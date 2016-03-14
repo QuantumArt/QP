@@ -1,0 +1,501 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddContextClassNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя дополнительного контекстного класса</value>
+  </data>
+  <data name="AddContextClassNameLengthExceeded" xml:space="preserve">
+    <value>Длина имени дополнительного контекстного класса не должна превышать {5} символов</value>
+  </data>
+  <data name="AddContextClassNameNonUnique" xml:space="preserve">
+    <value>Имя дополнительного контекстного класса не является уникальным на уровне сайта</value>
+  </data>
+  <data name="AddContextClassNameNonUniqueDB" xml:space="preserve">
+    <value>Имя дополнительного контекстного класса не является уникальным на уровне базы данных</value>
+  </data>
+  <data name="AdditionalContextClassName" xml:space="preserve">
+    <value>Имя дополнительного контекстного класса</value>
+  </data>
+  <data name="AllContentGroups" xml:space="preserve">
+    <value>Все группы</value>
+  </data>
+  <data name="ArchiveOnRemoval" xml:space="preserve">
+    <value>Архивировать при удалении</value>
+  </data>
+  <data name="ArticlesNumberPerPage" xml:space="preserve">
+    <value>Число статей на странице</value>
+  </data>
+  <data name="ArticlesNumberPerPageNotInRange" xml:space="preserve">
+    <value>Число статей на странице не входит в допустимый диапазон: от {0} до {1}</value>
+  </data>
+  <data name="CannotAddBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно создать новый контент в текущем сайте, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotAddGroupBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно создать новую группу контентов в текущем сайте, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotCopyBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно создать копию контента, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotRemoveBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно удалить контент, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotUpdateBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно обновить контент, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotUpdateDefaultGroup" xml:space="preserve">
+    <value>Нельзя обновить группу по умолчанию</value>
+  </data>
+  <data name="CannotUpdateGroupBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно обновить группу контентов, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="ContentNotFound" xml:space="preserve">
+    <value>Контент не найден (Id = {0})</value>
+  </data>
+  <data name="CreateVersions" xml:space="preserve">
+    <value>Создавать версии</value>
+  </data>
+  <data name="CurrentContent" xml:space="preserve">
+    <value>Этот контент</value>
+  </data>
+  <data name="DefaultContentGroup" xml:space="preserve">
+    <value>Группа по умолчанию</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
+    <value>Длина описания не должна превышать {5} символов</value>
+  </data>
+  <data name="EnableArticlesPermissions" xml:space="preserve">
+    <value>Включить права доступа для статей</value>
+  </data>
+  <data name="EnableSiteSharing" xml:space="preserve">
+    <value>Разрешить доступ из других сайтов</value>
+  </data>
+  <data name="FriendlyPluralMaxLengthExceeded" xml:space="preserve">
+    <value>Длина дружественного имени во множественном числе не должна превышать {5} символов</value>
+  </data>
+  <data name="FriendlySingularMaxLengthExceeded" xml:space="preserve">
+    <value>Длина дружественного имени в единственном числе не должна превышать {5} символов</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Группа</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Название группы</value>
+  </data>
+  <data name="GroupNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя группы контентов</value>
+  </data>
+  <data name="GroupNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени группы контентов не должна превышать {5} символов</value>
+  </data>
+  <data name="GroupNameNonUnique" xml:space="preserve">
+    <value>Имя группы контентов не является уникальным на уровне сайта</value>
+  </data>
+  <data name="GroupNameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя группы контентов</value>
+  </data>
+  <data name="GroupNotFound" xml:space="preserve">
+    <value>Группа контентов не найдена (Id = {0})</value>
+  </data>
+  <data name="IsAltUserQueryUsed" xml:space="preserve">
+    <value>Использовать отдельный запрос для United View</value>
+  </data>
+  <data name="JoinFields" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="JoinFieldsNotEntered" xml:space="preserve">
+    <value>Пожалуйста укажите поля</value>
+  </data>
+  <data name="JoinRoot" xml:space="preserve">
+    <value>Контент-источник</value>
+  </data>
+  <data name="Legend_BasicParameters" xml:space="preserve">
+    <value>Основные параметры</value>
+  </data>
+  <data name="Legend_FriendlyName" xml:space="preserve">
+    <value>Дружественное имя</value>
+  </data>
+  <data name="Legend_LinqParameters" xml:space="preserve">
+    <value>Параметры отображения в LINQ-классы</value>
+  </data>
+  <data name="Legend_VersionControl" xml:space="preserve">
+    <value>Контроль версий</value>
+  </data>
+  <data name="Legend_VirtualContentParameters" xml:space="preserve">
+    <value>Параметры виртуального контента</value>
+  </data>
+  <data name="Legend_Workflow" xml:space="preserve">
+    <value>Workflow</value>
+  </data>
+  <data name="Link_AddNewContent" xml:space="preserve">
+    <value>Добавить новый контент</value>
+  </data>
+  <data name="Link_AddNewField" xml:space="preserve">
+    <value>Добавить новое поле</value>
+  </data>
+  <data name="MapAsClass" xml:space="preserve">
+    <value>Отображать как класс</value>
+  </data>
+  <data name="MaximumNumberOfStoredVersions" xml:space="preserve">
+    <value>Максимальное число хранимых версий</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Имя контента</value>
+  </data>
+  <data name="NameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя контента</value>
+  </data>
+  <data name="NameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени контента не должна превышать {5} символов</value>
+  </data>
+  <data name="NameNonUnique" xml:space="preserve">
+    <value>Имя контента не является уникальным на уровне сайта</value>
+  </data>
+  <data name="NameNonUniqueDB" xml:space="preserve">
+    <value>Имя контента не является уникальным на уровне базы данных</value>
+  </data>
+  <data name="NameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя контента</value>
+  </data>
+  <data name="NamePlural" xml:space="preserve">
+    <value>Имя (множественное)</value>
+  </data>
+  <data name="NamePluralInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя LINQ-класса во множественном числе</value>
+  </data>
+  <data name="NamePluralMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени LINQ-класса во множественном числе не должна превышать {5} символов</value>
+  </data>
+  <data name="NamePluralNonUnique" xml:space="preserve">
+    <value>Имя LINQ-класса во множественном числе не является уникальным на уровне сайта</value>
+  </data>
+  <data name="NamePluralNonUniqueDB" xml:space="preserve">
+    <value>Имя LINQ-класса во множественном числе не является уникальным на уровне базы данных</value>
+  </data>
+  <data name="NamePluralNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя LINQ-класса во множественном числе</value>
+  </data>
+  <data name="NameSingular" xml:space="preserve">
+    <value>Имя (единственное)</value>
+  </data>
+  <data name="NameSingularInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя LINQ-класса в единственном числе</value>
+  </data>
+  <data name="NameSingularMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени  LINQ-класса в единственном числе не должна превышать {5} символов</value>
+  </data>
+  <data name="NameSingularNonUnique" xml:space="preserve">
+    <value>Имя LINQ-класса в единственном числе не является уникальным на уровне сайта</value>
+  </data>
+  <data name="NameSingularNonUniqueDB" xml:space="preserve">
+    <value>Имя LINQ-класса в единственном числе не является уникальным на уровне базы данных</value>
+  </data>
+  <data name="NameSingularNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя LINQ-класса в единственном числе</value>
+  </data>
+  <data name="NoWorkflow" xml:space="preserve">
+    <value>Нет workflow</value>
+  </data>
+  <data name="Plural" xml:space="preserve">
+    <value>Множественное число</value>
+  </data>
+  <data name="RelatedContentsExist" xml:space="preserve">
+    <value>Контент не может быть удален, так как существуют следующие связанные с ним контенты: {0}</value>
+  </data>
+  <data name="SelectContent" xml:space="preserve">
+    <value>Выберите контент</value>
+  </data>
+  <data name="SelectContentGroup" xml:space="preserve">
+    <value>Выберите группу контентов</value>
+  </data>
+  <data name="Singular" xml:space="preserve">
+    <value>Единственное число</value>
+  </data>
+  <data name="SourceContentNotEntered" xml:space="preserve">
+    <value>Пожалуйста укажите контент-источник</value>
+  </data>
+  <data name="SplitArticles" xml:space="preserve">
+    <value>Расщеплять статьи</value>
+  </data>
+  <data name="ToRebuild" xml:space="preserve">
+    <value>Перестроить виртуальный контент</value>
+  </data>
+  <data name="UnionBaseContentNotEntered" xml:space="preserve">
+    <value>Пожалуйста выберите контенты-источники</value>
+  </data>
+  <data name="UnionSourceContents" xml:space="preserve">
+    <value>Контенты-источники</value>
+  </data>
+  <data name="UseDefaultFiltration" xml:space="preserve">
+    <value>Использовать фильтрацию по умолчанию</value>
+  </data>
+  <data name="UserQuery" xml:space="preserve">
+    <value>Запрос</value>
+  </data>
+  <data name="UserQueryAlternative" xml:space="preserve">
+    <value>Запрос для United View</value>
+  </data>
+  <data name="UserQueryAltIsInvalid" xml:space="preserve">
+    <value>Ошибка в запросе для United View: {0}</value>
+  </data>
+  <data name="UserQueryIsInvalid" xml:space="preserve">
+    <value>Ошибка в запросе: {0}</value>
+  </data>
+  <data name="UserQueryNotEntered" xml:space="preserve">
+    <value>Пожалуйста введите текст запроса</value>
+  </data>
+  <data name="VirtualSubContentsExist" xml:space="preserve">
+    <value>Контент не может быть удален, так как существуют следующие подчиненные виртуальные контенты: {0}</value>
+  </data>
+  <data name="VirtualType" xml:space="preserve">
+    <value>Тип виртуального контента</value>
+  </data>
+  <data name="VirtualTypeCantBeChanged" xml:space="preserve">
+    <value>Тип виртуального контента не может быть изменен, так как существуют виртуальные контенты, основанные на данном контенте</value>
+  </data>
+  <data name="Workflow" xml:space="preserve">
+    <value>Workflow</value>
+  </data>
+  <data name="NotAllMandatoryColumnsInUserQuery" xml:space="preserve">
+    <value>Не все обязательные поля указаны в запросе.  Не указаны {0}.</value>
+  </data>
+  <data name="UserQueryAndAltColumnsMismatch" xml:space="preserve">
+    <value>Наборы колонок и/или типы колонок возвращаемые запросом и запросом для United View несовпадают</value>
+  </data>
+  <data name="InvalidColumnsInUserQuery" xml:space="preserve">
+    <value>Контент содержит поля имеющие недопустимые типы: {0}</value>
+  </data>
+  <data name="UserQueryColumnTypeChanged" xml:space="preserve">
+    <value>Тип столбца [{0}] таблицы [{1}] изменен с {2} на {3}</value>
+  </data>
+  <data name="UserQuerySameNameColumsHaveDiffTypes" xml:space="preserve">
+    <value>Типы столбца [{0}] в таблицах {1} не совпадают</value>
+  </data>
+  <data name="ErrorInSubContent" xml:space="preserve">
+    <value>Ошибка в подчиненном виртуальном контенте: {0}. Ошибка: {1}</value>
+  </data>
+  <data name="CyclesInContentTree" xml:space="preserve">
+    <value>Был найден цикл в графе контентов</value>
+  </data>
+  <data name="SelectSite" xml:space="preserve">
+    <value>Выберите сайт</value>
+  </data>
+  <data name="AllSites" xml:space="preserve">
+    <value>Все сайты</value>
+  </data>
+  <data name="ParentSiteName" xml:space="preserve">
+    <value>Сайт</value>
+  </data>
+  <data name="VirualSubContentProcessingError" xml:space="preserve">
+    <value>Ошибка при обработке дочернего виртуального контента ({0}) "{1}": {2}</value>
+  </data>
+  <data name="ClearContentStageName" xml:space="preserve">
+    <value>Очистка контента "{0}"</value>
+  </data>
+  <data name="RemoveContentStageName" xml:space="preserve">
+    <value>Удаление контента "{0}"</value>
+  </data>
+  <data name="ContentsAreSharedRelated" xml:space="preserve">
+    <value>Следующие контенты не могут быть удалены потому что в других сайтах существуют связанные с ними контенты: {0}</value>
+  </data>
+  <data name="ContentsAreSharedUnionBase" xml:space="preserve">
+    <value>Следующие контенты не могут быть удалены потому что в других сайтах существуют подчиненные виртуальные контенты: {0}</value>
+  </data>
+  <data name="ArticlePermissionsComplete" xml:space="preserve">
+    <value>Права доступа для статей контента включены.</value>
+  </data>
+  <data name="RebuildVirtualContentViewsStageName" xml:space="preserve">
+    <value>Обновление представлений </value>
+  </data>
+  <data name="RebuildUserQueryStageName" xml:space="preserve">
+    <value>Обновление структуры USER QUERY </value>
+  </data>
+  <data name="ContentIsAggregated" xml:space="preserve">
+    <value>Контент не может быть удален, потому что он содержит статьи и следующие агрегированные поля: {0}</value>
+  </data>
+  <data name="CannotChangeAutoArchive" xml:space="preserve">
+    <value>Свойство "Архивировать при удалении" не может быть изменено, потому что контент содержит агрегированные поля</value>
+  </data>
+  <data name="CannotChangeIsAsync" xml:space="preserve">
+    <value>Свойство "Расщеплять статьи" не может быть изменено, потому что контент содержит агрегированные поля</value>
+  </data>
+  <data name="CannotChangeWorkflow" xml:space="preserve">
+    <value>Workflow не может быть изменено, потому что контент содержит агрегированные поля</value>
+  </data>
+  <data name="OperationIsNotAllowedForAggregated" xml:space="preserve">
+    <value>Операция недопустима для агрегированного контента.</value>
+  </data>
+  <data name="OperationIsNotAllowedForAggregateds" xml:space="preserve">
+    <value>Операция недопустима для агрегированных контентов "{0}".</value>
+  </data>
+  <data name="OperationIsNotAllowedForRoot" xml:space="preserve">
+    <value>Операция недопустима для корневого контента.</value>
+  </data>
+  <data name="CreateDefaultXAMLValidation" xml:space="preserve">
+    <value>Создать валидацию XAML по умолчанию</value>
+  </data>
+  <data name="DisableXamlValidation" xml:space="preserve">
+    <value>Запретить валидацию XAML</value>
+  </data>
+  <data name="XamlValidation" xml:space="preserve">
+    <value>Валидация XAML</value>
+  </data>
+  <data name="Legend_CustomValidation" xml:space="preserve">
+    <value>Пользовательская валидация</value>
+  </data>
+  <data name="DisableChangingActions" xml:space="preserve">
+    <value>Запретить операции редактирования</value>
+  </data>
+  <data name="ArticleChangingIsProhibited" xml:space="preserve">
+    <value>Создание/Изменение статей контента запрещено.</value>
+  </data>
+  <data name="ContentChangingIsProhibited" xml:space="preserve">
+    <value>Операции запрещена для данного контента</value>
+  </data>
+  <data name="ExportArticles" xml:space="preserve">
+    <value>Экспорт статей</value>
+  </data>
+  <data name="ImportArticles" xml:space="preserve">
+    <value>Импорт статей</value>
+  </data>
+  <data name="Hierarchy" xml:space="preserve">
+    <value>Иерархия</value>
+  </data>
+  <data name="ParentContent" xml:space="preserve">
+    <value>Родительский контент</value>
+  </data>
+  <data name="SelectParentContent" xml:space="preserve">
+    <value>Не выбран</value>
+  </data>
+  <data name="UseForContext" xml:space="preserve">
+    <value>Использовать для переключения контекстов</value>
+  </data>
+  <data name="ErrorsOnCopyingVirtualContents" xml:space="preserve">
+    <value>Ошибки при копировании следующих контентов:</value>
+  </data>
+  <data name="Legend_ClientScripts" xml:space="preserve">
+    <value>Клиентские скрипты</value>
+  </data>
+  <data name="FormScript" xml:space="preserve">
+    <value>Скрипт для формы</value>
+  </data>
+</root>

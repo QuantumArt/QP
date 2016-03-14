@@ -1,0 +1,54 @@
+﻿@model ContentSearchBlockViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.Content
+@using Quantumart.QP8.Resources
+
+<div class="contentSearchBlock">
+	@if (Model.ShowGroupList)
+	{
+		<fieldset>
+			<legend>@ContentStrings.SelectContentGroup</legend>	
+			<div>
+		
+					@Html.QpDropDownList("contentGroupDropDownList",
+						@Html.List(Model.ContentGroups),
+						ContentStrings.AllContentGroups,
+						new ControlOptions
+						{
+							HtmlAttributes = new Dictionary<string, object> 
+								{ 
+									{ "class", "contentGroupList csFilterCombo" }, 				
+									{ "id", @Model.UniqueId("contentGroupDropDownList") } 
+								}
+						})
+			 </div>
+	</fieldset>
+	}
+	@if (Model.ShowSiteList)
+	{
+		<fieldset>
+			<legend>@ContentStrings.SelectSite</legend>	
+			<div>
+		
+					@Html.QpDropDownList("siteDropDownList",
+						@Html.List(Model.Sites),
+						ContentStrings.AllSites,
+						new ControlOptions
+						{
+							HtmlAttributes = new Dictionary<string, object> 
+								{ 
+									{ "class", "siteList csFilterCombo" }, 				
+									{ "id", @Model.UniqueId("siteDropDownList") } 
+								}
+						})
+			 </div>
+	</fieldset>
+	}
+
+	<fieldset>
+		<legend>@ContentStrings.Name</legend>	
+		<div>
+			@Html.TextBox(@Model.UniqueId("contentNameText"), String.Empty, new { @class = "textbox contentNameText csFilterTextbox" })
+		</div>
+	</fieldset>	
+</div>

@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>QA.Configuration</name>
+    </assembly>
+    <members>
+        <member name="T:QA.Configuration.Config">
+            <summary>
+            Класс с конфигурационными настройками, которые могут применяться к объектам с помощью AttachedProperty.
+            Syntax: x:Config.AttachedObject
+            </summary>
+        </member>
+        <member name="M:QA.Configuration.Config.GetAttachedObject(System.Object)">
+            <summary>
+            Получение присоединенного к элементу графа объектов объекта
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QA.Configuration.Config.SetAttachedObject(System.Object,System.Object)">
+            <summary>
+            Присоединение произвольного объекта к элементу графа объектов
+            </summary>
+            <param name="item"></param>
+            <returns></returns>
+        </member>
+        <member name="T:QA.Configuration.ConfigurableItem">
+            <summary>
+            Базовый класс для контейнера конфигурации.
+            Поддерживает поддержку ресурсных словарей
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.IResourceContainer">
+            <summary>
+            Интерфейс класса с ресурсным словарем, конфигурируемого с помощью Xaml
+            </summary>
+        </member>
+        <member name="P:QA.Configuration.ConfigurableItem.Resources">
+            <summary>
+            Ресурсный словарь.
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.AttachableConfigurableItem">
+            <summary>
+            Базовый класс для контейнера конфигурации.
+            Поддерживает поддержку ресурсных словарей и
+            является хранилищем для собственных AttachedProperties
+            </summary>
+        </member>
+        <member name="F:QA.Configuration.AttachableConfigurableItem.attachedProperties">
+            <summary>
+            Словарь значений
+            </summary>
+        </member>
+        <member name="M:QA.Configuration.AttachableConfigurableItem.CopyPropertiesTo(System.Collections.Generic.KeyValuePair{System.Xaml.AttachableMemberIdentifier,System.Object}[],System.Int32)">
+            <summary>
+            Копирование свойств
+            </summary>
+            <param name="array"></param>
+            <param name="index"></param>
+        </member>
+        <member name="P:QA.Configuration.AttachableConfigurableItem.PropertyCount">
+            <summary>
+            Количество свойств
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.ConfigurationService">
+            <summary>
+            Конфигурационный сервис.
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.IConfigurationService">
+            <summary>
+            Поставщик конфигурации
+            </summary>
+        </member>
+        <member name="M:QA.Configuration.IConfigurationService.GetConfiguration``1">
+            <summary>
+            Получить стандартный объект конфигурации про типу
+            </summary>
+            <typeparam name="T">Тип</typeparam>
+        </member>
+        <member name="M:QA.Configuration.IConfigurationService.GetConfiguration``1(System.String)">
+            <summary>
+            Получить именованный объект конфигурации про типу
+            </summary>
+            <typeparam name="T">Тип</typeparam> T 
+        </member>
+        <member name="M:QA.Configuration.IConfigurationService.GetConfigurations``1">
+            <summary>
+            Получить список объектов конфигурации про типу
+            </summary>
+            <typeparam name="T">Тип</typeparam> T 
+        </member>
+        <member name="M:QA.Configuration.ConfigurationService.#ctor">
+            <summary>
+            Конструктор
+            </summary>
+        </member>
+        <member name="M:QA.Configuration.ConfigurationService.GetConfiguration``1">
+            <summary>
+            Получить стандартный объект конфигурации про типу
+            </summary>
+            <typeparam name="T">Тип</typeparam>
+        </member>
+        <member name="M:QA.Configuration.ConfigurationService.GetConfiguration``1(System.String)">
+            <summary>
+            Получить именованный объект конфигурации про типу
+            </summary>
+            <typeparam name="T">Тип</typeparam> T 
+        </member>
+        <member name="M:QA.Configuration.ConfigurationService.GetConfigurations``1">
+            <summary>
+            Получить список объектов конфигурации про типу
+            </summary>
+            <typeparam name="T">Тип</typeparam> T 
+        </member>
+        <member name="T:QA.Configuration.ConfigurationStorage">
+            <summary>
+            Хранилище конфигурации
+            </summary>
+        </member>
+        <member name="M:QA.Configuration.ConfigurationStorage.#ctor">
+            <summary>
+            Конструктор
+            </summary>
+        </member>
+        <member name="P:QA.Configuration.ConfigurationStorage.Items">
+            <summary>
+            Элементы
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.ResourceDictionary`2">
+            <summary>
+            Ресурсный словарь
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.ResourceDictionary">
+            <summary>
+            Ресурсный словарь
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.ResourceExtension">
+            <summary>
+            Осуществляет поиск ресурса в ресурсоном словаре текущего или корневого элемента
+            </summary>
+        </member>
+        <member name="M:QA.Configuration.ResourceExtension.FindDictionary(System.IServiceProvider,System.Object)">
+            <summary>
+            Поиск ресурсного словаря. Поддерживаются вложенные ресурсные словари, а также ресурсные словари родительских объектов.
+            </summary>
+            <param name="serviceProvider"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QA.Configuration.ResourceExtension.FindRoot(System.Object,System.IServiceProvider)">
+            <summary>
+            Осуществляет поиск root-элемента с помощью Reflection
+            </summary>
+        </member>
+        <member name="P:QA.Configuration.ResourceExtension.Key">
+            <summary>
+            Ключ
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.XamlConfigurationSection">
+            <summary>
+            Обработчик Xaml-секции конфигурационного файла
+            </summary>
+        </member>
+        <member name="T:QA.Configuration.XamlConfigurationManager">
+            <summary>
+            Методы работы с xaml-конфигурацией
+            </summary>
+        </member>
+        <member name="M:QA.Configuration.XamlConfigurationManager.GetSection``1">
+            <summary>
+            Получение xaml-конфигурации объекта из app.config
+            </summary>
+            <typeparam name="T">Тип объекта</typeparam>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

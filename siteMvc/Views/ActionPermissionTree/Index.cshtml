@@ -1,0 +1,20 @@
+﻿@model ActionPermissionsTreeViewModel
+		   
+@using Quantumart.QP8
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Utils
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.WebMvc.ViewModels.ActionPermissions
+
+@using (Html.BeginDocumentPadding())
+{
+	<div class="actionPermission" id="@Model.MainComponentId">
+		@Html.Partial("UserAndGroupSearchBlock", Model)
+		<div class="treeContainer">
+			@Html.Telerik().TreeView().Name(Html.UniqueId("Tree"))
+		</div>
+	</div>
+}
+
+@Html.InitScript(Model)

@@ -1,0 +1,219 @@
+{
+  // JSCS rules via AuthorProxy
+  // All rules are presented explicitly (except contradictory) and ordered the same as on http://jscs.info/rules
+
+  // Version 2.11.0
+  // Rules: http://jscs.info/rules
+  // Releases: https://github.com/jscs-dev/node-jscs/releases/
+  // Sources: https://gist.github.com/AuthorProxy/bffb5f9aa733e3ca6279#file-jscsrc
+
+  "disallowArrayDestructuringReturn": true,
+  "disallowCapitalizedComments": true,
+  "disallowDanglingUnderscores": {
+    "allExcept": ["_jQuery", "_this"]
+  },
+  "disallowEmptyBlocks": {
+    "allExcept": ["comments"]
+  },
+  "disallowIdenticalDestructuringNames": true,
+  "disallowImplicitTypeConversion": ["binary"],
+  "disallowKeywordsInComments": "\\b(todo|fix|fixme)\\b",
+  "disallowKeywordsOnNewLine": ["else", "catch"],
+  "disallowKeywords": ["with"],
+  "disallowMixedSpacesAndTabs": true,
+  "disallowMultipleLineBreaks": true,
+  "disallowMultipleLineStrings": true,
+  "disallowMultipleSpaces": true,
+  "disallowMultipleVarDecl": {
+    "allExcept": [
+      "undefined",
+      "require"
+    ]
+  },
+  "disallowNestedTernaries": true,
+  "disallowNewlineBeforeBlockStatements": true,
+  "disallowNodeTypes": ["LabeledStatement"],
+  "disallowOperatorBeforeLineBreak": ["+", "."],
+  "disallowPaddingNewlinesInBlocks": true,
+  "disallowParenthesesAroundArrowParam": true,
+  "disallowQuotedKeysInObjects": true,
+  "disallowSpaceAfterObjectKeys": {
+    "allExcept": [ "aligned" ]
+  },
+  "disallowSpaceAfterPrefixUnaryOperators": true,
+  "disallowSpaceBeforeComma": true,
+  "disallowSpaceBeforePostfixUnaryOperators": true,
+  "disallowSpaceBeforeSemicolon": true,
+  "disallowSpacesInAnonymousFunctionExpression": {
+    "beforeOpeningRoundBrace": true
+  },
+  "disallowSpacesInCallExpression": true,
+  "disallowSpacesInFunctionDeclaration": {
+    "beforeOpeningRoundBrace": true
+  },
+  "disallowSpacesInFunctionExpression": {
+    "beforeOpeningRoundBrace": true
+  },
+  "disallowSpacesInFunction": {
+    "beforeOpeningRoundBrace": true
+  },
+  "disallowSpacesInGenerator": {
+    "beforeStar": true
+  },
+  "disallowSpacesInNamedFunctionExpression": {
+    "beforeOpeningRoundBrace": true
+  },
+  "disallowSpacesInsideArrayBrackets": true,
+  "disallowSpacesInsideParentheses": true,
+  "disallowSpacesInsideParenthesizedExpression": true,
+  "disallowSpacesInsideTemplateStringPlaceholders": true,
+  "disallowTabs": true,
+  "disallowTrailingComma": true,
+  "disallowTrailingWhitespace": true,
+  "disallowUnusedParams": true,
+  // "disallowVar": true, // ES6 only
+  "disallowYodaConditions": true,
+  "maximumLineLength": {
+    "value": 120,
+    "tabSize": 2,
+    "allowRegex": true,
+    "allowUrlComments": true
+  },
+  "maximumNumberOfLines": {
+    "value": 200,
+    "allExcept": ["comments"]
+  },
+  "requireAlignedMultilineParams": true, // check
+  "requireAnonymousFunctions": {
+    "allExcept": ["declarations"]
+  },
+  // "requireArrayDestructuring": true, // ES6 only
+  "requireBlocksOnNewline": {
+     "includeComments": true
+  },
+  "requireCamelCaseOrUpperCaseIdentifiers": true, // check for strict mode
+  "requireCapitalizedConstructorsNew": true,
+  "requireCapitalizedConstructors": true,
+  "requireCommaBeforeLineBreak": true,
+  "requireCurlyBraces": {
+    "allExcept": ["return", "continue", "break"],
+    "keywords": [
+      "if",
+      "else",
+      "for",
+      "while",
+      "do",
+      "try",
+      "catch"
+    ]
+  },
+  "requireDollarBeforejQueryAssignment": true,
+  "requireDotNotation": true,
+  "requireEarlyReturn": true,
+  // "requireEnhancedObjectLiterals": true, // ES6 only
+  "requireFunctionDeclarations": true,
+  // "requireImportAlphabetized": true, // todo: check in production
+  "requireLineBreakAfterVariableAssignment": true,
+  "requireLineFeedAtFileEnd": true,
+  "requireMatchingFunctionName": {
+    "includeModuleExports": true
+  },
+  "requireNewlineBeforeSingleStatementsInIf": true,
+  // "requireNumericLiterals": true, // ES6 only
+  // "requireObjectDestructuring": true, // ES6 only
+  "requireObjectKeysOnNewLine": {
+    "allExcept": ["sameLine"]
+  },
+  "requirePaddingNewLineAfterVariableDeclaration": true, // todo: report about { "allExcept": singleVar } option
+  "requirePaddingNewLinesBeforeExport": true,
+  "requirePaddingNewLinesAfterBlocks": {
+      "allExcept": [
+        "inCallExpressions",
+        "inNewExpressions",
+        "inArrayExpressions",
+        "inProperties"
+      ]
+  },
+  "requirePaddingNewLinesAfterUseStrict": true,
+  "requirePaddingNewlinesBeforeKeywords": ["try", "do"],
+  "requirePaddingNewLinesBeforeLineComments": {
+    "allExcept": "firstAfterCurly" // todo: report about VS2015 warning
+  },
+  "requireParenthesesAroundIIFE": true,
+  "requireSemicolons": true,
+  "requireShorthandArrowFunctions": true,
+  "requireSpaceAfterBinaryOperators": true,
+  "requireSpaceAfterComma": {
+    "allExcept": ["sparseArrays"] // todo: report about VS2015 warning
+  },
+  "requireSpaceAfterKeywords": [
+    "do",
+    "for",
+    "if",
+    "else",
+    "switch",
+    "case",
+    "try",
+    "catch",
+    "void",
+    "while",
+    "with",
+    "return",
+    "typeof"
+  ],
+  "requireSpaceAfterLineComment": true,
+  "requireSpaceBeforeBinaryOperators": true,
+  "requireSpaceBeforeBlockStatements": true,
+  "requireSpaceBeforeDestructuredValues": true,
+  "requireSpaceBeforeKeywords": [
+    "else",
+    "while",
+    "catch"
+  ],
+  "requireSpaceBeforeObjectValues": true,
+  "requireSpaceBetweenArguments": true,
+  "requireSpacesInGenerator": {
+    "afterStar": true
+  },
+  "requireSpacesInAnonymousFunctionExpression": {
+    "beforeOpeningCurlyBrace": true
+  },
+  "requireSpacesInConditionalExpression": true,
+  "requireSpacesInForStatement": true,
+  "requireSpacesInFunctionDeclaration": {
+    "beforeOpeningCurlyBrace": true
+  },
+  "requireSpacesInFunctionExpression": {
+    "beforeOpeningCurlyBrace": true
+  },
+  "requireSpacesInFunction": {
+    "beforeOpeningCurlyBrace": true
+  },
+  "requireSpacesInNamedFunctionExpression": {
+    "beforeOpeningCurlyBrace": true
+  },
+  "requireSpacesInsideObjectBrackets": "allButNested",
+  "requireSpread": true,
+  // "requireTemplateStrings": true, // ES6 only
+  "requireVarDeclFirst": true,
+  "safeContextKeyword": "safe",
+  "validateAlignedFunctionParameters": true,
+  "validateCommentPosition": {
+    "position": "above"
+  },
+  "validateIndentation": {
+    "value": 2,
+    "allExcept": ["comments"]
+  },
+  // "validateLineBreaks": "LF", // check (shouldn't be hardcoded and don't pass any test)
+  "validateNewlineAfterArrayElements": true,
+  "validateParameterSeparator": ", ",
+  "validateQuoteMarks": {
+    "mark": "'", // todo: report about VS2015 warning
+    "escape": true,
+    "ignoreJSX": true
+  },
+  "esprima" : "esprima-fb",
+  "esnext": true,
+  "maxErrors": 20
+}

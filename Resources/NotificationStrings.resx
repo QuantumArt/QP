@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddNewNotification" xml:space="preserve">
+    <value>Add New Notification</value>
+  </data>
+  <data name="BasicParameters" xml:space="preserve">
+    <value>Basic Parameters</value>
+  </data>
+  <data name="ForCreate" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="ForFrontend" xml:space="preserve">
+    <value>Request On Demand</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="ForModify" xml:space="preserve">
+    <value>Modify</value>
+  </data>
+  <data name="ForRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ForStatusChanged" xml:space="preserve">
+    <value>Status Changed</value>
+  </data>
+  <data name="ForStatusPartiallyChanged" xml:space="preserve">
+    <value>Status Partially Changed</value>
+  </data>
+  <data name="NotificationNotFound" xml:space="preserve">
+    <value>Notification Not Found (Id = {0})</value>
+  </data>
+  <data name="Receiver" xml:space="preserve">
+    <value>Receiver</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Events" xml:space="preserve">
+    <value>Events</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Sender</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="UseDefaultSenderName" xml:space="preserve">
+    <value>Use Default Sender Name</value>
+  </data>
+  <data name="DefaultSenderName" xml:space="preserve">
+    <value>Default Sender  Name</value>
+  </data>
+  <data name="SenderName" xml:space="preserve">
+    <value>Sender Name</value>
+  </data>
+  <data name="UseQP8UserEmail" xml:space="preserve">
+    <value>Use QP8 User Email</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="SendFiles" xml:space="preserve">
+    <value>Send Files As Attachments</value>
+  </data>
+  <data name="UseQaMail" xml:space="preserve">
+    <value>Use QA_Mail component in QP7 Backend</value>
+  </data>
+  <data name="QP8User" xml:space="preserve">
+    <value>QP8 User</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="UserGroup" xml:space="preserve">
+    <value>User Group</value>
+  </data>
+  <data name="Field" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="ReceiverType" xml:space="preserve">
+    <value>Receiver Type</value>
+  </data>
+  <data name="SenderNameNotEntered" xml:space="preserve">
+    <value>Please enter sender name!</value>
+  </data>
+  <data name="SenderNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of login should not exceed {0} characters!</value>
+  </data>
+  <data name="SenderEmailNotEntered" xml:space="preserve">
+    <value>Please enter sender e-mail!</value>
+  </data>
+  <data name="SenderEmailNotValid" xml:space="preserve">
+    <value>Please enter valid sender e-mail!</value>
+  </data>
+  <data name="FieldNotSelected" xml:space="preserve">
+    <value>Please select field</value>
+  </data>
+  <data name="UserGroupNotSelected" xml:space="preserve">
+    <value>Please select user group</value>
+  </data>
+  <data name="UserNotSelected" xml:space="preserve">
+    <value>Please select user</value>
+  </data>
+  <data name="Unbind" xml:space="preserve">
+    <value>Unbind</value>
+  </data>
+  <data name="UnbindedMessage" xml:space="preserve">
+    <value>Notification was unbinded from workflow</value>
+  </data>
+  <data name="CreateDefaultFormat" xml:space="preserve">
+    <value>Create Default Format</value>
+  </data>
+  <data name="FormatIdNotEntered" xml:space="preserve">
+    <value>Please select format</value>
+  </data>
+  <data name="RadioEveryone" xml:space="preserve">
+    <value>Everyone In History</value>
+  </data>
+  <data name="RadioFromArticle" xml:space="preserve">
+    <value>E-mail From Article Field</value>
+  </data>
+  <data name="RadioNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="RadioUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="RadioUserGroup" xml:space="preserve">
+    <value>User Group</value>
+  </data>
+  <data name="EventNotSelected" xml:space="preserve">
+    <value>Please select at least one event</value>
+  </data>
+  <data name="AnyStatus" xml:space="preserve">
+    <value>Any Status</value>
+  </data>
+  <data name="ChooseField" xml:space="preserve">
+    <value>Choose Field</value>
+  </data>
+  <data name="ChooseFormat" xml:space="preserve">
+    <value>Choose Format</value>
+  </data>
+  <data name="SenderEmailLengthExceeded" xml:space="preserve">
+    <value>The length of E-mail should not exceed {0} characters!</value>
+  </data>
+  <data name="WarningString" xml:space="preserve">
+    <value>This notification is default and bound to workflow ({0}).</value>
+  </data>
+  <data name="External" xml:space="preserve">
+    <value>External</value>
+  </data>
+  <data name="ExternalUrl" xml:space="preserve">
+    <value>External URL</value>
+  </data>
+	<data name="UseService" xml:space="preserve">
+    <value>Use service for sending</value>
+  </data>
+  <data name="ExternalUrlNotEntered" xml:space="preserve">
+    <value>Please enter external URL!</value>
+  </data>
+  <data name="ExternalUrlNotValid" xml:space="preserve">
+    <value>Please enter valid external URL!</value>
+  </data>
+  <data name="ForDelayedPublication" xml:space="preserve">
+    <value>Delayed Publication</value>
+  </data>
+  <data name="ContentContainsAggregatedFields" xml:space="preserve">
+    <value>You cannot create notification because there are aggregated fields in the content</value>
+  </data>
+</root>

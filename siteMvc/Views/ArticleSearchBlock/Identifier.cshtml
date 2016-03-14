@@ -1,0 +1,84 @@
+﻿@using Quantumart.QP8.Resources
+@{
+    string numberFromElementId = (string)ViewBag.NumberFromElementID;
+    string numberToElementId = (string)ViewBag.NumberToElementID;
+    string inverseCheckBoxElementId = (string)ViewBag.InverseCheckBoxElementID;
+}
+<div class="row">
+	@Html.QpRadioButtonList((string)ViewBag.ByValueElementID,
+	new[] 
+	{
+		new QPSelectListItem
+		{
+			Text = ArticleStrings.SearchBlock_ByValue,
+			Selected = true,
+			Value = "0",
+		},
+		new QPSelectListItem
+		{
+			Text = ArticleStrings.SearchBlock_ByRange,
+			Selected = false,
+			Value = "1"
+		},
+		new QPSelectListItem
+		{
+			Text = ArticleStrings.SearchBlock_ByList,
+			Selected = false,
+			Value = "2"
+		}
+
+	},
+	new ControlOptions {Enabled = true}
+	)
+</div>
+
+<dl class="row">
+	<dt class="label">
+		@Html.QpLabel(numberFromElementId, ArticleStrings.SearchBlock_Value, true)
+	</dt>
+	<dd class="field">
+		@Html.NumericTextBox(numberFromElementId, null,
+			new Dictionary<string, object> 
+			{ 
+				{ "id", numberFromElementId},
+				{ "class", "identifier"}
+			})
+	</dd>
+</dl>
+
+<dl class="row" style="display:none;">
+	<dt class="label">
+		@Html.QpLabel(numberToElementId, ArticleStrings.SearchBlock_RangeToText, true)
+	</dt>
+	<dd class="field">
+		@Html.NumericTextBox(numberToElementId, null, 
+			new Dictionary<string, object> 
+			{ 
+				{ "id", numberToElementId },
+				{ "class", "identifier"}
+			})
+	</dd>
+</dl>
+
+<dl class="row" style="display:none;">
+ <dt class="label">
+	@Html.QpLabel((string)ViewBag.TextElementID, ArticleStrings.SearchBlock_ListText, true)
+  </dt>
+  <dd class="field">
+    @Html.QpTextArea((string)ViewBag.TextElementID, "",
+	    new Dictionary<string, object> 
+	    {
+            { "class", "identifier-list"}
+	    })
+  </dd>
+</dl>
+
+<dl class="row">
+	<dt class="label"></dt>
+	<dd class="field">
+		<span class="checkbox">
+			@Html.QpCheckBox(inverseCheckBoxElementId, null, false, new Dictionary<string, object>())
+			@Html.QpLabel(inverseCheckBoxElementId, ArticleStrings.SearchBlock_InverseCheckBoxLabelText, false)
+		</span>
+	</dd>
+</dl>

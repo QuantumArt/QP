@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-US" xmlns="http://schemas.microsoft.com/wix/2006/localization" Codepage="utf-8">
+  <String Id="WebFeatureTitle">Web installation</String>
+
+  <String Id="WinlogonFeatureTitle">Winlogon installation</String>
+  <String Id="BackendFeatureTitle">Backend installation</String>
+  <String Id="ArticleSchedulerFeatureTitle">Article Schedule Service installation</String>
+  
+  <String Id="DatabaseFeatureTitle">Database installation</String>
+
+  <String Id="UpgradeQP7toQP8FeatureTitle">Upgrade QP7 to QP8</String>
+  <String Id="UpgradeQP8FeatureTitle">Upgrade QP8 to latest version</String>
+</WixLocalization>

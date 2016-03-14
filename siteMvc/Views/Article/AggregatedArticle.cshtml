@@ -1,0 +1,6 @@
+﻿@using Quantumart.QP8.BLL
+@using Quantumart.QP8.WebMvc.Extensions.Helpers
+
+@if(ViewBag.AggregatedArticle != null){
+	@Html.AggregatedArticle((Article)ViewBag.AggregatedArticle);
+}

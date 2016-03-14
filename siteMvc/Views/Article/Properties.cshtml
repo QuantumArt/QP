@@ -1,0 +1,71 @@
+﻿@model ArticleViewModel
+		
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.WebMvc.Extensions.Helpers;
+
+@if (!Model.Data.IsUpdatableWithWorkflow)
+{ 
+	@Html.Warning(Model.WorkflowWarning)
+}
+
+@if (Model.Data.ViewType == ArticleViewType.ReadOnlyBecauseOfRelationSecurity)
+{
+	@Html.Warning(Model.RelationSecurityWarning)
+}
+
+@using (Html.BeginTabForm(Model))
+{	
+	if (Model.ShowLockInfo)
+	{ 
+		@Html.Partial("Locking", Model)
+	}
+
+    if (Model.Data.UseVariations)
+    {
+        using (Html.BeginFieldGroup(ArticleStrings.VariationGroup))
+        {
+            <div class="variationInfo">
+                <div class="variationInfoItem currentInfo"></div>
+                <div class="variationInfoItem totalInfo">@Html.Raw(ArticleStrings.TotalVariationsMessage)</div>
+                <div style="display:none" class="variationInfoItem removeItem">@Html.Raw(Model.RemoveVariationCode)</div>
+            </div>
+        }
+    }
+
+    using (Html.BeginFieldGroup(ArticleStrings.CustomFieldsGroup))
+	{
+		
+        if (Model.Data.UseVariations)
+        { 
+            @Html.HiddenFor(n => n.VariationModel, new { id = Html.UniqueId("VariationModel"), @class = "variationModel textbox simple-text"})
+            @Html.HiddenFor(n => n.CurrentContext, new { id = Html.UniqueId("CurrentContext"), @class = "currentContext qp-notChangeTrack textbox simple-text"})
+            @Html.HiddenFor(n => n.ContextModel, new { id = Html.UniqueId("ContextModel"), @class = "contextModel qp-notChangeTrack"})
+            @Html.HiddenFor(n => n.ErrorModel, new { id = Html.UniqueId("ErrorModel"), @class = "errorModel qp-notChangeTrack textbox simple-text"})
+        }
+        
+        foreach (FieldValue pair in Model.Data.VariationEditableFieldValues)
+		{
+			@Html.Field(pair, forceReadonly: Model.IsChangingActionsProhibited)
+		}
+	}
+
+	if (!Model.IsReadOnly)
+	{
+        @Html.Partial("Schedule", Model)
+        @Html.Partial("Workflow", Model)
+	}
+	@Html.Partial("Version", Model.Data)
+
+	@Html.Partial("EntityDirectLink", Model)
+}
+
+
+@Html.PrepareInitScript(Model)
+@Html.CustomScript(Model.Data.Content.Site.ContentFormScript, Model.ContextObjectName)
+@Html.CustomScript(Model.Data.Content.FormScript, Model.ContextObjectName)
+@Html.RunInitScript(Model)
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

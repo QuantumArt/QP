@@ -1,0 +1,901 @@
+// ****************************************************************************
+// *** Компонент "Всплывающие окно"											***
+// ****************************************************************************
+
+//#region event types of popup window
+// === Типы событий всплывающего окна ===
+var EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING = "OnPopupWindowActionExecuting";
+var EVENT_TYPE_POPUP_WINDOW_ENTITY_READED = "OnPopupWindowEntityReaded";
+var EVENT_TYPE_POPUP_WINDOW_CLOSED = "OnPopupWindowClosed";
+//#endregion
+
+//#region class BackendPopupWindow
+// === Класс "Всплывающие окно" ===
+Quantumart.QP8.BackendPopupWindow = function (popupWindowId, eventArgs, options) {
+	Quantumart.QP8.BackendPopupWindow.initializeBase(this, [eventArgs, options]);
+
+	var $currentWindow = jQuery(window);
+	var currentWindowWidth = $currentWindow.width();
+	var currentWindowHeight = $currentWindow.height();
+	$currentWindow = null;
+
+	this._popupWindowId = popupWindowId;
+
+	if ($q.isObject(eventArgs)) {
+	    this._applyEventArgs(eventArgs, true);
+	    this.bindExternalCallerContext(eventArgs);
+	}
+
+	this._loadDefaultSearchBlockState();
+
+	if ($q.isObject(options)) {
+		if (!$q.isNull(options.showBreadCrumbs)) {
+			this._showBreadCrumbs = options.showBreadCrumbs;
+		}
+
+		if (options.customActionToolbarComponent) {
+			this._actionToolbarComponent = options.customActionToolbarComponent;
+			this._useCustomActionToolbar = true;
+		}
+
+		this._selectedEntities = [];
+
+		if (!$q.isNull(options.saveSelectionWhenChangingView)) {
+			this._saveSelectionWhenChangingView = options.saveSelectionWhenChangingView;
+		}
+
+		if (options.title) {
+			this._title = options.title;
+		}
+
+		if (options.width) {
+			this._width = options.width;
+		}
+		else {
+			this._width = Math.floor(currentWindowWidth * 0.8);
+		}
+
+		if (options.height) {
+			this._height = options.height;
+		}
+		else {
+			this._height = Math.floor(currentWindowHeight * 0.8);
+		}
+
+		if (options.minWidth) {
+			this._minWidth = options.minWidth;
+		}
+		else {
+			this._minWidth = Math.floor(currentWindowWidth * 0.2);
+		}
+
+		if (options.minHeight) {
+			this._minHeight = options.minHeight;
+		}
+		else {
+			this._minHeight = Math.floor(currentWindowHeight * 0.2);
+		}
+
+		if (!$q.isNull(options.isModal)) {
+			this._isModal = options.isModal;
+		}
+
+		if (!$q.isNull(options.allowResize)) {
+			this._allowResize = options.allowResize;
+		}
+
+		if (!$q.isNull(options.allowDrag)) {
+			this._allowDrag = options.allowDrag;
+		}
+
+		if (!$q.isNull(options.showCloseButton)) {
+			this._showCloseButton = options.showCloseButton;
+		}
+
+		if (!$q.isNull(options.showMinimizeButton)) {
+			this._showMinimizeButton = options.showMinimizeButton;
+		}
+
+		if (!$q.isNull(options.showMaximizeButton)) {
+			this._showMaximizeButton = options.showMaximizeButton;
+		}
+
+		if (options.additionalUrlParameters) {
+			this._additionalUrlParameters = options.additionalUrlParameters;
+		}
+		if (eventArgs.get_context() && eventArgs.get_context().additionalUrlParameters) {
+			this._additionalUrlParameters = jQuery.extend(this._additionalUrlParameters, eventArgs.get_context().additionalUrlParameters);
+		}
+
+		if (options.zIndex) {
+			this._zIndex = $q.toInt(options.zIndex);
+		}
+
+		if (options.filter) {
+			this._filter = options.filter;
+		}
+
+		if (options.isMultiOpen) {
+			this._isMultiOpen = options.isMultiOpen;
+		}
+	}
+
+	this._onPopupWindowResizeHandler = jQuery.proxy(this._onPopupWindowResize, this);
+	this._onPopupWindowOpenHandler = jQuery.proxy(this._onPopupWindowOpen, this);
+	this._onPopupWindowCloseHandler = jQuery.proxy(this._onPopupWindowClose, this);
+	this._onPopupWindowActivatedHandler = jQuery.proxy(this._onPopupWindowActivated, this);
+
+};
+
+Quantumart.QP8.BackendPopupWindow.prototype = {
+	_popupWindowId: "", // идентификатор окна
+	_popupWindowElement: null, // DOM-элемент, образующий всплывающее окно
+	_popupWindowComponent: null, // компонент "Всплывающее окно"
+	_showBreadCrumbs: false, // признак, разрешающий отображение хлебных крошек
+	_breadCrumbsWrapperElement: null, // DOM-элемент, образующий контейнер для хлебных крошек
+	_toolbarWrapperElement: null, // DOM-элемент, образующий контейнер для панелей инструментов
+	_actionToolbarWrapperElement: null, // DOM-элемент, образующий контейнер для панели инструментов действий
+	_viewToolbarWrapperElement: null, // DOM-элемент, образующий контейнер для панели инструментов представлений
+	_searchBlockWrapperElement: null, // DOM-элемент, образующий контейнер, в котором располагается блок поиска
+	_contextBlockWrapperElement: null, // DOM-элемент, образующий контейнер, в котором располагается блок контекста
+	_documentAreaElement: null, // DOM-элемент, образующий область для отображения документов
+	_loadingLayerElement: null, // DOM-элемент, образующий блокирующий слой с индикатором загрузки
+	_selectionContext: null, // контекст выбора
+	_saveSelectionWhenChangingView: false, // признак, разрешающий сохранять выделение при смене представления
+	_title: "", // заголовок окна
+	_width: 400, // ширина окна
+	_height: 300, // высота окна
+	_minWidth: 400, // минимальная ширина окна
+	_minHeight: 300, // минимальная высота окна
+	_isModal: true, // признак модального окна
+	_allowResize: true, // признак, разрешающий изменять размер окна
+	_allowDrag: true, // признак, разрешающий перемещение окна
+	_showRefreshButton: false, // признак разрешающий показывать кнопку "Обновить"
+	_showCloseButton: true, // признак, разрешающий показывать кнопку "Закрыть"
+	_showMaximizeButton: true, // признак, разрешающий показывать кнопку "Развернуть"
+	_popupWindowManagerComponent: null, // менеджер всплывающих окон
+	_additionalUrlParameters: null, // дополнительные параметры URL, которые должны использоваться при выполнении действий в окне
+	_zIndex: 0,
+	_isMultiOpen: false, // окно не уничтожается при закрытии
+
+	get_popupWindowId: function () {
+		return this._popupWindowId;
+	},
+
+	get_showBreadCrumbs: function () {
+		return this._showBreadCrumbs;
+	},
+
+	get_saveSelectionWhenChangingView: function () {
+		return this._saveSelectionWhenChangingView;
+	},
+
+	set_saveSelectionWhenChangingView: function (value) {
+		this._saveSelectionWhenChangingView = value;
+	},
+
+	get_title: function () {
+		return this._title;
+	},
+
+	set_title: function (value) {
+		this._title = value;
+	},
+
+	get_width: function () {
+		return this._width;
+	},
+
+	set_width: function (value) {
+		this._width = value;
+	},
+
+	get_height: function () {
+		return this._height;
+	},
+
+	set_height: function (value) {
+		this._height = value;
+	},
+
+	get_minWidth: function () {
+		return this._minWidth;
+	},
+
+	set_minWidth: function (value) {
+		this._minWidth = value;
+	},
+
+	get_minHeight: function () {
+		return this._minHeight;
+	},
+
+	set_minHeight: function (value) {
+		this._minHeight = value;
+	},
+
+	get_isModal: function () {
+		return this._isModal;
+	},
+
+	set_isModal: function (value) {
+		this._isModal = value;
+	},
+
+	get_allowResize: function () {
+		return this._allowResize;
+	},
+
+	set_allowResize: function (value) {
+		this._allowResize = value;
+	},
+
+	get_allowDrag: function () {
+		return this._allowDrag;
+	},
+
+	set_allowDrag: function (value) {
+		this._allowDrag = value;
+	},
+
+	get_showRefreshButton: function () {
+		return this._showRefreshButton;
+	},
+
+	set_showRefreshButton: function (value) {
+		this._showRefreshButton = value;
+	},
+
+	get_showCloseButton: function () {
+		return this._showCloseButton;
+	},
+
+	set_showCloseButton: function (value) {
+		this._showCloseButton = value;
+	},
+
+	get_showMaximizeButton: function () {
+		return this._showMaximizeButton;
+	},
+
+	set_showMaximizeButton: function (value) {
+		this._showMaximizeButton = value;
+	},
+
+	get_popupWindowManager: function () {
+		return this._popupWindowManagerComponent;
+	},
+
+	set_popupWindowManager: function (value) {
+		this._popupWindowManagerComponent = value;
+	},
+
+	get_hostType: function () {
+		return DOCUMENT_HOST_TYPE_POPUP_WINDOW;
+	},
+
+	get_zIndex: function () {
+	    return parseInt(jQuery(this._popupWindowElement).css("z-index"));
+	},
+
+	get_selectionContext: function () { return this._selectionContext; },
+	set_selectionContext: function (value) { this._selectionContext = value; },
+
+	_onPopupWindowResizeHandler: null,
+	_onPopupWindowOpenHandler: null,
+	_onPopupWindowCloseHandler: null,
+	_onPopupWindowActivatedHandler: null,
+
+	initialize: function () {
+		this._initSelectedEntities();
+
+		var action = this.getCurrentAction();
+		if ($q.isNullOrWhiteSpace(this._title) && this._popupWindowManagerComponent && action) {
+			var eventArgs = new Quantumart.QP8.BackendEventArgs();
+			eventArgs.set_entityTypeCode(this._entityTypeCode);
+			eventArgs.set_entityId(this._entityId);
+			eventArgs.set_entityName(this._entityName);
+			eventArgs.set_parentEntityId(this._parentEntityId);
+			eventArgs.set_actionCode(this._actionCode);
+			this._title = this._popupWindowManagerComponent.generatePopupWindowTitle(eventArgs);
+		}
+
+		this.createPanels();
+
+		var popupWindowComponent = this._createWindow();
+		popupWindowComponent.close = function () {
+			$.telerik.trigger(popupWindowComponent.element, "close");
+		};
+		var $popupWindow = jQuery(popupWindowComponent.element);
+
+		this._popupWindowElement = $popupWindow.get(0);
+		this._popupWindowComponent = popupWindowComponent;
+
+		this._attachPopupWindowEventHandlers();
+	},
+
+	_initSelectedEntities: function () {
+		var actionTypeCode = this._actionTypeCode;
+
+		if (actionTypeCode == ACTION_TYPE_CODE_SELECT || actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_SELECT) {
+			if (this._isMultipleEntities) {
+				this._selectedEntities = Array.clone(this._entities);
+			}
+			else {
+				this._selectedEntities = [{ "Id": this._entityId, "Name": this._entityName}];
+			}
+		}
+	},
+
+	generateDocumentUrl: function (options) {
+		var isSelectAction = this._actionTypeCode == ACTION_TYPE_CODE_SELECT || this._actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_SELECT;
+		var entityIDs = (this._isMultipleEntities) ? $o.getEntityIDsFromEntities((isSelectAction) ? this._selectedEntities : this._entities) : [this._entityId];
+
+		var extraOptions = {
+			additionalUrlParameters: this._additionalUrlParameters,
+			controllerActionUrl: this.getCurrentViewActionUrl()
+		};
+		if (this.get_isBindToExternal() === true) {
+			extraOptions.additionalUrlParameters = jQuery.extend(extraOptions.additionalUrlParameters, { boundToExternal: true });
+		}
+		
+		options = (!$q.isObject(options)) ? extraOptions : jQuery.extend(options, extraOptions);
+
+		this._documentUrl = $a.generateActionUrl(this._isMultipleEntities, entityIDs, this._parentEntityId, this._popupWindowId, this.getCurrentAction(), options);
+
+		var params = {};
+		if (this._isMultipleEntities || this._isCustomAction) { params.IDs = entityIDs; }
+		if (this._isCustomAction) { params.actionCode = this._actionCode; }
+		this._documentPostParams = params;
+	},
+
+	_createWindow: function () {
+		var popupWindowId = this._popupWindowId;
+		var actions = [];
+		if (this._showRefreshButton) {
+			Array.add(actions, "Refresh");
+		}
+		if (this._showMaximizeButton) {
+			Array.add(actions, "Maximize");
+		}
+		if (this._showCloseButton) {
+			Array.add(actions, "Close");
+		}
+
+		var breadCrumbsWrapperId = "breadCrumbsWrapper_" + popupWindowId;
+		var toolbarWrapperId = "toolbarWrapper_" + popupWindowId;
+		var actionToolbarWrapperId = "actionToolbarWrapper_" + popupWindowId;
+		var viewToolbarWrapperId = "viewToolbarWrapper_" + popupWindowId;
+		var searchBlockWrapperId = "searchBlockWrapper_" + popupWindowId;
+		var contextBlockWrapperId = "contextBlockWrapper_" + popupWindowId;
+		var documentAreaId = "documentArea_" + popupWindowId;
+		var documentWrapperId = "document_" + popupWindowId;
+
+		var windowContentHtml = new $.telerik.stringBuilder();
+		windowContentHtml
+			.catIf('<div id="' + breadCrumbsWrapperId + '" class="breadCrumbsWrapper"></div>', this._showBreadCrumbs)
+	        .cat('<div id="' + toolbarWrapperId + '" class="toolbarWrapper">\n')
+	        .cat('	<div id="' + actionToolbarWrapperId + '" class="actionToolbarWrapper"></div>\n')
+	        .cat('	<div id="' + viewToolbarWrapperId + '" class="viewToolbarWrapper"></div>\n')
+	        .cat('</div>\n')
+	        .cat('<div id="' + documentAreaId + '" class="area">')
+			.cat('	<div id="' + searchBlockWrapperId + '" class="searchWrapper"></div>')
+            .cat('	<div id="' + contextBlockWrapperId + '" class="contextWrapper"></div>')
+	        .cat('	<div id="' + documentWrapperId + '" class="documentWrapper"></div>')
+	        .cat('</div>\n')
+	        ;
+
+		var popupWindowComponent = $.telerik.window.create({
+		    title: $('<div/>').text(this._title).html(),
+			html: windowContentHtml.string(),
+			width: this._width,
+			height: this._height,
+			minWidth: this._minWidth,
+			minHeight: this._minHeight,
+			modal: this._isModal,
+			actions: actions,
+			resizable: this._allowResize,
+			draggable: this._allowDrag
+		}).data("tWindow").center();
+
+		var $popupWindow = jQuery(popupWindowComponent.element);
+		$popupWindow
+	        .addClass("popupWindow")
+	        .css("display", "none");
+
+		if (this._zIndex)
+			$popupWindow.css("z-index", this._zIndex);
+
+		var $content = $popupWindow.find("DIV.t-window-content:first");
+		var bottomPaddingFix = 0;
+		if (jQuery.support.borderRadius) {
+			bottomPaddingFix = 15;
+		}
+		else {
+			bottomPaddingFix = 10;
+		}
+		$content.css("padding-bottom", bottomPaddingFix + "px");
+
+		var $breadCrumbsWrapper = null;
+		if (this._breadCrumbsComponent) {
+			var $breadCrumbs = jQuery(this._breadCrumbsComponent.get_breadCrumbsElement());
+			$breadCrumbsWrapper = $popupWindow.find("#" + breadCrumbsWrapperId);
+			$breadCrumbsWrapper.append($breadCrumbs);
+		}
+
+		var $actionToolbar = jQuery(this._actionToolbarComponent.get_toolbarElement());
+		var $viewToolbar = jQuery(this._viewToolbarComponent.get_toolbarElement());
+
+		var $toolbarWrapper = $popupWindow.find("#" + toolbarWrapperId);
+
+		var $actionToolbarWrapper = $popupWindow.find("#" + actionToolbarWrapperId);
+		$actionToolbarWrapper.append($actionToolbar);
+
+		var $viewToolbarWrapper = $popupWindow.find("#" + viewToolbarWrapperId);
+		$viewToolbarWrapper.append($viewToolbar);
+
+		var $searchBlockWrapper = $popupWindow.find("#" + searchBlockWrapperId);
+		var $contextBlockWrapper = $popupWindow.find("#" + contextBlockWrapperId);
+		var $documentArea = $popupWindow.find("#" + documentAreaId);
+
+		var $loadingLayer = jQuery("<div />", { "class": "loadingLayer", "css": { "display": "none"} });
+		$documentArea.prepend($loadingLayer);
+
+		var $documentWrapper = $popupWindow.find("#" + documentWrapperId);
+
+		if (!$q.isNullOrEmpty($breadCrumbsWrapper)) {
+			this._breadCrumbsWrapperElement = $breadCrumbsWrapper.get(0);
+		}
+		this._toolbarWrapperElement = $toolbarWrapper.get(0);
+		this._actionToolbarWrapperElement = $actionToolbarWrapper.get(0);
+		this._viewToolbarWrapperElement = $viewToolbarWrapper.get(0);
+		this._searchBlockWrapperElement = $searchBlockWrapper.get(0);
+		this._contextBlockWrapperElement = $contextBlockWrapper.get(0);
+		this._documentAreaElement = $documentArea.get(0);
+		this._loadingLayerElement = $loadingLayer.get(0);
+		this._documentWrapperElementId = documentWrapperId;
+		this._documentWrapperElement = $documentWrapper.get(0);
+
+		$actionToolbar = null;
+		$viewToolbar = null;
+
+		$toolbarWrapper = null;
+		$searchBlockWrapper = null;
+		$documentArea = null;
+		$loadingLayer = null;
+		$documentWrapper = null;
+		$content = null;
+		$popupWindow = null;
+
+		return popupWindowComponent;
+	},
+
+	openWindow: function (options) {
+		if (this._isMultiOpen && this._isContentLoaded()) {
+			this._popupWindowComponent.open();
+		}
+		else {
+			this.onDocumentChanging();
+			this._popupWindowComponent.open();
+			this.generateDocumentUrl(options);
+			this.renderPanels();
+			var self = this;
+			this.loadHtmlContentToDocumentWrapper(function () {
+				self.onDocumentChanged();
+			}, options);
+		}
+	},
+
+	closeWindow: function () {
+		if (this._isMultiOpen) {
+			$c.closePopupWindow(this._popupWindowComponent);
+		}
+		else if (this.allowClose()) {
+
+			this.markMainComponentAsBusy();
+
+			this.cancel();
+
+			this.onDocumentUnloaded();
+
+			this.unbindExternalCallerContexts("closed");
+
+			var eventArgs = new Quantumart.QP8.BackendEventArgs();
+			this.notify(EVENT_TYPE_POPUP_WINDOW_CLOSED, eventArgs);
+			eventArgs = null;
+
+			this.dispose();
+		}
+	},
+
+	setWindowTitle: function (titleText) {
+		$c.setPopupWindowTitle(this._popupWindowComponent, titleText);
+		this._title = titleText;
+	},
+
+	_attachPopupWindowEventHandlers: function () {
+		var $popupWindow = jQuery(this._popupWindowElement);
+		$popupWindow
+	        .bind("open", this._onPopupWindowOpenHandler)
+	        .bind("resize", this._onPopupWindowResizeHandler)
+	        .bind("close", this._onPopupWindowCloseHandler)
+			.bind("activated", this._onPopupWindowActivatedHandler)
+	        ;
+	},
+
+	_detachPopupWindowEventHandlers: function () {
+		var $popupWindow = jQuery(this._popupWindowElement);
+		$popupWindow
+	        .unbind("open", this._onPopupWindowOpenHandler)
+	        .unbind("resize", this._onPopupWindowResizeHandler)
+	        .unbind("close", this._onPopupWindowCloseHandler)
+			.unbind("activated", this._onPopupWindowActivatedHandler)
+	        ;
+	},
+
+	_fixDocumentAreaHeight: function () {
+		var $popupWindow = jQuery(this._popupWindowElement);
+		var $content = $popupWindow.find("DIV.t-window-content:first");
+		var $breadCrumbsWrapper = null;
+		if (this._breadCrumbsWrapperElement) {
+			$breadCrumbsWrapper = jQuery(this._breadCrumbsWrapperElement)
+		}
+		var $toolbarWrapper = jQuery(this._toolbarWrapperElement);
+		var $area = jQuery(this._documentAreaElement);
+
+		var contentHeight = parseInt($content.height(), 10);
+		var breadCrumbsWrapperHeight = 0;
+		if (!$q.isNullOrEmpty($breadCrumbsWrapper)) {
+			breadCrumbsWrapperHeight = parseInt($breadCrumbsWrapper.outerHeight(), 10);
+		}
+		var toolbarWrapperHeight = parseInt($toolbarWrapper.outerHeight(), 10);
+		var areaHeight = contentHeight - breadCrumbsWrapperHeight - toolbarWrapperHeight;
+
+		$area.height(areaHeight);
+
+		var main = this.get_mainComponent();
+		if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
+			main.resize();
+		}
+
+		main = null;
+		$area = null;
+		$toolbarWrapper = null;
+		$content = null;
+		$popupWindow = null;
+	},
+
+	showLoadingLayer: function () {
+		var $loadingLayer = jQuery(this._loadingLayerElement);
+		$loadingLayer.show();
+		$loadingLayer = null;
+	},
+
+	hideLoadingLayer: function () {
+		var $loadingLayer = jQuery(this._loadingLayerElement);
+		$loadingLayer.hide();
+		$loadingLayer = null;
+	},
+
+	htmlLoadingMethod: function () {
+		return (this._isMultipleEntities || this._isCustomAction) ? "POST" : "GET";
+	},
+
+	createPanels: function () {
+		var action = this.getCurrentAction();
+
+		// Создаем хлебные крошки
+		if (this._showBreadCrumbs) {
+			var breadCrumbsComponent = Quantumart.QP8.BackendBreadCrumbsManager.getInstance().createBreadCrumbs("breadCrumbs_" + this._popupWindowId,
+				{
+					"documentHost": this
+				}
+			);
+			breadCrumbsComponent.attachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
+			breadCrumbsComponent.attachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
+
+			this._breadCrumbsComponent = breadCrumbsComponent;
+		}
+
+		// Создаем панель инструментов для действий
+		if (!this._useCustomActionToolbar) {
+			var actionToolbarOptions;
+			var eventArgsAdditionalData = this.get_eventArgsAdditionalData();
+			if (eventArgsAdditionalData && eventArgsAdditionalData.disabledActionCodes) {
+				actionToolbarOptions = { disabledActionCodes: eventArgsAdditionalData.disabledActionCodes };
+			}
+			var actionToolbarComponent = new Quantumart.QP8.BackendActionToolbar("actionToolbar_" + this._popupWindowId, this._actionCode, this._parentEntityId, actionToolbarOptions);
+			actionToolbarComponent.initialize();
+			actionToolbarComponent.attachObserver(EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
+			this._actionToolbarComponent = actionToolbarComponent;
+		}
+
+	    // Создаем панель инструментов для представлений
+		var viewToolbarOptions = {};
+		var state = this.loadHostState();
+		if (state && state.viewTypeCode) {
+		    viewToolbarOptions.viewTypeCode = state.viewTypeCode;
+		}
+
+		var viewToolbarComponent = new Quantumart.QP8.BackendViewToolbar("viewToolbar_" + this._popupWindowId, this._actionCode, viewToolbarOptions);
+		viewToolbarComponent.initialize();
+
+		viewToolbarComponent.attachObserver(EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
+		viewToolbarComponent.attachObserver(EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED, this._onGeneralEventHandler);
+		viewToolbarComponent.attachObserver(EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED, this._onGeneralEventHandler);
+
+		this._viewToolbarComponent = viewToolbarComponent;
+	},
+
+	hidePanels: function (callback) {
+		if (this._breadCrumbsComponent) {
+			this._breadCrumbsComponent.hideBreadCrumbs();
+		}
+
+		this._actionToolbarComponent.hideToolbar(callback);
+		this._viewToolbarComponent.hideToolbar();
+
+		if (this.get_isSearchBlockVisible() && this._searchBlockComponent) {
+			this._searchBlockComponent.hideSearchBlock();
+		}
+
+		if (this._isContextBlockVisible && this._contextBlockComponent) {
+		    this._contextBlockComponent.hideSearchBlock();
+		}
+	},
+
+	showPanels: function (callback) {
+		if (this._breadCrumbsComponent) {
+			this._breadCrumbsComponent.showBreadCrumbs();
+		}
+
+		this._actionToolbarComponent.showToolbar(callback);
+		this._viewToolbarComponent.showToolbar();
+		this.fixActionToolbarWidth();
+
+		if (this.get_isSearchBlockVisible() && this._searchBlockComponent) {
+			this._searchBlockComponent.showSearchBlock();
+		}
+
+		if (this._isContextBlockVisible && this._contextBlockComponent) {
+		    this._contextBlockComponent.showSearchBlock();
+		}
+	},
+
+	destroyPanels: function () {
+		if (this._breadCrumbsComponent) {
+			this._breadCrumbsComponent.detachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, this._onGeneralEventHandler);
+			this._breadCrumbsComponent.detachObserver(EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, this._onGeneralEventHandler);
+			var breadCrumbsElementId = this._breadCrumbsComponent.get_breadCrumbsElementId();
+			Quantumart.QP8.BackendBreadCrumbsManager.getInstance().destroyBreadCrumbs(breadCrumbsElementId);
+			this._breadCrumbsComponent = null;
+		}
+
+		if (this._actionToolbarComponent) {
+			if (!this._useCustomActionToolbar) {
+				this._actionToolbarComponent.detachObserver(EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED, this._onGeneralEventHandler);
+			}
+			this._actionToolbarComponent.dispose();
+			this._actionToolbarComponent = null;
+		}
+
+		if (this._viewToolbarComponent) {
+			this._viewToolbarComponent.detachObserver(EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, this._onGeneralEventHandler);
+			this._viewToolbarComponent.detachObserver(EVENT_TYPE_VIEW_TOOLBAR_SEARCH_BUTTON_CLICKED, this._onGeneralEventHandler);
+			this._viewToolbarComponent.detachObserver(EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKED, this._onGeneralEventHandler);
+			this._viewToolbarComponent.dispose();
+			this._viewToolbarComponent = null;
+		}
+	},
+
+	createSearchBlock: function () {
+		var searchBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
+			.createSearchBlock("searchBlock_" + this._popupWindowId, this._entityTypeCode, this._parentEntityId, this,
+				{
+					"searchBlockContainerElementId": jQuery(this._searchBlockWrapperElement).attr("id"),
+					"popupWindowId": this._popupWindowId,
+					"actionCode": this._actionCode,
+					"searchBlockState": this.getHostStateProp("searchBlockState")
+				});		
+
+		searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
+		searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
+		searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
+
+		this._searchBlockComponent = searchBlockComponent;
+	},
+
+	createContextBlock: function () {
+	    var contextBlockComponent = Quantumart.QP8.BackendSearchBlockManager.getInstance()
+			.createSearchBlock("contextBlock_" + this._popupWindowId, this._entityTypeCode, this._parentEntityId, this,
+				{
+				    "searchBlockContainerElementId": jQuery(this._searchBlockWrapperElement).attr("id"),
+				    "popupWindowId": this._popupWindowId,
+				    "actionCode": this._actionCode,
+				    "contextSearch": true,
+				    "hideButtons": true,
+				    "searchBlockState": this.get_contextState()
+				});
+	    contextBlockComponent.initialize();
+
+	    contextBlockComponent.attachObserver(EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
+
+	    this._contextBlockComponent = contextBlockComponent;
+	},
+
+	destroySearchBlock: function () {
+		var searchBlockComponent = this._searchBlockComponent;
+
+		if (searchBlockComponent) {
+			searchBlockComponent.hideSearchBlock();
+			searchBlockComponent.detachObserver(EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
+			searchBlockComponent.detachObserver(EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
+			searchBlockComponent.detachObserver(EVENT_TYPE_SEARCH_BLOCK_RESIZED, this._onSearchBlockResizeHandler);
+
+			var searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
+			Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
+
+			this._searchBlockComponent = null;
+		}
+	},
+
+	destroyContextBlock: function () {
+	    var contextBlockComponent = this._contextBlockComponent;
+
+	    if (contextBlockComponent) {
+	        contextBlockComponent.hideSearchBlock();
+	        contextBlockComponent.detachObserver(EVENT_TYPE_CONTEXT_BLOCK_FIND_START, this._onContextSwitchingHandler);
+
+	        var searchBlockElementId = searchBlockComponent.get_searchBlockElementId();
+	        Quantumart.QP8.BackendSearchBlockManager.getInstance().destroySearchBlock(searchBlockElementId);
+
+	        this._contextBlockComponent = null;
+	        this._isContextBlockVisible = false;
+	    }
+	},
+
+	showErrorMessageInDocumentWrapper: function (status) {
+		var $documentWrapper = jQuery(this._documentWrapperElement); // скрытый документ
+		$documentWrapper.html($q.generateErrorMessageText());
+
+		$documentWrapper = null;
+	},
+
+	updateTitle: function (eventArgs) {
+		this.setWindowTitle(this._popupWindowManagerComponent.generatePopupWindowTitle(eventArgs));
+	},
+
+	onChangeContent: function (eventType, sender, eventArgs) {
+		this.changeContent(eventArgs);
+	},
+
+	saveSelectionContext: function (eventArgs) {
+		this._selectionContext = eventArgs.get_context();
+	},
+
+	onActionExecuting: function (eventArgs) {
+	    this._copyCurrentContextToEventArgs(eventArgs);
+		return this._popupWindowManagerComponent.notify(EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING, eventArgs);
+	},
+
+	onEntityReaded: function (eventArgs) {
+		return this._popupWindowManagerComponent.notify(EVENT_TYPE_POPUP_WINDOW_ENTITY_READED, eventArgs);
+	},
+
+	onDocumentChanging: function (isLocal) {
+		this.markPanelsAsBusy();
+	},
+
+	onDocumentChanged: function (isLocal) {
+		this.unmarkPanelsAsBusy();
+	},
+
+	onNeedUp: function (eventArgs) {
+		this._popupWindowManagerComponent.onNeedUp(eventArgs, this.get_popupWindowId());
+	},
+
+	resetSelectedEntities: function () {
+		this._initSelectedEntities();
+	},
+
+	_onLibraryResized: function (eventType, sender) {
+		var $docArea = jQuery(this._documentAreaElement);
+		var $lib = jQuery(sender._libraryElement);
+		$lib.height($docArea.height() + 8);
+		$docArea = null;
+		$lib = null;
+	},
+
+	_onPopupWindowResize: function () {
+		this._fixDocumentAreaHeight();
+	},
+
+	_onPopupWindowOpen: function () {
+		this._fixDocumentAreaHeight();
+	},
+
+	_onPopupWindowClose: function () {
+		var $active = jQuery(document.activeElement);
+		if ($active)
+			$active.blur(); // close prevents default behaviour
+		this.closeWindow();
+	},
+
+	_onPopupWindowActivated: function () {
+		var main = this.get_mainComponent();
+		if (main && Quantumart.QP8.BackendLibrary.isInstanceOfType(main)) {
+			main.resize();
+		}
+	},
+
+	_onExternalCallerContextsUnbinded: function (unbindingEventArgs) {
+		this.get_popupWindowManager().hostExternalCallerContextsUnbinded(unbindingEventArgs);
+	},
+
+	_isContentLoaded: function () {
+		var $wrapper = jQuery(this._documentWrapperElement);
+		return $wrapper && $wrapper.html() != "";
+	},
+
+	onDocumentError: function () {
+		this.closeWindow();
+	},
+
+    _isWindow: function() { return true; },
+
+	dispose: function () {
+		Quantumart.QP8.BackendPopupWindow.callBaseMethod(this, "dispose");
+
+		this._detachPopupWindowEventHandlers();
+
+		this._breadCrumbsWrapperElement = null;
+		this._toolbarWrapperElement = null;
+		this._actionToolbarWrapperElement = null;
+		this._viewToolbarWrapperElement = null;
+		this._searchBlockWrapperElement = null;
+		this._contextBlockWrapperElement = null;
+		this._documentAreaElement = null;
+		this._documentWrapperElement = null;
+
+		if (this._loadingLayerElement) {
+			var $loadingLayer = jQuery(this._loadingLayerElement);
+			$loadingLayer.empty();
+			$loadingLayer.remove();
+
+			$loadingLayer = null;
+			this._loadingLayerElement = null;
+		}
+
+		this.destroyPanels();
+		this.destroySearchBlock();
+		this.destroyContextBlock();
+
+		if (this._popupWindowManagerComponent) {
+			var popupWindowId = this._popupWindowId;
+			if (!$q.isNullOrWhiteSpace(popupWindowId)) {
+				this._popupWindowManagerComponent.removePopupWindow(popupWindowId);
+			}
+
+			this._popupWindowManagerComponent = null;
+		}
+
+		if (this._popupWindowComponent) {
+			var popupWindowComponent = this._popupWindowComponent;
+			$c.destroyPopupWindow(popupWindowComponent);
+
+			popupWindowComponent = null;
+			this._popupWindowComponent = null;
+		}
+
+		this._popupWindowElement = null;
+
+		this._onPopupWindowResizeHandler = null;
+		this._onPopupWindowOpenHandler = null;
+		this._onPopupWindowCloseHandler = null;
+		this._onPopupWindowActivatedHandler = null;
+	}
+
+};
+
+Quantumart.QP8.BackendPopupWindow.registerClass("Quantumart.QP8.BackendPopupWindow", Quantumart.QP8.BackendDocumentHost);
+//#endregion

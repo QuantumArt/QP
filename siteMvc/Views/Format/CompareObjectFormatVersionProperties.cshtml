@@ -1,0 +1,43 @@
+﻿@model  ObjectFormatVersionCompareViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+
+@using (Html.BeginTabForm(Model))
+{
+    using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+		@Html.VersionTextFieldFor(s => s.Data.NameToMerge, Model.Data.NameToMerge)
+        
+        @Html.VersionTextFieldFor(s => s.Data.NetFormatNameToMerge, Model.Data.NetFormatNameToMerge)
+
+        @Html.VersionAreaFieldFor(s => s.Data.DescriptionToMerge, Model.Data.DescriptionToMerge)
+    
+        @Html.VersionTextFieldFor(s => s.Data.NetLanguageNameToMerge, Model.Data.NetLanguageNameToMerge)
+    
+        @Html.VersionAreaFieldFor(s => s.Data.PresentationToMerge, Model.Data.PresentationToMerge)
+                
+        @Html.VersionAreaFieldFor(s => s.Data.CodeBehindToMerge, Model.Data.CodeBehindToMerge)
+    }
+    using (Html.BeginFieldGroup(EntityObjectStrings.VersionTitle))
+    {
+        @Html.DisplayFieldFor(e => e.Data.ExpandedName)
+        @Html.DisplayFieldFor(e => e.Data.ModifiedToDisplay)
+        @Html.DisplayFieldFor(e => e.Data.LastModifiedByUserToDisplay)
+    }
+
+    if (Model.IsComparison)
+    {
+        using (Html.BeginFieldGroup(EntityObjectStrings.ComparedVersionTitle))
+        {
+	        @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ExpandedName)
+	        @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ModifiedToDisplay)
+            @Html.DisplayFieldFor(e => e.Data.VersionToMerge.LastModifiedByUserToDisplay)
+        }
+    }
+	
+}
+
+@Html.InitScript(Model)

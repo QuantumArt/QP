@@ -1,0 +1,27 @@
+﻿@model ArticleListViewModel
+
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+
+@using (Html.BeginDocumentPadding())
+{
+
+    if (Model.ShowAddNewItemButton && !Model.IsReadOnly)
+    {
+        using (Html.BeginLinkButtonsList())
+        {
+			@Html.AddNewItemLink(Model)
+            @Html.SelectAllLink(Model)
+            @Html.UnselectLink(Model)
+        }
+    }
+    
+    @Html.ArticleGrid(Model)
+
+}
+
+@Html.InitScript(Model)
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

@@ -1,0 +1,62 @@
+﻿@model UserListViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.BLL.Services.DTO
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+@using (Html.BeginDocumentPadding())
+{
+	if (Model.ShowAddNewItemButton)
+	{
+		using (Html.BeginLinkButtonsList())
+		{
+			@Html.AddNewItemLink(Model)
+		}
+	}
+
+    @(Html.Telerik().Grid<UserListItem>().Name(Model.MainComponentId)
+        .DataKeys(k => k.Add(s => s.Id))
+        .Columns(c =>
+        {
+            c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                   .Width(30)
+                   .HtmlAttributes(new { @class = "id" });
+
+            c.Bound(s => s.Disabled)
+                    .Title("")
+                    .Width(30)
+                    .ClientTemplate(String.Format(Model.IconFormat, Url.GetThemeSmallIconsImageFolderUrl(), "<#= DisabledIcon #>", "<#= DisabledText #>"))
+                    .HtmlAttributes(new { style = "text-align: center;" });
+
+            c.Bound(s => s.Login).Title(UserStrings.Login)
+                .HtmlAttributes(new { @class = "title" });
+            
+            c.Bound(s => s.FirstName).Title(UserStrings.FirstName);
+            c.Bound(s => s.LastName).Title(UserStrings.LastName);
+            c.Bound(s => s.Email).Title(UserStrings.Email);
+            c.Bound(s => s.Language).Title(UserStrings.Language);
+            c.Bound(s => s.LastLogOn).Title(UserStrings.LastLogOn);
+
+
+            c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
+            c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
+            c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
+        })
+        .DataBinding(db => db.Ajax()
+                .Select(Model.GettingDataActionName, "User")
+        )
+        .EnableCustomBinding(true)
+        .Sortable()
+        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
+        .Selectable(s => s.Enabled(true))
+        .ClientEvents(e =>
+            e.OnDataBinding("$q.preventDefaultFunction")
+             .OnRowDataBound("$q.preventDefaultFunction")
+        )
+    )
+}
+
+@Html.InitScript(Model)
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

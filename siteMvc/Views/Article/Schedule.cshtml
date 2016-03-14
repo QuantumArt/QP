@@ -1,0 +1,104 @@
+﻿@model ArticleViewModel
+
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+
+@using(Html.BeginFieldGroup(ArticleStrings.VisibilityGroup))
+{
+	@Html.RadioFieldFor(s => s.Data.Schedule.ScheduleType, Html.List(Model.ScheduleTypes))
+
+	using(Html.BeginPanel(s => s.Data.Schedule.ScheduleType, ScheduleTypeEnum.OneTimeEvent, true) )
+	{
+		@Html.CheckBoxFieldFor(s => s.Data.Schedule.StartRightNow, "beginDatePanel", true)
+		using (Html.BeginPanel("beginDatePanel"))
+		{
+			@Html.DateTimeFieldFor(s => s.Data.Schedule.StartDate)
+		}
+		
+		@Html.CheckBoxFieldFor(s => s.Data.Schedule.WithoutEndDate, "endDatePanel", true)
+		using (Html.BeginPanel("endDatePanel"))
+		{
+			@Html.DateTimeFieldFor(s => s.Data.Schedule.EndDate)
+		}
+	}
+	<br style="clear:left"/>
+    using (Html.BeginPanel(s => s.Data.Schedule.ScheduleType, ScheduleTypeEnum.Recurring, true))
+	{
+		using (Html.BeginFieldGroup(ArticleStrings.RepetitionIntervalGroup))
+		{ 
+			@Html.DateFieldFor(s => s.Data.Schedule.Recurring.RepetitionStartDate);
+		
+			@Html.CheckBoxFieldFor(s => s.Data.Schedule.Recurring.RepetitionNoEnd, "repetitionEndDatePanel", true);
+			using (Html.BeginPanel("repetitionEndDatePanel"))
+			{
+				@Html.DateFieldFor(s => s.Data.Schedule.Recurring.RepetitionEndDate)
+			}
+		}
+		
+		using (Html.BeginFieldGroup(ArticleStrings.RepetitionParamsGroup))
+		{ 
+			@Html.NumericFieldFor(s => s.Data.Schedule.Recurring.ScheduleRecurringValue, 
+								  ScheduleValidationConstants.ScheduleRecurringMinValue,
+								  ScheduleValidationConstants.ScheduleRecurringMaxValue);
+			@Html.SelectFieldFor(s => s.Data.Schedule.Recurring.ScheduleRecurringType, Html.List(Model.ScheduleRecurringTypes));
+
+			using (Html.BeginPanel(s => s.Data.Schedule.Recurring.ScheduleRecurringType, ScheduleRecurringType.Weekly))
+			{
+				@Html.CheckBoxFieldFor(s => s.Data.Schedule.Recurring.OnMonday);
+				@Html.CheckBoxFieldFor(s => s.Data.Schedule.Recurring.OnTuesday);
+				@Html.CheckBoxFieldFor(s => s.Data.Schedule.Recurring.OnWednesday);
+				@Html.CheckBoxFieldFor(s => s.Data.Schedule.Recurring.OnThursday);
+				@Html.CheckBoxFieldFor(s => s.Data.Schedule.Recurring.OnFriday);
+				@Html.CheckBoxFieldFor(s => s.Data.Schedule.Recurring.OnSaturday);
+				@Html.CheckBoxFieldFor(s => s.Data.Schedule.Recurring.OnSunday);
+			}
+				
+			using (Html.BeginPanel("daySpecBy"))
+			{
+				@Html.RadioFieldFor(s => s.Data.Schedule.Recurring.DaySpecifyingType, Html.List(Model.DaySpecifyingTypes))
+		
+					
+				using (Html.BeginPanel(s => s.Data.Schedule.Recurring.ScheduleRecurringType, ScheduleRecurringType.Yearly))
+				{
+					@Html.SelectFieldFor(s => s.Data.Schedule.Recurring.Month, Html.List(Model.Months));
+				}
+
+				using (Html.BeginPanel(s => s.Data.Schedule.Recurring.DaySpecifyingType, DaySpecifyingType.Date))
+				{
+					@Html.NumericFieldFor(s => s.Data.Schedule.Recurring.DayOfMonth,
+										  ScheduleValidationConstants.DayOfMonthMinValue,
+										  ScheduleValidationConstants.DayOfMonthMaxValue);
+				}
+
+				using (Html.BeginPanel(s => s.Data.Schedule.Recurring.DaySpecifyingType, DaySpecifyingType.DayOfWeek))
+				{
+					@Html.SelectFieldFor(s => s.Data.Schedule.Recurring.WeekOfMonth, Html.List(Model.WeeksOfMonth));
+					@Html.SelectFieldFor(s => s.Data.Schedule.Recurring.DayOfWeek, Html.List(Model.DaysOfWeek));
+				}				
+																						
+			}	
+		}
+
+		using (Html.BeginFieldGroup(ArticleStrings.ShowTimeIntervalGroup))
+		{ 
+			@Html.TimeFieldFor(s => s.Data.Schedule.Recurring.ShowStartTime);
+																   
+			@Html.RadioFieldFor(s => s.Data.Schedule.Recurring.ShowLimitationType, Html.List(Model.ShowLimitationTypes));
+
+			using (Html.BeginPanel(s => s.Data.Schedule.Recurring.ShowLimitationType, ShowLimitationType.EndTime))
+			{ 
+				@Html.TimeFieldFor(s => s.Data.Schedule.Recurring.ShowEndTime);
+			}
+
+			using (Html.BeginPanel(s => s.Data.Schedule.Recurring.ShowLimitationType, ShowLimitationType.Duration))
+			{
+				@Html.NumericFieldFor(s => s.Data.Schedule.Recurring.DurationValue, ScheduleValidationConstants.DurationMinValue, ScheduleValidationConstants.DurationMaxValue);
+				@Html.SelectFieldFor(s => s.Data.Schedule.Recurring.DurationUnit, Html.List(Model.DurationUnits));
+			}	
+		}
+																										   
+	}	
+		
+}

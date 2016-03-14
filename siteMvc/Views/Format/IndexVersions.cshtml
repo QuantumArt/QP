@@ -1,0 +1,52 @@
+﻿@model Quantumart.QP8.WebMvc.ViewModels.PageTemplate.ObjectFormatVersionListViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL.ListItems
+
+@using (Html.BeginDocumentPadding())
+{
+	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+	{
+		using (Html.BeginLinkButtonsList())
+		{
+			@Html.AddNewItemLink(Model)
+		}
+	}
+
+    @(Html.Telerik().Grid<ObjectFormatVersionListItem>().Name(Model.MainComponentId)
+        .DataKeys(k => k.Add(s => s.Id))
+        .Columns(c =>
+        {
+            c.Bound("")
+                .Title(@"<input type='checkbox' />")
+                .Width(30)
+                .HeaderHtmlAttributes(new { @class = "t-select-header" })
+                .ClientTemplate(@"<input type='checkbox' name='SelectedFormatVersionsIDs' value='<#= Id #>' />")
+                .HtmlAttributes(new { @class = "t-select-cell" })
+                .Sortable(false);
+			c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                   .Width(30)
+                   .HtmlAttributes(new { @class = "id" });
+            c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
+            c.Bound(s => s.Modified).Title(NotificationStrings.ForModify);
+            c.Bound(s => s.ModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);            
+        })
+        .DataBinding(db => db.Ajax()
+                .Select(Model.GettingDataActionName, "Format")
+        )
+        .EnableCustomBinding(true)
+        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
+        .Sortable()
+        .Selectable(s => s.Enabled(true))
+        .ClientEvents(e =>
+            e.OnDataBinding("$q.preventDefaultFunction")
+             .OnRowDataBound("$q.preventDefaultFunction")
+        )
+    )
+}
+
+@Html.InitScript(Model)
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

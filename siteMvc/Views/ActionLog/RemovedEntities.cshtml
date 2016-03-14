@@ -1,0 +1,30 @@
+﻿@using Quantumart.QP8.WebMvc.ViewModels.Audit
+@using Quantumart.QP8.BLL;
+
+@model RemovedEntitiesAreaViewModel
+
+@using (Html.BeginDocumentPadding())
+{
+    <div id="@Model.MainComponentId" class="alMainContaner">
+    @(Html.Telerik().Grid<RemovedEntity>().Name(Model.GridElementId)
+                .DataKeys(k => k.Add(s => s.EntityId))
+                .Columns(c =>
+                    {
+                        c.Bound(s => s.EntityId);
+                        c.Bound(s => s.EntityTypeCode);
+                        c.Bound(s => s.EntityTitle);
+                        c.Bound(s => s.ParentEntityId);
+                        c.Bound(s => s.UserLogin);
+                        c.Bound(s => s.DeletedTime);
+                    }
+                )
+                .DataBinding(db => db.Ajax().Select("_RemovedEntities", "ActionLog"))
+                .EnableCustomBinding(true)
+                .Sortable()
+                .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))
+                .Selectable(s => s.Enabled(false))
+        )
+    </div>
+}
+
+@Html.InitScript(Model)

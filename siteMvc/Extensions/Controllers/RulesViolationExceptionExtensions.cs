@@ -1,0 +1,51 @@
+﻿using Quantumart.QP8.BLL;
+using System.Globalization;
+using System.Linq;
+using System.Web.Mvc;
+
+namespace Quantumart.QP8.WebMvc.Extensions.Controllers
+{
+    public static class RulesViolationExceptionExtensions
+    {
+        public static void CopyTo(this RulesException ex, ModelStateDictionary modelState)
+        {
+            CopyTo(ex, modelState, null);
+        }
+
+        public static void CopyTo(this RulesException ex, ModelStateDictionary modelState, string prefix)
+        {
+            prefix = string.IsNullOrEmpty(prefix) ? "" : prefix + ".";
+            var criticalErrors = ex.Errors.Where(n => n.Critical).ToList();
+
+            foreach (var error in criticalErrors)
+            {
+                CopyError(modelState, prefix, error);
+            }
+
+            if (!criticalErrors.Any())
+            {
+                foreach (var error in ex.Errors.Where(n => !n.Critical))
+                {
+                    CopyError(modelState, prefix, error);
+                }
+            }
+        }
+
+        private static void CopyError(ModelStateDictionary modelState, string prefix, RuleViolation propertyError)
+        {
+            var key = !(string.IsNullOrEmpty(propertyError.PropertyName)) ? propertyError.PropertyName : ExpressionHelper.GetExpressionText(propertyError.Property);
+
+            // динамические поля - без префикса, но надо установить Value для Telerik
+            if (key.StartsWith(Field.Prefix))
+            {
+                modelState.SetModelValue(key, new ValueProviderResult(propertyError.PropertyValue, propertyError.PropertyValue, CultureInfo.InvariantCulture));
+            }
+            else
+            {
+                key = prefix + key;
+            }
+
+            modelState.AddModelError(key, propertyError.Message);
+        }
+    }
+}

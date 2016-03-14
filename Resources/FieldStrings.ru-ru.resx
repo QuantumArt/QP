@@ -1,0 +1,756 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DefaultValue" xml:space="preserve">
+    <value>Значение по умолчанию</value>
+  </data>
+  <data name="DisableVersionControl" xml:space="preserve">
+    <value>Отключить контроль версий</value>
+  </data>
+  <data name="FieldNotFound" xml:space="preserve">
+    <value>Поле не найдено (Id = {0})</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Тип поля</value>
+  </data>
+  <data name="FriendlyName" xml:space="preserve">
+    <value>Дружественное имя</value>
+  </data>
+  <data name="Indexed" xml:space="preserve">
+    <value>Индексированное</value>
+  </data>
+  <data name="IsUnique" xml:space="preserve">
+    <value>Уникальное</value>
+  </data>
+  <data name="LinqBackPropertyName" xml:space="preserve">
+    <value>Имя обратного LINQ-свойства</value>
+  </data>
+  <data name="LinqParamsGroup" xml:space="preserve">
+    <value>Параметры отображения в LINQ-классы</value>
+  </data>
+  <data name="LinqPropertyName" xml:space="preserve">
+    <value>Имя LINQ-свойства</value>
+  </data>
+  <data name="M2MRelation" xml:space="preserve">
+    <value>Связь "многие-ко-многим"</value>
+  </data>
+  <data name="MapAsProperty" xml:space="preserve">
+    <value>Отображать как LINQ-свойство</value>
+  </data>
+  <data name="MapLinkAsClass" xml:space="preserve">
+    <value>Отображать узловую таблицу как класс</value>
+  </data>
+  <data name="NetLinkName" xml:space="preserve">
+    <value>Имя узлового LINQ-класса (единственное)</value>
+  </data>
+  <data name="NetPluralLinkName" xml:space="preserve">
+    <value>Имя узлового LINQ-класса (множественное)</value>
+  </data>
+  <data name="O2MRelation" xml:space="preserve">
+    <value>Связь "один-ко-многим"</value>
+  </data>
+  <data name="OnScreen" xml:space="preserve">
+    <value>Разрешить OnScreen</value>
+  </data>
+  <data name="ReadOnly" xml:space="preserve">
+    <value>Только для чтения</value>
+  </data>
+  <data name="RelatedFieldIsNotFound" xml:space="preserve">
+    <value>Для поля (Id = {0}) не найдено связанное поле (Id = {1})</value>
+  </data>
+  <data name="RelateTo" xml:space="preserve">
+    <value>Связать с</value>
+  </data>
+  <data name="RelationCondition" xml:space="preserve">
+    <value>Условие на связь</value>
+  </data>
+  <data name="RelationFieldIsNull" xml:space="preserve">
+    <value>Для поля связи "один-ко-многим" (Id = {0}) не установлено связанное поле</value>
+  </data>
+  <data name="RelationId" xml:space="preserve">
+    <value>Показать поле</value>
+  </data>
+  <data name="RenameMatched" xml:space="preserve">
+    <value>Переименовывать совпадающие файлы</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Обязательное</value>
+  </data>
+  <data name="SubFolder" xml:space="preserve">
+    <value>Подпапка для файлов</value>
+  </data>
+  <data name="TypeSpecificParamsGroup" xml:space="preserve">
+    <value>Параметры, зависящие от типа</value>
+  </data>
+  <data name="UniqueInCombinationWith" xml:space="preserve">
+    <value>В комбинации с</value>
+  </data>
+  <data name="UseRelationCondition" xml:space="preserve">
+    <value>Использовать условие на связь</value>
+  </data>
+  <data name="UseSiteLibrary" xml:space="preserve">
+    <value>Использовать библиотеку сайта</value>
+  </data>
+  <data name="ViewInList" xml:space="preserve">
+    <value>Просмотреть в списке</value>
+  </data>
+  <data name="BasicInputMask" xml:space="preserve">
+    <value>Базовая</value>
+  </data>
+  <data name="CustomInputMask" xml:space="preserve">
+    <value>Настраиваемая</value>
+  </data>
+  <data name="DocType" xml:space="preserve">
+    <value>DocType</value>
+  </data>
+  <data name="FullPage" xml:space="preserve">
+    <value>Разрешить целые HTML-страницы</value>
+  </data>
+  <data name="InputMask" xml:space="preserve">
+    <value>Маска ввода</value>
+  </data>
+  <data name="InputMaskType" xml:space="preserve">
+    <value>Тип маски ввода</value>
+  </data>
+  <data name="NumericSize" xml:space="preserve">
+    <value>Десятичные знаки</value>
+  </data>
+  <data name="PEnterMode" xml:space="preserve">
+    <value>Вставлять тег P при нажатии Enter</value>
+  </data>
+  <data name="StringSize" xml:space="preserve">
+    <value>Размер</value>
+  </data>
+  <data name="TextBoxRows" xml:space="preserve">
+    <value>Строки</value>
+  </data>
+  <data name="UseInputMask" xml:space="preserve">
+    <value>Использовать маску ввода</value>
+  </data>
+  <data name="VisualEditorHeight" xml:space="preserve">
+    <value>Высота</value>
+  </data>
+  <data name="BaseImage" xml:space="preserve">
+    <value>Основано на</value>
+  </data>
+  <data name="DynamicImageHeigth" xml:space="preserve">
+    <value>Высота</value>
+  </data>
+  <data name="DynamicImageMode" xml:space="preserve">
+    <value>Режим</value>
+  </data>
+  <data name="DynamicImageModeHeight" xml:space="preserve">
+    <value>Ограничить по высоте</value>
+  </data>
+  <data name="DynamicImageModeSize" xml:space="preserve">
+    <value>Ограничить размеры</value>
+  </data>
+  <data name="DynamicImageModeWidth" xml:space="preserve">
+    <value>Ограничить по ширине</value>
+  </data>
+  <data name="DynamicImageQuality" xml:space="preserve">
+    <value>Качество (%)</value>
+  </data>
+  <data name="DynamicImageType" xml:space="preserve">
+    <value>Тип файла на выходе</value>
+  </data>
+  <data name="DynamicImageWidth" xml:space="preserve">
+    <value>Ширина</value>
+  </data>
+  <data name="IsInteger" xml:space="preserve">
+    <value>Целое</value>
+  </data>
+  <data name="SelectField" xml:space="preserve">
+    <value>Выберите поле</value>
+  </data>
+  <data name="BackwardFieldName" xml:space="preserve">
+    <value>Имя обратного поля</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Разместить</value>
+  </data>
+  <data name="OrderOptionAfterAll" xml:space="preserve">
+    <value>После существующих полей</value>
+  </data>
+  <data name="OrderOptionTemplate" xml:space="preserve">
+    <value>Перед полем  {0}</value>
+  </data>
+  <data name="DefaultAndUniqueBothAreSet" xml:space="preserve">
+    <value>Поле не может быть одновременно уникальным  и иметь значение по умолчанию</value>
+  </data>
+  <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
+    <value>Длина описания поля не должна превышать {5} символов</value>
+  </data>
+  <data name="FriendlyNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина дружественного имени поля не должна превышать {5} символов</value>
+  </data>
+  <data name="NameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя поля</value>
+  </data>
+  <data name="NameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени поля не должна превышать {5} символов</value>
+  </data>
+  <data name="NameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя поля</value>
+  </data>
+  <data name="ReadOnlyAndRequiredBothAreTrue" xml:space="preserve">
+    <value>Поле не может быть одновременно обязательным и "только для чтения"</value>
+  </data>
+  <data name="BackwardFieldNameAndNameAreEqual" xml:space="preserve">
+    <value>Имя поля и имя обрантого поля должны отличаться</value>
+  </data>
+  <data name="BackwardFieldNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя обратного поля</value>
+  </data>
+  <data name="BackwardFieldNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени обратного поля не должна превышать {5} символов!</value>
+  </data>
+  <data name="BackwardFieldNameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя обрантого поля</value>
+  </data>
+  <data name="BaseImageNotSelected" xml:space="preserve">
+    <value>Пожалуйста, выберите поле-изображение в качестве основы</value>
+  </data>
+  <data name="FieldValueIsNotInRange" xml:space="preserve">
+    <value>Содержимое поля не входит в допустимый диапазон: от {0} до {1}</value>
+  </data>
+  <data name="FieldValueLengthExceeded" xml:space="preserve">
+    <value>Длина содержимого поля не должна превышать {0} символов!</value>
+  </data>
+  <data name="DecimalPlacesNotInRange" xml:space="preserve">
+    <value>Количество цифр после запятой не входит в допустимый диапазон: от 0 до 25</value>
+  </data>
+  <data name="DefaultMaxLengthExceeded" xml:space="preserve">
+    <value>Длина значения по умолчанию не должна превышать 255 символов!</value>
+  </data>
+  <data name="DocTypeMaxLengthExceeded" xml:space="preserve">
+    <value>Длина значения DocType не должна превышать {5} символов!</value>
+  </data>
+  <data name="DynamicImageHeightNotInRange" xml:space="preserve">
+    <value>Значение высоты не входит в допустимый диапазон: от 1 до 9999</value>
+  </data>
+  <data name="DynamicImageQualityNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите значение качества</value>
+  </data>
+  <data name="DynamicImageQualityNotInRange" xml:space="preserve">
+    <value>Значение качества не входит в допустимый диапазон: от 50 до 100</value>
+  </data>
+  <data name="DynamicImageWidthNotInRange" xml:space="preserve">
+    <value>Значение ширины не входит в допустимый диапазон: от 1 до 9999</value>
+  </data>
+  <data name="InputMaskMaxLengthExceeded" xml:space="preserve">
+    <value>Длина маски ввода не должна превышать {5} символов!</value>
+  </data>
+  <data name="InputMaskNotEntered" xml:space="preserve">
+    <value>Пожалуйста, укажите маску ввода </value>
+  </data>
+  <data name="LinqBackPropertyNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя LINQ-свойства</value>
+  </data>
+  <data name="LinqBackPropertyNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени обратного LINQ-свойства не должна превышать {5} символов!</value>
+  </data>
+  <data name="LinqBackPropertyNameNonUnique" xml:space="preserve">
+    <value>Такое имя обратного LINQ-свойства уже используется</value>
+  </data>
+  <data name="LinqBackPropertyNameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя обратного LINQ-свойства</value>
+  </data>
+  <data name="LinqPropertyNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя обратного LINQ-свойства</value>
+  </data>
+  <data name="LinqPropertyNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени LINQ-свойства не должна превышать {5} символов!</value>
+  </data>
+  <data name="LinqPropertyNameNonUnique" xml:space="preserve">
+    <value>Такое имя LINQ-свойства уже используется</value>
+  </data>
+  <data name="LinqPropertyNameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя LINQ-свойства</value>
+  </data>
+  <data name="LinqPropertyNamesAreEqual" xml:space="preserve">
+    <value>Имя LINQ-свойства и имя обратного LINQ-свойства должны различаться</value>
+  </data>
+  <data name="NetLinkNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя узлового LINQ-класса (единственное)</value>
+  </data>
+  <data name="NetLinkNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени узлового LINQ-класса (единственное) не должна превышать {5} символов!</value>
+  </data>
+  <data name="NetLinkNameNonUnique" xml:space="preserve">
+    <value>Такое  имя узлового LINQ-класса (единственное) уже используется</value>
+  </data>
+  <data name="NetLinkNameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя узлового LINQ-класса (единственное)</value>
+  </data>
+  <data name="NetLinkNamesAreEqual" xml:space="preserve">
+    <value>Имена LINQ-класса (единственное и множественное) должны различаться</value>
+  </data>
+  <data name="NetPluralLinkNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя узлового LINQ-класса (множественное)</value>
+  </data>
+  <data name="NetPluralLinkNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени узлового LINQ-класса (множественное) не должна превышать {5} символов!</value>
+  </data>
+  <data name="NetPluralLinkNameNonUnique" xml:space="preserve">
+    <value>Такое  имя узлового LINQ-класса (множественное) уже используется</value>
+  </data>
+  <data name="NetPluralLinkNameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя узлового LINQ-класса (множественное)</value>
+  </data>
+  <data name="RelateToContentNotSelected" xml:space="preserve">
+    <value>Не выбран контент с которым связано поле</value>
+  </data>
+  <data name="RelationConditionMaxLengthExceeded" xml:space="preserve">
+    <value>Длина условия на связь не должна превышать {5} символов!</value>
+  </data>
+  <data name="RelationIdNotSelected" xml:space="preserve">
+    <value>Для связи не выбрано поле для показа</value>
+  </data>
+  <data name="StringLengthNotInRange" xml:space="preserve">
+    <value>Длина строки не входит в допустимый диапазон: от 1 до 3500</value>
+  </data>
+  <data name="SubFolderMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени подпапки для файлов не должна превышать {5} символов!</value>
+  </data>
+  <data name="TextboxRowsNotInRange" xml:space="preserve">
+    <value>Количество строк не входит в допустимый диапазон: от 5 до 30</value>
+  </data>
+  <data name="VisualEditHeightNotInRange" xml:space="preserve">
+    <value>Высота не входит в допустимый диапазон: от 350 до 750</value>
+  </data>
+  <data name="FieldHasBadValues" xml:space="preserve">
+    <value>Поле имеет недопустимые значения</value>
+  </data>
+  <data name="MultiplyUniqueConstraint" xml:space="preserve">
+    <value>Поле участвует в сложном ограничении уникальности</value>
+  </data>
+  <data name="RelatedFieldsExist" xml:space="preserve">
+    <value>Существуют поля, которые ссылаются на поле</value>
+  </data>
+  <data name="ThumbnailsExist" xml:space="preserve">
+    <value>Существуют динамические изображения для поля</value>
+  </data>
+  <data name="DecimalPlaces" xml:space="preserve">
+    <value>Количество цифр после запятой</value>
+  </data>
+  <data name="SizeTitle" xml:space="preserve">
+    <value>Размер</value>
+  </data>
+  <data name="SelectContent" xml:space="preserve">
+    <value>Выберите контент</value>
+  </data>
+  <data name="NoFields" xml:space="preserve">
+    <value>Поля отсутствуют</value>
+  </data>
+  <data name="SubFolderInvalidFormat" xml:space="preserve">
+    <value>Некорректный путь к подпапке для файлов </value>
+  </data>
+  <data name="SelectMaskTemplate" xml:space="preserve">
+    <value>Выберите базовую маску</value>
+  </data>
+  <data name="MatchNameConflict" xml:space="preserve">
+    <value>Поле "{0}" уже существует в контенте "{1}"</value>
+  </data>
+  <data name="BaseImageIdMismatch" xml:space="preserve">
+    <value>Изображение, на котором основано поле "{0} в контенте "{2}", не совпадает с изображением, на котором основано поле "{1}" в контенте "{3}"</value>
+  </data>
+  <data name="MatchTypeConflict" xml:space="preserve">
+    <value>Тип поля "{0}" в контенте "{2}" не совпадает с типом поля "{1}" в контенте "{3}"</value>
+  </data>
+  <data name="MatchUseSiteLibraryConflict" xml:space="preserve">
+    <value>Значение свойства "Использовать библиотеку сайта" не совпадает у поля "{0}" в контенте "{2}" и поля "{1}" в контенте "{3}"</value>
+  </data>
+  <data name="RelateToContensMismatch" xml:space="preserve">
+    <value>Контент на который ссылается поле "{0}" в контенте "{2}" не совпадает с контентом, на который ссылается поле "{1}" в контенте "{3}"</value>
+  </data>
+  <data name="VirtualChildrenFieldsExist" xml:space="preserve">
+    <value>Поле не может быть изменено, так как существуют дочерние поля в виртуальных контентах типа JOIN </value>
+  </data>
+  <data name="UseEnglishQuotes" xml:space="preserve">
+    <value>Использовать правила английской типографики</value>
+  </data>
+  <data name="M2ORelation" xml:space="preserve">
+    <value>Связь "многие-к-одному"</value>
+  </data>
+  <data name="BackRelationId" xml:space="preserve">
+    <value>Базовое поле связи</value>
+  </data>
+  <data name="BackRelationIdNotSelected" xml:space="preserve">
+    <value>Базовое поле связи не выбрано</value>
+  </data>
+  <data name="CannotChangeRelationTypeForSelfRelation" xml:space="preserve">
+    <value>Невозможно сменить тип связи для поля, которое ссылается на тот же контент</value>
+  </data>
+  <data name="BackRelationContentNotAssignedAsyncWorkflow" xml:space="preserve">
+    <value>На контент базового поля связи не назначено workflow с расщеплением статей</value>
+  </data>
+  <data name="CannotCreateUniqueFieldBecauseOfExisting" xml:space="preserve">
+    <value>Невозможно создать поле с ограничением уникальности, потому что текущий контент содержит более одной статьи</value>
+  </data>
+  <data name="ExistingDataIsNotUnique" xml:space="preserve">
+    <value>Существующие данные статей не уникальны. Найдено дубликатов: {0}</value>
+  </data>
+  <data name="CannotChangeTypeToNotRelateable" xml:space="preserve">
+    <value>Невозможно изменить тип поля, так как существуют поля ссылающиеся на него</value>
+  </data>
+  <data name="DefaultValueIsNotDefined" xml:space="preserve">
+    <value>Значение по умолчанию не определено</value>
+  </data>
+  <data name="ApplyDefaultValueStageName" xml:space="preserve">
+    <value>Применение значения по умолчанию</value>
+  </data>
+  <data name="FieldIsNotDynamicImage" xml:space="preserve">
+    <value>Поле (Id:{0}) не является динамическим изображением</value>
+  </data>
+  <data name="RecreateDynamicImagesStageName" xml:space="preserve">
+    <value>Пересоздание динамических изображений</value>
+  </data>
+  <data name="IsLong" xml:space="preserve">
+    <value>Использовать тип данных Int64</value>
+  </data>
+  <data name="IsDecimal" xml:space="preserve">
+    <value>Использовать тип данных Decimal</value>
+  </data>
+  <data name="AutoExpand" xml:space="preserve">
+    <value>Автоматическое раскрытие</value>
+  </data>
+  <data name="AutoCheckChildren" xml:space="preserve">
+    <value>Автоматически отмечать дочерние статьи</value>
+  </data>
+  <data name="UseForTree" xml:space="preserve">
+    <value>Использовать для дерева</value>
+  </data>
+  <data name="UseForTreeAlreadySet" xml:space="preserve">
+    <value>Опция "Использовать для дерева" уже  установлена для поля "{0}"</value>
+  </data>
+  <data name="RebuildVirtualContents" xml:space="preserve">
+    <value>Пересобрать виртуальные контенты</value>
+  </data>
+  <data name="DisablingRebuildIsDangerous" xml:space="preserve">
+    <value>Отключение опции 'Пересобрать виртуальные контенты' может привести к ошибкам в этих виртуальных контентах. Данная опция предназначена для опытных пользователей и служит для тонкой настройки производительности.</value>
+  </data>
+  <data name="Aggregated" xml:space="preserve">
+    <value>Агрегированное</value>
+  </data>
+  <data name="ClassifierId" xml:space="preserve">
+    <value>Классификатор</value>
+  </data>
+  <data name="AggregatedIsComplexUnique" xml:space="preserve">
+    <value>Агрегированное поле участвует в сложном ограничении уникальности</value>
+  </data>
+  <data name="AggregatedIsNotUnique" xml:space="preserve">
+    <value>Агрегированное поле должно быть уникальным</value>
+  </data>
+  <data name="AggregatedRelateToCurrentContent" xml:space="preserve">
+    <value>Агрегированное поле не может ссылаться на текущий контент</value>
+  </data>
+  <data name="CannotSetAggregateBecauseOfExisting" xml:space="preserve">
+    <value>Невозможно сделать поле агрегированным, потому что текущий контент содержит статьи</value>
+  </data>
+  <data name="ClassifierRefNotSelected" xml:space="preserve">
+    <value>Классификатор не выбран</value>
+  </data>
+  <data name="ThereAreAggregatedsInRootContent" xml:space="preserve">
+    <value>Корневой контент содержит агрегированное поле</value>
+  </data>
+  <data name="ThereIsAggregatedInContent" xml:space="preserve">
+    <value>Текущий контент содержит агрегированное поле</value>
+  </data>
+  <data name="CannotResetAggregateBecauseOfExisting" xml:space="preserve">
+    <value>Невозможно сделать поле неагрегированным, потому что текущий контент содержит статьи</value>
+  </data>
+  <data name="RelatedContentAutoArchiveIsDifferent" xml:space="preserve">
+    <value>Значение свойства "Архивировать при удалении" связанного контента отличается от соответствующего свойства текущего контента</value>
+  </data>
+  <data name="RelatedContentWorkflowIsDifferent" xml:space="preserve">
+    <value>Workflow связанного контента отличается от Workflow текущего контента</value>
+  </data>
+  <data name="RelatedContentWorkflowSplitIsDifferent" xml:space="preserve">
+    <value>Значение свойства "Расщеплять статьи" связанного контента отличается от соответствующего свойства текущего контента</value>
+  </data>
+  <data name="CannotChangeAggregateFieldTypeBecauseOfExisting" xml:space="preserve">
+    <value>Невозможно изменить тип поля, потому оно является агрегированным и текущий контент содержит статьи</value>
+  </data>
+  <data name="CannotChangeClassifierRefBecauseOfExisting" xml:space="preserve">
+    <value>Невозможно изменить классификатор, потому что поле является агрегированным и текущий контент содержит статьи</value>
+  </data>
+  <data name="CannotRemoveAggregated" xml:space="preserve">
+    <value>Агрегированное поле не может быть удалено, потому что текущий контент содержит статьи</value>
+  </data>
+  <data name="CannotSetAggregateBecauseOfNotification" xml:space="preserve">
+    <value>Невозможно сделать поле агрегированным, потому что существуют уведомления для текущего контента</value>
+  </data>
+  <data name="CannotRemoveClassifier" xml:space="preserve">
+    <value>Классификатор не может быть удален, потому что существуют связанные с ним агрегированные поля</value>
+  </data>
+  <data name="CannotRemoveChildField" xml:space="preserve">
+    <value>Дочернее поле не может быть удалено</value>
+  </data>
+  <data name="ClassiferCannotBeReadonly" xml:space="preserve">
+    <value>Классификатор не может быть доступен только для чтения</value>
+  </data>
+  <data name="ClassiferCannotBeUniq" xml:space="preserve">
+    <value>Классификатор не может иметь ограничения уникальности</value>
+  </data>
+  <data name="CannotChangeClassifierType" xml:space="preserve">
+    <value>Тип классификатора не может быть изменен, потому что существуют связанные с ним агрегированные поля</value>
+  </data>
+  <data name="Changeable" xml:space="preserve">
+    <value>Изменяемое поле</value>
+  </data>
+  <data name="ClassifierDefaultIsUndefined" xml:space="preserve">
+    <value>Значение не определено</value>
+  </data>
+  <data name="CannotChangeAggregateFieldTypeBecauseOfClassifierDefaultValue" xml:space="preserve">
+    <value>Невозможно изменить тип поля, потому оно является агрегированным и текущий контент контент является значением классификатора по умолчанию</value>
+  </data>
+  <data name="CannotChangeClassifierRefBecauseOfClassifierDefaultValue" xml:space="preserve">
+    <value>Невозможно изменить классификатор, потому оно является агрегированным и текущий контент контент является значением классификатора по умолчанию</value>
+  </data>
+  <data name="CannotRemoveAggregatedBecauseOfClassifierDefaultValue" xml:space="preserve">
+    <value>Агрегированное поле не может быть удалено, потому что текущий контент является значением классификатора по умолчанию</value>
+  </data>
+  <data name="CannotResetAggregateBecauseOfClassifierDefaultValue" xml:space="preserve">
+    <value>Невозможно сделать поле неагрегированным, потому что текущий контент является значением классификатора по умолчанию</value>
+  </data>
+  <data name="CopyPermissionsToChildren" xml:space="preserve">
+    <value>Копировать права доступа при создании дочерних элементов</value>
+  </data>
+  <data name="RelationSecurityFieldMustBeRequired" xml:space="preserve">
+    <value>Поле связи, для которого используются права доступа, должно быть обязательным</value>
+  </data>
+  <data name="UseRelationSecurity" xml:space="preserve">
+    <value>Использовать связанные права доступа</value>
+  </data>
+  <data name="StringEnum" xml:space="preserve">
+    <value>Строковое перечисление</value>
+  </data>
+  <data name="EnumValues" xml:space="preserve">
+    <value>Значения</value>
+  </data>
+  <data name="ShowAsRadioButtons" xml:space="preserve">
+    <value>Использовать группу радиокнопок</value>
+  </data>
+  <data name="AddNewEnumItem" xml:space="preserve">
+    <value>Добавить новый элемент</value>
+  </data>
+  <data name="EnumValueAlias" xml:space="preserve">
+    <value>Псевдоним</value>
+  </data>
+  <data name="EnumValueDefault" xml:space="preserve">
+    <value>По умолчанию</value>
+  </data>
+  <data name="EnumValueIsDefault" xml:space="preserve">
+    <value>Значение по умолчанию</value>
+  </data>
+  <data name="EnumValueValue" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="EnumValueIsInvalid" xml:space="preserve">
+    <value>Имя и псевдоним должны быть определены для каждого элемента перечисления.</value>
+  </data>
+  <data name="EnumValueIsNotDefined" xml:space="preserve">
+    <value>Должен быть определен как минимум один элемент перечисления.</value>
+  </data>
+  <data name="EnumValueAliasIsNotUnique" xml:space="preserve">
+    <value>Псевдонимы должны быть уникальными</value>
+  </data>
+  <data name="EnumValueValueIsNotUnique" xml:space="preserve">
+    <value>Значения должны быть уникальными</value>
+  </data>
+  <data name="NonEnumFieldValueExist" xml:space="preserve">
+    <value>Существуют значения текущего поля не входящие в перечисление</value>
+  </data>
+  <data name="SelectEnumValue" xml:space="preserve">
+    <value>Выберите значение</value>
+  </data>
+  <data name="Symmetric" xml:space="preserve">
+    <value>Симметричное</value>
+  </data>
+  <data name="VirtualBackwardFieldIsNotAllowed" xml:space="preserve">
+    <value>Обратное поле не может быть создано так как текущее поле ссылается на виртуальный контент</value>
+  </data>
+  <data name="UseForDefaultFiltration" xml:space="preserve">
+    <value>Использовать для фильтрации по умолчанию</value>
+  </data>
+  <data name="TreeSortingField" xml:space="preserve">
+    <value>Поле для сортировки в дереве</value>
+  </data>
+  <data name="UnableToCopyM2O" xml:space="preserve">
+    <value>Невозможно скопировать поле типа Relation Many-to-One</value>
+  </data>
+  <data name="UnableToCopyClassifier" xml:space="preserve">
+    <value>Невозможно копировать поле типа классификатор</value>
+  </data>
+  <data name="UnableToCopyAggregator" xml:space="preserve">
+    <value>Невозможно копировать поле типа Aggregator</value>
+  </data>
+  <data name="UnableToCopyUnique" xml:space="preserve">
+    <value>Невозможно скопировать уникальное поле</value>
+  </data>
+  <data name="ParentField" xml:space="preserve">
+    <value>Родительское поле</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Скрыть</value>
+  </data>
+  <data name="Override" xml:space="preserve">
+    <value>Переопределить</value>
+  </data>
+  <data name="UseForContext" xml:space="preserve">
+    <value>Использовать для выбора контекста</value>
+  </data>
+  <data name="UseForVariations" xml:space="preserve">
+    <value>Использовать для вариаций контента</value>
+  </data>
+  <data name="VariationAndM2OIncompatible" xml:space="preserve">
+    <value>Контент не может одновременно содержать поле вариаций контента и связь многие-к-одному</value>
+  </data>
+  <data name="ListFieldTitleCount" xml:space="preserve">
+    <value>Число полей, выводимых в заголовке элемента списка</value>
+  </data>
+  <data name="ListIncludeRelationsInTitle" xml:space="preserve">
+    <value>Включать поля связи в заголовок элемента списка</value>
+  </data>
+  <data name="ListOrderByTitle" xml:space="preserve">
+    <value>Сортировка по умолчанию по заголовку</value>
+  </data>
+  <data name="ListSortingField" xml:space="preserve">
+    <value>Поле для сортировки в списке</value>
+  </data>
+  <data name="TreeFieldTitleCount" xml:space="preserve">
+    <value>Число полей, выводимых в заголовке элемента дерева</value>
+  </data>
+  <data name="TreeIncludeRelationsInTitle" xml:space="preserve">
+    <value>Включать поля связи в заголовок элемента дерева</value>
+  </data>
+  <data name="TreeOrderByTitle" xml:space="preserve">
+    <value>Сортировка по умолчанию по заголовку</value>
+  </data>
+  <data name="UseInChildContentFilter" xml:space="preserve">
+    <value>Использовать в фильтре дочернего контента</value>
+  </data>
+  <data name="AutoLoad" xml:space="preserve">
+    <value>Как простой текстовый редактор</value>
+  </data>
+  <data name="UseTypeSecurity" xml:space="preserve">
+    <value>Использовать права доступа по типам</value>
+  </data>
+</root>

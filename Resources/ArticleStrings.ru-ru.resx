@@ -1,0 +1,594 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppendToVirtual" xml:space="preserve">
+    <value>Невозможно добавить статью в виртуальный контент (Id = {0})</value>
+  </data>
+  <data name="ArticleNotFoundInTheContent" xml:space="preserve">
+    <value>Статья (Id = {0}) не найдена в контенте (Id = {1})</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Создана</value>
+  </data>
+  <data name="CustomFieldsGroup" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Дата окончания показа</value>
+  </data>
+  <data name="FieldNotFound" xml:space="preserve">
+    <value>Поле '{0}' не найдено в контенте (Id = {1})</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="LastModifiedBy" xml:space="preserve">
+    <value>Изменил</value>
+  </data>
+  <data name="Invisible" xml:space="preserve">
+    <value>Не показывать</value>
+  </data>
+  <data name="MissingValue" xml:space="preserve">
+    <value>Поле '{0}' является обязательным</value>
+  </data>
+  <data name="Modified" xml:space="preserve">
+    <value>Изменена</value>
+  </data>
+  <data name="NotIntegerValue" xml:space="preserve">
+    <value>Значение поля '{0}' должно быть целым числом</value>
+  </data>
+  <data name="NotNumberValue" xml:space="preserve">
+    <value>Значение поля '{0}' должно быть числом</value>
+  </data>
+  <data name="NotUniqueValue" xml:space="preserve">
+    <value>Значение поля {0} должно быть уникальным. Конфликтующая статья: {1}.</value>
+  </data>
+  <data name="NotValidField" xml:space="preserve">
+    <value>Значение поля '{0}' должно быть корректным</value>
+  </data>
+  <data name="NotValidOrMissingValue" xml:space="preserve">
+    <value>Значение поля '{0}' должно быть корректным или отсутствовать</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="OneTimeEvent" xml:space="preserve">
+    <value>Разовое событие</value>
+  </data>
+  <data name="Recurring" xml:space="preserve">
+    <value>Повторяющееся событие</value>
+  </data>
+  <data name="ScheduleType" xml:space="preserve">
+    <value>Тип расписания</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Дата начала показа</value>
+  </data>
+  <data name="StartEndDates" xml:space="preserve">
+    <value>Дата начала показа должна быть раньше, чем дата конца</value>
+  </data>
+  <data name="StartRightNow" xml:space="preserve">
+    <value>Начать показ прямо сейчас</value>
+  </data>
+  <data name="TooLongValue" xml:space="preserve">
+    <value>Поле '{0}' превышает максимальную длину: {1}</value>
+  </data>
+  <data name="UniqueConstraintViolation" xml:space="preserve">
+    <value>Набор полей {0} должен быть уникальным. Конфликтующая статья: {1}</value>
+  </data>
+  <data name="VisibilityGroup" xml:space="preserve">
+    <value>Видимость</value>
+  </data>
+  <data name="Visible" xml:space="preserve">
+    <value>Показывать всегда</value>
+  </data>
+  <data name="WithoutEndDate" xml:space="preserve">
+    <value>Без окончания </value>
+  </data>
+  <data name="WorkflowGroup" xml:space="preserve">
+    <value>Публикация</value>
+  </data>
+  <data name="DelayPublication" xml:space="preserve">
+    <value>Отложить публикацию новой версии</value>
+  </data>
+  <data name="CancelSplit" xml:space="preserve">
+    <value>Отменить расщепление</value>
+  </data>
+  <data name="CancelSplitWarning" xml:space="preserve">
+    <value>После обновления статья исчезнет с основной версии сайта</value>
+  </data>
+  <data name="PublicationTime" xml:space="preserve">
+    <value>Время публикации</value>
+  </data>
+  <data name="UnsupportedConstraint" xml:space="preserve">
+    <value>Операция "Создать по образцу" не поддерживает некоторые из ограничений уникальности контента</value>
+  </data>
+  <data name="Link_AddNewArticle" xml:space="preserve">
+    <value>Добавить новую статью</value>
+  </data>
+  <data name="CurrentVersion" xml:space="preserve">
+    <value>Текущая версия</value>
+  </data>
+  <data name="VersionN" xml:space="preserve">
+    <value>Версия № {0}</value>
+  </data>
+  <data name="ArticleVersionNotFoundForArticle" xml:space="preserve">
+    <value>Версия (Id = {0}) не найдена для статьи (Id = {1})</value>
+  </data>
+  <data name="ArticleVersionNotFound" xml:space="preserve">
+    <value>Версия статьи не найдена (Id = {0})</value>
+  </data>
+  <data name="ArticleVersionSuccessfullyRestored" xml:space="preserve">
+    <value>Версия (Id = {0}) cтатьи (Id = {1}) успешно восстановлена!</value>
+  </data>
+  <data name="SearchBlock_AllTextFields" xml:space="preserve">
+    <value>Все текстовые поля </value>
+  </data>
+  <data name="SearchBlock_AllFields" xml:space="preserve">
+    <value>Все поля </value>
+  </data>
+  <data name="SearchBlock_AddFieldSearchContainer" xml:space="preserve">
+    <value>Добавить фильтр по полю</value>
+  </data>
+  <data name="SearchBlock_IsNullCheckBoxLabelText" xml:space="preserve">
+    <value>Отсутствие значения</value>
+  </data>
+  <data name="SearchBlock_InverseCheckBoxLabelText" xml:space="preserve">
+    <value>Инвертировать результат</value>
+  </data>
+  <data name="SearchBlock_RangeFromText" xml:space="preserve">
+    <value>От</value>
+  </data>
+  <data name="SearchBlock_RangeToText" xml:space="preserve">
+    <value>До</value>
+  </data>
+  <data name="EmptyValue" xml:space="preserve">
+    <value>Пустое значение</value>
+  </data>
+  <data name="LockedByAnyoneElse" xml:space="preserve">
+    <value>Статья заблокирована пользователем {0}. </value>
+  </data>
+  <data name="SearchBlock_FieldSearchBlockTitle" xml:space="preserve">
+    <value>Фильтрация</value>
+  </data>
+  <data name="SearchBlock_FullTextBlockTitle" xml:space="preserve">
+    <value>Полнотекстовый поиск</value>
+  </data>
+  <data name="InvalidDateTimeFormat" xml:space="preserve">
+    <value>Поле '{0}' имеет неправильный формат.</value>
+  </data>
+  <data name="ParentName" xml:space="preserve">
+    <value>Контент</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="CannotAddBecauseOfWorkflow" xml:space="preserve">
+    <value>Невозможно добавить новую статью в контент, потому что Вы не являетесь участником workflow</value>
+  </data>
+  <data name="CannotRemoveBecauseOfWorkflow" xml:space="preserve">
+    <value>Невозможно удалить статью из контента, потому что Вы не являетесь участником workflow или у вас недостаточно прав доступа по worfklow</value>
+  </data>
+  <data name="CannotUpdateBecauseOfWorkflow" xml:space="preserve">
+    <value>Невозможно обновить статью, потому что Вы не являетесь участником workflow</value>
+  </data>
+  <data name="CannotAddBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно добавить новую статью в контент, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotCopyBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно создать копию статьи, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotRemoveBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно удалить статью из контента, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotRemoveVersionsBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно удалить версии статьи, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotRestoreVersionBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно восстановить версию статьи, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="CannotUpdateBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно обновить статью, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="SomeoneBlockedByWorkflow" xml:space="preserve">
+    <value>Некоторые статьи не обработаны, потому что Вы не являетесь участником workflow или у Вас недостаточно прав доступа по workflow. Id: {0}</value>
+  </data>
+  <data name="SomeoneLocked" xml:space="preserve">
+    <value>Некоторые статьи не обработаны, потому что они заблокированы другими пользователями. Id: {0}</value>
+  </data>
+  <data name="SomeoneNotAccessed" xml:space="preserve">
+    <value>Некоторые статьи не обработаны из-за недостаточных прав доступа. Id: {0}</value>
+  </data>
+  <data name="SomeoneNotFound" xml:space="preserve">
+    <value>Некоторые статьи не найдены. Id: {0}</value>
+  </data>
+  <data name="SomeoneRedundant" xml:space="preserve">
+    <value>Нет необходимости обрабатывать некоторые статьи. Id: {0}</value>
+  </data>
+  <data name="SearchBlock_ByRange" xml:space="preserve">
+    <value>По диапазону</value>
+  </data>
+  <data name="SearchBlock_ByValue" xml:space="preserve">
+    <value>По значению</value>
+  </data>
+  <data name="SearchBlock_Value" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="InputMaskNotMatch" xml:space="preserve">
+    <value>Поле '{0}' не соответствует маске ввода</value>
+  </data>
+  <data name="Daily" xml:space="preserve">
+    <value>Дни</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Месяцы</value>
+  </data>
+  <data name="RepetitionEndDate" xml:space="preserve">
+    <value>Дата окончания повторений</value>
+  </data>
+  <data name="RepetitionNoEnd" xml:space="preserve">
+    <value>Без окончания</value>
+  </data>
+  <data name="RepetitionStartDate" xml:space="preserve">
+    <value>Дата начала повторений</value>
+  </data>
+  <data name="ScheduleRecurringType" xml:space="preserve">
+    <value>Интервал между повторениями (единицы измерения)</value>
+  </data>
+  <data name="ScheduleRecurringValue" xml:space="preserve">
+    <value>Интервал между повторениями (значение)</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>Недели</value>
+  </data>
+  <data name="Yearly" xml:space="preserve">
+    <value>Годы</value>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Пятница</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Понедельник</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Суббота</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Воскресенье</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Четверг</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Вторник</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Среда</value>
+  </data>
+  <data name="DayOfMonth" xml:space="preserve">
+    <value>Число</value>
+  </data>
+  <data name="DayOfWeek" xml:space="preserve">
+    <value>День недели</value>
+  </data>
+  <data name="DaysLimitationUnit" xml:space="preserve">
+    <value>Дни</value>
+  </data>
+  <data name="DaySpecifyingByDate" xml:space="preserve">
+    <value>Числом</value>
+  </data>
+  <data name="DaySpecifyingByDayOfWeek" xml:space="preserve">
+    <value>Днем недели</value>
+  </data>
+  <data name="DaySpecifyingType" xml:space="preserve">
+    <value>День задается</value>
+  </data>
+  <data name="DurationUnit" xml:space="preserve">
+    <value>Длительность (единицы измерения)</value>
+  </data>
+  <data name="DurationValue" xml:space="preserve">
+    <value>Длительность (значение)</value>
+  </data>
+  <data name="FirstWeek" xml:space="preserve">
+    <value>Первая</value>
+  </data>
+  <data name="FourthWeek" xml:space="preserve">
+    <value>Четвертая</value>
+  </data>
+  <data name="HoursLimitationUnit" xml:space="preserve">
+    <value>Часы</value>
+  </data>
+  <data name="LastWeek" xml:space="preserve">
+    <value>Последняя</value>
+  </data>
+  <data name="LimitedByDuration" xml:space="preserve">
+    <value>Длительностью</value>
+  </data>
+  <data name="LimitedByTime" xml:space="preserve">
+    <value>Временем окончания</value>
+  </data>
+  <data name="MinutesLimitationUnit" xml:space="preserve">
+    <value>Минуты</value>
+  </data>
+  <data name="MonthNumber" xml:space="preserve">
+    <value>Месяц</value>
+  </data>
+  <data name="MonthsLimitationUnit" xml:space="preserve">
+    <value>Месяцы</value>
+  </data>
+  <data name="RepetitionIntervalGroup" xml:space="preserve">
+    <value>Интервал повторений</value>
+  </data>
+  <data name="RepetitionParamsGroup" xml:space="preserve">
+    <value>Определение дней показа</value>
+  </data>
+  <data name="SecondWeek" xml:space="preserve">
+    <value>Вторая</value>
+  </data>
+  <data name="ShowEndTime" xml:space="preserve">
+    <value>Время окончания показа</value>
+  </data>
+  <data name="ShowIsLimitedBy" xml:space="preserve">
+    <value>Показ ограничивается</value>
+  </data>
+  <data name="ShowStartTime" xml:space="preserve">
+    <value>Время начала показа</value>
+  </data>
+  <data name="ShowTimeIntervalGroup" xml:space="preserve">
+    <value>Интервал времени показа</value>
+  </data>
+  <data name="ThirdWeek" xml:space="preserve">
+    <value>Третья</value>
+  </data>
+  <data name="Weekday" xml:space="preserve">
+    <value>Рабочие дни</value>
+  </data>
+  <data name="Weekend" xml:space="preserve">
+    <value>Выходные</value>
+  </data>
+  <data name="WeekOfMonth" xml:space="preserve">
+    <value>Неделя месяца</value>
+  </data>
+  <data name="WeeksLimitationUnit" xml:space="preserve">
+    <value>Недели</value>
+  </data>
+  <data name="YearsLimitationUnit" xml:space="preserve">
+    <value>Годы</value>
+  </data>
+  <data name="DayOfMonthError" xml:space="preserve">
+    <value>Дата должна лежать в деапазоне от 1 до 31</value>
+  </data>
+  <data name="DurationValueError" xml:space="preserve">
+    <value>Значение длительности интервала может принимать значения от 1 до 100</value>
+  </data>
+  <data name="ScheduleRecurringValueError" xml:space="preserve">
+    <value>Интервал между повторениями может принимать значения от 1 до 100</value>
+  </data>
+  <data name="ShowStartTimeError" xml:space="preserve">
+    <value>Время начала показа должно быть меньше времени окончания показа</value>
+  </data>
+  <data name="RepetitionStartDateError" xml:space="preserve">
+    <value>Дата начала повторений должна быть меньше даты окончания повторений</value>
+  </data>
+  <data name="ArticleNotFound" xml:space="preserve">
+    <value>Статья не найдена (Id = {0})</value>
+  </data>
+  <data name="O2MRelateToCurrentArticle" xml:space="preserve">
+    <value>Статья не может ссылаться сама на себя</value>
+  </data>
+  <data name="SearchBlock_SelectFieldToFilter" xml:space="preserve">
+    <value>Выберите поле для фильтрации</value>
+  </data>
+  <data name="WarningHasChildren" xml:space="preserve">
+    <value>Статья является родительской для {0} статей. Продолжить?</value>
+  </data>
+  <data name="WarningHasNonArchiveChildren" xml:space="preserve">
+    <value>Статья является родительской для {0} неархивных статей. Продолжить?</value>
+  </data>
+  <data name="WarningHasChildrenMultiple" xml:space="preserve">
+    <value>Некоторые из выбранных статей (IDs: {0}) являются родительскими для других статей. Продолжить?</value>
+  </data>
+  <data name="WarningHasNonArchiveChildrenMultiple" xml:space="preserve">
+    <value>Некоторые из выбранных статей (IDs: {0}) являются родительскими для других неархивных статей. Продолжить?</value>
+  </data>
+  <data name="BaseRelationFieldRequired" xml:space="preserve">
+    <value>Базовое поле связи является обязательным, поэтому вы не можете сбрасывать значения</value>
+  </data>
+  <data name="BaseRelationUniqueViolation" xml:space="preserve">
+    <value>Нарушение уникальности для базового поля (Найдено дубликатов: {0})</value>
+  </data>
+  <data name="CurrentArticleViolatesRelationCondition" xml:space="preserve">
+    <value>Текущая статья нарушает условие на связь</value>
+  </data>
+  <data name="IsInvisibleTooltip" xml:space="preserve">
+    <value>Невидимая</value>
+  </data>
+  <data name="IsScheduledTooltip" xml:space="preserve">
+    <value>Назначено расписание</value>
+  </data>
+  <data name="IsSplitedTooltip" xml:space="preserve">
+    <value>Расщеплена</value>
+  </data>
+  <data name="IsLockedHeaderTooltip" xml:space="preserve">
+    <value>Заблокировано</value>
+  </data>
+  <data name="InvalidClassiferValue" xml:space="preserve">
+    <value>Недопустимое значение поля</value>
+  </data>
+  <data name="OperationIsNotAllowedForAggregated" xml:space="preserve">
+    <value>Операция недопустима для агрегированной статьи</value>
+  </data>
+  <data name="CannotUpdateBecauseOfRelationSecurity" xml:space="preserve">
+    <value>Невозможно обновить статью, потому что у Вас недостаточно прав доступа на все связанные статьи</value>
+  </data>
+  <data name="CannotAddBecauseOfRelationSecurity" xml:space="preserve">
+    <value>Невозможно добавить статью, потому что у Вас недостаточно прав доступа на все связанные статьи</value>
+  </data>
+  <data name="SomeoneBlockedByRelationSecurity" xml:space="preserve">
+    <value>Некоторые статьи не обработаны, потому что у вас недостаточно прав доступа на все связанные статьи. Id: {0}</value>
+  </data>
+  <data name="CustomValidationFailed" xml:space="preserve">
+    <value>Ошибка при выполнении пользовательской валидации: {0}</value>
+  </data>
+  <data name="LeaveComment" xml:space="preserve">
+    <value>Оставить комментарий</value>
+  </data>
+  <data name="LastComment" xml:space="preserve">
+    <value>Последний комментарий</value>
+  </data>
+  <data name="Comments" xml:space="preserve">
+    <value>Комментарии</value>
+  </data>
+  <data name="IsChanged" xml:space="preserve">
+    <value>IsChanged</value>
+  </data>
+  <data name="CONTENT_ITEM_ID" xml:space="preserve">
+    <value>CONTENT_ITEM_ID</value>
+  </data>
+  <data name="VariationGroup" xml:space="preserve">
+    <value>Вариации</value>
+  </data>
+  <data name="Context" xml:space="preserve">
+    <value>Контекст</value>
+  </data>
+  <data name="RemoveCurrentVariation" xml:space="preserve">
+    <value>Удалить текущую вариацию</value>
+  </data>
+  <data name="TotalVariationsMessage" xml:space="preserve">
+    <value>Для данной статьи существует вариаций - &lt;span class="currentTotal"&gt;&lt;/span&gt;</value>
+  </data>
+  <data name="SearchBlock_BySelector" xml:space="preserve">
+    <value>По селектору</value>
+  </data>
+  <data name="SearchBlock_ByList" xml:space="preserve">
+    <value>По списку</value>
+  </data>
+  <data name="SearchBlock_ListText" xml:space="preserve">
+    <value>Список</value>
+  </data>
+  <data name="SearchBlock_Text" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="SearchBlock_FullTextBlockSearchResultLimitTitle" xml:space="preserve">
+    <value>Лимит поиска</value>
+  </data>
+</root>

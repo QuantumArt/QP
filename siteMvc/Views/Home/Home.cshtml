@@ -1,0 +1,35 @@
+﻿@model HomeViewModel
+
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.WebMvc.ViewModels.HomePage
+
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(HomeStrings.Main))
+	{
+		@Html.HtmlFieldFor(s => s.LoggedAs, @<div id="@Model.LoggedAsElementId">@Html.DisplayFor(s => s.LoggedAs)</div>)
+		@Html.HtmlFieldFor(s => s.LockedCount, @<div id="@Model.LockedElementId">@Html.DisplayFor(s => s.LockedCount)</div>)
+		@Html.HtmlFieldFor(s => s.ApprovalCount, @<div id="@Model.ApprovalElementId">@Html.DisplayFor(s => s.ApprovalCount)</div>)
+	}
+
+	using (Html.BeginFieldGroup(HomeStrings.SearchInArticles))
+	{
+		@Html.SelectFieldFor(e => e.SiteId, Html.List(Model.Sites), new Dictionary<string, object>() { { "id", Model.SiteElementId } })
+		@Html.TextBoxFieldFor(e => e.Search, new Dictionary<string, object>() { { "id", Model.SearchElementId } })
+	}
+}
+
+@Html.PrepareInitScript(Model)
+<script type="text/javascript">	
+	@(Model.ContextObjectName).set_initializedCallback(function() {				
+		this.mediatorComponent = new Quantumart.QP8.Home(this, "@Model.SiteElementId", "@Model.SearchElementId", "@Model.LockedElementId", "@Model.ApprovalElementId", "@Model.LoggedAsElementId", "@Model.CustomerCode");
+		this.mediatorComponent.initialize();
+	});	
+	@(Model.ContextObjectName).set_terminatingCallback(function() {								
+		this.mediatorComponent.dispose();
+		this.mediatorComponent = null;
+	});
+</script>
+@Html.RunInitScript(Model)

@@ -1,0 +1,294 @@
+@using Quantumart.QP8.Constants
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Test</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
+	@{
+		bool allowCombineStylesheets = !HttpContext.Current.IsDebuggingEnabled; // разрешает объединение CSS-файлов
+		string currentThemeName = Html.GetCurrentTheme();
+	}
+	@(Html.Telerik().StyleSheetRegistrar().StyleSheets(css => css
+			// Common Styles
+			.AddGroup("CommonStyles", g => g
+				.Add("basic.css")
+				.Add("page.css")
+				.Add("telerik.common.css")
+				.Combined(allowCombineStylesheets)
+			)
+
+			// Current Skin Styles
+			.AddGroup("CurrentSkinStyles", g => g
+				.Add("jquery.jeegoocontext." + currentThemeName + ".css")
+				.Add("telerik." + currentThemeName + ".css")
+				.Combined(allowCombineStylesheets)
+			)
+		)
+	)
+</head>
+<body>
+    <h1>Test</h1>
+
+
+	@{
+		bool isDebugMode = HttpContext.Current.IsDebuggingEnabled; // признак, того что приложение запущено в режиме отладки
+
+		string ckeditorScriptName = (isDebugMode) ? "ckeditor_source.js" : "ckeditor.js"; // названия скрипта CKEditor
+		bool allowCombineScripts = !isDebugMode; // разрешает объединение JS-скриптов
+	}
+	@(Html.Telerik().ScriptRegistrar()
+		.DefaultGroup(g => g.Enabled(false))
+		.Scripts(js => js
+			// Common Libraries
+			.AddGroup("CommonLibraries", g => g
+        .Add("es5-shim.js")
+				.Add("jquery-1.7.1.js")
+				.Add("telerik.common.js")
+				.Add("Quantumart/jQueryExtensions.js")
+				.Add("MicrosoftAjax.js")
+				.Add("Quantumart/MicrosoftAjaxTraceExtensions.js")
+				.Add("json2.js")
+				.Add("Silverlight.js")
+				.Combined(allowCombineScripts)
+			)
+
+			// CKEditor
+			.Add(String.Format("~/Content/ckeditor/{0}", ckeditorScriptName))
+
+			// jQuery Plugins
+			.AddGroup("jQueryPlugins", g => g
+				.Add("jquery.cookie.js")
+				.Add("jquery.timers.js")
+				.Add("jquery.scrollTo-1.4.2.js")
+				.Add("jquery.splitter.js")
+				.Add("jquery.form.js")
+				.Add("jquery.validate.js")
+				.Add("jquery.jeegoocontext.js")
+				.Add("jquery.verticalResizer.js")
+				.Combined(allowCombineScripts)
+			)
+
+			// Telerik Controls
+			.AddGroup("TelerikControls", g => g
+				.Add("telerik.draganddrop.js")
+				.Add("telerik.treeview.js")
+				.Add("telerik.window.js")
+				.Add("telerik.textbox.js")
+				.Add("telerik.combobox.js")
+				.Add("telerik.calendar.js")
+				.Add("telerik.datepicker.js")
+				.Add("telerik.timepicker.js")
+				.Add("telerik.datetimepicker.js")
+				.Add("telerik.grid.js")
+				.Add("telerik.grid.resizing.js")
+				.Add("telerik.grid.filtering.js")
+				.Add("telerik.grid.grouping.js")
+				.Add("telerik.grid.editing.js")
+				.Add("telerik.upload.js")
+				.Add("telerik.splitter.js")
+				.Combined(allowCombineScripts)
+			)
+
+			// Quantumart Constants
+			.Add("Quantumart/JsConstants.ashx")
+
+			// Quantumart Localizations
+			.Add("Quantumart/JsLanguage.ashx")
+
+			// Quantumart Scripts
+			.AddGroup("QuantumartScripts", g => g
+				.Add("Quantumart/Utils.js")
+				.Add("Quantumart/Cache.js")
+				.Add("Quantumart/Common.js")
+				.Add("Quantumart/ControlHelpers.js")
+				.Add("Quantumart/Info/BackendEntityType.js")
+				.Add("Quantumart/Info/BackendEntityObject.js")
+				.Add("Quantumart/Info/BackendActionType.js")
+				.Add("Quantumart/BackendActionExecutor.js")
+				.Add("Quantumart/BackendSplitter.js")
+				.Add("Quantumart/BackendContextMenu.js")
+				.Add("Quantumart/BackendBreadCrumbs.js")
+				.Add("Quantumart/Tree/BackendTreeBase.js")
+				.Add("Quantumart/Tree/BackendTreeMenu.js")
+				.Add("Quantumart/Tree/BackendEntityTree.js")
+				.Add("Quantumart/BackendTabStrip.js")
+				.Add("Quantumart/Toolbar/BackendToolbar.js")
+				.Add("Quantumart/Toolbar/BackendActionToolbar.js")
+				.Add("Quantumart/Toolbar/BackendViewToolbar.js")
+				.Add("Quantumart/Search/BackendSearchBlockBase.js")
+				.Add("Quantumart/Search/BackendSearchInArticle.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchBase.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/IdentifierFieldSearch.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/BooleanFieldSearch.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/DateOrTimeRangeFieldSearch.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/NumericRangeFieldSearch.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/RelationFieldSearch.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/TextFieldSearch.js")
+                .Add("Quantumart/Search/BackendArticleSearchBlock/StringEnumFieldSearch.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/FullTextBlock.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchBlock.js")
+				.Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchContainer.js")
+				.Add("Quantumart/Search/BackendContentSearchBlock.js")
+				.Add("Quantumart/Document/BackendDocumentHost.js")
+				.Add("Quantumart/Document/BackendDocumentContext.js")
+				.Add("Quantumart/Document/BackendEditingDocument.js")
+				.Add("Quantumart/Document/BackendEditingArea.js")
+				.Add("Quantumart/Document/BackendPopupWindow.js")
+				.Add("Quantumart/BackendEntityGrid.js")
+				.Add("Quantumart/List/BackendEntityDataListBase.js")
+				.Add("Quantumart/List/BackendEntityDropDownList.js")
+				.Add("Quantumart/List/BackendEntityCheckBoxList.js")
+				.Add("Quantumart/List/BackendEntitySingleItemPicker.js")
+				.Add("Quantumart/List/BackendEntityMultipleItemPicker.js")
+				.Add("Quantumart/List/BackendSelectPopupWindow.js")
+				.Add("Quantumart/BackendActionLink.js")
+				.Add("Quantumart/BackendTraceWindow.js")
+                .Add("Quantumart/BackendLogOnWindow.js")
+				.Add("Quantumart/Library/BackendLibrary.js")
+				.Add("Quantumart/Library/BackendPager.js")
+				.Add("Quantumart/Library/BackendFileList.js")
+				.Add("Quantumart/Library/BackendFileNameListView.js")
+				.Add("Quantumart/Library/BackendFilePreviewListView.js")
+				.Add("Quantumart/Editor/BackendFieldProperties.js")
+				.Add("Quantumart/Editor/BackendFileField.js")
+				.Add("Quantumart/Editor/BackendVirtualContentProperties.js")
+				.Add("Quantumart/Editor/BackendVirtualFieldTree.js")
+				.Add("Quantumart/Editor/BackendEntityEditor.js")
+				.Add("Quantumart/Editor/LibraryPopupWindow.js")
+				.Add("Quantumart/Uploader/IBackendUploader.js")
+				.Add("Quantumart/Uploader/BackendHtmlUploader.js")
+				.Add("Quantumart/Uploader/BackendSilverlightUploader.js")
+				.Add("Quantumart/Audit/ActionLogComponent.js")
+				.Add("Quantumart/CustomAction/CustomActionProperties.js")
+				.Add("Quantumart/Managers/BackendBreadCrumbsManager.js")
+				.Add("Quantumart/Managers/BackendEntityGridManager.js")
+				.Add("Quantumart/Managers/BackendEntityTreeManager.js")
+				.Add("Quantumart/Managers/BackendEntityEditorManager.js")
+				.Add("Quantumart/Managers/BackendTreeMenuContextMenuManager.js")
+				.Add("Quantumart/Managers/BackendContextMenuManager.js")
+				.Add("Quantumart/Managers/BackendEntityDataListManager.js")
+				.Add("Quantumart/Managers/BackendPopupWindowManager.js")
+				.Add("Quantumart/Managers/BackendLibraryManager.js")
+				.Add("Quantumart/Managers/BackendSearchBlockManager.js")
+				.Add("Quantumart/MultistepAction/BackendProgressBar.jquery.js")
+				.Add("Quantumart/MultistepAction/BackendMultistepActionWindow.js")
+				.Add("Quantumart/Backend.js")
+
+				.Combined(allowCombineScripts)
+			)
+		)
+		.Globalization(true)
+			)
+
+<input type="button" id="btnCreate" value="Create" title="Create progress window" />
+<input type="button" id="btnClose" value="Close" title="Close progress window" />
+<br />
+<input type="button" id="btnStartStage" value="Start Stage" />
+<input type="button" id="btnCompleteStep" value="Complete Step" />
+<input type="button" id="btnCompleteStage" value="Complete Stage" />
+
+<script type="text/javascript">
+	$(document).ready(function () {
+		var progressWindow = null;
+		var stageNum = 0;
+		$("#btnCreate").click(function () {
+			progressWindow = new Quantumart.QP8.BackendMultistepActionWindow("Тестовое действие", 3);
+			progressWindow.initialize();
+			progressWindow.attachObserver(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, function (eventType, sender, eventArgs) {
+				if (confirm('Cancel ?')) {
+					eventArgs.setCancel(true);
+				}
+			});
+
+			progressWindow.attachObserver(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, function () {
+				alert('Canceled');
+				$("#btnClose").trigger("click");
+			});
+		});
+		$("#btnClose").click(function () {
+			progressWindow.dispose();
+			progressWindow = null;
+			stageNum = 0;
+		});
+
+		$("#btnStartStage").click(function () {
+			progressWindow.startStage("Этап " + (stageNum++), 10, 150);
+		});
+		$("#btnCompleteStep").click(function () {
+			progressWindow.completeStep(15);
+		});
+		$("#btnCompleteStage").click(function () {
+			progressWindow.completeStage();
+		});
+
+
+
+	});
+</script>
+
+@*<div style="width:200px; margin:4px;">
+	<div id="progressbar1" class="bepgtest"></div>
+</div>
+
+<div style="width:300px; margin:4px;">
+	<div id="progressbar2" class="bepgtest"></div>
+</div>
+
+<input type="button" id="btnAdd" value="   +   "  />
+<input type="button" id="btnMinus" value="   -   " />
+<input type="button" id="btnTotalPlus" value="   Total Plus   " />
+<input type="button" id="btnClose" value="Close" />
+
+<script type="text/javascript">
+	jQuery(document).ready(function () {
+		var $pgelements = jQuery(".bepgtest");
+		$pgelements.backendProgressBar();
+		jQuery("#progressbar1").data("backendProgressBar").total(1234);
+		jQuery("#progressbar2").data("backendProgressBar").total(543);
+
+		jQuery("#btnAdd").click(function () {
+			var component = jQuery("#progressbar1").data("backendProgressBar");
+			var val = component.value() + 500;
+			component.value(val);
+
+			component = jQuery("#progressbar2").data("backendProgressBar");
+			component.increment(170);
+
+			component = null;
+		});
+
+		jQuery("#btnMinus").click(function () {
+			var component = jQuery("#progressbar1").data("backendProgressBar");
+			var val = component.value() - 500;
+			component.value(val);
+
+			component = jQuery("#progressbar2").data("backendProgressBar");
+			component.decriment(170);
+
+			component = null;
+		});
+
+		jQuery("#btnTotalPlus").click(function () {
+			var component = jQuery("#progressbar1").data("backendProgressBar");
+			var val = component.total() * 2;
+			component.total(val);
+
+			component = jQuery("#progressbar2").data("backendProgressBar");
+			val = component.total() * 2;
+			component.total(val);
+
+			component = null;
+		});
+
+
+		/*jQuery("#btnClose").click(function () {
+			$pgelements.backendProgressBar("dispose");
+		});*/
+
+
+	});
+</script>*@
+</body>
+</html>

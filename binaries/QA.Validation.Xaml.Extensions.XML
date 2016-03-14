@@ -1,0 +1,190 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>QA.Validation.Xaml.Extensions</name>
+    </assembly>
+    <members>
+        <member name="T:QA.Validation.Xaml.Extensions.Conditions.Intersects">
+            <summary>
+            Условие валидации, проверяющее, еслить ли повторы в коллекции
+            На вход принимает любые типы, реализующие IEnumerable
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Conditions.Intersects.ReportErrors">
+            <summary>
+            Признак того, что правило добавляет найденные ошибки валидации в виде текста
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Conditions.Intersects.GroupBy">
+            <summary>
+            Поле, для которого проверяется условие валидации (его значение используют валидаторы)
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Conditions.Intersects.Target">
+            <summary>
+            Поле, с которым производится сравнение.
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.Conditions.IsAbsoluteUrl">
+            <summary>
+            Проверка корректности адреса Url
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.Conditions.UrlOptions">
+            <summary>
+            Параметры проверки
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.Conditions.IsUnique">
+            <summary>
+            Условие валидации, проверяющее, еслить ли повторы в коллекции
+            На вход принимает любые типы, реализующие IEnumerable
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf">
+            <summary>
+            Валидационное правило. Применяется ко всей модели.
+            Ошибки валидации выводятся в списке общих сообщений
+            </summary>
+        </member>
+        <member name="M:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.#ctor">
+            <summary>
+            Конструктор
+            HttpMethod = "POST";
+            ContentType = "application/json; charset=UTF-8";
+            Timeout = 5000;
+            </summary>
+        </member>
+        <member name="M:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.#ctor(QA.Validation.Xaml.Extensions.Rules.IWebInteractionManager)">
+            <summary>
+            Предоставляет функционал по подмене менеджера обращения к хендлеру
+            </summary>
+            <param name="manager"></param>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.Url">
+            <summary>
+            Адрес обработчика удаленной валидации
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.CustomerCode">
+            <summary>
+            QP customer code. Необходимо указывать.
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.SiteId">
+            <summary>
+            QP SiteId. Необходимо указывать.
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.HttpMethod">
+            <summary>
+            По умолчанию 'POST'
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.ContentType">
+            <summary>
+            По умолчанию 'application/json; charset=UTF-8'
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.Timeout">
+            <summary>
+            Таймаут на обращение к сервису валидации (в мс). 
+            По умолчанию 5000 (5 секунд)
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.DefinitionsToSend">
+            <summary>
+            Список полей, которые подлежат отправке на удаленною валидацию
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.ProcessRemoteValidationIf.AddAjaxHeader">
+            <summary>
+            Флаг устанавливки заголовка X-Requested-With
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.Rules.Remote.HttpHandlerBase">
+            <summary>
+            Базовый класс для http-хендлера, поддерживающего Unit-тестирование
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.Remote.RemotePropertyDefinition.PropertyType">
+            <summary>
+            Тип свойства
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.Remote.RemotePropertyDefinition.PropertyName">
+            <summary>
+            Название свойства.
+            По названию осуществляется поиск значения при  валидации
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.Remote.RemotePropertyDefinition.Alias">
+            <summary>
+            Уникальное дружественное имя данного поля.
+            Используется в качестве ключа в Xaml при применении DefinitionMarkupExtension
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.Remote.RemotePropertyDefinition.Description">
+            <summary>
+            Текстовый комментарий.
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.Rules.RemoteValidationContext">
+            <summary>
+            Контекст, передаваемый обработчику удаленной валидации
+            </summary>
+        </member>
+        <member name="M:QA.Validation.Xaml.Extensions.Rules.RemoteValidationContext.ProvideValueExact(QA.Validation.Xaml.Extensions.Rules.Remote.RemotePropertyDefinition)">
+            <summary>
+            Получение значения свойства по определению с конвертацией типа
+            </summary>
+            <param name="definition"></param>
+            <returns></returns>
+        </member>
+        <member name="M:QA.Validation.Xaml.Extensions.Rules.RemoteValidationContext.ProvideValueExact``1(QA.Validation.Xaml.Extensions.Rules.Remote.RemotePropertyDefinition)">
+            <summary>
+            Получение значения свойства по определению с конвертацией типа приведением
+            </summary>
+        </member>
+        <member name="M:QA.Validation.Xaml.Extensions.Rules.RemoteValidationContext.ProvideValueExact``1(System.String)">
+            <summary>
+            Получение значения свойства по имени с конвертацией типа и приведением
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.RemoteValidationContext.CurrentUICulture">
+            <summary>
+            Название текущей языковой культуры
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.Rules.RemoteValidationContext.CurrentCulture">
+            <summary>
+            Название текущей языковой культуры
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.Rules.RemoteValidationResult">
+            <summary>
+            Объект с результатами валидации
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.Rules.Remote.ValidationHandlerBase">
+            <summary>
+            Базовый класс для хендлера remote-валидации
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.ValueArguments.EncodingType">
+            <summary>
+            Тип кодирования строки
+            </summary>
+        </member>
+        <member name="T:QA.Validation.Xaml.Extensions.ValueArguments.Encode">
+            <summary>
+            Экранирование текста
+            </summary>
+        </member>
+        <member name="P:QA.Validation.Xaml.Extensions.ValueArguments.Encode.EncodingType">
+            <summary>
+            Тип экранирования строки
+            </summary>
+        </member>
+    </members>
+</doc>

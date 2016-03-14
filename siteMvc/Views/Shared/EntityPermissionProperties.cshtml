@@ -1,0 +1,78 @@
+﻿@model PermissionViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(EntityPermissionStrings.BasicParams))
+	{ 
+		@Html.RadioFieldFor(s => s.Data.MemberType, Html.List(Model.GetMemberTypes()), options: new ControlOptions {Enabled = Model.IsNew })
+		
+		using (Html.BeginPanel("UserMemberPanel"))
+		{ 
+			@Html.SingleItemPickerFieldFor(s => s.Data.UserId, 
+				Model.UserListItem, 
+				new EntityDataListArgs
+				{
+					EntityTypeCode = EntityTypeCode.User,
+					ParentEntityId = 0,
+					SelectActionCode = ActionCode.SelectUser,
+					ReadActionCode = ActionCode.UserProperties,
+					ListId = -1 * System.DateTime.Now.Millisecond,
+					MaxListHeight = 200,
+					MaxListWidth = 350,
+					ShowIds = true,					
+				},
+				new ControlOptions
+				{
+					Enabled = Model.IsNew
+				}
+			)
+		}
+		using (Html.BeginPanel("GroupMemberPanel"))
+		{
+			@Html.SingleItemPickerFieldFor(s => s.Data.GroupId,
+				Model.GroupListItem,
+				new EntityDataListArgs
+				{
+					EntityTypeCode = EntityTypeCode.UserGroup,
+					ParentEntityId = 0,
+					SelectActionCode = ActionCode.SelectUserGroup,
+					ReadActionCode = ActionCode.UserGroupProperties,
+					ListId = -1 * System.DateTime.Now.Millisecond,
+					MaxListHeight = 200,
+					MaxListWidth = 350,
+					ShowIds = true
+				},
+				new ControlOptions 
+				{ 
+					Enabled = Model.IsNew
+				}
+			)
+		}
+		
+		@Html.RadioFieldFor(s => s.Data.PermissionLevelId, Html.List(Model.GetPermissionLevels()))
+		if (Model.IsPropagateable)
+		{ 
+			@Html.CheckBoxFieldFor(s => s.Data.PropagateToItems)
+        }
+
+        if (Model.CanHide)
+        {
+            @Html.CheckBoxFieldFor(s => s.Data.Hide)
+        }
+
+        if (Model.IsContentPermission)
+        {
+			@Html.CheckBoxFieldFor(s => s.Data.ExplicitPermissionToRelatedContents)
+		}
+	}
+	
+	@Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+
+}
+
+@Html.InitScript(Model)

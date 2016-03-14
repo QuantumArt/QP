@@ -1,0 +1,63 @@
+﻿@model IUserAndGroupSearchBlockViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.Interfaces
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.WebMvc.Extensions.Helpers	   
+
+<form class="formLayout" action='javascript:void(0);'>
+	<div class="simpleSeachBlock">
+		@Html.QpRadioButtonListFor(s => s.MemberType, Html.List(Model.GetMemberTypes()))
+				
+		@using (Html.BeginPanel("UserMemberPanel"))
+		{ 
+			@Html.QpSingleItemPicker("user", null,
+				new ControlOptions
+				{
+					HtmlAttributes = new Dictionary<string, object> 
+					{
+						{"id", Html.UniqueId("userSelector")},
+						{"class", "pep-user-selector"}
+					}
+				},
+				new EntityDataListArgs
+				{
+					EntityTypeCode = EntityTypeCode.User,
+					ParentEntityId = 0,
+					SelectActionCode = ActionCode.SelectUser,
+					ReadActionCode = ActionCode.UserProperties,
+					ListId = -1 * System.DateTime.Now.Millisecond,
+					MaxListHeight = 200,
+					MaxListWidth = 350,
+					ShowIds = true,
+				}
+			)
+}
+				
+		@using (Html.BeginPanel("GroupMemberPanel"))
+{ 
+			@Html.QpSingleItemPicker("group", null,
+					new ControlOptions
+					{
+						HtmlAttributes = new Dictionary<string, object> 
+					{
+						{"id", Html.UniqueId("groupSelector")},
+						{"class", "pep-group-selector"}
+					}
+					},
+				new EntityDataListArgs
+				{
+					EntityTypeCode = EntityTypeCode.UserGroup,
+					ParentEntityId = 0,
+					SelectActionCode = ActionCode.SelectUserGroup,
+					ReadActionCode = ActionCode.UserGroupProperties,
+					ListId = -1 * System.DateTime.Now.Millisecond,
+					MaxListHeight = 200,
+					MaxListWidth = 350,
+					ShowIds = true
+				}
+			)				
+}
+
+		<input type="button" class="pep-search-button button" value="@Quantumart.QP8.Resources.EntityPermissionStrings.Find" />
+	</div>
+</form>

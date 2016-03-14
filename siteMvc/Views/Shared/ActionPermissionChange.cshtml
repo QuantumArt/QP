@@ -1,0 +1,14 @@
+﻿@model PermissionViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+@using (Html.BeginTabForm(Model))
+{ 
+	@Html.RadioFieldFor(s => s.Data.PermissionLevelId, Html.List(Model.GetPermissionLevels()))
+	@Html.HiddenFor(m => m.Data.GroupId, !Model.IsPostBack ? new { @class = CssClasses.NoCheckChange } : null)
+	@Html.HiddenFor(m => m.Data.UserId)
+}
+
+@Html.InitScript(Model)

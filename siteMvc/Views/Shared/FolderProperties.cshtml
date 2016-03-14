@@ -1,0 +1,16 @@
+﻿@model FolderViewModel
+@using Quantumart.QP8.WebMvc.ViewModels.Library
+@using Quantumart.QP8.Resources
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(FolderStrings.BasicParameters))
+	{ 
+		@Html.TextBoxFieldFor(src => src.Data.Name);
+	}
+	@Html.Partial("Version", Model.Data) 
+	@Html.Partial("EntityDirectLink", Model)
+	
+}
+
+@Html.InitScript(Model)

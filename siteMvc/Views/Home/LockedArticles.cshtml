@@ -1,0 +1,59 @@
+﻿@model ArticleBaseListViewModel
+
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.BLL
+
+@using (Html.BeginDocumentPadding())
+{
+        @(Html.Telerik().Grid<ArticleListItem>().Name(Model.MainComponentId)
+        .DataKeys(k => k.Add(s => s.Id))
+        .Columns(c =>
+            {
+                c.Bound("")
+                    .Title(@"<input type='checkbox' />")
+                    .Width(30)
+                    .HeaderHtmlAttributes(new { @class = "t-select-header" })
+                    .ClientTemplate(@"<input type='checkbox' name='SelectedArticlesIDs' value='<#= Id #>' />")
+                    .HtmlAttributes(new { @class = "t-select-cell" })
+                    .Sortable(false);
+                c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                    .Width(30)
+                    .HtmlAttributes(new { @class = "id" });
+                c.Bound(s => s.Title)
+                    .Title(ArticleStrings.Title)
+                    .HtmlAttributes(new { @class = "title" });
+                c.Bound(s => s.IsPermanentLock)
+                    .Title(GlobalStrings.PermanentLockSet)
+                    .ClientTemplate(@"<input type='checkbox' disabled='disabled' <#= IsPermanentLock?'checked':''#> />");
+                c.Bound(s => s.SiteName)
+                    .Title(SiteStrings.Name);
+                c.Bound(s => s.ContentName)
+                    .Title(ContentStrings.Name);
+                c.Bound(s => s.StatusName)
+                    .Title(ArticleStrings.Status);
+                c.Bound(s => s.Created)
+                    .Title(EntityObjectStrings.Created);
+                c.Bound(s => s.Modified)
+                    .Title(EntityObjectStrings.Modified);
+                c.Bound(s => s.LastModifiedByUser)
+                    .Title(EntityObjectStrings.LastModifiedBy);
+            })
+        .DataBinding(db => db.Ajax()
+            .Select(Model.DataBindingActionName, Model.DataBindingControllerName)
+        )
+        .EnableCustomBinding(true)
+        .Sortable()
+            .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
+        .Selectable(s => s.Enabled(true))
+        .ClientEvents(e =>
+            e.OnDataBinding("$q.preventDefaultFunction")
+             .OnRowDataBound("$q.preventDefaultFunction")
+        )
+    )
+}
+@Html.InitScript(Model)
+
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

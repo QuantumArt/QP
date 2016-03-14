@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="ARTICLESCHEDULERINSTALLFOLDER">
+      <Component Id='ArticleSchedulerServiceInstaller'
+                 Guid='{A089ED63-BA59-4FDA-B5D2-FBB89E54226D}'>
+        <File Id='fil1443E1C4A3FB4DC4983DFFF125E39D92'
+              Source='$(var.ArticleSchedulerDirPath)\Quantumart.QP8.ArticleScheduler.WinService.exe'
+              DiskId='1'
+              KeyPath='yes' />
+        <ServiceInstall Id="ArticleSchedulerService"
+                        Type="ownProcess"
+                        Name="ArticleSchedulerService"
+                        DisplayName="QP8 Article Scheduler"
+                        Description="QP8 Article Scheduler"
+                        Start="auto"
+                        Account="LocalSystem"
+                        ErrorControl="normal">
+        </ServiceInstall>
+        <ServiceControl Id="ArticleSchedulerService"
+                        Start="install"
+                        Stop="both"
+                        Remove="both"
+                        Name="ArticleSchedulerService"
+                        Wait="yes" />
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+</Wix>

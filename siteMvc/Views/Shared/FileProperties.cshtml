@@ -1,0 +1,22 @@
+﻿@model FileViewModel
+
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.WebMvc.ViewModels
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(LibraryStrings.Legend_FileParameters))
+	{
+		@Html.TextBoxFieldFor(s => s.File.Name)
+		@Html.DisplayFieldFor(s => s.File.FileTypeName)
+		@Html.DisplayFieldFor(s => s.File.Size)
+		if (!String.IsNullOrEmpty(Model.File.Dimensions))
+		{
+			@Html.DisplayFieldFor(s => s.File.Dimensions)
+		}
+		@Html.DisplayFieldFor(s => s.File.Created)
+		@Html.DisplayFieldFor(s => s.File.Modified)
+	}
+}
+@Html.InitScript(Model)

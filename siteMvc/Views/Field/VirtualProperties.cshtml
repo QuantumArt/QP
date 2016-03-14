@@ -1,0 +1,81 @@
+﻿@model FieldViewModel
+
+@using Quantumart.QP8
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Utils
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.WebMvc.ViewModels.Field
+
+@using (Html.BeginTabForm(Model))
+{
+	@Html.HiddenFor(s => s.Data.Id, new { id = Model.CurrentFieldIdHiddenElementId })
+																				  
+	using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
+	{
+		@Html.TextBoxFieldFor(s => s.Data.Name, Model.IsNameReadOnly ? new Dictionary<string, object> { { "disabled", "disabled" } } : null)		
+		@Html.TextAreaFieldFor(s => s.Data.Description)
+		
+		@Html.SelectFieldFor(s => s.Data.ExactType, 
+			Html.List(Model.GetAcceptableExactFieldTypes()), 
+			new Dictionary<string, object> { { "id", Model.ExactSelectElementId } }, 
+			new SelectOptions() { ReadOnly = true }
+		)
+		@Html.SelectFieldFor(s => s.Data.Order, Html.List(Model.GetOrderOptions()));
+			
+			
+		//--------------------		
+
+		using (Html.BeginPanel("ViewInList", Model.IsViewInListShown, false))
+		{ 
+			@Html.CheckBoxFieldFor(s => s.Data.ViewInList);
+		}
+				
+		using (Html.BeginPanel("UseInDefFlt", Model.Data.ExactType == FieldExactTypes.O2MRelation || Model.Data.ExactType == FieldExactTypes.M2MRelation, false))
+		{ 
+			@Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
+		}
+	}
+
+	
+	using (Html.BeginPanel("LinqGroup", Model.Data.Content.Site.AssemblingType == Quantumart.QP8.Constants.AssemblingType.AspDotNet, false))
+	{
+		using (Html.BeginFieldGroup(FieldStrings.LinqParamsGroup))
+		{
+		 			
+			@Html.CheckBoxFieldFor(s => s.Data.MapAsProperty, "MapAsPropertyIsTrue")
+
+
+
+			using (Html.BeginPanel("MapAsPropertyIsTrue"))
+			{				
+				@Html.TextBoxFieldFor(s => s.Data.LinqPropertyName)
+				using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.O2MRelation))
+				{ 							
+					@Html.TextBoxFieldFor(s => s.Data.LinqBackPropertyName)					
+				}
+				
+				using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Numeric))
+				{
+					if (Model.Data.IsInteger)
+					{
+						@Html.CheckBoxFieldFor(s => s.Data.IsLong)
+					}
+					else
+					{ 
+						@Html.CheckBoxFieldFor(s => s.Data.IsDecimal)					
+					}
+				}
+			}
+		}
+	}	
+		
+	@Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+
+}
+
+@Html.PrepareInitScript(Model)
+
+@Html.RunInitScript(Model)

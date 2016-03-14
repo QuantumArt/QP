@@ -1,0 +1,137 @@
+﻿@model  WorkflowViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.Workflow
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.WebMvc.Extensions.Helpers
+
+<script type="text/html" id="@Html.UniqueId("WorkflowRulesDisplay_template")">
+	<div data-bind ="foreach: {data: items, afterRender: jQuery.proxy(initializePickers, $root), beforeRemove: disposePickers}">
+        <fieldset data-bind="attr:{ class : StName + ' workflow_fieldset'}, style: { backgroundColor: Invalid? 'rgb(255, 238, 238)' : 'white' }">
+            <legend><span data-bind="text: '@WorkflowStrings.Stage ' + ($index() + 1) + ' - ' + StName"></span></legend>                        
+            <dl class="row">
+	            <dt class="label">
+	                <label>@WorkflowStrings.MemberType:</label>
+	            </dt>
+	            <dd class="field">
+                    <div class="radioButtonsList horizontalDirection">
+                        <ul>
+	                        <li>
+		                        <input type="radio" class = "workflow_radio" data-bind="attr :{uniqueName: true, value: 'User'}, checked: RadioChecked"/>
+		                        <label>@WorkflowStrings.User</label>
+	                        </li>
+	
+	                        <li>
+		                        <input type="radio" class = "workflow_radio" data-bind="attr :{uniqueName: true, value: 'Group'}, checked: RadioChecked"/>
+		                        <label for="tab2_Data_IsLive_1">@WorkflowStrings.Group</label>
+	                        </li>
+                        </ul>
+                    </div>
+	            </dd>
+            </dl>
+            
+            <dl class="row workflow_user_row" data-bind="visible: RadioChecked() == 'User'">
+	            <dt class="label">
+	                <label>@WorkflowStrings.User:</label>
+	            </dt>
+                <dd class="field">
+                    @Html.QpSingleItemPicker("User", null,
+				        new ControlOptions
+				        {
+					        HtmlAttributes = new Dictionary<string, object> 
+					        {                             
+						        {"class", "pep-user-selector"}
+					        }
+				        },
+				        new EntityDataListArgs
+				        {
+					        EntityTypeCode = EntityTypeCode.User,
+					        ParentEntityId = 0,
+					        SelectActionCode = ActionCode.SelectUser,
+					        ReadActionCode = ActionCode.UserProperties,
+					        ListId = -1 * System.DateTime.Now.Millisecond,
+					        MaxListHeight = 200,
+					        MaxListWidth = 350,
+					        ShowIds = true
+				        },
+                        true
+			        )
+                    <em class="validators">
+		                <span class="field-validation-error workflow_permission_message"></span>
+	                </em>
+                </dd>
+            </dl>
+            
+            <dl class="row workflow_group_row" data-bind="visible: RadioChecked() == 'Group'">
+	            <dt class="label">
+	                <label>@WorkflowStrings.Group:</label>
+	            </dt>
+                <dd class="field">
+                    @Html.QpSingleItemPicker("Group", null,
+				        new ControlOptions
+				        {
+					        HtmlAttributes = new Dictionary<string, object> 
+					        {
+						        {"class", "pep-user-selector"}
+					        }
+				        },
+				        new EntityDataListArgs
+				        {
+					        EntityTypeCode = EntityTypeCode.UserGroup,
+					        ParentEntityId = 0,
+					        SelectActionCode = ActionCode.SelectUserGroup,
+					        ReadActionCode = ActionCode.UserGroupProperties,
+					        ListId = -1 * System.DateTime.Now.Millisecond,
+					        MaxListHeight = 200,
+					        MaxListWidth = 350,
+					        ShowIds = true
+				        }, true
+			        )
+                    <em class="validators">
+		                <span class="field-validation-error workflow_permission_message"></span>
+	                </em>
+                </dd>
+            </dl>   
+            
+            <dl class="row">
+	            <dt class="label">
+	                <label>@EntityObjectStrings.Description:</label>
+	            </dt>
+                <dd class="field">
+                    <textarea rows ="5" cols="20" class ="textbox simple-text" data-bind="value: Description" style="margin-top: 1em;"></textarea>
+                </dd>
+            </dl>
+        </fieldset>
+    </div>
+    <input type="hidden" name="Workflows_WorkflowRulesDisplay" class="workflowResult" data-bind="value: ko.toJSON($root.items())"/>
+</script>
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+		@Html.TextBoxFieldFor(s => s.Data.Name)
+		@Html.TextAreaFieldFor(s => s.Data.Description)
+        @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultNotification)
+        @Html.CheckBoxFieldFor(s => s.Data.ApplyByDefault)
+        
+        @Html.CheckboxListFieldFor(
+			model => model.ActiveStatuses,
+			Html.List(Model.AllStatusListItems),
+			new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true, AddNewActionCode = ActionCode.AddNewStatusType, ParentEntityId = Model.Data.SiteId, ShowIds = true},
+			new Dictionary<string, object> { { "id", Model.UniqueId("ActiveStatuses") }, {"class", "workflow_control_selector"},
+            {"data-weights", Model.StatusWeightsDictionary}}
+		)
+        
+        @Html.MultipleItemPickerFieldFor(x => x.ActiveContentsIds, Model.ActiveContentsListItems, Model.EntityDataListArgs,
+            new Dictionary<string, object> {{"class", "workflow_content_selector"}})
+	}
+            
+    @Html.WorkflowFor(s => s.WorkflowRulesDisplay, Model.WorkflowRulesDisplay)
+            
+    @Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+
+}
+
+@Html.InitScript(Model)

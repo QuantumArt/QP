@@ -1,0 +1,309 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="AddNewUser" xml:space="preserve">
+    <value>Add new User</value>
+  </data>
+  <data name="AllowStageEditField" xml:space="preserve">
+    <value>Allow for fields</value>
+  </data>
+  <data name="AllowStageEditObject" xml:space="preserve">
+    <value>Allow for objects</value>
+  </data>
+  <data name="ArticlesInsertAll" xml:space="preserve">
+    <value>Insert all articles</value>
+  </data>
+  <data name="ArticlesInsertAndUpdate" xml:space="preserve">
+    <value>Update existing and add new articles</value>
+  </data>
+  <data name="ArticlesInsertNew" xml:space="preserve">
+    <value>Insert only new articles</value>
+  </data>
+  <data name="ArticlesUpdate" xml:space="preserve">
+    <value>Update articles</value>
+  </data>
+  <data name="ArticlesUpdateIfChanged" xml:space="preserve">
+    <value>Update articles specified in column IsChanged</value>
+  </data>
+  <data name="AutoLogOn" xml:space="preserve">
+    <value>Auto Login</value>
+  </data>
+  <data name="CannotRemoveBuitInUser" xml:space="preserve">
+    <value>You cannot remove built-in user.</value>
+  </data>
+  <data name="ContentDefaultFiltersTitle" xml:space="preserve">
+    <value>Default Filters</value>
+  </data>
+  <data name="DefaultFilterArticles" xml:space="preserve">
+    <value>Articles</value>
+  </data>
+  <data name="DefaultFilterContent" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="DefaultFilterSite" xml:space="preserve">
+    <value>Site</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="EmailInvalidFormat" xml:space="preserve">
+    <value>Invalid e-mail!</value>
+  </data>
+  <data name="EmailMaxLengthExceeded" xml:space="preserve">
+    <value>The length of e-mail should not exceed {5} characters!</value>
+  </data>
+  <data name="EmailNotEntered" xml:space="preserve">
+    <value>Please enter e-mail!</value>
+  </data>
+  <data name="EnableContentGroupingInTree" xml:space="preserve">
+    <value>Enable сontent grouping in backend tree</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="FirstNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of first name should not exceed {5} characters!</value>
+  </data>
+  <data name="FirstNameNotEntered" xml:space="preserve">
+    <value>Please enter first name!</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="LastLogOn" xml:space="preserve">
+    <value>Last Visit</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="LastNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of last name should not exceed {5} characters!</value>
+  </data>
+  <data name="LastNameNotEntered" xml:space="preserve">
+    <value>Please enter last name!</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="LoginData" xml:space="preserve">
+    <value>Login Parameters</value>
+  </data>
+  <data name="LoginInvalidFormat" xml:space="preserve">
+    <value>Invalid login!</value>
+  </data>
+  <data name="LoginLengthExceeded" xml:space="preserve">
+    <value>The length of login should not exceed {5} characters!</value>
+  </data>
+  <data name="LoginNotEntered" xml:space="preserve">
+    <value>Please inter Login!</value>
+  </data>
+  <data name="LoginNotUnique" xml:space="preserve">
+    <value>Login is already in using!</value>
+  </data>
+  <data name="MembershipData" xml:space="preserve">
+    <value>Membership</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New password</value>
+  </data>
+  <data name="NewPasswordAndCopyDoesntMatch" xml:space="preserve">
+    <value>New password and copy doesn't match!</value>
+  </data>
+  <data name="NewPasswordCopy" xml:space="preserve">
+    <value>New password copy</value>
+  </data>
+  <data name="NotificationsExist" xml:space="preserve">
+    <value>You cannot remove user because there are notifications received by user. Notifications: {0}</value>
+  </data>
+  <data name="NtLogin" xml:space="preserve">
+    <value>NT-login</value>
+  </data>
+  <data name="NtLoginLengthExceeded" xml:space="preserve">
+    <value>The length of NT-login should not exceed {5} characters!</value>
+  </data>
+  <data name="NtLoginNotEntered" xml:space="preserve">
+    <value>Please inter NT-login!</value>
+  </data>
+  <data name="OldPassword" xml:space="preserve">
+    <value>Old password</value>
+  </data>
+  <data name="OldPasswordIncorrect" xml:space="preserve">
+    <value>Incorrect old pasword!</value>
+  </data>
+  <data name="OldPasswordNotEntered" xml:space="preserve">
+    <value>Please enter old password!</value>
+  </data>
+  <data name="OnScreenData" xml:space="preserve">
+    <value>OnScreen Parameters</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="PasswordContainsLogin" xml:space="preserve">
+    <value>Login and password cannot match or contain each other</value>
+  </data>
+  <data name="PasswordLengthExceeded" xml:space="preserve">
+    <value>The length of password have to be between {0} and {1}!</value>
+  </data>
+  <data name="PasswordMinLength" xml:space="preserve">
+    <value>Minimum password length is 7 chars</value>
+  </data>
+  <data name="PasswordNotComplex" xml:space="preserve">
+    <value>Password must contain characters from from three of the four categories: digits, latin uppercase letters, latin lowercase letters, non-alfanumeric characters</value>
+  </data>
+  <data name="PasswordNotEntered" xml:space="preserve">
+    <value>Please enter password!</value>
+  </data>
+  <data name="ProfileData" xml:space="preserve">
+    <value>Profile data</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>Russian</value>
+  </data>
+  <data name="SelectedGroupIDs" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="UnbindBuitInGroup" xml:space="preserve">
+    <value>You cannot unbind built-in user from built-in groups: {0}</value>
+  </data>
+  <data name="UserCouldntBindToWFAndAdminDescGroups" xml:space="preserve">
+    <value>User could not bind to the groups used parallel workflow and to the Administrators group or it descendants at the same time.</value>
+  </data>
+  <data name="UserHasNotBeenCreated" xml:space="preserve">
+    <value>New user has not been created.</value>
+  </data>
+  <data name="UserNotFound" xml:space="preserve">
+    <value>User is not found (Id={0})</value>
+  </data>
+  <data name="ViewSettings" xml:space="preserve">
+    <value>View settings</value>
+  </data>
+  <data name="WorkflowsExist" xml:space="preserve">
+    <value>You cannot remove user because there are workflows which involve user. Workflows: {0}</value>
+  </data>
+</root>

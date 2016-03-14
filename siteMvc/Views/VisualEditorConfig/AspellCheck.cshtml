@@ -1,0 +1,51 @@
+﻿@model  Quantumart.QP8.WebMvc.ViewModels.VisualEditorConfig.AspellCheckViewModel
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="@Url.Content("~/Content/ckeditor/_source/plugins/aspell/spellerpages/spellerStyle.css")" />
+<script language="javascript" src="@Url.Content("~/Content/ckeditor/_source/plugins/aspell/spellerpages/wordWindow.js")"></script>
+<script language="javascript">
+var suggs = new Array();
+var words = new Array();
+var textinputs = new Array();
+var error;
+
+textinputs[0] = decodeURIComponent("@Model.TextInputsVar");
+words[0] = [];
+suggs[0] = [];
+@Model.CheckerResults
+
+var wordWindowObj = new wordWindow();
+wordWindowObj.originalSpellings = words;
+wordWindowObj.suggestions = suggs;
+wordWindowObj.textInputs = textinputs;
+
+function init_spell() {
+	// check if any error occured during server-side processing
+	if( error ) {
+		alert( error );
+	} else {
+		// call the init_spell() function in the parent frameset
+		if (parent.frames.length) {
+			parent.init_spell( wordWindowObj );
+		} else {
+			alert('This page was loaded outside of a frameset. It might not display properly');
+		}
+	}
+}
+
+
+
+</script>
+
+</head>
+<!-- <body onLoad="init_spell();">		by FredCK -->
+<body onLoad="init_spell();" bgcolor="#ffffff">
+
+<script type="text/javascript">
+wordWindowObj.writeBody();
+</script>
+
+</body>
+</html>

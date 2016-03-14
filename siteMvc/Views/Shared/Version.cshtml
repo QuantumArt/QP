@@ -1,0 +1,15 @@
+﻿@model EntityObject
+
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+
+@if (!Model.IsNew)
+{     
+	using (Html.BeginFieldGroup(EntityObjectStrings.VersionTitle))
+	{
+		@Html.DisplayFieldFor(e => e.Id)
+		@Html.DisplayFieldFor(e => e.CreatedToDisplay)
+		@Html.DisplayFieldFor(e => e.ModifiedToDisplay)
+		@Html.DisplayFieldFor(e => e.LastModifiedByUserToDisplay)
+	} 
+}

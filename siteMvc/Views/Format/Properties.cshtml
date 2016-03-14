@@ -1,0 +1,40 @@
+﻿@model  ObjectFormatViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+
+@using (Html.BeginTabForm(Model))
+{
+    @Html.Partial("Locking", Model)
+    
+	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+		@Html.TextBoxFieldFor(s => s.Data.Name)
+        if (Model.Data.IsSiteDotNet) 
+        { 
+            @Html.TextBoxFieldFor(s => s.Data.NetFormatName)
+        }
+        @Html.TextAreaFieldFor(s => s.Data.Description)
+        if (Model.Data.IsSiteDotNet)
+        {
+            @Html.SelectFieldFor(model => model.Data.NetLanguageId, Html.List(Model.Languages))
+        }
+        @Html.TextAreaFieldFor(s => s.Data.FormatBody, htmlAttributes: new Dictionary<string, object> { { "class", "textbox codeBehind hta-htmlTextArea highlightedTextarea" },
+        {"data-template_id", Model.TemplateId}, {"data-format_id", Model.Data.Id}, {"data-is_presentation", true}, {"data-net_language", Model.Data.NetLanguageId},
+        {"data-site_id", Model.SiteId}
+        })
+        if (Model.Data.IsSiteDotNet)
+        {
+            @Html.TextAreaFieldFor(s => s.Data.CodeBehind, htmlAttributes: new Dictionary<string, object> { { "class", "textbox codeBehind highlightedTextarea " + HighlightModeSelectHelper.SelectMode(Model.Data.NetLanguageId) },
+            {"data-template_id", Model.TemplateId}, {"data-format_id", Model.Data.Id}, {"data-is_presentation", false}, {"data-net_language", Model.Data.NetLanguageId}, {"data-site_id", Model.SiteId}
+            })
+        }
+	}
+	
+    @Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+}
+
+@Html.InitScript(Model)

@@ -1,0 +1,55 @@
+﻿@model ArticleViewModel
+		   
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+
+@using (Html.BeginFieldGroup(ArticleStrings.WorkflowGroup))
+{
+	if (Model.Data.Workflow.IsAssigned && Model.Data.IsUpdatableWithWorkflow)
+	{
+		@Html.SelectFieldFor(s => s.Data.StatusTypeId, Html.List(Model.AvailableStatuses))
+
+        using (Html.BeginPanel("cancelSplitPanel"))
+        { 
+             @Html.CheckBoxFieldFor(s => s.Data.CancelSplit, "cancelSplitWarningPanel")
+            
+            using (Html.BeginPanel("cancelSplitWarningPanel"))
+            { 
+                @Html.Warning(ArticleStrings.CancelSplitWarning);
+            }
+        }
+        
+        using (Html.BeginPanel(s => s.Data.StatusTypeId, Model.Data.Workflow.MaxStatus.Id))
+		{
+            @Html.CheckBoxFieldFor(s => s.Data.Delayed, "delayedPanel")
+			using (Html.BeginPanel("delayedPanel", true))
+			{
+				@Html.DateTimeFieldFor(s => s.Data.Schedule.PublicationDate)
+			}         
+ 
+        }
+        if (Model.Data.StatusHistoryListItem != null) { 
+            @Html.HtmlFieldFor(s=>s.Data.StatusHistoryListItem.Comment,
+                       @<div>
+                           (@Html.DisplayTextFor(s=>s.Data.StatusHistoryListItem.ActionDate) - @Html.DisplayTextFor(s=>s.Data.StatusHistoryListItem.ActionMadeBy))    
+                           @Html.DisplayTextFor(s=>s.Data.StatusHistoryListItem.Comment)
+                           </div>
+            )
+        }
+        using (Html.BeginPanel("comment"))
+		{ 
+	            @Html.HtmlFieldFor(s => s.Data.Comment,
+                    @<div class="qp-expandedContent">
+                            @Html.QpTextAreaFor(s => s.Data.Comment, new Dictionary<string, object> { { "class", "textbox" } })
+                    </div>
+                )
+		}
+
+    }
+	else
+	{
+		@Html.DisplayField("StatusTypeId", ArticleStrings.Status, Model.Data.Status.Name)
+	}
+}

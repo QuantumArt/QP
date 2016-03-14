@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-US" xmlns="http://schemas.microsoft.com/wix/2006/localization" Codepage="utf-8">
+  <String Id="UpdateQP8DlgTitle">Installed QP8 was found</String>
+  <String Id="UpdateQP8DlgInstallTitle">Installed QP8 was found</String>
+  <String Id="UpdateQP8DlgMessage">Installed QP8 was found. Installation have to continue in upgrade QP8 to new version mode.</String>
+  <String Id="UpdateQP8DlgUpgradeDatabases">Upgrade databases</String>
+</WixLocalization>

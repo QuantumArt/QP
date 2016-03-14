@@ -1,0 +1,12 @@
+Imports System
+Imports System.Collections
+Imports System.Web.UI.WebControls
+
+
+Protected Sub LoadGeneric(sender as Object, e as EventArgs)
+
+End Sub
+
+Overrides Public Sub InitUserHandlers(e as EventArgs)
+	LoadGeneric(Me, e)
+End Sub

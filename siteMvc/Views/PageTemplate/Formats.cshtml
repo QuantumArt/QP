@@ -1,0 +1,92 @@
+﻿@model SearchInFormatsViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.BLL.ListItems
+
+@using (Html.BeginDocumentPadding())
+{
+    <div id="@Model.MainComponentId" class="alMainContaner">	
+	    <form class="formLayout" action='javascript:void(0);'>
+		    <div id="@Model.FilterElementId" class="simpleSeachBlock">
+                @using (Html.BeginFieldGroup(TemplateStrings.FiltrationParameters))
+	            {
+                <div class="sic_templateSelector">                    
+                @Html.SelectFieldFor(model => model.TemplateId, Html.List(Model.Templates), new Dictionary<string, object> { { "style", "width:auto !important;" } }, new SelectOptions())
+                </div>
+                <div class="sic_pageSelector">                    			                        
+                @Html.SingleItemPickerFieldFor(s => s.PageId,
+					Model.PageListItem,
+				    new EntityDataListArgs
+				    {
+					    EntityTypeCode = Quantumart.QP8.Constants.EntityTypeCode.Page,
+					    ParentEntityId = Model.SiteAnyTemplateId,
+					    SelectActionCode = Quantumart.QP8.Constants.ActionCode.SelectPageForObjectForm,
+					    ReadActionCode = Quantumart.QP8.Constants.ActionCode.PageProperties,
+                        ListId = -3 * System.DateTime.Now.Millisecond,
+					    MaxListHeight = 200,
+					    MaxListWidth = 350,
+					    ShowIds = true,
+				    },
+				    new ControlOptions
+				    {
+				    })			            
+                </div>
+                <div class="sic_filter">                    
+                    @Html.TextBoxFieldFor(s => s.Filter)
+                </div>                
+                <input id="@Html.UniqueId("findButton")" type="button" class="sic_search_button button" value="@AuditStrings.Find" />
+                <input id="@Html.UniqueId("resetButton")" type="button" class="sic_reset_button" value="@AuditStrings.ResetFilter" />
+                }
+		    </div>
+        </form>
+
+	    @(Html.Telerik().Grid<ObjectFormatSearchResultListItem>().Name(Model.GridElementId)
+     .DataKeys(k => k.Add(s => s.Id))     
+                .Columns(c =>
+                    {
+                        c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                        .Width(30)
+                        .HtmlAttributes(new { @class = "id" });
+                        c.Bound(s => s.Name)
+                        .HtmlAttributes(new { @class = "title" });
+                        c.Bound(s => s.Description).Encoded(false);
+                        c.Bound(s => s.TemplateName);
+                        c.Bound(s => s.PageName);
+                        c.Bound(s => s.ParentName);
+                        c.Bound(s => s.Created);
+                        c.Bound(s => s.Modified);
+                        c.Bound(s => s.LastModifiedByLogin);
+                        c.Bound(s => s.ActionCode).Hidden(true);                        
+                    }
+                )
+                .DataBinding(db => db.Ajax().Select("_Formats", "PageTemplate"))
+                .EnableCustomBinding(true)
+                .Sortable()
+                .Selectable(s => s.Enabled(false))
+                .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))              
+                .ClientEvents(e => e
+                    .OnDataBinding("$q.preventDefaultFunction")
+                    .OnRowDataBound("$q.preventDefaultFunction")
+                )
+        )
+    </div>
+}
+
+@Html.PrepareInitScript(Model)
+<script type="text/javascript">	
+	@(Model.ContextObjectName).set_initializedCallback(function() {				
+	    this.filterComponent = new Quantumart.QP8.SearchInCodeComponent("@Model.FilterElementId", "@Model.GridElementId");		
+		this.filterComponent.initialize();
+	});        
+
+	@(Model.ContextObjectName).set_terminatingCallback(function() {								
+		this.filterComponent.dispose();
+		this.filterComponent = null;
+	});
+</script>
+@Html.RunInitScript(Model)
+

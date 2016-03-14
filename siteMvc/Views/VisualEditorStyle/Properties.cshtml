@@ -1,0 +1,80 @@
+﻿@model  VisualEditorStyleViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.VisualEditor
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+<script type="text/html" id="@Html.UniqueId("Data_AttributeItems_template")">
+	<span data-bind="@(!Model.Data.IsSystem ? "click: addItem" : string.Empty)">        
+        @Html.SimpleAddActionLink(VisualEditorStrings.AddNewHtmlAttribute)
+	</span>
+	<table>
+		<thead>
+			<tr>
+				<td/>
+				<td>@VisualEditorStrings.HeaderName</td>
+				<td>@VisualEditorStrings.HeaderValue</td>
+			</tr>			
+		</thead>
+		<tbody data-bind ="foreach: items">
+			<tr>
+				<td data-bind="text: $index() + 1"></td>
+				<td> <input @(Model.Data.IsSystem ? "disabled=\"\"" : string.Empty)  data-bind="value: Name, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
+				<td> <input @(Model.Data.IsSystem ? "disabled=\"\"" : string.Empty)  data-bind="value: ItemValue, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
+				<td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="@(!Model.Data.IsSystem ? "click: $root.removeItem" : string.Empty)"/></td>
+			</tr>
+		</tbody>
+	</table>
+</script>
+
+<script type="text/html" id="@Html.UniqueId("Data_StylesItems_template")">
+	<span data-bind="@(!Model.Data.IsSystem ? "click: addItem" : string.Empty)">
+        @Html.SimpleAddActionLink(VisualEditorStrings.AddNewCssStyle)
+	</span>
+	<table>
+		<thead>
+			<tr>
+				<td/>
+				<td>@VisualEditorStrings.HeaderName</td>				
+				<td>@VisualEditorStrings.HeaderValue</td>				
+			</tr>			
+		</thead>
+		<tbody data-bind ="foreach: items">
+			<tr>
+				<td data-bind="text: $index() + 1"></td>
+				<td> <input @(Model.Data.IsSystem ? "disabled=\"\"" : string.Empty) data-bind="value: Name, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
+				<td> <input @(Model.Data.IsSystem ? "disabled=\"\"" : string.Empty) data-bind="value: ItemValue, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
+				<td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="@(!Model.Data.IsSystem ? "click: $root.removeItem" : string.Empty)"/></td>
+			</tr>
+		</tbody>
+	</table>
+</script>
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+		@Html.TextBoxFieldFor(s => s.Data.Name)
+		@Html.TextAreaFieldFor(s => s.Data.Description)
+		@Html.CheckBoxFieldFor(s => s.Data.IsFormat)
+		@Html.CheckBoxFieldFor(s => s.Data.IsSystem, htmlAttributes: new Dictionary<string, object> { { "disabled", "disabled" } });
+		@Html.NumericFieldFor(s => s.Data.Order, 0)
+	}
+
+	using (Html.BeginFieldGroup(VisualEditorStrings.StyleSettings))
+	{
+		@Html.TextBoxFieldFor(s => s.Data.Tag)
+		@Html.TextBoxFieldFor(s => s.Data.OverridesTag)
+
+		@Html.AggregationListFieldFor(s => s.Data.AttributeItems, Model.Data.AttributeItems, "Name,ItemValue")
+		
+		@Html.AggregationListFieldFor(s => s.Data.StylesItems, Model.Data.StylesItems, "Name,ItemValue")		
+	}
+
+	
+    @Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+
+}
+
+@Html.InitScript(Model)

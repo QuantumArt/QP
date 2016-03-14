@@ -1,0 +1,24 @@
+﻿@model LockableEntityViewModel
+
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+
+@if (!Model.IsNew)
+{
+	using(Html.BeginFieldGroup(GlobalStrings.LockingGroup))
+	{
+		@Html.DisplayFieldFor(s => s.Data.LockedByDisplayName)
+		@Html.DisplayFieldFor(s => s.Data.LockedToDisplay)
+
+		if (Model.Data.LockedByYou)
+		{     
+			@Html.CheckBoxFieldFor(s => s.Data.PermanentLock)
+		}
+
+		if (Model.Data.CanBeUnlocked)
+        { 
+            @Html.UnlockLink(Model)
+        }
+    }
+}

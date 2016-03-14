@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.9</ProductVersion>
+    <ProjectGuid>a48f1897-3c46-4ccd-878b-21f1940f3949</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>QP8.Installer.Wix</OutputName>
+    <OutputType>Package</OutputType>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
+    <SccProjectName>$/QP8/main/QP8.Installer.Wix</SccProjectName>
+    <SccProvider>{4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}</SccProvider>
+    <SccAuxPath>http://tfs:8080/tfs/quantumartcollection</SccAuxPath>
+    <SccLocalPath>.</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+    <DefineConstants>Debug;BackendDirPath=$(SolutionDir)package\pack\qp8release\app\Backend;WinlogonDirPath=$(SolutionDir)package\pack\qp8release\app\Winlogon;ArticleSchedulerDirPath=$(SolutionDir)package\pack\qp8release\app\ArticleScheduler;DemoSiteDirPath=$(SolutionDir)package\pack\qp8release\app\DemoSite</DefineConstants>
+    <Cultures>ru-RU</Cultures>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug x64|x86' ">
+    <DefineConstants>Debug;</DefineConstants>
+    <Cultures>ru-RU</Cultures>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug x64|AnyCPU' ">
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug x64|Any CPU' ">
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DefineConstants>Debug;</DefineConstants>
+    <Cultures>ru-RU</Cultures>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug x64|x64' ">
+    <DefineConstants>Debug;</DefineConstants>
+    <Cultures>ru-RU</Cultures>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Platform)\$(Configuration)\</IntermediateOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="ArticleSchedulerSettings.wxs" />
+    <Compile Include="Dialogs\UpdateQP8Dlg.wxs" />
+    <Compile Include="Dialogs\DatabaseModeDbDlg.wxs" />
+    <Compile Include="Dialogs\WebModeDbDlg.wxs" />
+    <Compile Include="Dialogs\DemoSiteIisDlg.wxs" />
+    <Compile Include="Dialogs\SiteIisDlg.wxs" />
+    <Compile Include="Dialogs\UpdateQP7Dlg.wxs" />
+    <Compile Include="Dialogs\WrongMVCMessageDlg.wxs" />
+    <Compile Include="Dialogs\WrongIISMessageDlg.wxs" />
+    <Compile Include="Dialogs\WrongWindowsMessageDlg.wxs" />
+    <Compile Include="Files\ArticleSchedulerFiles.wxs" />
+    <Compile Include="Files\BackendFiles.wxs" />
+    <Compile Include="Files\DbFiles.wxs" />
+    <Compile Include="Files\DemoSiteFiles.wxs" />
+    <Compile Include="Files\QPublishingConfiguration.wxs" />
+    <Compile Include="Files\WinlogonFiles.wxs" />
+    <Compile Include="FolderPermissions.wxs" />
+    <Compile Include="GlobalProperties.wxs" />
+    <Content Include="InstallExecuteSequence.wxi" />
+    <Compile Include="Product.wxs" />
+    <Compile Include="WixUI_FeatureTreeNoLicense.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CustomActions.wxi" />
+    <Content Include="Features.wxi" />
+    <Content Include="GlobalConditions.wxi" />
+    <Content Include="InstallQP8Settings.wxi" />
+    <Content Include="InstallUISequence.wxi" />
+    <Content Include="PackageProperties.wxi" />
+    <Content Include="ProductProperties.wxi" />
+    <Content Include="Properties.wxi" />
+    <Content Include="Transformation\ArticleSchedulerHeatTransform.xslt" />
+    <Content Include="Transformation\BackendHeatTransform.xslt" />
+    <Content Include="Transformation\DemoSiteHeatTransform.xslt" />
+    <Content Include="Transformation\WinlogonHeatTransform.xslt" />
+    <Content Include="UI.wxi" />
+    <Content Include="UISequence.wxi" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Dialogs\Localization\UpdateQP8Dlg.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\UpdateQP8Dlg.ru-RU.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\DatabaseModeDbDlgStrings.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\DatabaseModeDbDlgStrings.ru-RU.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\DemoSiteIisDlgStrings.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\DemoSiteIisDlgStrings.ru-RU.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\SiteIisDlgStrings.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\SiteIisDlgStrings.ru-RU.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\UpdateQP7Dlg.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\UpdateQP7Dlg.ru-RU.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\WebModeDbDlgStrings.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\WebModeDbDlgStrings.ru-RU.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\WrongIISMessageDlg.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\WrongIISMessageDlg.ru-RU.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\WrongMVCMessageDlg.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\WrongMVCMessageDlg.ru-RU.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\WrongWindowsMessageDlg.en-US.wxl" />
+    <EmbeddedResource Include="Dialogs\Localization\WrongWindowsMessageDlg.ru-RU.wxl" />
+    <EmbeddedResource Include="Localization\FeaturesStrings.en-US.wxl" />
+    <EmbeddedResource Include="Localization\FeaturesStrings.ru-RU.wxl" />
+    <EmbeddedResource Include="Localization\GlobalConditionsStrings.en-US.wxl" />
+    <EmbeddedResource Include="Localization\GlobalConditionsStrings.ru-RU.wxl" />
+    <EmbeddedResource Include="Localization\IisExtension.ru-RU.wxl" />
+    <EmbeddedResource Include="Localization\ProductStrings.en-US.wxl" />
+    <EmbeddedResource Include="Localization\ProductStrings.ru-RU.wxl" />
+    <EmbeddedResource Include="Localization\SqlExtension.ru-RU.wxl" />
+    <EmbeddedResource Include="Localization\UtilExtension.ru-RU.wxl" />
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixSqlExtension">
+      <HintPath>$(WixExtDir)\WixSqlExtension.dll</HintPath>
+      <Name>WixSqlExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixNetFxExtension">
+      <HintPath>$(WixExtDir)\WixNetFxExtension.dll</HintPath>
+      <Name>WixNetFxExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixIIsExtension">
+      <HintPath>$(WixExtDir)\WixIIsExtension.dll</HintPath>
+      <Name>WixIIsExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Dialogs" />
+    <Folder Include="Dialogs\Localization" />
+    <Folder Include="Localization" />
+    <Folder Include="Files" />
+    <Folder Include="Transformation" />
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" />
+  <!--
+	To modify your build process, add your task inside one of the targets below and uncomment it.
+	Other similar extension points exist, see Wix.targets.-->
+  <Target Name="BeforeBuild">
+    <PropertyGroup>
+      <BackendDirPath>$(SolutionDir)package\pack\qp8release\app\Backend</BackendDirPath>
+      <WinlogonDirPath>$(SolutionDir)package\pack\qp8release\app\Winlogon</WinlogonDirPath>
+      <ArticleSchedulerDirPath>$(SolutionDir)package\pack\qp8release\app\ArticleScheduler</ArticleSchedulerDirPath>
+      <DemoSiteDirPath>$(SolutionDir)package\pack\qp8release\app\DemoSite</DemoSiteDirPath>
+    </PropertyGroup>
+    <Exec Command="&quot;$(DevEnvDir)tf&quot; checkout $(ProjectDir)Files\ArticleSchedulerFiles.wxs">
+    </Exec>
+    <Exec Command="&quot;$(DevEnvDir)tf&quot; checkout $(ProjectDir)Files\BackendFiles.wxs">
+    </Exec>
+    <Exec Command="&quot;$(DevEnvDir)tf&quot; checkout $(ProjectDir)Files\DemoSiteFiles.wxs">
+    </Exec>
+    <Exec Command="&quot;$(DevEnvDir)tf&quot; checkout $(ProjectDir)Files\WinlogonFiles.wxs">
+    </Exec>
+    <HeatDirectory NoLogo="$(HarvestDirectoryNoLogo)" SuppressAllWarnings="$(HarvestDirectorySuppressAllWarnings)" SuppressSpecificWarnings="$(HarvestDirectorySuppressSpecificWarnings)" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="$(HarvestDirectoryTreatWarningsAsErrors)" TreatSpecificWarningsAsErrors="$(HarvestDirectoryTreatSpecificWarningsAsErrors)" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="Files\BackendFiles.wxs" SuppressFragments="$(HarvestDirectorySuppressFragments)" SuppressUniqueIds="$(HarvestDirectorySuppressUniqueIds)" Transforms="Transformation\BackendHeatTransform.xslt" Directory="$(BackendDirPath)" ComponentGroupName="BackendProductComponents" DirectoryRefId="BACKENDINSTALLFOLDER" KeepEmptyDirectories="false" PreprocessorVariable="var.BackendDirPath" SuppressCom="true" SuppressRootDirectory="true" SuppressRegistry="true">
+    </HeatDirectory>
+    <HeatDirectory NoLogo="$(HarvestDirectoryNoLogo)" SuppressAllWarnings="$(HarvestDirectorySuppressAllWarnings)" SuppressSpecificWarnings="$(HarvestDirectorySuppressSpecificWarnings)" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="$(HarvestDirectoryTreatWarningsAsErrors)" TreatSpecificWarningsAsErrors="$(HarvestDirectoryTreatSpecificWarningsAsErrors)" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="Files\WinlogonFiles.wxs" SuppressFragments="$(HarvestDirectorySuppressFragments)" SuppressUniqueIds="$(HarvestDirectorySuppressUniqueIds)" Transforms="Transformation\WinlogonHeatTransform.xslt" Directory="$(WinlogonDirPath)" ComponentGroupName="WinlogonProductComponents" DirectoryRefId="WINLOGONINSTALLFOLDER" KeepEmptyDirectories="false" PreprocessorVariable="var.WinlogonDirPath" SuppressCom="true" SuppressRootDirectory="true" SuppressRegistry="true">
+    </HeatDirectory>
+    <HeatDirectory NoLogo="$(HarvestDirectoryNoLogo)" SuppressAllWarnings="$(HarvestDirectorySuppressAllWarnings)" SuppressSpecificWarnings="$(HarvestDirectorySuppressSpecificWarnings)" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="$(HarvestDirectoryTreatWarningsAsErrors)" TreatSpecificWarningsAsErrors="$(HarvestDirectoryTreatSpecificWarningsAsErrors)" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="Files\ArticleSchedulerFiles.wxs" SuppressFragments="$(HarvestDirectorySuppressFragments)" SuppressUniqueIds="$(HarvestDirectorySuppressUniqueIds)" Transforms="Transformation\ArticleSchedulerHeatTransform.xslt" Directory="$(ArticleSchedulerDirPath)" ComponentGroupName="ArticleSchedulerProductComponents" DirectoryRefId="ARTICLESCHEDULERINSTALLFOLDER" KeepEmptyDirectories="false" PreprocessorVariable="var.ArticleSchedulerDirPath" SuppressCom="true" SuppressRootDirectory="true" SuppressRegistry="true">
+    </HeatDirectory>
+    <HeatDirectory NoLogo="$(HarvestDirectoryNoLogo)" SuppressAllWarnings="$(HarvestDirectorySuppressAllWarnings)" SuppressSpecificWarnings="$(HarvestDirectorySuppressSpecificWarnings)" ToolPath="$(WixToolPath)" TreatWarningsAsErrors="$(HarvestDirectoryTreatWarningsAsErrors)" TreatSpecificWarningsAsErrors="$(HarvestDirectoryTreatSpecificWarningsAsErrors)" VerboseOutput="$(HarvestDirectoryVerboseOutput)" AutogenerateGuids="$(HarvestDirectoryAutogenerateGuids)" GenerateGuidsNow="$(HarvestDirectoryGenerateGuidsNow)" OutputFile="Files\DemoSiteFiles.wxs" SuppressFragments="$(HarvestDirectorySuppressFragments)" SuppressUniqueIds="$(HarvestDirectorySuppressUniqueIds)" Transforms="Transformation\DemoSiteHeatTransform.xslt" Directory="$(DemoSiteDirPath)" ComponentGroupName="DemoSiteProductComponents" DirectoryRefId="DEMOSITEINSTALLFOLDER" KeepEmptyDirectories="false" PreprocessorVariable="var.DemoSiteDirPath" SuppressCom="true" SuppressRootDirectory="true" SuppressRegistry="true">
+    </HeatDirectory>
+  </Target>
+  <!--<Target Name="AfterBuild">
+	</Target>-->
+</Project>

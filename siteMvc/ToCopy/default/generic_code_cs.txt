@@ -1,0 +1,13 @@
+using System;
+using System.Collections;
+using System.Web.UI.WebControls;
+
+protected void LoadGeneric(Object sender, EventArgs e)
+{
+
+}
+
+override public void InitUserHandlers(EventArgs e)
+{
+	LoadGeneric(this, e);
+}

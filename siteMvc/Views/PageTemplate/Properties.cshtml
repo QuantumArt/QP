@@ -1,0 +1,131 @@
+﻿@model  PageTemplateViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+<script type="text/html" id="@Html.UniqueId("Data_AdditionalNamespaceItems_template")">
+	<span data-bind="click: addItem">
+        @Html.SimpleAddActionLink(TemplateStrings.AddNamespace)
+	</span>
+	<table>
+		<thead>
+			<tr>
+				<td/>
+				<td></td>
+				<td></td>
+			</tr>
+		</thead>
+		<tbody data-bind ="foreach: items">
+			<tr>
+				<td data-bind="text: $index() + 1"></td>
+				<td> <input class="textbox" data-bind="value: Name, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>				
+				<td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
+			</tr>
+		</tbody>
+	</table>
+</script>
+
+@using (Html.BeginTabForm(Model))
+{
+    @Html.Partial("Locking", Model)
+    
+	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+		@Html.TextBoxFieldFor(s => s.Data.Name)
+        
+        if (Model.Data.SiteIsDotNet)
+        {
+            @Html.TextBoxFieldFor(s => s.Data.NetTemplateName)
+        }
+        
+		@Html.TextAreaFieldFor(s => s.Data.Description)
+
+        if (Model.Data.SiteIsDotNet)
+        {
+            @Html.SelectFieldFor(model => model.Data.NetLanguageId, Html.List(Model.Languages))
+        }
+        
+        @Html.TextBoxFieldFor(s => s.Data.TemplateFolder)
+
+        @Html.NumericFieldFor(s => s.Data.MaxNumOfFormatStoredVersions, 0, 100)
+
+        @Html.CheckBoxFieldFor(s => s.Data.SendNocacheHeaders)
+    }
+
+    using (Html.BeginFieldGroup(TemplateStrings.Format))
+	{
+        @Html.TextAreaFieldFor(s => s.Data.TemplateBody, htmlAttributes: new Dictionary<string, object> { { "class", "textbox codeBehind hta-htmlTextArea highlightedTextarea" },
+        {"data-template_id", Model.Data.Id}, {"data-format_id", null}, {"data-is_presentation", true}, {"data-net_language", Model.Data.NetLanguageId}, {"data-site_id", Model.Data.SiteId}})
+
+        if (Model.Data.SiteIsDotNet)
+        {
+            @Html.TextAreaFieldFor(s => s.Data.CodeBehind, htmlAttributes: new Dictionary<string, object> { { "class", "textbox codeBehind highlightedTextarea " + HighlightModeSelectHelper.SelectMode(Model.Data.NetLanguageId) },
+            {"data-template_id", Model.Data.Id}, {"data-format_id", null}, {"data-is_presentation", false}, {"data-net_language", Model.Data.NetLanguageId}, {"data-site_id", Model.Data.SiteId}
+            })
+        }
+        
+        @Html.HtmlFieldFor(s => s.Data.PreviewTemplateBody,
+				@<div class="qp-expandedContent">
+					@Html.QpTextAreaFor(s => s.Data.PreviewTemplateBody, new Dictionary<string, object> { { "class", "textbox codeBehind hta-htmlTextArea highlightedTextarea" },
+                     {"data-template_id", Model.Data.Id}, {"data-format_id", null}, {"data-is_presentation", true}, {"data-net_language", Model.Data.NetLanguageId}, {"data-site_id", Model.Data.SiteId}
+                    })
+				</div>
+			)
+
+        if (Model.Data.SiteIsDotNet)
+        {            
+            @Html.HtmlFieldFor(s => s.Data.PreviewCodeBehind,
+				@<div class="qp-expandedContent">
+					@Html.QpTextAreaFor(s => s.Data.PreviewCodeBehind, new Dictionary<string, object> { { "class", "textbox codeBehind highlightedTextarea " + HighlightModeSelectHelper.SelectMode(Model.Data.NetLanguageId) },
+                    {"data-template_id", Model.Data.Id}, {"data-format_id", null}, {"data-is_presentation", false}, {"data-net_language", Model.Data.NetLanguageId}, {"data-site_id", Model.Data.SiteId}})
+				</div>
+			)
+        }
+    }
+        if (Model.Data.SiteIsDotNet)
+        {
+            using (Html.BeginFieldGroup(TemplateStrings.ViewStateParameters))
+	        {           
+                @Html.CheckBoxFieldFor(s => s.Data.EnableViewstate)
+            
+                if (!Model.IsNew) 
+                    { @Html.CheckBoxFieldFor(s => s.Data.ApplyToExistingPagesAndObjects) }
+            }
+            using (Html.BeginFieldGroup(TemplateStrings.DataBinding))
+	        {                                           
+                @Html.CheckBoxFieldFor(s => s.Data.DisableDatabind)
+            
+                if (!Model.IsNew)
+                    { @Html.CheckBoxFieldFor(s => s.Data.ApplyToExistingObjects)}
+            }
+            
+            using (Html.BeginFieldGroup(TemplateStrings.PagesInheritance))
+	        {
+                @Html.TextBoxFieldFor(s => s.Data.CustomClassForPages)
+                if (!Model.IsNew) {@Html.CheckBoxFieldFor(s => s.Data.OverridePageSettings)}
+            }
+            
+            using (Html.BeginFieldGroup(TemplateStrings.ControlsInheritance))
+	        {
+                @Html.TextBoxFieldFor(s => s.Data.TemplateCustomClass)
+                @Html.TextBoxFieldFor(s => s.Data.CustomClassForGenerics)
+                @Html.TextBoxFieldFor(s => s.Data.CustomClassForContainers)
+                @Html.TextBoxFieldFor(s => s.Data.CustomClassForForms)
+                if (!Model.IsNew) {@Html.CheckBoxFieldFor(s => s.Data.OverrideObjectSettings)}
+                if (Model.Data.SiteIsDotNet) {@Html.AggregationListFieldFor(s => s.Data.AdditionalNamespaceItems, Model.Data.AdditionalNamespaceItems, "Name")}
+            }
+        }
+        
+        using (Html.BeginFieldGroup(TemplateStrings.RegionalAndLanguageSettings))
+	    {
+            @Html.SelectFieldFor(model => model.Data.Charset, Html.List(Model.Charsets))
+            @Html.SelectFieldFor(model => model.Data.Locale, Html.List(Model.Locales))
+        }
+	
+    @Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+
+}
+
+@Html.InitScript(Model)

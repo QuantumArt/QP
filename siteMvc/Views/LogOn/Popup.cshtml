@@ -1,0 +1,36 @@
+﻿@model LogOnCredentials
+
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.BLL
+
+<div id="page" class="loginFormLayout">
+	<div id="content" class="content">
+	@using (Html.BeginForm(null, null, FormMethod.Post, new { id = "auth" }))
+    {
+		<div class="formLayout">
+			@Html.TextBoxFieldFor(p => p.UserName)
+			@Html.PasswordFieldFor(p => p.Password)
+            @if (ViewBag.AllowSelectCustomerCode)
+            {
+                @Html.SelectFieldFor(p => p.CustomerCode, (IEnumerable<QPSelectListItem>)ViewBag.CustomerCodes);
+            }
+            else
+            {
+                @Html.TextBoxFieldFor(p => p.CustomerCode);
+            }
+			<dl class="row">
+				<dt class="label">
+				</dt>
+				<dd class="field">
+					<input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login" />
+                    <img id="authLoading" src="~/Content/QP8/icons/ajax_loaders/circle_ball.gif" />
+					<br />
+					@Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors, new { @style = "margin-top: 0.5em;" })
+				</dd>
+			</dl>
+			@Html.HiddenFor(p => p.IsSilverlightInstalled)
+            @Html.HiddenFor(p => p.UseAutoLogin)
+		</div>
+    }
+	</div>
+</div>

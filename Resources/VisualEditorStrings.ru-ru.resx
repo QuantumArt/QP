@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddNewExternalCss" xml:space="preserve">
+    <value>Добавить новый внешний CSS</value>
+  </data>
+  <data name="AddNewVisualEditorCommand" xml:space="preserve">
+    <value>Добавить новую команду визуального редактора</value>
+  </data>
+  <data name="AddNewVisualEditorPlugin" xml:space="preserve">
+    <value>Добавить новый плагин визуального редактора</value>
+  </data>
+  <data name="AddNewVisualEditorStyle" xml:space="preserve">
+    <value>Добавить новый стиль визуального редактора</value>
+  </data>
+  <data name="Attributes" xml:space="preserve">
+    <value>HTML - атрибуты</value>
+  </data>
+  <data name="CommandAliasDuplicate" xml:space="preserve">
+    <value>Алиас команды №{0} должен быть уникален в пределах плагина</value>
+  </data>
+  <data name="CommandAliasMaxLengthExceeded" xml:space="preserve">
+    <value>Длина алиаса команды №{0} не должна превышать 255 символов</value>
+  </data>
+  <data name="CommandAliasNonUnique" xml:space="preserve">
+    <value>Алиас команды №{0} должен быть уникальным между плагинами</value>
+  </data>
+  <data name="CommandAliasRequired" xml:space="preserve">
+    <value>Пожалуйста, введите алиас для команды №{0}</value>
+  </data>
+  <data name="CommandNameDuplicate" xml:space="preserve">
+    <value>Имя команды №{0} должно быть уникальным в пределах плагина</value>
+  </data>
+  <data name="CommandNameInvalidFormat" xml:space="preserve">
+    <value>У команды №{0} некорректное имя</value>
+  </data>
+  <data name="CommandNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени команды №{0} не должна превышать 255 символов</value>
+  </data>
+  <data name="CommandNameNonUnique" xml:space="preserve">
+    <value>Имя команды №{0} должно быть уникальным между плагинами</value>
+  </data>
+  <data name="CommandNameRequired" xml:space="preserve">
+    <value>Пожалуйста, введите имя для команды №{0}</value>
+  </data>
+  <data name="CommandNotValid" xml:space="preserve">
+    <value>Некоторые команды невалидны</value>
+  </data>
+  <data name="Commands" xml:space="preserve">
+    <value>Команды</value>
+  </data>
+  <data name="CommandsRequired" xml:space="preserve">
+    <value>Должна быть указана хотя бы одна команда визуального редактора</value>
+  </data>
+  <data name="ExternalCss" xml:space="preserve">
+    <value>Внешние CSS</value>
+  </data>
+  <data name="ExternalCssUrlDuplicate" xml:space="preserve">
+    <value>У внешнего CSS №{0} дублирующий URL</value>
+  </data>
+  <data name="ExternalCssUrlMaxLengthExceeded" xml:space="preserve">
+    <value>Длина URL внешнего CSS №{0} не должна превышать 255 символов</value>
+  </data>
+  <data name="ExternalCssUrlNotValid" xml:space="preserve">
+    <value>У внешнего CSS №{0} невалидный URL</value>
+  </data>
+  <data name="ExternalCssUrlRequired" xml:space="preserve">
+    <value>Пожалуйста, введите URL для внешнего CSS №{0}</value>
+  </data>
+  <data name="HeaderAlias" xml:space="preserve">
+    <value>Алиас</value>
+  </data>
+  <data name="HeaderName" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="IsFormat" xml:space="preserve">
+    <value>Формат</value>
+  </data>
+  <data name="IsSystem" xml:space="preserve">
+    <value>Системный</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
+  <data name="OverridesTag" xml:space="preserve">
+    <value>Заменяет тег</value>
+  </data>
+  <data name="RootElementClass" xml:space="preserve">
+    <value>Класс корневого элемента</value>
+  </data>
+  <data name="Styles" xml:space="preserve">
+    <value>Стили</value>
+  </data>
+  <data name="StyleSettings" xml:space="preserve">
+    <value>Настройки стиля</value>
+  </data>
+  <data name="Tag" xml:space="preserve">
+    <value>Тег</value>
+  </data>
+  <data name="Url" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="UrlPrefixInvalidFormat" xml:space="preserve">
+    <value>Введенный URL невалиден</value>
+  </data>
+  <data name="UrlPrefixMaxLengthExceeded" xml:space="preserve">
+    <value>Длина URL не должна превышать {5} символов</value>
+  </data>
+  <data name="VisualEditorPluginNotFound" xml:space="preserve">
+    <value>Плагин визуального редактора не найден (Id = {0})</value>
+  </data>
+  <data name="VisualEditorStyleNotFound" xml:space="preserve">
+    <value>Стиль визуального редактора не найден (Id = {0})</value>
+  </data>
+  <data name="AddNewCssStyle" xml:space="preserve">
+    <value>Добавить новый CSS-стиль</value>
+  </data>
+  <data name="AddNewHtmlAttribute" xml:space="preserve">
+    <value>Добавить новый HTML-атрибут</value>
+  </data>
+  <data name="HeaderValue" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="Attribute" xml:space="preserve">
+    <value>HTML - атрибута</value>
+  </data>
+  <data name="AttributesMessage" xml:space="preserve">
+    <value>HTML - атрибутов</value>
+  </data>
+  <data name="Style" xml:space="preserve">
+    <value>Стиля</value>
+  </data>
+  <data name="StylesMessage" xml:space="preserve">
+    <value>Стилей</value>
+  </data>
+  <data name="VeStyleAggrListItemNameDuplicate" xml:space="preserve">
+    <value>Имя {0} №{1} должно быть уникально в пределах {2} Стиля Визуального редактора</value>
+  </data>
+  <data name="VeStyleAggrListItemNameInvalidFormat" xml:space="preserve">
+    <value>У {0} №{1} невалидное имя</value>
+  </data>
+  <data name="VeStyleAggrListItemNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени {0} №{1} не должно превышать 255 символов</value>
+  </data>
+  <data name="VeStyleAggrListItemNameRequired" xml:space="preserve">
+    <value>Пожалуйста, введите имя {0} №{1}!</value>
+  </data>
+  <data name="VeStyleAggrListItemValueMaxLengthExceeded" xml:space="preserve">
+    <value>Длина значения {0} №{1} не должно превышать 255 символов</value>
+  </data>
+  <data name="VeStyleAggrListItemValueRequired" xml:space="preserve">
+    <value>Пожалуйста, введите значение {0} №{1}!</value>
+  </data>
+  <data name="SystemWarning" xml:space="preserve">
+    <value>Стиль визуального редактора (Id = {0}) не может быть удален, т.к. он является системным</value>
+  </data>
+  <data name="Formats" xml:space="preserve">
+    <value>Форматы</value>
+  </data>
+</root>

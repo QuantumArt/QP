@@ -1,0 +1,132 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
+using Quantumart.QPublishing.Database;
+
+
+namespace Quantumart.QP8.BLL.Repository
+{
+	class NotificationRepository
+	{
+        internal static Notification UpdateProperties(Notification notification)
+        {
+            return DefaultRepository.Update<Notification, NotificationsDAL>(notification);
+        }
+
+        public void SendNotification(string connectionString, int siteId, string code, int id, bool isLive)
+        {
+			QPConfiguration.SetAppSettings(DBConnector.AppSettings);
+			DBConnector cnn = new DBConnector(connectionString);
+			cnn.CacheData = false;
+			cnn.SendNotification(siteId, code, id, String.Empty, isLive);
+		}
+
+		/// <summary>
+		/// Удалить ссылки на поле
+		/// </summary>
+		/// <param name="fieldId"></param>
+		public void ClearEmailField(int fieldId)
+		{
+			using (var scope = new QPConnectionScope())
+			{
+				Common.ClearEmailField(scope.DbConnection, fieldId);
+			}
+		}
+
+		public IEnumerable<Notification> GetUserNotifications(int userId)
+		{
+			return MappersRepository.NotificationMapper.GetBizList(QPContext.EFContext
+				.NotificationsSet
+				.Where(n => n.ToUser.Id == userId)
+				.ToList()
+			);
+		}
+
+		public IEnumerable<Notification> GetUserGroupNotifications(int groupId)
+		{
+			return MappersRepository.NotificationMapper.GetBizList(QPContext.EFContext
+				.NotificationsSet
+				.Where(n => n.ToUserGroup.Id == groupId)
+				.ToList()
+			);
+		}
+
+		/// <summary>
+		/// Возвращает список по ids
+		/// </summary>
+		/// <returns></returns>
+		internal static IEnumerable<Notification> GetList(IEnumerable<int> IDs)
+		{
+			IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
+			return MappersRepository.NotificationMapper
+				.GetBizList(QPContext.EFContext.NotificationsSet
+					.Where(f => decIDs.Contains(f.Id))
+					.ToList()
+				);
+		}
+
+        internal static IEnumerable<NotificationListItem> List(ListCommand cmd, int contentId, out int totalRecords)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+				IEnumerable<DataRow> rows = Common.GetNotificationsPage(scope.DbConnection, contentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
+                return MappersRepository.NotificationListItemRowMapper.GetBizList(rows.ToList());                     
+            }
+        }
+
+        internal static Notification GetPropertiesById(int id)
+        {
+            return MappersRepository.NotificationMapper.GetBizObject(QPContext.EFContext.NotificationsSet
+                .Include("LastModifiedByUser")
+                .Include("WorkFlow")
+                .Include("FromUser")
+                .Include("ToUser")
+                .Include("ToUserGroup")
+                .SingleOrDefault(g => g.Id == id)
+            );
+        }
+
+        internal static Notification SaveProperties(Notification notification)
+        {
+			DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Notification, notification);
+			var result = DefaultRepository.Save<Notification, NotificationsDAL>(notification);
+			DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Notification);
+			return result;
+        }
+
+		public static void Delete(int id)
+		{
+			DefaultRepository.Delete<NotificationsDAL>(id);
+		}
+
+		public static void MultipleDelete(int[] IDs)
+		{
+			if (IDs.Length > 0)
+				DefaultRepository.Delete<NotificationsDAL>(IDs);
+		}
+
+        internal static void CopySiteUpdateNotifications(string relationsBetweenObjectFormats, string relationsBetweenContents)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.CopySiteUpdateNotifications(scope.DbConnection, relationsBetweenObjectFormats, relationsBetweenContents);
+            }
+        }
+
+        internal static void CopyContentNotifications(string relationsBetweenContentsXml, string relationsBetweenStatusesXml, string relationsBetweenAttributesXml)
+        {
+            using (new QPConnectionScope())
+            {
+                Common.CopyContentNotifications(QPConnectionScope.Current.DbConnection, relationsBetweenContentsXml, relationsBetweenStatusesXml, relationsBetweenAttributesXml);
+            }
+        }
+	}
+}

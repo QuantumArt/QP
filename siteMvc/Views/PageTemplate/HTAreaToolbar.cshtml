@@ -1,0 +1,53 @@
+﻿@model  HTAreaToolbarViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+
+ 
+ <div class="codeMirrorToolbar">
+       
+        <ul class="linkButtons group" style="display: block;">
+
+        @if (Model.PresentationOrCodeBehind == true) {
+            <li>
+                <span class="linkButton actionLink libraryButton">
+                    <a href="javascript:void(0);">
+                        <span class="icon library">
+                            <img src="/backend/Content/Common/0.gif">
+                        </span>
+                        <span class="text">@TemplateStrings.Library</span>
+                    </a>
+                </span>
+            </li>
+        }
+
+        @if (Model.FormatId != null && Model.FormatId != 0) {
+            <li>
+                <span class="linkButton actionLink restoreButton">
+                    <a href="javascript:void(0);">
+                        <span class="icon restore">
+                            <img src="/backend/Content/Common/0.gif">
+                        </span>
+                        <span class="text">@TemplateStrings.SetDefault</span>
+                    </a>
+                </span>
+            </li>
+        }
+
+        @if ( Model.TemplateId != null && Model.TemplateId != 0 && Model.FormatId != 0)
+        {
+            <li>
+                <span class="linkButton actionLink insertButton">
+                    <a href="javascript:void(0);">
+                        <span class="icon insert-call">
+                            <img src="/backend/Content/Common/0.gif">
+                        </span>
+                        <span class="text">@TemplateStrings.InsertCall</span>
+                    </a>
+                </span>
+            </li>
+        }
+        </ul>
+ </div>

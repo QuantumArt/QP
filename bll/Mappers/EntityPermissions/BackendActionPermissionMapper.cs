@@ -1,0 +1,31 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Quantumart.QP8.DAL;
+using AutoMapper;
+
+namespace Quantumart.QP8.BLL.Mappers.EntityPermissions
+{
+	internal class BackendActionPermissionMapper : GenericMapper<EntityPermission, BackendActionPermissionDAL>
+	{
+		public override void CreateBizMapper()
+		{
+			Mapper.CreateMap<BackendActionPermissionDAL, EntityPermission>()
+				.ForMember(biz => biz.Parent, opt => opt.MapFrom(data => MappersRepository.BackendActionMapper.GetBizObject(data.Action)))
+				.ForMember(biz => biz.ParentEntityId, opt => opt.MapFrom(data => data.ActionId));
+		}
+
+		public override void CreateDalMapper()
+		{
+			Mapper.CreateMap<EntityPermission, BackendActionPermissionDAL>()
+				.ForMember(data => data.Action, opt => opt.Ignore())
+				.ForMember(data => data.ActionId, opt => opt.MapFrom(biz => biz.ParentEntityId))
+
+				.ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
+				.ForMember(data => data.Group, opt => opt.Ignore())
+				.ForMember(data => data.PermissionLevel, opt => opt.Ignore())
+				.ForMember(data => data.User, opt => opt.Ignore());
+		}
+	}
+}

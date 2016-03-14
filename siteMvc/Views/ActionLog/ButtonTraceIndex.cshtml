@@ -1,0 +1,28 @@
+﻿@using Quantumart.QP8.WebMvc.ViewModels.Audit;
+@using Quantumart.QP8.BLL;
+
+@model ButtonTraceAreaViewModel
+           
+@using (Html.BeginDocumentPadding())
+{
+    <div id="@Model.MainComponentId" class="alMainContaner">
+    @(Html.Telerik().Grid<ButtonTrace>().Name(Model.GridElementId)
+                .DataKeys(k => k.Add(s => s.ActivatedTime))
+                .Columns(c =>
+                    {
+                        c.Bound(s => s.ButtonName);
+                        c.Bound(s => s.TabName);
+                        c.Bound(s => s.ActivatedTime);
+                        c.Bound(s => s.UserLogin);
+                    }
+                )
+                .DataBinding(db => db.Ajax().Select("_ButtonTrace", "ActionLog"))
+                .EnableCustomBinding(true)
+                .Sortable()
+                .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))
+                .Selectable(s => s.Enabled(false))
+        )
+    </div>
+}
+
+@Html.InitScript(Model)

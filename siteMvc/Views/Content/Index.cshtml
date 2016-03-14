@@ -1,0 +1,57 @@
+﻿@model ContentListViewModel
+
+@using Quantumart.QP8
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Utils
+@using Quantumart.QP8.BLL.ListItems
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+
+@using (Html.BeginDocumentPadding())
+{
+	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+    {
+        using (Html.BeginLinkButtonsList())
+        {
+			@Html.AddNewItemLink(Model)
+        }
+    }
+
+    @(Html.Telerik().Grid<ContentListItem>().Name(Model.MainComponentId)
+        .DataKeys(k => k.Add(s => s.Id))
+        .Columns(c =>
+            {
+                c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                    .Width(30)
+                    .HtmlAttributes(new { @class = "id" });
+                c.Bound(s => s.GroupName).Title(ContentStrings.GroupName);
+                c.Bound(s => s.Name)
+                    .Title(EntityObjectStrings.Name)
+                    .HtmlAttributes(new { @class = "title" });
+
+                if (Model.ActionCode == ActionCode.MultipleSelectContent) c.Bound(s => s.SiteName).Title(ContentStrings.ParentSiteName);
+
+                c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
+                if (Model.IsVirtual) c.Bound(s => s.VirtualType).Title(ContentStrings.VirtualType);
+                c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
+                c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
+                c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
+            })
+        .DataBinding(db => db.Ajax()
+            .Select(Model.GetDataAction, "Content")
+        )
+        .EnableCustomBinding(true)
+        .Sortable()
+        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
+        .Selectable(s => s.Enabled(true))
+        .ClientEvents(e =>
+            e
+                .OnDataBinding("$q.preventDefaultFunction")
+                .OnRowDataBound("$q.preventDefaultFunction")
+        )
+    )
+}
+
+@Html.InitScript(Model)
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

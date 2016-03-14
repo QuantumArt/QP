@@ -1,0 +1,67 @@
+﻿@model ChildEntityPermissionViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+@using (Html.BeginTabForm(Model, Model.SaveActionName, Model.ControllerName, new { tabId = Model.TabId, parentId = Model.ParentEntityId }))
+{
+    <dl>
+        <dd>
+            @Html.QpCheckBoxFor(m => m.Data.CopyParentPermission, "NewParamPanel", true, new Dictionary<string, object> { { "id", Model.UniqueId("CopyParentPermission") } })
+            @Html.Label(Model.UniqueId("CopyParentPermission"), EntityPermissionStrings.CopyParentPermission)
+        </dd>
+    </dl>
+    using (@Html.BeginPanel("NewParamPanel"))
+    {
+        <dl><dd>@Html.QpRadioButtonListFor(s => s.Data.PermissionLevelId, Html.List(Model.GetPermissionLevels()))</dd></dl>
+        if (Model.IsPropagateable)
+        {
+            <dl>
+                <dd>
+                    @Html.QpCheckBoxFor(s => s.Data.PropagateToItems, htmlAttributes: new Dictionary<string, object> { { "id", Model.UniqueId("PropagateToItems") } })
+                    @Html.Label(Model.UniqueId("PropagateToItems"), EntityPermissionStrings.PropagateToItems)
+                </dd>
+            </dl>
+        }
+
+        if (Model.CanHide)
+        {
+            <dl>
+                <dd>
+                    @Html.QpCheckBoxFor(s => s.Data.Hide, htmlAttributes: new Dictionary<string, object> { { "id", Model.UniqueId("Hide") } })
+                    @Html.Label(Model.UniqueId("Hide"), EntityPermissionStrings.Hide)
+                </dd>
+            </dl>
+        }
+
+
+        if (Model.IsContentPermission)
+        {
+            <dl>
+                <dd>
+                    @Html.QpCheckBoxFor(s => s.Data.ExplicitPermissionToRelatedContents, htmlAttributes: new Dictionary<string, object> { { "id", Model.UniqueId("ExplicitPermissionToRelatedContents") } })
+                    @Html.Label(Model.UniqueId("ExplicitPermissionToRelatedContents"), EntityPermissionStrings.ExplicitPermissionToRelatedContents)
+                </dd>
+            </dl>
+        }
+
+    }
+
+    if (Model.Data.UserId.HasValue)
+    {
+        @Html.HiddenFor(m => m.Data.UserId)
+    }
+    if (Model.Data.GroupId.HasValue)
+    {
+        @Html.HiddenFor(m => m.Data.GroupId)
+    }
+
+    foreach (int eid in Model.EntityIDs)
+    {
+        @Html.Hidden("EntityIDs", eid);
+    }
+
+    @Html.HiddenFor(m => m.SaveActionName, !Model.IsPostBack ? new { @class = CssClasses.NoCheckChange } : null);
+}
+@Html.InitScript(Model)

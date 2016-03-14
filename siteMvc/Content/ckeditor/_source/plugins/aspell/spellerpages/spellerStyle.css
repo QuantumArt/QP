@@ -1,0 +1,58 @@
+.blend {
+	font-family: courier new;
+	font-size: 10pt;
+	border: 0;
+	margin-bottom:-1;
+}
+.normalLabel {
+	font-size:8pt;
+}
+.normalText {
+	font-family:arial, helvetica, sans-serif;
+	font-size:10pt;
+	color:000000;
+	background-color:FFFFFF;
+}
+.plainText {
+	font-family: courier new, courier, monospace;
+	font-size: 10pt;
+	color:000000;
+	background-color:FFFFFF;
+}
+.controlWindowBody {
+	font-family:arial, helvetica, sans-serif;
+	font-size:8pt;
+	padding-top: 7px;		/* by FredCK */
+	margin: 0px;		/* by FredCK */
+	color:000000;
+	background-color:DADADA;
+}
+.readonlyInput {
+	background-color:#E3E3C7;	
+	font-size:8pt;
+	width:458px;
+    border: 1px solid #A0A0A0;
+}
+.textDefault {	
+	width: 200px;
+    font: 11px 'Microsoft Sans Serif',Tahoma,Arial,Verdana,Sans-Serif;
+}
+.buttonDefault {
+	width:90px;
+	height:22px;
+	font-size:8pt;
+}
+.suggSlct {
+	width:200px;
+	margin-top:2pt;
+	font-size:8pt;
+}
+
+.aspellbutton {
+    width: 9em!important;
+}
+
+.aspell_label {
+    font: 11px 'Microsoft Sans Serif',Tahoma,Arial,Verdana,Sans-Serif;
+}
+

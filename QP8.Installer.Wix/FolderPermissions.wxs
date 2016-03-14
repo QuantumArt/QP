@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	<Fragment>
+    <DirectoryRef Id="SITESINSTALLFOLDER">
+      <Component Id="cmpSites" Guid="{A9EF515F-8987-45DF-A366-66825A65589F}" KeyPath="yes">
+        <CreateFolder />
+      </Component>
+    </DirectoryRef>
+    <DirectoryRef Id="TEMPINSTALLFOLDER">
+      <Component Id="cmpTemp" Guid="{498F5810-1DFD-4C32-93DF-B65DA44DAD24}" KeyPath="yes">
+        <CreateFolder>
+          <util:PermissionEx
+            GenericWrite='yes'
+            User='IIS AppPool\[QP8_SITE_APP_POOL_NAME]'
+            />
+        </CreateFolder>
+      </Component>
+    </DirectoryRef>
+    <DirectoryRef Id="BACKENDINSTALLFOLDER">
+      <Component Id="cmpBackendPersmissions" Guid="{C09D231A-6A21-4C48-BB38-8F9055D53194}" KeyPath="yes">
+        <CreateFolder>
+          <util:PermissionEx
+            GenericWrite='yes'
+            User='IIS AppPool\[QP8_SITE_APP_POOL_NAME]'
+            />
+        </CreateFolder>
+      </Component>
+    </DirectoryRef>
+    <DirectoryRef Id="WINLOGONINSTALLFOLDER">
+      <Component Id="cmpWinlogonPersmissions" Guid="{A5D71FAD-5AB4-4FF5-9A65-B4E3EE2318E3}" KeyPath="yes">
+        <CreateFolder>
+          <util:PermissionEx
+            GenericWrite='yes'
+            User='IIS AppPool\[QP8_SITE_APP_POOL_NAME]'
+            />
+        </CreateFolder>
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="IISROOTFOLDER">
+      <Component Id="PermissionsIIsRoot"
+                 NeverOverwrite="yes"
+                 Guid="{E22908BC-5CC5-4D51-B861-00EE61D01E6E}">
+        <CreateFolder>
+          <util:PermissionEx
+            GenericWrite='yes'
+            User='IIS AppPool\[QP8_SITE_APP_POOL_NAME]' />
+        </CreateFolder>
+      </Component>
+    </DirectoryRef>
+	</Fragment>
+</Wix>

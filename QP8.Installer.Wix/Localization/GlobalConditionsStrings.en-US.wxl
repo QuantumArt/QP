@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="en-US" Codepage="utf-8" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="NetFramework45RequiredText">This setup requires Microsoft .NET Framework 4.5 package or greater needs to be installed for this installation to continue.</String>
+  <String Id="IIS7xRequiredText">This setup requires IIS 7 or greater to be installed for this installation to continue.</String>
+  <String Id="Lang">1033</String>
+  <String Id="ASPNET4RequiredText">ASP.NET 4.0 is required to proceed with the installation.</String>
+  <String Id="ASPNETMVC4RequiredText">ASP.NET MVC 4.0 is required to proceed with the installation.</String>
+  <String Id="WindowsVersionIncorrectText">Current Windows version is not support.</String>
+</WixLocalization>

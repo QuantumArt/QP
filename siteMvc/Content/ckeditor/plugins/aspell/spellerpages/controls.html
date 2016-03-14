@@ -1,0 +1,160 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="spellerStyle.css" />
+        <link rel="stylesheet" type="text/css" href="../../../skins/qp8/dialog.css"/>        
+		<script type="text/javascript" src="controlWindow.js"></script>
+		<script type="text/javascript">
+var spellerObject;
+var controlWindowObj;
+
+if( parent.opener ) {
+	spellerObject = parent.opener.speller;
+}
+
+function ignore_word() {
+	if( spellerObject ) {
+		spellerObject.ignoreWord();
+	}
+}
+
+function ignore_all() {
+	if( spellerObject ) {
+		spellerObject.ignoreAll();
+	}
+}
+
+function replace_word() {
+	if( spellerObject ) {
+		spellerObject.replaceWord();
+	}
+}
+
+function replace_all() {
+	if( spellerObject ) {
+		spellerObject.replaceAll();
+	}
+}
+
+function end_spell() {
+	if( spellerObject ) {
+		spellerObject.terminateSpell();
+	}
+}
+
+function undo() {
+	if( spellerObject ) {
+		spellerObject.undo();
+	}
+}
+
+function suggText() {
+	if( controlWindowObj ) {
+		controlWindowObj.setSuggestedText();
+	}
+}
+
+function init_spell() {
+	// By FredCK (fckLang attributes have been added to the HTML source of this page)
+	window.parent.parent.OnSpellerControlsLoad(this);
+	
+	var controlForm = document.spellcheck;
+	
+	// create a new controlWindow object
+ 	controlWindowObj = new controlWindow( controlForm );
+	// Let's take this out of the constructor, shall we?
+	controlWindowObj.noSuggestionSelection = window.parent.parent.FCKLang.DlgSpellNoSuggestions; // By ChrisB
+
+	// call the init_spell() function in the parent frameset
+	if( parent.frames.length ) {
+		parent.init_spell( controlWindowObj );
+	} else {
+		alert( 'This page was loaded outside of a frameset. It might not display properly' );
+	}
+}
+
+</script>
+	</head>
+	<body onLoad="init_spell();" style="OVERFLOW: hidden" scroll="no">	<!-- by FredCK -->
+		<form name="spellcheck" class="cke_skin_qp8">
+			<table border="0" cellpadding="0" cellspacing="0" border="0" align="center">
+				<tr>
+					<td colspan="3"><label class="aspell_label"><span fckLang="DlgSpellNotInDic">Not in dictionary:</span></label></td>
+				</tr>
+				<tr>
+					<td colspan="3"><input class="readonlyInput" type="text" name="misword" readonly /></td>
+				</tr>
+				<tr>
+					<td colspan="3" height="5"></td>
+				</tr>
+				<tr>
+					<td><label class="aspell_label"><span fckLang="DlgSpellChangeTo">Change to:</span></label></td>
+				</tr>
+				<tr valign="top">
+					<td>
+						<table border="0" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td class="normalLabel">
+									<input class="textDefault" type="text" name="txtsugg" />
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<select class="suggSlct" name="sugg" size="7" onChange="suggText();" onDblClick="replace_word();">
+										<option></option>
+									</select>
+								</td>
+							</tr>
+						</table>
+					</td>
+					<td>&nbsp;&nbsp;</td>
+					<td>
+						<table border="0" cellpadding="0" cellspacing="0" border="0">
+							<tr>
+								<td class="cke_dialog_ui_vbox_child">                                
+                                <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+									<span class="cke_dialog_ui_button aspellbutton" fckLang="DlgSpellBtnIgnore" onClick="ignore_word();">Ignore</span>
+                                </a>
+								</td>
+								<td>&nbsp;&nbsp;</td>
+								<td>
+                                <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+									<span class="cke_dialog_ui_button aspellbutton" fckLang="DlgSpellBtnIgnoreAll" onClick="ignore_all();">Ignore All</span>
+                                </a>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3" height="5"></td>
+							</tr>
+							<tr>
+								<td>
+                                    <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+									    <span class="cke_dialog_ui_button aspellbutton" fckLang="DlgSpellBtnReplace" onClick="replace_word();">Replace</span>
+                                    </a>
+								</td>
+								<td>&nbsp;&nbsp;</td>
+								<td>
+                                    <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+									    <span class="cke_dialog_ui_button aspellbutton" fckLang="DlgSpellBtnReplaceAll" onClick="replace_all();">Replace All</span>
+                                    </a>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="3" height="5"></td>
+							</tr>
+							<tr>
+								<td class="cke_dialog_ui_vbox_child">
+                                    <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+									    <span class="cke_dialog_ui_button aspellbutton" name="btnUndo" fckLang="DlgSpellBtnUndo" disabled="disabled" onClick="undo();">Undo</span>
+                                    </a>
+								</td>
+								<td>&nbsp;&nbsp;</td>
+								<td>									
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</body>
+</html>

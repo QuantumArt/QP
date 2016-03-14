@@ -1,0 +1,117 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.md]
+indent_size = 4
+indent_style = space
+trim_trailing_whitespace = false
+
+[*.cs]
+indent_size = 4
+indent_style = space
+
+
+
+
+[*.json]
+indent_size = 2
+indent_style = space
+
+[*.yml]
+indent_size = 2
+indent_style = space
+
+[*.yaml]
+indent_size = 2
+indent_style = space
+
+[*.js]
+indent_size = 2
+indent_style = space
+
+[*.coffee]
+indent_size = 2
+indent_style = space
+
+[*.css]
+indent_size = 2
+indent_style = space
+
+[*.html]
+indent_size = 2
+indent_style = space
+
+[*.cshtml]
+indent_size = 2
+indent_style = space
+
+[*.aspx]
+indent_size = 2
+indent_style = space
+
+[*.ascx]
+indent_size = 2
+indent_style = space
+
+[*.ashx]
+indent_size = 2
+indent_style = space
+
+[*.Master]
+indent_size = 2
+indent_style = space
+
+
+
+
+[*.kproj]
+indent_size = 2
+indent_style = space
+
+[*.csproj]
+indent_size = 2
+indent_style = space
+
+[*.ps1]
+indent_size = 2
+indent_style = space
+
+[*.resx]
+indent_size = 2
+indent_style = space
+
+[*.rst]
+indent_size = 2
+indent_style = space
+
+
+
+
+[*.sln]
+indent_size = 2
+indent_style = tab
+
+[*.proj]
+indent_size = 2
+indent_style = tab
+
+[*.props]
+indent_size = 2
+indent_style = tab
+
+[*.targets]
+indent_size = 2
+indent_style = tab
+
+
+
+
+[*.min.*]
+indent_style = ignore
+trim_trailing_whitespace = false
+insert_final_newline = ignore

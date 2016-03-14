@@ -1,0 +1,1 @@
+﻿<%@ ServiceHost Language="C#" Debug="true" Service="Quantumart.QP8.WebMvc.WebServices.NotificationWCFService" CodeBehind="NotificationWCFService.svc.cs" %>

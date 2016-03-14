@@ -1,0 +1,19 @@
+﻿<#@ template language="C#" #>
+<#@ import namespace="System.Diagnostics" #>
+<#@ parameter name="LogEntry" type="Microsoft.Practices.EnterpriseLibrary.Logging.LogEntry" #>
+<#@ parameter name="TraceOptions" type="System.Diagnostics.TraceOptions" #>
+<#= LogEntry.Message #>
+<#
+WriteOption("    DateTime", DateTime.Now, TraceOptions.DateTime);
+WriteOption("    TimeStamp", LogEntry.TimeStampString, TraceOptions.Timestamp);
+WriteOption("    ProcessId", LogEntry.ProcessId, TraceOptions.ProcessId);
+WriteOption("    ThreadId", LogEntry.Win32ThreadId, TraceOptions.ThreadId);
+#><#+
+private void WriteOption(string description, object value, TraceOptions option)
+{
+	if (TraceOptions.HasFlag(option))
+	{
+		WriteLine("{0}: {1}", description, value);
+	}
+}
+#>

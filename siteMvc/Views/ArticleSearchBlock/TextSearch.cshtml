@@ -1,0 +1,35 @@
+﻿@using Quantumart.QP8.Resources
+
+<dl class="row">
+    <dt class="label">
+        @Html.QpLabel((string)ViewBag.TextBoxElementID, ArticleStrings.SearchBlock_Text, true)
+    </dt>
+    <dd class="field">
+        @Html.QpTextBox((string)ViewBag.TextBoxElementID, "",
+        new Dictionary<string, object>
+        {
+            { "class", "textbox"}
+        })
+    </dd>
+</dl>
+
+
+ <dl class="row">
+     <dt class="label"></dt>
+     <dd class="field">
+         <span class="checkbox">
+             @Html.QpCheckBox((string)ViewBag.IsNullCheckBoxElementID, null, false, new Dictionary<string, object>())
+             @Html.QpLabel((string)ViewBag.IsNullCheckBoxElementID, ArticleStrings.SearchBlock_IsNullCheckBoxLabelText, false)
+         </span>
+     </dd>
+ </dl>
+
+ <dl class="row">
+     <dt class="label"></dt>
+     <dd class="field">
+         <span class="checkbox">
+             @Html.QpCheckBox((string)ViewBag.InverseCheckBoxElementID, null, false, new Dictionary<string, object>())
+             @Html.QpLabel((string)ViewBag.InverseCheckBoxElementID, ArticleStrings.SearchBlock_InverseCheckBoxLabelText, false)
+         </span>
+     </dd>
+ </dl>

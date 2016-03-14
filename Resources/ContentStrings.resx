@@ -1,0 +1,501 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddContextClassNameInvalidFormat" xml:space="preserve">
+    <value>Invalid additional context class name</value>
+  </data>
+  <data name="AddContextClassNameLengthExceeded" xml:space="preserve">
+    <value>The length of additional context class name should not exceed {5} characters</value>
+  </data>
+  <data name="AddContextClassNameNonUnique" xml:space="preserve">
+    <value>Additional context class name is already in using in the site</value>
+  </data>
+  <data name="AddContextClassNameNonUniqueDB" xml:space="preserve">
+    <value>Additional context class name is already in using in the database</value>
+  </data>
+  <data name="AdditionalContextClassName" xml:space="preserve">
+    <value>Additional context class name</value>
+  </data>
+  <data name="AllContentGroups" xml:space="preserve">
+    <value>All Groups</value>
+  </data>
+  <data name="ArchiveOnRemoval" xml:space="preserve">
+    <value>Archive on Removal</value>
+  </data>
+  <data name="ArticlesNumberPerPage" xml:space="preserve">
+    <value>Number of Articles Per Page</value>
+  </data>
+  <data name="ArticlesNumberPerPageNotInRange" xml:space="preserve">
+    <value>Number of Articles Per Page is not in acceptable range: from {0} to {1}</value>
+  </data>
+  <data name="CannotAddBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot add content into the site because you have no enough permissions</value>
+  </data>
+  <data name="CannotAddGroupBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot add content group into the site because you have no enough permissions</value>
+  </data>
+  <data name="CannotCopyBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot copy content because you have no enough permissions</value>
+  </data>
+  <data name="CannotRemoveBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot remove content because you have no enough permissions</value>
+  </data>
+  <data name="CannotUpdateBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot update content because you have no enough permissions</value>
+  </data>
+  <data name="CannotUpdateDefaultGroup" xml:space="preserve">
+    <value>Cannot update default group</value>
+  </data>
+  <data name="CannotUpdateGroupBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot update content group because you have no enough permissions</value>
+  </data>
+  <data name="ContentNotFound" xml:space="preserve">
+    <value>Content not found (Id = {0})</value>
+  </data>
+  <data name="CreateVersions" xml:space="preserve">
+    <value>Create Versions</value>
+  </data>
+  <data name="CurrentContent" xml:space="preserve">
+    <value>Current Content</value>
+  </data>
+  <data name="DefaultContentGroup" xml:space="preserve">
+    <value>Default Group</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
+    <value>The length of description should not exceed {5} characters</value>
+  </data>
+  <data name="EnableArticlesPermissions" xml:space="preserve">
+    <value>Enable articles permissions</value>
+  </data>
+  <data name="EnableSiteSharing" xml:space="preserve">
+    <value>Enable Site Sharing</value>
+  </data>
+  <data name="FriendlyPluralMaxLengthExceeded" xml:space="preserve">
+    <value>The length of plural friendly name should not exceed {5} characters</value>
+  </data>
+  <data name="FriendlySingularMaxLengthExceeded" xml:space="preserve">
+    <value>The length of singular friendly name should not exceed {5} characters</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Group Name</value>
+  </data>
+  <data name="GroupNameInvalidFormat" xml:space="preserve">
+    <value>Invalid content group name</value>
+  </data>
+  <data name="GroupNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of content group name should not exceed {5} characters</value>
+  </data>
+  <data name="GroupNameNonUnique" xml:space="preserve">
+    <value>Content group name is already in using on the site</value>
+  </data>
+  <data name="GroupNameNotEntered" xml:space="preserve">
+    <value>Please enter content group name</value>
+  </data>
+  <data name="GroupNotFound" xml:space="preserve">
+    <value>Content group not found (Id = {0})</value>
+  </data>
+  <data name="IsAltUserQueryUsed" xml:space="preserve">
+    <value>Use separate query for United View</value>
+  </data>
+  <data name="JoinFields" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="JoinFieldsNotEntered" xml:space="preserve">
+    <value>Please check Fields</value>
+  </data>
+  <data name="JoinRoot" xml:space="preserve">
+    <value>Source content</value>
+  </data>
+  <data name="Legend_BasicParameters" xml:space="preserve">
+    <value>Basic Parameters</value>
+  </data>
+  <data name="Legend_FriendlyName" xml:space="preserve">
+    <value>Friendly Name</value>
+  </data>
+  <data name="Legend_LinqParameters" xml:space="preserve">
+    <value>LINQ Mapping Parameters</value>
+  </data>
+  <data name="Legend_VersionControl" xml:space="preserve">
+    <value>Version Control</value>
+  </data>
+  <data name="Legend_VirtualContentParameters" xml:space="preserve">
+    <value>Virtual Content Parameters</value>
+  </data>
+  <data name="Legend_Workflow" xml:space="preserve">
+    <value>Workflow</value>
+  </data>
+  <data name="Link_AddNewContent" xml:space="preserve">
+    <value>Add New Content</value>
+  </data>
+  <data name="Link_AddNewField" xml:space="preserve">
+    <value>Add New Field</value>
+  </data>
+  <data name="MapAsClass" xml:space="preserve">
+    <value>Map as class</value>
+  </data>
+  <data name="MaximumNumberOfStoredVersions" xml:space="preserve">
+    <value>Maximum Number of Stored Versions</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Content name</value>
+  </data>
+  <data name="NameInvalidFormat" xml:space="preserve">
+    <value>Invalid content name</value>
+  </data>
+  <data name="NameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of content name should not exceed {5} characters</value>
+  </data>
+  <data name="NameNonUnique" xml:space="preserve">
+    <value>Content name is already in using on the site</value>
+  </data>
+  <data name="NameNonUniqueDB" xml:space="preserve">
+    <value>Content name is already in using in the database</value>
+  </data>
+  <data name="NameNotEntered" xml:space="preserve">
+    <value>Please enter content name</value>
+  </data>
+  <data name="NamePlural" xml:space="preserve">
+    <value>Name (plural)</value>
+  </data>
+  <data name="NamePluralInvalidFormat" xml:space="preserve">
+    <value>Invalid plural LINQ name</value>
+  </data>
+  <data name="NamePluralMaxLengthExceeded" xml:space="preserve">
+    <value>The length of plural LINQ name should not exceed {5} characters</value>
+  </data>
+  <data name="NamePluralNonUnique" xml:space="preserve">
+    <value>Plural LINQ name is already in using on the site</value>
+  </data>
+  <data name="NamePluralNonUniqueDB" xml:space="preserve">
+    <value>Plural LINQ name is already in using in the database</value>
+  </data>
+  <data name="NamePluralNotEntered" xml:space="preserve">
+    <value>Please enter plural LINQ name</value>
+  </data>
+  <data name="NameSingular" xml:space="preserve">
+    <value>Name (singular)</value>
+  </data>
+  <data name="NameSingularInvalidFormat" xml:space="preserve">
+    <value>Invalid singular LINQ name</value>
+  </data>
+  <data name="NameSingularMaxLengthExceeded" xml:space="preserve">
+    <value>The length of singular LINQ name should not exceed {5} characters</value>
+  </data>
+  <data name="NameSingularNonUnique" xml:space="preserve">
+    <value>Singular LINQ name name is already in using on the site</value>
+  </data>
+  <data name="NameSingularNonUniqueDB" xml:space="preserve">
+    <value>Singular LINQ name name is already in using in the database</value>
+  </data>
+  <data name="NameSingularNotEntered" xml:space="preserve">
+    <value>Please enter singular LINQ name</value>
+  </data>
+  <data name="NoWorkflow" xml:space="preserve">
+    <value>No workflow</value>
+  </data>
+  <data name="Plural" xml:space="preserve">
+    <value>Plural</value>
+  </data>
+  <data name="RelatedContentsExist" xml:space="preserve">
+    <value>Content could not be removed because there are following related contents: {0}</value>
+  </data>
+  <data name="SelectContent" xml:space="preserve">
+    <value>Select content</value>
+  </data>
+  <data name="SelectContentGroup" xml:space="preserve">
+    <value>Select Content Groups</value>
+  </data>
+  <data name="Singular" xml:space="preserve">
+    <value>Singular</value>
+  </data>
+  <data name="SourceContentNotEntered" xml:space="preserve">
+    <value>Please enter Source content</value>
+  </data>
+  <data name="SplitArticles" xml:space="preserve">
+    <value>Split Articles</value>
+  </data>
+  <data name="ToRebuild" xml:space="preserve">
+    <value>Rebuild virtual content</value>
+  </data>
+  <data name="UnionBaseContentNotEntered" xml:space="preserve">
+    <value>Please select Source contents</value>
+  </data>
+  <data name="UnionSourceContents" xml:space="preserve">
+    <value>Source contents</value>
+  </data>
+  <data name="UseDefaultFiltration" xml:space="preserve">
+    <value>Use default filtration</value>
+  </data>
+  <data name="UserQuery" xml:space="preserve">
+    <value>Query</value>
+  </data>
+  <data name="UserQueryAlternative" xml:space="preserve">
+    <value>Query for United View</value>
+  </data>
+  <data name="UserQueryAltIsInvalid" xml:space="preserve">
+    <value>Query for United View is invalid: {0}</value>
+  </data>
+  <data name="UserQueryIsInvalid" xml:space="preserve">
+    <value>Query is invalid: {0}</value>
+  </data>
+  <data name="UserQueryNotEntered" xml:space="preserve">
+    <value>Please enter Query</value>
+  </data>
+  <data name="VirtualSubContentsExist" xml:space="preserve">
+    <value>Content could not be removed because there are following inherited virtual contents: {0}</value>
+  </data>
+  <data name="VirtualType" xml:space="preserve">
+    <value>Virtual Type</value>
+  </data>
+  <data name="VirtualTypeCantBeChanged" xml:space="preserve">
+    <value>Virtual Type cannot be changed, because there are some contents which were built on the current content</value>
+  </data>
+  <data name="Workflow" xml:space="preserve">
+    <value>Workflow</value>
+  </data>
+  <data name="NotAllMandatoryColumnsInUserQuery" xml:space="preserve">
+    <value>There are not all mandatory columns in query. {0} are expected.</value>
+  </data>
+  <data name="UserQueryAndAltColumnsMismatch" xml:space="preserve">
+    <value>Column sets and/or column types of Query and Query for United View are mismatched</value>
+  </data>
+  <data name="InvalidColumnsInUserQuery" xml:space="preserve">
+    <value>There are invalid type columns: {0}</value>
+  </data>
+  <data name="UserQueryColumnTypeChanged" xml:space="preserve">
+    <value>The type of column [{0}] from the table [{1}] is casted from {2} to {3}</value>
+  </data>
+  <data name="UserQuerySameNameColumsHaveDiffTypes" xml:space="preserve">
+    <value>The types of column [{0}] in the next tables {1} are mismatched</value>
+  </data>
+  <data name="ErrorInSubContent" xml:space="preserve">
+    <value>Error in the following inherited virtual contents: {0}. Error: {1}</value>
+  </data>
+  <data name="CyclesInContentTree" xml:space="preserve">
+    <value>Cycle in the content graph has been found</value>
+  </data>
+  <data name="SelectSite" xml:space="preserve">
+    <value>Select Site</value>
+  </data>
+  <data name="AllSites" xml:space="preserve">
+    <value>All Sites</value>
+  </data>
+  <data name="ParentSiteName" xml:space="preserve">
+    <value>Site</value>
+  </data>
+  <data name="VirualSubContentProcessingError" xml:space="preserve">
+    <value>Error while processing inheritance virtual content ({0}) "{1}": {2}</value>
+  </data>
+  <data name="ClearContentStageName" xml:space="preserve">
+    <value>Clear content "{0}"</value>
+  </data>
+  <data name="RemoveContentStageName" xml:space="preserve">
+    <value>Removing content "{0}"</value>
+  </data>
+  <data name="ContentsAreSharedRelated" xml:space="preserve">
+    <value>Following contents could not be removed because there are related contents in other sites: {0}</value>
+  </data>
+  <data name="ContentsAreSharedUnionBase" xml:space="preserve">
+    <value>Following contents could not be removed because there are inherited virtual contents in other sites: {0}</value>
+  </data>
+  <data name="ArticlePermissionsComplete" xml:space="preserve">
+    <value>Content Article Permissions has been enabled.</value>
+  </data>
+  <data name="RebuildVirtualContentViewsStageName" xml:space="preserve">
+    <value>Refreshing views</value>
+  </data>
+  <data name="RebuildUserQueryStageName" xml:space="preserve">
+    <value>Updating USER QUERY structure</value>
+  </data>
+  <data name="ContentIsAggregated" xml:space="preserve">
+    <value>Content could not be removed because content contains articles and the following aggregated fields: {0}</value>
+  </data>
+  <data name="CannotChangeAutoArchive" xml:space="preserve">
+    <value>"Auto Archive" could not be changed because there are aggregated fields in the current content</value>
+  </data>
+  <data name="CannotChangeIsAsync" xml:space="preserve">
+    <value>"Is Async" could not be changed because there are aggregated fields in the current content</value>
+  </data>
+  <data name="CannotChangeWorkflow" xml:space="preserve">
+    <value>Workflow could not be changed because there are aggregated fields in the current content</value>
+  </data>
+  <data name="OperationIsNotAllowedForAggregated" xml:space="preserve">
+    <value>Operation is not allowed for aggregated content.</value>
+  </data>
+  <data name="OperationIsNotAllowedForAggregateds" xml:space="preserve">
+    <value>Operation is not allowed for aggregated contents "{0}".</value>
+  </data>
+  <data name="OperationIsNotAllowedForRoot" xml:space="preserve">
+    <value>Operation is not allowed for root content.</value>
+  </data>
+  <data name="CreateDefaultXAMLValidation" xml:space="preserve">
+    <value>Create Default XAML Validation</value>
+  </data>
+  <data name="DisableXamlValidation" xml:space="preserve">
+    <value>Disable XAML Validation</value>
+  </data>
+  <data name="XamlValidation" xml:space="preserve">
+    <value>XAML Validation</value>
+  </data>
+  <data name="Legend_CustomValidation" xml:space="preserve">
+    <value>Custom Validation</value>
+  </data>
+  <data name="DisableChangingActions" xml:space="preserve">
+    <value>Disable Changing Actions</value>
+  </data>
+  <data name="ArticleChangingIsProhibited" xml:space="preserve">
+    <value>Changing\Creation actions of this content arcticles is prohibited.</value>
+  </data>
+  <data name="ContentChangingIsProhibited" xml:space="preserve">
+    <value>Content changing actions are disabled</value>
+  </data>
+  <data name="ExportArticles" xml:space="preserve">
+    <value>Export Articles</value>
+  </data>
+  <data name="ImportArticles" xml:space="preserve">
+    <value>Import articles</value>
+  </data>
+  <data name="Hierarchy" xml:space="preserve">
+    <value>Hierarchy</value>
+  </data>
+  <data name="ParentContent" xml:space="preserve">
+    <value>Parent Content</value>
+  </data>
+  <data name="SelectParentContent" xml:space="preserve">
+    <value>Not selected</value>
+  </data>
+  <data name="UseForContext" xml:space="preserve">
+    <value>Use for context switching</value>
+  </data>
+  <data name="ErrorsOnCopyingVirtualContents" xml:space="preserve">
+    <value>Errors on copying next virtual contents:</value>
+  </data>
+  <data name="Legend_ClientScripts" xml:space="preserve">
+    <value>Client scripts</value>
+  </data>
+  <data name="FormScript" xml:space="preserve">
+    <value>Script for form</value>
+  </data>
+</root>

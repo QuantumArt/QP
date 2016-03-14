@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+  xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Feature
+    Id="BackendFeature"
+    Title="!(loc.BackendFeatureTitle)"
+    Level="1"
+    ConfigurableDirectory="BACKENDINSTALLFOLDER">
+    <ComponentGroupRef
+      Id="BackendProductComponents" />
+    <ComponentRef Id="InstallQP8RegistrySettings"></ComponentRef>
+    <ComponentRef Id="UnistallQP8RegistrySettings"></ComponentRef>
+    <ComponentRef Id="cmpSites"/>
+    <ComponentRef Id="cmpTemp"/>
+    <ComponentRef Id="cmpBackendPersmissions"/>
+    <ComponentRef Id="QP8SiteIisSettings"/>
+    <ComponentRef Id="PermissionsIIsRoot"/>
+    <ComponentRef Id="SiteRegistrySettings"/>
+    <ComponentRef Id="QPublishingConfigurationXmlRegistrySettings"/>
+    <ComponentRef Id="QPublishingConfigurationXmlFirstInstallAndUpdateRegistrySettings"/>
+    <ComponentGroupRef Id="QpConfigurationXmlFileComponents"/>
+    <ComponentRef Id="cmpQpTempFile"/>
+    <ComponentRef Id="WebModeConfigurationSettings"/>
+    <Feature
+      Id="WinlogonFeature"
+      Title="!(loc.WinlogonFeatureTitle)"
+      Level="1"
+      ConfigurableDirectory="WINLOGONINSTALLFOLDER"
+      Absent="disallow"
+      AllowAdvertise="no">
+      <ComponentGroupRef
+        Id="WinlogonProductComponents" />
+      <ComponentRef Id="cmpWinlogonPersmissions"/>
+    </Feature>
+  </Feature>
+  <Feature
+    Id="ArticleSchedulerFeature"
+    Title="!(loc.ArticleSchedulerFeatureTitle)"
+    Level="1"
+    ConfigurableDirectory="ARTICLESCHEDULERINSTALLFOLDER">
+    <ComponentGroupRef
+      Id="ArticleSchedulerProductComponents" />
+    <ComponentRef
+        Id="ArticleSchedulerServiceInstaller" />
+  </Feature>
+  <Feature
+    Id="DatabaseFeature"
+    Title="!(loc.DatabaseFeatureTitle)"
+    Level="1"
+    ConfigurableDirectory="DATABASEINSTALLFOLDER">
+    <ComponentGroupRef Id="DbProductComponents"/>
+    <ComponentRef Id="DatabasebModeDbSettings"/>
+  </Feature>
+  <Feature
+    Id="DemoSiteFeature"
+    Title="!(loc.DemoSiteFeatureTitle)"
+    Level="1"
+    ConfigurableDirectory="DEMOSITEINSTALLFOLDER">
+    <ComponentGroupRef
+        Id="DemoSiteProductComponents" />
+    <ComponentRef Id="QP8DemoSiteIisSettings"/>
+    <ComponentRef Id="DemoSiteRegistrySettings"/>
+    <ComponentRef Id="DemoSiteSettings"/>
+  </Feature>
+</Include>

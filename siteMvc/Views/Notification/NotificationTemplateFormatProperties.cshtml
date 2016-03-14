@@ -1,0 +1,28 @@
+﻿@model Quantumart.QP8.WebMvc.ViewModels.Notification.NotificationTemplateFormatViewModel
+
+@using Quantumart.QP8.Resources
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+		@Html.TextAreaFieldFor(s => s.Data.CodeBehind, htmlAttributes: new Dictionary<string, object> { 
+        { "class", "textbox codeBehind highlightedTextarea " + HighlightModeSelectHelper.SelectMode(Model.Data.NetLanguageId) },        
+        {"data-format_id", Model.Data.Id},
+        {"data-is_presentation", false},
+        {"data-template_id", Model.TemplateId},
+        {"data-net_language", Model.Data.NetLanguageId},
+        {"data-site_id", Model.SiteId}        
+    })
+		
+      @Html.TextAreaFieldFor(s => s.Data.FormatBody, htmlAttributes: new Dictionary<string, object> { 
+        { "class", "textbox codeBehind hta-htmlTextArea highlightedTextarea" },        
+        {"data-format_id", Model.Data.Id},
+        {"data-is_presentation", true},
+        {"data-template_id", Model.TemplateId},
+        {"data-net_language", Model.Data.NetLanguageId},
+        {"data-site_id", Model.SiteId}})
+	}
+}
+
+@Html.InitScript(Model)

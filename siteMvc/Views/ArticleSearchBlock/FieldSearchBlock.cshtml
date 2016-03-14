@@ -1,0 +1,49 @@
+﻿@using Quantumart.QP8.Resources
+
+<fieldset>
+	<legend>@ArticleStrings.SearchBlock_FieldSearchBlockTitle</legend>
+	<div class="fieldSearchSelector group" id="@((string)ViewBag.FieldSearchSelectorElementID)">
+		<div class="fieldList">
+			<select id="@ViewBag.FieldsComboID" class="dropDownList">
+				<option value="">@ArticleStrings.SearchBlock_SelectFieldToFilter</option>
+                @{var groups = (IEnumerable<IGrouping<string, Quantumart.QP8.BLL.ArticleSearchableField>>)ViewBag.SearchableFieldList;}
+				@foreach (var g in groups)
+				{
+                    if (g.Key == null || groups.Count() <= 1)
+                    {
+                            foreach(var f in g)
+                            {
+                                 <option
+                                    value="@f.ID"
+                                    data-search_type="@((int)f.ArticleFieldSearchType)"
+                                    data-field_id="@f.ID"
+                                    data-content_id="@f.ContentId"
+                                    data-reference_field_id="@f.ReferenceFieldId"
+                                    data-field_column="@f.ColumnName"
+                                    data-field_group="@f.GroupName">@f.Name</option>
+                            }
+                    }
+                    else
+                    {
+                        <optgroup label="@g.Key">
+                            @foreach(var f in g)
+				{
+                                <option
+                                    value="@f.ID"
+                                    data-search_type="@((int)f.ArticleFieldSearchType)"
+                                    data-field_id="@f.ID"
+                                    data-content_id="@f.ContentId"
+                                    data-reference_field_id="@f.ReferenceFieldId"
+                                    data-field_column="@f.ColumnName"
+                                    data-field_group="@f.GroupName">@f.Name</option>
+                            }
+                        </optgroup>
+                    }					
+				}
+			</select>
+		</div>
+	</div>
+
+	<div class="fieldSearchList" id="@((string)ViewBag.FieldSearchListElementID)">
+	</div>
+</fieldset>

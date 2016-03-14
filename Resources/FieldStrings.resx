@@ -1,0 +1,741 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DefaultValue" xml:space="preserve">
+    <value>Default Value</value>
+  </data>
+  <data name="DisableVersionControl" xml:space="preserve">
+    <value>Disable Version Control</value>
+  </data>
+  <data name="FieldNotFound" xml:space="preserve">
+    <value>Field not found (Id = {0})</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Field Type</value>
+  </data>
+  <data name="FriendlyName" xml:space="preserve">
+    <value>Friendly Name</value>
+  </data>
+  <data name="Indexed" xml:space="preserve">
+    <value>Indexed</value>
+  </data>
+  <data name="IsUnique" xml:space="preserve">
+    <value>Unique</value>
+  </data>
+  <data name="LinqBackPropertyName" xml:space="preserve">
+    <value>LINQ Back Property Name</value>
+  </data>
+  <data name="LinqParamsGroup" xml:space="preserve">
+    <value>LINQ Mapping Parameters</value>
+  </data>
+  <data name="LinqPropertyName" xml:space="preserve">
+    <value>LINQ Property Name</value>
+  </data>
+  <data name="M2MRelation" xml:space="preserve">
+    <value>Many-to-Many Relation</value>
+  </data>
+  <data name="MapAsProperty" xml:space="preserve">
+    <value>Map as LINQ Property</value>
+  </data>
+  <data name="MapLinkAsClass" xml:space="preserve">
+    <value>Map Junction Table as Class</value>
+  </data>
+  <data name="NetLinkName" xml:space="preserve">
+    <value>LINQ Junction Class Name (singular)</value>
+  </data>
+  <data name="NetPluralLinkName" xml:space="preserve">
+    <value>LINQ Junction Class Name (plural)</value>
+  </data>
+  <data name="O2MRelation" xml:space="preserve">
+    <value>One-to-Many Relation</value>
+  </data>
+  <data name="OnScreen" xml:space="preserve">
+    <value>Enable OnScreen</value>
+  </data>
+  <data name="ReadOnly" xml:space="preserve">
+    <value>Read-only</value>
+  </data>
+  <data name="RelatedFieldIsNotFound" xml:space="preserve">
+    <value>Related field (Id = {1}) for field (Id = {0}) is not found</value>
+  </data>
+  <data name="RelateTo" xml:space="preserve">
+    <value>Relate To</value>
+  </data>
+  <data name="RelationCondition" xml:space="preserve">
+    <value>Relation Condition</value>
+  </data>
+  <data name="RelationFieldIsNull" xml:space="preserve">
+    <value>The related field is not set in the One-to-Many relation field (Id = {0})</value>
+  </data>
+  <data name="RelationId" xml:space="preserve">
+    <value>Display Field</value>
+  </data>
+  <data name="RenameMatched" xml:space="preserve">
+    <value>Rename Matched Files</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="SubFolder" xml:space="preserve">
+    <value>File Subfolder</value>
+  </data>
+  <data name="TypeSpecificParamsGroup" xml:space="preserve">
+    <value>Type-specific parameters</value>
+  </data>
+  <data name="UniqueInCombinationWith" xml:space="preserve">
+    <value>In combination with</value>
+  </data>
+  <data name="UseRelationCondition" xml:space="preserve">
+    <value>Use Relation Condition</value>
+  </data>
+  <data name="UseSiteLibrary" xml:space="preserve">
+    <value>Use Site Library</value>
+  </data>
+  <data name="ViewInList" xml:space="preserve">
+    <value>View in List</value>
+  </data>
+  <data name="BasicInputMask" xml:space="preserve">
+    <value>Basic</value>
+  </data>
+  <data name="CustomInputMask" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="DocType" xml:space="preserve">
+    <value>DocType</value>
+  </data>
+  <data name="FullPage" xml:space="preserve">
+    <value>Enable full HTML pages</value>
+  </data>
+  <data name="InputMask" xml:space="preserve">
+    <value>Input Mask</value>
+  </data>
+  <data name="InputMaskType" xml:space="preserve">
+    <value>Input Mask Type</value>
+  </data>
+  <data name="DecimalPlaces" xml:space="preserve">
+    <value>Decimal Places</value>
+  </data>
+  <data name="PEnterMode" xml:space="preserve">
+    <value>Insert P tag while pressing Enter</value>
+  </data>
+  <data name="StringSize" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="TextBoxRows" xml:space="preserve">
+    <value>Rows</value>
+  </data>
+  <data name="UseInputMask" xml:space="preserve">
+    <value>Use Input Mask</value>
+  </data>
+  <data name="VisualEditorHeight" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="BaseImage" xml:space="preserve">
+    <value>Based On</value>
+  </data>
+  <data name="DynamicImageHeigth" xml:space="preserve">
+    <value>Height</value>
+  </data>
+  <data name="DynamicImageMode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="DynamicImageModeHeight" xml:space="preserve">
+    <value>Limit Height</value>
+  </data>
+  <data name="DynamicImageModeSize" xml:space="preserve">
+    <value>Limit Size</value>
+  </data>
+  <data name="DynamicImageModeWidth" xml:space="preserve">
+    <value>Limit Width</value>
+  </data>
+  <data name="DynamicImageQuality" xml:space="preserve">
+    <value>Quality (%)</value>
+  </data>
+  <data name="DynamicImageType" xml:space="preserve">
+    <value>Output File Type</value>
+  </data>
+  <data name="DynamicImageWidth" xml:space="preserve">
+    <value>Width</value>
+  </data>
+  <data name="IsInteger" xml:space="preserve">
+    <value>Integer</value>
+  </data>
+  <data name="SelectField" xml:space="preserve">
+    <value>Select field</value>
+  </data>
+  <data name="BackwardFieldName" xml:space="preserve">
+    <value>Backward field name</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Place</value>
+  </data>
+  <data name="OrderOptionAfterAll" xml:space="preserve">
+    <value>After Existing Fields</value>
+  </data>
+  <data name="OrderOptionTemplate" xml:space="preserve">
+    <value>Before {0}</value>
+  </data>
+  <data name="DefaultAndUniqueBothAreSet" xml:space="preserve">
+    <value>Field can not be Unique and has Default Value at the same time</value>
+  </data>
+  <data name="FriendlyNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of field friendly name should not exceed {5} characters</value>
+  </data>
+  <data name="ReadOnlyAndRequiredBothAreTrue" xml:space="preserve">
+    <value>Field can not be Read-only and Required at the same time</value>
+  </data>
+  <data name="BackwardFieldNameAndNameAreEqual" xml:space="preserve">
+    <value>Field Name and  Backward Field Name have to be different</value>
+  </data>
+  <data name="BackwardFieldNameInvalidFormat" xml:space="preserve">
+    <value>Invalid Backward Field Name format</value>
+  </data>
+  <data name="BackwardFieldNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of Backward Field Name should not exceed {5} characters!</value>
+  </data>
+  <data name="BackwardFieldNameNotEntered" xml:space="preserve">
+    <value>Please enter Backward Field Name</value>
+  </data>
+  <data name="BaseImageNotSelected" xml:space="preserve">
+    <value>Please select image which field is based on</value>
+  </data>
+  <data name="FieldValueIsNotInRange" xml:space="preserve">
+    <value>Values of field is not in acceptable range: from {0} to {1}</value>
+  </data>
+  <data name="FieldValueLengthExceeded" xml:space="preserve">
+    <value>The length of field value should not exceed {0} characters!</value>
+  </data>
+  <data name="DecimalPlacesNotInRange" xml:space="preserve">
+    <value>Decimal Places is not in acceptable range: from 0 to 25</value>
+  </data>
+  <data name="DefaultMaxLengthExceeded" xml:space="preserve">
+    <value>The length of Default Value should not exceed 255 characters!</value>
+  </data>
+  <data name="DocTypeMaxLengthExceeded" xml:space="preserve">
+    <value>The length of DocType should not exceed {5} characters!</value>
+  </data>
+  <data name="DynamicImageHeightNotInRange" xml:space="preserve">
+    <value>Value of Height is not in acceptable range: from 1 to 9999</value>
+  </data>
+  <data name="DynamicImageQualityNotEntered" xml:space="preserve">
+    <value>Please enter Quality value</value>
+  </data>
+  <data name="DynamicImageQualityNotInRange" xml:space="preserve">
+    <value>Value of Quality is not in acceptable range: from 50 to 100</value>
+  </data>
+  <data name="DynamicImageWidthNotInRange" xml:space="preserve">
+    <value>Value of Width is not in acceptable range: from 1 to 9999</value>
+  </data>
+  <data name="InputMaskMaxLengthExceeded" xml:space="preserve">
+    <value>The length of Input Mask should not exceed {5} characters!</value>
+  </data>
+  <data name="InputMaskNotEntered" xml:space="preserve">
+    <value>Please enter Input Mask</value>
+  </data>
+  <data name="LinqBackPropertyNameInvalidFormat" xml:space="preserve">
+    <value>Invalid LINQ Back Property Name format</value>
+  </data>
+  <data name="LinqBackPropertyNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of LINQ Back Property Name should not exceed {5} characters!</value>
+  </data>
+  <data name="LinqBackPropertyNameNonUnique" xml:space="preserve">
+    <value>Such Back LINQ Property Name is already in using</value>
+  </data>
+  <data name="LinqBackPropertyNameNotEntered" xml:space="preserve">
+    <value>Please enter LINQ Back Property</value>
+  </data>
+  <data name="LinqPropertyNameInvalidFormat" xml:space="preserve">
+    <value>Invalid LINQ Property Name format</value>
+  </data>
+  <data name="LinqPropertyNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of LINQ Property Name should not exceed {5} characters!</value>
+  </data>
+  <data name="LinqPropertyNameNonUnique" xml:space="preserve">
+    <value>Such LINQ Property Name is already in using</value>
+  </data>
+  <data name="LinqPropertyNameNotEntered" xml:space="preserve">
+    <value>Please enter LINQ Property Name</value>
+  </data>
+  <data name="LinqPropertyNamesAreEqual" xml:space="preserve">
+    <value>LINQ Property Name and LINQ Back Property Name have to be different</value>
+  </data>
+  <data name="NetLinkNameInvalidFormat" xml:space="preserve">
+    <value>Invalid LINQ Junction Class Name (singular) format</value>
+  </data>
+  <data name="NetLinkNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of LINQ Junction Class Name (singular) should not exceed {5} characters!</value>
+  </data>
+  <data name="NetLinkNameNonUnique" xml:space="preserve">
+    <value>Such LINQ Junction Class Name (singular) is already in using</value>
+  </data>
+  <data name="NetLinkNameNotEntered" xml:space="preserve">
+    <value>Please enter LINQ Junction Class Name (singular)</value>
+  </data>
+  <data name="NetLinkNamesAreEqual" xml:space="preserve">
+    <value>LINQ Junction Class Names (singular and plural) have to be different</value>
+  </data>
+  <data name="NetPluralLinkNameInvalidFormat" xml:space="preserve">
+    <value>Invalid LINQ Junction Class Name (plural) format</value>
+  </data>
+  <data name="NetPluralLinkNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of LINQ Junction Class Name (plural) should not exceed {5} characters!</value>
+  </data>
+  <data name="NetPluralLinkNameNonUnique" xml:space="preserve">
+    <value>Such LINQ Junction Class Name (plural) is already in using</value>
+  </data>
+  <data name="NetPluralLinkNameNotEntered" xml:space="preserve">
+    <value>Please enter LINQ Junction Class Name (plural)</value>
+  </data>
+  <data name="RelateToContentNotSelected" xml:space="preserve">
+    <value>"Relate to" is not selected</value>
+  </data>
+  <data name="RelationConditionMaxLengthExceeded" xml:space="preserve">
+    <value>The length of Relation Condition should not exceed {5} characters!</value>
+  </data>
+  <data name="RelationIdNotSelected" xml:space="preserve">
+    <value>Display Field is not selected</value>
+  </data>
+  <data name="StringLengthNotInRange" xml:space="preserve">
+    <value>Value of String Length  is not in acceptable range: from 1 to 3500</value>
+  </data>
+  <data name="SubFolderMaxLengthExceeded" xml:space="preserve">
+    <value>The length of File Subfolder name should not exceed {5} characters!</value>
+  </data>
+  <data name="TextboxRowsNotInRange" xml:space="preserve">
+    <value>Value of Rows is not in acceptable range: from 5 to 30</value>
+  </data>
+  <data name="VisualEditHeightNotInRange" xml:space="preserve">
+    <value>Value of Height is not in acceptable range: from 350 to 750</value>
+  </data>
+  <data name="FieldHasBadValues" xml:space="preserve">
+    <value>Field has an inadmissible values</value>
+  </data>
+  <data name="MultiplyUniqueConstraint" xml:space="preserve">
+    <value>Field is included in multiple unique constraint</value>
+  </data>
+  <data name="RelatedFieldsExist" xml:space="preserve">
+    <value>There are fields which are related to the current field</value>
+  </data>
+  <data name="ThumbnailsExist" xml:space="preserve">
+    <value>There are Dynamic Images for the current field</value>
+  </data>
+  <data name="SizeTitle" xml:space="preserve">
+    <value>Size/Decimal Places</value>
+  </data>
+  <data name="SelectContent" xml:space="preserve">
+    <value>Select content</value>
+  </data>
+  <data name="NoFields" xml:space="preserve">
+    <value>No fields</value>
+  </data>
+  <data name="SubFolderInvalidFormat" xml:space="preserve">
+    <value>Invalid Subfolder format</value>
+  </data>
+  <data name="SelectMaskTemplate" xml:space="preserve">
+    <value>Select basic input mask</value>
+  </data>
+  <data name="MatchNameConflict" xml:space="preserve">
+    <value>The field "{0}" already exists in the content "{1}"</value>
+  </data>
+  <data name="BaseImageIdMismatch" xml:space="preserve">
+    <value>The base image of the field "{0} in the content "{2}" mismatches the base image of the field "{1}" in the content "{3}"</value>
+  </data>
+  <data name="MatchTypeConflict" xml:space="preserve">
+    <value>The type of field "{0}" in the content "{2}" mismatches the type of field "{1}" in the content "{3}"</value>
+  </data>
+  <data name="MatchUseSiteLibraryConflict" xml:space="preserve">
+    <value>"Use Site Library" values of the field "{0}" in the content "{2}" and the field "{1}" in the content "{3}" mismatch</value>
+  </data>
+  <data name="RelateToContensMismatch" xml:space="preserve">
+    <value>The content related by the the field "{0}" in the content "{2}" mismatches the content related by the the field "{1}" in the content "{3}"</value>
+  </data>
+  <data name="VirtualChildrenFieldsExist" xml:space="preserve">
+    <value>Fields could not be changed because there are inherited fields in the virtual JOIN contents</value>
+  </data>
+  <data name="UseEnglishQuotes" xml:space="preserve">
+    <value>Use english typografic rules</value>
+  </data>
+  <data name="M2ORelation" xml:space="preserve">
+    <value>Many-to-One Relation</value>
+  </data>
+  <data name="BackRelationId" xml:space="preserve">
+    <value>Base relation field</value>
+  </data>
+  <data name="BackRelationIdNotSelected" xml:space="preserve">
+    <value>Base relation field is not selected</value>
+  </data>
+  <data name="CannotChangeRelationTypeForSelfRelation" xml:space="preserve">
+    <value>You cannot change relation type for the field that related to the same content</value>
+  </data>
+  <data name="BackRelationContentNotAssignedAsyncWorkflow" xml:space="preserve">
+    <value>The content for base relation field has not assigned workflow with article splitting </value>
+  </data>
+  <data name="CannotCreateUniqueFieldBecauseOfExisting" xml:space="preserve">
+    <value>You cannot create field with unique constraint because the current content contains more than one article</value>
+  </data>
+  <data name="ExistingDataIsNotUnique" xml:space="preserve">
+    <value>Existing article data is not unique. Duplicates found: {0}</value>
+  </data>
+  <data name="CannotChangeTypeToNotRelateable" xml:space="preserve">
+    <value>You cannot change field type because fields related to this field already exist</value>
+  </data>
+  <data name="DefaultValueIsNotDefined" xml:space="preserve">
+    <value>Default Value is not defined</value>
+  </data>
+  <data name="ApplyDefaultValueStageName" xml:space="preserve">
+    <value>Applying default value</value>
+  </data>
+  <data name="FieldIsNotDynamicImage" xml:space="preserve">
+    <value>Type of field (Id:{0}) is not Dynamic Image</value>
+  </data>
+  <data name="RecreateDynamicImagesStageName" xml:space="preserve">
+    <value>Recreating dynamic images</value>
+  </data>
+  <data name="IsLong" xml:space="preserve">
+    <value>Use Int64 data type</value>
+  </data>
+	<data name="IsDecimal" xml:space="preserve">
+    <value>Use Decimal data type</value>
+  </data>
+  <data name="AutoExpand" xml:space="preserve">
+    <value>Auto Expand</value>
+  </data>
+  <data name="AutoCheckChildren" xml:space="preserve">
+    <value>Auto check child articles</value>
+  </data>
+  <data name="UseForTree" xml:space="preserve">
+    <value>Use for tree</value>
+  </data>
+  <data name="UseForTreeAlreadySet" xml:space="preserve">
+    <value>Use For Tree option is already set for the field "{0}"</value>
+  </data>
+  <data name="RebuildVirtualContents" xml:space="preserve">
+    <value>Rebuild virtual contents</value>
+  </data>
+  <data name="DisablingRebuildIsDangerous" xml:space="preserve">
+    <value>Switching Rebuild Virtual Contents option off may cause errors in these virtual contents. This option is intended for advanced users and used for fine performance tuning.</value>
+  </data>
+  <data name="Aggregated" xml:space="preserve">
+    <value>Aggregated</value>
+  </data>
+  <data name="AggregatedIsComplexUnique" xml:space="preserve">
+    <value>Aggregated Field is included in multiple unique constraint</value>
+  </data>
+  <data name="AggregatedIsNotUnique" xml:space="preserve">
+    <value>Aggregated Field must be unique</value>
+  </data>
+  <data name="AggregatedRelateToCurrentContent" xml:space="preserve">
+    <value>Aggregated Field can not relate to the current Content</value>
+  </data>
+  <data name="CannotSetAggregateBecauseOfExisting" xml:space="preserve">
+    <value>You cannot set "Aggregated" because the current content contains articles</value>
+  </data>
+  <data name="ClassifierId" xml:space="preserve">
+    <value>Classifier</value>
+  </data>
+  <data name="ClassifierRefNotSelected" xml:space="preserve">
+    <value>Classifier is not selected</value>
+  </data>
+  <data name="ThereAreAggregatedsInRootContent" xml:space="preserve">
+    <value>There is another Aggregated Field is in the Related Content</value>
+  </data>
+  <data name="ThereIsAggregatedInContent" xml:space="preserve">
+    <value>There is another Aggregated Field is in the current Content</value>
+  </data>
+  <data name="CannotResetAggregateBecauseOfExisting" xml:space="preserve">
+    <value>You cannot reset "Aggregated" because the current content contains articles</value>
+  </data>
+  <data name="RelatedContentAutoArchiveIsDifferent" xml:space="preserve">
+    <value>"Auto Archive" property of Related Content is different of appropriate property of current Content </value>
+  </data>
+  <data name="RelatedContentWorkflowIsDifferent" xml:space="preserve">
+    <value>Workflow of Related Content is different of Workflow of current Content</value>
+  </data>
+  <data name="RelatedContentWorkflowSplitIsDifferent" xml:space="preserve">
+    <value>"Split Articles" property of Related Content is different of appropriate property of current Content</value>
+  </data>
+  <data name="CannotChangeAggregateFieldTypeBecauseOfExisting" xml:space="preserve">
+    <value>You cannot change Field Type because the field is aggregated and current content contains articles</value>
+  </data>
+  <data name="CannotChangeClassifierRefBecauseOfExisting" xml:space="preserve">
+    <value>You cannot change Classifier because the field is aggregated and current content contains articles</value>
+  </data>
+  <data name="CannotRemoveAggregated" xml:space="preserve">
+    <value>Aggregated field could not be removed because the current content contains articles</value>
+  </data>
+  <data name="CannotSetAggregateBecauseOfNotification" xml:space="preserve">
+    <value>You cannot set "Aggregated" because there are notifications for the current content </value>
+  </data>
+  <data name="CannotRemoveClassifier" xml:space="preserve">
+    <value>Classifier field could not be removed because there are related Aggregated fields</value>
+  </data>
+  <data name="CannotRemoveChildField" xml:space="preserve">
+    <value>Child field could not be removed</value>
+  </data>
+  <data name="ClassiferCannotBeReadonly" xml:space="preserve">
+    <value>Classifier could not be read only</value>
+  </data>
+  <data name="ClassiferCannotBeUniq" xml:space="preserve">
+    <value>Classifier could not be with with unique constraint</value>
+  </data>
+  <data name="CannotChangeClassifierType" xml:space="preserve">
+    <value>Classifier type could not be changed because there are related Aggregated fields</value>
+  </data>
+  <data name="Changeable" xml:space="preserve">
+    <value>Changeable</value>
+  </data>
+  <data name="ClassifierDefaultIsUndefined" xml:space="preserve">
+    <value>Value is undefined</value>
+  </data>
+  <data name="CannotChangeAggregateFieldTypeBecauseOfClassifierDefaultValue" xml:space="preserve">
+    <value>You cannot change Field Type because the field is aggregated and the current Content is classifier default value</value>
+  </data>
+  <data name="CannotChangeClassifierRefBecauseOfClassifierDefaultValue" xml:space="preserve">
+    <value>You cannot change Classifier because the field is aggregated and the current Content is classifier default value</value>
+  </data>
+  <data name="CannotRemoveAggregatedBecauseOfClassifierDefaultValue" xml:space="preserve">
+    <value>Aggregated field could not be removed because the current content is classifier default value</value>
+  </data>
+  <data name="CannotResetAggregateBecauseOfClassifierDefaultValue" xml:space="preserve">
+    <value>You cannot reset "Aggregated" because the current content is classifier default value</value>
+  </data>
+  <data name="CopyPermissionsToChildren" xml:space="preserve">
+    <value>Сopy permissions while creating children</value>
+  </data>
+  <data name="RelationSecurityFieldMustBeRequired" xml:space="preserve">
+    <value>Relation security field must be required</value>
+  </data>
+  <data name="UseRelationSecurity" xml:space="preserve">
+    <value>Use related permissions</value>
+  </data>
+  <data name="StringEnum" xml:space="preserve">
+    <value>String Enum</value>
+  </data>
+  <data name="EnumValues" xml:space="preserve">
+    <value>Values</value>
+  </data>
+  <data name="ShowAsRadioButtons" xml:space="preserve">
+    <value>Show as Radio Button Group</value>
+  </data>
+  <data name="AddNewEnumItem" xml:space="preserve">
+    <value>Add New Enum Item</value>
+  </data>
+  <data name="EnumValueAlias" xml:space="preserve">
+    <value>Alias</value>
+  </data>
+  <data name="EnumValueDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="EnumValueIsDefault" xml:space="preserve">
+    <value>This is Default Value</value>
+  </data>
+  <data name="EnumValueValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="EnumValueIsInvalid" xml:space="preserve">
+    <value>Name and Alias have to be defined for each enum items.</value>
+  </data>
+  <data name="EnumValueIsNotDefined" xml:space="preserve">
+    <value>Has to be defined at least one enum item.</value>
+  </data>
+  <data name="EnumValueAliasIsNotUnique" xml:space="preserve">
+    <value>The Aliases must be unique</value>
+  </data>
+  <data name="EnumValueValueIsNotUnique" xml:space="preserve">
+    <value>The Values must be unique</value>
+  </data>
+  <data name="NonEnumFieldValueExist" xml:space="preserve">
+    <value>There are current field values which are not a member of enum</value>
+  </data>
+  <data name="SelectEnumValue" xml:space="preserve">
+    <value>Select Value</value>
+  </data>
+  <data name="Symmetric" xml:space="preserve">
+    <value>Symmetric</value>
+  </data>
+  <data name="VirtualBackwardFieldIsNotAllowed" xml:space="preserve">
+    <value>Backward Field could not be created because of the current field is related to the Virtual Content</value>
+  </data>
+  <data name="UseForDefaultFiltration" xml:space="preserve">
+    <value>Use for Default Filtration</value>
+  </data>
+  <data name="TreeSortingField" xml:space="preserve">
+    <value>Tree Sorting Field</value>
+  </data>
+  <data name="UnableToCopyM2O" xml:space="preserve">
+    <value>Unable to copy Relation Many-to-One field</value>
+  </data>
+  <data name="UnableToCopyClassifier" xml:space="preserve">
+    <value>Unable To Copy Classifier</value>
+  </data>
+  <data name="UnableToCopyAggregator" xml:space="preserve">
+    <value>Unable To Copy Aggregator field</value>
+  </data>
+  <data name="UnableToCopyUnique" xml:space="preserve">
+    <value>Unable To Copy Unique Field</value>
+  </data>
+  <data name="ParentField" xml:space="preserve">
+    <value>Parent field</value>
+  </data>
+  <data name="Hide" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="Override" xml:space="preserve">
+    <value>Override</value>
+  </data>
+  <data name="UseForContext" xml:space="preserve">
+    <value>Use for context selection</value>
+  </data>
+  <data name="UseForVariations" xml:space="preserve">
+    <value>Use for content variations</value>
+  </data>
+  <data name="VariationAndM2OIncompatible" xml:space="preserve">
+    <value>Content cannot contain both Variation and Relation Many-To-One fields</value>
+  </data>
+  <data name="ListFieldTitleCount" xml:space="preserve">
+    <value>Number of fields included in list item title</value>
+  </data>
+  <data name="ListIncludeRelationsInTitle" xml:space="preserve">
+    <value>Include relation fields in list item title</value>
+  </data>
+  <data name="ListOrderByTitle" xml:space="preserve">
+    <value>Default sorting by title</value>
+  </data>
+  <data name="ListSortingField" xml:space="preserve">
+    <value>List Sorting Field</value>
+  </data>
+  <data name="TreeFieldTitleCount" xml:space="preserve">
+    <value>Number of fields included in tree item title</value>
+  </data>
+  <data name="TreeIncludeRelationsInTitle" xml:space="preserve">
+    <value>Include relation fields in tree item title</value>
+  </data>
+  <data name="TreeOrderByTitle" xml:space="preserve">
+    <value>Default sorting by title</value>
+  </data>
+  <data name="UseInChildContentFilter" xml:space="preserve">
+    <value>Use in child content filter</value>
+  </data>
+  <data name="AutoLoad" xml:space="preserve">
+    <value>As Text Editor</value>
+  </data>
+  <data name="UseTypeSecurity" xml:space="preserve">
+    <value>Use type security</value>
+  </data>
+</root>

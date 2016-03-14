@@ -1,0 +1,66 @@
+﻿@using Quantumart.QP8.Resources
+
+<dl class="row">
+	<dd>
+		@Html.QpRadioButtonList((string)ViewBag.ByValueElementID,
+		new[] 
+		{
+			new QPSelectListItem
+			{
+				Text = ArticleStrings.SearchBlock_ByValue,
+				Selected = true,
+				Value = "0",
+			},
+			new QPSelectListItem
+			{
+				Text = ArticleStrings.SearchBlock_ByRange,
+				Selected = false,
+				Value = "1"
+			}
+		},
+		new ControlOptions {Enabled = true}
+		)
+	</dd>
+</dl>
+
+<dl class="row">
+	<dt class="label">
+		@Html.QpLabel((string)ViewBag.DateFromElementID, ArticleStrings.SearchBlock_Value, true)
+	</dt>
+	<dd class="field">
+		@Html.Time((string)ViewBag.DateFromElementID, DateTime.Now.AddMonths(-1), 
+			new Dictionary<string, object> 
+			{ 
+				{ "id", (string)ViewBag.DateFromElementID },
+				{ "class", "textbox"}
+			},
+			true
+		)
+	</dd>
+</dl>
+
+<dl class="row" style="display:none;">
+	<dt class="label">
+		@Html.QpLabel((string)ViewBag.DateToElementID, ArticleStrings.SearchBlock_RangeToText, true)
+	</dt>
+	<dd class="field">
+		@Html.Time((string)ViewBag.DateToElementID, DateTime.Now, 
+			new Dictionary<string, object> 
+			{ 
+				{ "id", (string)ViewBag.DateToElementID },
+				{ "class", "textbox"}
+			},
+			true
+		)
+	</dd>
+</dl>
+
+<dl class="row">
+	<dt class="label"></dt>
+	<dd class="field">
+		<span class="checkbox">
+			@Html.QpCheckBox((string)ViewBag.IsNullCheckBoxElementID, null, false, new Dictionary<string, object>())
+			@Html.QpLabel((string)ViewBag.IsNullCheckBoxElementID, ArticleStrings.SearchBlock_IsNullCheckBoxLabelText, false)
+		</span>
+	</dd>
+</dl>

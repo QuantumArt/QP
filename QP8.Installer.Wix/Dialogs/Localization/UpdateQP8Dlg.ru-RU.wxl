@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ru-RU" xmlns="http://schemas.microsoft.com/wix/2006/localization" Codepage="1251">
+  <String Id="UpdateQP8DlgTitle">Обнаружен QP8</String>
+  <String Id="UpdateQP8DlgInstallTitle">Обнаружен QP8</String>
+  <String Id="UpdateQP8DlgMessage">Обнаружен установленный QP8. Продолжение установки возможно только в режиме обновления QP8 до новой версии.</String>
+  <String Id="UpdateQP8DlgUpgradeDatabases">Обновить базы данных</String>
+</WixLocalization>

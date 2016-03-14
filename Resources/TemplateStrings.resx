@@ -1,0 +1,672 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AdditionalNamespases" xml:space="preserve">
+    <value>Additional namespases</value>
+  </data>
+  <data name="AddNewObject" xml:space="preserve">
+    <value>Add New Object</value>
+  </data>
+  <data name="AddNewPage" xml:space="preserve">
+    <value>Add New Page</value>
+  </data>
+  <data name="AddNewTemplate" xml:space="preserve">
+    <value>Add New Template</value>
+  </data>
+  <data name="ApplyToExistingObjects" xml:space="preserve">
+    <value>Apply to existing  objects</value>
+  </data>
+  <data name="ApplyToExistingPagesAndObjects" xml:space="preserve">
+    <value>Apply to existing pages and objects</value>
+  </data>
+  <data name="Assembled" xml:space="preserve">
+    <value>Assembled</value>
+  </data>
+  <data name="AssembledBy" xml:space="preserve">
+    <value>Assembled By</value>
+  </data>
+  <data name="Charset" xml:space="preserve">
+    <value>Charset</value>
+  </data>
+  <data name="CodeBehind" xml:space="preserve">
+    <value>Code Behind</value>
+  </data>
+  <data name="CodeBehindForPreview" xml:space="preserve">
+    <value>Code Behind for Preview</value>
+  </data>
+  <data name="CustomClassForGenerics" xml:space="preserve">
+    <value>Custom class for Generics</value>
+  </data>
+  <data name="CustomClassForPages" xml:space="preserve">
+    <value>Custom class for pages</value>
+  </data>
+  <data name="CustomClassForPublishingContainers" xml:space="preserve">
+    <value>Custom class for Publishing Containers</value>
+  </data>
+  <data name="CustomClassForPublishingForms" xml:space="preserve">
+    <value>Custom class for Publishing Forms</value>
+  </data>
+  <data name="CustomClassForTemplate" xml:space="preserve">
+    <value>Custom class for template</value>
+  </data>
+  <data name="DisableAutoDataBinding" xml:space="preserve">
+    <value>Disable auto data binding</value>
+  </data>
+  <data name="EnableViewState" xml:space="preserve">
+    <value>Enable ViewState</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="Folder" xml:space="preserve">
+    <value>Folder</value>
+  </data>
+  <data name="FolderName" xml:space="preserve">
+    <value>Folder Name</value>
+  </data>
+  <data name="Locale" xml:space="preserve">
+    <value>Locale</value>
+  </data>
+  <data name="MaxNumberOfFormatStoredVersions" xml:space="preserve">
+    <value>Max Number of Format Stored Versions</value>
+  </data>
+  <data name="NetClassName" xml:space="preserve">
+    <value>.NET Class Name</value>
+  </data>
+  <data name="NetLanguage" xml:space="preserve">
+    <value>.NET Language</value>
+  </data>
+  <data name="OverrideObjectSettings" xml:space="preserve">
+    <value>Override object settings</value>
+  </data>
+  <data name="OverridePageSettings" xml:space="preserve">
+    <value>Override page settings</value>
+  </data>
+  <data name="Presentation" xml:space="preserve">
+    <value>Presentation</value>
+  </data>
+  <data name="PresentationForPreview" xml:space="preserve">
+    <value>Presentation for Preview</value>
+  </data>
+  <data name="SendNoCacheHeader" xml:space="preserve">
+    <value>Send No-Cache header</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="TemplateNotFound" xml:space="preserve">
+    <value>Template #{0} not found</value>
+  </data>
+  <data name="LockedByAnyoneElse" xml:space="preserve">
+    <value>Template is locked by user {0}.</value>
+  </data>
+  <data name="PageNotFound" xml:space="preserve">
+    <value>Page #{0} not found</value>
+  </data>
+  <data name="CustomClass" xml:space="preserve">
+    <value>Custom class</value>
+  </data>
+  <data name="GenerateTrace" xml:space="preserve">
+    <value>Generate trace</value>
+  </data>
+  <data name="ProxyCaching" xml:space="preserve">
+    <value>Proxy caching</value>
+  </data>
+  <data name="SendLastModifiedHeader" xml:space="preserve">
+    <value>Send Last-Modified header</value>
+  </data>
+  <data name="PageLockedByAnyoneElse" xml:space="preserve">
+    <value>Page is locked by user {0}.</value>
+  </data>
+  <data name="AllowDynamicContentChanging" xml:space="preserve">
+    <value>Allow Dynamic Content Changing</value>
+  </data>
+  <data name="Content" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="DefaultFormat" xml:space="preserve">
+    <value>Default Format</value>
+  </data>
+  <data name="DefaultSorting" xml:space="preserve">
+    <value>Default Sorting</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Duration (min.)</value>
+  </data>
+  <data name="DynamicContentVariable" xml:space="preserve">
+    <value>Dynamic Content Variable</value>
+  </data>
+  <data name="DynamicSortingExpression" xml:space="preserve">
+    <value>Dynamic Sorting Expression</value>
+  </data>
+  <data name="EnableDataCaching" xml:space="preserve">
+    <value>Enable Data Caching</value>
+  </data>
+  <data name="EnableOnScreen" xml:space="preserve">
+    <value>Enable OnScreen</value>
+  </data>
+  <data name="EndLevel" xml:space="preserve">
+    <value>End Level</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="FirstArticleNumberInTheSelection" xml:space="preserve">
+    <value>First Article Number In The Selection</value>
+  </data>
+  <data name="GenerateCode" xml:space="preserve">
+    <value>Generate code for updating/appending articles</value>
+  </data>
+  <data name="Global" xml:space="preserve">
+    <value>Global</value>
+  </data>
+  <data name="NumberOfArticlesInTheSelection" xml:space="preserve">
+    <value>Number of articles in the selection</value>
+  </data>
+  <data name="OverrideTemplateObject" xml:space="preserve">
+    <value>Override template object</value>
+  </data>
+  <data name="ParentTemplateObject" xml:space="preserve">
+    <value>Parent template object</value>
+  </data>
+  <data name="ReturnArticles" xml:space="preserve">
+    <value>Return Articles</value>
+  </data>
+  <data name="ReturnLastModifiedDate" xml:space="preserve">
+    <value>Return Last Modified Date</value>
+  </data>
+  <data name="SecurityMode" xml:space="preserve">
+    <value>Security Mode</value>
+  </data>
+  <data name="SelectionIncludes" xml:space="preserve">
+    <value>Selection includes</value>
+  </data>
+  <data name="SelectionIsStarting" xml:space="preserve">
+    <value>Selection is starting</value>
+  </data>
+  <data name="ShowArchived" xml:space="preserve">
+    <value>Show archived</value>
+  </data>
+  <data name="StartLevel" xml:space="preserve">
+    <value>Start Level</value>
+  </data>
+  <data name="Statuses" xml:space="preserve">
+    <value>Statuses</value>
+  </data>
+  <data name="SubmissionResponsePage" xml:space="preserve">
+    <value>Submission response page</value>
+  </data>
+  <data name="UseDefaultValues" xml:space="preserve">
+    <value>Use Default Values</value>
+  </data>
+  <data name="UseDynamicSorting" xml:space="preserve">
+    <value>Use Dynamic Sorting</value>
+  </data>
+  <data name="UseSchedule" xml:space="preserve">
+    <value>Use Schedule</value>
+  </data>
+  <data name="SelectObject" xml:space="preserve">
+    <value>Select Object</value>
+  </data>
+  <data name="ObjectNotFound" xml:space="preserve">
+    <value>Object #{0} not found</value>
+  </data>
+  <data name="ObjectLockedByAnyoneElse" xml:space="preserve">
+    <value>Object is locked by user {0}.</value>
+  </data>
+  <data name="AddNewFormat" xml:space="preserve">
+    <value>Add New Format</value>
+  </data>
+  <data name="FormatNotFound" xml:space="preserve">
+    <value>Format #{0} Not Found</value>
+  </data>
+  <data name="FormatLockedByAnyoneElse" xml:space="preserve">
+    <value>Format is locked by user{0}</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="AddNamespace" xml:space="preserve">
+    <value>Add Namespace</value>
+  </data>
+  <data name="NetNameMaxLengthExceeded" xml:space="preserve">
+    <value>.NET class name should not exceeded 255 characters</value>
+  </data>
+  <data name="NetNameInvalidFormat" xml:space="preserve">
+    <value>.NET name has invalid format</value>
+  </data>
+  <data name="FolderNameInvalidFormat" xml:space="preserve">
+    <value>Folder name has invalid format</value>
+  </data>
+  <data name="FolderNameMaxLengthExceeded" xml:space="preserve">
+    <value>Folder name length should not exceed {0} characters</value>
+  </data>
+  <data name="PresentationRequired" xml:space="preserve">
+    <value>Please enter presentation</value>
+  </data>
+  <data name="CustomClassForPagesMaxLengthExceeded" xml:space="preserve">
+    <value>Custom Class For Pages length should not exceed 255 characters</value>
+  </data>
+  <data name="CustomClassForPagesInvalidFormat" xml:space="preserve">
+    <value>Custom class for pages has invalid format</value>
+  </data>
+  <data name="CustomClassForTemplatesMaxLengthExceeded" xml:space="preserve">
+    <value>Custom class for templates length should not exceed 255 characters</value>
+  </data>
+  <data name="CustomClassForTemplateInvalidFormat" xml:space="preserve">
+    <value>Custom class for template has invalid format</value>
+  </data>
+  <data name="CustomClassForGenericsMaxLengthExceeded" xml:space="preserve">
+    <value>Custom class for generics length should not exceed 255 characters</value>
+  </data>
+  <data name="CustomClassForGenericsInvalidFormat" xml:space="preserve">
+    <value>Custom class for generics has invalid format</value>
+  </data>
+  <data name="CustomClassForFormsMaxLengthExceeded" xml:space="preserve">
+    <value>Custom class for forms length should not exceed 255 characters</value>
+  </data>
+  <data name="CustomClassForPublishingContainersMaxLengthExceeded" xml:space="preserve">
+    <value>Custom class for publishing containers length should not exceed 255 characters</value>
+  </data>
+  <data name="CustomClassForContainersInvalidFormat" xml:space="preserve">
+    <value>Custom class for publishing containers has invalid format</value>
+  </data>
+  <data name="CustomClassForFormsInvalidFormat" xml:space="preserve">
+    <value>Custom class for forms has invalid format</value>
+  </data>
+  <data name="AdditionalNamespaceInvalidFormat" xml:space="preserve">
+    <value>Additional Namespace #{0} has invalid format</value>
+  </data>
+  <data name="AdditionalNamespaceLengthExceeded" xml:space="preserve">
+    <value>Additional Namespace #{0} length should not exceed 255 characters</value>
+  </data>
+  <data name="AdditionalNamespaceRequired" xml:space="preserve">
+    <value>Additional Namespace #{0} is required</value>
+  </data>
+  <data name="UsingTotalLengthExceeded" xml:space="preserve">
+    <value>Additional Namespaces total length should not exceed 512 characters</value>
+  </data>
+  <data name="ExpiresIn" xml:space="preserve">
+    <value>Expires in (hrs.)</value>
+  </data>
+  <data name="FileNameMaxLengthExceeded" xml:space="preserve">
+    <value>File Name length should not exceed 255 characters</value>
+  </data>
+  <data name="CustomClassInvalidFormat" xml:space="preserve">
+    <value>Custom class has invalid format</value>
+  </data>
+  <data name="CustomClassMaxLengthExceeded" xml:space="preserve">
+    <value>Custom Class name`s length should not exceed 255 characters</value>
+  </data>
+  <data name="FileNameRequired" xml:space="preserve">
+    <value>Please enter file name</value>
+  </data>
+  <data name="WarningString" xml:space="preserve">
+    <value>Setting this option on may decrease page performance</value>
+  </data>
+  <data name="SelectDefaultFormat" xml:space="preserve">
+    <value>Select Default Format</value>
+  </data>
+  <data name="UseSecurity" xml:space="preserve">
+    <value>Use Security</value>
+  </data>
+  <data name="ReturnAllArticles" xml:space="preserve">
+    <value>Return all articles with their permission levels</value>
+  </data>
+  <data name="ReturnOnlyMatchingArticles" xml:space="preserve">
+    <value>Return only matching articles</value>
+  </data>
+  <data name="Randomly" xml:space="preserve">
+    <value>Randomly</value>
+  </data>
+  <data name="Sequentially" xml:space="preserve">
+    <value>Sequentially</value>
+  </data>
+  <data name="Field" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Sort Order</value>
+  </data>
+  <data name="AddSortExpression" xml:space="preserve">
+    <value>Add Sort Expression</value>
+  </data>
+  <data name="AllArticles" xml:space="preserve">
+    <value>All articles</value>
+  </data>
+  <data name="FromTheFirstArticle" xml:space="preserve">
+    <value>From the first article</value>
+  </data>
+  <data name="FromTheSpecifiedArticle" xml:space="preserve">
+    <value>From the article with the specified number</value>
+  </data>
+  <data name="SpecifiedNumberOfArticles" xml:space="preserve">
+    <value>Specified Number Of Articles</value>
+  </data>
+  <data name="TemplateName" xml:space="preserve">
+    <value>Template Name</value>
+  </data>
+  <data name="Filtering" xml:space="preserve">
+    <value>Filtering</value>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="Paging" xml:space="preserve">
+    <value>Paging</value>
+  </data>
+  <data name="Caching" xml:space="preserve">
+    <value>Caching</value>
+  </data>
+  <data name="FormParameters" xml:space="preserve">
+    <value>Form Parameters</value>
+  </data>
+  <data name="AddDefaultValue" xml:space="preserve">
+    <value>Add Default Value</value>
+  </data>
+  <data name="Ascending" xml:space="preserve">
+    <value>Ascending</value>
+  </data>
+  <data name="Descending" xml:space="preserve">
+    <value>Descending</value>
+  </data>
+  <data name="ControlsInheritance" xml:space="preserve">
+    <value>Controls Inheritance</value>
+  </data>
+  <data name="DataBinding" xml:space="preserve">
+    <value>Data Binding</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Format</value>
+  </data>
+  <data name="PagesInheritance" xml:space="preserve">
+    <value>Pages Inheritance</value>
+  </data>
+  <data name="RegionalAndLanguageSettings" xml:space="preserve">
+    <value>Regional and Language Settings</value>
+  </data>
+  <data name="ViewStateParameters" xml:space="preserve">
+    <value>ViewState Parameters</value>
+  </data>
+  <data name="BrowserCaching" xml:space="preserve">
+    <value>Browser Caching</value>
+  </data>
+  <data name="NetNameNotUnique" xml:space="preserve">
+    <value>.NET Class Name is already in using!</value>
+  </data>
+  <data name="FileNameInvalidFormat" xml:space="preserve">
+    <value>File name has invalid format</value>
+  </data>
+  <data name="ContentRequired" xml:space="preserve">
+    <value>Content is required</value>
+  </data>
+  <data name="DynamicContentVariableMaxLengthExceeded" xml:space="preserve">
+    <value>Dynamic content variable length should not exceed 255 characters</value>
+  </data>
+  <data name="DynamicContentVariableRequired" xml:space="preserve">
+    <value>Please enter Dynamic Content Variable</value>
+  </data>
+  <data name="FilterMaxLengthExceeded" xml:space="preserve">
+    <value>Filter length should not exceed {0} characters</value>
+  </data>
+  <data name="DynamicSortingExpressionRequired" xml:space="preserve">
+    <value>Please enter Dynamic Sorting Expression</value>
+  </data>
+  <data name="DynamicSortingExpressionMaxLengthExceeded" xml:space="preserve">
+    <value>Dynamic Sorting Expression length should not exceed 255 characters</value>
+  </data>
+  <data name="OrderDynamicMaxLengthExceeded" xml:space="preserve">
+    <value>Order Dynamic length should not exceed 255 characters</value>
+  </data>
+  <data name="OrderDynamicRequired" xml:space="preserve">
+    <value>Please, enter Order Dynamic</value>
+  </data>
+  <data name="SelectStartMaxLengthExceeded" xml:space="preserve">
+    <value>Selection is starting length should not exceed 255 characters</value>
+  </data>
+  <data name="SelectStartRequired" xml:space="preserve">
+    <value>Please, enter Selection is starting</value>
+  </data>
+  <data name="SelectTotalMaxLengthExceeded" xml:space="preserve">
+    <value>Select total length should not exceed 255 characters</value>
+  </data>
+  <data name="SelectTotalRequired" xml:space="preserve">
+    <value>Please, enter Select total</value>
+  </data>
+  <data name="DefaultValueNameMaxLengthExceeded" xml:space="preserve">
+    <value>Default value #{0} name length should not exceed 255 characters</value>
+  </data>
+  <data name="DefaultValueNameNotUnique" xml:space="preserve">
+    <value>Default value #{0} name should be unique!</value>
+  </data>
+  <data name="DefaultValueNameRequired" xml:space="preserve">
+    <value>Please enter name for defult value #{0}!</value>
+  </data>
+  <data name="DefaultValueValueMaxLengthExceeded" xml:space="preserve">
+    <value>Default value #{0} value length should not exceed 255 characters</value>
+  </data>
+  <data name="DefaultValueValueRequired" xml:space="preserve">
+    <value>Please enter value for defult value #{0}!</value>
+  </data>
+  <data name="SortExperessionFieldNotUnique" xml:space="preserve">
+    <value>Sort Experession #{0} field should be unique within this object!</value>
+  </data>
+  <data name="StatusTypeRequired" xml:space="preserve">
+    <value>At least one status is required</value>
+  </data>
+  <data name="ParentObjectIdRequired" xml:space="preserve">
+    <value>PLease, select Parent Object Id</value>
+  </data>
+  <data name="AssembleTemplateStageName" xml:space="preserve">
+    <value>Assembling template {0}</value>
+  </data>
+  <data name="AssemblePagesStageName" xml:space="preserve">
+    <value>Assembling pages of template {0}</value>
+  </data>
+  <data name="AssembleNotificationsStageName" xml:space="preserve">
+    <value>Assembling notifications of template {0}</value>
+  </data>
+  <data name="AssembleLiveSiteTemplateConfirmation" xml:space="preserve">
+    <value>Are you sure that you want to assemble this template despite the fact that it belongs to live site?</value>
+  </data>
+  <data name="ObjectPromoted" xml:space="preserve">
+    <value>Object {0} has been promoted</value>
+  </data>
+  <data name="UnableToPromote" xml:space="preserve">
+    <value>Promoting inherited objects is not allowed</value>
+  </data>
+  <data name="UnableToDeleteFormat" xml:space="preserve">
+    <value>Deleting this format is not allowed because it is being used by some notification</value>
+  </data>
+  <data name="UnableToDeleteObject" xml:space="preserve">
+    <value>Deleting this object is not allowed because  its format is being used by some notification</value>
+  </data>
+  <data name="SelectTemplate" xml:space="preserve">
+    <value>Select Template</value>
+  </data>
+  <data name="FilterString" xml:space="preserve">
+    <value>FilterString</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="VersionRestored" xml:space="preserve">
+    <value>Version #{0} has been successfully restored</value>
+  </data>
+  <data name="VersionRestoreError" xml:space="preserve">
+    <value>Version # {0} wasn`t restored</value>
+  </data>
+  <data name="FormatVersionNotFound" xml:space="preserve">
+    <value>Format version #{0} not found</value>
+  </data>
+  <data name="FormatVersionNotFoundForFormat" xml:space="preserve">
+    <value>Format version (Id = {0}) not found for format (Id = {1})</value>
+  </data>
+  <data name="FiltrationParameters" xml:space="preserve">
+    <value>Filtration Parameters</value>
+  </data>
+  <data name="SelectPage" xml:space="preserve">
+    <value>Select Page</value>
+  </data>
+  <data name="Function" xml:space="preserve">
+    <value>Function</value>
+  </data>
+  <data name="InsertCall" xml:space="preserve">
+    <value>Insert Call</value>
+  </data>
+  <data name="ContainerProp" xml:space="preserve">
+    <value>Container Property</value>
+  </data>
+  <data name="SelectFunction" xml:space="preserve">
+    <value>Select Function</value>
+  </data>
+  <data name="SelectProperty" xml:space="preserve">
+    <value>Select Property</value>
+  </data>
+  <data name="PageObject" xml:space="preserve">
+    <value>Page Object</value>
+  </data>
+  <data name="TemplateObject" xml:space="preserve">
+    <value>Template Object</value>
+  </data>
+  <data name="SelectField" xml:space="preserve">
+    <value>Select Field</value>
+  </data>
+  <data name="RestTemplateObject" xml:space="preserve">
+    <value>Rest Template Object</value>
+  </data>
+  <data name="ReplaceConfirmation" xml:space="preserve">
+    <value>Do you really want to restore the default value?</value>
+  </data>
+  <data name="Library" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="SetDefault" xml:space="preserve">
+    <value>SetDefault</value>
+  </data>
+  <data name="PageNotCreated" xml:space="preserve">
+    <value>New page has not been created.</value>
+  </data>
+  <data name="CopySiteTemplates" xml:space="preserve">
+    <value>Copying templates from site {0}</value>
+  </data>
+</root>

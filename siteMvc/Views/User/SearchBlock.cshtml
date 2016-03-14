@@ -1,0 +1,37 @@
+﻿@model UserSearchBlockViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.Resources
+
+<div class="userSearchBlock">
+	<div>
+		<fieldset>
+			<legend>@UserStrings.Login</legend>
+			<div>
+				@Html.TextBox(@Model.LoginElementId, String.Empty, new { @class = "textbox login csFilterTextbox" })
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>@UserStrings.Email</legend>
+			<div>
+				@Html.TextBox(@Model.EmailElementId, String.Empty, new { @class = "textbox email csFilterTextbox" })
+			</div>
+		</fieldset>
+	</div>
+
+	<div>
+		<fieldset>
+			<legend>@UserStrings.FirstName</legend>
+			<div>
+				@Html.TextBox(@Model.FirstNameElementId, String.Empty, new { @class = "textbox firstName csFilterTextbox" })
+			</div>
+		</fieldset>
+		<fieldset>
+			<legend>@UserStrings.LastName</legend>
+			<div>
+				@Html.TextBox(@Model.LastNameElementId, String.Empty, new { @class = "textbox lastName csFilterTextbox" })
+			</div>
+		</fieldset>
+	</div>
+
+</div>

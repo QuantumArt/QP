@@ -1,0 +1,86 @@
+﻿@model NotificationListViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.Notification
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL.ListItems
+
+@using (Html.BeginDocumentPadding())
+{
+	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+	{
+		using (Html.BeginLinkButtonsList())
+		{
+			@Html.AddNewItemLink(Model)
+		}
+	}
+
+    @(Html.Telerik().Grid<NotificationListItem>().Name(Model.MainComponentId)
+        .DataKeys(k => k.Add(s => s.Id))
+        .Columns(c =>
+        {
+			c.Bound("")
+				.Title(@"<input type='checkbox' />")
+				.Width(30)
+				.HeaderHtmlAttributes(new { @class = "t-select-header" })
+				.ClientTemplate(@"<input type='checkbox' name='SelectedNotificationsIDs' value='<#= Id #>' />")
+				.HtmlAttributes(new { @class = "t-select-cell" })
+				.Sortable(false);
+            c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                   .Width(30)
+                   .HtmlAttributes(new { @class = "id" });			
+            c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
+                .HtmlAttributes(new { @class = "title" });
+            c.Bound(s => s.Receiver).Title(NotificationStrings.Receiver);
+			c.Bound(s => s.IsExternal)
+				.ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (IsExternal)  { #> checked=""checked"" <# } #>/>")
+				.Title(NotificationStrings.External);
+            c.Bound(s => s.ForCreate)
+                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (ForCreate)  { #> checked=""checked"" <# } #>/>")
+                    .Title(NotificationStrings.ForCreate);
+
+            c.Bound(s => s.ForModify)
+                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (ForModify)  { #> checked=""checked"" <# } #>/>")
+                    .Title(NotificationStrings.ForModify);
+
+            c.Bound(s => s.ForRemove)
+                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (ForRemove)  { #> checked=""checked"" <# } #>/>")
+                    .Title(NotificationStrings.ForRemove);
+
+            c.Bound(s => s.ForStatusChanged)
+                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (ForStatusChanged)  { #> checked=""checked"" <# } #>/>")
+                    .Title(NotificationStrings.ForStatusChanged);
+
+            c.Bound(s => s.ForStatusPartiallyChanged)
+                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (ForStatusPartiallyChanged)  { #> checked=""checked"" <# } #>/>")
+                    .Title(NotificationStrings.ForStatusPartiallyChanged);
+
+            c.Bound(s => s.ForFrontend)
+                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (ForFrontend)  { #> checked=""checked"" <# } #>/>")
+                    .Title(NotificationStrings.ForFrontend);
+
+			c.Bound(s => s.ForDelayedPublication)
+					.ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (ForDelayedPublication)  { #> checked=""checked"" <# } #>/>")
+					.Title(NotificationStrings.ForDelayedPublication);
+
+            c.Bound(s => s.Created).Title(NotificationStrings.ForCreate);
+            c.Bound(s => s.Modified).Title(NotificationStrings.ForModify);
+            c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
+        })
+        .DataBinding(db => db.Ajax()
+                .Select(Model.GettingDataActionName, "Notification")
+        )
+        .EnableCustomBinding(true)
+        .Sortable()
+        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
+        .Selectable(s => s.Enabled(true))
+        .ClientEvents(e =>
+            e.OnDataBinding("$q.preventDefaultFunction")
+             .OnRowDataBound("$q.preventDefaultFunction")
+        )
+    )
+}
+
+@Html.InitScript(Model)
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

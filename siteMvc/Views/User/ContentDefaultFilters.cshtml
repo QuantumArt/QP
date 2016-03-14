@@ -1,0 +1,53 @@
+﻿@model UserViewModelBase
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL
+
+<div id="@Model.ContentFilterElementId">
+@using (Html.BeginFieldGroup(UserStrings.ContentDefaultFiltersTitle))
+{ 	
+	@Html.SelectFieldFor(m => m.ContentDefaultFilter.SiteId, Html.List(Model.AllSitesListItems),
+		new Dictionary<string, object> 
+		{
+			{"class", "qp-deffilter-site " + HtmlHelpersExtensions.DROP_DOWN_LIST_CLASS_NAME} 
+		}
+	)
+
+	@Html.SingleItemPickerFieldFor(m => m.ContentDefaultFilter.ContentId, Model.SelectedDefaultFilterContentListItem,
+		new EntityDataListArgs
+		{
+			EntityTypeCode = EntityTypeCode.Content,
+			ParentEntityId = Model.ContentDefaultFilter.SiteId ?? 0,
+			SelectActionCode = ActionCode.SelectContent,
+			ReadActionCode = ActionCode.ContentProperties,
+			ListId = -1 * System.DateTime.Now.Millisecond,
+			MaxListHeight = 200,
+			MaxListWidth = 350,
+			ShowIds = true
+		},
+		new ControlOptions
+		{
+			HtmlAttributes = new Dictionary<string, object> { {"class", "qp-deffilter-content"}}
+		}
+	)
+
+	@Html.MultipleItemPickerFieldFor(m => m.ContentDefaultFilter.ArticleIDs,
+		Model.SelectedDefaultFilterArticleListItems,
+		new EntityDataListArgs()
+		{
+			EntityTypeCode = EntityTypeCode.Article,
+			ParentEntityId = Model.ContentDefaultFilter.ContentId ?? 0,
+			EntityId = null,
+			ListId = -2 * System.DateTime.Now.Millisecond,			
+			SelectActionCode = ActionCode.MultipleSelectArticle,
+			ReadActionCode = ActionCode.EditArticle,
+			MaxListHeight = 200,
+			MaxListWidth = 350,
+			Filter = Field.DefaultRelationFilter,
+			ShowIds = true			
+		},
+		new Dictionary<string, object> { {"class", "qp-deffilter-articles"}}
+	)		
+}
+ </div>

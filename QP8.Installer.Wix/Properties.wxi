@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include
+  xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Property Id="IISROOT">
+    <RegistrySearch Id="IISROOT"
+                    Type="directory"
+                    Root="HKLM"
+                    Key="Software\Microsoft\InetStp"
+                    Name="PathWWWRoot" />
+  </Property>
+  <Property Id="QP_CONFIGURATION_FILE">
+    <RegistrySearch Id="QpConfigurationFileSearch"
+                    Type="raw"
+                    Root="HKLM"
+                    Key="Software\Quantum Art\Q-Publishing"
+                    Name="Configuration File" />
+  </Property>
+  <SetProperty Id='IISROOTFOLDER' Before='CostFinalize' Value='[IISROOT]' Sequence='execute'/>
+
+  <Property Id='DB_CONNECTION_SUCCESS' Value='0'></Property>
+
+  <Property Id="DB_PASSWORD"
+                Secure="yes">
+  </Property>
+  <Property Id="DB_LOGIN"
+            Value="publishing">
+  </Property>
+
+  <Property Id="DB_NAME"
+            Value="publishing">
+  </Property>
+
+  <Property Id="DB_SERVER_NAME"
+            Value=".\">
+  </Property>
+
+  <Property Id="SQL_SERVERS"
+                Secure="yes"></Property>
+
+  <Property Id="DB_DIALOG_SUCCESS"
+            Value="1">
+  </Property>
+  
+  <Property Id="IIS_DIALOG_SUCCESS"
+            Value="1">
+  </Property>
+</Include>

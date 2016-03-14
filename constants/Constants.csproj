@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Quantumart.QP8.Constants</RootNamespace>
+    <AssemblyName>Quantumart.QP8.Constants</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="QA.Validation.Xaml">
+      <HintPath>..\binaries\QA.Validation.Xaml.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ActionCode.cs" />
+    <Compile Include="ActionTargetType.cs" />
+    <Compile Include="ActionTypeCode.cs" />
+    <Compile Include="ArticleFullTextSearch.cs" />
+    <Compile Include="ArticleReturnMode.cs" />
+    <Compile Include="ArticleScheduleConstants.cs" />
+    <Compile Include="ArticleSelectionMode.cs" />
+    <Compile Include="ArticleSelectionIncludeMode.cs" />
+    <Compile Include="ArticleViewType.cs" />
+    <Compile Include="Charset.cs" />
+    <Compile Include="ContentSelectMode.cs" />
+    <Compile Include="ContextMenuCodes.cs" />
+    <Compile Include="FieldSelectMode.cs" />
+    <Compile Include="CssClasses.cs" />
+    <Compile Include="DocumentContextState.cs" />
+    <Compile Include="DateTimePickerMode.cs" />
+    <Compile Include="ApplicationConfigurationKeys.cs" />
+    <Compile Include="Config.cs" />
+    <Compile Include="DayOfWeek.cs" />
+    <Compile Include="DaySpecifyingType.cs" />
+    <Compile Include="Default.cs" />
+    <Compile Include="EditorType.cs" />
+    <Compile Include="EF.cs" />
+    <Compile Include="FieldExactTypes.cs" />
+    <Compile Include="FieldName.cs" />
+    <Compile Include="FieldTypeCodes.cs" />
+    <Compile Include="FieldTypeName.cs" />
+    <Compile Include="ActionMessageType.cs" />
+    <Compile Include="GroupItemCodes.cs" />
+    <Compile Include="ListSelectionMode.cs" />
+    <Compile Include="Locale.cs" />
+    <Compile Include="MainComponentType.cs" />
+    <Compile Include="NotificationCode.cs" />
+    <Compile Include="ObjectSecurityMode.cs" />
+    <Compile Include="Plupload.cs" />
+    <Compile Include="ReceiverType.cs" />
+    <Compile Include="Registry.cs" />
+    <Compile Include="EntityTypeCode.cs" />
+    <Compile Include="LanguageId.cs" />
+    <Compile Include="OnScreenBorderMode.cs" />
+    <Compile Include="PermissionLevel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QPAuthenticationErrorNumber.cs" />
+    <Compile Include="RegularExpressions.cs" />
+    <Compile Include="ScheduleFreqTypes.cs" />
+    <Compile Include="ScheduleRecurringType.cs" />
+    <Compile Include="ScheduleType.cs" />
+    <Compile Include="ScheduleValidationConstants.cs" />
+    <Compile Include="ScriptLanguage.cs" />
+    <Compile Include="ShowDurationUnit.cs" />
+    <Compile Include="ShowLimitationType.cs" />
+    <Compile Include="SpecialIds.cs" />
+    <Compile Include="StatusName.cs" />
+    <Compile Include="SpecialKeys.cs" />
+    <Compile Include="SystemStatusType.cs" />
+    <Compile Include="ValidFieldColumnDbTypes.cs" />
+    <Compile Include="ViewTypeCode.cs" />
+    <Compile Include="VirtualType.cs" />
+    <Compile Include="WeekOfMonth.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

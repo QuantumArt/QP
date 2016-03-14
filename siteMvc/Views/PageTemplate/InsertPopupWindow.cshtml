@@ -1,0 +1,50 @@
+﻿@model  InsertPopupViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+<div class="toolbarWrapper">
+	<div class="actionToolbarWrapper">
+		<div class="toolbar">
+			<ul>
+				 <li class="item button">
+	                <a class="link" href="javascript:void(0);">
+		                <span class="outerWrapper">
+		                <span class="innerWrapper">
+			                <span class="icon insertButton" title="@TemplateStrings.InsertCall">
+				                <img src="/backend/Content/Common//0.gif">
+			                </span>
+			                <span class="text">@TemplateStrings.InsertCall</span>
+		                </span>
+		                </span>
+	                </a>
+                </li>
+			</ul>
+		</div>
+	</div>
+</div>
+    
+<div class="formLayout">
+    <fieldset>
+        @Html.SelectFieldFor(x => x.selectedFunction, Html.List(Model.Functions), htmlAttributes: new Dictionary<string, object> { { "class", "ht-toolbar-function-selector" } })
+        @if (Model.IsContainer)
+        { 
+            @Html.SelectFieldFor(x => x.selectedContainerProp, Html.List(Model.ContainerProps), htmlAttributes: new Dictionary<string, object> { { "class", "ht-toolbar-container-selector" } })
+        }
+        
+        @Html.SelectFieldFor(x => x.selectedRestObject, Html.List(Model.RestTemplateObjects), htmlAttributes: new Dictionary<string, object> { { "class", "ht-toolbar-template-obj-selector" } })
+        
+        @Html.SelectFieldFor(x => x.selectedTemplateObject, Html.List(Model.TemplateObjects), htmlAttributes: new Dictionary<string, object> { { "class", "ht-toolbar-template-obj-selector" } })
+
+        @if (Model.IsPage)
+        {
+            @Html.SelectFieldFor(x => x.selectedPageObject, Html.List(Model.PageObjects), htmlAttributes: new Dictionary<string, object> { { "class", "ht-toolbar-page-obj-selector" } })
+        }
+
+        @if (Model.IsContainer || Model.IsForm)
+        { 
+            @Html.SelectFieldFor(x => x.selectdField, Html.List(Model.Fields) , htmlAttributes: new Dictionary<string, object> { { "class", "ht-toolbar-field-selector" } })
+        }
+    </fieldset>
+</div>    

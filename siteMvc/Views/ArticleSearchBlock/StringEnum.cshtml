@@ -1,0 +1,17 @@
+@using Quantumart.QP8.WebMvc.Extensions.Helpers
+@using Quantumart.QP8.Resources
+
+@model IEnumerable<QPSelectListItem>
+
+@{
+    var queryDropDownListId = (string)ViewBag.QueryDropDownListID;
+    var isNullCheckBoxId = (string)ViewBag.IsNullCheckBoxID;
+}
+
+<div class="row">
+    @Html.QpDropDownList(queryDropDownListId, Model, null, new ControlOptions { HtmlAttributes = new Dictionary<string, object> {{ "class", "" }} })
+    <span class="checkbox">
+        @Html.QpCheckBox(isNullCheckBoxId, null, false, new Dictionary<string, object>())
+        @Html.QpLabel(isNullCheckBoxId, ArticleStrings.SearchBlock_IsNullCheckBoxLabelText, false)
+    </span>
+</div>

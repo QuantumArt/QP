@@ -1,0 +1,286 @@
+﻿//#region class Quantumart.QP8.BackendClassifierField 
+var EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED = "OnClassifierFieldArticleLoaded";
+var EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING = "OnClassifierFieldArticleUnloading";
+
+// поле статьи типа классификатор
+Quantumart.QP8.BackendClassifierField = function (componentElem, editorExecutingHandler, options) {
+	Quantumart.QP8.BackendClassifierField.initializeBase(this);
+
+	this._editorExecutingHandler = editorExecutingHandler;
+
+	if (!$q.isNull(options)) {
+		if (options.hostIsWindow) {
+			this._hostIsWindow = options.hostIsWindow;
+		}
+		if (options.initFieldValues) {
+			this._initFieldValues = options.initFieldValues;
+		}
+		if (options.disabledFields) {
+			this._disabledFields = options.disabledFields;
+		}
+		if (options.hideFields) {
+			this._hideFields = options.hideFields;
+		}
+		if (options.customInit) {
+			this._customInit = options.customInit;
+		}
+		if (options.customDispose) {
+			this._customDispose = options.customDispose;
+		}
+		if (options.parentEditor) {
+			this._parentEditor = options.parentEditor;
+		}
+		if (options.customButtonsSettings) {
+			this._customButtonsSettings = options.customButtonsSettings;
+		}
+		if (options.customLinkButtonsSettings) {
+			this._customLinkButtonsSettings = options.customLinkButtonsSettings;
+		}
+
+
+
+	}	
+
+	this._$componentElem = jQuery(componentElem);
+	this._$componentElem.data(Quantumart.QP8.BackendClassifierField.componentRefDataKey, this);
+};
+
+Quantumart.QP8.BackendClassifierField.componentRefDataKey = "component_ref";
+Quantumart.QP8.BackendClassifierField.getComponent = function(componentElem){
+	return jQuery(componentElem).data(Quantumart.QP8.BackendClassifierField.componentRefDataKey);
+};
+
+Quantumart.QP8.BackendClassifierField.prototype = {
+	_$componentElem: null, // главный элемент компонента
+	_$articleWrapper: null, // контейнер содержимого агрегированной статьи
+	_$contentList: null, // список контентов
+
+	_hostIsWindow: false,
+
+	_initFieldValues: null, // значения для инициализации полей
+	_disabledFields: null, // идентификаторы полей которые должны быть disable (массив имен полей)	
+	_hideFields: null,	// идентификаторы полей которые должны быть скрыты (массив имен полей)
+	_disableChangeTracking: false,
+	_parentEditor: null,
+	_customInit: null,
+	_customDispose: null,
+
+	initialize: function () {
+		// Создать враппер для агрегированной статьи
+		this._$articleWrapper = jQuery('<div class="articleWrapper"></div>');
+		this._$componentElem.closest("dl.row").after(this._$articleWrapper);
+		//---------
+
+		// Инициализация значения списка контентов
+		this._$contentList = this._$componentElem.find('select.classifierContentList');
+		var selectedContentId = this._$componentElem.data("aggregated_content_id");
+		if (!selectedContentId) selectedContentId = "";
+		this._$contentList.find('option[value=' + selectedContentId + ']').prop("selected", true);
+		this._$contentList.on("change", jQuery.proxy(this._onContentSelected, this));
+		//------
+
+		// Разметка статьи (если разметка пришла с сервера)
+		var articleHtml = jQuery("#" + this._$componentElem.data("acticle_html_id")).html();
+		if (articleHtml) {
+			// html-decode
+			articleHtml = jQuery("<div></div>").html(articleHtml).text();
+			this._$articleWrapper.html(articleHtml);
+		}
+		//------
+
+		if ($q.toBoolean(this._$componentElem.data("is_not_changeable"), false)) {
+			this.makeReadonly();
+		}
+	},
+
+	selectContent: function (contentID) {
+		if (!$q.isNull(contentID) && $q.isInt(contentID)) {
+			this._$contentList
+				.find('OPTION[value="' + contentID + '"]')
+				.prop("selected", true)
+				.change();
+		}
+		else {
+			this._$contentList
+					.find("OPTION:selected")
+					.prop("selected", false)
+					.change();
+		}
+	},
+
+	getSelectedContent: function(){
+		return $q.toInt(this._$contentList.find("option:selected").val());
+	},
+
+	makeReadonly: function () {
+		var selectedVal = this._$contentList.find("OPTION:selected").val();
+		if (!$q.isNullOrEmpty(selectedVal)) {
+			var $hidden = this._$contentList.siblings('input[name="' + this._$contentList.prop("name") + '"]:hidden')
+			if ($hidden.length > 0) {
+				$hidden.val(selectedVal);
+			}
+			else {
+				this._$contentList.after('<input type="hidden" name="' + this._$contentList.prop("name") + '" value="' + selectedVal + '" />');
+			}
+		}		
+		this._$contentList
+			.addClass(this.LIST_DISABLED_CLASS_NAME)
+			.prop("disabled", true);
+	},
+
+
+	_onContentSelected: function (e) {
+		var rootContentId = $q.toInt(this._$componentElem.data("root_content_id"), 0);
+		var rootArticleId = $q.toInt(this._$componentElem.data("root_article_id"), 0);
+		var aggregatedContentId = $q.toInt(this._$contentList.find("option:selected").val(), 0);
+		var hostId = this._$componentElem.data("host_id");
+		var url = this._generateUrl(hostId, rootContentId, rootArticleId, aggregatedContentId);
+
+		var self = this;
+		$q.getJsonFromUrl(
+			"GET",
+			url,
+			null,
+			true,
+			false,
+			function (data, textStatus, jqXHR) {
+				if (data.success) {
+					var articleHtml = data.view;
+					self.notify(EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING, { articleWrapper: self._$articleWrapper, toggleDisableChangeTracking: self.set_disableChangeTracking });
+					self._disposeAllFields();
+					self._$articleWrapper.empty();
+					if (articleHtml) {
+						self._$articleWrapper.html(articleHtml);
+						self._initAllFields();
+						self.notify(EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED, { articleWrapper: self._$articleWrapper, toggleDisableChangeTracking: self.set_disableChangeTracking });
+					}
+					if (self._disableChangeTracking) {
+					    self._$articleWrapper.find('.' + CHANGED_FIELD_CLASS_NAME).removeClass(CHANGED_FIELD_CLASS_NAME);
+					    self._disableChangeTracking = false;
+					}
+				}
+				else {
+					alert(data.message);
+				}
+			},
+			function (jqXHR, textStatus, errorThrown) {
+				$q.processGenericAjaxError(jqXHR);
+			}
+		);
+	},
+
+	_generateUrl: function (tabId, rootContentId, rootArticleId, aggregatedContentId) {
+		var url = new $.telerik.stringBuilder();
+		url.cat(APPLICATION_ROOT_URL)
+			.cat("Article/AggregatedArticle/")
+			.cat(tabId).cat("/")
+			.cat(rootContentId).cat("/")
+			.cat(rootArticleId)
+			.cat("?aggregatedContentId=").cat(aggregatedContentId)
+			.cat("&_=").cat(+new Date());
+
+		return url.string();
+	},
+
+	_initAllFields: function () {
+		var $form = this._$articleWrapper;
+
+		$c.setAllVisualEditorValues($form, this._initFieldValues);
+		$c.makeReadonlyVisualEditors($form, this._disabledFields);
+
+				
+		$c.initAllDateTimePickers($form);
+		$c.initAllVisualEditors($form);
+		$c.initAllNumericTextBoxes($form);
+		$c.initAllFileFields($form);
+		$c.initAllEntityDataLists($form, this._editorExecutingHandler, { hostIsWindow: this._hostIsWindow });
+		$c.initAllEntityDataTrees($form);
+		$c.initAllAggregationLists($form);
+		$c.initAllHighlightedTextAreas($form);
+		Quantumart.QP8.BackendExpandedContainer.initAll($form);
+
+		$c.setAllSimpleTextBoxValues($form, this._initFieldValues);
+		$c.setAllBooleanValues($form, this._initFieldValues);
+		$c.setAllNumericBoxValues($form, this._initFieldValues);
+		$c.setAllDateTimePickersValues($form, this._initFieldValues);
+		$c.setAllRadioListValues($form, this._initFieldValues);
+
+		$c.initAllCheckboxToggles($form);
+		$c.initAllSwitcherLists($form);
+
+		$c.makeReadonlySimpleTextBoxes($form, this._disabledFields);
+		$c.makeReadonlyBooleans($form, this._disabledFields);
+		$c.makeReadonlyNumericBox($form, this._disabledFields);
+		$c.makeReadonlyDateTimePickers($form, this._disabledFields);
+		$c.makeReadonlyFileFields($form, this._disabledFields);
+		$c.makeReadonlyRadioList($form, this._disabledFields);
+
+		$c.setAllEntityDataListValues($form, this._initFieldValues);
+		$c.fixAllEntityDataListsOverflow($form);
+		$c.makeReadonlyEntityDataList($form, this._disabledFields);
+
+		$c.setFieldRowsVisibility($form, this._hideFields, false);
+
+		if (this._customInit)
+			this._customInit(this._parentEditor, $form);
+
+		var self = this;
+		if (this._customButtonsSettings) jQuery.each(this._customButtonsSettings, function (index, item) { self._parentEditor.addCustomButton(item, $form) });
+		if (this._customLinkButtonsSettings) jQuery.each(this._customLinkButtonsSettings, function (index, item) { self._parentEditor.addCustomLinkButton(item, $form) });
+
+		$form = null;
+	},
+
+	set_initFieldValues: function (value) {
+	    this._initFieldValues = value;
+	},
+
+	set_disableChangeTracking: function (value) {
+	    this._disableChangeTracking = value;
+	},
+
+
+	_disposeAllFields: function () {
+		var $form = this._$articleWrapper;
+
+		if (this._customDispose)
+			this._customDispose(this._parentEditor, $form);
+
+		$c.destroyAllCheckboxToggles($form);
+		$c.destroyAllSwitcherLists($form);
+		$c.destroyAllDateTimePickers($form);
+		$c.destroyAllVisualEditors($form);
+		$c.destroyAllNumericTextBoxes($form);
+		$c.destroyAllFileFields($form);
+		$c.destroyAllEntityDataLists($form);
+		$c.destroyAllEntityDataTrees($form);
+		$c.destroyAllAggregationLists($form);
+		$c.destroyAllHighlightedTextAreas($form);
+
+		Quantumart.QP8.BackendExpandedContainer.destroyAll($form);
+
+		$form = null;
+	},
+
+	dispose: function () {
+
+		this._customInit = null;
+		this._customDispose = null;
+		this._parentEditor = null;
+
+		if (this._$contentList) {
+			this._$contentList.off();
+			this._$contentList = null;
+		}
+
+		this._$articleWrapper = null;
+
+		if (this._$componentElem) {
+			this._$componentElem.removeData();
+			this._$componentElem = null;
+		}
+	}
+};
+
+Quantumart.QP8.BackendClassifierField.registerClass("Quantumart.QP8.BackendClassifierField", Quantumart.QP8.Observable);
+//#endregion

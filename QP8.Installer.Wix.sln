@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "QP8.Installer.Wix", "QP8.Installer.Wix\QP8.Installer.Wix.wixproj", "{A48F1897-3C46-4CCD-878B-21F1940F3949}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Installer.Wix.CustomActions", "QP8.Installer.Wix.CustomActions\QP8.Installer.Wix.CustomActions.csproj", "{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bin", "Bin", "{E0B0A9D0-E268-4871-8DA9-F97647E11446}"
+	ProjectSection(SolutionItems) = preProject
+		binaries\Microsoft.Web.Administration.dll = binaries\Microsoft.Web.Administration.dll
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = http://tfs:8080/tfs/quantumartcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = QP8.Installer.Wix.CustomActions\\QP8.Installer.Wix.CustomActions.csproj
+		SccProjectName1 = QP8.Installer.Wix.CustomActions
+		SccLocalPath1 = QP8.Installer.Wix.CustomActions
+		SccProjectUniqueName2 = QP8.Installer.Wix\\QP8.Installer.Wix.wixproj
+		SccProjectName2 = QP8.Installer.Wix
+		SccLocalPath2 = QP8.Installer.Wix
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug x64|x64 = Debug x64|x64
+		Debug x64|x86 = Debug x64|x86
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Debug x64|x64.ActiveCfg = Debug x64|x64
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Debug x64|x64.Build.0 = Debug x64|x64
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Debug x64|x86.ActiveCfg = Debug x64|x86
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Debug x64|x86.Build.0 = Debug x64|x86
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Debug|x64.ActiveCfg = Debug|x86
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Debug|x64.Build.0 = Debug|x86
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Debug|x86.ActiveCfg = Debug|x86
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Debug|x86.Build.0 = Debug|x86
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Release|x64.ActiveCfg = Release|x64
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Release|x64.Build.0 = Release|x64
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Release|x86.ActiveCfg = Release|x86
+		{A48F1897-3C46-4CCD-878B-21F1940F3949}.Release|x86.Build.0 = Release|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Debug x64|x64.ActiveCfg = Debug|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Debug x64|x86.ActiveCfg = Debug|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Debug x64|x86.Build.0 = Debug|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Debug|x64.ActiveCfg = Debug|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Debug|x86.ActiveCfg = Debug|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Debug|x86.Build.0 = Debug|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Release|x64.ActiveCfg = Release|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Release|x86.ActiveCfg = Release|x86
+		{37FCEBBB-FA53-4012-9610-98BBC3C21A1A}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

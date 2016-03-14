@@ -1,0 +1,18 @@
+﻿@model CustomCssViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels 
+
+@foreach (var status in Model.Statuses)
+{
+@:.t-alt-@status.Id
+@:{
+	@:background-color: #@status.AltColor;
+@:}
+
+@:.t-@status.Id
+@:{
+	@:background-color: #@status.Color;
+@:}	
+}
+
+

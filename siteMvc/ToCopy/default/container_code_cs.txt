@@ -1,0 +1,28 @@
+using System;
+using System.Collections;
+using System.Web.UI.WebControls;
+
+protected void LoadContainer(Object sender, EventArgs e)
+{
+	container.DataSource = Data;
+}
+
+override public void InitUserHandlers(EventArgs e)
+{
+	LoadContainer(this,e);
+}
+
+protected void OnItemDataBound(Object sender, RepeaterItemEventArgs e)
+{
+
+}
+
+protected void OnItemCreated(Object sender, RepeaterItemEventArgs e)
+{
+
+  // if((e.Item.ItemType == ListItemType.Item) || (e.Item.ItemType == ListItemType.AlternatingItem))
+  // {
+  //   ****please use if needed 
+  // }
+
+}

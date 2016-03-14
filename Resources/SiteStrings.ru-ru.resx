@@ -1,0 +1,576 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllowUserSessions" xml:space="preserve">
+    <value>Включить пользовательские сессии</value>
+  </data>
+  <data name="Always" xml:space="preserve">
+    <value>Всегда</value>
+  </data>
+  <data name="AssemblePreviewAndNotificationsInLiveModeOnly" xml:space="preserve">
+    <value>Собирать страницы для предварительного просмотра и уведомлений в Основном режиме</value>
+  </data>
+  <data name="AssemblingType" xml:space="preserve">
+    <value>Тип сборки</value>
+  </data>
+  <data name="AssemblyPathInvalidFormat" xml:space="preserve">
+    <value>Физический путь для файлов сборок имеет некорректный формат</value>
+  </data>
+  <data name="AssemblyPathMaxLengthExceeded" xml:space="preserve">
+    <value>Длина физического пути для файлов сборок не должна превышать {5} символов</value>
+  </data>
+  <data name="AssemblyPathNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите физический путь для файлов сборок</value>
+  </data>
+  <data name="ConnectionStringName" xml:space="preserve">
+    <value>Имя строки подключения</value>
+  </data>
+  <data name="ContextClassName" xml:space="preserve">
+    <value>Имя контекстного класса</value>
+  </data>
+  <data name="DnsInvalidFormat" xml:space="preserve">
+    <value>DNS имеет некорректный формат</value>
+  </data>
+  <data name="DnsMaxLengthExceeded" xml:space="preserve">
+    <value>Длина DNS не должна превышать {5} символов</value>
+  </data>
+  <data name="DnsNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите DNS!</value>
+  </data>
+  <data name="ForceAssemble" xml:space="preserve">
+    <value>Принудительная сборка без учета даты последнего изменения объекта</value>
+  </data>
+  <data name="ForceTestDirectory" xml:space="preserve">
+    <value>Использовать тестовую папку</value>
+  </data>
+  <data name="ImportMappingToDb" xml:space="preserve">
+    <value>Импортировать файл отображения в базу данных</value>
+  </data>
+  <data name="Legend_AssemblingParameters" xml:space="preserve">
+    <value>Параметры сборки</value>
+  </data>
+  <data name="Legend_AssemblyFilesLocation" xml:space="preserve">
+    <value>Расположение файлов сборок</value>
+  </data>
+  <data name="Legend_LinqAssemblingParameters" xml:space="preserve">
+    <value>Параметры сборки в LINQ-классы</value>
+  </data>
+  <data name="Legend_LivePagesLocation" xml:space="preserve">
+    <value>Расположение страниц в Основном режиме</value>
+  </data>
+  <data name="Legend_OnScreenAssemblingParameters" xml:space="preserve">
+    <value>Параметры сборки OnScreen</value>
+  </data>
+  <data name="Legend_Parameters" xml:space="preserve">
+    <value>Основные параметры</value>
+  </data>
+  <data name="Legend_SiteLocation" xml:space="preserve">
+    <value>Адрес сайта</value>
+  </data>
+  <data name="Legend_SiteMode" xml:space="preserve">
+    <value>Режим работы сайта</value>
+  </data>
+  <data name="Legend_StagePagesLocation" xml:space="preserve">
+    <value>Расположение страниц в Тестовом режиме</value>
+  </data>
+  <data name="Legend_UploadedFilesLocation" xml:space="preserve">
+    <value>Расположение загруженных файлов</value>
+  </data>
+  <data name="ListItem_ScriptLanguage_Asp" xml:space="preserve">
+    <value>ASP</value>
+  </data>
+  <data name="ListItem_ScriptLanguage_AspDotNet" xml:space="preserve">
+    <value>ASP.NET</value>
+  </data>
+  <data name="ListItem_ScriptLanguage_AspDotNetLikeAsp" xml:space="preserve">
+    <value>ASP.NET (like ASP)</value>
+  </data>
+  <data name="Live" xml:space="preserve">
+    <value>Основной</value>
+  </data>
+  <data name="LiveAssemblyPath" xml:space="preserve">
+    <value>Физический путь для Основного режима</value>
+  </data>
+  <data name="LiveDirectory" xml:space="preserve">
+    <value>Физический путь</value>
+  </data>
+  <data name="LiveDirectoryInvalidFormat" xml:space="preserve">
+    <value>Физический путь для страниц сайта в Основном режиме имеет некорректный формат</value>
+  </data>
+  <data name="LiveDirectoryMaxLengthExceeded" xml:space="preserve">
+    <value>Длина физического пути для страниц сайта в Основном режиме не должна превышать {5} символов</value>
+  </data>
+  <data name="LiveDirectoryNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите физический путь для страниц сайта в Основном режиме</value>
+  </data>
+  <data name="LiveVirtualRoot" xml:space="preserve">
+    <value>Виртуальный путь</value>
+  </data>
+  <data name="LiveVirtualRootInvalidFormat" xml:space="preserve">
+    <value>Виртуальный путь для страниц сайта в Основном режиме имеет некорректный формат</value>
+  </data>
+  <data name="LiveVirtualRootMaxLengthExceeded" xml:space="preserve">
+    <value>Длина виртуального пути для страниц сайта в Основном режиме не должна превышать {5} символов</value>
+  </data>
+  <data name="LiveVirtualRootNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите виртуальный путь для станиц сайта в Основном режиме!</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Имя сайта</value>
+  </data>
+  <data name="NameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя сайта</value>
+  </data>
+  <data name="NameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени сайта не должна превышать {5} символов</value>
+  </data>
+  <data name="NameNonUnique" xml:space="preserve">
+    <value>Такое имя сайта уже используется</value>
+  </data>
+  <data name="NameNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите имя сайта</value>
+  </data>
+  <data name="Namespace" xml:space="preserve">
+    <value>Пространство имен для генерируемых классов</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Никогда</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="OnMouseOver" xml:space="preserve">
+    <value>При наведении курсором</value>
+  </data>
+  <data name="OnScreenFieldBorder" xml:space="preserve">
+    <value>Рамка поля</value>
+  </data>
+  <data name="OnScreenObjectBorder" xml:space="preserve">
+    <value>Рамка объекта</value>
+  </data>
+  <data name="ProceedMappingWithDb" xml:space="preserve">
+    <value>Использовать прямое отображение из базы данных</value>
+  </data>
+  <data name="ReplaceUrls" xml:space="preserve">
+    <value>Заменять URL'ы</value>
+  </data>
+  <data name="SiteMode" xml:space="preserve">
+    <value>Режим работы сайта</value>
+  </data>
+  <data name="Stage" xml:space="preserve">
+    <value>Тестовый</value>
+  </data>
+  <data name="StageAssemblyPath" xml:space="preserve">
+    <value>Физический путь для Тестового режима</value>
+  </data>
+  <data name="StageAssemblyPathInvalidFormat" xml:space="preserve">
+    <value>Физический путь для файлов сборок в Тестовом режиме имеет некорректный формат</value>
+  </data>
+  <data name="StageAssemblyPathMaxLengthExceeded" xml:space="preserve">
+    <value>Длина физического пути для файлов сборок в Тестовом режиме не должна превышать {5} символов</value>
+  </data>
+  <data name="StageAssemblyPathNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите физический путь для файлов сборок в Тестовом режиме</value>
+  </data>
+  <data name="StageDirectory" xml:space="preserve">
+    <value>Физический путь</value>
+  </data>
+  <data name="StageDirectoryInvalidFormat" xml:space="preserve">
+    <value>Физический путь для страниц сайта в Тестовом режиме имеет некорректный формат</value>
+  </data>
+  <data name="StageDirectoryMaxLengthExceeded" xml:space="preserve">
+    <value>Длина физического пути для страниц сайта в Тестовом режиме не должна превышать {5} символов</value>
+  </data>
+  <data name="StageDirectoryNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите физический путь для страниц сайта в Тестовом режиме</value>
+  </data>
+  <data name="StageDns" xml:space="preserve">
+    <value>DNS для тестового режима</value>
+  </data>
+  <data name="StageDnsInvalidFormat" xml:space="preserve">
+    <value>DNS для тестового режима имеет некорректный формат</value>
+  </data>
+  <data name="StageDnsMaxLengthExceeded" xml:space="preserve">
+    <value>Длина DNS для Тестового режима не должна превышать {5} символов</value>
+  </data>
+  <data name="StageDnsNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите DNS для Тестового режима</value>
+  </data>
+  <data name="StageVirtualRoot" xml:space="preserve">
+    <value>Виртуальный путь</value>
+  </data>
+  <data name="StageVirtualRootInvalidFormat" xml:space="preserve">
+    <value>Виртуальный путь для страниц сайта в Тестовом режиме имеет некорректный формат</value>
+  </data>
+  <data name="StageVirtualRootMaxLengthExceeded" xml:space="preserve">
+    <value>Длина виртуального пути для страниц сайта в Тестовом режиме не должна превышать {5} символов</value>
+  </data>
+  <data name="StageVirtualRootNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите виртуальный путь для страниц сайта в Тестовом режиме</value>
+  </data>
+  <data name="TestDirectory" xml:space="preserve">
+    <value>Тестовая папка</value>
+  </data>
+  <data name="TestDirectoryInvalidFormat" xml:space="preserve">
+    <value>Физический путь к тестовой папке имеет некорректный формат</value>
+  </data>
+  <data name="TestDirectoryMaxLengthExceeded" xml:space="preserve">
+    <value>Длина физического пути к тестовой папке не должна превышать {5} символов</value>
+  </data>
+  <data name="UploadDirInvalidFormat" xml:space="preserve">
+    <value>Физический путь для загрузки файлов имеет некорректный формат</value>
+  </data>
+  <data name="UploadDirMaxLengthExceeded" xml:space="preserve">
+    <value>Длина физического пути для загрузки файлов не должна превышать {5} символов</value>
+  </data>
+  <data name="UploadDirNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите физический путь для загрузки файлов</value>
+  </data>
+  <data name="UploadPath" xml:space="preserve">
+    <value>Физический путь</value>
+  </data>
+  <data name="UploadUrl" xml:space="preserve">
+    <value>Виртуальный путь</value>
+  </data>
+  <data name="UploadUrlInvalidFormat" xml:space="preserve">
+    <value>Виртуальный путь для загрузки файлов имеет некорректный формат</value>
+  </data>
+  <data name="UploadUrlMaxLengthExceeded" xml:space="preserve">
+    <value>Длина виртуального пути для загрузки файлов не должна превышать {5} символов</value>
+  </data>
+  <data name="UploadUrlNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите виртуальный путь для загрузки файлов</value>
+  </data>
+  <data name="UploadUrlPrefix" xml:space="preserve">
+    <value>Префикс виртуального пути</value>
+  </data>
+  <data name="UploadUrlPrefixInvalidFormat" xml:space="preserve">
+    <value>Префикс виртуального пути для загрузки файлов имеет некорректный формат</value>
+  </data>
+  <data name="UploadUrlPrefixMaxLengthExceeded" xml:space="preserve">
+    <value>Длина префикса виртуального пути для загрузки файлов не должна превышать {5} символов</value>
+  </data>
+  <data name="UseAbsoluteUploadUrl" xml:space="preserve">
+    <value>Использовать абсолютный виртуальный путь</value>
+  </data>
+  <data name="UseLongUrls" xml:space="preserve">
+    <value>Использовать длинные URL'ы</value>
+  </data>
+  <data name="UseSeparateDnsForStageMode" xml:space="preserve">
+    <value>Использовать отдельный DNS для Тестового режима</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="Tooltip_LockedByUser" xml:space="preserve">
+    <value>Заблокирован пользователем {0}</value>
+  </data>
+  <data name="Tooltip_LockedByYou" xml:space="preserve">
+    <value>Заблокирован Вами</value>
+  </data>
+  <data name="Link_AddNewSite" xml:space="preserve">
+    <value>Добавить новый сайт</value>
+  </data>
+  <data name="Header_AddNewSite" xml:space="preserve">
+    <value>Добавление нового сайта</value>
+  </data>
+  <data name="Header_EditSite" xml:space="preserve">
+    <value>Редактирование сайта "{0}"</value>
+  </data>
+  <data name="Header_SiteList" xml:space="preserve">
+    <value>Список сайтов</value>
+  </data>
+  <data name="Dns" xml:space="preserve">
+    <value>DNS</value>
+  </data>
+  <data name="LockedByAnyoneElse" xml:space="preserve">
+    <value>Сайт заблокирован пользователем {0}. </value>
+  </data>
+  <data name="CannotUpdateBecauseOfSecurity" xml:space="preserve">
+    <value>Невозможно обновить сайт, потому что у Вас недостаточно прав доступа</value>
+  </data>
+  <data name="SomeoneBlockedByWorkflow" xml:space="preserve">
+    <value>Некоторые сайты не обработаны, потому что вы не являетесь участником workflow. Id: {0}</value>
+  </data>
+  <data name="SomeoneLocked" xml:space="preserve">
+    <value>Некоторые сайты не обработаны, потому что они заблокированы другими пользователями. Id: {0}</value>
+  </data>
+  <data name="SomeoneNotAccessed" xml:space="preserve">
+    <value>Некоторые сайты не обработаны из-за недостаточных прав доступа. Id: {0}</value>
+  </data>
+  <data name="SomeoneNotFound" xml:space="preserve">
+    <value>Некоторые сайты не найдены. Id: {0}</value>
+  </data>
+  <data name="ConnectionStringNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя строки подключения</value>
+  </data>
+  <data name="ConnectionStringNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени строки подключения не должна превышать {5} символов</value>
+  </data>
+  <data name="ContextClassNameInvalidFormat" xml:space="preserve">
+    <value>Некорректное имя контекстного класса</value>
+  </data>
+  <data name="ContextClassNameMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени контекстного класса не должна превышать {5} символов</value>
+  </data>
+  <data name="DbIndependent" xml:space="preserve">
+    <value>Выполнять генерацию, независимую от БД</value>
+  </data>
+  <data name="EnableOnScreen" xml:space="preserve">
+    <value>Разрешить OnScreen</value>
+  </data>
+  <data name="Legend_VisualEditor" xml:space="preserve">
+    <value>Параметры визуального редактора</value>
+  </data>
+  <data name="MapFileOnly" xml:space="preserve">
+    <value>Генерировать только .map-файл</value>
+  </data>
+  <data name="NamespaceInvalidFormat" xml:space="preserve">
+    <value>Некорректное пространство имен</value>
+  </data>
+  <data name="NamespaceMaxLengthExceeded" xml:space="preserve">
+    <value>Длина имени пространства имен не должна превышать {5} символов</value>
+  </data>
+  <data name="PEnterMode" xml:space="preserve">
+    <value>Вставлять тег P при нажатии Enter</value>
+  </data>
+  <data name="TestDirectoryNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите тестовую папку</value>
+  </data>
+  <data name="UploadUrlPrefixNotEntered" xml:space="preserve">
+    <value>Пожалуйста, введите префикс виртуального пути для загрузки файлов</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Описание</value>
+  </data>
+  <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
+    <value>Длина описания не должна превышать {5} символов</value>
+  </data>
+  <data name="ContextClassNameNonUnique" xml:space="preserve">
+    <value>Имя контекстного класса (с учетом пространства имен) не является уникальным на уровне сайта</value>
+  </data>
+  <data name="SiteNotFound" xml:space="preserve">
+    <value>Сайт не найден (Id = {0})</value>
+  </data>
+  <data name="ShouldBeDotNet" xml:space="preserve">
+    <value>Для выполнения этого действия тип сборки сайта должен быть установлен в значение 'ASP.NET'</value>
+  </data>
+  <data name="SiteInLiveWarning" xml:space="preserve">
+    <value>Внимание! Сайт сейчас находится в Основном режиме. Свойства сайта были модифицированы пользователем {1} в {0}. Вы действительно хотите выполнить сборку?</value>
+  </data>
+  <data name="UseEnglishQuotes" xml:space="preserve">
+    <value>Использовать правила английской типографики</value>
+  </data>
+  <data name="RemoveSiteStageName" xml:space="preserve">
+    <value>Удаление сайта "{0}"</value>
+  </data>
+  <data name="RemoveSiteArticlesStageName" xml:space="preserve">
+    <value>Удаление статей сайта "{0}"</value>
+  </data>
+  <data name="RemoveSiteContentsStageName" xml:space="preserve">
+    <value>Удаление контентов сайта "{0}"</value>
+  </data>
+  <data name="CreateSiteFoldersStageName" xml:space="preserve">
+    <value>Создания папок для сайта "{0}"</value>
+  </data>
+  <data name="AssembleLiveSiteConfirmation" xml:space="preserve">
+    <value>Вы уверены что хотите собрать основной сайт?</value>
+  </data>
+  <data name="AssembleTemplatesStageName" xml:space="preserve">
+    <value>Сборка шаблонов для сайта "{0}"</value>
+  </data>
+  <data name="AssemblePagesStageName" xml:space="preserve">
+    <value>Сборка страниц для сайта "{0}"</value>
+  </data>
+  <data name="AssembleNotificationStageName" xml:space="preserve">
+    <value>Сборка уведомлений для сайта "{0}"</value>
+  </data>
+  <data name="ExternalUrl" xml:space="preserve">
+    <value>Внешний URL</value>
+  </data>
+  <data name="Legend_NotificationProperties" xml:space="preserve">
+    <value>Свойства уведомлений</value>
+  </data>
+  <data name="ExternalUrlNotValid" xml:space="preserve">
+    <value>Пожалуйста, введите валидный внешний URL</value>
+  </data>
+  <data name="SendNotifications" xml:space="preserve">
+    <value>Посылать уведомления</value>
+  </data>
+  <data name="Legend_CustomValidation" xml:space="preserve">
+    <value>Пользовательская валидация</value>
+  </data>
+  <data name="XamlDictionaries" xml:space="preserve">
+    <value>Словари для валидации XAML</value>
+  </data>
+  <data name="CreateDefaultXamlDictionary" xml:space="preserve">
+    <value>Создать словарь для валидации XAML по умолчанию</value>
+  </data>
+  <data name="CreateLikeSite" xml:space="preserve">
+    <value>Создать по образцу</value>
+  </data>
+  <data name="CopySiteContents" xml:space="preserve">
+    <value>Копирование контентов сайта "{0}"</value>
+  </data>
+  <data name="CopySiteArticles" xml:space="preserve">
+    <value>Копирование статей сайта "{0}"</value>
+  </data>
+  <data name="CopySiteVirtualContents" xml:space="preserve">
+    <value>Копирование виртуальных контентов сайта "{0}"</value>
+  </data>
+  <data name="CopySiteSettings" xml:space="preserve">
+    <value>Копирование настроек сайта {0}</value>
+  </data>
+  <data name="CopySiteUpdateArticleIds" xml:space="preserve">
+    <value>Обновление ссылок между статьями</value>
+  </data>
+  <data name="Legend_CopySiteSettings" xml:space="preserve">
+    <value>Настройки копирования сайта</value>
+  </data>
+  <data name="DoNotCopyArticles" xml:space="preserve">
+    <value>Не копировать контенты, которые содержат более указанного количества статей</value>
+  </data>
+  <data name="DoNotCopyFiles" xml:space="preserve">
+    <value>Не копировать файлы</value>
+  </data>
+  <data name="DoNotCopyTemplates" xml:space="preserve">
+    <value>Не копировать шаблоны</value>
+  </data>
+  <data name="CopySiteContentLinks" xml:space="preserve">
+    <value>Копирование связей между контентами сайта "{0}"</value>
+  </data>
+  <data name="ContentFormScript" xml:space="preserve">
+    <value>Скрипт для формы контента</value>
+  </data>
+  <data name="Legend_Scripts" xml:space="preserve">
+    <value>Скрипты</value>
+  </data>
+  <data name="AssemblePagesError" xml:space="preserve">
+    <value>Страницы не собраны: </value>
+  </data>
+  <data name="AssemblePagesResult" xml:space="preserve">
+    <value>Пропущено страниц: {0} :</value>
+  </data>
+  <data name="QP7MissingPassword" xml:space="preserve">
+    <value>Для QP7 нужна повторная авторизация.</value>
+  </data>
+  <data name="SettingQP7PathIsMissed" xml:space="preserve">
+    <value>Настройка "QP7Path" не задана</value>
+  </data>
+</root>

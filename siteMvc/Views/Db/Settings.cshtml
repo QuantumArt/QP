@@ -1,0 +1,63 @@
+﻿@model DbViewModel
+
+@using Quantumart.QP8
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Utils
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(ContentStrings.Legend_BasicParameters))
+	{
+        @Html.CheckBoxFieldFor(s => s.Data.RecordActions, "OverridePanel");
+		using (Html.BeginPanel("OverridePanel"))
+		{
+			if (Model.Data.SingleUserId != null && Model.Data.SingleUserId != QPContext.CurrentUserId)
+			{
+				@Html.CheckBoxFieldFor(s => s.OverrideRecordsUser)
+			}
+            @Html.CheckBoxFieldFor(s => s.OverrideRecordsFile)
+        }
+        
+        @Html.HtmlFieldFor(s => s.Data.FpSettings,
+			@<div class="qp-expandedContent">
+				@Html.QpTextAreaFor(s => s.Data.FpSettings, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
+			</div>
+		)
+        @Html.CheckBoxFieldFor(s => s.Data.UseADSyncService);
+		@Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome);
+	    @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
+    }
+    
+
+	@Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+
+}
+
+<script type="text/html" id="@Html.UniqueId("Data_AppSettings_template")">
+	<span data-bind="click: addItem">
+        @Html.SimpleAddActionLink(DBStrings.AddAppSetting)
+	</span>
+	<table>
+		<thead>
+			<tr>
+				<td/>
+				<td>@DBStrings.Key</td>
+				<td>@DBStrings.Value</td>
+			</tr>
+		</thead>
+		<tbody data-bind ="foreach: items">
+			<tr>
+				<td data-bind="text: $index() + 1"></td>
+				<td><input class="textbox" data-bind="value: Key, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
+				<td><input class="textbox" data-bind="value: Value, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
+                <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
+			</tr>
+		</tbody>
+	</table>
+</script>
+
+@Html.InitScript(Model)

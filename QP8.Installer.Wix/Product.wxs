@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
+     xmlns:iis="http://schemas.microsoft.com/wix/IIsExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+     xmlns:sql="http://schemas.microsoft.com/wix/SqlExtension">
+
+  <!-- Переменные продукта -->
+  <?include ProductProperties.wxi?>
+  <?include PackageProperties.wxi?>
+
+  <Product
+    Id="*"
+    Name="!(loc.ProductName)"
+    Language="!(loc.Lang)"
+    Version="$(var.Version)"
+    Manufacturer="!(loc.Manufacturer)"
+    UpgradeCode="$(var.UpgradeCode)">
+
+    <Package
+      InstallerVersion="$(var.InstallerVersion)"
+      Compressed="$(var.Compressed)"
+      InstallScope="$(var.InstallScope)"
+      Description="!(loc.ProductName) $(var.Version)">
+    </Package>
+
+    <sql:SqlDatabase Id='SqlDatabase' Database='master' Server='[DB_SERVER_NAME]'></sql:SqlDatabase>
+
+    <EnsureTable Id="ComboBox" />
+
+    <Binary Id="NetCustomActions"
+            SourceFile="$(var.SolutionDir)QP8.Installer.Wix.CustomActions\bin\Debug\QP8.Installer.Wix.CustomActions.CA.dll" />
+
+    <MajorUpgrade
+      Schedule="afterInstallInitialize"
+      DowngradeErrorMessage="!(loc.DowngradeErrorMessage)"
+      />
+
+    <!-- Свойства -->
+    <?include Properties.wxi?>
+
+    <MediaTemplate CompressionLevel="$(var.CompressionLevel)"
+                   EmbedCab="$(var.EmbedCab)" />
+
+    <!-- Наборы -->
+    <?include Features.wxi?>
+
+    <!-- Интерфейс инсталлятора -->
+    <?include UI.wxi?>
+    <?include UISequence.wxi?>
+
+    <!-- Глобальные проверки -->
+    <?include GlobalConditions.wxi?>
+    <!-- Последоватеьность выполнения -->
+    <?include InstallExecuteSequence.wxi?>
+
+    <?include CustomActions.wxi?>
+    <?include InstallUISequence.wxi?>
+  </Product>
+
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="INSTALLFOLDER" Name="QP8.Framework">
+          <?include InstallQP8Settings.wxi?>
+          <Directory Id="BACKENDINSTALLFOLDER" Name="Backend"
+                     ComponentGuidGenerationSeed="{92FB8F92-4123-4A21-96FD-2E23852C7EA4}">
+            <Directory Id="SITESINSTALLFOLDER" Name="Sites">
+            </Directory>
+            <Directory Id="SITESCONTENTINSTALLFOLDER" Name="Content">
+            </Directory>
+            <Directory Id="SITESSCRIPTSINSTALLFOLDER" Name="Scripts">
+            </Directory>
+          </Directory>
+          <Directory Id="WINLOGONINSTALLFOLDER" Name="Winlogon"
+                     ComponentGuidGenerationSeed="{7CE93C68-C3E5-4431-AE91-0D569B00AE56}">
+          </Directory>
+          <Directory Id="ARTICLESCHEDULERINSTALLFOLDER" Name="ArticleScheduler"
+                     ComponentGuidGenerationSeed="{C86D6FA5-F142-44BC-9AE8-283572DB6EEC}">
+          </Directory>
+          <Directory Id="DATABASEINSTALLFOLDER" Name="DemoDb"
+                     ComponentGuidGenerationSeed="{C86D6FA5-F142-44BC-9AE8-283572DB6EEC}">
+          </Directory>
+          <Directory Id="DEMOSITEINSTALLFOLDER" Name="DemoSite"
+                     ComponentGuidGenerationSeed="{D145F616-9C23-418F-8008-49476B9C204E}">
+          </Directory>
+          <Directory Id="TEMPINSTALLFOLDER" Name="Temp">
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <Directory Id="IISROOTFOLDER">
+      </Directory>
+    </Directory>
+  </Fragment>
+</Wix>

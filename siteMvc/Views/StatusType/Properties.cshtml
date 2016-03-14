@@ -1,0 +1,22 @@
+﻿@model  StatusTypeViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.StatusType
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+		@Html.TextBoxFieldFor(s => s.Data.Name, htmlAttributes: (Model.Data.BuiltIn ? new Dictionary<string, object> { { "disabled", "disabled" } } : null))
+		@Html.TextAreaFieldFor(s => s.Data.Description)		
+		@Html.NumericFieldFor(s => s.Data.Weight, 0, 100, 0, htmlAttributes: (Model.Data.BuiltIn ? new Dictionary<string, object> { { "disabled", "disabled" } } : null))
+		@Html.TextBoxFieldFor(s => s.Data.Color)
+		@Html.TextBoxFieldFor(s => s.Data.AltColor)
+	}
+    @Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+
+}
+
+@Html.InitScript(Model)

@@ -1,0 +1,75 @@
+﻿@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+
+<div class="row">
+	<span>
+		@Html.QpRadioButtonList((string)ViewBag.SelectorElementID,
+		new[] 
+		{
+			new QPSelectListItem
+			{
+				Text = ArticleStrings.SearchBlock_BySelector,
+				Selected = true,
+				Value = "0",
+			},
+			new QPSelectListItem
+			{
+				Text = ArticleStrings.SearchBlock_ByList,
+				Selected = false,
+				Value = "1"
+			}
+		},
+		new ControlOptions {Enabled = true}
+		)
+	</span>
+</div>
+
+<div id="EntityContainer" class="row ">
+	@Html.Relation((string)ViewBag.RelationElementID,
+		Html.List((IEnumerable<ListItem>)ViewBag.ItemList),
+		//new QPSelectListItem[0],
+		new ControlOptions(), RelationType.ManyToMany, true, 
+		new EntityDataListArgs()
+		{
+			EntityTypeCode = EntityTypeCode.Article,
+			ParentEntityId = ((Field)ViewBag.Field).RelateToContentId,
+			EntityId = null,
+			ListId = ((Field)ViewBag.Field).Id,
+			AddNewActionCode = ActionCode.None,
+			ReadActionCode = ActionCode.None,
+			SelectActionCode = ActionCode.MultipleSelectArticle,
+			MaxListHeight = 100,
+			MaxListWidth = 350,
+			Filter = ((Field)ViewBag.Field).RelationFilter,
+            ShowIds = true
+		}
+	)
+</div>
+
+<div id="TextAreaContainer" class="row" style="display:none;">
+ <span class="label">
+	@Html.QpLabel((string)ViewBag.RelationTextAreaElementID, ArticleStrings.SearchBlock_ListText, true)
+  </span>
+  <span class="field">
+    @Html.QpTextArea((string)ViewBag.RelationTextAreaElementID, "",
+	    new Dictionary<string, object> 
+	    {
+            { "class", "numbers-list"}
+	    })
+  </span>
+</div>
+
+<div class="row">
+	<span class="checkbox">
+		@Html.QpCheckBox((string)ViewBag.IsNullCheckBoxElementID, null, false, new Dictionary<string, object>())
+		@Html.QpLabel((string)ViewBag.IsNullCheckBoxElementID, ArticleStrings.SearchBlock_IsNullCheckBoxLabelText, false)
+	</span>
+</div>
+
+<div class="row">
+	<span class="checkbox">
+		@Html.QpCheckBox((string)ViewBag.InverseCheckBoxElementID, null, false, new Dictionary<string, object>())
+		@Html.QpLabel((string)ViewBag.InverseCheckBoxElementID, ArticleStrings.SearchBlock_InverseCheckBoxLabelText, false)
+	</span>
+</div>

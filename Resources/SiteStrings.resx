@@ -1,0 +1,582 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllowUserSessions" xml:space="preserve">
+    <value>Enable User Sessions</value>
+  </data>
+  <data name="Always" xml:space="preserve">
+    <value>Always</value>
+  </data>
+  <data name="Asp" xml:space="preserve">
+    <value>ASP</value>
+  </data>
+  <data name="AspDotNet" xml:space="preserve">
+    <value>ASP.NET</value>
+  </data>
+  <data name="AspDotNetLikeAsp" xml:space="preserve">
+    <value>ASP.NET (like ASP)</value>
+  </data>
+  <data name="AssemblePreviewAndNotificationsInLiveModeOnly" xml:space="preserve">
+    <value>Assemble Preview and Notifications In Live Mode Only</value>
+  </data>
+  <data name="AssemblingType" xml:space="preserve">
+    <value>Assembling Type</value>
+  </data>
+  <data name="AssemblyPathInvalidFormat" xml:space="preserve">
+    <value>Invalid assembly files physical path format</value>
+  </data>
+  <data name="AssemblyPathMaxLengthExceeded" xml:space="preserve">
+    <value>The length of assembly files physical path should not exceed {5} characters</value>
+  </data>
+  <data name="AssemblyPathNotEntered" xml:space="preserve">
+    <value>Please enter assembly files physical path</value>
+  </data>
+  <data name="ConnectionStringName" xml:space="preserve">
+    <value>Connection string name</value>
+  </data>
+  <data name="ContextClassName" xml:space="preserve">
+    <value>Context class name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DescriptionMaxLengthExceeded" xml:space="preserve">
+    <value>The length of description should not exceed {5} characters</value>
+  </data>
+  <data name="DnsInvalidFormat" xml:space="preserve">
+    <value>Invalid DNS format</value>
+  </data>
+  <data name="DnsMaxLengthExceeded" xml:space="preserve">
+    <value>The length of DNS should not exceed {5} characters</value>
+  </data>
+  <data name="DnsNotEntered" xml:space="preserve">
+    <value>Please enter DNS</value>
+  </data>
+  <data name="ForceAssemble" xml:space="preserve">
+    <value>Force assembling without taking the date of the object last update into account</value>
+  </data>
+  <data name="ForceTestDirectory" xml:space="preserve">
+    <value>Force Test Directory</value>
+  </data>
+  <data name="ImportMappingToDb" xml:space="preserve">
+    <value>Import mapping file to database</value>
+  </data>
+  <data name="Legend_AssemblingParameters" xml:space="preserve">
+    <value>Assembling Parameters</value>
+  </data>
+  <data name="Legend_AssemblyFilesLocation" xml:space="preserve">
+    <value>Assembly Files Location</value>
+  </data>
+  <data name="Legend_LinqAssemblingParameters" xml:space="preserve">
+    <value>LINQ Assembling Parameters</value>
+  </data>
+  <data name="Legend_LivePagesLocation" xml:space="preserve">
+    <value>Live Pages Location</value>
+  </data>
+  <data name="Legend_OnScreenAssemblingParameters" xml:space="preserve">
+    <value>OnScreen Assembling Parameters</value>
+  </data>
+  <data name="Legend_Parameters" xml:space="preserve">
+    <value>Basic parameters</value>
+  </data>
+  <data name="Legend_SiteLocation" xml:space="preserve">
+    <value>Site Location</value>
+  </data>
+  <data name="Legend_SiteMode" xml:space="preserve">
+    <value>Site Mode</value>
+  </data>
+  <data name="Legend_StagePagesLocation" xml:space="preserve">
+    <value>Stage Pages Location</value>
+  </data>
+  <data name="Legend_UploadedFilesLocation" xml:space="preserve">
+    <value>Uploaded Files Location</value>
+  </data>
+  <data name="Legend_Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Live" xml:space="preserve">
+    <value>Live</value>
+  </data>
+  <data name="LiveAssemblyPath" xml:space="preserve">
+    <value>Live Physical Path</value>
+  </data>
+  <data name="LiveDirectory" xml:space="preserve">
+    <value>Physical Path</value>
+  </data>
+  <data name="LiveDirectoryInvalidFormat" xml:space="preserve">
+    <value>Invalid physical path for Live Mode format</value>
+  </data>
+  <data name="LiveDirectoryMaxLengthExceeded" xml:space="preserve">
+    <value>The length of site pages physical path for Live Mode should not exceed {5} characters</value>
+  </data>
+  <data name="LiveDirectoryNotEntered" xml:space="preserve">
+    <value>Please enter site pages physical path for Live Mode</value>
+  </data>
+  <data name="LiveVirtualRoot" xml:space="preserve">
+    <value>Virtual Path</value>
+  </data>
+  <data name="LiveVirtualRootInvalidFormat" xml:space="preserve">
+    <value>Invalid site pages virtual path for Live Mode format</value>
+  </data>
+  <data name="LiveVirtualRootMaxLengthExceeded" xml:space="preserve">
+    <value>The length of site pages virtual path for Live Mode should not exceed {5} characters</value>
+  </data>
+  <data name="LiveVirtualRootNotEntered" xml:space="preserve">
+    <value>Please enter site pages virtual path for Live Mode</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Site Name</value>
+  </data>
+  <data name="NameInvalidFormat" xml:space="preserve">
+    <value>Invalid site name</value>
+  </data>
+  <data name="NameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of site name should not exceed {5} characters</value>
+  </data>
+  <data name="NameNonUnique" xml:space="preserve">
+    <value>Site name is already in using</value>
+  </data>
+  <data name="NameNotEntered" xml:space="preserve">
+    <value>Please enter site name</value>
+  </data>
+  <data name="Namespace" xml:space="preserve">
+    <value>Namespace for generated classes</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="OnMouseOver" xml:space="preserve">
+    <value>On Mouse Over</value>
+  </data>
+  <data name="OnScreenFieldBorder" xml:space="preserve">
+    <value>Field Border</value>
+  </data>
+  <data name="OnScreenObjectBorder" xml:space="preserve">
+    <value>Object Border</value>
+  </data>
+  <data name="ProceedMappingWithDb" xml:space="preserve">
+    <value>Use direct mapping from database</value>
+  </data>
+  <data name="ReplaceUrls" xml:space="preserve">
+    <value>Replace URLs</value>
+  </data>
+  <data name="SiteMode" xml:space="preserve">
+    <value>Site Mode</value>
+  </data>
+  <data name="Stage" xml:space="preserve">
+    <value>Stage</value>
+  </data>
+  <data name="StageAssemblyPath" xml:space="preserve">
+    <value>Stage Physical Path</value>
+  </data>
+  <data name="StageAssemblyPathInvalidFormat" xml:space="preserve">
+    <value>Invalid assembly files physical path for Stage Mode format</value>
+  </data>
+  <data name="StageAssemblyPathMaxLengthExceeded" xml:space="preserve">
+    <value>The length of assembly files physical path for Stage Mode should not exceed {5} characters</value>
+  </data>
+  <data name="StageAssemblyPathNotEntered" xml:space="preserve">
+    <value>Please enter assembly files physical path for Stage Mode</value>
+  </data>
+  <data name="StageDirectory" xml:space="preserve">
+    <value>Physical Path</value>
+  </data>
+  <data name="StageDirectoryInvalidFormat" xml:space="preserve">
+    <value>Invalid physical path for Stage Mode format</value>
+  </data>
+  <data name="StageDirectoryMaxLengthExceeded" xml:space="preserve">
+    <value>The length of site pages physical path for Stage Mode should not exceed {5} characters</value>
+  </data>
+  <data name="StageDirectoryNotEntered" xml:space="preserve">
+    <value>Please enter site pages physical path for Stage Mode</value>
+  </data>
+  <data name="StageDns" xml:space="preserve">
+    <value>Stage DNS</value>
+  </data>
+  <data name="StageDnsInvalidFormat" xml:space="preserve">
+    <value>Invalid DNS for Stage Mode format</value>
+  </data>
+  <data name="StageDnsMaxLengthExceeded" xml:space="preserve">
+    <value>The length of DNS for Stage Mode should not exceed {5} characters</value>
+  </data>
+  <data name="StageDnsNotEntered" xml:space="preserve">
+    <value>Please enter DNS for Stage Mode</value>
+  </data>
+  <data name="StageVirtualRoot" xml:space="preserve">
+    <value>Virtual Path</value>
+  </data>
+  <data name="StageVirtualRootInvalidFormat" xml:space="preserve">
+    <value>Invalid site pages virtual path for Stage Mode format</value>
+  </data>
+  <data name="StageVirtualRootMaxLengthExceeded" xml:space="preserve">
+    <value>The length of site pages virtual path for Stage Mode should not exceed {5} characters</value>
+  </data>
+  <data name="StageVirtualRootNotEntered" xml:space="preserve">
+    <value>Please enter site pages virtual path for Stage Mode</value>
+  </data>
+  <data name="TestDirectory" xml:space="preserve">
+    <value>Test Directory</value>
+  </data>
+  <data name="TestDirectoryInvalidFormat" xml:space="preserve">
+    <value>Invalid test directory path format</value>
+  </data>
+  <data name="TestDirectoryMaxLengthExceeded" xml:space="preserve">
+    <value>The length of test directory path should not exceed {5} characters</value>
+  </data>
+  <data name="UploadDirInvalidFormat" xml:space="preserve">
+    <value>Invalid physical path for file uploading format</value>
+  </data>
+  <data name="UploadDirMaxLengthExceeded" xml:space="preserve">
+    <value>The length of physical path for file uploading should not exceed {5} characters</value>
+  </data>
+  <data name="UploadDirNotEntered" xml:space="preserve">
+    <value>Please enter physical path for file uploading</value>
+  </data>
+  <data name="UploadPath" xml:space="preserve">
+    <value>Physical Path</value>
+  </data>
+  <data name="UploadUrl" xml:space="preserve">
+    <value>Virtual Path</value>
+  </data>
+  <data name="UploadUrlInvalidFormat" xml:space="preserve">
+    <value>Invalid virtual path for file uploading format</value>
+  </data>
+  <data name="UploadUrlMaxLengthExceeded" xml:space="preserve">
+    <value>The length of virtual path for file uploading should not exceed {5} characters</value>
+  </data>
+  <data name="UploadUrlNotEntered" xml:space="preserve">
+    <value>Please enter virtual path for file uploading</value>
+  </data>
+  <data name="UploadUrlPrefix" xml:space="preserve">
+    <value>Virtual Path Prefix</value>
+  </data>
+  <data name="UploadUrlPrefixInvalidFormat" xml:space="preserve">
+    <value>Invalid virtual path prefix for file uploading format</value>
+  </data>
+  <data name="UploadUrlPrefixMaxLengthExceeded" xml:space="preserve">
+    <value>The length of virtual path prefix for file uploading should not exceed {5} characters</value>
+  </data>
+  <data name="UseAbsoluteUploadUrl" xml:space="preserve">
+    <value>Use absolute virtual path</value>
+  </data>
+  <data name="UseLongUrls" xml:space="preserve">
+    <value>Use long URLs</value>
+  </data>
+  <data name="UseSeparateDnsForStageMode" xml:space="preserve">
+    <value>Use Separate DNS for Stage Mode</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Tooltip_LockedByUser" xml:space="preserve">
+    <value>Locked by user {0}</value>
+  </data>
+  <data name="Tooltip_LockedByYou" xml:space="preserve">
+    <value>Locked by you</value>
+  </data>
+  <data name="Link_AddNewSite" xml:space="preserve">
+    <value>Add new site</value>
+  </data>
+  <data name="Header_AddNewSite" xml:space="preserve">
+    <value>Add new site</value>
+  </data>
+  <data name="Header_EditSite" xml:space="preserve">
+    <value>Edit site "{0}"</value>
+  </data>
+  <data name="Header_SiteList" xml:space="preserve">
+    <value>Site list</value>
+  </data>
+  <data name="Dns" xml:space="preserve">
+    <value>DNS</value>
+  </data>
+  <data name="LockedByAnyoneElse" xml:space="preserve">
+    <value>Site is locked by user {0}. </value>
+  </data>
+  <data name="CannotUpdateBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot update site because you have no enough permissions</value>
+  </data>
+  <data name="SomeoneBlockedByWorkflow" xml:space="preserve">
+    <value>Some sites have not been processed because you are not a workflow member. Id: {0}</value>
+  </data>
+  <data name="SomeoneLocked" xml:space="preserve">
+    <value>Some sites have not been processed because they are locked by other users. Id: {0}</value>
+  </data>
+  <data name="SomeoneNotAccessed" xml:space="preserve">
+    <value>Some sites have not been processed because of insufficient permissions. Id: {0}</value>
+  </data>
+  <data name="SomeoneNotFound" xml:space="preserve">
+    <value>Some sites have not been found. Id: {0}</value>
+  </data>
+  <data name="ConnectionStringNameInvalidFormat" xml:space="preserve">
+    <value>Wrong connection string name </value>
+  </data>
+  <data name="ConnectionStringNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of connection string name should not exceed {5} characters</value>
+  </data>
+  <data name="ContextClassNameInvalidFormat" xml:space="preserve">
+    <value>Wrong context class name</value>
+  </data>
+  <data name="ContextClassNameMaxLengthExceeded" xml:space="preserve">
+    <value>The length of context class name should not exceed {5} characters</value>
+  </data>
+  <data name="DbIndependent" xml:space="preserve">
+    <value>Proceed DB-independent generation</value>
+  </data>
+  <data name="EnableOnScreen" xml:space="preserve">
+    <value>Enable OnScreen</value>
+  </data>
+  <data name="Legend_VisualEditor" xml:space="preserve">
+    <value>Visual Editor Parameters</value>
+  </data>
+  <data name="MapFileOnly" xml:space="preserve">
+    <value>Generate only .map file</value>
+  </data>
+  <data name="NamespaceInvalidFormat" xml:space="preserve">
+    <value>Wrong namespace</value>
+  </data>
+  <data name="NamespaceMaxLengthExceeded" xml:space="preserve">
+    <value>The length of namespace should not exceed {5} characters</value>
+  </data>
+  <data name="PEnterMode" xml:space="preserve">
+    <value>Insert P tag while pressing Enter</value>
+  </data>
+  <data name="TestDirectoryNotEntered" xml:space="preserve">
+    <value>Please enter test directory</value>
+  </data>
+  <data name="UploadUrlPrefixNotEntered" xml:space="preserve">
+    <value>Please enter upload url prefix</value>
+  </data>
+  <data name="SelectWorkflow" xml:space="preserve">
+    <value>Select workflow</value>
+  </data>
+  <data name="ContextClassNameNonUnique" xml:space="preserve">
+    <value>Context class name (with namespace) is already in using on the site</value>
+  </data>
+  <data name="SiteNotFound" xml:space="preserve">
+    <value>Site not found (Id = {0})</value>
+  </data>
+  <data name="ShouldBeDotNet" xml:space="preserve">
+    <value>Site assembling type should be set into the 'ASP.NET' value to execute this action</value>
+  </data>
+  <data name="SiteInLiveWarning" xml:space="preserve">
+    <value>Warning! Site is now in live mode. Site properties was modified by {1} at {0}. Do you really want to proceed assembling?</value>
+  </data>
+  <data name="UseEnglishQuotes" xml:space="preserve">
+    <value>Use english typografic rules</value>
+  </data>
+  <data name="RemoveSiteStageName" xml:space="preserve">
+    <value>Removing Site "{0}"</value>
+  </data>
+  <data name="RemoveSiteArticlesStageName" xml:space="preserve">
+    <value>Removing articles from site "{0}"</value>
+  </data>
+  <data name="RemoveSiteContentsStageName" xml:space="preserve">
+    <value>Removing contents from site "{0}"</value>
+  </data>
+  <data name="CreateSiteFoldersStageName" xml:space="preserve">
+    <value>Creating folders for site "{0}"</value>
+  </data>
+  <data name="AssembleLiveSiteConfirmation" xml:space="preserve">
+    <value>Are you sure to assemble Live Site?</value>
+  </data>
+  <data name="AssembleTemplatesStageName" xml:space="preserve">
+    <value>Assembling Templates for Site "{0}"</value>
+  </data>
+  <data name="AssemblePagesStageName" xml:space="preserve">
+    <value>Assembling Pages for Site "{0}"</value>
+  </data>
+  <data name="AssembleNotificationStageName" xml:space="preserve">
+    <value>Assembling Notifications for Site "{0}"</value>
+  </data>
+  <data name="ExternalUrl" xml:space="preserve">
+    <value>External URL</value>
+  </data>
+  <data name="Legend_NotificationProperties" xml:space="preserve">
+    <value>Notification Properties</value>
+  </data>
+  <data name="ExternalUrlNotValid" xml:space="preserve">
+    <value>Please enter valid external URL</value>
+  </data>
+  <data name="SendNotifications" xml:space="preserve">
+    <value>Send notifications</value>
+  </data>
+  <data name="Legend_CustomValidation" xml:space="preserve">
+    <value>Custom Validation</value>
+  </data>
+  <data name="XamlDictionaries" xml:space="preserve">
+    <value>Dictionaries  for XAML Validation</value>
+  </data>
+  <data name="CreateDefaultXamlDictionary" xml:space="preserve">
+    <value>Create Default XAML Dictionary</value>
+  </data>
+  <data name="CreateLikeSite" xml:space="preserve">
+    <value>Create like site</value>
+  </data>
+  <data name="CopySiteContents" xml:space="preserve">
+    <value>Copying contents from site "{0}"</value>
+  </data>
+  <data name="CopySiteArticles" xml:space="preserve">
+    <value>Copying articles from site "{0}"</value>
+  </data>
+  <data name="CopySiteVirtualContents" xml:space="preserve">
+    <value>Copying virtual contents from site "{0}"</value>
+  </data>
+  <data name="CopySiteSettings" xml:space="preserve">
+    <value>Copying settings of site {0}</value>
+  </data>
+  <data name="CopySiteUpdateArticleIds" xml:space="preserve">
+    <value>Updating links between articles</value>
+  </data>
+  <data name="Legend_CopySiteSettings" xml:space="preserve">
+    <value>Copy site settings</value>
+  </data>
+  <data name="DoNotCopyArticles" xml:space="preserve">
+    <value>Do not copy contents with more then specified amount of articles</value>
+  </data>
+  <data name="DoNotCopyFiles" xml:space="preserve">
+    <value>Do not copy files</value>
+  </data>
+  <data name="DoNotCopyTemplates" xml:space="preserve">
+    <value>Do not copy templates</value>
+  </data>
+  <data name="CopySiteContentLinks" xml:space="preserve">
+    <value>Copying content links from site "{0}"</value>
+  </data>
+  <data name="ContentFormScript" xml:space="preserve">
+    <value>Content form script</value>
+  </data>
+  <data name="Legend_Scripts" xml:space="preserve">
+    <value>Scripts</value>
+  </data>
+  <data name="AssemblePagesError" xml:space="preserve">
+    <value>Pages are not assembled: </value>
+  </data>
+  <data name="AssemblePagesResult" xml:space="preserve">
+    <value>Missed {0} pages:</value>
+  </data>
+  <data name="QP7MissingPassword" xml:space="preserve">
+    <value>Password is missing for QP7 authentication. Need relogin.</value>
+  </data>
+  <data name="SettingQP7PathIsMissed" xml:space="preserve">
+    <value>Setting "QP7Path" is not defined</value>
+  </data>
+</root>

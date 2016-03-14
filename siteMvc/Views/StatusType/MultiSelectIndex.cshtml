@@ -1,0 +1,52 @@
+﻿@model Quantumart.QP8.WebMvc.ViewModels.StatusType.StatusTypeSelectableListViewModel
+
+@using Quantumart.QP8
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Utils
+@using Quantumart.QP8.BLL.ListItems
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.WebMvc.ViewModels.Content
+
+@using (Html.BeginDocumentPadding())
+{	
+    @(Html.Telerik().Grid<StatusTypeListItem>().Name(Model.MainComponentId)
+        .DataKeys(k => k.Add(s => s.Id))
+        .Columns(c =>
+            {
+                c.Bound("")
+                    .Title(@"<input type='checkbox' />")
+                    .Width(30)
+                    .HeaderHtmlAttributes(new { @class = "t-select-header" })
+                    .ClientTemplate(@"<input type='checkbox' name='selectedContentIDs' value='<#= Id #>' />")
+                    .HtmlAttributes(new { @class = "t-select-cell" })
+                    .Sortable(false);
+
+                c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                    .Width(30)
+                    .HtmlAttributes(new { @class = "id" });                
+                c.Bound(s => s.Name)
+                    .Title(EntityObjectStrings.Name)
+                    .HtmlAttributes(new { @class = "title" });                
+
+                c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
+
+            })
+        .DataBinding(db => db.Ajax()
+            .Select(Model.GetDataAction, "StatusType")
+        )
+        .EnableCustomBinding(true)
+        .Sortable()
+        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
+        .Selectable(s => s.Enabled(true))
+        .ClientEvents(e =>
+            e
+                .OnDataBinding("$q.preventDefaultFunction")
+                .OnRowDataBound("$q.preventDefaultFunction")
+        )
+    )
+}
+
+@Html.InitScript(Model)
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

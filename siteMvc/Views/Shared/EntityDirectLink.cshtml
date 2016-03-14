@@ -1,0 +1,27 @@
+﻿@model EntityViewModel
+
+@using Quantumart.QP8.WebMvc.Extensions.Helpers
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+
+@if (!Model.IsNew)
+{     
+	using (Html.BeginFieldGroup(EntityObjectStrings.DirectLinkTitle))
+	{
+		<div class="directLink">
+			@{
+				string url =  Url.Action("", "", Model.DirectLinkOptions, Request.Url.Scheme);
+			}
+
+			<dl class="row">
+				<dt class="label">
+					<label for='@Html.UniqueId("directLink")'>@EntityObjectStrings.DirectLink:</label>
+				</dt>
+				<dd class="field">
+					<input id='@Html.UniqueId("directLink")' type="text" class="textbox directLink" readonly="true" onclick="this.select()" value="@url">
+				</dd>
+			</dl>
+		</div>
+	
+	} 
+}

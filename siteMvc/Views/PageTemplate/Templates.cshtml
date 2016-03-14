@@ -1,0 +1,65 @@
+﻿@model SearchInTemplatesViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.BLL.ListItems
+
+@using (Html.BeginDocumentPadding())
+{
+    <div id="@Model.MainComponentId" class="alMainContaner">	
+	    <form class="formLayout" action='javascript:void(0);'>
+		    <div id="@Model.FilterElementId" class="simpleSeachBlock">
+                @using (Html.BeginFieldGroup(TemplateStrings.FiltrationParameters))
+	            {
+                    <div class="sic_filter">                    
+                        @Html.TextBoxFieldFor(s => s.Filter)
+                    </div>                			    			    
+			        <input id="@Html.UniqueId("findButton")" type="button" class="sic_search_button button" value="@AuditStrings.Find" />
+			        <input id="@Html.UniqueId("resetButton")" type="button" class="sic_reset_button button" value="@AuditStrings.ResetFilter" />
+                }
+		    </div>
+	    </form>			
+
+	    @(Html.Telerik().Grid<PageTemplateSearchListItem>().Name(Model.GridElementId)
+                .DataKeys(k => k.Add(s => s.Id))
+                .Columns(c =>
+                    {
+                        c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                        .Width(30)
+                        .HtmlAttributes(new { @class = "id" });
+                        c.Bound(s => s.Name)
+                        .HtmlAttributes(new { @class = "title" }); 
+                        c.Bound(s => s.Description).Encoded(false); ;
+                        c.Bound(s => s.Created);
+                        c.Bound(s => s.Modified);
+                        c.Bound(s => s.LastModifiedByLogin);                        
+                    }
+                )
+                .DataBinding(db => db.Ajax().Select("_Templates", "PageTemplate"))
+                .EnableCustomBinding(true)
+                .Sortable()
+                .Selectable(s => s.Enabled(false))
+                .Pageable(p => p.PageSize(20).Style(GridPagerStyles.NextPreviousAndNumeric))                
+                .ClientEvents(e => e
+                    .OnDataBinding("$q.preventDefaultFunction")
+                    .OnRowDataBound("$q.preventDefaultFunction")
+                )
+        )
+    </div>
+}
+
+@Html.PrepareInitScript(Model)
+<script type="text/javascript">	
+	@(Model.ContextObjectName).set_initializedCallback(function() {				
+	    this.filterComponent = new Quantumart.QP8.SearchInCodeComponent("@Model.FilterElementId", "@Model.GridElementId");		
+		this.filterComponent.initialize();
+	});	
+	@(Model.ContextObjectName).set_terminatingCallback(function() {								
+		this.filterComponent.dispose();
+		this.filterComponent = null;
+	});
+</script>
+@Html.RunInitScript(Model)

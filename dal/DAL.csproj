@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{3FF8834B-FB47-4855-B1E2-3B88C0DB1A94}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Quantumart.QP8.DAL</RootNamespace>
+    <AssemblyName>Quantumart.QP8.DAL</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EFExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\binaries\EFExtensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\binaries\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration">
+      <HintPath>..\binaries\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="Quantumart">
+      <HintPath>..\binaries\Quantumart.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ArticleDAL.cs" />
+    <Compile Include="CommonSecurity.cs" />
+    <Compile Include="DTO\ArticleFullTextSearchParameter.cs" />
+    <Compile Include="Common.cs" />
+    <Compile Include="ContentFolderDAL.cs" />
+    <Compile Include="DTO\ArticleLinkSearchParameter.cs" />
+    <Compile Include="DTO\ArticleRelationSecurityParameter.cs" />
+    <Compile Include="DTO\ArticleSimpleListOptions.cs" />
+    <Compile Include="DTO\ArticlePageOptions.cs" />
+    <Compile Include="DTO\ContentPageOptions.cs" />
+    <Compile Include="DTO\FieldPageOptions.cs" />
+    <Compile Include="DTO\PageOptionsBase.cs" />
+    <Compile Include="DTO\SitePageOptions.cs" />
+    <Compile Include="DTO\UserPageOptions.cs" />
+    <Compile Include="DynamicQuery.cs" />
+    <Compile Include="IQPEntityObject.cs" />
+    <Compile Include="QP8Model.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QP8Model.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QP8Entities.cs" />
+    <Compile Include="QP8Model.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QP8Model.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="SiteFolderDAL.cs" />
+    <Compile Include="SqlCommandFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
+    <EntityDeploy Include="QP8Model.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>QP8Model.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="ClassDiagram1.cd" />
+    <None Include="QP8Model.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>QP8Model.cs</LastGenOutput>
+    </None>
+    <None Include="Properties\DataSources\QP8Entities.datasource" />
+    <None Include="scripts\fix_dbo.tfs.cmd" />
+    <None Include="scripts\fix_dbo.vss.cmd" />
+    <None Include="scripts\restore_db.vss.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="scripts\data.sql" />
+    <Content Include="scripts\fix_dbo.sql" />
+    <Content Include="scripts\fix_dbo_old.sql" />
+    <Content Include="scripts\max.temp.fix_dbo.sql" />
+    <Content Include="scripts\schema.sql" />
+    <Content Include="scripts\undo_to_previous.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\configuration\Configuration.csproj">
+      <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
+      <Name>Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\constants\Constants.csproj">
+      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
+      <Name>Constants</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Resources\Resources.csproj">
+      <Project>{2a8b24b1-32aa-4a82-ab51-450f18fcbc76}</Project>
+      <Name>Resources</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\utils\Utils.csproj">
+      <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

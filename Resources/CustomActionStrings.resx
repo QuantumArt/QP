@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActionNotFound" xml:space="preserve">
+    <value>Action not found (Id = {0})</value>
+  </data>
+  <data name="ActionNotFoundByCode" xml:space="preserve">
+    <value>Action not found (Code = {0})</value>
+  </data>
+  <data name="ActionTypeNotSelected" xml:space="preserve">
+    <value>Please select Action Type</value>
+  </data>
+  <data name="AddNewCustomAction" xml:space="preserve">
+    <value>Add New Action</value>
+  </data>
+  <data name="BasicParametersTitle" xml:space="preserve">
+    <value>Basic Parameters</value>
+  </data>
+  <data name="ConfirmPhrase" xml:space="preserve">
+    <value>Confirm Phrase</value>
+  </data>
+  <data name="ConfirmPhraseLengthExceeded" xml:space="preserve">
+    <value>The length of Confirm Phrase should not exceed {5} characters!</value>
+  </data>
+  <data name="ContentSelectionMode" xml:space="preserve">
+    <value>Content selection mode</value>
+  </data>
+  <data name="CustomActionEntityType" xml:space="preserve">
+    <value>Entity Type</value>
+  </data>
+  <data name="CustomActionType" xml:space="preserve">
+    <value>Action Type</value>
+  </data>
+  <data name="DefaultActionTypeOption" xml:space="preserve">
+    <value>Select action type</value>
+  </data>
+  <data name="DefaultEntityTypeOption" xml:space="preserve">
+    <value>Select entity type</value>
+  </data>
+  <data name="EntityTypeNotSelected" xml:space="preserve">
+    <value>Please select Entity Type</value>
+  </data>
+  <data name="HasPreAction" xml:space="preserve">
+    <value>Has pre-action</value>
+  </data>
+  <data name="HasSettings" xml:space="preserve">
+    <value>Has settings</value>
+  </data>
+  <data name="HideExceptSelectedContents" xml:space="preserve">
+    <value>Hide in all  contents  except selected</value>
+  </data>
+  <data name="HideExceptSelectedSites" xml:space="preserve">
+    <value>Hide on all sites except selected</value>
+  </data>
+  <data name="IconUrl" xml:space="preserve">
+    <value>Icon URL</value>
+  </data>
+  <data name="IconUrlInvalidFormat" xml:space="preserve">
+    <value>Invalid Icon URL format</value>
+  </data>
+  <data name="IconUrlMaxLengthExceeded" xml:space="preserve">
+    <value>The length of Icon URL should not exceed {5} characters!</value>
+  </data>
+  <data name="IsInterface" xml:space="preserve">
+    <value>Interface</value>
+  </data>
+  <data name="IsWindow" xml:space="preserve">
+    <value>Window</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="OrderIsNotInRange" xml:space="preserve">
+    <value>Values of Order value must be greater than zero </value>
+  </data>
+  <data name="OrderValueIsNotUniq" xml:space="preserve">
+    <value>The value of Order is not unique for the selected Entity Type. The valid value is {0} .</value>
+  </data>
+  <data name="SelectedContentIDs" xml:space="preserve">
+    <value>Selected contents</value>
+  </data>
+  <data name="SelectedSiteIDs" xml:space="preserve">
+    <value>Selected sites</value>
+  </data>
+  <data name="ShowExpectSelectedContents" xml:space="preserve">
+    <value>Show in all contents except selected</value>
+  </data>
+  <data name="ShowExpectSelectedSites" xml:space="preserve">
+    <value>Show on all sites except selected</value>
+  </data>
+  <data name="ShowInMenu" xml:space="preserve">
+    <value>Show in context menu</value>
+  </data>
+  <data name="ShowInToolbar" xml:space="preserve">
+    <value>Show on toolbar</value>
+  </data>
+  <data name="SiteSelectionMode" xml:space="preserve">
+    <value>Site selection mode</value>
+  </data>
+  <data name="SomeEntitiesNotAccessable" xml:space="preserve">
+    <value>Some entities have not been processed because of insufficient permissions. IDs: {0}</value>
+  </data>
+  <data name="ThereIsNoContextMenuForEntityType" xml:space="preserve">
+    <value>There is no Context Menu for Entity Type '{0}'</value>
+  </data>
+  <data name="ToolbarButtonParentActionId" xml:space="preserve">
+    <value>For Action</value>
+  </data>
+  <data name="ToolbarButtonParentActionNotSelected" xml:space="preserve">
+    <value>Please select Action</value>
+  </data>
+  <data name="Url" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="UrlInvalidFormat" xml:space="preserve">
+    <value>Invalid URL format</value>
+  </data>
+  <data name="UrlMaxLengthExceeded" xml:space="preserve">
+    <value>The length of URL should not exceed {5} characters!</value>
+  </data>
+  <data name="UrlNotEntered" xml:space="preserve">
+    <value>Please enter URL</value>
+  </data>
+  <data name="WindowHeight" xml:space="preserve">
+    <value>Window Height</value>
+  </data>
+  <data name="WindowHeightIsNotEntered" xml:space="preserve">
+    <value>Please enter Window Height</value>
+  </data>
+  <data name="WindowHeightIsNotInRange" xml:space="preserve">
+    <value>Values of Window Height is not in acceptable range: from {0} to {1}</value>
+  </data>
+  <data name="WindowWidth" xml:space="preserve">
+    <value>Window Width</value>
+  </data>
+  <data name="WindowWidthIsNotEntered" xml:space="preserve">
+    <value>Please enter Window Width</value>
+  </data>
+  <data name="WindowWidthIsNotInRange" xml:space="preserve">
+    <value>Values of Window Width is not in acceptable range: from {0} to {1}</value>
+  </data>
+</root>

@@ -1,0 +1,23 @@
+Imports System
+Imports System.Collections
+Imports System.Web.UI.WebControls
+
+Protected Sub LoadContainer(sender as Object, e as EventArgs)
+	container.DataSource = Me.Data
+End Sub
+
+Overrides Public Sub InitUserHandlers(e as EventArgs)
+	LoadContainer(Me, e)
+End Sub
+
+Protected Sub OnItemDataBound(sender as Object, e as  RepeaterItemEventArgs)
+
+End Sub
+
+Protected Sub OnItemCreated(sender as Object, e as  RepeaterItemEventArgs)
+
+   '' If (e.Item.ItemType = ListItemType.Item) Or (e.Item.ItemType = ListItemType.AlternatingItem) Then    
+   '' ****please use if needed 
+   '' End If
+
+End Sub

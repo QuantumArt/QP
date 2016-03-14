@@ -1,0 +1,79 @@
+﻿@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>JQueryTest</title>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+</head>
+<body>
+    <div>
+        @using (Html.BeginForm())
+		{ 
+			<input type="hidden" id="hndFieldId" name="hdnField" value="init_hidden" title="init_title" />
+			
+			<input type="checkbox" id="chkBoxId" name="chkBox" code="hello code!" data-SampleOne-moreTime="hello max!"/>
+			
+			<textarea id="txtMessagesAreaId" rows="10" cols="25" ></textarea>
+			
+			<select id="selectId">
+				<option id="optionNull"></option>
+				<option id="option1">1</option>
+			</select>
+			
+			<input id="btnTestButtonId" type="button" value="Test1" />
+			<input id="btnTestButton2Id" type="button" value="Test2" />
+			
+			<input type="submit" value="Submit" />
+		}
+    </div>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$("#btnTestButtonId").click(function () {
+				var message = "",
+					$chkBoxId = $("#chkBoxId"),
+					$hdnField = $("#hndFieldId");
+
+				message += $chkBoxId.data("sampleoneMoretime");
+
+				//$("#selectId #option1").prop("selected", true);
+
+				//				message += ".attr = " + $chkBoxId.attr("checked") + " .ptop = " + $chkBoxId.prop("checked");
+				//				$chkBoxId.prop("disabled", true);
+				//				$chkBoxId.prop("disabled", false);
+				//				message += ".attr = " + $chkBoxId.attr("checked") + " .ptop = " + $chkBoxId.prop("checked");
+
+
+				//				{
+				//					message = "Hidden Init Values: " +
+				//				".attr = " + $hdnField.attr("title") +
+				//				" .ptop = " + $hdnField.prop("title");
+
+				//					$hdnField.prop("title", "set by prop");
+				//					message += "Values after Set by prop: " +
+				//				".attr = " + $hdnField.attr("title") +
+				//				" .ptop = " + $hdnField.prop("title");
+
+				//					$hdnField.attr("title", "set by attr");
+				//					message += "Values after Set by attr: " +
+				//				".attr = " + $hdnField.attr("title") +
+				//				" .ptop = " + $hdnField.prop("title");
+				//				}
+
+				//				message += $chkBoxId.attr("code");
+				//				$chkBoxId.attr("code", "by code");
+				//				message += $chkBoxId.attr("code");
+				$("#txtMessagesAreaId").val(message);
+
+			});
+
+			$("#btnTestButton2Id").click(function () {
+				$("#selectId #option1").prop("selected", false);
+			});
+		});
+	</script>
+</body>
+</html>

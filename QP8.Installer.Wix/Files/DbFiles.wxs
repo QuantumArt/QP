@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="DATABASEINSTALLFOLDER">
+      <Component Id="cmpDbBak"
+                 Guid="{B8B9D2B3-D4AC-4040-9B12-00F08ABBEF22}">
+        <File Id="filDbBak"
+              KeyPath="yes"
+              Source="$(var.SolutionDir)package\pack\qp8release\app\DemoDb\publishing.bak" />
+        <Condition><![CDATA[(QP_7_INSTALLED = "0" AND QP_8_INSTALLED = "0") AND NOT Installed]]></Condition>
+      </Component>
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="DbProductComponents">
+      <ComponentRef Id="cmpDbBak" />
+    </ComponentGroup>
+  </Fragment>
+</Wix>

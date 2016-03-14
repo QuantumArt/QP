@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ru-RU" Codepage="1251" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+  <String Id="NetFramework45RequiredText" Overridable="yes">Необходимо установить Microsoft .NET Framework 4.5 или выше.</String>
+  <String Id="IIS7xRequiredText" Overridable="yes">Необходимо установить IIS 7 или выше.</String>
+  <String Id="Lang">1049</String>
+  <String Id="ASPNET4RequiredText">Необходимо установить ASP.NET 4.0.</String>
+  <String Id="ASPNETMVC4RequiredText">Необходимо установить ASP.NET MVC 4.0.</String>
+  <String Id="WindowsVersionIncorrectText">Неподдерживаемая версия Windows.</String>
+</WixLocalization>

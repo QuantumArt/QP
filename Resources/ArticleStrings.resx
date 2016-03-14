@@ -1,0 +1,600 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppendToVirtual" xml:space="preserve">
+    <value>It is impossible to append article to the virtual content (Id = {0})</value>
+  </data>
+  <data name="ArticleNotFoundInTheContent" xml:space="preserve">
+    <value>Article (Id = {0}) is not found in the content (Id = {1})</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="CustomFieldsGroup" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Show End Date</value>
+  </data>
+  <data name="FieldNotFound" xml:space="preserve">
+    <value>Field '{0}' is not found in the content (Id = {1})</value>
+  </data>
+  <data name="Invisible" xml:space="preserve">
+    <value>Invisible</value>
+  </data>
+  <data name="ID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="LastModifiedBy" xml:space="preserve">
+    <value>Last Modified By</value>
+  </data>
+  <data name="MissingValue" xml:space="preserve">
+    <value>Field '{0}' is required</value>
+  </data>
+  <data name="Modified" xml:space="preserve">
+    <value>Modified</value>
+  </data>
+  <data name="NotIntegerValue" xml:space="preserve">
+    <value>Field '{0}' value must be an integer</value>
+  </data>
+  <data name="NotNumberValue" xml:space="preserve">
+    <value>Field '{0}' value must be a number</value>
+  </data>
+  <data name="NotUniqueValue" xml:space="preserve">
+    <value>Field {0} value must be unique. Conflicting article: {1}.</value>
+  </data>
+  <data name="NotValidOrMissingValue" xml:space="preserve">
+    <value>Field '{0}' value must be valid or missing </value>
+  </data>
+  <data name="NotValidValue" xml:space="preserve">
+    <value>Field '{0}' value must be valid</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="OneTimeEvent" xml:space="preserve">
+    <value>One Time Event</value>
+  </data>
+  <data name="Recurring" xml:space="preserve">
+    <value>Recurring event</value>
+  </data>
+  <data name="ScheduleType" xml:space="preserve">
+    <value>Schedule Type</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Show Start Date</value>
+  </data>
+  <data name="StartEndDates" xml:space="preserve">
+    <value>Start date should be earlier than end date</value>
+  </data>
+  <data name="StartRightNow" xml:space="preserve">
+    <value>Start Show Right Now</value>
+  </data>
+  <data name="TooLongValue" xml:space="preserve">
+    <value>Field '{0}' exceeds maximum length: {1}</value>
+  </data>
+  <data name="UniqueConstraintViolation" xml:space="preserve">
+    <value>Field set {0} must be unique. Conflicting article: {1}. </value>
+  </data>
+  <data name="VisibilityGroup" xml:space="preserve">
+    <value>Visibility</value>
+  </data>
+  <data name="Visible" xml:space="preserve">
+    <value>Always Visble</value>
+  </data>
+  <data name="WithoutEndDate" xml:space="preserve">
+    <value>Without End</value>
+  </data>
+  <data name="WorkflowGroup" xml:space="preserve">
+    <value>Publication</value>
+  </data>
+  <data name="DelayPublication" xml:space="preserve">
+    <value>Schedule New Version Publication</value>
+  </data>
+  <data name="CancelSplit" xml:space="preserve">
+    <value>Cancel Split</value>
+  </data>
+  <data name="CancelSplitWarning" xml:space="preserve">
+    <value>After updating article will disappear from live site</value>
+  </data>
+  <data name="PublicationTime" xml:space="preserve">
+    <value>Publication Time</value>
+  </data>
+  <data name="UnsupportedConstraint" xml:space="preserve">
+    <value>Create Like operation doesn't support some of the content unique constraints </value>
+  </data>
+  <data name="Link_AddNewArticle" xml:space="preserve">
+    <value>Add new article</value>
+  </data>
+  <data name="CurrentVersion" xml:space="preserve">
+    <value>Current version</value>
+  </data>
+  <data name="VersionN" xml:space="preserve">
+    <value>Version № {0}</value>
+  </data>
+  <data name="ArticleVersionNotFoundForArticle" xml:space="preserve">
+    <value>Article version (Id = {0}) is not found for the article (Id = {1})</value>
+  </data>
+  <data name="ArticleVersionNotFound" xml:space="preserve">
+    <value>Article version not found (Id = {0})</value>
+  </data>
+  <data name="ArticleVersionSuccessfullyRestored" xml:space="preserve">
+    <value>Article version (Id = {0}) of article (Id = {1}) successfully restored!</value>
+  </data>
+  <data name="SearchBlock_AllTextFields" xml:space="preserve">
+    <value>All Text Fields</value>
+  </data>
+  <data name="SearchBlock_AllFields" xml:space="preserve">
+    <value>All Fields</value>
+  </data>
+  <data name="SearchBlock_AddFieldSearchContainer" xml:space="preserve">
+    <value>Add Field Filter</value>
+  </data>
+  <data name="SearchBlock_IsNullCheckBoxLabelText" xml:space="preserve">
+    <value>Missed Value</value>
+  </data>
+  <data name="SearchBlock_InverseCheckBoxLabelText" xml:space="preserve">
+    <value>Inverse result</value>
+  </data>
+  <data name="SearchBlock_RangeFromText" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="SearchBlock_RangeToText" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="EmptyValue" xml:space="preserve">
+    <value>Empty Value</value>
+  </data>
+  <data name="LockedByAnyoneElse" xml:space="preserve">
+    <value>Article is locked by user {0}. </value>
+  </data>
+  <data name="SearchBlock_FieldSearchBlockTitle" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="SearchBlock_FullTextBlockTitle" xml:space="preserve">
+    <value>Full Text Search</value>
+  </data>
+  <data name="InvalidDateTimeFormat" xml:space="preserve">
+    <value>Field '{0}' has invalid format.</value>
+  </data>
+  <data name="ParentName" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="CannotAddBecauseOfWorkflow" xml:space="preserve">
+    <value>Cannot add new article into the content because you are not a member of workflow</value>
+  </data>
+  <data name="CannotRemoveBecauseOfWorkflow" xml:space="preserve">
+    <value>Cannot remove article from the content because you are not a member of workflow or have no enough permissions with workflow</value>
+  </data>
+  <data name="CannotUpdateBecauseOfWorkflow" xml:space="preserve">
+    <value>Cannot update article because you are not a member of workflow</value>
+  </data>
+  <data name="CannotAddBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot add new article into the content because you have no enough permissions</value>
+  </data>
+  <data name="CannotCopyBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot copy article because you have no enough permissions</value>
+  </data>
+  <data name="CannotRemoveBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot remove article from the content because you have no enough permissions</value>
+  </data>
+  <data name="CannotRemoveVersionsBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot remove article versions because you have no enough permissions</value>
+  </data>
+  <data name="CannotRestoreVersionBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot restore article version because you have no enough permissions</value>
+  </data>
+  <data name="CannotUpdateBecauseOfSecurity" xml:space="preserve">
+    <value>Cannot update article because you have no enough permissions</value>
+  </data>
+  <data name="SomeoneBlockedByWorkflow" xml:space="preserve">
+    <value>Some articles have not been processed because you are not a workflow member or have no enough permissions with workflow. Id: {0}</value>
+  </data>
+  <data name="SomeoneLocked" xml:space="preserve">
+    <value>Some articles have not been processed because they are locked by other users. Id: {0}</value>
+  </data>
+  <data name="SomeoneNotAccessed" xml:space="preserve">
+    <value>Some articles have not been processed because of insufficient permissions. Id: {0}</value>
+  </data>
+  <data name="SomeoneNotFound" xml:space="preserve">
+    <value>Some articles have not been found. Id: {0}</value>
+  </data>
+  <data name="SomeoneRedundant" xml:space="preserve">
+    <value>There is no need for processing some articles. Id: {0}</value>
+  </data>
+  <data name="SearchBlock_ByRange" xml:space="preserve">
+    <value>Search By Range</value>
+  </data>
+  <data name="SearchBlock_ByValue" xml:space="preserve">
+    <value>Search By Value</value>
+  </data>
+  <data name="SearchBlock_Value" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="InputMaskNotMatch" xml:space="preserve">
+    <value>Field '{0}' doesn't match input mask</value>
+  </data>
+  <data name="Daily" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="RepetitionEndDate" xml:space="preserve">
+    <value>Repetition End Date</value>
+  </data>
+  <data name="RepetitionNoEnd" xml:space="preserve">
+    <value>No End</value>
+  </data>
+  <data name="RepetitionStartDate" xml:space="preserve">
+    <value>Repetition Start Date</value>
+  </data>
+  <data name="ScheduleRecurringType" xml:space="preserve">
+    <value>Interval Between Repetitions (units)</value>
+  </data>
+  <data name="ScheduleRecurringValue" xml:space="preserve">
+    <value>Interval Between Repetitions (value)</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>Weeks</value>
+  </data>
+  <data name="Yearly" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Friday</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Monday</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Saturday</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Sunday</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Thursday</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Tuesday</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Wednesday</value>
+  </data>
+  <data name="DayOfMonth" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="DayOfWeek" xml:space="preserve">
+    <value>Day of Week</value>
+  </data>
+  <data name="DaysLimitationUnit" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="DaySpecifyingByDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="DaySpecifyingByDayOfWeek" xml:space="preserve">
+    <value>Day Of Week</value>
+  </data>
+  <data name="DaySpecifyingType" xml:space="preserve">
+    <value>Day is specified by</value>
+  </data>
+  <data name="DurationUnit" xml:space="preserve">
+    <value>Duration (units)</value>
+  </data>
+  <data name="DurationValue" xml:space="preserve">
+    <value>Duration (value)</value>
+  </data>
+  <data name="FirstWeek" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="FourthWeek" xml:space="preserve">
+    <value>Fourth</value>
+  </data>
+  <data name="HoursLimitationUnit" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="LastWeek" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <data name="LimitedByDuration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="LimitedByTime" xml:space="preserve">
+    <value>End Time</value>
+  </data>
+  <data name="MinutesLimitationUnit" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="MonthNumber" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="MonthsLimitationUnit" xml:space="preserve">
+    <value>Months</value>
+  </data>
+  <data name="RepetitionIntervalGroup" xml:space="preserve">
+    <value>Repetition Interval</value>
+  </data>
+  <data name="RepetitionParamsGroup" xml:space="preserve">
+    <value>Show day definition</value>
+  </data>
+  <data name="SecondWeek" xml:space="preserve">
+    <value>Second</value>
+  </data>
+  <data name="ShowEndTime" xml:space="preserve">
+    <value>Show End Time</value>
+  </data>
+  <data name="ShowIsLimitedBy" xml:space="preserve">
+    <value>Show is limited by</value>
+  </data>
+  <data name="ShowStartTime" xml:space="preserve">
+    <value>Show Start Time</value>
+  </data>
+  <data name="ShowTimeIntervalGroup" xml:space="preserve">
+    <value>Show time Interval</value>
+  </data>
+  <data name="ThirdWeek" xml:space="preserve">
+    <value>Third</value>
+  </data>
+  <data name="Weekday" xml:space="preserve">
+    <value>Weekday</value>
+  </data>
+  <data name="Weekend" xml:space="preserve">
+    <value>Weekend</value>
+  </data>
+  <data name="WeekOfMonth" xml:space="preserve">
+    <value>Week of month</value>
+  </data>
+  <data name="WeeksLimitationUnit" xml:space="preserve">
+    <value>Weeks</value>
+  </data>
+  <data name="YearsLimitationUnit" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="DayOfMonthError" xml:space="preserve">
+    <value>Date have to be between 1 and 31</value>
+  </data>
+  <data name="DurationValueError" xml:space="preserve">
+    <value>Value of Interval Duration have to be between 1 and 100</value>
+  </data>
+  <data name="RepetitionStartDateError" xml:space="preserve">
+    <value>Repetition Start Date have to be earlier than Repetition End Date</value>
+  </data>
+  <data name="ScheduleRecurringValueError" xml:space="preserve">
+    <value>Value of Interval Between Repetitions have to be between 1 and 100</value>
+  </data>
+  <data name="ShowStartTimeError" xml:space="preserve">
+    <value>Show Start Time have to be earlier than Show End Time</value>
+  </data>
+  <data name="ArticleNotFound" xml:space="preserve">
+    <value>Article not found (Id = {0})</value>
+  </data>
+  <data name="O2MRelateToCurrentArticle" xml:space="preserve">
+    <value>Article cannot be self-related</value>
+  </data>
+  <data name="SearchBlock_SelectFieldToFilter" xml:space="preserve">
+    <value>Select field to filter</value>
+  </data>
+  <data name="WarningHasChildren" xml:space="preserve">
+    <value>Article has {0} child articles. Continue?</value>
+  </data>
+  <data name="WarningHasNonArchiveChildren" xml:space="preserve">
+    <value>Article has {0} non-archived child articles. Continue?</value>
+  </data>
+  <data name="WarningHasChildrenMultiple" xml:space="preserve">
+    <value>Some articles (IDs: {0}) have child articles. Continue?</value>
+  </data>
+  <data name="WarningHasNonArchiveChildrenMultiple" xml:space="preserve">
+    <value>Some articles (IDs: {0}) have non-archived child articles. Continue?</value>
+  </data>
+  <data name="BaseRelationFieldRequired" xml:space="preserve">
+    <value>Base relation field is required, so you cannot reset values</value>
+  </data>
+  <data name="CurrentArticleViolatesRelationCondition" xml:space="preserve">
+    <value>Current article violates relation condition</value>
+  </data>
+  <data name="BaseRelationUniqueViolation" xml:space="preserve">
+    <value>Unique constrant violation for base field (Duplicates found: {0})</value>
+  </data>
+  <data name="IsInvisibleTooltip" xml:space="preserve">
+    <value>Invisible</value>
+  </data>
+  <data name="IsScheduledTooltip" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="IsSplitedTooltip" xml:space="preserve">
+    <value>Splitted</value>
+  </data>
+  <data name="IsLockedHeaderTooltip" xml:space="preserve">
+    <value>Locked</value>
+  </data>
+  <data name="InvalidClassiferValue" xml:space="preserve">
+    <value>The Field Value is invalid</value>
+  </data>
+  <data name="OperationIsNotAllowedForAggregated" xml:space="preserve">
+    <value>Operation is not allowed for aggregated article.</value>
+  </data>
+  <data name="CannotUpdateBecauseOfRelationSecurity" xml:space="preserve">
+    <value>Cannot update article because you have no enough permissions to all of the related articles</value>
+  </data>
+  <data name="CannotRemoveBecauseOfRelationSecurity" xml:space="preserve">
+    <value>Cannot remove article because you have no enough permissions to all of the related articles</value>
+  </data>
+  <data name="CannotAddBecauseOfRelationSecurity" xml:space="preserve">
+    <value>Cannot add article because you have no enough permissions to all of the related articles</value>
+  </data>
+  <data name="SomeoneBlockedByRelationSecurity" xml:space="preserve">
+    <value>Some articles have not been processed because you have no enough permissions to all of the related articles. Id: {0}</value>
+  </data>
+  <data name="CustomValidationFailed" xml:space="preserve">
+    <value>Custom Validating process is failed: {0}</value>
+  </data>
+  <data name="LeaveComment" xml:space="preserve">
+    <value>Leave a comment</value>
+  </data>
+  <data name="LastComment" xml:space="preserve">
+    <value>Last comment</value>
+  </data>
+  <data name="Comments" xml:space="preserve">
+    <value>Comments</value>
+  </data>
+  <data name="IsChanged" xml:space="preserve">
+    <value>IsChanged</value>
+  </data>
+  <data name="CONTENT_ITEM_ID" xml:space="preserve">
+    <value>CONTENT_ITEM_ID</value>
+  </data>
+  <data name="VariationGroup" xml:space="preserve">
+    <value>Variations</value>
+  </data>
+  <data name="Context" xml:space="preserve">
+    <value>Context</value>
+  </data>
+  <data name="RemoveCurrentVariation" xml:space="preserve">
+    <value>Remove current variation</value>
+  </data>
+  <data name="TotalVariationsMessage" xml:space="preserve">
+    <value>The number of current article variations - &lt;span class="currentTotal"&gt;&lt;/span&gt;</value>
+  </data>
+  <data name="SearchBlock_BySelector" xml:space="preserve">
+    <value>Search By Selector</value>
+  </data>
+  <data name="SearchBlock_ByList" xml:space="preserve">
+    <value>Search By List</value>
+  </data>
+  <data name="SearchBlock_ListText" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="SearchBlock_Text" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="ArticleRepository_GetByIdForTree_NotFound" xml:space="preserve">
+    <value>Article is not found (ID = {0})</value>
+  </data>
+  <data name="SearchBlock_FullTextBlockSearchResultLimitTitle" xml:space="preserve">
+    <value>Search result limit</value>
+  </data>
+</root>

@@ -1,0 +1,37 @@
+﻿@model ContextBlockViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.Content
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL
+
+<div class="contextBlock">
+    @foreach (var item in Model.RelatedContents)
+    { 
+	    <fieldset>
+		    <legend>@item.ContentName</legend>	
+		    <div>
+                @Html.QpSingleItemPicker("content_" + item.ContentId, null
+                    , new ControlOptions
+                        {
+                            Enabled = true,
+                            HtmlAttributes = new Dictionary<string, object> { 
+                                { "id", Model.UniqueId("content_" + item.ContentId) },
+                                { "class", "contextSwitcher" } 
+                            }
+                        }
+                    , new EntityDataListArgs
+                        {
+                            EntityTypeCode = EntityTypeCode.Article,
+                            ParentEntityId = item.ContentId,
+                            SelectActionCode = ActionCode.SelectArticle,
+                            ListId = item.FieldId,
+                            Filter = (Model.IsArchive) ? Field.ArchiveFilter : Field.DefaultRelationFilter
+                        }
+                    )
+		    </div>
+	</fieldset>	    
+    }
+
+</div>
+

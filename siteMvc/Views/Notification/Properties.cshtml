@@ -1,0 +1,181 @@
+﻿@model  NotificationViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.Notification
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+
+@if (Model.Data.WorkFlowId.HasValue)
+{
+	if (Model.ShowUnbindButton)
+	{ 
+		@Html.Warning(new[] 
+		{
+			new MvcHtmlString(String.Format(NotificationStrings.WarningString, Model.Data.Workflow.Name)), 			
+			@Html.BackendActionLink(Model.UniqueId("eapActionLink"), NotificationStrings.Unbind, Model.Data.Id, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.UnbindNotification)
+		})
+	}	
+}
+
+@using (Html.BeginTabForm(Model))
+{
+	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
+	{
+		@Html.TextBoxFieldFor(s => s.Data.Name)
+		@Html.CheckBoxFieldFor(s => s.Data.IsExternal, "ExternalUrlPanel", htmlAttributes: new Dictionary<string, object> { { "class", "nfp-external checkbox" } })
+		using (Html.BeginPanel("ExternalUrlPanel"))
+		{
+			@Html.TextBoxFieldFor(s => s.Data.ExternalUrl)
+			@Html.CheckBoxFieldFor(s => s.Data.UseService)
+		}
+		<div class="nfp-externalPanel">
+		@Html.CheckBoxFieldFor(s => s.CreateDefaultFormat, "FormatPanel", true)
+		@using (Html.BeginPanel("FormatPanel"))
+		{
+			@Html.SelectFieldFor(model => model.Data.FormatId, Html.List(Model.Formats), Model.SelectFormatOptions)
+		}
+		</div>
+	}
+
+	using (Html.BeginFieldGroup(NotificationStrings.Events))
+	{
+        @Html.CheckBoxFieldFor(s => s.Data.ForCreate)
+        @Html.CheckBoxFieldFor(s => s.Data.ForModify)
+        @Html.CheckBoxFieldFor(s => s.Data.ForRemove)		
+        @Html.CheckBoxFieldFor(s => s.Data.ForStatusChanged, htmlAttributes: new Dictionary<string, object> { { "class", "nfp-status checkbox" } })
+		@Html.CheckBoxFieldFor(s => s.Data.ForStatusPartiallyChanged, htmlAttributes: new Dictionary<string, object> { { "class", "nfp-status checkbox" } })
+		@Html.CheckBoxFieldFor(s => s.Data.ForFrontend)
+		@Html.CheckBoxFieldFor(s => s.Data.ForDelayedPublication)
+
+        <div class="nfp-status-panel">
+            @Html.SelectFieldFor(model => model.Data.NotifyOnStatusTypeId, Html.List(Model.Statuses))
+        </div>
+	}
+	<div class="nfp-externalPanel">
+	@using (Html.BeginFieldGroup(NotificationStrings.Sender))
+ {
+        @Html.CheckBoxFieldFor(s => s.Data.FromDefaultName, "DefaultSenderNamePanel", false, new Dictionary<string, object> {
+                                                                                   { 
+                                                                                       "class", "checkbox nfp-useDefaultSenderNameCheckbox"
+                                                                                   }
+                                                                                   })
+	 using (Html.BeginPanel("DefaultSenderNamePanel"))
+	 { 
+            @Html.DisplayFieldFor(s => s.Data.DefaultSenderName)
+	 }
+        
+        <div class = "nfp-senderNamePanel">
+            @Html.TextBoxFieldFor(s => s.Data.FromUserName)
+        </div>
+    
+        @Html.CheckBoxFieldFor(s => s.Data.FromBackenduser, "FromBackendUserPanel", false, new Dictionary<string, object> {
+                                                                                   {
+                                                                                       "class", "checkbox nfp-useBackendEmailCheckbox"
+                                                                                   }
+                                                                                   })
+
+	 using (Html.BeginPanel("FromBackendUserPanel"))
+	 {
+        @Html.SingleItemPickerFieldFor(s => s.Data.FromBackenduserId,
+					 Model.FromUserListItem,
+				new EntityDataListArgs
+				{
+					EntityTypeCode = EntityTypeCode.User,
+					ParentEntityId = 0,
+					SelectActionCode = ActionCode.SelectUser,
+					ReadActionCode = ActionCode.UserProperties,
+					ListId = -1 * System.DateTime.Now.Millisecond,
+					MaxListHeight = 200,
+					MaxListWidth = 350,
+					ShowIds = true,
+				},
+				new ControlOptions
+				{
+					Enabled = !Model.Data.WorkFlowId.HasValue
+				}
+			)
+	 }
+        <div class = "nfp-senderEmailPanel">
+            @Html.TextBoxFieldFor(s => s.Data.FromUserEmail)
+        </div>
+ }
+
+	@using (Html.BeginFieldGroup(NotificationStrings.Receiver))
+ {
+		<div class="nfp-receiver-radio">
+			@Html.RadioFieldFor(s => s.Data.SelectedReceiverType, Html.List(Model.GetReceiverTypes()))
+		</div>
+	 using (Html.BeginPanel("UserPanel"))
+	 {
+        @Html.SingleItemPickerFieldFor(s => s.Data.UserId,
+					 Model.ToUserListItem,
+				new EntityDataListArgs
+				{
+					EntityTypeCode = EntityTypeCode.User,
+					ParentEntityId = 0,
+					SelectActionCode = ActionCode.SelectUser,
+					ReadActionCode = ActionCode.UserProperties,
+					ListId = -1 * System.DateTime.Now.Millisecond,
+					MaxListHeight = 200,
+					MaxListWidth = 350,
+					ShowIds = true,
+				},
+				new ControlOptions
+				{
+					Enabled = !Model.Data.WorkFlowId.HasValue
+				}
+			)
+	 }
+	 using (Html.BeginPanel("UserGroupPanel"))
+	 {
+        @Html.SingleItemPickerFieldFor(s => s.Data.GroupId,
+					Model.ToUserGroupListItem,
+				new EntityDataListArgs
+				{
+					EntityTypeCode = EntityTypeCode.UserGroup,
+					ParentEntityId = 0,
+					SelectActionCode = ActionCode.SelectUserGroup,
+					ReadActionCode = ActionCode.UserGroupProperties,
+					ListId = -1 * System.DateTime.Now.Millisecond,
+					MaxListHeight = 200,
+					MaxListWidth = 350,
+					ShowIds = true
+				},
+				new ControlOptions
+				{
+					Enabled = !Model.Data.WorkFlowId.HasValue
+				}
+			)
+	 }
+	 using (Html.BeginPanel("FieldPanel"))
+	 {
+            @Html.SelectFieldFor(model => model.Data.EmailFieldId, Html.List(Model.Fields))
+	 }
+	 using (Html.BeginPanel("EmptyPanel"))
+	 {
+	 }
+ }
+
+	@using (Html.BeginFieldGroup(NotificationStrings.Options))
+ {
+        @Html.CheckBoxFieldFor(s => s.Data.SendFiles)
+        @Html.CheckBoxFieldFor(s => s.Data.UseQaMail)
+ }
+	</div>
+    @Html.Partial("Version", Model.Data)
+	@Html.Partial("EntityDirectLink", Model)
+
+}
+
+@Html.PrepareInitScript(Model)
+<script type="text/javascript">	
+	
+    @(Model.ContextObjectName).set_initializedCallback(function() {
+		this.viewMediator = new Quantumart.QP8.BackendNotificationPropertiesMediator('@(Html.UniqueId("editingForm"))');
+	});
+    
+    @(Model.ContextObjectName).set_terminatingCallback(function() {
+        this.viewMediator.dispose();
+        this.viewMediator = null;
+    });
+</script>
+@Html.RunInitScript(Model)

@@ -1,0 +1,3 @@
+GeneratePrettyNames: true
+GenerateAbsolutePathLinePragmas: true
+Imports: Telerik.Web.Mvc.UI, Quantumart.QP8.WebMvc.Extensions.Helpers, Quantumart.QP8.Resources

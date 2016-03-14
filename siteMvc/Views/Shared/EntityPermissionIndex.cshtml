@@ -1,0 +1,82 @@
+﻿@model PermissionListViewModel
+
+@using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
+@using Quantumart.QP8.BLL.Services.DTO
+@using Quantumart.QP8.Resources
+@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL.ListItems;
+
+@using (Html.BeginDocumentPadding())
+{
+	if (Model.ShowDisableArticlePermissionForContentWarning)
+	{ 
+		@Html.Warning(new[] 
+		{
+			new MvcHtmlString(EntityPermissionStrings.ContentArticlePermissionIsDisabled), 			
+			@Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions)
+		})
+	}
+
+	if (Model.ShowAddNewItemButton)
+	{
+		using (Html.BeginLinkButtonsList())
+		{				
+			@Html.AddNewItemLink(Model)			
+		}
+	}
+
+	@(Html.Telerik().Grid<EntityPermissionListItem>().Name(Model.MainComponentId)
+        .DataKeys(k => k.Add(s => s.Id))
+        .Columns(c =>
+        {
+            c.Bound("")
+                .Title(@"<input type='checkbox' />")
+                .Width(30)
+                .HeaderHtmlAttributes(new { @class = "t-select-header" })
+                .ClientTemplate(@"<input type='checkbox' name='SelectedSitePermissionIDs' value='<#= Id #>' />")
+                .HtmlAttributes(new { @class = "t-select-cell" })
+                .Sortable(false);
+
+            c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                   .Width(30)
+                   .HtmlAttributes(new { @class = "id" });
+
+            c.Bound(s => s.UserLogin).Title(EntityPermissionStrings.User);
+            c.Bound(s => s.GroupName).Title(EntityPermissionStrings.Group);
+            c.Bound(s => s.LevelName).Title(EntityPermissionStrings.PermissionLevel);
+
+            if (Model.IsPropagateable)
+            {
+                c.Bound(s => s.PropagateToItems)
+                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (PropagateToItems)  { #> checked=""checked"" <# } #>/>")
+                    .Title(EntityPermissionStrings.PropagateToItems);
+            }
+
+            if (Model.CanHide)
+            {
+                c.Bound(s => s.Hide)
+                    .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (Hide)  { #> checked=""checked"" <# } #>/>")
+                    .Title(EntityPermissionStrings.Hide);
+            }
+
+            c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
+            c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
+            c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
+        })
+        .DataBinding(db => db.Ajax()
+                .Select(Model.GettingDataActionName, Model.GettingDataControllerName)
+        )
+        .EnableCustomBinding(true)
+        .Sortable()
+        .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
+        .Selectable(s => s.Enabled(true))
+        .ClientEvents(e =>
+            e.OnDataBinding("$q.preventDefaultFunction")
+             .OnRowDataBound("$q.preventDefaultFunction")
+        )
+	)
+}
+
+@Html.InitScript(Model)
+
+@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

@@ -1,0 +1,77 @@
+﻿@using Quantumart.QP8.Resources
+@{
+    string numberFromElementId = (string)ViewBag.NumberFromElementID;
+    string numberToElementId = (string)ViewBag.NumberToElementID;
+    string isNullCheckBoxElementId = (string)ViewBag.IsNullCheckBoxElementID;
+}
+
+<dl class="row">
+	<dd>
+		@Html.QpRadioButtonList((string)ViewBag.ByValueElementID,
+		new[] 
+		{
+			new QPSelectListItem
+			{
+				Text = ArticleStrings.SearchBlock_ByValue,
+				Selected = true,
+				Value = "0",
+			},
+			new QPSelectListItem
+			{
+				Text = ArticleStrings.SearchBlock_ByRange,
+				Selected = false,
+				Value = "1"
+			}
+		},
+		new ControlOptions {Enabled = true}
+		)
+	</dd>
+</dl>
+
+<dl class="row">
+	<dt class="label">
+		@Html.QpLabel(numberFromElementId, ArticleStrings.SearchBlock_Value, true)
+	</dt>
+	<dd class="field">
+		@Html.NumericTextBox(numberFromElementId, null,
+			new Dictionary<string, object> 
+			{ 
+				{ "id", numberFromElementId},
+				{ "class", "textbox"}
+			})
+	</dd>
+</dl>
+
+<dl class="row" style="display:none;">
+	<dt class="label">
+		@Html.QpLabel(numberToElementId, ArticleStrings.SearchBlock_RangeToText, true)
+	</dt>
+	<dd class="field">
+		@Html.NumericTextBox(numberToElementId, null, 
+			new Dictionary<string, object> 
+			{ 
+				{ "id", numberToElementId },
+				{ "class", "textbox"}
+			})
+	</dd>
+</dl>
+
+<dl class="row">
+    <dt class="label"></dt>
+    <dd class="field">
+        <span class="checkbox">
+			@Html.QpCheckBox(isNullCheckBoxElementId, null, false, new Dictionary<string, object>())
+			@Html.QpLabel(isNullCheckBoxElementId, ArticleStrings.SearchBlock_IsNullCheckBoxLabelText, false)
+		</span>
+    </dd>
+</dl>
+
+<dl class="row">
+    <dt class="label"></dt>
+    <dd class="field">
+        <span class="checkbox">
+            @Html.QpCheckBox((string)ViewBag.InverseCheckBoxElementID, null, false, new Dictionary<string, object>())
+            @Html.QpLabel((string)ViewBag.InverseCheckBoxElementID, ArticleStrings.SearchBlock_InverseCheckBoxLabelText, false)
+        </span>
+    </dd>
+</dl>
