@@ -244,6 +244,7 @@ _Pvt_Extensions
 *.sln.iml
 
 # QuantumArt rules
-!binaries/*.pdb
+!siteMvc/ToCopy/bin
+!siteMvc/ToCopy/bin/*.pdb
 !bll/Services/MultistepActions/Publish/
-sites/plugins/
+!binaries/*.pdb
