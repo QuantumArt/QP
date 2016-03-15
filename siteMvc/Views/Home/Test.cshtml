@@ -29,11 +29,8 @@
 </head>
 <body>
     <h1>Test</h1>
-
-
 	@{
 		bool isDebugMode = HttpContext.Current.IsDebuggingEnabled; // признак, того что приложение запущено в режиме отладки
-
 		string ckeditorScriptName = (isDebugMode) ? "ckeditor_source.js" : "ckeditor.js"; // названия скрипта CKEditor
 		bool allowCombineScripts = !isDebugMode; // разрешает объединение JS-скриптов
 	}
@@ -43,10 +40,10 @@
 			// Common Libraries
 			.AddGroup("CommonLibraries", g => g
         .Add("es5-shim.js")
-				.Add("jquery-1.7.1.js")
-				.Add("telerik.common.js")
+				.Add("jquery/jquery-1.7.1.js")
+				.Add("telerik/telerik.common.js")
 				.Add("Quantumart/jQueryExtensions.js")
-				.Add("MicrosoftAjax.js")
+				.Add("microsoft/MicrosoftAjax.js")
 				.Add("Quantumart/MicrosoftAjaxTraceExtensions.js")
 				.Add("json2.js")
 				.Add("Silverlight.js")
@@ -58,35 +55,35 @@
 
 			// jQuery Plugins
 			.AddGroup("jQueryPlugins", g => g
-				.Add("jquery.cookie.js")
-				.Add("jquery.timers.js")
-				.Add("jquery.scrollTo-1.4.2.js")
-				.Add("jquery.splitter.js")
-				.Add("jquery.form.js")
-				.Add("jquery.validate.js")
-				.Add("jquery.jeegoocontext.js")
-				.Add("jquery.verticalResizer.js")
+				.Add("jquery/jquery.cookie.js")
+				.Add("jquery/jquery.timers.js")
+				.Add("jquery/jquery.scrollTo-1.4.2.js")
+				.Add("jquery/jquery.splitter.js")
+				.Add("jquery/jquery.form.js")
+				.Add("jquery/jquery.validate.js")
+				.Add("jquery/jquery.jeegoocontext.js")
+				.Add("jquery/jquery.verticalResizer.js")
 				.Combined(allowCombineScripts)
 			)
 
 			// Telerik Controls
 			.AddGroup("TelerikControls", g => g
-				.Add("telerik.draganddrop.js")
-				.Add("telerik.treeview.js")
-				.Add("telerik.window.js")
-				.Add("telerik.textbox.js")
-				.Add("telerik.combobox.js")
-				.Add("telerik.calendar.js")
-				.Add("telerik.datepicker.js")
-				.Add("telerik.timepicker.js")
-				.Add("telerik.datetimepicker.js")
-				.Add("telerik.grid.js")
-				.Add("telerik.grid.resizing.js")
-				.Add("telerik.grid.filtering.js")
-				.Add("telerik.grid.grouping.js")
-				.Add("telerik.grid.editing.js")
-				.Add("telerik.upload.js")
-				.Add("telerik.splitter.js")
+				.Add("telerik/telerik.draganddrop.js")
+				.Add("telerik/telerik.treeview.js")
+				.Add("telerik/telerik.window.js")
+				.Add("telerik/telerik.textbox.js")
+				.Add("telerik/telerik.combobox.js")
+				.Add("telerik/telerik.calendar.js")
+				.Add("telerik/telerik.datepicker.js")
+				.Add("telerik/telerik.timepicker.js")
+				.Add("telerik/telerik.datetimepicker.js")
+				.Add("telerik/telerik.grid.js")
+				.Add("telerik/telerik.grid.resizing.js")
+				.Add("telerik/telerik.grid.filtering.js")
+				.Add("telerik/telerik.grid.grouping.js")
+				.Add("telerik/telerik.grid.editing.js")
+				.Add("telerik/telerik.upload.js")
+				.Add("telerik/telerik.splitter.js")
 				.Combined(allowCombineScripts)
 			)
 
@@ -126,7 +123,7 @@
 				.Add("Quantumart/Search/BackendArticleSearchBlock/NumericRangeFieldSearch.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/RelationFieldSearch.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/TextFieldSearch.js")
-                .Add("Quantumart/Search/BackendArticleSearchBlock/StringEnumFieldSearch.js")
+        .Add("Quantumart/Search/BackendArticleSearchBlock/StringEnumFieldSearch.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/FullTextBlock.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchBlock.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchContainer.js")
@@ -145,7 +142,7 @@
 				.Add("Quantumart/List/BackendSelectPopupWindow.js")
 				.Add("Quantumart/BackendActionLink.js")
 				.Add("Quantumart/BackendTraceWindow.js")
-                .Add("Quantumart/BackendLogOnWindow.js")
+        .Add("Quantumart/BackendLogOnWindow.js")
 				.Add("Quantumart/Library/BackendLibrary.js")
 				.Add("Quantumart/Library/BackendPager.js")
 				.Add("Quantumart/Library/BackendFileList.js")
@@ -175,12 +172,9 @@
 				.Add("Quantumart/MultistepAction/BackendProgressBar.jquery.js")
 				.Add("Quantumart/MultistepAction/BackendMultistepActionWindow.js")
 				.Add("Quantumart/Backend.js")
-
 				.Combined(allowCombineScripts)
 			)
-		)
-		.Globalization(true)
-			)
+		).Globalization(true))
 
 <input type="button" id="btnCreate" value="Create" title="Create progress window" />
 <input type="button" id="btnClose" value="Close" title="Close progress window" />
@@ -207,6 +201,7 @@
 				$("#btnClose").trigger("click");
 			});
 		});
+
 		$("#btnClose").click(function () {
 			progressWindow.dispose();
 			progressWindow = null;
@@ -222,9 +217,6 @@
 		$("#btnCompleteStage").click(function () {
 			progressWindow.completeStage();
 		});
-
-
-
 	});
 </script>
 
@@ -281,13 +273,6 @@
 
 			component = null;
 		});
-
-
-		/*jQuery("#btnClose").click(function () {
-			$pgelements.backendProgressBar("dispose");
-		});*/
-
-
 	});
 </script>*@
 </body>

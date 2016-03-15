@@ -302,7 +302,7 @@ namespace Quantumart.QP8.WebMvc.Backend
             constants.AppendLine(GenerateStringConstant("PL_UPLOAD_ERROR_REPORT", LibraryStrings.PlUploadErrorReport));
             constants.AppendLine(GenerateStringConstant("PL_UPLOAD_ZERO_SIZE_WARN", LibraryStrings.ZeroSizeWarning));
 
-            // Типы полей						
+            // Типы полей
             constants.AppendLine(GenerateStringConstant("STRING_FIELD_TYPE", FieldExactTypes.String.ToString()));
             constants.AppendLine(GenerateStringConstant("NUMERIC_FIELD_TYPE", FieldExactTypes.Numeric.ToString()));
             constants.AppendLine(GenerateStringConstant("BOOLEAN_FIELD_TYPE", FieldExactTypes.Boolean.ToString()));

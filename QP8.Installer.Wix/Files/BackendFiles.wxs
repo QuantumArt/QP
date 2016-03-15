@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Fragment>
         <DirectoryRef Id="BACKENDINSTALLFOLDER">
@@ -8,13 +8,13 @@
             <Component Id="cmp4EB9DA64FCB79A4732C03801088B3261" Guid="*">
                 <File Id="fil755CEC4D44172BBE302C40A93CA7B499" KeyPath="yes" Source="$(var.BackendDirPath)\Global.asax" />
             </Component>
-            
+
             <Component Id="cmp044D04F02AB6EBFB306E0AC8A1E9C3B1" Guid="*">
                 <File Id="filD99D3E92E8A20A2DC428BD9D16FD926E" KeyPath="yes" Source="$(var.BackendDirPath)\Web.config" />
             </Component>
-            
-            
-            
+
+
+
             <Directory Id="dir4BD6CA797480F29428BC463D811A432E" Name="bin">
                 <Component Id="cmp8EE026464BCC6A5A18059FBE888102A4" Guid="*">
                     <File Id="filF766E890881FADB55275197B79329489" KeyPath="yes" Source="$(var.BackendDirPath)\bin\AutoMapper.dll" />
@@ -25,18 +25,18 @@
                 <Component Id="cmp442A808342A495CAE4D6A26E506D6814" Guid="*">
                     <File Id="fil25AD66BF2D4700293B0A42CB8B9963D0" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Castle.Core.dll" />
                 </Component>
-                
+
                 <Component Id="cmpDA1DBF8BD8FB9CB004120C2D18458CD6" Guid="*">
                     <File Id="fil0B5C2343AA79533918E8E49116AFB350" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Castle.DynamicProxy2.dll" />
                 </Component>
-                
+
                 <Component Id="cmpBB45722EE0F79D7788F90302448A1C06" Guid="*">
                     <File Id="fil5401E61F3FBCF21D089B1F59687225B3" KeyPath="yes" Source="$(var.BackendDirPath)\bin\EFExtensions.dll" />
                 </Component>
                 <Component Id="cmpCF68992C4EF8808BA7C9C7A590115324" Guid="*">
                     <File Id="fil6880FD746494407AC69FEF3C1E7D4D08" KeyPath="yes" Source="$(var.BackendDirPath)\bin\EFExtensions.pdb" />
                 </Component>
-                
+
                 <Component Id="cmpA8D7D2B33375394BD6920CB31CE73EF9" Guid="*">
                     <File Id="filDEBF7B5E75419E1F7DC8BA04B487DA76" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Irony.dll" />
                 </Component>
@@ -49,7 +49,7 @@
                 <Component Id="cmpABCFA03BB648579AE87CAAD89F75EFBD" Guid="*">
                     <File Id="fil099009FE1EF6249E51C82B5BF3274345" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.EnterpriseLibrary.Common.pdb" />
                 </Component>
-                
+
                 <Component Id="cmp91AAE3AF4681C1E11E677AB671F33BDD" Guid="*">
                     <File Id="filC40C8B8FD3C722063BB765422D2A1B1B" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll" />
                 </Component>
@@ -59,25 +59,25 @@
                 <Component Id="cmp5DB8078FEC318E5815FFDF54E79F8093" Guid="*">
                     <File Id="fil0A26AC33FA8C7563DA5A043FFC08B6B1" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.pdb" />
                 </Component>
-                
+
                 <Component Id="cmpD390377426A4ACDA75F649A8218A65B7" Guid="*">
                     <File Id="fil0F0CF885033482D73873D535F7E85720" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.pdb" />
                 </Component>
-                
+
                 <Component Id="cmpAFEACB670907E1D93FB13AB37A45A121" Guid="*">
                     <File Id="filA612E167C1230CE379C562E9F9429E73" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.EnterpriseLibrary.Logging.dll" />
                 </Component>
                 <Component Id="cmp8D2F4598E9043617FEC72B6CAA821455" Guid="*">
                     <File Id="filF44D16F87212A7131304D97C9CFED322" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.EnterpriseLibrary.Logging.pdb" />
                 </Component>
-                
+
                 <Component Id="cmp8A86ADA9582D73123BBCC7023F676A9D" Guid="*">
                     <File Id="fil237B40750304DD311F66B82D9BD940E5" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll" />
                 </Component>
                 <Component Id="cmpBA21F53D8E8EFA3434A4E3CBAA6A670B" Guid="*">
                     <File Id="filD3FE548B6842646EF09C509CB3024D4B" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.EnterpriseLibrary.Validation.pdb" />
                 </Component>
-                
+
                 <Component Id="cmp114C6F278747C2E0EB0E4BFEA52D5A7D" Guid="*">
                     <File Id="filA45F33D37F988182CDD16222BA51A764" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Microsoft.Practices.ServiceLocation.dll" />
                 </Component>
@@ -108,19 +108,19 @@
                 <Component Id="cmp001C244945BCEB19148C7937EC2B5AEB" Guid="*">
                     <File Id="filB8358EC8913BCC96D61744445956A76E" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Moq.pdb" />
                 </Component>
-                
+
                 <Component Id="cmp187BAEA8E274767AEF8E22E570A756A8" Guid="*">
                     <File Id="fil93D20558A6BCC293408BEED89B6FB325" KeyPath="yes" Source="$(var.BackendDirPath)\bin\QA.Configuration.dll" />
                 </Component>
-                
+
                 <Component Id="cmp067BB747538767FCBE4EBD4E3EA5C8C0" Guid="*">
                     <File Id="fil56CCFD20923E821FDED032F9683F53B7" KeyPath="yes" Source="$(var.BackendDirPath)\bin\QA.Validation.Xaml.dll" />
                 </Component>
                 <Component Id="cmpC10A490513D0F418AEDB2B18289FC6DF" Guid="*">
                     <File Id="filE8A33EB73CF7F32D318822E535654F3F" KeyPath="yes" Source="$(var.BackendDirPath)\bin\QA.Validation.Xaml.Extensions.dll" />
                 </Component>
-                
-                
+
+
                 <Component Id="cmp5530622F98DEAC85059F0CCBDD39D112" Guid="*">
                     <File Id="filFBAE7F84D3D8EAF489DAA0569CAFF98D" KeyPath="yes" Source="$(var.BackendDirPath)\bin\QA_Assembling.dll" />
                 </Component>
@@ -196,34 +196,34 @@
                 <Component Id="cmp91B3BEE0D74D0C99A8D3D826C256BB88" Guid="*">
                     <File Id="fil0F1A5A7E9DE219EAA42274F1C3398B56" KeyPath="yes" Source="$(var.BackendDirPath)\bin\System.Web.Helpers.dll" />
                 </Component>
-                
+
                 <Component Id="cmp2622FC1CDD6A88CC5A85D6D9EBE712C8" Guid="*">
                     <File Id="fil97CAF69D06272510CE9B473561E7D519" KeyPath="yes" Source="$(var.BackendDirPath)\bin\System.Web.Mvc.dll" />
                 </Component>
-                
+
                 <Component Id="cmpC139E474EC547D92E42BE3F24A2EC707" Guid="*">
                     <File Id="filFFFD9C828262F293806119CA102FD4A9" KeyPath="yes" Source="$(var.BackendDirPath)\bin\System.Web.Razor.dll" />
                 </Component>
-                
+
                 <Component Id="cmp1426235D29D0FDC29804CFDC230E7798" Guid="*">
                     <File Id="fil9C49D4AF47EE8B9E70783B5E8401EAE6" KeyPath="yes" Source="$(var.BackendDirPath)\bin\System.Web.WebPages.Deployment.dll" />
                 </Component>
-                
+
                 <Component Id="cmpDFD4C593755D7FC0022FB7051E6F77C7" Guid="*">
                     <File Id="filCF37FDAC5BCC1241B9AC7075B2C91182" KeyPath="yes" Source="$(var.BackendDirPath)\bin\System.Web.WebPages.dll" />
                 </Component>
                 <Component Id="cmp63CCECFD4E5303BA77C0A2E9ED03BA0D" Guid="*">
                     <File Id="filC9873F4CF0E8E96DE97079A7855CE853" KeyPath="yes" Source="$(var.BackendDirPath)\bin\System.Web.WebPages.Razor.dll" />
                 </Component>
-                
-                
+
+
                 <Component Id="cmp1F3919317A83C18D8E69C7309AA8C6FB" Guid="*">
                     <File Id="filEF295586BD32D5F791040F4782CE483B" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Telerik.Web.Mvc.dll" />
                 </Component>
                 <Component Id="cmp2C9A4D43A68FC16C7E60ABD4416606DA" Guid="*">
                     <File Id="fil62548B99741F8827991630FD832D1A91" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Telerik.Web.Mvc.pdb" />
                 </Component>
-                
+
                 <Component Id="cmp7A3B4B305155B67A2C73AC69C29F0BA5" Guid="*">
                     <File Id="filA4A212BE3243FD08CA1861FA8AD392D5" KeyPath="yes" Source="$(var.BackendDirPath)\bin\Telerik.Windows.RadUploadHandler.dll" />
                 </Component>
@@ -3774,92 +3774,74 @@
                 </Directory>
             </Directory>
             <Directory Id="dir86FF2B822FD4F8B6CA504845DA66B7AA" Name="Properties">
-                
+
             </Directory>
             <Directory Id="dir95A4AE7DEC3838A4367B9D42935FB90C" Name="Scripts">
                 <Component Id="cmp4894ACC0348131CE5E84B42EDB9DD210" Guid="*">
-                    <File Id="fil90BEA444F00D5C397741B448EEB4AB81" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery-1.7.1.intellisense.js" />
+                    <File Id="fil90BEA444F00D5C397741B448EEB4AB81" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery-1.7.1.intellisense.js" />
                 </Component>
                 <Component Id="cmpA1D25DF74CB276EA65F1E281DF7BAAB2" Guid="*">
-                    <File Id="fil68E9764A8C07F811962D1FB4EE803796" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery-1.7.1.intellisense.min.js" />
+                    <File Id="fil68E9764A8C07F811962D1FB4EE803796" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery-1.7.1.intellisense.min.js" />
                 </Component>
                 <Component Id="cmpEE16CE8146F4DC4072D322AF455C043F" Guid="*">
-                    <File Id="fil198BD54BA5EFDA5ED627CFA68EE7F015" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery-1.7.1.js" />
+                    <File Id="fil198BD54BA5EFDA5ED627CFA68EE7F015" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery-1.7.1.js" />
                 </Component>
                 <Component Id="cmp9DDF835347EE50C1F37413646BE69241" Guid="*">
-                    <File Id="filEEC591B0A3C398EF8D7C6B381B2F05D7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery-1.7.1.min.js" />
+                    <File Id="filEEC591B0A3C398EF8D7C6B381B2F05D7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery-1.7.1.min.js" />
                 </Component>
                 <Component Id="cmpB561F44D5229F6BECA4421A3D30F238A" Guid="*">
-                    <File Id="fil0F13C78D7DFD1F866FC94CD247EBB40D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.cookie.js" />
+                    <File Id="fil0F13C78D7DFD1F866FC94CD247EBB40D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.cookie.js" />
                 </Component>
                 <Component Id="cmp0E2B8AEB4F96E046E6561F6C16811B58" Guid="*">
-                    <File Id="fil579677F840BB603D2FCDC3B573E2AF17" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.cookie.min.js" />
+                    <File Id="fil579677F840BB603D2FCDC3B573E2AF17" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.cookie.min.js" />
                 </Component>
                 <Component Id="cmpA6A35222D814F1BFBE38D8CCF863C2F4" Guid="*">
-                    <File Id="filC2A72E75655969426DB495D0E7EBD2D6" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.form.js" />
+                    <File Id="filC2A72E75655969426DB495D0E7EBD2D6" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.form.js" />
                 </Component>
                 <Component Id="cmp85E4C8AF456982A716D2366E8FE74AAB" Guid="*">
-                    <File Id="fil1B651E9233381B6E3C108BC58EF1D042" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.form.min.js" />
+                    <File Id="fil1B651E9233381B6E3C108BC58EF1D042" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.form.min.js" />
                 </Component>
                 <Component Id="cmp2D05DA307C1FA1F05897A44F0653E597" Guid="*">
-                    <File Id="filCADA683556F3C2EB956ED3152FBBBC26" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.jeegoocontext.js" />
+                    <File Id="filCADA683556F3C2EB956ED3152FBBBC26" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.jeegoocontext.js" />
                 </Component>
                 <Component Id="cmpB40B9B4ACA2092D6A8D732D1E0F71241" Guid="*">
-                    <File Id="fil1D4ECCE09B21A855EF0531281E86DDD9" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.jeegoocontext.min.js" />
+                    <File Id="fil1D4ECCE09B21A855EF0531281E86DDD9" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.jeegoocontext.min.js" />
                 </Component>
                 <Component Id="cmpCA0D7F67AF6809B9A14C3EEC99A6C3E4" Guid="*">
-                    <File Id="fil14D079F33D8B6C93B2F016D7CF9B1127" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.scrollTo-1.4.2.js" />
+                    <File Id="fil14D079F33D8B6C93B2F016D7CF9B1127" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.scrollTo-1.4.2.js" />
                 </Component>
                 <Component Id="cmp90F641C2829CAA48E92BB7DBF59CA7D6" Guid="*">
-                    <File Id="fil88D01A417B8D7618CC5A0A9B7F324CF2" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.scrollTo-1.4.2.min.js" />
+                    <File Id="fil88D01A417B8D7618CC5A0A9B7F324CF2" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.scrollTo-1.4.2.min.js" />
                 </Component>
                 <Component Id="cmpDCA81D1BA0089DBDB2F496D635CACA83" Guid="*">
-                    <File Id="filC433D73BFB2D0136AE431EA2E95B78CD" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.scrollToElement.js" />
+                    <File Id="filC433D73BFB2D0136AE431EA2E95B78CD" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.scrollToElement.js" />
                 </Component>
                 <Component Id="cmp9FDC1C60F4E031FE44D42EBCCDC0AE7C" Guid="*">
-                    <File Id="filB30A94EA3037C4834B7509AFE26ECEC2" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.scrollToElement.min.js" />
+                    <File Id="filB30A94EA3037C4834B7509AFE26ECEC2" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.scrollToElement.min.js" />
                 </Component>
                 <Component Id="cmpAF9D8EC9CA3F250236A33B6861A4F5C1" Guid="*">
-                    <File Id="fil3BAEC415AF146D31A36A7CA28F81D41E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.splitter.js" />
+                    <File Id="fil3BAEC415AF146D31A36A7CA28F81D41E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.splitter.js" />
                 </Component>
                 <Component Id="cmpD0A3795805236F76EF8CD447DF1B7D8B" Guid="*">
-                    <File Id="fil40353866C3B38C9E897446E993C62209" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.splitter.min.js" />
+                    <File Id="fil40353866C3B38C9E897446E993C62209" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.splitter.min.js" />
                 </Component>
                 <Component Id="cmpC2054C3FED85519223FCE91585651377" Guid="*">
-                    <File Id="fil393D59EC051CF5ECE27A003424A04349" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.timers.js" />
+                    <File Id="fil393D59EC051CF5ECE27A003424A04349" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.timers.js" />
                 </Component>
                 <Component Id="cmp705DEB241F687EE456594F3F1BF4651B" Guid="*">
-                    <File Id="filE7FE056082AFF53204526B94AB5B90CA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.timers.min.js" />
-                </Component>
-                <Component Id="cmp2EBD694C76E83C6246D9134D79BDF0C9" Guid="*">
-                    <File Id="filE92212C556836A40F0BD0C9121940477" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.unobtrusive-ajax.js" />
-                </Component>
-                <Component Id="cmp4FF672282F8C9BE2EFB906BE3F531AE8" Guid="*">
-                    <File Id="fil05C2A68D97532E8C150AF42888FDB91E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.unobtrusive-ajax.min.js" />
-                </Component>
-                <Component Id="cmp416DD9B16C952A6227407FB35D5C8E03" Guid="*">
-                    <File Id="filB5263F0855A9872340578DEA6D10397B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.validate-vsdoc.js" />
-                </Component>
-                <Component Id="cmp6487B9C5B00726A405B2F029DE63D227" Guid="*">
-                    <File Id="fil937E6C6B1D71AA7D6AABE06EA689A625" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.validate-vsdoc.min.js" />
+                    <File Id="filE7FE056082AFF53204526B94AB5B90CA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.timers.min.js" />
                 </Component>
                 <Component Id="cmp400C196C336C86B5AE59270878395868" Guid="*">
-                    <File Id="filB95B7FAB26422BF03469789A613A70C2" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.validate.js" />
+                    <File Id="filB95B7FAB26422BF03469789A613A70C2" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.validate.js" />
                 </Component>
                 <Component Id="cmpA4664206B82591750E387CCF3B20CB7E" Guid="*">
-                    <File Id="filBD4D2584751952DA5021B0257EEB55A8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.validate.min.js" />
-                </Component>
-                <Component Id="cmp36AA101931FD6474D4381D14B84F28EE" Guid="*">
-                    <File Id="fil742B9F963A20A13A76C84A7A1B831885" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.validate.unobtrusive.js" />
-                </Component>
-                <Component Id="cmpB829A63F84E395A40A4B56FD6EAE95B0" Guid="*">
-                    <File Id="fil393F2309818DE2984F6D922644CF0A4E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.validate.unobtrusive.min.js" />
+                    <File Id="filBD4D2584751952DA5021B0257EEB55A8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.validate.min.js" />
                 </Component>
                 <Component Id="cmp66A5E9E6181ECDF0E6976A6DE2E864D2" Guid="*">
-                    <File Id="filC1DACCB31E3B62D0A8D9797FB2F843A8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.verticalResizer.js" />
+                    <File Id="filC1DACCB31E3B62D0A8D9797FB2F843A8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.verticalResizer.js" />
                 </Component>
                 <Component Id="cmp29139BAD28967E6379DA53C24284BEE3" Guid="*">
-                    <File Id="filB5398D1F9FF3B12E39782D711AEA687F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery.verticalResizer.min.js" />
+                    <File Id="filB5398D1F9FF3B12E39782D711AEA687F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\jquery\jquery.verticalResizer.min.js" />
                 </Component>
                 <Component Id="cmpECA736E820719E3918C60677EA87A81E" Guid="*">
                     <File Id="filDB059A68349925C2D5E111962562332F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\json2.js" />
@@ -3874,22 +3856,10 @@
                     <File Id="fil99F4DB445B8318AD20E6530803E3B3A5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\knockout.min.js" />
                 </Component>
                 <Component Id="cmp479695D3AF8BCB531351BB1AC5DE2A84" Guid="*">
-                    <File Id="fil34D4131509CBA13EEAF74CD0BB36314D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\MicrosoftAjax.debug.js" />
+                    <File Id="fil34D4131509CBA13EEAF74CD0BB36314D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\microsoft\MicrosoftAjax.debug.js" />
                 </Component>
                 <Component Id="cmp2A05D61CD1F6FB203927536E3FA31CC9" Guid="*">
-                    <File Id="fil00DB0D1E0376344EE12A53B209366CE1" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\MicrosoftAjax.js" />
-                </Component>
-                <Component Id="cmp744BBB8178348C94290E52C2745EA295" Guid="*">
-                    <File Id="filF25981F708ECE6186E5422CF0B8A7955" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\MicrosoftMvcAjax.debug.js" />
-                </Component>
-                <Component Id="cmp044A481A7D9333176F2270CCA7CB066B" Guid="*">
-                    <File Id="fil9944306294E9249CF81E1C586877C090" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\MicrosoftMvcAjax.js" />
-                </Component>
-                <Component Id="cmpA70C272AB7931E11232DF248C96DC3C1" Guid="*">
-                    <File Id="fil3289023A065F728A8ED061E69AFA2A83" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\MicrosoftMvcValidation.debug.js" />
-                </Component>
-                <Component Id="cmp7DE0EE5A8D21A873AF9F24BC7CF78245" Guid="*">
-                    <File Id="filA24FA8A0D9BF509C7ADBFA08186AD5D3" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\MicrosoftMvcValidation.js" />
+                    <File Id="fil00DB0D1E0376344EE12A53B209366CE1" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\microsoft\MicrosoftAjax.js" />
                 </Component>
                 <Component Id="cmp11E9E985603ADA34945951B033DF181A" Guid="*">
                     <File Id="fil0BED0BD9DC1D4C74739D790BB08AE4B7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\pmrpc.js" />
@@ -3910,166 +3880,166 @@
                     <File Id="filE2E8F09067CB539F9C36A31A3A8F5F43" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\SilverlightUpload.min.js" />
                 </Component>
                 <Component Id="cmpD4749EB1E8EBF1C52B4A95EBF5CE54D4" Guid="*">
-                    <File Id="filDB85A2382A5156A39F47EC35C5E7630E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.autocomplete.js" />
+                    <File Id="filDB85A2382A5156A39F47EC35C5E7630E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.autocomplete.js" />
                 </Component>
                 <Component Id="cmpAB7151AA7462F79DE916FC599BC5B485" Guid="*">
-                    <File Id="filBC80C929E37F6B53AAC51C1FEAA320BA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.autocomplete.min.js" />
+                    <File Id="filBC80C929E37F6B53AAC51C1FEAA320BA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.autocomplete.min.js" />
                 </Component>
                 <Component Id="cmp09810E3713A85CEEDD6797C670F286FD" Guid="*">
-                    <File Id="fil65E4EB96B1BF1ECC07E119647A94BA4D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.calendar.js" />
+                    <File Id="fil65E4EB96B1BF1ECC07E119647A94BA4D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.calendar.js" />
                 </Component>
                 <Component Id="cmp338180D54F052A90F0B14EAE6E756632" Guid="*">
-                    <File Id="fil2243F7F4933CB6363541AC82921B1C37" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.calendar.min.js" />
+                    <File Id="fil2243F7F4933CB6363541AC82921B1C37" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.calendar.min.js" />
                 </Component>
                 <Component Id="cmpE13576CF53372064F8E37C726EF062F2" Guid="*">
-                    <File Id="filCDD15DD239C6D4C0F5B790F97378F9B8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.chart.js" />
+                    <File Id="filCDD15DD239C6D4C0F5B790F97378F9B8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.chart.js" />
                 </Component>
                 <Component Id="cmp5BD30CE8EF4E081F506C0B09611F1507" Guid="*">
-                    <File Id="filC2746976A421BFB5051DFA33E5F69C88" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.chart.min.js" />
+                    <File Id="filC2746976A421BFB5051DFA33E5F69C88" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.chart.min.js" />
                 </Component>
                 <Component Id="cmp86832535AB76A229AE38395B0F595978" Guid="*">
-                    <File Id="fil9A6B9EE6EFD960852A9AE272D0A6608B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.combobox.js" />
+                    <File Id="fil9A6B9EE6EFD960852A9AE272D0A6608B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.combobox.js" />
                 </Component>
                 <Component Id="cmpF9AF94A47B73A0BE9BCA1CF964489932" Guid="*">
-                    <File Id="fil2EF9842376FB56247BC0DFA2F33A1F00" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.combobox.min.js" />
+                    <File Id="fil2EF9842376FB56247BC0DFA2F33A1F00" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.combobox.min.js" />
                 </Component>
                 <Component Id="cmp5614B82142DF4D12120EDE1F74161CCB" Guid="*">
-                    <File Id="fil0AE664C12A97359AA45CAAA16F07BCDB" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.common.js" />
+                    <File Id="fil0AE664C12A97359AA45CAAA16F07BCDB" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.common.js" />
                 </Component>
                 <Component Id="cmp7D4CEF129BDF9B7C0094313DE021EB67" Guid="*">
-                    <File Id="filE567EEE7C2200A9AB395AA981785A110" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.common.min.js" />
+                    <File Id="filE567EEE7C2200A9AB395AA981785A110" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.common.min.js" />
                 </Component>
                 <Component Id="cmpA17780FD54021759F6EF6C21BB953115" Guid="*">
-                    <File Id="filE2F5D0B1AC247D5F85F2C11C1F9B0FFF" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.datepicker.js" />
+                    <File Id="filE2F5D0B1AC247D5F85F2C11C1F9B0FFF" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.datepicker.js" />
                 </Component>
                 <Component Id="cmp665ACBA11033E3C90EB913FE521BE4FE" Guid="*">
-                    <File Id="fil1793CD8A5C99D290561F55D05C60D326" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.datepicker.min.js" />
+                    <File Id="fil1793CD8A5C99D290561F55D05C60D326" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.datepicker.min.js" />
                 </Component>
                 <Component Id="cmp9F45D156DFC5579C4D634AC0D1D1DD3B" Guid="*">
-                    <File Id="fil50D865AC2D2B079582238F6C5022692E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.datetimepicker.js" />
+                    <File Id="fil50D865AC2D2B079582238F6C5022692E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.datetimepicker.js" />
                 </Component>
                 <Component Id="cmp990C1FAFDB45AD7C7A386532D89AF81B" Guid="*">
-                    <File Id="fil14F5DFFBB365E10A2DA2411C5256CC1F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.datetimepicker.min.js" />
+                    <File Id="fil14F5DFFBB365E10A2DA2411C5256CC1F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.datetimepicker.min.js" />
                 </Component>
                 <Component Id="cmpA1E30502B4E12B831BC1269FF798B594" Guid="*">
-                    <File Id="fil8423E9409C274539819EA3A9B84158BF" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.draganddrop.js" />
+                    <File Id="fil8423E9409C274539819EA3A9B84158BF" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.draganddrop.js" />
                 </Component>
                 <Component Id="cmp13E2A8C0C7DFDF81A3D0331212F17067" Guid="*">
-                    <File Id="fil323D04B893E841C52B43464C8DE24549" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.draganddrop.min.js" />
+                    <File Id="fil323D04B893E841C52B43464C8DE24549" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.draganddrop.min.js" />
                 </Component>
                 <Component Id="cmp54E5546A4352CC5391B177E5A8CDCA98" Guid="*">
-                    <File Id="fil0471727D50771CF511F9F2C6BB6DB7B1" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.editor.js" />
+                    <File Id="fil0471727D50771CF511F9F2C6BB6DB7B1" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.editor.js" />
                 </Component>
                 <Component Id="cmpB01E837EEE625FE398A83C24295EE9D5" Guid="*">
-                    <File Id="filA851EFB52C7D2CDEEDE4A05423FF8A03" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.editor.min.js" />
+                    <File Id="filA851EFB52C7D2CDEEDE4A05423FF8A03" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.editor.min.js" />
                 </Component>
                 <Component Id="cmpB5F498078C0FCFF40D9755C7A4720AEB" Guid="*">
-                    <File Id="fil177AE956232A6A2C94EE83EE5F11661E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.editing.js" />
+                    <File Id="fil177AE956232A6A2C94EE83EE5F11661E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.editing.js" />
                 </Component>
                 <Component Id="cmp675AA3838CBEBAAD2332ABAE78617F30" Guid="*">
-                    <File Id="fil64C8434520772A56E8A4AD2821C04E64" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.editing.min.js" />
+                    <File Id="fil64C8434520772A56E8A4AD2821C04E64" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.editing.min.js" />
                 </Component>
                 <Component Id="cmpB65AC8972447D58C6AB1B46F50360645" Guid="*">
-                    <File Id="filFE430D4F21828CC29D4137240476647E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.filtering.js" />
+                    <File Id="filFE430D4F21828CC29D4137240476647E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.filtering.js" />
                 </Component>
                 <Component Id="cmp446230521919D33B531FD29EE49F9C37" Guid="*">
-                    <File Id="fil03A69BE89E8B58DFC10FD0CFE691B2B8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.filtering.min.js" />
+                    <File Id="fil03A69BE89E8B58DFC10FD0CFE691B2B8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.filtering.min.js" />
                 </Component>
                 <Component Id="cmp305128A637B99B7119AE65FA87DD059C" Guid="*">
-                    <File Id="filE42F023045C4184C4A1D821B84CEBC86" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.grouping.js" />
+                    <File Id="filE42F023045C4184C4A1D821B84CEBC86" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.grouping.js" />
                 </Component>
                 <Component Id="cmp6758CE9F4387FFB3B62FCF7C6CC3545B" Guid="*">
-                    <File Id="fil1DBBE3BDD6EA4046EA770CEAB64D245D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.grouping.min.js" />
+                    <File Id="fil1DBBE3BDD6EA4046EA770CEAB64D245D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.grouping.min.js" />
                 </Component>
                 <Component Id="cmp4D4CA37DF6B100C4BEFEC7FE96AB176F" Guid="*">
-                    <File Id="fil12BD1B38ABA48DEE5EC15F315D8F5EF0" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.js" />
+                    <File Id="fil12BD1B38ABA48DEE5EC15F315D8F5EF0" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.js" />
                 </Component>
                 <Component Id="cmpE55F44C2C23A3FDCD09523222036D711" Guid="*">
-                    <File Id="fil83ADCC993F211CF1AC86E07003905B22" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.min.js" />
+                    <File Id="fil83ADCC993F211CF1AC86E07003905B22" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.min.js" />
                 </Component>
                 <Component Id="cmpA65E3E00B4FAA7AF3D145309ED20BD3D" Guid="*">
-                    <File Id="fil68B48F164789C2BA58B2EFF4FCAF0E31" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.reordering.js" />
+                    <File Id="fil68B48F164789C2BA58B2EFF4FCAF0E31" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.reordering.js" />
                 </Component>
                 <Component Id="cmpF097B4AA6FD85A57D8E1F6B646029516" Guid="*">
-                    <File Id="fil968E7B1008724906FB11746D8744B6CC" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.reordering.min.js" />
+                    <File Id="fil968E7B1008724906FB11746D8744B6CC" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.reordering.min.js" />
                 </Component>
                 <Component Id="cmp7D7E6C1DE028EFCC39727EC0B58696CF" Guid="*">
-                    <File Id="fil1160CCCAEFD98935E2337CE529813BF8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.resizing.js" />
+                    <File Id="fil1160CCCAEFD98935E2337CE529813BF8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.resizing.js" />
                 </Component>
                 <Component Id="cmp48D2957454B209854122533CD11E2A85" Guid="*">
-                    <File Id="fil900CA3DCE6EA5AAD27CC2D35F474F7DC" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.grid.resizing.min.js" />
+                    <File Id="fil900CA3DCE6EA5AAD27CC2D35F474F7DC" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.grid.resizing.min.js" />
                 </Component>
                 <Component Id="cmp225A9791A9ABF8EA076C77549F7F20DC" Guid="*">
-                    <File Id="fil226A52DCBF6FAF6AD7326D8ACB4C820E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.imagebrowser.js" />
+                    <File Id="fil226A52DCBF6FAF6AD7326D8ACB4C820E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.imagebrowser.js" />
                 </Component>
                 <Component Id="cmpE3A9C87B4F724180FB529034BB096728" Guid="*">
-                    <File Id="filF488C6F3EDC305BFF7FE31EF2C8D9E26" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.imagebrowser.min.js" />
+                    <File Id="filF488C6F3EDC305BFF7FE31EF2C8D9E26" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.imagebrowser.min.js" />
                 </Component>
                 <Component Id="cmp56E2DC134AAC82C2AF1AE799BF5A1D02" Guid="*">
-                    <File Id="filBBF201DB807BA65A4531EB66D4878104" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.list.js" />
+                    <File Id="filBBF201DB807BA65A4531EB66D4878104" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.list.js" />
                 </Component>
                 <Component Id="cmp228C5AFBCC904681D97CC1289612DE6E" Guid="*">
-                    <File Id="filF157AB794B2850ACABA9AD6AC76A82AD" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.list.min.js" />
+                    <File Id="filF157AB794B2850ACABA9AD6AC76A82AD" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.list.min.js" />
                 </Component>
                 <Component Id="cmpC9E40CEDAF1973E3ABD64F4D1F778E6A" Guid="*">
-                    <File Id="fil080A1623E507D8C59B211E161BF1E7E6" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.menu.js" />
+                    <File Id="fil080A1623E507D8C59B211E161BF1E7E6" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.menu.js" />
                 </Component>
                 <Component Id="cmp03F47E45BE011456CD5C6F831DC9C629" Guid="*">
-                    <File Id="filDCBDD5E5B213786162CA9A7580A52AA5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.menu.min.js" />
+                    <File Id="filDCBDD5E5B213786162CA9A7580A52AA5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.menu.min.js" />
                 </Component>
                 <Component Id="cmp842C347843B38E3BCCE434D6189DA377" Guid="*">
-                    <File Id="filFB7BB0963F778F84FDA29D7D1B54D923" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.panelbar.js" />
+                    <File Id="filFB7BB0963F778F84FDA29D7D1B54D923" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.panelbar.js" />
                 </Component>
                 <Component Id="cmp966B0856EDD1F2010374CC4B7F807DFF" Guid="*">
-                    <File Id="filC69599236ED534F01BF58D9059DB74A3" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.panelbar.min.js" />
+                    <File Id="filC69599236ED534F01BF58D9059DB74A3" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.panelbar.min.js" />
                 </Component>
                 <Component Id="cmp12B3E4F4A50D9A336D3522A75025612A" Guid="*">
-                    <File Id="filDD5C4829FBF7DF14FDB48570A4E8160D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.slider.js" />
+                    <File Id="filDD5C4829FBF7DF14FDB48570A4E8160D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.slider.js" />
                 </Component>
                 <Component Id="cmp2BB701718B411EBDEF4D3296337DD452" Guid="*">
-                    <File Id="filA610C352380CEA14784BDCC77C9C1304" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.slider.min.js" />
+                    <File Id="filA610C352380CEA14784BDCC77C9C1304" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.slider.min.js" />
                 </Component>
                 <Component Id="cmpD6715F83E412BD7972FD311109DFE05F" Guid="*">
-                    <File Id="fil06145C6D8D9430682757F1A2C65CE09E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.splitter.js" />
+                    <File Id="fil06145C6D8D9430682757F1A2C65CE09E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.splitter.js" />
                 </Component>
                 <Component Id="cmpB85BE725BD7C03B223599F0F1F77AB3C" Guid="*">
-                    <File Id="filD091EA37B4F64F37A69C1DFA7C8FE884" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.splitter.min.js" />
+                    <File Id="filD091EA37B4F64F37A69C1DFA7C8FE884" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.splitter.min.js" />
                 </Component>
                 <Component Id="cmp97334C11B181E899032BCD046AF22CAC" Guid="*">
-                    <File Id="fil4FE48183AEA38E8B15E030DBBE37C2AF" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.tabstrip.js" />
+                    <File Id="fil4FE48183AEA38E8B15E030DBBE37C2AF" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.tabstrip.js" />
                 </Component>
                 <Component Id="cmpAFE52059F9FA8CF3414D14F912A46968" Guid="*">
-                    <File Id="fil9B474A9FB18A7C42C78734DEE11984EC" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.tabstrip.min.js" />
+                    <File Id="fil9B474A9FB18A7C42C78734DEE11984EC" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.tabstrip.min.js" />
                 </Component>
                 <Component Id="cmp597F55F77A36AD5D0334EC533304C247" Guid="*">
-                    <File Id="fil1B4BBD74375F38F9886FF0DD13FF85A8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.textbox.js" />
+                    <File Id="fil1B4BBD74375F38F9886FF0DD13FF85A8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.textbox.js" />
                 </Component>
                 <Component Id="cmpD3AA85BF705F4D347F004447F9842886" Guid="*">
-                    <File Id="filC4B6D3DB63DACCEDD925DE73EB6AD67A" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.textbox.min.js" />
+                    <File Id="filC4B6D3DB63DACCEDD925DE73EB6AD67A" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.textbox.min.js" />
                 </Component>
                 <Component Id="cmp241EF8ED539D21E1901EE1AA266AF2A1" Guid="*">
-                    <File Id="fil260E314B2B25C0990DE6716810EF6963" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.timepicker.js" />
+                    <File Id="fil260E314B2B25C0990DE6716810EF6963" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.timepicker.js" />
                 </Component>
                 <Component Id="cmp3079A8844F4EED93937F340F9EBF32C3" Guid="*">
-                    <File Id="fil738D0D67188190C8B6493C666FA42742" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.timepicker.min.js" />
+                    <File Id="fil738D0D67188190C8B6493C666FA42742" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.timepicker.min.js" />
                 </Component>
                 <Component Id="cmp6F56A039DC5D2268A1069CA7947A8038" Guid="*">
-                    <File Id="fil74DB4F2261AA9FDD8699C1716234FDCB" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.treeview.js" />
+                    <File Id="fil74DB4F2261AA9FDD8699C1716234FDCB" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.treeview.js" />
                 </Component>
                 <Component Id="cmpA8C6319ABBCCFA24A3849935390ECCCA" Guid="*">
-                    <File Id="fil3C10931ED9FA0F1D8E52A53038BEBE33" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.treeview.min.js" />
+                    <File Id="fil3C10931ED9FA0F1D8E52A53038BEBE33" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.treeview.min.js" />
                 </Component>
                 <Component Id="cmpAF474E6E8DE8A576208F0F0E1E3C622E" Guid="*">
-                    <File Id="fil4CF99988190C9A8C8AA5F5FD33CD7AF5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.upload.js" />
+                    <File Id="fil4CF99988190C9A8C8AA5F5FD33CD7AF5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.upload.js" />
                 </Component>
                 <Component Id="cmpE6963371B2358A2EFDB4FFDB0796C7DB" Guid="*">
-                    <File Id="filA2B8314EDECDB597D5CFF29607971C92" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.upload.min.js" />
+                    <File Id="filA2B8314EDECDB597D5CFF29607971C92" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.upload.min.js" />
                 </Component>
                 <Component Id="cmpFFF2574D8840966F502E6060CF25CE23" Guid="*">
-                    <File Id="filC3EB5971387F165A1B096A36B1A9560F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.window.js" />
+                    <File Id="filC3EB5971387F165A1B096A36B1A9560F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.window.js" />
                 </Component>
                 <Component Id="cmp35E2E7966EADD0E2EE12CC0CCBB1D158" Guid="*">
-                    <File Id="fil1020BB8A9907F85F318C9EF79D1D4C96" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik.window.min.js" />
+                    <File Id="fil1020BB8A9907F85F318C9EF79D1D4C96" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\telerik\telerik.window.min.js" />
                 </Component>
                 <Component Id="cmp1BADDEEAF04168E0BDB7DBCCA270B647" Guid="*">
                     <File Id="fil0672EA7228592E219BD1C8558C0AA527" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\underscore.js" />
@@ -4079,12 +4049,6 @@
                 </Component>
                 <Component Id="cmpC89FA7253CD2A82C06DCD7A21CA6586B" Guid="*">
                     <File Id="filF223ACA4538F3D794EDEC2028956E958" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Web.config" />
-                </Component>
-                <Component Id="cmp32EC1D2AACDF657A50D7FC2F97CA3D53" Guid="*">
-                    <File Id="fil83E897E810C48C8BB0416EA7BD0F183B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\_references.js" />
-                </Component>
-                <Component Id="cmp699530E5D29E27EA5269BD44803D40C8" Guid="*">
-                    <File Id="filAF7BBA56959558F7A6218FDAAC3EB433" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\_references.min.js" />
                 </Component>
                 <Directory Id="dir6B537A8E4FB3EC431ABD70828C2DEDBA" Name="CodeMirror">
                     <Component Id="cmp10DD3985BB66D8E03E03F9C5CC918D32" Guid="*">
@@ -4141,268 +4105,268 @@
                 </Directory>
                 <Directory Id="dirC35A16E369E338815987DF37F1A86747" Name="Languages">
                     <Component Id="cmp8AF1020587F88B4DD1F6BA1FE40D60A1" Guid="*">
-                        <File Id="fil0DE3ADFDA8206946CE60A54850E03F58" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendActionExecutor.Lang.js" />
+                        <File Id="fil0DE3ADFDA8206946CE60A54850E03F58" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendActionExecutor.Lang.js" />
                     </Component>
                     <Component Id="cmp96BDD9780798FA99C6C760FF0D876A0F" Guid="*">
-                        <File Id="filF3EC597CEF6FF95BF44BD28DBFEBE875" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendActionExecutor.Lang.min.js" />
+                        <File Id="filF3EC597CEF6FF95BF44BD28DBFEBE875" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendActionExecutor.Lang.min.js" />
                     </Component>
                     <Component Id="cmp2DBDA3254F9AF6B7624A76C6CB32300E" Guid="*">
-                        <File Id="fil0CA1CE2F8C41065F00CD8C0FF022DCED" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendActionExecutor.Lang.ru-ru.js" />
+                        <File Id="fil0CA1CE2F8C41065F00CD8C0FF022DCED" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendActionExecutor.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpF093F0B49EF63FBE6D1B8EF59400F680" Guid="*">
-                        <File Id="fil2A53874B4AC94EE4B026F0A3BB42FDF7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendActionExecutor.Lang.ru-ru.min.js" />
+                        <File Id="fil2A53874B4AC94EE4B026F0A3BB42FDF7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendActionExecutor.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpFCC38EFE8A7066533275AE45855DAC58" Guid="*">
-                        <File Id="fil359DFB88638320052DFE6737BC52D5DD" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendActionLink.Lang.js" />
+                        <File Id="fil359DFB88638320052DFE6737BC52D5DD" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendActionLink.Lang.js" />
                     </Component>
                     <Component Id="cmpD96F6FCEB194724640C4C74860D571E5" Guid="*">
-                        <File Id="fil4C3D8C003FDD6E3E0C4737E86AEABE06" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendActionLink.Lang.min.js" />
+                        <File Id="fil4C3D8C003FDD6E3E0C4737E86AEABE06" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendActionLink.Lang.min.js" />
                     </Component>
                     <Component Id="cmp615872746F30EB62A41F69DFF04ECF6B" Guid="*">
-                        <File Id="fil2A03BFDDC0868E8CA353D0CD5A93C9EA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendActionLink.Lang.ru-ru.js" />
+                        <File Id="fil2A03BFDDC0868E8CA353D0CD5A93C9EA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendActionLink.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp790BA92738FBE7149608A0C8D0C7800E" Guid="*">
-                        <File Id="fil05C6FCE6A25E8925D0C0049892C0206C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendActionLink.Lang.ru-ru.min.js" />
+                        <File Id="fil05C6FCE6A25E8925D0C0049892C0206C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendActionLink.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp33B0858DE57B67ED3F06E593F2607ED2" Guid="*">
-                        <File Id="fil7D5E80D7F1AF2F34EF64FB54E032EBA7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendBreadCrumbs.Lang.js" />
+                        <File Id="fil7D5E80D7F1AF2F34EF64FB54E032EBA7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendBreadCrumbs.Lang.js" />
                     </Component>
                     <Component Id="cmpC96D7A5700B45B4D618AD980E25BD0D8" Guid="*">
-                        <File Id="filB2F14832D73B0DE24057272773B287E5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendBreadCrumbs.Lang.min.js" />
+                        <File Id="filB2F14832D73B0DE24057272773B287E5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendBreadCrumbs.Lang.min.js" />
                     </Component>
                     <Component Id="cmp0BA05CBC1BE360963E05A1F1B80C6F0F" Guid="*">
-                        <File Id="filE863956D10165636515AEBB2019D65CA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendBreadCrumbs.Lang.ru-ru.js" />
+                        <File Id="filE863956D10165636515AEBB2019D65CA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendBreadCrumbs.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpC8E3B1CFD6C9D97CB9B511FEBC71F2A4" Guid="*">
-                        <File Id="fil31914633E99608E83815379270A9329C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendBreadCrumbs.Lang.ru-ru.min.js" />
+                        <File Id="fil31914633E99608E83815379270A9329C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendBreadCrumbs.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp364BF5F943409C047D7A778ED750AD54" Guid="*">
-                        <File Id="fil8EABCACB6B7C3A304B73AE32B7B53510" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendCommon.Lang.js" />
+                        <File Id="fil8EABCACB6B7C3A304B73AE32B7B53510" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendCommon.Lang.js" />
                     </Component>
                     <Component Id="cmpBC814121B681B5DA7EEFA0493E5AD095" Guid="*">
-                        <File Id="fil344343059363DCF423636C63973DD0FA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendCommon.Lang.min.js" />
+                        <File Id="fil344343059363DCF423636C63973DD0FA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendCommon.Lang.min.js" />
                     </Component>
                     <Component Id="cmp01E39A87C64AA79938FE9BC2B5356CFC" Guid="*">
-                        <File Id="filB55178FE567CB35F5930802E95331172" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendCommon.Lang.ru-ru.js" />
+                        <File Id="filB55178FE567CB35F5930802E95331172" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendCommon.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp2C070DDE52C032C6EBF018737E962F49" Guid="*">
-                        <File Id="fil3DFEC216230077EAF43237E05D2BD3CB" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendCommon.Lang.ru-ru.min.js" />
+                        <File Id="fil3DFEC216230077EAF43237E05D2BD3CB" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendCommon.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp11FCBB699C2F4B6CCC9087EE9F04DFB1" Guid="*">
-                        <File Id="filE4DEDCD92B6D03C25AD77DAE6331F655" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendContextMenu.Lang.js" />
+                        <File Id="filE4DEDCD92B6D03C25AD77DAE6331F655" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendContextMenu.Lang.js" />
                     </Component>
                     <Component Id="cmp3581E37A74C35D8CA537C2800BFC4F7C" Guid="*">
-                        <File Id="fil197ED6CC55209658DBF7FA28D303A830" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendContextMenu.Lang.min.js" />
+                        <File Id="fil197ED6CC55209658DBF7FA28D303A830" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendContextMenu.Lang.min.js" />
                     </Component>
                     <Component Id="cmpA06E2E6C648145BF7134D713D3CF8073" Guid="*">
-                        <File Id="fil7E4F3C34719DCDAADCC16AFD9886C921" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendContextMenu.Lang.ru-ru.js" />
+                        <File Id="fil7E4F3C34719DCDAADCC16AFD9886C921" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendContextMenu.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp4AA0CE01F36C5F46B56AC7D51A9D49D9" Guid="*">
-                        <File Id="fil6F5B656808E4547736B8BF6363F027FE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendContextMenu.Lang.ru-ru.min.js" />
+                        <File Id="fil6F5B656808E4547736B8BF6363F027FE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendContextMenu.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpD63A76C71E846B8BC85BB84EF5B97938" Guid="*">
-                        <File Id="filC96BF84171DD769B712BEC9EADFB6F93" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendDirectLinkExecutor.Lang.js" />
+                        <File Id="filC96BF84171DD769B712BEC9EADFB6F93" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendDirectLinkExecutor.Lang.js" />
                     </Component>
                     <Component Id="cmp662C98792442E250D7D32036CF9F690E" Guid="*">
-                        <File Id="fil33FA90B6FEDEA289FB1F897DF7A4E2FA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendDirectLinkExecutor.Lang.min.js" />
+                        <File Id="fil33FA90B6FEDEA289FB1F897DF7A4E2FA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendDirectLinkExecutor.Lang.min.js" />
                     </Component>
                     <Component Id="cmp399415D5274F0A6838B59FA21F136128" Guid="*">
-                        <File Id="fil1F937098F4798FA7B04B2BE0E4D4E543" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendDirectLinkExecutor.Lang.ru-ru.js" />
+                        <File Id="fil1F937098F4798FA7B04B2BE0E4D4E543" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendDirectLinkExecutor.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp35ECB02C175C527541C550D3FD8D6D4A" Guid="*">
-                        <File Id="fil1D11B807E1D03B5FD094D97D7E478F47" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendDirectLinkExecutor.Lang.ru-ru.min.js" />
+                        <File Id="fil1D11B807E1D03B5FD094D97D7E478F47" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendDirectLinkExecutor.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpF78AF42523FC4B278D89E8782F20C598" Guid="*">
-                        <File Id="fil5A317A73AC108DA57FC7F38ECC8443A4" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEditingArea.Lang.js" />
+                        <File Id="fil5A317A73AC108DA57FC7F38ECC8443A4" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEditingArea.Lang.js" />
                     </Component>
                     <Component Id="cmpF4D794001B213F20D48BECC4E76897EA" Guid="*">
-                        <File Id="filF49DF20F3DA6FE2ECEAACE3715BAF6F1" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEditingArea.Lang.min.js" />
+                        <File Id="filF49DF20F3DA6FE2ECEAACE3715BAF6F1" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEditingArea.Lang.min.js" />
                     </Component>
                     <Component Id="cmp7E40726E58071E0810CB2EC1ABAF0AC2" Guid="*">
-                        <File Id="fil72E807C8A9AD7F498B415DF18D05A241" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEditingArea.Lang.ru-ru.js" />
+                        <File Id="fil72E807C8A9AD7F498B415DF18D05A241" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEditingArea.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpA0E1CF4A4452377D519F2E796484A71A" Guid="*">
-                        <File Id="fil7404EF52E5851AFAD05B8E99290B4FC3" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEditingArea.Lang.ru-ru.min.js" />
+                        <File Id="fil7404EF52E5851AFAD05B8E99290B4FC3" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEditingArea.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp7B2F27046852C3FCA66B6FE21C9B0244" Guid="*">
-                        <File Id="fil2042856464E85CC1CC33E74272251A88" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityDataList.Lang.js" />
+                        <File Id="fil2042856464E85CC1CC33E74272251A88" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityDataList.Lang.js" />
                     </Component>
                     <Component Id="cmpC09E03988EF3B8EE5AF319F077C3D671" Guid="*">
-                        <File Id="filA9444067700A4E6183843D4B22F1C02A" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityDataList.Lang.min.js" />
+                        <File Id="filA9444067700A4E6183843D4B22F1C02A" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityDataList.Lang.min.js" />
                     </Component>
                     <Component Id="cmpA6791078172324D1F10C777117F90029" Guid="*">
-                        <File Id="fil274D3A0ADCB8FCADFB3BB04AEB952C62" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityDataList.Lang.ru-ru.js" />
+                        <File Id="fil274D3A0ADCB8FCADFB3BB04AEB952C62" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityDataList.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp09C487B82162425CC37817CB86B7F801" Guid="*">
-                        <File Id="filE47CCF59230BDBBB11229305CE246530" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityDataList.Lang.ru-ru.min.js" />
+                        <File Id="filE47CCF59230BDBBB11229305CE246530" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityDataList.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpCAC12B699F136A7C7BCB05E84F1A4EBB" Guid="*">
-                        <File Id="fil4A0E0F3646A1FDF08ED81E7986400CDE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityEditor.Lang.js" />
+                        <File Id="fil4A0E0F3646A1FDF08ED81E7986400CDE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityEditor.Lang.js" />
                     </Component>
                     <Component Id="cmp6362899A60CCF57F94699CE7B208E3C5" Guid="*">
-                        <File Id="filDFB6EEB1F7EE260975B8D8FB7D1B5C98" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityEditor.Lang.min.js" />
+                        <File Id="filDFB6EEB1F7EE260975B8D8FB7D1B5C98" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityEditor.Lang.min.js" />
                     </Component>
                     <Component Id="cmp52BEE34B15986E68A5552EDCB344D0E4" Guid="*">
-                        <File Id="filCC87113058AF4D1940979C82E90DEE59" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityEditor.Lang.ru-ru.js" />
+                        <File Id="filCC87113058AF4D1940979C82E90DEE59" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityEditor.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp1FD5C63F511E000DD4C75F5CA0445DE8" Guid="*">
-                        <File Id="filC2AF1FC8CF378E85A3B19219FA6F79D1" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityEditor.Lang.ru-ru.min.js" />
+                        <File Id="filC2AF1FC8CF378E85A3B19219FA6F79D1" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityEditor.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp58C39DB84F7C42AD99300DA7A22017EF" Guid="*">
-                        <File Id="fil8FF453419E6AB7EC5B8971092F6C5ED8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityEditorAutoSaver.Lang.js" />
+                        <File Id="fil8FF453419E6AB7EC5B8971092F6C5ED8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityEditorAutoSaver.Lang.js" />
                     </Component>
                     <Component Id="cmp5CBF13CDE0DFF897675382F2A414DCA3" Guid="*">
-                        <File Id="fil3B63285502B8DD692BE3E5E55B50B4A0" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityEditorAutoSaver.Lang.min.js" />
+                        <File Id="fil3B63285502B8DD692BE3E5E55B50B4A0" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityEditorAutoSaver.Lang.min.js" />
                     </Component>
                     <Component Id="cmp6414089B98435906A5A387C9F39226A6" Guid="*">
-                        <File Id="fil79FFFD9E3D8E228E5A3F2B95A1D83774" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityEditorAutoSaver.Lang.ru-ru.js" />
+                        <File Id="fil79FFFD9E3D8E228E5A3F2B95A1D83774" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityEditorAutoSaver.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp1FF1B69670D52CFBFA4C5274B7F6009A" Guid="*">
-                        <File Id="filD6034326FBE3238183E51BE2B37556FF" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityEditorAutoSaver.Lang.ru-ru.min.js" />
+                        <File Id="filD6034326FBE3238183E51BE2B37556FF" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityEditorAutoSaver.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp0FBB24E0353AA1906C1BEAEFF8B98730" Guid="*">
-                        <File Id="fil076BF3CDB6A22ACA775D9C6F07F51130" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityGrid.Lang.js" />
+                        <File Id="fil076BF3CDB6A22ACA775D9C6F07F51130" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityGrid.Lang.js" />
                     </Component>
                     <Component Id="cmp55D7B4FCB13FCB441E5E134874A9BE57" Guid="*">
-                        <File Id="filD2EA3349BECFB5819A212B75E195E167" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityGrid.Lang.min.js" />
+                        <File Id="filD2EA3349BECFB5819A212B75E195E167" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityGrid.Lang.min.js" />
                     </Component>
                     <Component Id="cmp87CBF6D8F5D66B68FCCA7F4EBB27DBC6" Guid="*">
-                        <File Id="filFD6D6AC3EACC99F1CE06382BC33D704F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityGrid.Lang.ru-ru.js" />
+                        <File Id="filFD6D6AC3EACC99F1CE06382BC33D704F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityGrid.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpC68BC8799D0987852F27252C669A0F79" Guid="*">
-                        <File Id="filE035CB5D951456CD4ADDBB02C810424F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendEntityGrid.Lang.ru-ru.min.js" />
+                        <File Id="filE035CB5D951456CD4ADDBB02C810424F" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendEntityGrid.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp52336EB2E36762A2508D058BF575AF46" Guid="*">
-                        <File Id="filA65D04793EED151D9AF570775A41E73C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendExpandedContainer.Lang.js" />
+                        <File Id="filA65D04793EED151D9AF570775A41E73C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendExpandedContainer.Lang.js" />
                     </Component>
                     <Component Id="cmp304BE67757E1D9349AB44E27AF588F9E" Guid="*">
-                        <File Id="fil1D10E6591254D23E79E8EB57A2339B72" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendExpandedContainer.Lang.min.js" />
+                        <File Id="fil1D10E6591254D23E79E8EB57A2339B72" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendExpandedContainer.Lang.min.js" />
                     </Component>
                     <Component Id="cmp1B6AA48F75011DD44ACAB1C27619416E" Guid="*">
-                        <File Id="fil06DC57AC7035604253715AAA11A6137C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendExpandedContainer.Lang.ru-ru.js" />
+                        <File Id="fil06DC57AC7035604253715AAA11A6137C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendExpandedContainer.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp7A0F9FB8F5A533FBD3ACD3A8850181B6" Guid="*">
-                        <File Id="filD852076C48BA96A87FBF54284B88A606" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendExpandedContainer.Lang.ru-ru.min.js" />
+                        <File Id="filD852076C48BA96A87FBF54284B88A606" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendExpandedContainer.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpEAC8CD1E9325C2BC1A8D91339310BD5F" Guid="*">
-                        <File Id="fil0097CDDD12F2EAB90DFAD8E80D14FD5E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendFileField.Lang.js" />
+                        <File Id="fil0097CDDD12F2EAB90DFAD8E80D14FD5E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendFileField.Lang.js" />
                     </Component>
                     <Component Id="cmp1A0B320013E38BDE3A41BE788058B83A" Guid="*">
-                        <File Id="fil6817D76A52D72A67C2250E7D4F398E7C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendFileField.Lang.min.js" />
+                        <File Id="fil6817D76A52D72A67C2250E7D4F398E7C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendFileField.Lang.min.js" />
                     </Component>
                     <Component Id="cmp65F282D8576AB6017C39E698BFA17DCD" Guid="*">
-                        <File Id="filA30C6B6859730814EC4F949BC710579B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendFileField.Lang.ru-ru.js" />
+                        <File Id="filA30C6B6859730814EC4F949BC710579B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendFileField.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpEC809CF9C0B4A34E1CC14FA19FC2CEEF" Guid="*">
-                        <File Id="fil392F526EB7172C8781B50EB8A882C1A9" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendFileField.Lang.ru-ru.min.js" />
+                        <File Id="fil392F526EB7172C8781B50EB8A882C1A9" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendFileField.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpB32B5C0B88C54DACE94D99F88E1B667A" Guid="*">
-                        <File Id="fil4B908AB15BA9DC1A9EDD41CA9D89C452" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendFileList.Lang.js" />
+                        <File Id="fil4B908AB15BA9DC1A9EDD41CA9D89C452" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendFileList.Lang.js" />
                     </Component>
                     <Component Id="cmp63C328777B60A62611931282C4F592AE" Guid="*">
-                        <File Id="filDC6511AB1F709A83D8D8B0769ACA3C08" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendFileList.Lang.min.js" />
+                        <File Id="filDC6511AB1F709A83D8D8B0769ACA3C08" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendFileList.Lang.min.js" />
                     </Component>
                     <Component Id="cmp4B739BC301AA54A2B9217F72D238B5AC" Guid="*">
-                        <File Id="filDE8836C8E6F8584B1B2E49AB192C5732" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendFileList.Lang.ru-ru.js" />
+                        <File Id="filDE8836C8E6F8584B1B2E49AB192C5732" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendFileList.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpFCDF8C63299367CAED6DD802429CB2CF" Guid="*">
-                        <File Id="fil8945A13825A81C9892EFF3F53F5D7714" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendFileList.Lang.ru-ru.min.js" />
+                        <File Id="fil8945A13825A81C9892EFF3F53F5D7714" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendFileList.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpABE2134B244DA4594AEE98F4A2DA25B0" Guid="*">
-                        <File Id="fil0C1702CBC205F2ACADFA6CC23C8F2B10" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendMultistepAction.Lang.js" />
+                        <File Id="fil0C1702CBC205F2ACADFA6CC23C8F2B10" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendMultistepAction.Lang.js" />
                     </Component>
                     <Component Id="cmp3A30BE97923953DA9D2E71BBB91F823D" Guid="*">
-                        <File Id="fil89EDF2AADB88AEDDA20E9FB5D4CBDB9B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendMultistepAction.Lang.min.js" />
+                        <File Id="fil89EDF2AADB88AEDDA20E9FB5D4CBDB9B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendMultistepAction.Lang.min.js" />
                     </Component>
                     <Component Id="cmp9655F1AE6A3417AFB8C62C806853B90B" Guid="*">
-                        <File Id="fil8958F497D451170656671D045D491B2D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendMultistepAction.Lang.ru-ru.js" />
+                        <File Id="fil8958F497D451170656671D045D491B2D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendMultistepAction.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpC5D1A5A147170E3BF319E4FC7F332067" Guid="*">
-                        <File Id="filC3F1A52D43D4F038F40842019494AB93" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendMultistepAction.Lang.ru-ru.min.js" />
+                        <File Id="filC3F1A52D43D4F038F40842019494AB93" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendMultistepAction.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp163DA04692FA0F847C5E1410EBD31F65" Guid="*">
-                        <File Id="fil1B4CEAE25F1BAEFC3C1CDED75A0E8BAE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPager.Lang.js" />
+                        <File Id="fil1B4CEAE25F1BAEFC3C1CDED75A0E8BAE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPager.Lang.js" />
                     </Component>
                     <Component Id="cmp1322707E0A5E92FC78442C1BBE54368B" Guid="*">
-                        <File Id="fil9BAC73206410EF28BC2A7A577A512AFE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPager.Lang.min.js" />
+                        <File Id="fil9BAC73206410EF28BC2A7A577A512AFE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPager.Lang.min.js" />
                     </Component>
                     <Component Id="cmp6D62FBAE1558AC35A2039ED88E7D2034" Guid="*">
-                        <File Id="fil86C12E48845C8BCA7E07BACD7380191A" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPager.Lang.ru-ru.js" />
+                        <File Id="fil86C12E48845C8BCA7E07BACD7380191A" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPager.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpFD7FF6D15027CCFD07CC186BB3F3E794" Guid="*">
-                        <File Id="fil02DB65952A0F08C7C8BC021DBD157501" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPager.Lang.ru-ru.min.js" />
+                        <File Id="fil02DB65952A0F08C7C8BC021DBD157501" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPager.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp6BE182299795403488AAD97CFB27FECE" Guid="*">
-                        <File Id="fil6AA69B8FB1AF8EE4B3DC106447FBEA34" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPermission.Lang.js" />
+                        <File Id="fil6AA69B8FB1AF8EE4B3DC106447FBEA34" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPermission.Lang.js" />
                     </Component>
                     <Component Id="cmp22879427ECCA86F061F31D88EF44874F" Guid="*">
-                        <File Id="filED4F2921EBF261746B2C198C22167B6E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPermission.Lang.min.js" />
+                        <File Id="filED4F2921EBF261746B2C198C22167B6E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPermission.Lang.min.js" />
                     </Component>
                     <Component Id="cmp837871F7DEC76E8AE0F9E2BF119E5A41" Guid="*">
-                        <File Id="fil7A4057E97032408EF3013DFCC7F7A5B9" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPermission.Lang.ru-ru.js" />
+                        <File Id="fil7A4057E97032408EF3013DFCC7F7A5B9" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPermission.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpA741158BF7FC5AE3DD9E2080AAFCDB3C" Guid="*">
-                        <File Id="fil6F8C222D1293997D99F26C1D1DFCBFA4" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPermission.Lang.ru-ru.min.js" />
+                        <File Id="fil6F8C222D1293997D99F26C1D1DFCBFA4" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPermission.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp1CD13BE9E447B80FB08010A20DF2F6A7" Guid="*">
-                        <File Id="filA541D1D107631E04729501E303707D94" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPopupWindow.Lang.js" />
+                        <File Id="filA541D1D107631E04729501E303707D94" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPopupWindow.Lang.js" />
                     </Component>
                     <Component Id="cmpC74406FEE6A39F5584FF5D265141A7E0" Guid="*">
-                        <File Id="fil9E63F6ADF2D942B744FB3F6BE1F7117D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPopupWindow.Lang.min.js" />
+                        <File Id="fil9E63F6ADF2D942B744FB3F6BE1F7117D" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPopupWindow.Lang.min.js" />
                     </Component>
                     <Component Id="cmp1B378EBF6A8A25E650F581765D1F5E1A" Guid="*">
-                        <File Id="filD2DC947F72257555684FFD4795CF9FA8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPopupWindow.Lang.ru-ru.js" />
+                        <File Id="filD2DC947F72257555684FFD4795CF9FA8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPopupWindow.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp2B0560F1064B79DE8199252CE8EDEDF0" Guid="*">
-                        <File Id="fil3FB3262843F3247DCE534A13F7E8274C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendPopupWindow.Lang.ru-ru.min.js" />
+                        <File Id="fil3FB3262843F3247DCE534A13F7E8274C" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendPopupWindow.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpA62267B165E764BB554B04EB219D215A" Guid="*">
-                        <File Id="fil6A1E2716B03D0CB860A7132A2C7A63B0" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendSearchBlock.Lang.js" />
+                        <File Id="fil6A1E2716B03D0CB860A7132A2C7A63B0" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendSearchBlock.Lang.js" />
                     </Component>
                     <Component Id="cmp26F4D34F8821375B840A70D4CB626FE3" Guid="*">
-                        <File Id="filDAE7681995E2C33E4A520DED0B507580" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendSearchBlock.Lang.min.js" />
+                        <File Id="filDAE7681995E2C33E4A520DED0B507580" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendSearchBlock.Lang.min.js" />
                     </Component>
                     <Component Id="cmp6E2E4B37050C734CA5C02C0CAFC0F77B" Guid="*">
-                        <File Id="fil6B2AF36ABF829427EAA480CFA3EC7E24" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendSearchBlock.Lang.ru-ru.js" />
+                        <File Id="fil6B2AF36ABF829427EAA480CFA3EC7E24" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendSearchBlock.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp809E23D1A8F41B13A8311CDC4792BFB4" Guid="*">
-                        <File Id="filED6FB0FF0E719B0EC02A3E7D7FA721D5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendSearchBlock.Lang.ru-ru.min.js" />
+                        <File Id="filED6FB0FF0E719B0EC02A3E7D7FA721D5" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendSearchBlock.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpD25E4ACB90949A396AF8EE2F9FEAC8C9" Guid="*">
-                        <File Id="filF3ABB2DD28E78FF7C2718C0326C34080" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendTabStrip.Lang.js" />
+                        <File Id="filF3ABB2DD28E78FF7C2718C0326C34080" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTabStrip.Lang.js" />
                     </Component>
                     <Component Id="cmp684096856F14CE3335A1F68A91D6A98C" Guid="*">
-                        <File Id="fil922C2DE99048727EEF89C2DC2F69817E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendTabStrip.Lang.min.js" />
+                        <File Id="fil922C2DE99048727EEF89C2DC2F69817E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTabStrip.Lang.min.js" />
                     </Component>
                     <Component Id="cmp17AC5E60BFE9F0280D6B587021161791" Guid="*">
-                        <File Id="filE2BBBB04A6A6A34A40A720CA8A5DC9AC" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendTabStrip.Lang.ru-ru.js" />
+                        <File Id="filE2BBBB04A6A6A34A40A720CA8A5DC9AC" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTabStrip.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp562D49D8ABFA4EE50F357F3C75527D4D" Guid="*">
-                        <File Id="fil05D35C7FC7A050F99B449E3D077E5E23" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendTabStrip.Lang.ru-ru.min.js" />
+                        <File Id="fil05D35C7FC7A050F99B449E3D077E5E23" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTabStrip.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmp3634B099E96E87A0FAD4863BE9C9F629" Guid="*">
-                        <File Id="filCD2D95C02BF3730D125951D9968D1CD9" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendToolbar.Lang.js" />
+                        <File Id="filCD2D95C02BF3730D125951D9968D1CD9" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendToolbar.Lang.js" />
                     </Component>
                     <Component Id="cmp2AEAF45D5914B16CC93714436D8F0F24" Guid="*">
-                        <File Id="filD4105FEE18B7FA2E09BAD1EE17B69A23" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendToolbar.Lang.min.js" />
+                        <File Id="filD4105FEE18B7FA2E09BAD1EE17B69A23" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendToolbar.Lang.min.js" />
                     </Component>
                     <Component Id="cmpBF50AEF435EEAEED60B3A197E9C9765D" Guid="*">
-                        <File Id="fil14C9FDDCC04A99E15732E9714356C8DE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendToolbar.Lang.ru-ru.js" />
+                        <File Id="fil14C9FDDCC04A99E15732E9714356C8DE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendToolbar.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmpAF8EDD2554F51DE9650D8B9BD0A5B274" Guid="*">
-                        <File Id="fil7FC0735DDB5B5FAF55BB842B3AAF0428" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendToolbar.Lang.ru-ru.min.js" />
+                        <File Id="fil7FC0735DDB5B5FAF55BB842B3AAF0428" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendToolbar.Lang.ru-ru.min.js" />
                     </Component>
                     <Component Id="cmpF84B0D7FB0979C93A5EDE132314ACB46" Guid="*">
-                        <File Id="filAEF48906C07DBE551AA213BC4CE21EE7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendTraceWindow.Lang.js" />
+                        <File Id="filAEF48906C07DBE551AA213BC4CE21EE7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTraceWindow.Lang.js" />
                     </Component>
                     <Component Id="cmp9FDDF6330E42F087BA719B2465B92261" Guid="*">
-                        <File Id="fil90A3323FFDD72D92D64BDF220F06235B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendTraceWindow.Lang.min.js" />
+                        <File Id="fil90A3323FFDD72D92D64BDF220F06235B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTraceWindow.Lang.min.js" />
                     </Component>
                     <Component Id="cmpBD87C4977A501BFF4FFDF0D27D245D8C" Guid="*">
-                        <File Id="fil4FA4E1B2B7051E666EFE7E102A403E96" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendTraceWindow.Lang.ru-ru.js" />
+                        <File Id="fil4FA4E1B2B7051E666EFE7E102A403E96" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTraceWindow.Lang.ru-ru.js" />
                     </Component>
                     <Component Id="cmp5DE79DF9A682EE668E59157EB78FEFD5" Guid="*">
-                        <File Id="fil235E3CDA66DC9C82B7FD19B033798DE8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Languages\BackendTraceWindow.Lang.ru-ru.min.js" />
+                        <File Id="fil235E3CDA66DC9C82B7FD19B033798DE8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTraceWindow.Lang.ru-ru.min.js" />
                     </Component>
                 </Directory>
                 <Directory Id="dir198C6CDFA49A681BFC9A118A7E582BBA" Name="PlUpload">
@@ -5672,37 +5636,37 @@
         <ComponentGroup Id="BackendProductComponents">
             <ComponentRef Id="cmp6FC3F5B27F2AF94F6FE82CF2FCAC57D5" />
             <ComponentRef Id="cmp4EB9DA64FCB79A4732C03801088B3261" />
-            
+
             <ComponentRef Id="cmp044D04F02AB6EBFB306E0AC8A1E9C3B1" />
-            
-            
-            
+
+
+
             <ComponentRef Id="cmp8EE026464BCC6A5A18059FBE888102A4" />
             <ComponentRef Id="cmp610D10A3644B1E90E5B5B579FEC41561" />
             <ComponentRef Id="cmp442A808342A495CAE4D6A26E506D6814" />
-            
+
             <ComponentRef Id="cmpDA1DBF8BD8FB9CB004120C2D18458CD6" />
-            
+
             <ComponentRef Id="cmpBB45722EE0F79D7788F90302448A1C06" />
             <ComponentRef Id="cmpCF68992C4EF8808BA7C9C7A590115324" />
-            
+
             <ComponentRef Id="cmpA8D7D2B33375394BD6920CB31CE73EF9" />
             <ComponentRef Id="cmpF52A8B4DFA35D398B9C49D78C2BE4977" />
             <ComponentRef Id="cmp30DB59204285FD0116B32FB38B4E52E7" />
             <ComponentRef Id="cmpABCFA03BB648579AE87CAAD89F75EFBD" />
-            
+
             <ComponentRef Id="cmp91AAE3AF4681C1E11E677AB671F33BDD" />
             <ComponentRef Id="cmp2E16A74F761B45C10587418D8F4291E7" />
             <ComponentRef Id="cmp5DB8078FEC318E5815FFDF54E79F8093" />
-            
+
             <ComponentRef Id="cmpD390377426A4ACDA75F649A8218A65B7" />
-            
+
             <ComponentRef Id="cmpAFEACB670907E1D93FB13AB37A45A121" />
             <ComponentRef Id="cmp8D2F4598E9043617FEC72B6CAA821455" />
-            
+
             <ComponentRef Id="cmp8A86ADA9582D73123BBCC7023F676A9D" />
             <ComponentRef Id="cmpBA21F53D8E8EFA3434A4E3CBAA6A670B" />
-            
+
             <ComponentRef Id="cmp114C6F278747C2E0EB0E4BFEA52D5A7D" />
             <ComponentRef Id="cmpC7968913759A719D028BCAF57B1B7561" />
             <ComponentRef Id="cmp21FD8DDB03EF1315A4E39CF580B7C747" />
@@ -5713,13 +5677,13 @@
             <ComponentRef Id="cmp238D24DAF3041C25446B075E62ABC546" />
             <ComponentRef Id="cmp4B53381F10EB0D5984B91C5C36B01D16" />
             <ComponentRef Id="cmp001C244945BCEB19148C7937EC2B5AEB" />
-            
+
             <ComponentRef Id="cmp187BAEA8E274767AEF8E22E570A756A8" />
-            
+
             <ComponentRef Id="cmp067BB747538767FCBE4EBD4E3EA5C8C0" />
             <ComponentRef Id="cmpC10A490513D0F418AEDB2B18289FC6DF" />
-            
-            
+
+
             <ComponentRef Id="cmp5530622F98DEAC85059F0CCBDD39D112" />
             <ComponentRef Id="cmpF5A6062F40642789214DAE16884E9227" />
             <ComponentRef Id="cmpFC52C6871790B66E9DE7B08B362F6A6C" />
@@ -5745,20 +5709,20 @@
             <ComponentRef Id="cmpF2FA5E8970314C55C6C7200ED9E42A04" />
             <ComponentRef Id="cmpF4A715D6C88332006FF92031EEAADC4B" />
             <ComponentRef Id="cmp91B3BEE0D74D0C99A8D3D826C256BB88" />
-            
+
             <ComponentRef Id="cmp2622FC1CDD6A88CC5A85D6D9EBE712C8" />
-            
+
             <ComponentRef Id="cmpC139E474EC547D92E42BE3F24A2EC707" />
-            
+
             <ComponentRef Id="cmp1426235D29D0FDC29804CFDC230E7798" />
-            
+
             <ComponentRef Id="cmpDFD4C593755D7FC0022FB7051E6F77C7" />
             <ComponentRef Id="cmp63CCECFD4E5303BA77C0A2E9ED03BA0D" />
-            
-            
+
+
             <ComponentRef Id="cmp1F3919317A83C18D8E69C7309AA8C6FB" />
             <ComponentRef Id="cmp2C9A4D43A68FC16C7E60ABD4416606DA" />
-            
+
             <ComponentRef Id="cmp7A3B4B305155B67A2C73AC69C29F0BA5" />
             <ComponentRef Id="cmp9BE01F7926D619A31E6BC03C90649DB6" />
             <ComponentRef Id="cmp79BB34AEDB82E47D5BE4C7D781CF5C3B" />
@@ -6743,7 +6707,7 @@
             <ComponentRef Id="cmp6139A82B3DCBAB9B7D96BD797087ACA5" />
             <ComponentRef Id="cmp3035E41CC13518D178EDB849276E7D58" />
             <ComponentRef Id="cmp0052FF51DA50FC7F0C3C052ED5AB6FE7" />
-            
+
             <ComponentRef Id="cmp4894ACC0348131CE5E84B42EDB9DD210" />
             <ComponentRef Id="cmpA1D25DF74CB276EA65F1E281DF7BAAB2" />
             <ComponentRef Id="cmpEE16CE8146F4DC4072D322AF455C043F" />
