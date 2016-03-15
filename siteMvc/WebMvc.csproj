@@ -486,7 +486,7 @@
     <Content Include="Scripts\Silverlight.min.js" />
     <Content Include="Scripts\SilverlightUpload.min.js" />
     <Content Include="Scripts\underscore.min.js" />
-    <Content Include="_package.json" />
+    <Content Include="package.json" />
     <None Include="Properties\PublishProfiles\abc.pubxml" />
     <None Include="Scripts\jquery\jquery-1.7.1.intellisense.js" />
     <Content Include="Content\QpCodemirror.css" />
@@ -2184,17 +2184,7 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\MicrosoftAjax\ajaxmin.tasks" />
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.1\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.1\build\RazorGenerator.MsBuild.targets')" />
-  <Target Name="AfterBuild">
-    <ItemGroup>
-      <JS Include="**\*.js" Exclude="**\*.min.js;gulpfile.js;Content\ckeditor\*.js;Content\ckeditor\**\*.js;**\jquery-1.7.1.js;**\jquery.scrollTo-1.4.2.js;**\jquery.unobtrusive-ajax.js;**\jquery.validate.js;**\jquery.validate.unobtrusive.js;**\telerik.*.js;**\MicrosoftAjax.debug.js;**\MicrosoftAjax.js;**\MicrosoftMvcAjax.debug.js;**\MicrosoftMvcAjax.js;**\MicrosoftMvcValidation.js;**\MicrosoftMvcValidation.debug.js;**\CodeMirror\codemirror.min.js;**\jquery.imgareaselect.js;**\jquery.qtip.js;" />
-    </ItemGroup>
-    <ItemGroup>
-      <CSS Include="**\*.css" Exclude="**\*.min.css;Content\ckeditor\*.css;Content\ckeditor\**\*.css" />
-    </ItemGroup>
-    <AjaxMin JsSourceFiles="@(JS)" JsSourceExtensionPattern="\.js$" JsTargetExtension=".min.js" JsCollapseToLiteral="true" JsEvalTreatment="MakeAllSafe" JsLocalRenaming="KeepLocalizationVars" JsMacSafariQuirks="true" JsRemoveUnneededCode="true" JsStripDebugStatements="true" JsOutputMode="SingleLine" CssSourceFiles="@(CSS)" CssSourceExtensionPattern="\.css$" CssTargetExtension=".min.css" CssColorNames="Hex" CssCommentMode="Hacks" CssTermSemicolons="true" />
-  </Target>
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(SolutionDir)dal\scripts\fix_dbo.sql" "$(ProjectDir)" /s /e /r /i /y
 

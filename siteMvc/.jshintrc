@@ -66,8 +66,8 @@
     "Url": false,
     "Global": false,
     "Quantumart": false,
-    "$q",
-    "$c",
-    "$ctx"
+    "$q": false,
+    "$c": false,
+    "$ctx": false
   }
 }
