@@ -1,13 +1,13 @@
-namespace Merger
+namespace Quantumart.QP8.Merger
 {
     public class HtmlCompare 
     {
-        private Merger _mymerger;
+        private global::Quantumart.QP8.Merger.MergeProcessor _mymerger;
 
 
         public string GetMergedVersion(string original, string modified)
         {
-            _mymerger = new Merger(original, modified);
+            _mymerger = new global::Quantumart.QP8.Merger.MergeProcessor(original, modified);
             return _mymerger.Merge();
         }
 

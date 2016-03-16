@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using System.Text;
 
-namespace QA_Assembling.Info
+namespace Assembling.Info
 {
 
     public class ControlSetInfo

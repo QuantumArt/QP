@@ -2,14 +2,14 @@
 using System.Data;
 using System.Diagnostics;
 using System.IO;
-using System.Text;
-using System.Xml.Xsl;
-using System.Text.RegularExpressions;
 using System.Linq;
-using QA_Assembling.Info;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml.Xsl;
+using Assembling;
+using Assembling.Info;
 
-
-namespace QA_Assembling
+namespace Quantumart.QP8.Assembling
 {
     public class AssembleContentsController : AssembleControllerBase
     {

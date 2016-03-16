@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.1.1\build\Microsoft.Net.Compilers.props')" />
@@ -124,11 +124,6 @@
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="Quantumart, Version=1.5.57.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\binaries\Quantumart.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="RazorGenerator.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\RazorGenerator.Mvc.2.4.2\lib\net40\RazorGenerator.Mvc.dll</HintPath>
@@ -2057,6 +2052,10 @@
     <Content Include="Scripts\Quantumart\JsLanguage.ashx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Assembling\Assembling.csproj">
+      <Project>{aba32eeb-7b9a-4bd8-973b-cd483f076237}</Project>
+      <Name>Assembling</Name>
+    </ProjectReference>
     <ProjectReference Include="..\bll\BLL.csproj">
       <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
       <Name>BLL</Name>
@@ -2083,7 +2082,15 @@
     </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.csproj">
       <Project>{2376f4db-61df-4440-bab7-5740e06cd945}</Project>
-      <Name>Logging %28Logging\Logging%29</Name>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Merger\Merger.csproj">
+      <Project>{cc2a4eab-777f-4b3c-8898-6fa1d00b2f7c}</Project>
+      <Name>Merger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Quantumart\Quantumart.csproj">
+      <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
+      <Name>Quantumart</Name>
     </ProjectReference>
     <ProjectReference Include="..\Resources\Resources.csproj">
       <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>

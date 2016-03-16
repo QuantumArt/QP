@@ -1,12 +1,12 @@
 using System;
-using System.Globalization;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Win32;
 
-namespace QA_Assembling
+namespace Assembling
 {
 
     public class DbConnector

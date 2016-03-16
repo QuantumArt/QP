@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace QA_Assembling.Info
+namespace Assembling.Info
 {
     public class ContextClassInfo
     {

@@ -1,8 +1,8 @@
 using System;
 using System.Data;
-using QA_Assembling.Info;
+using Assembling.Info;
 
-namespace QA_Assembling
+namespace Assembling
 {
     public class AssembleSelectedObjectsController : AssembleControllerBase
     {

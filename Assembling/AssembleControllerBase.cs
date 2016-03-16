@@ -1,14 +1,13 @@
 using System;
-using System.Globalization;
 using System.Collections;
+using System.Data;
+using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.IO;
-using System.Data;
-using QA_Assembling.Info;
+using Assembling.Info;
 
-
-namespace QA_Assembling
+namespace Assembling
 {
 
     public enum AssembleMode

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Assembling;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Repository;
-using QA_Assembling;
+using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {

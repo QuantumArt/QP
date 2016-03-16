@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Globalization;
-using QA_Assembling.Info;
+using Assembling.Info;
 
-namespace QA_Assembling
+namespace Assembling
 {
     public class CodeTransformer
     {
@@ -15,7 +15,6 @@ namespace QA_Assembling
         {
             Info = info;
         }
-
 
         public static Hashtable SystemNamespaces { get; } = GetSystemNamespaces();
 

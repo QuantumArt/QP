@@ -1,10 +1,10 @@
 using System;
-using System.Text;
-using System.IO;
 using System.Data;
-using QA_Assembling.Info;
+using System.IO;
+using System.Text;
+using Assembling.Info;
 
-namespace QA_Assembling
+namespace Assembling
 {
 
     public class AssemblePageController : AssembleControllerBase

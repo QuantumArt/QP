@@ -77,7 +77,7 @@ using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Merger
+namespace Quantumart.QP8.Merger
 {
 
     #region Data types
@@ -740,7 +740,7 @@ namespace Merger
     /// files and merge them into a new file with differences
     /// highlighted
     /// </summary>
-    public class Merger
+    public class MergeProcessor
     {
         private readonly WordsCollection _original;
         private readonly WordsCollection _modified;
@@ -753,7 +753,7 @@ namespace Merger
 
         public int BlocksDeleted { get; private set; }
 
-        public Merger(string original, string modified)
+        public MergeProcessor(string original, string modified)
         {
             // parse the passed in string to words 
             // collections

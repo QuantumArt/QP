@@ -4,7 +4,7 @@ using System.Data;
 using System.Globalization;
 using System.Text;
 
-namespace QA_Assembling.Info
+namespace Assembling.Info
 {
     public enum ControlType
     {

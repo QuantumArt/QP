@@ -1,4 +1,4 @@
-﻿using QA_Assembling;
+﻿using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using System;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Assembling;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {

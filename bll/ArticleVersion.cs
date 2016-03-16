@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Web.Script.Serialization;
 using System.Linq;
-using QA_Merger;
+using Quantumart.QP8.Merger;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -251,8 +251,8 @@ namespace Quantumart.QP8.BLL
 			string prefix = "<html><body>";
 			string suffix = "</body></html>";
 			string mergeFormat = "{0}{1}{2}";
-			Merger merger = new Merger(String.Format(mergeFormat, prefix, s1, suffix), String.Format(mergeFormat, prefix, s2, suffix));
-			string result = merger.merge();
+			Merger.MergeProcessor mergeProcessor = new Merger.MergeProcessor(String.Format(mergeFormat, prefix, s1, suffix), String.Format(mergeFormat, prefix, s2, suffix));
+			string result = mergeProcessor.Merge();
 			return result.Replace(prefix, "").Replace(suffix, "");
 		}
 

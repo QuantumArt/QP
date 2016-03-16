@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace QA_Assembling.Info
+namespace Assembling.Info
 {
     public class AssembleInfo
     {

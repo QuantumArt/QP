@@ -271,11 +271,10 @@
     <Compile Include="Resizer\DynamicImage.cs" />
     <Compile Include="Resizer\Resizer.cs" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\Assembling\QA_Assembling.csproj">
+    <ProjectReference Include="..\Assembling\Assembling.csproj">
       <Project>{aba32eeb-7b9a-4bd8-973b-cd483f076237}</Project>
-      <Name>QA_Assembling</Name>
+      <Name>Assembling</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

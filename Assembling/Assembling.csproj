@@ -8,8 +8,8 @@
     <ProjectGuid>{ABA32EEB-7B9A-4BD8-973B-CD483F076237}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QA_Assembling</RootNamespace>
-    <AssemblyName>QA_Assembling</AssemblyName>
+    <RootNamespace>Quantumart.QP8.Assembling</RootNamespace>
+    <AssemblyName>Quantumart.QP8.Assembling</AssemblyName>
     <SignAssembly>false</SignAssembly>
     <AssemblyOriginatorKeyFile>
     </AssemblyOriginatorKeyFile>

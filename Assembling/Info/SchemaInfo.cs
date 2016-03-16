@@ -1,6 +1,6 @@
 ﻿using System.Data;
 
-namespace QA_Assembling.Info
+namespace Assembling.Info
 {
     public class SchemaInfo
     {

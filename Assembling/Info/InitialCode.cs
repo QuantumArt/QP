@@ -1,4 +1,4 @@
-namespace QA_Assembling.Info
+namespace Assembling.Info
 {
     public class InitialCode
     {

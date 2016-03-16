@@ -10,12 +10,13 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.BLL</RootNamespace>
     <AssemblyName>Quantumart.QP8.BLL</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
     <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,6 +28,7 @@
     <WarningLevel>4</WarningLevel>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +37,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=1.0.1.999, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
@@ -86,16 +89,6 @@
     </Reference>
     <Reference Include="QA.Validation.Xaml.Extensions">
       <HintPath>..\binaries\QA.Validation.Xaml.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="QA_Assembling, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1ba3d6e7a9b0c8d3, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\binaries\QA_Assembling.dll</HintPath>
-    </Reference>
-    <Reference Include="QA_Merger">
-      <HintPath>..\binaries\QA_Merger.dll</HintPath>
-    </Reference>
-    <Reference Include="Quantumart">
-      <HintPath>..\binaries\Quantumart.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -651,6 +644,10 @@
     <Compile Include="WorkflowRule.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Assembling\Assembling.csproj">
+      <Project>{aba32eeb-7b9a-4bd8-973b-cd483f076237}</Project>
+      <Name>Assembling</Name>
+    </ProjectReference>
     <ProjectReference Include="..\configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
@@ -665,7 +662,15 @@
     </ProjectReference>
     <ProjectReference Include="..\Logging\Logging.csproj">
       <Project>{2376f4db-61df-4440-bab7-5740e06cd945}</Project>
-      <Name>Logging %28Logging\Logging%29</Name>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Merger\Merger.csproj">
+      <Project>{cc2a4eab-777f-4b3c-8898-6fa1d00b2f7c}</Project>
+      <Name>Merger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Quantumart\Quantumart.csproj">
+      <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
+      <Name>Quantumart</Name>
     </ProjectReference>
     <ProjectReference Include="..\Resources\Resources.csproj">
       <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>
