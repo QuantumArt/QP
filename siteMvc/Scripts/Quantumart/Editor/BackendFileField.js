@@ -269,7 +269,7 @@ Quantumart.QP8.BackendFileField.prototype = {
         resolveName: this.get_renameMatched()
       });
     } else if (this._uploaderType == Quantumart.QP8.Enums.UploaderType.PlUpload) {
-      this._uploaderComponent = new Quantumart.QP8.BackendPlUploader($(this._fileWrapperElement), {
+      this._uploaderComponent = new Quantumart.QP8.BackendPlUploader(this._fileWrapperElement, {
         extensions: extensions,
         resolveName: this.get_renameMatched(),
         useSiteLibrary: this._useSiteLibrary,

@@ -1,17 +1,29 @@
 'use strict';
 
-Quantumart.QP8.BackendPlUploader = function($containerBlock, options) {
+Quantumart.QP8.BackendPlUploader = function(containerBlock, options) {
   Quantumart.QP8.BackendPlUploader.initializeBase(this);
-  this._container = $containerBlock.find('.l-pl-uploader-container').first();
-  this._pickupButton = $containerBlock.find('.pl_upload_button').first();
-  this._pb_cont = $containerBlock.find('.lop-pbar-container').first();
-  this._progressbar = $containerBlock.find('.lop-pbar').first();
-  this._field = $containerBlock.find('input').first();
-  this._folderId = $containerBlock.data('folder_id');
+  var $container = $(containerBlock);
+
+  this._container = $container.find('.l-pl-uploader-container').first();
+  this._pickupButton = $container.find('.pl_upload_button').first();
+  this._pb_cont = $container.find('.lop-pbar-container').first();
+  this._progressbar = $container.find('.lop-pbar').first();
+  this._field = $container.find('input').first();
+  this._folderId = $container.data('folder_id');
 
   this._extensions = options.extensions;
   this._resolveName = options.resolveName;
   this._useSiteLibrary = options.useSiteLibrary;
+
+  options.getFormScriptOptions = options.getFormScriptOptions || function() {
+    return {
+      imgFilterResolution: 0,
+      extensions: options.extensions,
+      resolveName: options.resolveName,
+      useSiteLibrary: options.useSiteLibrary
+    };
+  };
+
   this._getFormScriptOptions = options.getFormScriptOptions.bind(this);
 };
 
