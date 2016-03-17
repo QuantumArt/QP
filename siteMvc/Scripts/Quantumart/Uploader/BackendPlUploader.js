@@ -176,10 +176,12 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     };
 
     if (this._extensions) {
-      options.filters.mime_types = [{
+      options.filters.mime_types = [
+{
         title: 'Allowed files',
         extensions: this._extensions.split(';.').join(',').replace('.', '')
-      }];
+      }
+];
     }
 
     this._uploader = new plupload.Uploader(options);
