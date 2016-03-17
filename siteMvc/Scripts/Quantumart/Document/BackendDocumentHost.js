@@ -505,7 +505,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   _filterEntities: function(entities) {
-    if (this._selectedEntitiesContext) {
+    if (this._selectedEntitiesContext && this._selectedEntitiesContext.url) {
       var queryData = jQuery.extend({
         page: 1,
         size: 0,
