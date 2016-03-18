@@ -1,4 +1,4 @@
-﻿using QA_Assembling;
+﻿using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Data;
+using Assembling;
 
 namespace Quantumart.QP8.BLL.Services
 {

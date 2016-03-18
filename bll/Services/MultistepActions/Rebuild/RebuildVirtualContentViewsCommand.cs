@@ -6,7 +6,7 @@ using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Repository;
-using QA_Assembling;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Constants;
 

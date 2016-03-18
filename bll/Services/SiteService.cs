@@ -7,7 +7,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Factories;
 using Quantumart.QP8.Constants;
-using QA_Assembling;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.Configuration;
 using System.IO;
 using Quantumart.QP8.BLL.ListItems;

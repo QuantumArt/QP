@@ -1,105 +1,105 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
   <!-- EF Runtime content -->
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="QP8Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="QP8Model.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityContainer Name="QP8ModelStoreContainer">
-          <EntitySet Name="ACTION_ACCESS" EntityType="QP8Model.Store.ACTION_ACCESS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ACTION_CONTENT_BIND" EntityType="QP8Model.Store.ACTION_CONTENT_BIND" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ACTION_EXCLUSIONS" EntityType="QP8Model.Store.ACTION_EXCLUSIONS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ACTION_SITE_BIND" EntityType="QP8Model.Store.ACTION_SITE_BIND" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ACTION_TOOLBAR_BUTTON" EntityType="QP8Model.Store.ACTION_TOOLBAR_BUTTON" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ACTION_TYPE" EntityType="QP8Model.Store.ACTION_TYPE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ACTION_VIEW" EntityType="QP8Model.Store.ACTION_VIEW" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="APP_SETTINGS" EntityType="QP8Model.Store.APP_SETTINGS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="article_workflow_bind" EntityType="QP8Model.Store.article_workflow_bind" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ATTRIBUTE_TYPE" EntityType="QP8Model.Store.ATTRIBUTE_TYPE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="BACKEND_ACTION" EntityType="QP8Model.Store.BACKEND_ACTION" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="BACKEND_ACTION_LOG" EntityType="QP8Model.Store.BACKEND_ACTION_LOG" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CHARSET" EntityType="QP8Model.Store.CHARSET" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CODE_SNIPPET" EntityType="QP8Model.Store.CODE_SNIPPET" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTAINER" EntityType="QP8Model.Store.CONTAINER" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTAINER_STATUSES" EntityType="QP8Model.Store.CONTAINER_STATUSES" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT" EntityType="QP8Model.Store.CONTENT" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_ACCESS" EntityType="QP8Model.Store.CONTENT_ACCESS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_ATTRIBUTE" EntityType="QP8Model.Store.CONTENT_ATTRIBUTE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="content_constraint" EntityType="QP8Model.Store.content_constraint" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="content_constraint_rule" EntityType="QP8Model.Store.content_constraint_rule" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_DATA" EntityType="QP8Model.Store.CONTENT_DATA" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="content_FOLDER" EntityType="QP8Model.Store.content_FOLDER" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="content_FOLDER_ACCESS" EntityType="QP8Model.Store.content_FOLDER_ACCESS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_FORM" EntityType="QP8Model.Store.CONTENT_FORM" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="content_group" EntityType="QP8Model.Store.content_group" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_ITEM" EntityType="QP8Model.Store.CONTENT_ITEM" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_ITEM_ACCESS" EntityType="QP8Model.Store.CONTENT_ITEM_ACCESS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_ITEM_SCHEDULE" EntityType="QP8Model.Store.CONTENT_ITEM_SCHEDULE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_ITEM_STATUS_HISTORY" EntityType="QP8Model.Store.CONTENT_ITEM_STATUS_HISTORY" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTENT_ITEM_VERSION" EntityType="QP8Model.Store.CONTENT_ITEM_VERSION" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="content_to_content" EntityType="QP8Model.Store.content_to_content" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="content_workflow_bind" EntityType="QP8Model.Store.content_workflow_bind" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTEXT_MENU" EntityType="QP8Model.Store.CONTEXT_MENU" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CONTEXT_MENU_ITEM" EntityType="QP8Model.Store.CONTEXT_MENU_ITEM" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="CUSTOM_ACTION" EntityType="QP8Model.Store.CUSTOM_ACTION" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="DANGEROUS_ACTIONS" EntityType="QP8Model.Store.DANGEROUS_ACTIONS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="DB" EntityType="QP8Model.Store.DB" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="DEVELOPER" EntityType="QP8Model.Store.DEVELOPER" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="DYNAMIC_IMAGE_ATTRIBUTE" EntityType="QP8Model.Store.DYNAMIC_IMAGE_ATTRIBUTE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ENTITY_TYPE" EntityType="QP8Model.Store.ENTITY_TYPE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="ENTITY_TYPE_ACCESS" EntityType="QP8Model.Store.ENTITY_TYPE_ACCESS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="FOLDER" EntityType="QP8Model.Store.FOLDER" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="FOLDER_ACCESS" EntityType="QP8Model.Store.FOLDER_ACCESS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="Group_To_Group" EntityType="QP8Model.Store.Group_To_Group" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="item_to_item" EntityType="QP8Model.Store.item_to_item" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="item_to_item_version" EntityType="QP8Model.Store.item_to_item_version" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="LANGUAGES" EntityType="QP8Model.Store.LANGUAGES" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="LOCALE" EntityType="QP8Model.Store.LOCALE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="MASK_TEMPLATE" EntityType="QP8Model.Store.MASK_TEMPLATE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="NET_LANGUAGES" EntityType="QP8Model.Store.NET_LANGUAGES" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="NOTIFICATIONS" EntityType="QP8Model.Store.NOTIFICATIONS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="notifications_sent" EntityType="QP8Model.Store.notifications_sent" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="OBJECT" EntityType="QP8Model.Store.OBJECT" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="OBJECT_FORMAT" EntityType="QP8Model.Store.OBJECT_FORMAT" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="OBJECT_FORMAT_VERSION" EntityType="QP8Model.Store.OBJECT_FORMAT_VERSION" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="OBJECT_TYPE" EntityType="QP8Model.Store.OBJECT_TYPE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="OBJECT_VALUES" EntityType="QP8Model.Store.OBJECT_VALUES" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PAGE" EntityType="QP8Model.Store.PAGE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PAGE_TEMPLATE" EntityType="QP8Model.Store.PAGE_TEMPLATE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PAGE_TRACE" EntityType="QP8Model.Store.PAGE_TRACE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PAGE_TRACE_FORMAT" EntityType="QP8Model.Store.PAGE_TRACE_FORMAT" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PAGE_TRACE_FORMAT_VALUES" EntityType="QP8Model.Store.PAGE_TRACE_FORMAT_VALUES" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="PERMISSION_LEVEL" EntityType="QP8Model.Store.PERMISSION_LEVEL" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="REMOVED_ENTITIES" EntityType="QP8Model.Store.REMOVED_ENTITIES" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="REMOVED_FILES" EntityType="QP8Model.Store.REMOVED_FILES" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="SESSIONS_LOG" EntityType="QP8Model.Store.SESSIONS_LOG" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="SITE" EntityType="QP8Model.Store.SITE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="SITE_ACCESS" EntityType="QP8Model.Store.SITE_ACCESS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="STATUS_TYPE" EntityType="QP8Model.Store.STATUS_TYPE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="STYLE" EntityType="QP8Model.Store.STYLE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="STYLE_ATTRIBUTE" EntityType="QP8Model.Store.STYLE_ATTRIBUTE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="STYLE_TAG" EntityType="QP8Model.Store.STYLE_TAG" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="SYSTEM_STATUS_TYPE" EntityType="QP8Model.Store.SYSTEM_STATUS_TYPE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="today_panels" EntityType="QP8Model.Store.today_panels" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="TRANSLATIONS" EntityType="QP8Model.Store.TRANSLATIONS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="union_attrs" EntityType="QP8Model.Store.union_attrs" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="union_contents" EntityType="QP8Model.Store.union_contents" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="USER_DEFAULT_FILTER" EntityType="QP8Model.Store.USER_DEFAULT_FILTER" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="USER_GROUP" EntityType="QP8Model.Store.USER_GROUP" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="USER_GROUP_BIND" EntityType="QP8Model.Store.USER_GROUP_BIND" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="user_query_attrs" EntityType="QP8Model.Store.user_query_attrs" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="user_query_contents" EntityType="QP8Model.Store.user_query_contents" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="user_to_panel" EntityType="QP8Model.Store.user_to_panel" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="USERS" EntityType="QP8Model.Store.USERS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="VE_COMMAND" EntityType="QP8Model.Store.VE_COMMAND" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="VE_PLUGIN" EntityType="QP8Model.Store.VE_PLUGIN" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="VE_STYLE" EntityType="QP8Model.Store.VE_STYLE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="VERSION_CONTENT_DATA" EntityType="QP8Model.Store.VERSION_CONTENT_DATA" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="VIEW_TYPE" EntityType="QP8Model.Store.VIEW_TYPE" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="WAITING_FOR_APPROVAL" EntityType="QP8Model.Store.WAITING_FOR_APPROVAL" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="workflow" EntityType="QP8Model.Store.workflow" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="WORKFLOW_ACCESS" EntityType="QP8Model.Store.WORKFLOW_ACCESS" store:Type="Tables" Schema="dbo" />
-          <EntitySet Name="workflow_rules" EntityType="QP8Model.Store.workflow_rules" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ACTION_ACCESS" EntityType="QP8Model.Store.ACTION_ACCESS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ACTION_CONTENT_BIND" EntityType="QP8Model.Store.ACTION_CONTENT_BIND" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ACTION_EXCLUSIONS" EntityType="QP8Model.Store.ACTION_EXCLUSIONS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ACTION_SITE_BIND" EntityType="QP8Model.Store.ACTION_SITE_BIND" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ACTION_TOOLBAR_BUTTON" EntityType="QP8Model.Store.ACTION_TOOLBAR_BUTTON" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ACTION_TYPE" EntityType="QP8Model.Store.ACTION_TYPE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ACTION_VIEW" EntityType="QP8Model.Store.ACTION_VIEW" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="APP_SETTINGS" EntityType="QP8Model.Store.APP_SETTINGS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="article_workflow_bind" EntityType="QP8Model.Store.article_workflow_bind" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ATTRIBUTE_TYPE" EntityType="QP8Model.Store.ATTRIBUTE_TYPE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="BACKEND_ACTION" EntityType="QP8Model.Store.BACKEND_ACTION" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="BACKEND_ACTION_LOG" EntityType="QP8Model.Store.BACKEND_ACTION_LOG" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CHARSET" EntityType="QP8Model.Store.CHARSET" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CODE_SNIPPET" EntityType="QP8Model.Store.CODE_SNIPPET" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTAINER" EntityType="QP8Model.Store.CONTAINER" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTAINER_STATUSES" EntityType="QP8Model.Store.CONTAINER_STATUSES" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT" EntityType="QP8Model.Store.CONTENT" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_ACCESS" EntityType="QP8Model.Store.CONTENT_ACCESS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_ATTRIBUTE" EntityType="QP8Model.Store.CONTENT_ATTRIBUTE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="content_constraint" EntityType="QP8Model.Store.content_constraint" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="content_constraint_rule" EntityType="QP8Model.Store.content_constraint_rule" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_DATA" EntityType="QP8Model.Store.CONTENT_DATA" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="content_FOLDER" EntityType="QP8Model.Store.content_FOLDER" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="content_FOLDER_ACCESS" EntityType="QP8Model.Store.content_FOLDER_ACCESS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_FORM" EntityType="QP8Model.Store.CONTENT_FORM" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="content_group" EntityType="QP8Model.Store.content_group" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_ITEM" EntityType="QP8Model.Store.CONTENT_ITEM" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_ITEM_ACCESS" EntityType="QP8Model.Store.CONTENT_ITEM_ACCESS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_ITEM_SCHEDULE" EntityType="QP8Model.Store.CONTENT_ITEM_SCHEDULE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_ITEM_STATUS_HISTORY" EntityType="QP8Model.Store.CONTENT_ITEM_STATUS_HISTORY" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTENT_ITEM_VERSION" EntityType="QP8Model.Store.CONTENT_ITEM_VERSION" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="content_to_content" EntityType="QP8Model.Store.content_to_content" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="content_workflow_bind" EntityType="QP8Model.Store.content_workflow_bind" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTEXT_MENU" EntityType="QP8Model.Store.CONTEXT_MENU" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CONTEXT_MENU_ITEM" EntityType="QP8Model.Store.CONTEXT_MENU_ITEM" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="CUSTOM_ACTION" EntityType="QP8Model.Store.CUSTOM_ACTION" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="DANGEROUS_ACTIONS" EntityType="QP8Model.Store.DANGEROUS_ACTIONS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="DB" EntityType="QP8Model.Store.DB" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="DEVELOPER" EntityType="QP8Model.Store.DEVELOPER" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="DYNAMIC_IMAGE_ATTRIBUTE" EntityType="QP8Model.Store.DYNAMIC_IMAGE_ATTRIBUTE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ENTITY_TYPE" EntityType="QP8Model.Store.ENTITY_TYPE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="ENTITY_TYPE_ACCESS" EntityType="QP8Model.Store.ENTITY_TYPE_ACCESS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="FOLDER" EntityType="QP8Model.Store.FOLDER" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="FOLDER_ACCESS" EntityType="QP8Model.Store.FOLDER_ACCESS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="Group_To_Group" EntityType="QP8Model.Store.Group_To_Group" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="item_to_item" EntityType="QP8Model.Store.item_to_item" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="item_to_item_version" EntityType="QP8Model.Store.item_to_item_version" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="LANGUAGES" EntityType="QP8Model.Store.LANGUAGES" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="LOCALE" EntityType="QP8Model.Store.LOCALE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="MASK_TEMPLATE" EntityType="QP8Model.Store.MASK_TEMPLATE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="NET_LANGUAGES" EntityType="QP8Model.Store.NET_LANGUAGES" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="NOTIFICATIONS" EntityType="QP8Model.Store.NOTIFICATIONS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="notifications_sent" EntityType="QP8Model.Store.notifications_sent" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="OBJECT" EntityType="QP8Model.Store.OBJECT" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="OBJECT_FORMAT" EntityType="QP8Model.Store.OBJECT_FORMAT" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="OBJECT_FORMAT_VERSION" EntityType="QP8Model.Store.OBJECT_FORMAT_VERSION" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="OBJECT_TYPE" EntityType="QP8Model.Store.OBJECT_TYPE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="OBJECT_VALUES" EntityType="QP8Model.Store.OBJECT_VALUES" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="PAGE" EntityType="QP8Model.Store.PAGE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="PAGE_TEMPLATE" EntityType="QP8Model.Store.PAGE_TEMPLATE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="PAGE_TRACE" EntityType="QP8Model.Store.PAGE_TRACE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="PAGE_TRACE_FORMAT" EntityType="QP8Model.Store.PAGE_TRACE_FORMAT" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="PAGE_TRACE_FORMAT_VALUES" EntityType="QP8Model.Store.PAGE_TRACE_FORMAT_VALUES" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="PERMISSION_LEVEL" EntityType="QP8Model.Store.PERMISSION_LEVEL" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="REMOVED_ENTITIES" EntityType="QP8Model.Store.REMOVED_ENTITIES" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="REMOVED_FILES" EntityType="QP8Model.Store.REMOVED_FILES" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="SESSIONS_LOG" EntityType="QP8Model.Store.SESSIONS_LOG" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="SITE" EntityType="QP8Model.Store.SITE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="SITE_ACCESS" EntityType="QP8Model.Store.SITE_ACCESS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="STATUS_TYPE" EntityType="QP8Model.Store.STATUS_TYPE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="STYLE" EntityType="QP8Model.Store.STYLE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="STYLE_ATTRIBUTE" EntityType="QP8Model.Store.STYLE_ATTRIBUTE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="STYLE_TAG" EntityType="QP8Model.Store.STYLE_TAG" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="SYSTEM_STATUS_TYPE" EntityType="QP8Model.Store.SYSTEM_STATUS_TYPE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="today_panels" EntityType="QP8Model.Store.today_panels" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="TRANSLATIONS" EntityType="QP8Model.Store.TRANSLATIONS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="union_attrs" EntityType="QP8Model.Store.union_attrs" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="union_contents" EntityType="QP8Model.Store.union_contents" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="USER_DEFAULT_FILTER" EntityType="QP8Model.Store.USER_DEFAULT_FILTER" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="USER_GROUP" EntityType="QP8Model.Store.USER_GROUP" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="USER_GROUP_BIND" EntityType="QP8Model.Store.USER_GROUP_BIND" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="user_query_attrs" EntityType="QP8Model.Store.user_query_attrs" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="user_query_contents" EntityType="QP8Model.Store.user_query_contents" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="user_to_panel" EntityType="QP8Model.Store.user_to_panel" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="USERS" EntityType="QP8Model.Store.USERS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="VE_COMMAND" EntityType="QP8Model.Store.VE_COMMAND" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="VE_PLUGIN" EntityType="QP8Model.Store.VE_PLUGIN" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="VE_STYLE" EntityType="QP8Model.Store.VE_STYLE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="VERSION_CONTENT_DATA" EntityType="QP8Model.Store.VERSION_CONTENT_DATA" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="VIEW_TYPE" EntityType="QP8Model.Store.VIEW_TYPE" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="WAITING_FOR_APPROVAL" EntityType="QP8Model.Store.WAITING_FOR_APPROVAL" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="workflow" EntityType="QP8Model.Store.workflow" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="WORKFLOW_ACCESS" EntityType="QP8Model.Store.WORKFLOW_ACCESS" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
+          <EntitySet Name="workflow_rules" EntityType="QP8Model.Store.workflow_rules" store:Type="Tables" Schema="dbo" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" />
           <AssociationSet Name="FK__WORKFLOW__GROUP" Association="QP8Model.Store.FK__WORKFLOW__GROUP">
             <End Role="USER_GROUP" EntitySet="USER_GROUP" />
             <End Role="WORKFLOW_ACCESS" EntitySet="WORKFLOW_ACCESS" />
@@ -5025,8 +5025,8 @@
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
-      <Schema Namespace="QP8Model" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
-        <EntityContainer Name="QP8Entities" annotation:LazyLoadingEnabled="false">
+      <Schema Namespace="QP8Model" Alias="Self" xmlns="http://schemas.microsoft.com/ado/2009/11/edm" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
+        <EntityContainer Name="QP8Entities" annotation:LazyLoadingEnabled="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation">
           <EntitySet Name="ActionTypeSet" EntityType="QP8Model.ActionTypeDAL" />
           <EntitySet Name="ArticleWorkflowBindSet" EntityType="QP8Model.ArticleWorkflowBindDAL" />
           <EntitySet Name="FieldTypeSet" EntityType="QP8Model.FieldTypeDAL" />
@@ -5965,7 +5965,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="RequiredPermissionLevelId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
@@ -6000,7 +6000,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="TypeId" Type="Int32" Nullable="false" />
           <Property Name="EntityTypeId" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
@@ -6047,7 +6047,7 @@
 					<Key>
 						<PropertyRef Name="Id" />
 					</Key>
-					<Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+					<Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
 					<Property Type="Decimal" Name="UserId" Nullable="false" Precision="18" Scale="0" />
 					<Property Type="DateTime" Name="ExecutionTime" Nullable="false" Precision="3" />
 					<Property Type="String" Name="ActionCode" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
@@ -6071,12 +6071,12 @@
           <Key>
             <PropertyRef Name="SnippetId" />
           </Key>
-          <Property Name="SnippetId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SnippetId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="SnippetName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="1024" Unicode="true" FixedLength="false" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="2048" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="SiteId" Type="Decimal" Precision="18" Scale="0" />
           <NavigationProperty Name="Site" Relationship="QP8Model.FK_CODE_SNIPPET_SITE" FromRole="CODE_SNIPPET" ToRole="SITE" />
@@ -6087,7 +6087,7 @@
           </Key>
           <Property Name="ObjectId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="ContentId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="AllowOrderDynamic" Type="Decimal" Precision="18" Scale="0" a:SetterAccess="Private" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" Nullable="true" />
+          <Property Name="AllowOrderDynamic" Type="Decimal" Precision="18" Scale="0" a:SetterAccess="Private" Nullable="true" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Name="OrderStatic" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
           <Property Name="OrderDynamic" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
           <Property Name="FilterValue" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
@@ -6119,12 +6119,12 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
           <Property Name="SiteId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
           <Property Name="FriendlyPluralName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="FriendlySingularName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
@@ -6186,11 +6186,11 @@
           <Property Name="UserId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="GroupId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PermissionLevelId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" annotation:StoreGeneratedPattern="Identity" Nullable="false" Precision="3" />
-          <Property Name="Modified" Type="DateTime" annotation:StoreGeneratedPattern="None" Nullable="false" Precision="3" />
+          <Property Name="Created" Type="DateTime" annotation:StoreGeneratedPattern="Identity" Nullable="false" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" annotation:StoreGeneratedPattern="None" Nullable="false" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="PropagateToItems" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="Content" Relationship="QP8Model.FK_CONTENT_ACCESS_CONTENT_ID" FromRole="CONTENT_ACCESS" ToRole="CONTENT" />
           <NavigationProperty Name="Group" Relationship="QP8Model.FK_CONTENT_ACCESS_GROUP_ID" FromRole="CONTENT_ACCESS" ToRole="USER_GROUP" />
           <NavigationProperty Name="User" Relationship="QP8Model.FK_CONTENT_ACCESS_USER_ID" FromRole="CONTENT_ACCESS" ToRole="USERS" />
@@ -6202,7 +6202,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="ContentId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="FormatMask" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
@@ -6213,10 +6213,10 @@
           <Property Name="RelationId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="IndexFlag" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Order" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="Order" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Computed" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Required" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="PermanentFlag" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="PrimaryFlag" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
@@ -6303,7 +6303,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="ContentId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="Content" Relationship="QP8Model.FK_content_constraint_CONTENT" FromRole="content_constraint" ToRole="CONTENT" />
           <NavigationProperty Name="Rules" Relationship="QP8Model.FK_content_constraint_rule_content_constraint" FromRole="ContentConstraintDAL" ToRole="ContentConstraintRuleDAL" />
@@ -6316,10 +6316,10 @@
           <Property Name="FieldId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="ArticleId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Data" Type="String" MaxLength="3500" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="BlobData" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="NotForReplication" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Field" Relationship="QP8Model.FK_CONTENT_DATA_CONTENT_ATTRIBUTE" FromRole="CONTENT_DATA" ToRole="CONTENT_ATTRIBUTE" />
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_CONTENT_DATA_CONTENT_ITEM" FromRole="CONTENT_DATA" ToRole="CONTENT_ITEM" />
@@ -6329,14 +6329,14 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="ContentId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="ParentId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Filter" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Path" Type="String" MaxLength="3000" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="Content" Relationship="QP8Model.FK_content_FLD_CONTENT" FromRole="content_FOLDER" ToRole="CONTENT" />
           <NavigationProperty Name="ContentFolderAccess" Relationship="QP8Model.FK_content_FLD_ACC_FOLDER" FromRole="content_FOLDER" ToRole="content_FOLDER_ACCESS" />
@@ -6352,10 +6352,10 @@
           <Property Name="UserId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="GroupId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PermissionLevelId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="ContentFolder" Relationship="QP8Model.FK_content_FLD_ACC_FOLDER" FromRole="content_FOLDER_ACCESS" ToRole="content_FOLDER" />
           <NavigationProperty Name="UserGroup" Relationship="QP8Model.FK_content_FLD_ACC_GROUP" FromRole="content_FOLDER_ACCESS" ToRole="USER_GROUP" />
           <NavigationProperty Name="PermissionLevel" Relationship="QP8Model.FK_content_FLD_ACC_PL" FromRole="content_FOLDER_ACCESS" ToRole="PERMISSION_LEVEL" />
@@ -6382,7 +6382,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="SiteId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Contents" Relationship="QP8Model.FK_CONTENT_CONTENT_GROUP_ID" FromRole="content_group" ToRole="CONTENT" />
@@ -6392,11 +6392,11 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Visible" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="StatusTypeId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Computed" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Computed" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="ContentId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="LockedBy" Type="Decimal" Precision="18" Scale="0" />
@@ -6432,10 +6432,10 @@
           <Property Name="UserId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="GroupId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PermissionLevelId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" annotation:StoreGeneratedPattern="Identity" Nullable="false" Precision="3" />
-          <Property Name="Modified" Type="DateTime" annotation:StoreGeneratedPattern="None" Nullable="false" Precision="3" />
+          <Property Name="Created" Type="DateTime" annotation:StoreGeneratedPattern="Identity" Nullable="false" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" annotation:StoreGeneratedPattern="None" Nullable="false" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_CONTENT_ITEM_ACCESS_CONTENT_ITEM_ID" FromRole="CONTENT_ITEM_ACCESS" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="Group" Relationship="QP8Model.FK_CONTENT_ITEM_ACCESS_GROUP_ID" FromRole="CONTENT_ITEM_ACCESS" ToRole="USER_GROUP" />
           <NavigationProperty Name="User" Relationship="QP8Model.FK_CONTENT_ITEM_ACCESS_USER_ID" FromRole="CONTENT_ITEM_ACCESS" ToRole="USERS" />
@@ -6447,10 +6447,10 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="ArticleId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="MaximumOccurences" Type="Decimal" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="FreqType" Type="Int32" Nullable="false" />
           <Property Name="FreqInterval" Type="Int32" Nullable="false" />
@@ -6475,13 +6475,13 @@
           <Key>
             <PropertyRef Name="StatusHistoryId" />
           </Key>
-          <Property Name="StatusHistoryId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StatusHistoryId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="StatusHistoryDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="ArticleId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="StatusTypeId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="UserId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="SystemStatusTypeId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="ArticleVersionId" Type="Decimal" Precision="18" Scale="0" />
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_CONTENT_ITEM_STATUS_HISTORY_CONTENT_ITEM_ID" FromRole="CONTENT_ITEM_STATUS_HISTORY" ToRole="CONTENT_ITEM" />
@@ -6493,13 +6493,13 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Version" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="VersionLabel" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="ContentVersionId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="ArticleId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="CreatedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_CONTENT_ITEM_VERSION_CONTENT_ITEM_ID" FromRole="CONTENT_ITEM_VERSION" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="CreatedByUser" Relationship="QP8Model.FK_CONTENT_ITEM_VERSION_CREATED_BY" FromRole="CONTENT_ITEM_VERSION" ToRole="USERS" />
@@ -6512,7 +6512,7 @@
           <Key>
             <PropertyRef Name="LinkId" />
           </Key>
-          <Property Name="LinkId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LinkId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LContentId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="RContentId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="MapAsClass" Type="Boolean" Nullable="false" />
@@ -6570,7 +6570,7 @@
            <Key>
              <PropertyRef Name="Id" />
            </Key>
-           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+           <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
            <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
            <Property Type="String" Name="Code" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
            <Property Type="Int32" Name="ParentId" />
@@ -6615,14 +6615,14 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="SiteId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="ParentId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Filter" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Path" Type="String" MaxLength="3000" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="FolderAccess" Relationship="QP8Model.FK_FLD_ACC_FOLDER" FromRole="FOLDER" ToRole="FOLDER_ACCESS" />
           <NavigationProperty Name="Folder1" Relationship="QP8Model.FK_FLD_FOLDER" FromRole="FOLDER" ToRole="FOLDER1" />
@@ -6638,10 +6638,10 @@
           <Property Name="UserId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="GroupId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PermissionLevelId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="Folder" Relationship="QP8Model.FK_FLD_ACC_FOLDER" FromRole="FOLDER_ACCESS" ToRole="FOLDER" />
           <NavigationProperty Name="Group" Relationship="QP8Model.FK_FLD_ACC_GROUP" FromRole="FOLDER_ACCESS" ToRole="USER_GROUP" />
           <NavigationProperty Name="PermissionLevel" Relationship="QP8Model.FK_FLD_ACC_PL" FromRole="FOLDER_ACCESS" ToRole="PERMISSION_LEVEL" />
@@ -6678,7 +6678,7 @@
           <Key>
             <PropertyRef Name="LanguageId" />
           </Key>
-          <Property Name="LanguageId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LanguageId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LanguageName" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="LanguagePt" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Locale" Type="Decimal" Nullable="false" Precision="9" Scale="0" />
@@ -6724,7 +6724,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="ContentId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="FormatId" Type="Decimal" Precision="18" Scale="0" />
@@ -6733,8 +6733,8 @@
           <Property Name="ForCreate" Type="Boolean" Nullable="false" />
           <Property Name="ForModify" Type="Boolean" Nullable="false" />
           <Property Name="ForRemove" Type="Boolean" Nullable="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="ForStatusChanged" Type="Boolean" />
           <Property Name="ForFrontend" Type="Boolean" />
@@ -6779,7 +6779,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="ParentObjectId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PageTemplateId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PageId" Type="Decimal" Precision="18" Scale="0" />
@@ -6788,8 +6788,8 @@
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
           <Property Name="TypeId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="UseDefaultValues" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="AllowStageEdit" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Global" Type="Boolean" Nullable="false" />
@@ -6818,18 +6818,18 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="ObjectId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="FormatBody" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="NetLanguageId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="NetFormatName" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="CodeBehind" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Name="Locked" Type="DateTime" a:GetterAccess="Public" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" Nullable="true" Precision="3" />
+          <Property Name="Locked" Type="DateTime" a:GetterAccess="Public" Nullable="true" Precision="3" xmlns:a="http://schemas.microsoft.com/ado/2006/04/codegeneration" />
           <Property Name="LockedBy" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="Assembled" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="AssembleInLive" Type="Boolean" Nullable="false" />
@@ -6853,13 +6853,13 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="ObjectFormatId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="ObjectId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="FormatBody" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="NetLanguageId" Type="Decimal" Precision="18" Scale="0" />
@@ -6876,7 +6876,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="RelatedTable" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="ImageName" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
@@ -6897,7 +6897,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="TemplateId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Filename" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
@@ -6908,10 +6908,10 @@
           <Property Name="Locale" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
           <Property Name="Reassemble" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Assembled" Type="DateTime" Nullable="false" Precision="3" annotation:StoreGeneratedPattern="None" />
+          <Property Name="Assembled" Type="DateTime" Nullable="false" Precision="3" annotation:StoreGeneratedPattern="None" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastAssembledBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="GenerateTrace" Type="Boolean" Nullable="false" />
           <Property Name="Folder" Type="String" MaxLength="1024" Unicode="true" FixedLength="false" />
@@ -6936,13 +6936,13 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="SiteId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="TemplatePicture" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Charset" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Codepage" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
@@ -6983,7 +6983,7 @@
           <Key>
             <PropertyRef Name="TraceId" />
           </Key>
-          <Property Name="TraceId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TraceId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="PageId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="QueryString" Type="String" MaxLength="2048" Unicode="true" FixedLength="false" />
           <Property Name="Values" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
@@ -6998,7 +6998,7 @@
           <Key>
             <PropertyRef Name="TraceFormatId" />
           </Key>
-          <Property Name="TraceFormatId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TraceFormatId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="FormatId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="ParentTraceFormatId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="TraceId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
@@ -7027,7 +7027,7 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Level" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="ActionType" Relationship="QP8Model.FK_ACTION_TYPE_PERMISSION_LEVEL" FromRole="PERMISSION_LEVEL" ToRole="ACTION_TYPE" />
@@ -7073,7 +7073,7 @@
           <Key>
             <PropertyRef Name="SessionId" />
           </Key>
-          <Property Name="SessionId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="SessionId" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Login" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
           <Property Name="Password" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
           <Property Name="UserId" Type="Decimal" Precision="18" Scale="0" />
@@ -7091,7 +7091,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Dns" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="LiveDirectory" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
@@ -7161,11 +7161,11 @@
           <Property Name="UserId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="GroupId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PermissionLevelId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="PropagateToItems" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="Site" Relationship="QP8Model.FK_SITE_ACCESS_SITE_ID" FromRole="SITE_ACCESS" ToRole="SITE" />
           <NavigationProperty Name="Group" Relationship="QP8Model.FK_SITE_ACCESS_GROUP_ID" FromRole="SITE_ACCESS" ToRole="USER_GROUP" />
           <NavigationProperty Name="User" Relationship="QP8Model.FK_SITE_ACCESS_USER_ID" FromRole="SITE_ACCESS" ToRole="USERS" />
@@ -7177,12 +7177,12 @@
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="SiteId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Weight" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="Articles" Relationship="QP8Model.FK_CONTENT_ITEM_STATUS_TYPE_ID" FromRole="STATUS_TYPE" ToRole="CONTENT_ITEM" />
           <NavigationProperty Name="Notifications" Relationship="QP8Model.FK_NOTIFICATIONS_NOTIFY_ON_STATUS_TYPE_ID" FromRole="STATUS_TYPE" ToRole="NOTIFICATIONS" />
@@ -7199,13 +7199,13 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="TagId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="Description" Type="String" MaxLength="1024" Unicode="true" FixedLength="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Class" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="SiteId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="Direct" Type="Boolean" Nullable="false" />
@@ -7216,7 +7216,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="StyleId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="AttributeValue" Type="String" MaxLength="1024" Unicode="true" FixedLength="false" />
@@ -7226,7 +7226,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="TagName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
         </EntityType>
         <EntityType Name="SystemStatusTypeDAL">
@@ -7279,11 +7279,11 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="SharedArticles" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="NtGroup" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
@@ -7346,7 +7346,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="18" Scale="0" />
+          <Property Name="Id" Type="Decimal" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="18" Scale="0" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Disabled" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
@@ -7355,8 +7355,8 @@
           <Property Name="NTLogOn" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="LastLogOn" Type="DateTime" Precision="3" />
           <Property Name="Subscribed" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="LanguageId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="VMode" Type="Decimal" Nullable="false" Precision="9" Scale="0" />
@@ -7424,7 +7424,7 @@
           <Property Name="ArticleVersionId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="Data" Type="String" MaxLength="3500" Unicode="true" FixedLength="false" />
           <Property Name="BlobData" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="Field" Relationship="QP8Model.FK_VERSION_CONTENT_DATA_ATTRIBUTE_ID" FromRole="VERSION_CONTENT_DATA" ToRole="CONTENT_ATTRIBUTE" />
         </EntityType>
         <EntityType Name="WaitingForApprovalDAL">
@@ -7443,11 +7443,11 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="512" Unicode="true" FixedLength="false" />
-          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" />
-          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" />
+          <Property Name="Created" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="Identity" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" annotation:StoreGeneratedPattern="None" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
           <Property Name="SiteId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
           <Property Name="CreateDefaultNotification" Type="Boolean" Nullable="false" />
@@ -7466,10 +7466,10 @@
           <Property Name="UserId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="GroupId" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="PermissionLevelId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Created" Type="DateTime" annotation:StoreGeneratedPattern="Identity" Nullable="false" Precision="3" />
-          <Property Name="Modified" Type="DateTime" annotation:StoreGeneratedPattern="None" Nullable="false" Precision="3" />
+          <Property Name="Created" Type="DateTime" annotation:StoreGeneratedPattern="Identity" Nullable="false" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+          <Property Name="Modified" Type="DateTime" annotation:StoreGeneratedPattern="None" Nullable="false" Precision="3" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="LastModifiedBy" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <NavigationProperty Name="Group" Relationship="QP8Model.FK__WORKFLOW__GROUP" FromRole="WORKFLOW_ACCESS" ToRole="USER_GROUP" />
           <NavigationProperty Name="User" Relationship="QP8Model.FK__WORKFLOW__USER" FromRole="WORKFLOW_ACCESS" ToRole="USERS" />
           <NavigationProperty Name="Workflow" Relationship="QP8Model.FK__WORKFLOW__WORKFLOW" FromRole="WORKFLOW_ACCESS" ToRole="workflow" />
@@ -7480,7 +7480,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Name="UserId" Type="Decimal" Precision="18" Scale="0" Nullable="true" />
           <Property Name="GroupId" Type="Decimal" Precision="18" Scale="0" Nullable="true" />
           <Property Name="RuleOrder" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
@@ -9178,7 +9178,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Name" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Code" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
 		  <Property Type="String" Name="Icon" Nullable="true" MaxLength="255" FixedLength="false" Unicode="true" />
@@ -9354,7 +9354,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="ContentConstraintRuleDAL" >
+        <EntityType Name="ContentConstraintRuleDAL">
           <Key>
             <PropertyRef Name="ConstraintId" />
             <PropertyRef Name="FieldId" />
@@ -9428,7 +9428,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ActionId" Nullable="false" />
           <Property Type="String" Name="Url" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="IconUrl" MaxLength="255" FixedLength="false" Unicode="true" />
@@ -9483,7 +9483,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Code" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Items" Relationship="QP8Model.FK_CONTEXT_MENU_ITEM_CONTEXT_MENU_ITEM" FromRole="CONTEXT_MENU" ToRole="CONTEXT_MENU_ITEM" />
           </EntityType>
@@ -9726,7 +9726,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="ActionId" Nullable="false" />
           <Property Type="Decimal" Name="UserId" Precision="18" Scale="0" />
           <Property Type="Decimal" Name="GroupId" Precision="18" Scale="0" />
@@ -9804,7 +9804,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="Int32" Name="EntityTypeId" Nullable="false" />
           <Property Type="Decimal" Name="UserId" Precision="18" Scale="0" />
           <Property Type="Decimal" Name="GroupId" Precision="18" Scale="0" />
@@ -9882,7 +9882,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Name" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="String" Name="Alias" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Type="Int32" Name="RowOrder" Nullable="false" />
@@ -9901,7 +9901,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Name" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="String" Name="Description" MaxLength="512" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Url" MaxLength="512" FixedLength="false" Unicode="true" />
@@ -9952,7 +9952,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
           <Property Type="String" Name="Name" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Description" MaxLength="512" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Tag" MaxLength="20" FixedLength="false" Unicode="true" />
@@ -10264,7 +10264,7 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="QP8ModelStoreContainer" CdmEntityContainer="QP8Entities">
           <EntitySetMapping Name="ActionTypeSet">
             <EntityTypeMapping TypeName="QP8Model.ActionTypeDAL">
@@ -10528,7 +10528,7 @@
                 <ScalarProperty Name="NetName" ColumnName="NET_ATTRIBUTE_NAME" />
                 <ScalarProperty Name="NetBackName" ColumnName="NET_BACK_ATTRIBUTE_NAME" />
                 <ScalarProperty Name="PEnterMode" ColumnName="P_ENTER_MODE" />
-								<ScalarProperty Name="UseEnglishQuotes" ColumnName="USE_ENGLISH_QUOTES"/>
+								<ScalarProperty Name="UseEnglishQuotes" ColumnName="USE_ENGLISH_QUOTES" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -11242,11 +11242,11 @@
                 <ScalarProperty Name="ConnectionStringName" ColumnName="CONNECTION_STRING_NAME" />
                 <ScalarProperty Name="ContextClassName" ColumnName="CONTEXT_CLASS_NAME" />
                 <ScalarProperty Name="PermanentLock" ColumnName="PERMANENT_LOCK" />
-                <ScalarProperty Name="PEnterMode" ColumnName="P_ENTER_MODE"/>
-								<ScalarProperty Name="ProceedDbIndependentGeneration" ColumnName="PROCEED_DB_INDEPENDENT_GENERATION"/>
-								<ScalarProperty Name="GenerateMapFileOnly" ColumnName="GENERATE_MAP_FILE_ONLY"/>
-								<ScalarProperty Name="EnableOnScreen" ColumnName="ENABLE_ONSCREEN"/>
-								<ScalarProperty Name="UseEnglishQuotes" ColumnName="USE_ENGLISH_QUOTES"/>
+                <ScalarProperty Name="PEnterMode" ColumnName="P_ENTER_MODE" />
+								<ScalarProperty Name="ProceedDbIndependentGeneration" ColumnName="PROCEED_DB_INDEPENDENT_GENERATION" />
+								<ScalarProperty Name="GenerateMapFileOnly" ColumnName="GENERATE_MAP_FILE_ONLY" />
+								<ScalarProperty Name="EnableOnScreen" ColumnName="ENABLE_ONSCREEN" />
+								<ScalarProperty Name="UseEnglishQuotes" ColumnName="USE_ENGLISH_QUOTES" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -11553,7 +11553,7 @@
           </EntitySetMapping>
           <EntitySetMapping Name="ContentConstraintRuleSet">
             <EntityTypeMapping TypeName="IsTypeOf(QP8Model.ContentConstraintRuleDAL)">
-              <MappingFragment StoreEntitySet="content_constraint_rule" >
+              <MappingFragment StoreEntitySet="content_constraint_rule">
                 <ScalarProperty Name="FieldId" ColumnName="attribute_id" />
                 <ScalarProperty Name="ConstraintId" ColumnName="constraint_id" />
               </MappingFragment>
@@ -11758,7 +11758,7 @@
     </edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
-  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <Connection>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
@@ -11774,7 +11774,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="44">
+      <Diagram Name="QP8Model" ZoomLevel="40">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -14302,7 +14302,7 @@
           <ConnectorPoint PointX="22.3125" PointY="18.246734526041664" />
           <ConnectorPoint PointX="22.625" PointY="18.246734526041664" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_UNION_ATTRS_UNION_ATTR_ID" >
+        <AssociationConnector Association="QP8Model.FK_UNION_ATTRS_UNION_ATTR_ID">
           <ConnectorPoint PointX="12.25" PointY="21.191655319019205" />
           <ConnectorPoint PointX="12.2935820198825" PointY="21.182146514681204" />
           <ConnectorPoint PointX="12.4564179801175" PointY="21.146618668811751" />
@@ -14359,7 +14359,7 @@
           <ConnectorPoint PointX="30.939695937499998" PointY="70" />
           <ConnectorPoint PointX="30.939695937499998" PointY="70.375" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_UNION_ATTRS_VIRTUAL_ATTR_ID" >
+        <AssociationConnector Association="QP8Model.FK_UNION_ATTRS_VIRTUAL_ATTR_ID">
           <ConnectorPoint PointX="12.25" PointY="20.059028647655687" />
           <ConnectorPoint PointX="12.293454184584437" PointY="20.049880398269487" />
           <ConnectorPoint PointX="12.456545815415563" PointY="20.015545318094514" />
@@ -14560,14 +14560,14 @@
           <ConnectorPoint PointX="1.9697115384615385" PointY="8.5" />
           <ConnectorPoint PointX="1.9697115384615385" PointY="8.75" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_CONTENT_ATTRIBUTE_BACK_RELATED_ATTRIBUTE_ID" >
+        <AssociationConnector Association="QP8Model.FK_CONTENT_ATTRIBUTE_BACK_RELATED_ATTRIBUTE_ID">
           <ConnectorPoint PointX="10.989615384615384" PointY="27.527975260416664" />
           <ConnectorPoint PointX="10.989615384615384" PointY="27.777975260416667" />
           <ConnectorPoint PointX="11.207692307692309" PointY="27.777975260416667" />
           <ConnectorPoint PointX="11.207692307692309" PointY="27.527975260416664" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.CustomActionDAL" Width="2" PointX="12.875" PointY="22.125" Height="3.9033007812499818" />
-        <AssociationConnector Association="QP8Model.FK_CUSTOM_ACTION_BACKEND_ACTION" >
+        <AssociationConnector Association="QP8Model.FK_CUSTOM_ACTION_BACKEND_ACTION">
           <ConnectorPoint PointX="1.3099183971557618" PointY="16.883932291666667" />
           <ConnectorPoint PointX="1.3099183971557618" PointY="27.601298828125" />
           <ConnectorPoint PointX="1.3841271152445476" PointY="27.601298828125" />
@@ -14622,7 +14622,7 @@
           <ConnectorPoint PointX="13" PointY="25.432514110020502" />
           <ConnectorPoint PointX="13.375" PointY="25.432514110020502" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.ACTION_CONTENT_BIND" >
+        <AssociationConnector Association="QP8Model.ACTION_CONTENT_BIND">
           <ConnectorPoint PointX="9.35937921875" PointY="24.508855911458209" />
           <ConnectorPoint PointX="9.0444871703275087" PointY="26.46626765728907" />
           <ConnectorPoint PointX="9.0180155796724915" PointY="26.630818660525062" />
@@ -14653,7 +14653,7 @@
           <ConnectorPoint PointX="12.770833333333334" PointY="23.526351838864429" />
           <ConnectorPoint PointX="12.875" PointY="23.526351838864429" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.ACTION_SITE_BIND" >
+        <AssociationConnector Association="QP8Model.ACTION_SITE_BIND">
           <ConnectorPoint PointX="13.828462038461538" PointY="19.403300781249996" />
           <ConnectorPoint PointX="13.328462038461538" PointY="18.653300781249996" />
           <ConnectorPoint PointX="13.270833333333334" PointY="18.653300781249996" />
@@ -14681,7 +14681,7 @@
           <ConnectorPoint PointX="8.88076923076923" PointY="16.489726562500003" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.UserGroupDAL" Width="1.5" PointX="5.5" PointY="14.125" Height="5.05710937499998" />
-        <AssociationConnector Association="QP8Model.FK_CUSTOM_ACTION_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_CUSTOM_ACTION_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="2.9863225000000004" PointY="0.5" />
           <ConnectorPoint PointX="2.9863225000000004" PointY="0.40625000000000089" />
           <ConnectorPoint PointX="4.0162751666666674" PointY="0.40625000000000033" />
@@ -14702,7 +14702,7 @@
         <EntityTypeShape EntityType="QP8Model.ToolbarButtonDAL" Width="1.5" PointX="2" PointY="19.25" Height="2.7494921874999818" />
         <EntityTypeShape EntityType="QP8Model.ContextMenuDAL" Width="2.75" PointX="12.375" PointY="28.875" Height="1.5956835937500031" />
         <EntityTypeShape EntityType="QP8Model.ContextMenuItemDAL" Width="1.5" PointX="19.625" PointY="24.625" Height="2.7494921874999996" />
-        <AssociationConnector Association="QP8Model.FK_CONTEXT_MENU_ITEM_CONTEXT_MENU_ITEM" >
+        <AssociationConnector Association="QP8Model.FK_CONTEXT_MENU_ITEM_CONTEXT_MENU_ITEM">
           <ConnectorPoint PointX="13.09375" PointY="27.7710986328125" />
           <ConnectorPoint PointX="12.59375" PointY="27.0210986328125" />
           <ConnectorPoint PointX="14.854166666666666" PointY="27.0210986328125" />
@@ -14725,7 +14725,7 @@
           <ConnectorPoint PointX="19.458333333333332" PointY="27.0210986328125" />
           <ConnectorPoint PointX="19.625" PointY="27.0210986328125" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ENTITY_TYPE_CONTEXT_MENU" >
+        <AssociationConnector Association="QP8Model.FK_ENTITY_TYPE_CONTEXT_MENU">
           <ConnectorPoint PointX="12.375" PointY="29.21875" />
           <ConnectorPoint PointX="12.139890855192203" PointY="27.92419063965815" />
           <ConnectorPoint PointX="12.110109144807797" PointY="27.760206410220206" />
@@ -14734,7 +14734,7 @@
           <ConnectorPoint PointX="10.234375" PointY="17.432027994791667" />
           <ConnectorPoint PointX="10.234375" PointY="29.96875" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ENTITY_TYPE_CONTEXT_MENU1" >
+        <AssociationConnector Association="QP8Model.FK_ENTITY_TYPE_CONTEXT_MENU1">
           <ConnectorPoint PointX="12.375" PointY="29.015622500000006" />
           <ConnectorPoint PointX="12.208333333333334" PointY="29.015622500000006" />
           <ConnectorPoint PointX="12.041666666666666" PointY="29.015622500000006" />
@@ -14745,7 +14745,7 @@
           <ConnectorPoint PointX="9.703125" PointY="29.015622500000006" />
           <ConnectorPoint PointX="9.703125" PointY="16.682027994791667" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_content_FOLDER_USERS" >
+        <AssociationConnector Association="QP8Model.FK_content_FOLDER_USERS">
           <ConnectorPoint PointX="4.5839867499999993" PointY="0.5" />
           <ConnectorPoint PointX="4.5839867499999993" PointY="0.40625000000000089" />
           <ConnectorPoint PointX="5.229166666666667" PointY="0.40625000000000033" />
@@ -14757,7 +14757,7 @@
           <ConnectorPoint PointX="14.406252" PointY="14.40625" />
           <ConnectorPoint PointX="14.406252" PointY="14.5" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_FOLDER_USERS" >
+        <AssociationConnector Association="QP8Model.FK_FOLDER_USERS">
           <ConnectorPoint PointX="3.4130845" PointY="0.5" />
           <ConnectorPoint PointX="3.4130845" PointY="0.4375" />
           <ConnectorPoint PointX="5.229166666666667" PointY="0.43749999999999944" />
@@ -14772,13 +14772,13 @@
           <ConnectorPoint PointX="13.332307692307692" PointY="7.125" />
           <ConnectorPoint PointX="13.332307692307692" PointY="7.375" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.Group_To_Group" >
+        <AssociationConnector Association="QP8Model.Group_To_Group">
           <ConnectorPoint PointX="6.0319230769230767" PointY="14.125" />
           <ConnectorPoint PointX="6.0319230769230767" PointY="13.875" />
           <ConnectorPoint PointX="6.4784615384615378" PointY="13.875" />
           <ConnectorPoint PointX="6.4784615384615378" PointY="14.125" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_CNT_ACC_PL" >
+        <AssociationConnector Association="QP8Model.FK_CNT_ACC_PL">
           <ConnectorPoint PointX="3.875" PointY="291.79072341145832" />
           <ConnectorPoint PointX="6.9295270813304075" PointY="260.01111484246286" />
           <ConnectorPoint PointX="6.9454729186695934" PointY="259.84521273865056" />
@@ -14789,7 +14789,7 @@
           <ConnectorPoint PointX="17.21875" PointY="152.96099934895835" />
           <ConnectorPoint PointX="17.21875" PointY="291.79072341145832" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_CNT_ITM_ACC_PL" >
+        <AssociationConnector Association="QP8Model.FK_CNT_ITM_ACC_PL">
           <ConnectorPoint PointX="3.375" PointY="293.24718023437504" />
           <ConnectorPoint PointX="6.854166666666667" PointY="293.24718023437504" />
           <ConnectorPoint PointX="7.020833333333333" PointY="293.24718023437504" />
@@ -14800,7 +14800,7 @@
           <ConnectorPoint PointX="23.375" PointY="293.24718023437504" />
           <ConnectorPoint PointX="23.375" PointY="152.01869791666667" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_SITE_ACC_PL" >
+        <AssociationConnector Association="QP8Model.FK_SITE_ACC_PL">
           <ConnectorPoint PointX="2.51562125" PointY="157.21338197005207" />
           <ConnectorPoint PointX="2.2649725163521031" PointY="156.83740886958023" />
           <ConnectorPoint PointX="2.1725224836478976" PointY="156.69873382052393" />
@@ -14821,7 +14821,7 @@
           <ConnectorPoint PointX="9.7552083333333339" PointY="156.46338197005207" />
           <ConnectorPoint PointX="15.125" PointY="156.46338197005207" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_WF_ACC_PL" >
+        <AssociationConnector Association="QP8Model.FK_WF_ACC_PL">
           <ConnectorPoint PointX="3.335941875" PointY="290" />
           <ConnectorPoint PointX="3.835941875" PointY="144.296875" />
           <ConnectorPoint PointX="6.854166666666667" PointY="144.296875" />
@@ -14838,7 +14838,7 @@
           <ConnectorPoint PointX="18.708333333333332" PointY="144.296875" />
           <ConnectorPoint PointX="18.875" PointY="144.296875" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_CONTENT_ACCESS_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_CONTENT_ACCESS_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.625" PointY="8.6780297159103181" />
           <ConnectorPoint PointX="4.71875" PointY="8.6780297159103181" />
           <ConnectorPoint PointX="4.71875" PointY="34.0625" />
@@ -14857,7 +14857,7 @@
           <ConnectorPoint PointX="15.695310999999997" PointY="147.07639648437498" />
           <ConnectorPoint PointX="15.695310999999997" PointY="148.5" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_CONTENT_ITEM_ACCESS_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_CONTENT_ITEM_ACCESS_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.625" PointY="11.746782667813568" />
           <ConnectorPoint PointX="4.71875" PointY="11.746782667813568" />
           <ConnectorPoint PointX="4.71875" PointY="34.0625" />
@@ -14888,7 +14888,7 @@
           <ConnectorPoint PointX="23.070310999999997" PointY="148.0625" />
           <ConnectorPoint PointX="23.070310999999997" PointY="148.5" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_FOLDER_ACCESS_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_FOLDER_ACCESS_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.625" PointY="10.786771415261978" />
           <ConnectorPoint PointX="4.71875" PointY="10.786771415261978" />
           <ConnectorPoint PointX="4.71875" PointY="34.0625" />
@@ -14915,7 +14915,7 @@
           <ConnectorPoint PointX="19.531252000000002" PointY="147.20619791666667" />
           <ConnectorPoint PointX="19.531252000000002" PointY="148.125" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_NOTIFICATIONS_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_NOTIFICATIONS_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="3.3501923076923075" PointY="12.287659505208334" />
           <ConnectorPoint PointX="3.3501923076923075" PointY="23" />
           <ConnectorPoint PointX="4.1041661666666664" PointY="23" />
@@ -14957,7 +14957,7 @@
           <ConnectorPoint PointX="20.054689" PointY="28.625000000000004" />
           <ConnectorPoint PointX="20.054689" PointY="29.25" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_SITE_ACCESS_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_SITE_ACCESS_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.625" PointY="7.5379868586437606" />
           <ConnectorPoint PointX="4.71875" PointY="7.5379868586437606" />
           <ConnectorPoint PointX="4.71875" PointY="34.0625" />
@@ -14978,7 +14978,7 @@
           <ConnectorPoint PointX="16.281252" PointY="153.4375" />
           <ConnectorPoint PointX="16.281252" PointY="153.5" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_USER_GROUP_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_USER_GROUP_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.625" PointY="12.24458158213141" />
           <ConnectorPoint PointX="4.6598244349011217" PointY="12.27940601703253" />
           <ConnectorPoint PointX="4.8759255650988793" PointY="12.495507147230288" />
@@ -14990,13 +14990,13 @@
           <ConnectorPoint PointX="5.489583333333333" PointY="15.437500499999999" />
           <ConnectorPoint PointX="5.5" PointY="15.437500499999999" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_USERS_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_USERS_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="2.875" PointY="4.5179386017628209" />
           <ConnectorPoint PointX="2.625" PointY="4.5179386017628209" />
           <ConnectorPoint PointX="2.625" PointY="8.3590490534855757" />
           <ConnectorPoint PointX="2.875" PointY="8.3590490534855757" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_WORKFLOW_ACCESS_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_WORKFLOW_ACCESS_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.625" PointY="11.266777041537772" />
           <ConnectorPoint PointX="4.71875" PointY="11.266777041537772" />
           <ConnectorPoint PointX="4.71875" PointY="34.0625" />
@@ -15020,7 +15020,7 @@
           <ConnectorPoint PointX="18.945310499999998" PointY="143.5" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.BackendActionPermissionDAL" Width="1.5" PointX="17.25" PointY="3.5" Height="3.3263964843749818" />
-        <AssociationConnector Association="QP8Model.FK_ACT_ACC_ACC_GROUP" >
+        <AssociationConnector Association="QP8Model.FK_ACT_ACC_ACC_GROUP">
           <ConnectorPoint PointX="5.5" PointY="19.225530098958338" />
           <ConnectorPoint PointX="5.4290625000000006" PointY="1.4100000000000001" />
           <ConnectorPoint PointX="5.3587250163521025" PointY="1.3044937745281526" />
@@ -15040,7 +15040,7 @@
           <ConnectorPoint PointX="17.25" PointY="4.5312505000000005" />
           <ConnectorPoint PointX="17.75" PointY="4.5312505000000005" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ACT_ACC_ACC_PL" >
+        <AssociationConnector Association="QP8Model.FK_ACT_ACC_ACC_PL">
           <ConnectorPoint PointX="3.1328156249999997" PointY="290" />
           <ConnectorPoint PointX="3.1328156249999997" PointY="289.375" />
           <ConnectorPoint PointX="3.331093719384739" PointY="285.97263641253033" />
@@ -15086,7 +15086,7 @@
           <ConnectorPoint PointX="18.5" PointY="3.875" />
           <ConnectorPoint PointX="18.5" PointY="4.25" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ACT_ACC_ACC_USERS" >
+        <AssociationConnector Association="QP8Model.FK_ACT_ACC_ACC_USERS">
           <ConnectorPoint PointX="4.625" PointY="8.1410801323657243" />
           <ConnectorPoint PointX="4.635416666666667" PointY="8.1410801323657225" />
           <ConnectorPoint PointX="5.052083333333333" PointY="8.1410801323657243" />
@@ -15095,7 +15095,7 @@
           <ConnectorPoint PointX="17.796874000000003" PointY="0.125" />
           <ConnectorPoint PointX="17.796874000000003" PointY="3.5" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ACT_ACC_ENTITY_TYPE" >
+        <AssociationConnector Association="QP8Model.FK_ACT_ACC_ENTITY_TYPE">
           <ConnectorPoint PointX="1.3049256346153846" PointY="8.75" />
           <ConnectorPoint PointX="1.8049256346153846" PointY="1.05" />
           <ConnectorPoint PointX="5.2292453650107467" PointY="0.90107400853245012" />
@@ -15112,7 +15112,7 @@
           <ConnectorPoint PointX="19.05" PointY="5.2593489583333328" />
           <ConnectorPoint PointX="18.75" PointY="5.2593489583333328" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ACT_ACC_LAST_MODIFIED_BY1" >
+        <AssociationConnector Association="QP8Model.FK_ACT_ACC_LAST_MODIFIED_BY1">
           <ConnectorPoint PointX="4.625" PointY="10.275997046708646" />
           <ConnectorPoint PointX="4.635416666666667" PointY="10.275997046708644" />
           <ConnectorPoint PointX="5.052083333333333" PointY="10.275997046708646" />
@@ -15122,12 +15122,12 @@
           <ConnectorPoint PointX="18.304689000000003" PointY="3.5" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.EntityTypePermissionDAL" Width="1.5" PointX="11.75" PointY="35.125" Height="3.5186979166667243" />
-        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_ENTITY_TYPE" >
+        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_ENTITY_TYPE">
           <ConnectorPoint PointX="9.671875" PointY="16.682027994791667" />
           <ConnectorPoint PointX="9.671875" PointY="567.38434895833336" />
           <ConnectorPoint PointX="11" PointY="567.38434895833336" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_GROUP" >
+        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_GROUP">
           <ConnectorPoint PointX="5.5937505000000005" PointY="20.143616536458335" />
           <ConnectorPoint PointX="5.5937505000000005" PointY="30.1875" />
           <ConnectorPoint PointX="5.604166666666667" PointY="30.1875" />
@@ -15140,7 +15140,7 @@
           <ConnectorPoint PointX="9.7552083333333339" PointY="566.66092197916669" />
           <ConnectorPoint PointX="11" PointY="566.66092197916669" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.625" PointY="7.0276522695423322" />
           <ConnectorPoint PointX="4.71875" PointY="7.0276522695423322" />
           <ConnectorPoint PointX="4.71875" PointY="34.0625" />
@@ -15155,7 +15155,7 @@
           <ConnectorPoint PointX="11.953126000000001" PointY="565.53125" />
           <ConnectorPoint PointX="11.953126000000001" PointY="565.625" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_PL" >
+        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_PL">
           <ConnectorPoint PointX="1.50781625" PointY="1129" />
           <ConnectorPoint PointX="1.50781625" PointY="568.75073942708332" />
           <ConnectorPoint PointX="1.6979166666666667" PointY="568.75073942708332" />
@@ -15190,7 +15190,7 @@
           <ConnectorPoint PointX="10.833333333333334" PointY="568.75073942708332" />
           <ConnectorPoint PointX="11" PointY="568.75073942708332" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_USERS" >
+        <AssociationConnector Association="QP8Model.FK_ENT_TYPE_ACC_USERS">
           <ConnectorPoint PointX="4.625" PointY="4.4934781545807976" />
           <ConnectorPoint PointX="4.71875" PointY="4.4934781545807976" />
           <ConnectorPoint PointX="4.71875" PointY="34.0625" />
@@ -15207,11 +15207,11 @@
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.VeCommandDAL" Width="1.5" PointX="3" PointY="23.25" Height="3.5186979166666674" />
         <EntityTypeShape EntityType="QP8Model.VePluginDAL" Width="1.5" PointX="0.75" PointY="23.625" Height="2.7494921874999818" />
-        <AssociationConnector Association="QP8Model.FK_VC_PLUGIN_ID" >
+        <AssociationConnector Association="QP8Model.FK_VC_PLUGIN_ID">
           <ConnectorPoint PointX="2.25" PointY="25.095896809895834" />
           <ConnectorPoint PointX="3" PointY="25.095896809895834" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_VE_PLUGIN_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_VE_PLUGIN_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.625" PointY="3.6884152822208929" />
           <ConnectorPoint PointX="4.635416666666667" PointY="3.6884152822208924" />
           <ConnectorPoint PointX="4.802083333333333" PointY="3.6884152822208929" />
@@ -15224,7 +15224,7 @@
           <ConnectorPoint PointX="1.5" PointY="22.984375" />
           <ConnectorPoint PointX="1.5" PointY="23.625" />
         </AssociationConnector>
-        <AssociationConnector Association="QP8Model.FK_VE_COMMAND_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_VE_COMMAND_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.5819230769230774" PointY="12.287659505208334" />
           <ConnectorPoint PointX="4.6598244349011217" PointY="12.365560863186376" />
           <ConnectorPoint PointX="4.8759255650988793" PointY="12.581661993384135" />
@@ -15240,7 +15240,7 @@
           <ConnectorPoint PointX="4.5" PointY="23.251152846153843" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.VeStyleDAL" Width="1.5" PointX="5.875" PointY="30.25" Height="3.7109993489583424" />
-        <AssociationConnector Association="QP8Model.FK_VES_LAST_MODIFIED_BY" >
+        <AssociationConnector Association="QP8Model.FK_VES_LAST_MODIFIED_BY">
           <ConnectorPoint PointX="4.6250000000000018" PointY="12.287659505208334" />
           <ConnectorPoint PointX="4.6598244349011217" PointY="12.322483940109452" />
           <ConnectorPoint PointX="4.8759255650988793" PointY="12.53858507030721" />

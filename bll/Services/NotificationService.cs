@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Constants;
-using QA_Assembling;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Exceptions;
 
 namespace Quantumart.QP8.BLL.Services
@@ -83,22 +84,14 @@ namespace Quantumart.QP8.BLL.Services
 
 		public MessageResult MultipleAssembleNotification(int[] IDs)
 		{
-			List<Notification> notifications = new List<Notification>();
-			
-			foreach (int id in IDs)
-			{
-				notifications.Add(NotificationRepository.GetPropertiesById(id));
-			}
-			
-			AssembleFormatController cnt;
-			
-			foreach (var notification in notifications)
-			{
-				cnt = new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification, QPContext.CurrentCustomerCode);
-				cnt.Assemble();
-			}
-			
-			return null;
+			List<Notification> notifications = IDs.Select(NotificationRepository.GetPropertiesById).ToList();
+
+		    foreach (var cnt in notifications.Select(notification => new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification, QPContext.CurrentCustomerCode)))
+		    {
+		        cnt.Assemble();
+		    }
+
+		    return null;
 		}
 
 		public MessageResult MultipleAssembleNotificationPreAction(int[] IDs)
