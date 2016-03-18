@@ -1,4 +1,4 @@
-﻿Backend.Lang.ExpandedContainer = {
-	expandText: "Expand",
-	collapseText: "Collapse"
+Backend.Lang.ExpandedContainer = {
+  expandText: 'Expand',
+  collapseText: 'Collapse'
 };

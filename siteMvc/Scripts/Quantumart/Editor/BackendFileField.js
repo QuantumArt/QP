@@ -170,16 +170,18 @@ Quantumart.QP8.BackendFileField.prototype = {
   updateUploader: function(value) {
     this._uploaderSubFolder = value;
     var $fileField = jQuery(this._fileFieldElement);
+
     if (this._uploaderSubFolder) {
       $fileField.attr('placeholder', this._getFileFieldSubFolder());
-    }    else {
+    } else {
       $fileField.removeAttr('placeholder');
       this._uploaderSubFolder = '';
     }
 
     var path = this._libraryPath;
+
     if (this._uploaderSubFolder) {
-        path += "\\" + this._uploaderSubFolder;
+      path += '\\' + this._uploaderSubFolder;
     }
 
     if (this._uploaderComponent) {
@@ -189,8 +191,9 @@ Quantumart.QP8.BackendFileField.prototype = {
 
   _getFileFieldSubFolder: function() {
     var subFolder = this._uploaderSubFolder;
+
     if (subFolder && !subFolder.match(/\/$/)) {
-      subFolder += "/";
+      subFolder += '/';
     }
 
     return subFolder;
@@ -204,14 +207,12 @@ Quantumart.QP8.BackendFileField.prototype = {
       if (entities.length > 0) {
         var url = args.context;
 
-          if (url == "\\") {
-              url = '';
-          }
+        if (url === '\\') {
+          url = '';
+        }
 
-          url = url.replace(this._subFolder + "\\", '').replace(/\\/g, "\/");
-        jQuery(this._fileFieldElement)
-        .val(url + entities[0].Name)
-        .trigger('change');
+        url = url.replace(this._subFolder + '\\', '').replace(/\\/g, '\/');
+        jQuery(this._fileFieldElement).val(url + entities[0].Name).trigger('change');
       }
     }
   },
@@ -226,14 +227,18 @@ Quantumart.QP8.BackendFileField.prototype = {
 
   initialize: function() {
     var $fileField = jQuery('#' + this._fileFieldElementId);
+
     $fileField.data('file_field', this);
     var $fileWrapper = jQuery('#' + this._fileWrapperElementId);
     var $browseButton = $fileWrapper.find('.' + this.BROWSE_BUTTON_CLASS_NAME + ':first');
     var $previewButton = $fileWrapper.find('.' + this.PREVIEW_BUTTON_CLASS_NAME + ':first');
+
     $previewButton.bind('click', this._onPreviewButtonClickHandler);
     var $libraryButton = $fileWrapper.find('.' + this.LIBRARY_BUTTON_CLASS_NAME + ':first');
+
     $libraryButton.bind('click', this._onLibraryButtonClickHandler);
     var $downloadButton = $fileWrapper.find('.' + this.DOWNLOAD_BUTTON_CLASS_NAME + ':first');
+
     $downloadButton.bind('click', this._onDownloadButtonClickHandler);
 
     this._fileFieldElement = $fileField.get(0);
@@ -257,19 +262,20 @@ Quantumart.QP8.BackendFileField.prototype = {
 
   _initFileUploader: function() {
     var extensions = (this._isImage) ? LIBRARY_FILE_EXTENSIONS_DICTIONARY[Quantumart.QP8.Enums.LibraryFileType.Image] : '';
-    if (this._uploaderType == Quantumart.QP8.Enums.UploaderType.Silverlight) {
+
+    if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Silverlight) {
       this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
         background: '#ffffff',
         extensions: extensions,
         resolveName: this.get_renameMatched()
       });
-    } else if (this._uploaderType == Quantumart.QP8.Enums.UploaderType.Html) {
+    } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.Html) {
       this._uploaderComponent = new Quantumart.QP8.BackendHtmlUploader(this._fileWrapperElement, {
         extensions: extensions,
         resolveName: this.get_renameMatched()
       });
-    } else if (this._uploaderType == Quantumart.QP8.Enums.UploaderType.PlUpload) {
-      this._uploaderComponent = new Quantumart.QP8.BackendPlUploader($(this._fileWrapperElement), {
+    } else if (this._uploaderType === Quantumart.QP8.Enums.UploaderType.PlUpload) {
+      this._uploaderComponent = new Quantumart.QP8.BackendPlUploader(this._fileWrapperElement, {
         extensions: extensions,
         resolveName: this.get_renameMatched(),
         useSiteLibrary: this._useSiteLibrary,
@@ -285,7 +291,7 @@ Quantumart.QP8.BackendFileField.prototype = {
   _getFormScriptOptions: function() {
     return {
       imgFilterResolution: this.imgFilterResolution
-    }
+    };
   },
 
   _previewImage: function() {
