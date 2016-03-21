@@ -840,6 +840,21 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static int[] GetGroupIds(SqlConnection connection, int userId)
+        {
+            using (
+                var cmd =
+                    SqlCommandFactory.Create(
+                        "select group_id from user_group_bind where user_id = @userId", connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.AddWithValue("@userId", userId);
+                var dt = new DataTable();
+                new SqlDataAdapter(cmd).Fill(dt);
+                return dt.AsEnumerable().Select(n => (int)n.Field<decimal>("group_id")).ToArray();
+            }
+        }
+
         public static bool CanUnlockItems(SqlConnection connection, int userId)
         {
             var sql = @"

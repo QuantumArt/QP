@@ -1,5 +1,4 @@
-﻿using System;
-using System.Dynamic;
+﻿using System.Dynamic;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
@@ -10,138 +9,107 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 {
     public abstract class EntityViewModel : ViewModel
     {
-		
-		public EntityObject EntityData { get; set; }
+        
+        public EntityObject EntityData { get; set; }
 
-		public string SuccesfulActionCode { get; set; }
+        public string SuccesfulActionCode { get; set; }
 
-		public bool IsValid { get; set; }
+        public bool IsValid { get; set; }
 
-		public EntityObject Data
-		{
-			get { return EntityData; }
-			set { EntityData = value; }
-		}
+        public EntityObject Data
+        {
+            get { return EntityData; }
+            set { EntityData = value; }
+        }
 
-		#region creation
-			
-		public static T Create<T>(EntityObject obj, string tabId, int parentId) where T : EntityViewModel, new()
-		{
-			T model = ViewModel.Create<T>(tabId, parentId);
-			model.EntityData = obj;
+        #region creation
+            
+        public static T Create<T>(EntityObject obj, string tabId, int parentId) where T : EntityViewModel, new()
+        {
+            var model = ViewModel.Create<T>(tabId, parentId);
+            model.EntityData = obj;
 
-			model.IsValid = true;
-			return model;
-		}
+            model.IsValid = true;
+            return model;
+        }
 
-		#endregion
+        #endregion
 
-		#region read-only members
+        #region read-only members
 
-		public bool IsNew
-		{
-			get
-			{
-				return EntityData.IsNew;
-			}
-		}
+        public bool IsNew => EntityData.IsNew;
 
-		public override MainComponentType MainComponentType
-		{
-			get { return MainComponentType.Editor; }
-		}
+        public override MainComponentType MainComponentType => MainComponentType.Editor;
 
-		public override string MainComponentId
-		{
-			get { return UniqueId("Editor"); }
-		}
+        public override string MainComponentId => UniqueId("Editor");
 
-		public override ExpandoObject MainComponentParameters
-		{
-			get
-			{
-				dynamic result = base.MainComponentParameters;
-				result.entityId = Id;
-				result.entityName = Name;
-				result.previousActionCode = SuccesfulActionCode;
-				return result;
-			}
-		}
-
-		public override ExpandoObject MainComponentOptions
-		{
-			get
-			{
-				dynamic result = base.MainComponentParameters;
-				result.validationSummaryElementId = ValidationSummaryId;
-				result.modifiedDateTime = (Data != null && !Data.IsNew) ? Data.Modified.Ticks : new Nullable<long>();
-				result.entityTypeAllowedToAutosave = (Data != null && EntityType.CheckToAutosave(Data.EntityTypeCode));
-
-                if (Data != null)
-                {
-                    BackendAction saveAndCloseAction = Data.SaveAndCloseAction;
-                    if (saveAndCloseAction != null)
-                        result.saveAndCloseActionCode = saveAndCloseAction.Code;
-                }
+        public override ExpandoObject MainComponentParameters
+        {
+            get
+            {
+                dynamic result = base.MainComponentParameters;
+                result.entityId = Id;
+                result.entityName = Name;
+                result.previousActionCode = SuccesfulActionCode;
+                result.userId = QPContext.CurrentUserId;
+                result.userGroupIds = QPContext.CurrentGroupIds;
                 return result;
-			}
-		}
+            }
+        }
 
-		public override DocumentContextState DocumentContextState
-		{
-			get
-			{
-				return String.IsNullOrWhiteSpace(SuccesfulActionCode) ? Constants.DocumentContextState.Loaded : Constants.DocumentContextState.Saved;
-			}
-		}
+        public override ExpandoObject MainComponentOptions
+        {
+            get
+            {
+                dynamic result = base.MainComponentParameters;
+                result.validationSummaryElementId = ValidationSummaryId;
+                result.modifiedDateTime = (Data != null && !Data.IsNew) ? Data.Modified.Ticks : new long?();
+                result.entityTypeAllowedToAutosave = (Data != null && EntityType.CheckToAutosave(Data.EntityTypeCode));
 
-		public virtual string Id
-		{
-			get
-			{
-				return EntityData.Id.ToString();
-			}
-		}
+                var saveAndCloseAction = Data?.SaveAndCloseAction;
+                if (saveAndCloseAction != null)
+                    result.saveAndCloseActionCode = saveAndCloseAction.Code;
+                return result;
+            }
+        }
 
-		public virtual string Name
-		{
-			get
-			{
-				return EntityData.Name;
-			}
-		}
+        public override DocumentContextState DocumentContextState => string.IsNullOrWhiteSpace(SuccesfulActionCode) ? DocumentContextState.Loaded : DocumentContextState.Saved;
 
-		public virtual DirectLinkOptions DirectLinkOptions
-		{
-			get
-			{
-				int entityId;
-				if(!Int32.TryParse(Id, out entityId))
-					entityId = 0;
-				return new DirectLinkOptions
-				{
-					actionCode = ActionCode,
-					customerCode = QPContext.CurrentCustomerCode,
-					entityId = entityId > 0 ? entityId : new Nullable<int>(),
-					entityTypeCode = EntityTypeCode,
-					parentEntityId = ParentEntityId > 0 ? ParentEntityId : new Nullable<int>()
-				};
-			}
-		}
+        public virtual string Id => EntityData.Id.ToString();
 
-		#endregion
+        public virtual string Name => EntityData.Name;
+
+        public virtual DirectLinkOptions DirectLinkOptions
+        {
+            get
+            {
+                int entityId;
+                if(!int.TryParse(Id, out entityId))
+                    entityId = 0;
+                return new DirectLinkOptions
+                {
+                    actionCode = ActionCode,
+                    customerCode = QPContext.CurrentCustomerCode,
+                    entityId = entityId > 0 ? entityId : new int?(),
+                    entityTypeCode = EntityTypeCode,
+                    parentEntityId = ParentEntityId > 0 ? ParentEntityId : new int?()
+                };
+            }
+        }
+
+        #endregion
 
         public virtual void Validate(ModelStateDictionary modelState)
         {
             try 
-			{
-				EntityData.Validate();
-			}
+            {
+                EntityData.Validate();
+            }
             catch (RulesException ex)
-			{
-				ex.CopyTo(modelState, "Data");
-				this.IsValid = false;
-			}
+            {
+                ex.CopyTo(modelState, "Data");
+                IsValid = false;
+            }
         }
-	}
+    }
 }
