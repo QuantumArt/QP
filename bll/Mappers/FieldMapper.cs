@@ -42,10 +42,10 @@ namespace Quantumart.QP8.BLL.Mappers
 		{
 			bizObject.Size = Utils.Converter.ToInt32(dataObject.Size);
 
-			bizObject.TextBoxRows = Field.TEXT_BOX_ROWS_DEFAULT_VALUE;
-			bizObject.VisualEditorHeight = Field.VISUAL_EDITOR_HEIGHT_DEFAULT_VALUE;
-			bizObject.StringSize = Field.STRING_SIZE_DEFAULT_VALUE;
-			bizObject.DecimalPlaces = Field.DECIMAL_PLACES_DEFAULT_VALUE;			
+			bizObject.TextBoxRows = Field.TextBoxRowsDefaultValue;
+			bizObject.VisualEditorHeight = Field.VisualEditorHeightDefaultValue;
+			bizObject.StringSize = Field.StringSizeDefaultValue;
+			bizObject.DecimalPlaces = Field.DecimalPlacesDefaultValue;
 
 			switch (bizObject.TypeId)
 			{
@@ -149,7 +149,7 @@ namespace Quantumart.QP8.BLL.Mappers
 				case Constants.FieldTypeCodes.File:
 				case Constants.FieldTypeCodes.Image:
 				case Constants.FieldTypeCodes.DynamicImage:
-					dataObject.Size = Field.STRING_SIZE_DEFAULT_VALUE;
+					dataObject.Size = Field.StringSizeDefaultValue;
 					break;
 				default:
 					dataObject.Size = 0;

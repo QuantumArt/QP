@@ -1,22 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using Quantumart.QP8.BLL.Services;
+﻿using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
     public class ArticleListHelper
     {
-        private static readonly string EMPTY_ICON = "0.gif";
-        private static readonly string IS_SCHEDULED_ICON = "is_scheduled.gif";
-        private static readonly string IS_SPLITED_ICON = "is_splited.gif";
-        private static readonly string IS_INVISIBLE_ICON = "is_invisible.gif";
-        private static readonly string LOCKED_BY_YOU_ICON = "locked.gif";
-        private static readonly string LOCKED_NOT_BY_YOU_ICON = "locked_by_user.gif";
+        private const string EmptyIcon = "0.gif";
+        private const string IsScheduledIcon = "is_scheduled.gif";
+        private const string IsSplitedIcon = "is_splited.gif";
+        private const string IsInvisibleIcon = "is_invisible.gif";
+        private const string LockedByYouIcon = "locked.gif";
+        private const string LockedNotByYouIcon = "locked_by_user.gif";
 
 
         internal static IEnumerable<SimpleDataRow> GetResult(IEnumerable<DataRow> rows, IEnumerable<Field> fieldList, bool? onlyIds)
@@ -26,39 +26,38 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 foreach (var id in articleIds)
                 {
-                    var dr = new SimpleDataRow();
-                    dr.Add(FieldName.CONTENT_ITEM_ID, (decimal)id);
+                    var dr = new SimpleDataRow { { FieldName.CONTENT_ITEM_ID, (decimal)id } };
                     yield return dr;
                 }
             }
             else
             {
-                var m2mFieldValues = new Dictionary<string, List<string>>();
-                var m2oFieldValues = new Dictionary<string, List<string>>();
-                var m2oFields = fieldList.Where(x => x.ExactType == FieldExactTypes.M2ORelation && x.ViewInList).ToList();
-                var m2mFields = fieldList.Where(x => x.ExactType == FieldExactTypes.M2MRelation && x.ViewInList).ToList();
+                var m2MFieldValues = new Dictionary<string, List<string>>();
+                var m2OFieldValues = new Dictionary<string, List<string>>();
+                var m2OFields = fieldList.Where(x => x.ExactType == FieldExactTypes.M2ORelation && x.ViewInList).ToList();
+                var m2MFields = fieldList.Where(x => x.ExactType == FieldExactTypes.M2MRelation && x.ViewInList).ToList();
 
-                foreach (var field in m2oFields)
+                foreach (var field in m2OFields)
                 {
-                    var m2oDisplayFieldName = ArticleService.GetTitleName(field.BackRelation.ContentId);
-                    var m2oValues = ArticleService.GetM2OValuesBatch(articleIds, field.BackRelation.ContentId, field.Id, field.BackRelation.Name, m2oDisplayFieldName);
-                    foreach (var val in m2oValues)
+                    var m2ODisplayFieldName = ArticleService.GetTitleName(field.BackRelation.ContentId);
+                    var m2OValues = ArticleService.GetM2OValuesBatch(articleIds, field.BackRelation.ContentId, field.Id, field.BackRelation.Name, m2ODisplayFieldName);
+                    foreach (var val in m2OValues)
                     {
-                        m2oFieldValues.Add(val.Key, val.Value);
+                        m2OFieldValues.Add(val.Key, val.Value);
                     }
                 }
 
-                foreach (var field in m2mFields)
+                foreach (var field in m2MFields)
                 {
-                    var m2mDisplayFieldName = ArticleService.GetTitleName(field.RelateToContentId.Value);
-                    var m2mValues = ArticleService.GetM2MValuesBatch(articleIds, field.LinkId.Value, m2mDisplayFieldName, field.RelateToContentId.Value);
-                    foreach (var val in m2mValues)
+                    var m2MDisplayFieldName = ArticleService.GetTitleName(field.RelateToContentId.Value);
+                    var m2MValues = ArticleService.GetM2MValuesBatch(articleIds, field.LinkId.Value, m2MDisplayFieldName, field.RelateToContentId.Value);
+                    foreach (var val in m2MValues)
                     {
-                        m2mFieldValues.Add(val.Key, val.Value);
+                        m2MFieldValues.Add(val.Key, val.Value);
                     }
                 }
 
-                var resultValues = m2mFieldValues.Union(m2oFieldValues).ToDictionary(k => k.Key, v => v.Value);
+                var resultValues = m2MFieldValues.Union(m2OFieldValues).ToDictionary(k => k.Key, v => v.Value);
 
                 foreach (var row in rows)
                 {
@@ -98,18 +97,18 @@ namespace Quantumart.QP8.BLL.Helpers
 
             if (lockedBy == QPContext.CurrentUserId)
             {
-                icon = LOCKED_BY_YOU_ICON;
+                icon = LockedByYouIcon;
                 toolTip = SiteStrings.Tooltip_LockedByYou;
             }
             else if (lockedBy.HasValue)
             {
-                icon = LOCKED_NOT_BY_YOU_ICON;
+                icon = LockedNotByYouIcon;
                 var lockerDisplayName = row.Field<string>(FieldName.LOCKER_FIRST_NAME) + " " + row.Field<string>(FieldName.LOCKER_LAST_NAME);
                 toolTip = string.Format(SiteStrings.Tooltip_LockedByUser, lockerDisplayName);
             }
             else
             {
-                icon = EMPTY_ICON;
+                icon = EmptyIcon;
                 toolTip = string.Empty;
             }
 
@@ -123,12 +122,12 @@ namespace Quantumart.QP8.BLL.Helpers
             string icon, toolTip;
             if (splitted.HasValue && splitted.Value)
             {
-                icon = IS_SPLITED_ICON;
+                icon = IsSplitedIcon;
                 toolTip = ArticleStrings.IsSplitedTooltip;
             }
             else
             {
-                icon = EMPTY_ICON;
+                icon = EmptyIcon;
                 toolTip = string.Empty;
             }
             newRow.Add(FieldName.SPLITTED_ICON, icon);
@@ -141,12 +140,12 @@ namespace Quantumart.QP8.BLL.Helpers
             string icon, toolTip;
             if (scheduled.HasValue && scheduled.Value)
             {
-                icon = IS_SCHEDULED_ICON;
+                icon = IsScheduledIcon;
                 toolTip = ArticleStrings.IsScheduledTooltip;
             }
             else
             {
-                icon = EMPTY_ICON;
+                icon = EmptyIcon;
                 toolTip = string.Empty;
             }
             newRow.Add(FieldName.SCHEDULED_ICON, icon);
@@ -159,12 +158,12 @@ namespace Quantumart.QP8.BLL.Helpers
             string icon, toolTip;
             if (visible.HasValue && visible.Value)
             {
-                icon = EMPTY_ICON;
+                icon = EmptyIcon;
                 toolTip = string.Empty;
             }
             else
             {
-                icon = IS_INVISIBLE_ICON;
+                icon = IsInvisibleIcon;
                 toolTip = ArticleStrings.IsInvisibleTooltip;
             }
             newRow.Add(FieldName.VISIBLE_ICON, icon);
@@ -251,11 +250,11 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 if (field.ExactType == FieldExactTypes.M2MRelation)
                 {
-                    var result = new List<string>();
+                    List<string> result;
                     if (fieldValues.TryGetValue(articleId + "_" + field.LinkId.Value, out result))
                     {
-                        bool addDots;
-                        if (addDots = result.Count() - 1 > Default.MaxViewInListArticleNumber)
+                        var addDots = result.Count - 1 > Default.MaxViewInListArticleNumber;
+                        if (addDots)
                         {
                             result.RemoveAt(Default.MaxViewInListArticleNumber);
                         }
@@ -263,7 +262,10 @@ namespace Quantumart.QP8.BLL.Helpers
                         fieldFormattedValue = string.Join(", ", result);
 
                         if (addDots)
+                        {
                             fieldFormattedValue += "...";
+                        }
+
                         fieldFormattedValue = Cleaner.RemoveAllHtmlTagsAndSpaces(Converter.ToString(fieldFormattedValue));
                     }
                     else
@@ -272,11 +274,11 @@ namespace Quantumart.QP8.BLL.Helpers
 
                 else if (fieldTypeName == FieldTypeName.M2ORelation)
                 {
-                    var result = new List<string>();
+                    List<string> result;
                     if (fieldValues.TryGetValue(articleId + "_" + field.Id, out result))
                     {
-                        bool addDots;
-                        if (addDots = result.Count() - 1 > Default.MaxViewInListArticleNumber)
+                        var addDots = result.Count() - 1 > Default.MaxViewInListArticleNumber;
+                        if (addDots)
                         {
                             result.RemoveAt(Default.MaxViewInListArticleNumber);
                         }
@@ -284,13 +286,17 @@ namespace Quantumart.QP8.BLL.Helpers
                         fieldFormattedValue = string.Join(", ", result);
 
                         if (addDots)
+                        {
                             fieldFormattedValue += "...";
+                        }
+
                         fieldFormattedValue = Cleaner.RemoveAllHtmlTagsAndSpaces(Converter.ToString(fieldFormattedValue));
                     }
                     else
+                    {
                         fieldFormattedValue = "";
+                    }
                 }
-
                 else
                 {
                     fieldFormattedValue = Cleaner.RemoveAllHtmlTagsAndSpaces(Converter.ToString(sourceValue));
@@ -311,6 +317,5 @@ namespace Quantumart.QP8.BLL.Helpers
             var sourceValue = sourceRecord[sourceName];
             return sourceValue;
         }
-
     }
 }
