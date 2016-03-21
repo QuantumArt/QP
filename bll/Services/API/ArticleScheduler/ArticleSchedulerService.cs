@@ -136,7 +136,7 @@ namespace Quantumart.QP8.BLL.Services.ArticleScheduler
 					{
 						article = ArticleRepository.GetById(schedule.ArticleId);
 						schedule.Article = article;
-						if (article != null && article.Delayed && article.Splitted)
+						if (article != null && article.Delayed)
 						{
 							QPContext.EFContext.MergeArticle(schedule.ArticleId);
 						}

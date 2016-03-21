@@ -248,3 +248,6 @@ _Pvt_Extensions
 !siteMvc/ToCopy/bin/*.pdb
 !bll/Services/MultistepActions/Publish/
 !binaries/*.pdb
+
+package/pack/qp8release
+

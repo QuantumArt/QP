@@ -38,11 +38,6 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             article.LoadLockedByUser();
-            if (!article.Splitted)
-            {
-                article.CancelSplit = false;
-            }
-
             return article;
         }
 

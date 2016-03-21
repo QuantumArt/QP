@@ -385,23 +385,23 @@ namespace Quantumart.QP8.DAL
         {
             var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
             using (var cmd = SqlCommandFactory.Create(string.Format(@"
-					declare @ids2 table (id numeric primary key)
-					insert into @ids2
-					select id from {0}
+                    declare @ids2 table (id numeric primary key)
+                    insert into @ids2
+                    select id from {0}
 
-					declare @statusTypeId numeric
-					select @statusTypeId = status_type_id from status_type where status_type_name = 'Published' and site_id in (select site_id from content c inner join content_item ci with(nolock) on c.content_id = ci.content_id inner join @ids2 i on i.id = ci.content_item_id )
+                    declare @statusTypeId numeric
+                    select @statusTypeId = status_type_id from status_type where status_type_name = 'Published' and site_id in (select site_id from content c inner join content_item ci with(nolock) on c.content_id = ci.content_id inner join @ids2 i on i.id = ci.content_item_id )
 
-					update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 0;
-					update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId, schedule_new_version_publication = 1 where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 1;
-					delete i from @ids2 i inner join content_item ci with(nolock) on ci.content_item_id = i.id where ci.splitted = 0
-					declare @id numeric
-					while exists (select id from @ids2)
-					begin
-						select @id = id from @ids2
-						exec qp_merge_article @id, @userId
-						delete from @ids2 where id = @id
-					end", source), connection
+                    update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 0;
+                    update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId, schedule_new_version_publication = 1 where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 1;
+                    delete i from @ids2 i inner join content_item ci with(nolock) on ci.content_item_id = i.id where ci.splitted = 0 and ci.schedule_new_version_publication = 0
+                    declare @id numeric
+                    while exists (select id from @ids2)
+                    begin
+                        select @id = id from @ids2
+                        exec qp_merge_article @id, @userId
+                        delete from @ids2 where id = @id
+                    end", source), connection
                 ))
             {
                 cmd.CommandType = CommandType.Text;
@@ -843,21 +843,21 @@ namespace Quantumart.QP8.DAL
         public static bool CanUnlockItems(SqlConnection connection, int userId)
         {
             var sql = @"
-				WITH
-				  cte (group_id, parent_group_id, can_unlock_items)
-				  AS
-				  (
-					SELECT ug.group_id, ug.parent_group_id, ug.can_unlock_items
-					FROM user_group_tree ug
-					inner join USER_GROUP_BIND ugb on ug.GROUP_ID = ugb.GROUP_ID
-					WHERE ugb.USER_ID = @userId
-					UNION ALL
-					SELECT ug2.group_id, ug2.parent_group_id, ug2.can_unlock_items
-					FROM user_group_tree ug2
-					INNER JOIN cte r ON ug2.group_id = r.parent_group_id
-				  )
-					select count(*) from cte where can_unlock_items = 1
-			";
+                WITH
+                  cte (group_id, parent_group_id, can_unlock_items)
+                  AS
+                  (
+                    SELECT ug.group_id, ug.parent_group_id, ug.can_unlock_items
+                    FROM user_group_tree ug
+                    inner join USER_GROUP_BIND ugb on ug.GROUP_ID = ugb.GROUP_ID
+                    WHERE ugb.USER_ID = @userId
+                    UNION ALL
+                    SELECT ug2.group_id, ug2.parent_group_id, ug2.can_unlock_items
+                    FROM user_group_tree ug2
+                    INNER JOIN cte r ON ug2.group_id = r.parent_group_id
+                  )
+                    select count(*) from cte where can_unlock_items = 1
+            ";
             using (var cmd = SqlCommandFactory.Create(sql, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -1456,15 +1456,15 @@ namespace Quantumart.QP8.DAL
                 throw new ArgumentException("viewName");
 
             var sql = @"
-			   WITH CI(COLUMN_NAME, DATA_TYPE, NUMERIC_SCALE, CHARACTER_MAXIMUM_LENGTH, TABLE_NAME) AS
-			   (
-			     select CI.COLUMN_NAME, CI.DATA_TYPE, CI.NUMERIC_SCALE, Ci.CHARACTER_MAXIMUM_LENGTH, VU.TABLE_NAME from INFORMATION_SCHEMA.COLUMNS CI
-			     LEFT JOIN INFORMATION_SCHEMA.VIEW_COLUMN_USAGE VU ON VU.COLUMN_NAME = CI.COLUMN_NAME AND VU.VIEW_NAME = @view_name
-			     where CI.TABLE_NAME = @view_name
-			   )
-			   SELECT CI.COLUMN_NAME as ColumnName, CI.DATA_TYPE As DbType, CI.NUMERIC_SCALE as NumericScale, CI.CHARACTER_MAXIMUM_LENGTH as CharMaxLength, CI.TABLE_NAME As TableName, COALESCE(CI2.DATA_TYPE, CI.DATA_TYPE) AS TableDbType FROM CI
-			   LEFT JOIN INFORMATION_SCHEMA.COLUMNS CI2 ON CI2.COLUMN_NAME = CI.COLUMN_NAME AND CI2.TABLE_NAME = CI.TABLE_NAME
-			";
+               WITH CI(COLUMN_NAME, DATA_TYPE, NUMERIC_SCALE, CHARACTER_MAXIMUM_LENGTH, TABLE_NAME) AS
+               (
+                 select CI.COLUMN_NAME, CI.DATA_TYPE, CI.NUMERIC_SCALE, Ci.CHARACTER_MAXIMUM_LENGTH, VU.TABLE_NAME from INFORMATION_SCHEMA.COLUMNS CI
+                 LEFT JOIN INFORMATION_SCHEMA.VIEW_COLUMN_USAGE VU ON VU.COLUMN_NAME = CI.COLUMN_NAME AND VU.VIEW_NAME = @view_name
+                 where CI.TABLE_NAME = @view_name
+               )
+               SELECT CI.COLUMN_NAME as ColumnName, CI.DATA_TYPE As DbType, CI.NUMERIC_SCALE as NumericScale, CI.CHARACTER_MAXIMUM_LENGTH as CharMaxLength, CI.TABLE_NAME As TableName, COALESCE(CI2.DATA_TYPE, CI.DATA_TYPE) AS TableDbType FROM CI
+               LEFT JOIN INFORMATION_SCHEMA.COLUMNS CI2 ON CI2.COLUMN_NAME = CI.COLUMN_NAME AND CI2.TABLE_NAME = CI.TABLE_NAME
+            ";
 
             using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
             {
@@ -1695,10 +1695,10 @@ namespace Quantumart.QP8.DAL
                 sqlConnection,
                 EntityTypeCode.Article,
                 @"[CONTENT_ITEM_ID] as ID
-	                                  ,it.[content_id] as ParentId
-	                                  ,dbo.qp_get_article_title_func(it.[Content_Item_Id],it.[content_id]) as Title
-	                                  ,con.CONTENT_NAME as ContentName
-	                                  ,site.SITE_NAME as SiteName
+                                      ,it.[content_id] as ParentId
+                                      ,dbo.qp_get_article_title_func(it.[Content_Item_Id],it.[content_id]) as Title
+                                      ,con.CONTENT_NAME as ContentName
+                                      ,site.SITE_NAME as SiteName
                                       ,typ.STATUS_TYPE_NAME as StatusName
                                       ,it.[CREATED] as Created
                                       ,it.[MODIFIED] as Modified
@@ -1734,14 +1734,14 @@ namespace Quantumart.QP8.DAL
         {
             var query =
                 @"select count(*) from content_item_workflow ciw with(nolock)
-			INNER JOIN content_item ci with(nolock) ON ci.content_item_id = ciw.content_item_id
-			INNER JOIN full_workflow_rules wr with(nolock) on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
-			INNER JOIN full_workflow_rules wr2 with(nolock) on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
-			WHERE (wr2.user_id = @userId OR wr2.group_id IN (SELECT group_id FROM user_group_bind with(nolock) WHERE user_id = @userId))
-			AND (
-				ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock))
-				OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = @userId)
-			)";
+            INNER JOIN content_item ci with(nolock) ON ci.content_item_id = ciw.content_item_id
+            INNER JOIN full_workflow_rules wr with(nolock) on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
+            INNER JOIN full_workflow_rules wr2 with(nolock) on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
+            WHERE (wr2.user_id = @userId OR wr2.group_id IN (SELECT group_id FROM user_group_bind with(nolock) WHERE user_id = @userId))
+            AND (
+                ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock))
+                OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = @userId)
+            )";
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -1757,14 +1757,14 @@ namespace Quantumart.QP8.DAL
                 sqlConnection,
                 EntityTypeCode.Article,
                 @"ci.content_item_id as ID
-	                                ,ci.content_id as ParentId
-     	                            ,dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) as Title
-     	                            ,s.site_name as SiteName
-     	                            ,c.CONTENT_NAME as ContentName
-     	                            ,ci.MODIFIED as Modified
-		                            ,ci.CREATED as Created
-		                            ,typ.STATUS_TYPE_NAME as StatusName
-		                            ,us.LOGIN as LastModifiedByUser
+                                    ,ci.content_id as ParentId
+                                    ,dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) as Title
+                                    ,s.site_name as SiteName
+                                    ,c.CONTENT_NAME as ContentName
+                                    ,ci.MODIFIED as Modified
+                                    ,ci.CREATED as Created
+                                    ,typ.STATUS_TYPE_NAME as StatusName
+                                    ,us.LOGIN as LastModifiedByUser
                                     ,ci.PERMANENT_LOCK as IsPermanentLock",
 
                 @"content_item_workflow ciw with(nolock)
@@ -1778,11 +1778,11 @@ namespace Quantumart.QP8.DAL
 
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "SiteName ASC, ID ASC",
                 string.Format(@"(wr2.user_id = {0}
-	                                        OR wr2.group_id IN (SELECT group_id FROM user_group_bind with(nolock) WHERE user_id={0})
+                                            OR wr2.group_id IN (SELECT group_id FROM user_group_bind with(nolock) WHERE user_id={0})
                                         )
                                         AND (
-	                                        ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock))
-	                                        OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = {0})
+                                            ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock))
+                                            OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = {0})
                                         )", userId),
                 startRow,
                 pageSize,
@@ -3590,7 +3590,7 @@ namespace Quantumart.QP8.DAL
                                       ,G.GROUP_NAME AS [GroupName]
                                       ,L.PERMISSION_LEVEL_NAME AS [LevelName]
                                       ,SA.[propagate_to_contents] as [PropagateToItems]
-									  ,cast(0 as bit) as [Hide]
+                                      ,cast(0 as bit) as [Hide]
                                       ,SA.[CREATED]
                                       ,SA.[MODIFIED]
                                       ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
@@ -3712,20 +3712,20 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetEntityTypePermissionPage(SqlConnection sqlConnection, int entityTypeId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var selectBlock = @"SA.ENTITY_TYPE_ACCESS_ID AS [ID]
-									,U.[LOGIN] AS [UserLogin]
-									,G.GROUP_NAME AS [GroupName]
-									,L.PERMISSION_LEVEL_NAME AS [LevelName]
-									,cast(0 as numeric(18, 0)) as [PropagateToItems]
+                                    ,U.[LOGIN] AS [UserLogin]
+                                    ,G.GROUP_NAME AS [GroupName]
+                                    ,L.PERMISSION_LEVEL_NAME AS [LevelName]
+                                    ,cast(0 as numeric(18, 0)) as [PropagateToItems]
                                     ,cast(0 as bit) as [Hide]
-									,SA.[CREATED]
-									,SA.[MODIFIED]
-									,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-									,U2.[LOGIN] AS [LastModifiedByUser]";
+                                    ,SA.[CREATED]
+                                    ,SA.[MODIFIED]
+                                    ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
+                                    ,U2.[LOGIN] AS [LastModifiedByUser]";
             var fromBlock = @"[ENTITY_TYPE_ACCESS] SA
-									LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
-									LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
-									JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-									JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+                                    LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
+                                    JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
+                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
 
             var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : "") + "[ENTITY_TYPE_ID] = " + entityTypeId;
 
@@ -3737,20 +3737,20 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetActionPermissionPage(SqlConnection sqlConnection, int actionId, string orderBy, string filter, int startRow, int pageSize, out int totalRecords)
         {
             var selectBlock = @"SA.ACTION_ACCESS_ID AS [ID]
-									,U.[LOGIN] AS [UserLogin]
-									,G.GROUP_NAME AS [GroupName]
-									,L.PERMISSION_LEVEL_NAME AS [LevelName]
-									,cast(0 as numeric(18, 0)) as [PropagateToItems]
-									,cast(0 as bit) as [Hide]
-									,SA.[CREATED]
-									,SA.[MODIFIED]
-									,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
-									,U2.[LOGIN] AS [LastModifiedByUser]";
+                                    ,U.[LOGIN] AS [UserLogin]
+                                    ,G.GROUP_NAME AS [GroupName]
+                                    ,L.PERMISSION_LEVEL_NAME AS [LevelName]
+                                    ,cast(0 as numeric(18, 0)) as [PropagateToItems]
+                                    ,cast(0 as bit) as [Hide]
+                                    ,SA.[CREATED]
+                                    ,SA.[MODIFIED]
+                                    ,SA.[LAST_MODIFIED_BY] AS [LastModifiedByUserId]
+                                    ,U2.[LOGIN] AS [LastModifiedByUser]";
             var fromBlock = @"[ACTION_ACCESS] SA
-									LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
-									LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
-									JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
-									JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
+                                    LEFT JOIN [USERS] U ON U.[USER_ID] = SA.[USER_ID]
+                                    LEFT JOIN USER_GROUP G ON G.GROUP_ID = SA.GROUP_ID
+                                    JOIN PERMISSION_LEVEL L ON L.PERMISSION_LEVEL_ID = SA.PERMISSION_LEVEL_ID
+                                    JOIN [USERS] U2 ON U2.[USER_ID] = SA.LAST_MODIFIED_BY";
 
             var localFilter = (!string.IsNullOrWhiteSpace(filter) ? filter + " AND " : "") + "[ACTION_ID] = " + actionId;
 
@@ -3819,7 +3819,7 @@ namespace Quantumart.QP8.DAL
             var fromBlock = @"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,
                                 CAST(ISNULL(P2.[PROPAGATE_TO_ITEMS], 0) AS BIT) AS PropagateToItems,
-								CAST(ISNULL(P2.[HIDE], 0) AS BIT) AS Hide,
+                                CAST(ISNULL(P2.[HIDE], 0) AS BIT) AS Hide,
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
@@ -3849,7 +3849,7 @@ namespace Quantumart.QP8.DAL
             var fromBlock = @"(select C.CONTENT_ID AS ID, C.CONTENT_NAME AS TITLE, L.PERMISSION_LEVEL_NAME as LevelName,
                                 CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,
                                 CAST(ISNULL(P2.[PROPAGATE_TO_ITEMS], 0) AS BIT) AS PropagateToItems,
-								CAST(ISNULL(P2.[HIDE], 0) AS BIT) AS Hide,
+                                CAST(ISNULL(P2.[HIDE], 0) AS BIT) AS Hide,
                                 L.PERMISSION_LEVEL_ID as LevelId
                                 from
                                 (<$_security_insert_$>) P1
@@ -4185,8 +4185,8 @@ namespace Quantumart.QP8.DAL
         public static bool IsSiteDotNeByObjectFormatId(SqlConnection sqlConnection, int objectFormatId)
         {
             var query = @"select s.script_language from OBJECT_FORMAT obf inner join [OBJECT] o on obf.[OBJECT_ID] = o.[OBJECT_ID]
-							inner join PAGE_TEMPLATE pt on o.PAGE_TEMPLATE_ID = pt.PAGE_TEMPLATE_ID inner join [SITE] s on pt.SITE_ID =  s.SITE_ID
-							where obf.OBJECT_FORMAT_ID = @in_object_format_id";
+                            inner join PAGE_TEMPLATE pt on o.PAGE_TEMPLATE_ID = pt.PAGE_TEMPLATE_ID inner join [SITE] s on pt.SITE_ID =  s.SITE_ID
+                            where obf.OBJECT_FORMAT_ID = @in_object_format_id";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -4199,11 +4199,11 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetEntityTypePermissionsForGroup(SqlConnection sqlConnection, int groupId, int? entityId = null)
         {
             var fromBlock = @"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit from
-								 (<$_security_insert_$>) P1
-								 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
-								 RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
-								 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-								 WHERE T.[ACTION_PERMISSION_ENABLE] = 1 {1}) AS TR";
+                                 (<$_security_insert_$>) P1
+                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
+                                 RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
+                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
+                                 WHERE T.[ACTION_PERMISSION_ENABLE] = 1 {1}) AS TR";
             fromBlock = string.Format(fromBlock, groupId, entityId.HasValue ? string.Format("AND T.ID = {0}", entityId.Value) : "");
 
             int totalRecords;
@@ -4214,12 +4214,12 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetEntityTypePermissionsForUser(SqlConnection sqlConnection, int userId, int? entityId = null)
         {
             var fromBlock = @"(select T.ID, T.NAME, L.PERMISSION_LEVEL_NAME, CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit, L.PERMISSION_LEVEL
-								 FROM
-								 (<$_security_insert_$>) P1
-								 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
-								 RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
-								 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-								 WHERE T.[ACTION_PERMISSION_ENABLE] = 1 {1}) AS TR";
+                                 FROM
+                                 (<$_security_insert_$>) P1
+                                 LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
+                                 RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
+                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
+                                 WHERE T.[ACTION_PERMISSION_ENABLE] = 1 {1}) AS TR";
             fromBlock = string.Format(fromBlock, userId, entityId.HasValue ? string.Format("AND T.ID = {0}", entityId.Value) : "");
 
             int totalRecords;
@@ -4230,11 +4230,11 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetActionPermissionsForGroup(SqlConnection sqlConnection, int groupId, int entityTypeId, int? actionId)
         {
             var fromBlock = @"(select T.ID, T.NAME, COALESCE(L.PERMISSION_LEVEL_NAME, {2}) AS PERMISSION_LEVEL_NAME, CAST((case when P2.GROUP_ID IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit from
-								 (<$_security_insert_$>) P1
-								 LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
-								 RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
-								 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-								 WHERE T.ENTITY_TYPE_ID = {1} {3} AND T.[TYPE_ID] != dbo.qp_action_type_id('refresh')) AS TR";
+                                 (<$_security_insert_$>) P1
+                                 LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.GROUP_ID = {0}
+                                 RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
+                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
+                                 WHERE T.ENTITY_TYPE_ID = {1} {3} AND T.[TYPE_ID] != dbo.qp_action_type_id('refresh')) AS TR";
 
             var entityPermissionLevelName = "NULL";
             var entityPermission = GetEntityTypePermissionsForGroup(sqlConnection, groupId, entityTypeId).FirstOrDefault();
@@ -4252,12 +4252,12 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetActionPermissionsForUser(SqlConnection sqlConnection, int userId, int entityTypeId, int? actionId)
         {
             var fromBlock = @"(select T.ID, T.NAME, COALESCE(L.PERMISSION_LEVEL_NAME, {2}) AS PERMISSION_LEVEL_NAME, CAST((case when P2.[USER_ID] IS NOT NULL THEN 1 ELSE 0 END) AS BIT) AS IsExplicit,  COALESCE(L.PERMISSION_LEVEL, {4}) AS PERMISSION_LEVEL
-								 FROM
-								 (<$_security_insert_$>) P1
-								 LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
-								 RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
-								 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
-								 WHERE T.ENTITY_TYPE_ID = {1} {3} AND T.[TYPE_ID] != dbo.qp_action_type_id('refresh')) AS TR";
+                                 FROM
+                                 (<$_security_insert_$>) P1
+                                 LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.[USER_ID] = {0}
+                                 RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
+                                 LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
+                                 WHERE T.ENTITY_TYPE_ID = {1} {3} AND T.[TYPE_ID] != dbo.qp_action_type_id('refresh')) AS TR";
 
             var entityPermissionLevelName = "NULL";
             var entityPermissionLevel = "NULL";
@@ -4313,22 +4313,22 @@ namespace Quantumart.QP8.DAL
         public static void UpdateOrInsertSiteVeCommandValue(SqlConnection sqlConnection, int siteId, int commandId, bool value)
         {
             var query = @"begin tran
-							if not exists (select * from VE_COMMAND_SITE_BIND where [COMMAND_ID] = @cId and [SITE_ID] = @sId)
-							begin
-									INSERT INTO VE_COMMAND_SITE_BIND
-									([COMMAND_ID]
-									   ,[SITE_ID]
-									   ,[ON])
-								 VALUES
-									   (@cId
-									   ,@sId
-									   ,@val)
-							end
-							else
-							begin
-									update VE_COMMAND_SITE_BIND set [ON] = @val where [COMMAND_ID] = @cId and [SITE_ID] = @sId
-							end
-							commit";
+                            if not exists (select * from VE_COMMAND_SITE_BIND where [COMMAND_ID] = @cId and [SITE_ID] = @sId)
+                            begin
+                                    INSERT INTO VE_COMMAND_SITE_BIND
+                                    ([COMMAND_ID]
+                                       ,[SITE_ID]
+                                       ,[ON])
+                                 VALUES
+                                       (@cId
+                                       ,@sId
+                                       ,@val)
+                            end
+                            else
+                            begin
+                                    update VE_COMMAND_SITE_BIND set [ON] = @val where [COMMAND_ID] = @cId and [SITE_ID] = @sId
+                            end
+                            commit";
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", commandId);
@@ -4341,22 +4341,22 @@ namespace Quantumart.QP8.DAL
         public static void UpdateOrInsertSiteVeStyleValue(SqlConnection sqlConnection, int siteId, int styleId, bool value)
         {
             var query = @"begin tran
-							if not exists (select * from VE_STYLE_SITE_BIND where [STYLE_ID] = @cId and [SITE_ID] = @sId)
-							begin
-									INSERT INTO VE_STYLE_SITE_BIND
-									([STYLE_ID]
-									   ,[SITE_ID]
-									   ,[ON])
-								 VALUES
-									   (@cId
-									   ,@sId
-									   ,@val)
-							end
-							else
-							begin
-									update VE_STYLE_SITE_BIND set [ON] = @val where [STYLE_ID] = @cId and [SITE_ID] = @sId
-							end
-							commit";
+                            if not exists (select * from VE_STYLE_SITE_BIND where [STYLE_ID] = @cId and [SITE_ID] = @sId)
+                            begin
+                                    INSERT INTO VE_STYLE_SITE_BIND
+                                    ([STYLE_ID]
+                                       ,[SITE_ID]
+                                       ,[ON])
+                                 VALUES
+                                       (@cId
+                                       ,@sId
+                                       ,@val)
+                            end
+                            else
+                            begin
+                                    update VE_STYLE_SITE_BIND set [ON] = @val where [STYLE_ID] = @cId and [SITE_ID] = @sId
+                            end
+                            commit";
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", styleId);
@@ -4409,22 +4409,22 @@ namespace Quantumart.QP8.DAL
         public static void UpdateOrInsertFieldVeCommandValue(SqlConnection sqlConnection, int fieldId, int commandId, bool value)
         {
             var query = @"begin tran
-							if not exists (select * from VE_COMMAND_FIELD_BIND where [COMMAND_ID] = @cId and [FIELD_ID] = @fId)
-							begin
-									INSERT INTO VE_COMMAND_FIELD_BIND
-									([COMMAND_ID]
-									   ,[FIELD_ID]
-									   ,[ON])
-								 VALUES
-									   (@cId
-									   ,@fId
-									   ,@val)
-							end
-							else
-							begin
-									update VE_COMMAND_FIELD_BIND set [ON] = @val where [COMMAND_ID] = @cId and [FIELD_ID] = @fId
-							end
-							commit";
+                            if not exists (select * from VE_COMMAND_FIELD_BIND where [COMMAND_ID] = @cId and [FIELD_ID] = @fId)
+                            begin
+                                    INSERT INTO VE_COMMAND_FIELD_BIND
+                                    ([COMMAND_ID]
+                                       ,[FIELD_ID]
+                                       ,[ON])
+                                 VALUES
+                                       (@cId
+                                       ,@fId
+                                       ,@val)
+                            end
+                            else
+                            begin
+                                    update VE_COMMAND_FIELD_BIND set [ON] = @val where [COMMAND_ID] = @cId and [FIELD_ID] = @fId
+                            end
+                            commit";
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@cId", commandId);
@@ -4550,22 +4550,22 @@ namespace Quantumart.QP8.DAL
         public static void UpdateOrInsertFieldVeStyleValue(SqlConnection sqlConnection, int fieldId, int styleId, bool value)
         {
             var query = @"begin tran
-							if not exists (select * from VE_STYLE_FIELD_BIND where [STYLE_ID] = @styleId and [FIELD_ID] = @fieldId)
-							begin
-									INSERT INTO VE_STYLE_FIELD_BIND
-									([STYLE_ID]
-									   ,[FIELD_ID]
-									   ,[ON])
-								 VALUES
-									   (@styleId
-									   ,@fieldId
-									   ,@val)
-							end
-							else
-							begin
-									update VE_STYLE_FIELD_BIND set [ON] = @val where [STYLE_ID] = @styleId and [FIELD_ID] = @fieldId
-							end
-							commit";
+                            if not exists (select * from VE_STYLE_FIELD_BIND where [STYLE_ID] = @styleId and [FIELD_ID] = @fieldId)
+                            begin
+                                    INSERT INTO VE_STYLE_FIELD_BIND
+                                    ([STYLE_ID]
+                                       ,[FIELD_ID]
+                                       ,[ON])
+                                 VALUES
+                                       (@styleId
+                                       ,@fieldId
+                                       ,@val)
+                            end
+                            else
+                            begin
+                                    update VE_STYLE_FIELD_BIND set [ON] = @val where [STYLE_ID] = @styleId and [FIELD_ID] = @fieldId
+                            end
+                            commit";
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.Parameters.AddWithValue("@styleId", styleId);
@@ -4792,23 +4792,23 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<decimal> GetAggregatedArticlesIDs(SqlConnection connection, int articleId, int[] classfierFields, int[] types)
         {
             var query = @"
-			declare @attrIds table (attribute_id numeric primary key, content_id numeric, attribute_name nvarchar(255))
-			declare @attribute_id numeric, @content_id numeric, @attribute_name nvarchar(255)
+            declare @attrIds table (attribute_id numeric primary key, content_id numeric, attribute_name nvarchar(255))
+            declare @attribute_id numeric, @content_id numeric, @attribute_name nvarchar(255)
 
-			insert into @attrIds(attribute_id, content_id, attribute_name)
-			select attribute_id, content_id, attribute_name from content_attribute where classifier_attribute_id in (select id from @ids) and content_id in (select id from @cids)
-			declare @sql nvarchar(max)
-			set @sql = ''
-			while exists(select * from @attrIds)
-			begin
-				select @attribute_id = attribute_id, @content_id = content_id, @attribute_name = attribute_name from @attrIds
-				print @attribute_id
-				if @sql <> ''
-					set @sql = @sql + ' union all '
-				set @sql = @sql + 'select content_item_id from content_' + cast(@content_id as nvarchar(30)) + '_united where [' + @attribute_name + '] = @article_id'
-				delete from @attrIds where attribute_id = @attribute_id
-			end
-			exec sp_executesql @sql, N'@article_id numeric', @article_id = @article_id";
+            insert into @attrIds(attribute_id, content_id, attribute_name)
+            select attribute_id, content_id, attribute_name from content_attribute where classifier_attribute_id in (select id from @ids) and content_id in (select id from @cids)
+            declare @sql nvarchar(max)
+            set @sql = ''
+            while exists(select * from @attrIds)
+            begin
+                select @attribute_id = attribute_id, @content_id = content_id, @attribute_name = attribute_name from @attrIds
+                print @attribute_id
+                if @sql <> ''
+                    set @sql = @sql + ' union all '
+                set @sql = @sql + 'select content_item_id from content_' + cast(@content_id as nvarchar(30)) + '_united where [' + @attribute_name + '] = @article_id'
+                delete from @attrIds where attribute_id = @attribute_id
+            end
+            exec sp_executesql @sql, N'@article_id numeric', @article_id = @article_id";
 
             var result = new List<decimal>();
             using (var cmd = SqlCommandFactory.Create(query, connection))
@@ -4870,8 +4870,8 @@ namespace Quantumart.QP8.DAL
         public static void RemoveUnionAttrsByUnionContent(SqlConnection connection, int contentId)
         {
             var query = @"delete UNION_ATTRS from UNION_ATTRS UA
-							JOIN CONTENT_ATTRIBUTE CA ON UA.virtual_attr_id = CA.ATTRIBUTE_ID
-							WHERE CA.CONTENT_ID = @content_id";
+                            JOIN CONTENT_ATTRIBUTE CA ON UA.virtual_attr_id = CA.ATTRIBUTE_ID
+                            WHERE CA.CONTENT_ID = @content_id";
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5077,8 +5077,8 @@ namespace Quantumart.QP8.DAL
             if (enumValues.Any())
             {
                 var query = string.Format(@"update content_data set DATA = @def_value, MODIFIED = GETDATE()
-					where ATTRIBUTE_ID = @field_id
-					and DATA not in ({0}) and DATA IS NOT NULL",
+                    where ATTRIBUTE_ID = @field_id
+                    and DATA not in ({0}) and DATA IS NOT NULL",
                     string.Join(",", enumValues.Select(v => string.Format("'{0}'", Cleaner.ToSafeSqlString(v))))
                 );
                 using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
@@ -5182,7 +5182,7 @@ namespace Quantumart.QP8.DAL
         public static string GetSiteScriptLanguageByPageId(SqlConnection sqlConnection, int pageId)
         {
             var sql = @"SELECT s.script_language from PAGE p inner join page_template t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID inner join [SITE] s on t.SITE_ID = s.SITE_ID
-			where p.PAGE_ID = @pageId";
+            where p.PAGE_ID = @pageId";
             using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5195,7 +5195,7 @@ namespace Quantumart.QP8.DAL
         public static string GetSiteScriptLanguageByTemplateId(SqlConnection sqlConnection, int templateId)
         {
             var sql = @"SELECT s.script_language from page_template t inner join [SITE] s on t.SITE_ID = s.SITE_ID
-			where t.PAGE_TEMPLATE_ID = @templateId";
+            where t.PAGE_TEMPLATE_ID = @templateId";
             using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -5254,10 +5254,10 @@ namespace Quantumart.QP8.DAL
         {
             var query = @"select TOP 1 h.STATUS_HISTORY_ID as Id
                                             ,h.STATUS_HISTORY_DATE as ActionDate
-		                                    ,ISNULL(h1.DESCRIPTION, h.DESCRIPTION) as Comment
-		                                    ,t.STATUS_TYPE_NAME as StatusTypeName
-		                                    ,u.LOGIN as ActionMadeBy
-		                                    ,s.NAME as SystemStatusTypeName
+                                            ,ISNULL(h1.DESCRIPTION, h.DESCRIPTION) as Comment
+                                            ,t.STATUS_TYPE_NAME as StatusTypeName
+                                            ,u.LOGIN as ActionMadeBy
+                                            ,s.NAME as SystemStatusTypeName
                                     from CONTENT_ITEM_STATUS_HISTORY as h with (nolock)
                                     LEFT JOIN STATUS_TYPE as t with (nolock) on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
                                     LEFT JOIN USERS as u with (nolock) on u.USER_ID = h.USER_ID
@@ -5283,10 +5283,10 @@ namespace Quantumart.QP8.DAL
              EntityTypeCode.Article,
              @"h.STATUS_HISTORY_ID as ID
                                             ,h.STATUS_HISTORY_DATE as ActionDate
-		                                    ,ISNULL(h1.DESCRIPTION, h.DESCRIPTION) as Comment
-		                                    ,t.STATUS_TYPE_NAME as StatusTypeName
-		                                    ,u.LOGIN as ActionMadeBy
-		                                    ,s.NAME as SystemStatusTypeName",
+                                            ,ISNULL(h1.DESCRIPTION, h.DESCRIPTION) as Comment
+                                            ,t.STATUS_TYPE_NAME as StatusTypeName
+                                            ,u.LOGIN as ActionMadeBy
+                                            ,s.NAME as SystemStatusTypeName",
 
              string.Format(@"[dbo].[CONTENT_ITEM_STATUS_HISTORY] as h with (nolock)
                                     LEFT JOIN [dbo].[STATUS_TYPE] as t with (nolock) on t.STATUS_TYPE_ID = h.STATUS_TYPE_ID
@@ -5326,28 +5326,28 @@ namespace Quantumart.QP8.DAL
         public static int[] GetReferencedAggregatedContentIds(SqlConnection sqlConnection, int contentId, int[] articleIds)
         {
             var query = @"
-				DECLARE @query NVARCHAR(1000)
-				SET @query = ''
+                DECLARE @query NVARCHAR(1000)
+                SET @query = ''
 
-				SELECT
-					@query = @query + ATTRIBUTE_NAME + ','
-				FROM
-					CONTENT_ATTRIBUTE f
-					JOIN CONTENT c ON c.CONTENT_ID = f.CONTENT_ID
-				WHERE
-					c.CONTENT_ID = @contentId AND
-					IS_CLASSIFIER = 1
+                SELECT
+                    @query = @query + ATTRIBUTE_NAME + ','
+                FROM
+                    CONTENT_ATTRIBUTE f
+                    JOIN CONTENT c ON c.CONTENT_ID = f.CONTENT_ID
+                WHERE
+                    c.CONTENT_ID = @contentId AND
+                    IS_CLASSIFIER = 1
 
-				IF NOT @query = ''
-				BEGIN
-					SET @query =
-					'SELECT DISTINCT ' + SUBSTRING(@query, 1, LEN(@query) - 1) +
-					' FROM CONTENT_' + LTRIM(STR(@contentId))  +
-					' WHERE ARCHIVE = 0 AND ' + SUBSTRING(@query, 1, LEN(@query) - 1) + ' IS NOT NULL'
-					IF EXISTS (SELECT NULL FROM @articleIds)
-						SET @query = @query + ' AND CONTENT_ITEM_ID IN (SELECT Id FROM @articleIds)'
-					EXEC sp_executesql @query, N'@articleIds Ids READONLY', @articleIds
-				END";
+                IF NOT @query = ''
+                BEGIN
+                    SET @query =
+                    'SELECT DISTINCT ' + SUBSTRING(@query, 1, LEN(@query) - 1) +
+                    ' FROM CONTENT_' + LTRIM(STR(@contentId))  +
+                    ' WHERE ARCHIVE = 0 AND ' + SUBSTRING(@query, 1, LEN(@query) - 1) + ' IS NOT NULL'
+                    IF EXISTS (SELECT NULL FROM @articleIds)
+                        SET @query = @query + ' AND CONTENT_ITEM_ID IN (SELECT Id FROM @articleIds)'
+                    EXEC sp_executesql @query, N'@articleIds Ids READONLY', @articleIds
+                END";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -5375,14 +5375,14 @@ namespace Quantumart.QP8.DAL
         public static int[] GetReferencedAggregatedContentIds(SqlConnection sqlConnection, int contentId)
         {
             var query = @"
-				SELECT
-					af.CONTENT_ID
-				FROM
-					CONTENT_ATTRIBUTE cf
-					JOIN CONTENT_ATTRIBUTE af ON cf.ATTRIBUTE_ID = af.RELATED_ATTRIBUTE_ID
-				WHERE
-					cf.CONTENT_ID = @contentId AND
-					af.AGGREGATED = 1";
+                SELECT
+                    af.CONTENT_ID
+                FROM
+                    CONTENT_ATTRIBUTE cf
+                    JOIN CONTENT_ATTRIBUTE af ON cf.ATTRIBUTE_ID = af.RELATED_ATTRIBUTE_ID
+                WHERE
+                    cf.CONTENT_ID = @contentId AND
+                    af.AGGREGATED = 1";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -5429,30 +5429,30 @@ namespace Quantumart.QP8.DAL
         public static Dictionary<int, Dictionary<int, int>> GetAggregatedArticleIdsMap(SqlConnection sqlConnection, int contentId, int[] articleIds)
         {
             var query = @"
-				DECLARE @query NVARCHAR(MAX)
-				SET @query = ''
+                DECLARE @query NVARCHAR(MAX)
+                SET @query = ''
 
-				SELECT
-					@query = @query + '
-					SELECT
-						ids.Id [Id],' +
-						CONVERT(NVARCHAR(10), f.ATTRIBUTE_ID) +' [FieldId],
-						a.CONTENT_ITEM_ID [ExstensionId]
-					FROM
-						@ids ids
-						JOIN CONTENT_' + CONVERT(NVARCHAR(10), ef.CONTENT_ID) + ' a ON a.' + ef.ATTRIBUTE_NAME +' = ids.Id
-					UNION'
-				FROM
-					[CONTENT_ATTRIBUTE] f
-					JOIN [CONTENT_ATTRIBUTE] ef ON ef.CLASSIFIER_ATTRIBUTE_ID = f.ATTRIBUTE_ID
-				WHERE
-					f.CONTENT_ID = @contentId
+                SELECT
+                    @query = @query + '
+                    SELECT
+                        ids.Id [Id],' +
+                        CONVERT(NVARCHAR(10), f.ATTRIBUTE_ID) +' [FieldId],
+                        a.CONTENT_ITEM_ID [ExstensionId]
+                    FROM
+                        @ids ids
+                        JOIN CONTENT_' + CONVERT(NVARCHAR(10), ef.CONTENT_ID) + ' a ON a.' + ef.ATTRIBUTE_NAME +' = ids.Id
+                    UNION'
+                FROM
+                    [CONTENT_ATTRIBUTE] f
+                    JOIN [CONTENT_ATTRIBUTE] ef ON ef.CLASSIFIER_ATTRIBUTE_ID = f.ATTRIBUTE_ID
+                WHERE
+                    f.CONTENT_ID = @contentId
 
-				IF @query <> ''
-				BEGIN
-					SET @query = LEFT(@query, LEN(@query) - LEN('UNION'))
-					EXEC sp_executesql @query, N'@ids Ids READONLY', @ids
-				END";
+                IF @query <> ''
+                BEGIN
+                    SET @query = LEFT(@query, LEN(@query) - LEN('UNION'))
+                    EXEC sp_executesql @query, N'@ids Ids READONLY', @ids
+                END";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -5637,7 +5637,7 @@ namespace Quantumart.QP8.DAL
                 sqlConnection,
                 EntityTypeCode.Notification,
                 @" s.STATUS_TYPE_ID as Id, s.STATUS_TYPE_NAME as Name, s.DESCRIPTION as Description, s.[WEIGHT] as Weight,
-				s.MODIFIED as Modified, s.[CREATED] as Created, s.LAST_MODIFIED_BY as LastModifiedBy, s.BUILT_IN, u.[LOGIN] as LastModifiedByLogin ",
+                s.MODIFIED as Modified, s.[CREATED] as Created, s.LAST_MODIFIED_BY as LastModifiedBy, s.BUILT_IN, u.[LOGIN] as LastModifiedByLogin ",
                 @" [workflow_rules] as wr inner join status_type as s on s.[STATUS_TYPE_ID] = wr.[SUCCESSOR_STATUS_ID] inner join USERS as u on u.[USER_ID] = s.LAST_MODIFIED_BY ",
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "[Id]",
                 "WORKFLOW_ID = " + workflowId,
@@ -5650,10 +5650,10 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetAllStatusesForWorkflow(SqlConnection sqlConnection, int workflowId)
         {
             var query = @"SELECT s.STATUS_TYPE_ID as Id, s.STATUS_TYPE_NAME as Name, s.DESCRIPTION as Description, s.[WEIGHT] as Weight,
-							s.MODIFIED as Modified, s.[CREATED] as Created, s.LAST_MODIFIED_BY as LastModifiedBy, s.BUILT_IN, u.[LOGIN] as LastModifiedByLogin
-							FROM [workflow_rules] as wr
-							inner join status_type as s on s.[STATUS_TYPE_ID] = wr.[SUCCESSOR_STATUS_ID] inner join USERS as u on u.[USER_ID] = s.LAST_MODIFIED_BY
-							where WORKFLOW_ID = " + workflowId;
+                            s.MODIFIED as Modified, s.[CREATED] as Created, s.LAST_MODIFIED_BY as LastModifiedBy, s.BUILT_IN, u.[LOGIN] as LastModifiedByLogin
+                            FROM [workflow_rules] as wr
+                            inner join status_type as s on s.[STATUS_TYPE_ID] = wr.[SUCCESSOR_STATUS_ID] inner join USERS as u on u.[USER_ID] = s.LAST_MODIFIED_BY
+                            where WORKFLOW_ID = " + workflowId;
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -6041,26 +6041,26 @@ namespace Quantumart.QP8.DAL
         public static void ValidateO2MValues(SqlConnection sqlConnection, string xmlParameter, string message)
         {
             var sql = @"
-			DECLARE @NewArticles TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))
+            DECLARE @NewArticles TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))
 
-			INSERT INTO @NewArticles
-				SELECT
-				 doc.col.value('(CONTENT_ITEM_ID)[1]', 'int') CONTENT_ITEM_ID
-				,doc.col.value('(ATTRIBUTE_ID)[1]', 'int') ATTRIBUTE_ID
-				,doc.col.value('(DATA)[1]', 'nvarchar(3500)') DATA
-				,doc.col.value('(BLOB_DATA)[1]', 'nvarchar(max)') BLOB_DATA
-				FROM @xmlParameter.nodes('/PARAMETERS/FIELDVALUE') doc(col)
+            INSERT INTO @NewArticles
+                SELECT
+                 doc.col.value('(CONTENT_ITEM_ID)[1]', 'int') CONTENT_ITEM_ID
+                ,doc.col.value('(ATTRIBUTE_ID)[1]', 'int') ATTRIBUTE_ID
+                ,doc.col.value('(DATA)[1]', 'nvarchar(3500)') DATA
+                ,doc.col.value('(BLOB_DATA)[1]', 'nvarchar(max)') BLOB_DATA
+                FROM @xmlParameter.nodes('/PARAMETERS/FIELDVALUE') doc(col)
 
-				select * from
-				(select a.*, ca.ATTRIBUTE_NAME, rca.CONTENT_ID as RELATED_CONTENT_ID from @NewArticles a
-				inner join CONTENT_ATTRIBUTE ca on a.ATTRIBUTE_ID = ca.ATTRIBUTE_ID
-				inner join CONTENT_ATTRIBUTE rca on ca.RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID and ca.CONTENT_ID <> rca.CONTENT_ID
-				inner join CONTENT rc on rc.CONTENT_ID = rca.CONTENT_ID and rc.VIRTUAL_TYPE <> 3
-				where a.DATA != ''
-				) as a
-				left join CONTENT_ITEM ci on ci.CONTENT_ITEM_ID = convert(numeric, data)
-				where ci.CONTENT_ID is null or ci.CONTENT_ID <> a.RELATED_CONTENT_ID
-			";
+                select * from
+                (select a.*, ca.ATTRIBUTE_NAME, rca.CONTENT_ID as RELATED_CONTENT_ID from @NewArticles a
+                inner join CONTENT_ATTRIBUTE ca on a.ATTRIBUTE_ID = ca.ATTRIBUTE_ID
+                inner join CONTENT_ATTRIBUTE rca on ca.RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID and ca.CONTENT_ID <> rca.CONTENT_ID
+                inner join CONTENT rc on rc.CONTENT_ID = rca.CONTENT_ID and rc.VIRTUAL_TYPE <> 3
+                where a.DATA != ''
+                ) as a
+                left join CONTENT_ITEM ci on ci.CONTENT_ITEM_ID = convert(numeric, data)
+                where ci.CONTENT_ID is null or ci.CONTENT_ID <> a.RELATED_CONTENT_ID
+            ";
             using (var cmd = SqlCommandFactory.Create(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -6382,10 +6382,10 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetRestTemplateObjects(SqlConnection sqlConnection, int templateId, int siteId)
         {
             var query = string.Format(@"select t.[TEMPLATE_NAME] as TemplateName, t.PAGE_TEMPLATE_ID, o.[OBJECT_ID], o.PAGE_ID,
-						   o.[OBJECT_NAME] as ObjectName, CASE WHEN f.[OBJECT_FORMAT_ID] = o.[OBJECT_FORMAT_ID] THEN null ELSE f.[FORMAT_NAME] END as FormatName
-						   from [OBJECT_FORMAT] as f inner join [OBJECT] as o on f.[OBJECT_ID] = o.[OBJECT_ID]
-						   inner join [PAGE_TEMPLATE] as t on t.[page_template_id] = o.[page_template_id]
-						   where t.[SITE_ID] = {0} and t.[PAGE_TEMPLATE_ID] <> {1} and o.[PAGE_ID] is null", siteId, templateId);
+                           o.[OBJECT_NAME] as ObjectName, CASE WHEN f.[OBJECT_FORMAT_ID] = o.[OBJECT_FORMAT_ID] THEN null ELSE f.[FORMAT_NAME] END as FormatName
+                           from [OBJECT_FORMAT] as f inner join [OBJECT] as o on f.[OBJECT_ID] = o.[OBJECT_ID]
+                           inner join [PAGE_TEMPLATE] as t on t.[page_template_id] = o.[page_template_id]
+                           where t.[SITE_ID] = {0} and t.[PAGE_TEMPLATE_ID] <> {1} and o.[PAGE_ID] is null", siteId, templateId);
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -6407,10 +6407,10 @@ namespace Quantumart.QP8.DAL
         public static bool PageFileNameExists(SqlConnection sqlConnection, string checkPath, int siteId)
         {
             var query = string.Format(@"select COUNT(*)
-										 from PAGE as p left outer join PAGE_TEMPLATE as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID
-										 inner join dbo.[SITE] as s on t.SITE_ID = s.[SITE_ID]
-										 where (s.LIVE_DIRECTORY + ISNULL(t.TEMPLATE_FOLDER, '') + ISNULL(p.PAGE_FOLDER, '') + p.PAGE_FILENAME) = '{0}'
-										 and s.SITE_ID = {1}", checkPath, siteId);
+                                         from PAGE as p left outer join PAGE_TEMPLATE as t on p.PAGE_TEMPLATE_ID = t.PAGE_TEMPLATE_ID
+                                         inner join dbo.[SITE] as s on t.SITE_ID = s.[SITE_ID]
+                                         where (s.LIVE_DIRECTORY + ISNULL(t.TEMPLATE_FOLDER, '') + ISNULL(p.PAGE_FOLDER, '') + p.PAGE_FILENAME) = '{0}'
+                                         and s.SITE_ID = {1}", checkPath, siteId);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -6423,7 +6423,7 @@ namespace Quantumart.QP8.DAL
         public static void ClearFieldTreeOrder(SqlConnection sqlConnection, int Id)
         {
             var query = string.Format(@"UPDATE dbo.[CONTENT_ATTRIBUTE] set [TREE_ORDER_FIELD] = null
-										 where  [TREE_ORDER_FIELD] = '{0}'", Id);
+                                         where  [TREE_ORDER_FIELD] = '{0}'", Id);
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -6434,8 +6434,8 @@ namespace Quantumart.QP8.DAL
         public static void MoveFieldOrders(SqlConnection sqlConnection, int contentId, int newOrder)
         {
             var query = string.Format(@"UPDATE [CONTENT_ATTRIBUTE]
-										 SET [ATTRIBUTE_ORDER] = [ATTRIBUTE_ORDER] + 1
-										 WHERE CONTENT_ID = {0} and [ATTRIBUTE_ORDER] >= {1}",
+                                         SET [ATTRIBUTE_ORDER] = [ATTRIBUTE_ORDER] + 1
+                                         WHERE CONTENT_ID = {0} and [ATTRIBUTE_ORDER] >= {1}",
                                          contentId, newOrder);
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -6552,10 +6552,10 @@ namespace Quantumart.QP8.DAL
             var sb = new StringBuilder();
 
             sb.Append(@"	select c.content_id as source_content_id, nc.content_id as destination_content_id
-			                    from [dbo].[content] as c (nolock)
-			                    inner join [dbo].[content] as nc (nolock)
-				                    on nc.content_name = c.content_name and nc.site_id = @newSiteId
-			                        where c.site_id = @oldSiteId");
+                                from [dbo].[content] as c (nolock)
+                                inner join [dbo].[content] as nc (nolock)
+                                    on nc.content_name = c.content_name and nc.site_id = @newSiteId
+                                    where c.site_id = @oldSiteId");
 
             if (!string.IsNullOrEmpty(newContentIds))
             {
@@ -6579,16 +6579,16 @@ namespace Quantumart.QP8.DAL
         {
             var query = string.Format(@"	declare @xmlprms xml = '{0}'
 
-	                            ;with relationsBetweenContents as (
-	                                select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                ;with relationsBetweenContents as (
+                                    select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                 )
-		                        select ca.attribute_id as source_attribute_id
-			                                , ca1.attribute_id as destination_attribute_id
-		                        from [dbo].content_attribute as ca (nolock)
-		                        inner join relations_between_contents as ra on ra.source_content_id = ca.content_id
-		                        inner join [dbo].content_attribute as ca1 (nolock) on ca1.attribute_name = ca.attribute_name and ca1.content_id = ra.destination_content_id
+                                select ca.attribute_id as source_attribute_id
+                                            , ca1.attribute_id as destination_attribute_id
+                                from [dbo].content_attribute as ca (nolock)
+                                inner join relations_between_contents as ra on ra.source_content_id = ca.content_id
+                                inner join [dbo].content_attribute as ca1 (nolock) on ca1.attribute_name = ca.attribute_name and ca1.content_id = ra.destination_content_id
                                 where ra.destination_content_id in (select destinationId from relationsBetweenContents)", relationsBetweenContentsXml);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
@@ -6609,9 +6609,9 @@ namespace Quantumart.QP8.DAL
                                             declare @now DateTime = GetDate()
                                             declare @xmlprmsContentItems xml = '{0}'
                                             ;with relations_between_content_items as (
-	                                            select doc.col.value('./@sourceId', 'int') source_content_item_id
-			                                     ,doc.col.value('./@destinationId', 'int') destination_content_item_id
-			                                    from @xmlprmsContentItems.nodes('/items/item') doc(col)
+                                                select doc.col.value('./@sourceId', 'int') source_content_item_id
+                                                 ,doc.col.value('./@destinationId', 'int') destination_content_item_id
+                                                from @xmlprmsContentItems.nodes('/items/item') doc(col)
                                             )
                                             insert into [dbo].[content_item_access]
                                             ( [content_item_id]
@@ -6663,9 +6663,9 @@ namespace Quantumart.QP8.DAL
                                     declare @xmlprms xml = '{0}'
 
                                     ;with relationsBetweenContents as (
-	                                    select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                     )
                                     insert into [dbo].[user_query_contents]
                                     select rbc.destination_content_id
@@ -6693,16 +6693,16 @@ namespace Quantumart.QP8.DAL
                                     )
 
                                     insert into @relationsBetweenAttributes
-	                                    select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                            from @xmlprmsAttributes.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                        from @xmlprmsAttributes.nodes('/items/item') doc(col)
 
                                     declare @xmlprms xml = '{1}'
 
                                     ;with relationsBetweenContents as (
-	                                    select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                     )
                                     insert into [dbo].[user_query_attrs]
                                     select rbc.destination_content_id
@@ -6723,12 +6723,12 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"
 
                                 if OBJECT_ID('tempdb..#disable_ti_access_content_item') IS NULL begin
-	                                select 1 as A into #disable_ti_access_content_item
+                                    select 1 as A into #disable_ti_access_content_item
                                 end
 
-	                            declare @isVirtual bit = 0
-	                            declare @todaysDateTime datetime = GetDate();
-	                            declare @not_for_replication bit  = 1
+                                declare @isVirtual bit = 0
+                                declare @todaysDateTime datetime = GetDate();
+                                declare @not_for_replication bit  = 1
 
                                 declare @xmlprmsContents xml = '{0}'
 
@@ -6737,9 +6737,9 @@ namespace Quantumart.QP8.DAL
                                     destination_content_id int
                                 )
                                 insert into @relations_between_contents
-	                                    select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprmsContents.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprmsContents.nodes('/items/item') doc(col)
 
 
                                 declare @xmlprmsStatuses xml = '{1}'
@@ -6749,83 +6749,83 @@ namespace Quantumart.QP8.DAL
                                     destination_status_id int
                                 )
                                 insert into @relations_between_statuses
-	                                    select doc.col.value('./@sourceId', 'int') source_status_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_status_id
-			                            from @xmlprmsStatuses.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_status_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_status_id
+                                        from @xmlprmsStatuses.nodes('/items/item') doc(col)
 
-								declare @contents table(
-									id int primary key
-								)
+                                declare @contents table(
+                                    id int primary key
+                                )
 
-								insert into @contents
-								select cast(nstr as numeric) from dbo.splitNew(@contentIdsToCopy, ',')
+                                insert into @contents
+                                select cast(nstr as numeric) from dbo.splitNew(@contentIdsToCopy, ',')
 
-								declare @items table
-								(
-									id int primary key
-								)
+                                declare @items table
+                                (
+                                    id int primary key
+                                )
 
-								insert into @items
-								select [content_item_id]
-		                        from (
-			                            select row_number() over (order by content_item_id desc) as rownumber
-				                            ,content_item_id
-			                            from [dbo].[content_item] (NOLOCK) as c2
-			                            inner join [dbo].[content] as c (NOLOCK) on c.content_id = c2.content_id
-										where c.site_id = @oldsiteid and c.CONTENT_ID  in (select id from @contents)
-		                            )  as c1
-		                            where c1.rownumber between @startfrom and @endon
+                                insert into @items
+                                select [content_item_id]
+                                from (
+                                        select row_number() over (order by content_item_id desc) as rownumber
+                                            ,content_item_id
+                                        from [dbo].[content_item] (NOLOCK) as c2
+                                        inner join [dbo].[content] as c (NOLOCK) on c.content_id = c2.content_id
+                                        where c.site_id = @oldsiteid and c.CONTENT_ID  in (select id from @contents)
+                                    )  as c1
+                                    where c1.rownumber between @startfrom and @endon
 
-	                            declare @contentitemstable table(
-			                            source_item_id int ,
-			                            contentid int,
-			                            destination_item_id int,
-			                            primary key ( destination_item_id, source_item_id, contentid));
+                                declare @contentitemstable table(
+                                        source_item_id int ,
+                                        contentid int,
+                                        destination_item_id int,
+                                        primary key ( destination_item_id, source_item_id, contentid));
 
                                     ;with content_items as (
-		                            select [content_item_id]
-			                              ,[visible]
-			                              ,rbs.destination_status_id as status_type_id
-			                              ,@todaysDateTime as created
-			                              ,@todaysDateTime as modified
-			                              ,rc.destination_content_id as content_id
-			                              ,c1.[last_modified_by]
-			                              ,[locked_by]
-			                              ,[archive]
-			                              ,@not_for_replication as [not_for_replication]
-			                              ,[schedule_new_version_publication]
-			                              ,[splitted]
-			                              ,[cancel_split]
-		                            from [dbo].[content_item] (NOLOCK) as c1
-			                            inner join @relations_between_contents as rc on rc.source_content_id = c1.content_id
-			                            inner join @relations_between_statuses as rbs on c1.[status_type_id] = rbs.source_status_id
-									where c1.content_item_id in (select id from @items)
-	                            )
-	                            merge [dbo].[content_item]
-	                            using(
-		                            select content_item_id
-		                              ,[visible]
-		                              ,[status_type_id]
-		                              ,[created]
-		                              ,[modified]
-		                              ,[content_id]
-		                              ,[last_modified_by]
-		                              ,[locked_by]
-		                              ,[archive]
-		                              ,[not_for_replication]
-		                              ,[schedule_new_version_publication]
-		                              ,[splitted]
-		                              ,[cancel_split]
-		                            from content_items as t
-	                            ) as src(content_item_id, [visible], [status_type_id],[created],[modified], content_id,[last_modified_by],[locked_by],[archive],[not_for_replication],[schedule_new_version_publication],[splitted],[cancel_split])
-	                            on 0 = 1
-	                            when not matched then
-		                            insert ([visible], [status_type_id],[created],[modified], content_id,[last_modified_by],[locked_by],[archive],[not_for_replication],[schedule_new_version_publication],[splitted],[cancel_split])
-		                            values ([visible], [status_type_id],[created],[modified], content_id,[last_modified_by],[locked_by],[archive],[not_for_replication],[schedule_new_version_publication],[splitted],[cancel_split])
-		                            output  src.content_item_id, inserted.content_id, inserted.content_item_id
-			                            into @contentitemstable;
+                                    select [content_item_id]
+                                          ,[visible]
+                                          ,rbs.destination_status_id as status_type_id
+                                          ,@todaysDateTime as created
+                                          ,@todaysDateTime as modified
+                                          ,rc.destination_content_id as content_id
+                                          ,c1.[last_modified_by]
+                                          ,[locked_by]
+                                          ,[archive]
+                                          ,@not_for_replication as [not_for_replication]
+                                          ,[schedule_new_version_publication]
+                                          ,[splitted]
+                                          ,[cancel_split]
+                                    from [dbo].[content_item] (NOLOCK) as c1
+                                        inner join @relations_between_contents as rc on rc.source_content_id = c1.content_id
+                                        inner join @relations_between_statuses as rbs on c1.[status_type_id] = rbs.source_status_id
+                                    where c1.content_item_id in (select id from @items)
+                                )
+                                merge [dbo].[content_item]
+                                using(
+                                    select content_item_id
+                                      ,[visible]
+                                      ,[status_type_id]
+                                      ,[created]
+                                      ,[modified]
+                                      ,[content_id]
+                                      ,[last_modified_by]
+                                      ,[locked_by]
+                                      ,[archive]
+                                      ,[not_for_replication]
+                                      ,[schedule_new_version_publication]
+                                      ,[splitted]
+                                      ,[cancel_split]
+                                    from content_items as t
+                                ) as src(content_item_id, [visible], [status_type_id],[created],[modified], content_id,[last_modified_by],[locked_by],[archive],[not_for_replication],[schedule_new_version_publication],[splitted],[cancel_split])
+                                on 0 = 1
+                                when not matched then
+                                    insert ([visible], [status_type_id],[created],[modified], content_id,[last_modified_by],[locked_by],[archive],[not_for_replication],[schedule_new_version_publication],[splitted],[cancel_split])
+                                    values ([visible], [status_type_id],[created],[modified], content_id,[last_modified_by],[locked_by],[archive],[not_for_replication],[schedule_new_version_publication],[splitted],[cancel_split])
+                                    output  src.content_item_id, inserted.content_id, inserted.content_item_id
+                                        into @contentitemstable;
 
-	                            select source_item_id, destination_item_id from @contentitemstable"
+                                select source_item_id, destination_item_id from @contentitemstable"
                                                                                                 , relationsBetweenContentsXml
                                                                                                 , relationsBetweenStatusesXml);
 
@@ -6847,63 +6847,63 @@ namespace Quantumart.QP8.DAL
         {
             var query = string.Format(@"
                                 declare @todaysDateTime datetime = GetDate()
-					            declare @xmlprms xml = '{0}'
+                                declare @xmlprms xml = '{0}'
 
                                 ;with relationsBetweenNewContentItemsXml as (
-	                                    select doc.col.value('./@sourceId', 'int') source_content_item_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_item_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_item_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_item_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                 )
-	                            insert into [dbo].[CONTENT_ITEM_SCHEDULE](
-		                              [content_item_id]
-		                              ,[maximum_occurences]
-		                              ,[created]
-		                              ,[modified]
-		                              ,[last_modified_by]
-		                              ,[freq_type]
-		                              ,[freq_interval]
-		                              ,[freq_subday_type]
-		                              ,[freq_subday_interval]
-		                              ,[freq_relative_interval]
-		                              ,[freq_recurrence_factor]
-		                              ,[active_start_date]
-		                              ,[active_end_date]
-		                              ,[active_start_time]
-		                              ,[active_end_time]
-		                              ,[occurences]
-		                              ,[use_duration]
-		                              ,[duration]
-		                              ,[duration_units]
-		                              ,[deactivate]
-		                              ,[delete_job]
-		                              ,[use_service]
-		                            )
-		                            SELECT
-			                            cist.destination_content_item_id
-		                              ,[maximum_occurences]
-		                              ,@todaysDateTime
-		                              ,@todaysDateTime
-		                              ,[last_modified_by]
-		                              ,[freq_type]
-		                              ,[freq_interval]
-		                              ,[freq_subday_type]
-		                              ,[freq_subday_interval]
-		                              ,[freq_relative_interval]
-		                              ,[freq_recurrence_factor]
-		                              ,[active_start_date]
-		                              ,[active_end_date]
-		                              ,[active_start_time]
-		                              ,[active_end_time]
-		                              ,[occurences]
-		                              ,[use_duration]
-		                              ,[duration]
-		                              ,[duration_units]
-		                              ,[deactivate]
-		                              ,[delete_job]
-		                              ,1 as[use_service]
-		                              FROM [dbo].[CONTENT_ITEM_SCHEDULE] as cis (NOLOCK)
-			                            inner join relationsBetweenNewContentItemsXml as cist
-				                            on cis.CONTENT_ITEM_ID = cist.source_content_item_id;", relationsNewContentItemsIdXml);
+                                insert into [dbo].[CONTENT_ITEM_SCHEDULE](
+                                      [content_item_id]
+                                      ,[maximum_occurences]
+                                      ,[created]
+                                      ,[modified]
+                                      ,[last_modified_by]
+                                      ,[freq_type]
+                                      ,[freq_interval]
+                                      ,[freq_subday_type]
+                                      ,[freq_subday_interval]
+                                      ,[freq_relative_interval]
+                                      ,[freq_recurrence_factor]
+                                      ,[active_start_date]
+                                      ,[active_end_date]
+                                      ,[active_start_time]
+                                      ,[active_end_time]
+                                      ,[occurences]
+                                      ,[use_duration]
+                                      ,[duration]
+                                      ,[duration_units]
+                                      ,[deactivate]
+                                      ,[delete_job]
+                                      ,[use_service]
+                                    )
+                                    SELECT
+                                        cist.destination_content_item_id
+                                      ,[maximum_occurences]
+                                      ,@todaysDateTime
+                                      ,@todaysDateTime
+                                      ,[last_modified_by]
+                                      ,[freq_type]
+                                      ,[freq_interval]
+                                      ,[freq_subday_type]
+                                      ,[freq_subday_interval]
+                                      ,[freq_relative_interval]
+                                      ,[freq_recurrence_factor]
+                                      ,[active_start_date]
+                                      ,[active_end_date]
+                                      ,[active_start_time]
+                                      ,[active_end_time]
+                                      ,[occurences]
+                                      ,[use_duration]
+                                      ,[duration]
+                                      ,[duration_units]
+                                      ,[deactivate]
+                                      ,[delete_job]
+                                      ,1 as[use_service]
+                                      FROM [dbo].[CONTENT_ITEM_SCHEDULE] as cis (NOLOCK)
+                                        inner join relationsBetweenNewContentItemsXml as cist
+                                            on cis.CONTENT_ITEM_ID = cist.source_content_item_id;", relationsNewContentItemsIdXml);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -6915,11 +6915,11 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetRelationsBetweenStatuses(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             var query = @"	select st1.STATUS_TYPE_ID as source_status_type_id
-						                            ,st2.STATUS_TYPE_ID as destination_status_type_id
-				                            from [dbo].[status_type] as st1 (NOLOCK)
-				                            inner join [dbo].[status_type] as st2 (NOLOCK)
-					                            on st1.STATUS_TYPE_NAME = st2.STATUS_TYPE_NAME and st2.SITE_ID = @newSiteId
-				                            where st1.SITE_ID = @oldSiteId";
+                                                    ,st2.STATUS_TYPE_ID as destination_status_type_id
+                                            from [dbo].[status_type] as st1 (NOLOCK)
+                                            inner join [dbo].[status_type] as st2 (NOLOCK)
+                                                on st1.STATUS_TYPE_NAME = st2.STATUS_TYPE_NAME and st2.SITE_ID = @newSiteId
+                                            where st1.SITE_ID = @oldSiteId";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -6936,19 +6936,19 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetRelationsBetweenLinks(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             var query = @" select distinct oldvalues.link_id as source_link_id, newvalues.link_id as destination_link_id from (
-	                                select attribute_name, link_id, c.content_name
-	                                  from [dbo].[content_attribute] as ca
-	                                  inner join content as c on c.content_id = ca.content_id and c.virtual_type = 0
-	                                  inner join attribute_type as at on at.attribute_type_id = ca.attribute_type_id and at.type_name = 'Relation'
-	                                  where c.site_id = @sourceSiteId and link_id is not null) as oldvalues
-	                                inner join (
-		                                select attribute_name, link_id, c.content_name
-		                                  from [dbo].[content_attribute] as ca
-		                                  inner join content as c on c.content_id = ca.content_id and c.virtual_type = 0
-		                                  inner join attribute_type as at on at.attribute_type_id = ca.attribute_type_id and at.type_name = 'Relation'
-		                                  where c.site_id = @destinationSiteId and link_id is not null)
-		                                  as newvalues
-		                                  on newvalues.attribute_name = oldvalues.attribute_name and newvalues.content_name = oldvalues.content_name";
+                                    select attribute_name, link_id, c.content_name
+                                      from [dbo].[content_attribute] as ca
+                                      inner join content as c on c.content_id = ca.content_id and c.virtual_type = 0
+                                      inner join attribute_type as at on at.attribute_type_id = ca.attribute_type_id and at.type_name = 'Relation'
+                                      where c.site_id = @sourceSiteId and link_id is not null) as oldvalues
+                                    inner join (
+                                        select attribute_name, link_id, c.content_name
+                                          from [dbo].[content_attribute] as ca
+                                          inner join content as c on c.content_id = ca.content_id and c.virtual_type = 0
+                                          inner join attribute_type as at on at.attribute_type_id = ca.attribute_type_id and at.type_name = 'Relation'
+                                          where c.site_id = @destinationSiteId and link_id is not null)
+                                          as newvalues
+                                          on newvalues.attribute_name = oldvalues.attribute_name and newvalues.content_name = oldvalues.content_name";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -6966,18 +6966,18 @@ namespace Quantumart.QP8.DAL
         {
             var query = string.Format(@"
 
-	                            select 1 as A into #disable_tu_update_child_content_data;
+                                select 1 as A into #disable_tu_update_child_content_data;
 
-					            declare @xmlprmsAttributes xml = '{0}'
+                                declare @xmlprmsAttributes xml = '{0}'
 
                                 declare @relations_between_attributes table (
                                     source_attribute_id int,
                                     destination_attribute_id int
                                 )
                                 insert into @relations_between_attributes
-	                                    select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                            from @xmlprmsAttributes.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                        from @xmlprmsAttributes.nodes('/items/item') doc(col)
 
                                 declare @xmlprmsContentItems xml = '{1}'
 
@@ -6986,33 +6986,33 @@ namespace Quantumart.QP8.DAL
                                     destination_content_item_id int
                                 )
                                 insert into @relations_between_content_items
-	                                    select doc.col.value('./@sourceId', 'int') source_content_item_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_item_id
-			                            from @xmlprmsContentItems.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_item_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_item_id
+                                        from @xmlprmsContentItems.nodes('/items/item') doc(col)
 
-	                            update copydata
-	                            set [data] =(	case	when at.[TYPE_NAME] = 'Dynamic Image' then replace(cd.data, 'field_' + CAST(cd.ATTRIBUTE_ID as varchar), 'field_' + CAST(ra.destination_attribute_id as varchar))
-							                            when at.[TYPE_NAME] = 'Relation Many-to-One' and cd.DATA is not null then CAST(ra1.destination_attribute_id as varchar)
-							                            else cd.data
-					                            end)
+                                update copydata
+                                set [data] =(	case	when at.[TYPE_NAME] = 'Dynamic Image' then replace(cd.data, 'field_' + CAST(cd.ATTRIBUTE_ID as varchar), 'field_' + CAST(ra.destination_attribute_id as varchar))
+                                                        when at.[TYPE_NAME] = 'Relation Many-to-One' and cd.DATA is not null then CAST(ra1.destination_attribute_id as varchar)
+                                                        else cd.data
+                                                end)
                                   ,[blob_data] = cd.BLOB_DATA
-	                            from [dbo].[content_data] as copydata (NOLOCK)
-		                            inner join @relations_between_attributes as ra on ra.destination_attribute_id = copydata.ATTRIBUTE_ID
-		                            inner join @relations_between_content_items as cit on cit.destination_content_item_id = copydata.CONTENT_ITEM_ID
-		                            inner join [dbo].[content_data] as cd (NOLOCK) on
-			                            cd.ATTRIBUTE_ID = ra.source_attribute_id and cd.CONTENT_ITEM_ID = cit.source_content_item_id
-		                            inner join [dbo].[CONTENT_ATTRIBUTE] as ca (NOLOCK)
-			                            on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID
-		                            inner join [dbo].[attribute_type] as at (NOLOCK)
-			                            on ca.ATTRIBUTE_TYPE_ID = at.ATTRIBUTE_TYPE_ID
-		                            left join @relations_between_attributes ra1 on CAST(ra1.source_attribute_id as nvarchar) = cd.DATA;
+                                from [dbo].[content_data] as copydata (NOLOCK)
+                                    inner join @relations_between_attributes as ra on ra.destination_attribute_id = copydata.ATTRIBUTE_ID
+                                    inner join @relations_between_content_items as cit on cit.destination_content_item_id = copydata.CONTENT_ITEM_ID
+                                    inner join [dbo].[content_data] as cd (NOLOCK) on
+                                        cd.ATTRIBUTE_ID = ra.source_attribute_id and cd.CONTENT_ITEM_ID = cit.source_content_item_id
+                                    inner join [dbo].[CONTENT_ATTRIBUTE] as ca (NOLOCK)
+                                        on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID
+                                    inner join [dbo].[attribute_type] as at (NOLOCK)
+                                        on ca.ATTRIBUTE_TYPE_ID = at.ATTRIBUTE_TYPE_ID
+                                    left join @relations_between_attributes ra1 on CAST(ra1.source_attribute_id as nvarchar) = cd.DATA;
 
 
 
                                 declare @ids varchar(max)
-	                            select @ids = COALESCE(@ids + ', ', '') + CAST(destination_content_item_id as nvarchar) from @relations_between_content_items
-	                            if @ids is not null
-		                            exec qp_replicate_items @ids "
+                                select @ids = COALESCE(@ids + ', ', '') + CAST(destination_content_item_id as nvarchar) from @relations_between_content_items
+                                if @ids is not null
+                                    exec qp_replicate_items @ids "
                                                                                     , relationsBetweenAttributesXml
                                                                                     , relationsNewContentItemsIdXml);
 
@@ -7042,14 +7042,14 @@ namespace Quantumart.QP8.DAL
         {
             var query = string.Format(@"declare @xmlprms xml = '{0}'
 
-	                                        ;with relations_between_items as (
+                                            ;with relations_between_items as (
                                                     select doc.col.value('./@sourceId', 'int') olditemid
-			                                        , doc.col.value('./@destinationId', 'int') newitemid
-			                                        from @xmlprms.nodes('/item') doc(col)
-			                                )
-	                                        update content_attribute
-		                                    set default_value = rbi.newitemid
-		                                    from content_attribute as ca (nolock)
+                                                    , doc.col.value('./@destinationId', 'int') newitemid
+                                                    from @xmlprms.nodes('/item') doc(col)
+                                            )
+                                            update content_attribute
+                                            set default_value = rbi.newitemid
+                                            from content_attribute as ca (nolock)
                                             inner join relations_between_items as rbi
                                                 on ca.default_value = CAST(rbi.olditemid as varchar)
                                             inner join content as c
@@ -7068,31 +7068,31 @@ namespace Quantumart.QP8.DAL
         public static void UpdateO2MValues(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenArticles)
         {
             var query = string.Format(@"
-	                        declare @xmlprms xml = '{0}'
+                            declare @xmlprms xml = '{0}'
 
                             if OBJECT_ID('tempdb..#disable_tu_update_child_content_data') IS NULL begin
-	                            select 1 as A into #disable_tu_update_child_content_data
+                                select 1 as A into #disable_tu_update_child_content_data
                             end
 
-	                        ;with relations_between_items as (
+                            ;with relations_between_items as (
                                     select doc.col.value('./@sourceId', 'int') olditemid
-			                        , doc.col.value('./@destinationId', 'int') newitemid
-			                        from @xmlprms.nodes('/item') doc(col)
-			                )
-	                        update [dbo].[content_data]
-		                        set data = (case when lr.newitemid is not null then lr.newitemid else cd.DATA end)
-		                        from [dbo].[content_data] cd (nolock)
-		                        inner join CONTENT_ATTRIBUTE as ca (nolock)
-			                        on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
-		                        inner join ATTRIBUTE_TYPE as at (nolock)
-			                        on at.ATTRIBUTE_TYPE_ID = ca.ATTRIBUTE_TYPE_ID and at.TYPE_NAME = 'Relation'
-		                        inner join [dbo].[CONTENT_ITEM] as ci (nolock)
-			                        on ci.CONTENT_ITEM_ID = cd.CONTENT_ITEM_ID
-		                        inner join [dbo].[CONTENT] as c (nolock)
-			                        on c.CONTENT_ID = ci.CONTENT_ID
-		                        inner join relations_between_items lr
-			                        on cast(lr.olditemid as varchar) = cd.DATA
-		                        where c.SITE_ID = @destinationSiteId", relationsBetweenArticles);
+                                    , doc.col.value('./@destinationId', 'int') newitemid
+                                    from @xmlprms.nodes('/item') doc(col)
+                            )
+                            update [dbo].[content_data]
+                                set data = (case when lr.newitemid is not null then lr.newitemid else cd.DATA end)
+                                from [dbo].[content_data] cd (nolock)
+                                inner join CONTENT_ATTRIBUTE as ca (nolock)
+                                    on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
+                                inner join ATTRIBUTE_TYPE as at (nolock)
+                                    on at.ATTRIBUTE_TYPE_ID = ca.ATTRIBUTE_TYPE_ID and at.TYPE_NAME = 'Relation'
+                                inner join [dbo].[CONTENT_ITEM] as ci (nolock)
+                                    on ci.CONTENT_ITEM_ID = cd.CONTENT_ITEM_ID
+                                inner join [dbo].[CONTENT] as c (nolock)
+                                    on c.CONTENT_ID = ci.CONTENT_ID
+                                inner join relations_between_items lr
+                                    on cast(lr.olditemid as varchar) = cd.DATA
+                                where c.SITE_ID = @destinationSiteId", relationsBetweenArticles);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7108,27 +7108,27 @@ namespace Quantumart.QP8.DAL
         {
             var query = string.Format(@"
                             declare @relations_between_items table(
-		                        olditemid numeric,
-		                        newitemid numeric
-	                        )
-	                        declare @xmlprms xml = '{0}'
+                                olditemid numeric,
+                                newitemid numeric
+                            )
+                            declare @xmlprms xml = '{0}'
 
-	                        insert into @relations_between_items
-	                        select doc.col.value('./@oldId', 'int') olditemid
-			                         ,doc.col.value('./@newId', 'int') newitemid
-			                        from @xmlprms.nodes('/item') doc(col)
+                            insert into @relations_between_items
+                            select doc.col.value('./@oldId', 'int') olditemid
+                                     ,doc.col.value('./@newId', 'int') newitemid
+                                    from @xmlprms.nodes('/item') doc(col)
 
 
                             ;with relations_between_workflows
-	                                as
-	                                (
-		                                SELECT w1.[WORKFLOW_ID] as old_workflow_id
-				                                ,w2.WORKFLOW_ID as new_workflow_id
-		                                FROM [dbo].[workflow] as w1 (nolock)
-			                                inner join [dbo].[workflow] as w2 (nolock)
-				                                on w1.WORKFLOW_NAME = w2.WORKFLOW_NAME and w2.SITE_ID = @destinationSiteId
-		                                where w1.SITE_ID = @sourceSiteId
-	                                )
+                                    as
+                                    (
+                                        SELECT w1.[WORKFLOW_ID] as old_workflow_id
+                                                ,w2.WORKFLOW_ID as new_workflow_id
+                                        FROM [dbo].[workflow] as w1 (nolock)
+                                            inner join [dbo].[workflow] as w2 (nolock)
+                                                on w1.WORKFLOW_NAME = w2.WORKFLOW_NAME and w2.SITE_ID = @destinationSiteId
+                                        where w1.SITE_ID = @sourceSiteId
+                                    )
                             insert into [dbo].[article_workflow_bind]
                                 select lr.newitemid
                                   ,rbw.new_workflow_id
@@ -7150,23 +7150,23 @@ namespace Quantumart.QP8.DAL
         public static void CopyFieldArticleBind(SqlConnection sqlConnection, string relationsBetweenArticles, string relationsBetweenAttributes)
         {
             var query = string.Format(@"
-					            declare @xmlprmsAttributes xml = '{0}'
+                                declare @xmlprmsAttributes xml = '{0}'
 
                                 declare @relations_between_attributes table (
                                     source_attribute_id int,
                                     destination_attribute_id int
                                 )
                                 insert into @relations_between_attributes
-	                                    select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                            from @xmlprmsAttributes.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                        from @xmlprmsAttributes.nodes('/items/item') doc(col)
 
-	                            declare @xmlprmsItems xml = '{1}'
+                                declare @xmlprmsItems xml = '{1}'
 
-	                            ;with relations_between_items as (
-	                            select doc.col.value('./@oldId', 'int') olditemid
-			                             ,doc.col.value('./@newId', 'int') newitemid
-			                            from @xmlprmsItems.nodes('/item') doc(col)
+                                ;with relations_between_items as (
+                                select doc.col.value('./@oldId', 'int') olditemid
+                                         ,doc.col.value('./@newId', 'int') newitemid
+                                        from @xmlprmsItems.nodes('/item') doc(col)
                                 )
                                 insert into [dbo].[field_article_bind] ([article_id],[field_id])
                                 select lr.newitemid
@@ -7188,7 +7188,7 @@ namespace Quantumart.QP8.DAL
                                 declare @xmlprmsLinks xml = '{0}'
 
                                 if OBJECT_ID('tempdb..#disable_tu_update_child_content_data') IS NULL begin
-	                                select 1 as A into #disable_tu_update_child_content_data
+                                    select 1 as A into #disable_tu_update_child_content_data
                                 end
 
                                 declare @relations_between_links table (
@@ -7196,28 +7196,28 @@ namespace Quantumart.QP8.DAL
                                     destination_link_id int
                                 )
                                 insert into @relations_between_links
-	                                    select doc.col.value('./@sourceId', 'int') source_link_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_link_id
-			                            from @xmlprmsLinks.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_link_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_link_id
+                                        from @xmlprmsLinks.nodes('/items/item') doc(col)
 
-	                            declare @xmlprmsItems xml = '{1}'
+                                declare @xmlprmsItems xml = '{1}'
 
-	                            ;with relations_between_items as (
-	                            select doc.col.value('./@sourceId', 'int') olditemid
-			                             ,doc.col.value('./@destinationId', 'int') newitemid
-			                            from @xmlprmsItems.nodes('/item') doc(col)
+                                ;with relations_between_items as (
+                                select doc.col.value('./@sourceId', 'int') olditemid
+                                         ,doc.col.value('./@destinationId', 'int') newitemid
+                                        from @xmlprmsItems.nodes('/item') doc(col)
                                 )
                                 update [dbo].[content_data]
-		                        set data = (case when lc.destination_link_id is not null then lc.destination_link_id else cd.DATA end)
-		                        from [dbo].[content_data] cd (nolock)
-		                        left join @relations_between_links lc
-			                        on  cast(lc.source_link_id as varchar) = cd.DATA
-		                        inner join CONTENT_ATTRIBUTE as ca (nolock)
-			                        on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
-		                        inner join ATTRIBUTE_TYPE as at (nolock)
-			                        on at.ATTRIBUTE_TYPE_ID = ca.ATTRIBUTE_TYPE_ID and at.TYPE_NAME = 'Relation'
-		                        inner join relations_between_items as lr1
-			                        on lr1.newitemid = cd.content_item_id", relationsBetweenLinks, relationsBetweenArticles);
+                                set data = (case when lc.destination_link_id is not null then lc.destination_link_id else cd.DATA end)
+                                from [dbo].[content_data] cd (nolock)
+                                left join @relations_between_links lc
+                                    on  cast(lc.source_link_id as varchar) = cd.DATA
+                                inner join CONTENT_ATTRIBUTE as ca (nolock)
+                                    on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
+                                inner join ATTRIBUTE_TYPE as at (nolock)
+                                    on at.ATTRIBUTE_TYPE_ID = ca.ATTRIBUTE_TYPE_ID and at.TYPE_NAME = 'Relation'
+                                inner join relations_between_items as lr1
+                                    on lr1.newitemid = cd.content_item_id", relationsBetweenLinks, relationsBetweenArticles);
 
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
@@ -7232,7 +7232,7 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"
 
                                 if OBJECT_ID('tempdb..#disable_ti_item_to_item') IS NULL begin
-	                                select 1 as A into #disable_ti_item_to_item
+                                    select 1 as A into #disable_ti_item_to_item
                                 end
 
                                 declare @xmlprmsLinks xml = '{0}'
@@ -7242,23 +7242,23 @@ namespace Quantumart.QP8.DAL
                                     destination_link_id int
                                 )
                                 insert into @relations_between_links
-	                                    select doc.col.value('./@sourceId', 'int') source_link_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_link_id
-			                            from @xmlprmsLinks.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_link_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_link_id
+                                        from @xmlprmsLinks.nodes('/items/item') doc(col)
 
-	                            declare @xmlprmsItems xml = '{1}'
+                                declare @xmlprmsItems xml = '{1}'
 
-	                            ;with relations_between_items as (
-	                            select doc.col.value('./@sourceId', 'int') olditemid
-			                             ,doc.col.value('./@destinationId', 'int') newitemid
-			                            from @xmlprmsItems.nodes('/item') doc(col)
+                                ;with relations_between_items as (
+                                select doc.col.value('./@sourceId', 'int') olditemid
+                                         ,doc.col.value('./@destinationId', 'int') newitemid
+                                        from @xmlprmsItems.nodes('/item') doc(col)
                                 )
-	                            insert into [dbo].[item_to_item]
-	                            select r.destination_link_id, i1.l_item_id, i1.r_item_id
-	                            from [dbo].[item_to_item] as i1 (nolock)
-	                            inner join @relations_between_links as r
-		                            on r.source_link_id = i1.link_id
-	                            where i1.l_item_id in (select olditemid from relations_between_items) or i1.r_item_id in (select olditemid from relations_between_items)", relationsBetweenLinks, relationsBetweenArticles);
+                                insert into [dbo].[item_to_item]
+                                select r.destination_link_id, i1.l_item_id, i1.r_item_id
+                                from [dbo].[item_to_item] as i1 (nolock)
+                                inner join @relations_between_links as r
+                                    on r.source_link_id = i1.link_id
+                                where i1.l_item_id in (select olditemid from relations_between_items) or i1.r_item_id in (select olditemid from relations_between_items)", relationsBetweenLinks, relationsBetweenArticles);
 
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
@@ -7274,7 +7274,7 @@ namespace Quantumart.QP8.DAL
                                 declare @xmlprmsLinks xml = '{0}'
 
                                 if OBJECT_ID('tempdb..#disable_ti_item_to_item') IS NULL begin
-	                                select 1 as A into #disable_ti_item_to_item
+                                    select 1 as A into #disable_ti_item_to_item
                                 end
 
                                 declare @relations_between_links table (
@@ -7282,37 +7282,37 @@ namespace Quantumart.QP8.DAL
                                     destination_link_id int
                                 )
                                 insert into @relations_between_links
-	                                    select doc.col.value('./@sourceId', 'int') source_link_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_link_id
-			                            from @xmlprmsLinks.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_link_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_link_id
+                                        from @xmlprmsLinks.nodes('/items/item') doc(col)
 
-	                            declare @xmlprmsItems xml = '{1}'
+                                declare @xmlprmsItems xml = '{1}'
 
                                 declare @relations_between_items table (
                                     source_item_id int,
                                     destination_item_id int
                                 )
-	                            insert into @relations_between_items
-	                            select doc.col.value('./@sourceId', 'int') source_item_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_item_id
-			                            from @xmlprmsItems.nodes('/item') doc(col)
+                                insert into @relations_between_items
+                                select doc.col.value('./@sourceId', 'int') source_item_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_item_id
+                                        from @xmlprmsItems.nodes('/item') doc(col)
 
                                 update [dbo].[item_to_item]
-	                            set l_item_id = lr.destination_item_id
-	                            from [dbo].[item_to_item] as ii
-		                        inner join @relations_between_items as lr on
-			                        ii.l_item_id = lr.source_item_id
-		                        inner join @relations_between_links as r
-			                        on r.destination_link_id = ii.link_id
-	                            where ii.l_item_id in (select source_item_id from @relations_between_items)
+                                set l_item_id = lr.destination_item_id
+                                from [dbo].[item_to_item] as ii
+                                inner join @relations_between_items as lr on
+                                    ii.l_item_id = lr.source_item_id
+                                inner join @relations_between_links as r
+                                    on r.destination_link_id = ii.link_id
+                                where ii.l_item_id in (select source_item_id from @relations_between_items)
 
-	                            update [dbo].[item_to_item]
-	                            set r_item_id = lr.destination_item_id
-	                            from [dbo].[item_to_item] as ii
-		                        inner join @relations_between_items as lr on
-			                        ii.r_item_id = lr.source_item_id
-		                        inner join @relations_between_links as r
-			                        on r.destination_link_id = ii.link_id", relationsBetweenLinks, relationsBetweenArticles);
+                                update [dbo].[item_to_item]
+                                set r_item_id = lr.destination_item_id
+                                from [dbo].[item_to_item] as ii
+                                inner join @relations_between_items as lr on
+                                    ii.r_item_id = lr.source_item_id
+                                inner join @relations_between_links as r
+                                    on r.destination_link_id = ii.link_id", relationsBetweenLinks, relationsBetweenArticles);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7327,28 +7327,28 @@ namespace Quantumart.QP8.DAL
             var query = @"       declare @todaysDate datetime
                                     set @todaysDate = GETDATE()
 
-	                                insert into [dbo].[workflow]
-		                                (
-		                                   [workflow_name]
-		                                  ,[description]
-		                                  ,[created]
-		                                  ,[modified]
-		                                  ,[last_modified_by]
-		                                  ,[site_id]
-		                                  ,[create_default_notification]
-		                                  ,[apply_by_default]
-		                                )
-	                                SELECT [WORKFLOW_NAME]
-		                                  ,w.[DESCRIPTION]
-		                                  ,@todaysDate
-		                                  ,@todaysDate
-		                                  ,w.[LAST_MODIFIED_BY]
-		                                  ,@destinationSiteId
-		                                  ,[create_default_notification]
-		                                  ,[apply_by_default]
-	                                  FROM [dbo].[workflow] as w
-		                                inner join [dbo].[SITE] as s
-			                                on w.SITE_ID = s.SITE_ID and s.SITE_ID = @sourceSiteId";
+                                    insert into [dbo].[workflow]
+                                        (
+                                           [workflow_name]
+                                          ,[description]
+                                          ,[created]
+                                          ,[modified]
+                                          ,[last_modified_by]
+                                          ,[site_id]
+                                          ,[create_default_notification]
+                                          ,[apply_by_default]
+                                        )
+                                    SELECT [WORKFLOW_NAME]
+                                          ,w.[DESCRIPTION]
+                                          ,@todaysDate
+                                          ,@todaysDate
+                                          ,w.[LAST_MODIFIED_BY]
+                                          ,@destinationSiteId
+                                          ,[create_default_notification]
+                                          ,[apply_by_default]
+                                      FROM [dbo].[workflow] as w
+                                        inner join [dbo].[SITE] as s
+                                            on w.SITE_ID = s.SITE_ID and s.SITE_ID = @sourceSiteId";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7419,15 +7419,15 @@ namespace Quantumart.QP8.DAL
         {
             var query = @"       declare @now DateTime = GetDate()
                                     ;with relations_between_workflows
-	                                as
-	                                (
-		                                SELECT w1.[WORKFLOW_ID] as source_workflow_id
-				                                ,w2.WORKFLOW_ID as destination_workflow_id
-		                                FROM [dbo].[workflow] as w1
-			                                inner join [dbo].[workflow] as w2
-				                                on w1.WORKFLOW_NAME = w2.WORKFLOW_NAME and w2.SITE_ID = @destinationSiteId
-		                                where w1.SITE_ID = @sourceSiteId
-	                                )
+                                    as
+                                    (
+                                        SELECT w1.[WORKFLOW_ID] as source_workflow_id
+                                                ,w2.WORKFLOW_ID as destination_workflow_id
+                                        FROM [dbo].[workflow] as w1
+                                            inner join [dbo].[workflow] as w2
+                                                on w1.WORKFLOW_NAME = w2.WORKFLOW_NAME and w2.SITE_ID = @destinationSiteId
+                                        where w1.SITE_ID = @sourceSiteId
+                                    )
                                     insert into [dbo].[workflow_access]
                                     ([workflow_id]
                                       ,[user_id]
@@ -7458,27 +7458,27 @@ namespace Quantumart.QP8.DAL
         public static void CopyWorkflowRules(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
         {
             var query = @"       ;with relations_between_workflows
-	                                as
-	                                (
-		                                SELECT w1.[WORKFLOW_ID] as old_workflow_id
-				                                ,w2.WORKFLOW_ID as new_workflow_id
-		                                FROM [dbo].[workflow] as w1
-			                                inner join [dbo].[workflow] as w2
-				                                on w1.WORKFLOW_NAME = w2.WORKFLOW_NAME and w2.SITE_ID = @destinationSiteId
-		                                where w1.SITE_ID = @sourceSiteId
-	                                )
-	                                insert into [dbo].[workflow_rules]
-	                                select [user_id]
-		                                  ,[group_id]
-		                                  ,[rule_order]
-		                                  ,[predecessor_permission_id]
-		                                  ,[successor_permission_id]
-		                                  ,[successor_status_id]
-		                                  ,[comment]
-		                                  ,rbw.new_workflow_id
-	                                  from [dbo].[workflow_rules] as wr (nolock)
-		                                inner join relations_between_workflows as rbw
-			                                on wr.WORKFLOW_ID = rbw.old_workflow_id";
+                                    as
+                                    (
+                                        SELECT w1.[WORKFLOW_ID] as old_workflow_id
+                                                ,w2.WORKFLOW_ID as new_workflow_id
+                                        FROM [dbo].[workflow] as w1
+                                            inner join [dbo].[workflow] as w2
+                                                on w1.WORKFLOW_NAME = w2.WORKFLOW_NAME and w2.SITE_ID = @destinationSiteId
+                                        where w1.SITE_ID = @sourceSiteId
+                                    )
+                                    insert into [dbo].[workflow_rules]
+                                    select [user_id]
+                                          ,[group_id]
+                                          ,[rule_order]
+                                          ,[predecessor_permission_id]
+                                          ,[successor_permission_id]
+                                          ,[successor_status_id]
+                                          ,[comment]
+                                          ,rbw.new_workflow_id
+                                      from [dbo].[workflow_rules] as wr (nolock)
+                                        inner join relations_between_workflows as rbw
+                                            on wr.WORKFLOW_ID = rbw.old_workflow_id";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7495,12 +7495,12 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"
                             declare @now DateTime = GetDate()
 
-	                        declare @xmlprmsFolders xml = '{0}'
+                            declare @xmlprmsFolders xml = '{0}'
 
-	                        ;with relations_between_folders as (
-	                        select doc.col.value('./@sourceId', 'int') source_folder_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_folder_id
-			                        from @xmlprmsFolders.nodes('/items/item') doc(col)
+                            ;with relations_between_folders as (
+                            select doc.col.value('./@sourceId', 'int') source_folder_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_folder_id
+                                    from @xmlprmsFolders.nodes('/items/item') doc(col)
                             )
                             insert into [dbo].[folder_access](
                                     [folder_id]
@@ -7534,15 +7534,15 @@ namespace Quantumart.QP8.DAL
                                     set @todaysDate = GETDATE()
 
 
-	                                declare @relations_between_folders table(
-		                                old_folder_id int,
-		                                new_folder_id int
-	                                )
+                                    declare @relations_between_folders table(
+                                        old_folder_id int,
+                                        new_folder_id int
+                                    )
 
-	                                --copying folders
-	                                merge into [dbo].[folder]
-	                                using (
-	                                select @destinationSiteId
+                                    --copying folders
+                                    merge into [dbo].[folder]
+                                    using (
+                                    select @destinationSiteId
                                       ,[folder_id]
                                       ,[parent_folder_id]
                                       ,[name]
@@ -7552,22 +7552,22 @@ namespace Quantumart.QP8.DAL
                                       ,@todaysDate
                                       ,@todaysDate
                                       ,[last_modified_by]
-	                                from [dbo].[folder]
-	                                where SITE_ID = @sourceSiteId)
-	                                as src (site_id,[folder_id],[parent_folder_id],[name],[description],[filter],[path],[created], [modified],[last_modified_by])
-	                                on 0 = 1
-	                                when not matched then
-	                                insert (site_id,[parent_folder_id],[name],[description],[filter],[path],[created], [modified],[last_modified_by])
-	                                values (site_id,[parent_folder_id],[name],[description],[filter],[path],[created], [modified],[last_modified_by])
-	                                output src.[folder_id], inserted.[folder_id]
-		                                into @relations_between_folders;
+                                    from [dbo].[folder]
+                                    where SITE_ID = @sourceSiteId)
+                                    as src (site_id,[folder_id],[parent_folder_id],[name],[description],[filter],[path],[created], [modified],[last_modified_by])
+                                    on 0 = 1
+                                    when not matched then
+                                    insert (site_id,[parent_folder_id],[name],[description],[filter],[path],[created], [modified],[last_modified_by])
+                                    values (site_id,[parent_folder_id],[name],[description],[filter],[path],[created], [modified],[last_modified_by])
+                                    output src.[folder_id], inserted.[folder_id]
+                                        into @relations_between_folders;
 
-	                                update [dbo].[folder]
-	                                set [parent_folder_id] = rbf.new_folder_id
-	                                from [dbo].[folder] as f
-		                                inner join @relations_between_folders as rbf
-			                                on f.[parent_folder_id] = rbf.old_folder_id
-	                                where f.SITE_ID = @destinationSiteId
+                                    update [dbo].[folder]
+                                    set [parent_folder_id] = rbf.new_folder_id
+                                    from [dbo].[folder] as f
+                                        inner join @relations_between_folders as rbf
+                                            on f.[parent_folder_id] = rbf.old_folder_id
+                                    where f.SITE_ID = @destinationSiteId
 
                                     select old_folder_id as source_folder_id,
                                             new_folder_id as destination_folder_id
@@ -7589,14 +7589,14 @@ namespace Quantumart.QP8.DAL
         public static void CopyCommandSiteBind(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
         {
             var query = @"        delete from [dbo].[VE_COMMAND_SITE_BIND]
-	                                 where site_id = @destinationSiteId
+                                     where site_id = @destinationSiteId
 
-	                                 insert into [dbo].[VE_COMMAND_SITE_BIND]
-	                                 SELECT command_id
-			                                ,@destinationSiteId
-		                                  ,[ON]
-	                                  FROM [dbo].[VE_COMMAND_SITE_BIND] (nolock)
-	                                  where site_id = @sourceSiteId";
+                                     insert into [dbo].[VE_COMMAND_SITE_BIND]
+                                     SELECT command_id
+                                            ,@destinationSiteId
+                                          ,[ON]
+                                      FROM [dbo].[VE_COMMAND_SITE_BIND] (nolock)
+                                      where site_id = @sourceSiteId";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7611,14 +7611,14 @@ namespace Quantumart.QP8.DAL
         public static void CopyStyleSiteBind(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
         {
             var query = @"        delete from [dbo].[VE_STYLE_SITE_BIND]
-	                                 where site_id = @destinationSiteId
+                                     where site_id = @destinationSiteId
 
-	                                 insert into [dbo].[VE_STYLE_SITE_BIND]
-	                                 SELECT style_id
-			                                ,@destinationSiteId
-			                                ,[ON]
-	                                  FROM [dbo].[VE_STYLE_SITE_BIND] (nolock)
-	                                  where site_id = @sourceSiteId";
+                                     insert into [dbo].[VE_STYLE_SITE_BIND]
+                                     SELECT style_id
+                                            ,@destinationSiteId
+                                            ,[ON]
+                                      FROM [dbo].[VE_STYLE_SITE_BIND] (nolock)
+                                      where site_id = @sourceSiteId";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7648,26 +7648,26 @@ namespace Quantumart.QP8.DAL
 
 
             var query = string.Format(@"	declare @todaysDate datetime = GETDATE()
-	                                declare @isvirtual bit = 0
-	                                declare @new_content_ids table (content_id int)
-	                                -- copying contents
+                                    declare @isvirtual bit = 0
+                                    declare @new_content_ids table (content_id int)
+                                    -- copying contents
 
                                     ;with contents_with_row_number
-	                                as
-	                                (
-		                                select ROW_NUMBER() over(order by content_id) as [row_number]
-			                                , {0}
-	                                  from [dbo].[content] (nolock)
-	                                  where site_id = @oldsiteid and virtual_type = 0
-	                                )
-	                                insert into [dbo].[content] ({1})
-	                                output inserted.CONTENT_ID
-		                                into @new_content_ids
-	                                select {0}
-	                                  from contents_with_row_number
-	                                  where row_number between @startFrom and @endOn
+                                    as
+                                    (
+                                        select ROW_NUMBER() over(order by content_id) as [row_number]
+                                            , {0}
+                                      from [dbo].[content] (nolock)
+                                      where site_id = @oldsiteid and virtual_type = 0
+                                    )
+                                    insert into [dbo].[content] ({1})
+                                    output inserted.CONTENT_ID
+                                        into @new_content_ids
+                                    select {0}
+                                      from contents_with_row_number
+                                      where row_number between @startFrom and @endOn
 
-	                                select content_id from @new_content_ids",
+                                    select content_id from @new_content_ids",
                                                        GetColumnsForTable(sqlConnection, "content", excludeColumns, changeValues)
                                                        , GetColumnsForTable(sqlConnection, "content", excludeColumns));
 
@@ -7696,9 +7696,9 @@ namespace Quantumart.QP8.DAL
                                     )
 
                                     ;with relationsBetweenContents as (
-	                                    select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                     )
                                     merge [dbo].[content_constraint]
                                     using (
@@ -7711,8 +7711,8 @@ namespace Quantumart.QP8.DAL
                                     when not matched then
                                     insert(content_id)
                                     values(content_id)
-		                            output src.constraint_id, inserted.constraint_id
-			                            into @relations_between_constrains;
+                                    output src.constraint_id, inserted.constraint_id
+                                        into @relations_between_constrains;
 
                                     select source_constraint_id, destination_constraint_id from @relations_between_constrains", relationsBetweenContentsXml);
 
@@ -7743,9 +7743,9 @@ namespace Quantumart.QP8.DAL
                                     )
 
                                     insert into @relationsBetweenStatuses
-	                                    select doc.col.value('./@sourceId', 'int') source_status_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_status_id
-			                            from @xmlprmsStatuses.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_status_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_status_id
+                                        from @xmlprmsStatuses.nodes('/items/item') doc(col)
 
                                     declare @xmlprmsAttributes xml = '{1}'
 
@@ -7755,16 +7755,16 @@ namespace Quantumart.QP8.DAL
                                     )
 
                                     insert into @relationsBetweenAttributes
-	                                    select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                            from @xmlprmsAttributes.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                        from @xmlprmsAttributes.nodes('/items/item') doc(col)
 
                                     declare @xmlprms xml = '{2}'
 
                                     ;with relationsBetweenContents as (
-	                                    select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                     )
                                     insert into [dbo].[notifications] ({3})
                                     select {4}
@@ -7790,19 +7790,19 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"       declare @xmlprms xml = '{0}'
 
                                     ;with relationsBetweenAttributes as (
-	                                    select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                     )
                                     insert into [dbo].[dynamic_image_attribute]
-	                                select ra.destination_attribute_id
+                                    select ra.destination_attribute_id
                                       ,[width]
                                       ,[height]
                                       ,[type]
                                       ,[quality]
                                       ,[max_size]
-	                                from [dbo].[dynamic_image_attribute] as dia (nolock)
-		                                inner join relationsBetweenAttributes as ra on dia.ATTRIBUTE_ID = ra.source_attribute_id", relationsBetweenAttributesXml);
+                                    from [dbo].[dynamic_image_attribute] as dia (nolock)
+                                        inner join relationsBetweenAttributes as ra on dia.ATTRIBUTE_ID = ra.source_attribute_id", relationsBetweenAttributesXml);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7822,20 +7822,20 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"	    declare @xmlprms xml = '{0}'
 
                                     ;with relationsBetweenAttributes as (
-	                                    select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                     )
                                     update ca
-	                                set ATTRIBUTE_ORDER = ca1.ATTRIBUTE_ORDER
-	                                from [dbo].[content_attribute] as ca (nolock)
-		                                inner join content as c (nolock)
-			                                on ca.CONTENT_ID = c.CONTENT_ID
-		                                inner join relationsBetweenAttributes as ra
-			                                on ca.ATTRIBUTE_ID = ra.destination_attribute_id
-		                                inner join CONTENT_ATTRIBUTE as ca1  (nolock)
-			                                on ra.source_attribute_id = ca1.ATTRIBUTE_ID
-	                                where c.SITE_ID = @newsiteid {1}", relationsBetweenAttributesXml, forAttributesOfContents);
+                                    set ATTRIBUTE_ORDER = ca1.ATTRIBUTE_ORDER
+                                    from [dbo].[content_attribute] as ca (nolock)
+                                        inner join content as c (nolock)
+                                            on ca.CONTENT_ID = c.CONTENT_ID
+                                        inner join relationsBetweenAttributes as ra
+                                            on ca.ATTRIBUTE_ID = ra.destination_attribute_id
+                                        inner join CONTENT_ATTRIBUTE as ca1  (nolock)
+                                            on ra.source_attribute_id = ca1.ATTRIBUTE_ID
+                                    where c.SITE_ID = @newsiteid {1}", relationsBetweenAttributesXml, forAttributesOfContents);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7856,21 +7856,21 @@ namespace Quantumart.QP8.DAL
                                         destination_content_id int
                                     )
                                     insert into @relationsBetweenContents
-	                                    select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
 
 
-	                                ;with relations_between_workflows
-	                                as
-	                                (
-		                                SELECT w1.[WORKFLOW_ID] as old_workflow_id
-				                                ,w2.WORKFLOW_ID as new_workflow_id
-		                                FROM [dbo].[workflow] as w1 (nolock)
-			                                inner join [dbo].[workflow] as w2 (nolock)
-				                                on w1.WORKFLOW_NAME = w2.WORKFLOW_NAME and w2.SITE_ID = @newSiteId
-		                                where w1.SITE_ID = @oldSiteId
-	                                )
+                                    ;with relations_between_workflows
+                                    as
+                                    (
+                                        SELECT w1.[WORKFLOW_ID] as old_workflow_id
+                                                ,w2.WORKFLOW_ID as new_workflow_id
+                                        FROM [dbo].[workflow] as w1 (nolock)
+                                            inner join [dbo].[workflow] as w2 (nolock)
+                                                on w1.WORKFLOW_NAME = w2.WORKFLOW_NAME and w2.SITE_ID = @newSiteId
+                                        where w1.SITE_ID = @oldSiteId
+                                    )
                                     insert into [dbo].[content_workflow_bind]
                                         select rbc.destination_content_id
                                                 ,rbw.new_workflow_id
@@ -7901,24 +7901,24 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"
 
                             declare @relscontents as table(
-		                        content_id_old int,
-		                        content_id_new int
-	                        )
-	                        declare @isVirtual bit = 0
+                                content_id_old int,
+                                content_id_new int
+                            )
+                            declare @isVirtual bit = 0
 
-	                        insert into @relscontents
-					                        select c.content_id as source_content_id, nc.content_id as destination_content_id
-					                        from [dbo].[content] as c (nolock)
-					                        inner join [dbo].[content] as nc (nolock)
-						                        on nc.content_name = c.content_name and nc.site_id = @newsiteid
-					                        where c.site_id = @oldsiteid
+                            insert into @relscontents
+                                            select c.content_id as source_content_id, nc.content_id as destination_content_id
+                                            from [dbo].[content] as c (nolock)
+                                            inner join [dbo].[content] as nc (nolock)
+                                                on nc.content_name = c.content_name and nc.site_id = @newsiteid
+                                            where c.site_id = @oldsiteid
 
                             insert into union_contents
-	                        select nvc1.content_id_new, rc.content_id_new, rc1.content_id_new
-	                        from union_contents as uc (nolock)
-	                        inner join @relscontents as nvc1 on uc.virtual_content_id = nvc1.content_id_old
-	                        left join @relscontents as rc on uc.union_content_id = rc.content_id_old
-	                        left join @relscontents as rc1 on uc.master_content_id = rc1.content_id_old
+                            select nvc1.content_id_new, rc.content_id_new, rc1.content_id_new
+                            from union_contents as uc (nolock)
+                            inner join @relscontents as nvc1 on uc.virtual_content_id = nvc1.content_id_old
+                            left join @relscontents as rc on uc.union_content_id = rc.content_id_old
+                            left join @relscontents as rc1 on uc.master_content_id = rc1.content_id_old
                             where nvc1.content_id_new in ({0})", newContentIds);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
@@ -7934,30 +7934,30 @@ namespace Quantumart.QP8.DAL
         {
             var query = @"   ;with relationsBetweenContentLinks as (
                                 select distinct oldvalues.link_id as oldvalue, newvalues.link_id as newvalue from (
-	                                select attribute_name, link_id, c.content_name
-	                                  from [dbo].[content_attribute] as ca
-	                                  inner join content as c on c.content_id = ca.content_id and c.virtual_type = 0
-	                                  inner join attribute_type as at on at.attribute_type_id = ca.attribute_type_id and at.type_name = 'Relation'
-	                                  where c.site_id = @oldsiteid and link_id is not null) as oldvalues
-	                                inner join (
-		                                select attribute_name, link_id, c.content_name
-		                                  from [dbo].[content_attribute] as ca
-		                                  inner join content as c on c.content_id = ca.content_id and c.virtual_type = 0
-		                                  inner join attribute_type as at on at.attribute_type_id = ca.attribute_type_id and at.type_name = 'Relation'
-		                                  where c.site_id = @newsiteid and link_id is not null)
-		                                  as newvalues
-		                                  on newvalues.attribute_name = oldvalues.attribute_name and newvalues.content_name = oldvalues.content_name
+                                    select attribute_name, link_id, c.content_name
+                                      from [dbo].[content_attribute] as ca
+                                      inner join content as c on c.content_id = ca.content_id and c.virtual_type = 0
+                                      inner join attribute_type as at on at.attribute_type_id = ca.attribute_type_id and at.type_name = 'Relation'
+                                      where c.site_id = @oldsiteid and link_id is not null) as oldvalues
+                                    inner join (
+                                        select attribute_name, link_id, c.content_name
+                                          from [dbo].[content_attribute] as ca
+                                          inner join content as c on c.content_id = ca.content_id and c.virtual_type = 0
+                                          inner join attribute_type as at on at.attribute_type_id = ca.attribute_type_id and at.type_name = 'Relation'
+                                          where c.site_id = @newsiteid and link_id is not null)
+                                          as newvalues
+                                          on newvalues.attribute_name = oldvalues.attribute_name and newvalues.content_name = oldvalues.content_name
                             )
-	                        update [dbo].[content_attribute]
-	                        set link_id = lc.newvalue,
-		                        default_value =lc1.newvalue
-	                        from  [dbo].[content_attribute] as ca (nolock)
-		                        inner join relationsBetweenContentLinks as lc
-			                        on ca.link_id = CAST(lc.oldvalue as varchar)
-		                        inner join relationsBetweenContentLinks as lc1
-			                        on ca.default_value = CAST(lc1.oldvalue as varchar)
-		                        inner join content as c (nolock)
-			                        on ca.CONTENT_ID = c.CONTENT_ID and c.SITE_ID = @newsiteid";
+                            update [dbo].[content_attribute]
+                            set link_id = lc.newvalue,
+                                default_value =lc1.newvalue
+                            from  [dbo].[content_attribute] as ca (nolock)
+                                inner join relationsBetweenContentLinks as lc
+                                    on ca.link_id = CAST(lc.oldvalue as varchar)
+                                inner join relationsBetweenContentLinks as lc1
+                                    on ca.default_value = CAST(lc1.oldvalue as varchar)
+                                inner join content as c (nolock)
+                                    on ca.CONTENT_ID = c.CONTENT_ID and c.SITE_ID = @newsiteid";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7971,13 +7971,13 @@ namespace Quantumart.QP8.DAL
         public static void CopyContentsGroups(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             var query = @"delete from [dbo].[content_group]
-		                        where site_id = @newsiteid
+                                where site_id = @newsiteid
 
-	                        insert into [dbo].[content_group]
-	                        select @newsiteid
-		                          ,[name]
-	                          from [dbo].[content_group] (nolock)
-	                          where site_id = @oldsiteid";
+                            insert into [dbo].[content_group]
+                            select @newsiteid
+                                  ,[name]
+                              from [dbo].[content_group] (nolock)
+                              where site_id = @oldsiteid";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -7991,17 +7991,17 @@ namespace Quantumart.QP8.DAL
         public static void UpdateContentGroupIds(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
             var query = @";with relations_between_groups as
-	                        (
-		                        select c.content_group_id as content_group_id_old, nc.content_group_id as content_group_id_new
-		                        from [dbo].[content_group] as c
-		                        inner join [dbo].[content_group] as nc on nc.name = c.name and nc.site_id = @newsiteid
-		                        where c.site_id = @oldsiteid
-	                        )
-	                        update [dbo].content
-	                        set content_group_id = rbg.content_group_id_new
-	                        from [dbo].[CONTENT] as c (nolock)
-		                        inner join relations_between_groups as rbg (nolock) on c.content_group_id = rbg.content_group_id_old
-	                        where site_id = @newsiteid";
+                            (
+                                select c.content_group_id as content_group_id_old, nc.content_group_id as content_group_id_new
+                                from [dbo].[content_group] as c
+                                inner join [dbo].[content_group] as nc on nc.name = c.name and nc.site_id = @newsiteid
+                                where c.site_id = @oldsiteid
+                            )
+                            update [dbo].content
+                            set content_group_id = rbg.content_group_id_new
+                            from [dbo].[CONTENT] as c (nolock)
+                                inner join relations_between_groups as rbg (nolock) on c.content_group_id = rbg.content_group_id_old
+                            where site_id = @newsiteid";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -8028,47 +8028,47 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"set nocount on;
 
                             declare @newvirtualcontents table(
-		                        content_id_old int,
-		                        content_id_new int,
-		                        virtual_type int,
-		                        sqlquery nvarchar(max),
-		                        altquery nvarchar(max)
-	                        )
+                                content_id_old int,
+                                content_id_new int,
+                                virtual_type int,
+                                sqlquery nvarchar(max),
+                                altquery nvarchar(max)
+                            )
 
-	                        declare @relscontents as table(
-		                        content_id_old int,
-		                        content_id_new int
-	                        )
-	                        declare @isVirtual bit = 0
+                            declare @relscontents as table(
+                                content_id_old int,
+                                content_id_new int
+                            )
+                            declare @isVirtual bit = 0
 
-	                        insert into @relscontents
-					                        select c.content_id as source_content_id, nc.content_id as destination_content_id
-					                        from [dbo].[content] as c (nolock)
-					                        inner join [dbo].[content] as nc (nolock)
-						                        on nc.content_name = c.content_name and nc.site_id = @newsiteid
-					                        where c.site_id = @oldsiteid
+                            insert into @relscontents
+                                            select c.content_id as source_content_id, nc.content_id as destination_content_id
+                                            from [dbo].[content] as c (nolock)
+                                            inner join [dbo].[content] as nc (nolock)
+                                                on nc.content_name = c.content_name and nc.site_id = @newsiteid
+                                            where c.site_id = @oldsiteid
 
-	                        merge [dbo].[content]
-	                        using (
-		                        select {0}
-		                          from [dbo].[content] as c (nolock)
-		                          left join @relscontents as rc on rc.content_id_old = c.[virtual_join_primary_content_id]
-	                          where virtual_type != 0 and site_id = @oldsiteid)
-	                          as src({1})
-	                          on 0 = 1
-	                          when not matched then
-	                           insert ({2})
-	                           values ({3})
-	                           output src.[content_id], inserted.content_id, inserted.virtual_type, inserted.query, inserted.alt_query
-		                        into @newvirtualcontents;
+                            merge [dbo].[content]
+                            using (
+                                select {0}
+                                  from [dbo].[content] as c (nolock)
+                                  left join @relscontents as rc on rc.content_id_old = c.[virtual_join_primary_content_id]
+                              where virtual_type != 0 and site_id = @oldsiteid)
+                              as src({1})
+                              on 0 = 1
+                              when not matched then
+                               insert ({2})
+                               values ({3})
+                               output src.[content_id], inserted.content_id, inserted.virtual_type, inserted.query, inserted.alt_query
+                                into @newvirtualcontents;
 
 
-	                        select 	content_id_old
-		                        , content_id_new
-		                        , virtual_type
-		                        , sqlquery
-		                        , altquery
-	                        from @newvirtualcontents
+                            select 	content_id_old
+                                , content_id_new
+                                , virtual_type
+                                , sqlquery
+                                , altquery
+                            from @newvirtualcontents
 
                             ",
                                                        GetColumnsForTable(sqlConnection, "content", null, changeValues, fieldsToAdd, "virtual_join_primary_content_id")
@@ -8138,9 +8138,9 @@ namespace Quantumart.QP8.DAL
         {
             var query = @"select c.content_id as content_id_old
                                     , nc.content_id as content_id_new
-		                     from [dbo].[content] as c
-		                     inner join [dbo].[content] as nc on nc.content_name = c.content_name and nc.site_id = @newsiteid
-		                     where c.site_id = @oldsiteid";
+                             from [dbo].[content] as c
+                             inner join [dbo].[content] as nc on nc.content_name = c.content_name and nc.site_id = @newsiteid
+                             where c.site_id = @oldsiteid";
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -8161,120 +8161,120 @@ namespace Quantumart.QP8.DAL
 
                             if @templateNumber = 1
                             begin
-		                        delete from [dbo].[page_template]
-		                        where SITE_ID = @newSiteId
-	                        end
+                                delete from [dbo].[page_template]
+                                where SITE_ID = @newSiteId
+                            end
 
 
                             declare @new_templates table(new_template_id int)
                             ;with templates_with_row_number as
                             (
-		                        select ROW_NUMBER() over(order by page_template_id) as [row_number]
-		                          ,[site_id]
-		                          ,[template_name]
-		                          ,[template_picture]
-		                          ,[description]
-		                          ,[created]
-		                          ,[modified]
-		                          ,[last_modified_by]
-		                          ,[charset]
-		                          ,[codepage]
-		                          ,[locale]
-		                          ,[template_body]
-		                          ,[template_folder]
-		                          ,[is_system]
-		                          ,[net_template_name]
-		                          ,[code_behind]
-		                          ,[net_language_id]
-		                          ,[show_filenames]
-		                          ,[enable_viewstate]
-		                          ,[for_mobile_devices]
-		                          ,[preview_template_body]
-		                          ,[preview_code_behind]
-		                          ,[max_num_of_format_stored_versions]
-		                          ,[custom_class_for_pages]
-		                          ,[template_custom_class]
-		                          ,[custom_class_for_generics]
-		                          ,[custom_class_for_containers]
-		                          ,[custom_class_for_forms]
-		                          ,[assemble_in_live]
-		                          ,[assemble_in_stage]
-		                          ,[disable_databind]
-		                          ,[using]
-		                          ,[send_nocache_headers]
-	                        from [dbo].[page_template] as pt (nolock)
-	                        where site_id = @oldSiteId
+                                select ROW_NUMBER() over(order by page_template_id) as [row_number]
+                                  ,[site_id]
+                                  ,[template_name]
+                                  ,[template_picture]
+                                  ,[description]
+                                  ,[created]
+                                  ,[modified]
+                                  ,[last_modified_by]
+                                  ,[charset]
+                                  ,[codepage]
+                                  ,[locale]
+                                  ,[template_body]
+                                  ,[template_folder]
+                                  ,[is_system]
+                                  ,[net_template_name]
+                                  ,[code_behind]
+                                  ,[net_language_id]
+                                  ,[show_filenames]
+                                  ,[enable_viewstate]
+                                  ,[for_mobile_devices]
+                                  ,[preview_template_body]
+                                  ,[preview_code_behind]
+                                  ,[max_num_of_format_stored_versions]
+                                  ,[custom_class_for_pages]
+                                  ,[template_custom_class]
+                                  ,[custom_class_for_generics]
+                                  ,[custom_class_for_containers]
+                                  ,[custom_class_for_forms]
+                                  ,[assemble_in_live]
+                                  ,[assemble_in_stage]
+                                  ,[disable_databind]
+                                  ,[using]
+                                  ,[send_nocache_headers]
+                            from [dbo].[page_template] as pt (nolock)
+                            where site_id = @oldSiteId
                             )
-	                        insert into [dbo].[page_template](
-		                          [site_id]
-		                          ,[template_name]
-		                          ,[template_picture]
-		                          ,[description]
-		                          ,[created]
-		                          ,[modified]
-		                          ,[last_modified_by]
-		                          ,[charset]
-		                          ,[codepage]
-		                          ,[locale]
-		                          ,[template_body]
-		                          ,[template_folder]
-		                          ,[is_system]
-		                          ,[net_template_name]
-		                          ,[code_behind]
-		                          ,[net_language_id]
-		                          ,[show_filenames]
-		                          ,[enable_viewstate]
-		                          ,[for_mobile_devices]
-		                          ,[preview_template_body]
-		                          ,[preview_code_behind]
-		                          ,[max_num_of_format_stored_versions]
-		                          ,[custom_class_for_pages]
-		                          ,[template_custom_class]
-		                          ,[custom_class_for_generics]
-		                          ,[custom_class_for_containers]
-		                          ,[custom_class_for_forms]
-		                          ,[assemble_in_live]
-		                          ,[assemble_in_stage]
-		                          ,[disable_databind]
-		                          ,[using]
-		                          ,[send_nocache_headers]
-	                        )
-	                        output inserted.PAGE_TEMPLATE_ID
-		                        into @new_templates
-	                        select @newSiteId
-		                          ,[template_name]
-		                          ,[template_picture]
-		                          ,[description]
-		                          ,@now as created
-		                          ,@now as modified
-		                          ,[last_modified_by]
-		                          ,[charset]
-		                          ,[codepage]
-		                          ,[locale]
-		                          ,[template_body]
-		                          ,[template_folder]
-		                          ,[is_system]
-		                          ,[net_template_name]
-		                          ,[code_behind]
-		                          ,[net_language_id]
-		                          ,[show_filenames]
-		                          ,[enable_viewstate]
-		                          ,[for_mobile_devices]
-		                          ,[preview_template_body]
-		                          ,[preview_code_behind]
-		                          ,[max_num_of_format_stored_versions]
-		                          ,[custom_class_for_pages]
-		                          ,[template_custom_class]
-		                          ,[custom_class_for_generics]
-		                          ,[custom_class_for_containers]
-		                          ,[custom_class_for_forms]
-		                          ,[assemble_in_live]
-		                          ,[assemble_in_stage]
-		                          ,[disable_databind]
-		                          ,[using]
-		                          ,[send_nocache_headers]
-	                        from templates_with_row_number as pt
-	                        where row_number = @templateNumber
+                            insert into [dbo].[page_template](
+                                  [site_id]
+                                  ,[template_name]
+                                  ,[template_picture]
+                                  ,[description]
+                                  ,[created]
+                                  ,[modified]
+                                  ,[last_modified_by]
+                                  ,[charset]
+                                  ,[codepage]
+                                  ,[locale]
+                                  ,[template_body]
+                                  ,[template_folder]
+                                  ,[is_system]
+                                  ,[net_template_name]
+                                  ,[code_behind]
+                                  ,[net_language_id]
+                                  ,[show_filenames]
+                                  ,[enable_viewstate]
+                                  ,[for_mobile_devices]
+                                  ,[preview_template_body]
+                                  ,[preview_code_behind]
+                                  ,[max_num_of_format_stored_versions]
+                                  ,[custom_class_for_pages]
+                                  ,[template_custom_class]
+                                  ,[custom_class_for_generics]
+                                  ,[custom_class_for_containers]
+                                  ,[custom_class_for_forms]
+                                  ,[assemble_in_live]
+                                  ,[assemble_in_stage]
+                                  ,[disable_databind]
+                                  ,[using]
+                                  ,[send_nocache_headers]
+                            )
+                            output inserted.PAGE_TEMPLATE_ID
+                                into @new_templates
+                            select @newSiteId
+                                  ,[template_name]
+                                  ,[template_picture]
+                                  ,[description]
+                                  ,@now as created
+                                  ,@now as modified
+                                  ,[last_modified_by]
+                                  ,[charset]
+                                  ,[codepage]
+                                  ,[locale]
+                                  ,[template_body]
+                                  ,[template_folder]
+                                  ,[is_system]
+                                  ,[net_template_name]
+                                  ,[code_behind]
+                                  ,[net_language_id]
+                                  ,[show_filenames]
+                                  ,[enable_viewstate]
+                                  ,[for_mobile_devices]
+                                  ,[preview_template_body]
+                                  ,[preview_code_behind]
+                                  ,[max_num_of_format_stored_versions]
+                                  ,[custom_class_for_pages]
+                                  ,[template_custom_class]
+                                  ,[custom_class_for_generics]
+                                  ,[custom_class_for_containers]
+                                  ,[custom_class_for_forms]
+                                  ,[assemble_in_live]
+                                  ,[assemble_in_stage]
+                                  ,[disable_databind]
+                                  ,[using]
+                                  ,[send_nocache_headers]
+                            from templates_with_row_number as pt
+                            where row_number = @templateNumber
 
 
                             select new_template_id from @new_templates";
@@ -8295,9 +8295,9 @@ namespace Quantumart.QP8.DAL
             var query = @"select pto.page_template_id as source_template_id
                                     ,ptn.page_template_id as destination_template_id
                             from page_template as pto (nolock)
-			                inner join page_template as ptn (nolock)
-				                  on pto.template_name = ptn.template_name and ptn.site_id = @newSiteId
-		                    where pto.site_id = @oldSiteId and ptn.PAGE_TEMPLATE_ID = @templateIdNew";
+                            inner join page_template as ptn (nolock)
+                                  on pto.template_name = ptn.template_name and ptn.site_id = @newSiteId
+                            where pto.site_id = @oldSiteId and ptn.PAGE_TEMPLATE_ID = @templateIdNew";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -8317,19 +8317,19 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"	declare @xmlprms xml = '{0}'
 
                                 ;with relations_between_templates as (
-	                                    select doc.col.value('./@sourceId', 'int') source_page_template_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_page_template_id
-			                            from @xmlprms.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_page_template_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_page_template_id
+                                        from @xmlprms.nodes('/items/item') doc(col)
                                 )
                                 select po.PAGE_ID as source_page_id
                                         ,pn.PAGE_ID as destination_page_id
                                 from [dbo].[page] as po (nolock)
-		                        inner join relations_between_templates as pt
-			                        on po.PAGE_TEMPLATE_ID = pt.source_page_template_id
-		                        inner join PAGE as pn (nolock)
-			                        on po.PAGE_NAME = pn.PAGE_NAME
-		                        inner join relations_between_templates as pt1
-			                        on pn.PAGE_TEMPLATE_ID = pt1.destination_page_template_id", relationsBetweenTemplates);
+                                inner join relations_between_templates as pt
+                                    on po.PAGE_TEMPLATE_ID = pt.source_page_template_id
+                                inner join PAGE as pn (nolock)
+                                    on po.PAGE_NAME = pn.PAGE_NAME
+                                inner join relations_between_templates as pt1
+                                    on pn.PAGE_TEMPLATE_ID = pt1.destination_page_template_id", relationsBetweenTemplates);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -8343,68 +8343,68 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> CopySiteTemplatePages(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId, string relationsBetweenTemplates)
         {
             var query = string.Format(@"
-	                        declare @now datetime = GETDATE()
+                            declare @now datetime = GETDATE()
                             declare @new_pages_added table(page_id int, page_template_id int)
 
                             declare @xmlprms xml = '{0}'
 
                             ;with relations_between_templates as (
-	                                select doc.col.value('./@sourceId', 'int') source_page_template_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_page_template_id
-			                        from @xmlprms.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_page_template_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_page_template_id
+                                    from @xmlprms.nodes('/items/item') doc(col)
                             )
-	                        insert into dbo.[page] (
-		                        [page_template_id]
-		                          ,[page_name]
-		                          ,[page_filename]
-		                          ,[proxy_cache]
-		                          ,[cache_hours]
-		                          ,[charset]
-		                          ,[codepage]
-		                          ,[locale]
-		                          ,[description]
-		                          ,[reassemble]
-		                          ,[created]
-		                          ,[modified]
-		                          ,[last_modified_by]
-		                          ,[assembled]
-		                          ,[last_assembled_by]
-		                          ,[generate_trace]
-		                          ,[page_folder]
-		                          ,[enable_viewstate]
-		                          ,[disable_browse_server]
-		                          ,[set_last_modified_header]
-		                          ,[page_custom_class]
-		                          ,[send_nocache_headers]
-		                          ,[permanent_lock])
-	                        output inserted.PAGE_ID, inserted.PAGE_TEMPLATE_ID
-		                        into @new_pages_added
-	                        select
-		                          rbt.destination_page_template_id
-		                          ,[page_name]
-		                          ,[page_filename]
-		                          ,[proxy_cache]
-		                          ,[cache_hours]
-		                          ,[charset]
-		                          ,[codepage]
-		                          ,[locale]
-		                          ,[description]
-		                          ,[reassemble]
-		                          ,@now as created
-		                          ,@now as modified
-		                          ,[last_modified_by]
-		                          ,[assembled]
-		                          ,[last_assembled_by]
-		                          ,[generate_trace]
-		                          ,[page_folder]
-		                          ,[enable_viewstate]
-		                          ,[disable_browse_server]
-		                          ,[set_last_modified_header]
-		                          ,[page_custom_class]
-		                          ,[send_nocache_headers]
-		                          ,[permanent_lock]
-	                        from [dbo].[page] as p (nolock)
-	                        inner join relations_between_templates as rbt on p.page_template_id = rbt.source_page_template_id
+                            insert into dbo.[page] (
+                                [page_template_id]
+                                  ,[page_name]
+                                  ,[page_filename]
+                                  ,[proxy_cache]
+                                  ,[cache_hours]
+                                  ,[charset]
+                                  ,[codepage]
+                                  ,[locale]
+                                  ,[description]
+                                  ,[reassemble]
+                                  ,[created]
+                                  ,[modified]
+                                  ,[last_modified_by]
+                                  ,[assembled]
+                                  ,[last_assembled_by]
+                                  ,[generate_trace]
+                                  ,[page_folder]
+                                  ,[enable_viewstate]
+                                  ,[disable_browse_server]
+                                  ,[set_last_modified_header]
+                                  ,[page_custom_class]
+                                  ,[send_nocache_headers]
+                                  ,[permanent_lock])
+                            output inserted.PAGE_ID, inserted.PAGE_TEMPLATE_ID
+                                into @new_pages_added
+                            select
+                                  rbt.destination_page_template_id
+                                  ,[page_name]
+                                  ,[page_filename]
+                                  ,[proxy_cache]
+                                  ,[cache_hours]
+                                  ,[charset]
+                                  ,[codepage]
+                                  ,[locale]
+                                  ,[description]
+                                  ,[reassemble]
+                                  ,@now as created
+                                  ,@now as modified
+                                  ,[last_modified_by]
+                                  ,[assembled]
+                                  ,[last_assembled_by]
+                                  ,[generate_trace]
+                                  ,[page_folder]
+                                  ,[enable_viewstate]
+                                  ,[disable_browse_server]
+                                  ,[set_last_modified_header]
+                                  ,[page_custom_class]
+                                  ,[send_nocache_headers]
+                                  ,[permanent_lock]
+                            from [dbo].[page] as p (nolock)
+                            inner join relations_between_templates as rbt on p.page_template_id = rbt.source_page_template_id
 
 
                             select page_id, page_template_id from @new_pages_added", relationsBetweenTemplates);
@@ -8432,103 +8432,103 @@ namespace Quantumart.QP8.DAL
                                 destination_template_id int
                             )
                             insert into @relations_between_templates
-	                                select doc.col.value('./@sourceId', 'int') source_template_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_template_id
-			                        from @xmlprmsTemplates.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_template_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_template_id
+                                    from @xmlprmsTemplates.nodes('/items/item') doc(col)
 
                             declare @xmlprmsPages xml = '{1}'
 
                             declare @relations_between_objects table(
-		                        source_object_id int,
-		                        destination_object_id int
-	                        )
+                                source_object_id int,
+                                destination_object_id int
+                            )
 
                             ;with relations_between_pages as (
-	                                select doc.col.value('./@sourceId', 'int') source_page_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_page_id
-			                        from @xmlprmsPages.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_page_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_page_id
+                                    from @xmlprmsPages.nodes('/items/item') doc(col)
                             )
-	                        merge into [dbo].[object]
-	                        using(
-	                        select [object_id]
-		                          ,[parent_object_id]
-		                          ,pt.destination_template_id as [page_template_id]
-		                          ,rbg.destination_page_id as [page_id]
-		                          ,[object_name]
-		                          ,[object_format_id]
-		                          ,o.[description]
-		                          ,[object_type_id]
-		                          ,[use_default_values]
-		                          ,o.[last_modified_by]
-		                          ,[allow_stage_edit]
-		                          ,[global]
-		                          ,[net_object_name]
-		                          ,o.[locked_by]
-		                          ,o.[enable_viewstate]
-		                          ,[control_custom_class]
-		                          ,o.[disable_databind]
-		                          ,o.[permanent_lock]
-	                        from dbo.[OBJECT] as o (nolock)
-		                        inner join @relations_between_templates as pt
-			                        on o.PAGE_TEMPLATE_ID = pt.source_template_id
-		                        left join relations_between_pages as rbg
-			                        on o.page_id = rbg.source_page_id
-	                        )as src ([object_id]
-		                          ,[parent_object_id]
-		                          ,[page_template_id]
-		                          ,[page_id]
-		                          ,[object_name]
-		                          ,[object_format_id]
-		                          ,[description]
-		                          ,[object_type_id]
-		                          ,[use_default_values]
-		                          ,[last_modified_by]
-		                          ,[allow_stage_edit]
-		                          ,[global]
-		                          ,[net_object_name]
-		                          ,[locked_by]
-		                          ,[enable_viewstate]
-		                          ,[control_custom_class]
-		                          ,[disable_databind]
-		                          ,[permanent_lock])
-	                        on 0 = 1
-	                        when not matched then
-	                        insert ([parent_object_id]
-		                          ,[page_template_id]
-		                          ,[page_id]
-		                          ,[object_name]
-		                          ,[object_format_id]
-		                          ,[description]
-		                          ,[object_type_id]
-		                          ,[use_default_values]
-		                          ,[last_modified_by]
-		                          ,[allow_stage_edit]
-		                          ,[global]
-		                          ,[net_object_name]
-		                          ,[locked_by]
-		                          ,[enable_viewstate]
-		                          ,[control_custom_class]
-		                          ,[disable_databind]
-		                          ,[permanent_lock])
-	                        values ([parent_object_id]
-		                          ,[page_template_id]
-		                          ,[page_id]
-		                          ,[object_name]
-		                          ,[object_format_id]
-		                          ,[description]
-		                          ,[object_type_id]
-		                          ,[use_default_values]
-		                          ,[last_modified_by]
-		                          ,[allow_stage_edit]
-		                          ,[global]
-		                          ,[net_object_name]
-		                          ,[locked_by]
-		                          ,[enable_viewstate]
-		                          ,[control_custom_class]
-		                          ,[disable_databind]
-		                          ,[permanent_lock])
-	                        output src.[object_id], inserted.[object_id]
-		                        into @relations_between_objects;
+                            merge into [dbo].[object]
+                            using(
+                            select [object_id]
+                                  ,[parent_object_id]
+                                  ,pt.destination_template_id as [page_template_id]
+                                  ,rbg.destination_page_id as [page_id]
+                                  ,[object_name]
+                                  ,[object_format_id]
+                                  ,o.[description]
+                                  ,[object_type_id]
+                                  ,[use_default_values]
+                                  ,o.[last_modified_by]
+                                  ,[allow_stage_edit]
+                                  ,[global]
+                                  ,[net_object_name]
+                                  ,o.[locked_by]
+                                  ,o.[enable_viewstate]
+                                  ,[control_custom_class]
+                                  ,o.[disable_databind]
+                                  ,o.[permanent_lock]
+                            from dbo.[OBJECT] as o (nolock)
+                                inner join @relations_between_templates as pt
+                                    on o.PAGE_TEMPLATE_ID = pt.source_template_id
+                                left join relations_between_pages as rbg
+                                    on o.page_id = rbg.source_page_id
+                            )as src ([object_id]
+                                  ,[parent_object_id]
+                                  ,[page_template_id]
+                                  ,[page_id]
+                                  ,[object_name]
+                                  ,[object_format_id]
+                                  ,[description]
+                                  ,[object_type_id]
+                                  ,[use_default_values]
+                                  ,[last_modified_by]
+                                  ,[allow_stage_edit]
+                                  ,[global]
+                                  ,[net_object_name]
+                                  ,[locked_by]
+                                  ,[enable_viewstate]
+                                  ,[control_custom_class]
+                                  ,[disable_databind]
+                                  ,[permanent_lock])
+                            on 0 = 1
+                            when not matched then
+                            insert ([parent_object_id]
+                                  ,[page_template_id]
+                                  ,[page_id]
+                                  ,[object_name]
+                                  ,[object_format_id]
+                                  ,[description]
+                                  ,[object_type_id]
+                                  ,[use_default_values]
+                                  ,[last_modified_by]
+                                  ,[allow_stage_edit]
+                                  ,[global]
+                                  ,[net_object_name]
+                                  ,[locked_by]
+                                  ,[enable_viewstate]
+                                  ,[control_custom_class]
+                                  ,[disable_databind]
+                                  ,[permanent_lock])
+                            values ([parent_object_id]
+                                  ,[page_template_id]
+                                  ,[page_id]
+                                  ,[object_name]
+                                  ,[object_format_id]
+                                  ,[description]
+                                  ,[object_type_id]
+                                  ,[use_default_values]
+                                  ,[last_modified_by]
+                                  ,[allow_stage_edit]
+                                  ,[global]
+                                  ,[net_object_name]
+                                  ,[locked_by]
+                                  ,[enable_viewstate]
+                                  ,[control_custom_class]
+                                  ,[disable_databind]
+                                  ,[permanent_lock])
+                            output src.[object_id], inserted.[object_id]
+                                into @relations_between_objects;
 
                         select source_object_id, destination_object_id from @relations_between_objects", relationsBetweenTemplates, relationsBetweenPages);
 
@@ -8546,85 +8546,85 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"
 
                             declare @relations_between_object_formats table(
-		                        source_object_format_id int,
-		                        destination_object_format_id int
-	                        )
+                                source_object_format_id int,
+                                destination_object_format_id int
+                            )
 
                             declare @xmlprmsObjects xml = '{0}'
 
                             ;with relations_between_objects as (
-	                                select doc.col.value('./@sourceId', 'int') source_object_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_object_id
-			                        from @xmlprmsObjects.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_object_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_object_id
+                                    from @xmlprmsObjects.nodes('/items/item') doc(col)
                             )
                             merge [dbo].[OBJECT_FORMAT]
-	                        using (
-			                        select
-			                        [object_format_id]
-		                          ,rbo.destination_object_id as [object_id]
-		                          ,[format_name]
-		                          ,[description]
-		                          ,[last_modified_by]
-		                          ,[format_body]
-		                          ,[net_language_id]
-		                          ,[net_format_name]
-		                          ,[code_behind]
-		                          ,[assemble_notification_in_live]
-		                          ,[assemble_notification_in_stage]
-		                          ,[assemble_preview_in_live]
-		                          ,[assemble_preview_in_stage]
-		                          ,[tag_name]
-		                          ,[permanent_lock]
-	                        from [dbo].[OBJECT_FORMAT] as oft (nolock)
-	                        inner join relations_between_objects as rbo
-		                        on oft.[OBJECT_ID] = rbo.source_object_id
-	                        ) as src([object_format_id]
-			                        ,[object_id]
-		                          ,[format_name]
-		                          ,[description]
-		                          ,[last_modified_by]
-		                          ,[format_body]
-		                          ,[net_language_id]
-		                          ,[net_format_name]
-		                          ,[code_behind]
-		                          ,[assemble_notification_in_live]
-		                          ,[assemble_notification_in_stage]
-		                          ,[assemble_preview_in_live]
-		                          ,[assemble_preview_in_stage]
-		                          ,[tag_name]
-		                          ,[permanent_lock])
-	                        on 0 = 1
-	                        when not matched then
-	                        insert ([object_id]
-		                          ,[format_name]
-		                          ,[description]
-		                          ,[last_modified_by]
-		                          ,[format_body]
-		                          ,[net_language_id]
-		                          ,[net_format_name]
-		                          ,[code_behind]
-		                          ,[assemble_notification_in_live]
-		                          ,[assemble_notification_in_stage]
-		                          ,[assemble_preview_in_live]
-		                          ,[assemble_preview_in_stage]
-		                          ,[tag_name]
-		                          ,[permanent_lock])
-	                        values ([object_id]
-		                          ,[format_name]
-		                          ,[description]
-		                          ,[last_modified_by]
-		                          ,[format_body]
-		                          ,[net_language_id]
-		                          ,[net_format_name]
-		                          ,[code_behind]
-		                          ,[assemble_notification_in_live]
-		                          ,[assemble_notification_in_stage]
-		                          ,[assemble_preview_in_live]
-		                          ,[assemble_preview_in_stage]
-		                          ,[tag_name]
-		                          ,[permanent_lock])
-	                        output src.[object_format_id], inserted.[object_format_id]
-		                        into @relations_between_object_formats;
+                            using (
+                                    select
+                                    [object_format_id]
+                                  ,rbo.destination_object_id as [object_id]
+                                  ,[format_name]
+                                  ,[description]
+                                  ,[last_modified_by]
+                                  ,[format_body]
+                                  ,[net_language_id]
+                                  ,[net_format_name]
+                                  ,[code_behind]
+                                  ,[assemble_notification_in_live]
+                                  ,[assemble_notification_in_stage]
+                                  ,[assemble_preview_in_live]
+                                  ,[assemble_preview_in_stage]
+                                  ,[tag_name]
+                                  ,[permanent_lock]
+                            from [dbo].[OBJECT_FORMAT] as oft (nolock)
+                            inner join relations_between_objects as rbo
+                                on oft.[OBJECT_ID] = rbo.source_object_id
+                            ) as src([object_format_id]
+                                    ,[object_id]
+                                  ,[format_name]
+                                  ,[description]
+                                  ,[last_modified_by]
+                                  ,[format_body]
+                                  ,[net_language_id]
+                                  ,[net_format_name]
+                                  ,[code_behind]
+                                  ,[assemble_notification_in_live]
+                                  ,[assemble_notification_in_stage]
+                                  ,[assemble_preview_in_live]
+                                  ,[assemble_preview_in_stage]
+                                  ,[tag_name]
+                                  ,[permanent_lock])
+                            on 0 = 1
+                            when not matched then
+                            insert ([object_id]
+                                  ,[format_name]
+                                  ,[description]
+                                  ,[last_modified_by]
+                                  ,[format_body]
+                                  ,[net_language_id]
+                                  ,[net_format_name]
+                                  ,[code_behind]
+                                  ,[assemble_notification_in_live]
+                                  ,[assemble_notification_in_stage]
+                                  ,[assemble_preview_in_live]
+                                  ,[assemble_preview_in_stage]
+                                  ,[tag_name]
+                                  ,[permanent_lock])
+                            values ([object_id]
+                                  ,[format_name]
+                                  ,[description]
+                                  ,[last_modified_by]
+                                  ,[format_body]
+                                  ,[net_language_id]
+                                  ,[net_format_name]
+                                  ,[code_behind]
+                                  ,[assemble_notification_in_live]
+                                  ,[assemble_notification_in_stage]
+                                  ,[assemble_preview_in_live]
+                                  ,[assemble_preview_in_stage]
+                                  ,[tag_name]
+                                  ,[permanent_lock])
+                            output src.[object_format_id], inserted.[object_format_id]
+                                into @relations_between_object_formats;
 
                             select source_object_format_id, destination_object_format_id
                             from @relations_between_object_formats", relationsBetweenObjects);
@@ -8644,29 +8644,29 @@ namespace Quantumart.QP8.DAL
                                 declare @xmlprmsObjectFormats xml = '{0}'
 
                                 declare @relations_between_object_formats table(
-		                            source_object_format_id int,
-		                            destination_object_format_id int
-	                            )
+                                    source_object_format_id int,
+                                    destination_object_format_id int
+                                )
 
                                 insert into @relations_between_object_formats
-	                                    select doc.col.value('./@sourceId', 'int') source_object_format_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_object_format_id
-			                            from @xmlprmsObjectFormats.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_object_format_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_object_format_id
+                                        from @xmlprmsObjectFormats.nodes('/items/item') doc(col)
 
                                 declare @xmlprmsObjects xml = '{1}'
 
                                 ;with relations_between_objects as (
-	                                    select doc.col.value('./@sourceId', 'int') source_object_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_object_id
-			                            from @xmlprmsObjects.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_object_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_object_id
+                                        from @xmlprmsObjects.nodes('/items/item') doc(col)
                                 )
                                 update [dbo].[object]
-	                            set OBJECT_FORMAT_ID = rbof.destination_object_format_id
-	                            from [dbo].[object] as o (nolock)
-		                        inner join @relations_between_object_formats as rbof
-			                        on o.OBJECT_FORMAT_ID = rbof.source_object_format_id
-		                        inner join relations_between_objects as rbo
-			                        on o.OBJECT_ID = rbo.destination_object_id", relationsBetweenObjectFormats, relationsBetweenObjects);
+                                set OBJECT_FORMAT_ID = rbof.destination_object_format_id
+                                from [dbo].[object] as o (nolock)
+                                inner join @relations_between_object_formats as rbof
+                                    on o.OBJECT_FORMAT_ID = rbof.source_object_format_id
+                                inner join relations_between_objects as rbo
+                                    on o.OBJECT_ID = rbo.destination_object_id", relationsBetweenObjectFormats, relationsBetweenObjects);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -8682,17 +8682,17 @@ namespace Quantumart.QP8.DAL
                                     declare @xmlprmsObjects xml = '{0}'
 
                                     ;with relations_between_objects as (
-	                                        select doc.col.value('./@sourceId', 'int') source_object_id
-			                                 ,doc.col.value('./@destinationId', 'int') destination_object_id
-			                                from @xmlprmsObjects.nodes('/items/item') doc(col)
+                                            select doc.col.value('./@sourceId', 'int') source_object_id
+                                             ,doc.col.value('./@destinationId', 'int') destination_object_id
+                                            from @xmlprmsObjects.nodes('/items/item') doc(col)
                                     )
                                     insert into [dbo].[OBJECT_VALUES]
-	                                select rbo.destination_object_id
+                                    select rbo.destination_object_id
                                       ,[variable_name]
                                       ,[variable_value]
-	                                from [dbo].[object_values] as ov
-		                                inner join relations_between_objects as rbo
-			                                on ov.OBJECT_ID = rbo.source_object_id", relationsBetweenObjects);
+                                    from [dbo].[object_values] as ov
+                                        inner join relations_between_objects as rbo
+                                            on ov.OBJECT_ID = rbo.source_object_id", relationsBetweenObjects);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -8711,42 +8711,42 @@ namespace Quantumart.QP8.DAL
                                 )
 
                                 insert into @relations_between_contents
-	                                    select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprmsContents.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprmsContents.nodes('/items/item') doc(col)
 
                                 declare @xmlprmsObjects xml = '{1}'
 
                                 ;with relations_between_objects as (
-	                                    select doc.col.value('./@sourceId', 'int') source_object_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_object_id
-			                            from @xmlprmsObjects.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_object_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_object_id
+                                        from @xmlprmsObjects.nodes('/items/item') doc(col)
                                 )
                                 insert into [dbo].[container]
-		                        (
-		                          [object_id]
-		                          ,[content_id]
-		                          ,[allow_order_dynamic]
-		                          ,[order_static]
-		                          ,[order_dynamic]
-		                          ,[filter_value]
-		                          ,[select_start]
-		                          ,[select_total]
-		                          ,[schedule_dependence]
-		                          ,[rotate_content]
-		                          ,[apply_security]
-		                          ,[show_archived]
-		                          ,[cursor_type]
-		                          ,[cursor_location]
-		                          ,[duration]
-		                          ,[enable_cache_invalidation]
-		                          ,[dynamic_content_variable]
-		                          ,[start_level]
-		                          ,[end_level]
-		                          ,[use_level_filtration]
-		                          ,[return_last_modified]
-		                        )
-	                        select rbo.destination_object_id
+                                (
+                                  [object_id]
+                                  ,[content_id]
+                                  ,[allow_order_dynamic]
+                                  ,[order_static]
+                                  ,[order_dynamic]
+                                  ,[filter_value]
+                                  ,[select_start]
+                                  ,[select_total]
+                                  ,[schedule_dependence]
+                                  ,[rotate_content]
+                                  ,[apply_security]
+                                  ,[show_archived]
+                                  ,[cursor_type]
+                                  ,[cursor_location]
+                                  ,[duration]
+                                  ,[enable_cache_invalidation]
+                                  ,[dynamic_content_variable]
+                                  ,[start_level]
+                                  ,[end_level]
+                                  ,[use_level_filtration]
+                                  ,[return_last_modified]
+                                )
+                            select rbo.destination_object_id
                               ,rbc.destination_content_id
                               ,[allow_order_dynamic]
                               ,[order_static]
@@ -8767,11 +8767,11 @@ namespace Quantumart.QP8.DAL
                               ,[end_level]
                               ,[use_level_filtration]
                               ,[return_last_modified]
-	                        from [dbo].[container] as c (nolock)
-		                        inner join relations_between_objects as rbo
-			                        on c.[OBJECT_ID] = rbo.source_object_id
-		                        inner join @relations_between_contents as rbc
-			                        on c.CONTENT_ID = rbc.source_content_id", relationsBetweenContents, relationsBetweenObjects);
+                            from [dbo].[container] as c (nolock)
+                                inner join relations_between_objects as rbo
+                                    on c.[OBJECT_ID] = rbo.source_object_id
+                                inner join @relations_between_contents as rbc
+                                    on c.CONTENT_ID = rbc.source_content_id", relationsBetweenContents, relationsBetweenObjects);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -8790,16 +8790,16 @@ namespace Quantumart.QP8.DAL
                                 )
 
                                 insert into @relations_between_contents
-	                                    select doc.col.value('./@sourceId', 'int') source_content_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                            from @xmlprmsContents.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_content_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                        from @xmlprmsContents.nodes('/items/item') doc(col)
 
                                 declare @xmlprmsObjectFormats xml = '{1}'
 
                                 ;with relations_between_object_formats as (
-	                                    select doc.col.value('./@sourceId', 'int') source_object_format_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_object_format_id
-			                            from @xmlprmsObjectFormats.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_object_format_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_object_format_id
+                                        from @xmlprmsObjectFormats.nodes('/items/item') doc(col)
                                 )
                                 update [dbo].[notifications]
                                 set [format_id] = rbof.destination_object_format_id
@@ -8859,28 +8859,28 @@ namespace Quantumart.QP8.DAL
             changeValues.Add("modified", DateTime.Now.ToString(CultureInfo.GetCultureInfo("en-US")));
 
             var query = string.Format(@"	set nocount on;
-				if @new_content_ids is not null begin
-					declare @content_ids table
-					(
-						id numeric primary key
-					)
+                if @new_content_ids is not null begin
+                    declare @content_ids table
+                    (
+                        id numeric primary key
+                    )
 
-					insert into @content_ids(id)
-					SELECT convert(numeric, nstr) from dbo.splitNew(@new_content_ids, ',')
+                    insert into @content_ids(id)
+                    SELECT convert(numeric, nstr) from dbo.splitNew(@new_content_ids, ',')
 
-					delete from content_attribute where content_id in (select id from @content_ids)
+                    delete from content_attribute where content_id in (select id from @content_ids)
 
-					insert into content_attribute ({0})
-					select {1}
-					from [dbo].[content_attribute] as ca (nolock)
-					inner join (
-						select c.content_id as source_content_id, nc.content_id as destination_content_id
-						from [dbo].[content] as c (nolock)
-						inner join [dbo].[content] as nc (nolock)
-						    on nc.content_name = c.content_name and nc.site_id = @destination_site_id
-						where c.site_id = @source_site_id and {2}
-					) as rbc on ca.CONTENT_ID = rbc.source_content_id and rbc.destination_content_id in (select id from @content_ids)
-				end", GetColumnsForTable(sqlConnection, "content_attribute", excludeColumns)
+                    insert into content_attribute ({0})
+                    select {1}
+                    from [dbo].[content_attribute] as ca (nolock)
+                    inner join (
+                        select c.content_id as source_content_id, nc.content_id as destination_content_id
+                        from [dbo].[content] as c (nolock)
+                        inner join [dbo].[content] as nc (nolock)
+                            on nc.content_name = c.content_name and nc.site_id = @destination_site_id
+                        where c.site_id = @source_site_id and {2}
+                    ) as rbc on ca.CONTENT_ID = rbc.source_content_id and rbc.destination_content_id in (select id from @content_ids)
+                end", GetColumnsForTable(sqlConnection, "content_attribute", excludeColumns)
                   , GetColumnsForTable(sqlConnection, "content_attribute", new List<string> { "attribute_id", "content_id" }, changeValues, new Dictionary<string, string> { { "rbc.destination_content_id", "" } }, "ATTRIBUTE_NAME")
                   , isContentsVirtual ? "c.virtual_type != 0" : "c.virtual_type = 0");
             using (var cmd = new SqlCommand(query, sqlConnection))
@@ -8901,9 +8901,9 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"
                                         declare @xmlprmsAttributes xml = '{0}'
                                         ;with relations_between_attributes as (
-	                                        select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                                ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                                from @xmlprmsAttributes.nodes('/items/item') doc(col)
+                                            select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                            ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                            from @xmlprmsAttributes.nodes('/items/item') doc(col)
                                         )
                                                 insert into [dbo].[ve_style_field_bind]
                                                 select [style_id]
@@ -8924,9 +8924,9 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"
                                         declare @xmlprmsAttributes xml = '{0}'
                                         ;with relations_between_attributes as (
-	                                        select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                                ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                                from @xmlprmsAttributes.nodes('/items/item') doc(col)
+                                            select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                            ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                            from @xmlprmsAttributes.nodes('/items/item') doc(col)
                                         )
                                         insert into [dbo].[ve_command_field_bind]
                                         select [command_id]
@@ -8954,16 +8954,16 @@ namespace Quantumart.QP8.DAL
                                                 destination_constraint_id int
                                             )
                                             insert into @relations_between_constraints
-	                                            select doc.col.value('./@sourceId', 'int') source_constraint_id
-			                                     ,doc.col.value('./@destinationId', 'int') destination_constraint_id
-			                                from @xmlprmsConstraints.nodes('/items/item') doc(col)
+                                                select doc.col.value('./@sourceId', 'int') source_constraint_id
+                                                 ,doc.col.value('./@destinationId', 'int') destination_constraint_id
+                                            from @xmlprmsConstraints.nodes('/items/item') doc(col)
 
-	                                        declare @xmlprmsAttributes xml = '{1}'
+                                            declare @xmlprmsAttributes xml = '{1}'
 
                                             ;with relations_between_attributes as (
-	                                            select doc.col.value('./@sourceId', 'int') source_attribute_id
-			                                    ,doc.col.value('./@destinationId', 'int') destination_attribute_id
-			                                    from @xmlprmsAttributes.nodes('/items/item') doc(col)
+                                                select doc.col.value('./@sourceId', 'int') source_attribute_id
+                                                ,doc.col.value('./@destinationId', 'int') destination_attribute_id
+                                                from @xmlprmsAttributes.nodes('/items/item') doc(col)
                                             )
                                                 insert into [dbo].content_constraint_rule
                                                 SELECT rbc.destination_constraint_id
@@ -8989,31 +8989,31 @@ namespace Quantumart.QP8.DAL
                 inContents = string.Format("and c.content_id in ({0})", contentIds);
             }
             var query = string.Format(@"
-	                                declare @xmlprmsAttributes xml = '{0}'
+                                    declare @xmlprmsAttributes xml = '{0}'
                                         ;with relsattrs as (
-	                                        select doc.col.value('./@sourceId', 'int') attr_old
-			                                ,doc.col.value('./@destinationId', 'int') attr_new
-			                                from @xmlprmsAttributes.nodes('/items/item') doc(col)
+                                            select doc.col.value('./@sourceId', 'int') attr_old
+                                            ,doc.col.value('./@destinationId', 'int') attr_new
+                                            from @xmlprmsAttributes.nodes('/items/item') doc(col)
                                         )
-	                                update [dbo].[content_attribute]
-	                                set		[related_attribute_id] = rai.attr_new
-		                                  ,[related_image_attribute_id]= ria.attr_new
-		                                  ,[persistent_attr_id]= pai.attr_new
-		                                  ,[join_attr_id]= jai.attr_new
-		                                  ,[back_related_attribute_id]= bra.attr_new
-		                                  ,[classifier_attribute_id]= cai.attr_new
-		                                  ,[tree_order_field] = tof.attr_new
-		                                  ,[PARENT_ATTRIBUTE_ID] = paid.attr_new
-	                                from [dbo].[content_attribute] as ca (nolock)
-	                                left join relsattrs as rai on rai.attr_old = ca.related_attribute_id
-	                                left join relsattrs as ria on ria.attr_old = ca.related_image_attribute_id
-	                                left join relsattrs as pai on pai.attr_old = ca.persistent_attr_id
-	                                left join relsattrs as jai on jai.attr_old = ca.join_attr_id
-	                                left join relsattrs as bra on bra.attr_old = ca.back_related_attribute_id
-	                                left join relsattrs as cai on cai.attr_old = ca.classifier_attribute_id
-	                                left join relsattrs as tof on tof.attr_old = ca.tree_order_field
-	                                left join relsattrs as paid on paid.attr_old = ca.PARENT_ATTRIBUTE_ID
-	                                inner join [dbo].[content] as c on ca.content_id = c.content_id
+                                    update [dbo].[content_attribute]
+                                    set		[related_attribute_id] = rai.attr_new
+                                          ,[related_image_attribute_id]= ria.attr_new
+                                          ,[persistent_attr_id]= pai.attr_new
+                                          ,[join_attr_id]= jai.attr_new
+                                          ,[back_related_attribute_id]= bra.attr_new
+                                          ,[classifier_attribute_id]= cai.attr_new
+                                          ,[tree_order_field] = tof.attr_new
+                                          ,[PARENT_ATTRIBUTE_ID] = paid.attr_new
+                                    from [dbo].[content_attribute] as ca (nolock)
+                                    left join relsattrs as rai on rai.attr_old = ca.related_attribute_id
+                                    left join relsattrs as ria on ria.attr_old = ca.related_image_attribute_id
+                                    left join relsattrs as pai on pai.attr_old = ca.persistent_attr_id
+                                    left join relsattrs as jai on jai.attr_old = ca.join_attr_id
+                                    left join relsattrs as bra on bra.attr_old = ca.back_related_attribute_id
+                                    left join relsattrs as cai on cai.attr_old = ca.classifier_attribute_id
+                                    left join relsattrs as tof on tof.attr_old = ca.tree_order_field
+                                    left join relsattrs as paid on paid.attr_old = ca.PARENT_ATTRIBUTE_ID
+                                    inner join [dbo].[content] as c on ca.content_id = c.content_id
                                     where c.site_id = @destination_site_id {1}", relationsBetweenAttributesXml, inContents);
 
             using (var cmd = new SqlCommand(query, sqlConnection))
@@ -9035,17 +9035,17 @@ namespace Quantumart.QP8.DAL
                                         destination_link_id int
                                     )
                                     insert into @relationsBetweenLinks
-	                                    select doc.col.value('./@sourceId', 'int') source_link_id
-			                             ,doc.col.value('./@destinationId', 'int') destination_link_id
-			                            from @xmlprmsLinks.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_link_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_link_id
+                                        from @xmlprmsLinks.nodes('/items/item') doc(col)
 
-	                                update content_attribute
-	                                set link_id = rc.destination_link_id,
-		                            default_value = rc.destination_link_id
-		                            from content_attribute as ca (nolock)
-									inner join content as c on ca.content_id = c.content_id
-		                            inner join @relationsBetweenLinks as rc on rc.source_link_id = ca.link_id
-									where c.site_id = @newSiteId
+                                    update content_attribute
+                                    set link_id = rc.destination_link_id,
+                                    default_value = rc.destination_link_id
+                                    from content_attribute as ca (nolock)
+                                    inner join content as c on ca.content_id = c.content_id
+                                    inner join @relationsBetweenLinks as rc on rc.source_link_id = ca.link_id
+                                    where c.site_id = @newSiteId
                                     ", relationsBetweenLinksXml);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
@@ -9062,16 +9062,16 @@ namespace Quantumart.QP8.DAL
             var query = string.Format(@"	declare @xmlprmsContents xml = '{0}'
 
                                 ;with relationsBetweenContents as (
-	                                select doc.col.value('./@sourceId', 'int') source_content_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                        from @xmlprmsContents.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_content_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                    from @xmlprmsContents.nodes('/items/item') doc(col)
                                 )
                                 update [dbo].[content]
-	                            set PARENT_CONTENT_ID = rbc.destination_content_id
-	                            from [dbo].[content] as c
-	                            inner join relationsBetweenContents as rbc
-		                            on c.PARENT_CONTENT_ID = rbc.source_content_id
-	                            where c.SITE_ID = @destinationSiteId", relationsBetweenContentsXml);
+                                set PARENT_CONTENT_ID = rbc.destination_content_id
+                                from [dbo].[content] as c
+                                inner join relationsBetweenContents as rbc
+                                    on c.PARENT_CONTENT_ID = rbc.source_content_id
+                                where c.SITE_ID = @destinationSiteId", relationsBetweenContentsXml);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -9085,41 +9085,41 @@ namespace Quantumart.QP8.DAL
         {
             var query = string.Format(@"
 
-	                            delete FROM [dbo].[CONTENT_ACCESS]
-	                            where CONTENT_ID in (
-		                            select c.CONTENT_ID from content as c (nolock)
-		                            inner join [dbo].[content] as c1 (nolock) on c.CONTENT_ID = c1.CONTENT_ID and c.SITE_ID = @destinationSiteId
-	                            )
+                                delete FROM [dbo].[CONTENT_ACCESS]
+                                where CONTENT_ID in (
+                                    select c.CONTENT_ID from content as c (nolock)
+                                    inner join [dbo].[content] as c1 (nolock) on c.CONTENT_ID = c1.CONTENT_ID and c.SITE_ID = @destinationSiteId
+                                )
 
-	                            declare @now datetime = GETDATE()
+                                declare @now datetime = GETDATE()
 
                                 declare @xmlprmsContents xml = '{0}'
 
                                 ;with relations_between_contents as (
-	                                select doc.col.value('./@sourceId', 'int') source_content_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                        from @xmlprmsContents.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_content_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                    from @xmlprmsContents.nodes('/items/item') doc(col)
                                 )
-	                            insert into [CONTENT_ACCESS](
-		                            [content_id]
-		                              ,[user_id]
-		                              ,[group_id]
-		                              ,[permission_level_id]
-		                              ,[created]
-		                              ,[modified]
-		                              ,[last_modified_by]
-		                              ,[propagate_to_items]
-	                            )
-	                            select rbc.destination_content_id
-		                              ,[user_id]
-		                              ,[group_id]
-		                              ,[permission_level_id]
-		                              ,@now
-		                              ,@now
-		                              ,[last_modified_by]
-		                              ,[propagate_to_items]
-	                            from [dbo].[content_access] as ca (nolock)
-		                            inner join relations_between_contents as rbc on ca.CONTENT_ID = rbc.source_content_id", relationsBetweenContentsXml);
+                                insert into [CONTENT_ACCESS](
+                                    [content_id]
+                                      ,[user_id]
+                                      ,[group_id]
+                                      ,[permission_level_id]
+                                      ,[created]
+                                      ,[modified]
+                                      ,[last_modified_by]
+                                      ,[propagate_to_items]
+                                )
+                                select rbc.destination_content_id
+                                      ,[user_id]
+                                      ,[group_id]
+                                      ,[permission_level_id]
+                                      ,@now
+                                      ,@now
+                                      ,[last_modified_by]
+                                      ,[propagate_to_items]
+                                from [dbo].[content_access] as ca (nolock)
+                                    inner join relations_between_contents as rbc on ca.CONTENT_ID = rbc.source_content_id", relationsBetweenContentsXml);
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -9133,7 +9133,7 @@ namespace Quantumart.QP8.DAL
         {
             var query = string.Format(@"
 
-	                                declare @xmlprmsObjects xml = '{0}'
+                                    declare @xmlprmsObjects xml = '{0}'
 
                                     declare @relations_between_objects table(
                                         source_object_id int,
@@ -9142,14 +9142,14 @@ namespace Quantumart.QP8.DAL
 
                                     insert into @relations_between_objects
                                         select doc.col.value('./@sourceId', 'int') source_object_id
-			                            ,doc.col.value('./@destinationId', 'int') destination_object_id
-			                            from @xmlprmsObjects.nodes('/items/item') doc(col)
+                                        ,doc.col.value('./@destinationId', 'int') destination_object_id
+                                        from @xmlprmsObjects.nodes('/items/item') doc(col)
 
-	                                declare @xmlprmsStatuses xml = '{1}'
+                                    declare @xmlprmsStatuses xml = '{1}'
                                     ;with relations_between_statuses as (
-	                                    select doc.col.value('./@sourceId', 'int') source_status_id
-			                            ,doc.col.value('./@destinationId', 'int') destination_status_id
-			                            from @xmlprmsStatuses.nodes('/items/item') doc(col)
+                                        select doc.col.value('./@sourceId', 'int') source_status_id
+                                        ,doc.col.value('./@destinationId', 'int') destination_status_id
+                                        from @xmlprmsStatuses.nodes('/items/item') doc(col)
                                     )
                                     insert into [dbo].[container_statuses]
                                     select rbo.destination_object_id
@@ -9172,9 +9172,9 @@ namespace Quantumart.QP8.DAL
                                 declare @xmlprmsContents xml = '{0}'
 
                                 ;with relations_between_contents as (
-	                                select doc.col.value('./@sourceId', 'int') source_content_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                        from @xmlprmsContents.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_content_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                    from @xmlprmsContents.nodes('/items/item') doc(col)
                                 )
                                 insert into [dbo].[ACTION_CONTENT_BIND]
                                 select [custom_action_id]
@@ -9194,14 +9194,14 @@ namespace Quantumart.QP8.DAL
         {
             var query = string.Format(@"
 
-	                            declare @now datetime = GETDATE()
+                                declare @now datetime = GETDATE()
 
                                 declare @xmlprmsContents xml = '{0}'
 
                                 ;with relations_between_contents as (
-	                                select doc.col.value('./@sourceId', 'int') source_content_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                        from @xmlprmsContents.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_content_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                    from @xmlprmsContents.nodes('/items/item') doc(col)
                                 )
                                 insert into [dbo].[content_folder](
                                 [content_id]
@@ -9243,9 +9243,9 @@ namespace Quantumart.QP8.DAL
                                     destination_content_id int
                                 )
                                 insert into @relations_between_contents
-	                                select doc.col.value('./@sourceId', 'int') source_content_id
-			                         ,doc.col.value('./@destinationId', 'int') destination_content_id
-			                        from @xmlprmsContents.nodes('/items/item') doc(col)
+                                    select doc.col.value('./@sourceId', 'int') source_content_id
+                                     ,doc.col.value('./@destinationId', 'int') destination_content_id
+                                    from @xmlprmsContents.nodes('/items/item') doc(col)
 
 
                                 ;with relations_between_folders as (
@@ -9277,44 +9277,44 @@ namespace Quantumart.QP8.DAL
         {
             var query = @"	set nocount on;
 
-	                            --copying links between contents
-	                            declare @relations_between_content_links table(
-		                            oldlink int,
-		                            newlink int
-	                            )
+                                --copying links between contents
+                                declare @relations_between_content_links table(
+                                    oldlink int,
+                                    newlink int
+                                )
 
-	                            declare @relations_between_contents table(
-		                            source_content_id int,
-		                            destination_content_id int
-	                            )
-	                            insert into @relations_between_contents
-				                            select c.content_id as source_content_id, nc.content_id as destination_content_id
-				                            from [dbo].[content] as c (nolock)
-				                            inner join [dbo].[content] as nc (nolock)
-					                            on nc.content_name = c.content_name and nc.site_id = @newSiteId
-				                            where c.site_id = @oldSiteId
+                                declare @relations_between_contents table(
+                                    source_content_id int,
+                                    destination_content_id int
+                                )
+                                insert into @relations_between_contents
+                                            select c.content_id as source_content_id, nc.content_id as destination_content_id
+                                            from [dbo].[content] as c (nolock)
+                                            inner join [dbo].[content] as nc (nolock)
+                                                on nc.content_name = c.content_name and nc.site_id = @newSiteId
+                                            where c.site_id = @oldSiteId
 
-	                            merge [dbo].content_to_content as t
-	                            using(
-	                            select cc.[link_id]
-		                              ,rbc.destination_content_id
-		                              ,rbc1.destination_content_id
-		                              ,cc.[map_as_class]
-		                              ,[net_link_name]
-		                              ,[net_plural_link_name]
-		                              ,[symmetric]
-		                            from [dbo].content_to_content as cc (nolock)
-		                            inner join [dbo].content as c (nolock) on c.content_id = l_content_id
-		                            inner join @relations_between_contents as rbc on cc.l_content_id = rbc.source_content_id
-		                            inner join @relations_between_contents as rbc1 on cc.r_content_id = rbc1.source_content_id
-		                            where c.site_id = @oldsiteid
-	                            )as src([link_id],[l_content_id],[r_content_id],[map_as_class],[net_link_name],[net_plural_link_name],[symmetric])
-	                            on 0 = 1
-	                            when not matched then
-	                               insert ([l_content_id],[r_content_id],[map_as_class],[net_link_name],[net_plural_link_name],[symmetric])
-	                               values ([l_content_id],[r_content_id],[map_as_class],[net_link_name],[net_plural_link_name],[symmetric])
-	                               output src.[link_id], inserted.[link_id]
-		                            into @relations_between_content_links;
+                                merge [dbo].content_to_content as t
+                                using(
+                                select cc.[link_id]
+                                      ,rbc.destination_content_id
+                                      ,rbc1.destination_content_id
+                                      ,cc.[map_as_class]
+                                      ,[net_link_name]
+                                      ,[net_plural_link_name]
+                                      ,[symmetric]
+                                    from [dbo].content_to_content as cc (nolock)
+                                    inner join [dbo].content as c (nolock) on c.content_id = l_content_id
+                                    inner join @relations_between_contents as rbc on cc.l_content_id = rbc.source_content_id
+                                    inner join @relations_between_contents as rbc1 on cc.r_content_id = rbc1.source_content_id
+                                    where c.site_id = @oldsiteid
+                                )as src([link_id],[l_content_id],[r_content_id],[map_as_class],[net_link_name],[net_plural_link_name],[symmetric])
+                                on 0 = 1
+                                when not matched then
+                                   insert ([l_content_id],[r_content_id],[map_as_class],[net_link_name],[net_plural_link_name],[symmetric])
+                                   values ([l_content_id],[r_content_id],[map_as_class],[net_link_name],[net_plural_link_name],[symmetric])
+                                   output src.[link_id], inserted.[link_id]
+                                    into @relations_between_content_links;
 
                                 select oldlink, newlink from @relations_between_content_links
                                 ";
@@ -9342,17 +9342,17 @@ namespace Quantumart.QP8.DAL
             }
 
             sb.AppendFormat(@"select ca.attribute_id as source_attribute_id
-		                                             ,ca1.attribute_id as destination_attribute_id
-	                                         from [dbo].content_attribute as ca
-	                                            inner join (
-					                                select c.content_id as source_content_id, nc.content_id as destination_content_id
-					                                from [dbo].[content] as c (nolock)
-					                                inner join [dbo].[content] as nc (nolock)
-						                                on nc.content_name = c.content_name and nc.site_id = {1}
-					                                where c.site_id = {0} {2}
+                                                     ,ca1.attribute_id as destination_attribute_id
+                                             from [dbo].content_attribute as ca
+                                                inner join (
+                                                    select c.content_id as source_content_id, nc.content_id as destination_content_id
+                                                    from [dbo].[content] as c (nolock)
+                                                    inner join [dbo].[content] as nc (nolock)
+                                                        on nc.content_name = c.content_name and nc.site_id = {1}
+                                                    where c.site_id = {0} {2}
                                                 ) as rbc
                                                     on ca.content_id = rbc.source_content_id
-	                                            left join [dbo].content_attribute as ca1
+                                                left join [dbo].content_attribute as ca1
                                                     on ca.attribute_name = ca1.attribute_name and ca1.content_id = rbc.destination_content_id",
                                                                                                                               sourceSiteId,
                                                                                                                               destinationSiteId,
@@ -9388,11 +9388,11 @@ namespace Quantumart.QP8.DAL
                                                                     where t.countArticles <= @noMoreThanNArticles)
 
                                     if @articlesCount is null begin
-	                                    select 0
+                                        select 0
                                     end
                                     else
                                     begin
-	                                    select @articlesCount
+                                        select @articlesCount
                                     end";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
@@ -9586,14 +9586,14 @@ namespace Quantumart.QP8.DAL
         public static int[] SortIdsByFieldName(SqlConnection sqlConnection, int[] ids, int contentId, string fieldName)
         {
             var template = @"
-				select
-					CONTENT_ITEM_ID
-				from
-					content_{0}_united a with(nolock) {1}
-				WHERE
-					a.archive = 0
-				ORDER BY
-					a.[{2}]";
+                select
+                    CONTENT_ITEM_ID
+                from
+                    content_{0}_united a with(nolock) {1}
+                WHERE
+                    a.archive = 0
+                ORDER BY
+                    a.[{2}]";
 
             var join = "join @ids ids on a.CONTENT_ITEM_ID = ids.Id";
 
@@ -9625,113 +9625,113 @@ namespace Quantumart.QP8.DAL
         #region ArticleMatching
         #region MatchContentsQuery
         private const string MatchContentsQuery = @"
-			DECLARE @fields TABLE
-			(
-				Id INT NOT NULL,
-				ParentId INT,
-				Name NVARCHAR(255) NOT NULL,
-				[Type] NVARCHAR(255),
-				ContentId INT,
-				UNIQUE (ParentId, Name, [Type], ContentId)
-			)
+            DECLARE @fields TABLE
+            (
+                Id INT NOT NULL,
+                ParentId INT,
+                Name NVARCHAR(255) NOT NULL,
+                [Type] NVARCHAR(255),
+                ContentId INT,
+                UNIQUE (ParentId, Name, [Type], ContentId)
+            )
 
-			INSERT INTO
-				@fields(Id, ParentId, Name, Type, ContentId)
-			SELECT
-				T.N.value('(Id/text())[1]', 'INT') Id,
-				T.N.value('(ParentId/text())[1]', 'INT') ParentId,
-				T.N.value('(Name/text())[1]', 'NVARCHAR(255)') Name,
-				T.N.value('(Type/text())[1]', 'NVARCHAR(255)') Type,
-				T.N.value('(ContentId/text())[1]', 'INT') ContentId
-			FROM
-				@fieldsXml.nodes('ArrayOfFieldInfo/FieldInfo') as T(N)
-			;
-			WITH
-			Query(Id, ParentId, RootContentId, ContentId, RefContentId, LinkId, Field, BackwardField, AttributeTypeId, DataType) AS
-			(
-				SELECT
-					f.Id,
-					f.ParentId,
-					s.CONTENT_ID,
-					s.CONTENT_ID,
-					CASE
-						WHEN otm.CONTENT_ID IS NOT NULL THEN otm.CONTENT_ID
-						WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
-						WHEN mtm.r_content_id IS NOT NULL THEN mtm.r_content_id
-						WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
-						ELSE NULL
-					END,
-					s.link_id,
-					f.Name,
-					CASE
-						WHEN mto.ATTRIBUTE_NAME IS NOT NULL THEN mto.ATTRIBUTE_NAME
-						WHEN classifier.ATTRIBUTE_NAME IS NOT NULL THEN classifier.ATTRIBUTE_NAME
-						ELSE NULL
-					END,
-					s.ATTRIBUTE_TYPE_ID,
-					f.Type
-				FROM
-					@fields f
-					JOIN CONTENT_ATTRIBUTE s ON f.Name = s.ATTRIBUTE_NAME
-					LEFT JOIN CONTENT_ATTRIBUTE otm ON s.RELATED_ATTRIBUTE_ID = otm.ATTRIBUTE_ID
-					LEFT JOIN CONTENT_ATTRIBUTE mto ON s.BACK_RELATED_ATTRIBUTE_ID = mto.ATTRIBUTE_ID
-					LEFT JOIN CONTENT_TO_CONTENT mtm ON s.LINK_ID = mtm.LINK_ID AND s.CONTENT_ID = mtm.l_content_id
-					LEFT JOIN CONTENT_ATTRIBUTE classifier ON s.ATTRIBUTE_ID = classifier.CLASSIFIER_ATTRIBUTE_ID AND classifier.CONTENT_ID = f.ContentId
-				WHERE
-					(
-						s.IS_CLASSIFIER = 0 OR
-						classifier.CONTENT_ID IS NOT NULL
-					) AND
-					(
-						otm.CONTENT_ID IS NOT NULL OR
-						mto.CONTENT_ID IS NOT NULL OR
-						mtm.r_content_id IS NOT NULL OR
-						f.Type IS NULL OR
-						f.Type = 'date' AND s.ATTRIBUTE_TYPE_ID IN (4, 5, 6) OR
-						f.Type = 'string' AND s.ATTRIBUTE_TYPE_ID IN (1, 7, 8, 9, 10, 12) OR
-						f.Type = 'numeric' AND s.ATTRIBUTE_TYPE_ID IN (2, 3)
-					)
-			),
-			FlatQuery(Id, RootContentId, ContentId, RefContentId, LinkId, Alias, ParentAlias, Field, BackwardField, AttributeTypeId, DataType) AS
-			(
-				SELECT
-					Id,
-					RootContentId,
-					ContentId,
-					RefContentId,
-					LinkId,
-					CAST('root_' + Field AS NVARCHAR(MAX)),
-					CAST('root' AS NVARCHAR(MAX)),
-					Field,
-					BackwardField,
-					AttributeTypeId,
-					DataType
-				FROM Query
-					WHERE ParentId IS NULL
+            INSERT INTO
+                @fields(Id, ParentId, Name, Type, ContentId)
+            SELECT
+                T.N.value('(Id/text())[1]', 'INT') Id,
+                T.N.value('(ParentId/text())[1]', 'INT') ParentId,
+                T.N.value('(Name/text())[1]', 'NVARCHAR(255)') Name,
+                T.N.value('(Type/text())[1]', 'NVARCHAR(255)') Type,
+                T.N.value('(ContentId/text())[1]', 'INT') ContentId
+            FROM
+                @fieldsXml.nodes('ArrayOfFieldInfo/FieldInfo') as T(N)
+            ;
+            WITH
+            Query(Id, ParentId, RootContentId, ContentId, RefContentId, LinkId, Field, BackwardField, AttributeTypeId, DataType) AS
+            (
+                SELECT
+                    f.Id,
+                    f.ParentId,
+                    s.CONTENT_ID,
+                    s.CONTENT_ID,
+                    CASE
+                        WHEN otm.CONTENT_ID IS NOT NULL THEN otm.CONTENT_ID
+                        WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
+                        WHEN mtm.r_content_id IS NOT NULL THEN mtm.r_content_id
+                        WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
+                        ELSE NULL
+                    END,
+                    s.link_id,
+                    f.Name,
+                    CASE
+                        WHEN mto.ATTRIBUTE_NAME IS NOT NULL THEN mto.ATTRIBUTE_NAME
+                        WHEN classifier.ATTRIBUTE_NAME IS NOT NULL THEN classifier.ATTRIBUTE_NAME
+                        ELSE NULL
+                    END,
+                    s.ATTRIBUTE_TYPE_ID,
+                    f.Type
+                FROM
+                    @fields f
+                    JOIN CONTENT_ATTRIBUTE s ON f.Name = s.ATTRIBUTE_NAME
+                    LEFT JOIN CONTENT_ATTRIBUTE otm ON s.RELATED_ATTRIBUTE_ID = otm.ATTRIBUTE_ID
+                    LEFT JOIN CONTENT_ATTRIBUTE mto ON s.BACK_RELATED_ATTRIBUTE_ID = mto.ATTRIBUTE_ID
+                    LEFT JOIN CONTENT_TO_CONTENT mtm ON s.LINK_ID = mtm.LINK_ID AND s.CONTENT_ID = mtm.l_content_id
+                    LEFT JOIN CONTENT_ATTRIBUTE classifier ON s.ATTRIBUTE_ID = classifier.CLASSIFIER_ATTRIBUTE_ID AND classifier.CONTENT_ID = f.ContentId
+                WHERE
+                    (
+                        s.IS_CLASSIFIER = 0 OR
+                        classifier.CONTENT_ID IS NOT NULL
+                    ) AND
+                    (
+                        otm.CONTENT_ID IS NOT NULL OR
+                        mto.CONTENT_ID IS NOT NULL OR
+                        mtm.r_content_id IS NOT NULL OR
+                        f.Type IS NULL OR
+                        f.Type = 'date' AND s.ATTRIBUTE_TYPE_ID IN (4, 5, 6) OR
+                        f.Type = 'string' AND s.ATTRIBUTE_TYPE_ID IN (1, 7, 8, 9, 10, 12) OR
+                        f.Type = 'numeric' AND s.ATTRIBUTE_TYPE_ID IN (2, 3)
+                    )
+            ),
+            FlatQuery(Id, RootContentId, ContentId, RefContentId, LinkId, Alias, ParentAlias, Field, BackwardField, AttributeTypeId, DataType) AS
+            (
+                SELECT
+                    Id,
+                    RootContentId,
+                    ContentId,
+                    RefContentId,
+                    LinkId,
+                    CAST('root_' + Field AS NVARCHAR(MAX)),
+                    CAST('root' AS NVARCHAR(MAX)),
+                    Field,
+                    BackwardField,
+                    AttributeTypeId,
+                    DataType
+                FROM Query
+                    WHERE ParentId IS NULL
 
-				UNION ALL
+                UNION ALL
 
-				SELECT
-					q.Id,
-					fq.RootContentId,
-					q.ContentId,
-					q.RefContentId,
-					q.LinkId,
-					fq.Alias + '_' + q.Field,
-					fq.Alias,
-					q.Field,
-					q.BackwardField,
-					q.AttributeTypeId,
-					q.DataType
-				FROM
-					Query q
-					JOIN FlatQuery fq ON q.ParentId = fq.Id
-				WHERE
-					fq.RefContentId = q.ContentId
-			)
-			SELECT RootContentId, ContentId, RefContentId, LinkId, ParentAlias Alias, Field, BackwardField, AttributeTypeId, DataType
-			FROM FlatQuery
-			WHERE RootContentId IN (SELECT Id FROM @contentIds)";
+                SELECT
+                    q.Id,
+                    fq.RootContentId,
+                    q.ContentId,
+                    q.RefContentId,
+                    q.LinkId,
+                    fq.Alias + '_' + q.Field,
+                    fq.Alias,
+                    q.Field,
+                    q.BackwardField,
+                    q.AttributeTypeId,
+                    q.DataType
+                FROM
+                    Query q
+                    JOIN FlatQuery fq ON q.ParentId = fq.Id
+                WHERE
+                    fq.RefContentId = q.ContentId
+            )
+            SELECT RootContentId, ContentId, RefContentId, LinkId, ParentAlias Alias, Field, BackwardField, AttributeTypeId, DataType
+            FROM FlatQuery
+            WHERE RootContentId IN (SELECT Id FROM @contentIds)";
         #endregion
 
         public static IEnumerable<DataRow> MatchContents(SqlConnection sqlConnection, int[] contentIds, XDocument fields)
@@ -9766,101 +9766,101 @@ namespace Quantumart.QP8.DAL
 
         #region BatchInsertQuery
         private const string BatchInsertQuery = @"
-			DECLARE @articles TABLE
-			(
-				Id INT PRIMARY KEY IDENTITY(1,1),
-				ContentId INT,
-				ArticleId INT
-				UNIQUE (ContentId, ArticleId)
-			)
+            DECLARE @articles TABLE
+            (
+                Id INT PRIMARY KEY IDENTITY(1,1),
+                ContentId INT,
+                ArticleId INT
+                UNIQUE (ContentId, ArticleId)
+            )
 
-			DECLARE @statuses TABLE
-			(
-				ContentId INT PRIMARY KEY,
-				StatusId INT,
-				UNIQUE (StatusId, ContentId)
-			)
+            DECLARE @statuses TABLE
+            (
+                ContentId INT PRIMARY KEY,
+                StatusId INT,
+                UNIQUE (StatusId, ContentId)
+            )
 
-			DECLARE @ids TABLE
-			(
-				Id INT PRIMARY KEY IDENTITY(1,1),
-				ArticleId INT
-				UNIQUE (ArticleId)
-			)
+            DECLARE @ids TABLE
+            (
+                Id INT PRIMARY KEY IDENTITY(1,1),
+                ArticleId INT
+                UNIQUE (ArticleId)
+            )
 
-			INSERT INTO
-				@articles(ContentId, ArticleId)
-			SELECT DISTINCT
-				ContentId,
-				ArticleId
-			FROM
-				@values
-			EXCEPT
-				SELECT
-					CONTENT_ID,
-					CONTENT_ITEM_ID
-				FROM
-					CONTENT_ITEM
-			ORDER BY
-				ArticleId DESC
+            INSERT INTO
+                @articles(ContentId, ArticleId)
+            SELECT DISTINCT
+                ContentId,
+                ArticleId
+            FROM
+                @values
+            EXCEPT
+                SELECT
+                    CONTENT_ID,
+                    CONTENT_ITEM_ID
+                FROM
+                    CONTENT_ITEM
+            ORDER BY
+                ArticleId DESC
 
-			INSERT INTO
-				@statuses(ContentId, StatusId)
-			SELECT
-				a.ContentId,
-				CASE
-					WHEN
-						w.WORKFLOW_ID IS NULL
-					THEN
-					(
-						SELECT STATUS_TYPE_ID
-						FROM STATUS_TYPE t
-						WHERE t.STATUS_TYPE_NAME = 'Published' AND t.SITE_ID = c.SITE_ID)
-					ELSE
-					(
-						SELECT STATUS_TYPE_ID
-						FROM STATUS_TYPE t
-						WHERE t.STATUS_TYPE_NAME = 'None' AND t.SITE_ID = c.SITE_ID
-					)
-				END StatusId
-			FROM
-				@articles a
-				JOIN CONTENT c ON a.ContentId = c.CONTENT_ID
-				LEFT JOIN CONTENT_WORKFLOW_BIND w ON a.ContentId = w.CONTENT_ID
-			GROUP BY
-				a.ContentId,
-				w.WORKFLOW_ID,
-				c.SITE_ID
+            INSERT INTO
+                @statuses(ContentId, StatusId)
+            SELECT
+                a.ContentId,
+                CASE
+                    WHEN
+                        w.WORKFLOW_ID IS NULL
+                    THEN
+                    (
+                        SELECT STATUS_TYPE_ID
+                        FROM STATUS_TYPE t
+                        WHERE t.STATUS_TYPE_NAME = 'Published' AND t.SITE_ID = c.SITE_ID)
+                    ELSE
+                    (
+                        SELECT STATUS_TYPE_ID
+                        FROM STATUS_TYPE t
+                        WHERE t.STATUS_TYPE_NAME = 'None' AND t.SITE_ID = c.SITE_ID
+                    )
+                END StatusId
+            FROM
+                @articles a
+                JOIN CONTENT c ON a.ContentId = c.CONTENT_ID
+                LEFT JOIN CONTENT_WORKFLOW_BIND w ON a.ContentId = w.CONTENT_ID
+            GROUP BY
+                a.ContentId,
+                w.WORKFLOW_ID,
+                c.SITE_ID
 
-			INSERT INTO CONTENT_ITEM
-			(
-				CONTENT_ID,
-				VISIBLE,
-				STATUS_TYPE_ID,
-				LAST_MODIFIED_BY,
-				NOT_FOR_REPLICATION
-			)
-			OUTPUT
-				INSERTED.CONTENT_ITEM_ID INTO @ids(ArticleId)
-			SELECT
-				a.ContentId,
-				@visible,
-				s.StatusId,
-				@userId,
-				1
-			FROM
-				@articles a
-				JOIN @statuses s ON a.ContentId = s.ContentId
-			ORDER BY
-				ArticleId DESC
+            INSERT INTO CONTENT_ITEM
+            (
+                CONTENT_ID,
+                VISIBLE,
+                STATUS_TYPE_ID,
+                LAST_MODIFIED_BY,
+                NOT_FOR_REPLICATION
+            )
+            OUTPUT
+                INSERTED.CONTENT_ITEM_ID INTO @ids(ArticleId)
+            SELECT
+                a.ContentId,
+                @visible,
+                s.StatusId,
+                @userId,
+                1
+            FROM
+                @articles a
+                JOIN @statuses s ON a.ContentId = s.ContentId
+            ORDER BY
+                ArticleId DESC
 
-			SELECT
-				old.ArticleId OriginalArticleId,
-				new.ArticleId CreatedArticleId,
-				old.ContentId
-			FROM
-				@ids new
-				JOIN @articles old ON new.Id = old.Id";
+            SELECT
+                old.ArticleId OriginalArticleId,
+                new.ArticleId CreatedArticleId,
+                old.ContentId
+            FROM
+                @ids new
+                JOIN @articles old ON new.Id = old.Id";
         #endregion
 
         public static IEnumerable<DataRow> BatchInsert(SqlConnection sqlConnection, DataTable articles, bool visible, int userId)
@@ -9879,34 +9879,34 @@ namespace Quantumart.QP8.DAL
 
         #region BatchUpdateQuery
         private const string BatchUpdateQuery = @"
-			UPDATE
-				CONTENT_ITEM
-			SET
-				NOT_FOR_REPLICATION = 1,
-				MODIFIED = GETDATE(),
-				LAST_MODIFIED_BY = @userId
-			WHERE
-				NOT_FOR_REPLICATION = 0 AND
-				CONTENT_ITEM_ID IN (SELECT DISTINCT ArticleId FROM @values)
+            UPDATE
+                CONTENT_ITEM
+            SET
+                NOT_FOR_REPLICATION = 1,
+                MODIFIED = GETDATE(),
+                LAST_MODIFIED_BY = @userId
+            WHERE
+                NOT_FOR_REPLICATION = 0 AND
+                CONTENT_ITEM_ID IN (SELECT DISTINCT ArticleId FROM @values)
 
-			UPDATE
-				CONTENT_DATA
-			SET
-				DATA =
-				CASE
-					WHEN t.DATABASE_TYPE != 'NTEXT' AND v.Value != '' THEN v.Value
-					ELSE NULL
-				END,
-				BLOB_DATA =
-				CASE
-					WHEN t.DATABASE_TYPE = 'NTEXT' AND v.Value != '' THEN v.Value
-					ELSE NULL
-				END
-			FROM
-				CONTENT_DATA d
-				JOIN @values v ON v.ArticleId = d.CONTENT_ITEM_ID AND v.FieldId = d.ATTRIBUTE_ID
-				JOIN CONTENT_ATTRIBUTE a ON v.FieldId = a.ATTRIBUTE_ID AND v.ContentId = a.CONTENT_ID
-				JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID";
+            UPDATE
+                CONTENT_DATA
+            SET
+                DATA =
+                CASE
+                    WHEN t.DATABASE_TYPE != 'NTEXT' AND v.Value != '' THEN v.Value
+                    ELSE NULL
+                END,
+                BLOB_DATA =
+                CASE
+                    WHEN t.DATABASE_TYPE = 'NTEXT' AND v.Value != '' THEN v.Value
+                    ELSE NULL
+                END
+            FROM
+                CONTENT_DATA d
+                JOIN @values v ON v.ArticleId = d.CONTENT_ITEM_ID AND v.FieldId = d.ATTRIBUTE_ID
+                JOIN CONTENT_ATTRIBUTE a ON v.FieldId = a.ATTRIBUTE_ID AND v.ContentId = a.CONTENT_ID
+                JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID";
         #endregion
 
         public static void BatchUpdate(SqlConnection sqlConnection, DataTable articles, int userId)
@@ -9921,41 +9921,41 @@ namespace Quantumart.QP8.DAL
 
         #region GetRelationsQuery
         private const string GetRelationsQuery = @"
-			SELECT
-				f.ArticleId,
-				a.CONTENT_ID ContentId,
-				a.ATTRIBUTE_ID FieldId,
-				a.ATTRIBUTE_NAME FieldName,
-				f.Value FieldValue,
-				CASE
-					WHEN otm.CONTENT_ID IS NOT NULL THEN a.CONTENT_ID
-					WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
-					WHEN mtm.linked_content_id IS NOT NULL THEN mtm.linked_content_id
-					WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
-					ELSE NULL
-				END RefContentId,
-				CASE
-					WHEN otm.CONTENT_ID IS NOT NULL THEN a.ATTRIBUTE_ID
-					WHEN mto.CONTENT_ID IS NOT NULL THEN mto.ATTRIBUTE_ID
-					WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.ATTRIBUTE_ID
-					ELSE NULL
-				END RefFieldId,
-				CASE
-					WHEN mtm.link_id IS NOT NULL THEN mtm.link_id
-					ELSE NULL
-				END LinkId
-			FROM
-				@values f
-				JOIN CONTENT_ATTRIBUTE a ON f.FieldId = a.ATTRIBUTE_ID AND f.ContentId = a.CONTENT_ID
-				LEFT JOIN CONTENT_ATTRIBUTE otm ON a.RELATED_ATTRIBUTE_ID = otm.ATTRIBUTE_ID
-				LEFT JOIN CONTENT_ATTRIBUTE mto ON a.BACK_RELATED_ATTRIBUTE_ID = mto.ATTRIBUTE_ID
-				LEFT JOIN CONTENT_LINK mtm ON a.LINK_ID = mtm.LINK_ID AND a.CONTENT_ID = mtm.content_id
-				LEFT JOIN CONTENT_ATTRIBUTE classifier ON a.ATTRIBUTE_ID = classifier.CLASSIFIER_ATTRIBUTE_ID AND CAST(classifier.CONTENT_ID AS NVARCHAR(MAX)) = f.Value
-			WHERE
-				otm.CONTENT_ID IS NOT NULL OR
-				mto.CONTENT_ID IS NOT NULL OR
-				mtm.linked_content_id IS NOT NULL OR
-				classifier.CONTENT_ID IS NOT NULL";
+            SELECT
+                f.ArticleId,
+                a.CONTENT_ID ContentId,
+                a.ATTRIBUTE_ID FieldId,
+                a.ATTRIBUTE_NAME FieldName,
+                f.Value FieldValue,
+                CASE
+                    WHEN otm.CONTENT_ID IS NOT NULL THEN a.CONTENT_ID
+                    WHEN mto.CONTENT_ID IS NOT NULL THEN mto.CONTENT_ID
+                    WHEN mtm.linked_content_id IS NOT NULL THEN mtm.linked_content_id
+                    WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.CONTENT_ID
+                    ELSE NULL
+                END RefContentId,
+                CASE
+                    WHEN otm.CONTENT_ID IS NOT NULL THEN a.ATTRIBUTE_ID
+                    WHEN mto.CONTENT_ID IS NOT NULL THEN mto.ATTRIBUTE_ID
+                    WHEN classifier.CONTENT_ID IS NOT NULL THEN classifier.ATTRIBUTE_ID
+                    ELSE NULL
+                END RefFieldId,
+                CASE
+                    WHEN mtm.link_id IS NOT NULL THEN mtm.link_id
+                    ELSE NULL
+                END LinkId
+            FROM
+                @values f
+                JOIN CONTENT_ATTRIBUTE a ON f.FieldId = a.ATTRIBUTE_ID AND f.ContentId = a.CONTENT_ID
+                LEFT JOIN CONTENT_ATTRIBUTE otm ON a.RELATED_ATTRIBUTE_ID = otm.ATTRIBUTE_ID
+                LEFT JOIN CONTENT_ATTRIBUTE mto ON a.BACK_RELATED_ATTRIBUTE_ID = mto.ATTRIBUTE_ID
+                LEFT JOIN CONTENT_LINK mtm ON a.LINK_ID = mtm.LINK_ID AND a.CONTENT_ID = mtm.content_id
+                LEFT JOIN CONTENT_ATTRIBUTE classifier ON a.ATTRIBUTE_ID = classifier.CLASSIFIER_ATTRIBUTE_ID AND CAST(classifier.CONTENT_ID AS NVARCHAR(MAX)) = f.Value
+            WHERE
+                otm.CONTENT_ID IS NOT NULL OR
+                mto.CONTENT_ID IS NOT NULL OR
+                mtm.linked_content_id IS NOT NULL OR
+                classifier.CONTENT_ID IS NOT NULL";
         #endregion
 
         public static IEnumerable<DataRow> GetRelations(SqlConnection sqlConnection, DataTable articles)
@@ -10031,39 +10031,39 @@ namespace Quantumart.QP8.DAL
                 declare @fieldName nvarchar(255)
 
                 select
-	                @contentId = CONTENT_ID,
-	                @fieldName = ATTRIBUTE_NAME
+                    @contentId = CONTENT_ID,
+                    @fieldName = ATTRIBUTE_NAME
                 from
-	                CONTENT_ATTRIBUTE
+                    CONTENT_ATTRIBUTE
                 where
-	                ATTRIBUTE_ID = @fieldId and
-	                ATTRIBUTE_TYPE_ID = 11
+                    ATTRIBUTE_ID = @fieldId and
+                    ATTRIBUTE_TYPE_ID = 11
 
                 if (@contentId is not null and @fieldName is not null)
                 begin
-	                declare @sql nvarchar(max) ='
-		                with Result(Id, ParentId, Lvl)
-		                as
-		                (
-			                select
-				                CONTENT_ITEM_ID Id,'
-				                + @fieldName + ' ParentId,
-				                0 Lvl
-			                from
-				                content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
-			                where
-				                CONTENT_ITEM_ID IN (SELECT * FROM @ids)
+                    declare @sql nvarchar(max) ='
+                        with Result(Id, ParentId, Lvl)
+                        as
+                        (
+                            select
+                                CONTENT_ITEM_ID Id,'
+                                + @fieldName + ' ParentId,
+                                0 Lvl
+                            from
+                                content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
+                            where
+                                CONTENT_ITEM_ID IN (SELECT * FROM @ids)
 
-			                union all
+                            union all
 
-			                select
-				                c.CONTENT_ITEM_ID Id,
-				                c.Parent,
-				                r.Lvl + 1
-			                from
-				                content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
-				                join Result r on c.CONTENT_ITEM_ID = r.ParentId
-		                )"
+                            select
+                                c.CONTENT_ITEM_ID Id,
+                                c.Parent,
+                                r.Lvl + 1
+                            from
+                                content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
+                                join Result r on c.CONTENT_ITEM_ID = r.ParentId
+                        )"
                        + (ids.Count > 1
                        ? "SELECT DISTINCT Id, ParentId FROM Result'"
                        : "SELECT DISTINCT Id, ParentId, Lvl FROM Result ORDER BY Lvl'")
