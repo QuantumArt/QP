@@ -1031,7 +1031,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                         var field = fieldList.SingleOrDefault(n => n.FormName == oldFieldName);
                         if (field == null)
                         {
-                            throw new Exception($"Sorting field {oldFieldName} is not found");
+                            return null;
+                            // TODO: logger throw new Exception($"Sorting field {oldFieldName} is not found");
                         }
 
                         newFieldName = $"[{field.Name}]";
