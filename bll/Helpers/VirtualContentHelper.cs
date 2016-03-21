@@ -241,7 +241,7 @@ namespace Quantumart.QP8.BLL.Helpers
 					// создать "свободное" поле
 					Field vField = new Field(dbContent).Init();
 					vField.Name = column.Name;
-					int stringSize = column.CharMaxLength.HasValue ? column.CharMaxLength.Value : Field.STRING_SIZE_DEFAULT_VALUE;
+					int stringSize = column.CharMaxLength.HasValue ? column.CharMaxLength.Value : Field.StringSizeDefaultValue;
                     switch (column.DbType.ToLowerInvariant())
 					{
 						case ValidFieldColumnDbTypes.Numeric:
@@ -264,7 +264,7 @@ namespace Quantumart.QP8.BLL.Helpers
 						case ValidFieldColumnDbTypes.Nvarchar:
 							vField.TypeId = (stringSize == - 1) ? FieldTypeCodes.Textbox : FieldTypeCodes.String;
 							vField.StringSize = stringSize;
-							vField.TextBoxRows = Field.TEXT_BOX_ROWS_DEFAULT_VALUE;
+							vField.TextBoxRows = Field.TextBoxRowsDefaultValue;
 							break;
 						default:
 							throw new ApplicationException("Недопустимый тип колонки: " + column.DbType);

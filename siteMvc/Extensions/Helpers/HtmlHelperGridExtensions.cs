@@ -182,7 +182,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 		private static GridColumnFactory<DataRow> ConfigureDynamicColumn(GridColumnFactory<DataRow> columnFactory, Field field, bool isFirstColumn, bool hasTitleLink, Dictionary<int, int> relationCounts)
 		{
 			columnFactory
-				.Bound(field.CLRType, Article.GetDynamicColumnName(field, relationCounts, true))
+				.Bound(field.ClrType, Article.GetDynamicColumnName(field, relationCounts, true))
 				.Title(field.DisplayName)
 				.ClientTemplate("<#= " + field.FormName + " #>")
 				.Sortable(field.ExactType != FieldExactTypes.M2MRelation && field.ExactType != FieldExactTypes.M2ORelation)

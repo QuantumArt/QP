@@ -1124,10 +1124,14 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   onGeneralEvent: function(eventType, sender, eventArgs) {
-    if (eventType == EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING || eventType == EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING ||
-    eventType == EVENT_TYPE_LIBRARY_ACTION_EXECUTING || eventType == EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING ||
-    eventType == EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK || eventType == EVENT_TYPE_ACTION_LINK_CLICK ||
-    eventType == EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING || eventType == EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED) {
+    if (eventType == EVENT_TYPE_ENTITY_GRID_ACTION_EXECUTING
+      || eventType == EVENT_TYPE_ENTITY_TREE_ACTION_EXECUTING
+      || eventType == EVENT_TYPE_LIBRARY_ACTION_EXECUTING
+      || eventType == EVENT_TYPE_ENTITY_EDITOR_ACTION_EXECUTING
+      || eventType == EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK
+      || eventType == EVENT_TYPE_ACTION_LINK_CLICK
+      || eventType == EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING
+      || eventType == EVENT_TYPE_LIBRARY_ALL_FILES_UPLOADED) {
       this.onActionExecuting(eventArgs);
     } else if (eventType == EVENT_TYPE_EXTERNAL_ACTION_EXECUTING) {
       if (eventArgs.get_externalCallerContext().data.changeCurrentTab && eventArgs.get_isInterface()) {

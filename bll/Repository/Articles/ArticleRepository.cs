@@ -778,29 +778,28 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <summary>
         /// Удаляет статьи
         /// </summary>
-        /// <param name="IDs">идентификаторы статей</param>
-        internal static void MultipleDelete(IEnumerable<int> IDs, bool withAggregated = false, bool withAutoArchive = false)
+        internal static void MultipleDelete(IEnumerable<int> ids, bool withAggregated = false, bool withAutoArchive = false)
         {
             using (new QPConnectionScope())
             {
                 if (withAutoArchive)
                 {
-                    var newIds = Common.GetIdsToAutoArchive(QPConnectionScope.Current.DbConnection, IDs);
+                    var newIds = Common.GetIdsToAutoArchive(QPConnectionScope.Current.DbConnection, ids);
                     Common.SetArchiveFlag(QPConnectionScope.Current.DbConnection, newIds, QPContext.CurrentUserId, true, withAggregated);
-                    Common.DeleteArticles(QPConnectionScope.Current.DbConnection, IDs.Except(newIds), withAggregated);
+                    Common.DeleteArticles(QPConnectionScope.Current.DbConnection, ids.Except(newIds), withAggregated);
                 }
                 else
                 {
-                    Common.DeleteArticles(QPConnectionScope.Current.DbConnection, IDs, withAggregated);
+                    Common.DeleteArticles(QPConnectionScope.Current.DbConnection, ids, withAggregated);
                 }
             }
         }
 
-        internal static void UnlockArticlesByUser(int[] IDs)
+        internal static void UnlockArticlesByUser(int[] ids)
         {
             using (new QPConnectionScope())
             {
-                Common.UnlockArticlesLockedByUser(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, IDs);
+                Common.UnlockArticlesLockedByUser(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, ids);
             }
         }
 
@@ -934,33 +933,31 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <summary>
         /// Устанавливает значение архивного флага для статей
         /// </summary>
-        /// <param name="IDs">массив ID статей</param>
-        /// <param name="flag">значение архивного флага</param>
-        internal static void SetArchiveFlag(IEnumerable<int> IDs, bool flag, bool withAggregated = false)
+        internal static void SetArchiveFlag(IEnumerable<int> ids, bool flag, bool withAggregated = false)
         {
             using (new QPConnectionScope())
             {
-                if (IDs != null && IDs.Any())
+                if (ids != null && ids.Any())
                 {
                     var stageIds = Enumerable.Empty<int>();
                     var liveIds = Enumerable.Empty<int>();
-                    Common.GetContentModification(QPConnectionScope.Current.DbConnection, IDs, withAggregated, ref liveIds, ref stageIds);
-                    Common.SetArchiveFlag(QPConnectionScope.Current.DbConnection, IDs, QPContext.CurrentUserId, flag, withAggregated);
+                    Common.GetContentModification(QPConnectionScope.Current.DbConnection, ids, withAggregated, ref liveIds, ref stageIds);
+                    Common.SetArchiveFlag(QPConnectionScope.Current.DbConnection, ids, QPContext.CurrentUserId, flag, withAggregated);
                     Common.UpdateContentModification(QPConnectionScope.Current.DbConnection, liveIds, stageIds);
                 }
             }
         }
 
-        internal static void Publish(IEnumerable<int> IDs, bool withAggregated = false)
+        internal static void Publish(IEnumerable<int> ids, bool withAggregated = false)
         {
             using (new QPConnectionScope())
             {
-                if (IDs != null && IDs.Any())
+                if (ids != null && ids.Any())
                 {
                     var stageIds = Enumerable.Empty<int>();
                     var liveIds = Enumerable.Empty<int>();
-                    Common.GetContentModification(QPConnectionScope.Current.DbConnection, IDs, withAggregated, ref liveIds, ref stageIds);
-                    Common.Publish(QPConnectionScope.Current.DbConnection, IDs, QPContext.CurrentUserId, withAggregated);
+                    Common.GetContentModification(QPConnectionScope.Current.DbConnection, ids, withAggregated, ref liveIds, ref stageIds);
+                    Common.Publish(QPConnectionScope.Current.DbConnection, ids, QPContext.CurrentUserId, withAggregated);
                     Common.UpdateContentModification(QPConnectionScope.Current.DbConnection, liveIds, stageIds);
                 }
             }
@@ -981,11 +978,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         #region Private Members
 
-        private static readonly Regex DynamicColumnNamePattern = new Regex(string.Format(@"^{0}(\d+)$", Field.Prefix), RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        private static readonly Regex DynamicColumnNamePattern = new Regex($@"^{Field.Prefix}(\d+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static string GetDisplayExpression(FieldValue item)
         {
-            return string.Format("[{0}]", item.Field.Name);
+            return $"[{item.Field.Name}]";
         }
 
         private static Article InternalUpdate(Article item)
@@ -1003,10 +1000,10 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             if (string.IsNullOrEmpty(item.Value))
             {
-                return string.Format("([{0}] IS NULL)", item.Field.Name);
+                return $"([{item.Field.Name}] IS NULL)";
             }
 
-            return string.Format("([{0}] = {1})", item.Field.Name, item.Field.ParamName);
+            return $"([{item.Field.Name}] = {item.Field.ParamName})";
         }
 
         /// <summary>
@@ -1034,19 +1031,19 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                         var field = fieldList.SingleOrDefault(n => n.FormName == oldFieldName);
                         if (field == null)
                         {
-                            throw new Exception(string.Format("Sorting field {0} is not found", oldFieldName));
+                            return null;
+                            // TODO: logger throw new Exception($"Sorting field {oldFieldName} is not found");
                         }
 
-                        newFieldName = string.Format("[{0}]", field.Name);
+                        newFieldName = $"[{field.Name}]";
                         if (field.Type.Name == FieldTypeName.Time)
                         {
-                            newFieldName = string.Format("dbo.qp_abs_time(c.{0})", newFieldName);
+                            newFieldName = $"dbo.qp_abs_time(c.{newFieldName})";
                         }
-
                     }
                     else if (!SqlSorting.ContainsSquareBrackets(newFieldName))
                     {
-                        newFieldName = string.Format("[{0}]", newFieldName);
+                        newFieldName = $"[{newFieldName}]";
                     }
 
                     if (sortInfoIndex > 0)
@@ -1157,7 +1154,10 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         internal static bool CheckRelationSecurity(Article article, bool isDeletable)
         {
             var result = true;
-            if (QPContext.IsAdmin) return result;
+            if (QPContext.IsAdmin)
+            {
+                return true;
+            }
 
             using (new QPConnectionScope())
             {
@@ -1285,7 +1285,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (var scope = new QPConnectionScope())
             {
-                var allExstensions = string.Format("{0} {1}", exstensions, GetExtraFromForRelations(fieldsToExpand));
+                var allExstensions = $"{exstensions} {GetExtraFromForRelations(fieldsToExpand)}";
                 return Common.GetArticlesForExport(scope.DbConnection, contentId, allExstensions, columns, filter, startRow, pageSize, orderBy, out totalRecords);
             }
         }
@@ -1613,12 +1613,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return articles;
         }
 
-        private static int[] GetArticleIds(ArticleData[] articles)
+        private static int[] GetArticleIds(IEnumerable<ArticleData> articles)
         {
             return articles.Select(a => a.Id).ToArray();
         }
 
-        private static int[] GetFieldIds(ArticleData[] articles)
+        private static int[] GetFieldIds(IEnumerable<ArticleData> articles)
         {
             return articles.SelectMany(a => a.Fields.Select(f => f.Id)).Distinct().ToArray();
         }
