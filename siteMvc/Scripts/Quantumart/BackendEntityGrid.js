@@ -334,6 +334,8 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   _onDeselectAllClickHandler: null,
 
   initialize: function() {
+    $('.fullTextBlock label').addClass('hidden');
+
     var $grid = jQuery('#' + this._gridElementId);
     var gridComponent = $grid.data('tGrid');
 
@@ -352,7 +354,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     $grid
       .unbind('dataBinding', gridComponent.onDataBinding)
       .unbind('rowDataBound', gridComponent.onRowDataBound)
-
       //.unbind("error", gridComponent.onError)
       //.bind("error", this._onDataLoadErrorHandler)
       .bind('dataBinding', this._onDataBindingHandler)
@@ -1035,6 +1036,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   _onDataBinding: function(e) {
     var params = this._createDataQueryParams();
+
     e.data = jQuery.extend(e.data, params);
     if (this._isDataLoaded) {
       var action = this._getCurrentAction();
@@ -1057,6 +1059,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       }
 
       var contextMenuComponent = this._contextMenuComponent;
+
       if (contextMenuComponent) {
         contextMenuComponent.hideMenu();
       }

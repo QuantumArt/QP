@@ -1,4 +1,4 @@
-﻿@using Quantumart.QP8.Constants
+@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
 
 <fieldset>
@@ -29,6 +29,6 @@
 
 		@Html.TextBox((string)ViewBag.QueryTextBoxID, string.Empty, new { @class = "textbox" })
 
-	    <label>&nbsp;@ArticleStrings.SearchBlock_FullTextBlockSearchResultLimitTitle:&nbsp;@ArticleFullTextSearchSettings.SearchResultLimit</label>
+	    <label class="hidden">&nbsp;@ArticleStrings.SearchBlock_FullTextBlockSearchResultLimitTitle:&nbsp;@ArticleFullTextSearchSettings.SearchResultLimit</label>
 	</div>
 </fieldset>
