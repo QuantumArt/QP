@@ -244,10 +244,10 @@ _Pvt_Extensions
 *.sln.iml
 
 # QuantumArt rules
+package/pack/qp8release
+siteMvc/Scripts/Quantumart/**/*.min.js
+
 !siteMvc/ToCopy/bin
 !siteMvc/ToCopy/bin/*.pdb
 !bll/Services/MultistepActions/Publish/
 !binaries/*.pdb
-
-package/pack/qp8release
-

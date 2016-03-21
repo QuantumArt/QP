@@ -1,6 +1,6 @@
-﻿@model CustomCssViewModel
+@model CustomCssViewModel
 
-@using Quantumart.QP8.WebMvc.ViewModels 
+@using Quantumart.QP8.WebMvc.ViewModels
 
 @foreach (var status in Model.Statuses)
 {
@@ -12,7 +12,9 @@
 @:.t-@status.Id
 @:{
 	@:background-color: #@status.Color;
-@:}	
+@:}
 }
 
-
+.hidden {
+  display: none;
+}

@@ -178,14 +178,12 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   initialize: function() {
     Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'initialize');
 
+    $('.fullTextBlock label').removeClass('hidden');
+
     var treeComponent = this._treeComponent;
-
     treeComponent.showCheckBox = this._allowMultipleNodeSelection;
-
     var $tree = jQuery(this._treeElement);
-
     $tree.bind('dataBound', this._onDataBoundHandler);
-
     if (!$q.isNullOrWhiteSpace(this._contextMenuCode)) {
       var contextMenuComponent = new Quantumart.QP8.BackendContextMenu(this._contextMenuCode, String.format('{0}_ContextMenu', this._treeElementId), {
         targetElements: this._treeElement,
@@ -227,6 +225,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     if (!$q.isNullOrEmpty(entitiesIDs)) {
       var self = this;
       var $nodes = this.getAllNodes();
+
       $nodes.each(
         function(index, nodeElem) {
           if (Array.contains(entitiesIDs, $q.toString(self.getEntityId(nodeElem)))) {
@@ -246,6 +245,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       var entityTypeCode = this._entityTypeCode;
       var entityId = this.convertNodeCodeToEntityId(node);
       var parentId = $o.getParentEntityId(entityTypeCode, entityId);
+
       if (parentId) {
         $parentNode = this.getNode(this.convertEntityIdToNodeCode(parentId));
       }
@@ -263,13 +263,17 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     // Получаем коды родительских узлов
     var parentNodeCodes = [];
+
     for (var entityIndex = 0; entityIndex < entityCount; entityIndex++) {
       var entityId = entitiesIDs[entityIndex];
       var $node = this.getNodeByEntityId(entityId);
+
       if (!$q.isNullOrEmpty($node)) {
         var $parentNode = this.getParentNode($node);
+
         if (!$q.isNullOrEmpty($parentNode)) {
           var parentNodeCode = this.getNodeValue($parentNode);
+
           Array.add(parentNodeCodes, parentNodeCode);
         }
 
@@ -297,6 +301,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     // Формируем список уровней вложенности
     var levels = [];
+
     for (var parentNodeInfoIndex = 0; parentNodeInfoIndex < parentNodeInfos.length; parentNodeInfoIndex++) {
       var parentNodeInfo = parentNodeInfos[parentNodeInfoIndex];
       var level = parentNodeInfo.level;
@@ -311,6 +316,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     // Очищаем список родительских узлов от узлов, которые являются дочерними
     // по отношению к узлам, содержащимся в списке
     var levelCount = levels.length;
+
     if (levelCount > 1) {
       for (var levelIndex = levelCount - 2; levelIndex >= 0; levelIndex--) {
         var level = levels[levelIndex];
@@ -324,6 +330,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         });
 
         var childNodeInfoCount = childNodeInfos.length;
+
         if (childNodeInfoCount > 0) {
           for (var nodeInfoIndex = 0; nodeInfoIndex < nodeInfoCount; nodeInfoIndex++) {
             var nodeInfo = nodeInfos[nodeInfoIndex];
@@ -358,12 +365,14 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
   _isSearchQueryEmpty: function(searchQuery) {
     var query = searchQuery || this._searchQuery;
+
     if ($q.isNullOrWhiteSpace(query)) {
       return true;
     }
 
     var i, j;
     var jsonData = JSON.parse(query);
+
     for (i = 0; i < jsonData.length; i++) {
       for (j = 0; j < jsonData[i].QueryParams.length; j++) {
         if (!$q.isNullOrWhiteSpace(jsonData[i].QueryParams[j])) {
@@ -381,6 +390,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     var dataItems = this.getTreeViewItemCollectionFromEntityObjects(entities);
+
     if (dataItems.length == 0) {
       $('.t-icon', $parentNode).hide();
       dataItems = null;
@@ -393,6 +403,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     $(entities).each(function(index, ent) {
       var $currentNode = this.getNodeByEntityId(ent.Id);
+
       this._drawData(ent.Children, $currentNode, false);
       if (!this._isSearchQueryEmpty()) {
         if (ent.IsHighlighted) {
@@ -418,7 +429,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
       if (options.maxExpandLevel != 0) {
         $parentNode.find('> UL > LI').each((function(index, $childNode) {
-            this.addNodesToParentNode($childNode, options.maxExpandLevel);
+          this.addNodesToParentNode($childNode, options.maxExpandLevel);
         }).bind(this));
       }
 
@@ -437,7 +448,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       this._raiseDataBoundEvent();
       $q.processGenericAjaxError(jqXHR);
       $q.callFunction(options.callback);
-    }
+    };
   },
 
   addNodesToParentNode: function(parentNode, maxExpandLevel, callback) {
@@ -454,7 +465,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       entityId = this.getEntityId($parentNode);
     }
 
-    var options =  {
+    var options = {
       $parentNode: $parentNode,
       isRootNode: isRootNode,
       maxExpandLevel: maxExpandLevel,
@@ -466,6 +477,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       this._raiseDataBindingEvent();
       this._showAjaxLoadingIndicatorForNode($parentNode);
       var returnSelf = (this._rootEntityId != null) && isRootNode;
+
       this._getEntityChildList(
         entityId,
         returnSelf,
