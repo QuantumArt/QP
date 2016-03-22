@@ -63,33 +63,9 @@ namespace Quantumart.QPublishing.Database
 
         public bool CacheData { get; set; }
 
-        private bool _updateManyToMany;
-        public bool UpdateManyToMany 
-        { 
-            get
-            {
-                return _updateManyToMany;
-            }
-            set
-            {
-                _updateManyToMany = value;
-                _updateManyToOne = value; // backward compatibility, should be removed later
-            }
-        }
+        public bool UpdateManyToMany { get; set; }
 
-        private bool _updateManyToOne;
-        public bool UpdateManyToOne
-        {
-            get
-            {
-                return _updateManyToOne;
-            }
-            set
-            {
-                _updateManyToOne = value;
-            }	
-        }
-
+        public bool UpdateManyToOne { get; set; }
 
         public bool ThrowNotificationExceptions { get; set; }
 

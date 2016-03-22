@@ -106,7 +106,7 @@ namespace Quantumart.QPublishing.Resizer
             return "field_" + attributeId + "\\" + String.Join(".", fileNameParts);
         }
 
-        public string GetDynamicImageRelUrl(string fileName, decimal attributeId, string outFileType)
+        public static string GetDynamicImageRelUrl(string fileName, decimal attributeId, string outFileType)
         {
             string[] fileNameParts = fileName.Split('.');
             fileNameParts[fileNameParts.Length - 1] = outFileType;

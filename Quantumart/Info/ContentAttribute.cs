@@ -9,6 +9,9 @@
         public string Description { get; set; }
         public AttributeType Type { get; set; }
         public string DbTypeName { get; set; }
+
+        public string DbField => DbTypeName == "NTEXT" ? "BLOB_DATA" : "DATA";
+
         public string InputTypeName { get; set; }
         public string InputMask { get; set; }
         public int Size { get; set; }

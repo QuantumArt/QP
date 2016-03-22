@@ -12,6 +12,7 @@ using System.Web;
 using Microsoft.VisualBasic;
 using Quantumart.QPublishing.Helpers;
 using Quantumart.QPublishing.Info;
+using Quantumart.QPublishing.Resizer;
 
 namespace Quantumart.QPublishing.Database
 {
@@ -625,8 +626,8 @@ namespace Quantumart.QPublishing.Database
                     MaxSize = attr.DynamicImage.MaxSize
                 };
 
-                image.DynamicUrl = !string.IsNullOrEmpty(image.ImageName) ? 
-                    DynamicImageCreator.GetDynamicImageRelUrl(image.ImageName, image.Id, image.FileType).Replace("'", "''") :
+                image.DynamicUrl = !string.IsNullOrEmpty(image.ImageName) ?
+                    DynamicImage.GetDynamicImageRelUrl(image.ImageName, image.Id, image.FileType).Replace("'", "''") :
                     "NULL";
 
                 imagesList.Add(image);
