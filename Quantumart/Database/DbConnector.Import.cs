@@ -53,7 +53,7 @@ namespace Quantumart.QPublishing.Database
             ImportContentItem(contentId, enumerable, lastModifiedBy, doc);
 
             var contentAttributes = attrs as ContentAttribute[] ?? attrs.ToArray();
-            var dataDoc = GetImportContentDataDocument(enumerable, contentAttributes);
+            var dataDoc = GetImportContentDataDocument(enumerable, contentAttributes, overrideMissedFields);
             ImportContentData(dataDoc);
 
             var attrString = fullUpdate ? String.Empty : String.Join(",", contentAttributes.Select(n => n.Id.ToString()).ToArray());
@@ -143,7 +143,7 @@ namespace Quantumart.QPublishing.Database
             ProcessData(cmd);
         }
 
-        private XDocument GetImportContentDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs)
+        private XDocument GetImportContentDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, bool overrideMissedFields = false)
         {
             var dataDoc = new XDocument();
             dataDoc.Add(new XElement("ITEMS"));
@@ -156,16 +156,18 @@ namespace Quantumart.QPublishing.Database
                     elem.Add(new XAttribute("id", XmlValidChars(value[SystemColumnNames.Id])));
                     elem.Add(new XAttribute("attrId", attr.Id));
                     string temp;
-                    value.TryGetValue(attr.Name, out temp);
+                    var valueExists = value.TryGetValue(attr.Name, out temp);
                     if (attr.LinkId.HasValue)
                     {
                         elem.Add(new XElement("DATA", attr.LinkId.Value));
+                        valueExists = true;
                     }
                     else if (attr.BackRelation != null)
                     {
                         elem.Add(new XElement("DATA", attr.BackRelation.Id));
+                        valueExists = true;
                     }
-                    else if (!String.IsNullOrEmpty(temp))
+                    else if (!string.IsNullOrEmpty(temp))
                     {
                         if (attr.DbTypeName == "DATETIME" && Information.IsDate(temp))
                         {
@@ -177,7 +179,8 @@ namespace Quantumart.QPublishing.Database
                         }
                         elem.Add(new XElement(attr.DbTypeName == "NTEXT" ? "BLOB_DATA" : "DATA", XmlValidChars(temp)));
                     }
-                    dataDoc.Root?.Add(elem);
+                    if (valueExists || overrideMissedFields)
+                        dataDoc.Root?.Add(elem);
                 }
             }
             return dataDoc;
@@ -188,14 +191,14 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 return XmlConvert.VerifyXmlChars(token);
-
             }
             catch (XmlException)
             {
-                const string invalidXmlChars = @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]";
-                return Regex.Replace(token, invalidXmlChars, "");
+                return InvalidXmlChars.Replace(token, "");
             }
         }
+
+        private static readonly Regex InvalidXmlChars = new Regex(@"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]");
 
         private XDocument GetImportContentItemDocument(IEnumerable<Dictionary<string, string>> values, Content content)
         {
