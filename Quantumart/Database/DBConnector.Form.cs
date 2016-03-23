@@ -775,7 +775,7 @@ namespace Quantumart.QPublishing.Database
                         {
                             dataValue = attr.BackRelation.Id;
                         }
-                        else if (attr.DbTypeName == "TEXT" || attr.DbTypeName == "NTEXT")
+                        else if (attr.IsBlob)
                         {
                             blobDataValue = data;
                         }

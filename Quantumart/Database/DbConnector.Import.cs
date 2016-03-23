@@ -177,7 +177,7 @@ namespace Quantumart.QPublishing.Database
                         {
                             temp = temp.Replace(",", ".");
                         }
-                        elem.Add(new XElement(attr.DbTypeName == "NTEXT" ? "BLOB_DATA" : "DATA", XmlValidChars(temp)));
+                        elem.Add(new XElement(attr.DbField, XmlValidChars(temp)));
                     }
                     if (valueExists || overrideMissedFields)
                         dataDoc.Root?.Add(elem);

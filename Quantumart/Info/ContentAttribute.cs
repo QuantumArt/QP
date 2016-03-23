@@ -10,7 +10,11 @@
         public AttributeType Type { get; set; }
         public string DbTypeName { get; set; }
 
-        public string DbField => DbTypeName == "NTEXT" ? "BLOB_DATA" : "DATA";
+        public string FullDbTypeName => DbTypeName == "NVARCHAR" ? $"{DbTypeName}({Size})" : DbTypeName;
+
+        public bool IsBlob => DbTypeName == "NTEXT";
+
+        public string DbField => IsBlob ? "BLOB_DATA" : "DATA";
 
         public string InputTypeName { get; set; }
         public string InputMask { get; set; }
@@ -31,6 +35,7 @@
         public string LinqName { get; set; }
         public bool IsClassifier { get; set; }
         public bool Aggregated { get; set; }
+        public int? ConstraintId { get; set; }
         public BackRelation BackRelation { get; set; }
         public DynamicImageAttribute DynamicImage { get; set; }
         public SourceAttribute SourceAttribute { get; set; }

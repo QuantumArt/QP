@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 using Microsoft.VisualBasic;
 using Quantumart.QPublishing.Info;
@@ -43,8 +44,8 @@ namespace Quantumart.QPublishing.Database
 
             CreateDynamicImages(arrValues, fullAttrs);
 
+            ValidateConstraints(arrValues, fullAttrs);
             var dataDoc = GetMassUpdateContentDataDocument(arrValues, attrs, fullAttrs, newIds, content);
-            ValidateConstraints(dataDoc, fullAttrs);
             ImportContentData(dataDoc);
 
             var attrString = string.Join(",", attrs.Select(n => n.Id.ToString()).ToArray());
@@ -163,9 +164,92 @@ namespace Quantumart.QPublishing.Database
 
         }
 
-        private void ValidateConstraints(XDocument dataDoc, ContentAttribute[] fullAttrs)
+        private void ValidateConstraints(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs)
         {
-            throw new NotImplementedException();
+            var validatedAttrs = attrs.Where(n => n.ConstraintId.HasValue).ToArray();
+            if (validatedAttrs.Any())
+            {
+                var constraints = validatedAttrs.GroupBy(n => n.ConstraintId).Select(n => new
+                {
+                    Id = (int) n.Key,
+                    Attrs = n.ToArray()
+                }).ToArray();
+
+                foreach (var constraint in constraints)
+                {
+                    XDocument validatedDataDoc = GetValidatedDataDocument(values, constraint.Attrs);
+                    SelfValidate(validatedDataDoc, constraint.Attrs);
+                    ValidateConstraint(validatedDataDoc, constraint.Attrs);
+                }
+            }
+        }
+
+        private void SelfValidate(XDocument validatedDataDoc, ContentAttribute[] attrs)
+        {
+            var items = validatedDataDoc.Root.Descendants("items").ToArray();
+            var set = new HashSet<string>();
+            foreach (var item in items)
+            {
+                var str = item.ToString();
+                if (set.Contains(str))
+                {
+                    var msg = String.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name")}] = '{n.Value}'"));
+                    throw new QPInvalidAttributeException($"Unique constraint violation between articles being added/updated: " + msg);
+                }
+                set.Add(str);
+            }
+        }
+
+        private XDocument GetValidatedDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs)
+        {
+            var result = new XDocument();
+            var root = new XElement("items", values.Select(m =>
+            {
+                var temp = new XElement("item");
+                temp.Add(new XAttribute("id", m[SystemColumnNames.Id]));
+                temp.Add(attrs.Select(n =>
+                {
+                    string value;
+                    if (!m.TryGetValue(n.Name, out value)) return null;
+                    var elem = new XElement("DATA", value);
+                    elem.Add(new XAttribute("name", n.Name));
+                    elem.Add(new XAttribute("id", n.Id));
+                    return elem;
+                }));
+                return temp;
+            }));
+            result.Add(root);
+            return result;
+        }
+
+        private void ValidateConstraint(XDocument validatedDataDoc, ContentAttribute[] attrs)
+        {
+            var sb = new StringBuilder();
+            int contentId = attrs[0].ContentId;
+            var attrNames = string.Join(", ", attrs.Select(n => n.Name));
+            sb.AppendLine($"WITH X(CONTENT_ITEM_ID, {attrNames})");
+            sb.AppendLine(@"AS (  SELECT doc.col.value('./@id', 'int') CONTENT_ITEM_ID");
+            foreach (var attr in attrs)
+            {
+                sb.AppendLine($",doc.col.value('(DATA)[@id={attr.Id}]', '{attr.FullDbTypeName}') {attr.Name}");
+            }
+            sb.AppendLine("FROM @xmlParameter.nodes('/ITEMS/ITEM') doc(col))");
+            sb.AppendLine($" SELECT c.CONTENT_ITEM_ID FROM dbo.CONTENT_{contentId}_UNITED c INNER JOIN X ON c.CONTENT_ITEM_ID = X.CONTENT_ITEM_ID");
+            foreach (var attr in attrs)
+            {
+                sb.AppendLine($"AND c.[{attr.Name}] = X.[{attr.Name}]");
+            }
+
+            var cmd = new SqlCommand(sb.ToString())
+            {
+                CommandTimeout = 120,
+                CommandType = CommandType.Text
+            };
+            cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = validatedDataDoc.ToString(SaveOptions.None) });
+            var conflictIds = GetRealData(cmd).AsEnumerable().Select(n => (int) n.Field<decimal>("CONTENT_ITEM_ID")).ToArray();
+            if (conflictIds.Any())
+                throw new QPInvalidAttributeException($"Unique constraint violation. Fields: {attrNames}. Article IDs: {string.Join(", ", conflictIds.ToArray())}");
+
         }
 
         private XDocument GetMassUpdateContentDataDocument(IEnumerable<Dictionary<string, string>> values, ContentAttribute[] attrs, ContentAttribute[] fullAttrs, int[] newIds, Content content)
