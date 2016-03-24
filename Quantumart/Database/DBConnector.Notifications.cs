@@ -119,6 +119,8 @@ namespace Quantumart.QPublishing.Database
                 var errorMessage =
                     $"{"DbConnector.cs, ExternalNotificationCallback(IAsyncResult iar)"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
                 System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+                if (ThrowNotificationExceptions)
+                    throw;
             }
 
         }
@@ -255,6 +257,8 @@ namespace Quantumart.QPublishing.Database
                 var errorMessage =
                     $"{"DbConnector.cs, SendNotification"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
                 System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+                if (ThrowNotificationExceptions)
+                    throw;
             }
         }
 
@@ -393,10 +397,10 @@ namespace Quantumart.QPublishing.Database
             string functionReturnValue;
             var sb = new StringBuilder();
             sb.Append("EXEC sp_executesql N'select p.charset as page_charset, pt.charset as template_charset from object_format objf ");
-            sb.Append(" inner join object o on o.objectId = objf.objectId ");
+            sb.Append(" inner join object o on o.object_id = objf.object_id ");
             sb.Append(" inner join page_template pt on o.page_template_id = pt.page_template_id ");
             sb.Append(" left join page p on o.page_id = p.page_id ");
-            sb.AppendFormat(" where objf.objectFormatId = @formatId', N'@formatId NUMERIC', @formatId = {0} ", objectFormatId);
+            sb.AppendFormat(" where objf.object_format_id = @formatId', N'@formatId NUMERIC', @formatId = {0} ", objectFormatId);
             var table = GetCachedData(sb.ToString());
             if (table.Rows.Count > 0)
             {
@@ -438,11 +442,11 @@ namespace Quantumart.QPublishing.Database
             var sb = new StringBuilder();
             sb.Append("EXEC sp_executesql N'");
             sb.AppendFormat("select n.NOTIFICATION_ID{0}, n.NOTIFICATION_NAME, n.CONTENT_ID, n.FORMAT_ID, n.USER_ID, n.GROUP_ID, n.NOTIFY_ON_STATUS_TYPE_ID, n.EMAIL_ATTRIBUTE_ID, n.NO_EMAIL, n.SEND_FILES, n.FROM_BACKENDUSER_ID, n.FROM_BACKENDUSER, n.FROM_DEFAULT_NAME, n.FROM_USER_EMAIL, n.FROM_USER_NAME, ", serviceString);
-            sb.Append(" f.objectId, c.siteId, n.is_external, coalesce(n.external_url, s.external_url) as external_url FROM notifications AS n with(nolock)");
-            sb.Append(" INNER JOIN content AS c with(nolock) ON c.contentId = n.contentId");
-            sb.Append(" INNER JOIN site AS s with(nolock) ON c.siteId = s.siteId");
-            sb.Append(" LEFT OUTER JOIN object_format AS f with(nolock) ON f.objectFormatId = n.format_id");
-            sb.Append(" WHERE n.contentId = @contentId");
+            sb.Append(" f.object_id, c.site_id, n.is_external, coalesce(n.external_url, s.external_url) as external_url FROM notifications AS n with(nolock)");
+            sb.Append(" INNER JOIN content AS c with(nolock) ON c.content_id = n.content_id");
+            sb.Append(" INNER JOIN site AS s with(nolock) ON c.site_id = s.site_id");
+            sb.Append(" LEFT OUTER JOIN object_format AS f with(nolock) ON f.object_format_id = n.format_id");
+            sb.Append(" WHERE n.content_id = @contentId");
             sb.AppendFormat(" AND n.{0} = 1", notificationOn);
             if (notificationOn.ToLowerInvariant() == NotificationEvent.StatusChanged)
             {
@@ -562,7 +566,7 @@ namespace Quantumart.QPublishing.Database
         public void AttachFiles(MailMessage mailMess, int siteId, int contentId, int contentItemId)
         {
             var strDataSql =
-                $"EXEC sp_executesql N'select cd.data from content_data cd inner join content_attribute ca on cd.attribute_id = ca.attribute_id where ca.contentId = @contentId and ca.attribute_type_id in (7,8) and cd.content_item_id = @itemId', N'@contentId NUMERIC, @itemId NUMERIC' , @contentId = {contentId}, @itemId = {contentItemId}";
+                $"EXEC sp_executesql N'select cd.data from content_data cd inner join content_attribute ca on cd.attribute_id = ca.attribute_id where ca.content_id = @contentId and ca.attribute_type_id in (7,8) and cd.content_item_id = @itemId', N'@contentId NUMERIC, @itemId NUMERIC' , @contentId = {contentId}, @itemId = {contentItemId}";
             var rstData = GetRealData(strDataSql);
             var currentDir = GetUploadDir(siteId) + "\\contents\\" + contentId;
 

@@ -10057,12 +10057,12 @@ namespace Quantumart.QP8.DAL
                 if (@contentId is not null and @fieldName is not null)
                 begin
                     declare @sql nvarchar(max) ='
-                        with Result(Id, ParentId, Lvl)
+                        with CTE(Id, ParentId, Lvl)
                         as
                         (
                             select
-                                CONTENT_ITEM_ID Id,'
-                                + @fieldName + ' ParentId,
+                                CONTENT_ITEM_ID Id, 
+                                [' + @fieldName + '] ParentId,
                                 0 Lvl
                             from
                                 content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
@@ -10077,11 +10077,11 @@ namespace Quantumart.QP8.DAL
                                 r.Lvl + 1
                             from
                                 content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)
-                                join Result r on c.CONTENT_ITEM_ID = r.ParentId
+                                join CTE r on c.CONTENT_ITEM_ID = r.ParentId
                         )"
                        + (ids.Count > 1
-                       ? "SELECT DISTINCT Id, ParentId FROM Result'"
-                       : "SELECT DISTINCT Id, ParentId, Lvl FROM Result ORDER BY Lvl'")
+                       ? "SELECT DISTINCT Id, ParentId FROM CTE'"
+                       : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl'")
                        + "EXEC sp_executesql @sql, N'@ids dbo.Ids READONLY, @fieldId int', @ids, @fieldId END";
         }
 
