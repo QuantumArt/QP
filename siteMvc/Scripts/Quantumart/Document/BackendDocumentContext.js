@@ -331,6 +331,10 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     return this._options;
   },
 
+  get_params: function () {
+      return this._params;
+  },
+
   needUp: function() {
     var result = false;
 
