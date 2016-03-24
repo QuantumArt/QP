@@ -676,7 +676,7 @@
     <Content Include="Scripts\Quantumart\Search\BackendArticleSearchBlock\ClassifierFieldSearch.js" />
     <Content Include="Scripts\Quantumart\Search\BackendContextBlock.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendPlUploader.js" />
-    <Content Include="Scripts\Quantumart\version.6.20.js" />
+    <Content Include="Scripts\Quantumart\version.6.21.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="ToCopy\default\container_code_cs.txt" />
     <Content Include="ToCopy\default\container_code_vb.txt" />
