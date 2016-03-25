@@ -27,17 +27,17 @@ namespace Assembling
 
         internal class ContentProperties
         {
-	        public int Id { get; set; }
+            public int Id { get; set; }
 
-	        public bool IsVirtual { get; set; }
+            public bool IsVirtual { get; set; }
 
-	        public bool IsUserQuery { get; set; }
+            public bool IsUserQuery { get; set; }
 
             public ContentProperties(int id, bool isVirtual, bool isUserQuery)
             {
                 Id = id;
                 IsVirtual = isVirtual;
-	            IsUserQuery = isUserQuery;
+                IsUserQuery = isUserQuery;
             }
 
         }
@@ -57,8 +57,8 @@ namespace Assembling
             {
                 var id = Int32.Parse(dv[0]["content_id"].ToString(), CultureInfo.InvariantCulture);
                 var isVirtual = dv[0]["virtual_type"].ToString() != "0";
-				var isUserQuery = dv[0]["virtual_type"].ToString() == "3";
-				return new ContentProperties(id, isVirtual, isUserQuery);
+                var isUserQuery = dv[0]["virtual_type"].ToString() == "3";
+                return new ContentProperties(id, isVirtual, isUserQuery);
             }
         }
 
@@ -211,25 +211,25 @@ namespace Assembling
             }
         }
 
-		private DataRowView GetFieldInfoRow(string name, int contentId)
-		{
-		    var dv = new DataView(Controller.FieldsInfoTable)
-		    {
-		        RowFilter =
-		            String.Format(CultureInfo.InvariantCulture, "COLUMN_NAME = '{0}' and TABLE_NAME = 'content_{1}'", name,
-		                contentId)
-		    };
-		    if (dv.Count == 0)
-			{
-				throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Cannot find field {0} in table content_{1}", name, contentId.ToString(CultureInfo.InvariantCulture)));
-			}
-			else
-			{
-				return dv[0];
-			}
-		}
+        private DataRowView GetFieldInfoRow(string name, int contentId)
+        {
+            var dv = new DataView(Controller.FieldsInfoTable)
+            {
+                RowFilter =
+                    String.Format(CultureInfo.InvariantCulture, "COLUMN_NAME = '{0}' and TABLE_NAME = 'content_{1}'", name,
+                        contentId)
+            };
+            if (dv.Count == 0)
+            {
+                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Cannot find field {0} in table content_{1}", name, contentId.ToString(CultureInfo.InvariantCulture)));
+            }
+            else
+            {
+                return dv[0];
+            }
+        }
 
-		private void AppendToSchema(XDocument doc, XElement elem)
+        private void AppendToSchema(XDocument doc, XElement elem)
         {
             if (elem != null)
             {
@@ -240,18 +240,21 @@ namespace Assembling
 
         private void CorrectLinks(XDocument doc)
         {
-            var usedLinks = doc.Descendants("attribute").Where(el => el.Attribute("link_id") != null).Select(el => el.Attribute("link_id")?.Value).Where(n => !String.IsNullOrEmpty(n)).Distinct().ToArray();
-            var definedLinks = doc.Descendants("link").Select(el => el.Attribute("id")?.Value).ToArray();
-            var undefinedLinks = usedLinks.Where(n => !definedLinks.Contains(n));
-            var unusedLinks = definedLinks.Where(n => !usedLinks.Contains(n));
-            var equalCounts = doc.Descendants("link").GroupBy(n =>
-                $"{n.Attribute("content_id")}_{n.Attribute("linked_content_id")}").Select(g => new { key = g.Key, count = g.Count() }).ToDictionary(n => n.key, n => n.count);
+            var usedLinks = new HashSet<string>(
+                doc.Descendants("attribute")
+                    .Where(el => el.Attribute("link_id") != null)
+                    .Select(el => el.Attribute("link_id").Value)
+                    .Where(n => !string.IsNullOrEmpty(n))
+                    .Distinct());
+            var definedLinks = new HashSet<string>(doc.Descendants("link").Select(el => el.Attribute("id").Value));
+            var undefinedLinks = usedLinks.Where(n => !definedLinks.Contains(n)).ToArray();
+            var unusedLinks = new HashSet<string>(definedLinks.Where(n => !usedLinks.Contains(n)));
+            var equalCounts = doc.Descendants("link")
+                .GroupBy(n => $"{n.Attribute("content_id")}_{n.Attribute("linked_content_id")}")
+                .Select(g => new { key = g.Key, count = g.Count() })
+                .ToDictionary(n => n.key, n => n.count);
 
-            doc.Descendants("link").Where(n =>
-            {
-                var xAttribute = n.Attribute("id");
-                return xAttribute != null && unusedLinks.Contains(xAttribute.Value);
-            }).Remove();
+            doc.Descendants("link").Where(n => unusedLinks.Contains(n.Attribute("id").Value)).Remove();
 
             var dv = new DataView(Controller.ContentToContentTable);
             foreach (var linkId in undefinedLinks)
@@ -260,11 +263,12 @@ namespace Assembling
                 AppendToSchema(doc, GetLinkElement(dv[0].Row, equalCounts, true));
             }
 
-            foreach (var linkId in definedLinks.ToList())
+            var redefinedLinks = doc.Descendants("link").Select(el => el.Attribute("id").Value).ToArray();
+            foreach (var linkId in redefinedLinks)
             {
                 dv.RowFilter = "link_id = " + linkId;
-                var node = doc.Descendants("link").Single(n => n.Attribute("id")?.Value == linkId.ToString());
-                node.ReplaceWith(GetLinkElement(dv[0].Row, equalCounts, node.Attribute("mapped_name")?.Value, node.Attribute("plural_mapped_name")?.Value, true));
+                var node = doc.Descendants("link").Single(n => n.Attribute("id").Value == linkId.ToString());
+                node.ReplaceWith(GetLinkElement(dv[0].Row, equalCounts, node.Attribute("mapped_name").Value, node.Attribute("plural_mapped_name").Value, true));
             }
         }
 
@@ -311,21 +315,21 @@ namespace Assembling
         {
             var fieldName = contentField.Attribute("name")?.Value;
             var row = GetFieldRow(fieldName, contentId);
-	        var row2 = isUserQuery ? GetFieldInfoRow(fieldName, contentId) : null;
-			SetFieldParams(contentField, row, row2);
+            var row2 = isUserQuery ? GetFieldInfoRow(fieldName, contentId) : null;
+            SetFieldParams(contentField, row, row2);
         }
 
         private void SetFieldParams(XElement contentField, DataRowView field, DataRowView fieldInfo)
         {
-	        if (fieldInfo != null)
-	        {
-		        var dataType = fieldInfo["DATA_TYPE"].ToString();
-		        var resultDataType = GetResultDataType(dataType);
-		        if (!string.IsNullOrEmpty(resultDataType))
-					contentField.SetAttributeValue("force_db_type", resultDataType);
+            if (fieldInfo != null)
+            {
+                var dataType = fieldInfo["DATA_TYPE"].ToString();
+                var resultDataType = GetResultDataType(dataType);
+                if (!string.IsNullOrEmpty(resultDataType))
+                    contentField.SetAttributeValue("force_db_type", resultDataType);
 
-			}
-			contentField.SetAttributeValue("id", GetFieldId(field));
+            }
+            contentField.SetAttributeValue("id", GetFieldId(field));
             var fieldType = GetFieldType(field);
             contentField.SetAttributeValue("type", fieldType);
 
@@ -334,10 +338,10 @@ namespace Assembling
                 contentField.SetAttributeValue("size", GetFieldSize(field));
             }
 
-			if ("Numeric" == fieldType)
-			{
-				contentField.SetAttributeValue("is_long", (bool)field["IS_LONG"]);
-			}
+            if ("Numeric" == fieldType)
+            {
+                contentField.SetAttributeValue("is_long", (bool)field["IS_LONG"]);
+            }
 
             var isClassifier = (bool)field["IS_CLASSIFIER"];
 
@@ -382,37 +386,37 @@ namespace Assembling
             }
         }
 
-	    private static string GetResultDataType(string dataType)
-	    {
-		    var resultDataType = "";
-		    switch (dataType)
-		    {
-			    case "int":
-				    resultDataType = "Int";
-				    break;
-			    case "tinyint":
-					resultDataType = "TinyInt";
-				
-				    break;
-			    case "smallint":
-				    resultDataType = "SmallInt";
-				    break;
-			    case "bit":
-				    resultDataType = "Bit";
-				    break;
-			    case "bigint":
-				    resultDataType = "BigInt";
-				    break;
-		    }
-		    return resultDataType;
-	    }
-
-	    private int SetContentParams(XElement content)
+        private static string GetResultDataType(string dataType)
         {
-	        var cp = GetContentProperties(content.Attribute("name")?.Value);
+            var resultDataType = "";
+            switch (dataType)
+            {
+                case "int":
+                    resultDataType = "Int";
+                    break;
+                case "tinyint":
+                    resultDataType = "TinyInt";
+                
+                    break;
+                case "smallint":
+                    resultDataType = "SmallInt";
+                    break;
+                case "bit":
+                    resultDataType = "Bit";
+                    break;
+                case "bigint":
+                    resultDataType = "BigInt";
+                    break;
+            }
+            return resultDataType;
+        }
+
+        private int SetContentParams(XElement content)
+        {
+            var cp = GetContentProperties(content.Attribute("name")?.Value);
             content.SetAttributeValue("id", cp.Id);
             content.SetAttributeValue("virtual", cp.IsVirtual ? "1" : "0");
-			content.SetAttributeValue("user_query", cp.IsUserQuery ? "1" : "0");
+            content.SetAttributeValue("user_query", cp.IsUserQuery ? "1" : "0");
             return cp.Id;
         }
 
@@ -596,7 +600,7 @@ namespace Assembling
             result.SetAttributeValue("replaceUrls", info.ReplaceUrls);
             result.SetAttributeValue("dbIndependent", info.DbIndependent);
             result.SetAttributeValue("isPartial", info.IsPartial);
-			result.SetAttributeValue("sendNotifications", info.SendNotifications);
+            result.SetAttributeValue("sendNotifications", info.SendNotifications);
             result.SetAttributeValue("siteName", info.SiteName);
             return result;
         }
