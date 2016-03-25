@@ -83,7 +83,7 @@ namespace Quantumart.QPublishing.Database
                 CommandType = CommandType.Text
             };
             cmd.Parameters.AddWithValue("@maxNumber", maxNumber);
-            cmd.Parameters.AddWithValue("@ids", IdsToDataTable(ids));
+            cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(ids) });
             return GetRealData(cmd).AsEnumerable().Select(n => (int) n.Field<decimal>("content_item_version_id")).ToArray();
         }
 
@@ -193,7 +193,7 @@ namespace Quantumart.QPublishing.Database
                 var str = item.ToString();
                 if (set.Contains(str))
                 {
-                    var msg = String.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name")}] = '{n.Value}'"));
+                    var msg = string.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name")}] = '{n.Value}'"));
                     throw new QPInvalidAttributeException($"Unique constraint violation between articles being added/updated: " + msg);
                 }
                 set.Add(str);
@@ -354,7 +354,7 @@ namespace Quantumart.QPublishing.Database
                 exec qp_create_content_item_versions @OldIds, @lastModifiedBy    
 
                 INSERT INTO @OldNonSplittedIds
-                SELECT a.CONTENT_ITEM_ID from @OldIds i INNER JOIN content_item ci on i.id = ci.CONTENT_ITEM_ID where ci.SPLITTED = 0
+                SELECT i.Id from @OldIds i INNER JOIN content_item ci on i.id = ci.CONTENT_ITEM_ID where ci.SPLITTED = 0
 
                 UPDATE CONTENT_ITEM SET 
                     VISIBLE = COALESCE(a.visible, ci.visible), 
@@ -365,7 +365,7 @@ namespace Quantumart.QPublishing.Database
                 FROM @Articles a INNER JOIN content_item ci on a.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
 
                 INSERT INTO @NewSplittedIds
-                SELECT a.ID from @OldNonSplittedIds i INNER JOIN content_item ci on i.ID = ci.CONTENT_ITEM_ID where ci.SPLITTED = 1
+                SELECT i.Id from @OldNonSplittedIds i INNER JOIN content_item ci on i.ID = ci.CONTENT_ITEM_ID where ci.SPLITTED = 1
 
                 exec qp_split_articles @NewSplittedIds, @lastModifiedBy    
                    
