@@ -55,7 +55,7 @@ namespace Quantumart.QPublishing.Database
                 ImportContentItem(contentId, enumerable, lastModifiedBy, doc);
 
                 var contentAttributes = attrs as ContentAttribute[] ?? attrs.ToArray();
-                var dataDoc = GetImportContentDataDocument(enumerable, contentAttributes, overrideMissedFields);
+                var dataDoc = GetImportContentDataDocument(enumerable, contentAttributes, content, overrideMissedFields);
                 ImportContentData(dataDoc);
 
                 var attrString = fullUpdate ? String.Empty : String.Join(",", contentAttributes.Select(n => n.Id.ToString()).ToArray());
@@ -87,7 +87,7 @@ namespace Quantumart.QPublishing.Database
                 CommandTimeout = 120
             };
             var result = String.Join(",", values.Select(n => n[SystemColumnNames.Id]).ToArray());
-            cmd.Parameters.Add(new SqlParameter("@ids_str", SqlDbType.NVarChar, -1) { Value = result });
+            cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = result });
             cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = attrString });
             ProcessData(cmd);
         }
@@ -154,8 +154,11 @@ namespace Quantumart.QPublishing.Database
             ProcessData(cmd);
         }
 
-        private XDocument GetImportContentDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, bool overrideMissedFields = false)
+        private XDocument GetImportContentDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content, bool overrideMissedFields = false)
         {
+            var longUploadUrl = GetImagesUploadUrl(content.SiteId);
+            var longSiteLiveUrl = GetSiteUrl(content.SiteId, true);
+            var longSiteStageUrl = GetSiteUrl(content.SiteId, false);
             var dataDoc = new XDocument();
             dataDoc.Add(new XElement("ITEMS"));
             var contentAttributes = attrs as ContentAttribute[] ?? attrs.ToArray();
@@ -180,14 +183,7 @@ namespace Quantumart.QPublishing.Database
                     }
                     else if (!string.IsNullOrEmpty(temp))
                     {
-                        if (attr.DbTypeName == "DATETIME" && Information.IsDate(temp))
-                        {
-                            temp = DateTime.Parse(temp).ToString("yyyy-MM-dd HH:mm:ss");
-                        }
-                        else if (attr.DbTypeName == "NUMERIC")
-                        {
-                            temp = temp.Replace(",", ".");
-                        }
+                        temp = FormatResult(attr, temp, longUploadUrl, longSiteStageUrl, longSiteLiveUrl);
                         elem.Add(new XElement(attr.DbField, XmlValidChars(temp)));
                     }
                     if (valueExists || overrideMissedFields)

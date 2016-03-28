@@ -46,7 +46,7 @@ namespace Quantumart.QPublishing.Database
 
                 CreateDynamicImages(arrValues, fullAttrs);
 
-                ValidateConstraints(arrValues, fullAttrs);
+                ValidateConstraints(arrValues, fullAttrs, content);
                 var dataDoc = GetMassUpdateContentDataDocument(arrValues, attrs, fullAttrs, newIds, content);
                 ImportContentData(dataDoc);
 
@@ -173,7 +173,7 @@ namespace Quantumart.QPublishing.Database
 
         }
 
-        private void ValidateConstraints(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs)
+        private void ValidateConstraints(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content)
         {
             var validatedAttrs = attrs.Where(n => n.ConstraintId.HasValue).ToArray();
             if (validatedAttrs.Any())
@@ -186,7 +186,7 @@ namespace Quantumart.QPublishing.Database
 
                 foreach (var constraint in constraints)
                 {
-                    XDocument validatedDataDoc = GetValidatedDataDocument(values, constraint.Attrs);
+                    XDocument validatedDataDoc = GetValidatedDataDocument(values, constraint.Attrs, content);
                     SelfValidate(validatedDataDoc);
                     ValidateConstraint(validatedDataDoc, constraint.Attrs);
                 }
@@ -197,14 +197,14 @@ namespace Quantumart.QPublishing.Database
         {
             if (validatedDataDoc.Root != null)
             {
-                var items = validatedDataDoc.Root.Descendants("ITEMS").ToArray();
+                var items = validatedDataDoc.Root.Descendants("ITEM").ToArray();
                 var set = new HashSet<string>();
                 foreach (var item in items)
                 {
-                    var str = item.ToString();
+                    var str = String.Join("", item.Elements().Select(n => n.ToString()));
                     if (set.Contains(str))
                     {
-                        var msg = string.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name")}] = '{n.Value}'"));
+                        var msg = string.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name").Value}] = '{n.Value}'"));
                         throw new QPInvalidAttributeException("Unique constraint violation between articles being added/updated: " + msg);
                     }
                     set.Add(str);
@@ -212,8 +212,11 @@ namespace Quantumart.QPublishing.Database
             }
         }
 
-        private XDocument GetValidatedDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs)
+        private XDocument GetValidatedDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content)
         {
+            var longUploadUrl = GetImagesUploadUrl(content.SiteId);
+            var longSiteLiveUrl = GetSiteUrl(content.SiteId, true);
+            var longSiteStageUrl = GetSiteUrl(content.SiteId, false);
             var result = new XDocument();
             var root = new XElement("ITEMS", values.Select(m =>
             {
@@ -222,8 +225,10 @@ namespace Quantumart.QPublishing.Database
                 temp.Add(attrs.Select(n =>
                 {
                     string value;
-                    if (!m.TryGetValue(n.Name, out value)) return null;
-                    var elem = new XElement("DATA", value);
+                    var valueExists = m.TryGetValue(n.Name, out value);
+                    if (valueExists)
+                        value = FormatResult(n, value, longUploadUrl, longSiteStageUrl, longSiteLiveUrl);
+                    var elem = (valueExists) ? new XElement("DATA", value) : new XElement("MISSED_DATA");
                     elem.Add(new XAttribute("name", n.Name));
                     elem.Add(new XAttribute("id", n.Id));
                     return elem;
@@ -237,19 +242,29 @@ namespace Quantumart.QPublishing.Database
         private void ValidateConstraint(XDocument validatedDataDoc, ContentAttribute[] attrs)
         {
             var sb = new StringBuilder();
+            var validatedIds = validatedDataDoc
+                .Descendants("ITEM")
+                .Where(n => !n.Descendants("MISSED_DATA").Any())
+                .Select(n => int.Parse(n.Attribute("id").Value))
+                .ToArray();
             int contentId = attrs[0].ContentId;
             var attrNames = string.Join(", ", attrs.Select(n => n.Name));
             sb.AppendLine($"WITH X(CONTENT_ITEM_ID, {attrNames})");
             sb.AppendLine(@"AS (  SELECT doc.col.value('./@id', 'int') CONTENT_ITEM_ID");
             foreach (var attr in attrs)
             {
-                sb.AppendLine($",doc.col.value('(DATA)[@id={attr.Id}][1]', '{attr.FullDbTypeName}') {attr.Name}");
+                sb.AppendLine($",doc.col.value('(DATA)[@id={attr.Id}][1]', 'nvarchar(max)') {attr.Name}");
             }
             sb.AppendLine("FROM @xmlParameter.nodes('/ITEMS/ITEM') doc(col))");
-            sb.AppendLine($" SELECT c.CONTENT_ITEM_ID FROM dbo.CONTENT_{contentId}_UNITED c INNER JOIN X ON c.CONTENT_ITEM_ID = X.CONTENT_ITEM_ID");
+            sb.AppendLine($" SELECT c.CONTENT_ITEM_ID FROM dbo.CONTENT_{contentId}_UNITED c INNER JOIN X ON c.CONTENT_ITEM_ID NOT IN (select id from @validatedIds)");
             foreach (var attr in attrs)
             {
-                sb.AppendLine($"AND c.[{attr.Name}] = X.[{attr.Name}]");
+                if (attr.IsNumeric)
+                    sb.AppendLine($"AND c.[{attr.Name}] = cast (X.[{attr.Name}] as numeric(18, {attr.Size}))");
+                else if (attr.IsDateTime)
+                    sb.AppendLine($"AND c.[{attr.Name}] = cast (X.[{attr.Name}] as datetime)");
+                else
+                    sb.AppendLine($"AND c.[{attr.Name}] = X.[{attr.Name}]");
             }
 
             var cmd = new SqlCommand(sb.ToString())
@@ -258,6 +273,8 @@ namespace Quantumart.QPublishing.Database
                 CommandType = CommandType.Text
             };
             cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = validatedDataDoc.ToString(SaveOptions.None) });
+            cmd.Parameters.Add(new SqlParameter("@validatedIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(validatedIds) });
+
             var conflictIds = GetRealData(cmd).AsEnumerable().Select(n => (int) n.Field<decimal>("CONTENT_ITEM_ID")).ToArray();
             if (conflictIds.Any())
                 throw new QPInvalidAttributeException($"Unique constraint violation. Fields: {attrNames}. Article IDs: {string.Join(", ", conflictIds.ToArray())}");
@@ -294,24 +311,7 @@ namespace Quantumart.QPublishing.Database
                     }
                     else if (!string.IsNullOrEmpty(result))
                     {
-                        if (attr.DbTypeName == "DATETIME" && Information.IsDate(result))
-                        {
-                            result = DateTime.Parse(result).ToString("yyyy-MM-dd HH:mm:ss");
-                        }
-                        else if (attr.DbTypeName == "NUMERIC")
-                        {
-                            result = result.Replace(",", ".");
-                        }
-                        else if (attr.Type == AttributeType.String || attr.Type == AttributeType.Textbox ||
-                                 attr.Type == AttributeType.VisualEdit)
-                        {
-                            result = (result)
-                                .Replace(longUploadUrl, UploadPlaceHolder)
-                                .Replace(longSiteStageUrl, SitePlaceHolder)
-                                .Replace(longSiteLiveUrl, SitePlaceHolder)
-                                ;
-
-                        }
+                        result = FormatResult(attr, result, longUploadUrl, longSiteStageUrl, longSiteLiveUrl);
                     }
                     else if (isNewArticle)
                     {
@@ -328,6 +328,28 @@ namespace Quantumart.QPublishing.Database
                 }
             }
             return dataDoc;
+        }
+
+        private string FormatResult(ContentAttribute attr, string result, string longUploadUrl, string longSiteStageUrl, string longSiteLiveUrl)
+        {
+            if (attr.DbTypeName == "DATETIME" && Information.IsDate(result))
+            {
+                result = DateTime.Parse(result).ToString("yyyy-MM-dd HH:mm:ss");
+            }
+            else if (attr.DbTypeName == "NUMERIC")
+            {
+                result = result.Replace(",", ".");
+            }
+            else if (attr.Type == AttributeType.String || attr.Type == AttributeType.Textbox ||
+                     attr.Type == AttributeType.VisualEdit)
+            {
+                result = (result)
+                    .Replace(longUploadUrl, UploadPlaceHolder)
+                    .Replace(longSiteStageUrl, SitePlaceHolder)
+                    .Replace(longSiteLiveUrl, SitePlaceHolder)
+                    ;
+            }
+            return result;
         }
 
         private int[] MassUpdateContentItem(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, XDocument doc)

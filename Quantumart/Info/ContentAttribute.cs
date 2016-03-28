@@ -14,6 +14,10 @@
 
         public bool IsBlob => DbTypeName == "NTEXT";
 
+        public bool IsDateTime => DbTypeName == "DATETIME";
+
+        public bool IsNumeric => DbTypeName == "NUMERIC";
+
         public string DbField => IsBlob ? "BLOB_DATA" : "DATA";
 
         public string InputTypeName { get; set; }
