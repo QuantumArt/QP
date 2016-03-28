@@ -48,24 +48,35 @@ namespace Quantumart.QPublishing.Database
                 attrs = GetContentAttributeObjects(contentId).Where(n => attrIds != null && (fullUpdate || attrIds.Contains(n.Id)));
             }
 
-
-            var doc = GetImportContentItemDocument(enumerable, content);
-            ImportContentItem(contentId, enumerable, lastModifiedBy, doc);
-
-            var contentAttributes = attrs as ContentAttribute[] ?? attrs.ToArray();
-            var dataDoc = GetImportContentDataDocument(enumerable, contentAttributes, overrideMissedFields);
-            ImportContentData(dataDoc);
-
-            var attrString = fullUpdate ? String.Empty : String.Join(",", contentAttributes.Select(n => n.Id.ToString()).ToArray());
-            ReplicateData(enumerable, attrString);
-
-            var manyToManyAttrs = contentAttributes.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue);
-            var toManyAttrs = manyToManyAttrs as ContentAttribute[] ?? manyToManyAttrs.ToArray();
-            if (toManyAttrs.Any())
+            CreateInternalConnection(true);
+            try
             {
-                var linkDoc = GetImportItemLinkDocument(enumerable, toManyAttrs);
-                ImportItemLink(linkDoc);
+                var doc = GetImportContentItemDocument(enumerable, content);
+                ImportContentItem(contentId, enumerable, lastModifiedBy, doc);
+
+                var contentAttributes = attrs as ContentAttribute[] ?? attrs.ToArray();
+                var dataDoc = GetImportContentDataDocument(enumerable, contentAttributes, overrideMissedFields);
+                ImportContentData(dataDoc);
+
+                var attrString = fullUpdate ? String.Empty : String.Join(",", contentAttributes.Select(n => n.Id.ToString()).ToArray());
+                ReplicateData(enumerable, attrString);
+
+                var manyToManyAttrs = contentAttributes.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue);
+                var toManyAttrs = manyToManyAttrs as ContentAttribute[] ?? manyToManyAttrs.ToArray();
+                if (toManyAttrs.Any())
+                {
+                    var linkDoc = GetImportItemLinkDocument(enumerable, toManyAttrs);
+                    ImportItemLink(linkDoc);
+                }
+                CommitInternalTransaction();
             }
+            finally
+            {
+                DisposeInternalConnection();
+            }
+
+
+
         }
 
         private void ReplicateData(IEnumerable<Dictionary<string, string>> values, string attrString)
@@ -76,7 +87,7 @@ namespace Quantumart.QPublishing.Database
                 CommandTimeout = 120
             };
             var result = String.Join(",", values.Select(n => n[SystemColumnNames.Id]).ToArray());
-            cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = result });
+            cmd.Parameters.Add(new SqlParameter("@ids_str", SqlDbType.NVarChar, -1) { Value = result });
             cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = attrString });
             ProcessData(cmd);
         }

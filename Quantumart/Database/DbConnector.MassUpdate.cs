@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,6 +17,7 @@ namespace Quantumart.QPublishing.Database
     {
         public void AddUpdateArticles(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy)
         {
+
             var content = GetContentObject(contentId);
             if (content == null)
             {
@@ -35,36 +35,45 @@ namespace Quantumart.QPublishing.Database
             var fullAttrs = GetContentAttributeObjects(contentId).ToArray();
             var attrs = fullAttrs.Where(n => names.Contains(n.Name.ToLowerInvariant())).ToArray();
 
-            var existingIds = values.Select(n => int.Parse(n[SystemColumnNames.Id])).Where(n => n != 0).ToArray();
+            var existingIds = arrValues.Select(n => int.Parse(n[SystemColumnNames.Id])).Where(n => n != 0).ToArray();
             var versionIdsToRemove = GetVersionIdsToRemove(existingIds, content.MaxVersionNumber);
 
-            var doc = GetImportContentItemDocument(arrValues, content);
-            int[] newIds;
-            MassUpdateContentItem(contentId, arrValues, lastModifiedBy, doc, out newIds);
-
-            CreateDynamicImages(arrValues, fullAttrs);
-
-            ValidateConstraints(arrValues, fullAttrs);
-            var dataDoc = GetMassUpdateContentDataDocument(arrValues, attrs, fullAttrs, newIds, content);
-            ImportContentData(dataDoc);
-
-            var attrString = string.Join(",", attrs.Select(n => n.Id.ToString()).ToArray());
-            ReplicateData(arrValues, attrString);
-
-            var manyToManyAttrs = attrs.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue).ToArray();
-            if (manyToManyAttrs.Any())
+            CreateInternalConnection(true);
+            try
             {
-                var linkDoc = GetImportItemLinkDocument(arrValues, manyToManyAttrs);
-                ImportItemLink(linkDoc);
+                var doc = GetImportContentItemDocument(arrValues, content);
+                var newIds = MassUpdateContentItem(contentId, arrValues, lastModifiedBy, doc);
+
+                CreateDynamicImages(arrValues, fullAttrs);
+
+                ValidateConstraints(arrValues, fullAttrs);
+                var dataDoc = GetMassUpdateContentDataDocument(arrValues, attrs, fullAttrs, newIds, content);
+                ImportContentData(dataDoc);
+
+                var attrString = string.Join(",", attrs.Select(n => n.Id.ToString()).ToArray());
+                ReplicateData(arrValues, attrString);
+
+                var manyToManyAttrs = attrs.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue).ToArray();
+                if (manyToManyAttrs.Any())
+                {
+                    var linkDoc = GetImportItemLinkDocument(arrValues, manyToManyAttrs);
+                    ImportItemLink(linkDoc);
+                }
+
+                CreateFilesVersions(arrValues, existingIds, contentId);
+
+                foreach (var id in versionIdsToRemove)
+                {
+                    var oldFolder = GetVersionFolderForContent(contentId, id);
+                    if (Directory.Exists(oldFolder))
+                        Directory.Delete(oldFolder, true);
+                }
+
+                CommitInternalTransaction();
             }
-
-            CreateFilesVersions(arrValues, existingIds, contentId);
-
-            foreach (var id in versionIdsToRemove)
+            finally
             {
-                var oldFolder = GetVersionFolderForContent(contentId, id);
-                if (Directory.Exists(oldFolder))
-                    Directory.Delete(oldFolder, true);
+                DisposeInternalConnection();
             }
         }
 
@@ -178,34 +187,37 @@ namespace Quantumart.QPublishing.Database
                 foreach (var constraint in constraints)
                 {
                     XDocument validatedDataDoc = GetValidatedDataDocument(values, constraint.Attrs);
-                    SelfValidate(validatedDataDoc, constraint.Attrs);
+                    SelfValidate(validatedDataDoc);
                     ValidateConstraint(validatedDataDoc, constraint.Attrs);
                 }
             }
         }
 
-        private void SelfValidate(XDocument validatedDataDoc, ContentAttribute[] attrs)
+        private void SelfValidate(XDocument validatedDataDoc)
         {
-            var items = validatedDataDoc.Root.Descendants("items").ToArray();
-            var set = new HashSet<string>();
-            foreach (var item in items)
+            if (validatedDataDoc.Root != null)
             {
-                var str = item.ToString();
-                if (set.Contains(str))
+                var items = validatedDataDoc.Root.Descendants("ITEMS").ToArray();
+                var set = new HashSet<string>();
+                foreach (var item in items)
                 {
-                    var msg = string.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name")}] = '{n.Value}'"));
-                    throw new QPInvalidAttributeException($"Unique constraint violation between articles being added/updated: " + msg);
+                    var str = item.ToString();
+                    if (set.Contains(str))
+                    {
+                        var msg = string.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name")}] = '{n.Value}'"));
+                        throw new QPInvalidAttributeException("Unique constraint violation between articles being added/updated: " + msg);
+                    }
+                    set.Add(str);
                 }
-                set.Add(str);
             }
         }
 
         private XDocument GetValidatedDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs)
         {
             var result = new XDocument();
-            var root = new XElement("items", values.Select(m =>
+            var root = new XElement("ITEMS", values.Select(m =>
             {
-                var temp = new XElement("item");
+                var temp = new XElement("ITEM");
                 temp.Add(new XAttribute("id", m[SystemColumnNames.Id]));
                 temp.Add(attrs.Select(n =>
                 {
@@ -231,7 +243,7 @@ namespace Quantumart.QPublishing.Database
             sb.AppendLine(@"AS (  SELECT doc.col.value('./@id', 'int') CONTENT_ITEM_ID");
             foreach (var attr in attrs)
             {
-                sb.AppendLine($",doc.col.value('(DATA)[@id={attr.Id}]', '{attr.FullDbTypeName}') {attr.Name}");
+                sb.AppendLine($",doc.col.value('(DATA)[@id={attr.Id}][1]', '{attr.FullDbTypeName}') {attr.Name}");
             }
             sb.AppendLine("FROM @xmlParameter.nodes('/ITEMS/ITEM') doc(col))");
             sb.AppendLine($" SELECT c.CONTENT_ITEM_ID FROM dbo.CONTENT_{contentId}_UNITED c INNER JOIN X ON c.CONTENT_ITEM_ID = X.CONTENT_ITEM_ID");
@@ -318,7 +330,7 @@ namespace Quantumart.QPublishing.Database
             return dataDoc;
         }
 
-        private void MassUpdateContentItem(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, XDocument doc, out int[] newIds)
+        private int[] MassUpdateContentItem(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, XDocument doc)
         {
             var insertInto = @"
                 DECLARE @Articles TABLE 
@@ -378,15 +390,17 @@ namespace Quantumart.QPublishing.Database
             cmd.Parameters.AddWithValue("@notForReplication", 1);
 
 
-            var ids = new Queue<int>(GetRealData(cmd).AsEnumerable().Select(n => (int)n["ID"]).ToArray());
+            var ids = new Queue<int>(GetRealData(cmd).AsEnumerable().Select(n => (int)(decimal)n["ID"]).ToArray());
 
-            newIds = ids.ToArray();
+            var newIds = ids.ToArray();
 
             foreach (var value in values)
             {
                 if (value[SystemColumnNames.Id] == "0")
                     value[SystemColumnNames.Id] = ids.Dequeue().ToString();
             }
+
+            return newIds;
         }
     }
 

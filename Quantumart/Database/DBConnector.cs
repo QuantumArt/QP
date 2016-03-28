@@ -92,7 +92,40 @@ namespace Quantumart.QPublishing.Database
 
         public IDbTransaction ExternalTransaction { get; set; }
 
-        private bool NeedToDisposeActualSqlConnection => ExternalConnection == null;
+        private IDbConnection InternalConnection { get; set; }
+
+        private IDbTransaction InternalTransaction { get; set; }
+
+        private void CreateInternalConnection(bool withTransaction)
+        {
+            InternalConnection = GetActualSqlConnection();
+            if (InternalConnection.State == ConnectionState.Closed)
+                InternalConnection.Open();
+            if (withTransaction)
+            {
+                var extTr = GetActualSqlTransaction();
+                InternalTransaction = extTr ?? InternalConnection.BeginTransaction();
+            }
+        }
+
+        private void CommitInternalTransaction()
+        {
+            if (ExternalTransaction == null)
+                InternalTransaction.Commit();
+        }
+
+        private void DisposeInternalConnection()
+        {
+            if (ExternalConnection == null)
+            {
+                InternalConnection.Dispose();
+                InternalConnection = null;
+                InternalTransaction = null;
+            }
+        }
+
+
+        private bool NeedToDisposeActualSqlConnection => ExternalConnection == null && InternalConnection == null;
 
         private string _instanceCachePrefix;
         public string InstanceCachePrefix => _instanceCachePrefix ?? (_instanceCachePrefix = ExtractCachePrefix(InstanceConnectionString));
@@ -345,8 +378,7 @@ namespace Quantumart.QPublishing.Database
 
         private SqlConnection GetActualSqlConnection(string internalConnectionString)
         {
-            var result = ExternalConnection as SqlConnection ?? new SqlConnection(internalConnectionString);
-            return result;
+            return (InternalConnection ?? ExternalConnection) as SqlConnection ?? new SqlConnection(internalConnectionString);
         }
 
         private SqlConnection GetActualSqlConnection()
@@ -356,7 +388,7 @@ namespace Quantumart.QPublishing.Database
 
         private SqlTransaction GetActualSqlTransaction()
         {
-            return ExternalTransaction as SqlTransaction;
+            return (InternalTransaction ?? ExternalTransaction) as SqlTransaction;
         }
 
         #region site
