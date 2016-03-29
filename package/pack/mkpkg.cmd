@@ -36,7 +36,7 @@ if "%programfiles(x86)%" == "" (SET "PROGFPATH=%programfiles%") ELSE (SET "PROGF
 SET "VS110IDE=%VS110COMNTOOLS%\..\IDE"
 
 rem getting latest version from  TFS
-git clone http://tfs.artq.com:8080/tfs/quantumartcollection/_git/QP "%OUTPUTPATH%\temp"
+git clone -b release/release1 --single-branch http://tfs.artq.com:8080/tfs/quantumartcollection/_git/QP "%OUTPUTPATH%\temp"
 
 rem preparing DB update scripts
 xcopy "%OUTPUTPATH%\temp\dal\scripts\fix_dbo.sql" "%OUTPUTPATH%\database" /I /E /Y

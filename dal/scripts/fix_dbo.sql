@@ -12973,7 +12973,7 @@ END
 GO
 
 ALTER PROCEDURE [dbo].[qp_replicate_items] 
-@ids_str nvarchar(max),
+@ids nvarchar(max),
 @attr_ids nvarchar(max) = ''
 AS
 BEGIN
@@ -12994,7 +12994,7 @@ BEGIN
         content_id numeric
     )
     
-    insert into @articles(id) SELECT convert(numeric, nstr) from dbo.splitNew(@ids_str, ',')
+    insert into @articles(id) SELECT convert(numeric, nstr) from dbo.splitNew(@ids, ',')
     
     update base set base.content_id = ci.content_id, base.splitted = ci.SPLITTED, base.cancel_split = ci.cancel_split, base.delayed = ci.schedule_new_version_publication, base.status_type_id = ci.STATUS_TYPE_ID from @articles base inner join content_item ci on base.id = ci.CONTENT_ITEM_ID 
 
@@ -13010,10 +13010,10 @@ BEGIN
     inner join STATUS_TYPE st on st.STATUS_TYPE_NAME = 'None' and st.SITE_ID = c.SITE_ID
 
 
-    declare @ids [Ids], @syncIds [Ids], @syncIds2 [Ids], @asyncIds [Ids], @asyncIds2 [Ids]
+    declare @articleIds [Ids], @syncIds [Ids], @syncIds2 [Ids], @asyncIds [Ids], @asyncIds2 [Ids]
     declare @noneId numeric
 
-    insert into @ids select id from @articles
+    insert into @articleIds select id from @articles
     
     while exists (select id from @contents)
     begin
@@ -13071,9 +13071,8 @@ BEGIN
         delete from @asyncIds
     end
     
-    update content_item set not_for_replication = 0, CANCEL_SPLIT = 0 where content_item_id in (select id from @ids)
+    update content_item set not_for_replication = 0, CANCEL_SPLIT = 0 where content_item_id in (select id from @articleIds)
 END
-GO
 
 
 
