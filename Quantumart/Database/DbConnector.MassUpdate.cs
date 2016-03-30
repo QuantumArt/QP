@@ -15,7 +15,7 @@ namespace Quantumart.QPublishing.Database
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
-        public void AddUpdateArticles(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy)
+        public void MassUpdate(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy)
         {
 
             var content = GetContentObject(contentId);
@@ -201,13 +201,16 @@ namespace Quantumart.QPublishing.Database
                 var set = new HashSet<string>();
                 foreach (var item in items)
                 {
-                    var str = String.Join("", item.Elements().Select(n => n.ToString()));
-                    if (set.Contains(str))
+                    var str = String.Join("", item.Elements("DATA").Select(n => n.ToString()));
+                    if (!String.IsNullOrEmpty(str))
                     {
-                        var msg = string.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name").Value}] = '{n.Value}'"));
-                        throw new QPInvalidAttributeException("Unique constraint violation between articles being added/updated: " + msg);
+                        if (set.Contains(str))
+                        {
+                            var msg = string.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name").Value}] = '{n.Value}'"));
+                            throw new QPInvalidAttributeException("Unique constraint violation between articles being added/updated: " + msg);
+                        }
+                        set.Add(str);
                     }
-                    set.Add(str);
                 }
             }
         }
@@ -277,7 +280,7 @@ namespace Quantumart.QPublishing.Database
 
             var conflictIds = GetRealData(cmd).AsEnumerable().Select(n => (int) n.Field<decimal>("CONTENT_ITEM_ID")).ToArray();
             if (conflictIds.Any())
-                throw new QPInvalidAttributeException($"Unique constraint violation. Fields: {attrNames}. Article IDs: {string.Join(", ", conflictIds.ToArray())}");
+                throw new QPInvalidAttributeException($"Unique constraint violation for content articles. Fields: {attrNames}. Article IDs: {string.Join(", ", conflictIds.ToArray())}");
 
         }
 
