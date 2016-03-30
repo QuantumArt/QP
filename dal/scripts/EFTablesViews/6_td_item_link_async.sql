@@ -17,7 +17,7 @@ BEGIN
 	select distinct d.link_id, c2c.[SYMMETRIC], c2c.l_content_id, c2c.r_content_id from deleted d inner join content_to_content c2c on d.link_id = c2c.link_id
 	
 		declare @count numeric
-		select @count = count() from @links
+		select @count = count(id) from @links
 		print (@count) 
 
 	declare @link_id numeric, @is_symmetric bit, @l_content_id numeric, @r_content_id numeric
