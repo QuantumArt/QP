@@ -370,7 +370,8 @@ namespace Quantumart.QPublishing.Database
                 DECLARE @OldIds [Ids]
                 DECLARE @OldNonSplittedIds [Ids]
                 DECLARE @NewSplittedIds [Ids]
-
+                DECLARE @OldSplittedIds [Ids]
+                DECLARE @NewNonSplittedIds [Ids]
 
                 INSERT INTO @Articles
                     SELECT
@@ -393,6 +394,9 @@ namespace Quantumart.QPublishing.Database
                 INSERT INTO @OldNonSplittedIds
                 SELECT i.Id from @OldIds i INNER JOIN content_item ci on i.id = ci.CONTENT_ITEM_ID where ci.SPLITTED = 0
 
+                INSERT INTO @OldSplittedIds
+                SELECT i.Id from @OldIds i INNER JOIN content_item ci on i.id = ci.CONTENT_ITEM_ID where ci.SPLITTED = 1
+
                 UPDATE CONTENT_ITEM SET 
                     VISIBLE = COALESCE(a.visible, ci.visible), 
                     ARCHIVE = COALESCE(a.archive, ci.archive), 
@@ -404,7 +408,12 @@ namespace Quantumart.QPublishing.Database
                 INSERT INTO @NewSplittedIds
                 SELECT i.Id from @OldNonSplittedIds i INNER JOIN content_item ci on i.ID = ci.CONTENT_ITEM_ID where ci.SPLITTED = 1
 
-                exec qp_split_articles @NewSplittedIds, @lastModifiedBy    
+                INSERT INTO @NewNonSplittedIds
+                SELECT i.Id from @OldSplittedIds i INNER JOIN content_item ci on i.ID = ci.CONTENT_ITEM_ID where ci.SPLITTED = 0
+
+                exec qp_split_articles @NewSplittedIds, @lastModifiedBy
+
+                exec qp_merge_articles @NewNonSplittedIds, @lastModifiedBy, 1    
                    
                 SELECT ID FROM @NewArticles
                 ";

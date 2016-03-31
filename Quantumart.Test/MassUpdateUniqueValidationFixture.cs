@@ -20,8 +20,6 @@ namespace Quantumart.Test
 
         public static int ContentId { get; private set; }
 
-        public static Dictionary<int, DateTime> BaseArticles { get; private set; }
-
         public static int[] BaseArticlesIds { get; private set; }
 
         [OneTimeSetUp]
@@ -32,11 +30,8 @@ namespace Quantumart.Test
             var service = new ReplayService(GlobalSettings.ConnectionString, 1, true);
             service.ReplayXml(GlobalSettings.GetXml(@"xmls\unique.xml"));
             Cnn = new DBConnector(GlobalSettings.ConnectionString);
-            ContentId = Cnn.GetContentId(GlobalSettings.SiteId, "Test unique");
-            BaseArticles = Cnn.GetRealData($"select content_item_id, modified from content_{ContentId}_united")
-                .AsEnumerable()
-                .ToDictionary(n => (int) n.Field<decimal>("content_item_id"), m => m.Field<DateTime>("modified"));
-            BaseArticlesIds = BaseArticles.Keys.ToArray();
+            ContentId = GlobalSettings.GetContentId(Cnn, "Test unique");
+            BaseArticlesIds = GlobalSettings.GetIds(Cnn, ContentId);
         }
 
 
@@ -122,10 +117,7 @@ namespace Quantumart.Test
 
             Assert.That(() => { Cnn.MassUpdate(ContentId, values, 1); }, Throws.Exception);
 
-            var titles = Cnn.GetRealData($"select Title from content_{ContentId}_united")
-                .AsEnumerable()
-                .Select(n => n.Field<string>("Title"))
-                .ToArray();
+            var titles = GlobalSettings.GetTitles(Cnn, ContentId);
 
             Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the internal transaction should be rolled back");
         }
@@ -166,10 +158,7 @@ namespace Quantumart.Test
 
                 tr.Rollback();
 
-                var titles = localCnn.GetRealData($"select Title from content_{ContentId}_united")
-                    .AsEnumerable()
-                    .Select(n => n.Field<string>("Title"))
-                    .ToArray();
+                var titles = GlobalSettings.GetTitles(localCnn, ContentId);
 
                 Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the external transaction should be rolled back");
             }
@@ -198,11 +187,11 @@ namespace Quantumart.Test
             };
             values.Add(article2);
 
-            var modified = GetModified();
+            var modified = GlobalSettings.GetModified(Cnn, ContentId);
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update existing data");
 
-            var modified2 = GetModified();
+            var modified2 = GlobalSettings.GetModified(Cnn, ContentId);
             var first2 = ContentItem.Read(BaseArticlesIds[0], Cnn);
             var second2 = ContentItem.Read(BaseArticlesIds[1], Cnn);
 
@@ -236,11 +225,11 @@ namespace Quantumart.Test
             };
             values.Add(article2);
 
-            var modified = GetModified();
+            var modified = GlobalSettings.GetModified(Cnn, ContentId);
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Swap existing data");
 
-            var modified2 = GetModified();
+            var modified2 = GlobalSettings.GetModified(Cnn, ContentId);
             var first2 = ContentItem.Read(BaseArticlesIds[0], Cnn);
             var second2 = ContentItem.Read(BaseArticlesIds[1], Cnn);
 
@@ -268,24 +257,6 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void ValidateAttributeValue_ThrowsException_InvalidNumericData()
-        {
-            var values = new List<Dictionary<string, string>>();
-            var article1 = new Dictionary<string, string>
-            {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
-                ["Number"] = "test"
-            };
-            values.Add(article1);
-
-            Assert.That(
-                () => Cnn.MassUpdate(ContentId, values, 1),
-                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("type is incorrect"),
-                "Validate numeric data"
-            );
-        }
-
-        [Test]
         public void ValidateAttributeValue_ThrowsException_StringSizeExceeded()
         {
             var values = new List<Dictionary<string, string>>();
@@ -303,15 +274,6 @@ namespace Quantumart.Test
             );
         }
 
-
-
-        private static DateTime[] GetModified()
-        {
-            return Cnn.GetRealData($"select Modified from content_{ContentId}_united")
-                .AsEnumerable()
-                .Select(n => n.Field<DateTime>("Modified"))
-                .ToArray();
-        }
 
         [OneTimeTearDown]
         public static void TearDown()

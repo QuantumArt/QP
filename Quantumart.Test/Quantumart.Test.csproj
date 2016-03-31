@@ -71,6 +71,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="GlobalSettings.cs" />
+    <Compile Include="MassUpdateM2MValidationFixture .cs" />
     <Compile Include="MassUpdateUniqueValidationFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -93,6 +94,12 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="xmls\files.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="xmls\m2m.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="xmls\unique.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
