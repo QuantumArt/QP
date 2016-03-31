@@ -33,15 +33,15 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new ReplayService(GlobalSettings.ConnectionString, 1, true);
-            service.ReplayXml(GlobalSettings.GetXml(@"xmls\m2m.xml"));
-            Cnn = new DBConnector(GlobalSettings.ConnectionString);
-            ContentId = GlobalSettings.GetContentId(Cnn, "Test M2M");
-            DictionaryContentId = GlobalSettings.GetContentId(Cnn, "Test Category");
-            BaseArticlesIds = GlobalSettings.GetIds(Cnn, ContentId);
-            CategoryIds = GlobalSettings.GetIds(Cnn, DictionaryContentId);
-            NoneId = Cnn.GetStatusTypeId(GlobalSettings.SiteId, "None");
-            PublishedId = Cnn.GetStatusTypeId(GlobalSettings.SiteId, "Published");
+            var service = new ReplayService(Global.ConnectionString, 1, true);
+            service.ReplayXml(Global.GetXml(@"xmls\m2m.xml"));
+            Cnn = new DBConnector(Global.ConnectionString);
+            ContentId = Global.GetContentId(Cnn, "Test M2M");
+            DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
+            BaseArticlesIds = Global.GetIds(Cnn, ContentId);
+            CategoryIds = Global.GetIds(Cnn, DictionaryContentId);
+            NoneId = Cnn.GetStatusTypeId(Global.SiteId, "None");
+            PublishedId = Cnn.GetStatusTypeId(Global.SiteId, "Published");
         }
 
 
@@ -64,11 +64,11 @@ namespace Quantumart.Test
 
             var ints = new[] {BaseArticlesIds[0], BaseArticlesIds[1]};
 
-            var cntAsyncBefore = GlobalSettings.CountLinks(Cnn, ints, true);
-            var cntBefore = GlobalSettings.CountLinks(Cnn, ints, false);
-            var titlesBefore = GlobalSettings.GetTitles(Cnn, ContentId, ints);
-            var cntArticlesAsyncBefore = GlobalSettings.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesBefore = GlobalSettings.CountArticles(Cnn, ContentId, ints, false);
+            var cntAsyncBefore = Global.CountLinks(Cnn, ints, true);
+            var cntBefore = Global.CountLinks(Cnn, ints, false);
+            var titlesBefore = Global.GetTitles(Cnn, ContentId, ints);
+            var cntArticlesAsyncBefore = Global.CountArticles(Cnn, ContentId, ints, true);
+            var cntArticlesBefore = Global.CountArticles(Cnn, ContentId, ints, false);
 
 
             Assert.That(cntAsyncBefore, Is.EqualTo(0));
@@ -77,11 +77,11 @@ namespace Quantumart.Test
             Assert.That(cntArticlesBefore, Is.Not.EqualTo(0));
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
 
-            var cntAsyncAfterSplit = GlobalSettings.CountLinks(Cnn, ints, true);
-            var cntAfterSplit = GlobalSettings.CountLinks(Cnn, ints, false);
-            var asyncTitlesAfterSplit = GlobalSettings.GetTitles(Cnn, ContentId, ints, true);
-            var cntArticlesAsyncAfterSplit = GlobalSettings.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesAfterSplit = GlobalSettings.CountArticles(Cnn, ContentId, ints, false);
+            var cntAsyncAfterSplit = Global.CountLinks(Cnn, ints, true);
+            var cntAfterSplit = Global.CountLinks(Cnn, ints, false);
+            var asyncTitlesAfterSplit = Global.GetTitles(Cnn, ContentId, ints, true);
+            var cntArticlesAsyncAfterSplit = Global.CountArticles(Cnn, ContentId, ints, true);
+            var cntArticlesAfterSplit = Global.CountArticles(Cnn, ContentId, ints, false);
 
             Assert.That(cntAsyncAfterSplit, Is.Not.EqualTo(0));
             Assert.That(cntAfterSplit, Is.EqualTo(cntAsyncAfterSplit));
@@ -93,11 +93,11 @@ namespace Quantumart.Test
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
 
-            var cntAsyncAfterMerge = GlobalSettings.CountLinks(Cnn, ints, true);
-            var cntAfterMerge = GlobalSettings.CountLinks(Cnn, ints, false);
-            var titlesAfterMerge = GlobalSettings.GetTitles(Cnn, ContentId, ints);
-            var cntArticlesAsyncAfterMerge = GlobalSettings.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesAfterMerge = GlobalSettings.CountArticles(Cnn, ContentId, ints, false);
+            var cntAsyncAfterMerge = Global.CountLinks(Cnn, ints, true);
+            var cntAfterMerge = Global.CountLinks(Cnn, ints, false);
+            var titlesAfterMerge = Global.GetTitles(Cnn, ContentId, ints);
+            var cntArticlesAsyncAfterMerge = Global.CountArticles(Cnn, ContentId, ints, true);
+            var cntArticlesAfterMerge = Global.CountArticles(Cnn, ContentId, ints, false);
 
             Assert.That(cntAsyncAfterMerge, Is.EqualTo(0));
             Assert.That(cntAfterMerge, Is.Not.EqualTo(0));
@@ -130,10 +130,55 @@ namespace Quantumart.Test
             );
         }
 
+        [Test]
+        public void ValidateAttributeValue_ThrowsException_StringDoesNotComplyInputMask()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                ["Title"] = "test123"
+            };
+            values.Add(article1);
+
+            Assert.That(
+                () => Cnn.MassUpdate(ContentId, values, 1),
+                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("input mask"),
+                "Validate input mask"
+            );
+        }
+
+        [Test]
+        public void ValidateAttributeValue_ArticleAddedWithDefaultValues_NewArticleWithMissedData()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "newtest",
+            };
+            values.Add(article1);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
+
+            int id = int.Parse(values[0][SystemColumnNames.Id]);
+            var ids = new[] {id};
+
+            Assert.That(id, Is.Not.EqualTo(0), "Return id");
+
+            var desc = Global.GetFieldValues(Cnn, ContentId, "Description", ids)[0];
+            var num = (int)Global.GetNumbers(Cnn, ContentId, ids)[0];
+            var cnt = Global.CountLinks(Cnn, ids);
+
+            Assert.That(num, Is.Not.EqualTo(0), "Default number");
+            Assert.That(desc, Is.Not.Null.Or.Empty, "Default description");
+            Assert.That(cnt, Is.EqualTo(2), "Default M2M");
+        }
+
         [OneTimeTearDown]
         public static void TearDown()
         {
-            var srv = new ContentService(GlobalSettings.ConnectionString, 1);
+            var srv = new ContentService(Global.ConnectionString, 1);
             srv.Delete(ContentId);
             srv.Delete(DictionaryContentId);
             QPContext.UseConnectionString = false;

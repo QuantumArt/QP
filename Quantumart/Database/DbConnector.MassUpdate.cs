@@ -50,10 +50,11 @@ namespace Quantumart.QPublishing.Database
                 var dataDoc = GetMassUpdateContentDataDocument(arrValues, attrs, fullAttrs, newIds, content);
                 ImportContentData(dataDoc);
 
-                var attrString = string.Join(",", attrs.Select(n => n.Id.ToString()).ToArray());
+                var resultAttrs = (newIds.Any() ? fullAttrs : attrs);
+                var attrString = string.Join(",", resultAttrs.Select(n => n.Id.ToString()).ToArray());
                 ReplicateData(arrValues, attrString);
 
-                var manyToManyAttrs = attrs.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue).ToArray();
+                var manyToManyAttrs = resultAttrs.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue).ToArray();
                 if (manyToManyAttrs.Any())
                 {
                     var linkDoc = GetImportItemLinkDocument(arrValues, manyToManyAttrs);
@@ -144,7 +145,7 @@ namespace Quantumart.QPublishing.Database
                         VersionId = (int)n.Field<decimal>("content_item_version_id"),
                         Data = n.Field<string>("data")
                     })
-                    .Where(n => !String.IsNullOrEmpty(n.Data))
+                    .Where(n => !string.IsNullOrEmpty(n.Data))
                     .Select(n => new FileToCopy
                     {
                         Name = Path.GetFileName(n.Data),
@@ -158,7 +159,7 @@ namespace Quantumart.QPublishing.Database
                 var newFiles = values
                     .Where(n => strIds.Contains(n[SystemColumnNames.Id]))
                     .SelectMany(n => n)
-                    .Where(n => fileAttrDirs.ContainsKey(n.Key) && !String.IsNullOrEmpty(n.Value))
+                    .Where(n => fileAttrDirs.ContainsKey(n.Key) && !string.IsNullOrEmpty(n.Value))
                     .Distinct()
                     .Select(n => new FileToCopy
                     {
@@ -201,8 +202,8 @@ namespace Quantumart.QPublishing.Database
                 var set = new HashSet<string>();
                 foreach (var item in items)
                 {
-                    var str = String.Join("", item.Elements("DATA").Select(n => n.ToString()));
-                    if (!String.IsNullOrEmpty(str))
+                    var str = string.Join("", item.Elements("DATA").Select(n => n.ToString()));
+                    if (!string.IsNullOrEmpty(str))
                     {
                         if (set.Contains(str))
                         {
@@ -304,6 +305,8 @@ namespace Quantumart.QPublishing.Database
                     var valueExists = value.TryGetValue(attr.Name, out result);
                     if (attr.LinkId.HasValue)
                     {
+                        if (!valueExists && isNewArticle && !string.IsNullOrEmpty(attr.DefaultValue))
+                            value[attr.Name] = attr.DefaultValue;
                         result = attr.LinkId.Value.ToString();
                         valueExists = true;
                     }

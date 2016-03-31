@@ -70,7 +70,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="GlobalSettings.cs" />
+    <Compile Include="Global.cs" />
     <Compile Include="MassUpdateM2MValidationFixture .cs" />
     <Compile Include="MassUpdateUniqueValidationFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

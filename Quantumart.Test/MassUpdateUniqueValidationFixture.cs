@@ -27,11 +27,11 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new ReplayService(GlobalSettings.ConnectionString, 1, true);
-            service.ReplayXml(GlobalSettings.GetXml(@"xmls\unique.xml"));
-            Cnn = new DBConnector(GlobalSettings.ConnectionString);
-            ContentId = GlobalSettings.GetContentId(Cnn, "Test unique");
-            BaseArticlesIds = GlobalSettings.GetIds(Cnn, ContentId);
+            var service = new ReplayService(Global.ConnectionString, 1, true);
+            service.ReplayXml(Global.GetXml(@"xmls\unique.xml"));
+            Cnn = new DBConnector(Global.ConnectionString);
+            ContentId = Global.GetContentId(Cnn, "Test unique");
+            BaseArticlesIds = Global.GetIds(Cnn, ContentId);
         }
 
 
@@ -117,7 +117,7 @@ namespace Quantumart.Test
 
             Assert.That(() => { Cnn.MassUpdate(ContentId, values, 1); }, Throws.Exception);
 
-            var titles = GlobalSettings.GetTitles(Cnn, ContentId);
+            var titles = Global.GetTitles(Cnn, ContentId);
 
             Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the internal transaction should be rolled back");
         }
@@ -147,7 +147,7 @@ namespace Quantumart.Test
             };
             values2.Add(article3);
 
-            using (var conn = new SqlConnection(GlobalSettings.ConnectionString))
+            using (var conn = new SqlConnection(Global.ConnectionString))
             {
                 conn.Open();
                 var tr = conn.BeginTransaction();
@@ -158,7 +158,7 @@ namespace Quantumart.Test
 
                 tr.Rollback();
 
-                var titles = GlobalSettings.GetTitles(localCnn, ContentId);
+                var titles = Global.GetTitles(localCnn, ContentId);
 
                 Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the external transaction should be rolled back");
             }
@@ -187,11 +187,11 @@ namespace Quantumart.Test
             };
             values.Add(article2);
 
-            var modified = GlobalSettings.GetModified(Cnn, ContentId);
+            var modified = Global.GetModified(Cnn, ContentId);
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update existing data");
 
-            var modified2 = GlobalSettings.GetModified(Cnn, ContentId);
+            var modified2 = Global.GetModified(Cnn, ContentId);
             var first2 = ContentItem.Read(BaseArticlesIds[0], Cnn);
             var second2 = ContentItem.Read(BaseArticlesIds[1], Cnn);
 
@@ -225,11 +225,11 @@ namespace Quantumart.Test
             };
             values.Add(article2);
 
-            var modified = GlobalSettings.GetModified(Cnn, ContentId);
+            var modified = Global.GetModified(Cnn, ContentId);
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Swap existing data");
 
-            var modified2 = GlobalSettings.GetModified(Cnn, ContentId);
+            var modified2 = Global.GetModified(Cnn, ContentId);
             var first2 = ContentItem.Read(BaseArticlesIds[0], Cnn);
             var second2 = ContentItem.Read(BaseArticlesIds[1], Cnn);
 
@@ -278,7 +278,7 @@ namespace Quantumart.Test
         [OneTimeTearDown]
         public static void TearDown()
         {
-            var srv = new ContentService(GlobalSettings.ConnectionString, 1);
+            var srv = new ContentService(Global.ConnectionString, 1);
             srv.Delete(ContentId);
             QPContext.UseConnectionString = false;
         }

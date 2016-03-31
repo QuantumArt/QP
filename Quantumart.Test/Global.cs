@@ -11,7 +11,7 @@ using Quantumart.QPublishing.Database;
 
 namespace Quantumart.Test
 {
-    internal class GlobalSettings
+    internal class Global
     {
         public static string ConnectionString =
             @"Initial Catalog=mts_catalog;Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
@@ -41,7 +41,7 @@ namespace Quantumart.Test
                 .ToArray();
         }
 
-        public static int CountLinks(DBConnector cnn, int[] ids, bool isAsync)
+        public static int CountLinks(DBConnector cnn, int[] ids, bool isAsync = false)
         {
             var asyncString = isAsync ? "_async" : "";
             return cnn.GetRealData(
@@ -64,12 +64,28 @@ namespace Quantumart.Test
 
         public static string[] GetTitles(DBConnector localCnn, int contentId, int[] ids = null, bool isAsync = false)
         {
+            return GetFieldValues(localCnn, contentId, "Title", ids, isAsync);
+        }
+
+        public static string[] GetFieldValues(DBConnector localCnn, int contentId, string fieldName, int[] ids = null, bool isAsync = false)
+        {
             var asyncString = isAsync ? "_async" : "";
             var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : "";
             ;
-            return localCnn.GetRealData($"select Title from content_{contentId}{asyncString} {idsString}")
+            return localCnn.GetRealData($"select [{fieldName}] from content_{contentId}{asyncString} {idsString}")
                 .AsEnumerable()
-                .Select(n => n.Field<string>("Title"))
+                .Select(n => n.Field<string>(fieldName))
+                .ToArray();
+        }
+
+        public static decimal[] GetNumbers(DBConnector localCnn, int contentId, int[] ids = null, bool isAsync = false)
+        {
+            var asyncString = isAsync ? "_async" : "";
+            var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : "";
+            ;
+            return localCnn.GetRealData($"select Number from content_{contentId}{asyncString} {idsString}")
+                .AsEnumerable()
+                .Select(n => n.Field<decimal?>("Number") ?? 0)
                 .ToArray();
         }
 
