@@ -88,10 +88,21 @@ namespace Quantumart.Test
             Assert.That(cntArticlesAfterSplit, Is.Not.EqualTo(0));
             Assert.That(cntArticlesAsyncAfterSplit, Is.EqualTo(cntArticlesAfterSplit));
 
-            article1["STATUS_TYPE_ID"] = PublishedId.ToString();
-            article2["STATUS_TYPE_ID"] = PublishedId.ToString();
+            var values2 = new List<Dictionary<string, string>>();
+            var article3 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+            };
+            values2.Add(article3);
+            var article4 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+            };
+            values2.Add(article4);
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values2, 1));
 
             var cntAsyncAfterMerge = Global.CountLinks(Cnn, ints, true);
             var cntAfterMerge = Global.CountLinks(Cnn, ints, false);
@@ -108,7 +119,95 @@ namespace Quantumart.Test
 
             Assert.That(titlesBefore, Is.EqualTo(titlesAfterMerge));
             Assert.That(titlesBefore, Is.EqualTo(asyncTitlesAfterSplit));
+        }
 
+
+        [Test]
+        public void MassUpdate_InsertSplitAndMergeData_ForM2MAndStatusChanging()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var ints1 = new[] {CategoryIds[1], CategoryIds[3], CategoryIds[5]};
+            var ints2 = new[] {CategoryIds[2], CategoryIds[3], CategoryIds[4]};
+
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "newtest",
+                ["Categories"] = string.Join(",", ints1),
+                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "newtest",
+                ["Categories"] = string.Join(",", ints2),
+                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+            };
+            values.Add(article2);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
+
+            var ids1 = new[] { int.Parse(article1[SystemColumnNames.Id]) };
+            var ids2 = new[] { int.Parse(article2[SystemColumnNames.Id]) };
+            var intsSaved1 = Global.GetLinks(Cnn, ids1);
+            var intsSaved2 = Global.GetLinks(Cnn, ids2);
+
+            Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
+            Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
+
+            var titles = new[] {"xnewtest", "xnewtest"};
+            var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
+            var intsNew2 = new[] { CategoryIds[3], CategoryIds[5] };
+            article1["Categories"] = string.Join(",", intsNew1);
+            article2["Categories"] = string.Join(",", intsNew2);
+            article1["Title"] = titles[0];
+            article2["Title"] = titles[1];
+            article1["STATUS_TYPE_ID"] = NoneId.ToString();
+            article2["STATUS_TYPE_ID"] = NoneId.ToString();
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change and split");
+
+            var intsUpdated1 = Global.GetLinks(Cnn, ids1);
+            var intsUpdated2 = Global.GetLinks(Cnn, ids2);
+            var intsUpdatedAsync1 = Global.GetLinks(Cnn, ids1, true);
+            var intsUpdatedAsync2 = Global.GetLinks(Cnn, ids2, true);
+
+            Assert.That(ints1, Is.EqualTo(intsUpdated1), "First article M2M (main) remains the same");
+            Assert.That(ints2, Is.EqualTo(intsUpdated2), "Second article M2M (main) remains the same");
+            Assert.That(intsNew1, Is.EqualTo(intsUpdatedAsync1), "First article M2M (async) saved");
+            Assert.That(intsNew2, Is.EqualTo(intsUpdatedAsync2), "Second article M2M (async) saved");
+
+            var values2 = new List<Dictionary<string, string>>();
+            var article3 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
+                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+            };
+            values2.Add(article3);
+            var article4 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
+                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+            };
+            values2.Add(article4);
+
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values2, 1), "Merge");
+
+            var intsMerged1 = Global.GetLinks(Cnn, ids1);
+            var intsMerged2 = Global.GetLinks(Cnn, ids2);
+            var intsMergedAsync1 = Global.GetLinks(Cnn, ids1, true);
+            var intsMergedAsync2 = Global.GetLinks(Cnn, ids2, true);
+            var mergedTitles = Global.GetTitles(Cnn, ContentId, ids1.Union(ids2).ToArray());
+            var mergedTitlesAsync = Global.GetTitles(Cnn, ContentId, ids1.Union(ids2).ToArray(), true);
+
+            Assert.That(titles, Is.EqualTo(mergedTitles), "Updated articles (main) after merge");
+            Assert.That(mergedTitlesAsync, Is.Empty, "Empty articles (async) after merge");
+            Assert.That(intsMerged2, Is.EqualTo(intsUpdatedAsync2), "Second article M2M (main) merged");
+            Assert.That(intsMerged1, Is.EqualTo(intsUpdatedAsync1), "First article M2M (main) merged");
+            Assert.That(intsMergedAsync1, Is.Empty, "First article M2M (async) cleared");
+            Assert.That(intsMergedAsync2, Is.Empty, "Second article M2M (async) cleared");
 
         }
 

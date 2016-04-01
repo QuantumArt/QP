@@ -32,7 +32,7 @@ namespace Quantumart.QPublishing.Database
             var arrValues = values as Dictionary<string, string>[] ?? values.ToArray();
             var names =
                 new HashSet<string>(arrValues.SelectMany(n => n.Keys).Distinct().Select(n => n.ToLowerInvariant()));
-            var fullAttrs = GetContentAttributeObjects(contentId).ToArray();
+            var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
             var attrs = fullAttrs.Where(n => names.Contains(n.Name.ToLowerInvariant())).ToArray();
 
             var existingIds = arrValues.Select(n => int.Parse(n[SystemColumnNames.Id])).Where(n => n != 0).ToArray();

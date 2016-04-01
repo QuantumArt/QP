@@ -11,7 +11,6 @@ BEGIN
 
 	insert into @idsWithLinks
 	select i.id, ca.link_id from @ids i 
-	inner join CONTENT_ITEM_SPLITTED cis on i.id = cis.CONTENT_ITEM_ID
 	inner join content_item ci with(nolock) on ci.CONTENT_ITEM_ID = i.ID and (SPLITTED = 1 or @force_merge = 1)
 	inner join content c on ci.CONTENT_ID = c.CONTENT_ID
 	inner join CONTENT_ATTRIBUTE ca on ca.CONTENT_ID = c.CONTENT_ID and link_id is not null
@@ -65,7 +64,7 @@ BEGIN
 	from @newIds n 
 	where n.linked_has_data = 0 and n.linked_attribute_id is not null
 	
-	delete item_link_async from item_link_async ila inner join @ids i on ila.item_id = i.id
+	delete item_link_async from item_link_async ila inner join @idsWithLinks i on ila.item_id = i.id and ila.link_id = i.link_id
 
 
 END

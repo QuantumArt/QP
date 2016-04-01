@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using Quantumart.QPublishing.Info;
 
 namespace Quantumart.QPublishing.Database
@@ -33,19 +32,20 @@ namespace Quantumart.QPublishing.Database
                 throw new Exception($"Cannot modify virtual content (ID = {contentId})");
             }
 
-            IEnumerable<ContentAttribute> attrs;
+            ContentAttribute[] attrs;
             var fullUpdate = (attrIds == null || attrIds.Length == 0) && overrideMissedFields;
 
 
             var enumerable = values as Dictionary<string, string>[] ?? values.ToArray();
+            var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
             if (!overrideMissedFields && attrIds == null)
             {
                 var names = new HashSet<string>(enumerable.SelectMany(n => n.Keys).Distinct().Select(n => n.ToLowerInvariant()));
-                attrs = GetContentAttributeObjects(contentId).Where(n => names.Contains(n.Name.ToLowerInvariant()));
+                attrs = fullAttrs.Where(n => names.Contains(n.Name.ToLowerInvariant())).ToArray();
             }
             else
             {
-                attrs = GetContentAttributeObjects(contentId).Where(n => attrIds != null && (fullUpdate || attrIds.Contains(n.Id)));
+                attrs = fullAttrs.Where(n => attrIds != null && (fullUpdate || attrIds.Contains(n.Id))).ToArray();
             }
 
             CreateInternalConnection(true);
@@ -54,14 +54,13 @@ namespace Quantumart.QPublishing.Database
                 var doc = GetImportContentItemDocument(enumerable, content);
                 ImportContentItem(contentId, enumerable, lastModifiedBy, doc);
 
-                var contentAttributes = attrs as ContentAttribute[] ?? attrs.ToArray();
-                var dataDoc = GetImportContentDataDocument(enumerable, contentAttributes, content, overrideMissedFields);
+                var dataDoc = GetImportContentDataDocument(enumerable, attrs, content, overrideMissedFields);
                 ImportContentData(dataDoc);
 
-                var attrString = fullUpdate ? String.Empty : String.Join(",", contentAttributes.Select(n => n.Id.ToString()).ToArray());
+                var attrString = fullUpdate ? string.Empty : string.Join(",", attrs.Select(n => n.Id.ToString()).ToArray());
                 ReplicateData(enumerable, attrString);
 
-                var manyToManyAttrs = contentAttributes.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue);
+                var manyToManyAttrs = attrs.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue);
                 var toManyAttrs = manyToManyAttrs as ContentAttribute[] ?? manyToManyAttrs.ToArray();
                 if (toManyAttrs.Any())
                 {
@@ -86,7 +85,7 @@ namespace Quantumart.QPublishing.Database
                 CommandType = CommandType.StoredProcedure,
                 CommandTimeout = 120
             };
-            var result = String.Join(",", values.Select(n => n[SystemColumnNames.Id]).ToArray());
+            var result = string.Join(",", values.Select(n => n[SystemColumnNames.Id]).ToArray());
             cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = result });
             cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = attrString });
             ProcessData(cmd);
@@ -290,7 +289,7 @@ namespace Quantumart.QPublishing.Database
             if (value.TryGetValue(key, out tempId))
             {
                 int id;
-                if (Int32.TryParse(tempId, out id)) ;
+                if (int.TryParse(tempId, out id)) ;
                 result = id;
             }
             return result;

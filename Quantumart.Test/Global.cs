@@ -29,6 +29,7 @@ namespace Quantumart.Test
             return cnn.GetRealData($"select content_item_id from content_{contentId}_united")
                 .AsEnumerable()
                 .Select(n => (int) n.Field<decimal>("content_item_id"))
+                .OrderBy(n => n)
                 .ToArray();
         }
 
@@ -49,6 +50,17 @@ namespace Quantumart.Test
                 .AsEnumerable()
                 .Select(n => n.Field<int>("cnt"))
                 .Single();
+        }
+
+        public static int[] GetLinks(DBConnector cnn, int[] ids, bool isAsync = false)
+        {
+            var asyncString = isAsync ? "_async" : "";
+            return cnn.GetRealData(
+                $"select linked_item_id as id from item_link{asyncString} where item_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => (int) n.Field<decimal>("id"))
+                .OrderBy(n => n)
+                .ToArray();
         }
 
         public static int CountArticles(DBConnector cnn, int contentId, int[] ids = null, bool isAsync = false)
