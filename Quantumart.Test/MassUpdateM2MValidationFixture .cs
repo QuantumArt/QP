@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Globalization;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
@@ -65,10 +62,10 @@ namespace Quantumart.Test
             var ints = new[] {BaseArticlesIds[0], BaseArticlesIds[1]};
 
             var cntAsyncBefore = Global.CountLinks(Cnn, ints, true);
-            var cntBefore = Global.CountLinks(Cnn, ints, false);
+            var cntBefore = Global.CountLinks(Cnn, ints);
             var titlesBefore = Global.GetTitles(Cnn, ContentId, ints);
             var cntArticlesAsyncBefore = Global.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesBefore = Global.CountArticles(Cnn, ContentId, ints, false);
+            var cntArticlesBefore = Global.CountArticles(Cnn, ContentId, ints);
 
 
             Assert.That(cntAsyncBefore, Is.EqualTo(0));
@@ -78,10 +75,10 @@ namespace Quantumart.Test
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
 
             var cntAsyncAfterSplit = Global.CountLinks(Cnn, ints, true);
-            var cntAfterSplit = Global.CountLinks(Cnn, ints, false);
+            var cntAfterSplit = Global.CountLinks(Cnn, ints);
             var asyncTitlesAfterSplit = Global.GetTitles(Cnn, ContentId, ints, true);
             var cntArticlesAsyncAfterSplit = Global.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesAfterSplit = Global.CountArticles(Cnn, ContentId, ints, false);
+            var cntArticlesAfterSplit = Global.CountArticles(Cnn, ContentId, ints);
 
             Assert.That(cntAsyncAfterSplit, Is.Not.EqualTo(0));
             Assert.That(cntAfterSplit, Is.EqualTo(cntAsyncAfterSplit));
@@ -105,10 +102,10 @@ namespace Quantumart.Test
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values2, 1));
 
             var cntAsyncAfterMerge = Global.CountLinks(Cnn, ints, true);
-            var cntAfterMerge = Global.CountLinks(Cnn, ints, false);
+            var cntAfterMerge = Global.CountLinks(Cnn, ints);
             var titlesAfterMerge = Global.GetTitles(Cnn, ContentId, ints);
             var cntArticlesAsyncAfterMerge = Global.CountArticles(Cnn, ContentId, ints, true);
-            var cntArticlesAfterMerge = Global.CountArticles(Cnn, ContentId, ints, false);
+            var cntArticlesAfterMerge = Global.CountArticles(Cnn, ContentId, ints);
 
             Assert.That(cntAsyncAfterMerge, Is.EqualTo(0));
             Assert.That(cntAfterMerge, Is.Not.EqualTo(0));
@@ -212,7 +209,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void MassUpdate_SaveAndUpdateM2M_ForM2MData()
+        public void MassUpdate_SaveAndUpdateOK_ForM2MData()
         {
             var values = new List<Dictionary<string, string>>();
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
@@ -273,8 +270,83 @@ namespace Quantumart.Test
             Assert.That(versions.Count(), Is.EqualTo(2), "Versions created");
             Assert.That(cntData, Is.EqualTo(cntVersionData), "Data moved to versions");
             Assert.That(cntLinks, Is.EqualTo(cntVersionLinks), "Links moved to versions");
+        }
+
+        [Test]
+        public void MassUpdate_UpdateOK_ForAsymmetricData()
+        {
+
+            var ids = new[] {BaseArticlesIds[0], BaseArticlesIds[1]};
+            var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
+            var numbersBefore = Global.GetNumbers(Cnn, ContentId, ids);
+            var values = new List<Dictionary<string, string>>();
+
+            const string title1 = "newtestxx";
+            const string title2 = "newtestxxx";
+            const int num = 30;
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                ["Title"] = title1,
+                ["Number"] = num.ToString()
+                
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                ["Title"] = title2,
+            };
+            values.Add(article2);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+
+            var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
+            var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
+            var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
+
+            Assert.That(numbersAfter[1], Is.EqualTo(numbersBefore[1]), "Number 2 remains the same");
+            Assert.That(numbersAfter[0], Is.EqualTo(num), "Number 1 is changed");
+            Assert.That(titlesAfter[1], Is.EqualTo(title2), "Title 2 is changed");
+            Assert.That(titlesAfter[0], Is.EqualTo(title1), "Title 1 is changed");
+            Assert.That(descriptionsAfter[1], Is.EqualTo(descriptionsBefore[1]), "Description 2 remains the same");
+            Assert.That(descriptionsAfter[0], Is.EqualTo(descriptionsBefore[0]), "Description 12 remains the same");
+        }
+
+        [Test]
+        public void MassUpdate_ReturnModified_ForUpdatingData()
+        {
+
+            var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
+            var modifiedBefore = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids);
+
+            var values = new List<Dictionary<string, string>>();
+
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString()
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
+            };
+            values.Add(article2);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+
+            var modifiedAfter = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids);
+            var everyOneHasModified = values.All(n => n.ContainsKey(SystemColumnNames.Modified));
+
+            Assert.That(modifiedBefore, Does.Not.EqualTo(modifiedAfter), "Modified changed");
+            Assert.That(everyOneHasModified, Is.EqualTo(true), "All articles has Modified");
+
+            var modifiedReturned = values.Select(n => DateTime.Parse(n[SystemColumnNames.Modified])).ToArray();
+
+            Assert.That(modifiedAfter, Is.EqualTo(modifiedReturned), "Return modified");
 
         }
+
 
         [Test]
         public void ValidateAttributeValue_ThrowsException_InvalidNumericData()
@@ -330,7 +402,7 @@ namespace Quantumart.Test
 
             Assert.That(id, Is.Not.EqualTo(0), "Return id");
 
-            var desc = Global.GetFieldValues(Cnn, ContentId, "Description", ids)[0];
+            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
             var num = (int)Global.GetNumbers(Cnn, ContentId, ids)[0];
             var cnt = Global.CountLinks(Cnn, ids);
 

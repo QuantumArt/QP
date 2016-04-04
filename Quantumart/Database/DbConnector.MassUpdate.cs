@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -61,6 +62,8 @@ namespace Quantumart.QPublishing.Database
                     ImportItemLink(linkDoc);
                 }
 
+                UpdateModified(arrValues, existingIds, contentId);
+
                 CreateFilesVersions(arrValues, existingIds, contentId);
 
                 foreach (var id in versionIdsToRemove)
@@ -75,6 +78,38 @@ namespace Quantumart.QPublishing.Database
             finally
             {
                 DisposeInternalConnection();
+            }
+        }
+
+        private void UpdateModified(Dictionary<string, string>[] arrValues, int[] existingIds, int contentId)
+        {
+            var cmd = new SqlCommand()
+            {
+                CommandText =
+                    $"select content_item_id, Modified from content_{contentId}_united where content_item_id in (select id from @ids)",
+                CommandType = CommandType.Text,
+                Parameters =
+                {
+                    new SqlParameter("@ids", SqlDbType.Structured)
+                    {
+                        TypeName = "Ids",
+                        Value = IdsToDataTable(existingIds)
+                    }
+                }
+            };
+
+            var arrModified = GetRealData(cmd)
+                .AsEnumerable()
+                .ToDictionary(n => (int)n.Field<decimal>("content_item_id"), m => m.Field<DateTime>("modified"));
+
+            foreach (var value in arrValues)
+            {
+                var id = int.Parse(value[SystemColumnNames.Id]);
+                DateTime modified;
+                if (id != 0 && arrModified.TryGetValue(id, out modified))
+                {
+                    value[SystemColumnNames.Modified] = modified.ToString("MM/dd/yyyy HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                }
             }
         }
 

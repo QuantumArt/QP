@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using NUnit.Framework;
 using Quantumart.QPublishing.Database;
 
@@ -103,28 +99,24 @@ namespace Quantumart.Test
 
         public static string[] GetTitles(DBConnector localCnn, int contentId, int[] ids = null, bool isAsync = false)
         {
-            return GetFieldValues(localCnn, contentId, "Title", ids, isAsync);
+            return GetFieldValues<string>(localCnn, contentId, "Title", ids, isAsync);
         }
 
-        public static string[] GetFieldValues(DBConnector localCnn, int contentId, string fieldName, int[] ids = null, bool isAsync = false)
+        public static T[] GetFieldValues<T>(DBConnector localCnn, int contentId, string fieldName, int[] ids = null, bool isAsync = false)
         {
             var asyncString = isAsync ? "_async" : "";
             var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : "";
             ;
             return localCnn.GetRealData($"select [{fieldName}] from content_{contentId}{asyncString} {idsString}")
                 .AsEnumerable()
-                .Select(n => n.Field<string>(fieldName))
+                .Select(n => n.Field<T>(fieldName))
                 .ToArray();
         }
 
         public static decimal[] GetNumbers(DBConnector localCnn, int contentId, int[] ids = null, bool isAsync = false)
         {
-            var asyncString = isAsync ? "_async" : "";
-            var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : "";
-            ;
-            return localCnn.GetRealData($"select Number from content_{contentId}{asyncString} {idsString}")
-                .AsEnumerable()
-                .Select(n => n.Field<decimal?>("Number") ?? 0)
+            return GetFieldValues<decimal?>(localCnn, contentId, "Number", ids, isAsync)
+                .Select(n => n ?? 0)
                 .ToArray();
         }
 
