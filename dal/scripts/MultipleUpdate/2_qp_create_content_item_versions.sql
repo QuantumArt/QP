@@ -12,9 +12,9 @@ BEGIN
   declare @items table (id numeric, cnt int, last_version_id int, new_version_id int, content_id numeric, max_num int)
 
   insert into @items (id, cnt)
-  select civ.content_item_id, count(civ.content_item_version_id) from content_item_version civ 
-  inner join @ids i on civ.content_item_id = i.id
-  group by civ.content_item_id
+  select i.ID, count(civ.content_item_version_id) from @ids i 
+  left join content_item_version civ on civ.content_item_id = i.id
+  group by i.ID
 
   --print 'init completed'
 

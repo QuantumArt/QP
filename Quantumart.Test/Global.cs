@@ -63,6 +63,33 @@ namespace Quantumart.Test
                 .ToArray();
         }
 
+        public static int CountData(DBConnector cnn, int[] ids)
+        {
+            return cnn.GetRealData(
+                $"select count(*) as cnt from content_data where content_item_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => n.Field<int>("cnt"))
+                .Single();
+        }
+
+        public static int CountVersionData(DBConnector cnn, int[] ids)
+        {
+            return cnn.GetRealData(
+                $"select count(*) as cnt from version_content_data where content_item_version_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => n.Field<int>("cnt"))
+                .Single();
+        }
+
+        public static int CountVersionLinks(DBConnector cnn, int[] ids)
+        {
+            return cnn.GetRealData(
+                $"select count(*) as cnt from item_to_item_version where content_item_version_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => n.Field<int>("cnt"))
+                .Single();
+        }
+
         public static int CountArticles(DBConnector cnn, int contentId, int[] ids = null, bool isAsync = false)
         {
             var asyncString = isAsync ? "_async" : "";
@@ -98,6 +125,14 @@ namespace Quantumart.Test
             return localCnn.GetRealData($"select Number from content_{contentId}{asyncString} {idsString}")
                 .AsEnumerable()
                 .Select(n => n.Field<decimal?>("Number") ?? 0)
+                .ToArray();
+        }
+
+        public static int[] GetMaxVersions(DBConnector localCnn, int[] ids)
+        {
+            return localCnn.GetRealData($"select max(content_item_version_id) as id from content_item_version where content_item_id in ({string.Join(",", ids)}) group by content_item_id")
+                .AsEnumerable()
+                .Select(n => (int)n.Field<decimal>("id"))
                 .ToArray();
         }
 

@@ -212,6 +212,71 @@ namespace Quantumart.Test
         }
 
         [Test]
+        public void MassUpdate_SaveAndUpdateM2M_ForM2MData()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
+            var ints2 = new[] { CategoryIds[2], CategoryIds[3], CategoryIds[4] };
+
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "newtest",
+                ["Categories"] = string.Join(",", ints1),
+                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "newtest",
+                ["Categories"] = string.Join(",", ints2),
+                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+            };
+            values.Add(article2);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
+
+            var ids1 = new[] { int.Parse(article1[SystemColumnNames.Id]) };
+            var ids2 = new[] { int.Parse(article2[SystemColumnNames.Id]) };
+            var ids = ids1.Union(ids2).ToArray();
+            var intsSaved1 = Global.GetLinks(Cnn, ids1);
+            var intsSaved2 = Global.GetLinks(Cnn, ids2);
+
+            Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
+            Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
+
+            var titles = new[] { "xnewtest", "xnewtest" };
+            var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
+            var intsNew2 = new[] { CategoryIds[3], CategoryIds[5] };
+            article1["Categories"] = string.Join(",", intsNew1);
+            article2["Categories"] = string.Join(",", intsNew2);
+            article1["Title"] = titles[0];
+            article2["Title"] = titles[1];
+
+            var cntData = Global.CountData(Cnn, ids);
+            var cntLinks = Global.CountLinks(Cnn, ids);
+
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change");
+
+            var intsUpdated1 = Global.GetLinks(Cnn, ids1);
+            var intsUpdated2 = Global.GetLinks(Cnn, ids2);
+
+            Assert.That(intsNew1, Is.EqualTo(intsUpdated1), "First article M2M updated");
+            Assert.That(intsNew2, Is.EqualTo(intsUpdated2), "Second article M2M updated");
+
+            var versions = Global.GetMaxVersions(Cnn, ids);
+            var cntVersionData = Global.CountVersionData(Cnn, versions);
+            var cntVersionLinks = Global.CountVersionLinks(Cnn, versions);
+
+            Assert.That(versions.Count(), Is.EqualTo(2), "Versions created");
+            Assert.That(cntData, Is.EqualTo(cntVersionData), "Data moved to versions");
+            Assert.That(cntLinks, Is.EqualTo(cntVersionLinks), "Links moved to versions");
+
+        }
+
+        [Test]
         public void ValidateAttributeValue_ThrowsException_InvalidNumericData()
         {
             var values = new List<Dictionary<string, string>>();
