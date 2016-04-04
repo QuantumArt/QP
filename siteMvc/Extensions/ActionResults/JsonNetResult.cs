@@ -25,9 +25,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionResults
             response.Write(JsonConvert.SerializeObject(Data, Formatting.None));
         }
 
-        public static implicit operator JsonNetResult<T>(T d)
+        public static implicit operator JsonNetResult<T>(T data)
         {
-            return new JsonNetResult<T>(d);
+            return new JsonNetResult<T>(data);
         }
     }
 }
