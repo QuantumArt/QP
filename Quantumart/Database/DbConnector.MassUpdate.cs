@@ -13,10 +13,29 @@ using Quantumart.QPublishing.Resizer;
 
 namespace Quantumart.QPublishing.Database
 {
+    public class MassUpdateOptions
+    {
+        public MassUpdateOptions()
+        {
+            CreateVersions = true;
+            ReturnModified = true;
+        }
+
+        public bool CreateVersions { get; set; }
+
+        public bool ReturnModified { get; set; }
+
+    }
+    
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
         public void MassUpdate(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy)
+        {
+            MassUpdate(contentId, values, lastModifiedBy, new MassUpdateOptions());
+        }
+
+        public void MassUpdate(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, MassUpdateOptions options)
         {
 
             var content = GetContentObject(contentId);
@@ -38,7 +57,7 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 var doc = GetImportContentItemDocument(arrValues, content);
-                var newIds = MassUpdateContentItem(contentId, arrValues, lastModifiedBy, doc);
+                var newIds = MassUpdateContentItem(contentId, arrValues, lastModifiedBy, doc, options.CreateVersions);
 
                 var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
                 var resultAttrs = GetResultAttrs(arrValues, fullAttrs, newIds);
@@ -60,15 +79,19 @@ namespace Quantumart.QPublishing.Database
                     ImportItemLink(linkDoc);
                 }
 
-                UpdateModified(arrValues, existingIds, contentId);
+                if (options.ReturnModified)
+                    UpdateModified(arrValues, existingIds, contentId);
 
-                CreateFilesVersions(arrValues, existingIds, contentId);
-
-                foreach (var id in versionIdsToRemove)
+                if (options.CreateVersions)
                 {
-                    var oldFolder = GetVersionFolderForContent(contentId, id);
-                    FileSystem.RemoveDirectory(oldFolder);
+                    CreateFilesVersions(arrValues, existingIds, contentId);
 
+                    foreach (var id in versionIdsToRemove)
+                    {
+                        var oldFolder = GetVersionFolderForContent(contentId, id);
+                        FileSystem.RemoveDirectory(oldFolder);
+
+                    }
                 }
 
                 CommitInternalTransaction();
@@ -437,9 +460,13 @@ namespace Quantumart.QPublishing.Database
             return result;
         }
 
-        private int[] MassUpdateContentItem(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, XDocument doc)
+        private int[] MassUpdateContentItem(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, XDocument doc, bool createVersions)
         {
-            var insertInto = @"
+            var createVersionsString = (createVersions)
+                ? "exec qp_create_content_item_versions @OldIds, @lastModifiedBy"
+                : "";
+
+            var insertInto = $@"
                 DECLARE @Articles TABLE 
                 (
                     CONTENT_ITEM_ID NUMERIC,
@@ -471,7 +498,7 @@ namespace Quantumart.QPublishing.Database
                 INSERT INTO @OldIds    
                 SELECT a.CONTENT_ITEM_ID from @Articles a INNER JOIN content_item ci on a.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
 
-                exec qp_create_content_item_versions @OldIds, @lastModifiedBy    
+                {createVersionsString} 
 
                 INSERT INTO @OldNonSplittedIds
                 SELECT i.Id from @OldIds i INNER JOIN content_item ci on i.id = ci.CONTENT_ITEM_ID where ci.SPLITTED = 0

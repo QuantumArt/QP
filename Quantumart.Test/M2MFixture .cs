@@ -342,11 +342,38 @@ namespace Quantumart.Test
             var everyOneHasModified = values.All(n => n.ContainsKey(SystemColumnNames.Modified));
 
             Assert.That(modifiedBefore, Does.Not.EqualTo(modifiedAfter), "Modified changed");
-            Assert.That(everyOneHasModified, Is.EqualTo(true), "All articles has Modified");
+            Assert.That(everyOneHasModified, Is.True, "All articles has Modified");
 
             var modifiedReturned = values.Select(n => DateTime.Parse(n[SystemColumnNames.Modified], CultureInfo.InvariantCulture)).ToArray();
 
             Assert.That(modifiedAfter, Is.EqualTo(modifiedReturned), "Return modified");
+
+        }
+
+        [Test]
+        public void MassUpdate_DoesntReturnModified_ReturnModifiedFalse()
+        {
+
+            var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
+            var modifiedBefore = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids);
+
+            var values = new List<Dictionary<string, string>>();
+
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString()
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
+            };
+            values.Add(article2);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { ReturnModified = false }) , "Update");
+
+            var noOneHasModified = values.All(n => !n.ContainsKey(SystemColumnNames.Modified));
+            Assert.That(noOneHasModified, Is.EqualTo(true), "All articles has Modified");
 
         }
 

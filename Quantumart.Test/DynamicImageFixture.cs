@@ -117,6 +117,40 @@ namespace Quantumart.Test
         }
 
         [Test]
+        public void MassUpdate_DoesntCreateVersions_CreateVersionsFalse()
+        {
+            var mockFileSystem = new Mock<IFileSystem>();
+            Cnn.FileSystem = mockFileSystem.Object;
+            mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
+
+
+
+            var values = new List<Dictionary<string, string>>();
+
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                [ImageName] = "test44.jpg"
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                [ImageName] = "test55.jpg"
+            };
+            values.Add(article2);
+
+            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { CreateVersions = false}), "Update");
+
+            var versions = Global.GetMaxVersions(Cnn, ids).ToArray();
+
+            Assert.That(versions, Is.Empty, "No new versions");
+            mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "No new folders");
+        }
+
+        [Test]
         public void MassUpdate_CopyFiles_ContentHasFileFields()
         {
  
