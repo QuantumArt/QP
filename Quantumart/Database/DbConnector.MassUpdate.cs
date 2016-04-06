@@ -31,11 +31,6 @@ namespace Quantumart.QPublishing.Database
             }
 
             var arrValues = values as Dictionary<string, string>[] ?? values.ToArray();
-            var names =
-                new HashSet<string>(arrValues.SelectMany(n => n.Keys).Distinct().Select(n => n.ToLowerInvariant()));
-            var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
-            var attrs = fullAttrs.Where(n => names.Contains(n.Name.ToLowerInvariant())).ToArray();
-
             var existingIds = arrValues.Select(n => int.Parse(n[SystemColumnNames.Id])).Where(n => n != 0).ToArray();
             var versionIdsToRemove = GetVersionIdsToRemove(existingIds, content.MaxVersionNumber);
 
@@ -45,13 +40,16 @@ namespace Quantumart.QPublishing.Database
                 var doc = GetImportContentItemDocument(arrValues, content);
                 var newIds = MassUpdateContentItem(contentId, arrValues, lastModifiedBy, doc);
 
+                var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
+                var resultAttrs = GetResultAttrs(arrValues, fullAttrs, newIds);
+
                 CreateDynamicImages(arrValues, fullAttrs);
 
                 ValidateConstraints(arrValues, fullAttrs, content);
-                var dataDoc = GetMassUpdateContentDataDocument(arrValues, attrs, fullAttrs, newIds, content);
+                var dataDoc = GetMassUpdateContentDataDocument(arrValues, resultAttrs, newIds, content);
                 ImportContentData(dataDoc);
 
-                var resultAttrs = (newIds.Any() ? fullAttrs : attrs);
+
                 var attrString = string.Join(",", resultAttrs.Select(n => n.Id.ToString()).ToArray());
                 ReplicateData(arrValues, attrString);
 
@@ -69,8 +67,8 @@ namespace Quantumart.QPublishing.Database
                 foreach (var id in versionIdsToRemove)
                 {
                     var oldFolder = GetVersionFolderForContent(contentId, id);
-                    if (Directory.Exists(oldFolder))
-                        Directory.Delete(oldFolder, true);
+                    FileSystem.RemoveDirectory(oldFolder);
+
                 }
 
                 CommitInternalTransaction();
@@ -79,6 +77,50 @@ namespace Quantumart.QPublishing.Database
             {
                 DisposeInternalConnection();
             }
+        }
+
+        private static ContentAttribute[] GetResultAttrs(Dictionary<string, string>[] arrValues, ContentAttribute[] fullAttrs, int[] newIds)
+        {
+            var resultAttrs = fullAttrs;
+            var isNewArticle = newIds.Any();
+            if (!isNewArticle)
+            {
+                var names = new HashSet<string>(arrValues.SelectMany(n => n.Keys).Distinct().Select(n => n.ToLowerInvariant()));
+                if (fullAttrs.Any(n => n.Type == AttributeType.DynamicImage))
+                {
+                    names.UnionWith(GetDynamicImageExtraNames(arrValues, fullAttrs));
+                }
+                resultAttrs = fullAttrs.Where(n => names.Contains(n.Name.ToLowerInvariant())).ToArray();
+
+            }
+            return resultAttrs;
+        }
+
+        private static IEnumerable<string> GetDynamicImageExtraNames(Dictionary<string, string>[] arrValues, ContentAttribute[] fullAttrs)
+        {
+            var baseImages = fullAttrs.Where(n => n.Type == AttributeType.Image).
+                Where(n => arrValues.Any(m => m.ContainsKey(n.Name)))
+                .ToDictionary(n => n.Id, m => m.Name.ToLowerInvariant());
+
+            var baseImagesValues = baseImages.Select(n => n.Value).ToArray();
+
+            var dynImages = fullAttrs.Where(n => n.Type == AttributeType.DynamicImage)
+                .Where(n => baseImages.ContainsKey(n.RelatedImageId.Value))
+                .Select(n => new
+                {
+                    BaseImageName = baseImages[n.RelatedImageId.Value],
+                    DynImageName = n.Name.ToLowerInvariant()
+                })
+                .GroupBy(n => n.BaseImageName).ToDictionary(
+                    n => n.Key,
+                    n => n.Select(k => k.DynImageName).ToArray()
+                );
+
+            var extraNames =
+                baseImagesValues
+                    .SelectMany(n => dynImages.ContainsKey(n) ? dynImages[n] : Enumerable.Empty<string>())
+                    .ToArray();
+            return extraNames;
         }
 
         private void UpdateModified(Dictionary<string, string>[] arrValues, int[] existingIds, int contentId)
@@ -145,20 +187,23 @@ namespace Quantumart.QPublishing.Database
                     string image;
                     if (article.TryGetValue(imageAttr.Name, out image))
                     {
-                        DynamicImageCreator.CreateDynamicImage(
-                            contentDir,
-                            attrDir,
-                            image,
-                            dynImageAttr.Id,
-                            dynImageAttr.DynamicImage.Width,
-                            dynImageAttr.DynamicImage.Height,
-                            dynImageAttr.DynamicImage.Quality,
-                            dynImageAttr.DynamicImage.Type,
-                            dynImageAttr.DynamicImage.MaxSize
-                            );
+                        var info = new DynamicImageInfo()
+                        {
+                            ContentLibraryPath = contentDir,
+                            ImagePath = attrDir,
+                            ImageName = image,
+                            AttrId = dynImageAttr.Id,
+                            Width = dynImageAttr.DynamicImage.Width,
+                            Height = dynImageAttr.DynamicImage.Height,
+                            Quality = dynImageAttr.DynamicImage.Quality,
+                            FileType = dynImageAttr.DynamicImage.Type,
+                            MaxSize = dynImageAttr.DynamicImage.MaxSize
+                        };
 
+                        DynamicImageCreator.CreateDynamicImage(info);
+
+                        article[dynImageAttr.Name] = DynamicImage.GetDynamicImageRelUrl(info.ImageName, info.AttrId, info.FileType);
                     }
-                    article[dynImageAttr.Name] = DynamicImage.GetDynamicImageRelUrl(image, dynImageAttr.Id, dynImageAttr.DynamicImage.Type);
                 }
             }
         }
@@ -320,7 +365,7 @@ namespace Quantumart.QPublishing.Database
 
         }
 
-        private XDocument GetMassUpdateContentDataDocument(IEnumerable<Dictionary<string, string>> values, ContentAttribute[] attrs, ContentAttribute[] fullAttrs, int[] newIds, Content content)
+        private XDocument GetMassUpdateContentDataDocument(IEnumerable<Dictionary<string, string>> values, ContentAttribute[] attrs, int[] newIds, Content content)
         {
             var longUploadUrl = GetImagesUploadUrl(content.SiteId);
             var longSiteLiveUrl = GetSiteUrl(content.SiteId, true);
@@ -330,8 +375,7 @@ namespace Quantumart.QPublishing.Database
             foreach (var value in values)
             {
                 var isNewArticle = newIds.Contains(int.Parse(value[SystemColumnNames.Id]));
-                var resultAttrs = isNewArticle ? fullAttrs : attrs; 
-                foreach (var attr in resultAttrs)
+                foreach (var attr in attrs)
                 {
                     var elem = new XElement("ITEM");
                     elem.Add(new XAttribute("id", value[SystemColumnNames.Id]));

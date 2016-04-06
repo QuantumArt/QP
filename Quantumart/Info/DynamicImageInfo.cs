@@ -1,13 +1,13 @@
 ﻿namespace Quantumart.QPublishing.Info
 {
-    public class DynamicImageHolder
+    public class DynamicImageInfo
     {
          
         public string ContentLibraryPath { get; set; }
         
         public string ImagePath { get; set; }
         
-        public decimal Id { get; set; }
+        public int AttrId { get; set; }
 
         public short Width { get; set; }
 

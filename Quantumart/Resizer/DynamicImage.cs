@@ -1,28 +1,20 @@
 using System;
 using System.Drawing;
 using System.IO;
+using Quantumart.QPublishing.Info;
 
 namespace Quantumart.QPublishing.Resizer
 { 
 
-    public class DynamicImage
+    public class DynamicImage : IDynamicImage
     {
-        public void CreateDynamicImage(
-            string contentDir,
-            string uploadDir,
-            string fileName,
-            decimal attributeId,
-            object width,
-            object heigth,
-            object quality,
-            string fileType,
-            bool maxSize)
+        public void CreateDynamicImage(DynamicImageInfo image)
         {
 
-            int curWidth = GetValidValue(width);
-            int curHeight = GetValidValue(heigth);
-            int curQuality = GetValidValue(quality);
-            string path = (uploadDir + "\\" + fileName).Replace("/", "\\");
+            int curWidth = GetValidValue(image.Width);
+            int curHeight = GetValidValue(image.Height);
+            int curQuality = GetValidValue(image.Quality);
+            string path = (image.ImagePath + "\\" + image.ImageName).Replace("/", "\\");
 
             if (File.Exists(path))
             {
@@ -33,13 +25,13 @@ namespace Quantumart.QPublishing.Resizer
                     img = new Bitmap(path);
 
                     img2 = curWidth != 0 || curHeight != 0
-                        ? ResizeImage(img, curWidth, curHeight, maxSize)
+                        ? ResizeImage(img, curWidth, curHeight, image.MaxSize)
                         : new Bitmap(path);
 
-                    string filePath = contentDir + "\\" + GetDynamicImageRelPath(fileName, attributeId, fileType);
+                    string filePath = image.ContentLibraryPath + "\\" + GetDynamicImageRelPath(image.ImageName, image.AttrId, image.FileType);
 
                     CreateFolderForFile(filePath);
-                    Resizer.SaveImage(img2, fileType, filePath, curQuality);
+                    Resizer.SaveImage(img2, image.FileType, filePath, curQuality);
                 }
                 finally
                 {

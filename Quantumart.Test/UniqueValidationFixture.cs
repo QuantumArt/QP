@@ -11,7 +11,7 @@ using NUnit.Framework;
 namespace Quantumart.Test
 {
     [TestFixture]
-    public class MassUpdateUniqueValidationFixture
+    public class UniqueValidationFixture
     {
         public static DBConnector Cnn { get; private set; }
 
@@ -33,7 +33,7 @@ namespace Quantumart.Test
 
 
         [Test]
-        public void SelfValidate_DoesntThrowException_ForNonExistingFields()
+        public void MassUpdate_DoesntThrowException_SelfValidateForNonExistingFields()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
@@ -53,7 +53,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void SelfValidate_ThrowsException_ForDataConflict()
+        public void MassUpdate_ThrowsException_SelfValidateForDataConflict()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
@@ -77,7 +77,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void ValidateConstraint_ThrowsException_ForDataConflict()
+        public void MassUpdate_ThrowsException_ValidateConstraintForDataConflict()
         {
             var values = new List<Dictionary<string, string>>();
             var id = (decimal)Cnn.GetRealScalarData(new SqlCommand($"select content_item_id from content_{ContentId}_united where [Title] <> 'Name2'"));
@@ -120,7 +120,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void MassUpdateWithExternalTransaction_UpdateNothing_InCaseOfAnyError()
+        public void MassUpdate_UpdateNothing_InCaseOfAnyErrorAndExternalTransaction()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
@@ -163,7 +163,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void ValidateConstraint_IsValid_SameData()
+        public void MassUpdate_IsValid_ValidateConstraintSameData()
         {
             var values = new List<Dictionary<string, string>>();
             var first = ContentItem.Read(BaseArticlesIds[0], Cnn);
@@ -200,7 +200,7 @@ namespace Quantumart.Test
 
 
         [Test]
-        public void ValidateConstraint_IsValid_SwapData()
+        public void MassUpdate_IsValid_ValidateConstraintSwapData()
         {
             var values = new List<Dictionary<string, string>>();
             var first = ContentItem.Read(BaseArticlesIds[0], Cnn);
@@ -237,7 +237,7 @@ namespace Quantumart.Test
 
 
         [Test]
-        public void ValidateAttributeValue_ThrowsException_MissedData()
+        public void MassUpdate_ThrowsException_ValidateAttributeValueMissedData()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
@@ -254,7 +254,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void ValidateAttributeValue_ThrowsException_StringSizeExceeded()
+        public void MassUpdate_ThrowsException_ValidateAttributeValueStringSizeExceeded()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>

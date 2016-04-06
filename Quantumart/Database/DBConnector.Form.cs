@@ -129,7 +129,7 @@ namespace Quantumart.QPublishing.Database
             var command = new SqlCommand();
 
             var sqlStringBuilder = new StringBuilder();
-            var dynamicImagesList = new List<DynamicImageHolder>();
+            var dynamicImagesList = new List<DynamicImageInfo>();
 
             var actualFieldName = "";
 
@@ -259,8 +259,8 @@ namespace Quantumart.QPublishing.Database
                 if (GetVersionsCount(result) == content.MaxVersionNumber)
                 {
                     var oldFolder = GetVersionFolder(result, oldVersionId);
-                    if (Directory.Exists(oldFolder))
-                        Directory.Delete(oldFolder, true);
+                    FileSystem.RemoveDirectory(oldFolder);
+
                 }
             }
             return result;
@@ -600,7 +600,7 @@ namespace Quantumart.QPublishing.Database
 
         #region Working with dynamic images
 
-        private void GetDynamicImagesForImage(int attributeId, int contentItemId, string imageName, List<DynamicImageHolder> imagesList)
+        private void GetDynamicImagesForImage(int attributeId, int contentItemId, string imageName, List<DynamicImageInfo> imagesList)
         {
 
             var imageAttr = GetContentAttributeObject(attributeId);
@@ -612,9 +612,9 @@ namespace Quantumart.QPublishing.Database
 
             foreach (var attr in attrs)
             {
-                var image = new DynamicImageHolder
+                var image = new DynamicImageInfo
                 {
-                    Id = attr.Id,
+                    AttrId = attr.Id,
                     FileType = attr.DynamicImage.Type,
                     ImageName = imageName,
                     ArticleId = contentItemId,
@@ -627,7 +627,7 @@ namespace Quantumart.QPublishing.Database
                 };
 
                 image.DynamicUrl = !string.IsNullOrEmpty(image.ImageName) ?
-                    DynamicImage.GetDynamicImageRelUrl(image.ImageName, image.Id, image.FileType).Replace("'", "''") :
+                    DynamicImage.GetDynamicImageRelUrl(image.ImageName, image.AttrId, image.FileType).Replace("'", "''") :
                     "NULL";
 
                 imagesList.Add(image);
@@ -636,7 +636,7 @@ namespace Quantumart.QPublishing.Database
             }
         }
 
-        private void CreateAllDynamicImages(List<DynamicImageHolder> imagesList)
+        private void CreateAllDynamicImages(List<DynamicImageInfo> imagesList)
         {
             foreach (var image in imagesList)
             {
@@ -644,12 +644,12 @@ namespace Quantumart.QPublishing.Database
             }
         }
 
-        private void CreateDynamicImage(DynamicImageHolder image)
+        private void CreateDynamicImage(DynamicImageInfo image)
         {
             {
                 if (!string.IsNullOrEmpty(image.ImageName))
                 {
-                    DynamicImageCreator.CreateDynamicImage(image.ContentLibraryPath, image.ImagePath, image.ImageName, image.Id, image.Width, image.Height, image.Quality, image.FileType, image.MaxSize);
+                    DynamicImageCreator.CreateDynamicImage(image);
                 }
             }
         }
@@ -668,7 +668,7 @@ namespace Quantumart.QPublishing.Database
             return queryString + Environment.NewLine + "SELECT " + IdentityParamString + " = SCOPE_IDENTITY();" + Environment.NewLine;
         }
 
-        private string GetSqlUpdateAttributes(SqlCommand command, int contentItemId, IEnumerable<ContentAttribute> attrs, Hashtable values, bool updateEmpty, List<DynamicImageHolder> dynamicImagesList, int contentId, int siteId)
+        private string GetSqlUpdateAttributes(SqlCommand command, int contentItemId, IEnumerable<ContentAttribute> attrs, Hashtable values, bool updateEmpty, List<DynamicImageInfo> dynamicImagesList, int contentId, int siteId)
         {
             var oSb = new StringBuilder();
             string inputName;
@@ -804,7 +804,7 @@ namespace Quantumart.QPublishing.Database
             return oSb.ToString();
         }
 
-        private static string GetSqlDynamicImages(SqlCommand command, List<DynamicImageHolder> imagesList)
+        private static string GetSqlDynamicImages(SqlCommand command, List<DynamicImageInfo> imagesList)
         {
             var sb = new StringBuilder(string.Empty);
             var i = 0;
@@ -821,7 +821,7 @@ namespace Quantumart.QPublishing.Database
                 {
                     command.Parameters.Add(dataParamName, SqlDbType.NVarChar).Value = image.DynamicUrl;
                 }
-                command.Parameters.Add(fieldParamName, SqlDbType.Decimal).Value = image.Id;
+                command.Parameters.Add(fieldParamName, SqlDbType.Decimal).Value = image.AttrId;
                 sb.AppendFormat("update content_data set data = {0}, modified = getdate(), not_for_replication = 1 where content_item_id = @itemId and attributeId = {1};", dataParamName, fieldParamName);
                 sb.AppendLine();
                 i = i + 1;

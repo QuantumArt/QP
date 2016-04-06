@@ -13,6 +13,7 @@ using System.Xml;
 using System.Linq;
 using Microsoft.Win32;
 using Microsoft.VisualBasic;
+using Quantumart.QPublishing.FileSystem;
 using Quantumart.QPublishing.Helpers;
 using Quantumart.QPublishing.Info;
 using Quantumart.QPublishing.Resizer;
@@ -134,8 +135,7 @@ namespace Quantumart.QPublishing.Database
 
         public static NameValueCollection AppSettings => ConfigurationManager.AppSettings;
 
-        private DynamicImage _dynamicImageCreator;
-        private DynamicImage DynamicImageCreator => _dynamicImageCreator ?? (_dynamicImageCreator = new DynamicImage());
+        public IDynamicImage DynamicImageCreator { get; set; }
 
         private bool? _isStage;
         public bool IsStage
@@ -161,6 +161,8 @@ namespace Quantumart.QPublishing.Database
             }
 
         }
+
+        public IFileSystem FileSystem { get; set; }
 
         internal string UploadPlaceHolder => "<%=upload_url%>";
 
@@ -199,6 +201,8 @@ namespace Quantumart.QPublishing.Database
 
             CustomConnectionString = strConnectionString;
             CacheManager = new DbCacheManager(this);
+            FileSystem = new RealFileSystem();
+            DynamicImageCreator = new DynamicImage();
         }
 
         public DBConnector(IDbConnection connection)

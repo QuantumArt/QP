@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using Moq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.Info;
 using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 using NUnit.Framework;
+using Quantumart.QPublishing.FileSystem;
 
 namespace Quantumart.Test
 {
     [TestFixture]
-    public class MassUpdateM2MValidationFixture
+    public class M2MFixture
     {
         public static int NoneId { get; private set; }
         public static int PublishedId { get; private set; }
@@ -341,7 +344,7 @@ namespace Quantumart.Test
             Assert.That(modifiedBefore, Does.Not.EqualTo(modifiedAfter), "Modified changed");
             Assert.That(everyOneHasModified, Is.EqualTo(true), "All articles has Modified");
 
-            var modifiedReturned = values.Select(n => DateTime.Parse(n[SystemColumnNames.Modified])).ToArray();
+            var modifiedReturned = values.Select(n => DateTime.Parse(n[SystemColumnNames.Modified], CultureInfo.InvariantCulture)).ToArray();
 
             Assert.That(modifiedAfter, Is.EqualTo(modifiedReturned), "Return modified");
 
@@ -409,6 +412,29 @@ namespace Quantumart.Test
             Assert.That(num, Is.Not.EqualTo(0), "Default number");
             Assert.That(desc, Is.Not.Null.Or.Empty, "Default description");
             Assert.That(cnt, Is.EqualTo(2), "Default M2M");
+        }
+
+        [Test]
+        public void MassUpdate_DoesntCreateVersionDirectory_ContentDoesntHaveFileFields()
+        {
+            var mockFileSystem = new Mock<IFileSystem>();
+            Cnn.FileSystem = mockFileSystem.Object;
+            mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
+
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString()
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
+            };
+            values.Add(article2);
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+
+            mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called");
         }
 
         [OneTimeTearDown]

@@ -32,7 +32,7 @@ namespace Quantumart.QPublishing.Database
             return GetContentLibraryDirectory(siteId, contentId);
         }
 
-        private string GetVersionFolder(int articleId, int versionId)
+        public string GetVersionFolder(int articleId, int versionId)
         {
             if (versionId == 0)
                 return String.Empty;
@@ -40,7 +40,7 @@ namespace Quantumart.QPublishing.Database
                 return String.Format(GetVersionFolderFormat(), GetContentLibraryFolder(articleId), versionId);
         }
 
-        private string GetVersionFolderForContent(int contentId, int versionId)
+        public string GetVersionFolderForContent(int contentId, int versionId)
         {
             if (versionId == 0)
                 return String.Empty;
@@ -48,12 +48,12 @@ namespace Quantumart.QPublishing.Database
                 return String.Format(GetVersionFolderFormat(), GetContentLibraryDirectory(contentId), versionId);
         }
 
-        private string GetCurrentVersionFolder(int articleId)
+        public string GetCurrentVersionFolder(int articleId)
         {
             return String.Format(GetVersionFolderFormat(), GetContentLibraryFolder(articleId), "current");
         }
 
-        private string GetCurrentVersionFolderForContent(int contentId)
+        public string GetCurrentVersionFolderForContent(int contentId)
         {
             return String.Format(GetVersionFolderFormat(), GetContentLibraryDirectory(contentId), "current");
         }
@@ -128,10 +128,14 @@ namespace Quantumart.QPublishing.Database
             {
                 CommandType = CommandType.Text,
                 CommandText =
-                    $"select attribute_id, version_id, data from version_content_data where content_item_version_id in (select id from @versionIds) and attribute_id in (select id from @attrIds)"
+                    $"select attribute_id, content_item_version_id, data from version_content_data where content_item_version_id in (select id from @versionIds) and attribute_id in (select id from @attrIds)",
+                Parameters = 
+                {
+                    new SqlParameter("@versionIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(versionIds) },
+                    new SqlParameter("@attrIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(attrIds) },
+                }
             };
-            cmd.Parameters.AddWithValue("@versionIds", IdsToDataTable(versionIds));
-            cmd.Parameters.AddWithValue("@attrIds", IdsToDataTable(attrIds));
+
             var result = GetRealData(cmd);
             return result;
 
@@ -149,26 +153,16 @@ namespace Quantumart.QPublishing.Database
         {
             var fileToCopies = files as FileToCopy[] ?? files.ToArray();
 
-            foreach (var field in fileToCopies)
+            foreach (var file in fileToCopies)
             {
-                if (!Directory.Exists(field.ToFolder))
-                    Directory.CreateDirectory(field.ToFolder);
+                FileSystem.CreateDirectory(file.ToFolder);
+                FileSystem.CreateDirectory(file.Folder);
 
-                if (!Directory.Exists(field.Folder))
-                    Directory.CreateDirectory(field.Folder);
+                var sourceName = $@"{file.Folder}\{file.Name.Replace("/", "\\")}";
+                var destName = $@"{file.ToFolder}\{Path.GetFileName(file.Name)}";
 
-                var sourceName = $@"{field.Folder}\{field.Name.Replace("/", "\\")}";
-                var destName = $@"{field.ToFolder}\{Path.GetFileName(field.Name)}";
+                FileSystem.CopyFile(sourceName, destName);
 
-                if (File.Exists(sourceName))
-                {
-                    if (File.Exists(destName))
-                    {
-                        File.Delete(destName);
-                    }
-
-                    File.Copy(sourceName, destName);
-                }
             }
         }
 
@@ -210,15 +204,18 @@ namespace Quantumart.QPublishing.Database
         {
             if (!ids.Any())
                 return new int[0];
-            using (var cmd = new SqlCommand())
+            var cmd = new SqlCommand
             {
-                cmd.CommandType = CommandType.Text;
-                cmd.CommandText =
-                    $"select cast({function}(content_item_version_id) as int) as data from content_item_version group by content_item_id where content_item_id in (select id from @ids)";
-                cmd.Parameters.AddWithValue("@ids", IdsToDataTable(ids));
+                CommandType = CommandType.Text,
+                CommandText =
+                    $"select cast({function}(content_item_version_id) as int) as data from content_item_version where content_item_id in (select id from @ids) group by content_item_id",
+                Parameters =
+                {
+                    new SqlParameter("@ids", SqlDbType.Structured) {TypeName = "Ids", Value = IdsToDataTable(ids)},
+                }
+            };
 
-                return GetRealData(cmd).AsEnumerable().Select(n => n.Field<int>("data")).ToArray();
-            }
+            return GetRealData(cmd).AsEnumerable().Select(n => n.Field<int>("data")).ToArray();
         }
 
         #endregion
