@@ -4,7 +4,6 @@
     <field name="Data.Name">test files</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
-    <field name="Data.GroupId">11</field>
     <field name="Data.PageSize">20</field>
     <field name="Data.AllowItemsPermission">false</field>
     <field name="Data.AutoArchive">false</field>

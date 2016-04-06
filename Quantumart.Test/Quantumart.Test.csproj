@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="Global.cs" />
     <Compile Include="DynamicImageFixture.cs" />
+    <Compile Include="M2MNonSplittedFixture.cs" />
     <Compile Include="M2MFixture .cs" />
     <Compile Include="UniqueValidationFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -103,6 +104,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="xmls\m2m.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="xmls\m2m_nonsplitted.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="xmls\unique.xml">

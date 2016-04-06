@@ -52,12 +52,13 @@ namespace Quantumart.QPublishing.Database
             var arrValues = values as Dictionary<string, string>[] ?? values.ToArray();
             var existingIds = arrValues.Select(n => int.Parse(n[SystemColumnNames.Id])).Where(n => n != 0).ToArray();
             var versionIdsToRemove = GetVersionIdsToRemove(existingIds, content.MaxVersionNumber);
+            bool createVersions = options.CreateVersions && content.UseVersionControl;
 
             CreateInternalConnection(true);
             try
             {
                 var doc = GetImportContentItemDocument(arrValues, content);
-                var newIds = MassUpdateContentItem(contentId, arrValues, lastModifiedBy, doc, options.CreateVersions);
+                var newIds = MassUpdateContentItem(contentId, arrValues, lastModifiedBy, doc, createVersions);
 
                 var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
                 var resultAttrs = GetResultAttrs(arrValues, fullAttrs, newIds);
@@ -82,7 +83,7 @@ namespace Quantumart.QPublishing.Database
                 if (options.ReturnModified)
                     UpdateModified(arrValues, existingIds, contentId);
 
-                if (options.CreateVersions)
+                if (createVersions)
                 {
                     CreateFilesVersions(arrValues, existingIds, contentId);
 
