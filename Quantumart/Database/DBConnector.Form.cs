@@ -234,10 +234,15 @@ namespace Quantumart.QPublishing.Database
 
             //create dynamic images
             CreateAllDynamicImages(dynamicImagesList);
-            var oldVersionId = GetEarliestVersionId(contentItemId);
+
 
             //now perform one update, dynamic image sql is already appended to sb
             command.CommandText = sqlStringBuilder.ToString();
+            var isOldArticle = contentItemId != 0;
+            var content = GetContentObject(contentId);
+            var isVersionOverflow = isOldArticle && content.UseVersionControl && GetVersionsCount(contentItemId) == content.MaxVersionNumber;
+            var oldVersionId = isVersionOverflow ? GetEarliestVersionId(contentItemId) : 0;
+
             ProcessDataAsNewTransaction(command);
 
             var result = contentItemId != 0 ? contentItemId : GetIdentityId(command);
@@ -252,15 +257,13 @@ namespace Quantumart.QPublishing.Database
                 modified = (DateTime)GetRealScalarData(cmd);
             }
 
-            var content = GetContentObject(contentId);
+
             if (content.UseVersionControl)
             {
                 CreateFilesVersions(result);
-                if (GetVersionsCount(result) == content.MaxVersionNumber)
+                if (isVersionOverflow)
                 {
-                    var oldFolder = GetVersionFolder(result, oldVersionId);
-                    FileSystem.RemoveDirectory(oldFolder);
-
+                    FileSystem.RemoveDirectory(GetVersionFolder(result, oldVersionId));
                 }
             }
             return result;
@@ -353,13 +356,9 @@ namespace Quantumart.QPublishing.Database
                     result = datedata.ToString("yyyy-MM-dd HH:mm:ss");
                 }
             }
-            else if (attr.DbTypeName == "NUMERIC")
+            else if (attr.Type == AttributeType.Numeric)
             {
                 result = result.Replace(",", ".");
-                if (result == "-1" && attr.Type == AttributeType.Relation)
-                {
-                    result = "NULL";
-                }
             }
 
             if (string.IsNullOrEmpty(result) && updateEmpty)
@@ -464,7 +463,7 @@ namespace Quantumart.QPublishing.Database
                 else
                 {
                     sqls.Add($"([{attr.Name}] = {paramName})");
-                    cmd.Parameters.Add(GetSqlParameter(paramName, attr)).Value = value;
+                    cmd.Parameters.Add(GetSqlParameter(paramName, attr, value));
                 }
                 msgs.Add($"[{attr.Name}] = '{value}'");
             }
@@ -505,14 +504,26 @@ namespace Quantumart.QPublishing.Database
             throw new QPInvalidAttributeException($"Error updating attribute '{attributeName}': {comment}");
         }
 
-        private SqlParameter GetSqlParameter(string name, ContentAttribute attr)
+        private SqlParameter GetSqlParameter(string name, ContentAttribute attr, string value)
         {
             var result = new SqlParameter
             {
                 ParameterName = name,
-                SqlDbType = GetSqlParameterType(attr.DbTypeName)
+                SqlDbType = GetSqlParameterType(attr.DbTypeName),
+                Value = value
             };
-            if (attr.DbTypeName == "NVARCHAR") result.Size = attr.Size;
+            if (attr.DbTypeName == "NVARCHAR")
+                result.Size = attr.Size;
+            if (attr.DbTypeName == "NUMERIC")
+            {
+                result.Precision = 18;
+                result.Scale = (byte)attr.Size;
+                result.Value = Decimal.Parse(value, CultureInfo.InvariantCulture);
+            }
+            if (attr.DbTypeName == "DATETIME")
+            {
+                result.Value = DateTime.Parse(value, CultureInfo.InvariantCulture);
+            }
             return result;
         }
 
@@ -705,19 +716,19 @@ namespace Quantumart.QPublishing.Database
             var longSiteStageUrl = GetSiteUrl(siteId, false);
 
             if (UpdateManyToOne)
-                oSb.AppendLine("create table #resultIds (id numeric, attributeId numeric not null, to_remove bit not null default 0);");
+                oSb.AppendLine("create table #resultIds (id numeric, attribute_id numeric not null, to_remove bit not null default 0);");
 
             //create sql statements
             foreach (var attr in contentAttributes)
             {
                 inputName = FieldName(attr.Id);
-                object data = dataValues[inputName];
+                var data = dataValues[inputName];
 
                 if (updateEmpty || !IsEmptyData(data))
                 {
                     if (attr.Type == AttributeType.String || attr.Type == AttributeType.Textbox || attr.Type == AttributeType.VisualEdit)
                     {
-                        data = ((string)data)
+                        data = data
                             .Replace(longUploadUrl, UploadPlaceHolder)
                             .Replace(longSiteStageUrl, SitePlaceHolder)
                             .Replace(longSiteLiveUrl, SitePlaceHolder)
@@ -736,32 +747,28 @@ namespace Quantumart.QPublishing.Database
                         var backFieldValueParamName = "@backFieldValue" + counter;
 
                         oSb.Append(" update content_data set modified = getdate(),");
-                        oSb.AppendFormat(" data = {0}, blob_data = {1}, not_for_replication = 1 where content_item_id = @itemId and attributeId = {2};", dataParamName, blobDataParamName, idParamName);
+                        oSb.AppendFormat(" data = {0}, blob_data = {1}, not_for_replication = 1 where content_item_id = @itemId and attribute_id = {2};", dataParamName, blobDataParamName, idParamName);
                         oSb.AppendLine("");
                         if (attr.Type == AttributeType.Image)
                         {
-                            GetDynamicImagesForImage(attr.Id, contentItemId, Convert.ToString(values[inputName]), dynamicImagesList);
+                            GetDynamicImagesForImage(attr.Id, contentItemId, data, dynamicImagesList);
                         }
 
                         if (attr.LinkId.HasValue && UpdateManyToMany)
                         {
-                            var value = Convert.ToString(values[inputName]);
                             command.Parameters.AddWithValue(linkParamName, attr.LinkId);
-                            command.Parameters.Add(new SqlParameter(linkValueParamName, SqlDbType.NVarChar, -1) { Value = !String.IsNullOrEmpty(value) ? (object)value : DBNull.Value });
+                            command.Parameters.Add(new SqlParameter(linkValueParamName, SqlDbType.NVarChar, -1) { Value = !String.IsNullOrEmpty(data) ? (object)data : DBNull.Value });
                             oSb.AppendLine(
                                 $"exec qp_update_m2m @itemId, {linkParamName}, {linkValueParamName}, @splitted;");
                         }
 
                         if (attr.BackRelation != null && UpdateManyToOne)
                         {
-                            var value = Convert.ToString(values[inputName]);
                             command.Parameters.AddWithValue(backFieldParamName, attr.BackRelation.Id);
-                            command.Parameters.Add(new SqlParameter(backFieldValueParamName, SqlDbType.NVarChar, -1) { Value = !String.IsNullOrEmpty(value) ? (object)value : DBNull.Value });
+                            command.Parameters.Add(new SqlParameter(backFieldValueParamName, SqlDbType.NVarChar, -1) { Value = !String.IsNullOrEmpty(data) ? (object)data : DBNull.Value });
                             oSb.AppendLine(
                                 $"exec qp_update_m2o @itemId, {backFieldParamName}, {backFieldValueParamName};");
                         }
-
-                        if (IsEmptyData(data)) data = DBNull.Value;
 
                         command.Parameters.AddWithValue(idParamName, attr.Id);
 
@@ -775,11 +782,11 @@ namespace Quantumart.QPublishing.Database
                         {
                             dataValue = attr.BackRelation.Id;
                         }
-                        else if (attr.IsBlob)
+                        else if (attr.IsBlob && !IsEmptyData(data))
                         {
                             blobDataValue = data;
                         }
-                        else
+                        else if (!IsEmptyData(data))
                         {
                             dataValue = data;
                         }
@@ -822,7 +829,7 @@ namespace Quantumart.QPublishing.Database
                     command.Parameters.Add(dataParamName, SqlDbType.NVarChar).Value = image.DynamicUrl;
                 }
                 command.Parameters.Add(fieldParamName, SqlDbType.Decimal).Value = image.AttrId;
-                sb.AppendFormat("update content_data set data = {0}, modified = getdate(), not_for_replication = 1 where content_item_id = @itemId and attributeId = {1};", dataParamName, fieldParamName);
+                sb.AppendFormat("update content_data set data = {0}, modified = getdate(), not_for_replication = 1 where content_item_id = @itemId and attribute_id = {1};", dataParamName, fieldParamName);
                 sb.AppendLine();
                 i = i + 1;
             }

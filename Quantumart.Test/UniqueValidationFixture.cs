@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Globalization;
 using Quantumart.QP8.BLL;
@@ -17,6 +18,8 @@ namespace Quantumart.Test
 
         public static int ContentId { get; private set; }
 
+        public static string ContentName { get; private set; }
+
         public static int[] BaseArticlesIds { get; private set; }
 
         [OneTimeSetUp]
@@ -27,7 +30,8 @@ namespace Quantumart.Test
             var service = new ReplayService(Global.ConnectionString, 1, true);
             service.ReplayXml(Global.GetXml(@"xmls\unique.xml"));
             Cnn = new DBConnector(Global.ConnectionString);
-            ContentId = Global.GetContentId(Cnn, "Test unique");
+            ContentName = "Test unique";
+            ContentId = Global.GetContentId(Cnn, ContentName);
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
         }
 
@@ -96,6 +100,28 @@ namespace Quantumart.Test
         }
 
         [Test]
+        public void AddFormToContent_ThrowsException_ValidateConstraintForDataConflict()
+        {
+            var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
+            var numberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
+            var id = (int)(decimal)Cnn.GetRealScalarData(new SqlCommand($"select content_item_id from content_{ContentId}_united where [Title] <> 'Name2'"));
+            var article1 = new Hashtable()
+            {
+                [titleName] = "Name2",
+                [numberName] = "9,5",
+            };
+
+            Assert.That(() =>
+            {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
+            },
+
+            Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("Unique constraint violation"),
+            "Duplicate of test data should violate rules"
+            );
+        }
+
+        [Test]
         public void MassUpdate_UpdateNothing_InCaseOfAnyError()
         {
             var values = new List<Dictionary<string, string>>();
@@ -159,7 +185,49 @@ namespace Quantumart.Test
 
                 Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the external transaction should be rolled back");
             }
+        }
 
+        [Test]
+        public void AddFormToContent_UpdateNothing_InCaseOfAnyErrorAndExternalTransaction()
+        {
+            var titlesBefore = Global.GetTitles(Cnn, ContentId);
+            Assert.That(titlesBefore, Does.Not.Contain("Name5"), "correct state");
+            var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
+            var numberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
+            var article1 = new Hashtable()
+            {
+                [titleName] = "Name5",
+                [numberName] = "10"
+            };
+
+            var article3 = new Hashtable()
+            {
+                [SystemColumnNames.Id] = "0"
+            };
+            
+            using (var conn = new SqlConnection(Global.ConnectionString))
+            {
+                conn.Open();
+                var tr = conn.BeginTransaction();
+                DBConnector localCnn = new DBConnector(conn, tr);
+
+                Assert.DoesNotThrow(() => {
+                    localCnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
+                }, "Update existing data");
+
+                Assert.That(() =>
+                {
+                    localCnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article3, 0);
+                },
+                Throws.Exception, "Invalid data"
+                );
+
+                tr.Rollback();
+
+                var titles = Global.GetTitles(localCnn, ContentId);
+
+                Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the external transaction should be rolled back");
+            }
         }
 
         [Test]
@@ -195,6 +263,34 @@ namespace Quantumart.Test
             Assert.That(modified, Is.Not.EqualTo(modified2), "Modification dates should be changed");
             Assert.That(first2.FieldValues["Title"].Data, Is.EqualTo(first.FieldValues["Title"].Data), "Data should remain the same");
             Assert.That(second2.FieldValues["Title"].Data, Is.EqualTo(second.FieldValues["Title"].Data), "Data should remain the same");
+
+        }
+
+        [Test]
+        public void AddFormToContent_IsValid_ValidateConstraintSameData()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var first = ContentItem.Read(BaseArticlesIds[0], Cnn);
+            var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
+            var numberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
+
+            var article1 = new Hashtable()
+            {
+                [titleName] = first.FieldValues["Title"].Data,
+                [numberName] = first.FieldValues["Number"].Data
+            };
+
+            var modified = Global.GetModified(Cnn, ContentId);
+
+            Assert.DoesNotThrow(() => {
+                Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
+            }, "Update existing data");
+
+            var modified2 = Global.GetModified(Cnn, ContentId);
+            var first2 = ContentItem.Read(BaseArticlesIds[0], Cnn);
+
+            Assert.That(modified, Is.Not.EqualTo(modified2), "Modification dates should be changed");
+            Assert.That(first2.FieldValues["Title"].Data, Is.EqualTo(first.FieldValues["Title"].Data), "Data should remain the same");
 
         }
 
@@ -254,6 +350,23 @@ namespace Quantumart.Test
         }
 
         [Test]
+        public void AddFormToContent_ThrowsException_ValidateAttributeValueMissedData()
+        {
+            var article1 = new Hashtable()
+            {
+                [SystemColumnNames.Id] = "0"
+            };
+
+            Assert.That(() =>
+                {
+                    Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
+                },
+                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("is required"),
+                "Validate required fields"
+            );
+        }
+
+        [Test]
         public void MassUpdate_ThrowsException_ValidateAttributeValueStringSizeExceeded()
         {
             var values = new List<Dictionary<string, string>>();
@@ -266,6 +379,25 @@ namespace Quantumart.Test
 
             Assert.That(
                 () => Cnn.MassUpdate(ContentId, values, 1),
+                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("too long"),
+                "Validate string size"
+            );
+        }
+
+        [Test]
+        public void AddFormToContent_ThrowsException_ValidateAttributeValueStringSizeExceeded()
+        {
+
+            var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
+            var article1 = new Hashtable()
+            {
+                [titleName] = new string('*', 1000)
+            };
+
+            Assert.That(() =>
+                {
+                    Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
+                },
                 Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("too long"),
                 "Validate string size"
             );
