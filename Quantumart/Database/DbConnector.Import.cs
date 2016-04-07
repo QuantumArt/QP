@@ -45,7 +45,7 @@ namespace Quantumart.QPublishing.Database
             }
             else
             {
-                attrs = fullAttrs.Where(n => attrIds != null && (fullUpdate || attrIds.Contains(n.Id))).ToArray();
+                attrs = fullAttrs.Where(n => fullUpdate || attrIds != null && attrIds.Contains(n.Id)).ToArray();
             }
 
             CreateInternalConnection(true);

@@ -313,8 +313,209 @@ namespace Quantumart.Test
             Assert.That(titlesAfter[1], Is.EqualTo(title2), "Title 2 is changed");
             Assert.That(titlesAfter[0], Is.EqualTo(title1), "Title 1 is changed");
             Assert.That(descriptionsAfter[1], Is.EqualTo(descriptionsBefore[1]), "Description 2 remains the same");
-            Assert.That(descriptionsAfter[0], Is.EqualTo(descriptionsBefore[0]), "Description 12 remains the same");
+            Assert.That(descriptionsAfter[0], Is.EqualTo(descriptionsBefore[0]), "Description 1 remains the same");
         }
+
+        [Test]
+        public void ImportToContent_UpdateOK_ForAsymmetricData()
+        {
+
+            var values = new List<Dictionary<string, string>>();
+
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "testa",
+                ["Number"] = "20",
+                ["Description"] = "abc"
+
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "testb",
+                ["Number"] = "30",
+                ["Description"] = "def"
+
+            };
+            values.Add(article2);
+
+            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values, 1), "Create");
+
+            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
+            var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
+            var numbersBefore = Global.GetNumbers(Cnn, ContentId, ids);
+
+            var values2 = new List<Dictionary<string, string>>();
+            const string title1 = "newtestab";
+            const string title2 = "newtestabc";
+            const int num = 40;
+            var article3 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
+                ["Title"] = title1,
+                ["Number"] = num.ToString(),
+
+            };
+            values2.Add(article3);
+            var article4 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
+                ["Title"] = title2,
+
+            };
+            values2.Add(article4);
+
+            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2, 1), "Update");
+
+            var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
+            var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
+            var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
+
+            Assert.That(numbersAfter[1], Is.EqualTo(numbersBefore[1]), "Number 2 remains the same");
+            Assert.That(numbersAfter[0], Is.EqualTo(num), "Number 1 is changed");
+            Assert.That(titlesAfter[1], Is.EqualTo(title2), "Title 2 is changed");
+            Assert.That(titlesAfter[0], Is.EqualTo(title1), "Title 1 is changed");
+            Assert.That(descriptionsAfter[1], Is.EqualTo(descriptionsBefore[1]), "Description 2 remains the same");
+            Assert.That(descriptionsAfter[0], Is.EqualTo(descriptionsBefore[0]), "Description 1 remains the same");
+        }
+
+
+        [Test]
+        public void ImportToContent_UpdateOK_ForAsymmetricDataWithOverrideMissedFields()
+        {
+
+            var values = new List<Dictionary<string, string>>();
+
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "testa",
+                ["Number"] = "20",
+                ["Description"] = "abc"
+
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "testb",
+                ["Number"] = "30",
+                ["Description"] = "def"
+
+            };
+            values.Add(article2);
+
+            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values, 1), "Create");
+
+            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
+
+            var values2 = new List<Dictionary<string, string>>();
+            const string title1 = "newtestab";
+            const string title2 = "newtestabc";
+            const int num = 40;
+            var article3 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
+                ["Title"] = title1,
+                ["Number"] = num.ToString(),
+
+            };
+            values2.Add(article3);
+            var article4 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
+                ["Title"] = title2,
+
+            };
+            values2.Add(article4);
+
+            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2, 1, null, true), "Update");
+
+            var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
+            var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
+            var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
+
+            Assert.That(numbersAfter[1], Is.EqualTo(0), "Number 2 is cleared");
+            Assert.That(numbersAfter[0], Is.EqualTo(num), "Number 1 is changed");
+            Assert.That(titlesAfter[1], Is.EqualTo(title2), "Title 2 is changed");
+            Assert.That(titlesAfter[0], Is.EqualTo(title1), "Title 1 is changed");
+            Assert.That(descriptionsAfter[1], Is.Null.Or.Empty, "Description 2 is cleared");
+            Assert.That(descriptionsAfter[0], Is.Null.Or.Empty, "Description 1 is cleared");
+        }
+
+        [Test]
+        public void ImportToContent_UpdateOK_ForAsymmetricDataWithOverrideMissedFieldsAndAttrIds()
+        {
+
+            var values = new List<Dictionary<string, string>>();
+
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "testa",
+                ["Number"] = "20",
+                ["Description"] = "abc"
+
+            };
+            values.Add(article1);
+            var article2 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Title"] = "testb",
+                ["Number"] = "30",
+                ["Description"] = "def"
+
+            };
+            values.Add(article2);
+
+            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values, 1), "Create");
+
+            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
+            var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
+
+            var values2 = new List<Dictionary<string, string>>();
+            const string title1 = "newtestab";
+            const string title2 = "newtestabc";
+            const int num = 40;
+            var article3 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
+                ["Title"] = title1,
+                ["Number"] = num.ToString(),
+
+            };
+            values2.Add(article3);
+            var article4 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
+                ["Title"] = title2,
+
+            };
+            values2.Add(article4);
+
+            var titleId = Cnn.FieldID(Global.SiteId, Cnn.GetContentName(ContentId), "Title");
+            var numberId = Cnn.FieldID(Global.SiteId, Cnn.GetContentName(ContentId), "Number");
+            var attrIds = new[] {titleId, numberId};
+
+
+            Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2, 1, attrIds, true), "Update");
+
+            var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
+            var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
+            var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
+
+            Assert.That(numbersAfter[1], Is.EqualTo(0), "Number 2 is cleared");
+            Assert.That(numbersAfter[0], Is.EqualTo(num), "Number 1 is changed");
+            Assert.That(titlesAfter[1], Is.EqualTo(title2), "Title 2 is changed");
+            Assert.That(titlesAfter[0], Is.EqualTo(title1), "Title 1 is changed");
+            Assert.That(descriptionsAfter[1], Is.EqualTo(descriptionsBefore[1]), "Description 2 remains the same");
+            Assert.That(descriptionsAfter[0], Is.EqualTo(descriptionsBefore[0]), "Description 1 remains the same");
+
+        }
+
+
 
         [Test]
         public void MassUpdate_ReturnModified_ForUpdatingData()
@@ -379,7 +580,7 @@ namespace Quantumart.Test
 
 
         [Test]
-        public void ValidateAttributeValue_ThrowsException_InvalidNumericData()
+        public void MassUpdate_ThrowsException_ValidateAttributeValueInvalidNumericData()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
@@ -397,7 +598,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void ValidateAttributeValue_ThrowsException_StringDoesNotComplyInputMask()
+        public void MassUpdate_ThrowsException_ValidateAttributeValueStringDoesNotComplyInputMask()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
@@ -415,7 +616,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        public void ValidateAttributeValue_ArticleAddedWithDefaultValues_NewArticleWithMissedData()
+        public void MassUpdate_ArticleAddedWithDefaultValues_ValidateAttributeValueNewArticleWithMissedData()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
