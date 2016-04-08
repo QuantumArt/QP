@@ -25,6 +25,14 @@ namespace Quantumart.Test
 
         public static string ContentName { get; private set; }
 
+        public static string TitleName { get; private set; }
+
+        public static string MainCategoryName { get; private set; }
+
+        public static string NumberName { get; private set; }
+
+        public static string CategoryName { get; private set; }
+
         public static int DictionaryContentId { get; private set; }
 
         public static int[] BaseArticlesIds { get; private set; }
@@ -41,6 +49,10 @@ namespace Quantumart.Test
             Cnn = new DBConnector(Global.ConnectionString);
             ContentName = "Test M2M";
             ContentId = Global.GetContentId(Cnn, ContentName);
+            TitleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
+            MainCategoryName = Cnn.FieldName(Global.SiteId, ContentName, "MainCategory");
+            NumberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
+            CategoryName = Cnn.FieldName(Global.SiteId, ContentName, "Categories");
             DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
             CategoryIds = Global.GetIds(Cnn, DictionaryContentId);
@@ -219,14 +231,13 @@ namespace Quantumart.Test
         {
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
 
-            var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
-            var catName = Cnn.FieldName(Global.SiteId, ContentName, "Categories");
-
             var titles1 = new[] { "newtest" };
             var article1 = new Hashtable()
             {
-                [titleName] = titles1[0],
-                [catName] = string.Join(",", ints1),
+                [TitleName] = titles1[0],
+                [CategoryName] = string.Join(",", ints1),
+                [MainCategoryName] = CategoryIds[0]
+
             };
 
             var id = 0;
@@ -244,8 +255,8 @@ namespace Quantumart.Test
 
             var titles2 = new[] { "xnewtest" };
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
-            article1[catName] = string.Join(",", intsNew1);
-            article1[titleName] = titles2[0];
+            article1[CategoryName] = string.Join(",", intsNew1);
+            article1[TitleName] = titles2[0];
 
             Assert.DoesNotThrow(() =>
             {
@@ -348,13 +359,11 @@ namespace Quantumart.Test
         {
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
 
-            var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
-            var catName = Cnn.FieldName(Global.SiteId, ContentName, "Categories");
-
             var article1 = new Hashtable()
             {
-                [titleName] = "newtest",
-                [catName] = string.Join(",", ints1),
+                [TitleName] = "newtest",
+                [CategoryName] = string.Join(",", ints1),
+                [MainCategoryName] = CategoryIds[0]
             };
 
             var id = 0;
@@ -372,8 +381,8 @@ namespace Quantumart.Test
 
             var title1 = "xnewtest";
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
-            article1[catName] = string.Join(",", intsNew1);
-            article1[titleName] = title1;
+            article1[CategoryName] = string.Join(",", intsNew1);
+            article1[TitleName] = title1;
 
             var cntData = Global.CountData(Cnn, ids);
             var cntLinks = Global.CountLinks(Cnn, ids);
@@ -674,6 +683,37 @@ namespace Quantumart.Test
 
         }
 
+
+        [Test]
+        public void AddFormToContent_ReturnModified_ReturnModifiedTrue()
+        {
+
+            var article1 = new Hashtable()
+            {
+                [TitleName] = "abc",
+                [MainCategoryName] = CategoryIds[0]
+            };
+
+            var id = 0;
+
+            Assert.DoesNotThrow(() => {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
+            }, "Add article"); ;
+
+            var ids = new[] { id };
+
+            var modified = DateTime.MinValue;
+
+            Assert.DoesNotThrow(() => {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, true, false, true, ref modified);
+            }, "Update article");
+
+            var modifiedAfter = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids)[0];
+
+            Assert.That(modified, Is.EqualTo(modifiedAfter), "Modified changed");
+         
+        }
+
         [Test]
         public void MassUpdate_DoesntReturnModified_ReturnModifiedFalse()
         {
@@ -719,10 +759,10 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_ThrowsException_ValidateAttributeValueInvalidNumericData()
         {
-            var numberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
             var article1 = new Hashtable()
             {
-                [numberName] = "test"
+                [NumberName] = "test",
+                [MainCategoryName] = CategoryIds[0]
             };
 
             Assert.That(
@@ -755,10 +795,10 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_ThrowsException_ValidateAttributeValueStringDoesNotComplyInputMask()
         {
-            var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             var article1 = new Hashtable()
             {
-                [titleName] = "test123"
+                [TitleName] = "test123",
+                [MainCategoryName] = CategoryIds[0]
             };
 
             Assert.That(
@@ -800,10 +840,9 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_ArticleAddedWithDefaultValues_ValidateAttributeValueNewArticleWithMissedData()
         {
-            var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             var article1 = new Hashtable()
             {
-                [titleName] = "newtest",
+                [TitleName] = "newtest",
             };
 
             var id = 0;
@@ -846,6 +885,173 @@ namespace Quantumart.Test
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
 
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called");
+        }
+
+        [Test]
+        public void AddFormToContent_UpdateArchiveVisible_UpdateFlagsTrue()
+        {
+
+            var article1 = new Hashtable()
+            {
+                [TitleName] = "abc",
+                [MainCategoryName] = CategoryIds[0]
+            };
+
+            var id = 0;
+
+            Assert.DoesNotThrow(() => {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
+            }, "Add article"); ;
+
+            var ids = new[] { id };
+
+            var visibleBefore = Global.GetFieldValues<decimal>(Cnn, ContentId, "Visible", ids)[0];
+            var archiveBefore = Global.GetFieldValues<decimal>(Cnn, ContentId, "Archive", ids)[0];
+
+            var modified = DateTime.MinValue;
+
+            Assert.DoesNotThrow(() => {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, false, true, true, ref modified);
+            }, "Update article");
+
+            var visibleAfter = Global.GetFieldValues<decimal>(Cnn, ContentId, "Visible", ids)[0];
+            var archiveAfter = Global.GetFieldValues<decimal>(Cnn, ContentId, "Archive", ids)[0];
+
+            Assert.That(visibleBefore, Is.Not.EqualTo(visibleAfter), "Visible changed");
+            Assert.That(archiveBefore, Is.Not.EqualTo(archiveAfter), "Archive changed");
+            Assert.That(visibleAfter, Is.EqualTo(0), "Visible updated");
+            Assert.That(archiveAfter, Is.EqualTo(1), "Archive updated");
+        }
+
+        [Test]
+        public void AddFormToContent_UpdateOnlyOneField_AttrIdProvided()
+        {
+
+            var article1 = new Hashtable()
+            {
+                [TitleName] = "txt",
+                [MainCategoryName] = CategoryIds[0]
+            };
+
+            var article2 = new Hashtable()
+            {
+                [MainCategoryName] = CategoryIds[1]
+            };
+
+            var mainCatId = int.Parse(MainCategoryName.Replace("field_", ""));
+
+            var id = 0;
+
+            Assert.DoesNotThrow(() => {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
+            }, "Add article"); ;
+
+            var ids = new[] { id };
+
+            var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
+            var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
+
+            var modified = DateTime.MinValue;
+            var files = (System.Web.HttpFileCollection) null;
+
+            Assert.DoesNotThrow(() => {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article2, ref files, id, true, mainCatId);
+            }, "Update article");
+
+            var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
+            var catAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
+
+            Assert.That(titleBefore, Is.EqualTo(titleAfter), "Same Title");
+            Assert.That(catBefore, Is.Not.EqualTo(catAfter), "Category changed");
+            Assert.That(catAfter, Is.EqualTo(CategoryIds[1]), "Category updated");
+        }
+
+        [Test]
+        public void AddFormToContent_UpdateOnlyNonEmpty_UpdateEmptyTrue()
+        {
+
+            var article1 = new Hashtable()
+            {
+                [TitleName] = "pdf",
+                [NumberName] = "10",
+                [MainCategoryName] = CategoryIds[0]
+            };
+
+            var article2 = new Hashtable()
+            {
+                [TitleName] = "docx",
+                [NumberName] = ""
+            };
+
+
+            var id = 0;
+
+            Assert.DoesNotThrow(() => {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
+            }, "Add article"); ;
+
+            var ids = new[] { id };
+
+            var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
+            var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
+            var numBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "Number", ids)[0];
+
+            var files = (System.Web.HttpFileCollection)null;
+
+            Assert.DoesNotThrow(() => {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, ref files, id, false);
+            }, "Update article");
+
+            var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
+            var catAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
+            var numAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "Number", ids)[0];
+
+            Assert.That(titleBefore, Is.Not.EqualTo(titleAfter), "Changed Title");
+            Assert.That(catBefore, Is.EqualTo(catAfter), "Same Category");
+            Assert.That(numBefore, Is.EqualTo(numAfter), "Same Number");
+            Assert.That(titleAfter, Is.EqualTo(article2[TitleName]), "Category updated");
+        }
+
+        [Test]
+        public void AddFormToContent_NullifyM2M_ForEmptyM2MData()
+        {
+            var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
+
+            var article1 = new Hashtable()
+            {
+                [TitleName] = "newtest",
+                [CategoryName] = string.Join(",", ints1),
+                [MainCategoryName] = CategoryIds[0]
+
+            };
+
+            var article2 = new Hashtable()
+            {
+                [TitleName] = "newtest",
+                [CategoryName] = "",
+                [MainCategoryName] = CategoryIds[0]
+            };
+
+            var id = 0;
+
+            Assert.DoesNotThrow(() =>
+            {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
+            }, "Create");
+
+            var ids = new[] { id };
+            var cntLinks = Global.CountLinks(Cnn, ids);
+
+            Assert.That(cntLinks, Is.Not.EqualTo(0), "Links saved");
+
+
+            Assert.DoesNotThrow(() =>
+            {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
+            }, "Update");
+
+            var cntLinksAfter = Global.CountLinks(Cnn, ids);
+            Assert.That(cntLinksAfter, Is.EqualTo(0), "Links nullified");
         }
 
         [OneTimeTearDown]

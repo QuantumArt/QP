@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using Quantumart.QP8.BLL;
@@ -124,6 +125,11 @@ namespace Quantumart.Test
         [Test]
         public void MassUpdate_UpdateNothing_InCaseOfAnyError()
         {
+            var maxId =
+                (decimal)Cnn.GetRealScalarData(new SqlCommand("select max(content_item_id) from content_item")
+                {
+                    CommandType = CommandType.Text
+                });
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
@@ -140,9 +146,17 @@ namespace Quantumart.Test
 
             Assert.That(() => { Cnn.MassUpdate(ContentId, values, 1); }, Throws.Exception);
 
+            var maxIdAfter =
+            (decimal)Cnn.GetRealScalarData(new SqlCommand("select max(content_item_id) from content_item")
+            {
+                CommandType = CommandType.Text
+            });
+
             var titles = Global.GetTitles(Cnn, ContentId);
 
             Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the internal transaction should be rolled back");
+            Assert.That(maxId, Is.EqualTo(maxIdAfter), "No new content items");
+
         }
 
         [Test]

@@ -344,7 +344,7 @@ namespace Quantumart.QPublishing.Database
 
         #region Validation and default values
 
-        private string GetDataValueWithDefault(ContentAttribute attr, string data, bool updateEmpty)
+        private string GetDataValueWithDefault(ContentAttribute attr, string data, bool isNewArticle)
         {
 
             var result = data;
@@ -361,7 +361,7 @@ namespace Quantumart.QPublishing.Database
                 result = result.Replace(",", ".");
             }
 
-            if (string.IsNullOrEmpty(result) && updateEmpty)
+            if (string.IsNullOrEmpty(result) && isNewArticle)
             {
                 result = attr.DefaultValue;
             }
@@ -684,6 +684,7 @@ namespace Quantumart.QPublishing.Database
             var oSb = new StringBuilder();
             string inputName;
             var counter = 0;
+            var isNewArticle = contentItemId == 0;
 
 
             var dataValues = new Dictionary<string, string>();
@@ -694,7 +695,7 @@ namespace Quantumart.QPublishing.Database
             {
                 inputName = FieldName(attr.Id);
                 var dataValue = GetDataValue(values, inputName);
-                dataValue = GetDataValueWithDefault(attr, dataValue, updateEmpty);
+                dataValue = GetDataValueWithDefault(attr, dataValue, isNewArticle);
                 ValidateAttributeValue(attr, dataValue, updateEmpty);
                 dataValues.Add(inputName, dataValue);
             }
