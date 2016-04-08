@@ -698,7 +698,7 @@ namespace Quantumart.Test
 
             Assert.DoesNotThrow(() => {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article"); ;
+            }, "Add article"); 
 
             var ids = new[] { id };
 
@@ -849,7 +849,7 @@ namespace Quantumart.Test
 
             Assert.DoesNotThrow(() => {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article"); ;
+            }, "Add article"); 
 
             var ids = new[] { id };
 
@@ -901,7 +901,7 @@ namespace Quantumart.Test
 
             Assert.DoesNotThrow(() => {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article"); ;
+            }, "Add article"); 
 
             var ids = new[] { id };
 
@@ -944,14 +944,13 @@ namespace Quantumart.Test
 
             Assert.DoesNotThrow(() => {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article"); ;
+            }, "Add article"); 
 
             var ids = new[] { id };
 
             var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
             var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
 
-            var modified = DateTime.MinValue;
             var files = (System.Web.HttpFileCollection) null;
 
             Assert.DoesNotThrow(() => {
@@ -988,7 +987,7 @@ namespace Quantumart.Test
 
             Assert.DoesNotThrow(() => {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
-            }, "Add article"); ;
+            }, "Add article");
 
             var ids = new[] { id };
 

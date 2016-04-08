@@ -106,7 +106,6 @@ namespace Quantumart.Test
         {
             var asyncString = isAsync ? "_async" : "";
             var idsString = ids != null ? $"where content_item_id in ({string.Join(",", ids)})" : "";
-            ;
             return localCnn.GetRealData($"select [{fieldName}] from content_{contentId}{asyncString} {idsString}")
                 .AsEnumerable()
                 .Select(n => n.Field<T>(fieldName))

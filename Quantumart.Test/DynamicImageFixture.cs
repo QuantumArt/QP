@@ -90,7 +90,7 @@ namespace Quantumart.Test
             var actualPathes = new List<string>();
             mockFileSystem
                 .Setup(x => x.CreateDirectory(It.IsAny<string>()))
-                .Callback<string>((path) =>
+                .Callback<string>(path =>
                 {
                     actualPathes.Add(path);
                 });
@@ -125,7 +125,7 @@ namespace Quantumart.Test
             var actualPathes = new List<string>();
             mockFileSystem
                 .Setup(x => x.CreateDirectory(It.IsAny<string>()))
-                .Callback<string>((path) =>
+                .Callback<string>(path =>
                 {
                     actualPathes.Add(path);
                 });
@@ -404,7 +404,6 @@ namespace Quantumart.Test
             Cnn.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
             mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>()));
-            ;
 
             var values = new List<Dictionary<string, string>>();
 
@@ -430,7 +429,6 @@ namespace Quantumart.Test
             Cnn.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
             mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>()));
-            ;
 
             var article1 = new Hashtable()
             {
@@ -461,7 +459,7 @@ namespace Quantumart.Test
             var actualPathes = new List<string>();
             mockFileSystem
                 .Setup(x => x.RemoveDirectory(It.IsAny<string>()))
-                .Callback<string>((path) =>
+                .Callback<string>(path =>
                 {
                     actualPathes.Add(path);
                 });
@@ -493,7 +491,7 @@ namespace Quantumart.Test
             var actualPathes = new List<string>();
             mockFileSystem
                 .Setup(x => x.RemoveDirectory(It.IsAny<string>()))
-                .Callback<string>((path) =>
+                .Callback<string>(path =>
                 {
                     actualPathes.Add(path);
                 });
@@ -543,7 +541,7 @@ namespace Quantumart.Test
             var actualImages = new List<DynamicImageInfo>();
             mockDynamicImage
                 .Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()))
-                .Callback<DynamicImageInfo>((info) =>
+                .Callback<DynamicImageInfo>(info =>
                 {
                     actualImages.Add(info);
                 });
@@ -589,7 +587,7 @@ namespace Quantumart.Test
             var dbPng2 = $"field_{pngId}/{folder2}/{name2}.PNG";
             var dbJpg1 = $"field_{jpgId}/{name1}.JPG";
             var dbJpg2 = $"field_{jpgId}/{folder2}/{name2}.JPG";
-            var dbGif1 = $"field_{gifId}/{name1}.GIF";
+            var dbGif1 = $"field_{gifId}/{name1}.GIF";`
             var dbGif2 = $"field_{gifId}/{folder2}/{name2}.GIF";
 
             Assert.That(actualImages.Any(n => n.ImageName == article1[ImageName] && n.AttrId == pngId), Is.True, "Create png for article 1");
@@ -616,13 +614,11 @@ namespace Quantumart.Test
             var actualImages = new List<DynamicImageInfo>();
             mockDynamicImage
                 .Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()))
-                .Callback<DynamicImageInfo>((info) =>
+                .Callback<DynamicImageInfo>(info =>
                 {
                     actualImages.Add(info);
                 });
 
-
-            var values = new List<Dictionary<string, string>>();
             var name1 = "test789";
             var name2 = "test321";
             var ext1 = "jpg";

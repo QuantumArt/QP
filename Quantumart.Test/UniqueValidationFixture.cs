@@ -283,7 +283,6 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_IsValid_ValidateConstraintSameData()
         {
-            var values = new List<Dictionary<string, string>>();
             var first = ContentItem.Read(BaseArticlesIds[0], Cnn);
             var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             var numberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
