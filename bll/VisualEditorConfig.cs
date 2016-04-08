@@ -1,91 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Utils;
-
-namespace Quantumart.QP8.BLL
+﻿namespace Quantumart.QP8.BLL
 {
-	public class VisualEditorConfig
-	{
-		private const int CKEDITOR_ENTER_P	= 1;
-		private const int CKEDITOR_ENTER_BR = 2;
+    public class VisualEditorConfig
+    {
+        private readonly Field _field;
+        private const int CkeditorEnterP = 1;
+        private const int CkeditorEnterBr = 2;
+        private const int ToolbarsHeight = 110;
 
-		private readonly int ToolbarsHeight = 110;
-				
+        public string Language => QPContext.CurrentUserIdentity.CultureName;
 
-		internal VisualEditorConfig(Field field)
-		{
-			Field = field;
-		}
+        public string DocType => !string.IsNullOrWhiteSpace(_field.DocType) ? _field.DocType : @"<!doctype html>";
 
-		private Field Field { get; set; }
+        public bool FullPage => _field.FullPage;
 
-		public int Height
-		{
-			get
-			{
-				return Field.VisualEditorHeight - ToolbarsHeight;
-			}
-		}
-		
+        public int EnterMode => _field.PEnterMode ? CkeditorEnterP : CkeditorEnterBr;
 
-		public string DocType
-		{
-			get
-			{
-				if (!String.IsNullOrWhiteSpace(Field.DocType))
-					return Field.DocType;
-				else
-					return @"<!DOCTYPE html PUBLIC ""-//W3C//DTD XHTML 1.0 Transitional//EN"" ""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"">";
-			}
-		}
+        public int ShiftEnterMode => _field.PEnterMode ? CkeditorEnterBr : CkeditorEnterP;
 
+        public bool UseEnglishQuotes => _field.UseEnglishQuotes;
 
-		public int EnterMode
-		{
-			get
-			{
-				if (Field.PEnterMode)
-					return CKEDITOR_ENTER_P;
-				else
-					return CKEDITOR_ENTER_BR;
-			}
-		}
+        public int Height => _field.VisualEditorHeight - ToolbarsHeight;
 
-		public int ShiftEnterMode
-		{
-			get
-			{
-				if (Field.PEnterMode)
-					return CKEDITOR_ENTER_BR;
-				else
-					return CKEDITOR_ENTER_P;
-			}
-		}
+        public string BodyClass => _field.RootElementClass;
 
-		public bool UseEnglishQuotes
-		{
-			get
-			{
-				return Field.UseEnglishQuotes;					
-			}
-		}
-
-		public string Language
-		{
-			get
-			{
-				return QPContext.CurrentUserIdentity.CultureName;
-			}
-		}
-
-		public bool FullPage
-		{
-			get
-			{
-				return Field.FullPage;
-			}
-		}		
-	}
+        internal VisualEditorConfig(Field field)
+        {
+            _field = field;
+        }
+    }
 }

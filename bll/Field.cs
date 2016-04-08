@@ -1,5 +1,6 @@
 ﻿using QA.Validation.Xaml.ListTypes;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Helpers.VisualEditor;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -769,7 +770,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public bool IsBackwardFieldExists => BackwardField != null && !BackwardField.IsNew;
 
-        public Field BackwardField => M2MBackwardField != null ? M2MBackwardField : O2MBackwardField;
+        public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
 
         /// <summary>
         /// Поля которые ссылаются на данное поле связью O2M
@@ -1715,10 +1716,10 @@ namespace Quantumart.QP8.BLL
             ValidateExternalCss(errors);
 
             // Валидация поля на конфликты с полями дочерних контентов
-            new FieldsConflictValidator().SubContentsCheck(Content, this).Select(v =>
+            foreach (var ruleViolation in new FieldsConflictValidator().SubContentsCheck(Content, this))
             {
-                errors.ErrorForModel(v.Message); return (object)null;
-            }).ToArray();
+                errors.ErrorForModel(ruleViolation.Message);
+            }
         }
 
         private void ValidateVariations(RulesException<Field> errors)
@@ -2281,6 +2282,7 @@ namespace Quantumart.QP8.BLL
             {
                 return field.Die(removeChildFields);
             }
+
             return new[] { string.Format(FieldStrings.FieldNotFound, id) };
         }
 
@@ -2292,6 +2294,7 @@ namespace Quantumart.QP8.BLL
             {
                 DieWithoutValidation(removeVirtualFields);
             }
+
             return violationMessages;
         }
 

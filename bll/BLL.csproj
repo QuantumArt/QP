@@ -117,6 +117,7 @@
     <Compile Include="ArticleFieldSearchType.cs" />
     <Compile Include="Db.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
@@ -198,9 +199,9 @@
     <Compile Include="Helpers\MultistepActionHelper.cs" />
     <Compile Include="Helpers\SitePathHelper.cs" />
     <Compile Include="Helpers\SortingItem.cs" />
-    <Compile Include="Helpers\VeAggregationListItemsHelper.cs" />
-    <Compile Include="Helpers\VeStyleAggregationListHelper.cs" />
-    <Compile Include="Helpers\VeStyleAggregationListItem.cs" />
+    <Compile Include="Helpers\VisualEditor\VeAggregationListItemsHelper.cs" />
+    <Compile Include="Helpers\VisualEditor\VeStyleAggregationListHelper.cs" />
+    <Compile Include="Helpers\VisualEditor\VeStyleAggregationListItem.cs" />
     <Compile Include="Helpers\VirtualContentHelper.cs" />
     <Compile Include="Helpers\WorkflowRuleItem.cs" />
     <Compile Include="ListItems\ChildEntityPermissionListItem.cs" />

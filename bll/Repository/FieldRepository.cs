@@ -18,13 +18,9 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class FieldRepository
     {
-        #region Properties
         internal static ObjectQuery<FieldDAL> DefaultFieldQuery => QPContext.EFContext.FieldSet.Include("Content").Include("Type").Include("LastModifiedByUser");
 
-        #endregion
-
         #region Methods
-
         #region Get
         /// <summary>
         /// Возвращает поле по его идентификатору
@@ -71,7 +67,6 @@ namespace Quantumart.QP8.BLL.Repository
             );
         }
 
-
         /// <summary>
         /// Возвращает поле по значению поля Order и ID контента
         /// </summary>
@@ -113,7 +108,6 @@ namespace Quantumart.QP8.BLL.Repository
                     .OrderBy(n => n.Order)
                     .ToList()
             );
-
         }
 
         private static List<Field> GetListFromCache(int contentId)
@@ -130,9 +124,9 @@ namespace Quantumart.QP8.BLL.Repository
                     result = result1.ToList();
                 }
             }
+
             return result;
         }
-
 
         /// <summary>
         /// Возвращает список полей для отображения в виде таблицы
@@ -948,7 +942,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             field.Id = 0;
-
             if (field.ContentLink != null)
             {
                 field.ContentLink.LinkId = 0;
