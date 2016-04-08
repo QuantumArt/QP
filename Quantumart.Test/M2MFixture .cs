@@ -46,7 +46,7 @@ namespace Quantumart.Test
 
             var service = new ReplayService(Global.ConnectionString, 1, true);
             service.ReplayXml(Global.GetXml(@"xmls\m2m.xml"));
-            Cnn = new DBConnector(Global.ConnectionString);
+            Cnn = new DBConnector(Global.ConnectionString) {ForceLocalCache = true};
             ContentName = "Test M2M";
             ContentId = Global.GetContentId(Cnn, ContentName);
             TitleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");

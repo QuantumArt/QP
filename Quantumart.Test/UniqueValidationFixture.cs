@@ -30,7 +30,7 @@ namespace Quantumart.Test
 
             var service = new ReplayService(Global.ConnectionString, 1, true);
             service.ReplayXml(Global.GetXml(@"xmls\unique.xml"));
-            Cnn = new DBConnector(Global.ConnectionString);
+            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test unique";
             ContentId = Global.GetContentId(Cnn, ContentName);
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);

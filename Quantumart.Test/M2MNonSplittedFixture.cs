@@ -30,7 +30,7 @@ namespace Quantumart.Test
 
             var service = new ReplayService(Global.ConnectionString, 1, true);
             service.ReplayXml(Global.GetXml(@"xmls\m2m_nonsplitted.xml"));
-            Cnn = new DBConnector(Global.ConnectionString);
+            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentId = Global.GetContentId(Cnn, "Test M2M");
             DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
