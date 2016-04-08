@@ -1,4 +1,4 @@
-@using Quantumart.QP8.Constants
+﻿@using Quantumart.QP8.Constants
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -9,6 +9,7 @@
 		bool allowCombineStylesheets = !HttpContext.Current.IsDebuggingEnabled; // разрешает объединение CSS-файлов
 		string currentThemeName = Html.GetCurrentTheme();
 	}
+
 	@(Html.Telerik().StyleSheetRegistrar().StyleSheets(css => css
 			// Common Styles
 			.AddGroup("CommonStyles", g => g
@@ -32,11 +33,10 @@
 
 
 	@{
-		bool isDebugMode = HttpContext.Current.IsDebuggingEnabled; // признак, того что приложение запущено в режиме отладки
-
-		string ckeditorScriptName = (isDebugMode) ? "ckeditor_source.js" : "ckeditor.js"; // названия скрипта CKEditor
-		bool allowCombineScripts = !isDebugMode; // разрешает объединение JS-скриптов
+		bool isDebugMode = HttpContext.Current.IsDebuggingEnabled;
+		bool allowCombineScripts = !isDebugMode;
 	}
+
 	@(Html.Telerik().ScriptRegistrar()
 		.DefaultGroup(g => g.Enabled(false))
 		.Scripts(js => js
@@ -53,8 +53,13 @@
 				.Combined(allowCombineScripts)
 			)
 
-			// CKEditor
-			.Add(String.Format("~/Content/ckeditor/{0}", ckeditorScriptName))
+      .AddGroup("CkEditorScripts", g => g
+        .Add("~/Content/ckeditor/ckeditor.js")
+        .Add("Quantumart/ckeditor/aspell/plugin.js")
+        .Add("Quantumart/ckeditor/typographer/plugin.js")
+        .Add("Quantumart/ckeditor/globalSettings.js")
+        .Combined(allowCombineScripts)
+      )
 
 			// jQuery Plugins
 			.AddGroup("jQueryPlugins", g => g
@@ -126,7 +131,7 @@
 				.Add("Quantumart/Search/BackendArticleSearchBlock/NumericRangeFieldSearch.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/RelationFieldSearch.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/TextFieldSearch.js")
-                .Add("Quantumart/Search/BackendArticleSearchBlock/StringEnumFieldSearch.js")
+        .Add("Quantumart/Search/BackendArticleSearchBlock/StringEnumFieldSearch.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/FullTextBlock.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchBlock.js")
 				.Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchContainer.js")
@@ -145,7 +150,7 @@
 				.Add("Quantumart/List/BackendSelectPopupWindow.js")
 				.Add("Quantumart/BackendActionLink.js")
 				.Add("Quantumart/BackendTraceWindow.js")
-                .Add("Quantumart/BackendLogOnWindow.js")
+        .Add("Quantumart/BackendLogOnWindow.js")
 				.Add("Quantumart/Library/BackendLibrary.js")
 				.Add("Quantumart/Library/BackendPager.js")
 				.Add("Quantumart/Library/BackendFileList.js")
@@ -175,12 +180,9 @@
 				.Add("Quantumart/MultistepAction/BackendProgressBar.jquery.js")
 				.Add("Quantumart/MultistepAction/BackendMultistepActionWindow.js")
 				.Add("Quantumart/Backend.js")
-
 				.Combined(allowCombineScripts)
 			)
-		)
-		.Globalization(true)
-			)
+		).Globalization(true))
 
 <input type="button" id="btnCreate" value="Create" title="Create progress window" />
 <input type="button" id="btnClose" value="Close" title="Close progress window" />
@@ -281,13 +283,6 @@
 
 			component = null;
 		});
-
-
-		/*jQuery("#btnClose").click(function () {
-			$pgelements.backendProgressBar("dispose");
-		});*/
-
-
 	});
 </script>*@
 </body>

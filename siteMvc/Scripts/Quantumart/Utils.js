@@ -2,7 +2,77 @@
 // *** Компонент "Утилиты"                          ***
 // ****************************************************************************
 
-Quantumart.QP8.Utils = function() { };
+window.$q = Quantumart.QP8.Utils = function() { };
+
+$q.trace = function() {
+  if (window.Sys.Debug.isDebug) {
+    if ($.isFunction(window.console.trace)) {
+      window.console.trace(Array.prototype.slice.call(arguments));
+    } else {
+      window.console.log(Array.prototype.slice.call(arguments));
+    }
+  }
+};
+
+$q.alertSuccess = function(msg) {
+  window.alert(msg);
+  if (window.Sys.Debug.isDebug) {
+    window.console.log(msg);
+  }
+};
+
+$q.alertFail = function(msg) {
+  window.alert(msg);
+  if (window.Sys.Debug.isDebug) {
+    window.console.warn(msg);
+  }
+};
+
+$q.alertError = function(msg) {
+  window.alert(msg);
+  $q.trace(msg);
+};
+
+/**
+ * Basic implementation of jQuery ajax request with JSend response support
+ * @param  {Object} opts jQuery options for ajax request
+ * @return {Object}      jQuery XHR deffered
+ */
+$q.sendAjax = function(opts) {
+  var method = opts.method || 'GET';
+  var debugMessage = ' ajax: ' + method + ' ' + opts.url + '. Data: ' + JSON.stringify(opts.data);
+  $q.trace('Sending ' + debugMessage, opts);
+  return $q.getJsonFromUrl(method, opts.url, opts.data).done(function(response) {
+    $q.trace('Parsing ' + debugMessage, response);
+    if (response.status.toUpperCase() === 'SUCCESS') {
+      if ($.isFunction(opts.callbackSuccess)) {
+        opts.callbackSuccess(response.data);
+      }
+    } else if (response.status.toUpperCase() === 'FAIL') {
+      $q.alertFail(response.message || 'There was an errors at request');
+    } else {
+      $q.alertError(response.message || 'Unknown server error');
+    }
+  });
+};
+
+$q.getAjax = function(url, data, cb) {
+  return $q.sendAjax({
+    url: url,
+    data: data,
+    callbackSuccess: cb,
+    method: 'GET'
+  });
+};
+
+$q.postAjax = function(url, data, cb) {
+  return $q.sendAjax({
+    url: url,
+    data: data,
+    callbackSuccess: cb,
+    method: 'POST'
+  });
+};
 
 //#region Преобразование и проверка типов
 Quantumart.QP8.Utils.isNull = function Quantumart$QP8$Utils$isNull(value) {
@@ -508,7 +578,7 @@ Quantumart.QP8.Utils.getJsonFromUrl = function Quantumart$QP8$Utils$getJsonFromU
   var methodName = method.toUpperCase();
   var data = params;
 
-  if (methodName == 'POST') {
+  if (methodName.toUpperCase() === 'POST') {
     data = JSON.stringify(params);
   }
 
@@ -520,7 +590,7 @@ Quantumart.QP8.Utils.getJsonFromUrl = function Quantumart$QP8$Utils$getJsonFromU
     data: data,
     async: async,
     cache: allowCaching,
-    error: callbackError
+    error: callbackError || $q.processGenericAjaxError
   };
 
   settings.success = $q.ajaxCallbackDecorator(callbackSuccess, settings);
@@ -542,7 +612,7 @@ Quantumart.QP8.Utils.getJsonPFromUrl = function Quantumart$QP8$Utils$getJsonPFro
   var methodName = method.toUpperCase();
   var data = params;
 
-  if (methodName == 'POST') {
+  if (methodName.toUpperCase() === 'POST') {
     data = JSON.stringify(params);
   }
 
@@ -646,12 +716,8 @@ Quantumart.QP8.Utils.getJsonSync = function Quantumart$QP8$Utils$getJsonSync(url
     async: false,
     cache: false,
     success: null,
-    error: Quantumart.QP8.Utils.defaultJsonErrorHandler
+    error: Quantumart.QP8.Utils.processGenericAjaxError
   }).responseText);
-};
-
-Quantumart.QP8.Utils.defaultJsonErrorHandler = function(jqXHR) {
-  Quantumart.QP8.Utils.processGenericAjaxError(jqXHR);
 };
 
 Quantumart.QP8.Utils.getTypeNameForJson = function Quantumart$QP8$Utils$getTypeNameForJson(typeName) {
@@ -1126,6 +1192,3 @@ Quantumart.QP8.Utils.collectGarbageInIE = function Quantumart$QP8$Utils$collectG
 //#endregion
 
 Quantumart.QP8.Utils.registerClass('Quantumart.QP8.Utils');
-
-// Сокращенная запись
-window.$q = Quantumart.QP8.Utils;

@@ -8,7 +8,7 @@
   // Sources: https://gist.github.com/AuthorProxy/bffb5f9aa733e3ca6279#file-jscsrc
 
   "disallowArrayDestructuringReturn": true,
-  "disallowCapitalizedComments": true,
+  "disallowCapitalizedComments": true, // todo: check other presets
   "disallowDanglingUnderscores": {
     "allExcept": ["_jQuery", "_this"]
   },
@@ -80,7 +80,7 @@
     "allowUrlComments": true
   },
   "maximumNumberOfLines": {
-    "value": 200,
+    "value": 500,
     "allExcept": ["comments"]
   },
   "requireAlignedMultilineParams": true, // check
@@ -91,7 +91,7 @@
   "requireBlocksOnNewline": {
      "includeComments": true
   },
-  "requireCamelCaseOrUpperCaseIdentifiers": true, // check for strict mode
+  "requireCamelCaseOrUpperCaseIdentifiers": true,
   "requireCapitalizedConstructorsNew": true,
   "requireCapitalizedConstructors": true,
   "requireCommaBeforeLineBreak": true,
@@ -111,7 +111,7 @@
   "requireDotNotation": true,
   "requireEarlyReturn": true,
   // "requireEnhancedObjectLiterals": true, // ES6 only
-  "requireFunctionDeclarations": true,
+  // "requireFunctionDeclarations": true, // todo: check other presets. should be deleted
   // "requireImportAlphabetized": true, // todo: check in production
   "requireLineBreakAfterVariableAssignment": true,
   "requireLineFeedAtFileEnd": true,
@@ -196,17 +196,17 @@
   "requireSpread": true,
   // "requireTemplateStrings": true, // ES6 only
   "requireVarDeclFirst": true,
-  "safeContextKeyword": "safe",
+  "safeContextKeyword": "self",
   "validateAlignedFunctionParameters": true,
-  "validateCommentPosition": {
-    "position": "above"
-  },
   "validateIndentation": {
     "value": 2,
     "allExcept": ["comments"]
   },
   // "validateLineBreaks": "LF", // check (shouldn't be hardcoded and don't pass any test)
-  "validateNewlineAfterArrayElements": true,
+  "validateNewlineAfterArrayElements": {
+    "maximum": 999,
+    "ignoreBrackets": true
+  },
   "validateParameterSeparator": ", ",
   "validateQuoteMarks": {
     "mark": "'", // todo: report about VS2015 warning
