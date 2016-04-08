@@ -1,6 +1,7 @@
 ﻿using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -8,7 +9,6 @@ using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Quantumart.QP8.BLL.Services.DTO;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -170,14 +170,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonNetResult<object> AutosaveRestoringCheck([ModelBinder(typeof(JsonStringModelBinder<AutosavedEntityRecordHeader[]>))] AutosavedEntityRecordHeader[] recordHeaders)
         {
             var result = EntityObjectService.AutosaveRestoringCheck(recordHeaders);
-            return new JsonResult
+            return new
             {
-                Data = new
-                {
-                    success = true,
-                    approvedRecordIDs = result
-                }
-            };
+                success = true,
+                approvedRecordIDs = result
+            } as object;
         }
     }
 }

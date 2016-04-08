@@ -690,16 +690,16 @@ Quantumart.QP8.Utils.getTypeNameForJson = function Quantumart$QP8$Utils$getTypeN
   return jsonTypeName;
 };
 
+/// <summary>
+/// Обрабатывает ошибку, возникшую при AJAX-запросе
+/// </summary>
+/// <param name="status" type="Number" integer="true">HTTP-статус</param>
 Quantumart.QP8.Utils.processGenericAjaxError = function Quantumart$QP8$Utils$processGenericAjaxError(jqXHR) {
-  /// <summary>
-  /// Обрабатывает ошибку, возникшую при AJAX-запросе
-  /// </summary>
-  /// <param name="status" type="Number" integer="true">HTTP-статус</param>
   var errorMessage = String.format($l.Common.ajaxGenericErrorMessage, status);
 
-  if (status == 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
+  if (status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
     errorMessage = $l.Common.ajaxUserSessionExpiredErrorMessage;
-  } else if (status == 500) {
+  } else if (status === 500) {
     errorMessage = $l.Common.ajaxDataReceivingErrorMessage;
   }
 
@@ -713,19 +713,19 @@ Quantumart.QP8.Utils.generateErrorMessageText = function Quantumart$QP8$Utils$ge
   /// <param name="status" type="Number" integer="true">HTTP-статус</param>
   var html = new $.telerik.stringBuilder();
 
-  if (status == 500 || status == 404) {
+  if (status === 500 || status === 404) {
     html.cat('<div class="alignCenter" style="margin-top: 1.0em;">');
     html.cat('  <div class="alignCenterToLeft">');
     html.cat('    <div class="alignCenterToRight">');
     html.cat('      <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 120px;">');
     html.cat('        <tr class="top">');
-    if (status == 500) {
+    if (status === 500) {
       html.cat('          <td style="width: 110px;"><img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/errors/bug.gif" width="100" height="118" border="0" style="margin: 0 5px;" /></td>');
       html.cat('          <td style="padding: 0 10px;">');
       html.cat('            <h1>' + $l.EditingArea.error500Title + '</h1>');
       html.cat($l.EditingArea.error500Text);
       html.cat('          </td>');
-    } else if (status == 404) {
+    } else if (status === 404) {
       html.cat('          <td style="width: 110px;"><img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/errors/compass.png" width="100" height="115" border="0" alt="Компас" style="margin: 0 5px;" /></td>');
       html.cat('          <td style="padding: 0 10px;">');
       html.cat('            <h1>' + $l.EditingArea.error404Title + '</h1>');

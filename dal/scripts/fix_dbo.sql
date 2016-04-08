@@ -12818,7 +12818,7 @@ begin
             cancel_split bit
         )
 
-        declare @ids [Ids]
+        declare @ids [Ids], @ids2 [Ids]
         
         while exists (select id from @contents)
         begin
@@ -12832,6 +12832,9 @@ begin
             insert into @ids
             select id from @items
 
+            insert into @ids2
+            select id from @items where cancel_split = 1
+            
             set @items_list = null
             select @items_list = coalesce(@items_list + ',', '') + convert(nvarchar, id) from @items
                         
@@ -12844,10 +12847,11 @@ begin
             set @sql = @sql + ' end'
             set @sql = @sql + ' as new_splitted from ('
             set @sql = @sql + ' select distinct ci.content_item_id, st1.WEIGHT as curr_weight, st2.WEIGHT as front_weight, '
-            set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, case when ci.cancel_split = 1 then 0 else ciw.is_async end as is_workflow_async, ' 
+            set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, case when i2.id is not null then 0 else ciw.is_async end as is_workflow_async, ' 
             set @sql = @sql + ' ci.SCHEDULE_NEW_VERSION_PUBLICATION as delayed '
             set @sql = @sql + ' from content_item ci'
             set @sql = @sql + ' inner join @ids i on i.id = ci.content_item_id'
+            set @sql = @sql + ' left join @ids2 i2 on i.id = ci.content_item_id'
             set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
             set @sql = @sql + ' inner join STATUS_TYPE st1 on ci.STATUS_TYPE_ID = st1.STATUS_TYPE_ID'
             set @sql = @sql + ' inner join STATUS_TYPE st2 on c.STATUS_TYPE_ID = st2.STATUS_TYPE_ID'
@@ -12856,18 +12860,18 @@ begin
             set @sql = @sql + ' left join STATUS_TYPE st3 on st3.STATUS_TYPE_ID = wr.SUCCESSOR_STATUS_ID'
             set @sql = @sql + ' ) as main'
             print @sql
-            exec sp_executesql @sql, N'@ids [Ids] READONLY', @ids = @ids
+            exec sp_executesql @sql, N'@ids [Ids] READONLY, @ids2 [Ids] READONLY', @ids = @ids, @ids2 = @ids2
             
             update base set base.splitted = i.new_splitted from @items base inner join #ids_with_splitted i on base.id = i.id
             update base set base.splitted = i.splitted from content_item base inner join @items i on base.CONTENT_ITEM_ID = i.id
 
             insert into content_item_splitted(content_item_id)
-            select id from @ids base where splitted = 1 and not exists (select * from content_item_splitted cis where cis.content_item_id = base.id)
+            select id from @items base where splitted = 1 and not exists (select * from content_item_splitted cis where cis.content_item_id = base.id)
 
             delete from content_item_splitted where content_item_id in (
-                select id from @ids base where splitted = 0 
+                select id from @items base where splitted = 0 
             )
-
+            
             set @sync_ids_list = null
             select @sync_ids_list = coalesce(@sync_ids_list + ',', '') + convert(nvarchar, id) from @items where splitted = 0 and not_for_replication = 0
             set @async_ids_list = null
@@ -12895,7 +12899,7 @@ begin
                 
                 exec qp_get_update_items_flags_sql @table_name, @async_ids_list, @sql = @sql out
                 print @sql
-                exec sp_executesql @sql
+                exec sp_executesql @sql					
             end
             
             delete from #ids_with_splitted
@@ -12904,6 +12908,7 @@ begin
             
             delete from @items
             delete from @ids
+            delete from @ids2
         end
         
         drop table #ids_with_splitted
@@ -12968,7 +12973,7 @@ END
 GO
 
 ALTER PROCEDURE [dbo].[qp_replicate_items] 
-@ids_str nvarchar(max),
+@ids nvarchar(max),
 @attr_ids nvarchar(max) = ''
 AS
 BEGIN
@@ -12989,7 +12994,7 @@ BEGIN
         content_id numeric
     )
     
-    insert into @articles(id) SELECT convert(numeric, nstr) from dbo.splitNew(@ids_str, ',')
+    insert into @articles(id) SELECT convert(numeric, nstr) from dbo.splitNew(@ids, ',')
     
     update base set base.content_id = ci.content_id, base.splitted = ci.SPLITTED, base.cancel_split = ci.cancel_split, base.delayed = ci.schedule_new_version_publication, base.status_type_id = ci.STATUS_TYPE_ID from @articles base inner join content_item ci on base.id = ci.CONTENT_ITEM_ID 
 
@@ -13005,10 +13010,10 @@ BEGIN
     inner join STATUS_TYPE st on st.STATUS_TYPE_NAME = 'None' and st.SITE_ID = c.SITE_ID
 
 
-    declare @ids [Ids], @syncIds [Ids], @syncIds2 [Ids], @asyncIds [Ids], @asyncIds2 [Ids]
+    declare @articleIds [Ids], @syncIds [Ids], @syncIds2 [Ids], @asyncIds [Ids], @asyncIds2 [Ids]
     declare @noneId numeric
 
-    insert into @ids select id from @articles
+    insert into @articleIds select id from @articles
     
     while exists (select id from @contents)
     begin
@@ -13066,9 +13071,8 @@ BEGIN
         delete from @asyncIds
     end
     
-    update content_item set not_for_replication = 0, CANCEL_SPLIT = 0 where content_item_id in (select id from @ids)
+    update content_item set not_for_replication = 0, CANCEL_SPLIT = 0 where content_item_id in (select id from @articleIds)
 END
-GO
 
 
 
