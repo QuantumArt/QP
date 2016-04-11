@@ -6,10 +6,19 @@ window.$q = Quantumart.QP8.Utils = function() { };
 
 $q.trace = function() {
   if (window.Sys.Debug.isDebug) {
-    if ($.isFunction(window.console.trace)) {
-      window.console.trace(Array.prototype.slice.call(arguments));
+    var args = [].slice.call(arguments);
+    var firstArg = args.slice(0, 1)[0];
+    var otherArgs = args.slice(1);
+
+    if ($.isFunction(window.console.groupCollapsed)
+      && $.isFunction(window.console.groupEnd)
+      && $.isFunction(window.console.trace)) {
+      window.console.groupCollapsed(firstArg);
+      window.console.log.apply(window.console, otherArgs);
+      window.console.trace('%cView tracing', 'color: darkblue;font-weight:bold;');
+      window.console.groupEnd(firstArg);
     } else {
-      window.console.log(Array.prototype.slice.call(arguments));
+      window.console.log.apply(window.console, args);
     }
   }
 };
@@ -17,14 +26,14 @@ $q.trace = function() {
 $q.alertSuccess = function(msg) {
   window.alert(msg);
   if (window.Sys.Debug.isDebug) {
-    window.console.log(msg);
+    window.console.log.apply(window.console, Array.prototype.slice.call(arguments));
   }
 };
 
 $q.alertFail = function(msg) {
   window.alert(msg);
   if (window.Sys.Debug.isDebug) {
-    window.console.warn(msg);
+    window.console.warn.apply(window.console, Array.prototype.slice.call(arguments));
   }
 };
 
@@ -41,9 +50,9 @@ $q.alertError = function(msg) {
 $q.sendAjax = function(opts) {
   var method = opts.method || 'GET';
   var debugMessage = ' ajax: ' + method + ' ' + opts.url + '. Data: ' + JSON.stringify(opts.data);
-  $q.trace('Sending ' + debugMessage, opts);
+  $q.trace('Sending ' + debugMessage, 'Request object: ', opts);
   return $q.getJsonFromUrl(method, opts.url, opts.data).done(function(response) {
-    $q.trace('Parsing ' + debugMessage, response);
+    $q.trace('Parsing ' + debugMessage, 'Response object: ', response);
     if (response.status.toUpperCase() === 'SUCCESS') {
       if ($.isFunction(opts.callbackSuccess)) {
         opts.callbackSuccess(response.data);

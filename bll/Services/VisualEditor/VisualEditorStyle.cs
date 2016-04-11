@@ -8,10 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Quantumart.QP8.BLL
+namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
     public class VisualEditorStyle : EntityObject
     {
+        private const string Separator = ";";
+        private const string ItemSeparator = ":";
+
         internal VisualEditorStyle()
         { }
 
@@ -25,8 +28,8 @@ namespace Quantumart.QP8.BLL
 
         public VisualEditorStyle Init()
         {
-            _attributeItems = new InitPropertyValue<IEnumerable<VeStyleAggregationListItem>>(() => VeStyleAggregationListHelper.Deserialize(Attributes));
-            _stylesItems = new InitPropertyValue<IEnumerable<VeStyleAggregationListItem>>(() => VeStyleAggregationListHelper.Deserialize(Styles));
+            _attributeItems = new InitPropertyValue<IEnumerable<VeStyleAggregationListItem>>(() => Deserialize(Attributes));
+            _stylesItems = new InitPropertyValue<IEnumerable<VeStyleAggregationListItem>>(() => Deserialize(Styles));
             On = true;
             return this;
         }
@@ -93,8 +96,8 @@ namespace Quantumart.QP8.BLL
 
             StylesItems = jsonStyles;
             AttributeItems = jsonAttributes;
-            Styles = VeStyleAggregationListHelper.Serialize(jsonStyles);
-            Attributes = VeStyleAggregationListHelper.Serialize(jsonAttributes);
+            Styles = Serialize(jsonStyles);
+            Attributes = Serialize(jsonAttributes);
         }
 
         public override void Validate()
@@ -163,6 +166,25 @@ namespace Quantumart.QP8.BLL
                 errors.ErrorForModel(string.Format(VisualEditorStrings.VeStyleAggrListItemValueMaxLengthExceeded, typeName, index));
                 item.Invalid = true;
             }
+        }
+
+        private static string Serialize(IEnumerable<VeStyleAggregationListItem> items)
+        {
+            return string.Join(Separator, items.Select(x => $"{x.Name}:{x.ItemValue}"));
+        }
+
+        private static IEnumerable<VeStyleAggregationListItem> Deserialize(string str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return Enumerable.Empty<VeStyleAggregationListItem>();
+            }
+
+            return str.Split(Separator.ToCharArray()).Select(x =>
+            {
+                var strings = x.Split(ItemSeparator.ToCharArray());
+                return new VeStyleAggregationListItem { Name = strings[0], ItemValue = strings[1] };
+            });
         }
     }
 }

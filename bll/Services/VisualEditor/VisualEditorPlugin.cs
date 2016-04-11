@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace Quantumart.QP8.BLL
+namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
     public class VisualEditorPlugin : EntityObject
     {

@@ -1,5 +1,5 @@
-﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers.VisualEditor;
+﻿using Quantumart.QP8.BLL.Helpers.VisualEditor;
+using Quantumart.QP8.BLL.Services.VisualEditor;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;

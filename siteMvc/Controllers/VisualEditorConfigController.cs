@@ -1,7 +1,7 @@
-﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Extensions;
-using Quantumart.QP8.BLL.Helpers.VisualEditor;
+﻿using Quantumart.QP8.BLL.Extensions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -39,8 +39,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 StylesSet = includedStyles.Where(ves => !ves.IsFormat).Select(styleselect),
                 FormatsSet = includedStyles.Where(ves => ves.IsFormat).Select(styleselect).EmptyIfNull(),
-                ExtraPlugins = VisualEditorService.GetVisualEditorPlugins(veCommands).Select(pluginselect).EmptyIfNull(),
-                Toolbar = VeAggregationListItemsHelper.GenerateRows(veCommands)
+                ExtraPlugins = VisualEditorHelpers.GetVisualEditorPlugins(veCommands).Select(pluginselect).EmptyIfNull(),
+                Toolbar = VisualEditorHelpers.GenerateToolbar(veCommands)
             };
 
             if (fieldId != 0)

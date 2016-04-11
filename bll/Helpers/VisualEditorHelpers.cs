@@ -1,10 +1,12 @@
 ﻿using Quantumart.QP8.BLL.Extensions;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services.VisualEditor;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quantumart.QP8.BLL.Helpers.VisualEditor
+namespace Quantumart.QP8.BLL.Helpers
 {
-    public static class VeAggregationListItemsHelper
+    public static class VisualEditorHelpers
     {
         /// <summary>
         /// Заменяет элементы defaultElements соотв по Id командами из priorElements
@@ -35,7 +37,12 @@ namespace Quantumart.QP8.BLL.Helpers.VisualEditor
             return result.OrderBy(c => c.Id);
         }
 
-        public static IList<object> GenerateRows(IEnumerable<VisualEditorCommand> veCommands)
+        public static IEnumerable<VisualEditorPlugin> GetVisualEditorPlugins(IEnumerable<VisualEditorCommand> veCommands)
+        {
+            return veCommands.Where(vec => vec.PluginId.HasValue).Select(c => c.PluginId.Value).Distinct().Select(VisualEditorRepository.GetPluginPropertiesById);
+        }
+
+        public static IList<object> GenerateToolbar(IEnumerable<VisualEditorCommand> veCommands)
         {
             const string delimeter = "/";
             var result = veCommands.GroupBy(c => c.RowOrder).Select(GenerateRowGroups).ToList();

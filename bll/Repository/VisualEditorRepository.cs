@@ -1,6 +1,7 @@
-﻿using Quantumart.QP8.BLL.Helpers.VisualEditor;
+﻿using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
@@ -245,14 +246,14 @@ namespace Quantumart.QP8.BLL.Repository
             var defaultCommands = GetDefaultCommands();
             var siteCommands = GetSiteCommands(siteId);
             var fieldCommands = GetFieldCommands(fieldId);
-            return VeAggregationListItemsHelper.Merge(VeAggregationListItemsHelper.Merge(defaultCommands, siteCommands), fieldCommands);
+            return VisualEditorHelpers.Merge(VisualEditorHelpers.Merge(defaultCommands, siteCommands), fieldCommands);
         }
 
         internal static IEnumerable<VisualEditorCommand> GetResultCommands(int siteId)
         {
             var defaultCommands = GetDefaultCommands();
             var siteCommands = GetSiteCommands(siteId);
-            return VeAggregationListItemsHelper.Merge(defaultCommands, siteCommands);
+            return VisualEditorHelpers.Merge(defaultCommands, siteCommands);
         }
 
         internal static void SetSiteCommands(int siteId, Dictionary<int, bool> changedCommands, Dictionary<int, bool> defaultCommandsDictionary)
@@ -390,7 +391,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var defaultStyles = GetAllStyles();
             var siteStyles = GetSiteStyles(siteId);
-            return VeAggregationListItemsHelper.Merge(defaultStyles, siteStyles);
+            return VisualEditorHelpers.Merge(defaultStyles, siteStyles);
         }
 
         internal static IEnumerable<VisualEditorStyle> GetResultStyles(int fieldId, int siteId)
@@ -398,7 +399,7 @@ namespace Quantumart.QP8.BLL.Repository
             var defaultStyles = GetAllStyles();
             var siteStyles = GetSiteStyles(siteId);
             var fieldStyles = GetFieldStyles(fieldId);
-            return VeAggregationListItemsHelper.Merge(VeAggregationListItemsHelper.Merge(defaultStyles, siteStyles), fieldStyles);
+            return VisualEditorHelpers.Merge(VisualEditorHelpers.Merge(defaultStyles, siteStyles), fieldStyles);
         }
 
         internal static void SetSiteStyles(int siteId, Dictionary<int, bool> changedStyles, Dictionary<int, bool> defaultStyleDictionary)

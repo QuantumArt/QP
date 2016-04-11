@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+﻿using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Helpers.VisualEditor;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL
@@ -797,7 +796,7 @@ namespace Quantumart.QP8.BLL
         public void SaveVisualEditorCommands(int[] activeVeCommands)
         {
             var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToList();//все возможные команды
-            var offVeCommands = VeAggregationListItemsHelper.Subtract(defaultCommands, activeVeCommands).Select(c => c.Id).ToArray();//opposite to activeVecommands
+            var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, activeVeCommands).Select(c => c.Id).ToArray();//opposite to activeVecommands
             var oldSiteCommands = VisualEditorRepository.GetResultCommands(Id).ToList();// с этим нужно сравнивать на предмет измененеий
 
             var defaultCommandsDictionary = defaultCommands.ToDictionary(c => c.Id, c => c.On);
@@ -938,7 +937,7 @@ namespace Quantumart.QP8.BLL
         internal void SaveVisualEditorStyles(int[] activeStyleIds)
         {
             var defaultStyles = VisualEditorRepository.GetAllStyles().ToList();
-            var offVeStyles = VeAggregationListItemsHelper.Subtract(defaultStyles, activeStyleIds).Select(c => c.Id).ToArray();
+            var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, activeStyleIds).Select(c => c.Id).ToArray();
             var oldSiteStyles = VisualEditorRepository.GetResultStyles(Id).ToList();
 
             var defaultStyleDictionary = defaultStyles.ToDictionary(s => s.Id, s => s.On);

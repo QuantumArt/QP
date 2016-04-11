@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL;
+﻿using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using System.Collections.Generic;
