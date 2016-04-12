@@ -11,5 +11,11 @@
     <releaseNotes>Initial Release</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>QP8 Backend API</tags>
+      <dependencies>
+          <dependency id="Quantumart" version="2.0.0" />
+      </dependencies>
   </metadata>
+    <files>
+        <file src="bin\Release\*.dll" exclude="bin\Release\Quantumart.dll" target="lib\net45" />
+    </files>
 </package>
