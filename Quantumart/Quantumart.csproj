@@ -283,6 +283,9 @@
       <Name>Assembling</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Quantumart.nuspec" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MSBee\MSBuildExtras.FX1_1.CSharp.targets" Condition=" '$(BuildingInsideVisualStudio)' == '' AND '$(TargetFX1_1)'=='true'" />
   <PropertyGroup>
