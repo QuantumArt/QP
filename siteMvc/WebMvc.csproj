@@ -18,7 +18,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <PrecompileRazorFiles>true</PrecompileRazorFiles>
     <BuildWithScript>false</BuildWithScript>
-    <MvcBuildViews>true</MvcBuildViews>
+    <MvcBuildViews>false</MvcBuildViews>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
     <SccAuxPath>SAK</SccAuxPath>
@@ -2147,10 +2147,6 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
-  <Target Name="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
-    <AspNetCompiler Condition="'$(BuildingInsideVisualStudio)' == 'true' Or '$(BuildWithScript)' == 'true'" VirtualPath="temp" PhysicalPath="$(ProjectDir)" />
-    <AspNetCompiler Condition="'$(BuildingInsideVisualStudio)' != 'true' And '$(BuildWithScript)' != 'true'" VirtualPath="temp" PhysicalPath="$(OutDir)\_PublishedWebsites\$(ProjectName)" />
-  </Target>
   <ProjectExtensions>
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
