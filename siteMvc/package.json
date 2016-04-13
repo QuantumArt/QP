@@ -10,7 +10,8 @@
   "bugs": {
     "url": "http://tfs:8080/tfs/QuantumartCollection/QP/_workitems"
   },
-  "dependencies": {},
+  "dependencies": {
+  },
   "devDependencies": {
     "del": "^2.2.0",
     "gulp": "^3.9.1",
@@ -26,6 +27,7 @@
     "jshint-stylish": "^2.1.0"
   },
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp",
     "lint": "gulp lint",
     "postrestore": "echo something like npm install shoud here",

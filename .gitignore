@@ -246,6 +246,8 @@ _Pvt_Extensions
 # QuantumArt rules
 package/pack/qp8release
 siteMvc/Scripts/Quantumart/**/*.min.js
+siteMvc/Scripts/Quantumart/**/*.map
+
 
 !siteMvc/ToCopy/bin
 !siteMvc/ToCopy/bin/*.pdb

@@ -199,23 +199,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Shadow Include="Test References\Quantumart.QP8.BLL.accessor" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="TestData\fix_dbo.testsample.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Shadow Include="Test References\Quantumart.QP8.ArticleScheduler.accessor" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

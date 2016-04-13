@@ -39,10 +39,6 @@ Quantumart.QP8.Backend = function(isDebugMode, options) {
   });
 
   jQuery(window).bind('load', this._loadHandler);
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
-=======
-
->>>>>>> Organize some scripts and fix pathes
   if (window.attachEvent) {
     jQuery(window).bind('unload', this._unloadHandler);
   } else {
@@ -97,21 +93,12 @@ Quantumart.QP8.Backend.prototype = {
       this._backendActionExecutor.attachObserver(EVENT_TYPE_BACKEND_ACTION_EXECUTED, this._onActionExecutedHandler);
 
       this._backendSplitter = new Quantumart.QP8.BackendSplitter('splitter', {
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
           firstPaneWidth: 270,
           minFirstPaneWidth: 50,
           maxFirstPaneWidth: 400,
           stateCookieName: 'leftMenuSize',
           toWindowResize: true
         });
-=======
-        firstPaneWidth: 270,
-        minFirstPaneWidth: 50,
-        maxFirstPaneWidth: 400,
-        stateCookieName: 'leftMenuSize',
-        toWindowResize: true
-      });
->>>>>>> Organize some scripts and fix pathes
 
       this._backendTreeMenuContextMenuManager = Quantumart.QP8.BackendTreeMenuContextMenuManager.getInstance();
       this._backendContextMenuManager = Quantumart.QP8.BackendContextMenuManager.getInstance();
@@ -127,7 +114,6 @@ Quantumart.QP8.Backend.prototype = {
       this._backendTabStrip = Quantumart.QP8.BackendTabStrip.getInstance('MainTabStrip', { maxTabTextLength: 35, maxTabMenuItemTextLength: 33 });
       this._backendTabStrip.initialize();
 
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
       this._backendEditingArea = Quantumart.QP8.BackendEditingArea.getInstance('editingArea', {
         documentsContainerElementId: 'document',
         breadCrumbsContainerElementId: 'breadCrumbs',
@@ -141,22 +127,6 @@ Quantumart.QP8.Backend.prototype = {
         currentUserId: this._currentUserId
       });
 
-=======
-      this._backendEditingArea = Quantumart.QP8.BackendEditingArea.getInstance('editingArea',
-            {
-              documentsContainerElementId: 'document',
-              breadCrumbsContainerElementId: 'breadCrumbs',
-              actionToolbarContainerElementId: 'actionToolbar',
-              viewToolbarContainerElementId: 'viewToolbar',
-              searchBlockContainerElementId: 'search',
-              contextBlockContainerElementId: 'context',
-              documentsContainerHeightDifference: 118,
-              tabStrip: this._backendTabStrip,
-              currentCustomerCode: this._currentCustomerCode,
-              currentUserId: this._currentUserId
-            }
-          );
->>>>>>> Organize some scripts and fix pathes
       this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADING, this._onEditingAreaEventHandler);
       this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADED, this._onEditingAreaEventHandler);
       this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSING, this._onEditingAreaEventHandler);
@@ -199,23 +169,15 @@ Quantumart.QP8.Backend.prototype = {
 
       this._backendSplitter.initialize();
 
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
       if (this._autoLoadHome) {
         this._loadHome();
       }
-=======
-      if (this._autoLoadHome)
-      this._loadHome();
->>>>>>> Organize some scripts and fix pathes
 
       this._entityEditorAutoSaver = new Quantumart.QP8.EntityEditorAutoSaver({
         currentCustomerCode: this._currentCustomerCode,
         currentUserId: this._currentUserId
       });
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
 
-=======
->>>>>>> Organize some scripts and fix pathes
       this._entityEditorAutoSaver.attachObserver(EVENT_TYPE_AUTO_SAVER_ACTION_EXECUTING, this._onActionExecutingHandler);
       if (openByDirectLink) {
         this._entityEditorAutoSaver.start();
@@ -266,20 +228,11 @@ Quantumart.QP8.Backend.prototype = {
     };
 
     $.connection.singleUserMode.client.send = this._updateSingleUserMode;
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
     $.connection.hub.start().done(function() {
       var hash = $('body').data('dbhash');
 
       $.connection.communication.server.addHash(hash);
     });
-=======
-    $.connection.hub.start()
-      .done(function() {
-        var hash = $('body').data('dbhash');
-
-        $.connection.communication.server.addHash(hash);
-      });
->>>>>>> Organize some scripts and fix pathes
   },
 
   _updateSingleUserMode: function(data) {
@@ -352,14 +305,9 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _onDropSplitter: function() {
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
     if (!this._busy) {
       this._backendEditingArea.hideAjaxLoadingLayer();
     }
-=======
-    if (!this._busy)
-          this._backendEditingArea.hideAjaxLoadingLayer();
->>>>>>> Organize some scripts and fix pathes
   },
 
   _onEditingAreaEvent: function(eventType, sender, eventArgs) {
@@ -413,7 +361,6 @@ Quantumart.QP8.Backend.prototype = {
             this._backendEditingArea.addDocument(eventArgs);
           }
         } else if (this._isMultistep(action, eventArgs)) {
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
           jQuery.when(this._backendActionExecutor.executeMultistepAction(eventArgs)).done(function(status) {
             if (status == BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
               that._onActionExecuted(eventArgs);
@@ -428,37 +375,12 @@ Quantumart.QP8.Backend.prototype = {
 
             this._unmarkAsBusy();
           }, this);
-=======
-          jQuery.when(this._backendActionExecutor.executeMultistepAction(eventArgs))
-              .done(function(status) {
-                if (status == BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
-                  that._onActionExecuted(eventArgs);
-                }
-              })
-              .fail(function() { });
-        } else {
-          this._markAsBusy();
-          var callback = jQuery.proxy(
-            function(status, eventArgs) {
-              if (status == BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
-                this._onActionExecuted(eventArgs);
-              }
-
-              this._unmarkAsBusy();
-            }, this);
->>>>>>> Organize some scripts and fix pathes
 
           this._backendActionExecutor.executeNonInterfaceAction(eventArgs, callback);
         }
       }
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
     } else if (status == BACKEND_ACTION_EXECUTION_STATUS_SUCCESS)
     this._onActionExecuted(eventArgs);
-=======
-    } else if (status == BACKEND_ACTION_EXECUTION_STATUS_SUCCESS) {
-      this._onActionExecuted(eventArgs);
-    }
->>>>>>> Organize some scripts and fix pathes
   },
 
   _onActionExecuted: function(eventArgs) {
@@ -495,10 +417,7 @@ Quantumart.QP8.Backend.prototype = {
     Quantumart.QP8.BackendCustomActionHostManager.getInstance().onExternalCallerContextsUnbinded(message);
   },
 
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
   //#region EntityEditor Event Handlers
-=======
->>>>>>> Organize some scripts and fix pathes
   _onEntityEditorReady: function(eventType, sender, eventArgs) {
     this._entityEditorAutoSaver.onEntityEditorReady(eventArgs.documentWrapperElementId);
   },
@@ -515,11 +434,8 @@ Quantumart.QP8.Backend.prototype = {
     this._entityEditorAutoSaver.onAllFieldInvalidate(eventArgs.documentWrapperElementId);
   },
 
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
   //#endregion
 
-=======
->>>>>>> Organize some scripts and fix pathes
   checkOpenDocumentByEventArgs: function(eventArgs) {
     var tabsForEntity = this._backendTabStrip.getTabsByEventArgs(eventArgs);
     var entityIsOpenedInTab = tabsForEntity && tabsForEntity.length > 0;
@@ -666,10 +582,6 @@ Quantumart.QP8.Backend.prototype = {
       }
 
       this._terminateSignOut();
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
-=======
-
->>>>>>> Organize some scripts and fix pathes
       jQuery(document).unbind('click');
       jQuery(window).unbind('load', this._loadHandler);
 
@@ -691,12 +603,8 @@ Quantumart.QP8.Backend.prototype = {
       this._onActionExecutingHandler = null;
       this._onActionExecutedHandler = null;
       this._onEntityReadedHandler = null;
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
     }
     finally {
-=======
-    } finally {
->>>>>>> Organize some scripts and fix pathes
       if (this._directLinkExecutor) {
         this._directLinkExecutor.detachObserver(EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING);
         this._directLinkExecutor.dispose();
@@ -719,8 +627,4 @@ Quantumart.QP8.Backend.getInstance = function(isDebugMode, options) {
 };
 
 Quantumart.QP8.Backend.registerClass('Quantumart.QP8.Backend');
-<<<<<<< 32e7c35deb8e6006d4507b6d2f4b3183425baa14
-=======
-
->>>>>>> Organize some scripts and fix pathes
 //#endregion

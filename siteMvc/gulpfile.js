@@ -1,3 +1,4 @@
+/// <binding AfterBuild='lint, images, styles' Clean='clean' />
 var del = require('del');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
