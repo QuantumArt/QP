@@ -118,9 +118,25 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\data.sql" />
+    <Content Include="scripts\EFTablesViews\1_ef_base.sql" />
+    <Content Include="scripts\EFTablesViews\2_link_tables.sql" />
+    <Content Include="scripts\EFTablesViews\3_ti_item_to_item.sql" />
+    <Content Include="scripts\EFTablesViews\4_td_item_to_item.sql" />
+    <Content Include="scripts\EFTablesViews\5_ti_item_link_async.sql" />
+    <Content Include="scripts\EFTablesViews\6_td_item_link_async.sql" />
     <Content Include="scripts\fix_dbo.sql" />
     <Content Include="scripts\fix_dbo_old.sql" />
     <Content Include="scripts\max.temp.fix_dbo.sql" />
+    <Content Include="scripts\MultipleUpdate\1_qp_get_m2o_ids_multiple.sql" />
+    <Content Include="scripts\MultipleUpdate\2_qp_create_content_item_versions.sql" />
+    <Content Include="scripts\MultipleUpdate\3_qp_split_articles.sql" />
+    <Content Include="scripts\MultipleUpdate\4_qp_merge_links_multiple.sql" />
+    <Content Include="scripts\MultipleUpdate\5_qp_merge_articles.sql" />
+    <Content Include="scripts\MultipleUpdate\6_qp_assert_num_equal.sql" />
+    <Content Include="scripts\MultipleUpdate\tests\test.sql" />
+    <Content Include="scripts\MultipleUpdate\tests\test2.sql" />
+    <Content Include="scripts\MultipleUpdate\tests\test3.sql" />
+    <Content Include="scripts\MultipleUpdate\tests\test4.sql" />
     <Content Include="scripts\schema.sql" />
     <Content Include="scripts\undo_to_previous.sql" />
   </ItemGroup>
@@ -142,6 +158,7 @@
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

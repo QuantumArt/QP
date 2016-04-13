@@ -32,7 +32,7 @@ namespace Quantumart.QPublishing.Database
             return GetContentLibraryDirectory(siteId, contentId);
         }
 
-        private string GetVersionFolder(int articleId, int versionId)
+        public string GetVersionFolder(int articleId, int versionId)
         {
             if (versionId == 0)
                 return String.Empty;
@@ -40,9 +40,22 @@ namespace Quantumart.QPublishing.Database
                 return String.Format(GetVersionFolderFormat(), GetContentLibraryFolder(articleId), versionId);
         }
 
-        private string GetCurrentVersionFolder(int articleId)
+        public string GetVersionFolderForContent(int contentId, int versionId)
+        {
+            if (versionId == 0)
+                return String.Empty;
+            else
+                return String.Format(GetVersionFolderFormat(), GetContentLibraryDirectory(contentId), versionId);
+        }
+
+        public string GetCurrentVersionFolder(int articleId)
         {
             return String.Format(GetVersionFolderFormat(), GetContentLibraryFolder(articleId), "current");
+        }
+
+        public string GetCurrentVersionFolderForContent(int contentId)
+        {
+            return String.Format(GetVersionFolderFormat(), GetContentLibraryDirectory(contentId), "current");
         }
 
         private IEnumerable<ContentAttribute> GetFilesAttributesForVersionControl(int contentId)
@@ -64,21 +77,23 @@ namespace Quantumart.QPublishing.Database
                     .Select(n => new FileToCopy
                     {
                         Name = Path.GetFileName(n),
-                        Folder = currentVersionFolder
+                        Folder = currentVersionFolder,
+                        ToFolder = GetVersionFolder(articleId, newVersionId)
                     });
 
-                CopyArticleFiles(files, GetVersionFolder(articleId, newVersionId));
+                CopyArticleFiles(files);
             }
 
             var newFiles = GetFilesAttributesForVersionControl(contentId)
                 .Select(n => new FileToCopy
                 {
                     Name = GetDbDataValue(articleId, n),
-                    Folder = GetDirectoryForFileAttribute(n.Id)
+                    Folder = GetDirectoryForFileAttribute(n.Id),
+                    ToFolder = currentVersionFolder
                 })
                 .Where(n => !String.IsNullOrEmpty(n.Name));
 
-            CopyArticleFiles(newFiles, currentVersionFolder);
+            CopyArticleFiles(newFiles);
         }
 
         private string GetDbDataValue(int articleId, ContentAttribute field)
@@ -107,35 +122,47 @@ namespace Quantumart.QPublishing.Database
 
         }
 
+        private DataTable GetVersionDataValues(int[] versionIds, int[] attrIds)
+        {
+            var cmd = new SqlCommand
+            {
+                CommandType = CommandType.Text,
+                CommandText =
+                    $"select attribute_id, content_item_version_id, data from version_content_data where content_item_version_id in (select id from @versionIds) and attribute_id in (select id from @attrIds)",
+                Parameters = 
+                {
+                    new SqlParameter("@versionIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(versionIds) },
+                    new SqlParameter("@attrIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(attrIds) },
+                }
+            };
+
+            var result = GetRealData(cmd);
+            return result;
+
+        }
+
         private class FileToCopy
         {
             public string Name { get; set; }
             public string Folder { get; set; }
+
+            public string ToFolder { get; set; }
         }
 
-        private void CopyArticleFiles(IEnumerable<FileToCopy> files, string toFolder)
+        private void CopyArticleFiles(IEnumerable<FileToCopy> files)
         {
             var fileToCopies = files as FileToCopy[] ?? files.ToArray();
-            if (!Directory.Exists(toFolder) && fileToCopies.Any())
-                Directory.CreateDirectory(toFolder);
 
-            foreach (var field in fileToCopies)
+            foreach (var file in fileToCopies)
             {
-                if (!Directory.Exists(field.Folder))
-                    Directory.CreateDirectory(field.Folder);
+                FileSystem.CreateDirectory(file.ToFolder);
+                FileSystem.CreateDirectory(file.Folder);
 
-                var sourceName = $@"{field.Folder}\{field.Name.Replace("/", "\\")}";
-                var destName = $@"{toFolder}\{Path.GetFileName(field.Name)}";
+                var sourceName = $@"{file.Folder}\{file.Name.Replace("/", "\\")}";
+                var destName = $@"{file.ToFolder}\{Path.GetFileName(file.Name)}";
 
-                if (File.Exists(sourceName))
-                {
-                    if (File.Exists(destName))
-                    {
-                        File.Delete(destName);
-                    }
+                FileSystem.CopyFile(sourceName, destName);
 
-                    File.Copy(sourceName, destName);
-                }
             }
         }
 
@@ -147,6 +174,11 @@ namespace Quantumart.QPublishing.Database
         private int GetLatestVersionId(int articleId)
         {
             return GetAggregateVersionFunction("MAX", articleId);
+        }
+
+        private int[] GetLatestVersionIds(int[] ids)
+        {
+            return GetAggregateVersionFunction("MAX", ids);
         }
 
         private int GetVersionsCount(int articleId)
@@ -166,6 +198,24 @@ namespace Quantumart.QPublishing.Database
                 cmd.Parameters.AddWithValue("@id", articleId);
                 return CastDbNull.To<int>(GetRealScalarData(cmd));
             }
+        }
+
+        private int[] GetAggregateVersionFunction(string function, int[] ids)
+        {
+            if (!ids.Any())
+                return new int[0];
+            var cmd = new SqlCommand
+            {
+                CommandType = CommandType.Text,
+                CommandText =
+                    $"select cast({function}(content_item_version_id) as int) as data from content_item_version where content_item_id in (select id from @ids) group by content_item_id",
+                Parameters =
+                {
+                    new SqlParameter("@ids", SqlDbType.Structured) {TypeName = "Ids", Value = IdsToDataTable(ids)},
+                }
+            };
+
+            return GetRealData(cmd).AsEnumerable().Select(n => n.Field<int>("data")).ToArray();
         }
 
         #endregion

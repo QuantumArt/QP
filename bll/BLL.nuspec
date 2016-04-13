@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Pavel Celut,Sergey Koryakin</authors>
+    <owners>Quantum Art</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Internal QP8 API, that could help to write custom administrative modules for QP8</description>
+    <releaseNotes>Initial Release</releaseNotes>
+    <copyright>Copyright 2016</copyright>
+    <tags>QP8 Backend API</tags>
+      <dependencies>
+          <dependency id="Quantumart" version="2.0.0" />
+      </dependencies>
+  </metadata>
+    <files>
+        <file src="bin\Release\*.dll" exclude="bin\Release\Quantumart.dll" target="lib\net45" />
+    </files>
+</package>

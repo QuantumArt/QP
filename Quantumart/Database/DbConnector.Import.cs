@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using Quantumart.QPublishing.Info;
 
 namespace Quantumart.QPublishing.Database
@@ -33,39 +32,50 @@ namespace Quantumart.QPublishing.Database
                 throw new Exception($"Cannot modify virtual content (ID = {contentId})");
             }
 
-            IEnumerable<ContentAttribute> attrs;
+            ContentAttribute[] attrs;
             var fullUpdate = (attrIds == null || attrIds.Length == 0) && overrideMissedFields;
 
 
             var enumerable = values as Dictionary<string, string>[] ?? values.ToArray();
+            var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
             if (!overrideMissedFields && attrIds == null)
             {
                 var names = new HashSet<string>(enumerable.SelectMany(n => n.Keys).Distinct().Select(n => n.ToLowerInvariant()));
-                attrs = GetContentAttributeObjects(contentId).Where(n => names.Contains(n.Name.ToLowerInvariant()));
+                attrs = fullAttrs.Where(n => names.Contains(n.Name.ToLowerInvariant())).ToArray();
             }
             else
             {
-                attrs = GetContentAttributeObjects(contentId).Where(n => attrIds != null && (fullUpdate || attrIds.Contains(n.Id)));
+                attrs = fullAttrs.Where(n => fullUpdate || attrIds != null && attrIds.Contains(n.Id)).ToArray();
             }
 
-
-            var doc = GetImportContentItemDocument(enumerable, content);
-            ImportContentItem(contentId, enumerable, lastModifiedBy, doc);
-
-            var contentAttributes = attrs as ContentAttribute[] ?? attrs.ToArray();
-            var dataDoc = GetImportContentDataDocument(enumerable, contentAttributes);
-            ImportContentData(dataDoc);
-
-            var attrString = fullUpdate ? String.Empty : String.Join(",", contentAttributes.Select(n => n.Id.ToString()).ToArray());
-            ReplicateData(enumerable, attrString);
-
-            var manyToManyAttrs = contentAttributes.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue);
-            var toManyAttrs = manyToManyAttrs as ContentAttribute[] ?? manyToManyAttrs.ToArray();
-            if (toManyAttrs.Any())
+            CreateInternalConnection(true);
+            try
             {
-                var linkDoc = GetImportItemLinkDocument(enumerable, toManyAttrs);
-                ImportItemLink(linkDoc);
+                var doc = GetImportContentItemDocument(enumerable, content);
+                ImportContentItem(contentId, enumerable, lastModifiedBy, doc);
+
+                var dataDoc = GetImportContentDataDocument(enumerable, attrs, content, overrideMissedFields);
+                ImportContentData(dataDoc);
+
+                var attrString = fullUpdate ? string.Empty : string.Join(",", attrs.Select(n => n.Id.ToString()).ToArray());
+                ReplicateData(enumerable, attrString);
+
+                var manyToManyAttrs = attrs.Where(n => n.Type == AttributeType.Relation && n.LinkId.HasValue);
+                var toManyAttrs = manyToManyAttrs as ContentAttribute[] ?? manyToManyAttrs.ToArray();
+                if (toManyAttrs.Any())
+                {
+                    var linkDoc = GetImportItemLinkDocument(enumerable, toManyAttrs);
+                    ImportItemLink(linkDoc);
+                }
+                CommitInternalTransaction();
             }
+            finally
+            {
+                DisposeInternalConnection();
+            }
+
+
+
         }
 
         private void ReplicateData(IEnumerable<Dictionary<string, string>> values, string attrString)
@@ -75,7 +85,7 @@ namespace Quantumart.QPublishing.Database
                 CommandType = CommandType.StoredProcedure,
                 CommandTimeout = 120
             };
-            var result = String.Join(",", values.Select(n => n[SystemColumnNames.Id]).ToArray());
+            var result = string.Join(",", values.Select(n => n[SystemColumnNames.Id]).ToArray());
             cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = result });
             cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = attrString });
             ProcessData(cmd);
@@ -143,8 +153,11 @@ namespace Quantumart.QPublishing.Database
             ProcessData(cmd);
         }
 
-        private XDocument GetImportContentDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs)
+        private XDocument GetImportContentDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content, bool overrideMissedFields = false)
         {
+            var longUploadUrl = GetImagesUploadUrl(content.SiteId);
+            var longSiteLiveUrl = GetSiteUrl(content.SiteId, true);
+            var longSiteStageUrl = GetSiteUrl(content.SiteId, false);
             var dataDoc = new XDocument();
             dataDoc.Add(new XElement("ITEMS"));
             var contentAttributes = attrs as ContentAttribute[] ?? attrs.ToArray();
@@ -156,28 +169,24 @@ namespace Quantumart.QPublishing.Database
                     elem.Add(new XAttribute("id", XmlValidChars(value[SystemColumnNames.Id])));
                     elem.Add(new XAttribute("attrId", attr.Id));
                     string temp;
-                    value.TryGetValue(attr.Name, out temp);
+                    var valueExists = value.TryGetValue(attr.Name, out temp);
                     if (attr.LinkId.HasValue)
                     {
                         elem.Add(new XElement("DATA", attr.LinkId.Value));
+                        valueExists = true;
                     }
                     else if (attr.BackRelation != null)
                     {
                         elem.Add(new XElement("DATA", attr.BackRelation.Id));
+                        valueExists = true;
                     }
-                    else if (!String.IsNullOrEmpty(temp))
+                    else if (!string.IsNullOrEmpty(temp))
                     {
-                        if (attr.DbTypeName == "DATETIME" && Information.IsDate(temp))
-                        {
-                            temp = DateTime.Parse(temp).ToString("yyyy-MM-dd HH:mm:ss");
-                        }
-                        else if (attr.DbTypeName == "NUMERIC")
-                        {
-                            temp = temp.Replace(",", ".");
-                        }
-                        elem.Add(new XElement(attr.DbTypeName == "NTEXT" ? "BLOB_DATA" : "DATA", XmlValidChars(temp)));
+                        temp = FormatResult(attr, temp, longUploadUrl, longSiteStageUrl, longSiteLiveUrl);
+                        elem.Add(new XElement(attr.DbField, XmlValidChars(temp)));
                     }
-                    dataDoc.Root?.Add(elem);
+                    if (valueExists || overrideMissedFields)
+                        dataDoc.Root?.Add(elem);
                 }
             }
             return dataDoc;
@@ -188,14 +197,14 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 return XmlConvert.VerifyXmlChars(token);
-
             }
             catch (XmlException)
             {
-                const string invalidXmlChars = @"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]";
-                return Regex.Replace(token, invalidXmlChars, "");
+                return InvalidXmlChars.Replace(token, "");
             }
         }
+
+        private static readonly Regex InvalidXmlChars = new Regex(@"[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]");
 
         private XDocument GetImportContentItemDocument(IEnumerable<Dictionary<string, string>> values, Content content)
         {
@@ -280,7 +289,7 @@ namespace Quantumart.QPublishing.Database
             if (value.TryGetValue(key, out tempId))
             {
                 int id;
-                if (Int32.TryParse(tempId, out id)) ;
+                if (int.TryParse(tempId, out id)) ;
                 result = id;
             }
             return result;
