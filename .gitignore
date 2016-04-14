@@ -244,6 +244,7 @@ _Pvt_Extensions
 *.sln.iml
 
 # QuantumArt rules
+*.orig
 package/pack/qp8release
 siteMvc/Scripts/Quantumart/**/*.min.js
 siteMvc/Scripts/Quantumart/**/*.map

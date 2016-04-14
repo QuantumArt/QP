@@ -28,12 +28,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 		public static MvcHtmlString PrepareInitScript(this HtmlHelper html, ViewModel model)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(@"<script type=""text/javascript"">");
-			sb.AppendLine(@"//<![CDATA[");
+			sb.AppendLine(@"<script>");
 			sb.AppendFormatLine(@"var {0} = new Quantumart.QP8.BackendDocumentContext({1}, {2});",
 				model.ContextObjectName, model.MainComponentParameters.ToJson(), model.MainComponentOptions.ToJson()
 			);
-			sb.AppendLine(@"//]]>");
 			sb.AppendLine(@"</script>");
 
 			return MvcHtmlString.Create(sb.ToString());
@@ -48,10 +46,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 		public static MvcHtmlString RunInitScript(this HtmlHelper html, ViewModel model)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(@"<script type=""text/javascript"">");
-			sb.AppendLine(@"//<![CDATA[");
+			sb.AppendLine(@"<script>");
 			sb.AppendFormatLine(@"{0}.init();", model.ContextObjectName);
-			sb.AppendLine(@"//]]>");
 			sb.AppendLine(@"</script>");
 			return MvcHtmlString.Create(sb.ToString());
 		}
@@ -63,10 +59,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 			{
 				string contextPlaceholder = "QP_CURRENT_CONTEXT";
 
-				sb.AppendLine(@"<script type=""text/javascript"">");
-				sb.AppendLine(@"//<![CDATA[");
+				sb.AppendLine(@"<script>");
 				sb.AppendLine(script.Replace(contextPlaceholder, contextObjectName));
-				sb.AppendLine(@"//]]>");
 				sb.AppendLine(@"</script>");
 			}
 			return MvcHtmlString.Create(sb.ToString());
@@ -82,7 +76,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 		{
 			return MvcHtmlString.Create(html.PrepareInitScript(model).ToString() + html.RunInitScript(model).ToString());
 		}
-
 		#endregion
 	}
 }

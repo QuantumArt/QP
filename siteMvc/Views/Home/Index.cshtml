@@ -12,15 +12,16 @@
     <title>@Model.Title</title>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9"/>
-    <link href="~/Content/QP8/favicon.ico" rel="shortcut icon"/>
+	  <link href="~/Content/QP8/favicon.ico" rel="shortcut icon"/>
+
     @{
         const string jsVersion = "6.21";
         const string cssVersion = "6.3";
 
         var allowCombineStylesheets = !HttpContext.Current.IsDebuggingEnabled;
         var currentThemeName = Html.GetCurrentTheme();
-        var jsVersionFileName = string.Format("Quantumart/version.{0}.js", jsVersion);
-        var cssVersionFileName = string.Format("version.{0}.css", cssVersion);
+        var jsVersionFileName = $"Quantumart/version.{jsVersion}.js";
+        var cssVersionFileName = $"version.{cssVersion}.css";
     }
 
     @(Html.Telerik().StyleSheetRegistrar().StyleSheets(css => css
@@ -137,8 +138,8 @@
         var allowCombineScripts = !isDebugMode;
     }
 
-    @(Html.Telerik().ScriptRegistrar()
-        .DefaultGroup(g => g.Enabled(false))
+@(Html.Telerik().ScriptRegistrar()
+      .DefaultGroup(g => g.Enabled(false))
         .Scripts(js => js.AddGroup("CommonLibraries", g => g
           .Add("es5-shim.js")
           .Add("jquery/jquery-1.7.1.js")
@@ -154,7 +155,6 @@
           .Add(jsVersionFileName)
           .Combined(allowCombineScripts)
         )
-          .Add(string.Format("~/Content/ckeditor/{0}?{1}", isDebugMode ? "ckeditor_source.js" : "ckeditor.js", jsVersion))
           .AddGroup("jQueryPlugins", g => g
             .Add("jquery/jquery.cookie.js")
             .Add("jquery/jquery.timers.js")
@@ -191,10 +191,10 @@
             .Add(jsVersionFileName)
             .Combined(allowCombineScripts)
           )
-            .Add("Quantumart/JsConstants.ashx")
-            .Add("Quantumart/JsLanguage.ashx")
-            .Add("~/signalr/hubs")
-            .AddGroup("CodeMirrorScripts", g => g
+          .Add("Quantumart/JsConstants.ashx")
+          .Add("Quantumart/JsLanguage.ashx")
+          .Add("~/signalr/hubs")
+          .AddGroup("CodeMirrorScripts", g => g
               .Add("CodeMirror/codemirror.min.js")
               .Add("Codemirror/sql.js")
               .Add("CodeMirror/clike.js")
@@ -212,7 +212,14 @@
               .Add("Quantumart/Uploader/plupload/plupload.filters.js")
               .Add(jsVersionFileName)
               .Combined(allowCombineScripts)
-            ).AddGroup("QuantumartScripts", g => g
+            ).AddGroup("CkEditorScripts", g => g
+              .Add("~/Content/ckeditor/ckeditor.js")
+              .Add("Quantumart/ckeditor/aspell/plugin.js")
+              .Add("Quantumart/ckeditor/typographer/plugin.js")
+              .Add("Quantumart/ckeditor/globalSettings.js")
+              .Add(jsVersionFileName)
+              .Combined(allowCombineScripts)
+          ).AddGroup("QuantumartScripts", g => g
               .Add("Quantumart/Utils.js")
               .Add("Quantumart/Cache.js")
               .Add("Quantumart/Common.js")
@@ -332,13 +339,10 @@
               .Add("Quantumart/Home.js")
               .Add(jsVersionFileName)
               .Combined(allowCombineScripts)
-            )
-        ).Globalization(true)
-    )
-    <script type="text/javascript">
-      //<![CDATA[
+          )
+      ).Globalization(true))
+    <script>
       var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
       var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
-      //]]>
     </script>
 </body>

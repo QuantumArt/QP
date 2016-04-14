@@ -1,8 +1,6 @@
 ﻿@model VisualEditorListViewModel
 
 @using Quantumart.QP8.WebMvc.ViewModels.VisualEditor
-@using Quantumart.QP8.WebMvc.ViewModels
-@using Quantumart.QP8.BLL.Services.DTO
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 @using Quantumart.QP8.BLL.ListItems
@@ -21,14 +19,10 @@
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
         {
-            c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                   .Width(30)
-                   .HtmlAttributes(new { @class = "id" });
-
-            c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
-                .HtmlAttributes(new { @class = "title" });
+            c.Bound(s => s.Id).Title(EntityObjectStrings.ID).Width(30).HtmlAttributes(new { @class = "id" });
+            c.Bound(s => s.Name).Title(EntityObjectStrings.Name).HtmlAttributes(new { @class = "title" });
             c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
-			c.Bound(s => s.Url).Title(VisualEditorStrings.Url);
+			      c.Bound(s => s.Url).Title(VisualEditorStrings.Url);
             c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
             c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
             c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
@@ -40,10 +34,7 @@
         .Sortable()
         .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
         .Selectable(s => s.Enabled(true))
-        .ClientEvents(e =>
-            e.OnDataBinding("$q.preventDefaultFunction")
-             .OnRowDataBound("$q.preventDefaultFunction")
-        )
+        .ClientEvents(e => e.OnDataBinding("$q.preventDefaultFunction").OnRowDataBound("$q.preventDefaultFunction"))
     )
 }
 

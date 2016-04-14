@@ -2,6 +2,7 @@
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
@@ -18,13 +19,9 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class FieldRepository
     {
-        #region Properties
         internal static ObjectQuery<FieldDAL> DefaultFieldQuery => QPContext.EFContext.FieldSet.Include("Content").Include("Type").Include("LastModifiedByUser");
 
-        #endregion
-
         #region Methods
-
         #region Get
         /// <summary>
         /// Возвращает поле по его идентификатору
@@ -71,7 +68,6 @@ namespace Quantumart.QP8.BLL.Repository
             );
         }
 
-
         /// <summary>
         /// Возвращает поле по значению поля Order и ID контента
         /// </summary>
@@ -113,7 +109,6 @@ namespace Quantumart.QP8.BLL.Repository
                     .OrderBy(n => n.Order)
                     .ToList()
             );
-
         }
 
         private static List<Field> GetListFromCache(int contentId)
@@ -130,9 +125,9 @@ namespace Quantumart.QP8.BLL.Repository
                     result = result1.ToList();
                 }
             }
+
             return result;
         }
-
 
         /// <summary>
         /// Возвращает список полей для отображения в виде таблицы
@@ -932,7 +927,6 @@ namespace Quantumart.QP8.BLL.Repository
         }
         #endregion
 
-
         internal static Field Copy(Field field)
         {
             field.MutateNames();
@@ -948,7 +942,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             field.Id = 0;
-
             if (field.ContentLink != null)
             {
                 field.ContentLink.LinkId = 0;
@@ -1015,6 +1008,7 @@ namespace Quantumart.QP8.BLL.Repository
                 return MultistepActionHelper.GetXmlFromDataRows(rows, "attribute");
             }
         }
+
         internal static void CopyCommandFieldBind(string relationsBetweenAttributes)
         {
             using (new QPConnectionScope())
@@ -1022,6 +1016,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopyCommandFieldBind(QPConnectionScope.Current.DbConnection, relationsBetweenAttributes);
             }
         }
+
         internal static void CopyStyleFieldBind(string relationsBetweenAttributes)
         {
             using (new QPConnectionScope())
@@ -1029,6 +1024,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopyStyleFieldBind(QPConnectionScope.Current.DbConnection, relationsBetweenAttributes);
             }
         }
+
         internal static void CopyContentsAttributes(int oldSiteId, int newSiteId, string newContentIds, bool isContentsVirtual)
         {
             using (new QPConnectionScope())
@@ -1036,6 +1032,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopyContentsAttributes(QPConnectionScope.Current.DbConnection, oldSiteId, newSiteId, newContentIds, isContentsVirtual);
             }
         }
+
         internal static void CopyDynamicImageAttributes(string relationsBetweenAttributesXml)
         {
             using (var scope = new QPConnectionScope())
@@ -1043,6 +1040,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopyDynamicImageAttributes(scope.DbConnection, relationsBetweenAttributesXml);
             }
         }
+
         internal static void UpdateAttributesOrder(int destinationSiteId, string relationsBetweenAttributesXml, string newContents)
         {
             using (var scope = new QPConnectionScope())
