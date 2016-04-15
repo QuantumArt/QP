@@ -11,7 +11,6 @@
   };
 
   CKEDITOR.plugins.add(CKEDITOR.aspellSettings.pluginName, {
-    requires: ['toolbar'],
     init: function(editor) {
       if (editor.contextMenu) {
         editor.addMenuGroup('qp8', 10);

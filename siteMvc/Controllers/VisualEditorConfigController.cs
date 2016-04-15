@@ -23,8 +23,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 Name = entry.Name,
                 Element = entry.Tag,
                 Overrides = entry.OverridesTag, // TODO: проверить
-                Styles = entry.StylesItems.ToDictionary(k => k.Name.Replace(' ', '_'), v => v.ItemValue),
-                Attributes = entry.AttributeItems.ToDictionary(k => k.Name, v => v.ItemValue)
+                Styles = entry.StylesItems.Any() ? entry.StylesItems.ToDictionary(k => k.Name.Replace(' ', '_'), v => v.ItemValue) : null,
+                Attributes = entry.AttributeItems.Any() ? entry.AttributeItems.ToDictionary(k => k.Name, v => v.ItemValue) : null
             };
 
             Func<VisualEditorPlugin, VisualEditorPluginVm> pluginselect = entry => new VisualEditorPluginVm
