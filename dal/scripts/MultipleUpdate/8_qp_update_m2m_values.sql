@@ -97,3 +97,4 @@ BEGIN
 	from @newIds n 
 	where n.splitted = 0 and n.linked_splitted = 1 and n.linked_has_async = 0 and n.linked_attribute_id is not null
 END
+GO

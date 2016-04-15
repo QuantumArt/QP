@@ -9,3 +9,4 @@ BEGIN
 	SELECT @result = COALESCE(@result + ', ', '') +  cast(ARTICLE_ID as nvarchar(20))  FROM FIELD_ARTICLE_BIND where FIELD_ID = @field_id
 	return @result
 END
+GO
