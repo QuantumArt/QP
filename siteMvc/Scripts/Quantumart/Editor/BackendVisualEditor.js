@@ -24,10 +24,8 @@
       language: 'ru',
       docType: '<!doctype html>',
       height: 340,
-      fullPage: true,
       enterMode: 2,
-      shiftEnterMode: 1,
-      useEnglishQuotes: false
+      shiftEnterMode: 1
     };
 
     var config = {
@@ -51,13 +49,14 @@
       resize_maxHeight: 1024,
       bodyClass: opts.bodyClass,
       docType: opts.docType,
-      fullPage: opts.fullPage || defaultConfig.fullPage,
+      fullPage: opts.fullPage,
       enterMode: opts.enterMode || defaultConfig.enterMode,
       shiftEnterMode: opts.shiftEnterMode || defaultConfig.shiftEnterMode,
-      useEnglishQuotes: opts.useEnglishQuotes || defaultConfig.useEnglishQuotes,
+      useEnglishQuotes: opts.useEnglishQuotes,
       contentsCss: opts.contentsCss,
       stylesSet: opts.stylesSet,
       toolbar: opts.toolbar,
+      protectedSource: [/<a[^>]*><\/a>/g, /<i[^>]*><\/i>/g, /<b[^>]*><\/b>/g, /<span[^>]*><\/span>/g],
       extraPlugins: 'Spellchecker,Typographer',
       removePlugins: 'save,newpage,scayt,spellchecker,forms,language,smiley,iframe,about',
       format_tags: opts.formatsSet.map(function(fs) {

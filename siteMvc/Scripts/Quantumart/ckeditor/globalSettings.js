@@ -102,6 +102,11 @@
     });
   }
 
-  CKEDITOR.dtd.a.div = 1;
+  CKEDITOR.dtd.a.div = true;
+  CKEDITOR.dtd.$removeEmpty.a = false;
+  CKEDITOR.dtd.$removeEmpty.i = false;
+  CKEDITOR.dtd.$removeEmpty.b = false;
+  CKEDITOR.dtd.$removeEmpty.span = false;
+
   bindEvents();
 })();

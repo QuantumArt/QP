@@ -2,6 +2,7 @@
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -10,9 +11,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 {
     public class VisualEditorPluginViewModel : EntityViewModel
     {
+        private List<VisualEditorCommand> _jsonCommands;
+
+        private List<VisualEditorCommand> _veCommands;
+
         public override string EntityTypeCode => Constants.EntityTypeCode.VisualEditorPlugin;
 
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewVisualEditorPlugin : Constants.ActionCode.VisualEditorPluginProperties;
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public string AggregationListItems_VeCommandsDisplay { get; set; }
 
         public new VisualEditorPlugin Data
         {
@@ -24,8 +32,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
         {
             return Create<VisualEditorPluginViewModel>(plugin, tabId, parentId);
         }
-
-        private List<VisualEditorCommand> _veCommands;
 
         [LocalizedDisplayName("Commands", NameResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<object> VeCommandsDisplay
@@ -41,13 +47,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
             }
         }
 
-        public string AggregationListItemsVeCommandsDisplay { get; set; }
-
-        private List<VisualEditorCommand> _jsonCommands;
-
         internal void DoCustomBinding()
         {
-            _jsonCommands = new JavaScriptSerializer().Deserialize<List<VisualEditorCommand>>(AggregationListItemsVeCommandsDisplay);
+            _jsonCommands = new JavaScriptSerializer().Deserialize<List<VisualEditorCommand>>(AggregationListItems_VeCommandsDisplay);
             Data.DoCustomBinding(_jsonCommands);
         }
 
