@@ -47,7 +47,7 @@
 
           // Codemirror Styles
           .AddGroup("CodemirrorStyles", g => g
-              .Add("codemirror.css")
+              .Add("codemirror/lib/codemirror.css")
               .Add("codemirrorTheme.css")
               .Add("QpCodemirror.css")
               .Add(cssVersionFileName)
@@ -209,15 +209,15 @@
 
           // CodeMirror
           .AddGroup("CodeMirrorScripts", g => g
-              .Add("CodeMirror/codemirror.min.js")
-              .Add("Codemirror/sql.js")
-              .Add("CodeMirror/clike.js")
-              .Add("CodeMirror/vb.js")
-              .Add("CodeMirror/xml.js")
-              .Add("CodeMirror/css.js")
-              .Add("CodeMirror/htmlmixed.js")
-              .Add("CodeMirror/javascript.js")
-              .Add("CodeMirror/htmlembedded.js")
+              .Add("~/Content/codemirror/lib/codemirror.js")
+              .Add("~/Content/codemirror/mode/vb/vb.js")
+              .Add("~/Content/codemirror/mode/sql/sql.js")
+              .Add("~/Content/codemirror/mode/xml/xml.js")
+              .Add("~/Content/codemirror/mode/css/css.js")
+              .Add("~/Content/codemirror/mode/clike/clike.js")
+              .Add("~/Content/codemirror/mode/javascript/javascript.js")
+              .Add("~/Content/codemirror/mode/htmlmixed/htmlmixed.js")
+              .Add("~/Content/codemirror/mode/htmlembedded/htmlembedded.js")
               .Add(jsVersionFileName)
               .Combined(allowCombineScripts)
           )

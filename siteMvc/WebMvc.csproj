@@ -825,14 +825,6 @@
     <None Include="packages.config" />
     <Content Include=".jscsrc" />
     <Content Include=".jshintrc" />
-    <Content Include="Scripts\CodeMirror\clike.min.js" />
-    <Content Include="Scripts\CodeMirror\css.min.js" />
-    <Content Include="Scripts\CodeMirror\htmlembedded.min.js" />
-    <Content Include="Scripts\CodeMirror\htmlmixed.min.js" />
-    <Content Include="Scripts\CodeMirror\javascript.min.js" />
-    <Content Include="Scripts\CodeMirror\sql.min.js" />
-    <Content Include="Scripts\CodeMirror\vb.min.js" />
-    <Content Include="Scripts\CodeMirror\xml.min.js" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\jquery-1.7.1.intellisense.min.js" />
     <Content Include="Scripts\jquery.cookie.min.js" />
@@ -923,15 +915,6 @@
     <None Include="Properties\PublishProfiles\abc.pubxml" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Content\QpCodemirror.css" />
-    <Content Include="Scripts\CodeMirror\clike.js" />
-    <Content Include="Scripts\CodeMirror\codemirror.min.js" />
-    <Content Include="Scripts\CodeMirror\css.js" />
-    <Content Include="Scripts\CodeMirror\htmlembedded.js" />
-    <Content Include="Scripts\CodeMirror\htmlmixed.js" />
-    <Content Include="Scripts\CodeMirror\javascript.js" />
-    <Content Include="Scripts\CodeMirror\sql.js" />
-    <Content Include="Scripts\CodeMirror\vb.js" />
-    <Content Include="Scripts\CodeMirror\xml.js" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\jquery.imgareaselect.js" />
     <Content Include="Scripts\jquery.imgareaselect.min.js" />
@@ -1935,7 +1918,7 @@
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.1\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.1\build\RazorGenerator.MsBuild.targets')" />
   <Target Name="AfterBuild">
     <ItemGroup>
-      <JS Include="**\*.js" Exclude="**\*.min.js;gulpfile.js;Content\ckeditor\*.js;Content\ckeditor\**\*.js;**\jquery-1.7.1.js;**\jquery.scrollTo-1.4.2.js;**\jquery.unobtrusive-ajax.js;**\jquery.validate.js;**\jquery.validate.unobtrusive.js;**\telerik.*.js;**\MicrosoftAjax.debug.js;**\MicrosoftAjax.js;**\MicrosoftMvcAjax.debug.js;**\MicrosoftMvcAjax.js;**\MicrosoftMvcValidation.js;**\MicrosoftMvcValidation.debug.js;**\CodeMirror\codemirror.min.js;**\jquery.imgareaselect.js;**\jquery.qtip.js;" />
+      <JS Include="**\*.js" Exclude="**\*.min.js;gulpfile.js;Content\ckeditor\*.js;Content\ckeditor\**\*.js;**\jquery-1.7.1.js;**\jquery.scrollTo-1.4.2.js;**\jquery.unobtrusive-ajax.js;**\jquery.validate.js;**\jquery.validate.unobtrusive.js;**\telerik.*.js;**\MicrosoftAjax.debug.js;**\MicrosoftAjax.js;**\MicrosoftMvcAjax.debug.js;**\MicrosoftMvcAjax.js;**\MicrosoftMvcValidation.js;**\MicrosoftMvcValidation.debug.js;**\CodeMirror\codemirror.min.js;**\codemirror\**\*.js;**\jquery.imgareaselect.js;**\jquery.qtip.js;" />
     </ItemGroup>
     <ItemGroup>
       <CSS Include="**\*.css" Exclude="**\*.min.css;Content\ckeditor\*.css;Content\ckeditor\**\*.css" />
