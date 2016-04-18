@@ -384,10 +384,11 @@ namespace Quantumart.QP8.DAL
             bool withAggregated)
         {
             var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
-            using (var cmd = SqlCommandFactory.Create(string.Format(@"
-                    declare @ids2 table (id numeric primary key)
+            using (var cmd = SqlCommandFactory.Create($@"
+                    declare @ids2 [Ids]
+                
                     insert into @ids2
-                    select id from {0}
+                    select id from {source}
 
                     declare @statusTypeId numeric
                     select @statusTypeId = status_type_id from status_type where status_type_name = 'Published' and site_id in (select site_id from content c inner join content_item ci with(nolock) on c.content_id = ci.content_id inner join @ids2 i on i.id = ci.content_item_id )
@@ -395,13 +396,9 @@ namespace Quantumart.QP8.DAL
                     update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 0;
                     update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId, schedule_new_version_publication = 1 where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 1;
                     delete i from @ids2 i inner join content_item ci with(nolock) on ci.content_item_id = i.id where ci.splitted = 0 and ci.schedule_new_version_publication = 0
-                    declare @id numeric
-                    while exists (select id from @ids2)
-                    begin
-                        select @id = id from @ids2
-                        exec qp_merge_article @id, @userId
-                        delete from @ids2 where id = @id
-                    end", source), connection
+
+                    exec qp_merge_articles @ids2
+                    ", connection
                 ))
             {
                 cmd.CommandType = CommandType.Text;
