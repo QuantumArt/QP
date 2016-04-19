@@ -201,9 +201,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\binaries\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
-    <Reference Include="Telerik.Windows.RadUploadHandler">
-      <HintPath>..\binaries\Telerik.Windows.RadUploadHandler.dll</HintPath>
-    </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\WebActivatorEx.2.1.0\lib\net40\WebActivatorEx.dll</HintPath>
       <Private>True</Private>
@@ -1766,7 +1763,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="ToCopy\bin\Quantumart.pdb" />
-    <Content Include="Upload\SilverlightUpload.xap" />
     <Content Include="Views\ArticleVersion\Compare.cshtml">
       <LastGenOutput>Compare.generated.cs</LastGenOutput>
     </Content>
@@ -2143,9 +2139,6 @@
   <ItemGroup>
     <Content Include="WebServices\NotificationWCFService.svc" />
     <Content Include="WebServices\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Upload\RadUploadHandler.ashx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\imgareaselectcss\" />

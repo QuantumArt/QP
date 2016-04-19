@@ -44,12 +44,6 @@
       <HintPath>..\packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Castle.Core">
-      <HintPath>..\binaries\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Castle.DynamicProxy2">
-      <HintPath>..\binaries\Castle.DynamicProxy2.dll</HintPath>
-    </Reference>
     <Reference Include="EFExtensions">
       <HintPath>..\binaries\EFExtensions.dll</HintPath>
     </Reference>
@@ -102,8 +96,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\binaries\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Moq">
-      <HintPath>..\binaries\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="QA.Validation.Xaml, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
