@@ -13,9 +13,20 @@
     <tags>QP8 Backend API</tags>
       <dependencies>
           <dependency id="Quantumart" version="2.0.0" />
+          <dependency id="AutoMapper" version="1.1.0" />
+          <dependency id="Unity" version="2.1.505" />
+          <dependency id="EnterpriseLibrary.Common" version="5.0.505" />
+          <dependency id="EnterpriseLibrary.Data" version="5.0.505" />
+          <dependency id="EnterpriseLibrary.ExceptionHandling" version="5.0.505" />
+          <dependency id="EnterpriseLibrary.ExceptionHandling.Logging" version="5.0.505" />
+          <dependency id="EnterpriseLibrary.Logging" version="5.0.505" />               
+          <dependency id="EnterpriseLibrary.Validation" version="5.0.505" />
       </dependencies>
   </metadata>
     <files>
-        <file src="bin\Release\*.dll" exclude="bin\Release\Quantumart.dll" target="lib\net45" />
+        <file src="bin\Release\Quantumart.QP8.*.dll" target="lib\net45" />
+        <file src="bin\Release\QA.*.dll" target="lib\net45" />
+        <file src="bin\Release\EFExtensions.dll" target="lib\net45" />
+        <file src="bin\Release\Irony.dll" target="lib\net45" />
     </files>
 </package>
