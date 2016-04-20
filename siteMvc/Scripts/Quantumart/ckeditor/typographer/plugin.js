@@ -124,7 +124,7 @@
         exec: function(editor) {
           var html, proccessedHtml;
 
-          if (editor.mode === 'source') {
+          if (editor.mode === 'source' && editor.textarea) {
             html = editor.textarea.getValue();
             proccessedHtml = processHtml(html, editor.config.useEnglishQuotes);
             editor.textarea.setValue(proccessedHtml);
