@@ -92,8 +92,9 @@
       <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="QA.Configuration">
-      <HintPath>..\binaries\QA.Configuration.dll</HintPath>
+    <Reference Include="QA.Configuration, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QA.Configuration.1.0.1.0\lib\net40\QA.Configuration.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="QA.Validation.Xaml">
       <HintPath>..\binaries\QA.Validation.Xaml.dll</HintPath>
