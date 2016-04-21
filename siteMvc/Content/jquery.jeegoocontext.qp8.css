@@ -1,4 +1,4 @@
-﻿UL.contextMenu, UL.contextMenu UL
+UL.contextMenu, UL.contextMenu UL
 {
 	position: absolute;
 	z-index: 9999;
@@ -18,7 +18,7 @@ UL.contextMenu LI.item
 	height: 22px;
 	vertical-align: top;
 	list-style: none none outside;
-	line-height: normal; 
+	line-height: normal;
 	font: normal 12px/23px "Segoe UI", Arial, sans-serif;
 	color: #000;
 	text-decoration: none;
@@ -82,4 +82,4 @@ UL.contextMenu LI.disabled
 .ie8 UL.contextMenu LI.item
 {
 	margin-top: -1px;
-} 
+}

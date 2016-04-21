@@ -1,144 +1,98 @@
 ﻿@using Quantumart.QP8.Utils
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.BLL
+@using Quantumart.QP8.WebMvc.ViewModels.HomePage;
 
-@model Quantumart.QP8.WebMvc.ViewModels.HomePage.IndexViewModel
+@model IndexViewModel
 
 @{
 	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <head>
-    <title>@Model.Title</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9"/>
-	  <link href="~/Content/QP8/favicon.ico" rel="shortcut icon"/>
+	<title>@Model.Title</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
+	<link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
-    @{
-        const string jsVersion = "6.21";
-        const string cssVersion = "6.3";
+	@{
+		const string jsVersion = "6.21";
+		var jsVersionFileName = $"Quantumart/version.{jsVersion}.js";
+	}
 
-        var allowCombineStylesheets = !HttpContext.Current.IsDebuggingEnabled;
-        var currentThemeName = Html.GetCurrentTheme();
-        var jsVersionFileName = $"Quantumart/version.{jsVersion}.js";
-        var cssVersionFileName = $"version.{cssVersion}.css";
-    }
-
-    @(Html.Telerik().StyleSheetRegistrar().StyleSheets(css => css
-          // Common Styles
-          .AddGroup("CommonStyles", g => g
-              .Add("basic.css")
-              .Add("page.css")
-              .Add("telerik.common.css")
-              .Add("jquery.nouislider.css")
-              .Add("jquery.qtip.css")
-              .Add("imgCropResizeClient.css")
-              .Add("imgareaselect.css")
-              .Add(cssVersionFileName)
-              .Combined(allowCombineStylesheets)
-          ).Add("~/Css/CustomCss/")
-
-          // Current Skin Styles
-          .AddGroup("CurrentSkinStyles", g => g
-              .Add("jquery.jeegoocontext." + currentThemeName + ".css")
-              .Add("telerik." + currentThemeName + ".css")
-              .Add(cssVersionFileName)
-              .Combined(allowCombineStylesheets)
-          )
-
-          // Codemirror Styles
-          .AddGroup("CodemirrorStyles", g => g
-              .Add("codemirror.css")
-              .Add("codemirrorTheme.css")
-              .Add("QpCodemirror.css")
-              .Add(cssVersionFileName)
-              .Combined(allowCombineStylesheets)
-          )))
+	<link rel="stylesheet" href="@Url.Content("~/Content/build/app.min.css")">
+	<link rel="stylesheet" href="@Url.Action("CustomCss", "Css")">
 </head>
 
 <body data-dbhash="@Model.DbHash">
-    <div id="page" class="twoColumnLayout">
-        <div id="header">
-            <div id="serviceActions">
-                @if (HttpContext.Current.IsDebuggingEnabled)
-                {
-                    <a href="javascript:void(0);" id="traceWindowLink" class="js">@GlobalStrings.ServiceActions_Link_TraceConsole</a>
-                }
+	<div id="page" class="twoColumnLayout">
+		<div id="header">
+			<div id="serviceActions">
+				@if (HttpContext.Current.IsDebuggingEnabled)
+				{
+					<a href="javascript:void(0);" id="traceWindowLink" class="js">@GlobalStrings.ServiceActions_Link_TraceConsole</a>
+				}
+			</div>
+
+			<div id="communicationMessage">
+				<span class="singleusermode"></span>
+			</div>
+
+			<div id="userInformation">
+				@GlobalStrings.UserInfo_Label_LoggedInAs <span data-userid="@QPContext.CurrentUserId" class="userName">@QPContext.CurrentUserName</span>
+				@Html.ActionLink(GlobalStrings.UserInfo_Link_Exit, "LogOut", "LogOn", null, new { @class = "signOut" })
+			</div>
+		</div>
+
+		@{Html.Telerik().Splitter()
+        .Name("splitter")
+        .Orientation(SplitterOrientation.Horizontal)
+        .Panes(panes =>
+        {
+	        panes.Add().Content(
+            @<div id="menuContainer" style="display:none;">
+						  <div class="lineTop"></div>
+							<em class="tl"></em>
+							<em class="tr"></em>
+							<em class="bl"></em>
+							<em class="br"></em>
+							<div id="tree">
+							  @(Html.Telerik().TreeView().Name("MainTreeMenu"))
+						  </div>
+							<div class="lineBottom"></div>
+						</div>)
+					.Size("270px")
+					.MinSize("50px")
+					.MaxSize("400px")
+					.Collapsible(false)
+					.Resizable(true)
+					.Scrollable(false)
+					.HtmlAttributes(new { id = "leftMenu", @class = "corners" });
+
+	        panes.Add().Content(
+            @<div>
+              <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
+              <div id="editingArea" class="corners"><div class="lineTop"></div>
+                <em class="tl"></em>
+                <em class="tr"></em>
+                <em class="bl"></em>
+                <em class="br"></em>
+                <div id="breadCrumbs"></div>
+                <div id="toolbar"><div id="actionToolbar"></div><div id="viewToolbar"></div></div>
+                <div id="document"><div id="context"></div><div id="search"></div></div>
+                <div class="lineBottom"></div>
+							</div>
             </div>
+          ).HtmlAttributes(new { id = "content", @class = "content" });
+        }).Render();
+		}
+	</div>
 
-            <div id="communicationMessage">
-                <span class="singleusermode"></span>
-            </div>
+	@{
+		var allowCombineScripts = !HttpContext.Current.IsDebuggingEnabled;
+	}
 
-            <div id="userInformation">
-                @GlobalStrings.UserInfo_Label_LoggedInAs <span data-userid="@QPContext.CurrentUserId" class="userName">@QPContext.CurrentUserName</span>
-                @Html.ActionLink(GlobalStrings.UserInfo_Link_Exit, "LogOut", "LogOn", null, new { @class = "signOut" })
-            </div>
-        </div>
-
-        @{Html.Telerik().Splitter()
-                                                            .Name("splitter")
-                                                            .Orientation(SplitterOrientation.Horizontal)
-                                                            .Panes(panes =>
-                                                            {
-                                                            panes.Add().Content(
-                                                                @<div id="menuContainer" style="display:none;">
-                                                                    <div class="lineTop"></div>
-                                                                    <em class="tl"></em>
-                                                                    <em class="tr"></em>
-                                                                    <em class="bl"></em>
-                                                                    <em class="br"></em>
-                                                                    <div id="tree">
-                                                                        @(Html.Telerik().TreeView().Name("MainTreeMenu"))
-                                                                    </div>
-                                                                    <div class="lineBottom"></div>
-                                                                </div>
-)
-                    .Size("270px")
-                    .MinSize("50px")
-                    .MaxSize("400px")
-                    .Collapsible(false)
-                    .Resizable(true)
-                    .Scrollable(false)
-                    .HtmlAttributes(new { id = "leftMenu", @class = "corners" });
-
-                                                            panes.Add().Content(
-                                                                @<div>
-                                                                    <div id="tabs">
-                                                                        <div class="tabStrip" id="MainTabStrip">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div id="editingArea" class="corners">
-                                                                        <div class="lineTop"></div>
-                                                                        <em class="tl"></em>
-                                                                        <em class="tr"></em>
-                                                                        <em class="bl"></em>
-                                                                        <em class="br"></em>
-                                                                        <div id="breadCrumbs">
-                                                                        </div>
-                                                                        <div id="toolbar">
-                                                                            <div id="actionToolbar"></div>
-                                                                            <div id="viewToolbar"></div>
-                                                                        </div>
-                                                                        <div id="document">
-                                                                            <div id="context"></div>
-                                                                            <div id="search"></div>
-                                                                        </div>
-                                                                        <div class="lineBottom"></div>
-                                                                    </div>
-                                                                </div>
-)
-                .HtmlAttributes(new { id = "content", @class = "content" });
-                                                            }).Render();
-        }
-    </div>
-
-    @{
-        var isDebugMode = HttpContext.Current.IsDebuggingEnabled;
-        var allowCombineScripts = !isDebugMode;
-    }
-
-@(Html.Telerik().ScriptRegistrar()
+	@(Html.Telerik().ScriptRegistrar()
       .DefaultGroup(g => g.Enabled(false))
         .Scripts(js => js.AddGroup("CommonLibraries", g => g
           .Add("es5-shim.js")
@@ -195,15 +149,15 @@
           .Add("Quantumart/JsLanguage.ashx")
           .Add("~/signalr/hubs")
           .AddGroup("CodeMirrorScripts", g => g
-              .Add("CodeMirror/codemirror.min.js")
-              .Add("Codemirror/sql.js")
-              .Add("CodeMirror/clike.js")
-              .Add("CodeMirror/vb.js")
-              .Add("CodeMirror/xml.js")
-              .Add("CodeMirror/css.js")
-              .Add("CodeMirror/htmlmixed.js")
-              .Add("CodeMirror/javascript.js")
-              .Add("CodeMirror/htmlembedded.js")
+              .Add("~/Content/codemirror/lib/codemirror.js")
+              .Add("~/Content/codemirror/mode/clike/clike.js")
+              .Add("~/Content/codemirror/mode/sql/sql.js")
+              .Add("~/Content/codemirror/mode/xml/xml.js")
+              .Add("~/Content/codemirror/mode/css/css.js")
+              .Add("~/Content/codemirror/mode/vb/vb.js")
+              .Add("~/Content/codemirror/mode/javascript/javascript.js")
+              .Add("~/Content/codemirror/mode/htmlmixed/htmlmixed.js")
+              .Add("~/Content/codemirror/mode/htmlembedded/htmlembedded.js")
               .Add(jsVersionFileName)
               .Combined(allowCombineScripts)
             ).AddGroup("PlUploadScripts", g => g
@@ -341,8 +295,8 @@
               .Combined(allowCombineScripts)
           )
       ).Globalization(true))
-    <script>
-      var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
-      var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
-    </script>
+	<script>
+	  var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
+	  var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
+	</script>
 </body>

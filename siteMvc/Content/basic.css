@@ -577,9 +577,6 @@ A.html:hover
 	    overflow: hidden;
 	}
 
-	.formLayout DIV.dataListWrapper
-	{
-	}
 	.formLayout UL.linkButtons, .documentWrapper ul.linkButtons
 	{
 		margin: 0 0 0.4em 0;
@@ -854,29 +851,29 @@ input[type="text"].readonly, textarea.readonly
 
 .toolbar .insertButton
 {
-    background-image: url('QP8/icons/16x16/insert_call.gif')!important;
+  background-image: url('QP8/icons/16x16/insert_call.gif')!important;
 }
 /*#endregion*/
 
 /*#region TabStrip*/
 .tabStrip
 {
-    margin: 0;
-    padding: 0;
-    height: 24px;
-    border: none;
+  margin: 0;
+  padding: 0;
+  height: 24px;
+  border: none;
 	color: #fff;
 	font: 12px/24px "Segoe UI", Arial, sans-serif;
 }
 
 .tabStrip DIV.scrollable
 {
-    float: left;
+  float: left;
 	position: relative;
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    overflow: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow: hidden;
 }
 
 .tabStrip UL.tabList
@@ -888,17 +885,17 @@ input[type="text"].readonly, textarea.readonly
 
 .tabStrip LI.tab
 {
-    float: left;
-    position: relative;
-    top: 0;
-    margin: 0;
-    padding: 0;
-    height: 24px;
-    border: none;
-    display: inline-block;
-    *display: inline;
-    zoom: 1;
-    list-style-type: none;
+  float: left;
+  position: relative;
+  top: 0;
+  margin: 0;
+  padding: 0;
+  height: 24px;
+  border: none;
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  list-style-type: none;
 	color: #fff;
 	font: 12px/24px "Segoe UI", Arial, sans-serif;
 	vertical-align: top;
@@ -1221,6 +1218,7 @@ input[type="text"].readonly, textarea.readonly
 	width: 14px;
 	height: 14px;
 	border: none;
+  display: block;
 }
 
 
@@ -1874,7 +1872,7 @@ DIV.fieldSearchContainerContent
 	height: 9px;
 	border: 1px solid #a5b3c5;
 	overflow: hidden;
-	background: #ebf5fb url(QP8/search_block/bottom_handle.png) no-repeat scroll center 2px;
+	background: #ebf5fb url('QP8/search_block/bottom_handle.png') no-repeat scroll center 2px;
 	cursor: s-resize;
 }
 .searchBottomHandle.active
