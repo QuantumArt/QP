@@ -16,7 +16,7 @@ namespace Quantumart.QP8.BLL.Mappers
         {
 			Mapper.CreateMap<DataRow, ActionPermissionTreeNode>()
 				.ForMember(biz => biz.Id, opt => opt.MapFrom(r => r.Field<int>("ID")))
-				.ForMember(biz => biz.Text, opt => opt.MapFrom(FormatText));
+				.ForMember(biz => biz.Text, opt => opt.MapFrom(r => FormatText(r)));
 
 		}
 

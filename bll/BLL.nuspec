@@ -8,14 +8,27 @@
     <owners>Quantum Art</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Internal QP8 API, that could help to write custom administrative modules for QP8</description>
-    <releaseNotes>Initial Release</releaseNotes>
+    <releaseNotes>References for QA.Validation has been moved to nuget</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>QP8 Backend API</tags>
       <dependencies>
           <dependency id="Quantumart" version="2.0.0" />
+          <dependency id="QA.Configuration" version="1.0.1" />
+          <dependency id="QA.Validation.Xaml" version="1.0.2" />    
+          <dependency id="QA.Validation.Xaml.Extensions" version="1.0.2" />
+          <dependency id="AutoMapper" version="1.1.0" />
+          <dependency id="Unity" version="2.1.505" />
+          <dependency id="EnterpriseLibrary.Common" version="5.0.505" />
+          <dependency id="EnterpriseLibrary.Data" version="5.0.505" />
+          <dependency id="EnterpriseLibrary.ExceptionHandling" version="5.0.505" />
+          <dependency id="EnterpriseLibrary.ExceptionHandling.Logging" version="5.0.505" />
+          <dependency id="EnterpriseLibrary.Logging" version="5.0.505" />               
+          <dependency id="EnterpriseLibrary.Validation" version="5.0.505" />
       </dependencies>
   </metadata>
     <files>
-        <file src="bin\Release\*.dll" exclude="bin\Release\Quantumart.dll" target="lib\net45" />
+        <file src="bin\Release\Quantumart.QP8.*.dll" target="lib\net45" />
+        <file src="bin\Release\EFExtensions.dll" target="lib\net45" />
+        <file src="bin\Release\Irony.dll" target="lib\net45" />
     </files>
 </package>

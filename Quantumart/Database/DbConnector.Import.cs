@@ -36,7 +36,7 @@ namespace Quantumart.QPublishing.Database
             var fullUpdate = (attrIds == null || attrIds.Length == 0) && overrideMissedFields;
 
 
-            var enumerable = values as Dictionary<string, string>[] ?? values.ToArray();
+            var enumerable = values?.ToArray() ?? new Dictionary<string, string>[0];
             var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
             if (!overrideMissedFields && attrIds == null)
             {

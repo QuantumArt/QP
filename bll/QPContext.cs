@@ -175,14 +175,13 @@ namespace Quantumart.QP8.BLL
                 if (GetContentCache() == null)
                     SetContentCache(ContentRepository.GetAll().ToDictionary(n => n.Id));
 
-                IEnumerable<Field> fields = null;
+                IEnumerable<Field> fields = new Field[0];
                 if (GetFieldCache() == null || GetContentFieldCache() == null)
                     fields = FieldRepository.GetAll();
 
-                var enumerable = fields as Field[] ?? fields.ToArray();
                 if (GetFieldCache() == null)
                 {
-                    SetFieldCache(enumerable.ToDictionary(n => n.Id));
+                    SetFieldCache(fields.ToDictionary(n => n.Id));
                 }
 
                 if (GetStatusTypeCache() == null)
@@ -198,7 +197,7 @@ namespace Quantumart.QP8.BLL
                 if (GetContentFieldCache() == null)
                 {
                     var dict = new Dictionary<int, List<int>>();
-                    foreach (var item in enumerable)
+                    foreach (var item in fields)
                     {
                         if (dict.ContainsKey(item.ContentId))
                             dict[item.ContentId].Add(item.Id);

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using QA.Validation.Xaml.ListTypes;
 
 namespace Quantumart.QP8.Constants
 {
