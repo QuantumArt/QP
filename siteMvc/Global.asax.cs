@@ -27,6 +27,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using AutoMapper;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -76,10 +77,24 @@ namespace Quantumart.QP8.WebMvc
             RegisterValueProviders();
         }
 
+
+        internal static void UnregisterRoutes()
+        {
+            RouteTable.Routes.Clear();
+        }
+        internal static void UnregisterValueProviders()
+        {
+            ValueProviderFactories.Factories.Clear();
+        }
         internal static void RegisterValueProviders()
         {
             ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().FirstOrDefault());
             ValueProviderFactories.Factories.Add(new JsonNetValueProviderFactory());
+        }
+
+        internal static void UnregisterModelValidatorProviders()
+        {
+            ModelValidatorProviders.Providers.Clear();
         }
 
         internal static void RegisterModelValidatorProviders()
@@ -100,6 +115,11 @@ namespace Quantumart.QP8.WebMvc
         {
             ViewModelMapper.CreateAllMappings();
             DTOMapper.CreateAllMappings();
+        }
+
+        internal static void UnregisterModelBinders()
+        {
+            ModelBinders.Binders.Clear();
         }
 
         internal static void RegisterModelBinders()

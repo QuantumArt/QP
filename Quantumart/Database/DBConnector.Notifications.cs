@@ -141,9 +141,8 @@ namespace Quantumart.QPublishing.Database
             {
                 var rstNotifications = GetNotificationsTable(notificationOn, contentItemId);
                 var hasUseServiceColumn = rstNotifications.Columns.Contains("USE_SERVICE");
-                var notifications = rstNotifications.Rows.Cast<DataRow>();
-                var enumerable = notifications as DataRow[] ?? notifications.ToArray();
-                var externalNotifications = enumerable.Where(n => (bool)n["is_external"]);
+                var notifications = rstNotifications.Rows.Cast<DataRow>().ToArray();
+                var externalNotifications = notifications.Where(n => (bool)n["is_external"]);
                 var dataRows = externalNotifications as DataRow[] ?? externalNotifications.ToArray();
                 if (dataRows.Any())
                 {
@@ -157,7 +156,7 @@ namespace Quantumart.QPublishing.Database
 
                 }
 
-                var internalNotifications = enumerable.Except(dataRows);
+                var internalNotifications = notifications.Except(dataRows);
 
                 if (Strings.LCase(AppSettings["MailComponent"]) == "qa_mail" || string.IsNullOrEmpty(AppSettings["MailHost"]))
                 {

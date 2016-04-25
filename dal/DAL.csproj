@@ -43,12 +43,33 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\binaries\EFExtensions.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\binaries\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.Unity.Configuration">
-      <HintPath>..\binaries\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Data, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -104,6 +125,7 @@
       <LastGenOutput>QP8Model.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <None Include="ClassDiagram1.cd" />
+    <None Include="packages.config" />
     <None Include="QP8Model.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>QP8Model.cs</LastGenOutput>
@@ -118,9 +140,25 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\data.sql" />
+    <Content Include="scripts\EFTablesViews\1_ef_base.sql" />
+    <Content Include="scripts\EFTablesViews\2_link_tables.sql" />
+    <Content Include="scripts\EFTablesViews\3_ti_item_to_item.sql" />
+    <Content Include="scripts\EFTablesViews\4_td_item_to_item.sql" />
+    <Content Include="scripts\EFTablesViews\5_ti_item_link_async.sql" />
+    <Content Include="scripts\EFTablesViews\6_td_item_link_async.sql" />
     <Content Include="scripts\fix_dbo.sql" />
     <Content Include="scripts\fix_dbo_old.sql" />
     <Content Include="scripts\max.temp.fix_dbo.sql" />
+    <Content Include="scripts\MultipleUpdate\1_qp_get_m2o_ids_multiple.sql" />
+    <Content Include="scripts\MultipleUpdate\2_qp_create_content_item_versions.sql" />
+    <Content Include="scripts\MultipleUpdate\3_qp_split_articles.sql" />
+    <Content Include="scripts\MultipleUpdate\4_qp_merge_links_multiple.sql" />
+    <Content Include="scripts\MultipleUpdate\5_qp_merge_articles.sql" />
+    <Content Include="scripts\MultipleUpdate\6_qp_assert_num_equal.sql" />
+    <Content Include="scripts\MultipleUpdate\tests\test.sql" />
+    <Content Include="scripts\MultipleUpdate\tests\test2.sql" />
+    <Content Include="scripts\MultipleUpdate\tests\test3.sql" />
+    <Content Include="scripts\MultipleUpdate\tests\test4.sql" />
     <Content Include="scripts\schema.sql" />
     <Content Include="scripts\undo_to_previous.sql" />
   </ItemGroup>
@@ -142,6 +180,7 @@
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

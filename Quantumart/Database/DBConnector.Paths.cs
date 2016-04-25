@@ -213,6 +213,11 @@ namespace Quantumart.QPublishing.Database
             return GetUploadDir(siteId) + "\\contents\\" + contentId;
         }
 
+        public string GetContentLibraryDirectory(int contentId)
+        {
+            return GetContentLibraryDirectory(GetSiteIdByContentId(contentId), contentId);
+        }
+
         #endregion
 
         #region Content URL

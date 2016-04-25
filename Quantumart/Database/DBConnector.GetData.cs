@@ -70,21 +70,28 @@ namespace Quantumart.QPublishing.Database
 
         public DataTable GetRealData(SqlCommand cmd)
         {
-            var connection = GetActualSqlConnection();
+            return GetRealData(cmd, GetActualSqlConnection(), GetActualSqlTransaction(), NeedToDisposeActualSqlConnection);
+        }
+
+        public DataTable GetRealData(SqlCommand cmd, SqlConnection cnn, SqlTransaction tr, bool disposeConnection)
+        {
             try
             {
-                if (connection.State == ConnectionState.Closed)
-                    connection.Open();
+                if (cnn.State == ConnectionState.Closed)
+                    cnn.Open();
 
-                cmd.Connection = connection;
-                cmd.Transaction = GetActualSqlTransaction();
-                var adapter = new SqlDataAdapter {SelectCommand = cmd};
+                cmd.Connection = cnn;
+                cmd.Transaction = tr;
+                var adapter = new SqlDataAdapter
+                {
+                    SelectCommand = cmd
+                };
                 return GetFilledDataTable(adapter);
             }
             finally
             {
-                if (NeedToDisposeActualSqlConnection)
-                    connection.Dispose();
+                if (disposeConnection)
+                    cnn.Dispose();
             }
         }
 
@@ -516,20 +523,24 @@ namespace Quantumart.QPublishing.Database
 
         public void ProcessData(SqlCommand command)
         {
-            var connection = GetActualSqlConnection();
+            ProcessData(command, GetActualSqlConnection(), GetActualSqlTransaction(), NeedToDisposeActualSqlConnection);
+        }
+
+        public void ProcessData(SqlCommand command, SqlConnection cnn, SqlTransaction tr, bool disposeConnection)
+        {
             try
             {
-                if (connection.State == ConnectionState.Closed)
-                    connection.Open();
+                if (cnn.State == ConnectionState.Closed)
+                    cnn.Open();
 
-                command.Connection = connection;
-                command.Transaction = GetActualSqlTransaction();
+                command.Connection = cnn;
+                command.Transaction = tr;
                 command.ExecuteNonQuery();
             }
             finally
             {
-                if (NeedToDisposeActualSqlConnection)
-                    connection.Dispose();
+                if (disposeConnection)
+                    cnn.Dispose();
             }
         }
 
