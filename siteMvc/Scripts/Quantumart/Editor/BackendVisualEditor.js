@@ -43,6 +43,9 @@
           classes: true
         }
       },
+      fillEmptyBlocks: false,
+      forcePasteAsPlainText: true,
+      tabSpaces: 0,
       extraAllowedContent: 'replacement',
       height: opts.height || defaultConfig.height,
       resize_dir: 'both',
@@ -81,8 +84,20 @@
         ev.editor.dataProcessor.dataFilter.addRules({
           elements: {
             br: function(element) {
-              if (element.name === 'br' && (!element.next || element.next._.isBlockLike)) {
-                new CKEDITOR.htmlParser.text('&nbsp;').insertAfter(element);
+              if (!element.previous && !element.next && element.name === 'br') {
+                element = undefined;
+                return;
+              }
+
+              if (element.name === 'br' && element.next) {
+                if (element.next.name === 'br') {
+                  return;
+                }
+
+                if(element.next._.isBlockLike) {
+                  new CKEDITOR.htmlParser.text('&nbsp;').insertAfter(element);
+                  return;
+                }
               }
             }
           }
