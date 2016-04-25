@@ -52,7 +52,11 @@
               .Add("QpCodemirror.css")
               .Add(cssVersionFileName)
               .Combined(allowCombineStylesheets)
-          )))
+	      )))
+
+	<script>
+		window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
+	</script>
 </head>
 
 <body data-dbhash="@Model.DbHash">
@@ -362,10 +366,9 @@
               .Combined(allowCombineScripts)
           )
       ).Globalization(true))
-<script type="text/javascript">
-      //<![CDATA[
-      var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
-      var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
-      //]]>
-    </script>
+
+<script>
+  var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
+	var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
+</script>
 </body>

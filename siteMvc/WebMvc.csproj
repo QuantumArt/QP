@@ -72,7 +72,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -1929,7 +1929,7 @@
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.1\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.1\build\RazorGenerator.MsBuild.targets')" />
   <Target Name="AfterBuild">
     <ItemGroup>
-      <JS Include="**\*.js" Exclude="**\*.min.js;gulpfile.js;Content\ckeditor\*.js;Content\ckeditor\**\*.js;**\jquery-1.7.1.js;**\jquery.scrollTo-1.4.2.js;**\jquery.unobtrusive-ajax.js;**\jquery.validate.js;**\jquery.validate.unobtrusive.js;**\telerik.*.js;**\MicrosoftAjax.debug.js;**\MicrosoftAjax.js;**\MicrosoftMvcAjax.debug.js;**\MicrosoftMvcAjax.js;**\MicrosoftMvcValidation.js;**\MicrosoftMvcValidation.debug.js;**\CodeMirror\codemirror.min.js;**\codemirror\**\*.js;**\jquery.imgareaselect.js;**\jquery.qtip.js;" />
+      <JS Include="**\*.js" Exclude="**\*.min.js;gulpfile.js;Content\ckeditor\**\*.js;Content\codemirror\**\*.js;**\jquery-1.7.1.js;**\jquery.scrollTo-1.4.2.js;**\jquery.unobtrusive-ajax.js;**\jquery.validate.js;**\jquery.validate.unobtrusive.js;**\telerik.*.js;**\MicrosoftAjax.debug.js;**\MicrosoftAjax.js;**\MicrosoftMvcAjax.debug.js;**\MicrosoftMvcAjax.js;**\MicrosoftMvcValidation.js;**\MicrosoftMvcValidation.debug.js;**\jquery.imgareaselect.js;**\jquery.qtip.js;" />
     </ItemGroup>
     <ItemGroup>
       <CSS Include="**\*.css" Exclude="**\*.min.css;Content\ckeditor\*.css;Content\ckeditor\**\*.css" />
