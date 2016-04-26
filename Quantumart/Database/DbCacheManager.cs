@@ -345,12 +345,13 @@ namespace Quantumart.QPublishing.Database
         {
             var sb = new StringBuilder();
             sb.Append("SELECT C.SITE_ID, AT.TYPE_NAME, AT.DATABASE_TYPE, AT.INPUT_TYPE, CA.ATTRIBUTE_ID, CA.CONTENT_ID, CA.ATTRIBUTE_NAME, CA.NET_ATTRIBUTE_NAME, ");
-            sb.Append(" CA.INPUT_MASK, CA.ATTRIBUTE_SIZE, CA.DEFAULT_VALUE, CA.ATTRIBUTE_TYPE_ID, CA.INDEX_FLAG, CA.ATTRIBUTE_ORDER, CA.DESCRIPTION, ");
+            sb.Append(" CA.INPUT_MASK, CA.ATTRIBUTE_SIZE, CASE WHEN ca.link_id is not null THEN dbo.qp_default_link_ids(CA.ATTRIBUTE_ID) WHEN ca.attribute_type_id in (9, 10) THEN convert(nvarchar(max), ca.DEFAULT_BLOB_VALUE) ELSE ca.DEFAULT_VALUE END as DEFAULT_VALUE, ");
+            sb.Append(" CA.ATTRIBUTE_TYPE_ID, CA.INDEX_FLAG, CA.ATTRIBUTE_ORDER, CA.DESCRIPTION, ");
             sb.Append(" CA.REQUIRED, CA.IS_CLASSIFIER, CA.AGGREGATED, CA.READONLY_FLAG, CA.RELATED_IMAGE_ATTRIBUTE_ID, CA.PERSISTENT_ATTR_ID, CA.JOIN_ATTR_ID, CA.LINK_ID, CA.USE_SITE_LIBRARY, CA.SUBFOLDER, CA.DISABLE_VERSION_CONTROL, ");
             sb.Append(" DIA.WIDTH, DIA.HEIGHT, DIA.TYPE, DIA.QUALITY, DIA.MAX_SIZE, DIA.ATTRIBUTE_ID AS DYNAMIC_IMAGE_ATTRIBUTE_ID, ");
             sb.Append(" S.USE_SITE_LIBRARY AS SOURCE_USE_SITE_LIBRARY, S.CONTENT_ID AS SOURCE_CONTENT_ID, ");
             sb.Append(" CA.BACK_RELATED_ATTRIBUTE_ID AS BASE_RELATION_ATTRIBUTE_ID, RCA.CONTENT_ID AS BASE_RELATION_CONTENT_ID, RCA.ATTRIBUTE_NAME AS BASE_RELATION_ATTRIBUTE_NAME, ");
-            sb.Append(" CL.LINKED_CONTENT_ID, COALESCE(RA.CONTENT_ID, CL.LINKED_CONTENT_ID, RCA.CONTENT_ID) AS RELATED_CONTENT_ID");
+            sb.Append(" CL.LINKED_CONTENT_ID, COALESCE(RA.CONTENT_ID, CL.LINKED_CONTENT_ID, RCA.CONTENT_ID) AS RELATED_CONTENT_ID, CCR.CONSTRAINT_ID");
             sb.Append(" FROM CONTENT_ATTRIBUTE AS CA WITH(NOLOCK) ");
             sb.Append(" INNER JOIN ATTRIBUTE_TYPE AS AT WITH(NOLOCK) ON AT.ATTRIBUTE_TYPE_ID=CA.ATTRIBUTE_TYPE_ID ");
             sb.Append(" INNER JOIN CONTENT AS C WITH(NOLOCK) ON C.CONTENT_ID = CA.CONTENT_ID ");
@@ -358,6 +359,7 @@ namespace Quantumart.QPublishing.Database
             sb.Append(" LEFT JOIN CONTENT_ATTRIBUTE S ON CA.PERSISTENT_ATTR_ID = S.ATTRIBUTE_ID ");
             sb.Append(" LEFT JOIN CONTENT_ATTRIBUTE RA ON CA.RELATED_ATTRIBUTE_ID = RA.ATTRIBUTE_ID ");
             sb.Append(" LEFT JOIN CONTENT_ATTRIBUTE RCA ON CA.BACK_RELATED_ATTRIBUTE_ID = RCA.ATTRIBUTE_ID ");
+            sb.Append(" LEFT JOIN CONTENT_CONSTRAINT_RULE CCR ON CA.ATTRIBUTE_ID = CCR.ATTRIBUTE_ID ");
             sb.Append(" LEFT JOIN CONTENT_LINK CL ON CA.LINK_ID = CL.LINK_ID AND CA.CONTENT_ID = CL.CONTENT_ID");
 
             return sb.ToString();
@@ -649,6 +651,7 @@ namespace Quantumart.QPublishing.Database
                         UseSiteLibrary = (bool)row["USE_SITE_LIBRARY"],
                         DbTypeName = row["DATABASE_TYPE"].ToString().ToUpperInvariant(),
                         RelatedImageId = (int?)CastDbNull.To<decimal?>(row["RELATED_IMAGE_ATTRIBUTE_ID"]),
+                        ConstraintId = (int?)CastDbNull.To<decimal?>(row["CONSTRAINT_ID"]),
                         RelatedContentId = (int?)CastDbNull.To<decimal?>(row["RELATED_CONTENT_ID"]),
                         DefaultValue = row["DEFAULT_VALUE"].ToString(),
                         LinkId = (int?)CastDbNull.To<decimal?>(row["LINK_ID"]),

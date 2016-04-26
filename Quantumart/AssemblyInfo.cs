@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 // Review the values of the assembly attributes
 
 [assembly: AssemblyTitle("Quantumart")]
-[assembly: AssemblyDescription("Basic QP features")]
+[assembly: AssemblyDescription("Basic features for QP8 clients")]
 [assembly: AssemblyCompany("Quantum Art")]
 [assembly: AssemblyProduct("QP7.Framework (QP8.Framework)")]
 [assembly: AssemblyCopyright("Copyright © 2007-2016 Quantum Art")]

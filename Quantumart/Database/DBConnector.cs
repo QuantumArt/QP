@@ -13,6 +13,7 @@ using System.Xml;
 using System.Linq;
 using Microsoft.Win32;
 using Microsoft.VisualBasic;
+using Quantumart.QPublishing.FileSystem;
 using Quantumart.QPublishing.Helpers;
 using Quantumart.QPublishing.Info;
 using Quantumart.QPublishing.Resizer;
@@ -63,33 +64,9 @@ namespace Quantumart.QPublishing.Database
 
         public bool CacheData { get; set; }
 
-        private bool _updateManyToMany;
-        public bool UpdateManyToMany 
-        { 
-            get
-            {
-                return _updateManyToMany;
-            }
-            set
-            {
-                _updateManyToMany = value;
-                _updateManyToOne = value; // backward compatibility, should be removed later
-            }
-        }
+        public bool UpdateManyToMany { get; set; }
 
-        private bool _updateManyToOne;
-        public bool UpdateManyToOne
-        {
-            get
-            {
-                return _updateManyToOne;
-            }
-            set
-            {
-                _updateManyToOne = value;
-            }	
-        }
-
+        public bool UpdateManyToOne { get; set; }
 
         public bool ThrowNotificationExceptions { get; set; }
 
@@ -116,7 +93,40 @@ namespace Quantumart.QPublishing.Database
 
         public IDbTransaction ExternalTransaction { get; set; }
 
-        private bool NeedToDisposeActualSqlConnection => ExternalConnection == null;
+        private IDbConnection InternalConnection { get; set; }
+
+        private IDbTransaction InternalTransaction { get; set; }
+
+        private void CreateInternalConnection(bool withTransaction)
+        {
+            InternalConnection = GetActualSqlConnection();
+            if (InternalConnection.State == ConnectionState.Closed)
+                InternalConnection.Open();
+            if (withTransaction)
+            {
+                var extTr = GetActualSqlTransaction();
+                InternalTransaction = extTr ?? InternalConnection.BeginTransaction();
+            }
+        }
+
+        private void CommitInternalTransaction()
+        {
+            if (ExternalTransaction == null)
+                InternalTransaction.Commit();
+        }
+
+        private void DisposeInternalConnection()
+        {
+            if (ExternalConnection == null)
+            {
+                InternalConnection.Dispose();
+                InternalConnection = null;
+                InternalTransaction = null;
+            }
+        }
+
+
+        private bool NeedToDisposeActualSqlConnection => ExternalConnection == null && InternalConnection == null;
 
         private string _instanceCachePrefix;
         public string InstanceCachePrefix => _instanceCachePrefix ?? (_instanceCachePrefix = ExtractCachePrefix(InstanceConnectionString));
@@ -125,8 +135,7 @@ namespace Quantumart.QPublishing.Database
 
         public static NameValueCollection AppSettings => ConfigurationManager.AppSettings;
 
-        private DynamicImage _dynamicImageCreator;
-        private DynamicImage DynamicImageCreator => _dynamicImageCreator ?? (_dynamicImageCreator = new DynamicImage());
+        public IDynamicImage DynamicImageCreator { get; set; }
 
         private bool? _isStage;
         public bool IsStage
@@ -152,6 +161,8 @@ namespace Quantumart.QPublishing.Database
             }
 
         }
+
+        public IFileSystem FileSystem { get; set; }
 
         internal string UploadPlaceHolder => "<%=upload_url%>";
 
@@ -190,6 +201,8 @@ namespace Quantumart.QPublishing.Database
 
             CustomConnectionString = strConnectionString;
             CacheManager = new DbCacheManager(this);
+            FileSystem = new RealFileSystem();
+            DynamicImageCreator = new DynamicImage();
         }
 
         public DBConnector(IDbConnection connection)
@@ -369,8 +382,7 @@ namespace Quantumart.QPublishing.Database
 
         private SqlConnection GetActualSqlConnection(string internalConnectionString)
         {
-            var result = ExternalConnection as SqlConnection ?? new SqlConnection(internalConnectionString);
-            return result;
+            return (InternalConnection ?? ExternalConnection) as SqlConnection ?? new SqlConnection(internalConnectionString);
         }
 
         private SqlConnection GetActualSqlConnection()
@@ -380,7 +392,7 @@ namespace Quantumart.QPublishing.Database
 
         private SqlTransaction GetActualSqlTransaction()
         {
-            return ExternalTransaction as SqlTransaction;
+            return (InternalTransaction ?? ExternalTransaction) as SqlTransaction;
         }
 
         #region site

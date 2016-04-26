@@ -43,6 +43,14 @@
           classes: true
         }
       },
+      codemirror: {
+        tabSize: 2,
+        indentUnit: 2,
+        smartIndent: false,
+        indentWithTabs: false
+      },
+      fillEmptyBlocks: false,
+      forcePasteAsPlainText: true,
       extraAllowedContent: 'replacement',
       height: opts.height || defaultConfig.height,
       resize_dir: 'both',
@@ -77,20 +85,9 @@
     });
 
     config.on = {
-      pluginsLoaded: function(ev) {
-        ev.editor.dataProcessor.dataFilter.addRules({
-          elements: {
-            br: function(element) {
-              if (element.name === 'br' && (!element.next || element.next._.isBlockLike)) {
-                new CKEDITOR.htmlParser.text('&nbsp;').insertAfter(element);
-              }
-            }
-          }
-        });
-      },
       instanceReady: function(ev) {
         ev.editor.filter.addElementCallback(function(el) {
-          // disable attr <--> style transformations
+          // disable attributes to/from style transformations
           if (el.name === 'table' || el.name === 'img') {
             return CKEDITOR.FILTER_SKIP_TREE;
           }
@@ -101,7 +98,6 @@
           CKEDITOR.dtd.$block,
           CKEDITOR.dtd.$listItem,
           CKEDITOR.dtd.$tableContent)).forEach(function(key) {
-          // stop form@t$_#$*&^%... html source code
           this.dataProcessor.writer.setRules(key, {
             indent: false,
             breakBeforeOpen: true,
@@ -110,6 +106,30 @@
             breakAfterClose: false
           });
         }, this);
+
+        this.dataProcessor.writer.setRules('html', {
+          indent: true,
+          breakBeforeOpen: true,
+          breakAfterOpen: true,
+          breakBeforeClose: true,
+          breakAfterClose: true
+        });
+
+        this.dataProcessor.writer.setRules('head', {
+          indent: true,
+          breakBeforeOpen: true,
+          breakAfterOpen: true,
+          breakBeforeClose: true,
+          breakAfterClose: true
+        });
+
+        this.dataProcessor.writer.setRules('body', {
+          indent: true,
+          breakBeforeOpen: true,
+          breakAfterOpen: true,
+          breakBeforeClose: true,
+          breakAfterClose: true
+        });
 
         this.dataProcessor.writer.setRules('br', {
           indent: false,

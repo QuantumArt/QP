@@ -17,213 +17,194 @@ Quantumart.QP8.BackendPopupWindowManager.prototype = {
     _popupWindows: {},
     _hostStateStorage: null,
 
-	generatePopupWindowId: function () {
-		var popupWindowNumber = 1;
-		var popupWindows = this._popupWindows;
+    generatePopupWindowId: function () {
+        var popupWindowNums = Object.keys(this._popupWindows).map(
+            function(value) {
+                var matches = value.match("^win([0-9]+)$");
+                return (matches && matches.length === 2) ? matches[1] : 0;
+            });
+        var maxNumber = (popupWindowNums.length > 0) ? Math.max.apply(null, popupWindowNums) : 0;
+        return String.format("win{0}", maxNumber + 1);
+    },
 
-		if ($q.getHashKeysCount(popupWindows) > 0) {
-			var popupWindowIDs = [];
+    generatePopupWindowTitle: function (eventArgs) {
+        var popupWindowTitle = Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { "isTab": false });
+        return popupWindowTitle;
+    },
 
-			for (var popupWindowId in popupWindows) {
-				Array.add(popupWindowIDs, popupWindowId)
-			}
+    getAllPopupWindows: function () {
+        var popupWindowsHash = this._popupWindows;
+        var popupWindows = [];
 
-			var sortedPopupWindowIDs = popupWindowIDs.sort();
-			var lastPopupWindowId = sortedPopupWindowIDs[sortedPopupWindowIDs.length - 1];
-			var numberMatch = lastPopupWindowId.match("[0-9]+");
+        for (var popupWindowId in popupWindowsHash) {
+            Array.add(popupWindows, popupWindowsHash[popupWindowId]);
+        }
 
-			if (numberMatch.length == 1) {
-				popupWindowNumber = parseInt(numberMatch[0]) + 1;
-			}
-			else {
-				alert($l.PopupWindow.popupWindowIdGenerationErrorMessage);
-				return null;
-			}
-		}
+        return popupWindows;
+    },
 
-		var popupWindowId = String.format("win{0}", popupWindowNumber);
+    getPopupWindow: function (popupWindowId) {
+        var popupWindow = null;
 
-		return popupWindowId;
-	},
+        if (this._popupWindows[popupWindowId]) {
+            popupWindow = this._popupWindows[popupWindowId];
+        }
 
-	generatePopupWindowTitle: function (eventArgs) {
-		var popupWindowTitle = Quantumart.QP8.BackendDocumentHost.generateTitle(eventArgs, { "isTab": false });
-		return popupWindowTitle;
-	},
+        return popupWindow;
+    },
 
-	getAllPopupWindows: function () {
-		var popupWindowsHash = this._popupWindows;
-		var popupWindows = [];
+    getPopupWindowByEventArgs: function (eventArgs) {
+        return jQuery.grep(this.getAllPopupWindows(), function (w) {
+            return w.get_entityTypeCode() == eventArgs.get_entityTypeCode() &&
+                    w.get_entityId() == eventArgs.get_entityId() &&
+                    w.get_actionCode() == eventArgs.get_actionCode();
+        });
+    },
 
-		for (var popupWindowId in popupWindowsHash) {
-			Array.add(popupWindows, popupWindowsHash[popupWindowId]);
-		}
+    createPopupWindow: function (eventArgs, options) {
+        var popupWindowId = options ? options.popupWindowId : "";
+        if ($q.isNullOrWhiteSpace(popupWindowId)) {
+            popupWindowId = this.generatePopupWindowId();
+        }
 
-		return popupWindows;
-	},
+        if (this._popupWindows[popupWindowId]) {
+            alert($l.PopupWindow.popupWindowIdNotUniqueErrorMessage);
+            return null;
+        }
 
-	getPopupWindow: function (popupWindowId) {
-		var popupWindow = null;
+        jQuery.extend(options,
+        {
+            width: eventArgs.get_windowWidth(),
+            height: eventArgs.get_windowHeight(),
+            hostStateStorage: this._hostStateStorage
+        });
 
-		if (this._popupWindows[popupWindowId]) {
-			popupWindow = this._popupWindows[popupWindowId];
-		}
+        var popupWindow = new Quantumart.QP8.BackendPopupWindow(popupWindowId, eventArgs, options);
+        popupWindow.set_popupWindowManager(this);
+        popupWindow.initialize();
 
-		return popupWindow;
-	},
+        this._popupWindows[popupWindowId] = popupWindow;
 
-	getPopupWindowByEventArgs: function (eventArgs) {
-		return jQuery.grep(this.getAllPopupWindows(), function (w) {
-			return w.get_entityTypeCode() == eventArgs.get_entityTypeCode() &&
-					w.get_entityId() == eventArgs.get_entityId() &&
-					w.get_actionCode() == eventArgs.get_actionCode();
-		});
-	},
+        return popupWindow;
+    },
 
-	createPopupWindow: function (eventArgs, options) {
-		var popupWindowId = options ? options.popupWindowId : "";
-		if ($q.isNullOrWhiteSpace(popupWindowId)) {
-			popupWindowId = this.generatePopupWindowId();
-		}
+    openPopupWindow: function (eventArgs) {
+        var popupWindow = this.createPopupWindow(eventArgs, {});
+        popupWindow.openWindow();
 
-		if (this._popupWindows[popupWindowId]) {
-			alert($l.PopupWindow.popupWindowIdNotUniqueErrorMessage);
-			return null;
-		}
+        return popupWindow;
+    },
 
-		jQuery.extend(options,
-		{
-			width: eventArgs.get_windowWidth(),
-			height: eventArgs.get_windowHeight(),
-			hostStateStorage: this._hostStateStorage
-		});
+    removePopupWindow: function (popupWindowId) {
+        $q.removeProperty(this._popupWindows, popupWindowId);
+    },
 
-		var popupWindow = new Quantumart.QP8.BackendPopupWindow(popupWindowId, eventArgs, options);
-		popupWindow.set_popupWindowManager(this);
-		popupWindow.initialize();
+    destroyPopupWindow: function (popupWindowId) {
+        var popupWindow = this._popupWindows[popupWindowId];
 
-		this._popupWindows[popupWindowId] = popupWindow;
+        if (popupWindow != null) {
+            if (popupWindow.dispose) {
+                popupWindow.dispose();
+            }
+            popupWindow = null;
+        }
+    },
 
-		return popupWindow;
-	},
+    closeNotExistentPopupWindows: function () {
+        var popupWindows = this.getAllPopupWindows();
 
-	openPopupWindow: function (eventArgs) {
-		var popupWindow = this.createPopupWindow(eventArgs, {});
-		popupWindow.openWindow();
+        for (var popupWindowIndex = 0, popupWindowCount = popupWindows.length; popupWindowIndex < popupWindowCount; popupWindowIndex++) {
+            var popupWindow = popupWindows[popupWindowIndex];
 
-		return popupWindow;
-	},
+            var entityTypeCode = popupWindow.get_entityTypeCode();
+            var entityId = popupWindow.get_entityId();
+            var actionTypeCode = popupWindow.get_actionTypeCode();
+            var isMultipleEntities = popupWindow.get_isMultipleEntities();
 
-	removePopupWindow: function (popupWindowId) {
-		$q.removeProperty(this._popupWindows, popupWindowId);
-	},
+            if (actionTypeCode != ACTION_TYPE_CODE_ADD_NEW) {
+                if (isMultipleEntities && actionTypeCode != ACTION_TYPE_CODE_MULTIPLE_SELECT) {
+                    var entities = popupWindow.get_entities();
 
-	destroyPopupWindow: function (popupWindowId) {
-		var popupWindow = this._popupWindows[popupWindowId];
+                    for (var entityIndex = 0; entityIndex < entities.length; entityIndex++) {
+                        var entity = entities[entityIndex];
+                        if (entity) {
+                            var entityExist = $o.checkEntityExistence(entityTypeCode, entity.Id)
+                            if (!entityExist) {
+                                popupWindow.closeWindow();
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    var entityExist = $o.checkEntityExistence(entityTypeCode, entityId);
+                    if (!entityExist) {
+                        popupWindow.closeWindow();
+                    }
+                }
+            }
 
-		if (popupWindow != null) {
-			if (popupWindow.dispose) {
-				popupWindow.dispose();
-			}
-			popupWindow = null;
-		}
-	},
+            popupWindow = null;
+        }
 
-	closeNotExistentPopupWindows: function () {
-		var popupWindows = this.getAllPopupWindows();
+        popupWindows = null;
+    },
 
-		for (var popupWindowIndex = 0, popupWindowCount = popupWindows.length; popupWindowIndex < popupWindowCount; popupWindowIndex++) {
-			var popupWindow = popupWindows[popupWindowIndex];
+    onActionExecuted: function (eventArgs) {
+        if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving() || eventArgs.get_isRestoring()) {
+            this.closeNotExistentPopupWindows();
+        }
+    },
 
-			var entityTypeCode = popupWindow.get_entityTypeCode();
-			var entityId = popupWindow.get_entityId();
-			var actionTypeCode = popupWindow.get_actionTypeCode();
-			var isMultipleEntities = popupWindow.get_isMultipleEntities();
+    onNeedUp: function (eventArgs, popupWindowId) {
+        var popupWindow = this.getPopupWindow(popupWindowId);
+        if (popupWindow) {
+            popupWindow.closeWindow();
+        }
+    },
 
-			if (actionTypeCode != ACTION_TYPE_CODE_ADD_NEW) {
-				if (isMultipleEntities && actionTypeCode != ACTION_TYPE_CODE_MULTIPLE_SELECT) {
-					var entities = popupWindow.get_entities();
+    hostExternalCallerContextsUnbinded: function (unbindingEventArgs) {
+        this.notify(EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, unbindingEventArgs);
+    },
 
-					for (var entityIndex = 0; entityIndex < entities.length; entityIndex++) {
-						var entity = entities[entityIndex];
-						if (entity) {
-							var entityExist = $o.checkEntityExistence(entityTypeCode, entity.Id)
-							if (!entityExist) {
-								popupWindow.closeWindow();
-								break;
-							}
-						}
-					}
-				}
-				else {
-					var entityExist = $o.checkEntityExistence(entityTypeCode, entityId);
-					if (!entityExist) {
-						popupWindow.closeWindow();
-					}
-				}
-			}
+    dispose: function () {
+        Quantumart.QP8.BackendPopupWindowManager.callBaseMethod(this, "dispose");
 
-			popupWindow = null;
-		}
+        if (this._popupWindows) {
+            for (var popupWindowId in this._popupWindows) {
+                this.destroyPopupWindow(popupWindowId);
+            }
 
-		popupWindows = null;
-	},
+            this._popupWindows = null;
+        }
 
-	onActionExecuted: function (eventArgs) {
-		if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving() || eventArgs.get_isRestoring()) {
-			this.closeNotExistentPopupWindows();
-		}
-	},
+        if (this._hostStateStorage) {
+            this._hostStateStorage.dispose();
+            this._hostStateStorage = null;
+        }
 
-	onNeedUp: function (eventArgs, popupWindowId) {
-		var popupWindow = this.getPopupWindow(popupWindowId);
-		if (popupWindow) {
-			popupWindow.closeWindow();
-		}
-	},
+        Quantumart.QP8.BackendPopupWindowManager._instance = null;
 
-	hostExternalCallerContextsUnbinded: function (unbindingEventArgs) {
-		this.notify(EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, unbindingEventArgs);
-	},
-
-	dispose: function () {
-		Quantumart.QP8.BackendPopupWindowManager.callBaseMethod(this, "dispose");
-
-		if (this._popupWindows) {
-			for (var popupWindowId in this._popupWindows) {
-				this.destroyPopupWindow(popupWindowId);
-			}
-
-			this._popupWindows = null;
-		}
-
-		if (this._hostStateStorage) {
-		    this._hostStateStorage.dispose();
-		    this._hostStateStorage = null;
-		}
-
-		Quantumart.QP8.BackendPopupWindowManager._instance = null;
-
-		$q.collectGarbageInIE();
-	}
+        $q.collectGarbageInIE();
+    }
 };
 
 Quantumart.QP8.BackendPopupWindowManager._instance = null; // экземпляр класса
 
 // Возвращает экземпляр класса "Менеджер всплывающих окон"
 Quantumart.QP8.BackendPopupWindowManager.getInstance = function Quantumart$QP8$BackendPopupWindowManager$getInstance(options) {
-	if (Quantumart.QP8.BackendPopupWindowManager._instance == null) {
-		Quantumart.QP8.BackendPopupWindowManager._instance = new Quantumart.QP8.BackendPopupWindowManager(options);
-	}
+    if (Quantumart.QP8.BackendPopupWindowManager._instance == null) {
+        Quantumart.QP8.BackendPopupWindowManager._instance = new Quantumart.QP8.BackendPopupWindowManager(options);
+    }
 
-	return Quantumart.QP8.BackendPopupWindowManager._instance;
+    return Quantumart.QP8.BackendPopupWindowManager._instance;
 };
 
 // Уничтожает экземпляр класса "Менеджер всплывающих окон"
 Quantumart.QP8.BackendPopupWindowManager.destroyInstance = function Quantumart$QP8$BackendPopupWindowManager$destroyInstance() {
-	if (Quantumart.QP8.BackendPopupWindowManager._instance) {
-		Quantumart.QP8.BackendPopupWindowManager._instance.dispose();
-	}
+    if (Quantumart.QP8.BackendPopupWindowManager._instance) {
+        Quantumart.QP8.BackendPopupWindowManager._instance.dispose();
+    }
 };
 
 Quantumart.QP8.BackendPopupWindowManager.registerClass("Quantumart.QP8.BackendPopupWindowManager", Quantumart.QP8.Observable);

@@ -16,12 +16,16 @@
 	<link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
 	@{
-		const string jsVersion = "6.21";
+        const string jsVersion = "6.22";
 		var jsVersionFileName = $"Quantumart/version.{jsVersion}.js";
 	}
 
 	<link rel="stylesheet" href="@Url.Content("~/Content/build/app.min.css")">
 	<link rel="stylesheet" href="@Url.Action("CustomCss", "Css")">
+
+	<script>
+		window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
+	</script>
 </head>
 
 <body data-dbhash="@Model.DbHash">
@@ -295,7 +299,8 @@
               .Combined(allowCombineScripts)
           )
       ).Globalization(true))
-	<script>
+
+<script>
 	  var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
 	  var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
 	</script>

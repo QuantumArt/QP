@@ -32,6 +32,8 @@ namespace Quantumart.QP8.BLL
         private const string IsAdminKey = "IsAdmin";
         private const string CanUnlockItemsKey = "CanUnlockItems";
         private const string IsLiveKey = "IsLive";
+        private const string UseConnectionStringKey = "UseConnectionString";
+
 
         /// <summary>
         /// текущий объект ObjectContext для работы с ADO.Net Entity Framework
@@ -173,14 +175,13 @@ namespace Quantumart.QP8.BLL
                 if (GetContentCache() == null)
                     SetContentCache(ContentRepository.GetAll().ToDictionary(n => n.Id));
 
-                IEnumerable<Field> fields = null;
+                IEnumerable<Field> fields = new Field[0];
                 if (GetFieldCache() == null || GetContentFieldCache() == null)
                     fields = FieldRepository.GetAll();
 
-                var enumerable = fields as Field[] ?? fields.ToArray();
                 if (GetFieldCache() == null)
                 {
-                    SetFieldCache(enumerable.ToDictionary(n => n.Id));
+                    SetFieldCache(fields.ToDictionary(n => n.Id));
                 }
 
                 if (GetStatusTypeCache() == null)
@@ -196,7 +197,7 @@ namespace Quantumart.QP8.BLL
                 if (GetContentFieldCache() == null)
                 {
                     var dict = new Dictionary<int, List<int>>();
-                    foreach (var item in enumerable)
+                    foreach (var item in fields)
                     {
                         if (dict.ContainsKey(item.ContentId))
                             dict[item.ContentId].Add(item.Id);
@@ -249,6 +250,8 @@ namespace Quantumart.QP8.BLL
         [ThreadStatic]
         private static Version _currentSqlVersion;
 
+        [ThreadStatic]
+        private static bool _useConnectionString;
 
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
@@ -264,7 +267,7 @@ namespace Quantumart.QP8.BLL
         {
             SetValueToStorage(ref _isAdmin, value, IsAdminKey);
         }
-            
+
         private static void SetCanUnlockItemsValueToStorage(bool? value)
         {
             SetValueToStorage(ref _canUnlockItems, value, CanUnlockItemsKey);
@@ -332,6 +335,12 @@ namespace Quantumart.QP8.BLL
             {
                 SetIsAdminValueToStorage(value);
             }
+        }
+
+        public static bool UseConnectionString
+        {
+            get { return _useConnectionString; }
+            set { _useConnectionString = value; }
         }
 
         public static int[] CurrentGroupIds
@@ -448,7 +457,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// текущая строка подключения к БД
         /// </summary>
-        public static string CurrentDBConnectionString => QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode);
+        public static string CurrentDBConnectionString => UseConnectionString ? QPContext.CurrentCustomerCode : QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode);
 
         /// <summary>
         /// текущая строка подключения к БД для ADO.Net Entity Framework
