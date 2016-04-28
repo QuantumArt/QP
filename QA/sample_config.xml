@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<configuration>
+	<app_vars>
+		<app_var app_var_name="TempDirectory">C:\Temp\</app_var>
+		<app_var app_var_name="SqlMetalPath">C:\exchange\sqlmetal\sqlmetal.exe</app_var>
+		<app_var app_var_name="MailHost">exchange</app_var>
+		<app_var app_var_name="MailLogin"></app_var>
+		<app_var app_var_name="MailPassword"></app_var>
+		<app_var app_var_name="ADsConnectionString">YourADsConnectionString</app_var>
+		<app_var app_var_name="ADsPath">YourADsPath</app_var>
+		<app_var app_var_name="ADsFieldName">YourADsFieldName</app_var>
+		<app_var app_var_name="MailFromName">Q-Publishing Backend</app_var>
+		<app_var app_var_name="ApplyWorkflow">yes</app_var>
+		<app_var app_var_name="Debug_Mode">no</app_var>
+		<app_var app_var_name="allow_stage_edit_without_SSL">yes</app_var>
+		<app_var app_var_name="UseScheduleService">yes</app_var>
+		<app_var app_var_name="AllowSelectCustomerCode">yes</app_var>
+		<app_var app_var_name="ApplicationTitle">Local QP8 (release {release})</app_var>
+	</app_vars>
+	<customers>
+		<customer customer_name="publishing">
+			<db>Provider=Initial Catalog=publishing;Data Source=dbserver;Workstation ID=webserver;User ID=login;Password=password</db>
+		</customer>
+	</customers>
+</configuration>
