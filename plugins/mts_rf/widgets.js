@@ -107,7 +107,7 @@
 
     Quantumart.QP8.BackendDocumentContext.prototype.getLinkedContentId = function (editor, name) {
         var $form = jQuery(editor._formElement);
-        return $form.find("[name='" + name + "']").parent(".singleItemPicker").data("parent_entity_id");
+        return $form.find("[name='" + name + "']").parent(".singleItemPicker").data("parent_entity_id") || $form.find("[name='" + name + "']").data("parent_entity_id");;
     };
 
     Quantumart.QP8.BackendDocumentContext.prototype.getReadonlyStatus = function (editor, fieldName) {
@@ -241,6 +241,7 @@
 
     Quantumart.QP8.BackendDocumentContext.prototype.checkWidgetSystemFields = function (options, editor) {
         // проверяем, какие поля надо скрыть
+		debugger;
         var itemType = this.getValue(editor, options.fields.discriminator);
         var isPageFieldValue = this.getBooleanValue(editor, options.fields.isPage);
         var itemDefinitionContentId = this.getLinkedContentId(editor, options.fields.discriminator);
