@@ -17,33 +17,41 @@ namespace Quantumart.QP8.BLL.Factories
         /// <returns>список дочерних сущностей</returns>
         internal static ITreeProcessor Create(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string commonFilter, string selectItemIDs, IEnumerable<ArticleSearchQueryParam> searchQuery, IEnumerable<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser)
         {
-            if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.VirtualArticle)
+            using (new QPConnectionScope())
             {
-                var contentId = parentEntityId.GetValueOrDefault();
-                int[] extensionContentIds;
-                ContentReference[] contentReferences;
-                ArticleFullTextSearchParameter ftsOptions;
-                commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out ftsOptions, out extensionContentIds, out contentReferences);
+                if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.VirtualArticle)
+                {
+                    var contentId = parentEntityId.GetValueOrDefault();
+                    int[] extensionContentIds;
+                    ContentReference[] contentReferences;
+                    ArticleFullTextSearchParameter ftsOptions;
+                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery,
+                        ftsParser, out ftsOptions, out extensionContentIds, out contentReferences);
 
-                var filterSqlParams = new List<SqlParameter>();
-                var filterQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
-                var linkedFilters = ArticleRepository.GetLinkSearchParameter(searchQuery);
+                    var filterSqlParams = new List<SqlParameter>();
+                    var filterQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
+                    var linkedFilters = ArticleRepository.GetLinkSearchParameter(searchQuery);
 
-                var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
-                var hasFilterSearchParams = !string.IsNullOrEmpty(filterQuery) || (linkedFilters != null && linkedFilters.Any());
-                return hasFtsSearchParams || hasFilterSearchParams
-                    ? new ArticleFtsProcessor(contentId, commonFilter, filterQuery, linkedFilters, contextQuery, filterSqlParams, extensionContentIds, ftsOptions)
-                    : new ArticleSimpleProcessor(contentId, entityId, commonFilter, entityTypeCode, selectItemIDs) as ITreeProcessor;
-            }
+                    var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) &&
+                                             !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
+                    var hasFilterSearchParams = !string.IsNullOrEmpty(filterQuery) ||
+                                                (linkedFilters != null && linkedFilters.Any());
+                    return hasFtsSearchParams || hasFilterSearchParams
+                        ? new ArticleFtsProcessor(contentId, commonFilter, filterQuery, linkedFilters, contextQuery,
+                            filterSqlParams, extensionContentIds, ftsOptions)
+                        : new ArticleSimpleProcessor(contentId, entityId, commonFilter, entityTypeCode, selectItemIDs)
+                            as ITreeProcessor;
+                }
 
-            if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder)
-            {
-                return new SiteFolderProcessor(parentEntityId, entityTypeCode, returnSelf, entityId);
-            }
+                if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder)
+                {
+                    return new SiteFolderProcessor(parentEntityId, entityTypeCode, returnSelf, entityId);
+                }
 
-            if (entityTypeCode == EntityTypeCode.UserGroup)
-            {
-                return new UserGroupProcessor(entityTypeCode, entityId);
+                if (entityTypeCode == EntityTypeCode.UserGroup)
+                {
+                    return new UserGroupProcessor(entityTypeCode, entityId);
+                }
             }
 
             throw new NotImplementedException(entityTypeCode);
