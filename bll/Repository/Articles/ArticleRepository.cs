@@ -169,7 +169,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 {
                     ContentId = contentId,
                     ExstensionContentIds = extensionContentIds,
-                    ContentReferences = contentReferences,
+                    ContentReferences = contentReferences.Distinct().ToArray(),
                     SelectedIDs = selectedArticleIDs,
                     FilterIds = filterIds,
                     FullTextSearch = ftsOptions,
