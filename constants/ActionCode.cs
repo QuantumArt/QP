@@ -75,7 +75,10 @@ namespace Quantumart.QP8.Constants
 		public const string VirtualArticles = "list_virtual_article";
 		public const string ArchiveArticles = "list_archive_article";
 
-     	public const string ArticleVersions = "list_article_version";
+        public const string SelectChildArticles = "select_child_articles";
+        public const string UnselectChildArticles = "unselect_child_articles";
+
+        public const string ArticleVersions = "list_article_version";
 		public const string PreviewArticleVersion = "preview_article_version";
 		public const string CompareArticleVersionWithCurrent = "compare_article_version_with_current";
 		public const string CompareArticleVersions = "compare_article_versions";
