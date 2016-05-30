@@ -93,10 +93,12 @@ namespace Quantumart.QP8.Configuration
 
         public static bool AllowSelectCustomerCode => ConfigVariable(Config.AllowSelectCustomerCode).ToLowerInvariant() == "yes";
 
+        private static readonly Lazy<XDocument> _XmlConfig = new Lazy<XDocument>(() => XDocument.Load(XmlConfigPath));
+
         /// <summary>
         /// Конфигурационный файл QP
         /// </summary>
-        public static XDocument XmlConfig { get; set; } = XDocument.Load(XmlConfigPath);
+        public static XDocument XmlConfig => _XmlConfig.Value;
 
         /// <summary>
         /// Путь к конфигурационному файлу в реестре
@@ -107,7 +109,7 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configPath == null)
                 {
-                    if (!string.IsNullOrEmpty(WebConfigSection.QpConfigPath))
+                    if (!string.IsNullOrEmpty(WebConfigSection?.QpConfigPath))
                     {
                         _configPath = WebConfigSection.QpConfigPath;
                     }
