@@ -2,7 +2,7 @@
 <configuration>
 	<app_vars>
 		<app_var app_var_name="TempDirectory">C:\Temp\</app_var>
-		<app_var app_var_name="SqlMetalPath">C:\exchange\sqlmetal\sqlmetal.exe</app_var>
+		<app_var app_var_name="SqlMetalPath">C:\QA\sqlmetal.exe</app_var>
 		<app_var app_var_name="MailHost">exchange</app_var>
 		<app_var app_var_name="MailLogin"></app_var>
 		<app_var app_var_name="MailPassword"></app_var>
@@ -19,7 +19,7 @@
 	</app_vars>
 	<customers>
 		<customer customer_name="publishing">
-			<db>Provider=Initial Catalog=publishing;Data Source=dbserver;Workstation ID=webserver;User ID=login;Password=password</db>
+			<db>Initial Catalog=publishing;Data Source=dbserver;Workstation ID=webserver;User ID=login;Password=password</db>
 		</customer>
 	</customers>
 </configuration>
