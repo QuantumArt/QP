@@ -167,6 +167,9 @@ namespace qp8dbupdate
                 if (!disableContentIdentity)
                     identityTypes.Add(EntityTypeCode.Content);
 
+                if (!disableContentIdentity)
+                    identityTypes.Add(EntityTypeCode.ContentGroup);
+
                 if (!disableFieldIdentity)
                     identityTypes.Add(EntityTypeCode.Field);
 

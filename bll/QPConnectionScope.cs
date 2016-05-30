@@ -187,42 +187,54 @@ namespace Quantumart.QP8.BLL
 			}
 		}
 
-		private void CorrectSsdl(XElement ssdl)
-		{
-			XNamespace ns = XNamespace.Get(@"http://schemas.microsoft.com/ado/2009/02/edm/ssdl");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.Site, "SITE", "SITE_ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.Content, "CONTENT", "CONTENT_ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.ContentGroup, "CONTENT_GROUP", "CONTENT_GROUP_ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.Field, "CONTENT_ATTRIBUTE", "ATTRIBUTE_ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.ContentLink, "content_to_content", "link_id");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.CustomAction, "CUSTOM_ACTION", "ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.BackendAction, "BACKEND_ACTION", "ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorCommand, "VE_COMMAND", "ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorPlugin, "VE_PLUGIN", "ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorStyle, "VE_STYLE", "ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.User, "USERS", "USER_ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.UserGroup, "USER_GROUP", "GROUP_ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.Workflow, "WORKFLOW", "WORFKLOW_ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.StatusType, "STATUS_TYPE", "STATUS_TYPE_ID");
-			CorrectEntityType(ssdl, ns, EntityTypeCode.Notification, "NOTIFICATIONS", "NOTIFICATION_ID");
+        private void CorrectSsdl(XElement ssdl)
+        {
+            XNamespace ns = XNamespace.Get(@"http://schemas.microsoft.com/ado/2009/11/edm/ssdl");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.Site, "SITE", "SITE_ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.Content, "CONTENT", "CONTENT_ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.ContentGroup, "content_group", "content_group_id");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.Field, "CONTENT_ATTRIBUTE", "ATTRIBUTE_ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.ContentLink, "content_to_content", "link_id");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.CustomAction, "CUSTOM_ACTION", "ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.BackendAction, "BACKEND_ACTION", "ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorCommand, "VE_COMMAND", "ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorPlugin, "VE_PLUGIN", "ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.VisualEditorStyle, "VE_STYLE", "ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.User, "USERS", "USER_ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.UserGroup, "USER_GROUP", "GROUP_ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.Workflow, "WORKFLOW", "WORFKLOW_ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.StatusType, "STATUS_TYPE", "STATUS_TYPE_ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.Notification, "NOTIFICATIONS", "NOTIFICATION_ID");
+        }
 
+        private void CorrectEntityType(XElement ssdl, XNamespace ns, string entityTypeCode, string tableName, string keyName )
+        {
+            if (identityInsertOptions != null && identityInsertOptions.Contains(entityTypeCode))
+            {
+                XElement table;
+                try
+                {
+                    table = ssdl.Descendants(ns + "EntityType")
+                        .Single(n => n.Attribute("Name").Value == tableName);
+                }
+                catch (InvalidOperationException)
+                {
+                    throw new ApplicationException($"Table {tableName} with namespace {ns} is not found in ssdl");
+                }
 
+                XElement column;
+                try
+                {
+                    column = table.Elements(ns + "Property")
+                        .Single(n => n.Attribute("Name").Value == keyName);
+                }
+                catch (InvalidOperationException)
+                {
+                    throw new ApplicationException($"Column {keyName} with namespace {ns} for table {tableName} is not found in ssdl");
+                }
 
-
-		}
-
-		private void CorrectEntityType(XElement ssdl, XNamespace ns, string entityTypeCode, string tableName, string keyName )
-		{
-			if (identityInsertOptions != null && identityInsertOptions.Contains(entityTypeCode))
-			{
-				var content =
-				ssdl
-					.Descendants(ns + "EntityType")
-					.Single(n => n.Attribute("Name").Value == tableName)
-					.Elements(ns + "Property")
-					.Single(n => n.Attribute("Name").Value == keyName)
-					.Attribute("StoreGeneratedPattern").Value = "None";
-			}
-		}
-	}
+                column.Attribute("StoreGeneratedPattern").Value = "None";
+            }
+        }
+    }
 }
