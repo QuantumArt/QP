@@ -5,10 +5,13 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.ViewModels;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
@@ -509,9 +512,18 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope(ConnectionScopeMode.TransactionOn)]
         [ActionAuthorize(ActionCode.Articles)]
-        public ActionResult GetParentIds(int id, int fieldId)
+        public JsonNetResult<IList<int>> GetParentIds(int id, int fieldId)
         {
-            return Json(ArticleService.GetParentIds(id, fieldId));
+            return ArticleService.GetParentIds(id, fieldId).ToList();
+        }
+
+
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ActionAuthorize(ActionCode.Articles)]
+        public JsonNetResult<IList<int>> GetChildArticleIds(int? parentArticleId, int contentId, string filter)
+        {
+            return ArticleService.GetChildArticleIds(parentArticleId, contentId, filter).ToList();
         }
         #endregion
     }

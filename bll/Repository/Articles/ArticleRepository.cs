@@ -1401,6 +1401,14 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
+        internal static IList<int> GetChildArticleIds(int? parentArticleId, int contentId, string filter)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetChildArticleIds(scope.DbConnection, parentArticleId, contentId, filter, QPContext.IsLive);
+            }
+        }
+
         #region BatchUpdate
         internal static InsertData[] BatchUpdate(ArticleData[] articles, bool formatArticleData)
         {

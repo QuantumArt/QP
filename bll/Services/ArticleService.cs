@@ -810,9 +810,9 @@ namespace Quantumart.QP8.BLL.Services
             return ArticleRepository.GetParentIds(id, fieldId);
         }
 
-        public static IList<int> GetParentIds(IList<int> ids, int fieldId)
+        public static IList<int> GetChildArticleIds(int? parentArticleId, int contentId, string filter)
         {
-            return ArticleRepository.GetParentIds(ids, fieldId);
+            return ArticleRepository.GetChildArticleIds(parentArticleId, contentId, filter);
         }
     }
 }

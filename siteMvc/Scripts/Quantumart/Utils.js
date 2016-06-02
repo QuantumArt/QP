@@ -1,8 +1,4 @@
-// ****************************************************************************
-// *** Компонент "Утилиты"                          ***
-// ****************************************************************************
-
-Quantumart.QP8.Utils = function() { };
+window.$q = Quantumart.QP8.Utils = function() {};
 
 //#region Преобразование и проверка типов
 Quantumart.QP8.Utils.isNull = function Quantumart$QP8$Utils$isNull(value) {
@@ -1110,22 +1106,47 @@ Quantumart.QP8.Utils.updateQueryStringParameter = function Quantumart$QP8$Utils$
     return uri + separator + key + '=' + value;
   }
 };
-
 //#endregion
 
-//#region Сборка мусора
 Quantumart.QP8.Utils.collectGarbageInIE = function Quantumart$QP8$Utils$collectGarbageInIE() {
-  /// <summary>
-  /// Инициирует процесс сборки мусора в IE
-  /// </summary>
   if (jQuery.browser.msie) {
     CollectGarbage();
   }
 };
 
-//#endregion
+Quantumart.QP8.Utils.addRemoveToArrUniq = function Quantumart$QP8$Utils$addRemoveToArrUniq(arrToModify, valToAdd, shouldBeIncluded) {
+  var result;
+  if (shouldBeIncluded && !Array.contains(arrToModify, valToAdd)) {
+    result = Array.add(arrToModify, valToAdd);
+  }
+
+  if (!shouldBeIncluded) {
+    result = Array.remove(arrToModify, valToAdd);
+  }
+
+  return result;
+};
+
+
+Quantumart.QP8.Utils.bindProxies = function Quantumart$QP8$Utils$bindProxies(listOfFnNames, fnPostfix) {
+  var postfix = fnPostfix || 'Handler';
+  [].forEach.call(listOfFnNames, function(fnName) {
+    try {
+      this[fnName + postfix] = this[fnName].bind(this);
+    } catch(e) {
+      console.error('Failed to register: ' + fnName, e);
+    }
+  }, this);
+};
+
+Quantumart.QP8.Utils.dispose = function Quantumart$QP8$Utils$dispose(listOfObjs) {
+  [].forEach.call(listOfObjs, function(obj) {
+    try {
+      this[obj] = null;
+    } catch(e) {
+      console.error('Failed to dispose: ' + obj, e);
+    }
+  }, this);
+};
 
 Quantumart.QP8.Utils.registerClass('Quantumart.QP8.Utils');
-
-// Сокращенная запись
-window.$q = Quantumart.QP8.Utils;
