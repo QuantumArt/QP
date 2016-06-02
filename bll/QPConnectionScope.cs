@@ -48,7 +48,7 @@ namespace Quantumart.QP8.BLL
 
 		public QPConnectionScope(string connectionString)
         {
-            // Если scope для потока не существует, то делаем создаваемый текущим для потока 
+            // Если scope для потока не существует, то делаем создаваемый текущим для потока
 			if (Current == null)
 			{
 				if (string.IsNullOrWhiteSpace(connectionString))
@@ -65,11 +65,11 @@ namespace Quantumart.QP8.BLL
 
 		public QPConnectionScope() : this(QPContext.CurrentDBConnectionString) { }
 
-		public QPConnectionScope(string connectionString, HashSet<string> identityInsertOptions) : this(connectionString) 
+		public QPConnectionScope(string connectionString, HashSet<string> identityInsertOptions) : this(connectionString)
 		{
 			this.identityInsertOptions = identityInsertOptions;
 		}
-        
+
         public void Dispose()
         {
             if (Current != null)
@@ -133,7 +133,7 @@ namespace Quantumart.QP8.BLL
         {
 			if (Current.efConnection == null)
             {
-                SqlConnection sqlConnection = new SqlConnection(this.ConnectionString);				
+                SqlConnection sqlConnection = new SqlConnection(this.ConnectionString);
                 var efc = new EntityConnection(MetadataWorkspace, sqlConnection);
                 sqlConnection.Open();
                 efc.Open();
@@ -143,9 +143,9 @@ namespace Quantumart.QP8.BLL
 					using (SqlCommand cmd = SqlCommandFactory.Create(SetIsolationLevelCommandText, sqlConnection))
 					{
 						cmd.ExecuteNonQuery();
-					}					
+					}
 				}
-            }            
+            }
         }
 
 		private static MetadataWorkspace mdw = new MetadataWorkspace(new[]

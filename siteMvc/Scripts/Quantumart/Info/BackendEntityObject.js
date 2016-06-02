@@ -1,9 +1,9 @@
-﻿//#region class BackendEntityObject
+//#region class BackendEntityObject
 Quantumart.QP8.BackendEntityObject = function() {};
 
 // Возвращает сущность
 Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function(entityTypeCode, entityId, loadChilds, filter, successHandler, errorHandler) {
-  var actionUrl = CONTROLLER_URL_ENTITY_OBJECT + 'GetByTypeAndIdForTree';
+  var actionUrl = window.CONTROLLER_URL_ENTITY_OBJECT + 'GetByTypeAndIdForTree';
   var params = { entityTypeCode: entityTypeCode, entityId: entityId, loadChilds: loadChilds, filter: filter };
 
   if ($q.isFunction(successHandler)) {
@@ -40,7 +40,7 @@ Quantumart.QP8.BackendEntityObject.getEntityByTypeAndIdForTree = function(entity
 
 // Возвращает список дочерних сущностей
 Quantumart.QP8.BackendEntityObject.getEntityChildList = function(ajaxParams, successHandler, errorHandler) {
-  var actionUrl = CONTROLLER_URL_ENTITY_OBJECT + 'GetChildList';
+  var actionUrl = window.CONTROLLER_URL_ENTITY_OBJECT + 'GetChildList';
   if (!$q.isNullOrEmpty(ajaxParams.selectItemIDs)) {
     ajaxParams.selectItemIDs = ajaxParams.selectItemIDs.join(',');
   }
@@ -64,7 +64,7 @@ Quantumart.QP8.BackendEntityObject.getEntityChildList = function(ajaxParams, suc
 // Возвращает упрощенный список сущностей
 Quantumart.QP8.BackendEntityObject.getSimpleEntityList = function(entityTypeCode, parentEntityId, entityId,
   listId, selectionMode, selectedEntitiesIDs, filter, testEntityId) {
-  var actionUrl = CONTROLLER_URL_ENTITY_OBJECT + 'GetSimpleList';
+  var actionUrl = window.CONTROLLER_URL_ENTITY_OBJECT + 'GetSimpleList';
   var params = {
     entityTypeCode: entityTypeCode,
     parentEntityId: parentEntityId,
@@ -126,7 +126,7 @@ Quantumart.QP8.BackendEntityObject.checkEntityExistence = function Quantumart$QP
 
   $q.getJsonFromUrl(
   'GET',
-  CONTROLLER_URL_ENTITY_OBJECT + 'CheckExistence',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'CheckExistence',
   { entityTypeCode: entityTypeCode, entityId: entityId },
           false,
   false,
@@ -148,7 +148,7 @@ Quantumart.QP8.BackendEntityObject.checkEntityForPresenceSelfRelations = functio
 
   $q.getJsonFromUrl(
   'GET',
-  CONTROLLER_URL_ENTITY_OBJECT + 'CheckPresenceSelfRelations',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'CheckPresenceSelfRelations',
   { entityTypeCode: entityTypeCode, entityId: entityId },
           false,
   false,
@@ -170,7 +170,7 @@ Quantumart.QP8.BackendEntityObject.checkEntityForVariations = function Quantumar
 
   $q.getJsonFromUrl(
     'GET',
-    CONTROLLER_URL_ENTITY_OBJECT + 'CheckForVariations',
+    window.CONTROLLER_URL_ENTITY_OBJECT + 'CheckForVariations',
     { entityTypeCode: entityTypeCode, entityId: entityId },
       false,
     false,
@@ -192,7 +192,7 @@ Quantumart.QP8.BackendEntityObject.getEntityName = function Quantumart$QP8$Backe
 
   $q.getJsonFromUrl(
   'GET',
-  CONTROLLER_URL_ENTITY_OBJECT + 'GetName',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetName',
   { entityTypeCode: entityTypeCode, entityId: entityId, parentEntityId: parentEntityId },
           false,
   false,
@@ -214,7 +214,7 @@ Quantumart.QP8.BackendEntityObject.getParentEntityId = function Quantumart$QP8$B
 
   $q.getJsonFromUrl(
   'GET',
-  CONTROLLER_URL_ENTITY_OBJECT + 'GetParentId',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentId',
   { entityTypeCode: entityTypeCode, entityId: $q.toInt(entityId, 0) },
           false,
   false,
@@ -236,7 +236,7 @@ Quantumart.QP8.BackendEntityObject.getParentIdsForTree = function Quantumart$QP8
 
   $q.getJsonFromUrl(
   'POST',
-  CONTROLLER_URL_ENTITY_OBJECT + 'GetParentIdsForTree',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentIdsForTree',
   { entityTypeCode: entityTypeCode, ids: ids },
           false,
   false,
@@ -259,7 +259,7 @@ Quantumart.QP8.BackendEntityObject.getParentInfo = function Quantumart$QP8$Backe
 
   $q.getJsonFromUrl(
   'GET',
-  CONTROLLER_URL_ENTITY_OBJECT + 'GetParentInfo',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentInfo',
   { entityTypeCode: entityTypeCode, entityId: entityId, parentEntityId: parentEntityId },
           false,
   false,
@@ -278,7 +278,7 @@ Quantumart.QP8.BackendEntityObject.getParentInfo = function Quantumart$QP8$Backe
 Quantumart.QP8.BackendEntityObject.getArticleFieldValue = function(contentId, fieldName, articleId) {
   return $o.makeSimpleCall(
   'GET',
-  CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleFieldValue',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleFieldValue',
   { contentId: contentId, fieldName: fieldName, articleId: articleId }
   );
 };
@@ -286,7 +286,7 @@ Quantumart.QP8.BackendEntityObject.getArticleFieldValue = function(contentId, fi
 Quantumart.QP8.BackendEntityObject.getArticleLinkedItems = function Quantumart$QP8$BackendEntityObject$getArticleLinkedItems(linkId, articleId) {
   return $o.makeSimpleCall(
   'GET',
-  CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleLinkedItems',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleLinkedItems',
   { linkId: linkId, articleId: articleId }
   );
 };
@@ -294,7 +294,7 @@ Quantumart.QP8.BackendEntityObject.getArticleLinkedItems = function Quantumart$Q
 Quantumart.QP8.BackendEntityObject.getArticleIdByFieldValue = function Quantumart$QP8$BackendEntityObject$getArticleIdByFieldValue(contentId, fieldName, fieldValue) {
   return $o.makeSimpleCall(
   'GET',
-  CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleIdByFieldValue',
+  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleIdByFieldValue',
   { contentId: contentId, fieldName: fieldName, fieldValue: fieldValue }
   );
 };
@@ -306,7 +306,7 @@ Quantumart.QP8.BackendEntityObject.getParentsChain = function(entityTypeCode, en
 
   $q.getJsonFromUrl(
     'GET',
-    CONTROLLER_URL_ENTITY_OBJECT + 'GetParentsChain',
+    window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentsChain',
     { entityTypeCode: entityTypeCode, entityId: entityId, parentEntityId: parentEntityId },
       false,
     false,

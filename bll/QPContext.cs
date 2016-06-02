@@ -22,7 +22,7 @@ namespace Quantumart.QP8.BLL
         void ResetValue(string key);
         IEnumerable<string> Keys { get; }
     }
-    
+
     public class QPContext
     {
         private const string CurrentUserIdKey = "CurrentUserId";
@@ -55,8 +55,8 @@ namespace Quantumart.QP8.BLL
                     dbContext = new QP8Entities(QPConnectionScope.Current.EFConnection);
                 }
                 dbContext.ContextOptions.LazyLoadingEnabled = false;
-                return dbContext;				
-            }            			
+                return dbContext;
+            }
         }
 
         private static T GetValueFromStorage<T>(T threadStorage, string key)
@@ -66,7 +66,7 @@ namespace Quantumart.QP8.BLL
             else if (HttpContext.Current == null)
                 return threadStorage;
             else
-                return (T)HttpContext.Current.Items[key];	
+                return (T)HttpContext.Current.Items[key];
         }
 
 
@@ -151,7 +151,7 @@ namespace Quantumart.QP8.BLL
                 _statusTypeCache = null;
                 _userCache = null;
             }
-            
+
             internal static void ClearExternalStructureCache()
             {
                 if (_externalContextStorage?.Keys != null)
@@ -314,7 +314,7 @@ namespace Quantumart.QP8.BLL
                 }
             }
         }
-        
+
 
         public static bool IsAdmin
         {
@@ -408,7 +408,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public static string CurrentCustomerCode
         {
-            
+
             get
             {
                 var result = GetValueFromStorage(_currentCustomerCode, CurrentCustomerCodeKey);
@@ -420,7 +420,7 @@ namespace Quantumart.QP8.BLL
                         SetCurrentCustomerCodeValueToStorage(result);
                     }
                 }
-                        
+
                 return result;
             }
             set
@@ -558,10 +558,10 @@ namespace Quantumart.QP8.BLL
 
                 HttpContext.Current.Session.Abandon();
 
-                
+
                 return loginUrl;
             }
-        } 
+        }
         #endregion
 
         #region User Session Log
@@ -606,7 +606,7 @@ namespace Quantumart.QP8.BLL
         {
             var userSessions =
                          dbContext.SessionsLogSet
-                         .Where(s => s.UserId == userId && 
+                         .Where(s => s.UserId == userId &&
                                      !s.EndTime.HasValue &&
                                      !s.IsQP7)
                          .ToArray();
@@ -638,10 +638,10 @@ namespace Quantumart.QP8.BLL
             var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
-        } 
+        }
         #endregion
 
-        public static IUnityContainer CurrentUnityContainer { get;  private set; } 
+        public static IUnityContainer CurrentUnityContainer { get;  private set; }
         public static void SetUnityContainer(IUnityContainer container)
         {
             CurrentUnityContainer = container;
@@ -649,7 +649,7 @@ namespace Quantumart.QP8.BLL
 
         private static IContextStorage _externalContextStorage;
         private static HashSet<string> _externalContextStorageKeys;
-        public static IContextStorage ExternalContextStorage { 
+        public static IContextStorage ExternalContextStorage {
             set
             {
                 if (value.Keys == null || !value.Keys.Any())
@@ -659,6 +659,6 @@ namespace Quantumart.QP8.BLL
                 _externalContextStorageKeys = new HashSet<string>(value.Keys);
             }
         }
-    
+
     }
 }

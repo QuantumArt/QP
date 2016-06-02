@@ -35,7 +35,7 @@ namespace Quantumart.QP8.Constants
 		public const string SearchInArticles = "search_in_articles";
 		public const string SearchInCode = "search_in_code";
 		public const string SiteLibrary = "site_library";
-		public const string PopupSiteLibrary = "popup_site_library";		
+		public const string PopupSiteLibrary = "popup_site_library";
 		public const string SearchInTemplates = "search_in_templates";
 		public const string SearchInObjects = "search_in_objects";
 		public const string SimpleRemoveSite = "simple_remove_site";
@@ -159,7 +159,7 @@ namespace Quantumart.QP8.Constants
 		public const string AddNewContentFolder = "new_content_folder";
 		public const string RemoveContentFolder = "remove_content_folder";
 		public const string UpdateContentFolder = "update_content_folder";
-		
+
 		public const string SiteFileProperties = "edit_site_file";
 		public const string UpdateSiteFile = "update_site_file";
 		public const string MultipleRemoveSiteFile = "multiple_remove_site_file";
@@ -179,7 +179,7 @@ namespace Quantumart.QP8.Constants
 		public const string FailedSession = "list_failed_sessions";
 
 		public const string CustomActions = "list_custom_action";
-		public const string AddNewCustomAction = "new_custom_action";		
+		public const string AddNewCustomAction = "new_custom_action";
 		public const string CustomActionsProperties = "edit_custom_action";
 		public const string SaveCustomAction = "save_custom_action";
 		public const string UpdateCustomAction = "update_custom_action";
@@ -187,7 +187,7 @@ namespace Quantumart.QP8.Constants
 		public const string MultipleRemoveCustomAction = "multiple_remove_custom_action";
 		public const string CreateLikeCustomAction = "copy_custom_action";
 		public const string RefreshCustomAction = "refresh_custom_action";
-        public const string ActionSettings = "action_settings";		
+        public const string ActionSettings = "action_settings";
 
 		public const string Users = "list_user";
 		public const string AddNewUser = "new_user";
@@ -199,7 +199,7 @@ namespace Quantumart.QP8.Constants
 		public const string MultipleSelectUser = "multiple_select_user";
 		public const string SelectUser = "select_user";
 
-		public const string UserGroups = "list_user_group";        
+		public const string UserGroups = "list_user_group";
 		public const string AddNewUserGroup = "new_user_group";
 		public const string SaveUserGroup = "save_user_group";
 		public const string CreateLikeUserGroup = "copy_user_group";
@@ -343,18 +343,18 @@ namespace Quantumart.QP8.Constants
 
         public const string PageObjects = "list_page_object";
         public const string RefreshPageObjects = "refresh_page_objects";
-        public const string AddNewPageObject = "new_page_object";		
+        public const string AddNewPageObject = "new_page_object";
 		public const string SavePageObject = "save_page_object";
 		public const string PageObjectProperties = "edit_page_object";
 		public const string UpdatePageObject = "update_page_object";
 		public const string CancelPageObject = "cancel_page_object";
-		public const string RemovePageObject = "remove_page_object";		
+		public const string RemovePageObject = "remove_page_object";
 
 		public const string TemplateObjectFormats = "list_template_object_format";
 		public const string TemplateObjectFormatVersions = "list_template_object_format_version";
 		public const string CancelTemplateObjectFormat = "cancel_template_object_format";
 		public const string CancelPageObjectFormat = "cancel_page_object_format";
-		public const string SavePageObjectFormat = "save_page_object_format";		
+		public const string SavePageObjectFormat = "save_page_object_format";
 
 		public const string PageObjectFormats = "list_page_object_format";
 		public const string PageObjectFormatVersions = "list_page_object_format_version";
@@ -399,7 +399,7 @@ namespace Quantumart.QP8.Constants
 
         public const string PageProperties = "edit_page";
 		public const string CreateLikePage = "copy_page";
-        public const string UpdatePage = "update_page";        
+        public const string UpdatePage = "update_page";
         public const string RemovePage = "remove_page";
         public const string Pages = "list_page";
         public const string RefreshPages = "refresh_pages";
@@ -435,10 +435,10 @@ namespace Quantumart.QP8.Constants
 		public const string MultipleRemoveActionPermission = "multiple_remove_action_permission";
 		public const string ChangeActionPermission = "change_action_permission";
 		public const string UpdateActionPermissionChanges = "update_action_permission_changes";
-		public const string RemoveActionPermissionChanges = "remove_action_permission_changes";					
+		public const string RemoveActionPermissionChanges = "remove_action_permission_changes";
 
 		private static readonly IEnumerable<string> articleNonChangingActionCodes = new[]
-			{ 
+			{
 				Articles,
 				RefreshArticles,
 				EditArticle,
@@ -449,7 +449,7 @@ namespace Quantumart.QP8.Constants
 		public static IEnumerable<string> ArticleNonChangingActionCodes { get { return articleNonChangingActionCodes; } }
 
 		private static readonly IEnumerable<string> articleVersionNonChangingActionCodes = new[]
-			{ 
+			{
 				ArticleVersions,
 				RefreshArticleVersions,
 				PreviewArticleVersion,
@@ -458,6 +458,6 @@ namespace Quantumart.QP8.Constants
 				CompareArticleVersions,
 				CancelArticleVersion
 			};
-		public static IEnumerable<string> ArticleVersionsNonChangingActionCodes { get { return articleVersionNonChangingActionCodes; } }		
+		public static IEnumerable<string> ArticleVersionsNonChangingActionCodes { get { return articleVersionNonChangingActionCodes; } }
 	}
 }

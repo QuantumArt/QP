@@ -1,4 +1,4 @@
-﻿//#region class BackendEntityTreeManager
+//#region class BackendEntityTreeManager
 // === Класс "Менеджер деревьев сущностей" ===
 Quantumart.QP8.BackendEntityTreeManager = function () {
 	Quantumart.QP8.BackendEntityTreeManager.initializeBase(this);
@@ -57,16 +57,16 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 		var treeGroupCode = this.generateTreeGroupCode(entityTypeCode, parentEntityId);
 
 		var tree = null;
-		if ($q.isNullOrEmpty(options.virtualContentId))
+		if ($q.isNullOrEmpty(options.virtualContentId)) {
 			tree = new Quantumart.QP8.BackendEntityTree(treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options, hostOptions);
-		else
+    } else {
 			tree = new Quantumart.QP8.BackendVirtualFieldTree(treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options);
+    }
 
 		tree.set_treeManager(this);
 
 		var treeGroup = this.createTreeGroup(treeGroupCode);
 		treeGroup[treeElementId] = tree;
-
 		return tree;
 	},
 
@@ -116,7 +116,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 					var tree = this.getTree(treeElementId);
 					tree.refreshTree();
 				}
-			}			
+			}
 		}
 		else {
 			jQuery.each(ids, function (index, id) {

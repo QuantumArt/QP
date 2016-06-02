@@ -15,7 +15,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
     /// Режим работы фильтра <see cref="ExceptionResult"/>
     /// </summary>
     public enum ExceptionResultMode
-    {        
+    {
         /// <summary>
         /// Возвращает ошибку в формате для  интерфейсных qp-action
         /// </summary>
@@ -25,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
         /// </summary>
         OperationAction
     }
-    
+
     /// <summary>
     /// Exception-фильтр: возвращает информацию об ошибку в разных форматах
     /// </summary>
@@ -38,12 +38,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
         public ExceptionResultAttribute(ExceptionResultMode mode, string policyName)
         {
-            Contract.Requires(!String.IsNullOrEmpty(policyName));            
+            Contract.Requires(!String.IsNullOrEmpty(policyName));
             this.mode = mode;
             PolicyName = policyName;
         }
 
-        #region IExceptionFilter Members                
+        #region IExceptionFilter Members
         public void OnException(ExceptionContext filterContext)
         {
             if (filterContext == null || filterContext.Exception == null)
@@ -60,10 +60,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
              EnterpriseLibraryContainer.Current
 				   .GetInstance<ExceptionManager>()
-				   .HandleException(filterContext.Exception, PolicyName); 
+				   .HandleException(filterContext.Exception, PolicyName);
 
             filterContext.ExceptionHandled = true;
-            filterContext.HttpContext.Response.Clear();            
+            filterContext.HttpContext.Response.Clear();
         }
 
         #endregion
