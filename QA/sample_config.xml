@@ -15,7 +15,7 @@
 		<app_var app_var_name="allow_stage_edit_without_SSL">yes</app_var>
 		<app_var app_var_name="UseScheduleService">yes</app_var>
 		<app_var app_var_name="AllowSelectCustomerCode">yes</app_var>		
-		<app_var app_var_name="ApplicationTitle">Local QP8 (release {release})</app_var>		
+		<app_var app_var_name="ApplicationTitle">Local QP8 (release {release})</app_var>
 	</app_vars>
 	<customers>
 		<customer customer_name="publishing">
