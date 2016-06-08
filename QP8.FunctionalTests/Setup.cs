@@ -1,4 +1,6 @@
-﻿using AllureCSharpCommons;
+﻿using System;
+using System.IO;
+using AllureCSharpCommons;
 using NUnit.Framework;
 using QP8.FunctionalTests.Configuration;
 using SeleniumExtension;
@@ -14,8 +16,14 @@ namespace QP8.FunctionalTests
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
+            var resultsPath = Config.AllureResultsPath;
+            var environmentXmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "environment.xml");
+
+            AllureConfig.ResultsPath = resultsPath;
             AllureConfig.AllowEmptySuites = true;
-            AllureConfig.ResultsPath = Config.AllureResultsPath;
+            
+            if (File.Exists(environmentXmlPath))
+                File.Copy(environmentXmlPath, Path.Combine(resultsPath, "environment.xml"), true);
 
             GridHub = ExtensionCore.GetGridHubManager().ConnectToHub(Config.GridHubHost, Config.GridHubPort);
         }

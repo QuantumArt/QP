@@ -41,7 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="AllureCSharpCommons, Version=0.1.0.33073, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AllureCSharpCommons.0.2.3\lib\net45\AllureCSharpCommons.dll</HintPath>
+      <HintPath>..\packages\AllureCSharpCommons.0.2.4\lib\net45\AllureCSharpCommons.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -73,7 +73,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Nunit3AllureAdapter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nunit3AllureAdapter.1.0.1\lib\net45\Nunit3AllureAdapter.dll</HintPath>
+      <HintPath>..\packages\Nunit3AllureAdapter.1.0.2\lib\net45\Nunit3AllureAdapter.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="SeleniumExtension, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -93,16 +93,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\packages\AllureCSharpCommons.0.2.3\environment\environment.xml">
-      <Link>environment.xml</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="..\packages\SeleniumExtension.1.0.5\driver\chromedriver.exe">
       <Link>Resources\chromedriver.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -113,6 +107,9 @@
     </Content>
     <Content Include="..\packages\SeleniumExtension.1.0.5\driver\selenium-server-standalone.jar">
       <Link>Resources\selenium-server-standalone.jar</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="environment.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

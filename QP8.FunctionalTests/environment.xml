@@ -1,0 +1,51 @@
+<qa:environment xmlns:qa="urn:model.commons.qatools.yandex.ru">
+  <id>ReportId</id>
+  <name>QP8 Functional tests</name>
+  <url>http://tfs:8080/tfs/QuantumartCollection/QP/QP%20Team/_git/QP</url>
+  <parameter>
+    <name>browser</name>
+    <key>Browser</key>
+    <value>Chrome</value>
+  </parameter>
+  <parameter>
+    <name>QP8BackendUrl</name>
+    <key>Backend url</key>
+    <value>http://mscdev02:90/Backend/</value>
+  </parameter>
+  <parameter>
+    <name>QP8BackendLogin</name>
+    <key>Backend login</key>
+    <value>AutotestQuantumart</value>
+  </parameter>
+  <parameter>
+    <name>QP8BackendPassword</name>
+    <key>Backend password</key>
+    <value>1q2w-p=[Password</value>
+  </parameter>
+  <parameter>
+    <name>QP8BackendCustomerCode</name>
+    <key>Backend customer code</key>
+    <value>qp_beeline_main</value>
+  </parameter>
+
+  <parameter>
+    <name>PageLoadTimeout</name>
+    <key>Page load timeout</key>
+    <value>25000 milliseconds</value>
+  </parameter>
+  <parameter>
+    <name>PageLoadTimeout</name>
+    <key>Page load timeout</key>
+    <value>25000 milliseconds</value>
+  </parameter>
+  <parameter>
+    <name>ImplicitlyTimeout</name>
+    <key>Implicitly wait timeout</key>
+    <value>2000 milliseconds</value>
+  </parameter>
+  <parameter>
+    <name>JavaScriptTimeout</name>
+    <key>JavaScript timeout</key>
+    <value>10000 milliseconds</value>
+  </parameter>
+</qa:environment>
