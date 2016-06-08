@@ -102,6 +102,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="tests.runsettings" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\packages\SeleniumExtension.1.0.5\driver\chromedriver.exe">
