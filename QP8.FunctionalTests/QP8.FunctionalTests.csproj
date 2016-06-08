@@ -38,6 +38,7 @@
     <Compile Include="TestsData\Story.cs" />
     <Compile Include="Tests\Authentication\AuthenticationTests.cs" />
     <Compile Include="Tests\Authentication\AuthenticationTests2.cs" />
+    <Compile Include="Tests\Authentication\AuthenticationTests3.cs" />
     <Compile Include="Tests\BaseTest.cs" />
   </ItemGroup>
   <ItemGroup>

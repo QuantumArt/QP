@@ -17,6 +17,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
 {
     [TestFixture]
     [AllureTitle(Title)]
+    [Parallelizable(ParallelScope.Fixtures)]
     [AllureFeatures(Feature.Authentication)]
     public class AuthenticationTests : BaseTest
     {

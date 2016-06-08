@@ -18,7 +18,6 @@ using SeleniumExtension.Support.UI;
 namespace QP8.FunctionalTests.Tests
 {
     [AllureTestFixture]
-    [Parallelizable(ParallelScope.Fixtures)]
     public class BaseTest : AllureStepDefinition
     {
         private static readonly Logger _log = LogManager.GetCurrentClassLogger();
