@@ -41,24 +41,23 @@ namespace QP8.FunctionalTests.Tests.Authentication
             });
         }
 
-        protected void CheckValidationSteps(AuthenticationPage page, Input inputFieldToCheck, string validationErrorText)
+        protected void CheckValidationSteps(AuthenticationPage page, Input fieldToCheck, 
+                                            string fieldToCheckName, string validationErrorText)
         {
             Step("Check validation", () =>
             {
-                Assert.That(inputFieldToCheck.Valid, Is.False,
-                    "Password input field is not highlighted with red");
+                Assert.That(fieldToCheck.Valid, Is.False,
+                    string.Format("{0} input field is not highlighted with red", fieldToCheckName));
 
-                Assert.That(inputFieldToCheck.ValidationText, Is.EqualTo(validationErrorText),
-                    "Incorrect password input field validation text");
+                Assert.That(fieldToCheck.ValidationText, Is.EqualTo(validationErrorText),
+                    string.Format("{0} input field validation text is incorrect", fieldToCheckName));
 
                 Assert.That(page.Password.Text, Is.Empty,
                     "Password input field is not empty");
                 
                 Assert.That(page.ValidationErrors.Count(), Is.EqualTo(1),
                     "Validation errors miscount");
-
                 
-
                 Assert.That(page.ValidationErrors[0].Text, Is.EqualTo(validationErrorText),
                     "Incorrect validation error text");
             });
@@ -132,7 +131,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
             var page = new AuthenticationPage(Driver);
 
             AuthenticationSteps(page, login, Config.QP8BackendPassword, Config.QP8BackendCustomerCode);
-            CheckValidationSteps(page, page.Login, "Your account does not exist!");
+            CheckValidationSteps(page, page.Login, "Login", "Your account does not exist!");
             CheckJavaScriptErrors();
         }
 
@@ -151,7 +150,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
             var page = new AuthenticationPage(Driver);
 
             AuthenticationSteps(page, Config.QP8BackendLogin, password, Config.QP8BackendCustomerCode);
-            CheckValidationSteps(page, page.Password, "You entered wrong password!");
+            CheckValidationSteps(page, page.Password, "Password", "You entered wrong password!");
             CheckJavaScriptErrors();
         }
 
@@ -170,7 +169,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
             var page = new AuthenticationPage(Driver);
 
             AuthenticationSteps(page, Config.QP8BackendLogin, Config.QP8BackendPassword, customerCode);
-            CheckValidationSteps(page, page.CustomerCode, "Customer code does not exist!");
+            CheckValidationSteps(page, page.CustomerCode, "Customer code", "Customer code does not exist!");
             CheckJavaScriptErrors();
         }
 
