@@ -15,7 +15,7 @@
     <TargetFrameworkVersion>Framework45</TargetFrameworkVersion>
 
     <!-- Path to Test Adapters -->
-    <TestAdaptersPaths>..\packages\</TestAdaptersPaths>
+    <TestAdaptersPaths>C:\Temp\adapters\packages</TestAdaptersPaths>
   </RunConfiguration>
 
   <!-- Configurations for data collectors 
