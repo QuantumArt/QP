@@ -69,7 +69,15 @@ namespace QP8.FunctionalTests
             _log.Trace("GridHub disposing");
             Console.WriteLine("GridHub disposing");
 
-            GridHub.Dispose();
+            try
+            {
+                GridHub.Dispose();
+            }
+            catch (Exception e)
+            {
+                _log.Trace("GridHub disposing");
+                Console.WriteLine(e.Message);
+            }
         }
     }
 }
