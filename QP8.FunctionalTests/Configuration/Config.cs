@@ -27,9 +27,6 @@ namespace QP8.FunctionalTests.Configuration
                 if (!path.EndsWith("\\"))
                     path += "\\";
 
-                if (!Directory.Exists(path))
-                    Directory.CreateDirectory(path);
-
                 return path;
             }
         }
