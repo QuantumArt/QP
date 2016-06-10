@@ -753,4 +753,13 @@
   <data name="UseTypeSecurity" xml:space="preserve">
     <value>Использовать права доступа по типам</value>
   </data>
+  <data name="IsLocalization" xml:space="preserve">
+    <value>Является полем локализации</value>
+  </data>
+  <data name="OptimizeForHierarchy" xml:space="preserve">
+    <value>Оптимизировать для иерархии</value>
+  </data>
+  <data name="UseSeparateReverseViews" xml:space="preserve">
+    <value>Использовать отдельные обратные представления</value>
+  </data>
 </root>

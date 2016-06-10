@@ -971,6 +971,15 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("UseForContext", NameResourceType = typeof(FieldStrings))]
         public bool UseForContext { get; set; }
 
+        [LocalizedDisplayName("OptimizeForHierarchy", NameResourceType = typeof(FieldStrings))]
+        public bool OptimizeForHierarchy { get; set; }
+
+        [LocalizedDisplayName("IsLocalization", NameResourceType = typeof(FieldStrings))]
+        public bool IsLocalization { get; set; }
+
+        [LocalizedDisplayName("UseSeparateReverseViews", NameResourceType = typeof(FieldStrings))]
+        public bool UseSeparateReverseViews { get; set; }
+
         [LocalizedDisplayName("UseForVariations", NameResourceType = typeof(FieldStrings))]
         public bool UseForVariations { get; set; }
 

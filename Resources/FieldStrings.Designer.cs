@@ -907,6 +907,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Is localization field.
+        /// </summary>
+        public static string IsLocalization {
+            get {
+                return ResourceManager.GetString("IsLocalization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use Int64 data type.
         /// </summary>
         public static string IsLong {
@@ -1272,6 +1281,15 @@ namespace Quantumart.QP8.Resources {
         public static string OnScreen {
             get {
                 return ResourceManager.GetString("OnScreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Optimize for hierarchy.
+        /// </summary>
+        public static string OptimizeForHierarchy {
+            get {
+                return ResourceManager.GetString("OptimizeForHierarchy", resourceCulture);
             }
         }
         
@@ -1848,6 +1866,15 @@ namespace Quantumart.QP8.Resources {
         public static string UseRelationSecurity {
             get {
                 return ResourceManager.GetString("UseRelationSecurity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Use separate reverse views.
+        /// </summary>
+        public static string UseSeparateReverseViews {
+            get {
+                return ResourceManager.GetString("UseSeparateReverseViews", resourceCulture);
             }
         }
         
