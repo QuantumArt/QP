@@ -78,6 +78,7 @@
     <Compile Include="ContentGroupFixture.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="DynamicImageFixture.cs" />
+    <Compile Include="HierarchyFixture.cs" />
     <Compile Include="M2MNonSplittedFixture.cs" />
     <Compile Include="M2MFixture .cs" />
     <Compile Include="UniqueValidationFixture.cs" />
@@ -110,6 +111,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="xmls\group.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="xmls\hierarchy.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="xmls\m2m.xml">

@@ -6654,7 +6654,7 @@ namespace Quantumart.QP8.DAL
         {
             var result = new Dictionary<int, int>();
             var parentIdParam = (string.IsNullOrEmpty(treeFieldName)) ? "cast(0 as numeric)" : "ISNULL([" + treeFieldName + "], 0)";
-            var sql = string.Format("select content_item_id as id, {0} as parent_id from content_{1}_united with(nolock)", parentIdParam, contentId);
+            var sql = string.Format("select content_item_id as id, {0} as parent_id from content_{1}_united with(nolock) where archive = 0", parentIdParam, contentId);
             using (var cmd = new SqlCommand(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;

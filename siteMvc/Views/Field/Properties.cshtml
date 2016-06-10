@@ -9,529 +9,552 @@
 @using Quantumart.QP8.WebMvc.ViewModels.Field
 
 <script type="text/html" id="@Html.UniqueId("Data_ExternalCssItems_template")">
-	<span data-bind="click: addItem">
-		@Html.SimpleAddActionLink(VisualEditorStrings.AddNewExternalCss)
-	</span>
-	<table>
-		<thead>			
-			<tr>
-				<th/>
-				<th>URL</th>				
-				<th></th>				
-			</tr>			
-		</thead>
-		<tbody data-bind ="foreach: items">
-			<tr>
-				<td data-bind="text: $index() + 1"></td>
-				<td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"/></td>				
-				<td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
-			</tr>
-		</tbody>
-	</table>
+    <span data-bind="click: addItem">
+        @Html.SimpleAddActionLink(VisualEditorStrings.AddNewExternalCss)
+    </span>
+    <table>
+        <thead>			
+            <tr>
+                <th/>
+                <th>URL</th>				
+                <th></th>				
+            </tr>			
+        </thead>
+        <tbody data-bind ="foreach: items">
+            <tr>
+                <td data-bind="text: $index() + 1"></td>
+                <td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"/></td>				
+                <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
+            </tr>
+        </tbody>
+    </table>
 </script>
 
 <script type="text/html" id="@Html.UniqueId("Data_StringEnumItems_template")">	
-	<span data-bind="click: addItem">
-		@Html.SimpleAddActionLink(FieldStrings.AddNewEnumItem)
-	</span>	
-	<table>
-		<thead>
-			<tr>				
-				<th></th>
-				<th>@FieldStrings.EnumValueValue</th>				
-				<th>@FieldStrings.EnumValueAlias</th>
-				<th>@FieldStrings.EnumValueDefault</th>						
-				<th></th>
-			</tr>			
-		</thead>
-		<tbody data-bind ="foreach: items">
-			<tr>
-				<td data-bind="text: $index() + 1"></td>
-				<td><input class="textbox" data-bind="value: Value, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"/></td>
-				<td><input class="textbox" data-bind="value: Alias, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"/></td>
-				<td style="text-align:center; padding-right:0.7em;">
-					<input class="checkbox enum-default" title="@FieldStrings.EnumValueIsDefault" type="checkbox" data-bind="checked: IsDefault, event: { click: $root.onItemChanged }, attr: { 'data-index': $index }" />
-				</td>
-				<td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
-			</tr>
-		</tbody>
-	</table>	
+    <span data-bind="click: addItem">
+        @Html.SimpleAddActionLink(FieldStrings.AddNewEnumItem)
+    </span>	
+    <table>
+        <thead>
+            <tr>				
+                <th></th>
+                <th>@FieldStrings.EnumValueValue</th>				
+                <th>@FieldStrings.EnumValueAlias</th>
+                <th>@FieldStrings.EnumValueDefault</th>						
+                <th></th>
+            </tr>			
+        </thead>
+        <tbody data-bind ="foreach: items">
+            <tr>
+                <td data-bind="text: $index() + 1"></td>
+                <td><input class="textbox" data-bind="value: Value, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"/></td>
+                <td><input class="textbox" data-bind="value: Alias, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"/></td>
+                <td style="text-align:center; padding-right:0.7em;">
+                    <input class="checkbox enum-default" title="@FieldStrings.EnumValueIsDefault" type="checkbox" data-bind="checked: IsDefault, event: { click: $root.onItemChanged }, attr: { 'data-index': $index }" />
+                </td>
+                <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
+            </tr>
+        </tbody>
+    </table>	
 </script>
 
 
 @using (Html.BeginTabForm(Model))
 {
-	@Html.HiddenFor(s => s.Data.Id, new { id = Model.CurrentFieldIdHiddenElementId })
-																				  
-	using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
-	{
-		@Html.TextBoxFieldFor(s => s.Data.Name)
-		@Html.TextBoxFieldFor(s => s.Data.FriendlyName)
-		@Html.TextAreaFieldFor(s => s.Data.Description)
-		
-		@Html.SelectFieldFor(s => s.Data.ExactType, Html.List(Model.GetAcceptableExactFieldTypes()), new Dictionary<string, object> { { "id", Model.ExactSelectElementId } })
-		
-		@Html.SelectFieldFor(s => s.Data.Order, Html.List(Model.GetOrderOptions()));
+    @Html.HiddenFor(s => s.Data.Id, new {id = Model.CurrentFieldIdHiddenElementId})
+
+    using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
+    {
+        @Html.TextBoxFieldFor(s => s.Data.Name)
+        @Html.TextBoxFieldFor(s => s.Data.FriendlyName)
+        @Html.TextAreaFieldFor(s => s.Data.Description)
+
+        @Html.SelectFieldFor(s => s.Data.ExactType, Html.List(Model.GetAcceptableExactFieldTypes()), new Dictionary<string, object> {{"id", Model.ExactSelectElementId}})
+
+        @Html.SelectFieldFor(s => s.Data.Order, Html.List(Model.GetOrderOptions()))
+        ;
         @Html.CheckBoxFieldFor(s => s.Data.UseInChildContentFilter)
+        @Html.CheckBoxFieldFor(s => s.Data.IsLocalization)
 
 
-																			 //--------------------
-																			 using (Html.BeginPanel("Required"))
-																			 { 
-			@Html.CheckBoxFieldFor(s => s.Data.Required)
-																			 }
-		
-		@Html.CheckBoxFieldFor(s => s.Data.ReadOnly)		
-																			 using (Html.BeginPanel("Unique"))
-																			 { 			
-			@Html.CheckBoxFieldFor(s => s.Data.IsUnique, "ConstraintRules")
-			<div style="width:350px;">
-				@using (Html.BeginPanel("ConstraintRules", true))
-	{
-					<dl class="row">
-						<dt class="label"></dt>															
-						<dd class="field" style="width:350px;">							
-								@using (Html.BeginFieldGroup(FieldStrings.UniqueInCombinationWith))
-		{ 
-									@Html.QpCheckBoxListFor(
-										s => s.InCombinationWith,
-										Html.List(Model.GetAcceptableCombinationFields()),
-										Model.InCombinationWithEventArgs,
-										new Dictionary<string, object> { { "id", Model.InCombinationWithElementId } }
-									)
-		}
-						</dd>
-					</dl>
-	}
-			</div>			
-																			 }
 
-																			 using (Html.BeginPanel("Indexed"))
-																			 { 
-			@Html.CheckBoxFieldFor(s => s.Data.Indexed, htmlAttributes: new Dictionary<string, object> { { "id", Model.IndexedElementId } });
-																			 }
+        //--------------------
+        using (Html.BeginPanel("Required"))
+        {
+            @Html.CheckBoxFieldFor(s => s.Data.Required)
+        }
 
-																			 using (Html.BeginPanel("ViewInList"))
-																			 { 
-			@Html.CheckBoxFieldFor(s => s.Data.ViewInList);
-																			 }
+        @Html.CheckBoxFieldFor(s => s.Data.ReadOnly)
+        using (Html.BeginPanel("Unique"))
+        {
+            @Html.CheckBoxFieldFor(s => s.Data.IsUnique, "ConstraintRules")
+            <div style="width: 350px;">
+                @using (Html.BeginPanel("ConstraintRules", true))
+                {
+                    <dl class="row">
+                        <dt class="label"></dt>
+                        <dd class="field" style="width: 350px;">
+                            @using (Html.BeginFieldGroup(FieldStrings.UniqueInCombinationWith))
+                            {
+                                @Html.QpCheckBoxListFor(
+                                    s => s.InCombinationWith,
+                                    Html.List(Model.GetAcceptableCombinationFields()),
+                                    Model.InCombinationWithEventArgs,
+                                    new Dictionary<string, object> {{"id", Model.InCombinationWithElementId}}
+                                    )
+                            }
+                        </dd>
+                    </dl>
+                }
+            </div>
+        }
 
-																			 if (Model.Data.ParentField != null)
-																			 { 
-			@Html.TextBoxFieldFor(s => s.ParentFieldName, new Dictionary<string, object> { { "disabled", "disabled" } });
-			@Html.CheckBoxFieldFor(s => s.Data.Override, null, false, new Dictionary<string, object> { { "disabled", "disabled" } });
-			@Html.CheckBoxFieldFor(s => s.Data.Hide);
-																			 }
+        using (Html.BeginPanel("Indexed"))
+        {
+            @Html.CheckBoxFieldFor(s => s.Data.Indexed, htmlAttributes: new Dictionary<string, object> {{"id", Model.IndexedElementId}})
+            ;
+        }
 
-																			 using (Html.BeginPanel("OnScreen"))
-																			 { 
-			@Html.CheckBoxFieldFor(s => s.Data.OnScreen, htmlAttributes: new Dictionary<string, object> { { "id", Model.OnScreenElementId } });
-																			 }
+        using (Html.BeginPanel("ViewInList"))
+        {
+            @Html.CheckBoxFieldFor(s => s.Data.ViewInList)
+            ;
+        }
 
-		@Html.CheckBoxFieldFor(s => s.Data.RebuildVirtualContents, "RebuildVirtualContents", true);
-																								  using (Html.BeginPanel("RebuildVirtualContents"))
-																								  {
-			@Html.Warning(FieldStrings.DisablingRebuildIsDangerous)        
-																								  }
-	}
+        if (Model.Data.ParentField != null)
+        {
+            @Html.TextBoxFieldFor(s => s.ParentFieldName, new Dictionary<string, object> {{"disabled", "disabled"}})
+            ;
+            @Html.CheckBoxFieldFor(s => s.Data.Override, null, false, new Dictionary<string, object> {{"disabled", "disabled"}})
+            ;
+            @Html.CheckBoxFieldFor(s => s.Data.Hide)
+            ;
+        }
 
-	using (Html.BeginPanel("LinqGroup", Model.Data.Content.Site.AssemblingType == Quantumart.QP8.Constants.AssemblingType.AspDotNet, false))
-	{
-		using (Html.BeginFieldGroup(FieldStrings.LinqParamsGroup))
-		{
-					
-			@Html.CheckBoxFieldFor(s => s.Data.MapAsProperty, "MapAsPropertyIsTrue")
+        using (Html.BeginPanel("OnScreen"))
+        {
+            @Html.CheckBoxFieldFor(s => s.Data.OnScreen, htmlAttributes: new Dictionary<string, object> {{"id", Model.OnScreenElementId}})
+            ;
 
-			using (Html.BeginPanel("MapAsPropertyIsTrue", true))
-			{				
-				@Html.TextBoxFieldFor(s => s.Data.LinqPropertyName)
-
-				using (Html.BeginPanel("IsNumericLong"))
-				{ 							
-					@Html.CheckBoxFieldFor(s => s.Data.IsLong)
-					@Html.CheckBoxFieldFor(s => s.Data.IsDecimal)						
-				}
-
-				if (!Model.Data.IsBackwardFieldExists)
-				{
-					using (Html.BeginPanel("LinqBackProperty"))
-					{ 							
-						@Html.TextBoxFieldFor(s => s.Data.LinqBackPropertyName)					
-					}
-				}
-			}
-
-			using (Html.BeginPanel("M2MMaplink", true))
-			{ 
-				@Html.CheckBoxFieldFor(s => s.Data.ContentLink.MapAsClass, "MaplinkAsClassIsTrue")
-				using (Html.BeginPanel("MaplinkAsClassIsTrue"))
-				{ 
-					@Html.TextBoxFieldFor(s => s.Data.ContentLink.NetLinkName)
-					@Html.TextBoxFieldFor(s => s.Data.ContentLink.NetPluralLinkName)
-				}
-			}
-		}
-	}
-
-	using (Html.BeginFieldGroup(FieldStrings.TypeSpecificParamsGroup))
-	{
-		using (Html.BeginPanel("FileOrImage", true))
-		{ 								            
-			@Html.FileForFieldFor(s => s.Data.FileDefaultValue, Model.Data, new Dictionary<string, object> { { "id", Model.FileDefaultElementId } })
-			@Html.CheckBoxFieldFor(s => s.Data.UseSiteLibrary)
-			@Html.CheckBoxFieldFor(s => s.Data.RenameMatched)
-			@Html.CheckBoxFieldFor(s => s.Data.DisableVersionControl)
-			@Html.TextBoxFieldFor(s => s.Data.SubFolder)
-		}
-
-		using (Html.BeginPanel("RelateTo", true))
-		{ 			            
-			@Html.SingleItemPickerFieldFor(m => m.Data.RelateToContentId, Model.RelateToListItem,
-				new EntityDataListArgs
-				{
-					EntityTypeCode = EntityTypeCode.Content,
-					ParentEntityId = Model.Data.Content.SiteId,
-					SelectActionCode = ActionCode.SelectContentForField,
-					ReadActionCode = Model.RelatedReadActionCode,
-					ListId = -1 * System.DateTime.Now.Millisecond,
-					ShowIds = true
-				},
-				new ControlOptions
-				{
-					HtmlAttributes = new Dictionary<string, object> { { "id", Model.RelateToSelectElementId } }
-				}
-			)
-			
-			using (Html.BeginPanel("O2MMainProps"))
-			{
-				using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.RelationFieldPanelElementId } }))
-				{ 
-					@Html.SelectFieldFor(s => s.Data.RelationId, Html.List(Model.GetAcceptableRelatedFields()), new Dictionary<string, object> { { "id", Model.DisplayFieldSelectElementId } })				
-				}
-
-				using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.ClassifierFieldPanelElementId }, { "hideforcurrent", "true" } }))
-				{ 
-					@Html.CheckBoxFieldFor(s => s.Data.Aggregated, "ClassifierList", htmlAttributes: new Dictionary<string, object> { { "id", Model.AggregatedElementId } })
-					using (Html.BeginPanel("ClassifierList"))
-					{ 
-						@Html.SelectFieldFor(s => s.Data.ClassifierId, Html.List(Model.GetAcceptableClassifierFields()), new Dictionary<string, object> { { "id", Model.ClassifierSelectElementId } })
-					}
-					@Html.CheckBoxFieldFor(s => s.Data.UseForContext)
-				}
-
-				using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.O2MTreePanelElementId }, { "showforcurrent", "true" } }))
-				{
-					@Html.CheckBoxFieldFor(s => s.Data.UseForTree)   
-					@Html.CheckBoxFieldFor(s => s.Data.AutoCheckChildren)
-					@Html.CheckBoxFieldFor(s => s.Data.CopyPermissionsToChildren)
-					@Html.SelectFieldFor(s => s.Data.TreeOrderFieldId, Html.List(Model.GetFieldsForTreeOrder()))
-					@Html.CheckBoxFieldFor(s => s.Data.TreeOrderByTitle)
-					@Html.NumericFieldFor(s => s.Data.TreeFieldTitleCount)
-					@Html.CheckBoxFieldFor(s => s.Data.TreeIncludeRelationsInTitle)
-					@Html.CheckBoxFieldFor(s => s.Data.UseForVariations) 
-				}
-			}
-			
-			@Html.CheckBoxFieldFor(s => s.Data.UseRelationCondition, "RelationCondition")
-			using (Html.BeginPanel("RelationCondition"))
-			{ 
-				@Html.TextBoxFieldFor(s => s.Data.RelationCondition)
-			}
-
-			using (Html.BeginPanel("RelationSecurity"))
-			{ 
-				@Html.CheckBoxFieldFor(s => s.Data.UseRelationSecurity)
-			}
-
-			using (Html.BeginPanel("O2MDefault"))
-			{
-				using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.O2MDefaultPanelElementId } }))
-				{ 										
-					@Html.SingleItemPickerFieldFor(s => s.Data.O2MDefaultValue, Model.O2MDefaultValueListItem, new EntityDataListArgs
-{
-	EntityTypeCode = EntityTypeCode.Article,
-	ParentEntityId = Model.Data.RelateToContentId,
-	SelectActionCode = ActionCode.SelectArticle,
-	ReadActionCode = ActionCode.EditArticle,
-	AddNewActionCode = ActionCode.AddNewArticle,
-	ListId = -1 * System.DateTime.Now.Millisecond,
-	ShowIds = true,
-	Filter = Model.Data.RelationFilter,
-}, new ControlOptions
-{
-	Enabled = true,
-	HtmlAttributes = new Dictionary<string, object> { { "id", Model.O2MDefaultElementId } }
-}
-					);
-				}
-			}
-
-			using (Html.BeginPanel("M2MBackwardFieldName"))
-			{
-				using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.M2MBackwardFieldNamePanelElementId }, { "hideforcurrent", "true" } }))
-				{
-					if (!Model.Data.IsBackwardFieldExists)
-					{ 
-						@Html.TextBoxFieldFor(s => s.Data.NewM2MBackwardFieldName)                   
-					}
-				}
-			}
-
-			using (Html.BeginPanel("O2MBackwardFieldName"))
-			{
-				using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.O2MBackwardFieldNamePanelElementId } }))
-				{
-					if (!Model.Data.IsBackwardFieldExists)
-					{ 
-						@Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
-					}
-				}
-			}
-			
-			@Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2MRelation, true))
-		{ 
-			@Html.CheckBoxFieldFor(s => s.Data.ContentLink.Symmetric)			
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2MRelation, true))
-		{
-			using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.M2MDefaultPanelElementId } }))
-			{ 	
-				@Html.MultipleItemPickerFieldFor(x => x.DefaultArticleIds, Model.DefaultArticleListItems, Model.EntityDataListArgs,
-						new Dictionary<string, object> { { "id", Model.M2MDefaultElementId } });
-			}
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2ORelation, true))
-		{ 
-			@Html.SelectFieldFor(s => s.Data.BackRelationId, Html.List(Model.GetBaseFieldsForM2O()))
-		}
-
-		using (Html.BeginPanel("ListOrderOptions"))
-		{ 
-				@Html.SelectFieldFor(s => s.Data.ListOrderFieldId, Html.List(Model.GetFieldsForTreeOrder()), new Dictionary<string, object> { { "id", Model.ListOrderSelectElementId } })
-				@Html.CheckBoxFieldFor(s => s.Data.ListOrderByTitle)
-				@Html.NumericFieldFor(s => s.Data.ListFieldTitleCount)
-				@Html.CheckBoxFieldFor(s => s.Data.ListIncludeRelationsInTitle)
-		}
-
-		using (Html.BeginPanel("ListTitleOptions"))
-		{
-			using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.ListTitleOptionsPanelElementId }, { "hideforcurrent", "true" } }))
-			{ 
-				@Html.NumericFieldFor(s => s.Data.ListO2MFieldTitleCount)
-				@Html.CheckBoxFieldFor(s => s.Data.ListO2MIncludeRelationsInTitle)
-			}
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Boolean, true))
-		{ 
-			@Html.CheckBoxFieldFor(s => s.Data.BooleanDefaultValue)
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Date, true))
-		{ 
-			@Html.DateFieldFor(s => s.Data.DateDefaultValue)
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Time, true))
-		{ 
-			@Html.TimeFieldFor(s => s.Data.TimeDefaultValue)
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.DateTime, true))
-		{ 
-			@Html.DateTimeFieldFor(s => s.Data.DateTimeDefaultValue)
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Textbox, true))
-		{ 
-			@Html.TextAreaFieldFor(s => s.Data.TextBoxDefaultValue)
-			@Html.NumericFieldFor(s => s.Data.TextBoxRows)
-		}
-
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.VisualEdit, true))
-		{ 
-			@Html.VisualEditorFieldFor(s => s.Data.VisualEditDefaultValue, Model.Data)
-			@Html.NumericFieldFor(s => s.Data.VisualEditorHeight)
-			@Html.CheckBoxFieldFor(s => s.Data.AutoExpand, "AutoExpand", true)
-
-            using (Html.BeginPanel("AutoExpand"))
+            @Html.CheckBoxFieldFor(s => s.Data.RebuildVirtualContents, "RebuildVirtualContents", true)
+            ;
+            using (Html.BeginPanel("RebuildVirtualContents"))
             {
-                @Html.CheckBoxFieldFor(s => s.Data.AutoLoad)
+                @Html.Warning(FieldStrings.DisablingRebuildIsDangerous)
             }
-    
-            
-			@Html.CheckBoxFieldFor(s => s.Data.FullPage)
-			@Html.TextBoxFieldFor(s => s.Data.DocType, new Dictionary<string, object> { { "style", "width:100% !important;" } })
-			@Html.CheckBoxFieldFor(s => s.Data.PEnterMode)
-			@Html.CheckBoxFieldFor(s => s.Data.UseEnglishQuotes)
-			@Html.CheckboxListFieldFor(
-				model => model.ActiveVeCommands,
-					Html.List(Model.DefaultCommandsListItems),
-							new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
-							new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeCommands") } }
-			)
+        }
 
-			@Html.TextBoxFieldFor(s => s.Data.RootElementClass)
-	
-			@Html.AggregationListFieldFor(s => s.Data.ExternalCssItems, Model.Data.ExternalCssItems, "Url")
+        using (Html.BeginPanel("LinqGroup", Model.Data.Content.Site.AssemblingType == Quantumart.QP8.Constants.AssemblingType.AspDotNet, false))
+        {
+            using (Html.BeginFieldGroup(FieldStrings.LinqParamsGroup))
+            {
 
-			@Html.CheckboxListFieldFor(
-			model => model.ActiveVeStyles,
-			Html.List(Model.AllStylesListItems),
-			new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
-					new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeStyles") } }
-			)
+                @Html.CheckBoxFieldFor(s => s.Data.MapAsProperty, "MapAsPropertyIsTrue")
 
-			@Html.CheckboxListFieldFor(
-			model => model.ActiveVeFormats,
-			Html.List(Model.AllFormatsListItems),
-			new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
-					new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeFormats") } }
-			)
-			
-		}
+                using (Html.BeginPanel("MapAsPropertyIsTrue", true))
+                {
+                    @Html.TextBoxFieldFor(s => s.Data.LinqPropertyName)
 
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.String, true))
-		{ 
-			@Html.TextBoxFieldFor(s => s.Data.StringDefaultValue)
-			@Html.NumericFieldFor(s => s.Data.StringSize)
-			@Html.CheckBoxFieldFor(s => s.Data.UseInputMask, "InputMask")
-			using (Html.BeginPanel("InputMask"))
-			{ 
-				@Html.RadioFieldFor(s => s.InputMaskType, Html.List(Model.GetInputMaskTypes()))
+                    using (Html.BeginPanel("IsNumericLong"))
+                    {
+                        @Html.CheckBoxFieldFor(s => s.Data.IsLong)
+                        @Html.CheckBoxFieldFor(s => s.Data.IsDecimal)
+                    }
 
-				using (Html.BeginPanel(s => s.InputMaskType, InputMaskTypes.Basic))
-				{ 
-					@Html.SelectFieldFor(s => s.MaskTemplateId, Html.List(Model.GetMaskTemplates()))
-				}
+                    if (!Model.Data.IsBackwardFieldExists)
+                    {
+                        using (Html.BeginPanel("LinqBackProperty"))
+                        {
+                            @Html.TextBoxFieldFor(s => s.Data.LinqBackPropertyName)
+                        }
+                    }
 
-				using (Html.BeginPanel(s => s.InputMaskType, InputMaskTypes.Custom))
-				{
-					@Html.TextBoxFieldFor(s => s.Data.InputMask);
-				}
-			}
-		}
+                    @Html.CheckBoxFieldFor(s => s.Data.UseSeparateReverseViews)
+                }
 
-		using (Html.BeginPanel("NumericIntegerProps", true))
-		{ 
-			@Html.NumericFieldFor(s => s.Data.NumericDefaultValue, null, null, Model.Data.DecimalPlaces == default(int) ? 2 : Model.Data.DecimalPlaces)
-			@Html.CheckBoxFieldFor(s => s.Data.IsInteger, "IsIntegerPanel", true)
-			using (Html.BeginPanel("IsIntegerPanel"))
-			{ 
-				@Html.NumericFieldFor(s => s.Data.DecimalPlaces)
-			}
-		}
+                using (Html.BeginPanel("M2MMaplink", true))
+                {
+                    @Html.CheckBoxFieldFor(s => s.Data.ContentLink.MapAsClass, "MaplinkAsClassIsTrue")
+                    using (Html.BeginPanel("MaplinkAsClassIsTrue"))
+                    {
+                        @Html.TextBoxFieldFor(s => s.Data.ContentLink.NetLinkName)
+                        @Html.TextBoxFieldFor(s => s.Data.ContentLink.NetPluralLinkName)
+                    }
 
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.DynamicImage, true))
-		{ 
-			@Html.SelectFieldFor(s => s.Data.BaseImageId, Html.List(Model.GetContentImageFields()))
+                }
+            }
+        }
 
-			@Html.RadioFieldFor(s => s.DynamicImageSizeMode, Html.List(Model.GetDynamicImageModes()))			
+        using (Html.BeginFieldGroup(FieldStrings.TypeSpecificParamsGroup))
+        {
+            using (Html.BeginPanel("FileOrImage", true))
+            {
+                @Html.FileForFieldFor(s => s.Data.FileDefaultValue, Model.Data, new Dictionary<string, object> {{"id", Model.FileDefaultElementId}})
+                @Html.CheckBoxFieldFor(s => s.Data.UseSiteLibrary)
+                @Html.CheckBoxFieldFor(s => s.Data.RenameMatched)
+                @Html.CheckBoxFieldFor(s => s.Data.DisableVersionControl)
+                @Html.TextBoxFieldFor(s => s.Data.SubFolder)
+            }
 
-			using (Html.BeginPanel("HeightModePanel"))
-			{
-				@Html.NumericFieldFor(s => s.Data.DynamicImage.Height);
-			}
-			using (Html.BeginPanel("WidthModePanel"))
-			{
-				@Html.NumericFieldFor(s => s.Data.DynamicImage.Width);
-			}
-			
-			@Html.RadioFieldFor(s => s.Data.DynamicImage.Type, Html.List(Model.GetDynamicImageFileTypes()))
+            using (Html.BeginPanel("RelateTo", true))
+            {
+                @Html.SingleItemPickerFieldFor(m => m.Data.RelateToContentId, Model.RelateToListItem,
+                    new EntityDataListArgs
+                    {
+                        EntityTypeCode = EntityTypeCode.Content,
+                        ParentEntityId = Model.Data.Content.SiteId,
+                        SelectActionCode = ActionCode.SelectContentForField,
+                        ReadActionCode = Model.RelatedReadActionCode,
+                        ListId = -1*System.DateTime.Now.Millisecond,
+                        ShowIds = true
+                    },
+                    new ControlOptions
+                    {
+                        HtmlAttributes = new Dictionary<string, object> {{"id", Model.RelateToSelectElementId}}
+                    }
+                    )
 
-			using (Html.BeginPanel(s => s.Data.DynamicImage.Type, DynamicImage.JPG_EXTENSION))
-			{ 
-				@Html.NumericFieldFor(s => s.Data.DynamicImage.Quality);
-			}
-		}
+                using (Html.BeginPanel("O2MMainProps"))
+                {
+                    using (Html.BeginPanel(new Dictionary<string, object> {{"id", Model.RelationFieldPanelElementId}}))
+                    {
+                        @Html.SelectFieldFor(s => s.Data.RelationId, Html.List(Model.GetAcceptableRelatedFields()), new Dictionary<string, object> {{"id", Model.DisplayFieldSelectElementId}})
+                    }
 
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Classifier, true))
-		{
-			@Html.CheckBoxFieldFor(s => s.Data.Changeable);
-            @Html.CheckBoxFieldFor(s => s.Data.UseTypeSecurity);
-			@Html.SelectFieldFor(s => s.Data.ClassifierDefaultValue, Html.List(Model.GetAggregetableContentsForClassifier()), new SelectOptions { DefaultOption = FieldStrings.ClassifierDefaultIsUndefined })	
-		}
+                    using (Html.BeginPanel(new Dictionary<string, object> {{"id", Model.ClassifierFieldPanelElementId}, {"hideforcurrent", "true"}}))
+                    {
+                        @Html.CheckBoxFieldFor(s => s.Data.Aggregated, "ClassifierList", htmlAttributes: new Dictionary<string, object> {{"id", Model.AggregatedElementId}})
+                        using (Html.BeginPanel("ClassifierList"))
+                        {
+                            @Html.SelectFieldFor(s => s.Data.ClassifierId, Html.List(Model.GetAcceptableClassifierFields()), new Dictionary<string, object> {{"id", Model.ClassifierSelectElementId}})
+                        }
+                        @Html.CheckBoxFieldFor(s => s.Data.UseForContext)
+                    }
 
-		using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.StringEnum, true))
-		{
-			@Html.CheckBoxFieldFor(s => s.Data.ShowAsRadioButtons)
-			@Html.AggregationListFieldFor(s => s.Data.StringEnumItems, Model.Data.StringEnumItems, "Value,Alias,IsDefault")
-		}
-	}
-		
-	@Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+                    using (Html.BeginPanel(new Dictionary<string, object> {{"id", Model.O2MTreePanelElementId}, {"showforcurrent", "true"}}))
+                    {
+                        @Html.CheckBoxFieldFor(s => s.Data.UseForTree)
+                        @Html.CheckBoxFieldFor(s => s.Data.AutoCheckChildren)
+                        @Html.CheckBoxFieldFor(s => s.Data.CopyPermissionsToChildren)
+                        @Html.SelectFieldFor(s => s.Data.TreeOrderFieldId, Html.List(Model.GetFieldsForTreeOrder()))
+                        @Html.CheckBoxFieldFor(s => s.Data.TreeOrderByTitle)
+                        @Html.NumericFieldFor(s => s.Data.TreeFieldTitleCount)
+                        @Html.CheckBoxFieldFor(s => s.Data.TreeIncludeRelationsInTitle)
+                        @Html.CheckBoxFieldFor(s => s.Data.UseForVariations)
+
+                    }
+                }
+
+                @Html.CheckBoxFieldFor(s => s.Data.UseRelationCondition, "RelationCondition")
+                using (Html.BeginPanel("RelationCondition"))
+                {
+                    @Html.TextBoxFieldFor(s => s.Data.RelationCondition)
+                }
+
+                using (Html.BeginPanel("RelationSecurity"))
+                {
+                    @Html.CheckBoxFieldFor(s => s.Data.UseRelationSecurity)
+                }
+
+                using (Html.BeginPanel("O2MDefault"))
+                {
+                    using (Html.BeginPanel(new Dictionary<string, object> {{"id", Model.O2MDefaultPanelElementId}}))
+                    {
+                        @Html.SingleItemPickerFieldFor(s => s.Data.O2MDefaultValue, Model.O2MDefaultValueListItem, new EntityDataListArgs
+                        {
+                            EntityTypeCode = EntityTypeCode.Article,
+                            ParentEntityId = Model.Data.RelateToContentId,
+                            SelectActionCode = ActionCode.SelectArticle,
+                            ReadActionCode = ActionCode.EditArticle,
+                            AddNewActionCode = ActionCode.AddNewArticle,
+                            ListId = -1*System.DateTime.Now.Millisecond,
+                            ShowIds = true,
+                            Filter = Model.Data.RelationFilter,
+                        }, new ControlOptions
+                        {
+                            Enabled = true,
+                            HtmlAttributes = new Dictionary<string, object> {{"id", Model.O2MDefaultElementId}}
+                        }
+                            )
+                        ;
+                    }
+                }
+
+                using (Html.BeginPanel("M2MBackwardFieldName"))
+                {
+                    using (Html.BeginPanel(new Dictionary<string, object> {{"id", Model.M2MBackwardFieldNamePanelElementId}, {"hideforcurrent", "true"}}))
+                    {
+                        if (!Model.Data.IsBackwardFieldExists)
+                        {
+                            @Html.TextBoxFieldFor(s => s.Data.NewM2MBackwardFieldName)
+                        }
+                    }
+                }
+
+                using (Html.BeginPanel("O2MBackwardFieldName"))
+                {
+                    using (Html.BeginPanel(new Dictionary<string, object> {{"id", Model.O2MBackwardFieldNamePanelElementId}}))
+                    {
+                        if (!Model.Data.IsBackwardFieldExists)
+                        {
+                            @Html.TextBoxFieldFor(s => s.Data.NewO2MBackwardFieldName)
+                        }
+                    }
+                }
+
+                @Html.CheckBoxFieldFor(m => m.Data.UseForDefaultFiltration)
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2MRelation, true))
+            {
+                @Html.CheckBoxFieldFor(s => s.Data.ContentLink.Symmetric)
+                @Html.CheckBoxFieldFor(s => s.Data.OptimizeForHierarchy)
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2MRelation, true))
+            {
+                using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.M2MDefaultPanelElementId } }))
+                {
+                    @Html.MultipleItemPickerFieldFor(x => x.DefaultArticleIds, Model.DefaultArticleListItems, Model.EntityDataListArgs,
+                        new Dictionary<string, object> {{"id", Model.M2MDefaultElementId}})
+                    ;
+                }
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.M2ORelation, true))
+            {
+                @Html.SelectFieldFor(s => s.Data.BackRelationId, Html.List(Model.GetBaseFieldsForM2O()))
+            }
+
+            using (Html.BeginPanel("ListOrderOptions"))
+            {
+                @Html.SelectFieldFor(s => s.Data.ListOrderFieldId, Html.List(Model.GetFieldsForTreeOrder()), new Dictionary<string, object> {{"id", Model.ListOrderSelectElementId}})
+                @Html.CheckBoxFieldFor(s => s.Data.ListOrderByTitle)
+                @Html.NumericFieldFor(s => s.Data.ListFieldTitleCount)
+                @Html.CheckBoxFieldFor(s => s.Data.ListIncludeRelationsInTitle)
+            }
+
+            using (Html.BeginPanel("ListTitleOptions"))
+            {
+                using (Html.BeginPanel(new Dictionary<string, object> {{"id", Model.ListTitleOptionsPanelElementId}, {"hideforcurrent", "true"}}))
+                {
+                    @Html.NumericFieldFor(s => s.Data.ListO2MFieldTitleCount)
+                    @Html.CheckBoxFieldFor(s => s.Data.ListO2MIncludeRelationsInTitle)
+                }
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Boolean, true))
+            {
+                @Html.CheckBoxFieldFor(s => s.Data.BooleanDefaultValue)
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Date, true))
+            {
+                @Html.DateFieldFor(s => s.Data.DateDefaultValue)
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Time, true))
+            {
+                @Html.TimeFieldFor(s => s.Data.TimeDefaultValue)
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.DateTime, true))
+            {
+                @Html.DateTimeFieldFor(s => s.Data.DateTimeDefaultValue)
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Textbox, true))
+            {
+                @Html.TextAreaFieldFor(s => s.Data.TextBoxDefaultValue)
+                @Html.NumericFieldFor(s => s.Data.TextBoxRows)
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.VisualEdit, true))
+            {
+                @Html.VisualEditorFieldFor(s => s.Data.VisualEditDefaultValue, Model.Data)
+                @Html.NumericFieldFor(s => s.Data.VisualEditorHeight)
+                @Html.CheckBoxFieldFor(s => s.Data.AutoExpand, "AutoExpand", true)
+
+                using (Html.BeginPanel("AutoExpand"))
+                {
+                    @Html.CheckBoxFieldFor(s => s.Data.AutoLoad)
+                }
+
+
+                @Html.CheckBoxFieldFor(s => s.Data.FullPage)
+                @Html.TextBoxFieldFor(s => s.Data.DocType, new Dictionary<string, object> {{"style", "width:100% !important;"}})
+                @Html.CheckBoxFieldFor(s => s.Data.PEnterMode)
+                @Html.CheckBoxFieldFor(s => s.Data.UseEnglishQuotes)
+                @Html.CheckboxListFieldFor(
+                    model => model.ActiveVeCommands,
+                    Html.List(Model.DefaultCommandsListItems),
+                    new EntityDataListArgs() {MaxListHeight = 200, IsCollapsable = true},
+                    new Dictionary<string, object> {{"id", Model.UniqueId("ActiveVeCommands")}}
+                    )
+
+                @Html.TextBoxFieldFor(s => s.Data.RootElementClass)
+
+                @Html.AggregationListFieldFor(s => s.Data.ExternalCssItems, Model.Data.ExternalCssItems, "Url")
+
+                @Html.CheckboxListFieldFor(
+                    model => model.ActiveVeStyles,
+                    Html.List(Model.AllStylesListItems),
+                    new EntityDataListArgs() {MaxListHeight = 200, IsCollapsable = true},
+                    new Dictionary<string, object> {{"id", Model.UniqueId("ActiveVeStyles")}}
+                    )
+
+                @Html.CheckboxListFieldFor(
+                    model => model.ActiveVeFormats,
+                    Html.List(Model.AllFormatsListItems),
+                    new EntityDataListArgs() {MaxListHeight = 200, IsCollapsable = true},
+                    new Dictionary<string, object> {{"id", Model.UniqueId("ActiveVeFormats")}}
+                    )
+
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.String, true))
+            {
+                @Html.TextBoxFieldFor(s => s.Data.StringDefaultValue)
+                @Html.NumericFieldFor(s => s.Data.StringSize)
+                @Html.CheckBoxFieldFor(s => s.Data.UseInputMask, "InputMask")
+                using (Html.BeginPanel("InputMask"))
+                {
+                    @Html.RadioFieldFor(s => s.InputMaskType, Html.List(Model.GetInputMaskTypes()))
+
+                    using (Html.BeginPanel(s => s.InputMaskType, InputMaskTypes.Basic))
+                    {
+                        @Html.SelectFieldFor(s => s.MaskTemplateId, Html.List(Model.GetMaskTemplates()))
+                    }
+
+                    using (Html.BeginPanel(s => s.InputMaskType, InputMaskTypes.Custom))
+                    {
+                        @Html.TextBoxFieldFor(s => s.Data.InputMask)
+                        ;
+                    }
+                }
+            }
+
+            using (Html.BeginPanel("NumericIntegerProps", true))
+            {
+                @Html.NumericFieldFor(s => s.Data.NumericDefaultValue, null, null, Model.Data.DecimalPlaces == default(int) ? 2 : Model.Data.DecimalPlaces)
+                @Html.CheckBoxFieldFor(s => s.Data.IsInteger, "IsIntegerPanel", true)
+                using (Html.BeginPanel("IsIntegerPanel"))
+                {
+                    @Html.NumericFieldFor(s => s.Data.DecimalPlaces)
+                }
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.DynamicImage, true))
+            {
+                @Html.SelectFieldFor(s => s.Data.BaseImageId, Html.List(Model.GetContentImageFields()))
+
+                @Html.RadioFieldFor(s => s.DynamicImageSizeMode, Html.List(Model.GetDynamicImageModes()))
+
+                using (Html.BeginPanel("HeightModePanel"))
+                {
+                    @Html.NumericFieldFor(s => s.Data.DynamicImage.Height)
+                    ;
+                }
+                using (Html.BeginPanel("WidthModePanel"))
+                {
+                    @Html.NumericFieldFor(s => s.Data.DynamicImage.Width)
+                    ;
+                }
+
+                @Html.RadioFieldFor(s => s.Data.DynamicImage.Type, Html.List(Model.GetDynamicImageFileTypes()))
+
+                using (Html.BeginPanel(s => s.Data.DynamicImage.Type, DynamicImage.JPG_EXTENSION))
+                {
+                    @Html.NumericFieldFor(s => s.Data.DynamicImage.Quality)
+                    ;
+                }
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Classifier, true))
+            {
+                @Html.CheckBoxFieldFor(s => s.Data.Changeable)
+                ;
+                @Html.CheckBoxFieldFor(s => s.Data.UseTypeSecurity)
+                ;
+                @Html.SelectFieldFor(s => s.Data.ClassifierDefaultValue, Html.List(Model.GetAggregetableContentsForClassifier()), new SelectOptions {DefaultOption = FieldStrings.ClassifierDefaultIsUndefined})
+            }
+
+            using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.StringEnum, true))
+            {
+                @Html.CheckBoxFieldFor(s => s.Data.ShowAsRadioButtons)
+                @Html.AggregationListFieldFor(s => s.Data.StringEnumItems, Model.Data.StringEnumItems, "Value,Alias,IsDefault")
+            }
+        }
+
+        @Html.Partial("Version", Model.Data)
+        @Html.Partial("EntityDirectLink", Model)
+    }
 }
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">	
-	@(Model.ContextObjectName).set_initializedCallback(function() {
-		this.fieldPropertiesMediator = new Quantumart.QP8.FieldPropertiesMediator("@(Model.TabId)");
-		this.relateToAndDisplayFieldMediator = new Quantumart.QP8.RelateToAndDisplayFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.DisplayFieldSelectElementId)", "@(Model.CurrentFieldIdHiddenElementId)", "@(Model.ListOrderSelectElementId)");
-		this.relateToAndClassifierFieldMediator = new Quantumart.QP8.RelateToAndClassifierFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.ClassifierSelectElementId)", "@(Model.AggregatedElementId)");		
-		this.fieldTypeFileDefaultMediator = new Quantumart.QP8.FieldTypeFileDefaultMediator("@(Model.ExactSelectElementId)", "@(Model.FileDefaultElementId)");
-		this.relateToAndO2MDefaultMediator = new Quantumart.QP8.RelateToAndO2MDefaultMediator("@(Model.RelateToSelectElementId)", "@(Model.O2MDefaultElementId)", "@(Model.M2MDefaultElementId)");
+    @(Model.ContextObjectName).set_initializedCallback(function() {
+        this.fieldPropertiesMediator = new Quantumart.QP8.FieldPropertiesMediator("@(Model.TabId)");
+        this.relateToAndDisplayFieldMediator = new Quantumart.QP8.RelateToAndDisplayFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.DisplayFieldSelectElementId)", "@(Model.CurrentFieldIdHiddenElementId)", "@(Model.ListOrderSelectElementId)");
+        this.relateToAndClassifierFieldMediator = new Quantumart.QP8.RelateToAndClassifierFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.ClassifierSelectElementId)", "@(Model.AggregatedElementId)");		
+        this.fieldTypeFileDefaultMediator = new Quantumart.QP8.FieldTypeFileDefaultMediator("@(Model.ExactSelectElementId)", "@(Model.FileDefaultElementId)");
+        this.relateToAndO2MDefaultMediator = new Quantumart.QP8.RelateToAndO2MDefaultMediator("@(Model.RelateToSelectElementId)", "@(Model.O2MDefaultElementId)", "@(Model.M2MDefaultElementId)");
 
-		this.relateToAndPanelsMediator = new Quantumart.QP8.RelateToAndPanelsMediator("@(Model.RelateToSelectElementId)", "@(Model.RelatedSettingsPanelsSelector)", "@(Model.Data.ContentId)");
-		this.relateToAndPanelsMediator.refresh();
+        this.relateToAndPanelsMediator = new Quantumart.QP8.RelateToAndPanelsMediator("@(Model.RelateToSelectElementId)", "@(Model.RelatedSettingsPanelsSelector)", "@(Model.Data.ContentId)");
+        this.relateToAndPanelsMediator.refresh();
 
-		this.$documentWrapper= jQuery("#" + this.get_mainComponent()._documentWrapperElementId);
-		this.$stringEnum = jQuery('#@Html.UniqueId("Data_StringEnumItems_aggregationlist")');
-		var that = this;
-		this.$documentWrapper.on("change", "input:checkbox.enum-default", function(){
-			var $curr = jQuery(this);			
-			var aggList = Quantumart.QP8.BackendAggregationList.getComponent(that.$stringEnum);
-			if(aggList){
-				var chIndex = $q.toInt($curr.data('index'), -1);
-				var i = 0;
-				jQuery.each(aggList.get_items(), function(){					
-					if(i !== chIndex){
-						this.IsDefault = false;
-					}
-					i++;
-				});
-			}
-			
-			var isChecked = $curr.prop("checked");
-			that.$documentWrapper.find("input:checkbox:checked.enum-default").prop("checked", false);
-			if(isChecked){
-				$curr.prop("checked", true);
-			}
-			$curr = null;
-		});
-	});	
-	@(Model.ContextObjectName).set_terminatingCallback(function() {								
+        this.$documentWrapper= jQuery("#" + this.get_mainComponent()._documentWrapperElementId);
+        this.$stringEnum = jQuery('#@Html.UniqueId("Data_StringEnumItems_aggregationlist")');
+        var that = this;
+        this.$documentWrapper.on("change", "input:checkbox.enum-default", function(){
+            var $curr = jQuery(this);			
+            var aggList = Quantumart.QP8.BackendAggregationList.getComponent(that.$stringEnum);
+            if(aggList){
+                var chIndex = $q.toInt($curr.data('index'), -1);
+                var i = 0;
+                jQuery.each(aggList.get_items(), function(){					
+                    if(i !== chIndex){
+                        this.IsDefault = false;
+                    }
+                    i++;
+                });
+            }
+            
+            var isChecked = $curr.prop("checked");
+            that.$documentWrapper.find("input:checkbox:checked.enum-default").prop("checked", false);
+            if(isChecked){
+                $curr.prop("checked", true);
+            }
+            $curr = null;
+        });
+    });	
+    @(Model.ContextObjectName).set_terminatingCallback(function() {								
 
-		
-		this.relateToAndDisplayFieldMediator.dispose();
-		this.relateToAndDisplayFieldMediator = null;
+        
+        this.relateToAndDisplayFieldMediator.dispose();
+        this.relateToAndDisplayFieldMediator = null;
 
-		this.relateToAndClassifierFieldMediator.dispose();
-		this.relateToAndClassifierFieldMediator = null;
+        this.relateToAndClassifierFieldMediator.dispose();
+        this.relateToAndClassifierFieldMediator = null;
 
-		this.fieldTypeFileDefaultMediator.dispose();
-		this.fieldTypeFileDefaultMediator = null;
+        this.fieldTypeFileDefaultMediator.dispose();
+        this.fieldTypeFileDefaultMediator = null;
 
-		this.relateToAndO2MDefaultMediator.dispose();
-		this.relateToAndO2MDefaultMediator = null;
+        this.relateToAndO2MDefaultMediator.dispose();
+        this.relateToAndO2MDefaultMediator = null;
 
-		this.relateToAndPanelsMediator.dispose();
-		this.relateToAndPanelsMediator = null;
+        this.relateToAndPanelsMediator.dispose();
+        this.relateToAndPanelsMediator = null;
 
-		this.fieldPropertiesMediator.dispose();
-		this.fieldPropertiesMediator = null;
-		
-		this.$stringEnum = null;
-		if(this.$documentWrapper){
-			this.$documentWrapper.off("change", "input:checkbox.enum-default");
-			this.$documentWrapper = null;
-		}
-		
-	});
+        this.fieldPropertiesMediator.dispose();
+        this.fieldPropertiesMediator = null;
+        
+        this.$stringEnum = null;
+        if(this.$documentWrapper){
+            this.$documentWrapper.off("change", "input:checkbox.enum-default");
+            this.$documentWrapper = null;
+        }
+        
+    });
 </script>
 @Html.RunInitScript(Model)

@@ -71,6 +71,13 @@ New-Item "IIS:\sites\$name\Backend\WinLogon\Scripts" -physicalPath $scriptsPath 
 Write-Host "Done"
 
 
+Write-Host "Unlocking configuration..."
+Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/anonymousAuthentication"""
+Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/windowsAuthentication"""
+Write-Host "Done"
+
+
+
 Write-Host "Creating configuration directory..."
 
 $configDir = "C:\QA"
@@ -166,10 +173,3 @@ $Acl.SetAccessRule($Ar)
 Set-Acl -path $siteRoot -AclObject $Acl
 
 Write-Host "Done"
-
-
-#Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/anonymousAuthentication"""
-#Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/windowsAuthentication"""
-
-#Set-WebConfigurationProperty -Filter "/system.webServer/security/authentication/anonymousAuthentication" -Name Enabled -Value False -PSPath "IIS:\Sites\$name\Winlogon"
-#Set-WebConfigurationProperty -Filter "/system.webServer/security/authentication/windowsAuthentication" -Name Enabled -Value True -PSPath "IIS:\Sites\$name\Winlogon"
