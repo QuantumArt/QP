@@ -397,7 +397,7 @@ namespace Quantumart.QP8.DAL
                     update content_item with(rowlock) set status_type_id = @statusTypeId, modified = getdate(), last_modified_by = @userId, schedule_new_version_publication = 1 where content_item_id in (select id from @ids2) and status_type_id <> @statusTypeId and splitted = 1;
                     delete i from @ids2 i inner join content_item ci with(nolock) on ci.content_item_id = i.id where ci.splitted = 0 and ci.schedule_new_version_publication = 0
 
-                    exec qp_merge_articles @ids2
+                    exec qp_merge_articles @ids2, @userId
                     ", connection
                 ))
             {
@@ -6654,7 +6654,7 @@ namespace Quantumart.QP8.DAL
         {
             var result = new Dictionary<int, int>();
             var parentIdParam = (string.IsNullOrEmpty(treeFieldName)) ? "cast(0 as numeric)" : "ISNULL([" + treeFieldName + "], 0)";
-            var sql = string.Format("select content_item_id as id, {0} as parent_id from content_{1}_united with(nolock)", parentIdParam, contentId);
+            var sql = string.Format("select content_item_id as id, {0} as parent_id from content_{1}_united with(nolock) where archive = 0", parentIdParam, contentId);
             using (var cmd = new SqlCommand(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;

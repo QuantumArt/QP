@@ -326,6 +326,10 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     $group = null;
   },
 
+  _isSearchQueryEmpty: function() {
+      return true;
+  },
+
   refreshTree: function() {
     var maxExpandLevel = this._isSearchQueryEmpty() ? 1 : 0;
     $('ul.t-group', this._treeElement).remove();

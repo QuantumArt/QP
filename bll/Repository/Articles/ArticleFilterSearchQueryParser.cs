@@ -44,8 +44,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 						ArticleFieldSearchType.TimeRange,
 						ArticleFieldSearchType.NumericRange,
 						ArticleFieldSearchType.O2MRelation,
-                        ArticleFieldSearchType.Classifier
-					}).Contains(p.SearchType));
+                        ArticleFieldSearchType.Classifier,
+                        ArticleFieldSearchType.StringEnum
+                    }).Contains(p.SearchType));
 
 			// если нет обрабатываемых параметров - то возвращаем null
 			if (!processedSqlParams.Any())
@@ -55,7 +56,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 				{
 					if (p.SearchType == ArticleFieldSearchType.Identifier)
 						return ParseIdentifierParam(p, sqlParams);
-					if(p.SearchType == ArticleFieldSearchType.Text)
+					if(p.SearchType == ArticleFieldSearchType.Text || p.SearchType == ArticleFieldSearchType.StringEnum)
 						return ParseTextParam(p);
 					else if (p.SearchType == ArticleFieldSearchType.DateRange)
 						return ParseDateRangeParam(p);

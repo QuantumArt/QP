@@ -510,7 +510,7 @@
   <data name="IsLong" xml:space="preserve">
     <value>Use Int64 data type</value>
   </data>
-	<data name="IsDecimal" xml:space="preserve">
+  <data name="IsDecimal" xml:space="preserve">
     <value>Use Decimal data type</value>
   </data>
   <data name="AutoExpand" xml:space="preserve">
@@ -737,5 +737,14 @@
   </data>
   <data name="UseTypeSecurity" xml:space="preserve">
     <value>Use type security</value>
+  </data>
+  <data name="IsLocalization" xml:space="preserve">
+    <value>Is localization field</value>
+  </data>
+  <data name="OptimizeForHierarchy" xml:space="preserve">
+    <value>Optimize for hierarchy</value>
+  </data>
+  <data name="UseSeparateReverseViews" xml:space="preserve">
+    <value>Use separate reverse views</value>
   </data>
 </root>

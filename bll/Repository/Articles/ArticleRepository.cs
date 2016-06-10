@@ -169,7 +169,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 {
                     ContentId = contentId,
                     ExstensionContentIds = extensionContentIds,
-                    ContentReferences = contentReferences,
+                    ContentReferences = contentReferences.Distinct().ToArray(),
                     SelectedIDs = selectedArticleIDs,
                     FilterIds = filterIds,
                     FullTextSearch = ftsOptions,
@@ -1265,6 +1265,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         internal static Dictionary<int, int> GetHierarchy(int contentId)
         {
             var treeName = ContentRepository.GetTreeFieldName(contentId);
+            if (string.IsNullOrEmpty(treeName)) return null;
             using (var scope = new QPConnectionScope())
             {
                 return Common.GetArticleHierarchy(scope.DbConnection, contentId, treeName);

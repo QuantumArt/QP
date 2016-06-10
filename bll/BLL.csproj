@@ -132,6 +132,7 @@
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
+    <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />
     <Compile Include="Helpers\ReplayHelper.cs" />

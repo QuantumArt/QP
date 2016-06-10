@@ -1,4 +1,4 @@
-
+Ôªø
 /* 
 USAGE
 
@@ -24,7 +24,7 @@ var QA = QA || { BackendAPI: {} };
 
 //#region EntitiesPicker
 QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
-    // #region ÓÔˆËË
+    // #region –æ–ø—Ü–∏–∏
     Options = function (contentId) {
         this.contentId = contentId;
         this.onSelected = function (name, args) {
@@ -57,12 +57,12 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
 
     // #endregion
 
-    // ÔÒÂ‚‰Ó-ÍÎ‡ÒÒ ÍÓÏÔÓÌÂÚ‡ (ÍÓÌÒÚÛÍÚÓ)
+    // –ø—Å–µ–≤–¥–æ-–∫–ª–∞—Å—Å –∫–æ–º–ø–æ–Ω–µ—Ç–∞ (–∫–æ–Ω—Å—Ç—Ä—É–∫—Ç–æ—Ä)
     var QPEntitiesPicker = function (options) {
         this.options = options;
         var eventArgs = new Quantumart.QP8.BackendEventArgs();
         eventArgs.set_isMultipleEntities(options.isMultipleChoice);
-        eventArgs.set_parentEntityId(options.contentId); // id ÍÓÌÚÂÌÚ‡
+        eventArgs.set_parentEntityId(options.contentId); // id –∫–æ–Ω—Ç–µ–Ω—Ç–∞
         eventArgs.set_entityTypeCode("article");
 
         if (options.isMultipleChoice == true) {
@@ -148,7 +148,7 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
 //#endregion
 
 (function () {
-    //#region –‡Ò¯ËÂÌËÂ BackendDocumentContext (–Â„ËÒÚ‡ˆËˇ Ë ‚˚ÔÓÎÌÂÌËÂ Ó·‡·ÓÚ˜ËÍÓ‚ ÒÓ·˚ÚËÈ ÙÓÏ˚)
+    //#region –†–∞—Å—à–∏—Ä–µ–Ω–∏–µ BackendDocumentContext (–†–µ–≥–∏—Å—Ç—Ä–∞—Ü–∏—è –∏ –≤—ã–ø–æ–ª–Ω–µ–Ω–∏–µ –æ–±—Ä–∞–±–æ—Ç—á–∏–∫–æ–≤ —Å–æ–±—ã—Ç–∏–π —Ñ–æ—Ä–º—ã)
     Quantumart.QP8.BackendDocumentContext.prototype.addInitHandler = function (callback) {
         if (typeof (callback) == "function") {
             if (!Array.isArray(this._initHandlerCallbacks)) {
@@ -169,7 +169,7 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
     };
 
     Quantumart.QP8.BackendDocumentContext.prototype.fieldValueChangedHandler = function (editor, data, $rootElem) {
-        // ‚˚ÔÓÎÌˇÂÏ Á‡Â„ËÒÚËÓ‚‡ÌÌ˚Â Ó·‡·ÓÚ˜ËÍË
+        // –≤—ã–ø–æ–ª–Ω—è–µ–º –∑–∞—Ä–µ–≥–∏—Å—Ç—Ä–∏—Ä–æ–≤–∞–Ω–Ω—ã–µ –æ–±—Ä–∞–±–æ—Ç—á–∏–∫–∏
         if (Array.isArray(this._fieldValueChangedHandlerCallbacks)) {
             $.each(this._fieldValueChangedHandlerCallbacks, function (i, handler) {
                 if (typeof (handler) == "function") {
@@ -181,7 +181,7 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
 
     Quantumart.QP8.BackendDocumentContext.prototype.initHandler = function (editor, $elem) {
         Sys.Debug.trace("form initializer");
-        // ‚˚ÔÓÎÌˇÂÏ Á‡Â„ËÒÚËÓ‚‡ÌÌ˚Â Ó·‡·ÓÚ˜ËÍË
+        // –≤—ã–ø–æ–ª–Ω—è–µ–º –∑–∞—Ä–µ–≥–∏—Å—Ç—Ä–∏—Ä–æ–≤–∞–Ω–Ω—ã–µ –æ–±—Ä–∞–±–æ—Ç—á–∏–∫–∏
         if (Array.isArray(this._initHandlerCallbacks)) {
             $.each(this._initHandlerCallbacks, function (i, handler) {
                 if (typeof (handler) == "function") {
@@ -209,13 +209,15 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
 
     Quantumart.QP8.BackendDocumentContext.prototype.addShowRelatedArticlesButton = function (fieldName, options) {
         var defaults = {
-            icon: "/Backend/Content/QP8/icons/16x16/version.gif",
+            icon: "/Backend/Content/QP8/icons/16x16/relation.gif",
             contentId: 0,
-            title: "œÓÍ‡Á‡Ú¸ ËÒÚÓË˛ Á‡Í‡Á‡",
+            title: "–ü–æ–∫–∞–∑–∞—Ç—å —Å–≤—è–∑–∞–Ω–Ω—ã–µ —Å—Ç–∞—Ç—å–∏",
             filterBy: null,
-            // ËÏˇ ÔÓÎˇ, ÁÌ‡˜ÂÌËÂ ÍÓÚÓÓ„Ó ËÒÔÓÎ¸ÁÛÂÚÒˇ ‚ ÙËÎ¸Ú‡ˆËË
-            // ‚ ÚÂÍÛ˘ÂÈ ‚ÂÒËË ÌÂ Â‡ÎËÁÓ‚‡ÌÓ.
-            filterValue: null
+            // –∏–º—è –ø–æ–ª—è, –∑–Ω–∞—á–µ–Ω–∏–µ –∫–æ—Ç–æ—Ä–æ–≥–æ –∏—Å–ø–æ–ª—å–∑—É–µ—Ç—Å—è –≤ —Ñ–∏–ª—å—Ç—Ä–∞—Ü–∏–∏
+            // –µ—Å–ª–∏ –Ω–µ —É–∫–∞–∑–∞–Ω–æ, —Ñ–∏–ª—å—Ç—Ä–∞—Ü–∏—è –±—É–¥–µ—Ç –ø–æ Id —Å—Ç–∞—Ç—å–∏
+            filterValueSource: null,
+            // –ø—Ä–∏–∑–Ω–∞–∫ —Ç–æ–≥–æ, –æ–±–æ—Ä–∞—á–∏–≤–∞—Ç—å –ª–∏ –∑–Ω–∞—á–µ–Ω–∏–µ —Ñ–∏–ª—å—Ç—Ä–∞ –≤ –∫–∞–≤—ã—á–∫–∏
+            includeQuotes: false
         };
 
         defaults.fieldName = fieldName;
@@ -240,22 +242,32 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
 
         Sys.Debug.trace("call initShowRelatedArticlesButton");
 
-        var articleId = editor.get_entityId();
+        var filterValue = 0;
+
+        if (options.filterValueSource) {
+            filterValue = this.getValue(editor, options.filterValueSource);
+        } else {
+            filterValue = editor.get_entityId();
+        }
+
+        if (options.includeQuotes) {
+            filterValue = "'" + filterValue + "'";
+        }
 
         var contentId = options.contentId;
 
-        if (articleId && articleId > 0) {
+        if (filterValue && filterValue > 0) {
             this.addCustomLinkButton({
                 name: options.fieldName,
                 title: options.title,
-                suffix: "ShowRelatedArticles",
+                suffix: "ShowRelatedArticles" + options.contentId,
                 "class": "customLinkButton",
                 url: options.icon,
                 onClick: $.proxy(function (options, editor) {
                     var pickerOptions = new QA.BackendAPI.EntitiesPicker.Options(contentId);
                     pickerOptions.filter = "c.visible = 1 and c.archive = 0";
-                    if (articleId)
-                        pickerOptions.filter += " and c." + options.filterBy + " = " + articleId;
+                    if (filterValue)
+                        pickerOptions.filter += " and c.[" + options.filterBy + "] = " + filterValue;
 
                     pickerOptions.isMultipleChoice = false;
 
@@ -268,3 +280,43 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
     };
 
 })();
+
+/*
+
+QP_CURRENT_CONTEXT.addShowRelatedArticlesButton("field_1806", {
+    contentId: 480,
+    filterBy: "User",
+    icon: "/Backend/Content/QP8/icons/16x16/version.gif",
+    title: "–ò—Å—Ç–æ—Ä–∏—è –¥–µ–π—Å—Ç–≤–∏–π –≤ –°–£–ó"
+});
+
+QP_CURRENT_CONTEXT.addShowRelatedArticlesButton("field_1807", {
+    contentId: 480,
+    filterBy: "ActionUser",
+    icon: "/Backend/Content/QP8/icons/16x16/pick.gif",
+    title: "–î–µ–π—Å—Ç–≤–∏—è –Ω–∞–¥ –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª–µ–º"
+});
+
+QP_CURRENT_CONTEXT.addShowRelatedArticlesButton("field_1806", {
+    contentId: 437,
+    filterBy: "User",
+    icon: "/Backend/Content/QP8/icons/16x16/permissions.gif",
+    title: "–ü—Ä–∞–≤–∞ –°–£–ó"
+});
+
+
+QP_CURRENT_CONTEXT.addShowRelatedArticlesButton("field_1835", {
+    contentId: 483,
+    filterBy: "ActionOrder",
+    icon: "/Backend/Content/QP8/icons/16x16/version.gif",
+    title: "–ü—Ä–æ—Å–º–æ—Ç—Ä–µ—Ç—å –∏—Å—Ç–æ—Ä–∏—é –∑–∞–∫–∞–∑–∞"
+});
+
+QP_CURRENT_CONTEXT.addShowRelatedArticlesButton("field_1835", {
+    contentId: 482,
+    filterBy: "Order",
+    icon: "/Backend/Content/QP8/icons/16x16/context.gif",
+    title: "–ó–∞–∫–∞–∑—ã –¥–ª—è –†–∞—Ä—É—Å"
+});
+
+*/
