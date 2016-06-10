@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="spellerStyle.css" />
+    <script src="controlWindow.js"></script>
+    <script>
+      var spellerObject;
+      var controlWindowObj;
+
+      if(parent.opener) {
+        spellerObject = parent.opener.speller;
+      }
+
+      function ignore_word() {
+        if(spellerObject) {
+          spellerObject.ignoreWord();
+        }
+      }
+
+      function ignore_all() {
+        if(spellerObject) {
+          spellerObject.ignoreAll();
+        }
+      }
+
+      function replace_word() {
+        if(spellerObject) {
+          spellerObject.replaceWord();
+        }
+      }
+
+      function replace_all() {
+        if(spellerObject) {
+          spellerObject.replaceAll();
+        }
+      }
+
+      function end_spell() {
+        if(spellerObject) {
+          spellerObject.terminateSpell();
+        }
+      }
+
+      function undo() {
+        if(spellerObject) {
+          spellerObject.undo();
+        }
+      }
+
+      function suggText() {
+        if(controlWindowObj) {
+          controlWindowObj.setSuggestedText();
+        }
+      }
+
+      function init_spell() {
+        var controlForm = document.spellcheck;
+        controlWindowObj = new controlWindow(controlForm);
+        controlWindowObj.noSuggestionSelection = '- Нет предположений -';
+        if(parent.frames.length) {
+          parent.init_spell(controlWindowObj);
+        } else {
+          alert('This page was loaded outside of a frameset. It might not display properly');
+        }
+      }
+    </script>
+  </head>
+  <body onLoad="init_spell();" style="overflow: hidden" scroll="no">
+    <form name="spellcheck" class="cke_skin_qp8">
+      <table border="0" cellpadding="0" cellspacing="0" border="0" align="center">
+        <tr>
+          <td colspan="3">
+            <label class="aspell_label">
+              <span>Нет в словаре:</span>
+            </label>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3">
+            <input class="readonlyInput" type="text" name="misword" readonly />
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" height="5"></td>
+        </tr>
+        <tr>
+          <td>
+            <label class="aspell_label">
+              <span>Заменить на:</span>
+            </label>
+          </td>
+        </tr>
+        <tr valign="top">
+          <td>
+            <table border="0" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td class="normalLabel">
+                  <input class="textDefault" type="text" name="txtsugg" />
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <select class="suggSlct" name="sugg" size="7" onChange="suggText();" onDblClick="replace_word();">
+                    <option></option>
+                  </select>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td></td>
+          <td>
+            <table border="0" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+                <td class="cke_dialog_ui_vbox_child">
+                  <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+                   <span class="cke_dialog_ui_button aspellbutton" onClick="ignore_word();">Игнорировать</span>
+                  </a>
+                </td>
+                <td></td>
+                <td>
+                  <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+                   <span class="cke_dialog_ui_button aspellbutton" onClick="ignore_all();">Игнорировать все</span>
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3" height="5"></td>
+              </tr>
+              <tr>
+                <td>
+                  <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+                    <span class="cke_dialog_ui_button aspellbutton" onClick="replace_word();">Заменить</span>
+                  </a>
+                </td>
+                <td></td>
+                <td>
+                  <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+                    <span class="cke_dialog_ui_button aspellbutton" onClick="replace_all();">Заменить все</span>
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3" height="5"></td>
+              </tr>
+              <tr>
+                <td class="cke_dialog_ui_vbox_child">
+                  <a class="cke_dialog_ui_button cke_dialog_ui_button_cancel">
+                    <span class="cke_dialog_ui_button aspellbutton" name="btnUndo" disabled="disabled" onClick="undo();">Отменить</span>
+                  </a>
+                </td>
+                <td></td>
+                <td></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </form>
+  </body>
+</html>

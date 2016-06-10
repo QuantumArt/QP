@@ -127,6 +127,7 @@
     <Compile Include="ArticleFieldSearchType.cs" />
     <Compile Include="Db.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
+    <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
@@ -209,9 +210,8 @@
     <Compile Include="Helpers\MultistepActionHelper.cs" />
     <Compile Include="Helpers\SitePathHelper.cs" />
     <Compile Include="Helpers\SortingItem.cs" />
-    <Compile Include="Helpers\VeAggregationListItemsHelper.cs" />
-    <Compile Include="Helpers\VeStyleAggregationListHelper.cs" />
-    <Compile Include="Helpers\VeStyleAggregationListItem.cs" />
+    <Compile Include="Helpers\VisualEditorHelpers.cs" />
+    <Compile Include="Helpers\VisualEditor\VeStyleAggregationListItem.cs" />
     <Compile Include="Helpers\VirtualContentHelper.cs" />
     <Compile Include="Helpers\WorkflowRuleItem.cs" />
     <Compile Include="ListItems\ChildEntityPermissionListItem.cs" />
@@ -297,13 +297,13 @@
     <Compile Include="Mappers\ViewTypeMapper.cs" />
     <Compile Include="Mappers\VirtualFieldDataMapper.cs" />
     <Compile Include="Mappers\VirtualFieldsRelationMapper.cs" />
-    <Compile Include="Mappers\VisualEditorCommandMapper.cs" />
-    <Compile Include="Mappers\VisualEditorCommandRowMapper.cs" />
-    <Compile Include="Mappers\VisualEditorPluginListItemRowMapper.cs" />
-    <Compile Include="Mappers\VisualEditorPluginMapper.cs" />
-    <Compile Include="Mappers\VisualEditorStyleListItemRowMapper.cs" />
-    <Compile Include="Mappers\VisualEditorStyleMapper.cs" />
-    <Compile Include="Mappers\VisualEditorStyleRowMapper.cs" />
+    <Compile Include="Mappers\VisualEditor\VisualEditorCommandMapper.cs" />
+    <Compile Include="Mappers\VisualEditor\VisualEditorCommandRowMapper.cs" />
+    <Compile Include="Mappers\VisualEditor\VisualEditorPluginListItemRowMapper.cs" />
+    <Compile Include="Mappers\VisualEditor\VisualEditorPluginMapper.cs" />
+    <Compile Include="Mappers\VisualEditor\VisualEditorStyleListItemRowMapper.cs" />
+    <Compile Include="Mappers\VisualEditor\VisualEditorStyleMapper.cs" />
+    <Compile Include="Mappers\VisualEditor\VisualEditorStyleRowMapper.cs" />
     <Compile Include="Mappers\WorkflowListItemRowMapper.cs" />
     <Compile Include="Mappers\WorkflowMapper.cs" />
     <Compile Include="Mappers\WorkFlowRuleMapper.cs" />
@@ -619,7 +619,8 @@
     <Compile Include="Services\UserService.cs" />
     <Compile Include="Services\VirtualContentService.cs" />
     <Compile Include="Services\VirtualFieldService.cs" />
-    <Compile Include="Services\VisualEditorService.cs" />
+    <Compile Include="Services\IVisualEditorService.cs" />
+    <Compile Include="Services\VisualEditor\VisualEditorService.cs" />
     <Compile Include="Services\WorkflowService.cs" />
     <Compile Include="SessionsLog.cs" />
     <Compile Include="SharedLogic\CustomActionResolver.cs" />
@@ -642,11 +643,11 @@
     <Compile Include="TreeNode.cs" />
     <Compile Include="User.cs" />
     <Compile Include="ViewType.cs" />
-    <Compile Include="VisualEditFieldParams.cs" />
-    <Compile Include="VisualEditorCommand.cs" />
-    <Compile Include="VisualEditorConfig.cs" />
-    <Compile Include="VisualEditorPlugin.cs" />
-    <Compile Include="VisualEditorStyle.cs" />
+    <Compile Include="Services\VisualEditor\VisualEditFieldParams.cs" />
+    <Compile Include="Services\VisualEditor\VisualEditorCommand.cs" />
+    <Compile Include="Services\VisualEditor\VisualEditorConfig.cs" />
+    <Compile Include="Services\VisualEditor\VisualEditorPlugin.cs" />
+    <Compile Include="Services\VisualEditor\VisualEditorStyle.cs" />
     <Compile Include="WCF\Notification\INotificationWCFService.cs" />
     <Compile Include="WCF\Notification\NotificationSimpleServiceClient.cs" />
     <Compile Include="WCF\Notification\NotificationWCFServiceClient.cs" />
@@ -702,7 +703,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\Communication\" />
-    <Folder Include="Services\Models\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

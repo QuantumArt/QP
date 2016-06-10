@@ -23,7 +23,6 @@
   "plusplus": false,
   "undef": true,
   "strict": true,
-  "globalstrict": true,
   "maxparams": 4,
   "maxdepth": 4,
   "maxstatements": 25,
@@ -61,13 +60,14 @@
     "require": false,
     "define": false,
     "JSON": false,
+    "CKEDITOR": false,
 
     // WORK PROJECTS
     "Url": false,
     "Global": false,
     "Quantumart": false,
-    "$q",
-    "$c",
-    "$ctx"
+    "$q": false,
+    "$c": false,
+    "$ctx": false
   }
 }

@@ -244,8 +244,13 @@ _Pvt_Extensions
 *.sln.iml
 
 # QuantumArt rules
+*.orig
 package/pack/qp8release
+siteMvc/Views/**/*.generated.cs
 siteMvc/Scripts/Quantumart/**/*.min.js
+siteMvc/Scripts/Quantumart/**/*.map
+siteMvc/Scripts/build
+siteMvc/Content/build
 
 !siteMvc/ToCopy/bin
 !siteMvc/ToCopy/bin/*.pdb

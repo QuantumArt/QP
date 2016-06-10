@@ -3,6 +3,7 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -769,7 +770,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public bool IsBackwardFieldExists => BackwardField != null && !BackwardField.IsNew;
 
-        public Field BackwardField => M2MBackwardField != null ? M2MBackwardField : O2MBackwardField;
+        public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
 
         /// <summary>
         /// Поля которые ссылаются на данное поле связью O2M
@@ -1731,10 +1732,10 @@ namespace Quantumart.QP8.BLL
             ValidateExternalCss(errors);
 
             // Валидация поля на конфликты с полями дочерних контентов
-            new FieldsConflictValidator().SubContentsCheck(Content, this).Select(v =>
+            foreach (var ruleViolation in new FieldsConflictValidator().SubContentsCheck(Content, this))
             {
-                errors.ErrorForModel(v.Message); return (object)null;
-            }).ToArray();
+                errors.ErrorForModel(ruleViolation.Message);
+            }
         }
 
         private void ValidateVariations(RulesException<Field> errors)
@@ -2297,6 +2298,7 @@ namespace Quantumart.QP8.BLL
             {
                 return field.Die(removeChildFields);
             }
+
             return new[] { string.Format(FieldStrings.FieldNotFound, id) };
         }
 
@@ -2308,6 +2310,7 @@ namespace Quantumart.QP8.BLL
             {
                 DieWithoutValidation(removeVirtualFields);
             }
+
             return violationMessages;
         }
 
@@ -2679,7 +2682,7 @@ namespace Quantumart.QP8.BLL
             if (ActiveVeCommandIds != null)
             {
                 var defaultCommands = VisualEditorRepository.GetDefaultCommands();//все возможные команды
-                var offVeCommands = VeAggregationListItemsHelper.Subtract(defaultCommands, ActiveVeCommandIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
+                var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, ActiveVeCommandIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
                 var oldFieldCommands = VisualEditorRepository.GetResultCommands(Id, Content.SiteId);// с этим нужно сравнивать на предмет измененеий
                 var siteCommands = VisualEditorRepository.GetSiteCommands(Content.SiteId);
 
@@ -2710,7 +2713,7 @@ namespace Quantumart.QP8.BLL
             if (ActiveVeStyleIds != null)
             {
                 var defaultStyles = VisualEditorRepository.GetAllStyles();//все возможные стили
-                var offVeStyles = VeAggregationListItemsHelper.Subtract(defaultStyles, ActiveVeStyleIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
+                var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, ActiveVeStyleIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
                 var oldFieldStyles = VisualEditorRepository.GetResultStyles(Id, Content.SiteId);// с этим нужно сравнивать на предмет измененеий
                 var siteStyles = VisualEditorRepository.GetSiteStyles(Content.SiteId);
 

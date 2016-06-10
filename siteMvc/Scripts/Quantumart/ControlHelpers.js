@@ -311,9 +311,9 @@ Quantumart.QP8.ControlHelpers._switchPanel = function ($selectedSwitcher, panelI
                 function () { return jQuery(this).css("display") == "block" }
             ).hide().trigger('hide').each(
                 function () {
-                    $c._setPanelControlsDisabledState(jQuery(this), true);                    
+                    $c._setPanelControlsDisabledState(jQuery(this), true);
                 }
-            );           
+            );
         }
     }
 
@@ -323,7 +323,7 @@ Quantumart.QP8.ControlHelpers._switchPanel = function ($selectedSwitcher, panelI
         var $panels = jQuery(panelId);
         $panels.each(
             function () {
-                $c._setPanelControlsDisabledState(jQuery(this), false);                
+                $c._setPanelControlsDisabledState(jQuery(this), false);
             }
         ).show().trigger('show');
         $c.fixAllEntityDataListsOverflow($panels);
@@ -382,7 +382,7 @@ Quantumart.QP8.ControlHelpers.getAllRadioLists = function (parentElement) {
     return $q.toJQuery(parentElement).find(".radioButtonsList");
 };
 
-//Устанавливает значения radiolist  
+//Устанавливает значения radiolist
 Quantumart.QP8.ControlHelpers.setAllRadioListValues = function (parentElement, fieldValues) {
     if (!$q.isNullOrEmpty(fieldValues)) {
         var $glists = Quantumart.QP8.ControlHelpers.getAllRadioLists(parentElement);
@@ -477,7 +477,7 @@ Quantumart.QP8.ControlHelpers.setAllDateTimePickersValues = function (parentElem
     }
 };
 
-// Возвращает все VisualEditor TextArea 
+// Возвращает все VisualEditor TextArea
 Quantumart.QP8.ControlHelpers.getAllVisualEditorAreas = function (parentElement) {
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
@@ -496,8 +496,8 @@ Quantumart.QP8.ControlHelpers.setAllVisualEditorValues = function (parentElement
                     var $ve = $ta.closest(".visualEditorComponent");
                     if ($ve.length > 0) {
                         var component = Quantumart.QP8.BackendVisualEditor.getComponent($ve);
-                        if (component && component.getCKEditor()) {
-                            component.getCKEditor().setData(v.value);
+                        if (component && component.getCkEditor()) {
+                            component.getCkEditor().setData(v.value);
                         }
 
                     }
@@ -701,10 +701,10 @@ Quantumart.QP8.ControlHelpers.getAllVisualEditorValues = function (parentElement
 			    var $ta = $ve.find("TEXTAREA.textbox.visualEditor");
 			    var editor = Quantumart.QP8.BackendVisualEditor.getComponent($ve);
 			    if (editor) {
-			        if (editor.getCKEditor()) {
+			        if (editor.getCkEditor()) {
 			            return {
 			                fieldName: $ta.attr("name"),
-			                value: editor.getCKEditor().getData()
+			                value: editor.getCkEditor().getData()
 			            };
 			        }
 			        else {
@@ -910,7 +910,7 @@ Quantumart.QP8.ControlHelpers.makeReadonlyVisualEditors = function (parentElemen
     }
 };
 
-// Readonly File Fields 
+// Readonly File Fields
 Quantumart.QP8.ControlHelpers.makeReadonlyFileFields = function (parentElement, fieldNames) {
     if ($q.isArray(fieldNames) && !$q.isNullOrEmpty(fieldNames)) {
         var $fileFields = $q.toJQuery(parentElement).find("div.fileField");
@@ -1409,7 +1409,7 @@ Quantumart.QP8.ControlHelpers.initVisualEditor = function Quantumart$QP8$Control
     /// <summary>
     /// Инициализирует визуальный редактор
     /// </summary>
-    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>		
+    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>
     var editor = new Quantumart.QP8.BackendVisualEditor(editorElem);
     editor.initialize();
     editor = null;
@@ -1470,7 +1470,7 @@ Quantumart.QP8.ControlHelpers.saveVisualEditorData = function Quantumart$QP8$Con
     /// <summary>
     /// Сохраняет данные визуального редактора
     /// </summary>
-    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>	
+    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>
 
     var editor = Quantumart.QP8.BackendVisualEditor.getComponent(editorElem);
     if (editor) {
@@ -1514,7 +1514,7 @@ Quantumart.QP8.ControlHelpers.initHighlightedTextArea = function Quantumart$QP8$
     /// <summary>
     /// Инициализирует компонент типа "HighlightedTextArea"
     /// </summary>
-    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>		
+    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>
     var area = new Quantumart.QP8.BackendHighlightedTextArea(editorElem);
     area.initialize();
     area = null;
@@ -1589,7 +1589,7 @@ Quantumart.QP8.ControlHelpers.initAggregationList = function Quantumart$QP8$Cont
     /// <summary>
     /// Инициализирует компонент типа "AggregationList"
     /// </summary>
-    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>		
+    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>
     var list = new Quantumart.QP8.BackendAggregationList(editorElem);
     list.initialize();
     list = null;
@@ -1645,7 +1645,7 @@ Quantumart.QP8.ControlHelpers.saveAggregationListData = function Quantumart$QP8$
     /// <summary>
     /// Сохраняет данные компонента типа "AggregationList"
     /// </summary>
-    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>		
+    /// <param name="editorElem" type="Object" domElement="true">DOM-элемент, образующий визуальный редактор</param>
     var list = new Quantumart.QP8.BackendAggregationList(editorElem);
     list.saveAggregationListData();
     list = null;
