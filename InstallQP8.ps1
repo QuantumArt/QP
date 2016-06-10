@@ -48,6 +48,7 @@ Write-Host "Creating site, applications and virtual directories..."
 
 $currentPath = split-path -parent $MyInvocation.MyCommand.Definition
 $rootPath = Join-Path $currentPath "sites"
+$pluginsPath = Join-Path $currentPath "plugins"
 $BackendPath = Join-Path $currentPath "siteMvc"
 $WinlogonPath = Join-Path $currentPath "WinLogonMvc"
 $contentPath = Join-Path $BackendPath "Content"
@@ -66,14 +67,16 @@ Set-ItemProperty -Path "IIS:\sites\$name\Backend\WinLogon"  -Name serviceAutoSta
 
 New-Item "IIS:\sites\$name\Backend\WinLogon\Content" -physicalPath $contentPath -type VirtualDirectory
 
+New-Item "IIS:\sites\$name\plugins" -physicalPath $pluginsPath -type VirtualDirectory
+
 New-Item "IIS:\sites\$name\Backend\WinLogon\Scripts" -physicalPath $scriptsPath -type VirtualDirectory
 
 Write-Host "Done"
 
 
 Write-Host "Unlocking configuration..."
-Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/anonymousAuthentication"""
-Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/windowsAuthentication"""
+Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/anonymousAuthentication""";
+Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /section:""system.webServer/security/authentication/windowsAuthentication""";
 Write-Host "Done"
 
 
