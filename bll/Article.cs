@@ -955,7 +955,9 @@ namespace Quantumart.QP8.BLL
 
         private void OptimizeForHierarchy()
         {
-            FieldValues.Where(n => n.Field.OptimizeForHierarchy).ForEach(n => new OptimizeHierarchyHelper(n).Process());
+            FieldValues
+                .Where(n => n.Field.ExactType == FieldExactTypes.M2MRelation && n.Field.OptimizeForHierarchy)
+                .ForEach(n => new OptimizeHierarchyHelper(n).Process());
         }
 
         public Article GetVariationByContext(string context)

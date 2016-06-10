@@ -1414,6 +1414,7 @@ namespace Quantumart.QP8.BLL
             if (!MapAsProperty)
             {
                 LinqPropertyName = null;
+                UseSeparateReverseViews = false;
             }
 
             if (ContentId != RelateToContentId)
@@ -1509,6 +1510,8 @@ namespace Quantumart.QP8.BLL
             {
                 LinkId = null;
                 ContentLink = null;
+                OptimizeForHierarchy = false;
+                UseSeparateReverseViews = false;
             }
 
             if (ExactType != FieldExactTypes.O2MRelation)
@@ -1537,6 +1540,10 @@ namespace Quantumart.QP8.BLL
             {
                 if (RelateToContentId.HasValue)
                 {
+                    var relContent = ContentRepository.GetById(RelateToContentId.Value);
+                    if (!relContent.HasTreeField)
+                        OptimizeForHierarchy = false;
+
                     if (ContentLink.LContentId == ContentId && ContentLink.RContentId != RelateToContentId.Value)
                     {
                         ContentLink.RContentId = RelateToContentId.Value;
@@ -1551,7 +1558,7 @@ namespace Quantumart.QP8.BLL
                     // Создать обратное поле если это необходимо и возможно
                     if (!string.IsNullOrWhiteSpace(NewM2MBackwardFieldName) && !IsBackwardFieldExists && RelateToContentId != ContentId)
                     {
-                        var relContent = ContentRepository.GetById(RelateToContentId.Value);
+
                         // возможно только если Related контент не виртуальный
                         if (relContent.VirtualType == 0)
                         {
@@ -2349,8 +2356,8 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-		/// Удалить подчиненные виртуальные поля при удалении поля родительского контента
-		/// </summary>
+        /// Удалить подчиненные виртуальные поля при удалении поля родительского контента
+        /// </summary>
         private IEnumerable<Content.TreeItem> RemoveVirtualFields()
         {
             var helper = new VirtualContentHelper();

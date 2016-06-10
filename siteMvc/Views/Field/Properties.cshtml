@@ -168,9 +168,9 @@
                             @Html.TextBoxFieldFor(s => s.Data.LinqBackPropertyName)
                         }
                     }
-                }
 
-                @Html.CheckBoxFieldFor(s => s.Data.UseSeparateReverseViews)
+                    @Html.CheckBoxFieldFor(s => s.Data.UseSeparateReverseViews)
+                }
 
                 using (Html.BeginPanel("M2MMaplink", true))
                 {
@@ -180,6 +180,7 @@
                         @Html.TextBoxFieldFor(s => s.Data.ContentLink.NetLinkName)
                         @Html.TextBoxFieldFor(s => s.Data.ContentLink.NetPluralLinkName)
                     }
+
                 }
             }
         }

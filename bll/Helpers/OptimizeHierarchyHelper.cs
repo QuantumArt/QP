@@ -22,7 +22,9 @@ namespace Quantumart.QP8.BLL.Helpers
             var m = FieldValue.RelatedItems;
             if (m.Length <= 1) return;
             if (FieldValue.Field.RelateToContentId == null) return;
-            BuildHierarchy(ArticleRepository.GetHierarchy(FieldValue.Field.RelateToContentId.Value));
+            var data = ArticleRepository.GetHierarchy(FieldValue.Field.RelateToContentId.Value);
+            if (data == null) return;
+            BuildHierarchy(data);
             OptimizeHierarchyFor(FieldValue.RelatedItems);
             FieldValue.Value = string.Join(",", GetOptimizedValue());
         }
