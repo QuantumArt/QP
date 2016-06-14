@@ -123,7 +123,6 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function () {
 
 CKEDITOR.plugins.add('tags',
 {
-    requires: ['styles', 'button'],
     init: function (editor) {
         var addButtonCommand = function (buttonName, buttonLabel, commandName, styleDefiniton) {
             var tagStyle = new CKEDITOR.style(styleDefiniton);
