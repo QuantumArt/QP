@@ -14,7 +14,12 @@ namespace Quantumart.QP8.BLL.Services.API
 
 		}
 
-		public IEnumerable<Content> List(int siteId)
+        public ContentService(int userId) : base(userId)
+        {
+
+        }
+
+        public IEnumerable<Content> List(int siteId)
 		{
 			using (new QPConnectionScope(ConnectionString))
 			{
