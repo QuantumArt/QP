@@ -368,7 +368,8 @@
       ).Globalization(true))
 
 <script>
-  var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
-	var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
+    CKEDITOR.timestamp = '@jsVersion';
+    var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
+    var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
 </script>
 </body>
