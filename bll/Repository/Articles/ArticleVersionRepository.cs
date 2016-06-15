@@ -178,6 +178,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return QPContext.EFContext.ArticleVersionSet.Where(n => n.ArticleId == articleId).Select(n => (int)n.Id).ToArray();
         }
 
+        internal static IEnumerable<int> GetIds(int[] ids)
+        {
+            var decIds = ids.Select(n => (decimal)n).ToArray(); 
+            return QPContext.EFContext.ArticleVersionSet.Where(n => decIds.Contains(n.ArticleId)).Select(n => (int)n.Id).ToArray();
+        }
+
         /// <summary>
         /// Получение связанных статей (для поля типа M2O)
         /// </summary>

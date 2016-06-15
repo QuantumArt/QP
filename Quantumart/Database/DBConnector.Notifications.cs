@@ -20,6 +20,10 @@ namespace Quantumart.QPublishing.Database
     {
         #region Notifications
 
+        public bool DisableServiceNotifications { get; set; }
+
+        public bool DisableInternalNotifications { get; set; }
+
         private void ProceedExternalNotification(int id, string eventName, string externalUrl, ContentItem item, bool useService)
         {
             eventName = eventName.ToLowerInvariant();
@@ -32,7 +36,10 @@ namespace Quantumart.QPublishing.Database
                 }
                 else
                 {
-                    MakeExternalCall(id, eventName, externalUrl, item);
+                    if (!DisableServiceNotifications)
+                    {
+                        MakeExternalCall(id, eventName, externalUrl, item);
+                    }
                 }
             }
         }
@@ -117,7 +124,7 @@ namespace Quantumart.QPublishing.Database
             catch (Exception ex)
             {
                 var errorMessage =
-                    $"{"DbConnector.cs, ExternalNotificationCallback(IAsyncResult iar)"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
+                    $"DbConnector.cs, ExternalNotificationCallback(IAsyncResult iar), MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
                 System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
                 if (ThrowNotificationExceptions)
                     throw;
@@ -156,97 +163,100 @@ namespace Quantumart.QPublishing.Database
 
                 }
 
-                var internalNotifications = notifications.Except(dataRows);
-
-                if (Strings.LCase(AppSettings["MailComponent"]) == "qa_mail" || string.IsNullOrEmpty(AppSettings["MailHost"]))
+                if (!DisableInternalNotifications)
                 {
-                    if (internalNotifications.Any())
+                    var internalNotifications = notifications.Except(dataRows);
+                    if (Strings.LCase(AppSettings["MailComponent"]) == "qa_mail" || string.IsNullOrEmpty(AppSettings["MailHost"]))
                     {
-                        LoadUrl(GetAspWrapperUrl(siteId, notificationOn, contentItemId, notificationEmail, isLive));
-                    }
-                }
-                else
-                {
-                    var strSqlRegisterNotifForUsers = "";
-                    var platform = GetSitePlatform(siteId);
-
-                    foreach (var notifyRow in internalNotifications)
-                    {
-                        if (!ReferenceEquals(notifyRow["OBJECT_ID"], DBNull.Value))
+                        if (internalNotifications.Any())
                         {
+                            LoadUrl(GetAspWrapperUrl(siteId, notificationOn, contentItemId, notificationEmail, isLive));
+                        }
+                    }
+                    else
+                    {
+                        var strSqlRegisterNotifForUsers = "";
+                        var platform = GetSitePlatform(siteId);
 
-                            var objectId = GetNumInt(notifyRow["OBJECT_ID"]);
-                            var contentId = GetNumInt(notifyRow["CONTENT_ID"]);
-                            var objectFormatId = GetNumInt(notifyRow["FORMAT_ID"]);
-
-                            if (Strings.LCase(AppSettings["MailAssemble"]) == "yes")
+                        foreach (var notifyRow in internalNotifications)
+                        {
+                            if (!ReferenceEquals(notifyRow["OBJECT_ID"], DBNull.Value))
                             {
-                                switch (platform)
-                                {
-                                    case SitePlatform.Aspnet:
-                                        var fixedLocation = isLive ? AssembleLocation.Live : AssembleLocation.Stage;
 
-                                        var cnt = new AssembleFormatController(objectFormatId, AssembleMode.Notification, InstanceConnectionString, false, fixedLocation);
-                                        cnt.Assemble();
-                                        break;
-                                    case SitePlatform.Asp:
-                                        AssembleFormatToFile(siteId, objectFormatId);
-                                        break;
+                                var objectId = GetNumInt(notifyRow["OBJECT_ID"]);
+                                var contentId = GetNumInt(notifyRow["CONTENT_ID"]);
+                                var objectFormatId = GetNumInt(notifyRow["FORMAT_ID"]);
+
+                                if (Strings.LCase(AppSettings["MailAssemble"]) == "yes")
+                                {
+                                    switch (platform)
+                                    {
+                                        case SitePlatform.Aspnet:
+                                            var fixedLocation = isLive ? AssembleLocation.Live : AssembleLocation.Stage;
+
+                                            var cnt = new AssembleFormatController(objectFormatId, AssembleMode.Notification, InstanceConnectionString, false, fixedLocation);
+                                            cnt.Assemble();
+                                            break;
+                                        case SitePlatform.Asp:
+                                            AssembleFormatToFile(siteId, objectFormatId);
+                                            break;
+                                    }
+                                }
+
+                                var targetUrl = GetNotificationBodyUrl(siteId, objectId, contentItemId, isLive, notificationOn);
+
+                                if (GetNumBool(notifyRow["NO_EMAIL"]))
+                                {
+                                    LoadUrl(targetUrl);
+                                }
+                                else
+                                {
+                                    var mailMess = new MailMessage
+                                    {
+                                        Subject = notifyRow["NOTIFICATION_NAME"].ToString(),
+                                        From = GetFromAddress(notifyRow)
+                                    };
+
+
+                                    //set To
+                                    SetToMail(notifyRow, contentItemId, notificationOn, notificationEmail, mailMess, ref strSqlRegisterNotifForUsers);
+
+                                    mailMess.IsBodyHtml = true;
+                                    mailMess.BodyEncoding = Encoding.GetEncoding(GetFormatCharset(objectFormatId));
+                                    string body;
+
+                                    var doAttachFiles = (bool)notifyRow["SEND_FILES"];
+                                    try
+                                    {
+                                        body = GetUrlContent(targetUrl);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        body =
+                                            $"An error has occurred while getting url data: {targetUrl}. Error message: {ex.Message}";
+                                        var errorMessage =
+                                            $"DbConnector.cs, SendNotification, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
+                                        System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+                                        doAttachFiles = false;
+                                    }
+
+                                    mailMess.Body = body;
+
+                                    if (doAttachFiles)
+                                    {
+                                        AttachFiles(mailMess, siteId, contentId, contentItemId);
+                                    }
+
+                                    SendMail(mailMess);
+
+                                    //register sent notifications
+                                    if (!string.IsNullOrEmpty(strSqlRegisterNotifForUsers + ""))
+                                    {
+                                        ProcessData(strSqlRegisterNotifForUsers);
+                                    }
                                 }
                             }
 
-                            var targetUrl = GetNotificationBodyUrl(siteId, objectId, contentItemId, isLive, notificationOn);
-
-                            if (GetNumBool(notifyRow["NO_EMAIL"]))
-                            {
-                                LoadUrl(targetUrl);
-                            }
-                            else
-                            {
-                                var mailMess = new MailMessage
-                                {
-                                    Subject = notifyRow["NOTIFICATION_NAME"].ToString(),
-                                    From = GetFromAddress(notifyRow)
-                                };
-
-
-                                //set To
-                                SetToMail(notifyRow, contentItemId, notificationOn, notificationEmail, mailMess, ref strSqlRegisterNotifForUsers);
-
-                                mailMess.IsBodyHtml = true;
-                                mailMess.BodyEncoding = Encoding.GetEncoding(GetFormatCharset(objectFormatId));
-                                string body;
-
-                                var doAttachFiles = (bool)notifyRow["SEND_FILES"];
-                                try
-                                {
-                                    body = GetUrlContent(targetUrl);
-                                }
-                                catch (Exception ex)
-                                {
-                                    body =
-                                        $"An error has occurred while getting url data: {targetUrl}. Error message: {ex.Message}";
-                                    var errorMessage =
-                                        $"{"DbConnector.cs, SendNotification"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                                    System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
-                                    doAttachFiles = false;
-                                }
-
-                                mailMess.Body = body;
-
-                                if (doAttachFiles)
-                                {
-                                    AttachFiles(mailMess, siteId, contentId, contentItemId);
-                                }
-
-                                SendMail(mailMess);
-
-                                //register sent notifications
-                                if (!string.IsNullOrEmpty(strSqlRegisterNotifForUsers + ""))
-                                {
-                                    ProcessData(strSqlRegisterNotifForUsers);
-                                }
-                            }
                         }
                     }
                 }
@@ -254,7 +264,7 @@ namespace Quantumart.QPublishing.Database
             catch (Exception ex)
             {
                 var errorMessage =
-                    $"{"DbConnector.cs, SendNotification"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
+                    $"DbConnector.cs, SendNotification, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
                 System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
                 if (ThrowNotificationExceptions)
                     throw;
@@ -336,7 +346,7 @@ namespace Quantumart.QPublishing.Database
         private string GetObjectFolderUrl(int siteId, bool isLive)
         {
             //Return String.Format("{0}/{1}/", GetSiteUrl(siteId, isLive), "temp/notifications")
-            return $"{GetSiteUrl(siteId, isLive)}/{"qp_notifications"}/";
+            return $"{GetSiteUrl(siteId, isLive)}/qp_notifications/";
         }
 
 

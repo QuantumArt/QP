@@ -83,7 +83,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 			#endregion
 
 			#region Add users
-			var adUsersToBeAdded = adUsers.Where(adu => !adu.IsDisabled && !qpUsers.Any(qpu => adu.AccountName == qpu.NTLogOn));
+			var adUsersToBeAdded = adUsers.Where(adu => !adu.IsDisabled && !qpUsers.Any(qpu => adu.AccountName == qpu.NtLogOn));
 		
 			foreach (var adUser in adUsersToBeAdded)
 			{
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 
 			#region Update users
 			var usersToBeUpdated = from qpu in qpUsers
-								   join adu in adUsers on qpu.NTLogOn equals adu.AccountName
+								   join adu in adUsers on qpu.NtLogOn equals adu.AccountName
 								   select new { QP = qpu, AD = adu };
 
 			foreach (var user in usersToBeUpdated)
@@ -125,7 +125,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 			#endregion
 
 			#region Disable users
-			var qpUsersToBeDisabled = qpUsers.Where(qpu => !adUsers.Any(adu => adu.AccountName == qpu.NTLogOn));
+			var qpUsersToBeDisabled = qpUsers.Where(qpu => !adUsers.Any(adu => adu.AccountName == qpu.NtLogOn));
 
 			foreach (var qpUser in qpUsersToBeDisabled)
 			{
@@ -150,7 +150,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 			return new User
 			{
 				LogOn = user.AccountName,
-				NTLogOn = user.AccountName,
+				NtLogOn = user.AccountName,
 				Password = UserRepository.GeneratePassword(),
 				LanguageId = _languageId,
 				AutoLogOn = true,

@@ -662,9 +662,6 @@
     <Compile Include="Services\VisualEditor\VisualEditorConfig.cs" />
     <Compile Include="Services\VisualEditor\VisualEditorPlugin.cs" />
     <Compile Include="Services\VisualEditor\VisualEditorStyle.cs" />
-    <Compile Include="WCF\Notification\INotificationWCFService.cs" />
-    <Compile Include="WCF\Notification\NotificationSimpleServiceClient.cs" />
-    <Compile Include="WCF\Notification\NotificationWCFServiceClient.cs" />
     <Compile Include="Workflow.cs" />
     <Compile Include="WorkflowBinding.cs" />
     <Compile Include="WorkflowRule.cs" />

@@ -1128,9 +1128,6 @@
     <Compile Include="ViewModels\Workflow\WorkflowListViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowSourceListViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowViewModel.cs" />
-    <Compile Include="WebServices\NotificationWCFService.svc.cs">
-      <DependentUpon>NotificationWCFService.svc</DependentUpon>
-    </Compile>
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepBaseSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepCopySiteSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepExportSettings.js" />
@@ -1882,10 +1879,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="WebServices\NotificationWCFService.svc" />
-    <Content Include="WebServices\Web.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\imgareaselectcss\" />

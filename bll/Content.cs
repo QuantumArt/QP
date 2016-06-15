@@ -1168,7 +1168,7 @@ namespace Quantumart.QP8.BLL
         internal Article CreateArticle(Dictionary<string, string> predefinedValues)
         {
             if (IsVirtual)
-                throw new Exception(String.Format(ArticleStrings.AppendToVirtual, Id));
+                throw new Exception(string.Format(ArticleStrings.AppendToVirtual, Id));
 
             return new Article(this, predefinedValues);
         }
@@ -1180,10 +1180,7 @@ namespace Quantumart.QP8.BLL
 
         internal bool HasNotifications(string code)
         {
-            foreach (string currentCode in code.Split(';'))
-                if (ContentRepository.HasNotifications(Id, currentCode))
-                    return true;
-            return false;
+            return code.Split(';').Any(currentCode => ContentRepository.HasNotifications(Id, currentCode));
         }
 
         internal void CreateContentFolders()

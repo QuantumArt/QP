@@ -243,6 +243,9 @@
   <data name="NtLogin" xml:space="preserve">
     <value>NT-login</value>
   </data>
+  <data name="NtLoginInvalidFormat" xml:space="preserve">
+    <value>Invalid NT-login</value>
+  </data>
   <data name="NtLoginLengthExceeded" xml:space="preserve">
     <value>The length of NT-login should not exceed {5} characters!</value>
   </data>

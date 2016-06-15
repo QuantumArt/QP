@@ -127,24 +127,11 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-
         internal static IEnumerable<Notification> GetContentNotifications(int contentId, IEnumerable<string> codes)
         {
             return MappersRepository.NotificationMapper.GetBizList(
                 QPContext.EFContext.NotificationsSet
-                .Where(g => g.ContentId == contentId && g.UseService && g.IsExternal)
-                .FilterByCode(codes)
-                .ToList()
-            );
-        }
-
-        internal static IEnumerable<Notification> GetContentNotifications(IEnumerable<int> articleIds, IEnumerable<string> codes)
-        {
-            var contentIds = QPContext.EFContext.ArticleSet.GroupBy(a => a.ContentId).Select(g => g.Key).ToArray();
-
-            return MappersRepository.NotificationMapper.GetBizList(
-                QPContext.EFContext.NotificationsSet
-                .Where(g => contentIds.Contains(g.ContentId) && g.UseService && g.IsExternal)
+                .Where(g => g.ContentId == contentId)
                 .FilterByCode(codes)
                 .ToList()
             );

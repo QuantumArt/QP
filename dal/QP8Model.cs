@@ -16677,7 +16677,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="url">Initial value of the Url property.</param>
         /// <param name="tries">Initial value of the Tries property.</param>
         /// <param name="sent">Initial value of the Sent property.</param>
-        public static ExternalNotificationDAL CreateExternalNotificationDAL(global::System.Decimal id, global::System.Decimal articleId, global::System.DateTime created, global::System.String url, global::System.Decimal tries, global::System.Boolean sent)
+        /// <param name="modified">Initial value of the Modified property.</param>
+        public static ExternalNotificationDAL CreateExternalNotificationDAL(global::System.Decimal id, global::System.Decimal articleId, global::System.DateTime created, global::System.String url, global::System.Decimal tries, global::System.Boolean sent, global::System.DateTime modified)
         {
             ExternalNotificationDAL externalNotificationDAL = new ExternalNotificationDAL();
             externalNotificationDAL.Id = id;
@@ -16686,6 +16687,7 @@ namespace Quantumart.QP8.DAL
             externalNotificationDAL.Url = url;
             externalNotificationDAL.Tries = tries;
             externalNotificationDAL.Sent = sent;
+            externalNotificationDAL.Modified = modified;
             return externalNotificationDAL;
         }
 
@@ -16911,6 +16913,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Sent;
         partial void OnSentChanging(global::System.Boolean value);
         partial void OnSentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Modified
+        {
+            get
+            {
+                return _Modified;
+            }
+            set
+            {
+                OnModifiedChanging(value);
+                ReportPropertyChanging("Modified");
+                _Modified = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Modified");
+                OnModifiedChanged();
+            }
+        }
+        private global::System.DateTime _Modified;
+        partial void OnModifiedChanging(global::System.DateTime value);
+        partial void OnModifiedChanged();
 
         #endregion
 

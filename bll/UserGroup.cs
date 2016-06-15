@@ -36,6 +36,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("CanUnlockItems", NameResourceType = typeof(UserGroupStrings))]
         public bool CanUnlockItems { get; set; }
 
+        [MaxLengthValidator(255, MessageTemplateResourceName = "NtGroupLengthExceeded", MessageTemplateResourceType = typeof(UserGroupStrings))]
+        [FormatValidator(Constants.RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NtGroupInvalidFormat", MessageTemplateResourceType = typeof(UserGroupStrings))]
         [LocalizedDisplayName("NtGroup", NameResourceType = typeof(UserGroupStrings))]
         public string NtGroup { get; set; }
 
