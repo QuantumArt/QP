@@ -2,7 +2,7 @@
 using SeleniumExtension.Support.PageObjects.Elements;
 using SeleniumExtension.Support.PageObjects.Elements.Implementation;
 
-namespace QP8.PageObjects.Elements
+namespace QP8.FunctionalTests.PageObjects.Elements
 {
     /// <summary>
     /// Объектная модель ссылки<br/>

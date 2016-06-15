@@ -2,7 +2,7 @@
 using OpenQA.Selenium;
 using SeleniumExtension.Support.PageObjects.Elements;
 
-namespace QP8.PageObjects.Elements
+namespace QP8.FunctionalTests.PageObjects.Elements
 {
     /// <summary>
     /// Объектная модель поля ввода<br/>

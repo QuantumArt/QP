@@ -1,11 +1,11 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
-using QP8.PageObjects.Elements;
+using QP8.FunctionalTests.PageObjects.Elements;
 using SeleniumExtension.Support.PageObjects;
 using SeleniumExtension.Support.PageObjects.Attributes.Implementation;
 using SeleniumExtension.Support.PageObjects.Elements.Implementation;
 
-namespace QP8.PageObjects.Pages.Authentication
+namespace QP8.FunctionalTests.PageObjects.Pages.Authentication
 {
     public class AuthenticationPage : Page
     {

@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using SeleniumExtension.Support.PageObjects;
 
-namespace QP8.PageObjects.Pages
+namespace QP8.FunctionalTests.PageObjects.Pages
 {
     public class BasePage : Page
     {

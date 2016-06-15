@@ -7,7 +7,8 @@ namespace QP8.FunctionalTests.TestsData.Authentication
     {
         private static readonly IEnumerable<string> _variations = new List<string>
         {
-            "1", "123", "t", "test", "!", "@"//, "#", "$", "%", "^", "&", "*", "(", ")", "{", "}", "'", @"""" //, "<", ">"
+            "1", "123", "t", "test", "!", "@", "<", ">"
+            //"1", "123", "t", "test", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "{", "}", "'", @"""", "<", ">"
         };
 
         public static IEnumerable<string> InvalidLogin

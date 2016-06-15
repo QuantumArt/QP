@@ -3,29 +3,23 @@ using AllureCSharpCommons.Attributes;
 using Nunit3AllureAdapter;
 using NUnit.Framework;
 using QP8.FunctionalTests.Configuration;
-using QP8.FunctionalTests.TestsData;
+using QP8.FunctionalTests.PageObjects.Pages.Authentication;
 using QP8.FunctionalTests.TestsData.Authentication;
-using QP8.PageObjects.Pages.Authentication;
 
 namespace QP8.FunctionalTests.Tests.Authentication
 {
-    [TestFixture]
-    [AllureTitle(Title)]
+    [AllureStories(Story)]
     [Parallelizable(ParallelScope.Fixtures)]
-    [AllureFeatures(Feature.Authentication)]
-    public class AuthenticationTests2 : BaseTest
+    public class AuthenticationPasswordTests : AuthenticationTests
     {
-        public const string Title = "Authentication2 form tests";
-        
-        #region invalid password
+        private const string Story = "Password";
 
         [AllureTest]
+        [AllureSeverity(severitylevel.normal)]
         [AllureTitle("Authentication with invalid password")]
         [AllureDescription("Invalid password", descriptiontype.html)]
-        [AllureStories(Story.Negative)]
-        [AllureSeverity(severitylevel.normal)]
         [TestCaseSource(typeof(AuthenticationTestsData), "InvalidPassword")]
-        public void AuthenticationWithInvalidPassword(string password)
+        public void InvalidPasswordTest(string password)
         {
             var page = new AuthenticationPage(Driver);
 
@@ -33,7 +27,5 @@ namespace QP8.FunctionalTests.Tests.Authentication
             CheckValidationSteps(page, page.Password, "Password", "You entered wrong password!");
             CheckJavaScriptErrors();
         }
-
-        #endregion
     }
 }
