@@ -34,7 +34,7 @@
       contentsLanguage: opts.language || defaultConfig.language,
       disableNativeSpellChecker: true,
       skin: 'moonocolor',
-      disallowedContent: 'script; *[on*]',
+      disallowedContent: '',
       allowedContent: {
         $1: {
           elements: CKEDITOR.dtd,
