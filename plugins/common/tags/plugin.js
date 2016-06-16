@@ -1,21 +1,21 @@
-'use strict';
+﻿'use strict';
 
 var QA = QA || { BackendAPI: {} };
 
 QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function() {
-  Options = function(contentId) {
+  var Options = function(contentId) {
     this.contentId = contentId;
     this.onSelected = function(name, args) {
-      if (console && console.log) {
-        console.log(name);
-        console.log(args);
+      if (window.console && window.console.log) {
+        window.console.log(name);
+        window.console.log(args);
       }
     };
 
     this.onClosed = function(name, args) {
-      if (console && console.log) {
-        console.log(name);
-        console.log(args);
+      if (window.console && window.console.log) {
+        window.console.log(name);
+        window.console.log(args);
       }
     };
 
@@ -30,8 +30,7 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function() {
     onClosed: null
   };
 
-  OnSelectedEventArgs = function() { };
-
+  var OnSelectedEventArgs = function() { };
   OnSelectedEventArgs.prototype = {
     isSelected: false,
     selectedItems: null
@@ -40,7 +39,6 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function() {
   var QPEntitiesPicker = function(options) {
     this.options = options;
     var eventArgs = new Quantumart.QP8.BackendEventArgs();
-
     eventArgs.set_isMultipleEntities(options.isMultipleChoice);
     eventArgs.set_parentEntityId(options.contentId);
     eventArgs.set_entityTypeCode('article');
@@ -77,6 +75,7 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function() {
       this.component.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
       this.component.closeWindow();
       this.component.dispose();
+
       if (this.options.onSelected) {
         var args = new OnSelectedEventArgs();
 
@@ -94,6 +93,7 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function() {
       this.component.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED);
       this.component.detachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED);
       this.component.dispose();
+
       if (this.options.onClosed) {
         var args = new OnSelectedEventArgs();
 
@@ -107,10 +107,8 @@ QA.BackendAPI.EntitiesPicker = QA.BackendAPI.EntitiesPicker || (function() {
       }
     },
     openDialog: function() {
-      this.component.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED,
-        jQuery.proxy(this._onSelectedInternal, this));
-      this.component.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED,
-        jQuery.proxy(this._onClosedInternal, this));
+      this.component.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._onSelectedInternal, this));
+      this.component.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._onClosedInternal, this));
       this.component.openWindow();
     }
   };
@@ -133,7 +131,7 @@ CKEDITOR.plugins.add('tags', {
       editor.addCommand(commandName, {
         style: tagStyle,
         exec: function(editor) {
-          var options = new QA.BackendAPI.EntitiesPicker.Options(321);
+          var options = new QA.BackendAPI.EntitiesPicker.Options(CKEDITOR.RegionalTagsContentId);
 
           options.isMultipleChoice = false;
           options.onSelected = function(name, args) {
@@ -146,10 +144,6 @@ CKEDITOR.plugins.add('tags', {
             } else {
               editor.insertElement(CKEDITOR.dom.element.createFromHtml('<replacement>tag=' + name + '</replacement>'));
             }
-          };
-
-          options.onClosed = function(name, args) {
-            var tt = args;
           };
 
           var component = new QA.BackendAPI.EntitiesPicker.QPEntitiesPicker(options);
