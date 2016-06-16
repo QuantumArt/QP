@@ -43,16 +43,33 @@ if (!$p) {
     Write-Host "Done"
 }
 
-
-Write-Host "Creating site, applications and virtual directories..."
-
 $currentPath = split-path -parent $MyInvocation.MyCommand.Definition
 $rootPath = Join-Path $currentPath "sites"
 $pluginsPath = Join-Path $currentPath "plugins"
 $BackendPath = Join-Path $currentPath "siteMvc"
+$qaPath = Join-Path $currentPath "QA"
 $WinlogonPath = Join-Path $currentPath "WinLogonMvc"
 $contentPath = Join-Path $BackendPath "Content"
 $scriptsPath = Join-Path $BackendPath "Scripts"
+
+$BackendZipPath = Join-Path $currentPath "Backend.zip"
+$WinlogonZipPath = Join-Path $currentPath "WinLogon.zip"
+$pluginsZipPath = Join-Path $currentPath "plugins.zip"
+$sitesZipPath = Join-Path $currentPath "sites.zip"
+$qaZipPath = Join-Path $currentPath "qa.zip"
+
+
+if (Test-Path($BackendZipPath))
+{
+    Write-Host "Zip files found. Unpacking..."
+    Invoke-Expression "7za.exe x -r -y -o""$BackendZipPath"" ""$BackendPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$WinlogonZipPath"" ""$WinlogonPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$pluginsZipPath"" ""$pluginsPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$sitesZipPath"" ""$rootPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$qaZipPath"" ""$qaPath"""
+}
+
+Write-Host "Creating site, applications and virtual directories..."
 
 $s = New-Item "IIS:\sites\$name" -bindings @{protocol="http";bindingInformation="*:${port}:"} -physicalPath $rootPath -type Site
 $s | Set-ItemProperty -Name applicationPool -Value $name
@@ -80,16 +97,21 @@ Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /sectio
 Write-Host "Done"
 
 
+$defaultConfigDir = "C:\QA"
+$configDir = Read-Host "Please enter configuration directory (default - $defaultConfigDir)"
+if ([string]::IsNullOrEmpty($siteRoot))
+{
+    $configDir = $defaultConfigDir
+}
 
 Write-Host "Creating configuration directory..."
 
-$configDir = "C:\QA"
 $tempDir = "C:\temp"
 $logDir = "C:\logs"
 $configPath = Join-Path $configDir "config.xml"
 $psPath = Join-Path $configDir "AddToRegistry.ps1"
-$sourceConfigPath = Join-Path $currentPath "QA\sample_config.xml"
-$sourcePsPath = Join-Path $currentPath "QA\AddToRegistry.ps1"
+$sourceConfigPath = Join-Path $qaPath "sample_config.xml"
+$sourcePsPath = Join-Path $qaPath "AddToRegistry.ps1"
 
 if (-not(Test-Path $configDir -PathType Container))
 {
