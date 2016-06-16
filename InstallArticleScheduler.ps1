@@ -31,30 +31,35 @@ if ($s) {
     Write-Host "Removed"
 }
 
-$currentPath = split-path -parent $MyInvocation.MyCommand.Definition
-$projectName = "Quantumart.QP8.ArticleScheduler.WinService"
-
-$schedulerFolder = Join-Path $currentPath "$projectName\bin\Debug"
-$schedulerPath = Join-Path $schedulerFolder "$projectName.exe"
-
-if (-not(Test-Path $schedulerFolder) -or -not(Test-Path $schedulerPath))
-{
-    throw "You should build service $projectName in Debug configuration first";
-}
-
 $defaultInstallRoot = "C:\QA\ArticleScheduler"
 $installRoot = Read-Host "Please specify folder to install service (default - $defaultInstallRoot)"
 if ([string]::IsNullOrEmpty($installRoot))
 {
     $installRoot = $defaultInstallRoot
 }
+if (-not(Test-Path $installRoot)) { New-Item $installRoot -ItemType Directory }
 
-if (-not(Test-Path $installRoot))
+$currentPath = split-path -parent $MyInvocation.MyCommand.Definition
+$projectName = "Quantumart.QP8.ArticleScheduler.WinService"
+
+$schedulerFolder = Join-Path $currentPath "$projectName\bin\Debug"
+$schedulerPath = Join-Path $schedulerFolder "$projectName.exe"
+$schedulerZipPath = Join-Path $currentPath "ArticleScheduler.zip"
+
+if ((Test-Path $schedulerZipPath))
 {
-    New-Item $installRoot -ItemType Directory
+    Write-Host "Zip file found. Unpacking..."
+    Invoke-Expression "7za.exe x -r -y -o""$schedulerZipPath"" ""$installRoot"""
 }
-
-Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
+else
+{
+    if (-not(Test-Path $schedulerFolder) -or -not(Test-Path $schedulerPath))
+    {
+        throw "You should build service $projectName in Debug configuration first";
+    }
+    
+    Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
+}
 
 $login = "NT AUTHORITY\NETWORK SERVICE"
 $password = "dummy"

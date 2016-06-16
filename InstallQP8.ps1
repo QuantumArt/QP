@@ -43,7 +43,25 @@ if (!$p) {
     Write-Host "Done"
 }
 
-$currentPath = split-path -parent $MyInvocation.MyCommand.Definition
+$defaultcurrentPath = split-path -parent $MyInvocation.MyCommand.Definition
+
+$BackendZipPath = Join-Path $defaultcurrentPath "Backend.zip"
+$WinlogonZipPath = Join-Path $defaultcurrentPath "WinLogon.zip"
+$pluginsZipPath = Join-Path $defaultcurrentPath "plugins.zip"
+$sitesZipPath = Join-Path $defaultcurrentPath "sites.zip"
+$qaZipPath = Join-Path $defaultcurrentPath "qa.zip"
+
+if (Test-Path($BackendZipPath))
+{
+    $currentPath = Read-Host "Please enter path to install QP8 (default - $defaultcurrentPath)"
+    if ([string]::IsNullOrEmpty($name)) { $currentPath = $defaultcurrentPath }
+    if (-not(Test-Path($currentPath))) { New-Item $currentPath -ItemType Directory}
+}
+else
+{
+    $currentPath = $defaultcurrentPath
+}
+
 $rootPath = Join-Path $currentPath "sites"
 $pluginsPath = Join-Path $currentPath "plugins"
 $BackendPath = Join-Path $currentPath "siteMvc"
@@ -52,21 +70,21 @@ $WinlogonPath = Join-Path $currentPath "WinLogonMvc"
 $contentPath = Join-Path $BackendPath "Content"
 $scriptsPath = Join-Path $BackendPath "Scripts"
 
-$BackendZipPath = Join-Path $currentPath "Backend.zip"
-$WinlogonZipPath = Join-Path $currentPath "WinLogon.zip"
-$pluginsZipPath = Join-Path $currentPath "plugins.zip"
-$sitesZipPath = Join-Path $currentPath "sites.zip"
-$qaZipPath = Join-Path $currentPath "qa.zip"
-
 
 if (Test-Path($BackendZipPath))
 {
     Write-Host "Zip files found. Unpacking..."
-    Invoke-Expression "7za.exe x -r -y -o""$BackendZipPath"" ""$BackendPath"""
-    Invoke-Expression "7za.exe x -r -y -o""$WinlogonZipPath"" ""$WinlogonPath"""
-    Invoke-Expression "7za.exe x -r -y -o""$pluginsZipPath"" ""$pluginsPath"""
-    Invoke-Expression "7za.exe x -r -y -o""$sitesZipPath"" ""$rootPath"""
-    Invoke-Expression "7za.exe x -r -y -o""$qaZipPath"" ""$qaPath"""
+    if (-not(Test-Path($BackendPath))) { New-Item $BackendPath -ItemType Directory}
+    if (-not(Test-Path($WinlogonPath))) { New-Item $WinlogonPath -ItemType Directory}
+    if (-not(Test-Path($pluginsPath))) { New-Item $pluginsPath -ItemType Directory}
+    if (-not(Test-Path($rootPath))) { New-Item $rootPath -ItemType Directory}
+    if (-not(Test-Path($qaPath))) { New-Item $qaPath -ItemType Directory}
+
+    Invoke-Expression "7za.exe x -r -y -o""$BackendPath"" ""$BackendZipPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$WinlogonPath"" ""$WinlogonZipPath"""
+    if ((Test-Path($pluginsZipPath))) { Invoke-Expression "7za.exe x -r -y -o""$pluginsPath"" ""$pluginsZipPath""" }
+    Invoke-Expression "7za.exe x -r -y -o""$rootPath"" ""$sitesZipPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$qaPath"" ""$qaZipPath"""
 }
 
 Write-Host "Creating site, applications and virtual directories..."
@@ -153,33 +171,34 @@ Write-Host "Done"
 
 $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule('Everyone', 'Modify', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
 
-
-Write-Host "Creating temporary directory..."
-
 if (-not(Test-Path $tempDir -PathType Container))
 {
-    New-Item $tempDir -ItemType Directory 
+    Write-Host "Creating temporary directory..."
+    
+    New-Item $tempDir -ItemType Directory
+    
+    $Acl = (Get-Item $tempDir).GetAccessControl('Access')
+    $Acl.SetAccessRule($Ar)
+    Set-Acl -path $tempDir -AclObject $Acl
+    
+    Write-Host "Done" 
 }
 
-$Acl = (Get-Item $tempDir).GetAccessControl('Access')
-$Acl.SetAccessRule($Ar)
-Set-Acl -path $tempDir -AclObject $Acl
-
-Write-Host "Done"
-
-
-Write-Host "Creating directory for logs..."
 
 if (-not(Test-Path $logDir -PathType Container))
 {
-    New-Item $logDir -ItemType Directory 
+    Write-Host "Creating directory for logs..."
+
+    New-Item $logDir -ItemType Directory
+    
+    $Acl = (Get-Item $logDir).GetAccessControl('Access')
+    $Acl.SetAccessRule($Ar)
+    Set-Acl -path $logDir -AclObject $Acl
+
+    Write-Host "Done" 
 }
 
-$Acl = (Get-Item $logDir).GetAccessControl('Access')
-$Acl.SetAccessRule($Ar)
-Set-Acl -path $logDir -AclObject $Acl
 
-Write-Host "Done"
 
 
 $defaultSiteRoot = "c:\inetpub\wwwroot"
