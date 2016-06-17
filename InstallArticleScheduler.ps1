@@ -8,7 +8,7 @@
 $name = "ArticleSchedulerService"
 $timeout = "00:03:00"
 
-$s = Get-Service $name
+$s = Get-Service $name -ErrorAction SilentlyContinue
 
 if ($s) { 
     
@@ -49,7 +49,7 @@ $schedulerZipPath = Join-Path $currentPath "ArticleScheduler.zip"
 if ((Test-Path $schedulerZipPath))
 {
     Write-Host "Zip file found. Unpacking..."
-    Invoke-Expression "7za.exe x -r -y -o""$schedulerZipPath"" ""$installRoot"""
+    Invoke-Expression "7za.exe x -r -y -o""$installRoot"" ""$schedulerZipPath"""
 }
 else
 {
