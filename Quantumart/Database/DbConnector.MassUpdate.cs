@@ -81,7 +81,7 @@ namespace Quantumart.QPublishing.Database
                 }
 
                 if (options.ReturnModified)
-                    UpdateModified(arrValues, existingIds, contentId);
+                    UpdateModified(arrValues, existingIds, newIds, contentId);
 
                 if (createVersions)
                 {
@@ -147,7 +147,7 @@ namespace Quantumart.QPublishing.Database
             return extraNames;
         }
 
-        private void UpdateModified(Dictionary<string, string>[] arrValues, int[] existingIds, int contentId)
+        private void UpdateModified(Dictionary<string, string>[] arrValues, int[] existingIds, int[] newIds, int contentId)
         {
             var cmd = new SqlCommand()
             {
@@ -159,7 +159,7 @@ namespace Quantumart.QPublishing.Database
                     new SqlParameter("@ids", SqlDbType.Structured)
                     {
                         TypeName = "Ids",
-                        Value = IdsToDataTable(existingIds)
+                        Value = IdsToDataTable(existingIds.Union(newIds))
                     }
                 }
             };
@@ -168,6 +168,8 @@ namespace Quantumart.QPublishing.Database
                 .AsEnumerable()
                 .ToDictionary(n => (int)n.Field<decimal>("content_item_id"), m => m.Field<DateTime>("modified"));
 
+            var newHash = new HashSet<int>(newIds);
+
             foreach (var value in arrValues)
             {
                 var id = int.Parse(value[SystemColumnNames.Id]);
@@ -175,6 +177,10 @@ namespace Quantumart.QPublishing.Database
                 if (id != 0 && arrModified.TryGetValue(id, out modified))
                 {
                     value[SystemColumnNames.Modified] = modified.ToString("MM/dd/yyyy HH:mm:ss.fff", CultureInfo.InvariantCulture);
+                    if (newHash.Contains(id))
+                    {
+                        value[SystemColumnNames.Created] = value[SystemColumnNames.Modified];
+                    }
                 }
             }
         }
