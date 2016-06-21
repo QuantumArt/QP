@@ -19,9 +19,10 @@ using System.Reflection;
 using System.Threading;
 using System.Web;
 using Quantumart.QPublishing.Database;
+using Quantumart.QPublishing.Info;
 
 
-    <xsl:if test="@namespace">
+<xsl:if test="@namespace">
 namespace <xsl:value-of select="@namespace" /> 
 {
 </xsl:if>
@@ -615,10 +616,18 @@ public partial class <xsl:value-of select="@class" />
             }
         }
     </xsl:if>	
-        
-
     }
-
+    
+    protected Dictionary&lt;string, string&gt; GetInitialValues(IQPContent instance)
+    {
+        return new Dictionary&lt;string, string&gt;
+        {
+            [SystemColumnNames.Id] = instance.Id.ToString(),
+            [SystemColumnNames.Visible] = instance.Visible ? "1" : "0",
+            [SystemColumnNames.Archive] = instance.Archive ? "1" : "0",
+            [SystemColumnNames.StatusTypeId] = instance.StatusTypeId.ToString()
+        };
+    }
 }
 </xsl:template>
 
