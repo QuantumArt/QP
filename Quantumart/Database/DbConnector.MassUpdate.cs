@@ -19,11 +19,14 @@ namespace Quantumart.QPublishing.Database
         {
             CreateVersions = true;
             ReturnModified = true;
+            ReplaceUrls = true;
         }
 
         public bool CreateVersions { get; set; }
 
         public bool ReturnModified { get; set; }
+        
+        public bool ReplaceUrls { get; set; }
 
     }
     
@@ -65,8 +68,8 @@ namespace Quantumart.QPublishing.Database
 
                 CreateDynamicImages(arrValues, fullAttrs);
 
-                ValidateConstraints(arrValues, fullAttrs, content);
-                var dataDoc = GetMassUpdateContentDataDocument(arrValues, resultAttrs, newIds, content);
+                ValidateConstraints(arrValues, fullAttrs, content, options.ReplaceUrls);
+                var dataDoc = GetMassUpdateContentDataDocument(arrValues, resultAttrs, newIds, content, options.ReplaceUrls);
                 ImportContentData(dataDoc);
 
 
@@ -284,7 +287,7 @@ namespace Quantumart.QPublishing.Database
 
         }
 
-        private void ValidateConstraints(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content)
+        private void ValidateConstraints(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content, bool replaceUrls)
         {
             var validatedAttrs = attrs.Where(n => n.ConstraintId.HasValue).ToArray();
             if (validatedAttrs.Any())
@@ -297,7 +300,7 @@ namespace Quantumart.QPublishing.Database
 
                 foreach (var constraint in constraints)
                 {
-                    XDocument validatedDataDoc = GetValidatedDataDocument(values, constraint.Attrs, content);
+                    XDocument validatedDataDoc = GetValidatedDataDocument(values, constraint.Attrs, content, replaceUrls);
                     SelfValidate(validatedDataDoc);
                     ValidateConstraint(validatedDataDoc, constraint.Attrs);
                 }
@@ -326,7 +329,7 @@ namespace Quantumart.QPublishing.Database
             }
         }
 
-        private XDocument GetValidatedDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content)
+        private XDocument GetValidatedDataDocument(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content, bool replaceUrls)
         {
             var longUploadUrl = GetImagesUploadUrl(content.SiteId);
             var longSiteLiveUrl = GetSiteUrl(content.SiteId, true);
@@ -341,7 +344,7 @@ namespace Quantumart.QPublishing.Database
                     string value;
                     var valueExists = m.TryGetValue(n.Name, out value);
                     if (valueExists)
-                        value = FormatResult(n, value, longUploadUrl, longSiteStageUrl, longSiteLiveUrl);
+                        value = FormatResult(n, value, longUploadUrl, longSiteStageUrl, longSiteLiveUrl, replaceUrls);
                     var elem = (valueExists) ? new XElement("DATA", value) : new XElement("MISSED_DATA");
                     elem.Add(new XAttribute("name", n.Name));
                     elem.Add(new XAttribute("id", n.Id));
@@ -395,7 +398,7 @@ namespace Quantumart.QPublishing.Database
 
         }
 
-        private XDocument GetMassUpdateContentDataDocument(IEnumerable<Dictionary<string, string>> values, ContentAttribute[] attrs, int[] newIds, Content content)
+        private XDocument GetMassUpdateContentDataDocument(IEnumerable<Dictionary<string, string>> values, ContentAttribute[] attrs, int[] newIds, Content content, bool replaceUrls)
         {
             var longUploadUrl = GetImagesUploadUrl(content.SiteId);
             var longSiteLiveUrl = GetSiteUrl(content.SiteId, true);
@@ -426,7 +429,7 @@ namespace Quantumart.QPublishing.Database
                     }
                     else if (!string.IsNullOrEmpty(result))
                     {
-                        result = FormatResult(attr, result, longUploadUrl, longSiteStageUrl, longSiteLiveUrl);
+                        result = FormatResult(attr, result, longUploadUrl, longSiteStageUrl, longSiteLiveUrl, replaceUrls);
                     }
                     else if (isNewArticle)
                     {
@@ -445,7 +448,7 @@ namespace Quantumart.QPublishing.Database
             return dataDoc;
         }
 
-        private string FormatResult(ContentAttribute attr, string result, string longUploadUrl, string longSiteStageUrl, string longSiteLiveUrl)
+        private string FormatResult(ContentAttribute attr, string result, string longUploadUrl, string longSiteStageUrl, string longSiteLiveUrl, bool replaceUrls)
         {
             if (attr.DbTypeName == "DATETIME" && Information.IsDate(result))
             {
@@ -458,11 +461,14 @@ namespace Quantumart.QPublishing.Database
             else if (attr.Type == AttributeType.String || attr.Type == AttributeType.Textbox ||
                      attr.Type == AttributeType.VisualEdit)
             {
-                result = (result)
-                    .Replace(longUploadUrl, UploadPlaceHolder)
-                    .Replace(longSiteStageUrl, SitePlaceHolder)
-                    .Replace(longSiteLiveUrl, SitePlaceHolder)
-                    ;
+                if (replaceUrls)
+                {
+                    result = (result)
+                       .Replace(longUploadUrl, UploadPlaceHolder)
+                       .Replace(longSiteStageUrl, SitePlaceHolder)
+                       .Replace(longSiteLiveUrl, SitePlaceHolder)
+                       ;
+                }
             }
             return result;
         }

@@ -182,7 +182,7 @@ namespace Quantumart.QPublishing.Database
                     }
                     else if (!string.IsNullOrEmpty(temp))
                     {
-                        temp = FormatResult(attr, temp, longUploadUrl, longSiteStageUrl, longSiteLiveUrl);
+                        temp = FormatResult(attr, temp, longUploadUrl, longSiteStageUrl, longSiteLiveUrl, true);
                         elem.Add(new XElement(attr.DbField, XmlValidChars(temp)));
                     }
                     if (valueExists || overrideMissedFields)
