@@ -847,6 +847,48 @@ namespace Quantumart.Test
         }
 
         [Test]
+        public void MassUpdate_WithUrlsAndReplaceUrlsDefault_ReplaceUrls()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Description"] = $@"<a href=""{ Cnn.GetImagesUploadUrl(Global.SiteId) }"">test</a>"
+            };
+            values.Add(article1);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
+
+            int id = int.Parse(values[0][SystemColumnNames.Id]);
+            var ids = new[] { id };
+
+            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
+
+            Assert.That(desc, Does.Contain(@"<%=upload_url%>"));
+        }
+
+        [Test]
+        public void MassUpdate_WithUrlsAndReplaceUrlsFalse_DoesNotReplaceUrls()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Description"] = $@"<a href=""{ Cnn.GetImagesUploadUrl(Global.SiteId) }"">test</a>"
+            };
+            values.Add(article1);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { ReplaceUrls = false}), "Add article");
+
+            int id = int.Parse(values[0][SystemColumnNames.Id]);
+            var ids = new[] { id };
+
+            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
+
+            Assert.That(desc, Does.Not.Contain(@"<%=upload_url%>"));
+        }
+
+        [Test]
         public void AddFormToContent_ArticleAddedWithDefaultValues_ValidateAttributeValueNewArticleWithMissedData()
         {
             var article1 = new Hashtable()
