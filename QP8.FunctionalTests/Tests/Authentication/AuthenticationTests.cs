@@ -31,7 +31,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
             {
                 MakeAttachment(string.Format("Login: {1}{0}Password: {2}{0}CustomerCode: {3}{0}",
                                              Environment.NewLine, login, password, customerCode),
-                               "authentication data", TextType.textPlain);
+                               "Authentication data", TextType.textPlain);
 
                 page.Authenticate(login, password, customerCode);
             });

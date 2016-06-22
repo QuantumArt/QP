@@ -10,13 +10,13 @@ namespace QP8.FunctionalTests.PageObjects.Components
     {
         [By(How.CssSelector, "#communicationMessage>span.qpversion")]
         public Element QPVersion;
-
+        
         [By(How.CssSelector, "#userInformation>span.userName")]
         public Element UserName;
 
         [By(How.CssSelector, "#userInformation>a.signOut")]
         public Link Exit;
-        
+
         public HeaderComponent(IWebElement webElement, IWebDriver webDriver) 
             : base(webElement, webDriver)
         {

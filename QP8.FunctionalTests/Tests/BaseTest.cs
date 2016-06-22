@@ -1,8 +1,5 @@
-﻿using System.Drawing;
-using System.IO;
-using Nunit3AllureAdapter;
+﻿using Nunit3AllureAdapter;
 using NUnit.Framework;
-using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using QP8.FunctionalTests.Configuration;
@@ -34,18 +31,6 @@ namespace QP8.FunctionalTests.Tests
             Wait = ExtensionCore.GetWaiter();
             Wait.Timeout = Config.ImplicitlyTimeout;
             Wait.IgnoreExceptionTypes(typeof(NotFoundException), typeof(StaleElementReferenceException));
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            if (!TestContext.CurrentContext.Result.Outcome.Status.Equals(TestStatus.Failed))
-                return;
-
-            using (var memoryStream = new MemoryStream(Driver.GetScreenshot().AsByteArray))
-            {
-                MakeAttachment(Image.FromStream(memoryStream), "Failed screenshot", ImageType.imagePng);
-            }
         }
 
         [OneTimeTearDown]

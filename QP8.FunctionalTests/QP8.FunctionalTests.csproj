@@ -74,12 +74,12 @@
       <HintPath>..\packages\NUnit3TestAdapter.3.2.0\lib\NUnit3.TestAdapter.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Nunit3AllureAdapter, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Nunit3AllureAdapter.1.0.2\lib\net45\Nunit3AllureAdapter.dll</HintPath>
+    <Reference Include="Nunit3AllureAdapter, Version=1.0.3.32009, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Nunit3AllureAdapter.1.0.3\lib\net45\Nunit3AllureAdapter.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SeleniumExtension, Version=1.0.0.6, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SeleniumExtension.1.0.6\lib\net45\SeleniumExtension.dll</HintPath>
+    <Reference Include="SeleniumExtension, Version=1.0.7.22799, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SeleniumExtension.1.0.7\lib\net45\SeleniumExtension.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -95,22 +95,23 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-    <None Include="tests.runsettings">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\packages\SeleniumExtension.1.0.6\driver\chromedriver.exe">
+    <Content Include="..\packages\SeleniumExtension.1.0.7\driver\chromedriver.exe">
       <Link>Resources\chromedriver.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\packages\SeleniumExtension.1.0.6\driver\IEDriverServer.exe">
+    <Content Include="..\packages\SeleniumExtension.1.0.7\driver\IEDriverServer.exe">
       <Link>Resources\IEDriverServer.exe</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\packages\SeleniumExtension.1.0.6\driver\selenium-server-standalone.jar">
+    <Content Include="..\packages\SeleniumExtension.1.0.7\driver\selenium-server-standalone.jar">
       <Link>Resources\selenium-server-standalone.jar</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -119,7 +120,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QP8.PageObjects\QP8.FunctionalTests.PageObjects.csproj">
+    <ProjectReference Include="..\QP8.FunctionalTests.PageObjects\QP8.FunctionalTests.PageObjects.csproj">
       <Project>{7b6f3fd0-d890-44d1-b18b-9833772a7fb0}</Project>
       <Name>QP8.FunctionalTests.PageObjects</Name>
     </ProjectReference>
