@@ -93,10 +93,11 @@ public partial class <xsl:value-of select="@class" />
     <xsl:choose><xsl:when test="@virtual = '0'">
         Cnn.ExternalTransaction = Transaction;
         var values = Pack<xsl:value-of select="$name" />(instance);
-        Cnn.MassUpdate(<xsl:value-of select="$content_id" />, new List&lt;Dictionary&lt;string, string&gt;&gt;() { values }, Cnn.LastModifiedBy);
-        instance.Id = Int32.Parse(values[SystemColumnNames.Id]);
-        instance.Modified = DateTime.Parse(values[SystemColumnNames.Modified], CultureInfo.InvariantCulture);
-        instance.Created = instance.Modified;
+        Cnn.MassUpdate(<xsl:value-of select="$content_id" />, new List&lt;Dictionary&lt;string, string&gt;&gt;() { values }, Cnn.LastModifiedBy
+          , new MassUpdateOptions() { ReplaceUrls = <xsl:value-of select="parent::node()/@replaceUrls" />});
+      instance.Id = Int32.Parse(values[SystemColumnNames.Id]);
+      instance.Modified = DateTime.Parse(values[SystemColumnNames.Modified], CultureInfo.InvariantCulture);
+      instance.Created = instance.Modified;
     </xsl:when><xsl:otherwise>
         throw new InvalidOperationException(@"Virtual Contents cannot be modified");	
     </xsl:otherwise></xsl:choose>
@@ -107,8 +108,9 @@ public partial class <xsl:value-of select="@class" />
     <xsl:choose><xsl:when test="@virtual = '0'">
         Cnn.ExternalTransaction = Transaction;
         var values = Pack<xsl:value-of select="$name" />(instance);
-        Cnn.MassUpdate(<xsl:value-of select="$content_id" />, new List&lt;Dictionary&lt;string, string&gt;&gt;() { values }, Cnn.LastModifiedBy);
-        instance.Modified = DateTime.Parse(values[SystemColumnNames.Modified], CultureInfo.InvariantCulture);
+        Cnn.MassUpdate(<xsl:value-of select="$content_id" />, new List&lt;Dictionary&lt;string, string&gt;&gt;() { values }, Cnn.LastModifiedBy
+          , new MassUpdateOptions() { ReplaceUrls = <xsl:value-of select="parent::node()/@replaceUrls" />});
+      instance.Modified = DateTime.Parse(values[SystemColumnNames.Modified], CultureInfo.InvariantCulture);
     </xsl:when><xsl:otherwise>
         throw new InvalidOperationException(@"Virtual Contents cannot be modified");	
     </xsl:otherwise></xsl:choose>		

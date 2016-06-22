@@ -542,22 +542,6 @@ public partial class <xsl:value-of select="@class" />
         return result;
     }
     
-    public string ReplaceUrls(string input)
-    {
-        string result = input;
-        if (result != null)
-        {
-            result = result.Replace(LongUploadUrl, uploadPlaceholder);
-            result = result.Replace(ShortUploadUrl, uploadPlaceholder);
-            result = result.Replace(LiveSiteUrl, sitePlaceholder);
-            result = result.Replace(StageSiteUrl, sitePlaceholder);
-            if (!String.Equals(LiveSiteUrlRel, "/")) result = result.Replace(LiveSiteUrlRel, sitePlaceholder);
-            if (!String.Equals(StageSiteUrlRel, "/")) result = result.Replace(StageSiteUrlRel, sitePlaceholder);
-        }
-        return result;
-    }
-            
-
     public override void SubmitChanges(System.Data.Linq.ConflictMode failureMode)
     {
         Cnn.ExternalTransaction = Transaction;
