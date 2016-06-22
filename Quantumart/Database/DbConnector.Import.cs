@@ -117,8 +117,10 @@ namespace Quantumart.QPublishing.Database
                     linkElem.Add(new XAttribute("id", value[SystemColumnNames.Id]));
                     if (attr.LinkId != null) linkElem.Add(new XAttribute("linkId", attr.LinkId.Value));
                     if (value.TryGetValue(attr.Name, out temp))
+                    {
                         linkElem.Add(new XAttribute("value", temp));
-                    linkDoc.Root?.Add(linkElem);
+                        linkDoc.Root?.Add(linkElem);
+                    }
                 }
             }
             return linkDoc;
