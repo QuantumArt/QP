@@ -15,8 +15,11 @@ namespace QP8.FunctionalTests.PageObjects.Pages.Authentication
         [By(How.XPath, ".//dd[input[@id='Password']]")]
         public Input Password;
 
-        [By(How.XPath, ".//dd[input[@id='CustomerCode']]")]
-        public Input CustomerCode;
+        [By(How.XPath, ".//dd[input[@id='CustomerCodeInput']]")]
+        public Input CustomerCodeInput;
+
+        [By(How.XPath, ".//select[@id='CustomerCode']")]
+        public Select CustomerCodeSelect;
 
         [By(How.XPath, ".//dd[input[@id='Login']]")]
         public Button Submit;
@@ -34,7 +37,16 @@ namespace QP8.FunctionalTests.PageObjects.Pages.Authentication
         {
             Login.SendKeys(login);
             Password.SendKeys(password);
-            CustomerCode.SendKeys(customerCode);
+
+            if (CustomerCodeInput.Displayed)
+            {
+                CustomerCodeInput.SendKeys(customerCode);
+            }
+            else
+            {
+                CustomerCodeSelect.SelectByText(customerCode);
+            }
+            
             Submit.Click();
         }
     }

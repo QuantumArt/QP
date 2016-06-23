@@ -14,10 +14,12 @@ namespace QP8.FunctionalTests.PageObjects.Elements
     public class Button : InputBasedElement, IClickable, IEnabled
     {
         /// <summary>
-        /// Проверка доступности кнопки<br/>
+        /// Проверка доступности кнопки
+        /// </summary>
+        /// <remarks>
         /// Выполняется путём проверки отсутствия атрибута 'disabled' дочернего элемента 'input'<br/>
         /// и вызова свойства 'IWebElement.Enabled'
-        /// </summary>
+        /// </remarks>
         public bool Enabled
         {
             get
@@ -33,9 +35,11 @@ namespace QP8.FunctionalTests.PageObjects.Elements
         }
 
         /// <summary>
-        /// Клик по кнопке<br/>
-        /// Выполняется путём вызова метода 'IWebElement.Click()' дочернего элемента 'input'
+        /// Клик по кнопке
         /// </summary>
+        /// <remarks>
+        /// Выполняется путём вызова метода 'IWebElement.Click()' дочернего элемента 'input'
+        /// </remarks>
         public void Click()
         {
             ProxyWebElement.FindElement(By.CssSelector("input")).Click();

@@ -14,9 +14,11 @@ namespace QP8.FunctionalTests.PageObjects.Elements
     public class InputBasedElement : Element
     {
         /// <summary>
-        /// Получение текста элемента<br/>
-        /// Выполняется путём поиска дочернего элемента 'input' и получения его текста
+        /// Получение текста элемента
         /// </summary>
+        /// <remarks>
+        /// Выполняется путём поиска дочернего элемента 'input' и получения его текста
+        /// </remarks>
         public new string Text
         {
             get
