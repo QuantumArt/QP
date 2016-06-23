@@ -2,7 +2,7 @@
 using SeleniumExtension.Support.PageObjects.Elements;
 using SeleniumExtension.Support.PageObjects.Elements.Implementation;
 
-namespace QP8.PageObjects.Elements
+namespace QP8.FunctionalTests.PageObjects.Elements
 {
     /// <summary>
     /// Объектная модель ссылки<br/>
@@ -15,10 +15,12 @@ namespace QP8.PageObjects.Elements
     public class Link : Element, IClickable, IHasHref
     {
         /// <summary>
-        /// Получение ссылки<br/>
+        /// Получение ссылки
+        /// </summary>
+        /// <remarks>
         /// Выполняется путём получения значения атрибута 'href' с помощью метода<br/>
         /// 'IWebElement.GetAttribute(string attribute)'
-        /// </summary>
+        /// </remarks>
         public string Href
         {
             get
@@ -33,9 +35,11 @@ namespace QP8.PageObjects.Elements
         }
 
         /// <summary>
-        /// Клик по ссылке<br/>
-        /// Выполняется путём вызова метода 'IWebElement.Click()'
+        /// Клик по ссылке
         /// </summary>
+        /// <remarks>
+        /// Выполняется путём вызова метода 'IWebElement.Click()'
+        /// </remarks>
         public void Click()
         {
             ProxyWebElement.Click();

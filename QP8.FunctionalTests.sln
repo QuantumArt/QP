@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.FunctionalTests", "QP8.FunctionalTests\QP8.FunctionalTests.csproj", "{3DFA052F-930F-4914-BD6D-66E982CC31A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.PageObjects", "QP8.PageObjects\QP8.PageObjects.csproj", "{7B6F3FD0-D890-44D1-B18B-9833772A7FB0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.FunctionalTests.PageObjects", "QP8.FunctionalTests.PageObjects\QP8.FunctionalTests.PageObjects.csproj", "{7B6F3FD0-D890-44D1-B18B-9833772A7FB0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C9A5D2AB-F942-4C23-96EB-13F5BBE6C914}"
 	ProjectSection(SolutionItems) = preProject

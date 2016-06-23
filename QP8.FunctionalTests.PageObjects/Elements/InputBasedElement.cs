@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using SeleniumExtension.Support.PageObjects.Elements.Implementation;
 
-namespace QP8.PageObjects.Elements
+namespace QP8.FunctionalTests.PageObjects.Elements
 {
     /// <summary>
     /// Объектная модель элемента на основе 'input'<br/>
@@ -14,9 +14,11 @@ namespace QP8.PageObjects.Elements
     public class InputBasedElement : Element
     {
         /// <summary>
-        /// Получение текста элемента<br/>
-        /// Выполняется путём поиска дочернего элемента 'input' и получения его текста
+        /// Получение текста элемента
         /// </summary>
+        /// <remarks>
+        /// Выполняется путём поиска дочернего элемента 'input' и получения его текста
+        /// </remarks>
         public new string Text
         {
             get

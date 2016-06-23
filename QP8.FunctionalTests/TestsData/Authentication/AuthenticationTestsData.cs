@@ -5,31 +5,35 @@ namespace QP8.FunctionalTests.TestsData.Authentication
 {
     public static class AuthenticationTestsData
     {
-        private static readonly IEnumerable<string> _variations = new List<string>
-        {
-            "1", "123", "t", "test", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "{", "}", "'", @"""", "<", ">"
-        };
-
         public static IEnumerable<string> InvalidLogin
         {
-            get { return CombineWithVariations(Config.QP8BackendLogin); }
+            get { return CombineWithVariations(Config.Tests.BackendLogin); }
         }
 
         public static IEnumerable<string> InvalidPassword
         {
-            get { return CombineWithVariations(Config.QP8BackendPassword); }
+            get { return CombineWithVariations(Config.Tests.BackendPassword); }
         }
 
         public static IEnumerable<string> InvalidCustomerCode
         {
-            get { return CombineWithVariations(Config.QP8BackendCustomerCode); }
+            get
+            {
+                return Config.Tests.BackendCustomerCodeFieldIsDropdown
+                  ? new List<string> { "ignore" }
+                  : CombineWithVariations(Config.Tests.BackendCustomerCode);
+            }
         }
 
         private static IEnumerable<string> CombineWithVariations(string pattern)
         {
             var invalidLogins = new List<string>();
 
-            foreach (var variation in _variations)
+            var variations = Config.Environment.IsSmokeTests
+                ? Config.Tests.SmokeVariations
+                : Config.Tests.FullVariations;
+
+            foreach (var variation in variations)
             {
                 invalidLogins.Add(string.Format("{0}{1}", pattern, variation));
                 invalidLogins.Add(string.Format("{0}{1}", variation, pattern));

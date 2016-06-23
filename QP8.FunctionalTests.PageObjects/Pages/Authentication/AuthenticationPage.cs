@@ -1,11 +1,11 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.PageObjects;
-using QP8.PageObjects.Elements;
+using QP8.FunctionalTests.PageObjects.Elements;
 using SeleniumExtension.Support.PageObjects;
 using SeleniumExtension.Support.PageObjects.Attributes.Implementation;
 using SeleniumExtension.Support.PageObjects.Elements.Implementation;
 
-namespace QP8.PageObjects.Pages.Authentication
+namespace QP8.FunctionalTests.PageObjects.Pages.Authentication
 {
     public class AuthenticationPage : Page
     {
@@ -15,8 +15,11 @@ namespace QP8.PageObjects.Pages.Authentication
         [By(How.XPath, ".//dd[input[@id='Password']]")]
         public Input Password;
 
-        [By(How.XPath, ".//dd[input[@id='CustomerCode']]")]
-        public Input CustomerCode;
+        [By(How.XPath, ".//dd[input[@id='CustomerCodeInput']]")]
+        public Input CustomerCodeInput;
+
+        [By(How.XPath, ".//select[@id='CustomerCode']")]
+        public Select CustomerCodeSelect;
 
         [By(How.XPath, ".//dd[input[@id='Login']]")]
         public Button Submit;
@@ -28,14 +31,6 @@ namespace QP8.PageObjects.Pages.Authentication
         public AuthenticationPage(IWebDriver webDriver) 
             : base(webDriver)
         {
-        }
-
-        public void Authenticate(string login, string password, string customerCode)
-        {
-            Login.SendKeys(login);
-            Password.SendKeys(password);
-            CustomerCode.SendKeys(customerCode);
-            Submit.Click();
         }
     }
 }

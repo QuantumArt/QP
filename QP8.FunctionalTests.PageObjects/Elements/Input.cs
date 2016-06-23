@@ -2,7 +2,7 @@
 using OpenQA.Selenium;
 using SeleniumExtension.Support.PageObjects.Elements;
 
-namespace QP8.PageObjects.Elements
+namespace QP8.FunctionalTests.PageObjects.Elements
 {
     /// <summary>
     /// Объектная модель поля ввода<br/>
@@ -20,10 +20,12 @@ namespace QP8.PageObjects.Elements
     public class Input : InputBasedElement, IEditable, IEnabled, IFocused
     {
         /// <summary>
-        /// Проверка доступности поля ввода<br/>
+        /// Проверка доступности поля ввода
+        /// </summary>
+        /// <remarks>
         /// Выполняется путём проверки отсутствия атрибута 'disabled'<br/>
         /// и вызова свойства 'IWebElement.Enabled'
-        /// </summary>
+        /// </remarks>
         public bool Enabled
         {
             get
@@ -34,19 +36,23 @@ namespace QP8.PageObjects.Elements
         }
 
         /// <summary>
-        /// Проверка наличия фокуса на поле ввода<br/>
-        /// Выполняется путём получения активного элемента на странице и его сравнения с полем ввода
+        /// Проверка наличия фокуса на поле ввода
         /// </summary>
+        /// <remarks>
+        /// Выполняется путём получения активного элемента на странице и его сравнения с полем ввода
+        /// </remarks>
         public bool Focused
         {
             get { return ProxyWebElement.Equals(WebDriver.SwitchTo().ActiveElement()); }
         }
 
         /// <summary>
-        /// Проверка валидации поля<br/>
+        /// Проверка валидации поля
+        /// </summary>
+        /// <remarks>
         /// Выполняется путём проверки значения атрибута 'class' дочернего элемента 'input'<br/>
         /// на отсутствие параметра 'input-validation-error' или отсутствия текста валидации
-        /// </summary>
+        /// </remarks>
         public bool Valid
         {
             get
@@ -60,10 +66,12 @@ namespace QP8.PageObjects.Elements
         }
 
         /// <summary>
-        /// Получение текста валидации<br/>
+        /// Получение текста валидации
+        /// </summary>
+        /// <remarks>
         /// Выполняется путём поиска дочернего элемента 'span' с атрибутом 'class="field-validation-error"'<br/>
         /// и получения его текста
-        /// </summary>
+        /// </remarks>
         public string ValidationText
         {
             get
@@ -79,18 +87,22 @@ namespace QP8.PageObjects.Elements
         }
 
         /// <summary>
-        /// Удаление текста из поля ввода<br/>
-        /// Выполяется путём вызова метода 'IWebElement.Clear()' дочернего элемента 'input'
+        /// Удаление текста из поля ввода
         /// </summary>
+        /// <remarks>
+        /// Выполяется путём вызова метода 'IWebElement.Clear()' дочернего элемента 'input'
+        /// </remarks>
         public void Clear()
         {
             ProxyWebElement.FindElement(By.CssSelector("input")).Clear();
         }
 
         /// <summary>
-        /// Передача текста полю ввода<br/>
-        /// Выполяется путём вызова метода 'IWebElement.SendKeys(string)' дочергено элемента 'input'
+        /// Передача текста полю ввода
         /// </summary>
+        /// <remarks>
+        /// Выполяется путём вызова метода 'IWebElement.SendKeys(string)' дочергено элемента 'input'
+        /// </remarks>
         /// <param name="text">Текст для передачи</param>
         public void SendKeys(string text)
         {
