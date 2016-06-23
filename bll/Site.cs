@@ -441,6 +441,12 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("CreateDefaultXamlDictionary", NameResourceType = typeof(SiteStrings))]
         public bool CreateDefaultXamlDictionary { get; set; }
+
+        [LocalizedDisplayName("DownloadEfSource", NameResourceType = typeof(SiteStrings))]
+        public bool DownloadEfSource { get; set; }
+
+        [LocalizedDisplayName("ExternalDevelopment", NameResourceType = typeof(SiteStrings))]
+        public bool ExternalDevelopment { get; set; }
         #endregion
 
 

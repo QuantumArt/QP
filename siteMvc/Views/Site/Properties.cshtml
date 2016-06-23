@@ -34,6 +34,7 @@
 	{
 		@Html.TextBoxFieldFor(s => s.Data.Name)
 		@Html.TextAreaFieldFor(s => s.Data.Description)
+        @Html.CheckBoxFieldFor(s => s.Data.ExternalDevelopment, Model.ExtDevBlock)
 		@Html.RadioFieldFor(s => s.Data.IsLive, Html.List(Model.SiteModes))
 	}
 
@@ -157,7 +158,12 @@
 				using (Html.BeginPanel(Model.MapFileBlock))
 				{
 					@Html.CheckBoxFieldFor(s => s.Data.GenerateMapFileOnly)
-				}
+                }
+                using (Html.BeginPanel(Model.ExtDevBlock))
+                {
+                    @Html.CheckBoxFieldFor(s => s.Data.DownloadEfSource)
+                }
+
 				@Html.TextBoxFieldFor(s => s.Data.ConnectionStringName)
 				@Html.CheckBoxFieldFor(s => s.Data.UseLongUrls)
 				@Html.CheckBoxFieldFor(s => s.Data.ReplaceUrls)

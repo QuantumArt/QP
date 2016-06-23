@@ -457,11 +457,29 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download EF data source only.
+        /// </summary>
+        public static string DownloadEfSource {
+            get {
+                return ResourceManager.GetString("DownloadEfSource", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable OnScreen.
         /// </summary>
         public static string EnableOnScreen {
             get {
                 return ResourceManager.GetString("EnableOnScreen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External Development.
+        /// </summary>
+        public static string ExternalDevelopment {
+            get {
+                return ResourceManager.GetString("ExternalDevelopment", resourceCulture);
             }
         }
         
