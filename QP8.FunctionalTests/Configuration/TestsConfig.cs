@@ -29,12 +29,9 @@ namespace QP8.FunctionalTests.Configuration
             public static string BackendPassword { get { return StringValue("BackendPassword", "1q2w-p=[Password"); } }
             public static string BackendCustomerCode { get { return StringValue("BackendCustomerCode", "qp_beeline_main"); } }
 
-            public static string BackendCustomerCodeFieldType
+            public static bool BackendCustomerCodeFieldIsDropdown
             {
-                get
-                {
-                    return StringValue("BackendCustomerCodeFieldType", "input");
-                }
+                get { return BoolValue("BackendCustomerCodeFieldIsDropdown"); }
             }
 
             private static string AvoidSpecialCharacters(string inputString)
@@ -44,7 +41,7 @@ namespace QP8.FunctionalTests.Configuration
                                   .Replace("&lt;", "<")
                                   .Replace("&gt;", ">")
                                   .Replace("&amp;", "&");
-            } 
+            }
         }
     }
 }

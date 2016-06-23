@@ -32,22 +32,5 @@ namespace QP8.FunctionalTests.PageObjects.Pages.Authentication
             : base(webDriver)
         {
         }
-
-        public void Authenticate(string login, string password, string customerCode)
-        {
-            Login.SendKeys(login);
-            Password.SendKeys(password);
-
-            if (CustomerCodeInput.Displayed)
-            {
-                CustomerCodeInput.SendKeys(customerCode);
-            }
-            else
-            {
-                CustomerCodeSelect.SelectByText(customerCode);
-            }
-            
-            Submit.Click();
-        }
     }
 }

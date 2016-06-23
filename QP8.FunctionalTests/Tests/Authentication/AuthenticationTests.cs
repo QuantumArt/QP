@@ -36,13 +36,13 @@ namespace QP8.FunctionalTests.Tests.Authentication
                 page.Login.SendKeys(login);
                 page.Password.SendKeys(password);
 
-                if (Config.Tests.BackendCustomerCodeFieldType.Equals("input"))
+                if (Config.Tests.BackendCustomerCodeFieldIsDropdown)
                 {
-                    page.CustomerCodeInput.SendKeys(customerCode);
+                    page.CustomerCodeSelect.SelectByText(customerCode);
                 }
                 else
                 {
-                    page.CustomerCodeSelect.SelectByText(customerCode);
+                    page.CustomerCodeInput.SendKeys(customerCode);
                 }
 
                 page.Submit.Click();

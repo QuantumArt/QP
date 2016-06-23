@@ -14,6 +14,13 @@ namespace QP8.FunctionalTests.Tests.Authentication
     {
         private const string Story = "Customer code";
 
+        [SetUp]
+        public void LocalSetUp()
+        {
+            if (Config.Tests.BackendCustomerCodeFieldIsDropdown)
+                Assert.Ignore("Test ingnored");
+        }
+
         [AllureTest]
         [AllureSeverity(severitylevel.normal)]
         [AllureTitle("Authentication with invalid customer code")]

@@ -17,7 +17,12 @@ namespace QP8.FunctionalTests.TestsData.Authentication
 
         public static IEnumerable<string> InvalidCustomerCode
         {
-            get { return CombineWithVariations(Config.Tests.BackendCustomerCode); }
+            get
+            {
+                return Config.Tests.BackendCustomerCodeFieldIsDropdown
+                  ? new List<string> { "ignore" }
+                  : CombineWithVariations(Config.Tests.BackendCustomerCode);
+            }
         }
 
         private static IEnumerable<string> CombineWithVariations(string pattern)
