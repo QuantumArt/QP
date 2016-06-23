@@ -23,7 +23,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
         {
             var page = new AuthenticationPage(Driver);
 
-            AuthenticationSteps(page, Config.QP8BackendLogin, password, Config.QP8BackendCustomerCode);
+            AuthenticationSteps(page, Config.Tests.BackendLogin, password, Config.Tests.BackendCustomerCode);
             CheckValidationSteps(page, page.Password, "Password", "You entered wrong password!");
             CheckJavaScriptErrors();
         }

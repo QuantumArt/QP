@@ -22,9 +22,9 @@ namespace QP8.FunctionalTests.Tests
         public void OneTimeSetup()
         {
             Driver = Setup.GridHub.GetBrowserInstance(DesiredCapabilities.Chrome());
-            Driver.Manage().Timeouts().ImplicitlyWait(Config.ImplicitlyTimeout);
-            Driver.Manage().Timeouts().SetPageLoadTimeout(Config.PageLoadTimeout);
-            Driver.Manage().Timeouts().SetScriptTimeout(Config.JavaScriptTimeout);
+            Driver.Manage().Timeouts().ImplicitlyWait(Config.Environment.ImplicitlyTimeout);
+            Driver.Manage().Timeouts().SetPageLoadTimeout(Config.Environment.PageLoadTimeout);
+            Driver.Manage().Timeouts().SetScriptTimeout(Config.Environment.JavaScriptTimeout);
 
             var failedActions = new Action[]
             {
@@ -45,7 +45,7 @@ namespace QP8.FunctionalTests.Tests
             Driver.Manage().Cookies.DeleteAllCookies();
 
             Wait = ExtensionCore.GetWaiter();
-            Wait.Timeout = Config.ImplicitlyTimeout;
+            Wait.Timeout = Config.Environment.ImplicitlyTimeout;
             Wait.IgnoreExceptionTypes(typeof(NotFoundException), typeof(StaleElementReferenceException));
         }
 

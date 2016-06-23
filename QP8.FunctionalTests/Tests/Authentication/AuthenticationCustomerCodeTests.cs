@@ -23,8 +23,8 @@ namespace QP8.FunctionalTests.Tests.Authentication
         {
             var page = new AuthenticationPage(Driver);
 
-            AuthenticationSteps(page, Config.QP8BackendLogin, Config.QP8BackendPassword, customerCode);
-            CheckValidationSteps(page, page.CustomerCode, "Customer code", "Customer code does not exist!");
+            AuthenticationSteps(page, Config.Tests.BackendLogin, Config.Tests.BackendPassword, customerCode);
+            CheckValidationSteps(page, page.CustomerCodeInput, "Customer code", "Customer code does not exist!");
             CheckJavaScriptErrors();
         }
     }

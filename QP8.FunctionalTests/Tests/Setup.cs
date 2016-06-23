@@ -6,7 +6,7 @@ using QP8.FunctionalTests.Configuration;
 using SeleniumExtension;
 using SeleniumExtension.Grid;
 
-namespace QP8.FunctionalTests
+namespace QP8.FunctionalTests.Tests
 {
     [SetUpFixture]
     public class Setup
@@ -16,7 +16,7 @@ namespace QP8.FunctionalTests
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            var resultsPath = Config.AllureResultsPath;
+            var resultsPath = Config.Environment.AllureResultsPath;
             var environmentXmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "environment.xml");
 
             if (!Directory.Exists(resultsPath))
@@ -28,7 +28,8 @@ namespace QP8.FunctionalTests
             if (File.Exists(environmentXmlPath))
                 File.Copy(environmentXmlPath, Path.Combine(resultsPath, "environment.xml"), true);
 
-            GridHub = ExtensionCore.GetGridHubManager().ConnectToHub(Config.GridHubHost, Config.GridHubPort);
+            GridHub = ExtensionCore.GetGridHubManager()
+                                   .ConnectToHub(Config.Environment.GridHubHost, Config.Environment.GridHubPort);
         }
 
         [OneTimeTearDown]

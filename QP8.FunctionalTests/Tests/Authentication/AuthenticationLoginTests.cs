@@ -23,9 +23,9 @@ namespace QP8.FunctionalTests.Tests.Authentication
         [AllureDescription("Valid login", descriptiontype.html)]
         public void AuthenticationWithValidData()
         {
-            var login = Config.QP8BackendLogin;
-            var password = Config.QP8BackendPassword;
-            var customerCode = Config.QP8BackendCustomerCode;
+            var login = Config.Tests.BackendLogin;
+            var password = Config.Tests.BackendPassword;
+            var customerCode = Config.Tests.BackendCustomerCode;
 
             AuthenticationSteps(new AuthenticationPage(Driver), login, password, customerCode);
 
@@ -52,7 +52,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
         {
             var page = new AuthenticationPage(Driver);
 
-            AuthenticationSteps(page, login, Config.QP8BackendPassword, Config.QP8BackendCustomerCode);
+            AuthenticationSteps(page, login, Config.Tests.BackendPassword, Config.Tests.BackendCustomerCode);
             CheckValidationSteps(page, page.Login, "Login", "Your account does not exist!");
             CheckJavaScriptErrors();
         }

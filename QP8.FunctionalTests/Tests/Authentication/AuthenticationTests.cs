@@ -22,18 +22,30 @@ namespace QP8.FunctionalTests.Tests.Authentication
 
         protected void AuthenticationSteps(AuthenticationPage page, string login, string password, string customerCode)
         {
-            Step(string.Format("Opening {0}", Config.QP8BackendUrl), () =>
+            Step(string.Format("Opening {0}", Config.Tests.BackendUrl), () =>
             {
-                Driver.Url = Config.QP8BackendUrl;
+                Driver.Url = Config.Tests.BackendUrl;
             });
 
             Step("Authentication", () =>
             {
-                MakeAttachment(string.Format("Login: {1}{0}Password: {2}{0}CustomerCode: {3}{0}",
+                MakeAttachment(string.Format("Login: {1}{0}Password: {2}{0}CustomerCodeInput: {3}{0}",
                                              Environment.NewLine, login, password, customerCode),
                                "Authentication data", TextType.textPlain);
+                
+                page.Login.SendKeys(login);
+                page.Password.SendKeys(password);
 
-                page.Authenticate(login, password, customerCode);
+                if (Config.Tests.BackendCustomerCodeFieldType.Equals("input"))
+                {
+                    page.CustomerCodeInput.SendKeys(customerCode);
+                }
+                else
+                {
+                    page.CustomerCodeSelect.SelectByText(customerCode);
+                }
+
+                page.Submit.Click();
             });
         }
 
