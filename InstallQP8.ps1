@@ -54,7 +54,7 @@ $qaZipPath = Join-Path $defaultcurrentPath "qa.zip"
 if (Test-Path($BackendZipPath))
 {
     $currentPath = Read-Host "Please enter path to install QP8 (default - $defaultcurrentPath)"
-    if ([string]::IsNullOrEmpty($name)) { $currentPath = $defaultcurrentPath }
+    if ([string]::IsNullOrEmpty($currentPath)) { $currentPath = $defaultcurrentPath }
     if (-not(Test-Path($currentPath))) { New-Item $currentPath -ItemType Directory}
 }
 else
@@ -117,7 +117,7 @@ Write-Host "Done"
 
 $defaultConfigDir = "C:\QA"
 $configDir = Read-Host "Please enter configuration directory (default - $defaultConfigDir)"
-if ([string]::IsNullOrEmpty($siteRoot))
+if ([string]::IsNullOrEmpty($configDir))
 {
     $configDir = $defaultConfigDir
 }
