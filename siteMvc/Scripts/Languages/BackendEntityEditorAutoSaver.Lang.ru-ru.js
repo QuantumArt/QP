@@ -1,3 +1,3 @@
 ﻿Backend.Lang.EntityEditorAutoSaver = {
-	restoreConfirmationRequest: "Существуют несохрененные изменения. Открыть соответствующие формы?"
+	restoreConfirmationRequest: "Существуют несохраненные изменения. Открыть соответствующие формы?"
 };

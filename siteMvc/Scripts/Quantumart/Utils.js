@@ -1,5 +1,87 @@
 window.$q = Quantumart.QP8.Utils = function() {};
 
+$q.trace = function() {
+  if (window.Sys.Debug.isDebug) {
+    var args = [].slice.call(arguments);
+    var firstArg = args.slice(0, 1)[0];
+    var otherArgs = args.slice(1);
+
+    if ($.isFunction(window.console.groupCollapsed)
+      && $.isFunction(window.console.groupEnd)
+      && $.isFunction(window.console.trace)) {
+      window.console.groupCollapsed(firstArg);
+      window.console.log.apply(window.console, otherArgs);
+      window.console.trace('%cView tracing', 'color: darkblue;font-weight:bold;');
+      window.console.groupEnd(firstArg);
+    } else {
+      window.console.log.apply(window.console, args);
+    }
+  }
+};
+
+$q.alertSuccess = function(msg) {
+  window.alert(msg);
+  if (window.Sys.Debug.isDebug) {
+    window.console.log.apply(window.console, Array.prototype.slice.call(arguments));
+  }
+};
+
+$q.alertFail = function(msg) {
+  window.alert(msg);
+  if (window.Sys.Debug.isDebug) {
+    window.console.warn.apply(window.console, Array.prototype.slice.call(arguments));
+  }
+};
+
+$q.alertError = function(msg) {
+  window.alert(msg);
+  $q.trace(msg);
+};
+
+/**
+ * Basic implementation of jQuery ajax request with JSend response support
+ * @param  {Object} opts jQuery options for ajax request
+ * @return {Object}      jQuery XHR deffered
+ */
+$q.sendAjax = function(opts) {
+  var method = opts.method || 'GET';
+  var debugMessage = ' ajax: ' + method + ' ' + opts.url + '. Data: ' + JSON.stringify(opts.data);
+  $q.trace('Sending ' + debugMessage, 'Request object: ', opts);
+
+  // return $q.getJsonFromUrl(method, opts.url, opts.data).done(function(response) {
+  return $.ajax(opts).done(function(response) {
+    $q.trace('Parsing ' + debugMessage, 'Response object: ', response);
+    if (response.status.toUpperCase() === 'SUCCESS') {
+      if ($.isFunction(opts.callbackSuccess)) {
+        opts.callbackSuccess(response.data);
+      }
+    } else if (response.status.toUpperCase() === 'FAIL') {
+      $q.alertFail(response.message || 'There was an errors at request');
+    } else {
+      $q.alertError(response.message || 'Unknown server error');
+    }
+  });
+};
+
+$q.getAjax = function(url, data, cb) {
+  return $q.sendAjax({
+    url: url,
+    data: data,
+    traditional: true,
+    callbackSuccess: cb,
+    method: 'GET'
+  });
+};
+
+$q.postAjax = function(url, data, cb) {
+  return $q.sendAjax({
+    url: url,
+    data: data,
+    callbackSuccess: cb,
+    method: 'POST'
+  });
+};
+
 //#region Преобразование и проверка типов
 Quantumart.QP8.Utils.isNull = function Quantumart$QP8$Utils$isNull(value) {
   /// <summary>
@@ -8,7 +90,6 @@ Quantumart.QP8.Utils.isNull = function Quantumart$QP8$Utils$isNull(value) {
   /// <param name="value" type="String">значение</param>
   /// <returns type="Boolean">результат проверки (true - Null; false - не Null)</returns>
   var result = false;
-
   if (value == undefined || value == null || typeof (value) == 'undefined') {
     result = true;
   }
@@ -504,7 +585,7 @@ Quantumart.QP8.Utils.getJsonFromUrl = function Quantumart$QP8$Utils$getJsonFromU
   var methodName = method.toUpperCase();
   var data = params;
 
-  if (methodName == 'POST') {
+  if (methodName.toUpperCase() === 'POST') {
     data = JSON.stringify(params);
   }
 
@@ -516,7 +597,7 @@ Quantumart.QP8.Utils.getJsonFromUrl = function Quantumart$QP8$Utils$getJsonFromU
     data: data,
     async: async,
     cache: allowCaching,
-    error: callbackError
+    error: callbackError || $q.processGenericAjaxError
   };
 
   settings.success = $q.ajaxCallbackDecorator(callbackSuccess, settings);
@@ -538,7 +619,7 @@ Quantumart.QP8.Utils.getJsonPFromUrl = function Quantumart$QP8$Utils$getJsonPFro
   var methodName = method.toUpperCase();
   var data = params;
 
-  if (methodName == 'POST') {
+  if (methodName.toUpperCase() === 'POST') {
     data = JSON.stringify(params);
   }
 
@@ -642,12 +723,8 @@ Quantumart.QP8.Utils.getJsonSync = function Quantumart$QP8$Utils$getJsonSync(url
     async: false,
     cache: false,
     success: null,
-    error: Quantumart.QP8.Utils.defaultJsonErrorHandler
+    error: Quantumart.QP8.Utils.processGenericAjaxError
   }).responseText);
-};
-
-Quantumart.QP8.Utils.defaultJsonErrorHandler = function(jqXHR) {
-  Quantumart.QP8.Utils.processGenericAjaxError(jqXHR);
 };
 
 Quantumart.QP8.Utils.getTypeNameForJson = function Quantumart$QP8$Utils$getTypeNameForJson(typeName) {
@@ -1114,19 +1191,10 @@ Quantumart.QP8.Utils.collectGarbageInIE = function Quantumart$QP8$Utils$collectG
   }
 };
 
-Quantumart.QP8.Utils.addRemoveToArrUniq = function Quantumart$QP8$Utils$addRemoveToArrUniq(arrToModify, valToAdd, shouldBeIncluded) {
-  var result;
-  if (shouldBeIncluded && !Array.contains(arrToModify, valToAdd)) {
-    result = Array.add(arrToModify, valToAdd);
-  }
-
-  if (!shouldBeIncluded) {
-    result = Array.remove(arrToModify, valToAdd);
-  }
-
-  return result;
+Quantumart.QP8.Utils.addRemoveToArrUniq = function Quantumart$QP8$Utils$addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
+  var underscoreMethod = shouldBeExcluded ? 'difference' : 'union';
+  return _[underscoreMethod](arrToModify, valToAddRemove);
 };
-
 
 Quantumart.QP8.Utils.bindProxies = function Quantumart$QP8$Utils$bindProxies(listOfFnNames, fnPostfix) {
   var postfix = fnPostfix || 'Handler';

@@ -1,15 +1,16 @@
 ﻿using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using System;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 {
+    // ReSharper disable once InconsistentNaming
     public class QPController : Controller
     {
         public string RenderPartialView(string viewName, object model)
@@ -160,7 +161,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         private void PersistIds(string key, int[] ids)
         {
             if (ids != null && ids.Length > 0)
+            {
                 ControllerContext.HttpContext.Items[key] = string.Join(",", ids);
+            }
         }
 
         private void PersistIds(string key, int[] oldIds, int[] ids)

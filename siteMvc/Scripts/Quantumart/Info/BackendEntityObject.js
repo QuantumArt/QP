@@ -319,8 +319,7 @@ Quantumart.QP8.BackendEntityObject.getParentsChain = function(entityTypeCode, en
 // Проверяет список сущностей на наличие пустых имен
 Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function Quantumart$QP8$BackendEntityObject$checkEntitiesForPresenceEmptyNames(entities) {
   var isEmpty = false;
-
-  jQuery.each(entities, function(index, entity) {
+  $.each(entities, function(index, entity) {
     if ($q.isNullOrWhiteSpace(entity.Name)) {
       isEmpty = true;
       return false;
@@ -350,7 +349,6 @@ Quantumart.QP8.BackendEntityObject.getEntityNamesStringFromEntities = function Q
 
   return jQuery.map(entities, function(elem, index) {
     var prefix = '';
-
     if (index > 0) {
       if (index == (count - 1)) {
         prefix = ' ' + $l.Common.andUnion.toLowerCase() + ' ';

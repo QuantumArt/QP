@@ -197,38 +197,33 @@ Quantumart.QP8.BackendDocumentContext.prototype.getInput = function (editor, inp
 
 
 Quantumart.QP8.BackendDocumentContext.prototype.getRegionFolderByRegionId = function (id) {
-    if (id) {
+  if (id) {
+    var parentIds = null;
+    var folderItems = $ctx.getGlobal("regionalLibraryFolders");
 
-        var parentIds = null;
-        var folderItems = $ctx.getGlobal("regionalLibraryFolders");
+    $q.getJsonFromUrl("POST", "/Backend/Article/GetParentIds", {
+      "id": id,
+      "fieldId": 1115
+    }, false, false).done(function (data) {
+      if (data.Type === "Error" && data.Text) {
+        window.alert(data.Text);
+      }
 
-        $q.getJsonFromUrl(
-            "POST",
-            "/Backend/Article/GetParentIds",
-            { "id": id, "fieldId": 1115 },
-            false,
-            false)
-        .done(function (data) {
-            if (data.Type == "Error" && data.Text) {
-                alert(data.Text);
-            }
+      parentIds = data;
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+      $q.processGenericAjaxError(jqXHR);
+    });
 
-            parentIds = data;
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            $q.processGenericAjaxError(jqXHR);
-        });
+    for (var i = 0; i < folderItems.length; i++) {
+      var item = folderItems[i];
 
-        for (var i = 0; i < folderItems.length; i++) {
-            var item = folderItems[i];
-
-            if (jQuery.inArray(item.macroRegionId, parentIds) != -1) {
-                return item.folder;
-            }
-        }
+      if (jQuery.inArray(item.macroRegionId, parentIds) != -1) {
+        return item.folder;
+      }
     }
+  }
 
-    return null;
+  return null;
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.setFileFieldsSubFolder = function(editor, region, fileFieldIds) {
@@ -262,20 +257,20 @@ Quantumart.QP8.BackendDocumentContext.prototype.addGenerateMatrixTitleButton = f
 		onClick: function (evt) {
 			var resultInput = evt.data.$input;
 			var strTemplates = {
-				"404": 
+				"404":
 				{
 					template: "Услуга '{0}' для тарифа '{1}' в регионе '{2}'",
 					firstField: "field_1690",
 					secondField: "field_1691"
 				},
-				"407": 
+				"407":
 				{
 					template: "Пакет '{0}' для тарифа '{1}' в регионе '{2}'",
 					firstField: "field_1706",
 					secondField: "field_1703",
 					useSecondFieldForRegion: true
 				},
-				"365": 
+				"365":
 				{
 					template: "Группа '{0}' для региона '{2}'",
 					firstField: "field_1443",
@@ -286,7 +281,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.addGenerateMatrixTitleButton = f
 					template: "Связь между услугами '{0}' и '{1}' в регионе '{2}'",
 					firstField: "field_1761",
 					secondField: "field_1762"
-				},			
+				},
 			}
 
 			var matrixType = self.getValue(evt.data.$form, "field_1417");
@@ -297,16 +292,16 @@ Quantumart.QP8.BackendDocumentContext.prototype.addGenerateMatrixTitleButton = f
 					self.getInput(evt.data.$form, config.firstField).first().closest("li").find("label").text() :
 					self.getText(evt.data.$form, config.firstField);
 				var firstElems = firstText.split(';', 2);
-	
+
 				var secondText = (config.secondField) ? self.getText(evt.data.$form, config.secondField) : undefined;
 				var secondElems = (secondText) ? secondText.split(';', 2) : ["", ""];
-				
+
 				var region = (((config.useSecondFieldForRegion) ? secondElems[1] : firstElems[1]) || "").trim().substr(0, 127);
-				
+
 				var title = String.format(config.template, firstElems[0], secondElems[0], region);
-				
+
 				self.setValue(evt.data.$form, inputName, title);
-			}			
+			}
 		}
 	});
 }
@@ -322,10 +317,3 @@ Quantumart.QP8.BackendDocumentContext.setGlobal("regionalLibraryFolders", [
     { folder: "sz", macroRegionId: 338942 },
     { folder: "ural", macroRegionId: 338947 }
 ]);
-
-
-// {
-
-// }
-// });
-// };

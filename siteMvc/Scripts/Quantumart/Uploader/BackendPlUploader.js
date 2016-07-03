@@ -160,6 +160,7 @@ Quantumart.QP8.BackendPlUploader.prototype = {
       container: this._container.attr('id'),
       max_file_size: window.MAX_UPLOAD_SIZE_BYTES + 'b',
       chunk_size: '1mb',
+      debug: false,
       url: '/Backend/Upload/UploadChunk',
       flash_swf_url: '/Backend/Scripts/PlUpload/Moxie.swf',
       silverlight_xap_url: '/Backend/Scripts/PlUpload/Moxie.xap',
@@ -176,12 +177,10 @@ Quantumart.QP8.BackendPlUploader.prototype = {
     };
 
     if (this._extensions) {
-      options.filters.mime_types = [
-{
+      options.filters.mime_types = [{
         title: 'Allowed files',
         extensions: this._extensions.split(';.').join(',').replace('.', '')
-      }
-];
+      }];
     }
 
     this._uploader = new plupload.Uploader(options);

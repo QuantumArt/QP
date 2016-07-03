@@ -97,7 +97,7 @@ namespace Quantumart.QP8.Configuration
         /// Конфигурационный файл QP
         /// </summary>
         public static XDocument XmlConfig { get; set; } = XDocument.Load(XmlConfigPath);
-
+    
         /// <summary>
         /// Путь к конфигурационному файлу в реестре
         /// </summary>
@@ -107,7 +107,7 @@ namespace Quantumart.QP8.Configuration
             {
                 if (_configPath == null)
                 {
-                    if (!string.IsNullOrEmpty(WebConfigSection.QpConfigPath))
+                    if (!string.IsNullOrEmpty(WebConfigSection?.QpConfigPath))
                     {
                         _configPath = WebConfigSection.QpConfigPath;
                     }

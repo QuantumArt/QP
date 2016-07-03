@@ -524,14 +524,13 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   },
 
   toggleDirectChildRows: function(parentArticleId, rowState) {
-    var childEntities = this.getChildEntityIds(parentArticleId);
-    var $rowsToModify = $(this.getRowsByEntityIds(childEntities));
-    this._setRowsSelectedState($rowsToModify, rowState);
-    $.each(childEntities, function(i, entry) {
-      Quantumart.QP8.Utils.addRemoveToArrUniq(this._selectedEntitiesIDs, entry, rowState);
+    this.getChildEntityIds(parentArticleId).done(function(response) {
+      var $rowsToModify = $(this.getRowsByEntityIds(response.data));
+      this._setRowsSelectedState($rowsToModify, rowState);
+      this._selectedEntitiesIDs = $q.addRemoveToArrUniq(this._selectedEntitiesIDs, response.data, !rowState);
+      this._saveRowSelectionState();
+      this._raiseSelectEvent();
     }.bind(this));
-    this._saveRowSelectionState();
-    this._raiseSelectEvent();
   },
 
   selectPageRows: function(value) {
@@ -620,15 +619,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   },
 
   getChildEntityIds: function(parentArticleId) {
-    debugger;
-    var url = window.CONTROLLER_URL_ARTICLE + 'GetChildArticleIds'
-    var params = {
+    return $q.getAjax(window.CONTROLLER_URL_ARTICLE + 'GetChildArticleIds', {
       ids: [parentArticleId],
       filter: this._filter,
       fieldId: this._treeFieldId
-    }
-
-    return Quantumart.QP8.Utils.getJsonSync(url, params);
+    });
   },
 
   checkExistEntityInCurrentPage: function(entityId) {
@@ -858,14 +853,12 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     for (var rowIndex = 0; rowIndex < rowCount; rowIndex++) {
       var $row = $rows.eq(rowIndex);
-      Quantumart.QP8.Utils.addRemoveToArrUniq(
+      this._selectedEntitiesIDs = $q.addRemoveToArrUniq(
         this._selectedEntitiesIDs,
         this.getEntityId($row),
-        this.isRowSelected($row)
+        !this.isRowSelected($row)
       );
     }
-
-    $rows = null;
   },
 
   _saveRowAllSelectionState: function() {

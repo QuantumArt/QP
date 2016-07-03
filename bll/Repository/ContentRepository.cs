@@ -314,7 +314,11 @@ namespace Quantumart.QP8.BLL.Repository
         internal static ContentGroup SaveGroup(ContentGroup group)
         {
             var dal = MappersRepository.ContentGroupMapper.GetDalObject(group);
+            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.ContentGroup, group);
+            if (group.ForceId != 0)
+                dal.Id = group.ForceId;
             var newDal = DefaultRepository.SimpleSave(dal);
+            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.ContentGroup);
             return MappersRepository.ContentGroupMapper.GetBizObject(newDal);
         }
 

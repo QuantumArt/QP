@@ -195,7 +195,10 @@ namespace Quantumart.QP8.BLL.Repository
 					case EntityTypeCode.Content:
 						table = "dbo.CONTENT";
 						break;
-					case EntityTypeCode.Field:
+                    case EntityTypeCode.ContentGroup:
+                        table = "dbo.CONTENT_GROUP";
+                        break;
+                    case EntityTypeCode.Field:
 						table = "dbo.CONTENT_ATTRIBUTE";
 						break;
 					case EntityTypeCode.VisualEditorCommand:

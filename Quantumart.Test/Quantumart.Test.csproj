@@ -75,8 +75,10 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="ContentGroupFixture.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="DynamicImageFixture.cs" />
+    <Compile Include="HierarchyFixture.cs" />
     <Compile Include="M2MNonSplittedFixture.cs" />
     <Compile Include="M2MFixture .cs" />
     <Compile Include="UniqueValidationFixture.cs" />
@@ -86,6 +88,10 @@
     <ProjectReference Include="..\bll\BLL.csproj">
       <Project>{2fd6e504-0845-4c89-ae58-bdb467d8c487}</Project>
       <Name>BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\constants\Constants.csproj">
+      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
+      <Name>Constants</Name>
     </ProjectReference>
     <ProjectReference Include="..\Quantumart\Quantumart.csproj">
       <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
@@ -102,6 +108,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="xmls\files.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="xmls\group.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="xmls\hierarchy.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="xmls\m2m.xml">

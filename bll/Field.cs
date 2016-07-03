@@ -3,6 +3,7 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -769,7 +770,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public bool IsBackwardFieldExists => BackwardField != null && !BackwardField.IsNew;
 
-        public Field BackwardField => M2MBackwardField != null ? M2MBackwardField : O2MBackwardField;
+        public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
 
         /// <summary>
         /// Поля которые ссылаются на данное поле связью O2M
@@ -970,6 +971,15 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("UseForContext", NameResourceType = typeof(FieldStrings))]
         public bool UseForContext { get; set; }
+
+        [LocalizedDisplayName("OptimizeForHierarchy", NameResourceType = typeof(FieldStrings))]
+        public bool OptimizeForHierarchy { get; set; }
+
+        [LocalizedDisplayName("IsLocalization", NameResourceType = typeof(FieldStrings))]
+        public bool IsLocalization { get; set; }
+
+        [LocalizedDisplayName("UseSeparateReverseViews", NameResourceType = typeof(FieldStrings))]
+        public bool UseSeparateReverseViews { get; set; }
 
         [LocalizedDisplayName("UseForVariations", NameResourceType = typeof(FieldStrings))]
         public bool UseForVariations { get; set; }
@@ -1405,6 +1415,7 @@ namespace Quantumart.QP8.BLL
             if (!MapAsProperty)
             {
                 LinqPropertyName = null;
+                UseSeparateReverseViews = false;
             }
 
             if (ContentId != RelateToContentId)
@@ -1500,6 +1511,8 @@ namespace Quantumart.QP8.BLL
             {
                 LinkId = null;
                 ContentLink = null;
+                OptimizeForHierarchy = false;
+                UseSeparateReverseViews = false;
             }
 
             if (ExactType != FieldExactTypes.O2MRelation)
@@ -1528,6 +1541,10 @@ namespace Quantumart.QP8.BLL
             {
                 if (RelateToContentId.HasValue)
                 {
+                    var relContent = ContentRepository.GetById(RelateToContentId.Value);
+                    if (!relContent.HasTreeField)
+                        OptimizeForHierarchy = false;
+
                     if (ContentLink.LContentId == ContentId && ContentLink.RContentId != RelateToContentId.Value)
                     {
                         ContentLink.RContentId = RelateToContentId.Value;
@@ -1542,7 +1559,7 @@ namespace Quantumart.QP8.BLL
                     // Создать обратное поле если это необходимо и возможно
                     if (!string.IsNullOrWhiteSpace(NewM2MBackwardFieldName) && !IsBackwardFieldExists && RelateToContentId != ContentId)
                     {
-                        var relContent = ContentRepository.GetById(RelateToContentId.Value);
+
                         // возможно только если Related контент не виртуальный
                         if (relContent.VirtualType == 0)
                         {
@@ -1715,10 +1732,10 @@ namespace Quantumart.QP8.BLL
             ValidateExternalCss(errors);
 
             // Валидация поля на конфликты с полями дочерних контентов
-            new FieldsConflictValidator().SubContentsCheck(Content, this).Select(v =>
+            foreach (var ruleViolation in new FieldsConflictValidator().SubContentsCheck(Content, this))
             {
-                errors.ErrorForModel(v.Message); return (object)null;
-            }).ToArray();
+                errors.ErrorForModel(ruleViolation.Message);
+            }
         }
 
         private void ValidateVariations(RulesException<Field> errors)
@@ -2281,6 +2298,7 @@ namespace Quantumart.QP8.BLL
             {
                 return field.Die(removeChildFields);
             }
+
             return new[] { string.Format(FieldStrings.FieldNotFound, id) };
         }
 
@@ -2292,6 +2310,7 @@ namespace Quantumart.QP8.BLL
             {
                 DieWithoutValidation(removeVirtualFields);
             }
+
             return violationMessages;
         }
 
@@ -2340,8 +2359,8 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-		/// Удалить подчиненные виртуальные поля при удалении поля родительского контента
-		/// </summary>
+        /// Удалить подчиненные виртуальные поля при удалении поля родительского контента
+        /// </summary>
         private IEnumerable<Content.TreeItem> RemoveVirtualFields()
         {
             var helper = new VirtualContentHelper();
@@ -2663,7 +2682,7 @@ namespace Quantumart.QP8.BLL
             if (ActiveVeCommandIds != null)
             {
                 var defaultCommands = VisualEditorRepository.GetDefaultCommands();//все возможные команды
-                var offVeCommands = VeAggregationListItemsHelper.Subtract(defaultCommands, ActiveVeCommandIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
+                var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, ActiveVeCommandIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
                 var oldFieldCommands = VisualEditorRepository.GetResultCommands(Id, Content.SiteId);// с этим нужно сравнивать на предмет измененеий
                 var siteCommands = VisualEditorRepository.GetSiteCommands(Content.SiteId);
 
@@ -2694,7 +2713,7 @@ namespace Quantumart.QP8.BLL
             if (ActiveVeStyleIds != null)
             {
                 var defaultStyles = VisualEditorRepository.GetAllStyles();//все возможные стили
-                var offVeStyles = VeAggregationListItemsHelper.Subtract(defaultStyles, ActiveVeStyleIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
+                var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, ActiveVeStyleIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
                 var oldFieldStyles = VisualEditorRepository.GetResultStyles(Id, Content.SiteId);// с этим нужно сравнивать на предмет измененеий
                 var siteStyles = VisualEditorRepository.GetSiteStyles(Content.SiteId);
 

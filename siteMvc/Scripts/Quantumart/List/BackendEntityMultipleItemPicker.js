@@ -1,5 +1,3 @@
-//#region class BackendEntityMultipleItemPicker
-// === Класс "Cписок сущностей в виде элемента управления множественного выбора" ===
 Quantumart.QP8.BackendEntityMultipleItemPicker = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
   Quantumart.QP8.BackendEntityMultipleItemPicker.initializeBase(this,
     [listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options]);
@@ -9,7 +7,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker = function (listGroupCode, listEl
 };
 
 Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
-  _pickButtonElement: null, // DOM-элемент, образующий кнопку выбора элементов
+  _pickButtonElement: null,
   _clearButtonElement: null,
   _copyButtonElement: null,
   _pasteButtonElement: null,
@@ -67,7 +65,6 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 
     this._addNewButtonToToolbar();
 
-
     this._pickButtonElement = $pickButton.get(0);
     $pickButton.bind('click', jQuery.proxy(this._onPickButtonClickHandler, this));
 
@@ -92,79 +89,73 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     $list = null;
   },
 
-  getListItems: function () {
-    return jQuery(this._listElement).find("UL LI");
+  getListItems: function() {
+    return $(this._listElement).find("UL LI");
   },
 
-  getSelectedListItems: function () {
-    return jQuery(this._listElement).find("UL LI:has(INPUT:checkbox:checked)");
+  getSelectedListItems: function() {
+    return $(this._listElement).find("UL LI:has(INPUT:checkbox:checked)");
   },
 
-  getSelectedEntities: function () {
-    var entities;
-    if (!this._isCountOverflow())
-    {
+  getSelectedEntities: function() {
+    var result;
+    if (!this._isCountOverflow()) {
       var $selectedListItems = this.getSelectedListItems();
-      entities = $selectedListItems.map(function (i, item) {
-        var $item = jQuery(item);
-        var id = $q.toInt($item.find("INPUT:checkbox").val(), 0);
-        var name = $q.toString($item.find("LABEL").text());
-        return { Id : id, Name : name };
-      }).get();
+      result = $selectedListItems.map(function (i, item) {
+        var $item = $(item);
+        return {
+          Id : +$item.find("INPUT:checkbox").val(),
+          Name : $item.find("LABEL").text()
+        };
+      }).get() || [];
     }
-    else
-    {
-      var ids = jQuery(this._countOverflowElement).val().split(",");
-      entities = jQuery.map(ids, function (id) {
-        return { Id: id, Name: "" };
-      });
+    else {
+      var ids = $(this._countOverflowElement).val().split(",");
+      result = $.map(ids, function (id) {
+        return { Id: id, Name: '' };
+      }) || [];
     }
 
-    return (entities || []);
+    return result;
   },
 
-  _isCountOverflow : function()
-  {
+  _isCountOverflow : function() {
     return this._countOverflowElement != null;
   },
 
   _refreshListInner: function (dataItems, refreshOnly) {
-    //#region Определяем, изменились ли значения
-    var newSelectedIDs = jQuery.map(
-      jQuery.grep(dataItems, function (di) { return di.Value; }),
-      function (di) { return $q.toInt(di.Value) }
-    );
-    var currentSelectedIDs = this.getSelectedEntityIDs();
+    var newSelectedIDs = $.map($.grep(dataItems, function (di) {
+      return di.Value;
+    }), function (di) {
+      return $q.toInt(di.Value);
+    });
 
-    var selectedItemsIsChanged = (newSelectedIDs.length != currentSelectedIDs.length
-      || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length
-    );
+    var currentSelectedIDs = this.getSelectedEntityIDs();
+    var selectedItemsIsChanged = (newSelectedIDs.length != currentSelectedIDs.length || newSelectedIDs.length != _.union(newSelectedIDs, currentSelectedIDs).length);
 
     if (selectedItemsIsChanged) {
       var oldCount = this.getSelectedEntities().length;
-      var $list = jQuery(this._listElement)
+      var $list = $(this._listElement)
       var $ul = $list.find("UL");
 
-      if (newSelectedIDs.length < this._countLimit)
-      {
+      if (newSelectedIDs.length < this._countLimit) {
         $ul.empty().html(this._getCheckBoxListHtml(dataItems));
-        jQuery(this._countOverflowElement).remove();
+        $(this._countOverflowElement).remove();
         this._countOverflowElement = null;
-      }
-      else
-      {
+      } else {
         $ul.empty();
         var value = newSelectedIDs.join();
         if (this._countOverflowElement) {
-          jQuery(this._countOverflowElement).val(value);
-        }
-        else {
+          $(this._countOverflowElement).val(value);
+        } else {
           var name = $list.data("list_item_name");
           var html = '<input type="hidden" class="' + this.OVERFLOW_HIDDEN_CLASS + '" name="' + name + '" value = "' + value + '" />';
           $ul.before(html);
+
           this._countOverflowElement = $list.find("." + this.OVERFLOW_HIDDEN_CLASS).get(0);
         }
       }
+
       this._setAsChanged(refreshOnly);
       this._refreshGroupCheckbox(dataItems.length);
       this._syncCountSpan(dataItems.length);
@@ -172,25 +163,35 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     }
   },
 
-  selectAllListItems: function () {
-      this._changeAllListItemsSelection(true);
-      this._refreshClearButton();
-  },
-
-  selectEntities: function (entityIDs) {
-    this.deselectAllListItems();
-    if (!$q.isNullOrEmpty(entityIDs) && $q.isArray(entityIDs)) {
-      var selectedEntityIDs = jQuery.map(entityIDs, function (id) {
-        return { Id: id };
+  appendEntities: function(entityIds) {
+    if(entityIds && entityIds.length) {
+      var selectedEntities = entityIds.map(function(i) {
+        return { Id: i };
       });
-      this._loadSelectedItems(selectedEntityIDs);
-      selectedEntityIDs = null;
+
+      this._loadSelectedItems(selectedEntities);
     }
   },
 
+  selectEntities: function(entityIds) {
+    this.deselectAllListItems();
+    if(entityIds && entityIds.length) {
+      var selectedEntities = entityIds.map(function(i) {
+        return { Id: i };
+      });
+
+      this._loadSelectedItems(selectedEntities);
+    }
+  },
+
+  selectAllListItems: function () {
+    this._changeAllListItemsSelection(true);
+    this._refreshClearButton();
+  },
+
   deselectAllListItems: function () {
-      this._changeAllListItemsSelection(false);
-      this._refreshClearButton();
+    this._changeAllListItemsSelection(false);
+    this._refreshClearButton();
   },
 
   removeAllListItems: function () {
@@ -204,7 +205,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   enableList: function () {
-    jQuery(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
+    $(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
 
     this.getListItems().find("INPUT:checkbox").prop("disabled", false);
     this._getGroupCheckbox().prop("disabled", false);
@@ -213,11 +214,10 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   disableList: function () {
-    jQuery(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
+    $(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
 
     this.getListItems().find("INPUT:checkbox").prop("disabled", true);
     this._getGroupCheckbox().prop("disabled", true);
-
     this._disableAllToolbarButtons();
   },
 
@@ -225,23 +225,22 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
     this.disableList();
     var $checked = this.getListItems().find("INPUT:checkbox:checked");
     $checked.each(function (i, cb) {
-      var $cb = jQuery(cb);
+      var $cb = $(cb);
       $cb.siblings('input[name="' + $cb.prop("name") + '"]:hidden').val($cb.val());
     });
   },
 
   isListChanged: function () {
-    var $list = jQuery(this._listElement);
-    var result = $list.hasClass(CHANGED_FIELD_CLASS_NAME);
-    $list = null;
-    return result;
+    return $(this._listElement).hasClass(CHANGED_FIELD_CLASS_NAME);
   },
 
   _setAsChanged: function (refreshOnly) {
-    var $list = jQuery(this._listElement);
+    var $list = $(this._listElement);
     $list.addClass(CHANGED_FIELD_CLASS_NAME);
-    var operation = (refreshOnly) ? "addClass" : "removeClass";
-    $list[operation](REFRESHED_FIELD_CLASS_NAME)
+
+    var operation = refreshOnly ? "addClass" : "removeClass";
+    $list[operation](REFRESHED_FIELD_CLASS_NAME);
+
     var value = this.getSelectedEntityIDs();
     $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $list.data("list_item_name"), "value": value });
   },
@@ -252,6 +251,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       var dataItem = dataItems[dataItemIndex];
       this._getCheckBoxListItemHtml(html, dataItem, dataItemIndex);
     }
+
     return html.string();
   },
 
@@ -274,8 +274,7 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
       .cat('<input type="hidden" value="false" name="' + $q.htmlEncode(itemElementName) + '"/>')
       .cat(this._getIdLinkCode(itemValue))
       .cat('<label for="' + $q.htmlEncode(itemElementId) + '">' + itemText + '</label>')
-      .cat('</li>')
-      ;
+      .cat('</li>');
   },
 
   _onPickButtonClickHandler: function () {
@@ -315,21 +314,21 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   dispose: function () {
     this._stopDeferredOperations = true;
 
-    jQuery(this._pickButtonElement).unbind("click");
-    jQuery(this._clearButtonElement).unbind("click");
+    $(this._pickButtonElement).unbind("click");
+    $(this._clearButtonElement).unbind("click");
     if (this._enableCopy) {
-        jQuery(this._copyButtonElement).unbind("click");
-        jQuery(this._pasteButtonElement).unbind("click");
+      $(this._copyButtonElement).unbind("click");
+      $(this._pasteButtonElement).unbind("click");
     }
-    jQuery(this._listElement).undelegate("LI INPUT:checkbox", "change");
-    jQuery(this._listElement).undelegate("LI A", "click");
-    jQuery(this._listElement).undelegate("LI A", "mouseup");
+
+    $(this._listElement).undelegate("LI INPUT:checkbox", "change");
+    $(this._listElement).undelegate("LI A", "click");
+    $(this._listElement).undelegate("LI A", "mouseup");
 
     this._pickButtonElement = null;
     this._clearButtonElement = null;
     this._copyButtonElement = null;
     this._pasteButtonElement = null;
-
     this._listElement = null;
 
     Quantumart.QP8.BackendEntityMultipleItemPicker.callBaseMethod(this, "dispose");
@@ -337,4 +336,3 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
 };
 
 Quantumart.QP8.BackendEntityMultipleItemPicker.registerClass("Quantumart.QP8.BackendEntityMultipleItemPicker", Quantumart.QP8.BackendEntityDataListBase);
-//#endregion

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using Quantumart.QP8.Utils;
+using System.Text;
 
 namespace Quantumart.QP8.BLL
 {
@@ -23,23 +22,24 @@ namespace Quantumart.QP8.BLL
     }
 
     [Serializable]
-	[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2240")]
+    [SuppressMessage("Microsoft.Usage", "CA2240")]
     public class RulesException : Exception
     {
         public readonly IList<RuleViolation> Errors = new List<RuleViolation>();
 
-        private readonly static Expression<Func<object, object>> thisObject = x => x;
+        private static readonly Expression<Func<object, object>> ThisObject = x => x;
+
+        public bool IsEmpty => Errors.Count == 0;
 
         public void CriticalErrorForModel(string message)
         {
-            Errors.Add(new RuleViolation { Property = thisObject, Message = message, Critical = true });
+            Errors.Add(new RuleViolation { Property = ThisObject, Message = message, Critical = true });
         }
 
         public void ErrorForModel(string message)
         {
-            Errors.Add(new RuleViolation { Property = thisObject, Message = message });
+            Errors.Add(new RuleViolation { Property = ThisObject, Message = message });
         }
-			
 
         public void Error(string propertyName, string propertyValue, string message)
         {
@@ -48,8 +48,8 @@ namespace Quantumart.QP8.BLL
 
         public static void Wrap(Exception ex)
         {
-            RulesException newEx = new RulesException();
-            StringBuilder sb = new StringBuilder(ex.Message);
+            var newEx = new RulesException();
+            var sb = new StringBuilder(ex.Message);
             while (ex.InnerException != null)
             {
                 ex = ex.InnerException;
@@ -57,23 +57,14 @@ namespace Quantumart.QP8.BLL
                 sb.Append(ex.Message);
             }
             newEx.ErrorForModel(sb.ToString());
-            throw newEx;       
+            throw newEx;
         }
-
-        public bool IsEmpty
-        {
-            get
-            {
-                return Errors.Count == 0;          
-            }
-        }	
     }
 
     [Serializable]
-    /// Strongly-typed version permits lambda expression syntax to reference properties
     public class RulesException<T> : RulesException
     {
-        public void ErrorFor<P>(Expression<Func<T, P>> property, string message)
+        public void ErrorFor<TP>(Expression<Func<T, TP>> property, string message)
         {
             Errors.Add(new RuleViolation { Property = property, Message = message });
         }

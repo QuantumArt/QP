@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -27,6 +28,15 @@ namespace Quantumart.Test
                 .Select(n => (int) n.Field<decimal>("content_item_id"))
                 .OrderBy(n => n)
                 .ToArray();
+        }
+
+        public static Dictionary<string, int> GetIdsWithTitles(DBConnector cnn, int contentId)
+        {
+            return cnn.GetRealData($"select content_item_id, Title from content_{contentId}_united")
+                .AsEnumerable()
+                .Select(n => new {Id = (int) n.Field<decimal>("content_item_id"), Title = n.Field<string>("Title")})
+                .ToDictionary(n => n.Title, n => n.Id);
+
         }
 
 

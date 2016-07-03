@@ -8,8 +8,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (contain
     '_onLoad',
     '_onIsNullCheckBoxChange',
     '_onSelectorChange',
-    '_expandParentHierarchy',
-    '_expandChildHierarchy'
+    '_expandHierarchy'
   ]);
 };
 
@@ -55,8 +54,8 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       this._inverseCheckBoxElement = $containerElement.find('#' + inverseCheckBoxID).get(0);
 
       $('.radioButtonsList input[type="radio"]', $containerElement).on('click', this._onSelectorChangeHandler);
-      $('.expandParentButton', $containerElement).on('click', this._expandParentHierarchyHandler);
-      $('.expandChildsButton', $containerElement).on('click', this._expandChildHierarchyHandler);
+      $('.expandParentButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetParentIds2'));
+      $('.expandChildsButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetChildArticleIds'));
       $(document).ready(this._onLoadHandler);
 
       $isNullCheckBoxElement = null;
@@ -77,38 +76,21 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     return result;
   },
 
-  getParentArticlesHierarchy: function(ids) {
-    var url = window.CONTROLLER_URL_ARTICLE + "GetParentIds2"
-    var params = {
-      ids: ids,
-      fieldId: this._fieldID,
-      filter: this._getEntityDataList()._filter
+  _expandHierarchy: function(url) {
+    var self = this;
+    return function() {
+      var selectedIds = self.getSelectedIds();
+      if (selectedIds && selectedIds.length) {
+        $q.getAjax(url, {
+          ids: self.getSelectedIds(),
+          fieldId: self._fieldID,
+          filter: self._getEntityDataList()._filter
+        }, function(data) {
+          self._selectedEntitiesIDs = $q.addRemoveToArrUniq(selectedIds, data);
+          self._replaceWithSelectedEntities();
+        });
+      }
     }
-
-    return Quantumart.QP8.Utils.getJsonSync(url, params);
-  },
-
-  getChildArticlesHierarchy: function(ids) {
-    var url = window.CONTROLLER_URL_ARTICLE + "GetChildArticleIds"
-    var params = {
-      ids: ids,
-      fieldId: this._fieldID,
-      filter: this._getEntityDataList()._filter
-    }
-
-    return Quantumart.QP8.Utils.getJsonSync(url, params);
-  },
-
-  _expandParentHierarchy: function() {
-    var selectedIds = this.getSelectedIds();
-    this._selectedEntitiesIDs = this.getParentArticlesHierarchy(selectedIds);
-    this._saveSelectedEntities();
-  },
-
-  _expandChildHierarchy: function() {
-    var selectedIds = this.getSelectedIds();
-    this._selectedEntitiesIDs = this.getChildArticlesHierarchy(selectedIds);
-    this._saveSelectedEntities();
   },
 
   get_searchQuery: function () {
@@ -164,7 +146,6 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
         var $isNullCheckBoxElement = $(this._isNullCheckBoxElement);
         $isNullCheckBoxElement.prop('checked', state.isNull);
         $isNullCheckBoxElement.trigger('change');
-        $isNullCheckBoxElement = null;
       }
 
       if (this._inverseCheckBoxElement) {
@@ -176,7 +157,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
           return item.Id;
         });
 
-        this._saveSelectedEntities();
+        this._replaceWithSelectedEntities();
       }
 
       $(this._textAreaElement).val(state.text);
@@ -192,7 +173,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
     return this._getEntityDataList().getSelectedEntities();
   },
 
-  _saveSelectedEntities: function() {
+  _replaceWithSelectedEntities: function() {
     if (this._entityDataListElement) {
       this._getEntityDataList().selectEntities(this._selectedEntitiesIDs);
     }

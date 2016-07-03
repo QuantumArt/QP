@@ -241,7 +241,6 @@
 
     Quantumart.QP8.BackendDocumentContext.prototype.checkWidgetSystemFields = function (options, editor) {
         // проверяем, какие поля надо скрыть
-		debugger;
         var itemType = this.getValue(editor, options.fields.discriminator);
         var isPageFieldValue = this.getBooleanValue(editor, options.fields.isPage);
         var itemDefinitionContentId = this.getLinkedContentId(editor, options.fields.discriminator);

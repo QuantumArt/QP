@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Constants;
+﻿using Quantumart.QP8.Constants;
+using System;
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {
     [Serializable]
-	public class MessageResult
+    public class MessageResult
     {
         public string Type { get; set; }
+
         public string Text { get; set; }
+
         public int[] FailedIds { get; set; }
 
         private MessageResult(string actionMessageType, string message, int[] failedIds)
@@ -20,9 +19,9 @@ namespace Quantumart.QP8.BLL.Services.DTO
             FailedIds = failedIds;
         }
 
-		public static MessageResult Error(string message, int[] failedIds = null)
+        public static MessageResult Error(string message, int[] failedIds = null)
         {
-			return new MessageResult(ActionMessageType.Error, message, failedIds);
+            return new MessageResult(ActionMessageType.Error, message, failedIds);
         }
 
         public static MessageResult Info(string message, int[] failedIds = null)
@@ -30,14 +29,14 @@ namespace Quantumart.QP8.BLL.Services.DTO
             return new MessageResult(ActionMessageType.Info, message, failedIds);
         }
 
-		public static MessageResult Confirm(string message, int[] failedIds = null)
-		{
-			return new MessageResult(ActionMessageType.Confirm, message, failedIds);
-		}
+        public static MessageResult Confirm(string message, int[] failedIds = null)
+        {
+            return new MessageResult(ActionMessageType.Confirm, message, failedIds);
+        }
 
-		public static MessageResult Warning(string message, int[] failedIds = null)
-		{
-			return new MessageResult(ActionMessageType.Warning, message, failedIds);
-		}
+        public static MessageResult Warning(string message, int[] failedIds = null)
+        {
+            return new MessageResult(ActionMessageType.Warning, message, failedIds);
+        }
     }
 }

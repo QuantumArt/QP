@@ -1,31 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Quantumart.QP8.Constants
+﻿namespace Quantumart.QP8.Constants
 {
-	/// <summary>
-	/// Все типы поля контента с разделением Relation на M2M и O2M
-	/// </summary>
-	public enum FieldExactTypes
-	{
-		Undefined = FieldTypeCodes.Undefined,
-		String = FieldTypeCodes.String,
-		Numeric = FieldTypeCodes.Numeric,
-		Boolean = FieldTypeCodes.Boolean,
-		Date = FieldTypeCodes.Date,
-		Time = FieldTypeCodes.Time,
-		DateTime = FieldTypeCodes.DateTime,
-		File = FieldTypeCodes.File,
-		Image = FieldTypeCodes.Image,
-		Textbox = FieldTypeCodes.Textbox,
-		VisualEdit = FieldTypeCodes.VisualEdit,
-		DynamicImage = FieldTypeCodes.DynamicImage,
+    /// <summary>
+    /// Все типы поля контента с разделением Relation на M2M и O2M
+    /// </summary>
+    public enum FieldExactTypes
+    {
+        Undefined = FieldTypeCodes.Undefined,
+        String = FieldTypeCodes.String,
+        Numeric = FieldTypeCodes.Numeric,
+        Boolean = FieldTypeCodes.Boolean,
+        Date = FieldTypeCodes.Date,
+        Time = FieldTypeCodes.Time,
+        DateTime = FieldTypeCodes.DateTime,
+        File = FieldTypeCodes.File,
+        Image = FieldTypeCodes.Image,
+        Textbox = FieldTypeCodes.Textbox,
+        VisualEdit = FieldTypeCodes.VisualEdit,
+        DynamicImage = FieldTypeCodes.DynamicImage,
         M2ORelation = FieldTypeCodes.M2ORelation,
-		O2MRelation = 14,
-		M2MRelation = 15,
-		Classifier = 16,
-		StringEnum = 17
-	}
+        O2MRelation = 14,
+        M2MRelation = 15,
+        Classifier = 16,
+        StringEnum = 17
+    }
 }

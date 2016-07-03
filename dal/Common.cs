@@ -1519,9 +1519,8 @@ namespace Quantumart.QP8.DAL
 
         public static IList<KeyValuePair<int, string>> GetChildArticles(SqlConnection cn, IList<int> ids, string fieldName, int contentId, string filter)
         {
-            var parentArticleId = ids.Any() ? ids[0] : (int?)null;
             var customFilter = string.IsNullOrWhiteSpace(filter) ? string.Empty : $"AND {filter}";
-            var parentFilter = parentArticleId.HasValue ? $"c.{fieldName} = {parentArticleId}" : $"c.{fieldName} IS NULL";
+            var parentFilter = ids.Any() ? $"c.{fieldName} IN ({string.Join(",", ids)})" : $"c.{fieldName} IS NULL";
             var query = $"SELECT c.content_item_id, c.title FROM content_{contentId}_united c WITH(NOLOCK) WHERE {parentFilter} {customFilter}";
             return GetDatatableResult(cn, query).Select(r => new KeyValuePair<int, string>((int)r.Field<decimal>("content_item_id"), r.Field<string>("title"))).ToList();
         }
@@ -6678,7 +6677,7 @@ namespace Quantumart.QP8.DAL
         {
             var result = new Dictionary<int, int>();
             var parentIdParam = (string.IsNullOrEmpty(treeFieldName)) ? "cast(0 as numeric)" : "ISNULL([" + treeFieldName + "], 0)";
-            var sql = string.Format("select content_item_id as id, {0} as parent_id from content_{1}_united with(nolock)", parentIdParam, contentId);
+            var sql = string.Format("select content_item_id as id, {0} as parent_id from content_{1}_united with(nolock) where archive = 0", parentIdParam, contentId);
             using (var cmd = new SqlCommand(sql, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;

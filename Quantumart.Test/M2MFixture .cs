@@ -650,7 +650,7 @@ namespace Quantumart.Test
 
 
         [Test]
-        public void MassUpdate_ReturnModified_ForUpdatingData()
+        public void MassUpdate_ReturnModified_ForInsertingAndUpdatingData()
         {
 
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
@@ -668,13 +668,22 @@ namespace Quantumart.Test
                 [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
             };
             values.Add(article2);
+            var article3 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0"
+            };
+            values.Add(article3);
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update and Insert");
+            var afterIds = values.Select(n => n[SystemColumnNames.Id]).Select(int.Parse).ToArray();
+            var newId = afterIds.Except(ids).Single();
 
-            var modifiedAfter = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids);
+            var modifiedAfter = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", afterIds);
             var everyOneHasModified = values.All(n => n.ContainsKey(SystemColumnNames.Modified));
+            var createdItemId = int.Parse(values.Single(n => n.ContainsKey(SystemColumnNames.Created))[SystemColumnNames.Id]);
 
-            Assert.That(modifiedBefore, Does.Not.EqualTo(modifiedAfter), "Modified changed");
+            Assert.That(newId, Is.EqualTo(createdItemId), "New item has created");
+            Assert.That(modifiedBefore, Does.Not.EqualTo(modifiedAfter.Take(2).ToArray()), "Modified changed");
             Assert.That(everyOneHasModified, Is.True, "All articles has Modified");
 
             var modifiedReturned = values.Select(n => DateTime.Parse(n[SystemColumnNames.Modified], CultureInfo.InvariantCulture)).ToArray();
@@ -835,6 +844,48 @@ namespace Quantumart.Test
             Assert.That(num, Is.Not.EqualTo(0), "Default number");
             Assert.That(desc, Is.Not.Null.Or.Empty, "Default description");
             Assert.That(cnt, Is.EqualTo(2), "Default M2M");
+        }
+
+        [Test]
+        public void MassUpdate_WithUrlsAndReplaceUrlsDefault_ReplaceUrls()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Description"] = $@"<a href=""{ Cnn.GetImagesUploadUrl(Global.SiteId) }"">test</a>"
+            };
+            values.Add(article1);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
+
+            int id = int.Parse(values[0][SystemColumnNames.Id]);
+            var ids = new[] { id };
+
+            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
+
+            Assert.That(desc, Does.Contain(@"<%=upload_url%>"));
+        }
+
+        [Test]
+        public void MassUpdate_WithUrlsAndReplaceUrlsFalse_DoesNotReplaceUrls()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [SystemColumnNames.Id] = "0",
+                ["Description"] = $@"<a href=""{ Cnn.GetImagesUploadUrl(Global.SiteId) }"">test</a>"
+            };
+            values.Add(article1);
+
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { ReplaceUrls = false}), "Add article");
+
+            int id = int.Parse(values[0][SystemColumnNames.Id]);
+            var ids = new[] { id };
+
+            var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
+
+            Assert.That(desc, Does.Not.Contain(@"<%=upload_url%>"));
         }
 
         [Test]
