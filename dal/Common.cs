@@ -716,8 +716,7 @@ namespace Quantumart.QP8.DAL
 
         public static int GetSelfRelationFieldId(SqlConnection connection, int contentId)
         {
-            using (
-                var cmd = SqlCommandFactory.Create("select dbo.qp_get_self_relation_field_id(@contentId)", connection))
+            using (var cmd = SqlCommandFactory.Create("select dbo.qp_get_self_relation_field_id(@contentId)", connection))
             {
                 cmd.Parameters.AddWithValue("@contentId", contentId);
                 var result = cmd.ExecuteScalar();
@@ -737,9 +736,11 @@ namespace Quantumart.QP8.DAL
                 {
                     Direction = ParameterDirection.Output
                 });
+
                 cmd.ExecuteNonQuery();
                 parentEntityId = Converter.ToNullableInt32(cmd.Parameters["@parent_entity_id"].Value);
             }
+
             return parentEntityId;
         }
 
@@ -754,7 +755,9 @@ namespace Quantumart.QP8.DAL
                 using (IDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
+                    {
                         result.Add((int)dr.GetDecimal(0));
+                    }
                 }
             }
             return result.ToArray();
@@ -775,8 +778,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        private static readonly string GET_TRANSLATIONS_QUERY =
-            @"select p.PHRASE_ID, p.PHRASE_TEXT, t.LANGUAGE_ID, t.PHRASE_TRANSLATION from translations t inner join phrases p on t.phrase_id = p.phrase_id";
+        private static readonly string GET_TRANSLATIONS_QUERY = @"select p.PHRASE_ID, p.PHRASE_TEXT, t.LANGUAGE_ID, t.PHRASE_TRANSLATION from translations t inner join phrases p on t.phrase_id = p.phrase_id";
 
         public static IEnumerable<DataRow> GetTranslations(SqlConnection connection)
         {
@@ -1515,13 +1517,13 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IList<int> GetChildArticleIds(SqlConnection cn, int? parentArticleId, int contentId, string filter, bool isLive)
+        public static IList<KeyValuePair<int, string>> GetChildArticles(SqlConnection cn, IList<int> ids, string fieldName, int contentId, string filter)
         {
-            var suffix = isLive ? string.Empty : "_united";
+            var parentArticleId = ids.Any() ? ids[0] : (int?)null;
             var customFilter = string.IsNullOrWhiteSpace(filter) ? string.Empty : $"AND {filter}";
-            var parentFilter = parentArticleId.HasValue ? $"c.Parent = {parentArticleId}" : "c.Parent IS NULL";
-            var query = $"SELECT c.content_item_id FROM content_{contentId}{suffix} c WITH(NOLOCK) WHERE {parentFilter} {customFilter}";
-            return GetDatatableResult(cn, query).Select(dr => (int)dr.Field<decimal>(0)).Distinct().ToList();
+            var parentFilter = parentArticleId.HasValue ? $"c.{fieldName} = {parentArticleId}" : $"c.{fieldName} IS NULL";
+            var query = $"SELECT c.content_item_id, c.title FROM content_{contentId}_united c WITH(NOLOCK) WHERE {parentFilter} {customFilter}";
+            return GetDatatableResult(cn, query).Select(r => new KeyValuePair<int, string>((int)r.Field<decimal>("content_item_id"), r.Field<string>("title"))).ToList();
         }
 
         private static readonly string GET_VISUAL_EDITOR_CONFIG_QUERY =
@@ -1571,7 +1573,6 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
         }
-
 
         private static readonly string UPDATE_CONTENT_FOLDER_SQL =
             "WITH FOLDERS(FOLDER_ID, PARENT_FOLDER_ID, [PATH], NEW_PATH) as " +
@@ -10055,11 +10056,11 @@ namespace Quantumart.QP8.DAL
 
         public static IList<int> GetParentIdsTreeResult(SqlConnection cn, IList<int> ids, int fieldId)
         {
-            var query = GetParentIdsTreeQuery(cn, ids, fieldId);
+            var query = GetParentIdsTreeQuery(ids, fieldId);
             return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids), new SqlParameter("@fieldId", fieldId)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
         }
 
-        public static string GetParentIdsTreeQuery(SqlConnection cn, IList<int> ids, int fieldId)
+        public static string GetParentIdsTreeQuery(IList<int> ids, int fieldId)
         {
             return @"
                 declare @contentId int
@@ -10103,7 +10104,7 @@ namespace Quantumart.QP8.DAL
                        ? "SELECT DISTINCT Id, ParentId FROM CTE'"
                        : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl'")
                        + "EXEC sp_executesql @sql, N'@ids dbo.Ids READONLY, @fieldId int', @ids, @fieldId END";
-        }
+        } // TODO: Parent bug
 
         private static SqlParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids)
         {

@@ -276,27 +276,25 @@ Quantumart.QP8.BackendEntityObject.getParentInfo = function Quantumart$QP8$Backe
 };
 
 Quantumart.QP8.BackendEntityObject.getArticleFieldValue = function(contentId, fieldName, articleId) {
-  return $o.makeSimpleCall(
-  'GET',
-  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleFieldValue',
-  { contentId: contentId, fieldName: fieldName, articleId: articleId }
-  );
+  return $o.makeSimpleCall('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleFieldValue', {
+    contentId: contentId,
+    fieldName: fieldName,
+    articleId: articleId
+  });
 };
 
 Quantumart.QP8.BackendEntityObject.getArticleLinkedItems = function Quantumart$QP8$BackendEntityObject$getArticleLinkedItems(linkId, articleId) {
-  return $o.makeSimpleCall(
-  'GET',
-  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleLinkedItems',
-  { linkId: linkId, articleId: articleId }
-  );
+  return $o.makeSimpleCall('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleLinkedItems', {
+    linkId: linkId, articleId: articleId
+  });
 };
 
 Quantumart.QP8.BackendEntityObject.getArticleIdByFieldValue = function Quantumart$QP8$BackendEntityObject$getArticleIdByFieldValue(contentId, fieldName, fieldValue) {
-  return $o.makeSimpleCall(
-  'GET',
-  window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleIdByFieldValue',
-  { contentId: contentId, fieldName: fieldName, fieldValue: fieldValue }
-  );
+  return $o.makeSimpleCall('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetArticleIdByFieldValue', {
+    contentId: contentId,
+    fieldName: fieldName,
+    fieldValue: fieldValue
+  });
 };
 
 // Возвращает информацию о текущей сущности и всех предках
@@ -304,20 +302,16 @@ Quantumart.QP8.BackendEntityObject.getArticleIdByFieldValue = function Quantumar
 Quantumart.QP8.BackendEntityObject.getParentsChain = function(entityTypeCode, entityId, parentEntityId) {
   var result = null;
 
-  $q.getJsonFromUrl(
-    'GET',
-    window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentsChain',
-    { entityTypeCode: entityTypeCode, entityId: entityId, parentEntityId: parentEntityId },
-      false,
-    false,
-    function(data) {
-  result = data;
-    },
-    function(jqXHR) {
-  result = null;
-  $q.processGenericAjaxError(jqXHR);
-    }
-  );
+  $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentsChain', {
+    entityTypeCode: entityTypeCode,
+    entityId: entityId,
+    parentEntityId: parentEntityId
+  }, false, false, function(data) {
+    result = data;
+  }, function(jqXHR) {
+    result = null;
+    $q.processGenericAjaxError(jqXHR);
+  });
 
   return result;
 };
@@ -326,15 +320,12 @@ Quantumart.QP8.BackendEntityObject.getParentsChain = function(entityTypeCode, en
 Quantumart.QP8.BackendEntityObject.checkEntitiesForPresenceEmptyNames = function Quantumart$QP8$BackendEntityObject$checkEntitiesForPresenceEmptyNames(entities) {
   var isEmpty = false;
 
-  jQuery.each(entities,
-    function(index, entity) {
-  if ($q.isNullOrWhiteSpace(entity.Name)) {
-    isEmpty = true;
-
-    return false;
-  }
+  jQuery.each(entities, function(index, entity) {
+    if ($q.isNullOrWhiteSpace(entity.Name)) {
+      isEmpty = true;
+      return false;
     }
-  );
+  });
 
   return isEmpty;
 };
@@ -402,20 +393,20 @@ Quantumart.QP8.BackendEntityObject.isTreeViewTypeAllowed = function Quantumart$Q
 Quantumart.QP8.BackendEntityObject.getContextQuery = function(contentId, currentContext) {
   var result = null;
 
-  $q.getJsonFromUrl('GET', 'Article/GetContextQuery', { id: contentId, currentContext: currentContext }, false, false,
-    function(data) {
-  result = data;
-    },
-    function(jqXHR) {
-  result = null;
-  $q.processGenericAjaxError(jqXHR);
-    }
-  );
+  $q.getJsonFromUrl('GET', 'Article/GetContextQuery', {
+    id: contentId,
+    currentContext: currentContext
+  }, false, false, function(data) {
+    result = data;
+  }, function(jqXHR) {
+    result = null;
+    $q.processGenericAjaxError(jqXHR);
+  });
+
   return result;
 };
 
 Quantumart.QP8.BackendEntityObject.registerClass('Quantumart.QP8.BackendEntityObject');
-
 window.$o = Quantumart.QP8.BackendEntityObject;
 
 //#endregion

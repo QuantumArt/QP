@@ -1,0 +1,473 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 182.0,
+		"last_filter": "json",
+		"selected_items":
+		[
+			[
+				"json",
+				"Set Syntax: JSON"
+			],
+			[
+				"indent",
+				"IndentX: Indent & format JSON"
+			],
+			[
+				"inden",
+				"IndentX: Indent"
+			],
+			[
+				"inde",
+				"IndentX: Indent & format JSON"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"enab",
+				"Package Control: Enable Package"
+			],
+			[
+				"disabl",
+				"Package Control: Disable Package"
+			],
+			[
+				"forma",
+				"IndentX: Indent & format JSON"
+			],
+			[
+				"indenx",
+				"IndentX: Indent"
+			],
+			[
+				"syntax json",
+				"Set Syntax: JSON"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"reind",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"convertto",
+				"Indentation: Convert to Spaces"
+			],
+			[
+				"update",
+				"Package Control: Upgrade/Overwrite All Packages"
+			],
+			[
+				"up",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"gist",
+				"Gist: Open Gist"
+			],
+			[
+				"open",
+				"Gist: Open Gist"
+			],
+			[
+				"i",
+				"Package Control: Install Package"
+			],
+			[
+				"list p",
+				"Package Control: List Packages"
+			],
+			[
+				"raz",
+				"Set Syntax: Razor"
+			],
+			[
+				"plg",
+				"Package Control: List Packages"
+			],
+			[
+				"gitin",
+				"Set Syntax: Git Ignore"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"isntal",
+				"Package Control: Install Package"
+			],
+			[
+				"disable",
+				"Package Control: Disable Package"
+			],
+			[
+				"javasc",
+				"Set Syntax: JavaScript"
+			],
+			[
+				"isntall",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 414.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc"
+	],
+	"file_history":
+	[
+		"/C/Users/kostyukova/Documents/Sublime/Data/Settings/SideBarEnhancements.json",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/_package.json",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/SideBarEnhancements/Side Bar.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/Side Bar.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/SFTP.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/SFTP/SFTP.sublime-settings",
+		"/C/Users/kostyukova/Documents/Projects/QP/SideBarEnhancements.json",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/Backend.js",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/jquery.splitter.js",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/version_login.6.0.min.js",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/Preferences.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/kostyukova/Documents/Projects/QP/QP.Site.sublime-project",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Side Bar.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/SideBarEnhancements/Default (Windows).sublime-keymap",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/Default (Windows).sublime-keymap",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/SFTP/Default (Windows).sublime-keymap",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/Gist/Default (Windows).sublime-keymap",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/Babel/Babel.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/Babel.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/Gist/Gist.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/Gist.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/CSS3/CSS3.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/JSON.sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/CSS3.sublime-settings",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/Search/BackendArticleSearchBlock/RelationFieldSearch.js",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/BackendEntityGrid.js",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/Tree/BackendEntityTree.js",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/List/BackendEntityDataListBase.js",
+		"/C/Users/kostyukova/Downloads/cli-1.0.0-rc2/build.cmd",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Views/ArticleSearchBlock/RelationSearch.cshtml",
+		"/C/Users/kostyukova/Downloads/cli-1.0.0-rc2/build.sh",
+		"/C/Users/kostyukova/Downloads/cli-1.0.0-rc2/netci.groovy",
+		"/C/Users/kostyukova/Downloads/microsoft.netcore.app.1.0.0-rc2-3002702/dotnet_library_license.txt",
+		"/C/Users/kostyukova/Downloads/microsoft.netcore.app.1.0.0-rc2-3002702/Microsoft.NETCore.App.nuspec",
+		"/C/Users/kostyukova/Downloads/microsoft.netcore.app.1.0.0-rc2-3002702/[Content_Types].xml",
+		"/C/Users/kostyukova/Downloads/microsoft.netcore.app.1.0.0-rc2-3002702/_rels/.rels",
+		"/C/Users/kostyukova/Downloads/microsoft.netcore.app.1.0.0-rc2-3002702/ThirdPartyNotices.txt",
+		"/C/Users/kostyukova/Downloads/microsoft.netcore.app.1.0.0-rc2-3002702/package/services/metadata/core-properties/e8f03c71e9784363825ff2fe8e0f2b3e.psmdcp",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/List/BackendEntityMultipleItemPicker.js",
+		"/c/users/kostyu~1/appdata/local/temp/.editorconfig",
+		"/c/users/kostyu~1/appdata/local/temp/gitbash.md",
+		"/c/users/kostyu~1/appdata/local/temp/Q&A",
+		"/c/users/kostyu~1/appdata/local/temp/.gitconfig",
+		"/c/users/kostyu~1/appdata/local/temp/.jscsrc",
+		"/c/users/kostyu~1/appdata/local/temp/Preferences.sublime-settings",
+		"/c/users/kostyu~1/appdata/local/temp/.jshintrc",
+		"/c/users/kostyu~1/appdata/local/temp/.sublime-keymap",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/Utils.js",
+		"/C/Users/kostyukova/Documents/Projects/QP/.editorconfig",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/JavaScript.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/INI.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/JavaScript (Babel).sublime-settings",
+		"/C/Users/kostyukova/Documents/Sublime/Data/Packages/User/JavaScript (Babel).sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/JSCS-Formatter.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/JSON.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Preferences (2).sublime-settings",
+		"/C/Users/kostyukova/.jscsrc",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Default.sublime-commands",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Build/Chrome.sublime-build",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/C#.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Build/Node.sublime-build",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/colorcoder.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Gist.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Git Config.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/CSS3.sublime-settings",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/.gitignore",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Default (Windows).sublime-mousemap",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Default (Windows).sublime-keymap",
+		"/C/Users/kostyukova/YandexDisk/Sync/Software/SublimeText/Data/Packages/User/Package Control (2).sublime-settings",
+		"/C/Users/kostyukova/Documents/Projects/QP/siteMvc/Scripts/Quantumart/Search/BackendArticleSearchBlock.js",
+		"/C/Users/kostyukova/Documents/Projects/QP/.gitignore",
+		"/C/Users/kostyukova/Desktop/js_sobesed.txt",
+		"/C/Users/kostyukova/Documents/Projects/QP/QP.Global.sublime-project",
+		"/C/tfs/VirtualStorefront/Client/Tele2.VirtualStorefront.Client/www/scripts/cordovaUtilsLogger.js",
+		"/C/tfs/VirtualStorefront/Client/Tele2.VirtualStorefront.Client/www/scripts/bgAsyncFetcher.js",
+		"/C/tfs/VirtualStorefront/Client/Tele2.VirtualStorefront.Client/www/scripts/bgVideoPlayer.js",
+		"/C/tfs/VirtualStorefront/Client/Tele2.VirtualStorefront.Client/www/scripts/timeoutVideoPlayer.js",
+		"/C/tfs/VirtualStorefront/Client/Tele2.VirtualStorefront.Client/www/scripts/index.js",
+		"/C/tfs/VirtualStorefront/Client/Tele2.VirtualStorefront.Client/www/scripts/loggingService.js",
+		"/C/tfs/VirtualStorefront/Client/Tele2.Client.Cordova.sublime-project",
+		"/C/Users/kostyukova/Documents/Sublime/.gitignore",
+		"/C/tfs/VirtualStorefront/Client/Tele2.VirtualStorefront.Client.subl.sublime-project",
+		"/C/tfs/VirtualStorefront/Client/Tele2.VirtualStorefront.Client.subl.sublime-workspace",
+		"/C/tfs/VirtualStorefront/Client/.Tele2.VirtualStorefront.Client.sublime-project",
+		"/C/Users/kostyukova/Documents/Projects/SublimeProjects/QP.sublime-project",
+		"/C/Users/kostyukova/Documents/Projects/SublimeProjects/QP.sublime-workspace",
+		"/C/Users/kostyukova/Downloads/xxx.jsx"
+	],
+	"find":
+	{
+		"height": 24.0
+	},
+	"find_in_files":
+	{
+		"height": 158.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"false",
+			"”",
+			"“",
+			"GetChildArticles",
+			"Child",
+			"_addEntitiesToFilterView",
+			"Child",
+			"ParentButton",
+			"_refreshExpandChildsButton",
+			"_onExpandChildsButtonClickHandler",
+			"expandParentButton",
+			"1115",
+			"_expandChildHierarchy",
+			"_elementIdPrefix",
+			"Quantumart.QP8.Utils.bindProxies",
+			"proxy",
+			"').",
+			"expand",
+			"'",
+			"type='",
+			"\"",
+			"getSelectedEntities",
+			"restore_blockState",
+			"bom",
+			"_entityDataListElement",
+			"restore_blockState",
+			"_selectedEntitiesIDs",
+			"restore_blockState",
+			"}\n    else",
+			"_onExpandChildsButtonClickHandler",
+			"_onSelectorChange",
+			"_onExpandParentButtonClickHandler",
+			"_refreshExpandParentButton",
+			"expand",
+			"_expandParentButtonElement",
+			"expandParentButton",
+			"expandParent",
+			"_listElementId",
+			"jQuery",
+			"renderSearchBlock",
+			"restore_blockState",
+			"getSelectedEntities",
+			"restore_blockState",
+			"jQuery",
+			"_loadSelectedItems",
+			"СуперПуперГород",
+			"GetChildArticles: function(parentArticleId) { ",
+			"if (this._entityDataListElement) {",
+			"loadVirtualStore",
+			"startVideoLoopWithoutEvent",
+			"reStartLoggingfService",
+			"startVideoLoopWithoutEvent",
+			"startVideoLoop",
+			"startVideoCaching",
+			"downloadFilesAndSaveToAppStorage",
+			"startVideoCaching",
+			"videoCacheLoop",
+			"startingNewVideoCacheLoop",
+			"log(",
+			"\"",
+			"writeToLog",
+			"refreshWebview",
+			"onOffline",
+			"onOnline",
+			": 1",
+			"material_theme_bold_tab",
+			"theme"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 24.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.sftp":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "QP.Site.sublime-project",
+	"replace":
+	{
+		"height": 44.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"backendentit",
+				"siteMvc\\Scripts\\Quantumart\\BackendEntityGrid.js"
+			],
+			[
+				"backendentitygrid",
+				"siteMvc\\Scripts\\Quantumart\\BackendEntityGrid.js"
+			],
+			[
+				"backendentitydata",
+				"siteMvc\\Scripts\\Quantumart\\List\\BackendEntityDataListBase.js"
+			],
+			[
+				"multipleite",
+				"siteMvc\\Scripts\\Quantumart\\List\\BackendEntityMultipleItemPicker.js"
+			],
+			[
+				"utils",
+				"siteMvc\\Scripts\\Quantumart\\Utils.js"
+			],
+			[
+				"multipleitempicker",
+				"siteMvc\\Scripts\\Quantumart\\List\\BackendEntityMultipleItemPicker.js"
+			],
+			[
+				"relationsearch",
+				"siteMvc\\Views\\ArticleSearchBlock\\RelationSearch.cshtml"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"C:\\Users\\kostyukova\\Documents\\Projects\\QP\\QP.Global.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 324.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

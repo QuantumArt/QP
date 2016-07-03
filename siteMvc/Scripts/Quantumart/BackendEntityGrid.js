@@ -620,11 +620,12 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   },
 
   getChildEntityIds: function(parentArticleId) {
-    var url = window.CONTROLLER_URL_ARTICLE + "GetChildArticleIds"
+    debugger;
+    var url = window.CONTROLLER_URL_ARTICLE + 'GetChildArticleIds'
     var params = {
+      ids: [parentArticleId],
       filter: this._filter,
-      contentId: this._parentEntityId,
-      parentArticleId: parentArticleId
+      fieldId: this._treeFieldId
     }
 
     return Quantumart.QP8.Utils.getJsonSync(url, params);
@@ -1171,7 +1172,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     if (this._gridManagerComponent) {
       var gridElementId = this._gridElementId;
-
       if (!$q.isNullOrWhiteSpace(gridElementId)) {
         this._gridManagerComponent.removeGrid(gridElementId);
       }

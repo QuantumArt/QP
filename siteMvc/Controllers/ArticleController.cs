@@ -508,7 +508,6 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return Json(ArticleService.GetContextQuery(id, currentContext), JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope(ConnectionScopeMode.TransactionOn)]
         [ActionAuthorize(ActionCode.Articles)]
@@ -517,13 +516,20 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return ArticleService.GetParentIds(id, fieldId).ToList();
         }
 
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ActionAuthorize(ActionCode.Articles)]
+        public JsonNetResult<IList<int>> GetParentIds2(int[] ids, int fieldId, string filter)
+        {
+            return ArticleService.GetParentIds(ids, fieldId).ToList();
+        }
 
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope(ConnectionScopeMode.TransactionOn)]
         [ActionAuthorize(ActionCode.Articles)]
-        public JsonNetResult<IList<int>> GetChildArticleIds(int? parentArticleId, int contentId, string filter)
+        public JsonNetResult<IList<int>> GetChildArticleIds(int[] ids, int fieldId, string filter)
         {
-            return ArticleService.GetChildArticleIds(parentArticleId, contentId, filter).ToList();
+            return ArticleService.GetChildArticles(ids, fieldId, filter).Select(kv => kv.Key).ToList();
         }
         #endregion
     }

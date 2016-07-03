@@ -5,7 +5,7 @@
 <div class="row">
 	<span>
 		@Html.QpRadioButtonList((string)ViewBag.SelectorElementID,
-		new[] 
+		new[]
 		{
 			new QPSelectListItem
 			{
@@ -24,12 +24,13 @@
 		)
 	</span>
 </div>
-
-<div id="EntityContainer" class="row ">
-	@Html.Relation((string)ViewBag.RelationElementID,
+<div id="EntityContainer" class="row">
+	@Html.Relation(
+    (string)ViewBag.RelationElementID,
 		Html.List((IEnumerable<ListItem>)ViewBag.ItemList),
-		//new QPSelectListItem[0],
-		new ControlOptions(), RelationType.ManyToMany, true, 
+		new ControlOptions(),
+    RelationType.ManyToMany,
+    true,
 		new EntityDataListArgs()
 		{
 			EntityTypeCode = EntityTypeCode.Article,
@@ -42,21 +43,23 @@
 			MaxListHeight = 100,
 			MaxListWidth = 350,
 			Filter = ((Field)ViewBag.Field).RelationFilter,
-            ShowIds = true
+      ShowIds = true
 		}
 	)
 </div>
+
+<span class="expandParentButton" class="linkButton actionLink"><a href="javascript:void(0);"><span class="icon expandParent"><img src="/Backend/Content/Common/0.gif"></span><span class="text">Расширить вверх</span></a></span>
+<span class="expandChildsButton" class="linkButton actionLink"><a href="javascript:void(0);"><span class="icon expandParent"><img src="/Backend/Content/Common/0.gif"></span><span class="text">Расширить вниз</span></a></span>
 
 <div id="TextAreaContainer" class="row" style="display:none;">
  <span class="label">
 	@Html.QpLabel((string)ViewBag.RelationTextAreaElementID, ArticleStrings.SearchBlock_ListText, true)
   </span>
   <span class="field">
-    @Html.QpTextArea((string)ViewBag.RelationTextAreaElementID, "",
-	    new Dictionary<string, object> 
-	    {
-            { "class", "numbers-list"}
-	    })
+    @Html.QpTextArea((string)ViewBag.RelationTextAreaElementID, "", new Dictionary<string, object>
+	  {
+      { "class", "numbers-list"}
+	  })
   </span>
 </div>
 

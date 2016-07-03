@@ -258,7 +258,6 @@ namespace Quantumart.QP8.BLL.Services
             return Read(id, contentId, false);
         }
 
-
         /// <summary>
         /// Генерирует пустую статью для показа
         /// </summary>
@@ -268,7 +267,10 @@ namespace Quantumart.QP8.BLL.Services
         {
             var article = Article.CreateNew(contentId, fieldId, articleId, isChild);
             if (!article.IsArticleChangingActionsAllowed(boundToExternal))
+            {
                 throw ActionNotAllowedException.CreateNotAllowedForArticleChangingActionException();
+            }
+
             return article;
         }
 
@@ -292,27 +294,37 @@ namespace Quantumart.QP8.BLL.Services
             var result = new CopyResult();
             var article = ArticleRepository.GetById(id);
             if (article == null)
+            {
                 throw new Exception(string.Format(ArticleStrings.ArticleNotFound, id));
+            }
 
             if (article.IsAggregated)
+            {
                 return new CopyResult() { Message = MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated) };
+            }
 
             if (!article.IsArticleChangingActionsAllowed(boundToExternal))
+            {
                 return new CopyResult() { Message = MessageResult.Error(ContentStrings.ArticleChangingIsProhibited) };
+            }
 
             article.LoadFieldValues();
-
             if (!article.Content.IsUpdatable || !article.IsAccessible(ActionTypeCode.Read))
+            {
                 return new CopyResult() { Message = MessageResult.Error(ArticleStrings.CannotCopyBecauseOfSecurity) };
+            }
 
             if (!article.IsUpdatableWithWorkflow)
+            {
                 return new CopyResult() { Message = MessageResult.Error(ArticleStrings.CannotAddBecauseOfWorkflow) };
+            }
 
             if (!article.IsUpdatableWithRelationSecurity)
+            {
                 return new CopyResult() { Message = MessageResult.Error(ArticleStrings.CannotAddBecauseOfRelationSecurity) };
+            }
 
             var previousAggregatedArticles = article.AggregatedArticles;
-
             article.ReplaceAllUrlsToPlaceHolders();
 
             try
@@ -338,17 +350,21 @@ namespace Quantumart.QP8.BLL.Services
 		public static Article Save(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
         {
             if (article == null)
+            {
                 throw new ArgumentNullException("article");
+            }
 
             if (article.IsAggregated)
+            {
                 throw ActionNotAllowedException.CreateNotAllowedForAggregatedArticleException();
+            }
 
             if (!article.IsArticleChangingActionsAllowed(boundToExternal))
+            {
                 throw ActionNotAllowedException.CreateNotAllowedForArticleChangingActionException();
+            }
 
-            var result = article.Persist(disableNotifications);
-
-            return result;
+            return article.Persist(disableNotifications);
         }
 
         /// <summary>
@@ -360,18 +376,25 @@ namespace Quantumart.QP8.BLL.Services
         {
 
             if (article == null)
+            {
                 throw new ArgumentNullException("article");
+            }
 
             if (article.IsAggregated)
+            {
                 throw ActionNotAllowedException.CreateNotAllowedForAggregatedArticleException();
+            }
 
             if (!article.IsArticleChangingActionsAllowed(boundToExternal))
+            {
                 throw ActionNotAllowedException.CreateNotAllowedForArticleChangingActionException();
+            }
 
             var result = article.Persist(disableNotifications);
-
             if (!string.IsNullOrWhiteSpace(backendActionCode) && backendActionCode.Equals(ActionCode.UpdateArticleAndUp, StringComparison.InvariantCultureIgnoreCase))
+            {
                 result.AutoUnlock();
+            }
 
             return result;
         }
@@ -498,7 +521,10 @@ namespace Quantumart.QP8.BLL.Services
         {
             var article = ArticleRepository.GetById(id);
             if (article == null)
+            {
                 throw new Exception(string.Format(ArticleStrings.ArticleNotFound, id));
+            }
+
             article.AutoUnlock();
         }
 
@@ -506,7 +532,10 @@ namespace Quantumart.QP8.BLL.Services
         {
             var article = ArticleRepository.GetById(id);
             if (article == null)
+            {
                 throw new Exception(string.Format(ArticleStrings.ArticleNotFound, id));
+            }
+
             if (article.CanBeUnlocked)
             {
                 EntityObjectRepository.CaptureLock(article);
@@ -745,28 +774,31 @@ namespace Quantumart.QP8.BLL.Services
             {
                 Article rootArticle = null;
                 if (rootArticleId == 0)
+                {
                     rootArticle = Article.CreateNew(rootContentId);
+                }
                 else
+                {
                     rootArticle = Read(rootArticleId, rootContentId, false);
+                }
+
                 return rootArticle.GetAggregatedArticleByClassifier(aggregatedContentId);
             }
             else
+            {
                 return null;
+            }
         }
 
         public static IEnumerable<ArticleContextQueryParam> GetContextQuery(int contentId, string contextString)
         {
-            var parsed = contextString.Split(",".ToCharArray())
-                .Select(n => int.Parse(n))
-                .ToDictionary(n => ArticleRepository.GetById(n).ContentId, n => n);
-
-            return ContentRepository.GetById(contentId).GetContextSearchBlockItems()
-                .Select(n => new ArticleContextQueryParam
-                {
-                    Name = "content_" + n.ContentId,
-                    Value = parsed.ContainsKey(n.ContentId) ? parsed[n.ContentId].ToString() : string.Empty,
-                    FieldId = n.FieldId
-                });
+            var parsed = contextString.Split(",".ToCharArray()).Select(n => int.Parse(n)).ToDictionary(n => ArticleRepository.GetById(n).ContentId, n => n);
+            return ContentRepository.GetById(contentId).GetContextSearchBlockItems().Select(n => new ArticleContextQueryParam
+            {
+                Name = "content_" + n.ContentId,
+                Value = parsed.ContainsKey(n.ContentId) ? parsed[n.ContentId].ToString() : string.Empty,
+                FieldId = n.FieldId
+            });
         }
 
         public static void UnlockArticles(int[] IDs)
@@ -783,10 +815,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             var list = new List<ListItem>();
             list.Add(new ListItem { Text = ArticleStrings.ID, Value = ArticleStrings.ID });
-            list.AddRange(FieldRepository.GetList(contentId, false)
-                .Where(f => (!f.IsBlob && !f.IsClassifier && f.RelatedToContent == null))
-                .Select(f => new ListItem { Text = f.Name, Value = f.Name }).ToList());
-
+            list.AddRange(FieldRepository.GetList(contentId, false).Where(f => (!f.IsBlob && !f.IsClassifier && f.RelatedToContent == null)).Select(f => new ListItem { Text = f.Name, Value = f.Name }).ToList());
             return list;
         }
 
@@ -810,9 +839,15 @@ namespace Quantumart.QP8.BLL.Services
             return ArticleRepository.GetParentIds(id, fieldId);
         }
 
-        public static IList<int> GetChildArticleIds(int? parentArticleId, int contentId, string filter)
+        public static IList<int> GetParentIds(IList<int> ids, int fieldId)
         {
-            return ArticleRepository.GetChildArticleIds(parentArticleId, contentId, filter);
+            return ArticleRepository.GetParentIds(ids, fieldId);
+        }
+
+        public static IList<KeyValuePair<int, string>> GetChildArticles(IList<int> ids, int fieldId, string filter)
+        {
+            var treeField = FieldRepository.GetById(fieldId);
+            return ArticleRepository.GetChildArticles(ids, treeField.Name, treeField.ContentId, filter);
         }
     }
 }

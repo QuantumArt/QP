@@ -2,11 +2,7 @@
 Quantumart.QP8.BackendArticleSearchBlock = function(searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
   Quantumart.QP8.BackendArticleSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
   this.isVirtual = options.isVirtual;
-  if (this.isVirtual) {
-    this._minSearchBlockHeight = 125;
-  } else {
-    this._minSearchBlockHeight = 180;
-  }
+  this._minSearchBlockHeight = this.isVirtual ? 125 : 180;
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.prototype = {
@@ -23,23 +19,23 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
     if (this._searchBlockState && this._searchBlockState.defaultFieldSearchBlockState && this._buttonsWrapperElement) {
       this._defaultFieldSearchBlockState = this._searchBlockState.defaultFieldSearchBlockState;
 
-      var $buttonsWrapper = jQuery(this._buttonsWrapperElement);
+      var $buttonsWrapper = $(this._buttonsWrapperElement);
 
-      this._$defaultFilterButton = jQuery('<input />', { type: 'button', value: $l.SearchBlock.defaultFilterButtonText, class: 'button' });
+      this._$defaultFilterButton = $('<input />', { type: 'button', value: $l.SearchBlock.defaultFilterButtonText, class: 'button' });
       $buttonsWrapper.append('&nbsp;');
       $buttonsWrapper.append(this._$defaultFilterButton);
       $buttonsWrapper = null;
-      this._$defaultFilterButton.click(jQuery.proxy(this._onDefaultFilterClicked, this));
+      this._$defaultFilterButton.click($.proxy(this._onDefaultFilterClicked, this));
     }
   },
 
   renderSearchBlock: function() {
-    if (this.get_isRendered() !== true) {
-      var $concreteSearchBlockElement = jQuery(this._concreteSearchBlockElement);
+    if (!this.get_isRendered()) {
+      var $concreteSearchBlockElement = $(this._concreteSearchBlockElement);
 
       if (!this.isVirtual) {
         // Создает контейнер для блока полнотекстового поиска
-        var $fullTextBlockElement = jQuery('<div/>', { class: 'articleSearchRegion' });
+        var $fullTextBlockElement = $('<div/>', { class: 'articleSearchRegion' });
 
         this._fullTextBlockElement = $fullTextBlockElement.get(0);
 
@@ -52,7 +48,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       }
 
       // Создаем контейнер для блока поиска по полям
-      var $fieldSeachBlockElement = jQuery('<div/>', { class: 'articleSearchRegion' });
+      var $fieldSeachBlockElement = $('<div/>', { class: 'articleSearchRegion' });
 
       this._fieldSearchBlockElement = $fieldSeachBlockElement.get(0);
 
@@ -132,7 +128,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       this._searchBlockState.defaultFieldSearchBlockState = this._defaultFieldSearchBlockState;
     }
 
-    if (jQuery.isEmptyObject(this._searchBlockState)) {
+    if ($.isEmptyObject(this._searchBlockState)) {
       this._searchBlockState = null;
     }
 
@@ -161,10 +157,13 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
 
   _onDefaultFilterClicked: function() {
     if (this._defaultFieldSearchBlockState) {
-      if (this._fullTextBlock)
-      this._fullTextBlock.clear();
-      if (this._fieldSearchBlock)
-      this._fieldSearchBlock.clear();
+      if (this._fullTextBlock) {
+        this._fullTextBlock.clear();
+      }
+
+      if (this._fieldSearchBlock) {
+        this._fieldSearchBlock.clear();
+      }
 
       this._searchBlockState = {
         fieldSearchBlockState: this._defaultFieldSearchBlockState,

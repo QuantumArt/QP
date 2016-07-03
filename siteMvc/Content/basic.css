@@ -796,8 +796,17 @@ input[type="text"].readonly, textarea.readonly
 }
 .linkButton SPAN.deselectAll
 {
+  background-image: url('QP8/icons/16x16/deselect_all.gif');
+}
+.linkButton SPAN.expandParent
+{
+  background-image: url('QP8/icons/16x16/select_all.gif');
+}
+.linkButton SPAN.expandChilds
+{
 	background-image: url('QP8/icons/16x16/deselect_all.gif');
 }
+
 
 .linkButton SPAN.parentPermissions
 {
