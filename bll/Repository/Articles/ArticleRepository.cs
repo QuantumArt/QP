@@ -456,7 +456,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 var searchFilterQuery = GetSearchFiltersQuery(commonFilter, treeField, filterQuery, linkedFilters, contextQuery, filterSqlParams, ftsOptions.SearchResultLimit);
                 var searchIds = Common.GetFilterAndFtsSearchResult(scope.DbConnection, treeField.ContentId, extensionContentIds, ftsOptions, searchFilterQuery, filterSqlParams).ToList();
-                var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id);
+                var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id, treeField.Name);
                 var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField).ToList();
 
                 var treeItemsDict = treeItems.ToDictionary(kv => kv.Id);
@@ -1375,16 +1375,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static IList<int> GetParentIds(int id, int fieldId)
-        {
-            return GetParentIds(new[] { id }, fieldId);
-        }
-
-        internal static IList<int> GetParentIds(IList<int> ids, int fieldId)
+        internal static IList<int> GetParentIds(IList<int> ids, int fieldId, string fieldName)
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetParentIdsTreeResult(scope.DbConnection, ids, fieldId);
+                return Common.GetParentIdsTreeResult(scope.DbConnection, ids, fieldId, fieldName);
             }
         }
 

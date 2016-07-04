@@ -4,24 +4,21 @@
 
 <div class="row">
 	<span>
-		@Html.QpRadioButtonList((string)ViewBag.SelectorElementID,
-		new[]
-		{
-			new QPSelectListItem
-			{
-				Text = ArticleStrings.SearchBlock_BySelector,
-				Selected = true,
-				Value = "0",
-			},
-			new QPSelectListItem
-			{
-				Text = ArticleStrings.SearchBlock_ByList,
-				Selected = false,
-				Value = "1"
-			}
-		},
-		new ControlOptions {Enabled = true}
-		)
+		@Html.QpRadioButtonList((string)ViewBag.SelectorElementID, new[]
+    {
+      new QPSelectListItem
+      {
+        Text = ArticleStrings.SearchBlock_BySelector,
+        Selected = true,
+        Value = "0",
+      },
+      new QPSelectListItem
+      {
+        Text = ArticleStrings.SearchBlock_ByList,
+        Selected = false,
+        Value = "1"
+      }
+    }, new ControlOptions { Enabled = true })
 	</span>
 </div>
 <div id="EntityContainer" class="row">
@@ -48,8 +45,24 @@
 	)
 </div>
 
-<span class="expandParentButton" class="linkButton actionLink"><a href="javascript:void(0);"><span class="icon expandParent"><img src="/Backend/Content/Common/0.gif"></span><span class="text">Расширить вверх</span></a></span>
-<span class="expandChildsButton" class="linkButton actionLink"><a href="javascript:void(0);"><span class="icon expandParent"><img src="/Backend/Content/Common/0.gif"></span><span class="text">Расширить вниз</span></a></span>
+<ul class="linkButtons group">
+  <li>
+    <span class="expandParentsButton linkButton actionLink">
+      <a href="javascript:void(0);">
+        <span class="icon expandParents"><img src="/Backend/Content/Common/0.gif"></span>
+        <span class="text">@ArticleStrings.ExpandParents</span>
+      </a>
+    </span>
+  </li>
+  <li>
+    <span class="expandChildsButton linkButton actionLink">
+      <a href="javascript:void(0);">
+        <span class="icon expandChilds"><img src="/Backend/Content/Common/0.gif"></span>
+        <span class="text">@ArticleStrings.ExpandChilds</span>
+      </a>
+    </span>
+  </li>
+</ul>
 
 <div id="TextAreaContainer" class="row" style="display:none;">
  <span class="label">

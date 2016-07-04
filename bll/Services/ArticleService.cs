@@ -836,18 +836,20 @@ namespace Quantumart.QP8.BLL.Services
 
         public static IList<int> GetParentIds(int id, int fieldId)
         {
-            return ArticleRepository.GetParentIds(id, fieldId);
+            var treeField = FieldRepository.GetById(fieldId);
+            return ArticleRepository.GetParentIds(new[] { id }, treeField.Id, treeField.Name);
         }
 
         public static IList<int> GetParentIds(IList<int> ids, int fieldId)
         {
-            return ArticleRepository.GetParentIds(ids, fieldId);
+            var relatedField = FieldRepository.GetById(fieldId).RelatedToContent.Fields.Single(f => f.UseForTree);
+            return ArticleRepository.GetParentIds(ids, relatedField.Id, relatedField.Name);
         }
 
         public static IList<KeyValuePair<int, string>> GetChildArticles(IList<int> ids, int fieldId, string filter)
         {
-            var treeField = FieldRepository.GetById(fieldId);
-            return ArticleRepository.GetChildArticles(ids, treeField.Name, treeField.ContentId, filter);
+            var relatedField = FieldRepository.GetById(fieldId).RelatedToContent.Fields.Single(f => f.UseForTree);
+            return ArticleRepository.GetChildArticles(ids, relatedField.Name, relatedField.ContentId, filter);
         }
     }
 }

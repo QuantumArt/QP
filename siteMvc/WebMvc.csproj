@@ -759,6 +759,8 @@
     <Content Include="Content\ckeditor\styles.js" />
     <Content Include="Content\codemirror.css" />
     <Content Include="Content\codemirrorTheme.css" />
+    <Content Include="Content\QP8\icons\16x16\green_arrow_down.png" />
+    <Content Include="Content\QP8\icons\16x16\green_arrow_up.png" />
     <Content Include="Content\jquery.qtip.css" />
     <Content Include="Content\QP8\icons\16x16\crop.gif" />
     <Content Include="Content\QP8\imgareaselect\border-anim-h.gif" />

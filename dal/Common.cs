@@ -10053,13 +10053,13 @@ namespace Quantumart.QP8.DAL
             return dt;
         }
 
-        public static IList<int> GetParentIdsTreeResult(SqlConnection cn, IList<int> ids, int fieldId)
+        public static IList<int> GetParentIdsTreeResult(SqlConnection cn, IList<int> ids, int fieldId, string fieldName)
         {
-            var query = GetParentIdsTreeQuery(ids, fieldId);
+            var query = GetParentIdsTreeQuery(ids, fieldId, fieldName);
             return GetDatatableResult(cn, query, GetIdsDatatableParam("@ids", ids), new SqlParameter("@fieldId", fieldId)).Select(dr => (int)dr.Field<decimal>(0)).ToList();
         }
 
-        public static string GetParentIdsTreeQuery(IList<int> ids, int fieldId)
+        public static string GetParentIdsTreeQuery(IList<int> ids, int fieldId, string fieldName)
         {
             return @"
                 declare @contentId int
@@ -10093,7 +10093,7 @@ namespace Quantumart.QP8.DAL
 
                             select
                                 c.CONTENT_ITEM_ID Id,
-                                c.Parent,
+                                c." + fieldName + @",
                                 r.Lvl + 1
                             from
                                 content_'+ convert(nvarchar(10), @contentId) +'_united c with(nolock)

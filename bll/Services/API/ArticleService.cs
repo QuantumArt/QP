@@ -306,7 +306,8 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetParentIds(ids, fieldId);
+                var treeField = FieldRepository.GetById(fieldId);
+                return ArticleRepository.GetParentIds(ids, treeField.Id, treeField.Name);
             }
         }
     }

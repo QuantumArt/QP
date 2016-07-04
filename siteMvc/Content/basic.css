@@ -798,13 +798,13 @@ input[type="text"].readonly, textarea.readonly
 {
   background-image: url('QP8/icons/16x16/deselect_all.gif');
 }
-.linkButton SPAN.expandParent
+.linkButton SPAN.expandParents
 {
-  background-image: url('QP8/icons/16x16/select_all.gif');
+  background-image: url('QP8/icons/16x16/green_arrow_up.png');
 }
 .linkButton SPAN.expandChilds
 {
-	background-image: url('QP8/icons/16x16/deselect_all.gif');
+	background-image: url('QP8/icons/16x16/green_arrow_down.png');
 }
 
 
