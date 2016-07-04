@@ -63,7 +63,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 externalCss.Invalid = true;
             }
 
-            if (!string.IsNullOrWhiteSpace(externalCss.Url) && !Regex.IsMatch(externalCss.Url, RegularExpressions.ExternalCssUrl))
+            if (!string.IsNullOrWhiteSpace(externalCss.Url) && !Regex.IsMatch(externalCss.Url, RegularExpressions.AbsoluteWebFolderUrl) && !Regex.IsMatch(externalCss.Url, RegularExpressions.RelativeWebFolderUrl))
             {
                 errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlNotValid, index));
                 externalCss.Invalid = true;
