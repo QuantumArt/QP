@@ -44,41 +44,62 @@ $q.alertError = function(msg) {
  * @return {Object}      jQuery XHR deffered
  */
 $q.sendAjax = function(opts) {
-  var method = opts.method || 'GET';
-  var debugMessage = ' ajax: ' + method + ' ' + opts.url + '. Data: ' + JSON.stringify(opts.data);
-  $q.trace('Sending ' + debugMessage, 'Request object: ', opts);
+  var defaultOptions = {
+    type: 'GET',
+    dataType: 'json',
+    contentType: 'application/json; charset=utf-8',
+    async: true,
+    cache: true,
+    traditional: true
+  };
 
-  // return $q.getJsonFromUrl(method, opts.url, opts.data).done(function(response) {
-  return $.ajax(opts).done(function(response) {
+  var options = Object.assign({}, defaultOptions, opts);
+  if (options.dataType.toLowerCase() === 'jsonp' && !options.async) {
+    window.console.error('Sync requests cannot be combined with jsonp');
+  }
+
+  var debugMessage = ' ajax: ' + options.type + ' ' + options.url + '. Data: ' + JSON.stringify(options.data);
+  $q.trace('Sending ' + debugMessage, 'Request object: ', options);
+  return $.ajax(options).done(function(response) {
     $q.trace('Parsing ' + debugMessage, 'Response object: ', response);
     if (response.status.toUpperCase() === 'SUCCESS') {
-      if ($.isFunction(opts.callbackSuccess)) {
-        opts.callbackSuccess(response.data);
+      if(options.jsendSuccess) {
+        options.jsendSuccess(response.data, response);
       }
     } else if (response.status.toUpperCase() === 'FAIL') {
-      $q.alertFail(response.message || 'There was an errors at request');
+      if(options.jsendFail) {
+        options.jsendFail(response.data, response);
+      } else {
+        $q.alertFail(response.message || 'There was an errors at request');
+      }
     } else {
-      $q.alertError(response.message || 'Unknown server error');
+      if(options.jsendError) {
+        options.jsendError(response.data, response);
+      } else {
+        $q.alertError(response.message || 'Unknown server error');
+      }
     }
   });
 };
 
-$q.getAjax = function(url, data, cb) {
+$q.getAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
     url: url,
     data: data,
-    traditional: true,
-    callbackSuccess: cb,
-    method: 'GET'
+    jsendSuccess: jsendSuccess,
+    jsendFail: jsendFail,
+    jsendError: jsendError
   });
 };
 
-$q.postAjax = function(url, data, cb) {
+$q.postAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
     url: url,
     data: data,
-    callbackSuccess: cb,
-    method: 'POST'
+    type: 'POST',
+    jsendSuccess: jsendSuccess,
+    jsendFail: jsendFail,
+    jsendError: jsendError
   });
 };
 

@@ -846,7 +846,7 @@ namespace Quantumart.QP8.BLL.Services
             return ArticleRepository.GetParentIds(ids, relatedField.Id, relatedField.Name);
         }
 
-        public static IList<KeyValuePair<int, string>> GetChildArticles(IList<int> ids, int fieldId, string filter)
+        public static IList<int> GetChildArticles(IList<int> ids, int fieldId, string filter)
         {
             var relatedField = FieldRepository.GetById(fieldId).RelatedToContent.Fields.Single(f => f.UseForTree);
             return ArticleRepository.GetChildArticles(ids, relatedField.Name, relatedField.ContentId, filter);

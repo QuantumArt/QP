@@ -509,48 +509,28 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return Json(ArticleService.GetContextQuery(id, currentContext), JsonRequestBehavior.AllowGet);
         }
 
-        [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
         [ActionAuthorize(ActionCode.Articles)]
-        public JsonNetResult<IList<int>> GetParentIds(int id, int fieldId)
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
+        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        public JsonCamelCaseResult<JSendResponse> GetParentIds(List<int> ids, int fieldId, string filter)
         {
-            return ArticleService.GetParentIds(id, fieldId).ToList();
+            return new JSendResponse
+            {
+                Status = JSendStatus.Success,
+                Data = ArticleService.GetParentIds(ids, fieldId)
+            };
         }
 
         [ActionAuthorize(ActionCode.Articles)]
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
         [ConnectionScope(ConnectionScopeMode.TransactionOn)]
-        public JsonCamelCaseResult<JSendResponse> GetParentIds2(List<int> ids, int fieldId, string filter)
+        public JsonCamelCaseResult<JSendResponse> GetChildArticleIds(List<int> ids, int fieldId, string filter)
         {
-            var result = new JSendResponse { Status = JSendStatus.Success };
-            try
+            return new JSendResponse
             {
-                result.Data = ArticleService.GetParentIds(ids, fieldId).ToList();
-            }
-            catch (Exception)
-            {
-                result.Status = JSendStatus.Error;
-                result.Message = "Непредвиденная ошибка на сервере";
-            }
-
-            return result;
-        }
-
-        [ActionAuthorize(ActionCode.Articles)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
-        public JsonCamelCaseResult<JSendResponse> GetChildArticleIds(int[] ids, int fieldId, string filter)
-        {
-            var result = new JSendResponse { Status = JSendStatus.Success };
-            try
-            {
-                result.Data = ArticleService.GetChildArticles(ids, fieldId, filter).Select(kv => kv.Key).ToList();
-            }
-            catch (Exception)
-            {
-                result.Status = JSendStatus.Error;
-                result.Message = "Непредвиденная ошибка на сервере";
-            }
-
-            return result;
+                Status = JSendStatus.Success,
+                Data = ArticleService.GetChildArticles(ids, fieldId, filter)
+            };
         }
         #endregion
     }

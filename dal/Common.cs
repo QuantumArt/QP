@@ -1517,12 +1517,12 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static IList<KeyValuePair<int, string>> GetChildArticles(SqlConnection cn, IList<int> ids, string fieldName, int contentId, string filter)
+        public static IList<int> GetChildArticles(SqlConnection cn, IList<int> ids, string fieldName, int contentId, string filter)
         {
             var customFilter = string.IsNullOrWhiteSpace(filter) ? string.Empty : $"AND {filter}";
             var parentFilter = ids.Any() ? $"c.{fieldName} IN ({string.Join(",", ids)})" : $"c.{fieldName} IS NULL";
-            var query = $"SELECT c.content_item_id, c.title FROM content_{contentId}_united c WITH(NOLOCK) WHERE {parentFilter} {customFilter}";
-            return GetDatatableResult(cn, query).Select(r => new KeyValuePair<int, string>((int)r.Field<decimal>("content_item_id"), r.Field<string>("title"))).ToList();
+            var query = $"SELECT c.content_item_id FROM content_{contentId}_united c WITH(NOLOCK) WHERE {parentFilter} {customFilter}";
+            return GetDatatableResult(cn, query).Select(dr => (int)dr.Field<decimal>(0)).ToList();
         }
 
         private static readonly string GET_VISUAL_EDITOR_CONFIG_QUERY =
@@ -1616,6 +1616,7 @@ namespace Quantumart.QP8.DAL
                     return dt.AsEnumerable().ToArray();
                 }
             }
+
             return Enumerable.Empty<DataRow>();
         }
 
@@ -10103,7 +10104,7 @@ namespace Quantumart.QP8.DAL
                        ? "SELECT DISTINCT Id, ParentId FROM CTE'"
                        : "SELECT DISTINCT Id, ParentId, Lvl FROM CTE ORDER BY Lvl'")
                        + "EXEC sp_executesql @sql, N'@ids dbo.Ids READONLY, @fieldId int', @ids, @fieldId END";
-        } // TODO: Parent bug
+        }
 
         private static SqlParameter GetIdsDatatableParam(string paramName, IEnumerable<int> ids)
         {

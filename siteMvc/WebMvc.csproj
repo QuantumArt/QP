@@ -306,6 +306,7 @@
     <Compile Include="Extensions\Helpers\API\ReplayXmlException.cs" />
     <Compile Include="Extensions\Helpers\ControlOptions.cs" />
     <Compile Include="Extensions\Helpers\EntityDataListArgs.cs" />
+    <Compile Include="Extensions\Helpers\ErrorMessageGenerator.cs" />
     <Compile Include="Extensions\Helpers\GridExtensions.cs" />
     <Compile Include="Extensions\Helpers\HighlightedTAreaToolbarHelper.cs" />
     <Compile Include="Extensions\Helpers\HighlightModeSelectHelper.cs" />

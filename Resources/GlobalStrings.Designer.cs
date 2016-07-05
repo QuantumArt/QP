@@ -61,6 +61,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unexpected server error.
+        /// </summary>
+        public static string _500Error {
+            get {
+                return ResourceManager.GetString("500Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have no enough permissions to execute action &apos;{0}&apos;.
         /// </summary>
         public static string ActionIsNotAccessible {

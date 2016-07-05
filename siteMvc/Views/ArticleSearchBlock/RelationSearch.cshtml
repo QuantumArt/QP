@@ -21,6 +21,7 @@
     }, new ControlOptions { Enabled = true })
 	</span>
 </div>
+
 <div id="EntityContainer" class="row">
 	@Html.Relation(
     (string)ViewBag.RelationElementID,
@@ -45,24 +46,27 @@
 	)
 </div>
 
-<ul class="linkButtons group">
-  <li>
-    <span class="expandParentsButton linkButton actionLink">
-      <a href="javascript:void(0);">
-        <span class="icon expandParents"><img src="/Backend/Content/Common/0.gif"></span>
-        <span class="text">@ArticleStrings.ExpandParents</span>
-      </a>
-    </span>
-  </li>
-  <li>
-    <span class="expandChildsButton linkButton actionLink">
-      <a href="javascript:void(0);">
-        <span class="icon expandChilds"><img src="/Backend/Content/Common/0.gif"></span>
-        <span class="text">@ArticleStrings.ExpandChilds</span>
-      </a>
-    </span>
-  </li>
-</ul>
+@if (ViewBag.HasRelatedHierarchyContent)
+{
+  <ul class="linkButtons group">
+    <li>
+      <span class="expandParentsButton linkButton actionLink">
+        <a href="javascript:void(0);">
+          <span class="icon expandParents"><img src="/Backend/Content/Common/0.gif"></span>
+          <span class="text">@ArticleStrings.ExpandParents</span>
+        </a>
+      </span>
+    </li>
+    <li>
+      <span class="expandChildsButton linkButton actionLink">
+        <a href="javascript:void(0);">
+          <span class="icon expandChilds"><img src="/Backend/Content/Common/0.gif"></span>
+          <span class="text">@ArticleStrings.ExpandChilds</span>
+        </a>
+      </span>
+    </li>
+  </ul>
+}
 
 <div id="TextAreaContainer" class="row" style="display:none;">
  <span class="label">

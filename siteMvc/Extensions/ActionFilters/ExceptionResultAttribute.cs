@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.BLL.Services.DTO;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using System.Diagnostics.Contracts;
+using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
@@ -23,7 +19,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
         /// <summary>
         /// Возвращает ошибку в формате для  неинтерфейсных qp-action
         /// </summary>
-        OperationAction
+        OperationAction,
+        /// <summary>
+        /// Возвращает ошибку в формате JSend
+        /// </summary>
+        JSendResponse
     }
 
     /// <summary>
@@ -32,40 +32,36 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
     public class ExceptionResultAttribute : FilterAttribute, IExceptionFilter
     {
         ExceptionResultMode mode;
+
         private string PolicyName { get; set; }
 
         public ExceptionResultAttribute(ExceptionResultMode mode) : this(mode, "Policy") { }
 
         public ExceptionResultAttribute(ExceptionResultMode mode, string policyName)
         {
-            Contract.Requires(!String.IsNullOrEmpty(policyName));
+            Contract.Requires(!string.IsNullOrEmpty(policyName));
             this.mode = mode;
             PolicyName = policyName;
         }
 
-        #region IExceptionFilter Members
         public void OnException(ExceptionContext filterContext)
         {
             if (filterContext == null || filterContext.Exception == null)
+            {
                 return;
-			QPController controller = (QPController)filterContext.Controller;
-			if (controller == null || controller.IsReplayAction())
-				return;
+            }
 
-            // помещаем в результат операции информацию об ошибках в разных форматах в зависимости от режима
-            if(mode == ExceptionResultMode.UIAction)
-                filterContext.Result = controller.JsonError(filterContext.Exception.Message);
-            else if (mode == ExceptionResultMode.OperationAction)
-                filterContext.Result = new JsonResult { Data = MessageResult.Error(filterContext.Exception.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+            var controller = (QPController)filterContext.Controller;
+            if (controller == null || controller.IsReplayAction())
+            {
+                return;
+            }
 
-             EnterpriseLibraryContainer.Current
-				   .GetInstance<ExceptionManager>()
-				   .HandleException(filterContext.Exception, PolicyName);
+            filterContext.Result = ErrorMessageGenerator.GererateJsonError(mode, filterContext.Exception);
+            EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(filterContext.Exception, PolicyName);
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.Clear();
         }
-
-        #endregion
     }
 }

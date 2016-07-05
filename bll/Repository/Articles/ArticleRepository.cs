@@ -1383,7 +1383,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static IList<KeyValuePair<int, string>> GetChildArticles(IList<int> ids, string fieldName, int contentId, string filter)
+        internal static IList<int> GetChildArticles(IList<int> ids, string fieldName, int contentId, string filter)
         {
             using (var scope = new QPConnectionScope())
             {

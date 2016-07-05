@@ -54,7 +54,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.prototype = {
       this._inverseCheckBoxElement = $containerElement.find('#' + inverseCheckBoxID).get(0);
 
       $('.radioButtonsList input[type="radio"]', $containerElement).on('click', this._onSelectorChangeHandler);
-      $('.expandParentsButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetParentIds2'));
+      $('.expandParentsButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetParentIds'));
       $('.expandChildsButton', $containerElement).on('click', this._expandHierarchy(window.CONTROLLER_URL_ARTICLE + 'GetChildArticleIds'));
       $(document).ready(this._onLoadHandler);
 
