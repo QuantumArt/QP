@@ -6,6 +6,18 @@ If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     Break
 }
 
+function Give-Access ([String] $name, [String] $path, [String] $permission)
+{
+    Write-Host "Giving '$name' '$permission' permissions to '$path'"
+
+    $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("$name", "$permission", 'ContainerInherit,ObjectInherit', 'None', 'Allow')
+    $Acl = (Get-Item $path).GetAccessControl('Access')
+    $Acl.SetAccessRule($Ar)
+    Set-Acl -path $path -AclObject $Acl
+
+    Write-Host "Done"
+}
+
 Import-Module WebAdministration
 
 $defaultName = "QP8"
@@ -53,10 +65,21 @@ $qaZipPath = Join-Path $defaultcurrentPath "qa.zip"
 
 if (Test-Path($BackendZipPath))
 {
-    $currentPath = Read-Host "Please enter path to install QP8 (default - $defaultcurrentPath)"
-    if ([string]::IsNullOrEmpty($currentPath)) { $currentPath = $defaultcurrentPath }
-    if (-not(Test-Path($currentPath))) { New-Item $currentPath -ItemType Directory}
+    $def = Get-Item "IIS:\sites\Default Web Site" -ErrorAction SilentlyContinue
+    if ($def)
+    {
+        $siteRoot = $def.PhysicalPath -replace "%SystemDrive%",$env:SystemDrive
+        $currentPath = Join-Path $siteRoot $name
+    }
+    else
+    {
+        $currentPath = Read-Host "Please enter path to install QP8 (default - $defaultcurrentPath)"
+        if ([string]::IsNullOrEmpty($currentPath)) { $currentPath = $defaultcurrentPath }
+    }
+    
+    if (-not(Test-Path($currentPath))) { New-Item $currentPath -ItemType Directory }
 }
+
 else
 {
     $currentPath = $defaultcurrentPath
@@ -86,6 +109,8 @@ if (Test-Path($BackendZipPath))
     Invoke-Expression "7za.exe x -r -y -o""$rootPath"" ""$sitesZipPath"""
     Invoke-Expression "7za.exe x -r -y -o""$qaPath"" ""$qaZipPath"""
 }
+
+Give-Access "IIS AppPool\$name" $currentPath 'ReadAndExecute'
 
 Write-Host "Creating site, applications and virtual directories..."
 
@@ -149,6 +174,8 @@ if (-not(Test-Path $psPath -PathType Leaf))
     Invoke-Expression "attrib -r ""$psPath"""
 }
 
+Give-Access "IIS AppPool\$name" $configDir 'ReadAndExecute'
+
 $sdk1path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6 Tools"
 $sdk2path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
 $sdk3path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools"
@@ -176,12 +203,8 @@ if (-not(Test-Path $tempDir -PathType Container))
     Write-Host "Creating temporary directory..."
     
     New-Item $tempDir -ItemType Directory
-    
-    $Acl = (Get-Item $tempDir).GetAccessControl('Access')
-    $Acl.SetAccessRule($Ar)
-    Set-Acl -path $tempDir -AclObject $Acl
-    
-    Write-Host "Done" 
+
+    Give-Access 'Everyone' $tempDir 'Modify'
 }
 
 
@@ -191,29 +214,21 @@ if (-not(Test-Path $logDir -PathType Container))
 
     New-Item $logDir -ItemType Directory
     
-    $Acl = (Get-Item $logDir).GetAccessControl('Access')
-    $Acl.SetAccessRule($Ar)
-    Set-Acl -path $logDir -AclObject $Acl
-
-    Write-Host "Done" 
+    Give-Access 'Everyone' $logDir 'Modify'
 }
 
 
+Import-Module WebAdministration
+
+$siteRoot = "c:\inetpub\wwwroot"
+$def = Get-Item "IIS:\sites\Default Web Site" -ErrorAction SilentlyContinue
+if ($def) { $siteRoot = $def.PhysicalPath -replace "%SystemDrive%",$env:SystemDrive }
 
 
-$defaultSiteRoot = "c:\inetpub\wwwroot"
-$siteRoot = Read-Host "Please enter site root to give access (default - $defaultSiteRoot)"
-if ([string]::IsNullOrEmpty($siteRoot))
+if (Test-Path $siteRoot)
 {
-    $siteRoot = $defaultSiteRoot
+    Give-Access "IIS AppPool\$name" $siteRoot 'Modify'
 }
 
 
-Write-Host "Giving 'IIS AppPool\$name' user access to '$siteRoot'"
 
-$Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("IIS AppPool\$name", 'Modify', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
-$Acl = (Get-Item $siteRoot).GetAccessControl('Access')
-$Acl.SetAccessRule($Ar)
-Set-Acl -path $siteRoot -AclObject $Acl
-
-Write-Host "Done"
