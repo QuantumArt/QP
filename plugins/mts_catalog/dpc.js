@@ -214,7 +214,6 @@ Quantumart.QP8.BackendDocumentContext.prototype.getRegionFolderByRegionId = func
       filter: ''
     },
     jsendSuccess: function(data) {
-      console.log('success: ' + JSON.stringify(data));
       parentIds = data;
     }
   });
