@@ -821,7 +821,7 @@
     <Content Include="Content\QP8\icons\16x16\visual_editor_plugins.gif" />
     <Content Include="Content\QP8\icons\16x16\visual_editor_style.gif" />
     <Content Include="Content\QP8\icons\16x16\visual_editor_styles.gif" />
-    <Content Include="Content\version.6.4.css" />
+    <Content Include="Content\version.6.5.css" />
     <Content Include="gulpfile.js" />
     <Content Include="Content\ckeditor\CHANGES.md" />
     <Content Include="Content\ckeditor\LICENSE.md" />
@@ -926,7 +926,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\globalSettings.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
-    <Content Include="Scripts\Quantumart\version.6.26.js" />
+    <Content Include="Scripts\Quantumart\version.6.27.js" />
     <Content Include="Scripts\Silverlight.min.js" />
     <Content Include="Scripts\SilverlightUpload.min.js" />
     <Content Include="Scripts\underscore.min.js" />

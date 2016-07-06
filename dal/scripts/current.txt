@@ -1,5 +1,6 @@
 MultipleUpdate
 OptimizeHierarchy
 VeButtons
+HierarchyContextMenu
 
 
