@@ -2601,3 +2601,9 @@ span.mapped
     color:#0066d5;
 }
 /*#endregion*/
+
+
+/* Context (RClick) menu */
+ul.contextMenu, ul.contextMenu ul {
+  z-index: 99999;
+}
