@@ -13,7 +13,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 {
     public class ArticleListViewModel : ListViewModel
     {
-        
 		public DataTable Data { get; set; }
 
         public string ContentName { get; set; }
@@ -30,7 +29,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
 		public IEnumerable<BLL.Field> DisplayFields { get; set; }
 
-        public string GetDataActionName 
+        public string GetDataActionName
         {
             get
             {
@@ -42,8 +41,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
                 return ShowArchive ? "_ArchiveIndex" : "_Index";
             }
         }
-
-        #region creation
 
         public ArticleListViewModel()
         {
@@ -59,7 +56,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 			var model = Create<ArticleListViewModel>(tabId, parentEntityId);
             model.ContentId = parentEntityId;
 			model.Init(result);
-
 			return model;
         }
 
@@ -69,8 +65,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 			model.AllowMultipleEntitySelection = allowMultipleEntitySelection;
             model.IsSelect = isSelect;
 			model.SelectedIDs = ids;
-
-			return model;
+            return model;
         }
 
 		public void Init(ArticleResultBase result)
@@ -81,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 			ShowAddNewItemButton = result.IsUpdatable && result.IsAddNewAccessable && !IsWindow && !result.ContentDisableChangingActions;
 
 			var listResult = result as ArticleInitListResult;
-			if (listResult != null) 
+			if (listResult != null)
 			{
 				TitleFieldName = listResult.TitleFieldName;
 				PageSize = listResult.PageSize;
@@ -89,18 +84,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 			}
 
 			var treeResult = result as ArticleInitTreeResult;
-			if (treeResult != null) 
+			if (treeResult != null)
 			{
 				IsTree = true;
 				CustomFilter = treeResult.Filter;
 				AutoCheckChildren = treeResult.AutoCheckChildren;
-			}			
+			}
 		}
 
-        #endregion
-
         #region overrides
-
         public override bool IsReadOnly
         {
             get
@@ -114,9 +106,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             get
             {
                 if (ShowArchive)
+                {
                     return C.EntityTypeCode.ArchiveArticle;
+                }
+
                 if (IsVirtual)
+                {
                     return C.EntityTypeCode.VirtualArticle;
+                }
+
                 return C.EntityTypeCode.Article;
             }
         }
@@ -126,9 +124,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             get
             {
                 if (ShowArchive)
+                {
                     return C.ActionCode.ArchiveArticles;
+                }
+
                 if (IsVirtual)
+                {
                     return C.ActionCode.VirtualArticles;
+                }
+
                 return C.ActionCode.Articles;
             }
         }
@@ -169,8 +173,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 		{
 			get
 			{
-				return SqlFilterComposer.Compose(CustomFilter, String.Format("c.archive = {0}", Convert.ToInt32(ShowArchive)));
-			}
+                var filter = string.Format("c.archive = {0}", Convert.ToInt32(ShowArchive));
+                return CustomFilter.Contains(filter) ? CustomFilter : SqlFilterComposer.Compose(CustomFilter, filter);
+            }
 		}
 
 		public override ExpandoObject MainComponentOptions
@@ -203,6 +208,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 				{
 					result.AddCssClass(HtmlHelpersExtensions.CHECK_BOX_TREE_CLASS_NAME);
 				}
+
 				return result;
 			}
 		}

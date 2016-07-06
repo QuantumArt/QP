@@ -140,7 +140,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 
         /// <summary>
-        /// Проверяет существование сущности 
+        /// Проверяет существование сущности
         /// </summary>
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
@@ -215,7 +215,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         /// <summary>
         /// Получить словари
-        /// </summary>		
+        /// </summary>
         internal static IEnumerable<DataRow> GetTranslations()
         {
             using (var scope = new QPConnectionScope())
@@ -225,7 +225,7 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         /// <summary>
-        /// Возвращает цепочку родительских сущностей 
+        /// Возвращает цепочку родительских сущностей
         /// </summary>
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>

@@ -32,6 +32,12 @@ namespace Quantumart.QP8.BLL.Factories
                     var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
                     var hasFilterSearchParams = !string.IsNullOrEmpty(filterQuery) || (linkedFilters != null && linkedFilters.Any());
 
+<<<<<<< Updated upstream
+                    var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
+                    var hasFilterSearchParams = !string.IsNullOrEmpty(filterQuery) || (linkedFilters != null && linkedFilters.Any());
+
+=======
+>>>>>>> Stashed changes
                     return hasFtsSearchParams || hasFilterSearchParams
                         ? new ArticleFtsProcessor(contentId, commonFilter, filterQuery, linkedFilters, contextQuery, filterSqlParams, extensionContentIds, ftsOptions)
                         : new ArticleSimpleProcessor(contentId, entityId, commonFilter, entityTypeCode, selectItemIDs) as ITreeProcessor;

@@ -466,6 +466,24 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expand childs.
+        /// </summary>
+        public static string ExpandChilds {
+            get {
+                return ResourceManager.GetString("ExpandChilds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expand parents.
+        /// </summary>
+        public static string ExpandParents {
+            get {
+                return ResourceManager.GetString("ExpandParents", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Field &apos;{0}&apos; is not found in the content (Id = {1}).
         /// </summary>
         public static string FieldNotFound {

@@ -61,7 +61,7 @@ namespace Quantumart.QP8.BLL.Repository
 				nodesList = MappersRepository.TreeNodeMapper.GetBizList(
 						Common.GetChildTreeNodeList(scope.DbConnection, userId, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId).ToList());
 			}
-			
+
 
             if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder)
             {
@@ -81,7 +81,7 @@ namespace Quantumart.QP8.BLL.Repository
 						nodesList = nodesList.Where(c => !chdIDs.Contains(c.Id)).ToArray();
 					}
 				}
-				
+
 				if (nodesList.Any())
 				{
 					TreeNode firstNode = nodesList.First();

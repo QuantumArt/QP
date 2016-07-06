@@ -2,7 +2,11 @@
 <configuration>
 	<app_vars>
 		<app_var app_var_name="TempDirectory">C:\Temp\</app_var>
+<<<<<<< HEAD
+		<app_var app_var_name="SqlMetalPath">C:\exchange\sqlmetal\sqlmetal.exe</app_var>
+=======
 		<app_var app_var_name="SqlMetalPath">C:\QA\sqlmetal.exe</app_var>
+>>>>>>> master
 		<app_var app_var_name="MailHost">exchange</app_var>
 		<app_var app_var_name="MailLogin"></app_var>
 		<app_var app_var_name="MailPassword"></app_var>
@@ -14,12 +18,20 @@
 		<app_var app_var_name="Debug_Mode">no</app_var>
 		<app_var app_var_name="allow_stage_edit_without_SSL">yes</app_var>
 		<app_var app_var_name="UseScheduleService">yes</app_var>
+<<<<<<< HEAD
+		<app_var app_var_name="AllowSelectCustomerCode">yes</app_var>
+=======
 		<app_var app_var_name="AllowSelectCustomerCode">yes</app_var>		
+>>>>>>> master
 		<app_var app_var_name="ApplicationTitle">Local QP8 (release {release})</app_var>
 	</app_vars>
 	<customers>
 		<customer customer_name="publishing">
+<<<<<<< HEAD
+			<db>Provider=Initial Catalog=publishing;Data Source=dbserver;Workstation ID=webserver;User ID=login;Password=password</db>
+=======
 			<db>Initial Catalog=publishing;Data Source=dbserver;Workstation ID=webserver;User ID=login;Password=password</db>
+>>>>>>> master
 		</customer>
 	</customers>
 </configuration>

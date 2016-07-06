@@ -1,6 +1,7 @@
 ﻿using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Content;
@@ -15,7 +16,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     /// <summary>
     /// Контроллер для блока поиска по Article
-    /// </summary>    
+    /// </summary>
     public class ArticleSearchBlockController : QPController
     {
         private readonly IArticleSearchService _articleSearchService;
@@ -42,7 +43,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var fieldList = _articleSearchService.GetFullTextSearchableFieldGroups(parentEntityId);
             if (!fieldList.Any())
             {
-                return JsonEmpty();
+                return new JsonNetResult<object>(new { success = true, view = string.Empty });
             }
 
             ViewBag.SearchableFieldList = fieldList;
@@ -223,14 +224,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var field = _articleSearchService.GetFieldByID(fieldID);
             if (field == null)
             {
-                return JsonEmpty();
+                return new JsonNetResult<object>(new { success = true, view = string.Empty });
             }
 
-            ViewBag.ItemList = IDs.Length > 0
-                ? _articleSearchService.GetSimpleList(field, IDs)
-                : Enumerable.Empty<ListItem>();
-
+            ViewBag.ItemList = IDs.Length > 0 ? _articleSearchService.GetSimpleList(field, IDs) : Enumerable.Empty<ListItem>();
             ViewBag.Field = field;
+            ViewBag.HasRelatedHierarchyContent = field.RelatedToContent != null && field.RelatedToContent.Fields.Any(f => f.UseForTree);
+
             return JsonHtml("RelationSearch", null);
         }
 
