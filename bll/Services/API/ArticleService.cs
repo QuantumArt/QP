@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL;
+﻿using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Services.API.Models;
-using Quantumart.QP8.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
     public class ArticleService : ServiceBase
     {
         public ArticleService(string connectionString, int userId) : base(connectionString, userId)
-        {
-
-        }
+        { }
 
         public ArticleService(int userId) : base(userId)
         {
@@ -43,6 +38,7 @@ namespace Quantumart.QP8.BLL.Services.API
                     article.LoadFieldValues();
                     article.LoadAggregatedArticles();
                 }
+
                 return article;
             }
         }
@@ -52,7 +48,6 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 var content = ContentRepository.GetById(contentId);
-
                 if (content == null)
                 {
                     return null;
@@ -74,9 +69,13 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 if (ids == null)
+                {
                     return ArticleRepository.GetList(contentId);
+                }
                 else
+                {
                     return ArticleRepository.GetList(ids, true);
+                }
             }
         }
 
@@ -118,7 +117,10 @@ namespace Quantumart.QP8.BLL.Services.API
             {
                 var result = Copy(article);
                 if (result.Message.Type == ActionMessageType.Error)
+                {
                     throw new ApplicationException(result.Message.Text);
+                }
+
                 return Read(result.Id);
             }
         }
@@ -153,9 +155,14 @@ namespace Quantumart.QP8.BLL.Services.API
                 QPContext.CurrentUserId = TestedUserId;
                 Article articleToRemove = ArticleRepository.GetById(articleId);
                 if (articleToRemove == null)
-                    throw new ApplicationException(String.Format(ArticleStrings.ArticleNotFound, articleId));
+                {
+                    throw new ApplicationException(string.Format(ArticleStrings.ArticleNotFound, articleId));
+                }
                 else
-                    result = BLL.Services.ArticleService.Remove(articleToRemove.ContentId, articleId, false, true, false);
+                {
+                    result = Services.ArticleService.Remove(articleToRemove.ContentId, articleId, false, true, false);
+                }
+
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -189,9 +196,14 @@ namespace Quantumart.QP8.BLL.Services.API
                 QPContext.CurrentUserId = TestedUserId;
                 MessageResult result;
                 if (flag)
-                    result = BLL.Services.ArticleService.MoveToArchive(contentId, articleIds, true, false);
+                {
+                    result = Services.ArticleService.MoveToArchive(contentId, articleIds, true, false);
+                }
                 else
-                    result = BLL.Services.ArticleService.RestoreFromArchive(contentId, articleIds, true, false);
+                {
+                    result = Services.ArticleService.RestoreFromArchive(contentId, articleIds, true, false);
+                }
+
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -206,7 +218,7 @@ namespace Quantumart.QP8.BLL.Services.API
                 QPContext.CurrentUserId = 0;
             }
         }
-        
+
         public MessageResult Publish(int contentId, int[] articleIds)
         {
             using (new QPConnectionScope(ConnectionString))
@@ -278,8 +290,7 @@ namespace Quantumart.QP8.BLL.Services.API
             {
                 Id = article.Id,
                 ContentId = article.ContentId,
-                Fields = article.FieldValues
-                .Select(fv => new FieldData
+                Fields = article.FieldValues.Select(fv => new FieldData
                 {
                     Id = fv.Field.Id,
                     Value = fv.Field.TypeInfo.FormatFieldValue(fv.Value),
@@ -300,7 +311,8 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                return ArticleRepository.GetParentIds(ids, fieldId);
+                var treeField = FieldRepository.GetById(fieldId);
+                return ArticleRepository.GetParentIds(ids, treeField.Id, treeField.Name);
             }
         }
     }

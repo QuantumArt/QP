@@ -16,12 +16,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
 		public ActionAuthorizeAttribute(string actionCode)
 		{
-			_actionCode = actionCode;			
-		}					
+			_actionCode = actionCode;
+		}
 
 		#region IAuthorizationFilter Members
 		public void OnAuthorization(AuthorizationContext filterContext)
-		{			
+		{
 			var identity = filterContext.HttpContext.User.Identity as QPIdentity;
 		    if (identity == null || !identity.IsAuthenticated)
 		    {
@@ -34,6 +34,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 		        throw new SecurityException(string.Format(GlobalStrings.ActionIsNotAccessible, action.Name));
 		    }
 		}
-		#endregion		
+		#endregion
 	}
 }

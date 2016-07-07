@@ -720,21 +720,25 @@ namespace Quantumart.QP8.BLL
 
         public IEnumerable<Field> Fields
         {
-
             get
             {
                 if (_Fields == null)
                 {
-                    if (this.IsNew)
+                    if (IsNew)
+                    {
                         _Fields = Enumerable.Empty<Field>();
+                    }
                     else
-                        _Fields = FieldRepository.GetFullList(this.Id);
+                    {
+                        _Fields = FieldRepository.GetFullList(Id);
+                    }
 
-                    foreach (Field current in _Fields)
+                    foreach (var current in _Fields)
                     {
                         current.Content = this;
                     }
                 }
+
                 return _Fields;
             }
         }

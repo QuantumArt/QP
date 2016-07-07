@@ -26,13 +26,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
     {
         internal static Article GetById(int id)
         {
-            var article = MappersRepository.ArticleMapper.GetBizObject(
-                QPContext.EFContext.ArticleSet
-                    .Include("Status")
-                    .Include("Content")
-                    .Include("LastModifiedByUser")
-                    .Include("LockedByUser")
-                    .SingleOrDefault(n => n.Id == id)
+            var article = MappersRepository.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
+                .Include("Status")
+                .Include("Content")
+                .Include("LastModifiedByUser")
+                .Include("LockedByUser")
+                .SingleOrDefault(n => n.Id == id)
             );
 
             return article;
@@ -201,7 +200,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                IEnumerable<Article> result = new List<Article>();
+                var result = new List<Article>().AsEnumerable();
                 if (ids != null && ids.Any())
                 {
                     var contentId = (int)Common.GetContentIdForArticle(QPConnectionScope.Current.DbConnection, ids.First());
@@ -260,7 +259,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     article.Status = statuses[article.StatusTypeId];
                     article.LastModifiedByUser = users[article.LastModifiedBy];
                     if (article.LockedBy != 0)
+                    {
                         article.LockedByUser = users[article.LockedBy];
+                    }
                 }
 
                 if (loadFieldValues)
@@ -283,9 +284,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (var scope = new QPConnectionScope())
             {
-                return MappersRepository.ArticleListItemRowMapper
-                    .GetBizList(Common.GetLockedArticlesList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords)
-                    );
+                return MappersRepository.ArticleListItemRowMapper.GetBizList(Common.GetLockedArticlesList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
             }
         }
 
@@ -301,9 +300,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (var scope = new QPConnectionScope())
             {
-                return MappersRepository.ArticleListItemRowMapper
-                    .GetBizList(Common.GetArticlesWaitingForApproval(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords)
-                    );
+                return MappersRepository.ArticleListItemRowMapper.GetBizList(Common.GetArticlesWaitingForApproval(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
             }
         }
 
@@ -391,17 +388,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return SqlFilterComposer.Compose(contextQueryParams.Select(q => string.Format(string.IsNullOrEmpty(q.Value) ? "c.[{0}] IS NULL" : "c.[{0}] = {1}", fields.Single(n => n.Id == q.FieldId).Name, q.Value)));
         }
 
-        /// <summary>
-        /// Возвращает упрощенный список статей
-        /// </summary>
-        /// <param name="contentId">идентификатор контента</param>
-        /// <param name="articleId">идентификатор статьи, в котором используется данный список</param>
-        /// <param name="fieldId">идентификатор поля, в котором выводится данный список</param>
-        /// <param name="selectionMode">режим выделения списка</param>
-        /// <param name="selectedArticleIDs">идентификаторы выбранных статей</param>
-        /// <param name="filter"></param>
-        /// <param name="testArticleId"></param>
-        /// <returns>упрощенный список статей</returns>
         internal static List<ListItem> GetSimpleList(int contentId, int? articleId, int? fieldId, ListSelectionMode selectionMode, int[] selectedArticleIDs, string filter, int testArticleId)
         {
             using (var scope = new QPConnectionScope())
@@ -417,9 +403,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var selection = new HashSet<int>(selectedArticleIDs ?? new int[] { });
                 if (field != null && testArticleId != 0 && articleId.HasValue && (field.ExactType == FieldExactTypes.M2MRelation || field.ExactType == FieldExactTypes.M2ORelation))
                 {
-                    var testResult = field.ExactType == FieldExactTypes.M2MRelation && field.LinkId.HasValue ?
-                        Common.TestM2MValue(scope.DbConnection, field.LinkId.Value, articleId.Value, testArticleId) :
-                        Common.TestM2OValue(scope.DbConnection, field.BackRelation.ContentId, field.BackRelation.Name, articleId.Value, testArticleId);
+                    var testResult = field.ExactType == FieldExactTypes.M2MRelation && field.LinkId.HasValue
+                        ? Common.TestM2MValue(scope.DbConnection, field.LinkId.Value, articleId.Value, testArticleId)
+                        : Common.TestM2OValue(scope.DbConnection, field.BackRelation.ContentId, field.BackRelation.Name, articleId.Value, testArticleId);
 
                     if (testResult)
                     {
@@ -470,7 +456,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 var searchFilterQuery = GetSearchFiltersQuery(commonFilter, treeField, filterQuery, linkedFilters, contextQuery, filterSqlParams, ftsOptions.SearchResultLimit);
                 var searchIds = Common.GetFilterAndFtsSearchResult(scope.DbConnection, treeField.ContentId, extensionContentIds, ftsOptions, searchFilterQuery, filterSqlParams).ToList();
-                var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id);
+                var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id, treeField.Name);
                 var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField).ToList();
 
                 var treeItemsDict = treeItems.ToDictionary(kv => kv.Id);
@@ -1389,16 +1375,19 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static IList<int> GetParentIds(int id, int fieldId)
-        {
-            return GetParentIds(new[] { id }, fieldId);
-        }
-
-        internal static IList<int> GetParentIds(IList<int> ids, int fieldId)
+        internal static IList<int> GetParentIds(IList<int> ids, int fieldId, string fieldName)
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetParentIdsTreeResult(scope.DbConnection, ids, fieldId);
+                return Common.GetParentIdsTreeResult(scope.DbConnection, ids, fieldId, fieldName);
+            }
+        }
+
+        internal static IList<int> GetChildArticles(IList<int> ids, string fieldName, int contentId, string filter)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetChildArticles(scope.DbConnection, ids, fieldName, contentId, filter);
             }
         }
 

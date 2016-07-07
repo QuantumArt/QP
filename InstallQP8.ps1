@@ -6,6 +6,18 @@ If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     Break
 }
 
+function Give-Access ([String] $name, [String] $path, [String] $permission)
+{
+    Write-Host "Giving '$name' '$permission' permissions to '$path'"
+
+    $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("$name", "$permission", 'ContainerInherit,ObjectInherit', 'None', 'Allow')
+    $Acl = (Get-Item $path).GetAccessControl('Access')
+    $Acl.SetAccessRule($Ar)
+    Set-Acl -path $path -AclObject $Acl
+
+    Write-Host "Done"
+}
+
 Import-Module WebAdministration
 
 $defaultName = "QP8"
@@ -43,16 +55,64 @@ if (!$p) {
     Write-Host "Done"
 }
 
+$defaultcurrentPath = split-path -parent $MyInvocation.MyCommand.Definition
 
-Write-Host "Creating site, applications and virtual directories..."
+$BackendZipPath = Join-Path $defaultcurrentPath "Backend.zip"
+$WinlogonZipPath = Join-Path $defaultcurrentPath "WinLogon.zip"
+$pluginsZipPath = Join-Path $defaultcurrentPath "plugins.zip"
+$sitesZipPath = Join-Path $defaultcurrentPath "sites.zip"
+$qaZipPath = Join-Path $defaultcurrentPath "qa.zip"
 
-$currentPath = split-path -parent $MyInvocation.MyCommand.Definition
+if (Test-Path($BackendZipPath))
+{
+    $def = Get-Item "IIS:\sites\Default Web Site" -ErrorAction SilentlyContinue
+    if ($def)
+    {
+        $siteRoot = $def.PhysicalPath -replace "%SystemDrive%",$env:SystemDrive
+        $currentPath = Join-Path $siteRoot $name
+    }
+    else
+    {
+        $currentPath = Read-Host "Please enter path to install QP8 (default - $defaultcurrentPath)"
+        if ([string]::IsNullOrEmpty($currentPath)) { $currentPath = $defaultcurrentPath }
+    }
+    
+    if (-not(Test-Path($currentPath))) { New-Item $currentPath -ItemType Directory }
+}
+
+else
+{
+    $currentPath = $defaultcurrentPath
+}
+
 $rootPath = Join-Path $currentPath "sites"
 $pluginsPath = Join-Path $currentPath "plugins"
 $BackendPath = Join-Path $currentPath "siteMvc"
+$qaPath = Join-Path $currentPath "QA"
 $WinlogonPath = Join-Path $currentPath "WinLogonMvc"
 $contentPath = Join-Path $BackendPath "Content"
 $scriptsPath = Join-Path $BackendPath "Scripts"
+
+
+if (Test-Path($BackendZipPath))
+{
+    Write-Host "Zip files found. Unpacking..."
+    if (-not(Test-Path($BackendPath))) { New-Item $BackendPath -ItemType Directory}
+    if (-not(Test-Path($WinlogonPath))) { New-Item $WinlogonPath -ItemType Directory}
+    if (-not(Test-Path($pluginsPath))) { New-Item $pluginsPath -ItemType Directory}
+    if (-not(Test-Path($rootPath))) { New-Item $rootPath -ItemType Directory}
+    if (-not(Test-Path($qaPath))) { New-Item $qaPath -ItemType Directory}
+
+    Invoke-Expression "7za.exe x -r -y -o""$BackendPath"" ""$BackendZipPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$WinlogonPath"" ""$WinlogonZipPath"""
+    if ((Test-Path($pluginsZipPath))) { Invoke-Expression "7za.exe x -r -y -o""$pluginsPath"" ""$pluginsZipPath""" }
+    Invoke-Expression "7za.exe x -r -y -o""$rootPath"" ""$sitesZipPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$qaPath"" ""$qaZipPath"""
+}
+
+Give-Access "IIS AppPool\$name" $currentPath 'ReadAndExecute'
+
+Write-Host "Creating site, applications and virtual directories..."
 
 $s = New-Item "IIS:\sites\$name" -bindings @{protocol="http";bindingInformation="*:${port}:"} -physicalPath $rootPath -type Site
 $s | Set-ItemProperty -Name applicationPool -Value $name
@@ -80,16 +140,21 @@ Invoke-Expression "$env:SystemRoot\system32\inetsrv\APPCMD unlock config /sectio
 Write-Host "Done"
 
 
+$defaultConfigDir = "C:\QA"
+$configDir = Read-Host "Please enter configuration directory (default - $defaultConfigDir)"
+if ([string]::IsNullOrEmpty($configDir))
+{
+    $configDir = $defaultConfigDir
+}
 
 Write-Host "Creating configuration directory..."
 
-$configDir = "C:\QA"
 $tempDir = "C:\temp"
 $logDir = "C:\logs"
 $configPath = Join-Path $configDir "config.xml"
 $psPath = Join-Path $configDir "AddToRegistry.ps1"
-$sourceConfigPath = Join-Path $currentPath "QA\sample_config.xml"
-$sourcePsPath = Join-Path $currentPath "QA\AddToRegistry.ps1"
+$sourceConfigPath = Join-Path $qaPath "sample_config.xml"
+$sourcePsPath = Join-Path $qaPath "AddToRegistry.ps1"
 
 if (-not(Test-Path $configDir -PathType Container))
 {
@@ -108,6 +173,8 @@ if (-not(Test-Path $psPath -PathType Leaf))
     Copy-Item $sourcePsPath $psPath
     Invoke-Expression "attrib -r ""$psPath"""
 }
+
+Give-Access "IIS AppPool\$name" $configDir 'ReadAndExecute'
 
 $sdk1path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6 Tools"
 $sdk2path = "C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools"
@@ -131,48 +198,37 @@ Write-Host "Done"
 
 $Ar = New-Object System.Security.AccessControl.FileSystemAccessRule('Everyone', 'Modify', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
 
-
-Write-Host "Creating temporary directory..."
-
 if (-not(Test-Path $tempDir -PathType Container))
 {
-    New-Item $tempDir -ItemType Directory 
+    Write-Host "Creating temporary directory..."
+    
+    New-Item $tempDir -ItemType Directory
+
+    Give-Access 'Everyone' $tempDir 'Modify'
 }
 
-$Acl = (Get-Item $tempDir).GetAccessControl('Access')
-$Acl.SetAccessRule($Ar)
-Set-Acl -path $tempDir -AclObject $Acl
-
-Write-Host "Done"
-
-
-Write-Host "Creating directory for logs..."
 
 if (-not(Test-Path $logDir -PathType Container))
 {
-    New-Item $logDir -ItemType Directory 
+    Write-Host "Creating directory for logs..."
+
+    New-Item $logDir -ItemType Directory
+    
+    Give-Access 'Everyone' $logDir 'Modify'
 }
 
-$Acl = (Get-Item $logDir).GetAccessControl('Access')
-$Acl.SetAccessRule($Ar)
-Set-Acl -path $logDir -AclObject $Acl
 
-Write-Host "Done"
+Import-Module WebAdministration
+
+$siteRoot = "c:\inetpub\wwwroot"
+$def = Get-Item "IIS:\sites\Default Web Site" -ErrorAction SilentlyContinue
+if ($def) { $siteRoot = $def.PhysicalPath -replace "%SystemDrive%",$env:SystemDrive }
 
 
-$defaultSiteRoot = "c:\inetpub\wwwroot"
-$siteRoot = Read-Host "Please enter site root to give access (default - $defaultSiteRoot)"
-if ([string]::IsNullOrEmpty($siteRoot))
+if (Test-Path $siteRoot)
 {
-    $siteRoot = $defaultSiteRoot
+    Give-Access "IIS AppPool\$name" $siteRoot 'Modify'
 }
 
 
-Write-Host "Giving 'IIS AppPool\$name' user access to '$siteRoot'"
 
-$Ar = New-Object System.Security.AccessControl.FileSystemAccessRule("IIS AppPool\$name", 'Modify', 'ContainerInherit,ObjectInherit', 'None', 'Allow')
-$Acl = (Get-Item $siteRoot).GetAccessControl('Access')
-$Acl.SetAccessRule($Ar)
-Set-Acl -path $siteRoot -AclObject $Acl
-
-Write-Host "Done"

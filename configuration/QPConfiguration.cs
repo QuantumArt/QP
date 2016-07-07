@@ -51,7 +51,7 @@ namespace Quantumart.QP8.Configuration
         }
 
         /// <summary>
-        /// Получение всех строк подключения к БД из QP конфига 
+        /// Получение всех строк подключения к БД из QP конфига
         /// </summary>
         /// <param name="customerCode">код клиента</param>
         /// <returns>строка подключения</returns>
@@ -103,13 +103,11 @@ namespace Quantumart.QP8.Configuration
 
         public static string ADsFieldName => ConfigVariable(Config.ADsFieldNameKey).ToLowerInvariant();
 
-        private static readonly Lazy<XDocument> _XmlConfig = new Lazy<XDocument>(() => XDocument.Load(XmlConfigPath));
-
         /// <summary>
         /// Конфигурационный файл QP
         /// </summary>
-        public static XDocument XmlConfig => _XmlConfig.Value;
-
+        public static XDocument XmlConfig => XDocument.Load(XmlConfigPath);
+    
         /// <summary>
         /// Путь к конфигурационному файлу в реестре
         /// </summary>

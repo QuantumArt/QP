@@ -57,9 +57,6 @@ Quantumart.QP8.BackendDocumentContext = function(params, options) {
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype = {
-  test: function() {
-    return this;
-  },
   _hostId: '',
   _isWindow: false,
   _entityId: 0,

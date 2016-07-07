@@ -591,4 +591,10 @@
   <data name="SearchBlock_FullTextBlockSearchResultLimitTitle" xml:space="preserve">
     <value>Лимит поиска</value>
   </data>
+  <data name="ExpandChilds" xml:space="preserve">
+    <value>Расширить вниз</value>
+  </data>
+  <data name="ExpandParents" xml:space="preserve">
+    <value>Расширить вверх</value>
+  </data>
 </root>

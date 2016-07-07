@@ -29,3 +29,5 @@ exec qp_update_translations 'Format Selection', 'Форматировать вы
 exec qp_update_translations 'Comment Selection', 'Комментировать выбранное'
 exec qp_update_translations 'Uncomment Selection', 'Раскомментировать выбранное'
 exec qp_update_translations 'Enable\Disable HTML Tag Autocomplete', 'Включить/Выключить автозавершение HTML-тегов'
+
+GO

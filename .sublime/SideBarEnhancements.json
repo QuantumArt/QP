@@ -1,0 +1,6 @@
+{
+  "": {
+    "url_testing": "http://localhost:90/Backend",
+    "url_production": "http://mscdev02:90/Backend"
+  }
+}

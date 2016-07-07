@@ -34,7 +34,7 @@
       contentsLanguage: opts.language || defaultConfig.language,
       disableNativeSpellChecker: true,
       skin: 'moonocolor',
-      disallowedContent: 'script; *[on*]',
+      disallowedContent: '',
       allowedContent: {
         $1: {
           elements: CKEDITOR.dtd,
@@ -179,8 +179,7 @@
       var self = this;
       var $editorLink;
       $(this._componentElem).data(Quantumart.QP8.BackendVisualEditor.DATA_KEY_COMPONENT, this);
-      this._onChangeVisualEditorDataInDesignModeHandlerProxy =
-        this._onChangeVisualEditorDataInDesignModeHandler.bind(this);
+      this._onChangeVisualEditorDataInDesignModeHandlerProxy = this._onChangeVisualEditorDataInDesignModeHandler.bind(this);
 
       this._$expandLink = $('.visualEditorToolbar LI.expand', this._componentElem);
       this._$collapseLink = $('.visualEditorToolbar LI.collapse', this._componentElem);

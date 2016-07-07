@@ -12,9 +12,8 @@ namespace Quantumart.QP8.BLL.Factories
     internal static class ArticleTreeFactory
     {
         /// <summary>
-        /// Фабрика для деревьев
+        /// Фабрика для запроса на отображение дерева в QP
         /// </summary>
-        /// <returns>список дочерних сущностей</returns>
         internal static ITreeProcessor Create(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string commonFilter, string selectItemIDs, IEnumerable<ArticleSearchQueryParam> searchQuery, IEnumerable<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser)
         {
             using (new QPConnectionScope())
@@ -25,22 +24,17 @@ namespace Quantumart.QP8.BLL.Factories
                     int[] extensionContentIds;
                     ContentReference[] contentReferences;
                     ArticleFullTextSearchParameter ftsOptions;
-                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery,
-                        ftsParser, out ftsOptions, out extensionContentIds, out contentReferences);
+                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out ftsOptions, out extensionContentIds, out contentReferences);
 
                     var filterSqlParams = new List<SqlParameter>();
                     var filterQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
                     var linkedFilters = ArticleRepository.GetLinkSearchParameter(searchQuery);
+                    var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
+                    var hasFilterSearchParams = !string.IsNullOrEmpty(filterQuery) || (linkedFilters != null && linkedFilters.Any());
 
-                    var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) &&
-                                             !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
-                    var hasFilterSearchParams = !string.IsNullOrEmpty(filterQuery) ||
-                                                (linkedFilters != null && linkedFilters.Any());
                     return hasFtsSearchParams || hasFilterSearchParams
-                        ? new ArticleFtsProcessor(contentId, commonFilter, filterQuery, linkedFilters, contextQuery,
-                            filterSqlParams, extensionContentIds, ftsOptions)
-                        : new ArticleSimpleProcessor(contentId, entityId, commonFilter, entityTypeCode, selectItemIDs)
-                            as ITreeProcessor;
+                        ? new ArticleFtsProcessor(contentId, commonFilter, filterQuery, linkedFilters, contextQuery, filterSqlParams, extensionContentIds, ftsOptions)
+                        : new ArticleSimpleProcessor(contentId, entityId, commonFilter, entityTypeCode, selectItemIDs) as ITreeProcessor;
                 }
 
                 if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder)

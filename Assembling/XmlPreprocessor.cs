@@ -332,6 +332,7 @@ namespace Assembling
             contentField.SetAttributeValue("id", GetFieldId(field));
             var fieldType = GetFieldType(field);
             contentField.SetAttributeValue("type", fieldType);
+            contentField.SetAttributeValue("is_localization", (bool)field["IS_LOCALIZATION"]);
 
             if ("String" == fieldType || "Numeric" == fieldType)
             {
@@ -374,11 +375,11 @@ namespace Assembling
                 {
                     if (relId != 0)
                         contentField.SetAttributeValue("link_id", GetFieldLinkId(field));
+                    contentField.SetAttributeValue("use_separate_reverse_views", (bool)field["USE_SEPARATE_REVERSE_VIEWS"]);
                 }
                 else if ("O2M" == fieldType)
                 {
                     contentField.SetAttributeValue("has_m2o", GetRelatedM2OId(field).HasValue.ToString().ToLowerInvariant());
-
                     if (contentField.Attribute("mapped_back_name") == null)
                         if (contentField.Parent != null)
                             contentField.SetAttributeValue("mapped_back_name", contentField.Parent.Attribute("plural_mapped_name")?.Value);

@@ -16,14 +16,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public bool IsViewChangable { get; protected set; }
 
-		#region creation
 		public ViewModel()
 		{
 			IsVirtual = false;
 			IsViewChangable = true;
 			HostUID = Guid.NewGuid().ToString();
 		}
-		
+
 		public static T Create<T>(string tabId, int parentId) where T : ViewModel, new()
 		{
 		    var model = new T
@@ -34,7 +33,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
 		    return model;
 		}
-		#endregion
 
         #region read-only members
 		public abstract string EntityTypeCode { get; }
@@ -45,14 +43,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
 		public abstract string MainComponentId { get; }
 
-		public virtual C.DocumentContextState DocumentContextState 
+		public virtual C.DocumentContextState DocumentContextState
 		{
-			get { return C.DocumentContextState.None; } 
+			get { return C.DocumentContextState.None; }
 		}
 
 		public virtual ExpandoObject MainComponentParameters
 		{
-			get 
+			get
 			{
 				dynamic result = new ExpandoObject();
 				result.hostId = DocumentHostId;
@@ -68,11 +66,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 			}
 		}
 
-		public virtual ExpandoObject MainComponentOptions 
+		public virtual ExpandoObject MainComponentOptions
 		{
 			get { return new ExpandoObject();  }
 		}
-		
+
 		public string AddNewItemLinkId
         {
             get

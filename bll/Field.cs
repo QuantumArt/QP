@@ -607,7 +607,10 @@ namespace Quantumart.QP8.BLL
             get
             {
                 if (RelateToContentId.HasValue)
+                {
                     return ContentRepository.GetById(RelateToContentId.Value);
+                }
+
                 return null;
             }
         }
