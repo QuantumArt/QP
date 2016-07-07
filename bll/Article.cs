@@ -1164,6 +1164,14 @@ namespace Quantumart.QP8.BLL
             notificationRepository.SendNotifications();
         }
 
+        internal void SendNotification(string code, bool disableNotifications)
+        {
+            if (disableNotifications || !Content.HasNotifications(code)) return;
+            var notificationRepository = new NotificationPushRepository() { WaitForNonService = true };
+            notificationRepository.PrepareNotifications(ContentId, new[] { Id }, code);
+            notificationRepository.SendNotifications();
+        }
+
 
         internal bool CheckRelationCondition(string relCondition)
         {
