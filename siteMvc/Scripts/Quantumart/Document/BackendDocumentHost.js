@@ -1298,9 +1298,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   },
 
   onActionToolbarButtonClicked: function(eventType, sender, eventArgs) {
-    var actionCode = this._actionToolbarComponent.getToolbarItemValue(eventArgs.get_value());
-
-    this.executeAction(actionCode);
+    this.executeAction(this._actionToolbarComponent.getToolbarItemValue(eventArgs.get_value()));
   },
 
   onSearchViewToolbarButtonClicked: function() {

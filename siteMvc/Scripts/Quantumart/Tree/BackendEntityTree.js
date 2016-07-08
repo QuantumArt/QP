@@ -1037,11 +1037,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       return false;
     }
 
-    var saveOtherNodesSelection = (this._allowMultipleNodeSelection && e.ctrlKey) || this._treeComponent.showCheckBox === true;
-
+    var saveOtherNodesSelection = this._allowMultipleNodeSelection || this._treeComponent.showCheckBox === true;
     $node.find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_HOVER_CLASS_NAME);
     this.selectNode($node, saveOtherNodesSelection);
-    $node = null;
   },
 
   beforeCustomNodeCheck: function(checkbox, isChecked, suppressAutoCheck, autoCheckChildren) {

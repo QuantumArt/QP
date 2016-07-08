@@ -752,7 +752,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   executeAction: function(row, actionCode, followLink, ctrlKey) {
     var $row = this.getRow(row);
-
     if (!$q.isNullOrEmpty($row)) {
       var action = $a.getBackendActionByCode(actionCode);
       if (!action) {
@@ -1061,7 +1060,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
     var actionCodeForLink = this._actionCodeForLink;
     if (!$q.isNullOrWhiteSpace(actionCodeForLink)) {
-      this.executeAction($row, actionCodeForLink, !(e.ctrlKey || e.shiftKey || isMiddleClick), e.ctrlKey || isMiddleClick);
+      this.executeAction($row, actionCodeForLink, !e.ctrlKey && !e.shiftKey && !isMiddleClick, e.ctrlKey || isMiddleClick);
     } else {
       window.alert('Вы не задали код действия, которое открывает форму редактирования сущности!');
     }
@@ -1069,10 +1068,9 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   _onRowCellClick: function(e) {
     var $target = $(e.target);
-
     if (!$target.is(':button, A, :input, A > .t-icon')) {
       e.stopPropagation();
-      this.selectRow($target.closest('TR'), this._allowMultipleRowSelection && e.ctrlKey);
+      this.selectRow($target.closest('TR'), this._allowMultipleRowSelection);
     }
 
     if (this._contextMenuComponent) {

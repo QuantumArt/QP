@@ -324,7 +324,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   _isSearchQueryEmpty: function() {
-      return true;
+    return true;
   },
 
   refreshTree: function() {
@@ -336,7 +336,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _onNodeClicking: function(e) {
     var $element = $(e.currentTarget);
     var $node = $($element.closest('.t-item')[0]);
-
     if (!this._treeComponent.shouldNavigate($element)) {
       $node = null;
       $element = null;
@@ -358,7 +357,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   expandNode: function(node) {
     var $node = this.getNode(node);
-
     if (!$q.isNullOrEmpty($node)) {
       this._treeComponent.expand($node);
     }
@@ -366,7 +364,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   collapseNode: function(node) {
     var $node = this.getNode(node);
-
     if (!$q.isNullOrEmpty($node)) {
       this._treeComponent.collapse($node);
     }
@@ -374,7 +371,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   removeNodeOrRefreshParent: function(node, parentNode, options) {
     var $node = this.getNode(node);
-
     if ($node) {
       if ($node.siblings().length > 0) {
         this.removeNode($node);

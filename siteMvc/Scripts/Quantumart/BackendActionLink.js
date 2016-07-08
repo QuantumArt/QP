@@ -195,7 +195,6 @@ Quantumart.QP8.BackendActionLink.prototype = {
     var isLeftClick = e.type == "click" && (e.which == 1 || e.which == 0);
     var isMiddleClick = e.type == "mouseup" && e.which == 2;
     if (!this.isActionLinkDisabled() && !this.isActionLinkBusy() && (isLeftClick || isMiddleClick)) {
-      debugger;
       var actionTargetType = this._actionTargetType;
       if (!$q.isNull(actionTargetType)) {
         var actionCode = this._actionCode;
