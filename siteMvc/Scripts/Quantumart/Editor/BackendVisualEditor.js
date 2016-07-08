@@ -34,15 +34,7 @@
       contentsLanguage: opts.language || defaultConfig.language,
       disableNativeSpellChecker: true,
       skin: 'moonocolor',
-      disallowedContent: '',
-      allowedContent: {
-        $1: {
-          elements: CKEDITOR.dtd,
-          attributes: true,
-          styles: true,
-          classes: true
-        }
-      },
+      allowedContent: true,
       codemirror: {
         tabSize: 2,
         indentUnit: 2,
@@ -51,7 +43,6 @@
       },
       fillEmptyBlocks: false,
       forcePasteAsPlainText: true,
-      extraAllowedContent: 'replacement',
       height: opts.height || defaultConfig.height,
       resize_dir: 'both',
       resize_minWidth: 640,
