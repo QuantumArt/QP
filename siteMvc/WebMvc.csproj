@@ -932,7 +932,6 @@
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\_references.min.js" />
     <Content Include="_package.json" />
-    <None Include="Properties\PublishProfiles\abc.pubxml" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Content\QpCodemirror.css" />
     <Content Include="Scripts\es5-shim.js" />
