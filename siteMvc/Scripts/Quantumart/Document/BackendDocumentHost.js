@@ -810,17 +810,18 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       this.onDocumentUnloaded();
       $documentWrapper.data('scroll_position', scrollData);
 
-      if (visible)
-      $documentWrapper.hide();
+      if (visible) {
+        $documentWrapper.hide();
+      }
 
       $documentWrapper.empty().html(data.view);
-
-      if (visible)
-      $documentWrapper.show();
+      if (visible) {
+        $documentWrapper.show();
+      }
 
       this.onDocumentLoaded();
     } else {
-      alert(data.message);
+      window.alert(data.message);
 
       this.onDocumentError();
     }
@@ -997,8 +998,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       this.onEntityReaded(eventArgs);
       if (eventArgs.get_isRestored() && eventArgs.get_entityTypeCode() == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
         var message = String.format($l.EntityEditor.versionSuccessfullyRestoredMessage, eventArgs.get_entityId());
-
-        alert(message);
+        window.alert(message);
       }
     } else if (eventArgs.get_actionTypeCode() == ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE) {
       this.onEntityReaded(eventArgs);

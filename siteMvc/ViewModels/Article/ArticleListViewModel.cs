@@ -71,7 +71,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 		public void Init(ArticleResultBase result)
 		{
 			ContentName = result.ContentName;
-
 			IsVirtual = result.IsVirtual;
 			ShowAddNewItemButton = result.IsUpdatable && result.IsAddNewAccessable && !IsWindow && !result.ContentDisableChangingActions;
 

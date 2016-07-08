@@ -590,6 +590,7 @@ a.html:hover
 	{
 		float: left;
 		margin: 0;
+    /* line-height: 1.5; */
 		padding: 0 0.8em 0 0;
 	}
 	.formLayout div.dataListWrapper div.checkboxsList,
@@ -711,11 +712,6 @@ input[type="text"].readonly, textarea.readonly
 
 /*#region Links*/
 
-.linkButton
-{
-	padding: 0 0 0.1em 0;
-	font-size: 0.95em;
-}
 .linkButton a
 {
 	text-decoration: none;
@@ -1213,16 +1209,18 @@ input[type="text"].readonly, textarea.readonly
 .tabMenuButton span,
 .tabOverflowMenuButton span
 {
-    margin: 3px 0 0 15px;
+  margin: 3px 0 0 15px;
 	padding: 0;
-    display: inline-block;
-    *display: inline;
-    zoom: 1;
-    outline: 0;
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
+  outline: 0;
 	background-color: transparent;
-    background-image: url('QP8/tab_strip/sprite.png');
+  background-image: url('QP8/tab_strip/sprite.png');
 	background-repeat: no-repeat;
 	border: none;
+  width: 14px;
+  height: 14px;
 }
 .tabMenuButton span img,
 .tabOverflowMenuButton span img
@@ -2601,3 +2599,13 @@ span.mapped
     color:#0066d5;
 }
 /*#endregion*/
+
+
+.doctab-title__articles-count-label {
+  float: right !important;
+}
+
+.doctab-title__articles-count-label .selected-articles-count {
+  color: #283C52;
+  font-weight: bold;
+}
