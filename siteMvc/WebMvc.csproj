@@ -1771,9 +1771,9 @@
     <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
-    <Content Include="Views\Web.config">
+    <None Include="Views\Web.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <Content Include="Views\Field\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
     </Content>
