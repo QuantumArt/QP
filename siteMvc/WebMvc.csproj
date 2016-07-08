@@ -207,16 +207,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_GlobalResources\GridLocalization.ru-RU.designer.cs">
-      <DependentUpon>GridLocalization.ru-RU.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="App_GlobalResources\UploadLocalization.ru-RU.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UploadLocalization.ru-RU.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
     <Compile Include="Controllers\ActionLogController.cs" />
     <Compile Include="Controllers\ActionPermissionController.cs" />
@@ -842,8 +832,8 @@
     <Content Include="Content\ckeditor\.jscsrc" />
     <Content Include="Content\ckeditor\.jshintrc" />
     <None Include="packages.config" />
-    <Content Include=".jscsrc" />
-    <Content Include=".jshintrc" />
+    <None Include=".jscsrc" />
+    <None Include=".jshintrc" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\jquery-1.7.1.intellisense.min.js" />
     <Content Include="Scripts\jquery.cookie.min.js" />
@@ -931,7 +921,7 @@
     <Content Include="Scripts\SilverlightUpload.min.js" />
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\_references.min.js" />
-    <Content Include="_package.json" />
+    <None Include="_package.json" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Content\QpCodemirror.css" />
     <Content Include="Scripts\es5-shim.js" />
@@ -1130,9 +1120,6 @@
     <Compile Include="ViewModels\Workflow\WorkflowListViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowSourceListViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowViewModel.cs" />
-    <Compile Include="WebServices\NotificationWCFService.svc.cs">
-      <DependentUpon>NotificationWCFService.svc</DependentUpon>
-    </Compile>
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepBaseSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepCopySiteSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepExportSettings.js" />
@@ -1163,11 +1150,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_GlobalResources\GridLocalization.ru-RU.resx">
-      <SubType>Designer</SubType>
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>GridLocalization.ru-RU.designer.cs</LastGenOutput>
-    </Content>
     <Content Include="Content\basic.css" />
     <Content Include="Content\Common\errors\bug.gif" />
     <Content Include="Content\Common\errors\compass.png" />
@@ -1886,21 +1868,11 @@
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WebServices\NotificationWCFService.svc" />
-    <Content Include="WebServices\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Content\imgareaselectcss\" />
     <Folder Include="Content\Temp\" />
     <Folder Include="ViewModels\Common\" />
     <Folder Include="Views\ContentFolder\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\UploadLocalization.ru-RU.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.ru-RU.designer.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
