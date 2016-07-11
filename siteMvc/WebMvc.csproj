@@ -207,16 +207,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_GlobalResources\GridLocalization.ru-RU.designer.cs">
-      <DependentUpon>GridLocalization.ru-RU.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="App_GlobalResources\UploadLocalization.ru-RU.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UploadLocalization.ru-RU.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
     <Compile Include="Controllers\ActionLogController.cs" />
     <Compile Include="Controllers\ActionPermissionController.cs" />
@@ -842,8 +832,8 @@
     <Content Include="Content\ckeditor\.jscsrc" />
     <Content Include="Content\ckeditor\.jshintrc" />
     <None Include="packages.config" />
-    <Content Include=".jscsrc" />
-    <Content Include=".jshintrc" />
+    <None Include=".jscsrc" />
+    <None Include=".jshintrc" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\jquery-1.7.1.intellisense.min.js" />
     <Content Include="Scripts\jquery.cookie.min.js" />
@@ -926,13 +916,12 @@
     <Content Include="Scripts\Quantumart\ckeditor\globalSettings.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
-    <Content Include="Scripts\Quantumart\version.6.27.js" />
+    <Content Include="Scripts\Quantumart\version.6.28.js" />
     <Content Include="Scripts\Silverlight.min.js" />
     <Content Include="Scripts\SilverlightUpload.min.js" />
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\_references.min.js" />
-    <Content Include="_package.json" />
-    <None Include="Properties\PublishProfiles\abc.pubxml" />
+    <None Include="_package.json" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Content\QpCodemirror.css" />
     <Content Include="Scripts\es5-shim.js" />
@@ -1161,11 +1150,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_GlobalResources\GridLocalization.ru-RU.resx">
-      <SubType>Designer</SubType>
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>GridLocalization.ru-RU.designer.cs</LastGenOutput>
-    </Content>
     <Content Include="Content\basic.css" />
     <Content Include="Content\Common\errors\bug.gif" />
     <Content Include="Content\Common\errors\compass.png" />
@@ -1787,9 +1771,9 @@
     <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.js" />
     <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
-    <Content Include="Views\Web.config">
+    <None Include="Views\Web.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <Content Include="Views\Field\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
     </Content>
@@ -1889,12 +1873,6 @@
     <Folder Include="ViewModels\Common\" />
     <Folder Include="Views\ContentFolder\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\UploadLocalization.ru-RU.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.ru-RU.designer.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
