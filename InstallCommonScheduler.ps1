@@ -5,7 +5,7 @@
     Break
 }
 
-$name = "QP.ArticleScheduler"
+$name = "QP.CommonScheduler"
 $timeout = "00:03:00"
 
 $s = Get-Service $name -ErrorAction SilentlyContinue
@@ -31,7 +31,7 @@ if ($s) {
     Write-Host "Removed"
 }
 
-$defaultInstallRoot = "C:\QA\ArticleScheduler"
+$defaultInstallRoot = "C:\QA\CommonScheduler"
 $installRoot = Read-Host "Please specify folder to install service (default - $defaultInstallRoot)"
 if ([string]::IsNullOrEmpty($installRoot))
 {
@@ -40,11 +40,11 @@ if ([string]::IsNullOrEmpty($installRoot))
 if (-not(Test-Path $installRoot)) { New-Item $installRoot -ItemType Directory }
 
 $currentPath = split-path -parent $MyInvocation.MyCommand.Definition
-$projectName = "Quantumart.QP8.ArticleScheduler.WinService"
+$projectName = "Quantumart.QP8.Scheduler.Service"
 
 $schedulerFolder = Join-Path $currentPath "$projectName\bin\Debug"
 $schedulerPath = Join-Path $schedulerFolder "$projectName.exe"
-$schedulerZipPath = Join-Path $currentPath "ArticleScheduler.zip"
+$schedulerZipPath = Join-Path $currentPath "CommonScheduler.zip"
 
 if ((Test-Path $schedulerZipPath))
 {
@@ -61,11 +61,11 @@ else
     Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
 }
 
-$login = "NT AUTHORITY\NETWORK SERVICE"
+$login = "NT AUTHORITY\SYSTEM"
 $password = "dummy"
 $secpasswd = ConvertTo-SecureString $password -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential ($login, $secpasswd)
-$description = "QP8 Article Scheduler Service"
+$description = "QP8 Common Scheduler Service"
 
 Write-Host "Installing service: $name"
 New-Service -name $name -binaryPathName "$installRoot\$projectName.exe" -Description $description -displayName $name -startupType Automatic -credential $mycreds
