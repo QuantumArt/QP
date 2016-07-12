@@ -58,7 +58,7 @@
     <Compile Include="Providers\INotificationProvider.cs" />
     <Compile Include="Providers\NotificationModel.cs" />
     <Compile Include="Providers\NotificationProvider.cs" />
-    <Compile Include="ShedulerNotificationConfiguration.cs" />
+    <Compile Include="SchedulerNotificationConfiguration.cs" />
     <Compile Include="NotificationProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

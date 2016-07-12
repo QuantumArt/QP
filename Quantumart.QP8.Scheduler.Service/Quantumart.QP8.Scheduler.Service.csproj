@@ -72,15 +72,13 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceConfiguration.cs" />
-    <Compile Include="ShedulerService.cs">
+    <Compile Include="SchedulerService.cs">
       <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="installer.bat" />
     <None Include="packages.config" />
-    <None Include="uninstaller.bat" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\configuration\Configuration.csproj">

@@ -34,10 +34,16 @@ namespace Quantumart.QP8.BLL.Repository
         #endregion
 
         #region public properties
-
+        /// <summary>
+        /// Wait for internal or external non-service notifications
+        /// </summary>
         public bool WaitForNonService { get; set; }
 
-        public bool IgnoreLegacy { get; set; }
+
+        /// <summary>
+        /// Do not send internal e-mail notifications
+        /// </summary>
+        public bool IgnoreInternal { get; set; }
 
         #endregion
 
@@ -54,12 +60,12 @@ namespace Quantumart.QP8.BLL.Repository
         #region Internal methods
         internal void SendNotificationOneWay(string connectionString, int id, string code)
         {
-            QueueAsync(() => Notify(connectionString, id, code, IgnoreLegacy));
+            QueueAsync(() => Notify(connectionString, id, code, IgnoreInternal));
         }
 
         internal void SendNotification(string connectionString, int id, string code)
         {
-            Queue(() => Notify(connectionString, id, code, IgnoreLegacy));
+            Queue(() => Notify(connectionString, id, code, IgnoreInternal));
         }
 
         internal void PrepareNotifications(int contentId, int[] articleIds, string[] codes, bool disableNotifications = false)

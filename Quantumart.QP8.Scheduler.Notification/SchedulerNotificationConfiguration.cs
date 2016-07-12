@@ -5,7 +5,7 @@ using Quantumart.QP8.Scheduler.Notification.Providers;
 
 namespace Quantumart.QP8.Scheduler.Notification
 {
-	public class ShedulerNotificationConfiguration : UnityContainerExtension
+	public class SchedulerNotificationConfiguration : UnityContainerExtension
 	{
 		public const string NotificationService = "qp8.notification";
 

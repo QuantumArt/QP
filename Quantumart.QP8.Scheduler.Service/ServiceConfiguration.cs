@@ -17,7 +17,7 @@ namespace Quantumart.QP8.Scheduler.Service
 		protected override void Initialize()
 		{
 			Container.AddNewExtension<SchedulerUsersConfiguration>();
-			Container.AddNewExtension<ShedulerNotificationConfiguration>();
+			Container.AddNewExtension<SchedulerNotificationConfiguration>();
 			Container.AddNewExtension<SchedulerCoreConfiguration>();
 
 			var descriptors = Container.ResolveAll<ServiceDescriptor>();

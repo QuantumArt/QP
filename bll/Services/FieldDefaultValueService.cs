@@ -112,7 +112,7 @@ namespace Quantumart.QP8.BLL.Services
 
             if (idsForStep.Any())
             {
-                var notificationRepository = new NotificationPushRepository();
+                var notificationRepository = new NotificationPushRepository() { IgnoreInternal = true };
                 notificationRepository.PrepareNotifications(context.ContentId, idsForStep, NotificationCode.Update);
                 FieldDefaultValueRepository.SetDefaultValue(context.ContentId, context.FieldId, context.IsBlob, context.IsM2M, idsForStep, context.Symmetric);
                 notificationRepository.SendNotifications();

@@ -92,7 +92,7 @@ namespace Quantumart.QP8.BLL.Services
             if (dataForStep.Any())
             {
                 var ids = dataForStep.Select(d => d.Item1).ToArray();
-                var notificationRepository = new NotificationPushRepository();
+                var notificationRepository = new NotificationPushRepository() { IgnoreInternal = true };
                 notificationRepository.PrepareNotifications(context.ContentId, ids, NotificationCode.Update);
 
                 foreach (var d in dataForStep)

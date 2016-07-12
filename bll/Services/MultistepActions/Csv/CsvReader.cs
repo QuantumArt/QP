@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _contentId = contentId;
             _siteId = siteId;
             _importSetts = setts;
-            _notificationRepository = new NotificationPushRepository() { IgnoreLegacy = true };
+            _notificationRepository = new NotificationPushRepository() { IgnoreInternal = true };
             _reader = new FileReader(setts);
         }
 

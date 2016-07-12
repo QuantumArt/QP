@@ -87,7 +87,7 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         /// <param name="contentId">ID контента</param>
         /// <returns>DTO</returns>
-		public static ArticleInitListResult InitList(int contentId, bool? boundToExternal)
+        public static ArticleInitListResult InitList(int contentId, bool? boundToExternal)
         {
             return InitList(contentId, false, boundToExternal);
         }
@@ -263,7 +263,7 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         /// <param name="contentId">идентификатор контента</param>
         /// <returns>пустая статья</returns>
-		public static Article New(int contentId, int? fieldId, int? articleId, bool? isChild, bool? boundToExternal)
+        public static Article New(int contentId, int? fieldId, int? articleId, bool? isChild, bool? boundToExternal)
         {
             var article = Article.CreateNew(contentId, fieldId, articleId, isChild);
             if (!article.IsArticleChangingActionsAllowed(boundToExternal))
@@ -289,7 +289,7 @@ namespace Quantumart.QP8.BLL.Services
         /// Копирует статью
         /// </summary>
         /// <param name="id">идентификатор статьи</param>
-		public static CopyResult Copy(int id, bool? boundToExternal, bool disableNotifications)
+        public static CopyResult Copy(int id, bool? boundToExternal, bool disableNotifications)
         {
             var result = new CopyResult();
             var article = ArticleRepository.GetById(id);
@@ -347,7 +347,7 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         /// <param name="article">информация о статье</param>
         /// <returns>информация о статье</returns>
-		public static Article Save(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
+        public static Article Save(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
         {
             if (article == null)
             {
@@ -372,7 +372,7 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         /// <param name="article">информация о статье</param>
         /// <returns>информация о статье</returns>
-		public static Article Update(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
+        public static Article Update(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
         {
 
             if (article == null)
