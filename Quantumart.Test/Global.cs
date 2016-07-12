@@ -145,5 +145,10 @@ namespace Quantumart.Test
                 .Select(n => (int)n.Field<decimal>("content_id"))
                 .Single();
         }
+
+        public static int GetFieldId(DBConnector cnn, string contentName, string fieldName)
+        {
+            return cnn.FieldID(SiteId, contentName, fieldName);
+        }
     }
 }
