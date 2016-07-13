@@ -10,7 +10,6 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.StatusType;
 using Telerik.Web.Mvc;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

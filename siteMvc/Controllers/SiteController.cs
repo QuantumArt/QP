@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.ComponentModel;
-using System.Web;
 using System.Web.Mvc;
-using AutoMapper;
 using Telerik.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.ListItems;
@@ -15,20 +11,8 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Quantumart.QP8.Utils.FullTextSearch;
-using System.Drawing;
-using System.IO;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
-using System.Diagnostics;
-using System.Web.UI;
-using System.Web.SessionState;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Services.MultistepActions;
-using System.Collections.Specialized;
-using System.Web.Script.Serialization;
 
 
 namespace Quantumart.QP8.WebMvc.Controllers

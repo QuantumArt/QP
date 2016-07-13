@@ -10,9 +10,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
@@ -98,7 +96,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         public ActionResult Select(string tabId, int parentId, int id, bool? boundToExternal)
         {
             var articleList = ArticleService.InitList(parentId, boundToExternal);
-            var model = ArticleListViewModel.Create(articleList, parentId, tabId, false, true, new[] { id });
+            var model = ArticleListViewModel.Create(articleList, parentId, tabId, false, true, id);
             return JsonHtml("Index", model);
         }
 

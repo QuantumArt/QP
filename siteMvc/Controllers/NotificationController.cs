@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services;
@@ -11,7 +10,6 @@ using Quantumart.QP8.WebMvc.ViewModels.Notification;
 using Telerik.Web.Mvc;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Exceptions;
-using System;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
