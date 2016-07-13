@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Quantumart.QPublishing.Database;
+using System.Data.SqlClient;
+using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.Test
 {
@@ -149,6 +151,44 @@ namespace Quantumart.Test
         public static int GetFieldId(DBConnector cnn, string contentName, string fieldName)
         {
             return cnn.FieldID(SiteId, contentName, fieldName);
+        }
+
+        public static void ClearContentData(DBConnector cnn, int articleId)
+        {
+            var query = "delete from CONTENT_DATA where CONTENT_ITEM_ID = @id";
+            var cmd = new SqlCommand(query);
+            cmd.Parameters.AddWithValue("@id", articleId);
+
+            cnn.GetRealData(cmd);
+        }
+
+        public static ContentDataItem[] GetContentData(DBConnector cnn, int articleId)
+        {
+            var query = "select * from CONTENT_DATA where CONTENT_ITEM_ID = @id";
+            var cmd = new SqlCommand(query);
+            cmd.Parameters.AddWithValue("@id", articleId);
+
+            return cnn.GetRealData(cmd)
+              .AsEnumerable()
+              .Select(n => new ContentDataItem
+              {
+                  FieldId = (int)n.Field<decimal>("ATTRIBUTE_ID"),
+                  Data = n.Field<string>("DATA"),
+                  BlobData = n.Field<string>("BLOB_DATA")
+              })
+              .ToArray();
+        }
+
+        public class ContentDataItem
+        {
+            public int FieldId { get; set; }
+            public string Data { get; set; }
+            public string BlobData { get; set; }
+            public override string ToString()
+            {
+                return new { FieldId, Data, BlobData }.ToString();
+            }
+
         }
     }
 }

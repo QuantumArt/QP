@@ -108,7 +108,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="xmls\batchupdate.xml" />
+    <Content Include="xmls\batchupdate.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="xmls\files.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
