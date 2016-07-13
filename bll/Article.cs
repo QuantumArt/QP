@@ -362,13 +362,14 @@ namespace Quantumart.QP8.BLL
         [ScriptIgnore]
         public List<FieldValue> FieldValues
         {
-            get { return _fieldValues ?? (LoadFieldValues()); }
+            get { return _fieldValues ?? LoadFieldValues(); }
             set { _fieldValues = value; }
         }
 
         internal List<FieldValue> LoadFieldValues()
         {
-            return _fieldValues = GetFieldValues();
+            _fieldValues = GetFieldValues();
+            return _fieldValues;
         }
 
 
@@ -1019,10 +1020,7 @@ namespace Quantumart.QP8.BLL
                                 : ArticleRepository.GetRelatedItems(backRelationId.Value, article.Id);
                         break;
                     case RelationType.None:
-                        break;
                     case RelationType.OneToMany:
-                        break;
-                    default:
                         objectValue = data[fullFieldName];
                         if (DBNull.Value.Equals(objectValue))
                         {

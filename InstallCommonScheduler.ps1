@@ -5,33 +5,56 @@
     Break
 }
 
-$name = "QP.CommonScheduler"
-$timeout = "00:03:00"
+function Stop-And-Remove-Service([string] $name, [string] $timeout = "00:03:00")
+{
+    $s = Get-Service $name -ErrorAction SilentlyContinue
 
-$s = Get-Service $name -ErrorAction SilentlyContinue
-
-if ($s) { 
+    if ($s) { 
+        
     
-
-    if ( $s.Status -eq "Running")
-    {
-        Write-Host "Stopping service $name..."
-        $s.Stop()
-        try { $s.WaitForStatus("Stopped", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been stopped in '$timeout' interval" } 
-        Write-Host "$name Stopped"
-  
-        Write-Host "Waiting for a while..."
-        Start-Sleep -s 3
-        Write-Host "Done"
+        if ( $s.Status -eq "Running")
+        {
+            Write-Host "Stopping service $name..."
+            $s.Stop()
+            try { $s.WaitForStatus("Stopped", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been stopped in '$timeout' interval" } 
+            Write-Host "$name Stopped"
+      
+            Write-Host "Waiting for a while..."
+            Start-Sleep -s 3
+            Write-Host "Done"
+        }
+    
+        Write-Host "Removing service $name..."
+        $serviceToRemove = Get-WmiObject -Class Win32_Service -Filter "name='$name'"
+        $serviceToRemove.delete()
+        Write-Host "Removed"
     }
-
-    Write-Host "Removing service $name..."
-    $serviceToRemove = Get-WmiObject -Class Win32_Service -Filter "name='$name'"
-    $serviceToRemove.delete()
-    Write-Host "Removed"
 }
 
-$defaultInstallRoot = "C:\QA\CommonScheduler"
+function Start-Service-With-Timeout([string] $name, [string] $timeout = "00:03:00")
+{
+    $s = Get-Service $name
+    
+    if ( $s.Status -eq "Stopped")
+    {
+        Write-Output "Starting service $name..."
+        $s.Start()
+    }
+    
+    try { $s.WaitForStatus("Running", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been started in '$timeout' interval" } 
+    Write-Output "$name Running"
+
+}
+
+$name1 = "qp8.users"
+$name2 = "qp8.notification"
+
+Stop-And-Remove-Service $name1
+Stop-And-Remove-Service $name2
+
+$projectName = "Quantumart.QP8.Scheduler.Service"
+
+$defaultInstallRoot = "C:\QA\$projectName"
 $installRoot = Read-Host "Please specify folder to install service (default - $defaultInstallRoot)"
 if ([string]::IsNullOrEmpty($installRoot))
 {
@@ -39,8 +62,13 @@ if ([string]::IsNullOrEmpty($installRoot))
 }
 if (-not(Test-Path $installRoot)) { New-Item $installRoot -ItemType Directory }
 
+$logsRoot = "C:\Logs"
+if (-not(Test-Path $logsRoot)) { New-Item $logsRoot -ItemType Directory }
+$logsDir = Join-Path $logsRoot $projectName
+if (-not(Test-Path $logsDir)) { New-Item $logsDir -ItemType Directory }
+
 $currentPath = split-path -parent $MyInvocation.MyCommand.Definition
-$projectName = "Quantumart.QP8.Scheduler.Service"
+
 
 $schedulerFolder = Join-Path $currentPath "$projectName\bin\Debug"
 $schedulerPath = Join-Path $schedulerFolder "$projectName.exe"
@@ -61,27 +89,17 @@ else
     Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
 }
 
-$login = "NT AUTHORITY\SYSTEM"
-$password = "dummy"
-$secpasswd = ConvertTo-SecureString $password -AsPlainText -Force
-$mycreds = New-Object System.Management.Automation.PSCredential ($login, $secpasswd)
-$description = "QP8 Common Scheduler Service"
-
 Write-Host "Installing service: $name"
-New-Service -name $name -binaryPathName "$installRoot\$projectName.exe" -Description $description -displayName $name -startupType Automatic -credential $mycreds
+$frameworkDir = $([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory())
+Invoke-Expression "$frameworkDir\installutil ""$installRoot\$projectName.exe"""
 Write-Host "Installation completed: $name"
 
 Write-Host "Waiting for a while..."
 Start-Sleep -s 5
 Write-Host "Done"
 
-$s = Get-Service $name
+Set-Service $name1 -startuptype "Automatic"
+Set-Service $name2 -startuptype "Automatic"
 
-if ( $s.Status -eq "Stopped")
-{
-    Write-Output "Starting service $name..."
-    $s.Start()
-}
-
-try { $s.WaitForStatus("Running", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been started in '$timeout' interval" } 
-Write-Output "$name Running"
+Start-Service-With-Timeout $name1
+Start-Service-With-Timeout $name2

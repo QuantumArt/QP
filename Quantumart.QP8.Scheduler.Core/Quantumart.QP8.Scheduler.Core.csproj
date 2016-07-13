@@ -64,13 +64,13 @@
     <Compile Include="SchedulerCoreConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj">
       <Project>{b35feb42-4052-493f-b4eb-328a50453208}</Project>
       <Name>Quantumart.QP8.Scheduler.API</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
