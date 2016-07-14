@@ -211,8 +211,6 @@ namespace Quantumart.Test
             Ex2_2_ParentId = Global.GetFieldId(Cnn, Ex2_2_Content, Ex2_2_Parent);
             #endregion
 
-            var article = ArticleService.New(Base_ContentId);
-            ArticleService.Save(article);
         }
 
         [OneTimeTearDown]
