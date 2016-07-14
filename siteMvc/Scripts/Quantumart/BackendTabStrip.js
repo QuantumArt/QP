@@ -138,10 +138,10 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   initialize: function () {
-    var $tabStrip = $("#" + this._tabStripElementId);
-    var $scrollable = $("<div />", { "class": "scrollable" });
-    var $tabList = $("<ul />", { "class": "tabList" });
-    var $partialRemovedTabsContainer = $("<div />", { "id": "partialRemovedTabs", "css": { "display": "none"} })
+    var $tabStrip = $('#' + this._tabStripElementId);
+    var $scrollable = $('<div />', { 'class': 'scrollable' });
+    var $tabList = $('<ul />', { 'class': 'tabList' });
+    var $partialRemovedTabsContainer = $('<div />', { 'id': 'partialRemovedTabs', 'css': { 'display': 'none'} })
 
     $tabStrip.empty();
     $tabStrip.append($scrollable);

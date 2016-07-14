@@ -103,13 +103,12 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   initialize: function() {
-    var contextMenuElementId = this._contextMenuElementId;
-    if ($q.isNullOrWhiteSpace(contextMenuElementId)) {
-      contextMenuElementId = this._contextMenuCode;
+    if (!this._contextMenuElementId) {
+      this._contextMenuElementId = this._contextMenuCode;
     }
 
     var $menu = $('<ul />', {
-      id: contextMenuElementId,
+      id: this._contextMenuElementId,
       class: 'contextMenu'
     });
 
@@ -120,14 +119,13 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (!$q.isNullOrWhiteSpace(this._contextMenuContainerElementId)) {
       $('#' + this._contextMenuContainerElementId).append($menu);
     } else {
-      $('BODY:first').append($menu);
+      $('body:first').append($menu);
     }
 
-    this._contextMenuElementId = contextMenuElementId;
     this._contextMenuElement = $menu.get(0);
     var contextMenuComponentName = this._getMenuComponentName();
     var contextMenuComponent = $(this._targetElements).jeegoocontext({
-      menuElementId: contextMenuElementId,
+      menuElementId: this._contextMenuElementId,
       menuClass: 'contextMenu',
       allowManualShowing: this._allowManualShowing,
       onTune: this._onContextMenuTuneHandler,
@@ -212,7 +210,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
 
   tuneMenuItems: function(entityId, parentEntityId, callback) {
     var self = this;
-
     var params = {
       menuCode: this._contextMenuCode,
       entityId: entityId,
@@ -223,10 +220,8 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       params = jQuery.extend(params, { boundToExternal: true });
     }
 
-    $q.getJsonFromUrl('GET', CONTROLLER_URL_CONTEXT_MENU + 'GetStatusesList', params, false, false,
-      function(data) {
+    $q.getJsonFromUrl('GET', CONTROLLER_URL_CONTEXT_MENU + 'GetStatusesList', params, false, false, function(data) {
         var statuses = data;
-
         if (statuses) {
           var statusCount = statuses.length;
 
@@ -256,12 +251,11 @@ Quantumart.QP8.BackendContextMenu.prototype = {
   },
 
   _tuneMenuSeparators: function() {
-    jQuery('li.separator', this._contextMenuComponent._menuElement).each(function() {
-      var $separator = jQuery(this);
+    $('li.separator', this._contextMenuComponent._menuElement).each(function() {
+      var $separator = $(this);
       var toHide = true;
-
       $separator.nextAll('li.item, li.separator').each(function() {
-        var $ci = jQuery(this);
+        var $ci = $(this);
 
         if ($ci.hasClass('separator') == true) {
           return false;
@@ -278,13 +272,11 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       } else {
         $separator.show();
       }
-
-      $separator = null;
     });
 
     // Проверить, есть ли перед первым показываемым сепаратором показываемые элементы меню
     // если нет - то скрыть такой сепаратор
-    var $firstVisibleSeparator = jQuery('li.separator', this._contextMenuComponent._menuElement)
+    var $firstVisibleSeparator = $('li.separator', this._contextMenuComponent._menuElement)
     .filter(function() {
       return $(this).css('display') != 'none';
     }).first();
@@ -296,8 +288,6 @@ Quantumart.QP8.BackendContextMenu.prototype = {
     if (toHideFirstVisibleSeparator) {
       $firstVisibleSeparator.hide();
     }
-
-    $firstVisibleSeparator = null;
   },
 
   _getMenuItemHtml: function(html, dataItem) {
@@ -307,9 +297,9 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       .cat('      <div class="innerWrapper">\n')
       .cat('          <span class="icon"')
       .catIf(' style="background-image: url(\'' + THEME_IMAGE_FOLDER_URL_SMALL_ICONS + dataItem.Icon + '\')"',
-      !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() !== 'http://')
+        !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() !== 'http://')
       .catIf(' style="background-image: url(\'' + dataItem.Icon + '\')"',
-      !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() === 'http://')
+        !$q.isNullOrWhiteSpace(dataItem.Icon) && dataItem.Icon.left(7).toLowerCase() === 'http://')
       .cat('>')
       .cat('<img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif" width="16px" height="16px" />')
       .cat('</span>\n')

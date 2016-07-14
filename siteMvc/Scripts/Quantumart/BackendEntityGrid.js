@@ -369,8 +369,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         }
       }
 
-      $headerCheckbox = null;
-
       gridComponent.$tbody
         .undelegate(this.ROW_CLICKABLE_SELECTORS, 'click')
         .delegate(this.ROW_CLICKABLE_SELECTORS + ' td', 'click', this._onRowCellClickHandler)
@@ -388,9 +386,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       contextMenuComponent.initialize();
       contextMenuComponent.addMenuItemsToMenu(true);
 
-      var contextMenuEventType = contextMenuComponent.getContextMenuEventType();
-      $grid.delegate(this.ROW_CLICKABLE_SELECTORS, contextMenuEventType, this._onContextMenuHandler);
-
+      $grid.delegate(this.ROW_CLICKABLE_SELECTORS, contextMenuComponent.getContextMenuEventType(), this._onContextMenuHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onRowContextMenuShowingHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onRowContextMenuItemClickingHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onRowContextMenuHiddenHandler);
@@ -1183,13 +1179,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
             .undelegate(this.ROW_CLICKABLE_SELECTORS + ' ' + this.CHECKBOX_CELL_SELECTORS, 'click', this._onRowCheckboxCellClickHandler);
         }
 
-        var contextMenuEventType = this._contextMenuComponent.getContextMenuEventType();
-
         $grid
           .unbind('dataBinding')
           .unbind('dataBound')
           .unbind('rowDataBound')
-          .undelegate(this.ROW_CLICKABLE_SELECTORS, contextMenuEventType, this._onContextMenuHandler);
+          .undelegate(this.ROW_CLICKABLE_SELECTORS, this._contextMenuComponent.getContextMenuEventType(), this._onContextMenuHandler);
 
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onRowContextMenuShowingHandler);
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onRowContextMenuItemClickingHandler);
