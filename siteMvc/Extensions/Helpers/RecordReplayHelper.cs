@@ -453,7 +453,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private void CorrectArticleForm(NameValueCollection form, int contentId)
         {
-            var fields = ReplayHelper.GetRelations(contentId);
+            var relations = ReplayHelper.GetRelations(contentId);
+            var classifiers = ReplayHelper.GetClasifiers(contentId);
             foreach (var key in form.AllKeys.Where(n => n.StartsWith("field_")))
             {
                 int result;
@@ -468,23 +469,30 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                         if (enumerable != null)
                             foreach (var value in enumerable)
                             {
-                                var newValue = (fields.ContainsKey(newFieldId)) ? CorrectCommaListValue(EntityTypeCode.Article, value) : value;
+                                var newValue = value;
+                                if (relations.ContainsKey(newFieldId) || classifiers.ContainsKey(newFieldId))
+                                {
+                                    var code = relations.ContainsKey(newFieldId) ? EntityTypeCode.Article : EntityTypeCode.Content;
+                                    newValue = CorrectCommaListValue(code, value);
+                                }
                                 form.Add(newKey, newValue);
                             }
                         form.Remove(key);
                     }
                     else
                     {
-                        if (fields.ContainsKey(newFieldId))
+                        if (relations.ContainsKey(newFieldId) || classifiers.ContainsKey(newFieldId))
                         {
                             var values = form.GetValues(key);
                             form.Remove(key);
                             if (values != null)
                                 foreach (var value in values)
                                 {
-                                    form.Add(key, CorrectCommaListValue(EntityTypeCode.Article, value));
+                                    var code = relations.ContainsKey(newFieldId) ? EntityTypeCode.Article : EntityTypeCode.Content;
+                                    form.Add(key, CorrectCommaListValue(code, value));
                                 }
                         }
+
                     }
                 }
             }
