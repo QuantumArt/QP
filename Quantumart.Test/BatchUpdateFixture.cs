@@ -442,7 +442,7 @@ namespace Quantumart.Test
 
             var result = ArticleService.BatchUpdate(data);
 
-            Assert.IsNotNull(result, BatchUpdateResultIncorrect);
+            Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
             var exstensionResult = result[0];
             Assert.AreEqual(exstensionResult.ContentId, Ex2_1_ContentId);
@@ -573,12 +573,11 @@ namespace Quantumart.Test
 
             var result = ArticleService.BatchUpdate(data);
 
-            Assert.IsNotNull(result, BatchUpdateResultIncorrect);
-            Assert.IsEmpty(result, BatchUpdateResultIncorrect);
-
+            Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
+    
             var newValue = GetFieldValue<T>(contentId, fieldName, articleId);
 
-            Assert.AreEqual(value, newValue);
+            Assert.That(value, Is.EqualTo(newValue));
         }
     
         private void ClearClassifierField(int articleId, int fieldId)
@@ -586,10 +585,10 @@ namespace Quantumart.Test
             using (var scope = new QPConnectionScope(Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleId);
-                Assert.IsNotNull(article, CantReadArticle);
+                Assert.That(article, Is.Not.Null, CantReadArticle);
 
                 var fv = article.FieldValues.Find(itm => itm.Field.IsClassifier && itm.Field.Id == Base_Field_Ex2Id);
-                Assert.IsNotNull(fv, NoClassifierField);
+                Assert.That(fv, Is.Not.Null, NoClassifierField);
                 fv.Value = null;
 
                 ArticleService.Save(article);
@@ -599,7 +598,7 @@ namespace Quantumart.Test
         T GetFieldValue<T>(int contentId, string fieldName, int articleId)
         {
             var values = Global.GetFieldValues<T>(Cnn, contentId, fieldName, new[] { articleId });
-            Assert.IsNotNull(values, ValuesNotFound);
+            Assert.That(values, Is.Not.Null, ValuesNotFound);
             Assert.That(values, Has.Length.EqualTo(1), ValuesNotFound);
             return values[0];
         }
@@ -607,10 +606,9 @@ namespace Quantumart.Test
         private int GetArticleId(int contentId)
         {
             var ids = Global.GetIds(Cnn, contentId);
-            Assert.IsNotNull(ids, ArticlesNotFound);
-            Assert.IsNotEmpty(ids, ArticlesNotFound);
+            Assert.That(ids, Is.Not.Null.And.Not.Empty, ArticlesNotFound);
             return ids[0];
-        }        
+        }           
         #endregion
     }
 }
