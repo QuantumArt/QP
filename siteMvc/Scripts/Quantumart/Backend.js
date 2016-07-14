@@ -291,8 +291,8 @@ Quantumart.QP8.Backend.prototype = {
   _onResizeSplitter: function(eventType, sender, eventArgs) {
     this._backendTreeMenu.fixTreeHeight(eventArgs.get_firstPaneHeight());
     this._backendEditingArea.get_tabStrip().fixTabStripWidth(eventArgs.get_firstPaneWidth());
-    var selDoc = this._backendEditingArea.getSelectedDocument();
 
+    var selDoc = this._backendEditingArea.getSelectedDocument();
     if (selDoc) {
       selDoc.fixActionToolbarWidth();
     }
@@ -335,14 +335,11 @@ Quantumart.QP8.Backend.prototype = {
   _isMultistep: function(action, eventArgs) {
     var entities = eventArgs.get_entities();
     var limit = 1;
-
     if (action.EntityLimit) {
       limit = action.EntityLimit;
     }
 
-    var isMultistep = action.IsMultistep || (action.AdditionalControllerActionUrl && entities.length > limit);
-
-    return isMultistep;
+    return action.IsMultistep || (action.AdditionalControllerActionUrl && entities.length > limit);
   },
 
   _onActionExecuting: function(eventType, sender, eventArgs) {

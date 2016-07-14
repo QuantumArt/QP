@@ -36,7 +36,7 @@ Quantumart.QP8.BackendTreeBase = function(treeElementId, options) {
     }
   }
 
-  Quantumart.QP8.Utils.bindProxies.call(this, [
+  $q.bindProxies.call(this, [
     '_onNodeClicking',
     '_onIdClicking'
   ]);

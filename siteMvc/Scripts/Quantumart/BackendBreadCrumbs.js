@@ -1,14 +1,8 @@
-//#region event types of bread crumbs
-// === Типы событий хлебных крошек ===
 var EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK = "OnBreadCrumbsItemClick";
 var EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK = "OnBreadCrumbsItemCtrlClick";
-//#endregion
 
-//#region class BackendBreadCrumbs
-// === Класс "Хлебные крошки" ===
 Quantumart.QP8.BackendBreadCrumbs = function (breadCrumbsElementId, options) {
   Quantumart.QP8.BackendBreadCrumbs.initializeBase(this);
-
   this._breadCrumbsElementId = breadCrumbsElementId;
   if ($q.isObject(options)) {
     if (options.breadCrumbsContainerElementId) {
@@ -24,34 +18,38 @@ Quantumart.QP8.BackendBreadCrumbs = function (breadCrumbsElementId, options) {
     }
   }
 
-  this._onBreadCrumbsItemClickHandler = jQuery.proxy(this._onBreadCrumbsItemClick, this);
-  this._onGetBreadCrumbsListSuccessHandler = jQuery.proxy(this._onGetBreadCrumbsListSuccess, this);
-  this._onGetBreadCrumbsListErrorHandler = jQuery.proxy(this._onGetBreadCrumbsListError, this);
-
+  $q.bindProxies.call(this, [
+    '_onBreadCrumbsItemClick',
+    '_onContextMenuShow',
+    '_onGetBreadCrumbsListSuccess',
+    '_onGetBreadCrumbsListError'
+  ]);
 };
 
 Quantumart.QP8.BackendBreadCrumbs.prototype = {
-  _breadCrumbsElementId: "", // клиентский идентификатор хлебных крошек
+  _breadCrumbsElementId: '', // клиентский идентификатор хлебных крошек
   _breadCrumbsElement: null, // DOM-элемент, образующий хлебные крошки
   _breadCrumbsItemListElement: null, // DOM-элемент, образующий список элементов хлебных крошек
-  _breadCrumbsContainerElementId: "", // клиентский идентификатор контейнера, в котором располагаются хлебные крошки
+  _breadCrumbsContainerElementId: '', // клиентский идентификатор контейнера, в котором располагаются хлебные крошки
   _documentHost: null, // документ, для которого создаются хлебные крошки
   _stopDeferredOperations: false, // признак, отвечающий за остановку всех отложенных операций
   _addItemsCallback: null,
   _maxTitleLength: 60,
+  _contextMenuComponent: null,
 
-  ITEM_CLASS_NAME: "item",
-  ITEM_BUSY_CLASS_NAME: "busy",
+  ITEM_CLASS_NAME: 'item',
+  ITEM_BUSY_CLASS_NAME: 'busy',
 
-  ITEM_SELECTORS: "LI.item",
-  ITEM_WITH_LINK_SELECTORS: "LI.item:has(A)",
-  ITEM_LAST_WITH_LINK_SELECTORS: "LI.item:has(A):last",
+  ITEM_SELECTORS: 'li.item',
+  ITEM_WITH_LINK_SELECTORS: 'li.item:has(a)',
+  ITEM_LAST_WITH_LINK_SELECTORS: 'li.item:has(a):last',
 
   _onBreadCrumbsItemClickHandler: null,
+  _onContextMenuShowHandler: null,
   _onGetBreadCrumbsListSuccessHandler: null,
   _onGetBreadCrumbsListErrorHandler: null,
 
-  _manager: null, // менеджер хлебных крошек
+  _manager: null,
   get_manager: function () { return this._manager; },
   set_manager: function (value) { this._manager = value; },
   get_breadCrumbsElementId: function () { return this._breadCrumbsElementId; },
@@ -61,77 +59,62 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   set_breadCrumbsContainerElementId: function (value) { this._breadCrumbsContainerElementId = value; },
 
   initialize: function () {
-    var $breadCrumbs = jQuery("#" + this._breadCrumbsElementId);
-    var $breadCrumbsItemList = null;
-
-    var isBreadCrumbsExist = !$q.isNullOrEmpty($breadCrumbs); // признак существования хлебных крошек
-    if (!isBreadCrumbsExist) {
-      $breadCrumbs = jQuery("<div />", { "id": this._breadCrumbsElementId, "class": "breadCrumbs", "css": { "display": "none"} });
+    var $breadCrumbs = $('#' + this._breadCrumbsElementId);
+    var $breadCrumbsItemList = $breadCrumbs.find('ul:first');
+    if (!$breadCrumbsItemList.length) {
+      $breadCrumbsItemList = $('<ul />');
     }
 
-    $breadCrumbsItemList = $breadCrumbs.find("UL:first");
-    if ($q.isNullOrEmpty($breadCrumbsItemList)) {
-      $breadCrumbsItemList = jQuery("<ul />");
-    }
-
-    if (!isBreadCrumbsExist) {
+    if (!$breadCrumbs.length) {
+      $breadCrumbs = $('<div />', { 'id': this._breadCrumbsElementId, 'class': 'breadCrumbs', 'css': { 'display': 'none'} });
       $breadCrumbs.append($breadCrumbsItemList);
-
       if (!$q.isNullOrWhiteSpace(this._breadCrumbsContainerElementId)) {
-        jQuery("#" + this._breadCrumbsContainerElementId).append($breadCrumbs);
+        $('#' + this._breadCrumbsContainerElementId).append($breadCrumbs);
+      } else {
+        $('body:first').append($breadCrumbs);
       }
-      else {
-        jQuery("BODY:first").append($breadCrumbs);
-      }
+
+      setTimeout(this._attachBreadCrumbsEventHandlers.bind(this), 0);
     }
 
     this._breadCrumbsElement = $breadCrumbs.get(0);
     this._breadCrumbsItemListElement = $breadCrumbsItemList.get(0);
-
-    if (!isBreadCrumbsExist) {
-      this._attachBreadCrumbsEventHandlers();
-    }
+    this._createContextMenu();
   },
 
-  _attachBreadCrumbsEventHandlers: function () {
-    var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
-    $breadCrumbsItemList
-        .delegate(this.ITEM_WITH_LINK_SELECTORS, "click", this._onBreadCrumbsItemClickHandler)
-    .delegate(this.ITEM_WITH_LINK_SELECTORS, "mouseup", this._onBreadCrumbsItemClickHandler)
-        ;
+  _createContextMenu: function() {
+    console.log('xxx');
+  },
 
-    $breadCrumbsItemList = null;
+  _attachBreadCrumbsEventHandlers: function() {
+    $(this._breadCrumbsItemListElement)
+      .on('click', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
+      .on('mouseup', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
+      .on($.fn['jeegoocontext'].getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShow);
   },
 
   _detachBreadCrumbsHandlers: function () {
-    var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
-    $breadCrumbsItemList
-        .undelegate(this.ITEM_WITH_LINK_SELECTORS, "click", this._onBreadCrumbsItemClickHandler)
-    .undelegate(this.ITEM_WITH_LINK_SELECTORS, "mouseup", this._onBreadCrumbsItemClickHandler)
-        ;
-
-    $breadCrumbsItemList = null;
+    $(this._breadCrumbsItemListElement)
+      .off('click', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
+      .off('mouseup', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
+      .off($.fn['jeegoocontext'].getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShow);
   },
 
   getItems: function () {
-    var $items = jQuery(this._breadCrumbsItemListElement).find(this.ITEM_SELECTORS);
-
-    return $items;
+    return $(this._breadCrumbsItemListElement).find(this.ITEM_SELECTORS);
   },
 
   getLastItemButOne: function () {
-    return jQuery(this._breadCrumbsItemListElement).find(this.ITEM_LAST_WITH_LINK_SELECTORS);
+    return $(this._breadCrumbsItemListElement).find(this.ITEM_LAST_WITH_LINK_SELECTORS);
   },
 
   getItem: function (item) {
     var $item = null;
-
     if ($q.isObject(item)) {
       return $q.toJQuery(item);
-    }
-    else if ($q.isString(item)) {
-      $item = jQuery("LI[code='" + item + "']", this._breadCrumbsItemListElement);
-      if ($item.length == 0) {
+    } else if ($q.isString(item)) {
+      $item = $("LI[code='" + item + "']", this._breadCrumbsItemListElement);
+      if ($item.length === 0) {
         $item = null;
       }
 
@@ -144,55 +127,40 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     var itemValue = "";
 
     if (!$q.isNullOrEmpty($item)) {
-      itemValue = $item.attr("code");
-    }
-    else {
-      alert("Ошибка!");
+      itemValue = $item.attr('code');
+    } else {
+      window.alert('Ошибка!');
       return;
     }
-
-    $item = null;
 
     return itemValue;
   },
 
   getItemText: function (item) {
     var $item = this.getItem(item);
-    var itemText = "";
+    var itemText = '';
 
     if (!$q.isNullOrEmpty($item)) {
-      itemText = jQuery("SPAN.text", $item).text();
+      itemText = $('span.text', $item).text();
     }
-
-    $item = null;
 
     return itemText;
   },
 
   showBreadCrumbs: function () {
-    var $breadCrumbs = jQuery(this._breadCrumbsElement);
-    $breadCrumbs.show();
-    $breadCrumbs = null;
+    $(this._breadCrumbsElement).show();
   },
 
   hideBreadCrumbs: function () {
-    var $breadCrumbs = jQuery(this._breadCrumbsElement);
-    $breadCrumbs.hide();
-    $breadCrumbs = null;
+    $(this._breadCrumbsElement).hide();
   },
 
   markBreadCrumbsAsBusy: function () {
-    var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
-    $breadCrumbsItemList.addClass(this.ITEM_BUSY_CLASS_NAME);
-
-    $breadCrumbsItemList = null;
+    $(this._breadCrumbsItemListElement).addClass(this.ITEM_BUSY_CLASS_NAME);
   },
 
   unmarkBreadCrumbsAsBusy: function () {
-    var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
-    $breadCrumbsItemList.removeClass(this.ITEM_BUSY_CLASS_NAME);
-
-    $breadCrumbsItemList = null;
+    $(this._breadCrumbsItemListElement).removeClass(this.ITEM_BUSY_CLASS_NAME);
   },
 
   addItemsToBreadCrumbs: function (callback) {
@@ -221,34 +189,25 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     var items = data;
     if (!$q.isNull(items)) {
       var itemCount = items.length;
-
       if (itemCount > 0) {
-        var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
+        var $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
         var itemsHtml = new $.telerik.stringBuilder();
-
         for (var itemIndex = itemCount - 1; itemIndex >= 0; itemIndex--) {
           var item = items[itemIndex];
-
           this._getItemHtml(itemsHtml, item);
         }
 
         $breadCrumbsItemList.html(itemsHtml.string());
         this._extendItemElements(items);
-
-        itemsHtml = null;
-
         $q.callFunction(this._addItemsCallback);
-
-        return;
-      }
-      else {
+      } else {
         this.removeItemsFromBreadCrumbs(this._addItemsCallback);
       }
     }
   },
 
   removeItemsFromBreadCrumbs: function (callback) {
-    var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
+    var $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
     $breadCrumbsItemList.empty();
     $q.callFunction(callback);
   },
@@ -264,26 +223,27 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 
       var html = new $.telerik.stringBuilder();
       html
-        .catIf(' <a href="javascript:void(0);">', !isSelectedItem)
-        .cat('<span class="text"')
-          .cat(" title='(")
-          .cat(dataItem.Id).cat(') ')
-          .cat(dataItem.EntityTypeName)
-          .cat(' \"').cat($q.htmlEncode(dataItem.Title))
-          .cat('\"')
-          .cat("'")
-        .cat('>')
+      .catIf('  <a href="javascript:void(0);">', !isSelectedItem)
+      .cat('<span class="text"')
+        .cat(" title='(")
+        .cat(dataItem.Id).cat(') ')
         .cat(dataItem.EntityTypeName)
-        .cat(" \"")
-        .cat($q.middleCutShort($q.htmlEncode(dataItem.Title), this._maxTitleLength))
-        .cat('\"</span>')
-        .catIf('</a>', !isSelectedItem);
-
+        .cat(' \"').cat($q.htmlEncode(dataItem.Title))
+        .cat('\"')
+        .cat("'")
+      .cat('>')
+      .cat(dataItem.EntityTypeName)
+      .cat(" \"")
+      .cat($q.middleCutShort($q.htmlEncode(dataItem.Title), this._maxTitleLength))
+      .cat('\"</span>')
+      .catIf('</a>', !isSelectedItem)
       $item.html(html.string());
+
       $item.data('entity_type_code', dataItem.Code);
       $item.data('entity_id', dataItem.Id);
       $item.data('entity_name', dataItem.Title);
       $item.data('parent_entity_id', dataItem.ParentId);
+      $item.data('action_code', dataItem.ActionCode);
       $item.data('action_code', dataItem.ActionCode);
     }
   },
@@ -296,7 +256,6 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
       var entityTypeCode = dataItem.Code;
       var entityId = dataItem.Id;
       var parentEntityId = dataItem.ParentId;
-
       var itemCode = breadCrumbsManager.generateItemCode(entityTypeCode, parentEntityId, entityId);
       var $item = this.getItem(itemCode);
 
@@ -305,9 +264,11 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   _onBreadCrumbsItemClick: function (e) {
+    this._contextMenuComponent.hide(e);
     e.preventDefault();
-    var isLeftClick = e.type == "click" && (e.which == 1 || e.which == 0);
-    var isMiddleClick = e.type == "mouseup" && e.which == 2;
+
+    var isLeftClick = e.type === 'click' && (e.which == 1 || e.which == 0);
+    var isMiddleClick = e.type === 'mouseup' && e.which == 2;
     if (!(isLeftClick || isMiddleClick)) {
       return false;
     }
@@ -315,36 +276,38 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     var eventArgs = this.getItemActionEventArgs(e.currentTarget);
     if (eventArgs) {
       if (e.ctrlKey || e.shiftKey || isMiddleClick) {
-        eventArgs.set_context(jQuery.extend({ "ctrlKey": e.ctrlKey || isMiddleClick }, eventArgs.get_context()));
+        eventArgs.set_context($.extend({
+          'ctrlKey': e.ctrlKey || isMiddleClick
+        }, eventArgs.get_context()));
         this.notify(EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, eventArgs);
-      }
-      else {
+      } else {
         this.notify(EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, eventArgs);
       }
-      eventArgs = null;
     }
+  },
 
+  _onContextMenuShow: function(e) {
+    this._contextMenuComponent.show(e, e.currentTarget);
+    e.preventDefault();
   },
 
   getItemActionEventArgs: function (item) {
     var $item = this.getItem(item);
-
-    var actionCode = $item.data("action_code");
-
+    var actionCode = $item.data('action_code');
     if (!$q.isNullOrWhiteSpace(actionCode)) {
       var action = $a.getBackendActionByCode(actionCode);
       if (action == null) {
         alert($l.Common.ajaxDataReceivingErrorMessage);
-      }
-      else {
+      } else {
         var host = this._documentHost;
         if (host) {
           var params = new Quantumart.QP8.BackendActionParameters({
-            entityTypeCode: $item.data("entity_type_code"),
-            entityId: $item.data("entity_id"),
-            entityName: $item.data("entity_name"),
-            parentEntityId: $item.data("parent_entity_id")
+            entityTypeCode: $item.data('entity_type_code'),
+            entityId: $item.data('entity_id'),
+            entityName: $item.data('entity_name'),
+            parentEntityId: $item.data('parent_entity_id')
           });
+
           params.correct(action);
           var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
           return eventArgs;
@@ -355,77 +318,59 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 
   dispose: function () {
     this._stopDeferredOperations = true;
-
-    Quantumart.QP8.BackendBreadCrumbs.callBaseMethod(this, "dispose");
-
-    this._documentHost = null;
-    this._manager = null;
+    Quantumart.QP8.BackendBreadCrumbs.callBaseMethod(this, 'dispose');
     this._detachBreadCrumbsHandlers();
 
     if (this._breadCrumbsItemListElement) {
-      var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
-      $breadCrumbsItemList
-      .empty()
-      .remove()
-      ;
-
-      $breadCrumbsItemList = null;
-      this._breadCrumbsItemListElement = null;
+      var $breadCrumbsItemList = $(this._breadCrumbsItemListElement);
+      $breadCrumbsItemList.empty().remove();
     }
 
     if (this._breadCrumbsElement) {
-      var $breadCrumbs = jQuery(this._breadCrumbsElement);
-      $breadCrumbs
-      .empty()
-      .remove()
-      ;
-
-      $breadCrumbs = null;
-      this._breadCrumbsElement = null;
+      var $breadCrumbs = $(this._breadCrumbsElement);
+      $breadCrumbs.empty().remove();
     }
 
-    this._onBreadCrumbsItemClickHandler = null;
-    this._onGetBreadCrumbsListSuccessHandler = null;
-    this._onGetBreadCrumbsListErrorHandler = null;
+    if (this._contextMenuComponent) {
+      this._contextMenuComponent.dispose();
+    }
+
+    $q.dispose.call(this, [
+      '_manager',
+      '_documentHost',
+      '_breadCrumbsElement',
+      '_contextMenuComponent',
+      '_onContextMenuShowHandler',
+      '_breadCrumbsItemListElement',
+      '_onBreadCrumbsItemClickHandler',
+      '_onGetBreadCrumbsListErrorHandler',
+      '_onGetBreadCrumbsListSuccessHandler'
+    ]);
   }
 };
 
 Quantumart.QP8.BackendBreadCrumbs.getBreadCrumbsList = function (entityTypeCode, entityId, parentEntityId, actionCode, successHandler, errorHandler) {
-  var actionUrl = CONTROLLER_URL_ENTITY_OBJECT + "GetBreadCrumbsList";
-  var params = { "entityTypeCode": entityTypeCode, "entityId": entityId, "parentEntityId": parentEntityId, "actionCode": actionCode };
+  var actionUrl = CONTROLLER_URL_ENTITY_OBJECT + 'GetBreadCrumbsList';
+  var params = {
+    'entityTypeCode': entityTypeCode,
+    'entityId': entityId,
+    'parentEntityId': parentEntityId,
+    'actionCode': actionCode
+  };
 
   if ($q.isFunction(successHandler)) {
-    $q.getJsonFromUrl(
-      "GET",
-      actionUrl,
-      params,
-      false,
-      false,
-        successHandler,
-        errorHandler
-    );
-  }
-  else {
-    var breadCrumbs = null; // хлебные крошки
-
-    $q.getJsonFromUrl(
-      "GET",
-      actionUrl,
-      params,
-      false,
-      false,
-        function (data, textStatus, jqXHR) {
-          breadCrumbs = data;
-        },
-        function (jqXHR, textStatus, errorThrown) {
-          breadCrumbs = null;
-          $q.processGenericAjaxError(jqXHR);
-        }
-    );
+    $q.getJsonFromUrl('GET', actionUrl, params, false, false, successHandler, errorHandler);
+  } else {
+    var breadCrumbs = null;
+    $q.getJsonFromUrl('GET', actionUrl, params, false, false, function (data, textStatus, jqXHR) {
+      breadCrumbs = data;
+    }, function (jqXHR, textStatus, errorThrown) {
+      breadCrumbs = null;
+      $q.processGenericAjaxError(jqXHR);
+    });
 
     return breadCrumbs;
   }
 };
 
-Quantumart.QP8.BackendBreadCrumbs.registerClass("Quantumart.QP8.BackendBreadCrumbs", Quantumart.QP8.Observable);
-//#endregion
+Quantumart.QP8.BackendBreadCrumbs.registerClass('Quantumart.QP8.BackendBreadCrumbs', Quantumart.QP8.Observable);
