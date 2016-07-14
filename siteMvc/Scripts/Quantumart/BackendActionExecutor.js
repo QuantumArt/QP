@@ -526,60 +526,55 @@ Quantumart.QP8.BackendActionExecutor.getBackendActionById = function (actionId) 
 };
 
 Quantumart.QP8.BackendActionExecutor.getSelectedAction = function Quantumart$QP8$BackendActionExecutor$getSelectedAction(action) {
-
   var selectedAction = null;
   if ($q.isObject(action)) {
     selectedAction = action;
-  }
-  else if ($q.isString(action)) {
+  } else if ($q.isString(action)) {
     selectedAction = Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(action);
   }
+
   return selectedAction;
 };
 
 Quantumart.QP8.BackendActionExecutor.generateActionUrl = function (isMultiple, entityIDs, parentEntityId, tabId, action, options) {
-
   if ($q.isNullOrEmpty(parentEntityId)) {
     parentEntityId = 0;
   }
 
-  var url = "";
+  var url = '';
   var selectedAction = Quantumart.QP8.BackendActionExecutor.getSelectedAction(action);
-  var extraQueryString = (options && options.additionalUrlParameters) ? $q.hashToQueryString(options.additionalUrlParameters) : "";
+  var extraQueryString = (options && options.additionalUrlParameters) ? $q.hashToQueryString(options.additionalUrlParameters) : '';
 
   if (!$q.isNull(selectedAction)) {
     var isInterface = selectedAction.IsInterface;
     var isCustom = selectedAction.IsCustom;
     if (options && options.controllerActionUrl) {
       url = options.controllerActionUrl;
-    }
-    else if (selectedAction.ControllerActionUrl) {
+    } else if (selectedAction.ControllerActionUrl) {
       url = selectedAction.ControllerActionUrl;
-    }
-    else {
-      url = (isInterface) ? "~/Diagnostics/Index/" : "";
+    } else {
+      url = (isInterface) ? '~/Diagnostics/Index/' : '';
     }
 
     if (options && options.isPreAction) {
-      url = url.replace(/\/$/, "PreAction/")
+      url = url.replace(/\/$/, 'PreAction/')
     }
+
     if (options && options.hasSettings && !options.isSettingsSet) {
-        url = url.replace(/\/$/, "/Settings/")
+      url = url.replace(/\/$/, '/Settings/')
     }
 
     url = url.replace(/^~\//, APPLICATION_ROOT_URL);
-
     if (url) {
       if (isMultiple) {
-        url += String.format("{0}/{1}/", tabId, parentEntityId);
-      }
-      else {
+        url += String.format('{0}/{1}/', tabId, parentEntityId);
+      } else {
         var entityId = (entityIDs.length > 0) ? entityIDs[0] : 0;
-        url += String.format("{0}/{1}/{2}/", tabId, parentEntityId, entityId);
+        url += String.format('{0}/{1}/{2}/', tabId, parentEntityId, entityId);
       }
 
       if (extraQueryString.length > 0) {
-        url += "?" + extraQueryString;
+        url += '?' + extraQueryString;
       }
     }
   }

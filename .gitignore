@@ -249,6 +249,9 @@ _Pvt_Extensions
 
 package/pack/qp8release
 siteMvc/Views/**/*.generated.cs
+
+siteMvc/Content/*.min.css
+
 siteMvc/Scripts/Quantumart/**/*.min.js
 siteMvc/Scripts/Quantumart/**/*.map
 siteMvc/Scripts/build

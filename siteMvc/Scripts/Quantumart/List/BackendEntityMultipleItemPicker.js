@@ -231,18 +231,18 @@ Quantumart.QP8.BackendEntityMultipleItemPicker.prototype = {
   },
 
   isListChanged: function () {
-    return $(this._listElement).hasClass(CHANGED_FIELD_CLASS_NAME);
+    return $(this._listElement).hasClass(window.CHANGED_FIELD_CLASS_NAME);
   },
 
   _setAsChanged: function (refreshOnly) {
     var $list = $(this._listElement);
-    $list.addClass(CHANGED_FIELD_CLASS_NAME);
+    $list.addClass(window.CHANGED_FIELD_CLASS_NAME);
 
     var operation = refreshOnly ? "addClass" : "removeClass";
-    $list[operation](REFRESHED_FIELD_CLASS_NAME);
+    $list[operation](window.REFRESHED_FIELD_CLASS_NAME);
 
     var value = this.getSelectedEntityIDs();
-    $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $list.data("list_item_name"), "value": value });
+    $list.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $list.data("list_item_name"), "value": value });
   },
 
   _getCheckBoxListHtml: function (dataItems) {

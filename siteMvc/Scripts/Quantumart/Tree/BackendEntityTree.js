@@ -54,6 +54,10 @@ Quantumart.QP8.BackendEntityTree = function(treeGroupCode, treeElementId, entity
     if (options.zIndex) {
       this._zIndex = options.zIndex;
     }
+
+    if (options.articlesCountId) {
+      this.articlesCountId = options.articlesCountId;
+    }
   }
 
   if ($q.isObject(hostOptions)) {
@@ -563,22 +567,19 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     var $node = this.getNode(nodeElem);
-
     if (saveOtherNodesSelection) {
       $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME);
       $node.find(this.NODE_CHECKBOX_SELECTORS).prop('checked', this.isNodeSelected($node));
-      this._saveNodeSelectionState();
-      this._raiseSelectEvent();
     } else {
       this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
       $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', true);
       if (!this._allowMultipleNodeSelection && this._allowGlobalSelection) {
         this._resetNodeSelectionState();
       }
-
-      this._saveNodeSelectionState();
-      this._raiseSelectEvent();
     }
+
+    this._saveNodeSelectionState();
+    this._executePostSelectActions();
   },
 
   deselectNode: function(node) {
@@ -588,7 +589,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     $node.find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
 
     this._saveNodeSelectionState();
-    this._raiseSelectEvent();
+    this._executePostSelectActions();
   },
 
   selectNodes: function(nodeElems) {
@@ -598,13 +599,13 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     }
 
     this._saveNodeSelectionState();
-    this._raiseSelectEvent();
+    this._executePostSelectActions();
   },
 
   selectAllNodes: function(value) {
     this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', value);
     this._saveNodeSelectionState();
-    this._raiseSelectEvent();
+    this._executePostSelectActions();
   },
 
   isNodeSelected: function(node) {
@@ -624,7 +625,6 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
   convertNodeCodeToEntityId: function(nodeCode) {
     var entityId = -1;
-
     if (nodeCode == this.ROOT_NODE_CODE) {
       entityId = null;
     } else {
@@ -636,7 +636,6 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
   convertEntityIdToNodeCode: function(entityId) {
     var nodeCode = '';
-
     if (entityId == 0 || entityId == null || entityId == '0') {
       nodeCode = this.ROOT_NODE_CODE;
     } else {
@@ -672,13 +671,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   getEntitiesFromNodes: function(nodeElems) {
     var entities = [];
     var $nodes = $q.toJQuery(nodeElems);
-
     var self = this;
 
     $nodes.each(
       function(index) {
         var $node = $nodes.eq(index);
-
         var entityId = self.getEntityId($node);
         var entityName = self.getEntityName($node);
 
@@ -711,7 +708,6 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
   checkExistEntityInCurrentPage: function(entityId) {
     var result = false;
-
     var nodeCode = this.convertEntityIdToNodeCode(entityId);
     var $node = this.getNode(nodeCode);
 
@@ -889,6 +885,14 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     this._restoreNodeSelectionState();
   },
 
+  _executePostSelectActions: function () {
+    if (this.articlesCountId) {
+      $('#' + this.articlesCountId).text(this._selectedEntitiesIDs.length);
+    }
+
+    this._raiseSelectEvent();
+  },
+
   _raiseSelectEvent: function() {
     var nodes = this.getSelectedNodes();
     var action = this._getCurrentAction();
@@ -1033,11 +1037,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       return false;
     }
 
-    var saveOtherNodesSelection = (this._allowMultipleNodeSelection && e.ctrlKey) || this._treeComponent.showCheckBox === true;
-
+    var saveOtherNodesSelection = this._allowMultipleNodeSelection || this._treeComponent.showCheckBox === true;
     $node.find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_HOVER_CLASS_NAME);
     this.selectNode($node, saveOtherNodesSelection);
-    $node = null;
   },
 
   beforeCustomNodeCheck: function(checkbox, isChecked, suppressAutoCheck, autoCheckChildren) {

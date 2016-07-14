@@ -1,19 +1,19 @@
 ﻿@model ArticleListViewModel
-		   
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.BLL
-@using Quantumart.QP8.Resources
+
 @using Quantumart.QP8.WebMvc.ViewModels
 
 @using (Html.BeginDocumentPadding())
 {
-	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+    using (Html.BeginLinkButtonsList())
     {
-        using (Html.BeginLinkButtonsList())
+        if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
         {
-		    @Html.AddNewItemLink(Model)
+            @Html.AddNewItemLink(Model)
         }
+
+        <li class="doctab-title__element doctab-title__articles-count-label">Total selected articles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
     }
+
     @Html.Telerik().TreeView().Name(Model.MainComponentId).HtmlAttributes(Model.TreeHthmlAttributes);
 }
 

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using AutoMapper;
+﻿using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -9,8 +6,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
-using Quantumart.QP8.WebMvc.ViewModels;
 using Telerik.Web.Mvc;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 using Quantumart.QP8.BLL.Exceptions;

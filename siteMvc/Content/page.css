@@ -1,58 +1,54 @@
-﻿HTML, BODY
+HTML, BODY
 {
-	height: 100%; 
-	overflow: hidden;
+  height: 100%;
+  overflow: hidden;
 }
 
 /*#region Login form*/
-.loginFormLayout
-{	
+.loginFormLayout #content
+{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -100px 0 0 -150px;
+  width: 300px;
+  height: 200px;
+  background-color: #fff;
 }
 
-	.loginFormLayout #content
-	{
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		margin: -100px 0 0 -150px;
-		width: 300px;
-		height: 200px;
-		background-color: #fff;
-	}
-	
-	.loginFormLayout .formLayout DT.label
-	{
-		width: 8.0em;
-		white-space: nowrap;
-	}
-	
-	.loginFormLayout .formLayout DD.field
-	{
-		margin-left: 8.5em;
-	}
-	
-	.loginFormLayout .validationSummary
-	{
-		margin-top: 0.5em;
-	}
+.loginFormLayout .formLayout DT.label
+{
+  width: 8.0em;
+  white-space: nowrap;
+}
+
+.loginFormLayout .formLayout DD.field
+{
+  margin-left: 8.5em;
+}
+
+.loginFormLayout .validationSummary
+{
+  margin-top: 0.5em;
+  }
 /*#endregion*/
 
 /*#region Two column layuot*/
 .twoColumnLayout #header
 {
-	margin: 0;
-	padding: 5px 10px 0 10px;
-	width: 100%;
-	height: 21px;
-	background-color: #bcc7d8;
+  margin: 0;
+  padding: 5px 10px 0 10px;
+  width: 100%;
+  height: 21px;
+  background-color: #bcc7d8;
 }
 
 .twoColumnLayout #serviceActions
 {
-	float: left;
-	margin: 0 20px 0 0 ;
-	padding: 0;
-	line-height: normal;
+  float: left;
+  margin: 0 20px 0 0 ;
+  padding: 0;
+  line-height: normal;
 }
 
 .twoColumnLayout #serviceActions A.js,
@@ -61,57 +57,57 @@
 .twoColumnLayout #serviceActions A.js:hover,
 .twoColumnLayout #serviceActions A.js:active
 {
-	color: #f1f5fb;
-	font-weight: bold;
-	text-decoration: none;
-	border-bottom: 1px dotted #f1f5fb;
+  color: #f1f5fb;
+  font-weight: bold;
+  text-decoration: none;
+  border-bottom: 1px dotted #f1f5fb;
 }
 
 .twoColumnLayout #serviceActions A.js:hover
 {
-	color: #ffefbb;
-	border-bottom: 1px dotted #ffefbb;
+  color: #ffefbb;
+  border-bottom: 1px dotted #ffefbb;
 }
 
 .twoColumnLayout #communicationMessage
 {
-	float: left;
-	margin: 0 20px 0 0 ;
-	padding: 0;
-	line-height: normal;
-	width:auto;
+  float: left;
+  margin: 0 20px 0 0 ;
+  padding: 0;
+  line-height: normal;
+  width:auto;
 }
 
 .twoColumnLayout #communicationMessage SPAN.info
 {
-	font-weight: bold;
+  font-weight: bold;
 }
 
 .twoColumnLayout #communicationMessage SPAN.warning
 {
-	color: red;
-	font-weight: bold;
+  color: red;
+  font-weight: bold;
 }
 
 .twoColumnLayout #userInformation
 {
-	float: right;
-	margin: 0 20px 0 0 ;
-	padding: 0;
-	line-height: normal;
+  float: right;
+  margin: 0 20px 0 0 ;
+  padding: 0;
+  line-height: normal;
 }
 
 .twoColumnLayout #userInformation SPAN.userName
 {
-	margin: 0;
-	padding: 0;
-	font-weight: bold;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
 }
 
 .twoColumnLayout #userInformation A.signOut
 {
-	margin: 0;
-	padding: 0 0 0 8px;	
+  margin: 0;
+  padding: 0 0 0 8px;
 }
 
 .twoColumnLayout #userInformation A.signOut,
@@ -120,8 +116,8 @@
 .twoColumnLayout #userInformation A.signOut:hover,
 .twoColumnLayout #userInformation A.signOut:active
 {
-	color: #ffefbb;
-	font-weight: bold;
+  color: #ffefbb;
+  font-weight: bold;
 }
 
 .twoColumnLayout
@@ -134,7 +130,7 @@
 
 .twoColumnLayout #splitter
 {
-	background-color:transparent;
+  background-color:transparent;
     height: 100%;
     border: none;
     margin-right: 5px;
@@ -142,7 +138,7 @@
 
 .twoColumnLayout #leftMenu
 {
-	position: relative;
+  position: relative;
     margin: 0px 0 0 6px;
     padding: 0 0 0 0;
 }
@@ -156,17 +152,17 @@
         background-color: #fff;
         font-size: 1px;
     }
-    
+
     .twoColumnLayout #leftMenu .lineTop
     {
-    	margin-top: 6px;
+      margin-top: 6px;
     }
-    
+
     .twoColumnLayout #leftMenu .lineBottom
     {
-    	margin-bottom: 12px;
+      margin-bottom: 12px;
     }
-    
+
     .twoColumnLayout #leftMenu EM.tl,
     .twoColumnLayout #leftMenu EM.tr,
     .twoColumnLayout #leftMenu EM.bl,
@@ -203,11 +199,11 @@
 
 .twoColumnLayout #tree
 {
-	position: relative;
-	margin: 0 0 0 0;
+  position: relative;
+  margin: 0 0 0 0;
     width: 100%;
-	background-color: #fff;
-	overflow:auto;
+  background-color: #fff;
+  overflow:auto;
 }
 
 .twoColumnLayout #content
@@ -219,30 +215,30 @@
 .twoColumnLayout .content
 {
     margin: 0 0 0 7px;
-    padding: 0;   
+    padding: 0;
     overflow: auto;
 }
 
 .twoColumnLayout #splitter > .t-splitbar
 {
-	margin-left: 6px;
-	background: url('Common/0.gif');
-	border: none;
+  margin-left: 6px;
+  background: url('Common/0.gif');
+  border: none;
 }
 
 .twoColumnLayout #splitter > .t-splitbar .t-icon
 {
-	background: url('Common/0.gif');
+  background: url('Common/0.gif');
 }
 
 
 .vsplitbar
 {
     margin: 0;
-	width: 12px;
-	cursor: w-resize;
-	background-image: url('Common/0.gif');
-    background-repeat: repeat-y;	
+  width: 12px;
+  cursor: w-resize;
+  background-image: url('Common/0.gif');
+    background-repeat: repeat-y;
 }
 .vsplitbar.active
 {
@@ -260,7 +256,7 @@
    background-image: url('Common/0.gif');
 }
 
-.twoColumnLayout #tabs 
+.twoColumnLayout #tabs
 {
     margin: 6px 6px 0 0px;
     padding: 0;
@@ -271,8 +267,8 @@
 {
     display: none;
     position: relative;
-    top: -4px;    
-    margin: 0 6px 0 0;
+    top: -7px;
+    margin: 3px 6px 0 0;
     padding: 0;
 }
     .twoColumnLayout #editingArea .lineTop,
@@ -318,7 +314,7 @@
         bottom: -4px;
         background-position: -8px -8px;
     }
-    
+
 .twoColumnLayout #breadCrumbs
 {
     margin: 0;
@@ -338,22 +334,22 @@
     overflow: hidden;
 }
 
-	.twoColumnLayout #actionToolbar
-	{
-		float: left;
-	}
-	
-	.twoColumnLayout #viewToolbar
-	{
-		float: right;
-	}
-	
+  .twoColumnLayout #actionToolbar
+  {
+    float: left;
+  }
+
+  .twoColumnLayout #viewToolbar
+  {
+    float: right;
+  }
+
 .twoColumnLayout #search, .twoColumnLayout #context
 {
-	background-color: #ebf5fb;
+  background-color: #ebf5fb;
 }
 
-.twoColumnLayout #document 
+.twoColumnLayout #document
 {
     clear: both;
     z-index: 4444;
@@ -373,24 +369,24 @@
         overflow: auto;
         background-color: #fff;
     }
-    
+
     .twoColumnLayout #document .documentWrapper.libraryWrapper
-	{
-		overflow:hidden;
-	}
-    
+  {
+    overflow:hidden;
+  }
+
     .twoColumnLayout #document .documentWrapper .editingForm, .twoColumnLayout #document .documentWrapper .documentPadding
     {
         padding: 3px 5px;
     }
-    
+
     .twoColumnLayout #document .loadingLayer
     {
         position: absolute;
         z-index: 5555;
         width: 100%;
         height: 100%;
-        opacity: 0.5; 
+        opacity: 0.5;
         filter: alpha(opacity=50);
         background: #eee url('QP8/icons/ajax_loaders/big_loading.gif') no-repeat center;
     }

@@ -1,5 +1,4 @@
 ﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -8,9 +7,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
-using System.Collections.Generic;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using Telerik.Web.Mvc;
 using System.Linq;
 

@@ -1,5 +1,5 @@
 // ****************************************************************************
-// *** Компонент "Активная гиперссылка"										***
+// *** Компонент "Активная гиперссылка"                   ***
 // ****************************************************************************
 //#region event types of action link
 // === Типы событий активных ссылок ===
@@ -10,43 +10,43 @@ var EVENT_TYPE_ACTION_LINK_SELF_CLICK = "OnActionLinkSelfClick";
 //#region class BackendActionLink
 // === Класс "Активная гиперссылка" ===
 Quantumart.QP8.BackendActionLink = function (actionLinkElementId, options) {
-	Quantumart.QP8.BackendActionLink.initializeBase(this);
+  Quantumart.QP8.BackendActionLink.initializeBase(this);
 
-	this._actionLinkElementId = actionLinkElementId;
-	if ($q.isObject(options)) {
-		if (options.entityId) {
-			this._entityId = options.entityId;
-		}
+  this._actionLinkElementId = actionLinkElementId;
+  if ($q.isObject(options)) {
+    if (options.entityId) {
+      this._entityId = options.entityId;
+    }
 
-		if (options.entityName) {
-			this._entityName = options.entityName;
-		}
+    if (options.entityName) {
+      this._entityName = options.entityName;
+    }
 
-		if (options.parentEntityId) {
-			this._parentEntityId = options.parentEntityId;
-		}
+    if (options.parentEntityId) {
+      this._parentEntityId = options.parentEntityId;
+    }
 
-		if (options.actionTypeCode) {
-			this._actionTypeCode = options.actionTypeCode;
-		}
+    if (options.actionTypeCode) {
+      this._actionTypeCode = options.actionTypeCode;
+    }
 
-		if (options.actionCode) {
-			this._actionCode = options.actionCode;
-		}
+    if (options.actionCode) {
+      this._actionCode = options.actionCode;
+    }
 
-		if (options.context) {
-			this._context = options.context;
-		}
+    if (options.context) {
+      this._context = options.context;
+    }
 
-		if (!$q.isNull(options.actionTargetType)) {
-			this._actionTargetType = options.actionTargetType;
-		}
-		else {
-			this._actionTargetType = Quantumart.QP8.Enums.ActionTargetType.NewTab;
-		}
-	}
+    if (!$q.isNull(options.actionTargetType)) {
+      this._actionTargetType = options.actionTargetType;
+    }
+    else {
+      this._actionTargetType = Quantumart.QP8.Enums.ActionTargetType.NewTab;
+    }
+  }
 
-	this._onActionExecutingHandler = jQuery.proxy(this.onActionExecuting, this);
+  this._onActionExecutingHandler = jQuery.proxy(this.onActionExecuting, this);
 };
 
 Quantumart.QP8.BackendActionLink.prototype = {
@@ -60,199 +60,195 @@ Quantumart.QP8.BackendActionLink.prototype = {
     _actionTypeCode: "", // код типа действия
     _actionCode: "", // код действия
     _actionTargetType: null, // тип цели для отображения интерфейсного действия
-	_context: null,
+  _context: null,
 
     ACTION_LINK_DISABLED_CLASS_NAME: "disabled",
     ACTION_LINK_BUSY_CLASS_NAME: "busy",
 
     get_entityId: function () {
-		return this._entityId;
-	},
+    return this._entityId;
+  },
 
     set_entityId: function (value) {
-		this._entityId = value;
-	},
+    this._entityId = value;
+  },
 
     get_entityName: function () {
-		return this._entityName;
-	},
+    return this._entityName;
+  },
 
     set_entityName: function (value) {
-		this._entityName = value;
-	},
+    this._entityName = value;
+  },
 
     get_parentEntityId: function () {
-		return this._parentEntityId;
-	},
+    return this._parentEntityId;
+  },
 
     set_parentEntityId: function (value) {
-		this._parentEntityId = value;
-	},
+    this._parentEntityId = value;
+  },
 
     get_actionTypeCode: function () {
-		return this._actionTypeCode;
-	},
+    return this._actionTypeCode;
+  },
 
     set_actionTypeCode: function (value) {
-		this._actionTypeCode = value;
-	},
+    this._actionTypeCode = value;
+  },
 
-	get_actionCode: function () {
-		return this._actionCode;
-	},
+  get_actionCode: function () {
+    return this._actionCode;
+  },
 
-	set_actionCode: function (value) {
-		this._actionCode = value;
-	},
+  set_actionCode: function (value) {
+    this._actionCode = value;
+  },
 
-	get_actionTargetType: function () {
-		return this._actionTargetType;
-	},
+  get_actionTargetType: function () {
+    return this._actionTargetType;
+  },
 
-	set_actionTargetType: function (value) {
-		this._actionTargetType = value;
-	},
+  set_actionTargetType: function (value) {
+    this._actionTargetType = value;
+  },
 
 
-	_onActionExecutingHandler: null,
+  _onActionExecutingHandler: null,
 
-	initialize: function () {
-		var $actionLink = jQuery("#" + this._actionLinkElementId);
-		var $iconWrapper = $actionLink.find("SPAN.icon:first");
-		var $caption = $actionLink.find("SPAN.text:first");
-	
-		this._actionLinkElement = $actionLink.get(0);
-		this._iconWrapperElement = $iconWrapper.get(0);
-		this._captionElement = $caption.get(0);
-	
-		this._attachActionLinkEventHandlers();
-	},
+  initialize: function () {
+    var $actionLink = jQuery("#" + this._actionLinkElementId);
+    var $iconWrapper = $actionLink.find("SPAN.icon:first");
+    var $caption = $actionLink.find("SPAN.text:first");
 
-	_attachActionLinkEventHandlers: function () {
-		var $link = jQuery(this._actionLinkElement);
-		$link.bind("click", this._onActionExecutingHandler);
-		$link.bind("mouseup", this._onActionExecutingHandler)
-	
-		$link = null;
-	},
+    this._actionLinkElement = $actionLink.get(0);
+    this._iconWrapperElement = $iconWrapper.get(0);
+    this._captionElement = $caption.get(0);
 
-	_detachActionLinkEventHandlers: function () {
-		var $link = jQuery(this._actionLinkElement);
-		$link.unbind("click", this._onActionExecutingHandler);
-		$link.unbind("mouseup", this._onActionExecutingHandler);
-	
-		$link = null;
-	},
+    this._attachActionLinkEventHandlers();
+  },
 
-	markActionLinkAsBusy: function () {
-		var $link = jQuery(this._actionLinkElement);
-		$link.find("A:first").addClass(this.ACTION_LINK_BUSY_CLASS_NAME)
-	
-		$link = null;
-	},
+  _attachActionLinkEventHandlers: function () {
+    var $link = jQuery(this._actionLinkElement);
+    $link.bind("click", this._onActionExecutingHandler);
+    $link.bind("mouseup", this._onActionExecutingHandler)
 
-	unmarkActionLinkAsBusy: function () {
-		var $link = jQuery(this._actionLinkElement);
-		$link.find("A:first").removeClass(this.ACTION_LINK_BUSY_CLASS_NAME)
-	
-		$link = null;
-	},
+    $link = null;
+  },
 
-	isActionLinkBusy: function () {
-		var $link = jQuery(this._actionLinkElement);
-		var isBusy = $link.find("A:first").hasClass(this.ACTION_LINK_BUSY_CLASS_NAME);
-	
-		$link = null;
-	
-		return isBusy;
-	},
+  _detachActionLinkEventHandlers: function () {
+    var $link = jQuery(this._actionLinkElement);
+    $link.unbind("click", this._onActionExecutingHandler);
+    $link.unbind("mouseup", this._onActionExecutingHandler);
 
-	enableActionLink: function () {
-		var $link = jQuery(this._actionLinkElement);
-		$link.find("A:first").removeClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
-	
-		$link = null;
-	},
+    $link = null;
+  },
 
-	disableActionLink: function () {
-		var $link = jQuery(this._actionLinkElement);
-		$link.find("A:first").addClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
-	
-		$link = null;
-	},
+  markActionLinkAsBusy: function () {
+    var $link = jQuery(this._actionLinkElement);
+    $link.find("A:first").addClass(this.ACTION_LINK_BUSY_CLASS_NAME)
 
-	isActionLinkDisabled: function () {
-		var $link = jQuery(this._actionLinkElement);
-		var isDisabled = $link.find("A:first").hasClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
-	
-		$link = null;
-	
-		return isDisabled;
-	},
+    $link = null;
+  },
 
-	onActionExecuting: function (e) {
-		e.preventDefault();
-		var isLeftClick = e.type == "click" && (e.which == 1 || e.which == 0);
-		var isMiddleClick = e.type == "mouseup" && e.which == 2;
-		if (!this.isActionLinkDisabled() && !this.isActionLinkBusy() && ((isLeftClick || isMiddleClick))) {
-			var actionTargetType = this._actionTargetType;
-			if (!$q.isNull(actionTargetType)) {
-				var actionCode = this._actionCode;
-				var action = $a.getBackendActionByCode(actionCode);
-				if (action) {
-					var params = new Quantumart.QP8.BackendActionParameters({
-						entityId: this._entityId,
-						entityName: this._entityName,
-						parentEntityId: this._parentEntityId,
-						context: this._context,
-						entityTypeCode: action.EntityType.Code,
-						forceOpenWindow: (actionTargetType == Quantumart.QP8.Enums.ActionTargetType.NewWindow)
-					});
-					params.correct(action);
-					var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+  unmarkActionLinkAsBusy: function () {
+    var $link = jQuery(this._actionLinkElement);
+    $link.find("A:first").removeClass(this.ACTION_LINK_BUSY_CLASS_NAME)
 
-					if (action.ActionType.Code === ACTION_TYPE_CODE_ADD_NEW) {
-						eventArgs.set_context(
-							jQuery.extend(
-								{ "ctrlKey": e.ctrlKey || isMiddleClick },
-								eventArgs.get_context()
-							)
-						);
-					}
+    $link = null;
+  },
 
-					if (action.IsInterface && actionTargetType == Quantumart.QP8.Enums.ActionTargetType.Self) {
-						this.notify(EVENT_TYPE_ACTION_LINK_SELF_CLICK, eventArgs);
-					}
-					else {
-						this.notify(EVENT_TYPE_ACTION_LINK_CLICK, eventArgs);
-					}
-					eventArgs = null;
-					params = null;
-				}
-			}
-			else {
-				alert($l.ActionLink.actionTargetTypeNotSpecified);
-			}
-		}
-	},
+  isActionLinkBusy: function () {
+    var $link = jQuery(this._actionLinkElement);
+    var isBusy = $link.find("A:first").hasClass(this.ACTION_LINK_BUSY_CLASS_NAME);
 
-	dispose: function () {
-		Quantumart.QP8.BackendActionLink.callBaseMethod(this, "dispose");
-	
-		this._detachActionLinkEventHandlers();
-	
-		if (this._iconWrapperElement) {
-			this._iconWrapperElement = null;
-		}
-	
-		if (this._captionElement) {
-			this._captionElement = null;
-		}
-	
-		this._actionLinkElement = null;
-	
-		$q.collectGarbageInIE();
-	}
+    $link = null;
+
+    return isBusy;
+  },
+
+  enableActionLink: function () {
+    var $link = jQuery(this._actionLinkElement);
+    $link.find("A:first").removeClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
+
+    $link = null;
+  },
+
+  disableActionLink: function () {
+    var $link = jQuery(this._actionLinkElement);
+    $link.find("A:first").addClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
+
+    $link = null;
+  },
+
+  isActionLinkDisabled: function () {
+    var $link = jQuery(this._actionLinkElement);
+    var isDisabled = $link.find("A:first").hasClass(this.ACTION_LINK_DISABLED_CLASS_NAME);
+
+    $link = null;
+
+    return isDisabled;
+  },
+
+  onActionExecuting: function (e) {
+    e.preventDefault();
+    var isLeftClick = e.type == "click" && (e.which == 1 || e.which == 0);
+    var isMiddleClick = e.type == "mouseup" && e.which == 2;
+    if (!this.isActionLinkDisabled() && !this.isActionLinkBusy() && (isLeftClick || isMiddleClick)) {
+      var actionTargetType = this._actionTargetType;
+      if (!$q.isNull(actionTargetType)) {
+        var actionCode = this._actionCode;
+        var action = $a.getBackendActionByCode(actionCode);
+        if (action) {
+          var params = new Quantumart.QP8.BackendActionParameters({
+            entityId: this._entityId,
+            entityName: this._entityName,
+            parentEntityId: this._parentEntityId,
+            context: this._context,
+            entityTypeCode: action.EntityType.Code,
+            forceOpenWindow: (actionTargetType == Quantumart.QP8.Enums.ActionTargetType.NewWindow)
+          });
+
+          params.correct(action);
+          var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
+
+          if (action.ActionType.Code === ACTION_TYPE_CODE_ADD_NEW) {
+            eventArgs.set_context(jQuery.extend({ "ctrlKey": e.ctrlKey || isMiddleClick }, eventArgs.get_context()));
+          }
+
+          if (action.IsInterface && actionTargetType == Quantumart.QP8.Enums.ActionTargetType.Self) {
+            this.notify(EVENT_TYPE_ACTION_LINK_SELF_CLICK, eventArgs);
+          } else {
+            this.notify(EVENT_TYPE_ACTION_LINK_CLICK, eventArgs);
+          }
+
+          eventArgs = null;
+          params = null;
+        }
+      }
+      else {
+        alert($l.ActionLink.actionTargetTypeNotSpecified);
+      }
+    }
+  },
+
+  dispose: function () {
+    Quantumart.QP8.BackendActionLink.callBaseMethod(this, "dispose");
+
+    this._detachActionLinkEventHandlers();
+
+    if (this._iconWrapperElement) {
+      this._iconWrapperElement = null;
+    }
+
+    if (this._captionElement) {
+      this._captionElement = null;
+    }
+
+    this._actionLinkElement = null;
+
+    $q.collectGarbageInIE();
+  }
 };
 
 
@@ -299,7 +295,7 @@ Quantumart.QP8.BackendActionLink.prototype = {
 // Привязывает события к гиперссылке
 
 
-// Отвязывает события от гиперссылке 
+// Отвязывает события от гиперссылке
 
 
 // Помечает активную ссылку как занятую

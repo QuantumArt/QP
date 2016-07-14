@@ -1,88 +1,46 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Mvc.Html;
-using Quantumart.QP8;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.Resources;
+﻿using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.ViewModels;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.ViewModels.Field;
+using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
-	public static class HtmlHelperPageExtensions
-	{
-		#region Grid Helpers
+    public static class HtmlHelperPageExtensions
+    {
+        /// <summary>
+        /// Генерирует JS-код инициализации страницы
+        /// </summary>
+        public static MvcHtmlString PrepareInitScript(this HtmlHelper html, ViewModel model)
+        {
+            return MvcHtmlString.Create($"<script>var {model.ContextObjectName} = new Quantumart.QP8.BackendDocumentContext({model.MainComponentParameters.ToJson()}, {model.MainComponentOptions.ToJson()});</script>");
+        }
 
-		/// <summary>
-		/// Генерирует JS-код инициализации страницы
-		/// </summary>
-		/// <param name="html">HTML-хелпер</param>
-		/// <param name="model">модель</param>
-		/// <returns>код</returns>
-		public static MvcHtmlString PrepareInitScript(this HtmlHelper html, ViewModel model)
-		{
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(@"<script type=""text/javascript"">");
-			sb.AppendLine(@"//<![CDATA[");
-			sb.AppendFormatLine(@"var {0} = new Quantumart.QP8.BackendDocumentContext({1}, {2});",
-				model.ContextObjectName, model.MainComponentParameters.ToJson(), model.MainComponentOptions.ToJson()
-			);
-			sb.AppendLine(@"//]]>");
-			sb.AppendLine(@"</script>");
+        /// <summary>
+        /// Выполняет JS-код инициализации страницы
+        /// </summary>
+        public static MvcHtmlString RunInitScript(this HtmlHelper html, ViewModel model)
+        {
+            return MvcHtmlString.Create($"<script>{model.ContextObjectName}.init();</script>");
+        }
 
-			return MvcHtmlString.Create(sb.ToString());
-		}
+        /// <summary>
+        /// Подменяет контекст у скрипта
+        /// </summary>
+        public static MvcHtmlString CustomScript(this HtmlHelper html, string script, string contextObjectName)
+        {
+            if (string.IsNullOrEmpty(script))
+            {
+                return MvcHtmlString.Create(string.Empty);
+            }
 
-		/// <summary>
-		/// Выполняет JS-код инициализации страницы
-		/// </summary>
-		/// <param name="html">HTML-хелпер</param>
-		/// <param name="model">модель</param>
-		/// <returns>код</returns>
-		public static MvcHtmlString RunInitScript(this HtmlHelper html, ViewModel model)
-		{
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(@"<script type=""text/javascript"">");
-			sb.AppendLine(@"//<![CDATA[");
-			sb.AppendFormatLine(@"{0}.init();", model.ContextObjectName);
-			sb.AppendLine(@"//]]>");
-			sb.AppendLine(@"</script>");
-			return MvcHtmlString.Create(sb.ToString());
-		}
+            return MvcHtmlString.Create($"<script>{script.Replace("QP_CURRENT_CONTEXT", contextObjectName)}</script>");
+        }
 
-		public static MvcHtmlString CustomScript(this HtmlHelper html, string script, string contextObjectName)
-		{
-			StringBuilder sb = new StringBuilder();
-			if (!String.IsNullOrEmpty(script))
-			{
-				string contextPlaceholder = "QP_CURRENT_CONTEXT";
-
-				sb.AppendLine(@"<script type=""text/javascript"">");
-				sb.AppendLine(@"//<![CDATA[");
-				sb.AppendLine(script.Replace(contextPlaceholder, contextObjectName));
-				sb.AppendLine(@"//]]>");
-				sb.AppendLine(@"</script>");
-			}
-			return MvcHtmlString.Create(sb.ToString());
-		}
-
-		/// <summary>
-		/// Генерирует и выполняет JS-код инициализации страницы
-		/// </summary>
-		/// <param name="html">HTML-хелпер</param>
-		/// <param name="model">модель</param>
-		/// <returns>код</returns>
-		public static MvcHtmlString InitScript(this HtmlHelper html, ViewModel model)
-		{
-			return MvcHtmlString.Create(html.PrepareInitScript(model).ToString() + html.RunInitScript(model).ToString());
-		}
-
-		#endregion
-	}
+        /// <summary>
+        /// Генерирует и выполняет JS-код инициализации страницы
+        /// </summary>
+        public static MvcHtmlString InitScript(this HtmlHelper html, ViewModel model)
+        {
+            return MvcHtmlString.Create(html.PrepareInitScript(model).ToString() + html.RunInitScript(model).ToString());
+        }
+    }
 }
