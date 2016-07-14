@@ -280,14 +280,13 @@ namespace Quantumart.Test
                 }
             };
 
-            var result = ArticleService.BatchUpdate(data);            
+            var result = ArticleService.BatchUpdate(data);
 
-            Assert.IsNotNull(result, BatchUpdateResultIncorrect);
+            Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
             var articleResult = result[0];
-            Assert.AreEqual(Dictionary_ContentId, articleResult.ContentId);
-            Assert.AreNotEqual(articleResult.OriginalArticleId, articleResult.CreatedArticleId);
-
+            Assert.That(articleResult.ContentId, Is.EqualTo(Dictionary_ContentId));
+            Assert.That(articleResult.CreatedArticleId, Is.Not.EqualTo(articleResult.OriginalArticleId));
          
             data[0].Id = articleResult.CreatedArticleId;
             data[0].Fields[0].Value = key;
@@ -297,40 +296,39 @@ namespace Quantumart.Test
 
             result = ArticleService.BatchUpdate(data);
 
-            Assert.IsNotNull(result, BatchUpdateResultIncorrect);
-            Assert.IsEmpty(result);
+            Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
 
             var contentData = Global.GetContentData(Cnn, articleResult.CreatedArticleId);
 
-            Assert.IsNotNull(contentData);
-            Assert.That(contentData, Has.Length.EqualTo(4), ContentDataIsEmpty);            
+            Assert.That(contentData, Is.Not.Null);
+            Assert.That(contentData, Has.Length.EqualTo(4), ContentDataIsEmpty);
 
             using (var scope = new QPConnectionScope(Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
 
-                Assert.IsNotNull(article, CantReadArticle);
+                Assert.That(article, Is.Not.Null, CantReadArticle);
 
                 var keyFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Key);
-                Assert.IsNotNull(keyFv);
-                Assert.AreEqual(key, keyFv.Value);
-                Assert.True(contentData.Any(itm => itm.FieldId == Dictionary_KeyId && itm.Data == key));
+                Assert.That(keyFv, Is.Not.Null);
+                Assert.That(key, Is.EqualTo(keyFv.Value));
+                Assert.That(contentData.Any(itm => itm.FieldId == Dictionary_KeyId && itm.Data == key));
 
                 var valueFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Value);
-                Assert.IsNotNull(valueFv);
-                Assert.AreEqual(value, valueFv.Value);
-                Assert.True(contentData.Any(itm => itm.FieldId == Dictionary_ValueId && itm.Data == value));
+                Assert.That(valueFv, Is.Not.Null);
+                Assert.That(value, Is.EqualTo(valueFv.Value));
+                Assert.That(contentData.Any(itm => itm.FieldId == Dictionary_ValueId && itm.Data == value));
 
                 var mtoValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtO_Backward, articleResult.CreatedArticleId);
-                Assert.AreEqual(mtoValue, Base_Field_OtMId, WrongMtORelation);
-                Assert.True(contentData.Any(itm => itm.FieldId == Dictionary_Field_MtO_BackwardId && itm.Data == Base_Field_OtMId.ToString(CultureInfo.InvariantCulture)), WrongMtORelation);
+                Assert.That(mtoValue, Is.EqualTo(Base_Field_OtMId), WrongMtORelation);
+                Assert.That(contentData.Any(itm => itm.FieldId == Dictionary_Field_MtO_BackwardId && itm.Data == Base_Field_OtMId.ToString(CultureInfo.InvariantCulture)), WrongMtORelation);
 
                 var mtmValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtM_Backward, articleResult.CreatedArticleId);
-                Assert.IsNotNull(mtmValue, WrongMtMRelation);
+                Assert.That(mtmValue, Is.Not.Null, WrongMtMRelation);
                 var mtmFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Field_MtM_Backward);
-                Assert.IsNotNull(mtmFv);
-                Assert.AreEqual(mtmFv.Field.Default, mtmValue.Value.ToString(CultureInfo.InvariantCulture), WrongMtMRelation);
-                Assert.True(contentData.Any(itm => itm.FieldId == Dictionary_Field_MtM_BackwardId && itm.Data == mtmFv.Field.Default), WrongMtMRelation);
+                Assert.That(mtmFv, Is.Not.Null);
+                Assert.That(mtmFv.Field.Default, Is.EqualTo(mtmValue.Value.ToString(CultureInfo.InvariantCulture)), WrongMtMRelation);
+                Assert.That(contentData.Any(itm => itm.FieldId == Dictionary_Field_MtM_BackwardId && itm.Data == mtmFv.Field.Default), WrongMtMRelation);
 
                 ArticleService.Delete(article.Id);
             }
@@ -375,34 +373,34 @@ namespace Quantumart.Test
 
             var result = ArticleService.BatchUpdate(data);
 
-            Assert.IsNotNull(result, BatchUpdateResultIncorrect);
+            Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
             var articleResult = result[0];
-            Assert.AreEqual(Dictionary_ContentId, articleResult.ContentId);
-            Assert.AreNotEqual(articleResult.OriginalArticleId, articleResult.CreatedArticleId);
+            Assert.That(Dictionary_ContentId, Is.EqualTo(articleResult.ContentId));
+            Assert.That(articleResult.OriginalArticleId, Is.Not.EqualTo(articleResult.CreatedArticleId));
 
             using (var scope = new QPConnectionScope(Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
 
-                Assert.IsNotNull(article, CantReadArticle);
+                Assert.That(article, Is.Not.Null, CantReadArticle);
 
                 var keyFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Key);
-                Assert.IsNotNull(keyFv);
-                Assert.AreEqual(key, keyFv.Value);
+                Assert.That(keyFv, Is.Not.Null);
+                Assert.That(key, Is.EqualTo(keyFv.Value));
 
                 var valueFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Value);
-                Assert.IsNotNull(valueFv);
-                Assert.AreEqual(value, valueFv.Value);
+                Assert.That(valueFv, Is.Not.Null);
+                Assert.That(value, Is.EqualTo(valueFv.Value));
 
-                var mtoValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtO_Backward, articleResult.CreatedArticleId);                
-                Assert.AreEqual(mtoValue, Base_Field_OtMId, WrongMtORelation);
+                var mtoValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtO_Backward, articleResult.CreatedArticleId);
+                Assert.That(mtoValue, Is.EqualTo(Base_Field_OtMId), WrongMtORelation);
 
                 var mtmValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtM_Backward, articleResult.CreatedArticleId);
-                Assert.IsNotNull(mtmValue, WrongMtMRelation);
+                Assert.That(mtmValue, Is.Not.Null, WrongMtMRelation);
                 var mtmFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Field_MtM_Backward);
-                Assert.IsNotNull(mtmFv);
-                Assert.AreEqual(mtmFv.Field.Default, mtmValue.Value.ToString(CultureInfo.InvariantCulture), WrongMtMRelation);                
+                Assert.That(mtmFv, Is.Not.Null);
+                Assert.That(mtmFv.Field.Default, Is.EqualTo(mtmValue.Value.ToString(CultureInfo.InvariantCulture)), WrongMtMRelation);
 
                 ArticleService.Delete(article.Id);
             }
@@ -445,16 +443,15 @@ namespace Quantumart.Test
             Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
             var exstensionResult = result[0];
-            Assert.AreEqual(exstensionResult.ContentId, Ex2_1_ContentId);
-            Assert.AreNotEqual(exstensionResult.OriginalArticleId, exstensionResult.CreatedArticleId);
-
+            Assert.That(exstensionResult.ContentId, Is.EqualTo(Ex2_1_ContentId));
+            Assert.That(exstensionResult.OriginalArticleId, Is.Not.EqualTo(exstensionResult.CreatedArticleId));
 
             var parentValues = Global.GetFieldValues<decimal>(Cnn, Ex2_1_ContentId, Ex2_1_Parent, new[] { exstensionResult.CreatedArticleId });
-            Assert.IsNotNull(parentValues, ValuesNotFound);
+            Assert.That(parentValues, Is.Not.Null, ValuesNotFound);
             Assert.That(parentValues, Has.Length.EqualTo(1));
             var parentValue = parentValues[0];
 
-            Assert.AreEqual(articleId, parentValue);
+            Assert.That(articleId, Is.EqualTo(parentValue));
         }
 
         [Test]
@@ -608,7 +605,7 @@ namespace Quantumart.Test
             var ids = Global.GetIds(Cnn, contentId);
             Assert.That(ids, Is.Not.Null.And.Not.Empty, ArticlesNotFound);
             return ids[0];
-        }           
+        }
         #endregion
     }
 }
