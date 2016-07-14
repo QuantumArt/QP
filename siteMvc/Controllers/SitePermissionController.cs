@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Telerik.Web.Mvc;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.WebMvc.Controllers.Base;
 
 namespace Quantumart.QP8.WebMvc.Controllers

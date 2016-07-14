@@ -9925,6 +9925,30 @@ namespace Quantumart.QP8.DAL
                 NOT_FOR_REPLICATION = 0 AND
                 CONTENT_ITEM_ID IN (SELECT DISTINCT ArticleId FROM @values)
 
+            INSERT INTO
+                CONTENT_DATA (ATTRIBUTE_ID, CONTENT_ITEM_ID, CREATED, MODIFIED, [DATA], BLOB_DATA, not_for_replication)
+            SELECT
+                v.FieldId ATTRIBUTE_ID,
+                v.ArticleId CONTENT_ITEM_ID,
+                GETDATE() CREATED,
+                GETDATE() MODIFIED,
+                CASE
+                    WHEN t.DATABASE_TYPE != 'NTEXT' AND v.Value != '' THEN v.Value
+                    ELSE NULL
+                END [DATA],
+                CASE
+                    WHEN t.DATABASE_TYPE = 'NTEXT' AND v.Value != '' THEN v.Value
+                    ELSE NULL
+                END [BLOB_DATA],
+                1 not_for_replication
+            FROM
+                CONTENT_DATA d
+                RIGHT JOIN @values v ON v.ArticleId = d.CONTENT_ITEM_ID AND v.FieldId = d.ATTRIBUTE_ID
+                JOIN CONTENT_ATTRIBUTE a ON v.FieldId = a.ATTRIBUTE_ID AND v.ContentId = a.CONTENT_ID
+                JOIN ATTRIBUTE_TYPE t ON a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID
+            WHERE
+                d.ATTRIBUTE_ID IS NULL
+
             UPDATE
                 CONTENT_DATA
             SET

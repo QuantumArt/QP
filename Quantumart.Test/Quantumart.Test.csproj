@@ -75,6 +75,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="BatchUpdateFixture.cs" />
     <Compile Include="ContentGroupFixture.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="DynamicImageFixture.cs" />
@@ -107,6 +108,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="xmls\batchupdate.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="xmls\files.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

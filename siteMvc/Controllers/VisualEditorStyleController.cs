@@ -1,5 +1,4 @@
-﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services;
+﻿using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
