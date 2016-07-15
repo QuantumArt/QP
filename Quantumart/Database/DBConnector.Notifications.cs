@@ -303,26 +303,23 @@ namespace Quantumart.QPublishing.Database
 
         public string GetUrlContent(string url, bool throwException)
         {
-            string functionReturnValue;
-            var response = GetUrlResponse(url);
-            if (response.StatusCode == HttpStatusCode.OK)
+            using (var response = GetUrlResponse(url))
             {
-                var reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(response.CharacterSet));
-                functionReturnValue = reader.ReadToEnd();
-                response.Close();
-            }
-            else
-            {
-                if (throwException)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    throw new Exception(response.StatusDescription + "(" + response.StatusCode + "): " + url);
+                    var stream = response.GetResponseStream();
+                    var charset = response.CharacterSet ?? "UTF-8";
+                    return stream == null ? null : new StreamReader(stream, Encoding.GetEncoding(charset)).ReadToEnd();
                 }
                 else
                 {
-                    functionReturnValue = url + "<br>" + response.StatusCode + "<br>" + response.StatusDescription;
+                    if (throwException)
+                    {
+                        throw new Exception(response.StatusDescription + "(" + response.StatusCode + "): " + url);
+                    }
+                    return url + "<br>" + response.StatusCode + "<br>" + response.StatusDescription;
                 }
             }
-            return functionReturnValue;
         }
 
         public void LoadUrl(string url)
