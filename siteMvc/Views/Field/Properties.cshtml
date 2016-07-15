@@ -13,36 +13,36 @@
         @Html.SimpleAddActionLink(VisualEditorStrings.AddNewExternalCss)
     </span>
     <table>
-        <thead>			
+        <thead>
             <tr>
                 <th/>
-                <th>URL</th>				
-                <th></th>				
-            </tr>			
+                <th>URL</th>
+                <th></th>
+            </tr>
         </thead>
         <tbody data-bind ="foreach: items">
             <tr>
                 <td data-bind="text: $index() + 1"></td>
-                <td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"/></td>				
+                <td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"/></td>
                 <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
             </tr>
         </tbody>
     </table>
 </script>
 
-<script type="text/html" id="@Html.UniqueId("Data_StringEnumItems_template")">	
+<script type="text/html" id="@Html.UniqueId("Data_StringEnumItems_template")">
     <span data-bind="click: addItem">
         @Html.SimpleAddActionLink(FieldStrings.AddNewEnumItem)
-    </span>	
+    </span>
     <table>
         <thead>
-            <tr>				
+            <tr>
                 <th></th>
-                <th>@FieldStrings.EnumValueValue</th>				
+                <th>@FieldStrings.EnumValueValue</th>
                 <th>@FieldStrings.EnumValueAlias</th>
-                <th>@FieldStrings.EnumValueDefault</th>						
+                <th>@FieldStrings.EnumValueDefault</th>
                 <th></th>
-            </tr>			
+            </tr>
         </thead>
         <tbody data-bind ="foreach: items">
             <tr>
@@ -55,7 +55,7 @@
                 <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
             </tr>
         </tbody>
-    </table>	
+    </table>
 </script>
 
 
@@ -70,7 +70,6 @@
         @Html.TextAreaFieldFor(s => s.Data.Description)
 
         @Html.SelectFieldFor(s => s.Data.ExactType, Html.List(Model.GetAcceptableExactFieldTypes()), new Dictionary<string, object> {{"id", Model.ExactSelectElementId}})
-
         @Html.SelectFieldFor(s => s.Data.Order, Html.List(Model.GetOrderOptions()))
         ;
         @Html.CheckBoxFieldFor(s => s.Data.UseInChildContentFilter)
@@ -490,45 +489,43 @@
 }
 
 @Html.PrepareInitScript(Model)
-<script type="text/javascript">	
+<script>
     @(Model.ContextObjectName).set_initializedCallback(function() {
         this.fieldPropertiesMediator = new Quantumart.QP8.FieldPropertiesMediator("@(Model.TabId)");
         this.relateToAndDisplayFieldMediator = new Quantumart.QP8.RelateToAndDisplayFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.DisplayFieldSelectElementId)", "@(Model.CurrentFieldIdHiddenElementId)", "@(Model.ListOrderSelectElementId)");
-        this.relateToAndClassifierFieldMediator = new Quantumart.QP8.RelateToAndClassifierFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.ClassifierSelectElementId)", "@(Model.AggregatedElementId)");		
+        this.relateToAndClassifierFieldMediator = new Quantumart.QP8.RelateToAndClassifierFieldMediator("@(Model.RelateToSelectElementId)", "@(Model.ClassifierSelectElementId)", "@(Model.AggregatedElementId)");
         this.fieldTypeFileDefaultMediator = new Quantumart.QP8.FieldTypeFileDefaultMediator("@(Model.ExactSelectElementId)", "@(Model.FileDefaultElementId)");
         this.relateToAndO2MDefaultMediator = new Quantumart.QP8.RelateToAndO2MDefaultMediator("@(Model.RelateToSelectElementId)", "@(Model.O2MDefaultElementId)", "@(Model.M2MDefaultElementId)");
 
         this.relateToAndPanelsMediator = new Quantumart.QP8.RelateToAndPanelsMediator("@(Model.RelateToSelectElementId)", "@(Model.RelatedSettingsPanelsSelector)", "@(Model.Data.ContentId)");
         this.relateToAndPanelsMediator.refresh();
 
-        this.$documentWrapper= jQuery("#" + this.get_mainComponent()._documentWrapperElementId);
-        this.$stringEnum = jQuery('#@Html.UniqueId("Data_StringEnumItems_aggregationlist")');
+        this.$documentWrapper= $("#" + this.get_mainComponent()._documentWrapperElementId);
+        this.$stringEnum = $('#@Html.UniqueId("Data_StringEnumItems_aggregationlist")');
         var that = this;
         this.$documentWrapper.on("change", "input:checkbox.enum-default", function(){
-            var $curr = jQuery(this);			
+            var $curr = $(this);
             var aggList = Quantumart.QP8.BackendAggregationList.getComponent(that.$stringEnum);
             if(aggList){
                 var chIndex = $q.toInt($curr.data('index'), -1);
                 var i = 0;
-                jQuery.each(aggList.get_items(), function(){					
+                $.each(aggList.get_items(), function(){
                     if(i !== chIndex){
                         this.IsDefault = false;
                     }
                     i++;
                 });
             }
-            
+
             var isChecked = $curr.prop("checked");
             that.$documentWrapper.find("input:checkbox:checked.enum-default").prop("checked", false);
             if(isChecked){
                 $curr.prop("checked", true);
             }
-            $curr = null;
         });
-    });	
-    @(Model.ContextObjectName).set_terminatingCallback(function() {								
+    });
 
-        
+    @(Model.ContextObjectName).set_terminatingCallback(function() {
         this.relateToAndDisplayFieldMediator.dispose();
         this.relateToAndDisplayFieldMediator = null;
 
@@ -546,13 +543,12 @@
 
         this.fieldPropertiesMediator.dispose();
         this.fieldPropertiesMediator = null;
-        
+
         this.$stringEnum = null;
-        if(this.$documentWrapper){
+        if(this.$documentWrapper) {
             this.$documentWrapper.off("change", "input:checkbox.enum-default");
             this.$documentWrapper = null;
         }
-        
     });
 </script>
 @Html.RunInitScript(Model)

@@ -8,7 +8,6 @@ Quantumart.QP8.BackendDocumentContext = function(params, options) {
   }
 
   this._params = params;
-
   if (params.entityId) {
     this._entityId = params.entityId;
   }
@@ -126,7 +125,6 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     var host = this.getHost();
-
     if (host) {
       this._mainComponent = this.createMainComponent(host);
       host.set_documentContext(this);

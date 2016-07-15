@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     //#region Расширение BackendDocumentContext (Регистрация и выполнение обработчиков событий формы)
     Quantumart.QP8.BackendDocumentContext.prototype.addInitHandler = function (callback) {
         if (typeof (callback) == "function") {
@@ -112,7 +112,7 @@
 
     Quantumart.QP8.BackendDocumentContext.prototype.getReadonlyStatus = function (editor, fieldName) {
         /// <summary>
-        /// Возвращает статус заблокированности поля. 
+        /// Возвращает статус заблокированности поля.
         /// работает только с Textbox
         /// </summary>
         var $tboxes = $c.getAllSimpleTextBox(editor._formElement);
@@ -265,7 +265,7 @@
             } else {
                 // скрывается набор полей для страниц
                 this.toggleFields(editor, options.pagesFields, false);
-                // отображается набор полей для виджетов            
+                // отображается набор полей для виджетов
                 this.toggleFields(editor, options.widgetsFields, true);
             }
 
@@ -280,7 +280,7 @@
             }
 
             if (extensionId > 0) {
-                if ((currentExtensionIdValue == 0 || editor._acionCode == ACTION_CODE_ADD_NEW_ARTICLE) && currentExtensionIdValue != extensionId) {
+                if ((currentExtensionIdValue == 0 || editor._actionCode == ACTION_CODE_ADD_NEW_ARTICLE) && currentExtensionIdValue != extensionId) {
                     // если не выставлено значение, то выставляется
                     this.setValue(editor, [{ fieldName: options.fields.extensionId, value: extensionId }]);
                     $c.makeReadonlyClassifierFields(editor._formElement, [options.fields.extensionId]);

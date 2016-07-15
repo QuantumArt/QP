@@ -48,11 +48,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
-            if (filterContext.Exception == null
-                && filterContext.Controller.ViewData.ModelState.IsValid
-                && DbRepository.Get().RecordActions
-                && !QPController.IsError(filterContext.HttpContext)
-            )
+            var isValid = filterContext.Exception == null && filterContext.Controller.ViewData.ModelState.IsValid && !QPController.IsError(filterContext.HttpContext);
+            if (isValid && DbRepository.Get().RecordActions)
             {
                 var action = new RecordedAction();
                 var form = filterContext.HttpContext.Request.Form;
@@ -62,12 +59,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
                 }
 
                 action.Code = _code ?? BackendActionContext.Current.ActionCode;
-                action.ParentId = (BackendActionContext.Current.ParentEntityId.HasValue) ? BackendActionContext.Current.ParentEntityId.Value : 0;
+                action.ParentId = BackendActionContext.Current.ParentEntityId.HasValue ? BackendActionContext.Current.ParentEntityId.Value : 0;
                 action.Lcid = CultureInfo.CurrentCulture.LCID;
                 action.Executed = DateTime.Now;
                 action.ExecutedBy = (filterContext.HttpContext.User.Identity as QPIdentity)?.Name;
+
                 var fromId = filterContext.HttpContext.Items.Contains("FROM_ID") ? (int)filterContext.HttpContext.Items["FROM_ID"] : 0;
-                action.Ids = (fromId != 0) ? new[] { fromId.ToString() } : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray();
+                action.Ids = fromId != 0 ? new[] { fromId.ToString() } : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray();
+
                 var helper = DependencyResolver.Current.GetService<IRecordHelper>();
                 helper.PersistAction(action, filterContext.HttpContext);
             }

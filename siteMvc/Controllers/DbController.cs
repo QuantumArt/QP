@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Net.Mime;
+using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -19,7 +20,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _communicationService = communicationService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.DbSettings)]
         [BackendActionContext(ActionCode.DbSettings)]
@@ -28,6 +28,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var db = DbService.ReadSettings();
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
+
+            ViewBag.IsRecordAvailableForDownload = System.IO.File.Exists(RecordReplayHelper.GetXmlFilePath());
             return JsonHtml("Settings", model);
         }
 
@@ -41,6 +43,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var db = DbService.ReadSettingsForUpdate();
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
@@ -81,9 +84,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public FileResult GetRecordedUserActions()
         {
-            var fileBytes = System.IO.File.ReadAllBytes(@"c:\folder\myfile.ext");
-            var fileName = "myfile.ext";
-            return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
+            return File(RecordReplayHelper.GetXmlFilePath(), MediaTypeNames.Application.Octet, RecordReplayHelper.GetXmlFileName());
         }
     }
 }

@@ -534,14 +534,13 @@ a.html:hover
 	{
 		width: 16px;
 		height: 16px;
-        border: none;
+    border: none;
 	}
 	.formLayout div.fieldWrapper .downloadButton,
 	.formLayout div.fieldWrapper .previewButton,
 	.formLayout div.fieldWrapper .libraryButton,
 	.formLayout div.fieldWrapper .customButton
 	{
-		cursor: hand;
 		cursor: pointer;
 	}
 	.formLayout div.fieldWrapper .downloadButton
@@ -577,9 +576,6 @@ a.html:hover
 	    overflow: hidden;
 	}
 
-	.formLayout div.dataListWrapper
-	{
-	}
 	.formLayout ul.linkButtons, .documentWrapper ul.linkButtons
 	{
 		margin: 0 0 0.4em 0;
@@ -711,7 +707,6 @@ input[type="text"].readonly, textarea.readonly
 /*#endregion*/
 
 /*#region Links*/
-
 .linkButton a
 {
 	text-decoration: none;
@@ -754,7 +749,6 @@ input[type="text"].readonly, textarea.readonly
 {
 	cursor: wait;
 }
-
 .linkButton a.disabled
 {
 	cursor: default;
@@ -802,13 +796,14 @@ input[type="text"].readonly, textarea.readonly
 {
 	background-image: url('QP8/icons/16x16/green_arrow_down.png');
 }
-
-
+.linkButton span.download
+{
+	background-image: url('QP8/icons/16x16/download.gif');
+}
 .linkButton span.parentPermissions
 {
 	background-image: url('QP8/icons/16x16/child_permissions.gif');
 }
-
 .linkButton span.unlock
 {
 	background-image: url('QP8/icons/16x16/unlock.gif');
@@ -821,42 +816,34 @@ input[type="text"].readonly, textarea.readonly
 {
 	background-image: url('QP8/icons/16x16/collapse.gif');
 }
-
 .linkButton span.library
 {
 	background-image: url('QP8/icons/16x16/content_folder.gif');
 }
-
 .linkButton span.copy
 {
 	background-image: url('QP8/icons/16x16/copy.gif');
 }
-
 .linkButton span.paste
 {
 	background-image: url('QP8/icons/16x16/paste.gif');
 }
-
 .linkButton span.restore
 {
 	background-image: url('QP8/icons/16x16/restore.gif');
 }
-
 .linkButton span.texteditor
 {
 	background-image: url('QP8/icons/16x16/textbox.gif');
 }
-
 .linkButton span.visualeditor
 {
 	background-image: url('QP8/icons/16x16/vedit.gif');
 }
-
 .linkButton span.insert-call
 {
 	background-image: url('QP8/icons/16x16/insert_call.gif')!important;
 }
-
 .toolbar .insertButton
 {
     background-image: url('QP8/icons/16x16/insert_call.gif')!important;
