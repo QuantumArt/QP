@@ -66,6 +66,8 @@ namespace Quantumart.QPublishing.Info
 
         public Dictionary<string, ContentItemValue> FieldValues { get; } = new Dictionary<string, ContentItemValue>();
 
+        private Dictionary<string, ContentItemValue> RestrictedFieldValues { get; } = new Dictionary<string, ContentItemValue>();
+
         public List<ContentItem> AggregatedItems { get; } = new List<ContentItem>();
 
         public bool IsNew => Id == 0;
@@ -221,10 +223,15 @@ namespace Quantumart.QPublishing.Info
         }
 
         private void InitFieldValues() {
-            var attrs = Cnn.GetContentAttributeObjects(ContentId);
+            var attrs = Cnn.GetContentAttributeObjects(ContentId).ToArray();
             foreach (var attr in attrs)
             {
                 FieldValues.Add(attr.Name, new ContentItemValue());
+            }
+
+            foreach (var attr in attrs.Where(n => n.Aggregated || n.IsClassifier))
+            {
+                RestrictedFieldValues.Add(attr.Name, new ContentItemValue());
             }
         }
 
@@ -243,11 +250,17 @@ namespace Quantumart.QPublishing.Info
                 $"sp_executesql N'select cd.attribute_id, case when ca.attribute_type_id in (9, 10) then cd.blob_data else cd.data end as data from content_data cd inner join content_attribute ca on cd.attribute_id = ca.attribute_id where content_item_id = @id', N'@id NUMERIC', @id = {Id}");
             foreach (DataRow dr in dt.Rows)
             {
-                ContentAttribute attr = Cnn.GetContentAttributeObject((int)(decimal)dr["ATTRIBUTE_ID"]);
+                var attr = Cnn.GetContentAttributeObject((int)(decimal)dr["ATTRIBUTE_ID"]);
                 if (FieldValues.ContainsKey(attr.Name))
                 {
-                    ContentItemValue value = FieldValues[attr.Name];
+                    var value = FieldValues[attr.Name];
                     value.Data = dr["DATA"].ToString();
+
+                    if (RestrictedFieldValues.ContainsKey(attr.Name))
+                    {
+                        var restValue = RestrictedFieldValues[attr.Name];
+                        restValue.Data = dr["DATA"].ToString();
+                    }
 
                     if (attr.Type == AttributeType.String || attr.Type == AttributeType.VisualEdit || attr.Type == AttributeType.Textbox)
                     {
@@ -312,10 +325,19 @@ namespace Quantumart.QPublishing.Info
         {
             var attrs = Cnn.GetContentAttributeObjects(ContentId).ToDictionary(n => n.Name.ToLowerInvariant(), n => n);
             Hashtable values = new Hashtable();
-            if (attrs.Values.Any(n => n.IsClassifier || n.Aggregated))
+            var restAttrs = attrs.Values.Where(n => n.IsClassifier || n.Aggregated).ToDictionary(n => n.Name.ToLowerInvariant(), n => n); ;
+            foreach (var fieldValue in FieldValues)
             {
-                throw new Exception("Aggregated contents are not supported");		
+                var attrKey = fieldValue.Key.ToLowerInvariant();
+                if (restAttrs.ContainsKey(attrKey))
+                {
+                    var key = restAttrs[attrKey].Name;
+                    if (RestrictedFieldValues[key].Data != fieldValue.Value.Data)
+                        throw new Exception("Change of Aggregated or Classifier fields are not supported");
+
+                }
             }
+
             foreach (var fieldValue in FieldValues)
             {
                 var attrKey = fieldValue.Key.ToLowerInvariant();

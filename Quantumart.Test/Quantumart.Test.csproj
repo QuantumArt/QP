@@ -79,6 +79,7 @@
     <Compile Include="ContentGroupFixture.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="DynamicImageFixture.cs" />
+    <Compile Include="ExtensionFixture.cs" />
     <Compile Include="HierarchyFixture.cs" />
     <Compile Include="M2MNonSplittedFixture.cs" />
     <Compile Include="M2MFixture .cs" />

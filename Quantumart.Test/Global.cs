@@ -32,6 +32,15 @@ namespace Quantumart.Test
                 .ToArray();
         }
 
+        public static int[] GetIdsFromArchive(DBConnector cnn, int[] ids)
+        {
+            return cnn.GetRealData($"select content_item_id from content_item where archive = 1 and content_item_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => (int)n.Field<decimal>("content_item_id"))
+                .OrderBy(n => n)
+                .ToArray();
+        }
+
         public static Dictionary<string, int> GetIdsWithTitles(DBConnector cnn, int contentId)
         {
             return cnn.GetRealData($"select content_item_id, Title from content_{contentId}_united")
