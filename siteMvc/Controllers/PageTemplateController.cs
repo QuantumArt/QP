@@ -26,7 +26,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         #region list actions
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Templates)]
 		[BackendActionContext(ActionCode.Templates)]
         public ActionResult IndexTemplates(string tabId, int parentId)
@@ -44,13 +44,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             ListResult<PageTemplateListItem> serviceResult = _pageTemplateService.GetPageTemplatesBySiteId(command.GetListCommand(), parentId);
             return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
-        }               		
+        }
 
 		#endregion
 
 		#region create actions
 		[HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewPageTemplate)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.PageTemplate, "parentId")]
         [BackendActionContext(ActionCode.AddNewPageTemplate)]
@@ -62,8 +62,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.AddNewPageTemplate)]
         [BackendActionContext(ActionCode.AddNewPageTemplate)]
         [BackendActionLog]
@@ -83,12 +83,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             else
                 return this.JsonHtml("Properties", model);
         }
-		
+
         #endregion
-				
+
         #region properties region
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageTemplateProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageTemplate, "id")]
         [BackendActionContext(ActionCode.PageTemplateProperties)]
@@ -102,8 +102,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.UpdatePageTemplate)]
         [BackendActionContext(ActionCode.UpdatePageTemplate)]
         [BackendActionLog]
@@ -115,22 +115,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
-            {				
-                model.Data = _pageTemplateService.UpdatePageTemplateProperties(model.Data);				
+            {
+                model.Data = _pageTemplateService.UpdatePageTemplateProperties(model.Data);
                 return Redirect("PageTemplateProperties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.UpdatePageTemplate });
             }
             else
                 return this.JsonHtml("Properties", model);
-        }       				
+        }
 
-		
+
 
 		#endregion
 
 		#region remove region
 		[HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.RemovePageTemplate)]
         [BackendActionContext(ActionCode.RemovePageTemplate)]
         [BackendActionLog]
@@ -139,15 +139,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             MessageResult result = _pageTemplateService.RemovePageTemplate(id);
             return this.JsonMessageResult(result);
-        }				
+        }
 
-		
+
         #endregion
 
 		#region cancel actions
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CancelTemplate)]
 		[BackendActionContext(ActionCode.CancelTemplate)]
 		public ActionResult CancelTemplate(int id)
@@ -155,9 +155,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			_pageTemplateService.CancelTemplate(id);
 			return Json(null);
 		}
-		
-		#endregion				
-		
+
+		#endregion
+
 		[HttpPost]
 		public JsonResult GetFieldsByContentId(int contentId)
 		{
@@ -265,7 +265,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SearchInCode)]
 		[BackendActionContext(ActionCode.SearchInCode)]
 		public ActionResult Formats(string tabId, int parentId, int id)
@@ -276,7 +276,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[ActionAuthorize(ActionCode.SearchInCode)]
 		[BackendActionContext(ActionCode.SearchInCode)]
-		[GridAction(EnableCustomBinding = true)]		
+		[GridAction(EnableCustomBinding = true)]
 		public ActionResult _Formats(string tabId, int parentId, int id, int? templateId, int? pageId, string filterVal, GridCommand command)
 		{
 			ListResult<ObjectFormatSearchResultListItem> list = _pageTemplateService.FormatSearch(command.GetListCommand(), id, templateId, pageId, filterVal);
@@ -288,7 +288,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SearchInTemplates)]
 		[BackendActionContext(ActionCode.SearchInTemplates)]
 		public ActionResult Templates(string tabId, int parentId)
@@ -311,7 +311,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SearchInObjects)]
 		[BackendActionContext(ActionCode.SearchInObjects)]
 		public ActionResult Parameters(string tabId, int parentId, int id)
@@ -334,32 +334,32 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 		#endregion
 
-		
+
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CaptureLockTemplate)]
 		[BackendActionContext(ActionCode.CaptureLockTemplate)]
 		[BackendActionLog]
 		public ActionResult CaptureLockTemplate(int id)
-		{			
+		{
 			_pageTemplateService.CaptureLockTemplate(id);
 			return Json(null);
 		}
-		
+
 
 		#region Higlighted toolbar
-		
+
 		[HttpPost]
 		public JsonResult GetDefaultCode(int formatId)
 		{
-			string defaultCode = _pageTemplateService.ReadDefaultCode(formatId);						
+			string defaultCode = _pageTemplateService.ReadDefaultCode(formatId);
 			return new JsonResult
 			{
 				Data = new
 				{
 					success = true,
-					code = defaultCode					
+					code = defaultCode
 				},
 				JsonRequestBehavior = JsonRequestBehavior.AllowGet
 			};
@@ -388,7 +388,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			bool isContainer;
 			bool isForm;
 			int? pageId = null;
-			int? contentId = null;			
+			int? contentId = null;
 
 			if (formatId.HasValue)
 			{
@@ -413,7 +413,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 				isContainer = false;
 				isForm = false;
 				contentId = null;
-			}			
+			}
 
 			return new JsonResult
 			{

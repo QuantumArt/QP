@@ -16,7 +16,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ActionPermissionTree)]
 		[BackendActionContext(ActionCode.ActionPermissionTree)]
 		public ActionResult TreeView(string tabId)

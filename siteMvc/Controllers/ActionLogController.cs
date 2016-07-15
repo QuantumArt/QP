@@ -33,7 +33,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Action Log
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ActionLog)]
 		[BackendActionContext(ActionCode.ActionLog)]
 		public ActionResult Actions(string tabId, int parentId)
@@ -73,7 +73,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Button Trace
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ButtonTrace)]
 		[BackendActionContext(ActionCode.ButtonTrace)]
 		public ActionResult ButtonTrace(string tabId, int parentId)
@@ -103,7 +103,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Removed Entities
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.RemovedEntities)]
 		[BackendActionContext(ActionCode.RemovedEntities)]
 		public ActionResult RemovedEntities(string tabId, int parentId)
@@ -128,7 +128,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Sessions Log 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SuccessfulSession)]
 		[BackendActionContext(ActionCode.SuccessfulSession)]
 		public ActionResult SucessfullSessions(string tabId, int parentId)
@@ -152,7 +152,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.FailedSession)]
 		[BackendActionContext(ActionCode.FailedSession)]
 		public ActionResult FailedSessions(string tabId, int parentId)

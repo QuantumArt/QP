@@ -18,7 +18,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RebuildVirtualContents)]
 		[BackendActionContext(ActionCode.RebuildVirtualContents)]
 		[BackendActionLog]
@@ -30,7 +30,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		public ActionResult Step(int stage, int step)
 		{
 			MultistepActionStepResult stepResult = service.Step(stage, step);

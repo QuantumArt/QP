@@ -158,7 +158,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope()]
         public JsonNetResult<object> UnlockAllEntities()
         {
             EntityObjectService.UnlockAllEntitiesLockedByCurrentUser();

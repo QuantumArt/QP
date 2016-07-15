@@ -24,9 +24,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		#region list actions
-		
+
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.Notifications)]
 		[BackendActionContext(ActionCode.Notifications)]
 		public ActionResult Index(string tabId, int parentId)
@@ -45,11 +45,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			ListResult<NotificationListItem> serviceResult = _notificationService.GetNotificationsByContentId(command.GetListCommand(), parentId);
 			return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
 		}
-		#endregion		
+		#endregion
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.NotificationObjectFormatProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormat, "id")]
 		[BackendActionContext(ActionCode.NotificationObjectFormatProperties)]
@@ -63,8 +63,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.NotificationObjectFormatProperties)]
 		[BackendActionContext(ActionCode.NotificationObjectFormatProperties)]
 		[BackendActionLog]
@@ -86,20 +86,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.AddNewNotification)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
 		[BackendActionContext(ActionCode.AddNewNotification)]
 		public ActionResult New(string tabId, int parentId)
 		{
 			Notification notification = _notificationService.NewNotificationProperties(parentId);
-            NotificationViewModel model = NotificationViewModel.Create(notification, tabId, parentId, _notificationService);            
+            NotificationViewModel model = NotificationViewModel.Create(notification, tabId, parentId, _notificationService);
 			return this.JsonHtml("Properties", model);
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewNotification)]
 		[BackendActionContext(ActionCode.AddNewNotification)]
 		[BackendActionLog]
@@ -109,7 +109,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			Notification notification = _notificationService.NewNotificationPropertiesForUpdate(parentId);
             NotificationViewModel model = NotificationViewModel.Create(notification, tabId, parentId, _notificationService);
 			TryUpdateModel(model);
-			model.Validate(ModelState);            
+			model.Validate(ModelState);
 			if (ModelState.IsValid)
 			{
 				try
@@ -131,7 +131,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.NotificationProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Notification, "id")]
 		[BackendActionContext(ActionCode.NotificationProperties)]
@@ -145,8 +145,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateNotification)]
 		[BackendActionContext(ActionCode.UpdateNotification)]
 		[BackendActionLog]
@@ -154,7 +154,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
 		{
 			Notification notification = _notificationService.ReadNotificationPropertiesForUpdate(id);
-            NotificationViewModel model = NotificationViewModel.Create(notification, tabId, parentId, _notificationService);            
+            NotificationViewModel model = NotificationViewModel.Create(notification, tabId, parentId, _notificationService);
 			TryUpdateModel(model);
 			model.Validate(ModelState);
 			if (ModelState.IsValid)
@@ -169,8 +169,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UnbindNotification)]
 		[BackendActionContext(ActionCode.UnbindNotification)]
 		[BackendActionLog]
@@ -183,7 +183,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveNotification)]
 		[BackendActionContext(ActionCode.RemoveNotification)]
 		[BackendActionLog]
@@ -196,7 +196,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveNotification)]
 		[BackendActionContext(ActionCode.MultipleRemoveNotification)]
 		[BackendActionLog]

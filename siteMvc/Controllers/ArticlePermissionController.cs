@@ -13,7 +13,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Article Permissions
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ArticlePermissions)]
 		[BackendActionContext(ActionCode.ArticlePermissions)]
 		public override ActionResult Index(string tabId, int parentId)
@@ -31,8 +31,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.AddNewArticlePermission)]		
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ActionAuthorize(ActionCode.AddNewArticlePermission)]
 		[BackendActionContext(ActionCode.AddNewArticlePermission)]
 		public override ActionResult New(string tabId, int parentId)
 		{
@@ -40,8 +40,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewArticlePermission)]
 		[BackendActionContext(ActionCode.AddNewArticlePermission)]
 		[BackendActionLog]
@@ -52,7 +52,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ArticlePermissionProperties)]
 		[BackendActionContext(ActionCode.ArticlePermissionProperties)]
 		public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -61,8 +61,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateArticlePermission)]
 		[BackendActionContext(ActionCode.UpdateArticlePermission)]
 		[BackendActionLog]
@@ -74,7 +74,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveArticlePermission)]
 		[BackendActionContext(ActionCode.MultipleRemoveArticlePermission)]
 		[BackendActionLog]
@@ -86,7 +86,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveArticlePermission)]
 		[BackendActionContext(ActionCode.RemoveArticlePermission)]
 		[BackendActionLog]
@@ -94,7 +94,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		public override ActionResult Remove(int parentId, int id)
 		{
 			return base.Remove(parentId, id);
-		} 
+		}
 		#endregion
 
 
@@ -102,7 +102,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region list
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ChildArticlePermissions)]
 		[BackendActionContext(ActionCode.ChildArticlePermissions)]
 		public override ActionResult ChildIndex(string tabId, int parentId)
@@ -123,7 +123,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region Changes
 		#region MultipleChange
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.MultipleChangeChildArticlePermissions)]
 		[BackendActionContext(ActionCode.MultipleChangeChildArticlePermissions)]
 		public override ActionResult MultipleChangeAsChild(string tabId, int parentId, int[] IDs, int? userId, int? groupId)
@@ -132,8 +132,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleChangeChildArticlePermissions)]
 		[BackendActionContext(ActionCode.MultipleChangeChildArticlePermissions)]
 		[BackendActionLog]
@@ -146,7 +146,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region AllChange
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ChangeAllChildArticlePermissions)]
 		[BackendActionContext(ActionCode.ChangeAllChildArticlePermissions)]
 		public override ActionResult AllChangeAsChild(string tabId, int parentId, int? userId, int? groupId)
@@ -155,8 +155,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.ChangeAllChildArticlePermissions)]
 		[BackendActionContext(ActionCode.ChangeAllChildArticlePermissions)]
 		[BackendActionLog]
@@ -169,7 +169,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Change
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ChangeChildArticlePermission)]
 		[BackendActionContext(ActionCode.ChangeChildArticlePermission)]
 		public override ActionResult ChangeAsChild(string tabId, int parentId, int id, int? userId, int? groupId)
@@ -178,8 +178,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.ChangeChildArticlePermission)]
 		[BackendActionContext(ActionCode.ChangeChildArticlePermission)]
 		[BackendActionLog]
@@ -194,7 +194,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region Remove
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveChildArticlePermissions)]
 		[BackendActionContext(ActionCode.MultipleRemoveChildArticlePermissions)]
 		[BackendActionLog]
@@ -206,7 +206,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveAllChildArticlePermissions)]
 		[BackendActionContext(ActionCode.RemoveAllChildArticlePermissions)]
 		[BackendActionLog]
@@ -218,7 +218,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveChildArticlePermission)]
 		[BackendActionContext(ActionCode.RemoveChildArticlePermission)]
 		[BackendActionLog]

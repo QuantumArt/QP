@@ -31,7 +31,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Contents
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.Contents)]
 		[BackendActionContext(ActionCode.Contents)]
 		public ActionResult Index(string tabId, int parentId)
@@ -45,25 +45,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		[GridAction(EnableCustomBinding = true)]
 		[ActionAuthorize(ActionCode.Contents)]
 		[BackendActionContext(ActionCode.Contents)]
-		public ActionResult _Index(string tabId, int parentId, GridCommand command, 
+		public ActionResult _Index(string tabId, int parentId, GridCommand command,
 			[Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
 		{
-			filter = (filter ?? ContentListFilter.Empty);			
+			filter = (filter ?? ContentListFilter.Empty);
 			filter.SiteId = parentId > 0 ? (int?)parentId : null;
 			ListResult<ContentListItem> serviceResult = ContentService.List(filter, command.GetListCommand());
 			return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
 		}
 		#endregion
 
-		#region Virtual Content		
+		#region Virtual Content
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.VirtualContents)]
 		[BackendActionContext(ActionCode.VirtualContents)]
 		public ActionResult VirtualIndex(string tabId, int parentId)
 		{
 			ContentInitListResult result = ContentService.InitList(parentId, true);
-			ContentListViewModel model = ContentListViewModel.Create(result, tabId, parentId);			
+			ContentListViewModel model = ContentListViewModel.Create(result, tabId, parentId);
 			return this.JsonHtml("Index", model);
 		}
 
@@ -82,13 +82,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#endregion
 
-		#region form actions		
+		#region form actions
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewContent)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
-		[BackendActionContext(ActionCode.AddNewContent)]		
+		[BackendActionContext(ActionCode.AddNewContent)]
 		public ActionResult New(string tabId, int parentId, int? groupId)
 		{
 			Content content = ContentService.New(parentId, groupId);
@@ -98,13 +98,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewContent)]
 		[BackendActionContext(ActionCode.AddNewContent)]
 		[BackendActionLog]
 		[ValidateInput(false)]
-		[Record]	
+		[Record]
 		public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
 		{
 			Content content = ContentService.NewForSave(parentId);
@@ -134,8 +134,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.ContentProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Content, "id")]
 		[BackendActionContext(ActionCode.ContentProperties)]
@@ -149,8 +149,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateContent)]
 		[BackendActionContext(ActionCode.UpdateContent)]
 		[BackendActionLog]
@@ -183,8 +183,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewContentGroup)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
 		[BackendActionContext(ActionCode.AddNewContentGroup)]
@@ -197,8 +197,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewContentGroup)]
 		[BackendActionContext(ActionCode.AddNewContentGroup)]
 		[BackendActionLog]
@@ -220,8 +220,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.ContentGroupProperties)]
 		[BackendActionContext(ActionCode.ContentGroupProperties)]
 		public ActionResult GroupProperties(string tabId, int parentId, int id, string successfulActionCode)
@@ -233,8 +233,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateContentGroup)]
 		[BackendActionContext(ActionCode.UpdateContentGroup)]
 		[BackendActionLog]
@@ -252,7 +252,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			}
 			else
 				return JsonHtml("GroupProperties", model);
-		}			
+		}
 
 		#endregion
 
@@ -260,7 +260,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CreateLikeContent)]
 		[BackendActionContext(ActionCode.CreateLikeContent)]
 		[BackendActionLog]
@@ -276,8 +276,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "Id")]
 		[ActionAuthorize(ActionCode.EnableArticlesPermissions)]
 		[BackendActionContext(ActionCode.EnableArticlesPermissions)]
@@ -291,7 +291,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[EntityAuthorize(ActionTypeCode.Remove, EntityTypeCode.Content, "Id")]
 		[ActionAuthorize(ActionCode.SimpleRemoveContent)]
 		[BackendActionContext(ActionCode.SimpleRemoveContent)]
@@ -307,21 +307,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region helper actions
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		public ActionResult SearchBlock(int id, string actionCode, string hostId)
 		{
 			ContentSearchBlockViewModel model = new ContentSearchBlockViewModel(id, actionCode, hostId);
 			return this.JsonHtml("SearchBlock", model);
-		}		
+		}
 
 		#endregion
 
 		#region library actions
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ContentLibrary)]
-		[BackendActionContext(ActionCode.ContentLibrary)]		
+		[BackendActionContext(ActionCode.ContentLibrary)]
 		public ActionResult Library(string tabId, int parentId, int id, int? filterFileTypeId, string subFolder, bool allowUpload = true)
 		{
 			LibraryResult result = ContentService.Library(id, subFolder);
@@ -345,7 +345,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		/// <param name="pageNumber"></param>
 		/// <returns></returns>
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[EntityAuthorize(ActionTypeCode.List, EntityTypeCode.ContentFolder, "folderId")]
 		public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
 		{
@@ -372,7 +372,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "folderId")]
 		public JsonResult _FolderPath(int folderId)
 		{
@@ -394,16 +394,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region fields actions
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Content, "contentId")]
 		public ActionResult _RelateableFields(int? contentId, int? fieldId)
-		{			
+		{
 			if(contentId == null)
 				return new JsonResult
 				{
 					Data = new
 					{
-						success = true						
+						success = true
 					},
 					JsonRequestBehavior = JsonRequestBehavior.AllowGet
 				};
@@ -415,7 +415,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			Func<Field, bool> fieldFilter = f => true;
 			if (fieldId.HasValue)
 				fieldFilter = f => !f.IsNew && f.Id != fieldId.Value;
-			
+
 			return new JsonResult
 			{
 				Data = new
@@ -430,7 +430,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Content, "contentId")]
 		public ActionResult _ClassifierFields(int contentId)
 		{
@@ -449,8 +449,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 						.Select(f => new { id = f.Id, text = f.Name })
 				},
 				JsonRequestBehavior = JsonRequestBehavior.AllowGet
-			};			
-		}		
+			};
+		}
 		#endregion
 
 		#region select actions
@@ -458,7 +458,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region single actions
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SelectContent)]
 		[BackendActionContext(ActionCode.SelectContent)]
 		public ActionResult Select(string tabId, int parentId, int[] IDs)
@@ -482,7 +482,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SelectContentForObjectContainer)]
 		[BackendActionContext(ActionCode.SelectContentForObjectContainer)]
 		public ActionResult SelectForObjectContainer(string tabId, int parentId, int id)
@@ -506,7 +506,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SelectContentForObjectForm)]
 		[BackendActionContext(ActionCode.SelectContentForObjectForm)]
 		public ActionResult SelectForObjectForm(string tabId, int parentId, int id)
@@ -530,7 +530,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SelectContentForJoin)]
 		[BackendActionContext(ActionCode.SelectContentForJoin)]
 		public ActionResult SelectForJoin(string tabId, int parentId, int id)
@@ -554,7 +554,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SelectContentForField)]
 		[BackendActionContext(ActionCode.SelectContentForField)]
 		public ActionResult SelectForField(string tabId, int parentId, int id)
@@ -583,7 +583,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region multiple actions
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.MultipleSelectContent)]
 		[BackendActionContext(ActionCode.MultipleSelectContent)]
 		public ActionResult MultipleSelect(string tabId, int parentId, int[] IDs)
@@ -608,7 +608,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.MultipleSelectContentForCustomAction)]
 		[BackendActionContext(ActionCode.MultipleSelectContentForCustomAction)]
 		public ActionResult MultipleSelectForCustomAction(string tabId, int parentId, int[] IDs)
@@ -634,7 +634,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.MultipleSelectContentForWorkflow)]
 		[BackendActionContext(ActionCode.MultipleSelectContentForWorkflow)]
 		public ActionResult MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
@@ -660,7 +660,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
 		[BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
 		public ActionResult MultipleSelectForUnion(string tabId, int parentId, int[] IDs)

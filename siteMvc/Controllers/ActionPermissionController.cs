@@ -15,7 +15,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Action Permissions
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ActionPermissions)]
 		[BackendActionContext(ActionCode.ActionPermissions)]
 		public override ActionResult Index(string tabId, int parentId)
@@ -33,8 +33,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.AddNewActionPermission)]		
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ActionAuthorize(ActionCode.AddNewActionPermission)]
 		[BackendActionContext(ActionCode.AddNewActionPermission)]
 		public override ActionResult New(string tabId, int parentId)
 		{
@@ -42,8 +42,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewActionPermission)]
 		[BackendActionContext(ActionCode.AddNewActionPermission)]
 		[BackendActionLog]
@@ -54,7 +54,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ActionPermissionProperties)]
 		[BackendActionContext(ActionCode.ActionPermissionProperties)]
 		public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -63,8 +63,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateActionPermission)]
 		[BackendActionContext(ActionCode.UpdateActionPermission)]
 		[BackendActionLog]
@@ -76,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveActionPermission)]
 		[BackendActionContext(ActionCode.MultipleRemoveActionPermission)]
 		[BackendActionLog]
@@ -88,7 +88,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveActionPermission)]
 		[BackendActionContext(ActionCode.RemoveActionPermission)]
 		[BackendActionLog]
@@ -96,12 +96,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		public override ActionResult Remove(int parentId, int id)
 		{
 			return base.Remove(parentId, id);
-		} 
+		}
 		#endregion
 
 		#region Change
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ChangeActionPermission)]
 		[BackendActionContext(ActionCode.ChangeActionPermission)]
 		public override ActionResult Change(string tabId, int parentId, int? userId, int? groupId, bool? isPostBack)
@@ -110,8 +110,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateActionPermissionChanges)]
 		[BackendActionContext(ActionCode.UpdateActionPermissionChanges)]
 		[BackendActionLog]
@@ -122,7 +122,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveEntityTypePermissionChanges)]
 		[BackendActionContext(ActionCode.RemoveEntityTypePermissionChanges)]
 		[BackendActionLog]

@@ -16,7 +16,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             switch (responseType)
             {
-                case ExceptionResultMode.UIAction:
+                case ExceptionResultMode.UiAction:
                     result = new JsonNetResult<object>(new { success = false, message = ex.Message });
                     break;
                 case ExceptionResultMode.OperationAction:

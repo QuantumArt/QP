@@ -25,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CreateLikeSite)]
         [BackendActionContext(ActionCode.CreateLikeSite)]
         public ActionResult PreSettings(int parentId, int id)
@@ -58,10 +58,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CreateLikeSite)]
         [BackendActionContext(ActionCode.CreateLikeSite)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope()]
         [BackendActionLog]
         [ValidateInput(false)]
         [Record]

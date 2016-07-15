@@ -38,7 +38,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
 		[ActionAuthorize(ActionCode.ApplyFieldDefaultValue)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		public ActionResult Step(int step)
 		{
 			MultistepActionStepResult stepResult = service.Step(step);

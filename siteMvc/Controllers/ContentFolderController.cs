@@ -14,7 +14,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 	{
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.AddNewContentFolder)]
 		[BackendActionContext(ActionCode.AddNewContentFolder)]
 		public ActionResult New(string tabId, int parentId, int id)
@@ -25,8 +25,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ConnectionScope()]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.AddNewContentFolder)]
 		[BackendActionContext(ActionCode.AddNewContentFolder)]
 		[BackendActionLog]
@@ -48,7 +48,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ContentFolderProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "id")]
 		[BackendActionContext(ActionCode.ContentFolderProperties)]
@@ -61,8 +61,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateContentFolder)]
 		[BackendActionContext(ActionCode.UpdateContentFolder)]
 		[BackendActionLog]
@@ -90,7 +90,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveContentFolder)]
 		[BackendActionContext(ActionCode.RemoveContentFolder)]
 		[BackendActionLog]
@@ -102,10 +102,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ContentFileProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "parentId")]
-		[BackendActionContext(ActionCode.ContentFileProperties)]		
+		[BackendActionContext(ActionCode.ContentFileProperties)]
 		public ActionResult FileProperties(string tabId, int parentId, string id, string successfulActionCode)
 		{
 			FolderFile file = ContentFolderService.GetFile(parentId, id);
@@ -115,7 +115,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.UpdateContentFile)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.ContentFolder, "parentId")]
 		[BackendActionContext(ActionCode.UpdateContentFile)]

@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region List
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.UserGroups)]
 		[BackendActionContext(ActionCode.UserGroups)]
 		public ActionResult Index(string tabId, int parentId)
@@ -43,7 +43,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.UserGroups)]
 		[BackendActionContext(ActionCode.UserGroups)]
 		public ActionResult Tree(string tabId, int parentId)
@@ -54,7 +54,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SelectUserGroup)]
 		[BackendActionContext(ActionCode.SelectUserGroup)]
 		public ActionResult Select(string tabId, int parentId, int id)
@@ -75,8 +75,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#endregion
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.AddNewUserGroup)]		
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ActionAuthorize(ActionCode.AddNewUserGroup)]
 		[BackendActionContext(ActionCode.AddNewUserGroup)]
 		public ActionResult New(string tabId, int parentId)
 		{
@@ -86,8 +86,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewUserGroup)]
 		[BackendActionContext(ActionCode.AddNewUserGroup)]
 		[BackendActionLog]
@@ -110,7 +110,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CreateLikeUserGroup)]
 		[BackendActionContext(ActionCode.CreateLikeUserGroup)]
 		[BackendActionLog]
@@ -124,7 +124,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.UserGroupProperties)]
 		[BackendActionContext(ActionCode.UserGroupProperties)]
 		public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -137,8 +137,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateUserGroup)]
 		[BackendActionContext(ActionCode.UpdateUserGroup)]
 		[BackendActionLog]
@@ -160,7 +160,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveUserGroup)]
 		[BackendActionContext(ActionCode.RemoveUserGroup)]
 		[BackendActionLog]

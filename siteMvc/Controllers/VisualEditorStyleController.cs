@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         #region	list actions
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VisualEditorStyles)]
         [BackendActionContext(ActionCode.VisualEditorStyles)]
         public ActionResult Index(string tabId, int parentId)
@@ -42,7 +42,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         #endregion
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VisualEditorStyleProperties)]
         [BackendActionContext(ActionCode.VisualEditorStyleProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -55,8 +55,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.UpdateVisualEditorStyle)]
         [BackendActionContext(ActionCode.UpdateVisualEditorStyle)]
         [BackendActionLog]
@@ -78,7 +78,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.RemoveVisualEditorStyle)]
         [BackendActionContext(ActionCode.RemoveVisualEditorStyle)]
         [BackendActionLog]
@@ -89,7 +89,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionContext(ActionCode.AddNewVisualEditorStyle)]
         public ActionResult New(string tabId, int parentId)
@@ -100,8 +100,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionContext(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionLog]

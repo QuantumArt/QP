@@ -13,13 +13,13 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-	[ValidateInput(false)]    
+	[ValidateInput(false)]
 	public class ArticleVersionController : QPController
 	{
 		#region list actions
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ArticleVersions)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
 		[BackendActionContext(ActionCode.ArticleVersions)]
@@ -45,7 +45,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region forms actions
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.PreviewArticleVersion)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
 		[BackendActionContext(ActionCode.PreviewArticleVersion)]
@@ -57,7 +57,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.CompareArticleVersionWithCurrent)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
 		[BackendActionContext(ActionCode.CompareArticleVersionWithCurrent)]
@@ -70,7 +70,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.CompareArticleVersions)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
 		[BackendActionContext(ActionCode.CompareArticleVersions)]
@@ -87,8 +87,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region non-interface actions
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RestoreArticleVersion)]
 		[BackendActionContext(ActionCode.RestoreArticleVersion)]
 		[BackendActionLog]
@@ -103,11 +103,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			if (ModelState.IsValid)
 			{
 				model.Data.Article = ArticleVersionService.Restore(model.Data, boundToExternal, this.IsReplayAction());
-				return Redirect("Properties", new 
-				{ 
-					tabId = tabId, 
-					parentId = parentId, 
-					id = id, 
+				return Redirect("Properties", new
+				{
+					tabId = tabId,
+					parentId = parentId,
+					id = id,
 					successfulActionCode = backendActionCode,
 					boundToExternal = boundToExternal
 				});
@@ -119,7 +119,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveArticleVersion)]
 		[BackendActionContext(ActionCode.RemoveArticleVersion)]
 		[BackendActionLog]
@@ -132,7 +132,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveArticleVersion)]
 		[BackendActionContext(ActionCode.MultipleRemoveArticleVersion)]
 		[BackendActionLog]
