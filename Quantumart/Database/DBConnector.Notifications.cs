@@ -67,12 +67,14 @@ namespace Quantumart.QPublishing.Database
             {
                 cmd.CommandType = CommandType.Text;
                 var sb = new StringBuilder();
-                sb.AppendLine("insert into EXTERNAL_NOTIFICATION_QUEUE(ARTICLE_ID, EVENT_NAME, URL, NEW_XML, OLD_XML)");
-                sb.AppendLine("values (@id, @eventName, @url, @newXml, @oldXml)");
+                sb.AppendLine("insert into EXTERNAL_NOTIFICATION_QUEUE(ARTICLE_ID, EVENT_NAME, URL, NEW_XML, OLD_XML, CONTENT_ID, SITE_ID)");
+                sb.AppendLine("values (@id, @eventName, @url, @newXml, @oldXml, @contentId, @siteId)");
                 cmd.CommandText = sb.ToString();
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.Add(new SqlParameter("@eventName", SqlDbType.NVarChar, 50) { Value = eventName });
                 cmd.Parameters.Add(new SqlParameter("@url", SqlDbType.NVarChar, 1024) { Value = externalUrl });
+                cmd.Parameters.Add(new SqlParameter("@contentId", SqlDbType.Decimal) { Value = item.ContentId });
+                cmd.Parameters.Add(new SqlParameter("@siteId", SqlDbType.Decimal) { Value = item.SiteId });
                 cmd.Parameters.Add(new SqlParameter("@newXml", SqlDbType.NVarChar, -1) { Value = newDoc == null ? DBNull.Value : (object)newDoc.ToString() });
                 cmd.Parameters.Add(new SqlParameter("@oldXml", SqlDbType.NVarChar, -1) { Value = oldDoc == null ? DBNull.Value : (object)oldDoc.ToString() });
                 ProcessData(cmd);

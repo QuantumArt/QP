@@ -21,25 +21,25 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
     {
         private static readonly int ITEMS_PER_STEP = 20;
 
-		private readonly ILogReader _logReader;
-		private readonly IImportArticlesLogger _logger;
+        private readonly ILogReader _logReader;
+        private readonly IImportArticlesLogger _logger;
 
         public int SiteId { get; set; }
         public int ContentId { get; set; }
         public int ItemCount { get; set; }
 
-		public ImportArticlesCommand(MultistepActionStageCommandState state, ILogReader logReader, IImportArticlesLogger logger)
-			: this(state.ParentId, state.Id, 0, logReader, logger)
-		{
-		}
+        public ImportArticlesCommand(MultistepActionStageCommandState state, ILogReader logReader, IImportArticlesLogger logger)
+            : this(state.ParentId, state.Id, 0, logReader, logger)
+        {
+        }
 
-		public ImportArticlesCommand(int siteId, int contentId, int itemCount, ILogReader logReader, IImportArticlesLogger logger)
+        public ImportArticlesCommand(int siteId, int contentId, int itemCount, ILogReader logReader, IImportArticlesLogger logger)
         {
             this.SiteId = siteId;
             this.ContentId = contentId;
             this.ItemCount = itemCount;
-			_logReader = logReader;
-			_logger = logger;
+            _logReader = logReader;
+            _logger = logger;
         }
 
         public MultistepActionStageCommandState GetState()
@@ -59,31 +59,31 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             ImportSettings setts = HttpContext.Current.Session["ImportArticlesService.Settings"] as ImportSettings;
             CsvReader reader = new CsvReader(SiteId, ContentId, setts);
             int processedItemsCount;
-			MultistepActionStepResult result = new MultistepActionStepResult();
+            MultistepActionStepResult result = new MultistepActionStepResult();
 
-			using (var tscope = new TransactionScope())
-			{
-				using (var scope = new QPConnectionScope())
-				{
-					try
-					{
-						reader.Process(step, ITEMS_PER_STEP, out processedItemsCount);
+            using (var tscope = new TransactionScope())
+            {
+                using (var scope = new QPConnectionScope())
+                {
+                    try
+                    {
+                        reader.Process(step, ITEMS_PER_STEP, out processedItemsCount);
 
-						if (step * ITEMS_PER_STEP >= reader.ArticleCount - ITEMS_PER_STEP)
-						{
-							reader.PostUpdateM2MRelationAndO2MRelationFields();
-						}
-						_logger.LogStep(step, setts);
-						result.ProcessedItemsCount = processedItemsCount;
-						result.AdditionalInfo = _logReader.Read();
-					}
-					catch (Exception ex)
-					{
-						throw new ImportException(String.Format(ImportStrings.ImportInterrupted, ex.Message, reader.LastProcessed), ex, setts);
-					}
-				}
-				tscope.Complete();
-			}
+                        if (step * ITEMS_PER_STEP >= reader.ArticleCount - ITEMS_PER_STEP)
+                        {
+                            reader.PostUpdateM2MRelationAndO2MRelationFields();
+                        }
+                        _logger.LogStep(step, setts);
+                        result.ProcessedItemsCount = processedItemsCount;
+                        result.AdditionalInfo = _logReader.Read();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new ImportException(String.Format(ImportStrings.ImportInterrupted, ex.Message, reader.LastProcessed), ex, setts);
+                    }
+                }
+                tscope.Complete();
+            }
 
             return result;
         }

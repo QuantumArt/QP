@@ -16937,6 +16937,54 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Decimal> ContentId
+        {
+            get
+            {
+                return _ContentId;
+            }
+            set
+            {
+                OnContentIdChanging(value);
+                ReportPropertyChanging("ContentId");
+                _ContentId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ContentId");
+                OnContentIdChanged();
+            }
+        }
+        private Nullable<global::System.Decimal> _ContentId;
+        partial void OnContentIdChanging(Nullable<global::System.Decimal> value);
+        partial void OnContentIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Decimal> SiteId
+        {
+            get
+            {
+                return _SiteId;
+            }
+            set
+            {
+                OnSiteIdChanging(value);
+                ReportPropertyChanging("SiteId");
+                _SiteId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SiteId");
+                OnSiteIdChanged();
+            }
+        }
+        private Nullable<global::System.Decimal> _SiteId;
+        partial void OnSiteIdChanging(Nullable<global::System.Decimal> value);
+        partial void OnSiteIdChanged();
 
         #endregion
 

@@ -671,6 +671,8 @@
           <Property Name="OLD_XML" Type="nvarchar(max)" />
           <Property Name="SENT" Type="bit" Nullable="false" />
           <Property Name="MODIFIED" Type="datetime" Nullable="false" />
+          <Property Name="CONTENT_ID" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="SITE_ID" Type="numeric" Precision="18" Scale="0" />
         </EntityType>
         <EntityType Name="FOLDER">
           <Key>
@@ -10297,6 +10299,8 @@
           <Property Name="OldXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Sent" Type="Boolean" Nullable="false" />
           <Property Name="Modified" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ContentId" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="SiteId" Type="Decimal" Precision="18" Scale="0" />
         </EntityType>
 			</Schema>
     </edmx:ConceptualModels>
@@ -11797,6 +11801,8 @@
           <EntitySetMapping Name="ExternalNotificationSet">
             <EntityTypeMapping TypeName="QP8Model.ExternalNotificationDAL">
               <MappingFragment StoreEntitySet="EXTERNAL_NOTIFICATION_QUEUE">
+                <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+                <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
                 <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
                 <ScalarProperty Name="Sent" ColumnName="SENT" />
                 <ScalarProperty Name="OldXml" ColumnName="OLD_XML" />

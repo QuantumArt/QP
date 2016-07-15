@@ -391,7 +391,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Create);
             InsertArticleValues(idsList.ToArray(), baseArticles);
-            _notificationRepository.SendNotifications();
 
             if (_importSetts.ContainsO2MRelationOrM2MRelationFields)
             {
@@ -415,15 +414,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             foreach (var aggregatedArticleList in aggregatedArticles)
             {
                 var aggregatedIdsList = InsertArticlesIds(aggregatedArticleList);
-                _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Create);
                 InsertArticleValues(aggregatedIdsList.ToArray(), aggregatedArticleList);
-                _notificationRepository.SendNotifications();
 
                 if (_importSetts.ContainsO2MRelationOrM2MRelationFields)
                 {
                     SaveNewRelationsToFile(aggregatedArticleList, aggregatedIdsList);
                 }
             }
+
+            _notificationRepository.SendNotifications();
         }
 
         //Обновление статей
@@ -431,7 +430,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             var existingArticles = GetExistingArticles(articlesList);
             var exstensionsMap = ContentRepository.GetAggregatedArticleIdsMap(_contentId, existingArticles.GetBaseArticleIds().ToArray());
-            InsertArticleValues(existingArticles.GetBaseArticleIds().ToArray(), existingArticles.GetBaseArticles(), updateArticles: true);
+            var idsList = existingArticles.GetBaseArticleIds().ToArray();
+            _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Update);
+            InsertArticleValues(idsList, existingArticles.GetBaseArticles(), updateArticles: true);
 
             var idsToDelete = new List<int>();
             var articlesToInsert = new List<Article>();
@@ -490,6 +491,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
 
             InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, updateArticles: true);
+            _notificationRepository.SendNotifications();
             return existingArticles;
         }
 
@@ -623,6 +625,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         // Добавление значений m2m и o2m полей 
         public void PostUpdateM2MRelationAndO2MRelationFields()
         {
+            //TODO: Send Notifications
             if (_importSetts.ContainsO2MRelationOrM2MRelationFields)
             {
                 var values = new List<RelSourceDestinationValue>();

@@ -17,6 +17,8 @@ namespace Quantumart.QP8.BLL.Repository
         #region Private fields and properties
         private int ContentId { get; set; }
 
+        private int SiteId { get; set; }
+
         private int[] ArticleIds { get; set; }
 
         private Article[] Articles { get; set; }
@@ -80,6 +82,7 @@ namespace Quantumart.QP8.BLL.Repository
                 else
                 {
                     ContentId = contentId;
+                    SiteId = ContentRepository.GetSiteId(contentId);
                     Notifications = NotificationRepository.GetContentNotifications(contentId, codes).ToArray();
                     PrepareArticles(articleIds, codes);
                 }
@@ -94,7 +97,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal void PrepareNotifications(int contentId, int[] ids, string code, bool disableNotifications = false)
         {
-            PrepareNotifications(contentId, ids, new[] { code }, disableNotifications);
+            PrepareNotifications(contentId, ids, code.Split(';'), disableNotifications);
         }
 
         internal void SendNotifications()
@@ -130,6 +133,8 @@ namespace Quantumart.QP8.BLL.Repository
                         {
                             EventName = NotificationCode.Delete,
                             ArticleId = article.Id,
+                            ContentId = ContentId,
+                            SiteId = SiteId,
                             Url = notification.ExternalUrl,
                             OldXml = GetXDocument(article).ToString(),
                             NewXml = null
@@ -144,6 +149,8 @@ namespace Quantumart.QP8.BLL.Repository
                         {
                             EventName = NotificationCode.Create,
                             ArticleId = article.Id,
+                            ContentId = ContentId,
+                            SiteId = SiteId,
                             Url = notification.ExternalUrl,
                             OldXml = null,
                             NewXml = GetXDocument(article).ToString(),
@@ -168,6 +175,8 @@ namespace Quantumart.QP8.BLL.Repository
                         {
                             EventName = code,
                             ArticleId = oldArticle.Id,
+                            ContentId = ContentId,
+                            SiteId = SiteId,
                             Url = notification.ExternalUrl,
                             OldXml = GetXDocument(oldArticle).ToString(),
                             NewXml = GetXDocument(newArticle).ToString()

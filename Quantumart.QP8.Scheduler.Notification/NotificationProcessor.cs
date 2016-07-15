@@ -57,17 +57,21 @@ namespace Quantumart.QP8.Scheduler.Notification
                     notifications = _externalNotificationService.GetPendingNotifications();
                 }
 
-                var notificatioData = from g in notifications.GroupBySequence(n => new { n.Url, n.EventName }, n => n)
+                var notificatioData = from g in notifications.GroupBySequence(n => new { n.Url, n.EventName, n.SiteId, n.ContentId }, n => n)
                                       select new
                                       {
                                           NotificationModel = new NotificationModel
                                           {
                                               Url = g.Key.Url,
+                                              SiteId = g.Key.SiteId,
+                                              ContentId = g.Key.ContentId,
+                                              EventName = g.Key.EventName,
+                                              Ids = g.Select(n => n.ArticleId),
                                               NewXmlNodes = g.Select(n => n.NewXml),
                                               OldXmlNodes = g.Select(n => n.OldXml)
+
                                           },
-                                          NotificationIds = g.Select(n => n.Id),
-                                          EventName = g.Key.EventName
+                                          NotificationIds = g.Select(n => n.Id)
                                       };		
 
                 foreach (var item in notificatioData)
@@ -83,14 +87,18 @@ namespace Quantumart.QP8.Scheduler.Notification
 
                         if (status == HttpStatusCode.OK)
                         {
-                            _logger.TraceEvent(TraceEventType.Verbose, EventIdentificators.Common, NotificationLogMessage, item.EventName, item.NotificationModel.Url, status);
-                            _logger.TraceEvent(TraceEventType.Verbose, EventIdentificators.Common, "Old Xml: {0}", item.NotificationModel.OldXml);
-                            _logger.TraceEvent(TraceEventType.Verbose, EventIdentificators.Common, "New Xml: {0}", item.NotificationModel.NewXml);
+                            _logger.TraceEvent(TraceEventType.Information, EventIdentificators.Common, NotificationLogMessage, item.NotificationModel.EventName, item.NotificationModel.Url, status);
+
+                            foreach (var param in item.NotificationModel.Parameters)
+                            {
+                                _logger.TraceEvent(TraceEventType.Verbose, EventIdentificators.Common, $"{param.Key}: {param.Value}");
+                            }
+
                             sentNotificationIds.AddRange(item.NotificationIds);
                         }
                         else
                         {
-                            _logger.TraceEvent(TraceEventType.Warning, EventIdentificators.Common, NotificationLogMessage, item.EventName, item.NotificationModel.Url, status);
+                            _logger.TraceEvent(TraceEventType.Warning, EventIdentificators.Common, NotificationLogMessage, item.NotificationModel.EventName, item.NotificationModel.Url, status);
                             unsentNotificationIds.AddRange(item.NotificationIds);
                         }
                     }

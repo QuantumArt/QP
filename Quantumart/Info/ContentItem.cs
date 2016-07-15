@@ -235,7 +235,6 @@ namespace Quantumart.QPublishing.Info
 
             InitFieldValues();
 
-            int siteId = Cnn.GetSiteIdByContentId(ContentId);
             List<int> classifierIds = new List<int>();
             List<int> typeIds = new List<int>();
 
@@ -253,8 +252,8 @@ namespace Quantumart.QPublishing.Info
                     if (attr.Type == AttributeType.String || attr.Type == AttributeType.VisualEdit || attr.Type == AttributeType.Textbox)
                     {
                         value.Data = value.Data
-                            .Replace(Cnn.UploadPlaceHolder, Cnn.GetImagesUploadUrl(siteId))
-                            .Replace(Cnn.SitePlaceHolder, Cnn.GetSiteUrl(siteId, true))
+                            .Replace(Cnn.UploadPlaceHolder, Cnn.GetImagesUploadUrl(SiteId))
+                            .Replace(Cnn.SitePlaceHolder, Cnn.GetSiteUrl(SiteId, true))
                         ;
                     }
 
@@ -307,10 +306,10 @@ namespace Quantumart.QPublishing.Info
 
 
         }
+        public int SiteId => Cnn.GetSiteIdByContentId(ContentId);
 
         public void Save()
         {
-            int siteId = Cnn.GetSiteIdByContentId(ContentId);
             var attrs = Cnn.GetContentAttributeObjects(ContentId).ToDictionary(n => n.Name.ToLowerInvariant(), n => n);
             Hashtable values = new Hashtable();
             if (attrs.Values.Any(n => n.IsClassifier || n.Aggregated))
@@ -337,7 +336,7 @@ namespace Quantumart.QPublishing.Info
             DateTime modified = DateTime.MinValue;
 
             string notificationEvent = IsNew ? NotificationEvent.Create : NotificationEvent.Modify;
-            Id = Cnn.AddFormToContent(siteId, ContentId, StatusName, ref values, ref files, Id, true, 0, Visible, Archive, LastModifiedBy, DelayedSchedule,
+            Id = Cnn.AddFormToContent(SiteId, ContentId, StatusName, ref values, ref files, Id, true, 0, Visible, Archive, LastModifiedBy, DelayedSchedule,
             false, ref modified, true, true);
             Cnn.SendNotification(Id, notificationEvent);
             if (!IsNew && StatusChanged)
@@ -360,7 +359,7 @@ namespace Quantumart.QPublishing.Info
                 newDoc.Root.Add(new XElement("created", Created.ToString(CultureInfo.InvariantCulture)));
                 newDoc.Root.Add(new XElement("modified", Modified.ToString(CultureInfo.InvariantCulture)));
                 newDoc.Root.Add(new XElement("contentId", ContentId));
-                newDoc.Root.Add(new XElement("siteId", Cnn.GetSiteIdByContentId(ContentId)));
+                newDoc.Root.Add(new XElement("siteId", SiteId));
                 newDoc.Root.Add(new XElement("visible", Visible));
                 newDoc.Root.Add(new XElement("archive", Archive));
                 newDoc.Root.Add(new XElement("splitted", Splitted));

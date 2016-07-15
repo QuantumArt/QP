@@ -13,10 +13,12 @@ namespace Quantumart.QP8.DAL
 	{
 		#region External Notification
 		private const string InsertNotificationsQuery =
-			@"INSERT INTO [dbo].[EXTERNAL_NOTIFICATION_QUEUE]
+            @"INSERT INTO [dbo].[EXTERNAL_NOTIFICATION_QUEUE]
 			(
 				[EVENT_NAME],
 				[ARTICLE_ID],
+				[CONTENT_ID],
+				[SITE_ID],
 				[URL],
 				[NEW_XML],
 				[OLD_XML]
@@ -24,6 +26,8 @@ namespace Quantumart.QP8.DAL
 			SELECT
 				  col.value('(EventName)[1]','nvarchar(50)') [EVENT_NAME],
 				  col.value('(ArticleId)[1]','numeric(18,0)') [ARTICLE_ID],
+				  col.value('(ContentId)[1]','numeric(18,0)') [CONTENT_ID],
+				  col.value('(SiteId)[1]','numeric(18,0)') [SITE_ID],
 				  col.value('(Url)[1]','nvarchar(1024)') [URL],
 				  col.value('(NewXml)[1]','nvarchar(max)') [NEW_XML],
 				  col.value('(OldXml)[1]','nvarchar(max)') [OLD_XML]      

@@ -17,5 +17,9 @@ namespace Quantumart.QP8.BLL
 		public string NewXml { get; set; }
 		public string OldXml { get; set; }
 		public bool Sent { get; set; }
+
+        public int? ContentId { get; set; }
+
+        public int? SiteId { get; set; }
 	}
 }

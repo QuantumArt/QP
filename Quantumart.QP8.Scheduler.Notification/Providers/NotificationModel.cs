@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 
 namespace Quantumart.QP8.Scheduler.Notification.Providers
@@ -15,11 +16,35 @@ namespace Quantumart.QP8.Scheduler.Notification.Providers
 
         public string NewXml => GetXml(NewXmlNodes);
 
-        public FormUrlEncodedContent Content => new FormUrlEncodedContent(new List<KeyValuePair<string, string>>
+        public List<KeyValuePair<string, string>> Parameters
         {
-            new KeyValuePair<string, string>("NEW_XML", NewXml),
-            new KeyValuePair<string, string>("OLD_XML", OldXml)
-        });
+            get
+            {
+                var list = new List<KeyValuePair<string, string>>
+                {
+                    new KeyValuePair<string, string>("eventName", EventName),
+                    new KeyValuePair<string, string>("newXml", NewXml),
+                    new KeyValuePair<string, string>("oldXml", OldXml)
+                };
+
+                list.AddRange(Ids.Select(n => new KeyValuePair<string, string>("id", n.ToString())));
+
+                if (ContentId.HasValue)
+                    list.Add(new KeyValuePair<string, string>("contentId", ContentId.Value.ToString()));
+
+                if (SiteId.HasValue)
+                    list.Add(new KeyValuePair<string, string>("siteId", SiteId.Value.ToString()));
+                return list;
+            }
+        }
+
+        public IEnumerable<int> Ids { get; set; }
+
+        public int? ContentId { get; set; }
+
+        public int? SiteId { get; set; }
+
+        public string EventName { get; set; }
 
         public static string GetXml(IEnumerable<string> nodes)
         {
