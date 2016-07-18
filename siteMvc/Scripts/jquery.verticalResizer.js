@@ -1,289 +1,253 @@
-﻿(function ($) {
-	// Константы
-	var VERTICAL_RESIZER_COMPONENT_NAME = "vertical_resizer"; // название компонента
+(function ($) {
+  // Константы
+  var VERTICAL_RESIZER_COMPONENT_NAME = "vertical_resizer"; // название компонента
 
-	// Компонент VerticalResizer
-	VerticalResizer = function (element, options) {
-		
-		this._onBottomHandleMouseDownHandler = jQuery.proxy(this._onBottomHandleMouseDown, this);
-		this._onDocumentMouseMoveHandler = jQuery.proxy(this._onDocumentMouseMove, this);
-		this._onDocumentMouseUpHandler = jQuery.proxy(this._onDocumentMouseUp, this);
+  // Компонент VerticalResizer
+  VerticalResizer = function (element, options) {
 
-		this.initialize(element, options);
-	};
+    this._onBottomHandleMouseDownHandler = jQuery.proxy(this._onBottomHandleMouseDown, this);
+    this._onDocumentMouseMoveHandler = jQuery.proxy(this._onDocumentMouseMove, this);
+    this._onDocumentMouseUpHandler = jQuery.proxy(this._onDocumentMouseUp, this);
 
-	VerticalResizer.prototype = {
-		_panelElement: null, // DOM-элемент, образующий панель
-		_bottomHandleElement: null, // DOM-элемент, образующий нижнюю рукоятку для перетаскивания
-		_heightOffset: 0, // величина отклонения высоты панели
-		_lastMousePositionTop: 0, // последняя вертикальная позиция курсора мыши
-		_options: null, // настройки компонента
+    this.initialize(element, options);
+  };
 
-		_onBottomHandleMouseDownHandler: null,
-		_onDocumentMouseMoveHandler: null,
-		_onDocumentMouseUpHandler: null,
+  VerticalResizer.prototype = {
+    _panelElement: null, // DOM-элемент, образующий панель
+    _bottomHandleElement: null, // DOM-элемент, образующий нижнюю рукоятку для перетаскивания
+    _heightOffset: 0, // величина отклонения высоты панели
+    _lastMousePositionTop: 0, // последняя вертикальная позиция курсора мыши
+    _options: null, // настройки компонента
 
-		// Возвращает DOM-элемент, образующий нижнюю рукоятку для перетаскивания
-		get_bottomHandleElement: function () {
-			return this._bottomHandleElement;
-		},
+    _onBottomHandleMouseDownHandler: null,
+    _onDocumentMouseMoveHandler: null,
+    _onDocumentMouseUpHandler: null,
 
-		// Инициализирует компонент
-		initialize: function (element, options) {
-			this._options = $.extend({}, $.fn.verticalResizer.defaults, options);
+    // Возвращает DOM-элемент, образующий нижнюю рукоятку для перетаскивания
+    get_bottomHandleElement: function () {
+      return this._bottomHandleElement;
+    },
 
-			var bottomHandleCssClassName = this._options.bottomHandleCssClassName;
+    // Инициализирует компонент
+    initialize: function (element, options) {
+      this._options = $.extend({}, $.fn.verticalResizer.defaults, options);
 
-			var $panel = $(element);
-			$panel
-				.wrap("<div></div>")
-				.parent()
-				.append($('<div class="' + bottomHandleCssClassName + '" style="display:none"></div>'))
-				;
+      var bottomHandleCssClassName = this._options.bottomHandleCssClassName;
 
-			var $bottomHandle = $("." + bottomHandleCssClassName, $panel.parent());
-			if (this._options.allowFixBottomHandleWidth) {
-				$bottomHandle.css("margin-right", ($bottomHandle.outerWidth() - $panel.outerWidth()) + "px");
-			}
-			$bottomHandle.bind("mousedown", this._onBottomHandleMouseDownHandler);
+      var $panel = $(element);
+      $panel
+        .wrap("<div></div>")
+        .parent()
+        .append($('<div class="' + bottomHandleCssClassName + '" style="display:none"></div>'))
+        ;
 
-			this._panelElement = $panel.get(0);
-			this._bottomHandleElement = $bottomHandle.get(0);
+      var $bottomHandle = $("." + bottomHandleCssClassName, $panel.parent());
+      if (this._options.allowFixBottomHandleWidth) {
+        $bottomHandle.css("margin-right", ($bottomHandle.outerWidth() - $panel.outerWidth()) + "px");
+      }
+      $bottomHandle.bind("mousedown", this._onBottomHandleMouseDownHandler);
 
-			$panel = null;
-			$bottomHandle = null;
-		},
+      this._panelElement = $panel.get(0);
+      this._bottomHandleElement = $bottomHandle.get(0);
 
-		// Запускает перетаскивание
-		_startDrag: function (mousePositionTop) {
-			this._lastMousePositionTop = mousePositionTop;
-			this._heightOffset = $(this._panelElement).height() - this._lastMousePositionTop;
+      $panel = null;
+      $bottomHandle = null;
+    },
 
-			var $doc = $(document);
-			this._disableTextSelect($doc);
-			$doc
-				.mousemove(this._onDocumentMouseMoveHandler)
-				.mouseup(this._onDocumentMouseUpHandler)
-				;
+    // Запускает перетаскивание
+    _startDrag: function (mousePositionTop) {
+      this._lastMousePositionTop = mousePositionTop;
+      this._heightOffset = $(this._panelElement).height() - this._lastMousePositionTop;
 
-			$doc = null;
+      var $doc = $(document);
+      this._disableTextSelect($doc);
+      $doc
+        .mousemove(this._onDocumentMouseMoveHandler)
+        .mouseup(this._onDocumentMouseUpHandler)
+        ;
 
-			jQuery(this._bottomHandleElement).addClass("active");
+      $doc = null;
 
-			return false;
-		},
+      jQuery(this._bottomHandleElement).addClass("active");
 
-		// Возвращает новую высоту панели
-		_getNewPanelHeight: function (mousePositionTop) {
-			var newPanelHeight = this._heightOffset + mousePositionTop;
-			if (this._lastMousePositionTop >= mousePositionTop) {
-				newPanelHeight -= 5;
-			}
-			this._lastMousePositionTop = mousePositionTop;
+      return false;
+    },
 
-			return newPanelHeight;
-		},
+    // Возвращает новую высоту панели
+    _getNewPanelHeight: function (mousePositionTop) {
+      var newPanelHeight = this._heightOffset + mousePositionTop;
+      if (this._lastMousePositionTop >= mousePositionTop) {
+        newPanelHeight -= 5;
+      }
+      this._lastMousePositionTop = mousePositionTop;
 
-		// Возвращает координаты курсора мыши
-		_getMousePosition: function (e) {
-			var docElem = document.documentElement;
+      return newPanelHeight;
+    },
 
-			return { x: e.clientX + docElem.scrollLeft, y: e.clientY + docElem.scrollTop };
-		},
+    // Возвращает координаты курсора мыши
+    _getMousePosition: function (e) {
+      var docElem = document.documentElement;
 
-		// Останавливает перетаскивание
-		_endDrag: function () {
-			var $doc = $(document);
-			this._enableTextSelect($doc);
-			$doc
-				.unbind("mousemove", this._onDocumentMouseMoveHandler)
-				.unbind("mouseup", this._onDocumentMouseUpHandler)
-				;
+      return { x: e.clientX + docElem.scrollLeft, y: e.clientY + docElem.scrollTop };
+    },
 
-			$doc = null;
+    // Останавливает перетаскивание
+    _endDrag: function () {
+      var $doc = $(document);
+      this._enableTextSelect($doc);
+      $doc
+        .unbind("mousemove", this._onDocumentMouseMoveHandler)
+        .unbind("mouseup", this._onDocumentMouseUpHandler)
+        ;
 
-			jQuery(this._bottomHandleElement).removeClass("active");
+      $doc = null;
 
-			this._heightOffset = null;
-			this._lastMousePositionTop = 0;
-		},
+      jQuery(this._bottomHandleElement).removeClass("active");
 
-		// Отменяет поведение события по умолчанию
-		_cancelDefaultFunction: function (e) {
-			return false;
-		},
+      this._heightOffset = null;
+      this._lastMousePositionTop = 0;
+    },
 
-		// Запрещает выделение текста в заданном элементе
-		_disableTextSelect: function ($elem) {
-			if ($.browser.msie) {
-				$elem.bind("selectstart", this._cancelDefaultFunction);
-			}
-			else {
-				$elem.bind("mousedown", this._cancelDefaultFunction);
-			}
-		},
+    // Отменяет поведение события по умолчанию
+    _cancelDefaultFunction: function (e) {
+      return false;
+    },
 
-		// Разрешает выделение текста в заданном элементе
-		_enableTextSelect: function ($elem) {
-			if ($.browser.msie) {
-				$elem.unbind("selectstart", this._cancelDefaultFunction);
-			}
-			else {
-				$elem.unbind("mousedown", this._cancelDefaultFunction);
-			}
-		},
+    // Запрещает выделение текста в заданном элементе
+    _disableTextSelect: function ($elem) {
+      if ($.browser.msie) {
+        $elem.bind("selectstart", this._cancelDefaultFunction);
+      } else {
+        $elem.bind("mousedown", this._cancelDefaultFunction);
+      }
+    },
 
-		// Показывает контейнер, в котором находится панель
-		showPanelWrapper: function (callback) {
-			var $panelWrapper = jQuery(this._panelElement).parent();
-			if ($panelWrapper.is(":hidden")) {
-				$panelWrapper.show(0);
-			}
-			else {
-				$panelWrapper.css("display", "block");
-			}
-			$q.callFunction(callback);
+    // Разрешает выделение текста в заданном элементе
+    _enableTextSelect: function ($elem) {
+      if ($.browser.msie) {
+        $elem.unbind("selectstart", this._cancelDefaultFunction);
+      } else {
+        $elem.unbind("mousedown", this._cancelDefaultFunction);
+      }
+    },
 
-			$panelWrapper = null;
-		},
+    // Показывает контейнер, в котором находится панель
+    showPanelWrapper: function (callback) {
+      var $panelWrapper = jQuery(this._panelElement).parent();
+      if ($panelWrapper.is(":hidden")) {
+        $panelWrapper.show();
+      } else {
+        $panelWrapper.css("display", "block");
+      }
 
-		// Скрывает контейнер, в котором находится панель
-		hidePanelWrapper: function (callback) {
-			var $panelWrapper = jQuery(this._panelElement).parent();
-			if ($panelWrapper.is(":visible")) {
-				$panelWrapper.hide(0);
-			}
-			else {
-				$panelWrapper.css("display", "none");
-			}
-			$q.callFunction(callback);
+      $q.callFunction(callback);
+    },
 
-			$panelWrapper = null;
-		},
+    hidePanelWrapper: function (callback) {
+      var $panelWrapper = jQuery(this._panelElement).parent();
+      if ($panelWrapper.is(":visible")) {
+        $panelWrapper.hide();
+      } else {
+        $panelWrapper.css("display", "none");
+      }
 
-		// Показывает нижнюю рукоять
-		showBottomHandle: function (callback) {
-			var $bottomHandle = $(this._bottomHandleElement);
-			if ($bottomHandle.is(":hidden")) {
-				$bottomHandle.slideDown(30, callback);
-			}
-			else {
-				$bottomHandle.css("display", "block");
-				$q.callFunction(callback);
-			}
+      $q.callFunction(callback);
+    },
 
-			$bottomHandle = null;
-		},
+    showBottomHandle: function (callback) {
+      debugger;
+      var $bottomHandle = $(this._bottomHandleElement);
+      if ($bottomHandle.is(":hidden")) {
+        $bottomHandle.slideDown(30, callback);
+      } else {
+        $bottomHandle.css("display", "block");
+        $q.callFunction(callback);
+      }
+    },
 
-		// Скрывает нижнюю рукоять
-		hideBottomHandle: function (callback) {
-			var $bottomHandle = $(this._bottomHandleElement);
-			if ($bottomHandle.is(":visible")) {
-				$bottomHandle.slideUp(30, callback);
-			}
-			else {
-				$bottomHandle.css("display", "none");
-				$q.callFunction(callback);
-			}
+    hideBottomHandle: function (callback) {
+      debugger;
+      var $bottomHandle = $(this._bottomHandleElement);
+      if ($bottomHandle.is(":visible")) {
+        $bottomHandle.slideUp(30, callback);
+      } else {
+        $bottomHandle.css("display", "none");
+        $q.callFunction(callback);
+      }
+    },
 
-			$bottomHandle = null;
-		},
+    _onBottomHandleMouseDown: function (e) {
+      var mousePositionTop = this._getMousePosition(e).y;
+      this._startDrag(mousePositionTop);
+    },
 
-		_onBottomHandleMouseDown: function (e) {
-			var mousePositionTop = this._getMousePosition(e).y;
-			this._startDrag(mousePositionTop);
-		},
+    _onDocumentMouseMove: function (e) {
+      var $panel = jQuery(this._panelElement);
+      var mousePositionTop = this._getMousePosition(e).y;
+      var newPanelHeight = this._getNewPanelHeight(mousePositionTop);
+      var minPanelHeight = this._options.minPanelHeight;
+      var maxPanelHeight = this._options.maxPanelHeight;
 
-		_onDocumentMouseMove: function (e) {
-			var $panel = jQuery(this._panelElement);
-			var mousePositionTop = this._getMousePosition(e).y;
-			var newPanelHeight = this._getNewPanelHeight(mousePositionTop);
-			var minPanelHeight = this._options.minPanelHeight;
-			var maxPanelHeight = this._options.maxPanelHeight;
+      if (newPanelHeight < minPanelHeight) {
+        newPanelHeight = minPanelHeight;
+      } else if (newPanelHeight > maxPanelHeight) {
+        newPanelHeight = maxPanelHeight;
+      }
 
-			if (newPanelHeight < minPanelHeight) {
-				newPanelHeight = minPanelHeight;
-			}
-			else if (newPanelHeight > maxPanelHeight) {
-				newPanelHeight = maxPanelHeight;
-			}
-			$panel
-				.height(newPanelHeight)
-				.trigger("resize")
-				;
+      $panel.height(newPanelHeight).trigger("resize");
+      return false;
+    },
 
-			$panel = null;
+    _onDocumentMouseUp: function (e) {
+      this._endDrag();
+    },
 
-			return false;
-		},
+    // Уничтожает компонент
+    dispose: function () {
+      var $doc = $(document);
+      this._enableTextSelect($doc);
+      $doc.unbind("mousemove", this._onDocumentMouseMoveHandler).unbind("mouseup", this._onDocumentMouseUpHandler);
 
-		_onDocumentMouseUp: function (e) {
-			this._endDrag();
-		},
+      $(this._bottomHandleElement).unbind("mousedown", this._onBottomHandleMouseDownHandler).hide().empty().remove();
+      $(this._panelElement).unwrap();
 
+      this._panelElement = null;
+      this._bottomHandleElement = null;
+      this._options = null;
 
-		// Уничтожает компонент
-		dispose: function () {
-			var $doc = $(document);
-			this._enableTextSelect($doc);
-			$doc
-				.unbind("mousemove", this._onDocumentMouseMoveHandler)
-				.unbind("mouseup", this._onDocumentMouseUpHandler)
-				;
+      this._onBottomHandleMouseDownHandler = null;
+      this._onDocumentMouseMoveHandler = null;
+      this._onDocumentMouseUpHandler = null;
+    }
+  };
 
-			$doc = null;
+  // Инициализирует плагин Vertical Resizer
+  $.fn.verticalResizer = function (options) {
+    return this.each(function () {
+      var $panel = $(this);
+      if (!$panel.data(VERTICAL_RESIZER_COMPONENT_NAME)) {
+        $panel.data(VERTICAL_RESIZER_COMPONENT_NAME, new VerticalResizer(this, options));
+      }
+    });
+  };
 
-			$(this._bottomHandleElement)
-				.unbind("mousedown", this._onBottomHandleMouseDownHandler)
-				.hide(0)
-				.empty()
-				.remove()
-				;
+  // Уничтожает плагин Vertical Resizer
+  $.fn.noVerticalResizer = function (options) {
+    return this.each(function () {
+      var $panel = $(this);
+      var component = $panel.data(VERTICAL_RESIZER_COMPONENT_NAME);
+      if (component) {
+        component.dispose();
+        $panel.removeData(VERTICAL_RESIZER_COMPONENT_NAME);
+      }
+    });
+  };
 
-			$(this._panelElement).unwrap();
-
-			this._panelElement = null;
-			this._bottomHandleElement = null;
-			this._options = null;
-
-			this._onBottomHandleMouseDownHandler = null;
-			this._onDocumentMouseMoveHandler = null;
-			this._onDocumentMouseUpHandler = null;
-		}
-	};
-
-	// Инициализирует плагин Vertical Resizer
-	$.fn.verticalResizer = function (options) {
-		return this.each(function () {
-			var $panel = $(this);
-
-			if (!$panel.data(VERTICAL_RESIZER_COMPONENT_NAME)) {
-				var component = new VerticalResizer(this, options);
-				$panel.data(VERTICAL_RESIZER_COMPONENT_NAME, component);
-			}
-		});
-	};
-
-	// Уничтожает плагин Vertical Resizer
-	$.fn.noVerticalResizer = function (options) {
-		return this.each(function () {
-			var $panel = $(this);
-
-			var component = $panel.data(VERTICAL_RESIZER_COMPONENT_NAME);
-			if (component) {
-				component.dispose();
-				component = null;
-
-				$panel.removeData(VERTICAL_RESIZER_COMPONENT_NAME);
-			}
-		});
-	};
-
-	// Настройки по умолчанию
-	$.fn.verticalResizer.defaults = {
-		bottomHandleCssClassName: "bottomHandle", // имя CSS-класса для нижней рукояти
-		minPanelHeight: 100, // минимальная высота панели
-		maxPanelHeight: 400, // максимальная высота панели
-		allowFixBottomHandleWidth: false // признак, разрешающий корректировку ширины нижней рукояти
-	};
+  // Настройки по умолчанию
+  $.fn.verticalResizer.defaults = {
+    bottomHandleCssClassName: "bottomHandle", // имя CSS-класса для нижней рукояти
+    minPanelHeight: 100, // минимальная высота панели
+    maxPanelHeight: 400, // максимальная высота панели
+    allowFixBottomHandleWidth: false // признак, разрешающий корректировку ширины нижней рукояти
+  };
 })(jQuery);

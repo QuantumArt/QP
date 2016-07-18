@@ -191,36 +191,35 @@ Quantumart.QP8.Backend.prototype = {
 
       this._initializeSignOut();
     }, this));
-    this._initializeHubs();
+
+    this._initializeSignalrHubs();
   },
 
   _error: function() { },
 
   _initializeSignOut: function() {
-    jQuery('.signOut').bind('click', function() {
+    $('.signOut').bind('click', function() {
       Quantumart.QP8.BackendLogin.removeCustomerCode();
     });
   },
 
   _terminateSignOut: function() {
-    jQuery('.signOut').unbind('click');
+    $('.signOut').unbind('click');
   },
 
   _initializeTraceWindowLink: function() {
-    jQuery('#traceWindowLink').bind('click', this._onTraceWindowLinkClickHandler);
+    $('#traceWindowLink').bind('click', this._onTraceWindowLinkClickHandler);
   },
 
   _terminateTraceWindowLink: function() {
-    jQuery('#traceWindowLink').unbind('click', this._onTraceWindowLinkClickHandler);
+    $('#traceWindowLink').unbind('click', this._onTraceWindowLinkClickHandler);
   },
 
-  //#region SignalR Event Handlers
-  _initializeHubs: function() {
+  _initializeSignalrHubs: function() {
     that = this;
-    $.connection.hub.logging = this._isDebugMode;
-
+    $.connection.hub.logging = false;//this._isDebugMode;
     $.connection.communication.client.send = function(key, data) {
-      if (key == 'singleusermode') {
+      if (key === 'singleusermode') {
         that._updateSingleUserMode(data);
       } else {
         $('.' + key).text(data);
@@ -230,7 +229,6 @@ Quantumart.QP8.Backend.prototype = {
     $.connection.singleUserMode.client.send = this._updateSingleUserMode;
     $.connection.hub.start().done(function() {
       var hash = $('body').data('dbhash');
-
       $.connection.communication.server.addHash(hash);
     });
   },
@@ -259,8 +257,6 @@ Quantumart.QP8.Backend.prototype = {
 
     $elem.text(message);
   },
-
-  //#endregion
 
   _markAsBusy: function() {
     this._busy = true;

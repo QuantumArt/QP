@@ -165,4 +165,7 @@
   <data name="SingeUserModeMessage" xml:space="preserve">
     <value>Невозможно выполнить действие, поскольку база находится в режиме одного редактора</value>
   </data>
+  <data name="DownloadRecord" xml:space="preserve">
+    <value>Скачать запись</value>
+  </data>
 </root>

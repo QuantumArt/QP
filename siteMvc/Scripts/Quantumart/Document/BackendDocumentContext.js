@@ -95,6 +95,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   get_mainComponentType: function() {
     return this._mainComponentType;
   },
+
   get_state: function() {
     return this._state;
   },
@@ -102,24 +103,28 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
   set_initializingCallback: function(value) {
     this._initializingCallback = value;
   },
+
   set_initializedCallback: function(value) {
     this._initializedCallback = value;
   },
+
   set_terminatingCallback: function(value) {
     this._terminatingCallback = value;
   },
+
   set_terminatedCallback: function(value) {
     this._terminatedCallback = value;
   },
+
   set_execSelectCallback: function(value) {
     this._execSelectCallback = value;
   },
+
   set_hostLoadedCallback: function(value) {
     this._hostLoadedCallback = value;
   },
 
   init: function() {
-    Sys.Debug.trace('initPage ' + this._hostId);
     if (!this.needUp()) {
       $q.callFunction(this._initializingCallback, this);
     }
@@ -133,6 +138,8 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     if (!this.needUp()) {
       $q.callFunction(this._initializedCallback, this);
     }
+
+    $q.trace('Created document context: ' + this._hostId, this);
   },
 
   getHost: function() {
@@ -161,7 +168,7 @@ Quantumart.QP8.BackendDocumentContext.prototype = {
     }
 
     if (!this._getArea().getCustomScriptState(key)) {
-      var result = jQuery.ajax({
+      var result = $.ajax({
         type: 'get',
         dataType: 'script',
         url: url,

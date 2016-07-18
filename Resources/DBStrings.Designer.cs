@@ -88,6 +88,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download record.
+        /// </summary>
+        public static string DownloadRecord {
+            get {
+                return ResourceManager.GetString("DownloadRecord", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to DB fingerprint computing configuration.
         /// </summary>
         public static string FpSettings {
