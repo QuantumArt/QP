@@ -1,0 +1,7 @@
+﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+<#+ void AddTestClass(GenerationContext context){#>
+public class TestClass
+{
+	public int X { get; set; }
+}
+<#+}#>

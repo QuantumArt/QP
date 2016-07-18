@@ -1,0 +1,3 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<schema connectionStringName="qp_database" class="EF6Model" namespace="QA.EF" useLongUrls="true" replaceUrls="true" dbIndependent="true" isPartial="true" sendNotifications="false" siteName="Product Catalog" siteId="35" forStage="true" connectionString="Initial Catalog=beeline_catalog_branch_main;Data Source=MSCSQL01;Workstation ID=MSCDEV02;User ID=publishing;Password=QuantumartHost.SQL" connectionStringObject="System.Configuration.ConfigurationManager.ConnectionStrings">
+</schema>
