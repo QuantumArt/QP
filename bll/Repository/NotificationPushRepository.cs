@@ -121,15 +121,15 @@ namespace Quantumart.QP8.BLL.Repository
         internal void SendNotifications()
         {
             SendServiceNotifications();
-            SendNonServiceNotifications();
+            SendNonServiceNotifications(WaitForNonService);
         }
 
-        internal void SendNonServiceNotifications()
+        internal void SendNonServiceNotifications(bool waitFor)
         {
             if (!NonServiceNotifications.Any()) return;
             foreach (var item in ArticleIds)
             {
-                if (WaitForNonService)
+                if (waitFor)
                     SendNotification(QPContext.CurrentDBConnectionString, item, string.Join(";", Codes));
                 else
                     SendNotificationOneWay(QPContext.CurrentDBConnectionString, item, string.Join(";", Codes));

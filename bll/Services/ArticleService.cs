@@ -487,29 +487,30 @@ namespace Quantumart.QP8.BLL.Services
             var result = CheckIdResult<Article>.CreateForRemove(contentId, ids, disableSecurityCheck);
 
             var idsToProceed = result.ValidItems.Cast<Article>().SelectMany(a => a.SelfAndChildIds).ToArray();
+            var idsToNotify = result.ValidItems.Select(n => n.Id).ToArray();
+
+            var isUpdate = content.AutoArchive && !fromArchive;
+            var code = isUpdate ? NotificationCode.Update : NotificationCode.Delete;
+            var repo = new NotificationPushRepository();
+            repo.PrepareNotifications(contentId, idsToNotify, code, disableNotifications);
+
 
             if (content.AutoArchive && !fromArchive)
             {
                 ArticleRepository.SetArchiveFlag(idsToProceed, true);
-
-                foreach (var o in result.ValidItems)
-                {
-                    var item = (Article) o;
-                    item.SendNotificationOneWay(NotificationCode.Update, disableNotifications);
-                }
+                repo.SendNotifications();
             }
             else
             {
+                repo.SendNonServiceNotifications(true);
                 foreach (var o in result.ValidItems)
                 {
                     var item = (Article) o;
                     item.RemoveAllVersionFolders();
-                    item.SendNotification(NotificationCode.Delete, disableNotifications);
                 }
-
                 ArticleRepository.MultipleDelete(idsToProceed);
+                repo.SendServiceNotifications();
             }
-
             return result.GetServiceResult();
         }
 
