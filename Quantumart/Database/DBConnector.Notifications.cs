@@ -24,6 +24,8 @@ namespace Quantumart.QPublishing.Database
 
         public bool DisableInternalNotifications { get; set; }
 
+        public Action<Exception> ExternalExceptionHandler { get; set; }
+
         private void ProceedExternalNotification(int id, string eventName, string externalUrl, ContentItem item, bool useService)
         {
             eventName = eventName.ToLowerInvariant();
@@ -31,15 +33,15 @@ namespace Quantumart.QPublishing.Database
             {
                 if (useService)
                 {
+                    if (!DisableServiceNotifications)
+                    {
+                        EnqueueNotification(id, eventName, externalUrl, item);
+                    }
 
-                    EnqueueNotification(id, eventName, externalUrl, item);
                 }
                 else
                 {
-                    if (!DisableServiceNotifications)
-                    {
-                        MakeExternalCall(id, eventName, externalUrl, item);
-                    }
+                    MakeExternalCall(id, eventName, externalUrl, item);
                 }
             }
         }
@@ -113,24 +115,19 @@ namespace Quantumart.QPublishing.Database
             var delimiter = externalUrl.Contains("?") ? "&" : "?";
             var fullUrl = String.Concat(externalUrl, delimiter, queryString);
             var request = (HttpWebRequest)WebRequest.Create(fullUrl);
-            request.BeginGetResponse(ExternalNotificationCallback, request);
+            var result = request.GetResponseAsync().ContinueWith((t) => { InternalExceptionHandler(t.Exception, "GetResponseAsync", request); });
+            if (ExternalExceptionHandler != null)
+            {
+                result.ContinueWith((t) => { ExternalExceptionHandler(t.Exception); });
+            }
         }
 
-        private void ExternalNotificationCallback(IAsyncResult iar)
+        private void InternalExceptionHandler(Exception ex, string code, WebRequest request)
         {
-            try
-            {
-                var request = (HttpWebRequest)iar.AsyncState;
-                request.EndGetResponse(iar);
-            }
-            catch (Exception ex)
-            {
-                var errorMessage =
-                    $"DbConnector.cs, ExternalNotificationCallback(IAsyncResult iar), MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
-                if (ThrowNotificationExceptions)
-                    throw;
-            }
+            var errorMessage = $"DbConnector.Notifications.cs, {code}, URL: {request.RequestUri}, MESSAGE: {ex.Message}, STACK TRACE: {ex.StackTrace}";
+            System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+            if (ThrowNotificationExceptions)
+                throw new Exception(errorMessage, ex);
 
         }
 
@@ -265,11 +262,7 @@ namespace Quantumart.QPublishing.Database
             }
             catch (Exception ex)
             {
-                var errorMessage =
-                    $"DbConnector.cs, SendNotification, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
-                if (ThrowNotificationExceptions)
-                    throw;
+                InternalExceptionHandler(ex, "SendNotification", null);
             }
         }
 

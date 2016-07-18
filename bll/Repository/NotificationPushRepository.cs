@@ -70,28 +70,46 @@ namespace Quantumart.QP8.BLL.Repository
             Queue(() => Notify(connectionString, id, code, IgnoreInternal));
         }
 
+        internal void PrepareNotifications(Article article, string[] codes, bool disableNotifications = false)
+        {
+            Notifications = new Notification[0];
+            ArticleIds = new int[0];
+            Articles = new Article[0];
+            ValidateCodes(codes);
+            Codes = codes.Distinct().ToArray();
+            if (!disableNotifications)
+            {
+                ContentId = article.ContentId;
+                SiteId = article.Content.SiteId;
+                Notifications = NotificationRepository.GetContentNotifications(ContentId, codes).ToArray();
+                if (Notifications.Any())
+                {
+                    Articles = new[] {article};
+                    ArticleIds = new[] {article.Id};
+                }
+            }
+        }
+
         internal void PrepareNotifications(int contentId, int[] articleIds, string[] codes, bool disableNotifications = false)
         {
+            Notifications = new Notification[0];
+            ArticleIds = new int[0];
+            Articles = new Article[0];
             ValidateCodes(codes);
-            try
+            Codes = codes.Distinct().ToArray();
+            if (!disableNotifications)
             {
-                if (disableNotifications)
+                ContentId = contentId;
+                SiteId = ContentRepository.GetSiteId(contentId);
+                Notifications = NotificationRepository.GetContentNotifications(contentId, codes).ToArray();
+                if (Notifications.Any())
                 {
-                    Notifications = new Notification[0];
+                    ArticleIds = articleIds;
+                    if (!Codes.Contains(NotificationCode.Create) && ServiceNotifications.Any())
+                    {
+                        Articles = GetArticles();
+                    }
                 }
-                else
-                {
-                    ContentId = contentId;
-                    SiteId = ContentRepository.GetSiteId(contentId);
-                    Notifications = NotificationRepository.GetContentNotifications(contentId, codes).ToArray();
-                    PrepareArticles(articleIds, codes);
-                }
-            
-            }
-            catch (Exception ex)
-            {
-                Notifications = new Notification[0];
-                HandleException(ex);
             }
         }
 
@@ -194,19 +212,6 @@ namespace Quantumart.QP8.BLL.Repository
         #endregion
 
         #region Private methods
-        private void PrepareArticles(IEnumerable<int> articleIds, IEnumerable<string> codes)
-        {
-            Codes = codes.Distinct().ToArray();
-            Articles = new Article[0];
-
-            if (!Notifications.Any()) return;
-            ArticleIds = articleIds.ToArray();
-
-            if (!Codes.Contains(NotificationCode.Create) && ServiceNotifications.Any())
-            {
-                Articles = GetArticles();
-            }
-        }
 
         private static void QueueAsync(Action action)
         {
@@ -226,22 +231,16 @@ namespace Quantumart.QP8.BLL.Repository
 
         private void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
         {
-            try
+            var cnn = new DBConnector(connectionString)
             {
-                var cnn = new DBConnector(connectionString)
-                {
-                    CacheData = false,
-                    DisableServiceNotifications = true,
-                    DisableInternalNotifications = disableInternalNotifications
-                };
-                foreach (var simpleCode in code.Split(';'))
-                {
-                    cnn.SendNotification(id, simpleCode);
-                }
-            }
-            catch (Exception ex)
+                CacheData = false,
+                DisableServiceNotifications = true,
+                DisableInternalNotifications = disableInternalNotifications,
+                ExternalExceptionHandler = HandleException
+            };
+            foreach (var simpleCode in code.Split(';'))
             {
-                HandleException(ex);
+                cnn.SendNotification(id, simpleCode);
             }
         }
 

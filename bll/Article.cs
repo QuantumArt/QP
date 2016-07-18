@@ -45,6 +45,7 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<List<Article>> _variationArticles;
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
+        internal NotificationPushRepository NotificationPushRepository { get; }
 
         #endregion
 
@@ -59,6 +60,7 @@ namespace Quantumart.QP8.BLL
             _isUpdatableWithRelationSecurity = new InitPropertyValue<bool>(() => QPContext.IsAdmin || ArticleRepository.CheckRelationSecurity(this, false));
             _isRemovableWithRelationSecurity = new InitPropertyValue<bool>(() => QPContext.IsAdmin || ArticleRepository.CheckRelationSecurity(this, true));
             _statusHistoryListItem = new InitPropertyValue<StatusHistoryListItem>(() => ArticleRepository.GetStatusHistoryItem(Id));
+            NotificationPushRepository = new NotificationPushRepository();
             PredefinedValues = new Dictionary<string, string>();
             VariationsErrorModel = new Dictionary<string, RulesException<Article>>();
             CancelSplit = false;
@@ -764,7 +766,25 @@ namespace Quantumart.QP8.BLL
 
             ReplaceAllUrlsToPlaceHolders();
             OptimizeForHierarchy();
-            var result = (IsNew) ? ArticleRepository.Save(this) : ArticleRepository.Update(this);
+            Article result, articleToPrepare;
+            var codes = new List<string>();
+            if (IsNew)
+            {
+                result = ArticleRepository.Save(this);
+                codes.Add(NotificationCode.Create);
+                articleToPrepare = result;
+            }
+            else
+            {
+                result = ArticleRepository.Update(this);
+                codes.Add(NotificationCode.Update);
+                if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
+                {
+                    codes.Add(NotificationCode.ChangeStatus);
+                }
+                articleToPrepare = previousArticle;
+            }
+            result.NotificationPushRepository.PrepareNotifications(articleToPrepare, codes.ToArray(), disableNotifications);
             result.BackupCurrentFiles();
             result.CreateDynamicImages();
 
@@ -790,18 +810,14 @@ namespace Quantumart.QP8.BLL
                         a.Persist(disableNotifications);
                     }
 
-                    if (IsNew)
-                        result.SendNotificationOneWay(NotificationCode.Create, disableNotifications);
-                    else if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
+                    if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
                     {
-                        result.SendNotificationOneWay($"{NotificationCode.Update};{NotificationCode.ChangeStatus}", disableNotifications);
                         var message = ReplaceCommentLink(Comment);
                         var systemStatusType = GetSystemStatusType(previousArticle.StatusTypeId, StatusTypeId, ref message);
                         WorkflowRepository.SaveHistoryStatus(Id, systemStatusType, message, QPContext.CurrentUserId);
                     }
-                    else
-                        result.SendNotificationOneWay(NotificationCode.Update, disableNotifications);
 
+                    result.NotificationPushRepository.SendNotifications();
                 }
             }
             return result;
