@@ -45,7 +45,7 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<List<Article>> _variationArticles;
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
-        internal NotificationPushRepository NotificationPushRepository { get; }
+        private NotificationPushRepository NotificationPushRepository { get; }
 
         #endregion
 
@@ -1181,6 +1181,16 @@ namespace Quantumart.QP8.BLL
             var notificationRepository = new NotificationPushRepository() { WaitForNonService = waitForNonService };
             notificationRepository.PrepareNotifications(ContentId, new[] { Id }, code);
             notificationRepository.SendNotifications();
+        }
+
+        internal void PrepareNotifications(string code, bool disableNotifications = false)
+        {
+            NotificationPushRepository.PrepareNotifications(this, new[] { code }, disableNotifications);
+        }
+
+        internal void SendPreparedNotifications()
+        {
+            NotificationPushRepository.SendNotifications();
         }
 
 
