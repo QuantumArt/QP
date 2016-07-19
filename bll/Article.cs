@@ -1165,24 +1165,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Отправляет асинхронное уведомление
-        /// </summary>
-        /// <param name="code">код события</param>
-        /// <param name="disableNotifications"></param>
-        internal void SendNotificationOneWay(string code, bool disableNotifications)
-        {
-            SendNotification(code, disableNotifications, false);
-        }
-
-        internal void SendNotification(string code, bool disableNotifications, bool waitForNonService = true)
-        {
-            if (disableNotifications || !Content.HasNotifications(code)) return;
-            var notificationRepository = new NotificationPushRepository() { WaitForNonService = waitForNonService };
-            notificationRepository.PrepareNotifications(ContentId, new[] { Id }, code);
-            notificationRepository.SendNotifications();
-        }
-
         internal void PrepareNotifications(string code, bool disableNotifications = false)
         {
             NotificationPushRepository.PrepareNotifications(this, new[] { code }, disableNotifications);

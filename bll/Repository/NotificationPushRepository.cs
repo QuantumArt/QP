@@ -29,6 +29,8 @@ namespace Quantumart.QP8.BLL.Repository
 
         private Notification[] NonServiceNotifications => Notifications.Where(n => !n.UseService).ToArray();
 
+        public string ConnectionString { get; set; } = QPContext.CurrentDBConnectionString;
+
 
         private string[] Codes { get; set; }
 
@@ -36,11 +38,6 @@ namespace Quantumart.QP8.BLL.Repository
         #endregion
 
         #region public properties
-        /// <summary>
-        /// Wait for internal or external non-service notifications
-        /// </summary>
-        public bool WaitForNonService { get; set; }
-
 
         /// <summary>
         /// Do not send internal e-mail notifications
@@ -121,7 +118,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal void SendNotifications()
         {
             SendServiceNotifications();
-            SendNonServiceNotifications(WaitForNonService);
+            SendNonServiceNotifications(false);
         }
 
         internal void SendNonServiceNotifications(bool waitFor)
@@ -130,9 +127,9 @@ namespace Quantumart.QP8.BLL.Repository
             foreach (var item in ArticleIds)
             {
                 if (waitFor)
-                    SendNotification(QPContext.CurrentDBConnectionString, item, string.Join(";", Codes));
+                    SendNotification(ConnectionString, item, string.Join(";", Codes));
                 else
-                    SendNotificationOneWay(QPContext.CurrentDBConnectionString, item, string.Join(";", Codes));
+                    SendNotificationOneWay(ConnectionString, item, string.Join(";", Codes));
             }
         }
 

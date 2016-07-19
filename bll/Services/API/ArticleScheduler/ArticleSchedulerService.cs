@@ -12,6 +12,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
     public class ArticleSchedulerService : IArticleSchedulerService, IArticleOnetimeSchedulerService, IArticlePublishingSchedulerService, IArticleRecurringSchedulerService
     {
         readonly string _connectionString;
+        private NotificationPushRepository _notificationPushRepository;
 
         public ArticleSchedulerService(string connectionString)
         {
@@ -19,6 +20,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                 throw new ArgumentNullException(nameof(connectionString));
 
             _connectionString = connectionString;
+            _notificationPushRepository = new NotificationPushRepository() {ConnectionString = _connectionString};
         }		
 
         public IEnumerable<ArticleScheduleTask> GetScheduleTaskList()
@@ -42,11 +44,15 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             using (new QPConnectionScope(_connectionString))
             {
                 var article = ArticleRepository.GetById(articleId);
-                if (article != null && !article.Visible) {
-                    QPContext.EFContext.SetContentItemVisible(articleId, true);
+                if (article != null && !article.Visible)
+                {
+                    article.LoadFieldValues();
+                    _notificationPushRepository.PrepareNotifications(article, new [] { NotificationCode.Update });
+                    QPContext.EFContext.SetContentItemVisible(articleId, true, article.LastModifiedBy);
+                    _notificationPushRepository.SendNotifications();
                 }
 
-                article?.LoadFieldValues();
+                ;
                 return article;
             }		
         }
@@ -56,11 +62,14 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             using (new QPConnectionScope(_connectionString))
             {
                 var article = ArticleRepository.GetById(articleId);
-                if (article != null && article.Visible) {
-                    QPContext.EFContext.SetContentItemVisible(articleId, false);
+                if (article != null && article.Visible)
+                {
+                    article.LoadFieldValues();
+                    _notificationPushRepository.PrepareNotifications(article, new[] { NotificationCode.Update });
+                    QPContext.EFContext.SetContentItemVisible(articleId, false, article.LastModifiedBy);
+                    _notificationPushRepository.SendNotifications();
                 }
 
-                article?.LoadFieldValues();
                 return article;
             }
         }
@@ -83,8 +92,6 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                 transaction.Complete();
             }
 
-            SendNotification(article, NotificationCode.Update);
-
             return article;
         }
 
@@ -106,8 +113,6 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                 transaction.Complete();
             }
 
-            SendNotification(article, NotificationCode.Update);
-
             return article;
         }
 
@@ -126,31 +131,22 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                         schedule.Article = article;
                         if (article != null && article.Delayed)
                         {
-                            QPContext.EFContext.MergeArticle(schedule.ArticleId);
+                            QPContext.IsLive = true;
+                            article.LoadFieldValues();
+                            QPContext.IsLive = false;
+                            _notificationPushRepository.PrepareNotifications(article, new[] { NotificationCode.DelayedPublication });
+                            QPContext.EFContext.MergeArticle(schedule.ArticleId, article.LastModifiedBy);
+                            _notificationPushRepository.SendNotifications();
                         }
                         else
+                        {
                             ScheduleRepository.Delete(schedule);
-
-                        article?.LoadFieldValues();
+                        }
                     }
                 }
                 transaction.Complete();
             }
-
-            SendNotification(article, NotificationCode.DelayedPublication);
-
             return article;
-        }
-
-        private static void SendNotification(Article article, string code)
-        {
-            if (article == null) return;
-            using (new QPConnectionScope())
-            {
-                var rep = new NotificationPushRepository();
-                rep.PrepareNotifications(article.ContentId, new[] { article.Id }, code);
-                rep.SendNotifications();
-            }
         }
     }
 }

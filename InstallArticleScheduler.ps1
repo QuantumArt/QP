@@ -5,7 +5,7 @@
     Break
 }
 
-$name = "QP.ArticleScheduler"
+$name = "ArticleSchedulerService"
 $timeout = "00:03:00"
 
 $s = Get-Service $name -ErrorAction SilentlyContinue
@@ -66,9 +66,10 @@ $password = "dummy"
 $secpasswd = ConvertTo-SecureString $password -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential ($login, $secpasswd)
 $description = "QP8 Article Scheduler Service"
+$displayName = "QP8 Article Scheduler Service"
 
 Write-Host "Installing service: $name"
-New-Service -name $name -binaryPathName "$installRoot\$projectName.exe" -Description $description -displayName $name -startupType Automatic -credential $mycreds
+New-Service -name $name -binaryPathName "$installRoot\$projectName.exe" -Description $description -displayName $displayName -startupType Automatic -credential $mycreds
 Write-Host "Installation completed: $name"
 
 Write-Host "Waiting for a while..."

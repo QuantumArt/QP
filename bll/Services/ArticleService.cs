@@ -334,7 +334,8 @@ namespace Quantumart.QP8.BLL.Services
                 article = ArticleRepository.Copy(article);
                 result.Id = article.Id;
                 article.CopyAggregates(previousAggregatedArticles);
-                article.SendNotificationOneWay(NotificationCode.Create, disableNotifications);
+                article.PrepareNotifications(NotificationCode.Create, disableNotifications);
+                article.SendPreparedNotifications();
             }
             catch (UnsupportedConstraintException)
             {
@@ -448,16 +449,22 @@ namespace Quantumart.QP8.BLL.Services
 
             var idsToProceed = articleToRemove.SelfAndChildIds;
 
-            if (content.AutoArchive && !fromArchive)
+            var isUpdate = content.AutoArchive && !fromArchive;
+            var code = isUpdate ? NotificationCode.Update : NotificationCode.Delete;
+            var repo = new NotificationPushRepository();
+            repo.PrepareNotifications(articleToRemove, new [] { code }, disableNotifications);
+            articleToRemove.PrepareNotifications(code, disableNotifications);
+            if (isUpdate)
             {
                 ArticleRepository.SetArchiveFlag(idsToProceed, true);
-                articleToRemove.SendNotificationOneWay(NotificationCode.Update, disableNotifications);
+                repo.SendNotifications();
             }
             else
             {
                 articleToRemove.RemoveAllVersionFolders();
-                articleToRemove.SendNotification(NotificationCode.Delete, disableNotifications);
+                repo.SendNonServiceNotifications(true);
                 ArticleRepository.MultipleDelete(idsToProceed);
+                repo.SendServiceNotifications();
             }
 
             return null;

@@ -566,35 +566,40 @@ namespace Quantumart.QP8.DAL
 
 			return result;
 		}
-		
 
-		/// <summary>
-		/// Устанавливает свойство Visible для content item
-		/// </summary>
-		/// <param name="articleId"></param>
-		public void SetContentItemVisible(int contentItemId, bool isVisible)
+
+	    /// <summary>
+	    /// Устанавливает свойство Visible для content item
+	    /// </summary>
+	    /// <param name="contentItemId"></param>
+	    /// <param name="isVisible"></param>
+	    /// <param name="lastModifiedBy"></param>
+	    public void SetContentItemVisible(int contentItemId, bool isVisible, int lastModifiedBy = 1)
 		{
 			object[] parameters = 
 			{
                 new SqlParameter() { ParameterName = "id", DbType = DbType.Decimal, Value = contentItemId },
-				new SqlParameter() { ParameterName = "is_visible", DbType = DbType.Decimal, Value = isVisible ? 1 : 0 }
+				new SqlParameter() { ParameterName = "is_visible", DbType = DbType.Decimal, Value = isVisible ? 1 : 0 },
+                new SqlParameter() { ParameterName = "last_modified_by", DbType = DbType.Decimal, Value = lastModifiedBy }
             };
 
-			using (DbCommand dbCommand = this.CreateStoreCommand("UPDATE content_item with(rowlock) SET visible = @is_visible, modified = getdate(), last_modified_by = 1 WHERE content_item_id = @id", CommandType.Text, parameters))
+			using (DbCommand dbCommand = this.CreateStoreCommand("UPDATE content_item with(rowlock) SET visible = @is_visible, modified = getdate(), last_modified_by = @last_modified_by WHERE content_item_id = @id", CommandType.Text, parameters))
 			{
 				dbCommand.ExecuteNonQuery();	
 			}
 		}
 
-		/// <summary>
-		/// qp_merge_article
-		/// </summary>
-		/// <param name="articleId"></param>
-		public void MergeArticle(int contentItemId)
+	    /// <summary>
+	    /// qp_merge_article
+	    /// </summary>
+	    /// <param name="contentItemId"></param>
+	    /// <param name="lastModifiedBy"></param>
+	    public void MergeArticle(int contentItemId, int lastModifiedBy = 1)
 		{
 			object[] parameters = 
 			{
-                new SqlParameter() { ParameterName = "item_id", DbType = DbType.Decimal, Value = contentItemId },				
+                new SqlParameter() { ParameterName = "item_id", DbType = DbType.Decimal, Value = contentItemId },
+                new SqlParameter() { ParameterName = "last_modified_by", DbType = DbType.Decimal, Value = lastModifiedBy },
             };
 
 			using (DbCommand dbCommand = this.CreateStoreCommand("qp_merge_article", CommandType.StoredProcedure, parameters))
