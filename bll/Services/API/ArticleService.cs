@@ -136,12 +136,12 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        public Article Save(Article article)
+        public Article Save(Article article, bool disableNotifications = false)
         {
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                Article result = article.Persist(false);
+                Article result = article.Persist(disableNotifications);
                 QPContext.CurrentUserId = 0;
                 return result;
             }

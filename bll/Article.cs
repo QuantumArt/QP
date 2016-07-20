@@ -45,7 +45,6 @@ namespace Quantumart.QP8.BLL
         private readonly InitPropertyValue<List<Article>> _variationArticles;
         private readonly InitPropertyValue<IEnumerable<ArticleVariationListItem>> _variationListItems;
         private readonly InitPropertyValue<IEnumerable<ArticleContextListItem>> _contextListItems;
-        private NotificationPushRepository NotificationPushRepository { get; }
 
         #endregion
 
@@ -60,7 +59,6 @@ namespace Quantumart.QP8.BLL
             _isUpdatableWithRelationSecurity = new InitPropertyValue<bool>(() => QPContext.IsAdmin || ArticleRepository.CheckRelationSecurity(this, false));
             _isRemovableWithRelationSecurity = new InitPropertyValue<bool>(() => QPContext.IsAdmin || ArticleRepository.CheckRelationSecurity(this, true));
             _statusHistoryListItem = new InitPropertyValue<StatusHistoryListItem>(() => ArticleRepository.GetStatusHistoryItem(Id));
-            NotificationPushRepository = new NotificationPushRepository();
             PredefinedValues = new Dictionary<string, string>();
             VariationsErrorModel = new Dictionary<string, RulesException<Article>>();
             CancelSplit = false;
@@ -784,7 +782,8 @@ namespace Quantumart.QP8.BLL
                 }
                 articleToPrepare = previousArticle;
             }
-            result.NotificationPushRepository.PrepareNotifications(articleToPrepare, codes.ToArray(), disableNotifications);
+            var repo = new NotificationPushRepository();
+            repo.PrepareNotifications(articleToPrepare, codes.ToArray(), disableNotifications);
             result.BackupCurrentFiles();
             result.CreateDynamicImages();
 
@@ -817,7 +816,7 @@ namespace Quantumart.QP8.BLL
                         WorkflowRepository.SaveHistoryStatus(Id, systemStatusType, message, QPContext.CurrentUserId);
                     }
 
-                    result.NotificationPushRepository.SendNotifications();
+                    repo.SendNotifications();
                 }
             }
             return result;
@@ -1164,17 +1163,6 @@ namespace Quantumart.QP8.BLL
                 }
             }
         }
-
-        internal void PrepareNotifications(string code, bool disableNotifications = false)
-        {
-            NotificationPushRepository.PrepareNotifications(this, new[] { code }, disableNotifications);
-        }
-
-        internal void SendPreparedNotifications()
-        {
-            NotificationPushRepository.SendNotifications();
-        }
-
 
         internal bool CheckRelationCondition(string relCondition)
         {

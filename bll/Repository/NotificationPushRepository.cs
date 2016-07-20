@@ -52,7 +52,6 @@ namespace Quantumart.QP8.BLL.Repository
         {
             Articles = new Article[0];
             Notifications = new Notification[0];
-            _exceptionManager = EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>();
         }
         #endregion
 
@@ -334,7 +333,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private void HandleException(Exception ex)
         {
-            _exceptionManager.HandleException(ex, "Policy");
+            EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, "Policy");
         }
         #endregion
     }

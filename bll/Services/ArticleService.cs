@@ -334,8 +334,9 @@ namespace Quantumart.QP8.BLL.Services
                 article = ArticleRepository.Copy(article);
                 result.Id = article.Id;
                 article.CopyAggregates(previousAggregatedArticles);
-                article.PrepareNotifications(NotificationCode.Create, disableNotifications);
-                article.SendPreparedNotifications();
+                var repo = new NotificationPushRepository();
+                repo.PrepareNotifications(article, new [] { NotificationCode.Create }, disableNotifications);
+                repo.SendNotifications();
             }
             catch (UnsupportedConstraintException)
             {
@@ -453,7 +454,6 @@ namespace Quantumart.QP8.BLL.Services
             var code = isUpdate ? NotificationCode.Update : NotificationCode.Delete;
             var repo = new NotificationPushRepository();
             repo.PrepareNotifications(articleToRemove, new [] { code }, disableNotifications);
-            articleToRemove.PrepareNotifications(code, disableNotifications);
             if (isUpdate)
             {
                 ArticleRepository.SetArchiveFlag(idsToProceed, true);
@@ -636,11 +636,12 @@ namespace Quantumart.QP8.BLL.Services
 
             var idsToProceed = article.SelfAndChildIds;
 
-            article.PrepareNotifications(NotificationCode.Update, disableNotifications);
+            var repo = new NotificationPushRepository();
+            repo.PrepareNotifications(article, new[] { NotificationCode.Update }, disableNotifications);
 
             ArticleRepository.SetArchiveFlag(idsToProceed, true);
 
-            article.SendPreparedNotifications();
+            repo.SendNotifications();
 
             return null;
         }
@@ -705,11 +706,12 @@ namespace Quantumart.QP8.BLL.Services
 
             var idsToProceed = article.SelfAndChildIds;
 
-            article.PrepareNotifications(NotificationCode.Update, disableNotifications);
+            var repo = new NotificationPushRepository();
+            repo.PrepareNotifications(article, new[] { NotificationCode.Update }, disableNotifications);
 
             ArticleRepository.SetArchiveFlag(idsToProceed, false);
 
-            article.SendPreparedNotifications();
+            repo.SendNotifications();
             return null;
         }
 
