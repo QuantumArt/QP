@@ -133,45 +133,29 @@
 
     // Показывает контейнер, в котором находится панель
     showPanelWrapper: function (callback) {
-      var $panelWrapper = jQuery(this._panelElement).parent();
-      if ($panelWrapper.is(":hidden")) {
-        $panelWrapper.show();
-      } else {
-        $panelWrapper.css("display", "block");
+      $(this._panelElement).parent().show();
+      if(callback) {
+        $q.callFunction(callback);
       }
-
-      $q.callFunction(callback);
     },
 
     hidePanelWrapper: function (callback) {
-      var $panelWrapper = jQuery(this._panelElement).parent();
-      if ($panelWrapper.is(":visible")) {
-        $panelWrapper.hide();
-      } else {
-        $panelWrapper.css("display", "none");
+      $(this._panelElement).parent();
+      if(callback) {
+        $q.callFunction(callback);
       }
-
-      $q.callFunction(callback);
     },
 
     showBottomHandle: function (callback) {
-      debugger;
-      var $bottomHandle = $(this._bottomHandleElement);
-      if ($bottomHandle.is(":hidden")) {
-        $bottomHandle.slideDown(30, callback);
-      } else {
-        $bottomHandle.css("display", "block");
+      $(this._bottomHandleElement).show();
+      if(callback) {
         $q.callFunction(callback);
       }
     },
 
     hideBottomHandle: function (callback) {
-      debugger;
-      var $bottomHandle = $(this._bottomHandleElement);
-      if ($bottomHandle.is(":visible")) {
-        $bottomHandle.slideUp(30, callback);
-      } else {
-        $bottomHandle.css("display", "none");
+      $(this._bottomHandleElement).hide();
+      if(callback) {
         $q.callFunction(callback);
       }
     },
