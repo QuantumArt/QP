@@ -625,15 +625,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         // Добавление значений m2m и o2m полей 
         public void PostUpdateM2MRelationAndO2MRelationFields()
         {
-            //TODO: Send Notifications
             if (_importSetts.ContainsO2MRelationOrM2MRelationFields)
             {
-                var values = new List<RelSourceDestinationValue>();
                 //get all relations between old and new article ids
-                GetNewValues(ref values);
-
-                PostUpdateM2MValues(values);
-                PostUpdateO2MValues(values);
+                var values = GetNewValues();
+                if (values.Any())
+                {
+                    var repo = new NotificationPushRepository();
+                    repo.PrepareNotifications(_contentId, values.Select(n => n.NewId).Distinct().ToArray(), NotificationCode.Update);
+                    PostUpdateM2MValues(values);
+                    PostUpdateO2MValues(values);
+                    repo.SendNotifications();
+                }
             }
         }
 
@@ -835,29 +838,28 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         }
 
         // Десериализация всех соответствий (после добавления статей) 
-        private void GetNewValues(ref List<RelSourceDestinationValue> m2MValues)
+        private List<RelSourceDestinationValue> GetNewValues()
         {
-            if (!File.Exists(_importSetts.TempFileForRelFields))
-            {
-                return;
-            }
-            try
-            {
-                using (Stream stream = File.Open(_importSetts.TempFileForRelFields, FileMode.Open))
+            var m2MValues = new List<RelSourceDestinationValue>();
+            if (File.Exists(_importSetts.TempFileForRelFields))
+                try
                 {
-                    var bin = new BinaryFormatter();
-
-                    while (stream.Position != stream.Length)
+                    using (Stream stream = File.Open(_importSetts.TempFileForRelFields, FileMode.Open))
                     {
-                        var vals = (List<RelSourceDestinationValue>)bin.Deserialize(stream);
-                        m2MValues.AddRange(vals);
+                        var bin = new BinaryFormatter();
+
+                        while (stream.Position != stream.Length)
+                        {
+                            var vals = (List<RelSourceDestinationValue>) bin.Deserialize(stream);
+                            m2MValues.AddRange(vals);
+                        }
                     }
                 }
-            }
-            catch
-            {
-                throw new ArgumentException();
-            }
+                catch
+                {
+                    throw new ArgumentException();
+                }
+            return m2MValues;
         }
 
         #endregion
