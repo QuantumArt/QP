@@ -552,7 +552,7 @@ namespace Quantumart.QP8.BLL.Repository
                 var dymamicImageDal = DefaultRepository.GetById<DynamicImageFieldDAL>(newItem.Id);
                 if (dymamicImageDal != null)
                 {
-                    DefaultRepository.SimpleDelete<DynamicImageFieldDAL>(dymamicImageDal.EntityKey);
+                    DefaultRepository.SimpleDelete(dymamicImageDal.EntityKey);
                 }
             }
         }

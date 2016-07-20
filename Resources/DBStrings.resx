@@ -117,10 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="FpSettings" xml:space="preserve">
-    <value>DB fingerprint computing configuration</value>
-  </data>
-  <data name="UseADSyncService" xml:space="preserve">
+  <data name="UseAdSyncService" xml:space="preserve">
     <value>Turn on users synchronization with Active Directory</value>
   </data>
   <data name="OverrideRecordsFile" xml:space="preserve">
@@ -165,7 +162,13 @@
   <data name="SingeUserModeMessage" xml:space="preserve">
     <value>Action is not allowed because of single editor mode</value>
   </data>
-  <data name="DownloadRecord" xml:space="preserve">
-    <value>Download record</value>
+  <data name="DownloadRecords" xml:space="preserve">
+    <value>Download records</value>
+  </data>
+  <data name="ReplayRecords" xml:space="preserve">
+    <value>Replay records</value>
+  </data>
+  <data name="ReplayRecordsLabel" xml:space="preserve">
+    <value>Проигрывание записанных действий</value>
   </data>
 </root>

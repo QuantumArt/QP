@@ -6,6 +6,7 @@ using System.Web.Configuration;
 using Quantumart.QP8.Constants;
 using System.Collections.Specialized;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Quantumart.QP8.Configuration
 {
@@ -34,26 +35,29 @@ namespace Quantumart.QP8.Configuration
             return elem?.Value ?? string.Empty;
         }
 
-
         /// <summary>
         /// Получение строки подключения к БД из QP конфига
         /// </summary>
         /// <returns>строка подключения</returns>
         public static string ConfigConnectionString(string customerCode, string appName = "QP8Backend")
         {
-            if (string.IsNullOrWhiteSpace(customerCode))
+            if (!string.IsNullOrWhiteSpace(customerCode))
             {
-                return null;
+                var xElement = XmlConfig.Descendants("customer").Single(n => n.Attribute("customer_name").Value == customerCode).Element("db");
+                if (xElement != null)
+                {
+                    return TuneConnectionString(xElement.Value, appName);
+                }
             }
 
-            var result = XmlConfig.Descendants("customer").Single(n => n.Attribute("customer_name").Value == customerCode).Element("db").Value;
-            return TuneConnectionString(result, appName);
+            return null;
         }
 
         /// <summary>
         /// Получение всех строк подключения к БД из QP конфига
         /// </summary>
         /// <returns>строка подключения</returns>
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static IEnumerable<string> ConfigConnectionStrings(string appName = null, IEnumerable<string> exceptCustomerCodes = null)
         {
             exceptCustomerCodes = exceptCustomerCodes ?? new string[0];
@@ -120,9 +124,13 @@ namespace Quantumart.QP8.Configuration
                     {
                         var qKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(QpKeyRegistryPath);
                         if (qKey != null)
+                        {
                             _configPath = qKey.GetValue(Registry.XmlConfigValue).ToString();
+                        }
                         else
+                        {
                             throw new Exception("QP is not installed");
+                        }
                     }
                 }
 
@@ -141,7 +149,7 @@ namespace Quantumart.QP8.Configuration
             settings[Config.MailHostKey] = ConfigVariable(Config.MailHostKey);
             settings[Config.MailLoginKey] = ConfigVariable(Config.MailLoginKey);
             settings[Config.MailPasswordKey] = ConfigVariable(Config.MailPasswordKey);
-            settings[Config.MailAssembleKey] = (ConfigVariable(Config.MailAssembleKey) != "no") ? "yes" : ""; // inverting backend and frontend default logic
+            settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : ""; // inverting backend and frontend default logic
             settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
         }
     }

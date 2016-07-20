@@ -92,6 +92,10 @@
       <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.3.6\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="QA.Configuration, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\QA.Configuration.1.0.1.0\lib\net40\QA.Configuration.dll</HintPath>
       <Private>True</Private>
@@ -116,12 +120,14 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\NLogLogger.cs" />
     <Compile Include="ArticleContextQueryParam.cs" />
     <Compile Include="ArticleContextSearchBlockItem.cs" />
     <Compile Include="ArticleFieldSearchType.cs" />
@@ -129,15 +135,22 @@
     <Compile Include="Exceptions\ImportException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
+    <Compile Include="Factories\NLogFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
+    <Compile Include="Helpers\Ensure.cs" />
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />
     <Compile Include="Helpers\ReplayHelper.cs" />
     <Compile Include="Helpers\SiteUrlHelper.cs" />
     <Compile Include="Helpers\SortingItemHelper.cs" />
+    <Compile Include="Interfaces\Logging\ILog.cs" />
+    <Compile Include="Interfaces\Logging\ILogFactory.cs" />
+    <Compile Include="Interfaces\Logging\LogManager.cs" />
+    <Compile Include="Interfaces\Logging\NullDebugLogger.cs" />
+    <Compile Include="Interfaces\Logging\NullLogFactory.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />
@@ -151,6 +164,8 @@
     <Compile Include="Mappers\StatusHistoryItemMapper.cs" />
     <Compile Include="Mappers\StatusTypeRowMapper.cs" />
     <Compile Include="Mappers\TemplateObjectFormatDtoMapper.cs" />
+    <Compile Include="Mappers\XmlDbUpdate\XmlDbUpdateActionsLogMapper.cs" />
+    <Compile Include="Mappers\XmlDbUpdate\XmlDbUpdateLogMapper.cs" />
     <Compile Include="ObjectFormatVersion.cs" />
     <Compile Include="Processors\TreeProcessors\ArticleFtsProcessor.cs" />
     <Compile Include="Processors\TreeProcessors\ArticleSimpleProcessor.cs" />
@@ -181,6 +196,8 @@
     <Compile Include="Repository\Helpers\ContentPermissionHelper.cs" />
     <Compile Include="Repository\ObjectRepository.cs" />
     <Compile Include="Repository\PageRepository.cs" />
+    <Compile Include="Repository\XmlDbUpdate\XmlDbUpdateLogRepository.cs" />
+    <Compile Include="Repository\XmlDbUpdate\XmlDbUpdateActionsLogRepository.cs" />
     <Compile Include="ServiceField.cs" />
     <Compile Include="ArticleVersion.cs" />
     <Compile Include="ArticleWorkflowBind.cs" />
@@ -410,7 +427,6 @@
     <Compile Include="Services\EntityPermissions\PermissionServiceAbstract.cs" />
     <Compile Include="Services\EntityPermissions\SitePermissionService.cs" />
     <Compile Include="Services\ActionPermissions\ActionPermissionTreeService.cs" />
-    <Compile Include="Services\FingerprintService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesCommand.cs" />
@@ -654,6 +670,8 @@
     <Compile Include="Workflow.cs" />
     <Compile Include="WorkflowBinding.cs" />
     <Compile Include="WorkflowRule.cs" />
+    <Compile Include="Models\XmlDbUpdate\XmlDbUpdateActionsLogModel.cs" />
+    <Compile Include="Models\XmlDbUpdate\XmlDbUpdateLogModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Assembling\Assembling.csproj">

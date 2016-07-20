@@ -381,7 +381,7 @@ namespace Quantumart.QP8.Utils
 
             return result;
         }
-		
+
 		/// <summary>
 		/// Преобразует массив значений типа Int32 в строковый массив
 		/// </summary>
@@ -560,12 +560,12 @@ namespace Quantumart.QP8.Utils
 		}
 
 		/// <summary>
-		/// Преобразует массив значений типа Decimal в массив типа Int32 
+		/// Преобразует массив значений типа Decimal в массив типа Int32
 		/// </summary>
 		/// <param name="values">массив значений типа Int32</param>
 		/// <returns>массив значений типа Decimal</returns>
 		public static IEnumerable<int> ToInt32Collection(IEnumerable<decimal> values)
-		{						
+		{
 			return values.Select(v => ToInt32(v)).ToArray();
 		}
 
@@ -1116,7 +1116,7 @@ namespace Quantumart.QP8.Utils
 		}
 
 		/// <summary>
-		/// Возвращает код типа данных JavaScript, соответствующий 
+		/// Возвращает код типа данных JavaScript, соответствующий
 		/// указанному .Net-типу
 		/// </summary>
 		/// <param name="type">тип данных</param>
@@ -1151,7 +1151,7 @@ namespace Quantumart.QP8.Utils
 		}
 
 		///<summary>
-		/// Преобразует строку в JS-строку 
+		/// Преобразует строку в JS-строку
 		///</summary>
 		///<param name="value">значение</param>
 		///<returns>JS-строка</returns>
@@ -1234,7 +1234,7 @@ namespace Quantumart.QP8.Utils
 		/// <param name="value">значение</param>
 		/// <returns>преобразованное значение</returns>
 		public static int? ToNullableInt32(object value)
-		{			
+		{
 			return ToNullableInt32(value, null);
 		}
 
@@ -1348,7 +1348,7 @@ namespace Quantumart.QP8.Utils
 		/// <param name="value">значение</param>
 		/// <returns>преобразованное значение</returns>
 		public static decimal? ToNullableDecimal(object value)
-		{			
+		{
 			return ToNullableDecimal(value, null);
 		}
 
@@ -1414,7 +1414,7 @@ namespace Quantumart.QP8.Utils
 		/// <param name="value">значение</param>
 		/// <returns>преобразованное значение</returns>
 		public static double? ToNullableDouble(object value)
-		{			
+		{
 			return IsNullOrEmpty(value) ? null : (double?)ToDouble(value);
 		}
 
@@ -1424,7 +1424,7 @@ namespace Quantumart.QP8.Utils
 		/// <param name="value">значение</param>
 		/// <returns>преобразованное значение</returns>
 		public static bool? ToNullableBoolean(object value)
-		{			
+		{
 			return ToNullableBoolean(value, null);
 		}
 
@@ -1478,7 +1478,7 @@ namespace Quantumart.QP8.Utils
             return result;
         }
 
-		
+
 		/// <summary>
 		/// Преобразует объект в объект типа Nullable<DateTime>
 		/// </summary>
@@ -1517,8 +1517,8 @@ namespace Quantumart.QP8.Utils
         public static bool TryConvertToSqlDateString(string dateString, TimeSpan? time, out string sqlDateString, out DateTime? dateTime, string format = null)
         {
             DateTime dt;
-			bool parseResult = String.IsNullOrEmpty(format) 
-				? DateTime.TryParse(dateString, out dt) 
+			bool parseResult = String.IsNullOrEmpty(format)
+				? DateTime.TryParse(dateString, out dt)
 				: DateTime.TryParseExact(dateString, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt);
             if (parseResult)
             {
@@ -1607,7 +1607,7 @@ namespace Quantumart.QP8.Utils
 		/// <param name="value"></param>
 		/// <returns></returns>
 		public static string ToDbDateTimeString(DateTime? dt)
-		{			
+		{
 			return dt.HasValue ? dt.Value.ToString("yyyy-MM-dd HH:mm:ss") : null;
 		}
 

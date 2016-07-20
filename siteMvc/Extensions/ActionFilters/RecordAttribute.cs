@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Globalization;
-using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
@@ -51,24 +50,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
             var isValid = filterContext.Exception == null && filterContext.Controller.ViewData.ModelState.IsValid && !QPController.IsError(filterContext.HttpContext);
             if (isValid && DbRepository.Get().RecordActions)
             {
-                var action = new RecordedAction();
-                var form = filterContext.HttpContext.Request.Form;
-                if (form != null && !_ignoreForm)
-                {
-                    action.Form = form;
-                }
-
-                action.Code = _code ?? BackendActionContext.Current.ActionCode;
-                action.ParentId = BackendActionContext.Current.ParentEntityId.HasValue ? BackendActionContext.Current.ParentEntityId.Value : 0;
-                action.Lcid = CultureInfo.CurrentCulture.LCID;
-                action.Executed = DateTime.Now;
-                action.ExecutedBy = (filterContext.HttpContext.User.Identity as QPIdentity)?.Name;
-
-                var fromId = filterContext.HttpContext.Items.Contains("FROM_ID") ? (int)filterContext.HttpContext.Items["FROM_ID"] : 0;
-                action.Ids = fromId != 0 ? new[] { fromId.ToString() } : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray();
-
-                var helper = DependencyResolver.Current.GetService<IRecordHelper>();
-                helper.PersistAction(action, filterContext.HttpContext);
+                var actionToSerialize = XmlDbUpdateActionCorrectionService.CreateActionFromHttpContext(filterContext.HttpContext, _code ?? BackendActionContext.Current.ActionCode, _ignoreForm);
+                XmlDbUpdateSerializerHelpers
+                    .SerializeAction(actionToSerialize, CommonHelpers.GetBackendUrl(filterContext.HttpContext))
+                    .Save(XmlDbUpdateXDocumentConstants.XmlFilePath);
             }
 
             base.OnActionExecuted(filterContext);

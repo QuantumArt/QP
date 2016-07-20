@@ -10,7 +10,9 @@ namespace Quantumart.QP8.BLL.Services.API.Models
 		}
 
 		public int Id { get; set; }
+
 		public int ContentId { get; set; }
+
 		public List<FieldData> Fields { get; set; }
 
 		public override string ToString()

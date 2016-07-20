@@ -6,19 +6,16 @@ using System.Linq;
 using NUnit.Framework;
 using Quantumart.QPublishing.Database;
 using System.Data.SqlClient;
-using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.Test
 {
     internal class Global
     {
-        public static string ConnectionString =
-            @"Initial Catalog=mts_catalog;Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
+        public static string ConnectionString = @"Initial Catalog=mts_catalog;Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
 
         public static string GetXml(string fileName)
         {
-            var path = TestContext.CurrentContext.TestDirectory;
-            return File.ReadAllText(Path.Combine(path, fileName));
+            return File.ReadAllText(Path.Combine(TestContext.CurrentContext.TestDirectory, fileName));
         }
 
         public static int SiteId => 35;
@@ -27,7 +24,7 @@ namespace Quantumart.Test
         {
             return cnn.GetRealData($"select content_item_id from content_{contentId}_united")
                 .AsEnumerable()
-                .Select(n => (int) n.Field<decimal>("content_item_id"))
+                .Select(n => (int)n.Field<decimal>("content_item_id"))
                 .OrderBy(n => n)
                 .ToArray();
         }
@@ -36,9 +33,8 @@ namespace Quantumart.Test
         {
             return cnn.GetRealData($"select content_item_id, Title from content_{contentId}_united")
                 .AsEnumerable()
-                .Select(n => new {Id = (int) n.Field<decimal>("content_item_id"), Title = n.Field<string>("Title")})
+                .Select(n => new { Id = (int)n.Field<decimal>("content_item_id"), Title = n.Field<string>("Title") })
                 .ToDictionary(n => n.Title, n => n.Id);
-
         }
 
 
@@ -52,7 +48,7 @@ namespace Quantumart.Test
 
         public static int CountLinks(DBConnector cnn, int[] ids, bool isAsync = false)
         {
-            var asyncString = isAsync ? "_async" : "";
+            var asyncString = isAsync ? "_async" : string.Empty;
             return cnn.GetRealData(
                 $"select count(*) as cnt from item_link{asyncString} where item_id in ({string.Join(",", ids)})")
                 .AsEnumerable()
@@ -62,11 +58,11 @@ namespace Quantumart.Test
 
         public static int[] GetLinks(DBConnector cnn, int[] ids, bool isAsync = false)
         {
-            var asyncString = isAsync ? "_async" : "";
+            var asyncString = isAsync ? "_async" : string.Empty;
             return cnn.GetRealData(
                 $"select linked_item_id as id from item_link{asyncString} where item_id in ({string.Join(",", ids)})")
                 .AsEnumerable()
-                .Select(n => (int) n.Field<decimal>("id"))
+                .Select(n => (int)n.Field<decimal>("id"))
                 .OrderBy(n => n)
                 .ToArray();
         }
@@ -155,7 +151,7 @@ namespace Quantumart.Test
 
         public static void ClearContentData(DBConnector cnn, int articleId)
         {
-            var query = "delete from CONTENT_DATA where CONTENT_ITEM_ID = @id";
+            const string query = "delete from CONTENT_DATA where CONTENT_ITEM_ID = @id";
             var cmd = new SqlCommand(query);
             cmd.Parameters.AddWithValue("@id", articleId);
 
@@ -164,7 +160,7 @@ namespace Quantumart.Test
 
         public static ContentDataItem[] GetContentData(DBConnector cnn, int articleId)
         {
-            var query = "select * from CONTENT_DATA where CONTENT_ITEM_ID = @id";
+            const string query = "select * from CONTENT_DATA where CONTENT_ITEM_ID = @id";
             var cmd = new SqlCommand(query);
             cmd.Parameters.AddWithValue("@id", articleId);
 
@@ -182,13 +178,15 @@ namespace Quantumart.Test
         public class ContentDataItem
         {
             public int FieldId { get; set; }
+
             public string Data { get; set; }
+
             public string BlobData { get; set; }
+
             public override string ToString()
             {
                 return new { FieldId, Data, BlobData }.ToString();
             }
-
         }
     }
 }

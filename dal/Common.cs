@@ -586,11 +586,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<string, List<string>> GetM2OValuesBatch(SqlConnection connection, int contentId,
-            int fieldId, string fieldName, IEnumerable<int> ids, string displayFieldName, int maxNumberOfRecords)
+        public static Dictionary<string, List<string>> GetM2OValuesBatch(SqlConnection connection, int contentId, int fieldId, string fieldName, IEnumerable<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
             var result = new Dictionary<string, List<string>>();
-            if (ids.Count() > 0)
+            if (ids.Any())
             {
                 var query = new StringBuilder();
                 query.AppendFormatLine(" select subsel.content_item_id, {0}, Title from ( ", fieldName);
@@ -622,11 +621,10 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static Dictionary<string, List<string>> GetM2MValuesBatch(SqlConnection sqlConnection,
-            IEnumerable<int> ids, int linkId, int maxNumberOfRecords, string displayFieldName, int contentId)
+        public static Dictionary<string, List<string>> GetM2MValuesBatch(SqlConnection sqlConnection, IEnumerable<int> ids, int linkId, int maxNumberOfRecords, string displayFieldName, int contentId)
         {
             var result = new Dictionary<string, List<string>>();
-            if (ids.Count() > 0)
+            if (ids.Any())
             {
                 var query =
                     string.Format(

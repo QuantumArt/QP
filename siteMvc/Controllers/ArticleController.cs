@@ -12,6 +12,7 @@ using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.ViewModels;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Telerik.Web.Mvc;
 
 // ReSharper disable InconsistentNaming
@@ -305,6 +306,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
                     return JsonHtml("Properties", model);
                 }
             }
+
             return JsonHtml("Properties", model);
         }
 

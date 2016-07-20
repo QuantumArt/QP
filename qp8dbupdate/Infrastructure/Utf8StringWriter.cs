@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace qp8dbupdate.Infrastructure
+namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure
 {
     public class Utf8StringWriter : StringWriter
     {

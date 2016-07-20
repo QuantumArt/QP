@@ -10,6 +10,7 @@ using Quantumart.QP8.WebMvc.ViewModels.Notification;
 using Telerik.Web.Mvc;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -114,7 +115,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			{
 				try
 				{
-                    model.Data = _notificationService.SaveNotificationProperties(model.Data, model.CreateDefaultFormat, GetBackendUrl());
+                    model.Data = _notificationService.SaveNotificationProperties(model.Data, model.CreateDefaultFormat, CommonHelpers.GetBackendUrl(HttpContext));
 					this.PersistResultId(model.Data.Id);
 					if (model.CreateDefaultFormat)
 						this.PersistNotificationFormatId(model.Data.FormatId);
@@ -159,7 +160,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 			model.Validate(ModelState);
 			if (ModelState.IsValid)
 			{
-				model.Data = _notificationService.UpdateNotificationProperties(model.Data, model.CreateDefaultFormat, GetBackendUrl());
+				model.Data = _notificationService.UpdateNotificationProperties(model.Data, model.CreateDefaultFormat, CommonHelpers.GetBackendUrl(HttpContext));
 				if (model.CreateDefaultFormat)
 					this.PersistNotificationFormatId(model.Data.FormatId);
 				return Redirect("Properties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.UpdateNotification });

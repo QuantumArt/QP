@@ -9,6 +9,7 @@ using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using System;
 using System.Linq;
 using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
@@ -50,7 +44,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 		{
 			get
 			{
-				return new ApplicationInfoHelper().GetCurrentDBVersion();
+				return new ApplicationInfoHelper().GetCurrentDbVersion();
 			}
 		}
 
@@ -79,7 +73,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 			{
 				return DbRepository.GetDbServerName();
 			}
-		}	
+		}
 	}
 
 }

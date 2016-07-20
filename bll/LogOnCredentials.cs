@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.Validators;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.Configuration;
-using System.IO;
 using Quantumart.QP8.BLL.Helpers;
-
 
 namespace Quantumart.QP8.BLL
 {
@@ -19,7 +10,7 @@ namespace Quantumart.QP8.BLL
 	{
 		private string _UserName;
 
-		[LocalizedDisplayName("UserName", NameResourceType = typeof(LogOnStrings))]	
+		[LocalizedDisplayName("UserName", NameResourceType = typeof(LogOnStrings))]
 		public string UserName
 		{
 			get
@@ -32,14 +23,14 @@ namespace Quantumart.QP8.BLL
 			}
 		}
 
-		[LocalizedDisplayName("Password", NameResourceType = typeof(LogOnStrings))]	
+		[LocalizedDisplayName("Password", NameResourceType = typeof(LogOnStrings))]
 		public string Password
 		{
 			get;
 			set;
 		}
 
-		[LocalizedDisplayName("CustomerCode", NameResourceType = typeof(LogOnStrings))]	
+		[LocalizedDisplayName("CustomerCode", NameResourceType = typeof(LogOnStrings))]
 		public string CustomerCode
 		{
 			get;
@@ -95,7 +86,7 @@ namespace Quantumart.QP8.BLL
 				if (!QPContext.CheckCustomerCode(CustomerCode))
 				{
 					errors.ErrorFor(n => n.CustomerCode, LogOnStrings.ErrorMessage_CustomerCodeNotExist);
-				}				
+				}
 			}
 
 			if (errors.IsEmpty)
@@ -105,7 +96,7 @@ namespace Quantumart.QP8.BLL
 				{
 
 					ApplicationInfoHelper appSrv = new ApplicationInfoHelper();
-					string dbVer = appSrv.GetCurrentDBVersion();
+					string dbVer = appSrv.GetCurrentDbVersion();
 					string appVer = appSrv.GetCurrentBackendVersion();
 					if (!appSrv.VersionsEqual(dbVer, appVer))
 					{
@@ -117,7 +108,7 @@ namespace Quantumart.QP8.BLL
 
 			if (errors.IsEmpty)
 			{
-				int errorCode = Constants.QPAuthenticationErrorNumber.NoErrors; 
+				int errorCode = Constants.QPAuthenticationErrorNumber.NoErrors;
 				string message;
 
 				User = QPContext.Authenticate(this, ref errorCode, out message);
@@ -153,7 +144,7 @@ namespace Quantumart.QP8.BLL
 					errors.ErrorForModel(LogOnStrings.ErrorMessage_UnknownAuthenticationError + ": " + message);
 				}
 			}
-			
+
 			if (!errors.IsEmpty)
 				throw errors;
 		}

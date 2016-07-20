@@ -80,8 +80,8 @@
     <Compile Include="Global.cs" />
     <Compile Include="DynamicImageFixture.cs" />
     <Compile Include="HierarchyFixture.cs" />
+    <Compile Include="M2MFixture.cs" />
     <Compile Include="M2MNonSplittedFixture.cs" />
-    <Compile Include="M2MFixture .cs" />
     <Compile Include="UniqueValidationFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

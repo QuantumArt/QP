@@ -2,14 +2,11 @@
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
 using Quantumart.QPublishing.Database;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.Test
 {
@@ -151,9 +148,9 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new ReplayService(Global.ConnectionString, 1, true);
-            service.ReplayXml(Global.GetXml(@"xmls\batchupdate.xml"));
-            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };            
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
+            service.Process(Global.GetXml(@"xmls\batchupdate.xml"), null);
+            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ArticleService = new ArticleService(Global.ConnectionString, 1);
             Random = new Random();
 
@@ -210,7 +207,6 @@ namespace Quantumart.Test
             Ex2_2_ContentId = Global.GetContentId(Cnn, Ex2_2_Content);
             Ex2_2_ParentId = Global.GetFieldId(Cnn, Ex2_2_Content, Ex2_2_Parent);
             #endregion
-
         }
 
         [OneTimeTearDown]
@@ -221,7 +217,7 @@ namespace Quantumart.Test
 
             var dictionaryIds = Global.GetIds(Cnn, Dictionary_ContentId);
             var baseIds = Global.GetIds(Cnn, Base_ContentId);
-            
+
             ArticleService.Delete(Dictionary_ContentId, dictionaryIds);
             ArticleService.Delete(Base_ContentId, baseIds);
 
@@ -287,7 +283,7 @@ namespace Quantumart.Test
             var articleResult = result[0];
             Assert.That(articleResult.ContentId, Is.EqualTo(Dictionary_ContentId));
             Assert.That(articleResult.CreatedArticleId, Is.Not.EqualTo(articleResult.OriginalArticleId));
-         
+
             data[0].Id = articleResult.CreatedArticleId;
             data[0].Fields[0].Value = key;
             data[0].Fields[1].Value = value;
@@ -503,7 +499,7 @@ namespace Quantumart.Test
         {
             var value = Guid.NewGuid().ToString();
             UpdateField(Base_ContentId, Base_Field_VisualEditId, Base_Field_VisualEdit, value, value);
-        }      
+        }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateNumericIntegerField()
@@ -544,7 +540,7 @@ namespace Quantumart.Test
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
             UpdateField(Base_ContentId, Base_Field_TimeId, Base_Field_Time, value, value.ToString(CultureInfo.InvariantCulture));
         }
-        #endregion          
+        #endregion
 
         #region Private methods
         private void UpdateField<T>(int contentId, int fieldId, string fieldName, T value, string stringValue)
@@ -571,12 +567,12 @@ namespace Quantumart.Test
             var result = ArticleService.BatchUpdate(data);
 
             Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
-    
+
             var newValue = GetFieldValue<T>(contentId, fieldName, articleId);
 
             Assert.That(value, Is.EqualTo(newValue));
         }
-    
+
         private void ClearClassifierField(int articleId, int fieldId)
         {
             using (var scope = new QPConnectionScope(Global.ConnectionString))

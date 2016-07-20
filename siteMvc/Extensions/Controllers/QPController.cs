@@ -3,10 +3,12 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 {
@@ -51,20 +53,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             return new JsonNetResult<object>(new { success = true, view = RenderPartialView(viewName, model) });
         }
 
-        public bool IsReplayAction()
-        {
-            return IsReplayAction(HttpContext);
-        }
-
-        public static bool IsReplayAction(HttpContextBase context)
-        {
-            return context.Items.Contains("IS_REPLAY");
-        }
-
         public static bool IsError(HttpContextBase context)
         {
             var form = context.Request.Form;
-            var formResult = (form != null && form.AllKeys.Contains("isError") && bool.Parse(form["isError"]));
+            var formResult = form != null && form.AllKeys.Contains("isError") && bool.Parse(form["isError"]);
             return formResult || context.Items.Contains("IS_ERROR");
         }
 
@@ -148,19 +140,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             }
         }
 
-        private void PersistIds(string key, int[] ids)
+        private void PersistIds(string key, IReadOnlyCollection<int> ids)
         {
-            if (ids != null && ids.Length > 0)
+            if (ids != null && ids.Count > 0)
             {
                 ControllerContext.HttpContext.Items[key] = string.Join(",", ids);
             }
         }
 
-        private void PersistIds(string key, int[] oldIds, int[] ids)
+        private void PersistIds(string key, int[] oldIds, IReadOnlyCollection<int> ids)
         {
-            if (ids != null && ids.Length > 0)
+            if (ids != null && ids.Count > 0)
             {
-                ControllerContext.HttpContext.Items[key] = string.Join(",", (oldIds != null) ? ids.Except(oldIds) : ids);
+                ControllerContext.HttpContext.Items[key] = string.Join(",", oldIds != null ? ids.Except(oldIds) : ids);
             }
         }
 
@@ -207,20 +199,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             }
         }
 
-        public string GetBackendUrl()
+        // TODO: fix referenced code
+        public bool IsReplayAction()
         {
-            return GetBackendUrl(HttpContext);
-        }
-
-        public static string GetBackendUrl(HttpContextBase context)
-        {
-            if (IsReplayAction(context))
-            {
-                return context.Items.Contains("BACKEND_URL") ? context.Items["BACKEND_URL"].ToString() : string.Empty;
-            }
-
-            var request = context.Request;
-            return $"{request.Url.Scheme}://{request.Url.Host}:{request.Url.Port}{request.ApplicationPath}/";
+            return CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext);
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using System.Text;
+﻿using System.Data.SqlClient;
 using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.DAL
@@ -27,15 +25,9 @@ namespace Quantumart.QP8.DAL
 			return Init(new SqlCommand(cmdText, connection, transaction));
 		}
 
-		public static int CommandTimeout 
-		{ 
-			get 
-			{
-				return QPConfiguration.WebConfigSection != null ? QPConfiguration.WebConfigSection.CommandTimeout : 120; 
-			} 
-		}
+		public static int CommandTimeout => QPConfiguration.WebConfigSection != null ? QPConfiguration.WebConfigSection.CommandTimeout : 120;
 
-		private static SqlCommand Init(SqlCommand cmd)
+	    private static SqlCommand Init(SqlCommand cmd)
 		{
 			cmd.CommandTimeout = CommandTimeout;
 			return cmd;

@@ -25,21 +25,17 @@ using Quantumart.QP8.WebMvc.Hubs;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Extensions
 {
-    /// <summary>
-    /// Реализация Service Locator
-    /// </summary>
     public class UnityDependencyResolver : IDependencyResolver
     {
-        private readonly IUnityContainer container = null;
-
-        public IUnityContainer UnityContainer { get { return container; } }
+        public IUnityContainer UnityContainer { get; }
 
         public UnityDependencyResolver()
         {
-            container = new UnityContainer()
+            UnityContainer = new UnityContainer()
                 .RegisterInstance<ISearchGrammarParser>(new IronySearchGrammarParser(new StopWordList()))
 
                 .RegisterType<IArticleSearchRepository, ArticleSearchRepository>()
@@ -50,8 +46,6 @@ namespace Quantumart.QP8.WebMvc.Extensions
                 .RegisterType<IButtonTracePagesRepository, AuditRepository>()
                 .RegisterType<IRemovedEntitiesPagesRepository, AuditRepository>()
                 .RegisterType<ISessionLogRepository, AuditRepository>()
-                .RegisterType<IRecordHelper, RecordReplayHelper>()
-                .RegisterType<IReplayHelper, RecordReplayHelper>()
                 .RegisterType<IArticleSearchService, ArticleSearchService>()
                 .RegisterType<IBackendActionLogService, BackendActionLogService>()
                 .RegisterType<IButtonTraceService, ButtonTraceService>()
@@ -104,15 +98,13 @@ namespace Quantumart.QP8.WebMvc.Extensions
                 .RegisterType<SingleUserModeHub>();
 
 
-            #region Logging
-            container.AddNewExtension<LoggersContainerConfiguration>();
-            container.AddNewExtension<LogServicesContainerConfigutation>();
-            #endregion
+            UnityContainer.AddNewExtension<LoggersContainerConfiguration>();
+            UnityContainer.AddNewExtension<LogServicesContainerConfigutation>();
 
-            RegisterMultistepActionServices(container);
+            RegisterMultistepActionServices(UnityContainer);
         }
 
-        private void RegisterMultistepActionServices(IUnityContainer container)
+        private static void RegisterMultistepActionServices(IUnityContainer container)
         {
             var a = typeof(IMultistepActionService).Assembly;
             foreach (var t in a.GetExportedTypes())
@@ -133,13 +125,11 @@ namespace Quantumart.QP8.WebMvc.Extensions
             container.RegisterType<Func<string, string>>(new InjectionFactory(c => new Func<string, string>(command => c.Resolve<IActionCode>(command).ActionCode)));
         }
 
-        #region IDependencyResolver Members
-
         public object GetService(Type serviceType)
         {
             try
             {
-                return container.Resolve(serviceType);
+                return UnityContainer.Resolve(serviceType);
             }
             catch
             {
@@ -151,14 +141,12 @@ namespace Quantumart.QP8.WebMvc.Extensions
         {
             try
             {
-                return container.ResolveAll(serviceType);
+                return UnityContainer.ResolveAll(serviceType);
             }
             catch
             {
                 return new List<object>();
             }
         }
-
-        #endregion
     }
 }

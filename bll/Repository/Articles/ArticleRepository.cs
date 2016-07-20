@@ -1018,7 +1018,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                         if (field == null)
                         {
                             return null;
-                            // TODO: logger throw new Exception($"Sorting field {oldFieldName} is not found");
                         }
 
                         newFieldName = $"[{field.Name}]";

@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Moq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
 using Quantumart.QPublishing.Database;
-using Quantumart.QPublishing.Info;
 using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 using NUnit.Framework;
 using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.FileSystem;
 using Quantumart.QPublishing.Resizer;
 
@@ -36,8 +32,8 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new ReplayService(Global.ConnectionString, 1, true);
-            service.ReplayXml(Global.GetXml(@"xmls\hierarchy.xml"));
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
+            service.Process(Global.GetXml(@"xmls\hierarchy.xml"), null);
             RegionContentName = "test regions";
             ProductContentName = "test products";
 

@@ -1,14 +1,14 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.Info;
 using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 using NUnit.Framework;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.Test
 {
@@ -28,8 +28,8 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new ReplayService(Global.ConnectionString, 1, true);
-            service.ReplayXml(Global.GetXml(@"xmls\unique.xml"));
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
+            service.Process(Global.GetXml(@"xmls\unique.xml"), null);
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test unique";
             ContentId = Global.GetContentId(Cnn, ContentName);
@@ -75,8 +75,8 @@ namespace Quantumart.Test
             values.Add(article2);
 
             Assert.That(
-                () => Cnn.MassUpdate(ContentId, values, 1), 
-                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("between articles being added/updated"), 
+                () => Cnn.MassUpdate(ContentId, values, 1),
+                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("between articles being added/updated"),
                 "Field Title should violate rules"
             );
         }
@@ -95,7 +95,7 @@ namespace Quantumart.Test
             values.Add(article1);
 
             Assert.That(
-                () => Cnn.MassUpdate(ContentId, values, 1), 
+                () => Cnn.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("for content articles"),
                 "Duplicate of test data should violate rules");
         }
@@ -218,7 +218,7 @@ namespace Quantumart.Test
             {
                 [SystemColumnNames.Id] = "0"
             };
-            
+
             using (var conn = new SqlConnection(Global.ConnectionString))
             {
                 conn.Open();
@@ -356,7 +356,7 @@ namespace Quantumart.Test
             values.Add(article1);
 
             Assert.That(
-                () => Cnn.MassUpdate(ContentId, values, 1), 
+                () => Cnn.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("is required"),
                 "Validate required fields"
             );

@@ -5,11 +5,11 @@ using System.IO;
 using System.Linq;
 using Moq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.Info;
 using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 using NUnit.Framework;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.FileSystem;
 using Quantumart.QPublishing.Resizer;
 
@@ -68,8 +68,8 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new ReplayService(Global.ConnectionString, 1, true);
-            service.ReplayXml(Global.GetXml(@"xmls\files.xml"));
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
+            service.Process(Global.GetXml(@"xmls\files.xml"), null);
             Cnn = new DBConnector(Global.ConnectionString)
             {
                 DynamicImageCreator = new FakeDynamicImage(),
@@ -194,7 +194,7 @@ namespace Quantumart.Test
         [Test]
         public void MassUpdate_CopyFiles_ContentHasFileFields()
         {
- 
+
             var mockFileSystem = new Mock<IFileSystem>();
             Cnn.FileSystem = mockFileSystem.Object;
             var list = new List<CopyFile>();
@@ -243,7 +243,7 @@ namespace Quantumart.Test
                 Path.Combine(currentVersionFolder, fileValuesBefore[1]),
                 Path.Combine(paths[1], fileValuesBefore[1])
             );
-        
+
             var file3 = new CopyFile(
                 Path.Combine(attrFolder, article1[ImageName]),
                 Path.Combine(currentVersionFolder, article1[ImageName])
@@ -336,7 +336,7 @@ namespace Quantumart.Test
                 Path.Combine(currentVersionFolder, article1[imageName].ToString()),
                 Path.Combine(paths[0], article1[imageName].ToString())
             );
-            
+
 
             var file3 = new CopyFile(
                 Path.Combine(attrFolder, article2[imageName].ToString().Replace(@"/", @"\")),

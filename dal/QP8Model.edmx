@@ -1105,6 +1105,8 @@
           <Property Name="ROOT_ELEMENT_CLASS" Type="nvarchar" MaxLength="50" />
           <Property Name="XAML_DICTIONARIES" Type="ntext" />
           <Property Name="CONTENT_FORM_SCRIPT" Type="ntext" />
+          <Property Name="EXTERNAL_DEVELOPMENT" Type="bit" Nullable="false" />
+          <Property Name="DOWNLOAD_EF_SOURCE" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="SITE_ACCESS">
           <Key>
@@ -1428,6 +1430,32 @@
           <Property Name="SUCCESSOR_STATUS_ID" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="COMMENT" Type="nvarchar" MaxLength="2000" />
           <Property Name="WORKFLOW_ID" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="XML_DB_UPDATE">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Applied" Type="datetime" Nullable="false" />
+          <Property Name="Hash" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar" MaxLength="300" />
+          <Property Name="USER_ID" Type="int" Nullable="false" />
+          <Property Name="Body" Type="nvarchar(max)" />
+          <Property Name="Version" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="XML_DB_UPDATE_ACTIONS">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UpdateId" Type="int" />
+          <Property Name="Ids" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ParentId" Type="int" Nullable="false" />
+          <Property Name="Hash" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="Applied" Type="datetime" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="SourceXml" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ResultXml" Type="nvarchar(max)" Nullable="false" />
         </EntityType>
         <Association Name="FK__WORKFLOW__GROUP">
           <End Role="USER_GROUP" Type="Self.USER_GROUP" Multiplicity="0..1">
@@ -4089,6 +4117,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_XML_DB_UPDATE_ACTIONS_UpdateId">
+          <End Role="XML_DB_UPDATE" Type="Self.XML_DB_UPDATE" Multiplicity="0..1" />
+          <End Role="XML_DB_UPDATE_ACTIONS" Type="Self.XML_DB_UPDATE_ACTIONS" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="XML_DB_UPDATE">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="XML_DB_UPDATE_ACTIONS">
+              <PropertyRef Name="UpdateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="QP8ModelStoreContainer">
           <EntitySet Name="ACTION_ACCESS" EntityType="Self.ACTION_ACCESS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ACTION_CONTENT_BIND" EntityType="Self.ACTION_CONTENT_BIND" Schema="dbo" store:Type="Tables" />
@@ -4184,6 +4224,8 @@
           <EntitySet Name="workflow" EntityType="Self.workflow" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="WORKFLOW_ACCESS" EntityType="Self.WORKFLOW_ACCESS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="workflow_rules" EntityType="Self.workflow_rules" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="XML_DB_UPDATE" EntityType="Self.XML_DB_UPDATE" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="XML_DB_UPDATE_ACTIONS" EntityType="Self.XML_DB_UPDATE_ACTIONS" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK__WORKFLOW__GROUP" Association="Self.FK__WORKFLOW__GROUP">
             <End Role="USER_GROUP" EntitySet="USER_GROUP" />
             <End Role="WORKFLOW_ACCESS" EntitySet="WORKFLOW_ACCESS" />
@@ -5023,6 +5065,10 @@
           <AssociationSet Name="FK_workflow_SITE" Association="Self.FK_workflow_SITE">
             <End Role="SITE" EntitySet="SITE" />
             <End Role="workflow" EntitySet="workflow" />
+          </AssociationSet>
+          <AssociationSet Name="FK_XML_DB_UPDATE_ACTIONS_UpdateId" Association="Self.FK_XML_DB_UPDATE_ACTIONS_UpdateId">
+            <End Role="XML_DB_UPDATE" EntitySet="XML_DB_UPDATE" />
+            <End Role="XML_DB_UPDATE_ACTIONS" EntitySet="XML_DB_UPDATE_ACTIONS" />
           </AssociationSet>
         </EntityContainer>
       </Schema></edmx:StorageModels>
@@ -5962,7 +6008,13 @@
             <End Role="BackendActionDAL" EntitySet="BackendActionSet" />
             <End Role="BackendActionDAL1" EntitySet="BackendActionSet" />
           </AssociationSet>
-          <EntitySet Name="AppSettingsSet" EntityType="QP8Model.AppSettingsDAL" />					
+          <EntitySet Name="AppSettingsSet" EntityType="QP8Model.AppSettingsDAL" />
+          <EntitySet Name="XML_DB_UPDATE" EntityType="QP8Model.XmlDbUpdateLogEntity" />
+          <EntitySet Name="XML_DB_UPDATE_ACTIONS" EntityType="QP8Model.XmlDbUpdateActionsLogEntity" />
+          <AssociationSet Name="FK_XML_DB_UPDATE_ACTIONS_UpdateId1" Association="QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1">
+            <End Role="XmlDbUpdateLogEntity" EntitySet="XML_DB_UPDATE" />
+            <End Role="XmlDbUpdateActionsLogEntity" EntitySet="XML_DB_UPDATE_ACTIONS" />
+          </AssociationSet>					
         </EntityContainer>
         <EntityType Name="ActionTypeDAL">
           <Key>
@@ -7158,6 +7210,8 @@
           <Property Type="String" Name="RootElementClass" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="XamlDictionaries" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ContentFormScript" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EXTERNAL_DEVELOPMENT" Type="Boolean" Nullable="false" />
+          <Property Name="DOWNLOAD_EF_SOURCE" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="SitePermissionDAL">
           <Key>
@@ -10139,7 +10193,6 @@
           <Property Type="Decimal" Name="Id" Nullable="false" Precision="18" Scale="0" />
           <Property Type="Boolean" Name="RecordActions" Nullable="false" />
           <Property Type="Decimal" Name="SingleUserId" Precision="18" Scale="0" />
-          <Property Type="String" Name="FpSettings" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="DateTime" Name="Created" Nullable="false" Precision="3" />
           <Property Type="DateTime" Name="Modified" Nullable="false" Precision="3" />
           <Property Type="Decimal" Name="LastModifiedBy" Nullable="false" Precision="18" Scale="0" />
@@ -10266,6 +10319,46 @@
           <Property Type="String" Name="Key" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Value" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="XmlDbUpdateLogEntity">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Applied" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Hash" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="FileName" Type="String" MaxLength="300" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Body" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Version" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="XML_DB_UPDATE_ACTIONS" Relationship="QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1" FromRole="XmlDbUpdateLogEntity" ToRole="XmlDbUpdateActionsLogEntity" />
+        </EntityType>
+        <EntityType Name="XmlDbUpdateActionsLogEntity">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UpdateId" Type="Int32" />
+          <Property Name="Ids" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ParentId" Type="Int32" Nullable="false" />
+          <Property Name="Hash" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="Applied" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="SourceXml" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ResultXml" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="XML_DB_UPDATE" Relationship="QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1" FromRole="XmlDbUpdateActionsLogEntity" ToRole="XmlDbUpdateLogEntity" />
+        </EntityType>
+        <Association Name="FK_XML_DB_UPDATE_ACTIONS_UpdateId1">
+          <End Type="QP8Model.XmlDbUpdateLogEntity" Role="XmlDbUpdateLogEntity" Multiplicity="0..1" />
+          <End Type="QP8Model.XmlDbUpdateActionsLogEntity" Role="XmlDbUpdateActionsLogEntity" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="XmlDbUpdateLogEntity">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="XmlDbUpdateActionsLogEntity">
+              <PropertyRef Name="UpdateId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
 			</Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11207,6 +11300,8 @@
           <EntitySetMapping Name="SiteSet">
             <EntityTypeMapping TypeName="QP8Model.SiteDAL">
               <MappingFragment StoreEntitySet="SITE">
+                <ScalarProperty Name="DOWNLOAD_EF_SOURCE" ColumnName="DOWNLOAD_EF_SOURCE" />
+                <ScalarProperty Name="EXTERNAL_DEVELOPMENT" ColumnName="EXTERNAL_DEVELOPMENT" />
                 <ScalarProperty Name="ContentFormScript" ColumnName="CONTENT_FORM_SCRIPT" />
                 <ScalarProperty Name="XamlDictionaries" ColumnName="XAML_DICTIONARIES" />
                 <ScalarProperty Name="RootElementClass" ColumnName="ROOT_ELEMENT_CLASS" />
@@ -11739,7 +11834,6 @@
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
                 <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
                 <ScalarProperty Name="Created" ColumnName="CREATED" />
-                <ScalarProperty Name="FpSettings" ColumnName="fp_settings" />
                 <ScalarProperty Name="SingleUserId" ColumnName="SINGLE_USER_ID" />
                 <ScalarProperty Name="RecordActions" ColumnName="RECORD_ACTIONS" />
                 <ScalarProperty Name="Id" ColumnName="ID" />
@@ -11759,6 +11853,34 @@
               <MappingFragment StoreEntitySet="APP_SETTINGS">
                 <ScalarProperty Name="Value" ColumnName="VALUE" />
                 <ScalarProperty Name="Key" ColumnName="KEY" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="XML_DB_UPDATE">
+            <EntityTypeMapping TypeName="QP8Model.XmlDbUpdateLogEntity">
+              <MappingFragment StoreEntitySet="XML_DB_UPDATE">
+                <ScalarProperty Name="Version" ColumnName="Version" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="UserId" ColumnName="USER_ID" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="Hash" ColumnName="Hash" />
+                <ScalarProperty Name="Applied" ColumnName="Applied" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="XML_DB_UPDATE_ACTIONS">
+            <EntityTypeMapping TypeName="QP8Model.XmlDbUpdateActionsLogEntity">
+              <MappingFragment StoreEntitySet="XML_DB_UPDATE_ACTIONS">
+                <ScalarProperty Name="ResultXml" ColumnName="ResultXml" />
+                <ScalarProperty Name="SourceXml" ColumnName="SourceXml" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Applied" ColumnName="Applied" />
+                <ScalarProperty Name="Hash" ColumnName="Hash" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="Ids" ColumnName="Ids" />
+                <ScalarProperty Name="UpdateId" ColumnName="UpdateId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -11784,7 +11906,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="57">
+      <Diagram Name="QP8Model" ZoomLevel="61">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -15279,6 +15401,9 @@
         <AssociationConnector Association="QP8Model.FK_BACKEND_ACTION_EXCLUDED_BY_ACTION" />
         <AssociationConnector Association="QP8Model.ACTION_EXCLUSIONS" />
         <EntityTypeShape EntityType="QP8Model.AppSettingsDAL" Width="1.5" PointX="7.3218784869284734" PointY="14.581806293959639" />
+        <EntityTypeShape EntityType="QP8Model.XmlDbUpdateLogEntity" Width="1.5" PointX="9.125" PointY="2.375" />
+        <EntityTypeShape EntityType="QP8Model.XmlDbUpdateActionsLogEntity" Width="3" PointX="12.25" PointY="2.25" />
+        <AssociationConnector Association="QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1" />
 		</Diagram>
     </Diagrams>
   </Designer>

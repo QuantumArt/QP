@@ -45,12 +45,12 @@ namespace Quantumart.QP8.BLL.Repository
 				throw new ApplicationException(String.Format(CustomActionStrings.ActionNotFoundByCode, actionCode));
 			return action;
 		}
-		
+
 		internal static IEnumerable<BackendActionCacheRecord> GetActionContextCacheData()
 		{
 			return BackendActionCache.Actions
 				.Select(a => new BackendActionCacheRecord {ActionCode = a.Code, ActionTypeCode = a.ActionType.Code, EntityTypeCode = a.EntityType.Code })
-				.ToArray();				
+				.ToArray();
 		}
 
 		/// <summary>
@@ -67,7 +67,7 @@ namespace Quantumart.QP8.BLL.Repository
 				List<BackendActionStatus> statusesList = MappersRepository.BackendActionStatusMapper.GetBizList(
 					Common.GetActionStatusList(scope.DbConnection, userId, actionCode, entityId).ToList());
 				return statusesList;
-			}			
+			}
 		}
 
 		internal static IEnumerable<BackendAction> GetInterfaceActionsForCustom()

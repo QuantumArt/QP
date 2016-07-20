@@ -4,12 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.BLL.Factories;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Helpers;
-using System.Globalization;
 using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
@@ -18,7 +14,7 @@ namespace Quantumart.QP8.BLL
     {
 
 		#region private
-        
+
         private Folder _ParentFolder;
         private EntityObject _Parent;
         private IEnumerable<EntityObject> _Children;
@@ -33,31 +29,31 @@ namespace Quantumart.QP8.BLL
 		protected abstract EntityObject GetParent();
 
 		protected abstract FolderFactory GetFactory();
-	
+
         #endregion
 
 		#region public properties
-		
+
 		#region overrides
 
 		/// <summary>
 		/// Имя папки
 		/// </summary>
-		[RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(FolderStrings))]		
+		[RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(FolderStrings))]
 		[FormatValidator(Constants.RegularExpressions.InvalidFolderName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(FolderStrings))]
 		[LocalizedDisplayName("Name", NameResourceType = typeof(FolderStrings))]
 		public override string Name {get;set;}
 
 		/// <summary>
 		/// Список дочерних сущностей (папок)
-		/// </summary>      
+		/// </summary>
 		public override IEnumerable<EntityObject> Children
 		{
 			get
 			{
 				if (_Children == null && AutoLoadChildren)
 				{
-					_Children = (LoadAllChildren) ? Repository.GetAllChildrenFromDB(Id) : Repository.GetChildrenFromDB(ParentEntityId, Id);				
+					_Children = (LoadAllChildren) ? Repository.GetAllChildrenFromDB(Id) : Repository.GetChildrenFromDB(ParentEntityId, Id);
 				}
 				return _Children;
 			}
@@ -135,7 +131,7 @@ namespace Quantumart.QP8.BLL
 		public string Path { get; set; }
 
 		/// <summary>
-		/// Путь к директории полученный из БД 
+		/// Путь к директории полученный из БД
 		/// не меняеться на основе данных формы
 		/// </summary>
 		public string StoredPath { get; set; }
@@ -212,7 +208,7 @@ namespace Quantumart.QP8.BLL
 			Folder newFolder = (asAdmin) ? Repository.CreateInDBAsAdmin(this) : Repository.CreateInDB(this);
 			this.Id = newFolder.Id;
 			this.Path = newFolder.Path;
-		}		
+		}
 
 		/// <summary>
 		/// Создаем папку в файловой системе
@@ -291,13 +287,13 @@ namespace Quantumart.QP8.BLL
 					info.Attributes = FileAttributes.Normal;
 				}
 
-				directory.Delete(true);			
+				directory.Delete(true);
 			}
 
 		}
 
 		#endregion
-		
+
 		#region overrided
 		protected override void ValidateUnique(RulesException errors)
 		{
@@ -327,7 +323,7 @@ namespace Quantumart.QP8.BLL
 
 			var filteredAndPaged = filtered
 							.Skip((command.StartPage - 1) * command.PageSize)
-							.Take(command.PageSize)							
+							.Take(command.PageSize)
 							.ToList();
 			return new ListResult<FolderFile>() { Data = filteredAndPaged, TotalRecords = filtered.Count() };
 		}
@@ -370,6 +366,6 @@ namespace Quantumart.QP8.BLL
 		private string CreateComputedPath(string name)
 		{
 			return String.Format(@"{0}{1}\", (ParentFolder == null) ? String.Empty : ParentFolder.Path, name);
-		}		
+		}
 	}
 }

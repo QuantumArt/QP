@@ -29,6 +29,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         Vertical = 1
     }
 
+    // TODO: CLEAN THIS FILE
     public static class HtmlHelpersExtensions
     {
         public const string TEXTBOX_CLASS_NAME = "textbox simple-text";
@@ -83,9 +84,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         internal static Dictionary<string, object> QPHtmlProperties<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, EditorType type, int index = -1)
         {
-            ModelMetadata data = source.GetMetaData(expression);
-            string name = ExpressionHelper.GetExpressionText(expression);
-            int maxlength = source.GetMaxLength(data.ContainerType, data.PropertyName);
+            var data = source.GetMetaData(expression);
+            var name = ExpressionHelper.GetExpressionText(expression);
+            var maxlength = source.GetMaxLength(data.ContainerType, data.PropertyName);
 
             return source.QPHtmlProperties(name, maxlength, type, index);
         }
@@ -194,23 +195,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         private static EditorType GetEditorType<TModel>(this HtmlHelper<TModel> source, Type sourceType, string propertyName)
         {
             var attr = source.GetCustomAttribute<TModel>(sourceType, propertyName, typeof(EditorAttribute));
-            return (attr != null) ?
-                ((EditorAttribute)attr).Type
-                :
-                source.GetDefaultEditorType(source.GetPropertyType(propertyName))
-                ;
+            return ((EditorAttribute)attr)?.Type ?? source.GetDefaultEditorType(source.GetPropertyType(propertyName));
         }
 
         private static int GetMaxLength<TModel>(this HtmlHelper<TModel> source, Type sourceType, string propertyName)
         {
             var attr = source.GetCustomAttribute<TModel>(sourceType, propertyName, typeof(MaxLengthValidatorAttribute));
-            return (attr != null) ? ((MaxLengthValidatorAttribute)attr).UpperBound : 0;
+            return ((MaxLengthValidatorAttribute)attr)?.UpperBound ?? 0;
         }
 
         internal static string GetExampleText<TModel>(this HtmlHelper<TModel> source, Type sourceType, string propertyName)
         {
             var attr = source.GetCustomAttribute<TModel>(sourceType, propertyName, typeof(ExampleAttribute));
-            return (attr != null) ? ((ExampleAttribute)attr).Text : null;
+            return ((ExampleAttribute)attr)?.Text;
         }
 
         private static object GetCustomAttribute<TModel>(this HtmlHelper<TModel> source, Type sourceType, string propertyName, Type type)
@@ -271,7 +268,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 pbTb.AddCssClass("lop-pbar-container");
                 pbTb.MergeAttribute("style", "height: 18px;");
                 pbTb.InnerHtml = "<div class=\"lop-pbar\"></div>";
-                tb.InnerHtml = String.Format("<div id={0} class=\"t-button pl_upload_button\"><span>{1}</span></div>{2}", source.UniqueId("uploadBtn_") + id , LibraryStrings.Upload,  pbTb.ToString());
+                tb.InnerHtml = String.Format("<div id={0} class=\"t-button pl_upload_button\"><span>{1}</span></div>{2}", source.UniqueId("uploadBtn_") + id, LibraryStrings.Upload, pbTb.ToString());
             }
 
             return tb.ToString();
@@ -314,9 +311,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 return dt.ToString(formatString);
             else
                 if (defaultValue == null)
-                    return String.Empty;
-                else
-                    return ((DateTime)defaultValue).ToString(formatString);
+                return String.Empty;
+            else
+                return ((DateTime)defaultValue).ToString(formatString);
         }
 
         #endregion
@@ -427,8 +424,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             string name = ExpressionHelper.GetExpressionText(expression);
 
             IEnumerable<QPSelectListItem> list = null;
-            if(selected != null)
-                list = new[]{selected};
+            if (selected != null)
+                list = new[] { selected };
 
             return source.QpSingleItemPicker(name, list, options, entityDataListArgs);
         }
@@ -735,11 +732,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             StringBuilder htmlBuilder = new StringBuilder();
             htmlBuilder.Append(GetSingleItemDisplayValue(itemText, itemValue, entityDataListArgs != null && entityDataListArgs.ShowIds, ignoreIdSet));
             var htmlAttributes = new Dictionary<string, object>();
-            if(!ignoreIdSet)
+            if (!ignoreIdSet)
                 htmlAttributes.Add("id", valueId);
             else
             {
-                htmlAttributes.Add("data-bind", "value: "+name +"Id"+" , attr :{ id: '" + source.UniqueId(name) + "' + $index(), name: '" + source.UniqueId(name) + "' + $index()}");
+                htmlAttributes.Add("data-bind", "value: " + name + "Id" + " , attr :{ id: '" + source.UniqueId(name) + "' + $index(), name: '" + source.UniqueId(name) + "' + $index()}");
             }
             htmlAttributes.Add("class", "stateField");
             htmlBuilder.Append(source.Hidden(name, itemValue, htmlAttributes));
@@ -1033,7 +1030,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             bool allowLibrary = !readOnly && version == null;
 
             string fieldId = null;
-            if(htmlAttributes.ContainsKey("id"))
+            if (htmlAttributes.ContainsKey("id"))
                 fieldId = htmlAttributes["id"].ToString();
             TagBuilder tb = source.FileWrapper(id, fieldId, field, entityId, version, readOnly, _allowUpload);
             tb.InnerHtml = source.FileContents(id, value, htmlAttributes, field, allowLibrary, _allowUpload, allowPreview, allowDownload);
@@ -1082,7 +1079,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 FolderRepository repository = FolderFactory.Create(useSiteLibrary ? EntityTypeCode.SiteFolder : EntityTypeCode.ContentFolder).CreateRepository();
                 var folder = repository.GetRoot(useSiteLibrary ? field.Content.SiteId : field.Content.Id);
                 string subFolder = (isVersion) ? String.Empty : field.SubFolder;
-                string libraryEntityId =  (isVersion) ? String.Empty : field.LibraryEntityId.ToString();
+                string libraryEntityId = (isVersion) ? String.Empty : field.LibraryEntityId.ToString();
                 string libraryParentEntityId = (isVersion) ? String.Empty : field.LibraryParentEntityId.ToString();
                 string libraryPath = (isVersion) ? version.PathInfo.Path : field.PathInfo.Path;
                 string libraryUrl = (isVersion) ? version.PathInfo.Url : field.PathInfo.Url;
@@ -1097,7 +1094,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 tb.MergeDataAttribute("is_image", Converter.ToJsString(field.ExactType == FieldExactTypes.Image));
                 tb.MergeDataAttribute("allow_file_upload", Converter.ToJsString(allowUpload));
                 tb.MergeDataAttribute("uploader_type", ((int)UploaderTypeHelper.UploaderType).ToString());
-                tb.MergeDataAttribute("folder_Id", folder == null ? string.Empty: folder.Id.ToString());
+                tb.MergeDataAttribute("folder_Id", folder == null ? string.Empty : folder.Id.ToString());
             }
 
             return tb;
@@ -1537,7 +1534,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             EntityDataListArgs entityDataListArgs = new EntityDataListArgs
             {
-                EntityTypeCode =  EntityTypeCode.Content,
+                EntityTypeCode = EntityTypeCode.Content,
                 ParentEntityId = siteId,
                 SelectActionCode = ActionCode.MultipleSelectContentForUnion,
                 ListId = -1 * System.DateTime.Now.Millisecond,
@@ -1560,13 +1557,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var _source = source;
             return list.Select(n => new QPSelectListItem()
-                {
-                    Text = n.Text,
-                    Value = n.Value,
-                    HasDependentItems = n.HasDependentItems,
-                    DependentItemIDs = n.DependentItemIDs != null ? n.DependentItemIDs.Select(s => _source.UniqueId(s)).ToArray() : null,
-                    Selected = n.Selected
-                }
+            {
+                Text = n.Text,
+                Value = n.Value,
+                HasDependentItems = n.HasDependentItems,
+                DependentItemIDs = n.DependentItemIDs != null ? n.DependentItemIDs.Select(s => _source.UniqueId(s)).ToArray() : null,
+                Selected = n.Selected
+            }
             );
         }
 
@@ -1580,12 +1577,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             string[] values = value.Split(',');
             return list.Select(n => new QPSelectListItem()
-                {
-                    Text = n.Text,
-                    Value = n.Value,
-                    Selected = (values.Contains(n.Value)),
-                    HasDependentItems = n.HasDependentItems
-                }
+            {
+                Text = n.Text,
+                Value = n.Value,
+                Selected = (values.Contains(n.Value)),
+                HasDependentItems = n.HasDependentItems
+            }
             );
         }
 

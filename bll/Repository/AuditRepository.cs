@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.BLL.Mappers;
 using System.Data;
-using AutoMapper;
 using Quantumart.QP8.Utils;
-using System.Security;
 using Quantumart.QP8.BLL.ListItems;
-using System.Diagnostics;
-using System.Collections;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -73,15 +67,15 @@ namespace Quantumart.QP8.BLL.Repository
 		SessionsLog Save(SessionsLog session);
 		SessionsLog GetCurrent();
 		SessionsLog Update(SessionsLog session);
-	} 	
-	
+	}
+
 
 	#endregion
 
 
-	public sealed class AuditRepository :	IBackendActionLogRepository, IBackendActionLogPagesRepository, 
-											IButtonTracePagesRepository, 
-											IRemovedEntitiesPagesRepository,									
+	public sealed class AuditRepository :	IBackendActionLogRepository, IBackendActionLogPagesRepository,
+											IButtonTracePagesRepository,
+											IRemovedEntitiesPagesRepository,
 											ISessionLogRepository
 	{
 		#region Backend Action Log
@@ -108,9 +102,9 @@ namespace Quantumart.QP8.BLL.Repository
 			filter = filter ?? new BackendActionLogFilter();
 			using (var scope = new QPConnectionScope())
 			{
-				IEnumerable<DataRow> rows = Common.GetActionLogPage(scope.DbConnection, cmd.SortExpression, 
-					filter.actionTypeCode, 
-					filter.entityTypeCode, 
+				IEnumerable<DataRow> rows = Common.GetActionLogPage(scope.DbConnection, cmd.SortExpression,
+					filter.actionTypeCode,
+					filter.entityTypeCode,
 					filter.entityStringId,
 					filter.parentEntityId,
  					filter.entityTitle,
@@ -131,7 +125,7 @@ namespace Quantumart.QP8.BLL.Repository
 		{
 			return EntityTypeRepository.GetList();
 		}
-		#endregion 
+		#endregion
 		#endregion
 
 		#region Button Trace
@@ -172,7 +166,7 @@ namespace Quantumart.QP8.BLL.Repository
 				IEnumerable<SessionsLog> result = MappersRepository.SessionsLogRowMapper.GetBizList(rows.ToList());
 				return result;
 			}
-		}		
+		}
 
 		public IEnumerable<SessionsLog> GetFailedSessionPage(ListCommand cmd, out int totalRecords)
 		{
@@ -185,8 +179,8 @@ namespace Quantumart.QP8.BLL.Repository
 		}
 
 		public SessionsLog Save(SessionsLog session)
-		{			
-			SessionsLogDAL sessionsLogDAL = MappersRepository.SessionsLogMapper.GetDalObject(session);			
+		{
+			SessionsLogDAL sessionsLogDAL = MappersRepository.SessionsLogMapper.GetDalObject(session);
 			sessionsLogDAL = DefaultRepository.SimpleSave(sessionsLogDAL);
 			return MappersRepository.SessionsLogMapper.GetBizObject(sessionsLogDAL);
 		}
@@ -207,7 +201,7 @@ namespace Quantumart.QP8.BLL.Repository
 			SessionsLogDAL sessionsLogDAL = MappersRepository.SessionsLogMapper.GetDalObject(session);
 			sessionsLogDAL = DefaultRepository.SimpleUpdate(sessionsLogDAL);
 			return MappersRepository.SessionsLogMapper.GetBizObject(sessionsLogDAL);
-		}		
+		}
 
 		#endregion
 	}

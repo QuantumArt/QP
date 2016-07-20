@@ -37,7 +37,7 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
 		internal static ContentConstraint Save(ContentConstraint constrain)
-		{			
+		{
 			if (constrain == null)
 				throw new ArgumentNullException("constrain");
 			if (!constrain.IsNew)
@@ -45,12 +45,12 @@ namespace Quantumart.QP8.BLL.Repository
 
 			// Сохраняем ограничение только если есть правила
 			if (constrain.Rules != null && constrain.Rules.Count > 0)
-			{				
-				ContentConstraintDAL ccDal = MappersRepository.ContentConstraintMapper.GetDalObject(constrain);				
+			{
+				ContentConstraintDAL ccDal = MappersRepository.ContentConstraintMapper.GetDalObject(constrain);
 				// добавить в БД запись ContentConstraint
-				ccDal = DefaultRepository.SimpleSave(ccDal);				
+				ccDal = DefaultRepository.SimpleSave(ccDal);
 				ContentConstraint newContraint = MappersRepository.ContentConstraintMapper.GetBizObject(ccDal);
-				
+
 				return newContraint;
 			}
 			else
@@ -83,7 +83,7 @@ namespace Quantumart.QP8.BLL.Repository
 				// создать новые записи для правил
 				foreach (var rule in constraint.Rules)
 				{
-					rule.ConstraintId = constraint.Id;					
+					rule.ConstraintId = constraint.Id;
 				}
 				var newDalList = MappersRepository.ContentConstraintRuleMapper.GetDalList(constraint.Rules.ToList());
 				DefaultRepository.SimpleSave(newDalList.AsEnumerable());
