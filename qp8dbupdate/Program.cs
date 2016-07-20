@@ -40,11 +40,12 @@ namespace qp8dbupdate
                     {
                         if (qpReplaySettings.SkipLogging)
                         {
+                            // TODO: exception is here
                             service.ReplayXml(xmlString);
                         }
                         else
                         {
-                            service.ReplayWithLogging(new DbUpdateLogEntry { Applied = DateTime.Now, Body = xmlString, FileName = Path.GetFileName(qpReplaySettings.Xmlpath) }, qpReplaySettings.CreateTable);
+                            service.ReplayWithLogging(new DbUpdateLogEntry { Applied = DateTime.Now, Body = xmlString, FileName = qpReplaySettings.Xmlpath }, qpReplaySettings.CreateTable);
                         }
                     }
                 }
@@ -134,7 +135,7 @@ namespace qp8dbupdate
 
             if (debug)
             {
-                Console.WriteLine("Запуск произведен с возможностью отладки. Нажмите любою клавишу для продолжения...");
+                Console.WriteLine("Запуск произведен с возможностью отладки. Нажмите любую клавишу для продолжения...");
                 Console.ReadKey(true);
                 Debugger.Break();
             }
@@ -152,7 +153,6 @@ namespace qp8dbupdate
                 Console.WriteLine("\t[-disableContentIdentity] отключить сохранение id контентов");
                 Console.WriteLine("\t[-disableFieldIdentity]  отключить сохранение id полей");
                 Console.WriteLine("\t[-createTable] создать таблицу XML_DB_UPDATE во время обновления");
-                Console.WriteLine("\t[-useConfig] использовать конфиг в кач-ве третьего параметра");
                 Console.WriteLine("\t<XML FILE/DIRECTORY PATH> путь к xml с действиями");
                 Console.WriteLine("\t<CUSTOMER CODE> customer code, для которого требуется выполнять действия");
                 Console.WriteLine("\t<CONFIG FILE> config файл, в котором указаны относительные пути к файлам xml c действиями и их настройки");

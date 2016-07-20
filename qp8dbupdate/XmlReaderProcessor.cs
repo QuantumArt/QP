@@ -1,7 +1,7 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using System.Xml.Linq;
 using qp8dbupdate.Infrastructure.Extensions;
 
@@ -9,40 +9,40 @@ namespace qp8dbupdate
 {
     internal static class XmlReaderProcessor
     {
-        internal static string GetNodesToReplay(string absDataPath, string configPath)
+        internal static string GetNodesToReplay(string absDataPath, string absOrRelativeConfigPath)
         {
-            if (string.IsNullOrWhiteSpace(absDataPath))
+            if (!File.Exists(absDataPath) && !Directory.Exists(absDataPath))
             {
-                throw new FileNotFoundException("Неправильно указан путь к файлам записанных действий");
+                throw new FileNotFoundException("Неправильно указан путь к файлам записанных действий: " + absDataPath);
             }
 
             var parsedDocument = (File.GetAttributes(absDataPath) & FileAttributes.Directory) == FileAttributes.Directory
-                ? ReadDirectoryFiles(absDataPath, configPath)
+                ? ReadDirectoryFiles(absDataPath, absOrRelativeConfigPath)
                 : ReadSingleFile(absDataPath);
 
             return FilterFromSubRootNodeDuplicates(parsedDocument).ToStringWithDeclaration();
         }
 
-        private static XmlReaderSettings GetDefaultSettings(string absDirPath)
+        private static XmlReaderSettings GetDefaultXmlReaderSettings(string absDirPath)
         {
             return new XmlReaderSettings(Directory.EnumerateFiles(absDirPath, "*.xml", SearchOption.TopDirectoryOnly).OrderBy(fn => fn).ToList());
         }
 
-        private static XmlReaderSettings GetXmlFileSettings(string absDirPath, string configPath)
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        private static XmlReaderSettings GetXmlReaderSettings(string absDirPath, string absOrRelativeConfigPath)
         {
-            var absConfigPath = Path.Combine(absDirPath, configPath);
-            if (!File.Exists(absConfigPath))
+            var configPath = absOrRelativeConfigPath;
+            if (!File.Exists(configPath))
             {
-                throw new FileNotFoundException("Неправильно указан путь к конфигурационному файлу");
+                configPath = Path.Combine(absDirPath, absOrRelativeConfigPath);
+                if (!File.Exists(configPath))
+                {
+                    throw new FileNotFoundException("Неправильно указан путь к файлу конфигурации: " + configPath);
+                }
             }
 
-            var xmlData = XDocument.Load(absConfigPath);
-            if (xmlData.Root == null || xmlData.Root.IsEmpty)
-            {
-                throw new Exception("Неверный формат конфигурационного файла");
-            }
-
-            var actionNodes = xmlData.Root.Elements(XmlReaderSettings.ConfigElementNodeName);
+            var xmlData = XDocument.Load(configPath);
+            var actionNodes = xmlData.Root.Elements(XmlReaderSettings.ConfigElementNodeName).Where(el => el.NodeType != XmlNodeType.Comment);
             return new XmlReaderSettings(actionNodes.Select(node => Path.Combine(absDirPath, node.Attribute(XmlReaderSettings.ConfigElementPathAttribute).Value)).ToList());
         }
 
@@ -52,12 +52,16 @@ namespace qp8dbupdate
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        private static XDocument ReadDirectoryFiles(string absDirPath, string configPath)
+        private static XDocument ReadDirectoryFiles(string absDirPath, string absOrRelativeConfigPath)
         {
-            var config = string.IsNullOrWhiteSpace(configPath) ? GetDefaultSettings(absDirPath) : GetXmlFileSettings(absDirPath, configPath);
+            var config = string.IsNullOrWhiteSpace(absOrRelativeConfigPath)
+                ? GetDefaultXmlReaderSettings(absDirPath)
+                : GetXmlReaderSettings(absDirPath, absOrRelativeConfigPath);
+
             var xmlFileDatas = config.RecordedXmlFilePathes.Select(XDocument.Load).ToList();
             var root = new XDocument(xmlFileDatas[0].Root);
             root.Root.RemoveNodes();
+
             return xmlFileDatas.Aggregate(root, (result, xd) =>
             {
                 result.Root.Add(xd.Root.Nodes());
