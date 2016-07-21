@@ -34,7 +34,6 @@ namespace Quantumart.QP8.BLL.Repository
 
         private string[] Codes { get; set; }
 
-        private readonly ExceptionManager _exceptionManager;
         #endregion
 
         #region public properties

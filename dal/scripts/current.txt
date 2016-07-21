@@ -2,5 +2,6 @@ MultipleUpdate
 OptimizeHierarchy
 VeButtons
 HierarchyContextMenu
+ExternalNotifications
 
 
