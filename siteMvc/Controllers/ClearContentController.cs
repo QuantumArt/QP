@@ -37,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
 		public ActionResult Step(int stage, int step)
 		{

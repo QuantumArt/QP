@@ -4,86 +4,89 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
-	public class ServiceBase
-	{
-		private string connectionString;
-		private int userId;
-		private bool userTested = false;
+    public class ServiceBase
+    {
+        private bool _userTested;
 
-		protected ServiceBase(string connectionString, int userId)
-		{
-			if (String.IsNullOrEmpty(connectionString))
-				throw new ArgumentNullException("connectionString");
+        protected ServiceBase(string connectionString, int userId)
+        {
+            Setup(connectionString, userId);
+        }
 
-			this.ConnectionString = connectionString;
-			this.UserId = userId;
-		}
+        private void Setup(string connectionString, int userId)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+                throw new ArgumentNullException(nameof(connectionString));
 
-		public string ConnectionString
-		{
-			get { return connectionString; }
-			private set { connectionString = value; }
-		}
+            ConnectionString = connectionString;
+            UserId = userId;
+        }
 
-		public int UserId
-		{
-			get { return userId; }
-			private set { userId = value; }
-		}
+        protected ServiceBase(int userId)
+        {
+            if (QPConnectionScope.Current == null)
+                throw new ApplicationException("Attempt to create service instance without external QPConnectionScope object");
 
-		public int TestedUserId
-		{
-			get
-			{
-				if (!userTested)
-					TestUser();
-				return UserId;
-			}
-		}
+            Setup(QPConnectionScope.Current.DbConnection.ConnectionString, userId);
+        }
 
-		public bool IsLive
-		{
-			get
-			{
-				return QPContext.IsLive;
-			}
+        public string ConnectionString { get; private set; }
 
-			set
-			{
-				QPContext.IsLive = value;
-			}
-		}
+        public int UserId { get; private set; }
 
-		public void LoadStructureCache()
-		{
-			LoadStructureCache(null, false);
-		}
+        public int TestedUserId
+        {
+            get
+            {
+                if (!_userTested)
+                    TestUser();
+                return UserId;
+            }
+        }
 
-		public void LoadStructureCache(IContextStorage st)
-		{
-			LoadStructureCache(st, false);
-		}
+        public bool IsLive
+        {
+            get
+            {
+                return QPContext.IsLive;
+            }
 
-		public void LoadStructureCache(IContextStorage st, bool resetExternal)
-		{
-			using (new QPConnectionScope(ConnectionString))
-			{
-				if (st != null)
-					QPContext.ExternalContextStorage = st;
-				QPContext.LoadStructureCache(resetExternal);
-			}
-		}
+            set
+            {
+                QPContext.IsLive = value;
+            }
+        }
 
-		private void TestUser()
-		{
-			using (new QPConnectionScope(ConnectionString))
-			{
-				var user = UserRepository.GetById(UserId);
-				if (user == null)
-					throw new ApplicationException(String.Format(UserStrings.UserNotFound, UserId));
-				userTested = true;
-			}
-			
-		}
-	}
+        public void LoadStructureCache()
+        {
+            LoadStructureCache(null, false);
+        }
+
+        public void LoadStructureCache(IContextStorage st)
+        {
+            LoadStructureCache(st, false);
+        }
+
+        public void LoadStructureCache(IContextStorage st, bool resetExternal)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                if (st != null)
+                    QPContext.ExternalContextStorage = st;
+                QPContext.LoadStructureCache(resetExternal);
+            }
+        }
+
+        private void TestUser()
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                var user = UserRepository.GetById(UserId);
+                if (user == null)
+                    throw new ApplicationException(String.Format(UserStrings.UserNotFound, UserId));
+                _userTested = true;
+            }
+            
+        }
+    }
 }

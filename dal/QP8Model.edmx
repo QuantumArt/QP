@@ -657,6 +657,23 @@
           <Property Name="MODIFIED" Type="datetime" Nullable="false" />
           <Property Name="LAST_MODIFIED_BY" Type="numeric" Precision="18" Scale="0" Nullable="false" />
         </EntityType>
+        <EntityType Name="EXTERNAL_NOTIFICATION_QUEUE">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EVENT_NAME" Type="nvarchar" MaxLength="50" />
+          <Property Name="ARTICLE_ID" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="CREATED" Type="datetime" Nullable="false" />
+          <Property Name="URL" Type="nvarchar" MaxLength="1024" Nullable="false" />
+          <Property Name="TRIES" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="NEW_XML" Type="nvarchar(max)" />
+          <Property Name="OLD_XML" Type="nvarchar(max)" />
+          <Property Name="SENT" Type="bit" Nullable="false" />
+          <Property Name="MODIFIED" Type="datetime" Nullable="false" />
+          <Property Name="CONTENT_ID" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="SITE_ID" Type="numeric" Precision="18" Scale="0" />
+        </EntityType>
         <EntityType Name="FOLDER">
           <Key>
             <PropertyRef Name="FOLDER_ID" />
@@ -4132,6 +4149,7 @@
           <EntitySet Name="DYNAMIC_IMAGE_ATTRIBUTE" EntityType="Self.DYNAMIC_IMAGE_ATTRIBUTE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ENTITY_TYPE" EntityType="Self.ENTITY_TYPE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ENTITY_TYPE_ACCESS" EntityType="Self.ENTITY_TYPE_ACCESS" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EXTERNAL_NOTIFICATION_QUEUE" EntityType="Self.EXTERNAL_NOTIFICATION_QUEUE" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FOLDER" EntityType="Self.FOLDER" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="FOLDER_ACCESS" EntityType="Self.FOLDER_ACCESS" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Group_To_Group" EntityType="Self.Group_To_Group" Schema="dbo" store:Type="Tables" />
@@ -5962,7 +5980,8 @@
             <End Role="BackendActionDAL" EntitySet="BackendActionSet" />
             <End Role="BackendActionDAL1" EntitySet="BackendActionSet" />
           </AssociationSet>
-          <EntitySet Name="AppSettingsSet" EntityType="QP8Model.AppSettingsDAL" />					
+          <EntitySet Name="AppSettingsSet" EntityType="QP8Model.AppSettingsDAL" />
+          <EntitySet Name="ExternalNotificationSet" EntityType="QP8Model.ExternalNotificationDAL" />					
         </EntityContainer>
         <EntityType Name="ActionTypeDAL">
           <Key>
@@ -10266,6 +10285,23 @@
           <Property Type="String" Name="Key" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="Value" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="ExternalNotificationDAL">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EventName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="ArticleId" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Url" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Name="Tries" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="NewXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OldXml" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Sent" Type="Boolean" Nullable="false" />
+          <Property Name="Modified" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ContentId" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="SiteId" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
 			</Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -11762,6 +11798,24 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="ExternalNotificationSet">
+            <EntityTypeMapping TypeName="QP8Model.ExternalNotificationDAL">
+              <MappingFragment StoreEntitySet="EXTERNAL_NOTIFICATION_QUEUE">
+                <ScalarProperty Name="SiteId" ColumnName="SITE_ID" />
+                <ScalarProperty Name="ContentId" ColumnName="CONTENT_ID" />
+                <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
+                <ScalarProperty Name="Sent" ColumnName="SENT" />
+                <ScalarProperty Name="OldXml" ColumnName="OLD_XML" />
+                <ScalarProperty Name="NewXml" ColumnName="NEW_XML" />
+                <ScalarProperty Name="Tries" ColumnName="TRIES" />
+                <ScalarProperty Name="Url" ColumnName="URL" />
+                <ScalarProperty Name="Created" ColumnName="CREATED" />
+                <ScalarProperty Name="ArticleId" ColumnName="ARTICLE_ID" />
+                <ScalarProperty Name="EventName" ColumnName="EVENT_NAME" />
+                <ScalarProperty Name="Id" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -11784,7 +11838,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="57">
+      <Diagram Name="QP8Model" ZoomLevel="30">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -15279,6 +15333,7 @@
         <AssociationConnector Association="QP8Model.FK_BACKEND_ACTION_EXCLUDED_BY_ACTION" />
         <AssociationConnector Association="QP8Model.ACTION_EXCLUSIONS" />
         <EntityTypeShape EntityType="QP8Model.AppSettingsDAL" Width="1.5" PointX="7.3218784869284734" PointY="14.581806293959639" />
+        <EntityTypeShape EntityType="QP8Model.ExternalNotificationDAL" Width="1.5" PointX="8.375" PointY="0.75" />
 		</Diagram>
     </Diagrams>
   </Designer>

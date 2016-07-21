@@ -14,7 +14,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region Entity Permissions
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.EntityTypePermissions)]
 		[BackendActionContext(ActionCode.EntityTypePermissions)]
 		public override ActionResult Index(string tabId, int parentId)
@@ -32,8 +32,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.AddNewEntityTypePermission)]		
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ActionAuthorize(ActionCode.AddNewEntityTypePermission)]
 		[BackendActionContext(ActionCode.AddNewEntityTypePermission)]
 		public override ActionResult New(string tabId, int parentId)
 		{
@@ -41,8 +41,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewEntityTypePermission)]
 		[BackendActionContext(ActionCode.AddNewEntityTypePermission)]
 		[BackendActionLog]
@@ -53,7 +53,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.EntityTypePermissionProperties)]
 		[BackendActionContext(ActionCode.EntityTypePermissionProperties)]
 		public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -62,8 +62,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateEntityTypePermission)]
 		[BackendActionContext(ActionCode.UpdateEntityTypePermission)]
 		[BackendActionLog]
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveEntityTypePermission)]
 		[BackendActionContext(ActionCode.MultipleRemoveEntityTypePermission)]
 		[BackendActionLog]
@@ -87,7 +87,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveEntityTypePermission)]
 		[BackendActionContext(ActionCode.RemoveEntityTypePermission)]
 		[BackendActionLog]
@@ -95,13 +95,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		public override ActionResult Remove(int parentId, int id)
 		{
 			return base.Remove(parentId, id);
-		} 
+		}
 		#endregion
 
 
 		#region Change
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ChangeEntityTypePermission)]
 		[BackendActionContext(ActionCode.ChangeEntityTypePermission)]
 		public override ActionResult Change(string tabId, int parentId, int? userId, int? groupId, bool? isPostBack)
@@ -110,8 +110,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateEntityTypePermissionChanges)]
 		[BackendActionContext(ActionCode.UpdateEntityTypePermissionChanges)]
 		[BackendActionLog]
@@ -122,7 +122,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveActionPermissionChanges)]
 		[BackendActionContext(ActionCode.RemoveActionPermissionChanges)]
 		[BackendActionLog]

@@ -8,11 +8,11 @@ using Quantumart.QP8.WebMvc.Controllers.Base;
 namespace Quantumart.QP8.WebMvc.Controllers
 {
 	public class SitePermissionController : PermissionControllerBase
-    {		
+    {
 		public SitePermissionController(IPermissionService service) : base(service){}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SitePermissions)]
 		[BackendActionContext(ActionCode.SitePermissions)]
 		public override ActionResult Index(string tabId, int parentId)
@@ -30,8 +30,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.AddNewSitePermission)]		
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ActionAuthorize(ActionCode.AddNewSitePermission)]
 		[BackendActionContext(ActionCode.AddNewSitePermission)]
 		public override ActionResult New(string tabId, int parentId)
 		{
@@ -39,8 +39,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewSitePermission)]
 		[BackendActionContext(ActionCode.AddNewSitePermission)]
 		[BackendActionLog]
@@ -51,7 +51,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SitePermissionProperties)]
 		[BackendActionContext(ActionCode.SitePermissionProperties)]
 		public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -60,8 +60,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateSitePermission)]
 		[BackendActionContext(ActionCode.UpdateSitePermission)]
 		[BackendActionLog]
@@ -73,7 +73,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveSitePermission)]
 		[BackendActionContext(ActionCode.MultipleRemoveSitePermission)]
 		[BackendActionLog]
@@ -85,7 +85,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveSitePermission)]
 		[BackendActionContext(ActionCode.RemoveSitePermission)]
 		[BackendActionLog]

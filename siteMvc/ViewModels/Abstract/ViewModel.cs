@@ -16,7 +16,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public bool IsViewChangable { get; protected set; }
 
-		public ViewModel()
+        protected ViewModel()
 		{
 			IsVirtual = false;
 			IsViewChangable = true;
@@ -34,7 +34,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 		    return model;
 		}
 
-        #region read-only members
 		public abstract string EntityTypeCode { get; }
 
 		public abstract string ActionCode { get; }
@@ -43,12 +42,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
 		public abstract string MainComponentId { get; }
 
-		public virtual C.DocumentContextState DocumentContextState
-		{
-			get { return C.DocumentContextState.None; }
-		}
+		public virtual C.DocumentContextState DocumentContextState => C.DocumentContextState.None;
 
-		public virtual ExpandoObject MainComponentParameters
+        public virtual ExpandoObject MainComponentParameters
 		{
 			get
 			{
@@ -66,67 +62,26 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 			}
 		}
 
-		public virtual ExpandoObject MainComponentOptions
-		{
-			get { return new ExpandoObject();  }
-		}
+		public virtual ExpandoObject MainComponentOptions => new ExpandoObject();
 
-		public string AddNewItemLinkId
-        {
-            get
-            {
-                return UniqueId("addNewItemLink");
-            }
-        }
+        public string AddNewItemLinkId => UniqueId("addNewItemLink");
 
-		public string ContextObjectName
-		{
-			get
-			{
-				return UniqueId("context");
-			}
-		}
+        public string ContextObjectName => UniqueId("context");
 
-        public string DocumentHostId
-        {
-            get
-            {
-                if (IsWindow)
-                {
-                    return TabId;
-                }
+        public string DocumentHostId => IsWindow ? TabId : UniqueId("document");
 
-                return UniqueId("document");
-            }
-        }
+        public string ValidationSummaryId => UniqueId("Summary");
 
-		public string ValidationSummaryId
-		{
-			get { return UniqueId("Summary"); }
-		}
+        // ReSharper disable once InconsistentNaming
+        public string HostUID { get; }
 
-		public string HostUID { get; private set; }
-
-        public bool IsWindow
-        {
-            get
-            {
-                return HtmlHelperFieldExtensions.IsWindow(TabId);
-            }
-        }
+        public bool IsWindow => HtmlHelperFieldExtensions.IsWindow(TabId);
 
         public string UniqueId(string id)
         {
             return HtmlHelperFieldExtensions.UniqueId(id, TabId);
         }
 
-		public bool IsAdmin
-		{
-			get
-			{
-				return QPContext.IsAdmin;
-			}
-		}
-        #endregion
+		public bool IsAdmin => QPContext.IsAdmin;
      }
 }

@@ -110,6 +110,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
@@ -128,6 +129,7 @@
     <Compile Include="Db.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="ListItems\ObjectFormatVersionListItem.cs" />
     <Compile Include="ListItems\StatusHistoryListItem.cs" />
     <Compile Include="Mappers\DataRowMapper.cs" />
+    <Compile Include="Mappers\ExternalNotificationMapper.cs" />
     <Compile Include="Mappers\ObjectFormatSearchResultRowMapper.cs" />
     <Compile Include="Mappers\ObjectFormatVersionRowMapper.cs" />
     <Compile Include="Mappers\ObjectValueMapper.cs" />
@@ -157,6 +160,12 @@
     <Compile Include="Processors\TreeProcessors\ITreeProcessor.cs" />
     <Compile Include="Processors\TreeProcessors\SiteFolderProcessor.cs" />
     <Compile Include="Processors\TreeProcessors\UserGroupProcessor.cs" />
+    <Compile Include="Repository\ActiveDirectory\ActiveDirectoryEntityBase.cs" />
+    <Compile Include="Repository\ActiveDirectory\ActiveDirectoryGroup.cs" />
+    <Compile Include="Repository\ActiveDirectory\ActiveDirectoryRepository.cs" />
+    <Compile Include="Repository\ActiveDirectory\ActiveDirectoryUser.cs" />
+    <Compile Include="Repository\ActiveDirectory\LdapQueryBuilder.cs" />
+    <Compile Include="Repository\ActiveDirectory\UserAccountControlDescription.cs" />
     <Compile Include="Repository\ArticleMatching\ArticleMatchRepository.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\ComparitionCondition.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\ConditionBase.cs" />
@@ -176,9 +185,11 @@
     <Compile Include="Repository\ArticleMatching\Models\QueryField.cs" />
     <Compile Include="Repository\ArticleMatching\Models\SchemaInfo.cs" />
     <Compile Include="Repository\DBRepository.cs" />
+    <Compile Include="Repository\ExternalNotificationRepository.cs" />
     <Compile Include="Repository\FingerprintRepository.cs" />
     <Compile Include="Repository\FormatRepository.cs" />
     <Compile Include="Repository\Helpers\ContentPermissionHelper.cs" />
+    <Compile Include="Repository\NotificationPushRepository.cs" />
     <Compile Include="Repository\ObjectRepository.cs" />
     <Compile Include="Repository\PageRepository.cs" />
     <Compile Include="ServiceField.cs" />
@@ -410,6 +421,7 @@
     <Compile Include="Services\EntityPermissions\PermissionServiceAbstract.cs" />
     <Compile Include="Services\EntityPermissions\SitePermissionService.cs" />
     <Compile Include="Services\ActionPermissions\ActionPermissionTreeService.cs" />
+    <Compile Include="Services\ExternalNotificationService.cs" />
     <Compile Include="Services\FingerprintService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
@@ -617,6 +629,8 @@
     <Compile Include="Services\TreeMenuService.cs" />
     <Compile Include="Services\UserGroupService.cs" />
     <Compile Include="Services\UserService.cs" />
+    <Compile Include="Services\UserSinchronization\IUserSynchronizationService.cs" />
+    <Compile Include="Services\UserSinchronization\UserSynchronizationService.cs" />
     <Compile Include="Services\VirtualContentService.cs" />
     <Compile Include="Services\VirtualFieldService.cs" />
     <Compile Include="Services\IVisualEditorService.cs" />
@@ -648,9 +662,6 @@
     <Compile Include="Services\VisualEditor\VisualEditorConfig.cs" />
     <Compile Include="Services\VisualEditor\VisualEditorPlugin.cs" />
     <Compile Include="Services\VisualEditor\VisualEditorStyle.cs" />
-    <Compile Include="WCF\Notification\INotificationWCFService.cs" />
-    <Compile Include="WCF\Notification\NotificationSimpleServiceClient.cs" />
-    <Compile Include="WCF\Notification\NotificationWCFServiceClient.cs" />
     <Compile Include="Workflow.cs" />
     <Compile Include="WorkflowBinding.cs" />
     <Compile Include="WorkflowRule.cs" />

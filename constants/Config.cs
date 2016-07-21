@@ -20,5 +20,11 @@ namespace Quantumart.QP8.Constants
 		public static readonly string UseScheduleService = "UseScheduleService";
 		public static readonly string ApplicationTitle = "ApplicationTitle";
 		public static readonly string AllowSelectCustomerCode = "AllowSelectCustomerCode";
+        public static readonly string ADsConnectionStringKey = "ADsConnectionString";
+        public static readonly string ADsPathKey = "ADsPath";
+        public static readonly string ADsFieldNameKey = "ADsFieldName";
+        public static readonly string ADsConnectionUsernameKey = "ADsConnectionUsername";
+        public static readonly string ADsConnectionPasswordKey = "ADsConnectionPassword";
+
     }
 }

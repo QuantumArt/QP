@@ -13,7 +13,6 @@ namespace Quantumart.QP8.Configuration
     {
         private static string _configPath;
 
-
         /// <summary>
         /// Проверка, запущен ли пул в 64-битном режиме
         /// </summary>
@@ -37,23 +36,23 @@ namespace Quantumart.QP8.Configuration
 
 
         /// <summary>
-        /// Получение строки подключения к БД из QP конфига 
+        /// Получение строки подключения к БД из QP конфига
         /// </summary>
-        /// <param name="customerCode">код клиента</param>
         /// <returns>строка подключения</returns>
         public static string ConfigConnectionString(string customerCode, string appName = "QP8Backend")
         {
             if (string.IsNullOrWhiteSpace(customerCode))
+            {
                 return null;
-            string result;
-            result = XmlConfig.Descendants("customer").Single(n => n.Attribute("customer_name").Value == customerCode).Element("db").Value;
+            }
+
+            var result = XmlConfig.Descendants("customer").Single(n => n.Attribute("customer_name").Value == customerCode).Element("db").Value;
             return TuneConnectionString(result, appName);
         }
 
         /// <summary>
         /// Получение всех строк подключения к БД из QP конфига
         /// </summary>
-        /// <param name="customerCode">код клиента</param>
         /// <returns>строка подключения</returns>
         public static IEnumerable<string> ConfigConnectionStrings(string appName = null, IEnumerable<string> exceptCustomerCodes = null)
         {
@@ -61,6 +60,7 @@ namespace Quantumart.QP8.Configuration
             var result = XmlConfig.Descendants("customer")
                 .Where(n => !exceptCustomerCodes.Contains(n.Attribute("customer_name").Value, StringComparer.InvariantCultureIgnoreCase))
                 .Select(n => TuneConnectionString(n.Element("db").Value, appName));
+
             return result.ToArray();
         }
 
@@ -78,14 +78,19 @@ namespace Quantumart.QP8.Configuration
         {
             var builder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", ""));
             if (!string.IsNullOrWhiteSpace(appName))
+            {
                 builder.ApplicationName = appName;
+            }
+
             if (builder.ConnectTimeout < 120)
+            {
                 builder.ConnectTimeout = 120;
+            }
+
             return builder.ToString();
         }
 
         public static string TempDirectory => ConfigVariable(Config.TempKey).ToLowerInvariant();
-
 
         public static bool UseScheduleService => ConfigVariable(Config.UseScheduleService).ToLowerInvariant() == "yes";
 
@@ -93,11 +98,21 @@ namespace Quantumart.QP8.Configuration
 
         public static bool AllowSelectCustomerCode => ConfigVariable(Config.AllowSelectCustomerCode).ToLowerInvariant() == "yes";
 
+        public static string ADsConnectionString => ConfigVariable(Config.ADsConnectionStringKey).ToLowerInvariant();
+
+        public static string ADsConnectionUsername => ConfigVariable(Config.ADsConnectionUsernameKey);
+  
+        public static string ADsConnectionPassword => ConfigVariable(Config.ADsConnectionPasswordKey);
+
+        public static string ADsPath => ConfigVariable(Config.ADsPathKey);
+
+        public static string ADsFieldName => ConfigVariable(Config.ADsFieldNameKey).ToLowerInvariant();
+
         /// <summary>
         /// Конфигурационный файл QP
         /// </summary>
         public static XDocument XmlConfig => XDocument.Load(XmlConfigPath);
-    
+
         /// <summary>
         /// Путь к конфигурационному файлу в реестре
         /// </summary>
@@ -120,6 +135,7 @@ namespace Quantumart.QP8.Configuration
                             throw new Exception("QP is not installed");
                     }
                 }
+
                 return _configPath;
             }
         }

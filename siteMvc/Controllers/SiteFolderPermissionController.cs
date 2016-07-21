@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		public SiteFolderPermissionController(IPermissionService service) : base(service) { }
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SiteFolderPermissions)]
 		[BackendActionContext(ActionCode.SiteFolderPermissions)]
 		public override ActionResult Index(string tabId, int parentId)
@@ -30,8 +30,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.AddNewSiteFolderPermission)]		
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ActionAuthorize(ActionCode.AddNewSiteFolderPermission)]
 		[BackendActionContext(ActionCode.AddNewSiteFolderPermission)]
 		public override ActionResult New(string tabId, int parentId)
 		{
@@ -39,8 +39,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewSiteFolderPermission)]
 		[BackendActionContext(ActionCode.AddNewSiteFolderPermission)]
 		[BackendActionLog]
@@ -51,7 +51,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SiteFolderPermissionProperties)]
 		[BackendActionContext(ActionCode.SiteFolderPermissionProperties)]
 		public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -60,8 +60,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateSiteFolderPermission)]
 		[BackendActionContext(ActionCode.UpdateSiteFolderPermission)]
 		[BackendActionLog]
@@ -73,7 +73,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveSiteFolderPermission)]
 		[BackendActionContext(ActionCode.MultipleRemoveSiteFolderPermission)]
 		[BackendActionLog]
@@ -85,7 +85,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveSiteFolderPermission)]
 		[BackendActionContext(ActionCode.RemoveSiteFolderPermission)]
 		[BackendActionLog]

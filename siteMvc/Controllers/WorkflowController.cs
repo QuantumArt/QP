@@ -30,7 +30,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region	list actions
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.Workflows)]
 		[BackendActionContext(ActionCode.Workflows)]
 		public ActionResult Index(string tabId, int parentId)
@@ -52,21 +52,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#endregion
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.WorkflowProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Workflow, "id")]
 		[BackendActionContext(ActionCode.WorkflowProperties)]
 		public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
 		{
-			Workflow workflow = _workflowService.ReadProperties(id);			
+			Workflow workflow = _workflowService.ReadProperties(id);
 			WorkflowViewModel model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 			model.SuccesfulActionCode = successfulActionCode;
 			return this.JsonHtml("Properties", model);
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateWorkflow)]
 		[BackendActionContext(ActionCode.UpdateWorkflow)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Workflow, "id")]
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
 		{
 			Workflow workflow = _workflowService.ReadPropertiesForUpdate(id);
-			WorkflowViewModel model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);			
+			WorkflowViewModel model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 			TryUpdateModel(model);
 			model.Validate(ModelState);
 			if (ModelState.IsValid)
@@ -84,17 +84,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
 				model.Data = _workflowService.UpdateProperties(model.Data, model.ActiveContentsIds);
 				int[] newIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
 				this.PersistRulesIds(oldIds, newIds);
-				
+
 				return Redirect("Properties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.UpdateWorkflow });
 			}
 			else
-			{				
+			{
 				return JsonHtml("Properties", model);
 			}
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.AddNewWorkflow)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
 		[BackendActionContext(ActionCode.AddNewWorkflow)]
@@ -106,11 +106,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewWorkflow)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
-		[BackendActionContext(ActionCode.AddNewWorkflow)]		
+		[BackendActionContext(ActionCode.AddNewWorkflow)]
 		[BackendActionLog]
 		[Record]
 		public ActionResult New(string tabId, int parentId, FormCollection collection)
@@ -133,7 +133,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveWorkflow)]
 		[BackendActionContext(ActionCode.RemoveWorkflow)]
 		[BackendActionLog]
@@ -145,7 +145,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		public ActionResult CheckUserOrGroupAccessOnContents(string statusName, string userIdString, string groupIdString, string contentIdsString)
 		{
 			var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(new char[] { ',' }).Select(x => int.Parse(x)).ToList();
@@ -155,7 +155,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 
 			var contentAccessSummary = new StringBuilder();
-			
+
 			foreach (var contentId in contentIds)
 			{
 				if (userId != null && !_workflowService.IsContentAccessibleForUser(contentId, userId.Value))
@@ -167,12 +167,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 					contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForGroup + "<br>", _workflowService.getContentNameById(contentId));
 				}
 			}
-			
+
 			return this.Json(contentAccessSummary.ToString(), JsonRequestBehavior.AllowGet);
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		public ActionResult CheckAllAccessOnContents(string modelString, string contentIdsString)
 		{
 			var contentAccessSummary = new List<object>();

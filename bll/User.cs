@@ -25,24 +25,24 @@ namespace Quantumart.QP8.BLL
 {
     [HasSelfValidation]
     public class User : EntityObject
-	{
-		internal static User Create()
-		{
-			User user = new User();
-			user.Groups = Enumerable.Empty<UserGroup>();
-			return user;
-		}
+    {
+        internal static User Create()
+        {
+            User user = new User();
+            user.Groups = Enumerable.Empty<UserGroup>();
+            return user;
+        }
 
-		public User()
-		{
-			contentDefaultFilters = new InitPropertyValue<IEnumerable<UserDefaultFilter>>(() => QPContext.CurrentUnityContainer.Resolve<IUserService>().GetContentDefaultFilters(this.Id));
+        public User()
+        {
+            contentDefaultFilters = new InitPropertyValue<IEnumerable<UserDefaultFilter>>(() => QPContext.CurrentUnityContainer.Resolve<IUserService>().GetContentDefaultFilters(this.Id));
             EnableContentGroupingInTree = true;
-		}
+        }
 
         [LocalizedDisplayName("Login", NameResourceType = typeof(UserStrings))]
-		[RequiredValidator(MessageTemplateResourceName = "LoginNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
-		[MaxLengthValidator(30, MessageTemplateResourceName = "LoginLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
-		[FormatValidator(Constants.RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(UserStrings))]
+        [RequiredValidator(MessageTemplateResourceName = "LoginNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
+        [MaxLengthValidator(30, MessageTemplateResourceName = "LoginLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
+        [FormatValidator(Constants.RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(UserStrings))]
         public string LogOn
         {
             get;
@@ -51,10 +51,10 @@ namespace Quantumart.QP8.BLL
         
         [LocalizedDisplayName("Password", NameResourceType = typeof(UserStrings))]
         public string Password
-		{
-			get;
-			set;
-		}
+        {
+            get;
+            set;
+        }
 
         [LocalizedDisplayName("OldPassword", NameResourceType = typeof(UserStrings))]
         public string OldPassword
@@ -77,12 +77,12 @@ namespace Quantumart.QP8.BLL
             set;
         }
 
-		[LocalizedDisplayName("Disabled", NameResourceType = typeof(UserStrings))]
-		public bool Disabled
-		{
-			get;
-			set;
-		}
+        [LocalizedDisplayName("Disabled", NameResourceType = typeof(UserStrings))]
+        public bool Disabled
+        {
+            get;
+            set;
+        }
 
         [RequiredValidator(MessageTemplateResourceName = "FirstNameNotEntered", MessageTemplateResourceType = typeof(UserStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "FirstNameMaxLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
@@ -112,21 +112,21 @@ namespace Quantumart.QP8.BLL
             set;
         }
 
-		[LocalizedDisplayName("AutoLogOn", NameResourceType = typeof(UserStrings))]
-		public bool AutoLogOn
-		{
-			get;
-			set;
-		}
+        [LocalizedDisplayName("AutoLogOn", NameResourceType = typeof(UserStrings))]
+        public bool AutoLogOn
+        {
+            get;
+            set;
+        }
 
-		[LocalizedDisplayName("NtLogin", NameResourceType = typeof(UserStrings))]
-		[MaxLengthValidator(255, MessageTemplateResourceName = "NtLoginLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
-		[FormatValidator(Constants.RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(UserStrings))]
-		public string NTLogOn
-		{
-			get;
-			set;
-		}
+        [LocalizedDisplayName("NtLogin", NameResourceType = typeof(UserStrings))]
+        [MaxLengthValidator(255, MessageTemplateResourceName = "NtLoginLengthExceeded", MessageTemplateResourceType = typeof(UserStrings))]
+        [FormatValidator(Constants.RegularExpressions.InvalidUserName, Negated = true, MessageTemplateResourceName = "NtLoginInvalidFormat", MessageTemplateResourceType = typeof(UserStrings))]
+        public string NtLogOn
+        {
+            get;
+            set;
+        }
 
         [LocalizedDisplayName("EnableContentGroupingInTree", NameResourceType = typeof(UserStrings))]
         public bool EnableContentGroupingInTree
@@ -136,67 +136,67 @@ namespace Quantumart.QP8.BLL
         }
 
 
-		public DateTime? LastLogOn
-		{
-			get;
-			set;
-		}
+        public DateTime? LastLogOn
+        {
+            get;
+            set;
+        }
 
 
-		public bool Subscribed
-		{
-			get;
-			set;
-		}
+        public bool Subscribed
+        {
+            get;
+            set;
+        }
 
 
         [LocalizedDisplayName("Language", NameResourceType = typeof(UserStrings))]
-		public int LanguageId
-		{
-			get;
-			set;
-		}
+        public int LanguageId
+        {
+            get;
+            set;
+        }
 
 
-		public bool VMode
-		{
-			get;
-			set;
-		}
+        public bool VMode
+        {
+            get;
+            set;
+        }
 
-		public Byte[] AdSid
-		{
-			get;
-			set;
-		}
+        public Byte[] AdSid
+        {
+            get;
+            set;
+        }
 
-		[LocalizedDisplayName("AllowStageEditField", NameResourceType = typeof(UserStrings))]
-		public bool AllowStageEditField
-		{
-			get;
-			set;
-		}
-
-
-		[LocalizedDisplayName("AllowStageEditObject", NameResourceType = typeof(UserStrings))]
-		public bool AllowStageEditObject
-		{
-			get;
-			set;
-		}
+        [LocalizedDisplayName("AllowStageEditField", NameResourceType = typeof(UserStrings))]
+        public bool AllowStageEditField
+        {
+            get;
+            set;
+        }
 
 
-		public bool BuiltIn
-		{
-			get;
-			set;
-		}
+        [LocalizedDisplayName("AllowStageEditObject", NameResourceType = typeof(UserStrings))]
+        public bool AllowStageEditObject
+        {
+            get;
+            set;
+        }
 
-		public DateTime PasswordModified
-		{
-			get;
-			set;
-		}
+
+        public bool BuiltIn
+        {
+            get;
+            set;
+        }
+
+        public DateTime PasswordModified
+        {
+            get;
+            set;
+        }
 
         public override string EntityTypeCode
         {
@@ -222,13 +222,13 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-		public string FullName
-		{
-			get
-			{
-				return FirstName + " " + LastName;
-			}
-		}
+        public string FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
      
      
         /// <summary>
@@ -239,7 +239,7 @@ namespace Quantumart.QP8.BLL
             get 
             {
                 StringBuilder sb = new StringBuilder();
-				sb.Append(FullName);
+                sb.Append(FullName);
                 if (You)
                 {
                     sb.AppendFormat(" ({0})", GlobalStrings.You);
@@ -253,17 +253,17 @@ namespace Quantumart.QP8.BLL
             get { return QPContext.CurrentUserId == Id; }
         }
 
-		public IEnumerable<UserGroup> Groups { get; set; }
+        public IEnumerable<UserGroup> Groups { get; set; }
 
-		InitPropertyValue<IEnumerable<UserDefaultFilter>> contentDefaultFilters = null;
-		/// <summary>
-		/// Фильтры по умолчанию
-		/// </summary>
-		public IEnumerable<UserDefaultFilter> ContentDefaultFilters 
-		{
-			get { return contentDefaultFilters.Value; }
-			set { contentDefaultFilters.Value = value; }
-		}
+        InitPropertyValue<IEnumerable<UserDefaultFilter>> contentDefaultFilters = null;
+        /// <summary>
+        /// Фильтры по умолчанию
+        /// </summary>
+        public IEnumerable<UserDefaultFilter> ContentDefaultFilters 
+        {
+            get { return contentDefaultFilters.Value; }
+            set { contentDefaultFilters.Value = value; }
+        }
 
         private static bool IsPasswordComplex(string password)
         {
@@ -277,7 +277,7 @@ namespace Quantumart.QP8.BLL
             return count >= 3;
         }
 
-		public void ProfileValidate()
+        public void ProfileValidate()
         {
             RulesException<User> errors = new RulesException<User>();
 
@@ -290,8 +290,8 @@ namespace Quantumart.QP8.BLL
                 else if (!UserRepository.CheckAuthenticate(LogOn, OldPassword))
                     errors.ErrorFor(u => u.OldPassword, UserStrings.OldPasswordIncorrect);
 
-				if (NewPassword.Length < 7 || NewPassword.Length > 20)
-					errors.ErrorFor(u => u.NewPassword, String.Format(UserStrings.PasswordLengthExceeded, 7, 20));
+                if (NewPassword.Length < 7 || NewPassword.Length > 20)
+                    errors.ErrorFor(u => u.NewPassword, String.Format(UserStrings.PasswordLengthExceeded, 7, 20));
                 
                 if (NewPassword.Contains(LogOn) || LogOn.Contains(NewPassword))
                     errors.ErrorFor(u => u.LogOn, UserStrings.PasswordContainsLogin);
@@ -307,88 +307,88 @@ namespace Quantumart.QP8.BLL
                 throw errors;
         }
 
-		public void DoCustomBinding()
-		{
-			VMode = false;
-			Subscribed = true;
+        public void DoCustomBinding()
+        {
+            VMode = false;
+            Subscribed = true;
 
-			if (!String.IsNullOrEmpty(NewPassword))
-				Password = NewPassword;
-			else
-				Password = "";
-		}
+            if (!String.IsNullOrEmpty(NewPassword))
+                Password = NewPassword;
+            else
+                Password = "";
+        }
 
-		public override void Validate()
-		{
-			RulesException<User> errors = new RulesException<User>();
-			base.Validate(errors);
+        public override void Validate()
+        {
+            RulesException<User> errors = new RulesException<User>();
+            base.Validate(errors);
 
-			if (IsNew)
-			{
-				if (String.IsNullOrEmpty(NewPassword))
-					errors.ErrorFor(u => u.NewPassword, UserStrings.PasswordNotEntered);
-			}
+            if (IsNew)
+            {
+                if (String.IsNullOrEmpty(NewPassword))
+                    errors.ErrorFor(u => u.NewPassword, UserStrings.PasswordNotEntered);
+            }
 
-			// Пользователь не может быть одновременно добавлен в группу использующую параллельный Workflow ,в группу "Администраторы" или в ее потомков
-			if(Groups.Where(g => g.UseParallelWorkflow).Any())
-			{
-				IEnumerable<int> groupIDs = Groups.Select(g => g.Id);
-				bool userInAdminDescGroups =  
-					UserGroupRepository.GetAdministratorsHierarhy()
-					.Select(r => Convert.ToInt32(r.Field<decimal>("CHILD")))
-					.Intersect(groupIDs)
-					.Any();
-				if (userInAdminDescGroups)
-					errors.ErrorForModel(UserStrings.UserCouldntBindToWFAndAdminDescGroups);
-			}
-			
+            // Пользователь не может быть одновременно добавлен в группу использующую параллельный Workflow ,в группу "Администраторы" или в ее потомков
+            if(Groups.Where(g => g.UseParallelWorkflow).Any())
+            {
+                IEnumerable<int> groupIDs = Groups.Select(g => g.Id);
+                bool userInAdminDescGroups =  
+                    UserGroupRepository.GetAdministratorsHierarhy()
+                    .Select(r => Convert.ToInt32(r.Field<decimal>("CHILD")))
+                    .Intersect(groupIDs)
+                    .Any();
+                if (userInAdminDescGroups)
+                    errors.ErrorForModel(UserStrings.UserCouldntBindToWFAndAdminDescGroups);
+            }
+            
 
-			if (!String.IsNullOrEmpty(NewPassword))
-			{
-				if (NewPassword.Length < 7 || NewPassword.Length > 20)
-					errors.ErrorFor(u => u.NewPassword, String.Format(UserStrings.PasswordLengthExceeded, 7, 20));
+            if (!String.IsNullOrEmpty(NewPassword))
+            {
+                if (NewPassword.Length < 7 || NewPassword.Length > 20)
+                    errors.ErrorFor(u => u.NewPassword, String.Format(UserStrings.PasswordLengthExceeded, 7, 20));
 
-				if (NewPassword.Contains(LogOn) || LogOn.Contains(NewPassword))
-					errors.ErrorFor(u => u.LogOn, UserStrings.PasswordContainsLogin);
+                if (NewPassword.Contains(LogOn) || LogOn.Contains(NewPassword))
+                    errors.ErrorFor(u => u.LogOn, UserStrings.PasswordContainsLogin);
 
-				if (!IsPasswordComplex(NewPassword))
-					errors.ErrorFor(u => u.NewPassword, UserStrings.PasswordNotComplex);
+                if (!IsPasswordComplex(NewPassword))
+                    errors.ErrorFor(u => u.NewPassword, UserStrings.PasswordNotComplex);
 
-				if (NewPassword != NewPasswordCopy)
-					errors.ErrorFor(u => u.NewPasswordCopy, UserStrings.NewPasswordAndCopyDoesntMatch);
-			}
+                if (NewPassword != NewPasswordCopy)
+                    errors.ErrorFor(u => u.NewPasswordCopy, UserStrings.NewPasswordAndCopyDoesntMatch);
+            }
 
-			if (!errors.IsEmpty)
-				throw errors;
-		}
+            if (!errors.IsEmpty)
+                throw errors;
+        }
 
-		public override string PropertyIsNotUniqueMessage
-		{
-			get
-			{
-				return UserStrings.LoginNotUnique;
-			}
-		}
+        public override string PropertyIsNotUniqueMessage
+        {
+            get
+            {
+                return UserStrings.LoginNotUnique;
+            }
+        }
 
-		public override string UniquePropertyName
-		{
-			get
-			{
-				Expression<Func<object>> f = (() => this.LogOn);
-				return f.GetPropertyName();
-			}
-		}
+        public override string UniquePropertyName
+        {
+            get
+            {
+                Expression<Func<object>> f = (() => this.LogOn);
+                return f.GetPropertyName();
+            }
+        }
 
-		internal void MutateLogin()
-		{
-			string login = LogOn;
-			int index = 0;
-			do
-			{
-				index++;
-				LogOn = MutateHelper.MutateUserLogin(login, index);
-			}
-			while (EntityObjectRepository.CheckNameUniqueness(this));
-		}
-	}
+        internal void MutateLogin()
+        {
+            string login = LogOn;
+            int index = 0;
+            do
+            {
+                index++;
+                LogOn = MutateHelper.MutateUserLogin(login, index);
+            }
+            while (EntityObjectRepository.CheckNameUniqueness(this));
+        }
+    }
 }

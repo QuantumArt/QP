@@ -1794,16 +1794,17 @@ Quantumart.QP8.ControlHelpers.correctPreviewSize = function Quantumart$QP8$Contr
 };
 
 Quantumart.QP8.ControlHelpers.downloadFile = function Quantumart$QP8$ControlHelpers$downloadFile(url) {
-    var id = "hiddenDownloader";
-    var iframe = jQuery("#" + id).get(0);
-    if (!iframe) {
-        iframe = jQuery("<iframe>").attr({
-            id: id,
-            width: 0,
-            height: 0
-        }).appendTo(document.body).get(0);
-    }
-    iframe.src = url;
+  var id = "hiddenDownloader";
+  var iframe = $("#" + id).get(0);
+  if (!iframe) {
+    iframe = $("<iframe>").attr({
+      id: id,
+      width: 0,
+      height: 0
+    }).appendTo(document.body).get(0);
+  }
+
+  iframe.src = url;
 };
 
 Quantumart.QP8.ControlHelpers.downloadFileWithChecking = function Quantumart$QP8$ControlHelpers$downloadFileWithChecking(checkUrl, fileName) {

@@ -13,27 +13,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class SiteFolderController : QPController
     {
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.AddNewSiteFolder)]
 		[BackendActionContext(ActionCode.AddNewSiteFolder)]
 		public ActionResult New(string tabId, int parentId, int id)
-		{			
-			SiteFolder folder = SiteFolderService.New(parentId, id);			
+		{
+			SiteFolder folder = SiteFolderService.New(parentId, id);
 			SiteFolderViewModel model = SiteFolderViewModel.Create(folder, tabId, parentId);
 			return this.JsonHtml("FolderProperties", model);
 		}
 
 		[HttpPost]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ConnectionScope()]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.SiteFolder, "id")]
 		[ActionAuthorize(ActionCode.AddNewSiteFolder)]
 		[BackendActionContext(ActionCode.AddNewSiteFolder)]
 		[BackendActionLog]
 		[Record]
 		public ActionResult New(string tabId, int parentId, int id, FormCollection collection)
-		{			
-			SiteFolder folder = SiteFolderService.NewForSave(parentId, id);			
+		{
+			SiteFolder folder = SiteFolderService.NewForSave(parentId, id);
 			SiteFolderViewModel model = SiteFolderViewModel.Create(folder, tabId, parentId);
 			TryUpdateModel(model);
 			model.Validate(ModelState);
@@ -48,21 +48,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SiteFolderProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "id")]
 		[BackendActionContext(ActionCode.SiteFolderProperties)]
 		public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
 		{
 			SiteFolder folder = SiteFolderService.Read(id);
-			SiteFolderViewModel model = SiteFolderViewModel.Create(folder, tabId, parentId);			
+			SiteFolderViewModel model = SiteFolderViewModel.Create(folder, tabId, parentId);
 			model.SuccesfulActionCode = successfulActionCode;
 			return this.JsonHtml("FolderProperties", model);
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateSiteFolder)]
 		[BackendActionContext(ActionCode.UpdateSiteFolder)]
 		[BackendActionLog]
@@ -89,7 +89,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveSiteFolder)]
 		[BackendActionContext(ActionCode.RemoveSiteFolder)]
 		[BackendActionLog]
@@ -101,7 +101,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SiteFileProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "parentId")]
 		[BackendActionContext(ActionCode.SiteFileProperties)]
@@ -114,7 +114,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.UpdateSiteFile)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.SiteFolder, "parentId")]
 		[BackendActionContext(ActionCode.UpdateSiteFile)]

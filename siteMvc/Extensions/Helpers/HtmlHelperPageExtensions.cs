@@ -1,6 +1,6 @@
-﻿using Quantumart.QP8.Utils;
+﻿using System.Web.Mvc;
+using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.ViewModels;
-using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
@@ -40,7 +40,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// </summary>
         public static MvcHtmlString InitScript(this HtmlHelper html, ViewModel model)
         {
-            return MvcHtmlString.Create(html.PrepareInitScript(model).ToString() + html.RunInitScript(model).ToString());
+            return MvcHtmlString.Create(html.PrepareInitScript(model) + html.RunInitScript(model).ToString());
         }
     }
 }

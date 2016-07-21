@@ -1,15 +1,14 @@
-﻿Quantumart.QP8.BackendWorkflow = function (componentElem) {
+Quantumart.QP8.BackendWorkflow = function (componentElem) {
     this._componentElem = componentElem;
-    this._containerElem = jQuery('.workflowContainer', componentElem);    
+    this._containerElem = jQuery('.workflowContainer', componentElem);
     this._checkSinglePermisssionHandler = jQuery.proxy(this.checkSinglePermission, this);
     this._checkAllPermisssionsHandler = jQuery.proxy(this.checkAllPermisssions, this);
 };
 
-
 Quantumart.QP8.BackendWorkflow.prototype = {
     _componentElem: null,
     _resultElem: null,
-    _containerElem: null,    
+    _containerElem: null,
     _addItemHandler: null,
     _removeItemHandler: null,
     _tableHeader: null,
@@ -37,11 +36,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
         this._contentSelector = this._componentElem.closest('form').find('.workflow_content_selector');
 
-        var viewModel = {            
+        var viewModel = {
             items: this._items,
             contentSelector: this._contentSelector,
             checkSinglePermisssionHandler: this._checkSinglePermisssionHandler,
-            initializePickers: function (dom, element, index) {                
+            initializePickers: function (dom, element, index) {
                 Quantumart.QP8.ControlHelpers.initAllEntityDataLists(jQuery(dom));
                 jQuery(dom).find('.pep-user-selector').first().data('entity_data_list_component').selectEntities([element.UserId()]);
                 jQuery(dom).find('.pep-user-selector').last().data('entity_data_list_component').selectEntities([element.GroupId()]);
@@ -49,7 +48,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                 var activeContentsIds = this.contentSelector.find('input:checkbox:checked').map(function (index, elem) {
                     return $(elem).val();
                 }).get().join();
-                                
+
                 if (element.UserId() != null || element.GroupId() != null) {
                     $q.getJsonFromUrl(
                         "GET",
@@ -82,11 +81,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
             disposePickers: function (dom, element, index) {
                 Quantumart.QP8.ControlHelpers.destroyAllEntityDataLists(jQuery(dom));
                 jQuery(dom).remove();
-            }            
+            }
         };
 
-        ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: workflow.attr('id').replace('_workflow_control', '_template') } }, viewModel);        
-        this._resultElem = jQuery('.workflowResult', this._componentElem);                
+        ko.applyBindingsToNode(this._containerElem.get(0), { template: { name: workflow.attr('id').replace('_workflow_control', '_template') } }, viewModel);
+        this._resultElem = jQuery('.workflowResult', this._componentElem);
 
         var component = this;
         this._componentElem.closest('form').find('.workflow_control_selector').parent('div').find('.checkbox')
@@ -123,24 +122,24 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
     checkAllPermisssions: function () {
         var activeContentsIds = this.getCheckedContentsIds();
-        
+
         var usersAndGroups = jQuery.map(this._items(), function (elem, index) {
             return { StName: elem.StName, UserId: elem.UserId(), GroupId: elem.GroupId() };
         });
-        
+
         $q.getJsonFromUrl(
-			"GET",
-			CONTROLLER_URL_WORKFLOW + "CheckAllAccessOnContents",
-			{
-			    "contentIdsString": activeContentsIds,
-			    "modelString": JSON.stringify(usersAndGroups)
-			},
-			false,
-			false,
-			jQuery.proxy(function (data) {
-			    this._containerElem.find('span.workflow_permission_message').html('');
-			    for (var i in data) {
-			        var current_workflow_stage = this._containerElem.find('.' + data[i].StName);
+      "GET",
+      CONTROLLER_URL_WORKFLOW + "CheckAllAccessOnContents",
+      {
+          "contentIdsString": activeContentsIds,
+          "modelString": JSON.stringify(usersAndGroups)
+      },
+      false,
+      false,
+      jQuery.proxy(function (data) {
+          this._containerElem.find('span.workflow_permission_message').html('');
+          for (var i in data) {
+              var current_workflow_stage = this._containerElem.find('.' + data[i].StName);
                     var user_row = current_workflow_stage.find(':visible.workflow_user_row');
                     var group_row = current_workflow_stage.find(':visible.workflow_group_row');
 
@@ -154,11 +153,11 @@ Quantumart.QP8.BackendWorkflow.prototype = {
                         var oldHtml = span.html();
                         group_row.find('span.workflow_permission_message').html(oldHtml + '<br>' + data[i].Message);
                     }
-			    }
-			}, this)
-		);
+          }
+      }, this)
+    );
     },
-    
+
     checkSinglePermission: function (eventType, eventArgs) {
         var activeContentsIds = this.getCheckedContentsIds();
         var statusName = $(eventArgs._listElement).closest('fieldset').attr('Class').replace('workflow_fieldset', '');
@@ -169,28 +168,28 @@ Quantumart.QP8.BackendWorkflow.prototype = {
         else if (eventArgs.get_entityTypeCode() == "user_group")
             groupId = eventArgs.getSelectedEntities()[0] != null ? eventArgs.getSelectedEntities()[0].Id : null;
         $q.getJsonFromUrl(
-			"GET",
-			CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
-			{
-			    "contentIdsString": activeContentsIds,
-			    "statusName": statusName,
-			    "userIdString": userId,
-			    "groupIdString": groupId
-			},
-			false,
-			false,
-			function (data) {
-			        var current_workflow_stage = $(eventArgs._listElement).closest('fieldset');
-			        var user_row = current_workflow_stage.find(':visible.workflow_user_row');
-			        var group_row = current_workflow_stage.find(':visible.workflow_group_row');
-			        if (user_row.size() > group_row.size()) {//its user
-			            user_row.find('span.workflow_permission_message').html(data);
-			        }
-			        else { //its user group
-			            group_row.find('span.workflow_permission_message').html(data);
-			        }
-			}
-		);
+      "GET",
+      CONTROLLER_URL_WORKFLOW + "CheckUserOrGroupAccessOnContents",
+      {
+          "contentIdsString": activeContentsIds,
+          "statusName": statusName,
+          "userIdString": userId,
+          "groupIdString": groupId
+      },
+      false,
+      false,
+      function (data) {
+              var current_workflow_stage = $(eventArgs._listElement).closest('fieldset');
+              var user_row = current_workflow_stage.find(':visible.workflow_user_row');
+              var group_row = current_workflow_stage.find(':visible.workflow_group_row');
+              if (user_row.size() > group_row.size()) {//its user
+                  user_row.find('span.workflow_permission_message').html(data);
+              }
+              else { //its user group
+                  group_row.find('span.workflow_permission_message').html(data);
+              }
+      }
+    );
     },
 
     manageItems: function (e) {
@@ -248,10 +247,10 @@ Quantumart.QP8.BackendWorkflow.prototype = {
     },
 
     _setAsChanged: function () {
-    	var $field = jQuery(this._resultElem);
-    	$field.addClass(CHANGED_FIELD_CLASS_NAME);
-    	$field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $field.attr("name"), "value": this._items() });
-    	$field = null;
+      var $field = jQuery(this._resultElem);
+      $field.addClass(CHANGED_FIELD_CLASS_NAME);
+      $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $field.attr("name"), "value": this._items() });
+      $field = null;
     },
 
     destroyWorkflow: function () {
@@ -262,7 +261,7 @@ Quantumart.QP8.BackendWorkflow.prototype = {
 
         this._contentSelector
         .data('entity_data_list_component').detachObserver(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, this._checkAllPermisssionsHandler);
-        
+
         ko.cleanNode(containerElem.get(0));
         this._componentElem = null;
         this._containerElem = null;

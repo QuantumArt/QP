@@ -105,7 +105,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         #region List
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CustomActions)]
         [BackendActionContext(ActionCode.CustomActions)]
         public ActionResult Index(string tabId, int parentId)
@@ -127,7 +127,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         #endregion
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewCustomAction)]
         [BackendActionContext(ActionCode.AddNewCustomAction)]
         public ActionResult New(string tabId, int parentId)
@@ -138,8 +138,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.AddNewCustomAction)]
         [BackendActionContext(ActionCode.AddNewCustomAction)]
         [BackendActionLog]
@@ -163,7 +163,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CustomActionsProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.CustomAction, "id")]
         [BackendActionContext(ActionCode.CustomActionsProperties)]
@@ -176,8 +176,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.UpdateCustomAction)]
         [BackendActionContext(ActionCode.UpdateCustomAction)]
         [BackendActionLog]
@@ -200,7 +200,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.RemoveCustomAction)]
         [BackendActionContext(ActionCode.RemoveCustomAction)]
         [BackendActionLog]

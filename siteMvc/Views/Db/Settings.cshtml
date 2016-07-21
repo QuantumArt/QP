@@ -1,8 +1,5 @@
 ﻿@model DbViewModel
 
-@using Quantumart.QP8
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
 @using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.WebMvc.ViewModels
@@ -11,35 +8,47 @@
 {
 	using (Html.BeginFieldGroup(ContentStrings.Legend_BasicParameters))
 	{
-        @Html.CheckBoxFieldFor(s => s.Data.RecordActions, "OverridePanel");
+    @Html.CheckBoxFieldFor(s => s.Data.RecordActions, "OverridePanel")
 		using (Html.BeginPanel("OverridePanel"))
 		{
 			if (Model.Data.SingleUserId != null && Model.Data.SingleUserId != QPContext.CurrentUserId)
 			{
 				@Html.CheckBoxFieldFor(s => s.OverrideRecordsUser)
 			}
-            @Html.CheckBoxFieldFor(s => s.OverrideRecordsFile)
-        }
-        
-        @Html.HtmlFieldFor(s => s.Data.FpSettings,
-			@<div class="qp-expandedContent">
-				@Html.QpTextAreaFor(s => s.Data.FpSettings, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
-			</div>
-		)
-        @Html.CheckBoxFieldFor(s => s.Data.UseADSyncService);
-		@Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome);
-	    @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
+
+      @Html.CheckBoxFieldFor(s => s.OverrideRecordsFile)
     }
-    
+
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <span class="downloadRecords linkButton actionLink">
+          <a href="javascript: void(0)" class="@(ViewBag.IsRecordAvailableForDownload ? string.Empty : "disabled")">
+            <span class="icon download"><img src="/Backend/Content/Common/0.gif" alt="download record"></span>
+            <span class="text">@DBStrings.DownloadRecord</span>
+          </a>
+        </span>
+      </dd>
+    </dl>
+
+    @Html.HtmlFieldFor(s => s.Data.FpSettings,
+      @<div class="qp-expandedContent">
+        @Html.QpTextAreaFor(s => s.Data.FpSettings, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
+      </div>
+    )
+
+    @Html.CheckBoxFieldFor(s => s.Data.UseADSyncService)
+	  @Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome)
+	  @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
+  }
 
 	@Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
-
 }
 
 <script type="text/html" id="@Html.UniqueId("Data_AppSettings_template")">
 	<span data-bind="click: addItem">
-        @Html.SimpleAddActionLink(DBStrings.AddAppSetting)
+    @Html.SimpleAddActionLink(DBStrings.AddAppSetting)
 	</span>
 	<table>
 		<thead>
@@ -54,10 +63,26 @@
 				<td data-bind="text: $index() + 1"></td>
 				<td><input class="textbox" data-bind="value: Key, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
 				<td><input class="textbox" data-bind="value: Value, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
-                <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
+        <td><img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" alt="delete" data-bind="click: $root.removeItem"/></td>
 			</tr>
 		</tbody>
 	</table>
 </script>
 
-@Html.InitScript(Model)
+@Html.PrepareInitScript(Model)
+<script>
+  @(Model.ContextObjectName).set_initializedCallback(function() {
+    $(@Model.UniqueId("editingForm")).on('click', '.downloadRecords', function(e) {
+      $c.downloadFile("@Url.Action("GetRecordedUserActions")");
+    });
+
+    $(@Model.UniqueId("editingForm")).on('click', '.downloadRecords .disabled', function(e) {
+      e.preventDefault();
+    });
+  });
+
+  @(Model.ContextObjectName).set_terminatingCallback(function() {
+    $(@Model.UniqueId("editingForm")).off('click');
+  });
+</script>
+@Html.RunInitScript(Model)

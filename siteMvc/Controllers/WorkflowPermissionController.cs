@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		public WorkflowPermissionController(IPermissionService service) : base(service) { }
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.WorkflowPermissions)]
 		[BackendActionContext(ActionCode.WorkflowPermissions)]
 		public override ActionResult Index(string tabId, int parentId)
@@ -30,8 +30,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.AddNewWorkflowPermission)]		
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ActionAuthorize(ActionCode.AddNewWorkflowPermission)]
 		[BackendActionContext(ActionCode.AddNewWorkflowPermission)]
 		public override ActionResult New(string tabId, int parentId)
 		{
@@ -39,8 +39,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewWorkflowPermission)]
 		[BackendActionContext(ActionCode.AddNewWorkflowPermission)]
 		[BackendActionLog]
@@ -51,7 +51,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.WorkflowPermissionProperties)]
 		[BackendActionContext(ActionCode.WorkflowPermissionProperties)]
 		public override ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -60,8 +60,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateWorkflowPermission)]
 		[BackendActionContext(ActionCode.UpdateWorkflowPermission)]
 		[BackendActionLog]
@@ -73,7 +73,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveWorkflowPermission)]
 		[BackendActionContext(ActionCode.MultipleRemoveWorkflowPermission)]
 		[BackendActionLog]
@@ -85,7 +85,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveWorkflowPermission)]
 		[BackendActionContext(ActionCode.RemoveWorkflowPermission)]
 		[BackendActionLog]

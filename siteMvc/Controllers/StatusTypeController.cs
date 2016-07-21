@@ -24,7 +24,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		#region	list actions
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.StatusTypes)]
 		[BackendActionContext(ActionCode.StatusTypes)]
 		public ActionResult Index(string tabId, int parentId)
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#endregion
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.StatusTypeProperties)]
 		[BackendActionContext(ActionCode.StatusTypeProperties)]
 		public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
@@ -58,8 +58,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateStatusType)]
 		[BackendActionContext(ActionCode.UpdateStatusType)]
 		[BackendActionLog]
@@ -80,8 +80,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewStatusType)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
 		[BackendActionContext(ActionCode.AddNewStatusType)]
@@ -93,8 +93,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewStatusType)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
 		[BackendActionContext(ActionCode.AddNewStatusType)]
@@ -118,7 +118,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveStatusType)]
 		[BackendActionContext(ActionCode.RemoveStatusType)]
 		[BackendActionLog]
@@ -130,7 +130,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.MultipleSelectStatusesForWorkflow)]
 		[BackendActionContext(ActionCode.MultipleSelectStatusesForWorkflow)]
 		public ActionResult MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
@@ -146,7 +146,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		[BackendActionContext(ActionCode.MultipleSelectStatusesForWorkflow)]
 		public ActionResult _MultipleSelectForWorkflow(string tabId, string IDs, GridCommand command, int parentId)
 		{
-			ListResult<StatusTypeListItem> serviceResult = _statusTypeService.ListForWorkflow(command.GetListCommand(), Converter.ToInt32Collection(IDs, ','), parentId);			
+			ListResult<StatusTypeListItem> serviceResult = _statusTypeService.ListForWorkflow(command.GetListCommand(), Converter.ToInt32Collection(IDs, ','), parentId);
 			return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
 		}
     }

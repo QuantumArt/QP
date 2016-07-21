@@ -59,7 +59,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.LockedArticles)]
         [BackendActionContext(ActionCode.LockedArticles)]
         public ActionResult LockedArticles(string tabId, int parentId, int id)
@@ -81,7 +81,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticlesForApproval)]
         [BackendActionContext(ActionCode.ArticlesForApproval)]
         public ActionResult ArticlesForApproval(string tabId, int parentId, int id)
@@ -105,7 +105,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope()]
         [ActionAuthorize(ActionCode.UnlockArticles)]
         [BackendActionContext(ActionCode.UnlockArticles)]
         [BackendActionLog]

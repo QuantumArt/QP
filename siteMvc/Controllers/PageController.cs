@@ -13,7 +13,7 @@ using Telerik.Web.Mvc;
 namespace Quantumart.QP8.WebMvc.Controllers
 {
 	public class PageController : QPController
-    {        
+    {
 		IPageService _pageService;
 
 		public PageController(IPageService pageService)
@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.Pages)]
 		[BackendActionContext(ActionCode.Pages)]
 		public ActionResult IndexPages(string tabId, int parentId)
@@ -43,7 +43,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.AddNewPage)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Page, "parentId")]
 		[BackendActionContext(ActionCode.AddNewPage)]
@@ -55,8 +55,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewPage)]
 		[BackendActionContext(ActionCode.AddNewPage)]
 		[BackendActionLog]
@@ -78,7 +78,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.PageProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Page, "id")]
 		[BackendActionContext(ActionCode.PageProperties)]
@@ -92,8 +92,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdatePage)]
 		[BackendActionContext(ActionCode.UpdatePage)]
 		[BackendActionLog]
@@ -115,7 +115,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemovePage)]
 		[BackendActionContext(ActionCode.MultipleRemovePage)]
 		[BackendActionLog]
@@ -127,7 +127,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemovePage)]
 		[BackendActionContext(ActionCode.RemovePage)]
 		[BackendActionLog]
@@ -140,7 +140,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CancelPage)]
 		[BackendActionContext(ActionCode.CancelPage)]
 		public ActionResult CancelPage(int id)
@@ -150,7 +150,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.SelectPageForObjectForm)]
 		[BackendActionContext(ActionCode.SelectPageForObjectForm)]
 		public ActionResult SelectPages(string tabId, int parentId, int id)
@@ -208,7 +208,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CaptureLockPage)]
 		[BackendActionContext(ActionCode.CaptureLockPage)]
 		[BackendActionLog]
@@ -220,7 +220,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CreateLikePage)]
 		[BackendActionContext(ActionCode.CreateLikePage)]
 		[BackendActionLog]

@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region list actions
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.Fields)]
 		public ActionResult Index(string tabId, int parentId)
 		{
@@ -39,12 +39,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		#endregion
-		
+
 		#region form actions
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewField)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
 		[BackendActionContext(ActionCode.AddNewField)]
@@ -57,8 +57,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ValidateInput(false)]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewField)]
 		[BackendActionContext(ActionCode.AddNewField)]
 		[BackendActionLog]
@@ -90,10 +90,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 					ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
 					return this.JsonHtml("Properties", model);
 				}
-				return this.Redirect("Properties", new { 
-					tabId = tabId, 
-					parentId = parentId, 
-					id = model.Data.Id, 
+				return this.Redirect("Properties", new {
+					tabId = tabId,
+					parentId = parentId,
+					id = model.Data.Id,
 					successfulActionCode = backendActionCode,
 					viewInListAffected = model.Data.ViewInList
 				});
@@ -103,7 +103,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.FieldProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Field, "id")]
 		[BackendActionContext(ActionCode.FieldProperties)]
@@ -119,8 +119,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ValidateInput(false)]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateField)]
 		[BackendActionContext(ActionCode.UpdateField)]
 		[BackendActionLog]
@@ -160,11 +160,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 				}
                 int newOrder = model.Data.Order;
 				bool newViewInList = model.Data.ViewInList;
-				return this.Redirect("Properties", new { 
-					tabId = tabId, 
-					parentId = parentId, 
-					id = model.Data.Id, 
-					successfulActionCode = backendActionCode, 
+				return this.Redirect("Properties", new {
+					tabId = tabId,
+					parentId = parentId,
+					id = model.Data.Id,
+					successfulActionCode = backendActionCode,
 					orderChanged = (newOrder != oldOrder),
 					viewInListAffected = (newViewInList != oldViewInList)
 				});
@@ -174,7 +174,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.VirtualFieldProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.VirtualField, "id")]
 		[BackendActionContext(ActionCode.VirtualFieldProperties)]
@@ -190,8 +190,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ValidateInput(false)]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateVirtualField)]
 		[BackendActionContext(ActionCode.UpdateVirtualField)]
 		[BackendActionLog]
@@ -226,11 +226,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 					return JsonHtml("Properties", model);
 				}
 				bool newViewInList = model.Data.ViewInList;
-                return Redirect("VirtualProperties", new { 
-					tabId = tabId, 
-					parentId = parentId, 
-					id = model.Data.Id, 
-					successfulActionCode = Constants.ActionCode.UpdateField, 
+                return Redirect("VirtualProperties", new {
+					tabId = tabId,
+					parentId = parentId,
+					id = model.Data.Id,
+					successfulActionCode = Constants.ActionCode.UpdateField,
 					orderChanged = (oldOrder != model.Data.Order),
 					viewInListAffected = (newViewInList != oldViewInList)
 				});
@@ -241,7 +241,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveField)]
 		[BackendActionContext(ActionCode.RemoveField)]
 		[BackendActionLog]
@@ -254,7 +254,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveField)]
 		[BackendActionContext(ActionCode.MultipleRemoveField)]
 		[BackendActionLog]
@@ -270,7 +270,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		#region select actions
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
 		[BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
 		public ActionResult MultipleSelectForExport(string tabId, int parentId, int[] IDs)
@@ -279,7 +279,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 
 			FieldSelectableListViewModel model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExport);
-			
+
             model.IsMultiple = true;
 			return this.JsonHtml("MultiSelectIndex", model);
 		}
@@ -295,7 +295,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
 		[BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
 		public ActionResult MultipleSelectForExportExpanded(string tabId, int parentId, int[] IDs)
@@ -320,7 +320,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CreateLikeField)]
 		[BackendActionContext(ActionCode.CreateLikeField)]
 		[BackendActionLog]
