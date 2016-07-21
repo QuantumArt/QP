@@ -12,9 +12,15 @@ namespace Quantumart.QP8.BLL.Services.API
 
 		public FieldService(string connectionString, int userId) : base(connectionString, userId)
 		{
+
 		}
-		
-		public Field Read(int id)
+
+        public FieldService(int userId) : base(userId)
+        {
+
+        }
+
+        public Field Read(int id)
 		{
 			using (new QPConnectionScope(ConnectionString))
 			{

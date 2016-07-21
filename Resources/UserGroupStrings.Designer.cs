@@ -196,6 +196,33 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to NT-group.
+        /// </summary>
+        public static string NtGroup {
+            get {
+                return ResourceManager.GetString("NtGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid NT-group.
+        /// </summary>
+        public static string NtGroupInvalidFormat {
+            get {
+                return ResourceManager.GetString("NtGroupInvalidFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The length of NT-group should not exceed {5} characters!.
+        /// </summary>
+        public static string NtGroupLengthExceeded {
+            get {
+                return ResourceManager.GetString("NtGroupLengthExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parent group could not use parallel workflow.
         /// </summary>
         public static string ParentCouldntUseWorkflow {

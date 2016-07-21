@@ -8,10 +8,10 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
-using Quantumart.QP8.BLL.Services.MultistepActions.Import.Csv;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

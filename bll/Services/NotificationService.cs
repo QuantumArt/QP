@@ -8,7 +8,6 @@ using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Exceptions;
 
 namespace Quantumart.QP8.BLL.Services
@@ -23,7 +22,7 @@ namespace Quantumart.QP8.BLL.Services
 
         Notification ReadNotificationProperties(int id);
 
-		Notification SaveNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl);
+        Notification SaveNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl);
 
         Notification UpdateNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl);
 
@@ -33,132 +32,141 @@ namespace Quantumart.QP8.BLL.Services
 
         IEnumerable<ListItem> GetStringFieldsAsListItemsByContentId(int contentId);
 
-		MessageResult UnbindNotification(int notificationId);
+        MessageResult UnbindNotification(int notificationId);
 
-		MessageResult Remove(int id);
+        MessageResult Remove(int id);
 
-		NotificationObjectFormat ReadNotificationTemplateFormat(int id);
+        NotificationObjectFormat ReadNotificationTemplateFormat(int id);
 
-		PageTemplate ReadPageTemplateByObjectFormatId(int id);
+        PageTemplate ReadPageTemplateByObjectFormatId(int id);
 
-		NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item);
+        NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item);
 
-		NotificationObjectFormat ReadNotificationTemplateFormatForUpdate(int id);
+        NotificationObjectFormat ReadNotificationTemplateFormatForUpdate(int id);
 
-		Notification ReadNotificationPropertiesForUpdate(int id);
+        Notification ReadNotificationPropertiesForUpdate(int id);
 
-		Notification NewNotificationPropertiesForUpdate(int parentId);
+        Notification NewNotificationPropertiesForUpdate(int parentId);
 
-		NotificationInitListResult InitList(int parentId);
+        NotificationInitListResult InitList(int parentId);
 
-		MessageResult MultipleRemove(int[] IDs);
+        MessageResult MultipleRemove(int[] ids);
 
-		MessageResult AssembleNotification(int id);
+        MessageResult AssembleNotification(int id);
 
-		MessageResult AssembleNotificationPreAction(int id);
+        MessageResult AssembleNotificationPreAction(int id);
 
-		MessageResult MultipleAssembleNotificationPreAction(int[] IDs);
+        MessageResult MultipleAssembleNotificationPreAction(int[] ids);
 
-		MessageResult MultipleAssembleNotification(int[] IDs);
+        MessageResult MultipleAssembleNotification(int[] ids);
 
-		bool IsSiteDotNetByObjectFormatId(int objectFormattId);
-	}
+        bool IsSiteDotNetByObjectFormatId(int objectFormattId);
+    }
 
-	public class NotificationService: INotificationService
-	{
-		public MessageResult AssembleNotificationPreAction(int id)
-		{
-			var site = NotificationRepository.GetPropertiesById(id).Content.Site;
-			string message = (!site.IsLive) ? null : String.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
-			return (String.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
-		}
+    public class NotificationService: INotificationService
+    {
+        public MessageResult AssembleNotificationPreAction(int id)
+        {
+            var site = NotificationRepository.GetPropertiesById(id).Content.Site;
+            var message = (!site.IsLive) ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
+            return (string.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+        }
 
-		public MessageResult AssembleNotification(int id)
-		{
-			var notification = NotificationRepository.GetPropertiesById(id);
+        public MessageResult AssembleNotification(int id)
+        {
+            var notification = NotificationRepository.GetPropertiesById(id);
 
-			var cnt = new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification, QPContext.CurrentCustomerCode);
-			cnt.Assemble();
-			return null;
-		}
-
-		public MessageResult MultipleAssembleNotification(int[] IDs)
-		{
-			List<Notification> notifications = IDs.Select(NotificationRepository.GetPropertiesById).ToList();
-
-		    foreach (var cnt in notifications.Select(notification => new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification, QPContext.CurrentCustomerCode)))
-		    {
-		        cnt.Assemble();
-		    }
-
-		    return null;
-		}
-
-		public MessageResult MultipleAssembleNotificationPreAction(int[] IDs)
-		{
-			if (IDs == null)
-				throw new ArgumentNullException("IDs");
-			var site = NotificationRepository.GetPropertiesById(IDs[0]).Content.Site;
-			string message = (!site.IsLive) ? null : String.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
-			return (String.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
-		}
-
-		public MessageResult MultipleRemove(int[] IDs)
-		{
-			if (IDs == null)
-				throw new ArgumentNullException("IDs");
-						
-			NotificationRepository.MultipleDelete(IDs);
-			
+            if (notification.FormatId != null)
+            {
+                var cnt = new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification, QPContext.CurrentCustomerCode);
+                cnt.Assemble();
+            }
             return null;
-		}
+        }
 
-		public NotificationInitListResult InitList(int contentId)
-		{
-			return new NotificationInitListResult
-			{
-				IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewNotification) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update)
-			};
-		}
+        public MessageResult MultipleAssembleNotification(int[] ids)
+        {
+            var notifications = ids.Select(NotificationRepository.GetPropertiesById).ToList();
 
-		public Notification NewNotificationPropertiesForUpdate(int parentId)
-		{
-			return NewNotificationProperties(parentId);
-		}
+            foreach (var cnt in notifications.Select(notification =>
+            {
+                if (notification.FormatId != null)
+                    return new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification,
+                        QPContext.CurrentCustomerCode);
+                return null;
+            }))
+            {
+                cnt.Assemble();
+            }
 
-		public Notification ReadNotificationPropertiesForUpdate(int id)
-		{
-			return ReadNotificationProperties(id);
-		}
+            return null;
+        }
 
-		public NotificationObjectFormat ReadNotificationTemplateFormatForUpdate(int id)
-		{
-			return ReadNotificationTemplateFormat(id);
-		}
+        public MessageResult MultipleAssembleNotificationPreAction(int[] ids)
+        {
+            if (ids == null)
+                throw new ArgumentNullException(nameof(ids));
+            var site = NotificationRepository.GetPropertiesById(ids[0]).Content.Site;
+            var message = (!site.IsLive) ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
+            return (string.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+        }
 
-		public NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item)
-		{
-		    if (item == null)
-		        throw new ArgumentNullException("item");
-		    return ObjectFormatRepository.UpdateNotificationTemplateFormat(item);
-		}
+        public MessageResult MultipleRemove(int[] ids)
+        {
+            if (ids == null)
+                throw new ArgumentNullException(nameof(ids));
+                        
+            NotificationRepository.MultipleDelete(ids);
+            
+            return null;
+        }
 
-		public NotificationObjectFormat ReadNotificationTemplateFormat(int id)
-		{
-			return ObjectFormatRepository.ReadNotificationTemplateFormat(id);
-		}
+        public NotificationInitListResult InitList(int contentId)
+        {
+            return new NotificationInitListResult
+            {
+                IsAddNewAccessable = SecurityRepository.IsActionAccessible(ActionCode.AddNewNotification) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update)
+            };
+        }
 
-		public MessageResult Remove(int id)
-		{
-			Notification notification = NotificationRepository.GetPropertiesById(id);
-			if (notification == null)
-				throw new ApplicationException(String.Format(NotificationStrings.NotificationNotFound, id));
-			NotificationRepository.Delete(id);
-			return null;
-		}		
+        public Notification NewNotificationPropertiesForUpdate(int parentId)
+        {
+            return NewNotificationProperties(parentId);
+        }
 
-		public IEnumerable<ListItem> GetStringFieldsAsListItemsByContentId(int contentId)
-		{
+        public Notification ReadNotificationPropertiesForUpdate(int id)
+        {
+            return ReadNotificationProperties(id);
+        }
+
+        public NotificationObjectFormat ReadNotificationTemplateFormatForUpdate(int id)
+        {
+            return ReadNotificationTemplateFormat(id);
+        }
+
+        public NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+            return ObjectFormatRepository.UpdateNotificationTemplateFormat(item);
+        }
+
+        public NotificationObjectFormat ReadNotificationTemplateFormat(int id)
+        {
+            return ObjectFormatRepository.ReadNotificationTemplateFormat(id);
+        }
+
+        public MessageResult Remove(int id)
+        {
+            var notification = NotificationRepository.GetPropertiesById(id);
+            if (notification == null)
+                throw new ApplicationException(string.Format(NotificationStrings.NotificationNotFound, id));
+            NotificationRepository.Delete(id);
+            return null;
+        }		
+
+        public IEnumerable<ListItem> GetStringFieldsAsListItemsByContentId(int contentId)
+        {
             return FieldRepository.GetFullList(contentId).Where(f => f.TypeId == 1).Select(field => new ListItem
             {
                 Text = field.Name,
@@ -179,31 +187,31 @@ namespace Quantumart.QP8.BLL.Services
 
         public Notification UpdateNotificationProperties(Notification notification, bool createDefaultFormat, string backendUrl)
         {
-			if (createDefaultFormat  && !notification.FormatId.HasValue && !notification.IsExternal)
-			{
-				notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);				
-			}
+            if (createDefaultFormat  && !notification.FormatId.HasValue && !notification.IsExternal)
+            {
+                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);				
+            }
             return NotificationRepository.UpdateProperties(notification);
         }
 
         public Notification SaveNotificationProperties(Notification notification,  bool createDefaultFormat, string backendUrl)
         {
-			if (ContentRepository.IsAnyAggregatedFields(notification.ParentEntityId))
-				throw ActionNotAllowedException.CreateNotAllowedForAggregatedContentException();
+            if (ContentRepository.IsAnyAggregatedFields(notification.ParentEntityId))
+                throw ActionNotAllowedException.CreateNotAllowedForAggregatedContentException();
 
-			if (createDefaultFormat && !notification.IsExternal)
-			{
-				notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);				
-			}
-            Notification result = NotificationRepository.SaveProperties(notification);
-			return result;
+            if (createDefaultFormat && !notification.IsExternal)
+            {
+                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);				
+            }
+            var result = NotificationRepository.SaveProperties(notification);
+            return result;
         }
 
         public Notification ReadNotificationProperties(int id)
         {
-            Notification notification = NotificationRepository.GetPropertiesById(id);
+            var notification = NotificationRepository.GetPropertiesById(id);
             if (notification == null)
-                throw new ApplicationException(String.Format(NotificationStrings.NotificationNotFound, id));
+                throw new ApplicationException(string.Format(NotificationStrings.NotificationNotFound, id));
             return notification;
         }
 
@@ -215,7 +223,7 @@ namespace Quantumart.QP8.BLL.Services
         public ListResult<NotificationListItem> GetNotificationsByContentId(ListCommand cmd, int contentId)
         {
             int totalRecords;
-            IEnumerable<NotificationListItem> list = NotificationRepository.List(cmd, contentId, out totalRecords);
+            var list = NotificationRepository.List(cmd, contentId, out totalRecords);
             return new ListResult<NotificationListItem>
             {
                 Data = list.ToList(),
@@ -225,45 +233,45 @@ namespace Quantumart.QP8.BLL.Services
 
         public void SendNotification(string connectionString, int id, string code)
         {
-			Site site = null;
-			using (new QPConnectionScope(connectionString))
-			{
-				Article article = ArticleRepository.GetById(id);
-				if(article == null)
-					throw new ArgumentException(String.Format(ArticleStrings.ArticleNotFound, id));
-				site = article.Content.Site;
-			}
-			
-			NotificationRepository repository = new NotificationRepository();
-			string[] codes = code.Split(';');
-			foreach (string currentCode in codes)
-				repository.SendNotification(connectionString, site.Id, currentCode, id, site.IsLive || site.AssembleFormatsInLive);
-		}
+            Site site;
+            using (new QPConnectionScope(connectionString))
+            {
+                var article = ArticleRepository.GetById(id);
+                if(article == null)
+                    throw new ArgumentException(string.Format(ArticleStrings.ArticleNotFound, id));
+                site = article.Content.Site;
+            }
+            
+            var repository = new NotificationRepository();
+            var codes = code.Split(';');
+            foreach (var currentCode in codes)
+                repository.SendNotification(connectionString, site.Id, currentCode, id, site.IsLive || site.AssembleFormatsInLive);
+        }
 
-		public MessageResult UnbindNotification(int notificationId)
-		{
-			var notification = ReadNotificationProperties(notificationId);
-			notification.WorkFlowId = null;
-			NotificationRepository.UpdateProperties(notification);
-			return MessageResult.Info(NotificationStrings.UnbindedMessage);			
-		}
+        public MessageResult UnbindNotification(int notificationId)
+        {
+            var notification = ReadNotificationProperties(notificationId);
+            notification.WorkFlowId = null;
+            NotificationRepository.UpdateProperties(notification);
+            return MessageResult.Info(NotificationStrings.UnbindedMessage);			
+        }
 
-		public bool IsSiteDotNetByObjectFormatId(int objectFormatId)
-		{
-			return ObjectFormatRepository.IsSiteDotNeByObjectFormatId(objectFormatId);
-		}
+        public bool IsSiteDotNetByObjectFormatId(int objectFormatId)
+        {
+            return ObjectFormatRepository.IsSiteDotNeByObjectFormatId(objectFormatId);
+        }
 
-		private int CreateDefaultFormat(int contentId, string backendUrl, string currentCustomerCode)
-		{
-			return ObjectFormatRepository.CreateDefaultFormat(contentId, backendUrl, currentCustomerCode);
-		}
+        private int CreateDefaultFormat(int contentId, string backendUrl, string currentCustomerCode)
+        {
+            return ObjectFormatRepository.CreateDefaultFormat(contentId, backendUrl, currentCustomerCode);
+        }
 
 
-		public PageTemplate ReadPageTemplateByObjectFormatId(int id)
-		{
-			var frmt = ReadNotificationTemplateFormat(id);
-			var obj = ObjectRepository.GetObjectPropertiesById(frmt.ObjectId);
-			return PageTemplateRepository.GetPageTemplatePropertiesById(obj.PageTemplateId);
-		}
-	}
+        public PageTemplate ReadPageTemplateByObjectFormatId(int id)
+        {
+            var frmt = ReadNotificationTemplateFormat(id);
+            var obj = ObjectRepository.GetObjectPropertiesById(frmt.ObjectId);
+            return PageTemplateRepository.GetPageTemplatePropertiesById(obj.PageTemplateId);
+        }
+    }
 }

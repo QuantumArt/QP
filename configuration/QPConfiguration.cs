@@ -93,6 +93,16 @@ namespace Quantumart.QP8.Configuration
 
         public static bool AllowSelectCustomerCode => ConfigVariable(Config.AllowSelectCustomerCode).ToLowerInvariant() == "yes";
 
+        public static string ADsConnectionString => ConfigVariable(Config.ADsConnectionStringKey).ToLowerInvariant();
+
+        public static string ADsConnectionUsername => ConfigVariable(Config.ADsConnectionUsernameKey);
+  
+        public static string ADsConnectionPassword => ConfigVariable(Config.ADsConnectionPasswordKey);
+
+        public static string ADsPath => ConfigVariable(Config.ADsPathKey);
+
+        public static string ADsFieldName => ConfigVariable(Config.ADsFieldNameKey).ToLowerInvariant();
+
         /// <summary>
         /// Конфигурационный файл QP
         /// </summary>

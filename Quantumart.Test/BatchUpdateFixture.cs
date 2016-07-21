@@ -588,7 +588,7 @@ namespace Quantumart.Test
                 Assert.That(fv, Is.Not.Null, NoClassifierField);
                 fv.Value = null;
 
-                ArticleService.Save(article);
+                ArticleService.Save(article, true);
             }
         }
 

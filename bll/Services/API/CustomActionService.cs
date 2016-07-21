@@ -10,9 +10,16 @@ namespace Quantumart.QP8.BLL.Services.API
 	{
 		public CustomActionService(string connectionString, int userId) :  base(connectionString, userId)
 		{
-		}
 
-		public CustomAction ReadByCode(string code)
+        }
+
+        public CustomActionService(int userId) : base(userId)
+        {
+
+        }
+
+
+        public CustomAction ReadByCode(string code)
 		{
 			using (new QPConnectionScope(ConnectionString))
 			{
