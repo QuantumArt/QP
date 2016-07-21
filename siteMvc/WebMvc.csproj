@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.2.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -137,7 +137,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -207,16 +207,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_GlobalResources\GridLocalization.ru-RU.designer.cs">
-      <DependentUpon>GridLocalization.ru-RU.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="App_GlobalResources\UploadLocalization.ru-RU.designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>UploadLocalization.ru-RU.resx</DependentUpon>
-    </Compile>
     <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
     <Compile Include="Controllers\ActionLogController.cs" />
     <Compile Include="Controllers\ActionPermissionController.cs" />
@@ -306,6 +296,7 @@
     <Compile Include="Extensions\Helpers\API\ReplayXmlException.cs" />
     <Compile Include="Extensions\Helpers\ControlOptions.cs" />
     <Compile Include="Extensions\Helpers\EntityDataListArgs.cs" />
+    <Compile Include="Extensions\Helpers\ErrorMessageGenerator.cs" />
     <Compile Include="Extensions\Helpers\GridExtensions.cs" />
     <Compile Include="Extensions\Helpers\HighlightedTAreaToolbarHelper.cs" />
     <Compile Include="Extensions\Helpers\HighlightModeSelectHelper.cs" />
@@ -1282,6 +1273,8 @@
     <Content Include="Content\codemirror\theme\zenburn.min.css" />
     <Content Include="Content\jquery.qtip.css" />
     <Content Include="Content\QP8\icons\16x16\crop.gif" />
+    <Content Include="Content\QP8\icons\16x16\green_arrow_down.png" />
+    <Content Include="Content\QP8\icons\16x16\green_arrow_up.png" />
     <Content Include="Content\QP8\imgareaselect\border-anim-h.gif" />
     <Content Include="Content\QP8\imgareaselect\border-anim-v.gif" />
     <Content Include="Content\QP8\imgareaselect\border-h.gif" />
@@ -1339,7 +1332,7 @@
     <Content Include="Content\QP8\icons\16x16\visual_editor_plugins.gif" />
     <Content Include="Content\QP8\icons\16x16\visual_editor_style.gif" />
     <Content Include="Content\QP8\icons\16x16\visual_editor_styles.gif" />
-    <Content Include="Content\version.6.3.css" />
+    <Content Include="Content\version.6.5.css" />
     <Content Include="gulpfile.js" />
     <Content Include="Content\ckeditor\CHANGES.md" />
     <Content Include="Content\ckeditor\LICENSE.md" />
@@ -1369,8 +1362,8 @@
     <Content Include="Content\codemirror\README.md" />
     <Content Include="Content\ckeditor\skins\moonocolor\readme.md" />
     <None Include="packages.config" />
-    <Content Include=".jscsrc" />
-    <Content Include=".jshintrc" />
+    <None Include=".jscsrc" />
+    <None Include=".jshintrc" />
     <Content Include="package.json" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\dialogs\aspell.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\plugin.js" />
@@ -1385,7 +1378,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\globalSettings.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
-    <None Include="Properties\PublishProfiles\abc.pubxml" />
+    <Content Include="Scripts\Quantumart\version.6.28.js" />
     <None Include="Scripts\jquery\jquery-1.7.1.intellisense.js" />
     <Content Include="Content\QpCodemirror.css" />
     <Content Include="Scripts\es5-shim.js" />
@@ -1580,9 +1573,6 @@
     <Compile Include="ViewModels\Workflow\WorkflowListViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowSourceListViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowViewModel.cs" />
-    <Compile Include="WebServices\NotificationWCFService.svc.cs">
-      <DependentUpon>NotificationWCFService.svc</DependentUpon>
-    </Compile>
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepBaseSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepCopySiteSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepExportSettings.js" />
@@ -1591,7 +1581,6 @@
     <Content Include="Scripts\Quantumart\Search\BackendArticleSearchBlock\ClassifierFieldSearch.js" />
     <Content Include="Scripts\Quantumart\Search\BackendContextBlock.js" />
     <Content Include="Scripts\Quantumart\Uploader\BackendPlUploader.js" />
-    <Content Include="Scripts\Quantumart\version.6.22.js" />
     <Content Include="Scripts\underscore.js" />
     <Content Include="ToCopy\default\container_code_cs.txt" />
     <Content Include="ToCopy\default\container_code_vb.txt" />
@@ -1614,11 +1603,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_GlobalResources\GridLocalization.ru-RU.resx">
-      <SubType>Designer</SubType>
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>GridLocalization.ru-RU.designer.cs</LastGenOutput>
-    </Content>
     <Content Include="Content\basic.css" />
     <Content Include="Content\Common\errors\bug.gif" />
     <Content Include="Content\Common\errors\compass.png" />
@@ -2196,9 +2180,9 @@
     <Content Include="Scripts\jquery\jquery.validate.js" />
     <Content Include="Scripts\microsoft\MicrosoftAjax.js" />
     <Content Include="Scripts\microsoft\MicrosoftAjax.debug.js" />
-    <Content Include="Views\Web.config">
+    <None Include="Views\Web.config">
       <SubType>Designer</SubType>
-    </Content>
+    </None>
     <Content Include="Views\Field\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
     </Content>
@@ -2293,22 +2277,12 @@
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="WebServices\NotificationWCFService.svc" />
-    <Content Include="WebServices\Web.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Content\build\" />
     <Folder Include="Content\imgareaselectcss\" />
     <Folder Include="Content\Temp\" />
     <Folder Include="ViewModels\Common\" />
     <Folder Include="Views\ContentFolder\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_GlobalResources\UploadLocalization.ru-RU.resx">
-      <Generator>GlobalResourceProxyGenerator</Generator>
-      <LastGenOutput>UploadLocalization.ru-RU.designer.cs</LastGenOutput>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
@@ -2340,6 +2314,9 @@
   </ProjectExtensions>
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.1\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.1\build\RazorGenerator.MsBuild.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(WebProjectOutputDir)\bin\Roslyn" md "$(WebProjectOutputDir)\bin\Roslyn" start /MIN xcopy /s /y /R "$(OutDir)roslyn\*.*" "$(WebProjectOutputDir)\bin\Roslyn"</PostBuildEvent>
+    <PostBuildEvent>
+      if not exist "$(WebProjectOutputDir)\bin\Roslyn" md "$(WebProjectOutputDir)\bin\Roslyn"
+      start /MIN xcopy /s /y /R "$(OutDir)roslyn\*.*" "$(WebProjectOutputDir)\bin\Roslyn"
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -16690,7 +16690,10 @@ namespace Quantumart.QP8.DAL
         /// <param name="fieldTitleCount">Initial value of the FieldTitleCount property.</param>
         /// <param name="includeRelationsInTitle">Initial value of the IncludeRelationsInTitle property.</param>
         /// <param name="useInChildContentFilter">Initial value of the UseInChildContentFilter property.</param>
-        public static FieldDAL CreateFieldDAL(global::System.Decimal id, global::System.Decimal contentId, global::System.String name, global::System.Decimal size, global::System.Decimal typeId, global::System.Decimal indexFlag, global::System.DateTime modified, global::System.DateTime created, global::System.Decimal lastModifiedBy, global::System.Decimal order, global::System.Decimal required, global::System.Decimal permanentFlag, global::System.Decimal primaryFlag, global::System.Decimal displayAsRadioButton, global::System.Boolean viewInList, global::System.Boolean readonlyFlag, global::System.Decimal allowStageEdit, global::System.Boolean autoLoad, global::System.Boolean useSiteLibrary, global::System.Boolean useArchiveArticles, global::System.Boolean autoExpand, global::System.Boolean fullPage, global::System.Boolean renameMatched, global::System.Boolean disableVersionControl, global::System.Boolean mapAsProperty, global::System.Boolean isLong, global::System.Boolean useForTree, global::System.Boolean autoCheckChildren, global::System.Boolean aggregated, global::System.Boolean isClassifier, global::System.Boolean changeable, global::System.Boolean useRelationSecurity, global::System.Boolean copyPermissionsToChildren, global::System.Boolean showAsRadioButtons, global::System.Boolean useForDefaultFiltration, global::System.Boolean hide, global::System.Boolean @override, global::System.Boolean useForContext, global::System.Boolean useForVariations, global::System.Boolean orderByTitle, global::System.Int32 fieldTitleCount, global::System.Boolean includeRelationsInTitle, global::System.Boolean useInChildContentFilter)
+        /// <param name="optimizeForHierarchy">Initial value of the OptimizeForHierarchy property.</param>
+        /// <param name="isLocalization">Initial value of the IsLocalization property.</param>
+        /// <param name="useSeparateReverseViews">Initial value of the UseSeparateReverseViews property.</param>
+        public static FieldDAL CreateFieldDAL(global::System.Decimal id, global::System.Decimal contentId, global::System.String name, global::System.Decimal size, global::System.Decimal typeId, global::System.Decimal indexFlag, global::System.DateTime modified, global::System.DateTime created, global::System.Decimal lastModifiedBy, global::System.Decimal order, global::System.Decimal required, global::System.Decimal permanentFlag, global::System.Decimal primaryFlag, global::System.Decimal displayAsRadioButton, global::System.Boolean viewInList, global::System.Boolean readonlyFlag, global::System.Decimal allowStageEdit, global::System.Boolean autoLoad, global::System.Boolean useSiteLibrary, global::System.Boolean useArchiveArticles, global::System.Boolean autoExpand, global::System.Boolean fullPage, global::System.Boolean renameMatched, global::System.Boolean disableVersionControl, global::System.Boolean mapAsProperty, global::System.Boolean isLong, global::System.Boolean useForTree, global::System.Boolean autoCheckChildren, global::System.Boolean aggregated, global::System.Boolean isClassifier, global::System.Boolean changeable, global::System.Boolean useRelationSecurity, global::System.Boolean copyPermissionsToChildren, global::System.Boolean showAsRadioButtons, global::System.Boolean useForDefaultFiltration, global::System.Boolean hide, global::System.Boolean @override, global::System.Boolean useForContext, global::System.Boolean useForVariations, global::System.Boolean orderByTitle, global::System.Int32 fieldTitleCount, global::System.Boolean includeRelationsInTitle, global::System.Boolean useInChildContentFilter, global::System.Boolean optimizeForHierarchy, global::System.Boolean isLocalization, global::System.Boolean useSeparateReverseViews)
         {
             FieldDAL fieldDAL = new FieldDAL();
             fieldDAL.Id = id;
@@ -16736,6 +16739,9 @@ namespace Quantumart.QP8.DAL
             fieldDAL.FieldTitleCount = fieldTitleCount;
             fieldDAL.IncludeRelationsInTitle = includeRelationsInTitle;
             fieldDAL.UseInChildContentFilter = useInChildContentFilter;
+            fieldDAL.OptimizeForHierarchy = optimizeForHierarchy;
+            fieldDAL.IsLocalization = isLocalization;
+            fieldDAL.UseSeparateReverseViews = useSeparateReverseViews;
             return fieldDAL;
         }
 
@@ -18425,6 +18431,78 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseInChildContentFilter;
         partial void OnUseInChildContentFilterChanging(global::System.Boolean value);
         partial void OnUseInChildContentFilterChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean OptimizeForHierarchy
+        {
+            get
+            {
+                return _OptimizeForHierarchy;
+            }
+            set
+            {
+                OnOptimizeForHierarchyChanging(value);
+                ReportPropertyChanging("OptimizeForHierarchy");
+                _OptimizeForHierarchy = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("OptimizeForHierarchy");
+                OnOptimizeForHierarchyChanged();
+            }
+        }
+        private global::System.Boolean _OptimizeForHierarchy;
+        partial void OnOptimizeForHierarchyChanging(global::System.Boolean value);
+        partial void OnOptimizeForHierarchyChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean IsLocalization
+        {
+            get
+            {
+                return _IsLocalization;
+            }
+            set
+            {
+                OnIsLocalizationChanging(value);
+                ReportPropertyChanging("IsLocalization");
+                _IsLocalization = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("IsLocalization");
+                OnIsLocalizationChanged();
+            }
+        }
+        private global::System.Boolean _IsLocalization;
+        partial void OnIsLocalizationChanging(global::System.Boolean value);
+        partial void OnIsLocalizationChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean UseSeparateReverseViews
+        {
+            get
+            {
+                return _UseSeparateReverseViews;
+            }
+            set
+            {
+                OnUseSeparateReverseViewsChanging(value);
+                ReportPropertyChanging("UseSeparateReverseViews");
+                _UseSeparateReverseViews = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UseSeparateReverseViews");
+                OnUseSeparateReverseViewsChanged();
+            }
+        }
+        private global::System.Boolean _UseSeparateReverseViews;
+        partial void OnUseSeparateReverseViewsChanging(global::System.Boolean value);
+        partial void OnUseSeparateReverseViewsChanged();
 
         #endregion
 

@@ -11,11 +11,11 @@
 @using (Html.BeginDocumentPadding())
 {
 
-	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+    if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
     {
         using (Html.BeginLinkButtonsList())
         {
-		@Html.AddNewItemLink(Model)
+            @Html.AddNewItemLink(Model)
         }
     }
 

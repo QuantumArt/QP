@@ -5,10 +5,12 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.ViewModels;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
@@ -94,7 +96,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         public ActionResult Select(string tabId, int parentId, int id, bool? boundToExternal)
         {
             var articleList = ArticleService.InitList(parentId, boundToExternal);
-            var model = ArticleListViewModel.Create(articleList, parentId, tabId, false, true, new[] { id });
+            var model = ArticleListViewModel.Create(articleList, parentId, tabId, false, true, id);
             return JsonHtml("Index", model);
         }
 
@@ -505,13 +507,28 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return Json(ArticleService.GetContextQuery(id, currentContext), JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost]
-        [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
         [ActionAuthorize(ActionCode.Articles)]
-        public ActionResult GetParentIds(int id, int fieldId)
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
+        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        public JsonCamelCaseResult<JSendResponse> GetParentIds(List<int> ids, int fieldId, string filter)
         {
-            return Json(ArticleService.GetParentIds(id, fieldId));
+            return new JSendResponse
+            {
+                Status = JSendStatus.Success,
+                Data = ArticleService.GetParentIds(ids, fieldId)
+            };
+        }
+
+        [ActionAuthorize(ActionCode.Articles)]
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
+        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        public JsonCamelCaseResult<JSendResponse> GetChildArticleIds(List<int> ids, int fieldId, string filter)
+        {
+            return new JSendResponse
+            {
+                Status = JSendStatus.Success,
+                Data = ArticleService.GetChildArticles(ids, fieldId, filter)
+            };
         }
         #endregion
     }

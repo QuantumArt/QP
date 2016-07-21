@@ -1,27 +1,23 @@
 ﻿@model ArticleListViewModel
 
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.BLL
-@using Quantumart.QP8.Resources
 @using Quantumart.QP8.WebMvc.ViewModels
 
 @using (Html.BeginDocumentPadding())
 {
-
-    if (Model.ShowAddNewItemButton && !Model.IsReadOnly)
+    using (Html.BeginLinkButtonsList())
     {
-        using (Html.BeginLinkButtonsList())
+        if (Model.ShowAddNewItemButton && !Model.IsReadOnly)
         {
-			@Html.AddNewItemLink(Model)
-            @Html.SelectAllLink(Model)
-            @Html.UnselectLink(Model)
+            @Html.AddNewItemLink(Model)
         }
-    }
-    
-    @Html.ArticleGrid(Model)
 
+        @Html.SelectAllLink(Model)
+        @Html.UnselectLink(Model)
+        <li class="doctab-title__element doctab-title__articles-count-label">Total selected articles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
+    }
+
+    @Html.ArticleGrid(Model)
 }
 
 @Html.InitScript(Model)
-
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

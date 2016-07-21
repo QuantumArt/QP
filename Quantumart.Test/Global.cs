@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Quantumart.QPublishing.Database;
+using System.Data.SqlClient;
+using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.Test
 {
@@ -27,6 +30,24 @@ namespace Quantumart.Test
                 .Select(n => (int) n.Field<decimal>("content_item_id"))
                 .OrderBy(n => n)
                 .ToArray();
+        }
+
+        public static int[] GetIdsFromArchive(DBConnector cnn, int[] ids)
+        {
+            return cnn.GetRealData($"select content_item_id from content_item where archive = 1 and content_item_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => (int)n.Field<decimal>("content_item_id"))
+                .OrderBy(n => n)
+                .ToArray();
+        }
+
+        public static Dictionary<string, int> GetIdsWithTitles(DBConnector cnn, int contentId)
+        {
+            return cnn.GetRealData($"select content_item_id, Title from content_{contentId}_united")
+                .AsEnumerable()
+                .Select(n => new {Id = (int) n.Field<decimal>("content_item_id"), Title = n.Field<string>("Title")})
+                .ToDictionary(n => n.Title, n => n.Id);
+
         }
 
 
@@ -134,6 +155,49 @@ namespace Quantumart.Test
                 .AsEnumerable()
                 .Select(n => (int)n.Field<decimal>("content_id"))
                 .Single();
+        }
+
+        public static int GetFieldId(DBConnector cnn, string contentName, string fieldName)
+        {
+            return cnn.FieldID(SiteId, contentName, fieldName);
+        }
+
+        public static void ClearContentData(DBConnector cnn, int articleId)
+        {
+            var query = "delete from CONTENT_DATA where CONTENT_ITEM_ID = @id";
+            var cmd = new SqlCommand(query);
+            cmd.Parameters.AddWithValue("@id", articleId);
+
+            cnn.GetRealData(cmd);
+        }
+
+        public static ContentDataItem[] GetContentData(DBConnector cnn, int articleId)
+        {
+            var query = "select * from CONTENT_DATA where CONTENT_ITEM_ID = @id";
+            var cmd = new SqlCommand(query);
+            cmd.Parameters.AddWithValue("@id", articleId);
+
+            return cnn.GetRealData(cmd)
+              .AsEnumerable()
+              .Select(n => new ContentDataItem
+              {
+                  FieldId = (int)n.Field<decimal>("ATTRIBUTE_ID"),
+                  Data = n.Field<string>("DATA"),
+                  BlobData = n.Field<string>("BLOB_DATA")
+              })
+              .ToArray();
+        }
+
+        public class ContentDataItem
+        {
+            public int FieldId { get; set; }
+            public string Data { get; set; }
+            public string BlobData { get; set; }
+            public override string ToString()
+            {
+                return new { FieldId, Data, BlobData }.ToString();
+            }
+
         }
     }
 }

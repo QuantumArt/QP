@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.DAL.DTO
 {
@@ -39,10 +40,24 @@ namespace Quantumart.QP8.DAL.DTO
         public int[] FilterIds { get; set; }
 	}
 
-	public class ContentReference
+	public class ContentReference : IEquatable<ContentReference>
 	{
 		public int ReferenceFieldID { get; set; }
 
 		public int TargetContentId { get; set; }
+
+	    public bool Equals(ContentReference otherRef)
+	    {
+	        if (object.ReferenceEquals(otherRef, null))
+                return false;
+	        if (object.ReferenceEquals(this, otherRef))
+	            return true;
+	        return (otherRef.TargetContentId == TargetContentId && otherRef.ReferenceFieldID == ReferenceFieldID);
+	    }
+
+	    public override int GetHashCode()
+	    {
+	        return $"{TargetContentId};{ReferenceFieldID}".GetHashCode();
+	    }
 	}
 }

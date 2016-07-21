@@ -61,7 +61,7 @@ var reportError = function(error) {
 
   gutil.beep();
   $.notify({
-    title: 'Task Failed [' + error.plugin + '] at [' + error.fileName + '],
+    title: 'Task Failed [' + error.plugin + '] at [' + error.fileName + ']',
     message: lineNumber + 'See console.',
     sound: 'Sosumi'
   }).write(error);

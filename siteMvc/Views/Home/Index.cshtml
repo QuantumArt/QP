@@ -6,74 +6,74 @@
 @model IndexViewModel
 
 @{
-	Layout = "~/Views/Shared/_Layout.cshtml";
+  Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <head>
-	<title>@Model.Title</title>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
-	<link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
+  <title>@Model.Title</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
+  <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
-	@{
-        const string jsVersion = "6.22";
-		var jsVersionFileName = $"Quantumart/version.{jsVersion}.js";
-	}
+  @{
+        const string jsVersion = "6.28";
+    var jsVersionFileName = $"Quantumart/version.{jsVersion}.js";
+  }
 
-	<link rel="stylesheet" href="@Url.Content("~/Content/build/app.min.css")">
-	<link rel="stylesheet" href="@Url.Action("CustomCss", "Css")">
+  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.min.css")">
+  <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")">
 
-	<script>
-		window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
-	</script>
+  <script>
+    window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
+  </script>
 </head>
 
 <body data-dbhash="@Model.DbHash">
-	<div id="page" class="twoColumnLayout">
-		<div id="header">
-			<div id="serviceActions">
-				@if (HttpContext.Current.IsDebuggingEnabled)
-				{
-					<a href="javascript:void(0);" id="traceWindowLink" class="js">@GlobalStrings.ServiceActions_Link_TraceConsole</a>
-				}
-			</div>
+  <div id="page" class="twoColumnLayout">
+    <div id="header">
+      <div id="serviceActions">
+        @if (HttpContext.Current.IsDebuggingEnabled)
+        {
+          <a href="javascript:void(0);" id="traceWindowLink" class="js">@GlobalStrings.ServiceActions_Link_TraceConsole</a>
+        }
+      </div>
 
-			<div id="communicationMessage">
-				<span class="singleusermode"></span>
-			</div>
+      <div id="communicationMessage">
+        <span class="singleusermode"></span>
+      </div>
 
-			<div id="userInformation">
-				@GlobalStrings.UserInfo_Label_LoggedInAs <span data-userid="@QPContext.CurrentUserId" class="userName">@QPContext.CurrentUserName</span>
-				@Html.ActionLink(GlobalStrings.UserInfo_Link_Exit, "LogOut", "LogOn", null, new { @class = "signOut" })
-			</div>
-		</div>
+      <div id="userInformation">
+        @GlobalStrings.UserInfo_Label_LoggedInAs <span data-userid="@QPContext.CurrentUserId" class="userName">@QPContext.CurrentUserName</span>
+        @Html.ActionLink(GlobalStrings.UserInfo_Link_Exit, "LogOut", "LogOn", null, new { @class = "signOut" })
+      </div>
+    </div>
 
-		@{Html.Telerik().Splitter()
+    @{Html.Telerik().Splitter()
         .Name("splitter")
         .Orientation(SplitterOrientation.Horizontal)
         .Panes(panes =>
         {
-	        panes.Add().Content(
+          panes.Add().Content(
             @<div id="menuContainer" style="display:none;">
-						  <div class="lineTop"></div>
-							<em class="tl"></em>
-							<em class="tr"></em>
-							<em class="bl"></em>
-							<em class="br"></em>
-							<div id="tree">
-							  @(Html.Telerik().TreeView().Name("MainTreeMenu"))
-						  </div>
-							<div class="lineBottom"></div>
-						</div>)
-					.Size("270px")
-					.MinSize("50px")
-					.MaxSize("400px")
-					.Collapsible(false)
-					.Resizable(true)
-					.Scrollable(false)
-					.HtmlAttributes(new { id = "leftMenu", @class = "corners" });
+              <div class="lineTop"></div>
+              <em class="tl"></em>
+              <em class="tr"></em>
+              <em class="bl"></em>
+              <em class="br"></em>
+              <div id="tree">
+                @(Html.Telerik().TreeView().Name("MainTreeMenu"))
+              </div>
+              <div class="lineBottom"></div>
+            </div>)
+          .Size("270px")
+          .MinSize("50px")
+          .MaxSize("400px")
+          .Collapsible(false)
+          .Resizable(true)
+          .Scrollable(false)
+          .HtmlAttributes(new { id = "leftMenu", @class = "corners" });
 
-	        panes.Add().Content(
+          panes.Add().Content(
             @<div>
               <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
               <div id="editingArea" class="corners"><div class="lineTop"></div>
@@ -85,18 +85,18 @@
                 <div id="toolbar"><div id="actionToolbar"></div><div id="viewToolbar"></div></div>
                 <div id="document"><div id="context"></div><div id="search"></div></div>
                 <div class="lineBottom"></div>
-							</div>
+              </div>
             </div>
           ).HtmlAttributes(new { id = "content", @class = "content" });
         }).Render();
-		}
-	</div>
+    }
+  </div>
 
-	@{
-		var allowCombineScripts = !HttpContext.Current.IsDebuggingEnabled;
-	}
+  @{
+    var allowCombineScripts = !HttpContext.Current.IsDebuggingEnabled;
+  }
 
-	@(Html.Telerik().ScriptRegistrar()
+  @(Html.Telerik().ScriptRegistrar()
       .DefaultGroup(g => g.Enabled(false))
         .Scripts(js => js.AddGroup("CommonLibraries", g => g
           .Add("es5-shim.js")
@@ -301,7 +301,8 @@
       ).Globalization(true))
 
 <script>
-	  var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
-	  var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
-	</script>
+    CKEDITOR.timestamp = '@jsVersion';
+    var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
+    var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
+  </script>
 </body>

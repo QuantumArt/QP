@@ -4,32 +4,31 @@
 
 <div class="row">
 	<span>
-		@Html.QpRadioButtonList((string)ViewBag.SelectorElementID,
-		new[] 
-		{
-			new QPSelectListItem
-			{
-				Text = ArticleStrings.SearchBlock_BySelector,
-				Selected = true,
-				Value = "0",
-			},
-			new QPSelectListItem
-			{
-				Text = ArticleStrings.SearchBlock_ByList,
-				Selected = false,
-				Value = "1"
-			}
-		},
-		new ControlOptions {Enabled = true}
-		)
+		@Html.QpRadioButtonList((string)ViewBag.SelectorElementID, new[]
+    {
+      new QPSelectListItem
+      {
+        Text = ArticleStrings.SearchBlock_BySelector,
+        Selected = true,
+        Value = "0",
+      },
+      new QPSelectListItem
+      {
+        Text = ArticleStrings.SearchBlock_ByList,
+        Selected = false,
+        Value = "1"
+      }
+    }, new ControlOptions { Enabled = true })
 	</span>
 </div>
 
-<div id="EntityContainer" class="row ">
-	@Html.Relation((string)ViewBag.RelationElementID,
+<div id="EntityContainer" class="row">
+	@Html.Relation(
+    (string)ViewBag.RelationElementID,
 		Html.List((IEnumerable<ListItem>)ViewBag.ItemList),
-		//new QPSelectListItem[0],
-		new ControlOptions(), RelationType.ManyToMany, true, 
+		new ControlOptions(),
+    RelationType.ManyToMany,
+    true,
 		new EntityDataListArgs()
 		{
 			EntityTypeCode = EntityTypeCode.Article,
@@ -42,21 +41,42 @@
 			MaxListHeight = 100,
 			MaxListWidth = 350,
 			Filter = ((Field)ViewBag.Field).RelationFilter,
-            ShowIds = true
+      ShowIds = true
 		}
 	)
 </div>
+
+@if (ViewBag.HasRelatedHierarchyContent)
+{
+  <ul class="linkButtons group">
+    <li>
+      <span class="expandParentsButton linkButton actionLink">
+        <a href="javascript:void(0);" class="disabled">
+          <span class="icon expandParents"><img src="/Backend/Content/Common/0.gif"></span>
+          <span class="text">@ArticleStrings.ExpandParents</span>
+        </a>
+      </span>
+    </li>
+    <li>
+      <span class="expandChildsButton linkButton actionLink">
+        <a href="javascript:void(0);" class="disabled">
+          <span class="icon expandChilds"><img src="/Backend/Content/Common/0.gif"></span>
+          <span class="text">@ArticleStrings.ExpandChilds</span>
+        </a>
+      </span>
+    </li>
+  </ul>
+}
 
 <div id="TextAreaContainer" class="row" style="display:none;">
  <span class="label">
 	@Html.QpLabel((string)ViewBag.RelationTextAreaElementID, ArticleStrings.SearchBlock_ListText, true)
   </span>
   <span class="field">
-    @Html.QpTextArea((string)ViewBag.RelationTextAreaElementID, "",
-	    new Dictionary<string, object> 
-	    {
-            { "class", "numbers-list"}
-	    })
+    @Html.QpTextArea((string)ViewBag.RelationTextAreaElementID, "", new Dictionary<string, object>
+	  {
+      { "class", "numbers-list"}
+	  })
   </span>
 </div>
 

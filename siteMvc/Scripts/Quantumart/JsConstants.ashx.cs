@@ -103,6 +103,8 @@ namespace Quantumart.QP8.WebMvc.Backend
             constants.AppendLine(GenerateStringConstant("ACTION_TYPE_CHILD_ENTITY_REMOVE_ALL", ActionTypeCode.ChildEntityPermissionRemoveAll));
             constants.AppendLine(GenerateStringConstant("ACTION_TYPE_CHILD_ENTITY_REMOVE", ActionTypeCode.ChildEntityPermissionRemove));
             constants.AppendLine(GenerateStringConstant("ACTION_TYPE_ACTION_PERMISSION_TREE", ActionTypeCode.ActionPermissionTree));
+            constants.AppendLine(GenerateStringConstant("ACTION_TYPE_SELECT_CHILD_ARTICLES", ActionTypeCode.SelectChildArticles));
+            constants.AppendLine(GenerateStringConstant("ACTION_TYPE_UNSELECT_CHILD_ARTICLES", ActionTypeCode.UnselectChildArticles));
 
             constants.AppendLine();
             constants.AppendLine(GenerateIntegerConstant("MAX_ITEMS_AFFECTED_NUMBER", 255));

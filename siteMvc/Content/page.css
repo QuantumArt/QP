@@ -5,36 +5,28 @@ HTML, BODY
 }
 
 /*#region Login form*/
-.loginFormLayout
-{
+.loginFormLayout #content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin: -100px 0 0 -150px;
+  width: 300px;
+  height: 200px;
+  background-color: #fff;
 }
 
-  .loginFormLayout #content
-  {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    margin: -100px 0 0 -150px;
-    width: 300px;
-    height: 200px;
-    background-color: #fff;
-  }
+.loginFormLayout .formLayout dt.label {
+  width: 8.0em;
+  white-space: nowrap;
+}
 
-  .loginFormLayout .formLayout DT.label
-  {
-    width: 8.0em;
-    white-space: nowrap;
-  }
+.loginFormLayout .formLayout dd.field {
+  margin-left: 8.5em;
+}
 
-  .loginFormLayout .formLayout DD.field
-  {
-    margin-left: 8.5em;
-  }
-
-  .loginFormLayout .validationSummary
-  {
-    margin-top: 0.5em;
-  }
+.loginFormLayout .validationSummary {
+  margin-top: 0.5em;
+}
 /*#endregion*/
 
 /*#region Two column layuot*/
@@ -267,13 +259,12 @@ HTML, BODY
     height: 24px;
 }
 
-.twoColumnLayout #editingArea
-{
-    display: none;
-    position: relative;
-    top: -4px;
-    margin: 0 6px 0 0;
-    padding: 0;
+.twoColumnLayout #editingArea {
+  display: none;
+  position: relative;
+  top: -7px;
+  margin: 3px 6px 0 0;
+  padding: 0;
 }
     .twoColumnLayout #editingArea .lineTop,
     .twoColumnLayout #editingArea .lineBottom

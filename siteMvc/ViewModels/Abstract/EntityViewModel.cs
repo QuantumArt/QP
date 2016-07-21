@@ -9,7 +9,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 {
     public abstract class EntityViewModel : ViewModel
     {
-        
+
         public EntityObject EntityData { get; set; }
 
         public string SuccesfulActionCode { get; set; }
@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         }
 
         #region creation
-            
+
         public static T Create<T>(EntityObject obj, string tabId, int parentId) where T : EntityViewModel, new()
         {
             var model = ViewModel.Create<T>(tabId, parentId);
@@ -68,7 +68,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
                 var saveAndCloseAction = Data?.SaveAndCloseAction;
                 if (saveAndCloseAction != null)
+                {
                     result.saveAndCloseActionCode = saveAndCloseAction.Code;
+                }
+
                 return result;
             }
         }
@@ -101,7 +104,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public virtual void Validate(ModelStateDictionary modelState)
         {
-            try 
+            try
             {
                 EntityData.Validate();
             }

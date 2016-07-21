@@ -98,19 +98,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             return result;
         }
 
-        public ActionResult JsonEmpty()
-        {
-            return new JsonNetResult<object>(new { success = true, view = string.Empty });
-        }
-
         public JsonResult JsonError(string msg)
         {
             return new JsonNetResult<object>(new { success = false, message = msg });
-        }
-
-        public JsonResult JsonError(Exception ex)
-        {
-            return JsonError(ex.Message);
         }
 
         public void PersistResultId(int id)

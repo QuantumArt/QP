@@ -19,9 +19,10 @@ using System.Reflection;
 using System.Threading;
 using System.Web;
 using Quantumart.QPublishing.Database;
+using Quantumart.QPublishing.Info;
 
 
-    <xsl:if test="@namespace">
+<xsl:if test="@namespace">
 namespace <xsl:value-of select="@namespace" /> 
 {
 </xsl:if>
@@ -541,22 +542,6 @@ public partial class <xsl:value-of select="@class" />
         return result;
     }
     
-    public string ReplaceUrls(string input)
-    {
-        string result = input;
-        if (result != null)
-        {
-            result = result.Replace(LongUploadUrl, uploadPlaceholder);
-            result = result.Replace(ShortUploadUrl, uploadPlaceholder);
-            result = result.Replace(LiveSiteUrl, sitePlaceholder);
-            result = result.Replace(StageSiteUrl, sitePlaceholder);
-            if (!String.Equals(LiveSiteUrlRel, "/")) result = result.Replace(LiveSiteUrlRel, sitePlaceholder);
-            if (!String.Equals(StageSiteUrlRel, "/")) result = result.Replace(StageSiteUrlRel, sitePlaceholder);
-        }
-        return result;
-    }
-            
-
     public override void SubmitChanges(System.Data.Linq.ConflictMode failureMode)
     {
         Cnn.ExternalTransaction = Transaction;
@@ -615,10 +600,18 @@ public partial class <xsl:value-of select="@class" />
             }
         }
     </xsl:if>	
-        
-
     }
-
+    
+    protected Dictionary&lt;string, string&gt; GetInitialValues(IQPContent instance)
+    {
+        return new Dictionary&lt;string, string&gt;
+        {
+            [SystemColumnNames.Id] = instance.Id.ToString(),
+            [SystemColumnNames.Visible] = instance.Visible ? "1" : "0",
+            [SystemColumnNames.Archive] = instance.Archive ? "1" : "0",
+            [SystemColumnNames.StatusTypeId] = instance.StatusTypeId.ToString()
+        };
+    }
 }
 </xsl:template>
 

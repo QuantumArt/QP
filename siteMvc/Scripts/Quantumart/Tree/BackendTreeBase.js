@@ -36,8 +36,10 @@ Quantumart.QP8.BackendTreeBase = function(treeElementId, options) {
     }
   }
 
-  this._onNodeClickingHandler = jQuery.proxy(this._onNodeClicking, this);
-  this._onIdClickingHandler = jQuery.proxy(this._onIdClicking, this);
+  Quantumart.QP8.Utils.bindProxies.call(this, [
+    '_onNodeClicking',
+    '_onIdClicking'
+  ]);
 };
 
 Quantumart.QP8.BackendTreeBase.prototype = {
@@ -55,7 +57,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _hostIsWindow: false,
 
   ROOT_NODE_CODE: 'root',
-
   ROOT_NODE_CLASS_NAME: 't-treeview',
   NODE_HOVER_CLASS_NAME: 't-state-hover',
   NODE_SELECTED_CLASS_NAME: 't-state-selected',
@@ -88,7 +89,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   _onNodeCheckboxClickHandler: null,
 
   initialize: function() {
-    var $tree = jQuery('#' + this._treeElementId);
+    var $tree = $('#' + this._treeElementId);
 
     var treeComponent = $tree.data('tTreeView'); // древовидное меню
     treeComponent.isAjax = this.isAjax;
@@ -103,22 +104,23 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     this._treeComponent = treeComponent;
 
     $tree
-          .unbind('select')
-    .undelegate(this.NODE_OLD_CLICKABLE_SELECTORS, 'click')
-    .delegate(this.NODE_NEW_CLICKABLE_SELECTORS, 'click', this._onNodeClickingHandler)
-          .delegate(this.NODE_ID_LINK_SELECTORS, 'click', this._onIdClickingHandler);
+      .unbind('select')
+      .undelegate(this.NODE_OLD_CLICKABLE_SELECTORS, 'click')
+      .delegate(this.NODE_NEW_CLICKABLE_SELECTORS, 'click', this._onNodeClickingHandler)
+      .delegate(this.NODE_ID_LINK_SELECTORS, 'click', this._onIdClickingHandler);
 
     $tree = null;
   },
 
   _initNodeCheck: function(treeComponent) {
-    var self = this;
+    treeComponent.nodeCheck = function(li, isChecked, suppressAutoCheck, autoCheckChildren) {
+      this._legacyNodeCheck.call(treeComponent, li, isChecked);
+      this.beforeCustomNodeCheck.call(this, li, isChecked, suppressAutoCheck, autoCheckChildren);
+      this._proceedAutoCheckAllChildren.call(this, li, isChecked, suppressAutoCheck, autoCheckChildren);
+      this.afterCustomNodeCheck.call(this, li, isChecked, suppressAutoCheck, autoCheckChildren);
+    }.bind(this);
 
-    treeComponent.nodeCheck = function(li, isChecked, suppressAutoCheck) {
-      self._legacyNodeCheck.call(treeComponent, li, isChecked);
-      self.customNodeCheck.call(self, li, isChecked, suppressAutoCheck);
-      self._proceedAutoCheckChildren.call(self, li, isChecked, suppressAutoCheck);
-    };
+    treeComponent.nodeCheckExcludeSelf = this._proceedAutoCheckDirectChildren.bind(this);
   },
 
   _initNewToggle: function(treeComponent) {
@@ -135,42 +137,37 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   getChildNodesContainer: function(node) {
     var $node = this.getNode(node);
-    var $childNodesContainer = jQuery('> UL.t-group', $node);
-
+    var $childNodesContainer = $('> UL.t-group', $node);
     $node = null;
     return $childNodesContainer;
   },
 
   getAllNodes: function() {
-    var $tree = jQuery(this._treeElement);
+    var $tree = $(this._treeElement);
     var $nodes = $tree.find('LI.t-item');
-
     $tree = null;
-
     return $nodes;
   },
 
   getSelectedNodes: function() {
-    var $selectedNodes = this.getAllNodes().filter(':has(> DIV > SPAN.' + this.NODE_SELECTED_CLASS_NAME + ')');
-
-    return $selectedNodes;
+    return this.getAllNodes().filter(':has(> DIV > SPAN.' + this.NODE_SELECTED_CLASS_NAME + ')');
   },
 
   getNode: function(node, parentNodeElem) {
     if ($q.isObject(node)) {
       return $q.toJQuery(node);
     } else if ($q.isString(node) || $q.isInt(node) || $q.isFloat(node)) {
-      $parentNode = jQuery(parentNodeElem);
+      $parentNode = $(parentNodeElem);
       if ($q.isNullOrEmpty($parentNode)) {
-        $parentNode = jQuery('#' + this._treeElementId);
+        $parentNode = $('#' + this._treeElementId);
       }
 
       var $node = null;
 
       if (node == this.ROOT_NODE_CODE) {
-        $node = jQuery('#' + this._treeElementId);
+        $node = $('#' + this._treeElementId);
       } else {
-        $node = jQuery("LI DIV INPUT:hidden[value='" + node + "']", $parentNode).parent().parent().filter('.t-item');
+        $node = $("LI DIV INPUT:hidden[value='" + node + "']", $parentNode).parent().parent().filter('.t-item');
         if ($node.length == 0) {
           $node = null;
         }
@@ -259,7 +256,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
     if (!$q.isNullOrEmpty($nodes)) {
       $nodes.each(function(index, nodeElem) {
-        var $node = jQuery(nodeElem);
+        var $node = $(nodeElem);
         self.refreshNode($node, options);
       });
     }
@@ -282,7 +279,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       makeLinksFromIds: this._makeLinksFromIds
     });
 
-    var $newNode = jQuery(nodeHtml.string());
+    var $newNode = $(nodeHtml.string());
     var cssClassNames = $newNode.attr('class');
     var htmlContent = $newNode.html();
 
@@ -326,6 +323,10 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     $group = null;
   },
 
+  _isSearchQueryEmpty: function() {
+    return true;
+  },
+
   refreshTree: function() {
     var maxExpandLevel = this._isSearchQueryEmpty() ? 1 : 0;
     $('ul.t-group', this._treeElement).remove();
@@ -333,9 +334,8 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   _onNodeClicking: function(e) {
-    var $element = jQuery(e.currentTarget);
-    var $node = jQuery($element.closest('.t-item')[0]);
-
+    var $element = $(e.currentTarget);
+    var $node = $($element.closest('.t-item')[0]);
     if (!this._treeComponent.shouldNavigate($element)) {
       $node = null;
       $element = null;
@@ -357,7 +357,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   expandNode: function(node) {
     var $node = this.getNode(node);
-
     if (!$q.isNullOrEmpty($node)) {
       this._treeComponent.expand($node);
     }
@@ -365,7 +364,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   collapseNode: function(node) {
     var $node = this.getNode(node);
-
     if (!$q.isNullOrEmpty($node)) {
       this._treeComponent.collapse($node);
     }
@@ -373,7 +371,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   removeNodeOrRefreshParent: function(node, parentNode, options) {
     var $node = this.getNode(node);
-
     if ($node) {
       if ($node.siblings().length > 0) {
         this.removeNode($node);
@@ -448,7 +445,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     var nodeIndex = undefined;
 
     if (this._treeComponent.showCheckBox === true)
-    nodeIndex = jQuery(".t-checkbox input[type='hidden'][name='" + this._treeElementName + ".Index']", $node).val();
+    nodeIndex = $(".t-checkbox input[type='hidden'][name='" + this._treeElementName + ".Index']", $node).val();
     return nodeIndex;
   },
 
@@ -488,11 +485,10 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
     if ($node.hasClass('t-item')) {
       $node.data('loaded', true)
-      .find('SPAN.t-icon:first')
-      .removeClass('t-loading')
-      .removeClass('t-plus')
-      .addClass('t-minus')
-      ;
+        .find('SPAN.t-icon:first')
+        .removeClass('t-loading')
+        .removeClass('t-plus')
+        .addClass('t-minus');
     }
   },
 
@@ -522,30 +518,47 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     }, this));
   },
 
-  _proceedAutoCheckChildren: function(li, isChecked, suppressAutoCheck) {
-    if (!suppressAutoCheck && this._autoCheckChildren) {
-      var $node = $($(li).closest('.t-item')[0]);
+  _proceedAutoCheckChildren: function(nodeSelectorFn, li, isChecked, suppressAutoCheck, autoCheckChildren) {
+    if (!suppressAutoCheck && (autoCheckChildren || this._autoCheckChildren)) {
+      var $node = $(li).closest('.t-item').first();
 
       if (this._isNodeCollapsed($node)) {
         this._treeComponent.nodeToggle(null, $node, true);
       }
 
-      var self = this;
-
-      jQuery('ul.t-group .t-checkbox [type=checkbox]', $node).each(function(index, item) {
-        var $checkbox = jQuery(item);
-
-        $checkbox.prop('checked', isChecked);
-        self._treeComponent.nodeCheck($checkbox, isChecked, true);
-        $checkbox.removeClass(CHANGED_FIELD_CLASS_NAME);
-        $checkbox = null;
-      });
+      nodeSelectorFn.call(this, $node);
       $parentNode = null;
     }
   },
 
-  customNodeCheck: function() {
+  _proceedAutoCheckAllChildren: function(li, isChecked, suppressAutoCheck, autoCheckChildren) {
+    return this._proceedAutoCheckChildren(function($node) {
+      var self = this;
+      $node.find('ul.t-group .t-checkbox [type=checkbox]').each(function(index, item) {
+        var $checkbox = $(item);
+        $checkbox.prop('checked', isChecked);
+        self._treeComponent.nodeCheck($checkbox, isChecked, true);
+        $checkbox.removeClass(window.CHANGED_FIELD_CLASS_NAME);
+        $checkbox = null;
+      });
+    }, li, isChecked, suppressAutoCheck, autoCheckChildren);
   },
+
+  _proceedAutoCheckDirectChildren: function(li, isChecked, suppressAutoCheck, autoCheckChildren) {
+    return this._proceedAutoCheckChildren(function($node) {
+      var self = this;
+      $node.children('ul.t-group').children('li.t-item').children('div').find('.t-checkbox [type=checkbox]').each(function(index, item) {
+        var $checkbox = $(item);
+        $checkbox.prop('checked', isChecked);
+        self._treeComponent.nodeCheck($checkbox, isChecked, true);
+        $checkbox.removeClass(window.CHANGED_FIELD_CLASS_NAME);
+        $checkbox = null;
+      });
+    }, li, isChecked, suppressAutoCheck, autoCheckChildren);
+  },
+
+  beforeCustomNodeCheck: function() { },
+  afterCustomNodeCheck: function() { },
 
   _isNodeCollapsed: function($node) {
     return $node.find(this.NODE_PLUS_SELECTOR).length;
@@ -563,19 +576,16 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       this._treeComponent = null;
     }
 
-    var $tree = jQuery(this._treeElement);
+    var $tree = $(this._treeElement);
 
     $tree
-    .undelegate(this.NODE_NEW_CLICKABLE_SELECTORS, 'click')
-                .undelegate(this.NODE_ID_LINK_SELECTORS, 'click')
-    .removeData('tTreeView')
-    .empty()
-    ;
+      .undelegate(this.NODE_NEW_CLICKABLE_SELECTORS, 'click')
+      .undelegate(this.NODE_ID_LINK_SELECTORS, 'click')
+      .removeData('tTreeView')
+      .empty();
 
     $tree = null;
-
     this._treeElement = null;
-
     this._onNodeClickingHandler = null;
     this._onIdClickingHandler = null;
 
@@ -590,107 +600,103 @@ $.telerik.treeview.getItemHtml = function(options) {
   groupLevel = options.groupLevel,
   itemIndex = options.itemIndex,
   itemsCount = options.itemsCount,
-  absoluteIndex = new $.telerik.stringBuilder()
-    .cat(groupLevel).catIf(':', groupLevel).cat(itemIndex)
-      .string();
-
-  html.cat('<li class="t-item')
-  .catIf(' t-first', isFirstLevel && itemIndex == 0)
-  .catIf(' t-last', itemIndex == itemsCount - 1)
-          .cat('">')
-          .cat('<div class="')
-              .catIf('t-top ', isFirstLevel && itemIndex == 0)
-              .catIf('t-top', itemIndex != itemsCount - 1 && itemIndex == 0)
-              .catIf('t-mid', itemIndex != itemsCount - 1 && itemIndex != 0)
-              .catIf('t-bot', itemIndex == itemsCount - 1)
-          .cat('">');
+  absoluteIndex = new $.telerik.stringBuilder().cat(groupLevel).catIf(':', groupLevel).cat(itemIndex).string();
+  html
+    .cat('<li class="t-item')
+    .catIf(' t-first', isFirstLevel && itemIndex == 0)
+    .catIf(' t-last', itemIndex == itemsCount - 1)
+    .cat('">')
+    .cat('<div class="')
+    .catIf('t-top ', isFirstLevel && itemIndex == 0)
+    .catIf('t-top', itemIndex != itemsCount - 1 && itemIndex == 0)
+    .catIf('t-mid', itemIndex != itemsCount - 1 && itemIndex != 0)
+    .catIf('t-bot', itemIndex == itemsCount - 1)
+    .cat('">');
 
   if ((options.isAjax && item.LoadOnDemand) || (item.Items && item.Items.length > 0))
-  html.cat('<span class="t-icon')
-                  .catIf(' t-plus', item.Expanded !== true)
-                  .catIf(' t-minus', item.Expanded === true)
-
-  //.catIf('-disabled', item.Enabled === false) // t-(plus|minus)-disabled
-              .cat('"></span>');
+  html
+    .cat('<span class="t-icon')
+    .catIf(' t-plus', item.Expanded !== true)
+    .catIf(' t-minus', item.Expanded === true)
+    .cat('"></span>');
 
   if (options.showCheckBoxes && item.Checkable !== false) {
     var arrayName = options.elementId; // + '_checkedNodes';
 
-    html.cat('<span class="t-checkbox" data-array_name="').cat(arrayName).cat('">')
-                    .cat('<input type="hidden" value="').cat(absoluteIndex)
-                    .cat('" name="').cat(arrayName).cat('.Index')
-                    .cat('" class="t-input"/>')
-
-                    .cat('<input type="checkbox" value="').cat(item.Checked === true ? 'True' : 'False')
-                    .cat('" class="t-input')
-                    .cat('" name="').cat(arrayName).cat('[').cat(absoluteIndex).cat('].Checked"')
-                    .catIf(' disabled="disabled"', item.Enabled === false)
-                    .catIf(' checked="checked"', item.Checked)
-                .cat('/>');
+    html
+      .cat('<span class="t-checkbox" data-array_name="').cat(arrayName).cat('">')
+      .cat('<input type="hidden" value="').cat(absoluteIndex)
+      .cat('" name="').cat(arrayName).cat('.Index')
+      .cat('" class="t-input"/>')
+      .cat('<input type="checkbox" value="').cat(item.Checked === true ? 'True' : 'False')
+      .cat('" class="t-input')
+      .cat('" name="').cat(arrayName).cat('[').cat(absoluteIndex).cat('].Checked"')
+      .catIf(' disabled="disabled"', item.Enabled === false)
+      .catIf(' checked="checked"', item.Checked)
+      .cat('/>');
 
     if (item.Checked)
     html.cat($.telerik.treeview.getNodeInputsHtml(item.Value, item.Text, arrayName, absoluteIndex));
-
     html.cat('</span>');
   }
 
   var startLinkFunction = function(html, item) {
     var navigateUrl = item.NavigateUrl || item.Url;
 
-    html.cat(navigateUrl ? '<a href="' + navigateUrl + '" class="t-link ' : '<span class="')
-                    .cat('t-in')
-
-            //.catIf(' t-state-disabled', item.Enabled === false)
-                    .catIf(' t-state-selected', item.Selected === true)
-                .cat('">');
+    html
+      .cat(navigateUrl ? '<a href="' + navigateUrl + '" class="t-link ' : '<span class="')
+      .cat('t-in')
+      .catIf(' t-state-selected', item.Selected === true)
+      .cat('">');
   };
 
   var endLinkFunction = function(html, item) {
     var navigateUrl = item.NavigateUrl || item.Url;
-
     html.cat(navigateUrl ? '</a>' : '</span>');
   };
 
   startLinkFunction(html, item);
 
-  if (item.ImageUrl != null)
-  html.cat('<img class="t-image" alt="" src="').cat(item.ImageUrl).cat('" />');
+  if (item.ImageUrl != null) {
+    html.cat('<img class="t-image" alt="" src="').cat(item.ImageUrl).cat('" />');
+  }
 
-  if (item.SpriteCssClasses != null)
-  html.cat('<span class="t-sprite ').cat(item.SpriteCssClasses).cat('"></span>');
+  if (item.SpriteCssClasses != null) {
+    html.cat('<span class="t-sprite ').cat(item.SpriteCssClasses).cat('"></span>');
+  }
 
   if (options.showIds) {
-    if (options.makeLinksFromIds)
-    html.cat('<span class="idLink">(<a class="js" href="javascript:void(0)">' + $q.htmlEncode(item.Value) + '</a>)</span>');
-    else
-    html.cat('<span class="idLink">(' + $q.htmlEncode(item.Value) + ')</span>');
+    if (options.makeLinksFromIds) {
+      html.cat('<span class="idLink">(<a class="js" href="javascript:void(0)">' + $q.htmlEncode(item.Value) + '</a>)</span>');
+    } else {
+      html.cat('<span class="idLink">(' + $q.htmlEncode(item.Value) + ')</span>');
+    }
+
     html.cat(' ');
   }
 
-  html.catIf(item.Text, item.Encoded === false)
-          .catIf(item.Text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), item.Encoded !== false);
-
+  html.catIf(item.Text, item.Encoded === false).catIf(item.Text.replace(/</g, '&lt;').replace(/>/g, '&gt;'), item.Encoded !== false);
   endLinkFunction(html, item);
 
-  if (item.Value)
-  html.cat('<input type="hidden" class="t-input" name="itemValue" value="')
-              .cat(item.Value)
-              .cat('" />');
+  if (item.Value) {
+    html.cat('<input type="hidden" class="t-input" name="itemValue" value="').cat(item.Value).cat('" />');
+  }
 
   html.cat('</div>');
 
-  if (item.Items && item.Items.length > 0)
-      $.telerik.treeview.getGroupHtml({
-        data: item.Items,
-        html: html,
-        isAjax: options.isAjax,
-        isFirstLevel: false,
-        showCheckBoxes: options.showCheckBoxes,
-        groupLevel: absoluteIndex,
-        elementId: options.elementId,
-        showIds: options.showIds,
-        makeLinksFromIds: options.makeLinksFromIds
-      });
+  if (item.Items && item.Items.length > 0) {
+    $.telerik.treeview.getGroupHtml({
+      data: item.Items,
+      html: html,
+      isAjax: options.isAjax,
+      isFirstLevel: false,
+      showCheckBoxes: options.showCheckBoxes,
+      groupLevel: absoluteIndex,
+      elementId: options.elementId,
+      showIds: options.showIds,
+      makeLinksFromIds: options.makeLinksFromIds
+    });
+  }
 
   html.cat('</li>');
 };

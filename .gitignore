@@ -243,13 +243,23 @@ _Pvt_Extensions
 .idea/
 *.sln.iml
 
-# QuantumArt rules
-*.orig
-siteMvc/Views/**/*.generated.cs
+
+
+# QP Web Assets
+siteMvc/Content/*.min.css
 siteMvc/Scripts/Quantumart/**/*.map
 siteMvc/Scripts/Quantumart/**/*.min.js
 
-git_work_branch
+!siteMvc/Content/ckeditor
+!siteMvc/Content/codemirror
+
+
+
+# QP Generated And Builded
+*.orig
+*.sublime-workspace
+**/*.generated.cs
+
 siteMvc/Scripts/build
 siteMvc/Content/build
 package/pack/qp8release

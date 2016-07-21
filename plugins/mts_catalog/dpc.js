@@ -74,38 +74,41 @@ Quantumart.QP8.BackendDocumentContext.prototype.fieldValueChangedHandler = funct
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.setFilter = function (inputName, value, fieldName, $form) {
-    var filter = "";
-    if (value)
-        filter = (fieldName) ? "c.[" + fieldName + "] in (" + value + ")" : "c.content_item_id in (select linked_item_id from item_link where item_id in (" + value + "))";
-    this.applyFilter(inputName, filter, $form);
+  var filter = '';
+  if (value) {
+    filter = (fieldName) ? 'c.[' + fieldName + '] in (' + value + ')' : 'c.content_item_id in (select linked_item_id from item_link where item_id in (' + value + '))';
+  }
+
+  this.applyFilter(inputName, filter, $form);
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.applyFilter = function (inputName, filter, $form) {
-    var list = $form.find(".dataList[data-list_item_name='" + inputName + "']").data("entity_data_list_component");
-    if (list)
-        list.applyFilter(filter);
+  var list = $form.find(".dataList[data-list_item_name='" + inputName + "']").data("entity_data_list_component");
+  if (list) {
+    list.applyFilter(filter);
+  }
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getCurrentResolver = function (editor, name) {
-    var $form = jQuery(editor._formElement);
-    var prop = this.getResolverInputNameProp(name);
-    return (!prop || !this[prop]) ? 0 : this.getResolver(editor, $form.find("[name='" + this[prop] + "']").val(), name);
+  var $form = jQuery(editor._formElement);
+  var prop = this.getResolverInputNameProp(name);
+  return (!prop || !this[prop]) ? 0 : this.getResolver(editor, $form.find("[name='" + this[prop] + "']").val(), name);
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getResolverInputNameProp = function (name) {
-    return name.charAt(0).toLowerCase() + name.slice(1) + "ResolverInputName";
+  return name.charAt(0).toLowerCase() + name.slice(1) + "ResolverInputName";
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getFiltersNameProp = function (name) {
-    return name.charAt(0).toLowerCase() + name.slice(1) + "Filters";
+  return name.charAt(0).toLowerCase() + name.slice(1) + "Filters";
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getParentResolverFieldNameProp = function (name) {
-    return "parent" + name + "FieldName";
+  return 'parent' + name + 'FieldName';
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getParentClassifierFieldNameProp = function (name) {
-    return "parent" + name + "ClassifierFieldName";
+  return 'parent' + name + 'ClassifierFieldName';
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getResolverContentId = function (editor, name) {
@@ -144,37 +147,38 @@ Quantumart.QP8.BackendDocumentContext.prototype.getResolver = function (editor, 
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.changeFilters = function (editor, value, $elem, filterProp) {
-    var $form = $elem || jQuery(editor._formElement);
-    if (this[filterProp]) {
-        for (var key in this[filterProp]) {
-            this.setFilter(key, value, this[filterProp][key], $form);
-        }
+  var $form = $elem || jQuery(editor._formElement);
+  if (this[filterProp]) {
+    for (var key in this[filterProp]) {
+      this.setFilter(key, value, this[filterProp][key], $form);
     }
+  }
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.wrapFields = function (editor, inputNames, title) {
-    var $form = jQuery(editor._formElement);
-    var multiSelector = jQuery.map(inputNames, function (val) { return "dl[data-field_form_name='" + val + "']"; }).join(", ")
-    $form.find(multiSelector).wrapAll("<fieldset />")
-    $form.find("dl[data-field_form_name='" + inputNames[0] + "']").closest("fieldset").append("<legend>" + title + "</legend>");
+  var $form = jQuery(editor._formElement);
+  var multiSelector = jQuery.map(inputNames, function (val) { return "dl[data-field_form_name='" + val + "']"; }).join(", ")
+  $form.find(multiSelector).wrapAll("<fieldset />")
+  $form.find("dl[data-field_form_name='" + inputNames[0] + "']").closest("fieldset").append("<legend>" + title + "</legend>");
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.toggleField = function (editor, inputName, state, preserveHidden) {
     var $elem = jQuery(editor._formElement).find("dl[data-field_form_name='" + inputName + "']");
     var list = $elem.find(".dataList[data-list_item_name='" + inputName + "']").data("entity_data_list_component");
     if (state) {
-        $elem.show();
-        if (list)
-            list._fixListOverflow();
-    }
-    else {
-        $elem.hide();
-        if (!preserveHidden) {
-            if (list)
-                list.selectEntities();
-            else
-                $elem.val("");
+      $elem.show();
+      if (list) {
+        list._fixListOverflow();
+      }
+    } else {
+      $elem.hide();
+      if (!preserveHidden) {
+        if (list) {
+          list.selectEntities();
+        } else {
+          $elem.val("");
         }
+      }
     }
 };
 
@@ -195,40 +199,34 @@ Quantumart.QP8.BackendDocumentContext.prototype.getInput = function (editor, inp
     return $form.find("[name='" + inputName + "']");
 };
 
-
 Quantumart.QP8.BackendDocumentContext.prototype.getRegionFolderByRegionId = function (id) {
-    if (id) {
+  if (!id) {
+    return null
+  };
 
-        var parentIds = null;
-        var folderItems = $ctx.getGlobal("regionalLibraryFolders");
-
-        $q.getJsonFromUrl(
-            "POST",
-            "/Backend/Article/GetParentIds",
-            { "id": id, "fieldId": 1115 },
-            false,
-            false)
-        .done(function (data) {
-            if (data.Type == "Error" && data.Text) {
-                alert(data.Text);
-            }
-
-            parentIds = data;
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-            $q.processGenericAjaxError(jqXHR);
-        });
-
-        for (var i = 0; i < folderItems.length; i++) {
-            var item = folderItems[i];
-
-            if (jQuery.inArray(item.macroRegionId, parentIds) != -1) {
-                return item.folder;
-            }
-        }
+  var parentIds;
+  $q.sendAjax({
+    url: '/Backend/Article/GetParentIds',
+    async: false,
+    data: {
+      ids: [id],
+      fieldId: 1115,
+      filter: ''
+    },
+    jsendSuccess: function(data) {
+      parentIds = data;
     }
+  });
 
-    return null;
+  var folderItems = $ctx.getGlobal('regionalLibraryFolders');
+  for (var i = 0; i < folderItems.length; i++) {
+    var item = folderItems[i];
+    if ($.inArray(item.macroRegionId, parentIds) !== -1) {
+      return item.folder;
+    }
+  }
+
+  return null;
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.setFileFieldsSubFolder = function(editor, region, fileFieldIds) {
@@ -246,8 +244,6 @@ Quantumart.QP8.BackendDocumentContext.prototype.setFileFieldsSubFolder = functio
             component.updateUploader(folder);
         }
     });
-
-    $fields = null;
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.addGenerateMatrixTitleButton = function (inputName)

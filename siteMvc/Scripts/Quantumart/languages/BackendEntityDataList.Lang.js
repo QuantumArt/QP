@@ -1,11 +1,11 @@
-﻿Backend.Lang.EntityDataList = {
+Backend.Lang.EntityDataList = {
 	pickLinkButtonText: "Select more",
 	pickSingleLinkButtonText: "Select other value",
 	deselectLinkButtonText: "Clear",
 	clearUnmarkedLinkButtonText: "Clear unmarked",
 	selectAllLinkButtonText: "Select all",
 	copyLinkButtonText: "Copy",
-    pasteLinkButtonText: "Paste",
+  pasteLinkButtonText: "Paste",
 	deselectAllLinkButtonText: "Deselect all",
 	selectDeselectAllText: "Mark (unmark) all",
 	countText: "Selected items: {0}",

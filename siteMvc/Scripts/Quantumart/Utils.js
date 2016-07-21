@@ -1,8 +1,4 @@
-// ****************************************************************************
-// *** Компонент "Утилиты"                          ***
-// ****************************************************************************
-
-window.$q = Quantumart.QP8.Utils = function() { };
+window.$q = Quantumart.QP8.Utils = function() {};
 
 $q.trace = function() {
   if (window.Sys.Debug.isDebug) {
@@ -48,38 +44,62 @@ $q.alertError = function(msg) {
  * @return {Object}      jQuery XHR deffered
  */
 $q.sendAjax = function(opts) {
-  var method = opts.method || 'GET';
-  var debugMessage = 'ajax: ' + method + ' ' + opts.url + '. Data: ' + JSON.stringify(opts.data);
-  $q.trace('Sending ' + debugMessage, 'Request object: ', opts);
-  return $q.getJsonFromUrl(method, opts.url, opts.data).done(function(response) {
+  var defaultOptions = {
+    type: 'GET',
+    dataType: 'json',
+    contentType: 'application/json; charset=utf-8',
+    async: true,
+    cache: true,
+    traditional: true
+  };
+
+  var options = Object.assign({}, defaultOptions, opts);
+  if (options.dataType.toLowerCase() === 'jsonp' && !options.async) {
+    window.console.error('Sync requests cannot be combined with jsonp');
+  }
+
+  var debugMessage = ' ajax: ' + options.type + ' ' + options.url + '. Data: ' + JSON.stringify(options.data);
+  $q.trace('Sending ' + debugMessage, 'Request object: ', options);
+  return $.ajax(options).done(function(response) {
     $q.trace('Parsing ' + debugMessage, 'Response object: ', response);
     if (response.status.toUpperCase() === 'SUCCESS') {
-      if ($.isFunction(opts.callbackSuccess)) {
-        opts.callbackSuccess(response.data);
+      if(options.jsendSuccess) {
+        options.jsendSuccess(response.data, response);
       }
     } else if (response.status.toUpperCase() === 'FAIL') {
-      $q.alertFail(response.message || 'There was an errors at request');
+      if(options.jsendFail) {
+        options.jsendFail(response.data, response);
+      } else {
+        $q.alertFail(response.message || 'There was an errors at request');
+      }
     } else {
-      $q.alertError(response.message || 'Unknown server error');
+      if(options.jsendError) {
+        options.jsendError(response.data, response);
+      } else {
+        $q.alertError(response.message || 'Unknown server error');
+      }
     }
   });
 };
 
-$q.getAjax = function(url, data, cb) {
+$q.getAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
     url: url,
     data: data,
-    callbackSuccess: cb,
-    method: 'GET'
+    jsendSuccess: jsendSuccess,
+    jsendFail: jsendFail,
+    jsendError: jsendError
   });
 };
 
-$q.postAjax = function(url, data, cb) {
+$q.postAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
     url: url,
     data: data,
-    callbackSuccess: cb,
-    method: 'POST'
+    type: 'POST',
+    jsendSuccess: jsendSuccess,
+    jsendFail: jsendFail,
+    jsendError: jsendError
   });
 };
 
@@ -91,7 +111,6 @@ Quantumart.QP8.Utils.isNull = function Quantumart$QP8$Utils$isNull(value) {
   /// <param name="value" type="String">значение</param>
   /// <returns type="Boolean">результат проверки (true - Null; false - не Null)</returns>
   var result = false;
-
   if (value == undefined || value == null || typeof (value) == 'undefined') {
     result = true;
   }
@@ -1185,19 +1204,38 @@ Quantumart.QP8.Utils.updateQueryStringParameter = function Quantumart$QP8$Utils$
     return uri + separator + key + '=' + value;
   }
 };
-
 //#endregion
 
-//#region Сборка мусора
 Quantumart.QP8.Utils.collectGarbageInIE = function Quantumart$QP8$Utils$collectGarbageInIE() {
-  /// <summary>
-  /// Инициирует процесс сборки мусора в IE
-  /// </summary>
   if (jQuery.browser.msie) {
     CollectGarbage();
   }
 };
 
-//#endregion
+Quantumart.QP8.Utils.addRemoveToArrUniq = function Quantumart$QP8$Utils$addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
+  var underscoreMethod = shouldBeExcluded ? 'difference' : 'union';
+  return _[underscoreMethod](arrToModify, valToAddRemove);
+};
+
+Quantumart.QP8.Utils.bindProxies = function Quantumart$QP8$Utils$bindProxies(listOfFnNames, fnPostfix) {
+  var postfix = fnPostfix || 'Handler';
+  [].forEach.call(listOfFnNames, function(fnName) {
+    try {
+      this[fnName + postfix] = this[fnName].bind(this);
+    } catch(e) {
+      console.error('Failed to register: ' + fnName, e);
+    }
+  }, this);
+};
+
+Quantumart.QP8.Utils.dispose = function Quantumart$QP8$Utils$dispose(listOfObjs) {
+  [].forEach.call(listOfObjs, function(obj) {
+    try {
+      this[obj] = null;
+    } catch(e) {
+      console.error('Failed to dispose: ' + obj, e);
+    }
+  }, this);
+};
 
 Quantumart.QP8.Utils.registerClass('Quantumart.QP8.Utils');
