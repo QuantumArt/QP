@@ -19,7 +19,8 @@ var AUTOPREFIXER_BROWSERS = [
 var destPaths = {
   scripts: 'Scripts/build',
   styles: 'Content/build',
-  images: 'Content/build/images'
+  images: 'Content/build'
+  //images: 'Content/build/images'
 };
 
 var paths = {
