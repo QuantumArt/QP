@@ -57,7 +57,11 @@ namespace Quantumart.QPublishing.Database
                 {
                     oldDoc = ContentItem.ReadLastVersion(item.Id, this).GetXDocument();
                 }
-                catch (VersionNotFoundException) { }
+                catch (VersionNotFoundException)
+                {
+                    if (ThrowNotificationExceptions)
+                        throw;
+                }
             }
             else if (eventName == NotificationEvent.Remove)
             {
@@ -100,9 +104,12 @@ namespace Quantumart.QPublishing.Database
             if (eventName == NotificationEvent.Modify || eventName == NotificationEvent.StatusChanged || eventName == NotificationEvent.StatusPartiallyChanged)
             {
                 var row = GetPreviousStatusHistoryRecord(id);
-                queryParams.Add("oldVisible", (bool)row["visible"]);
-                queryParams.Add("oldArchive", (bool)row["archive"]);
-                queryParams.Add("oldStatusName", row["status_type_name"].ToString());
+                if (row != null)
+                {
+                    queryParams.Add("oldVisible", (bool)row["visible"]);
+                    queryParams.Add("oldArchive", (bool)row["archive"]);
+                    queryParams.Add("oldStatusName", row["status_type_name"].ToString());
+                }
             }
 
             var arr =
@@ -124,7 +131,7 @@ namespace Quantumart.QPublishing.Database
 
         private void InternalExceptionHandler(Exception ex, string code, WebRequest request)
         {
-            var errorMessage = $"DbConnector.Notifications.cs, {code}, URL: {request.RequestUri}, MESSAGE: {ex.Message}, STACK TRACE: {ex.StackTrace}";
+            var errorMessage = $"DbConnector.Notifications.cs, {code}, URL: {request?.RequestUri}, MESSAGE: {ex.Message}, STACK TRACE: {ex.StackTrace}";
             System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
             if (ThrowNotificationExceptions)
                 throw new Exception(errorMessage, ex);
