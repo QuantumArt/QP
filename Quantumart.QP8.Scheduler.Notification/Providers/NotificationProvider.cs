@@ -12,10 +12,15 @@ namespace Quantumart.QP8.Scheduler.Notification.Providers
 		{
 			using (var client = new HttpClient())
 			{
-			    var response = await client.PostAsync(notification.Url, new FormUrlEncodedContent(notification.Parameters));
+			    var content = new MultipartFormDataContent();
+			    foreach (var param in notification.Parameters)
+			    {
+                    content.Add(new StringContent(param.Value), param.Key);
+                }
+
+                var response = await client.PostAsync(notification.Url, content);
 				return response.StatusCode;
 			}
 		}
-
 	}
 }

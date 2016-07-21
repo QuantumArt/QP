@@ -57,11 +57,12 @@ namespace Quantumart.QPublishing.Database
                 {
                     oldDoc = ContentItem.ReadLastVersion(item.Id, this).GetXDocument();
                 }
-                catch (VersionNotFoundException)
+                catch (Exception ex)
                 {
-                    if (ThrowNotificationExceptions)
-                        throw;
+                    ExternalExceptionHandler?.Invoke(ex);
+                    oldDoc = newDoc;
                 }
+
             }
             else if (eventName == NotificationEvent.Remove)
             {
@@ -270,6 +271,7 @@ namespace Quantumart.QPublishing.Database
             catch (Exception ex)
             {
                 InternalExceptionHandler(ex, "SendNotification", null);
+                ExternalExceptionHandler?.Invoke(ex);
             }
         }
 

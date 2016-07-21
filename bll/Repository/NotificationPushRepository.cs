@@ -232,7 +232,8 @@ namespace Quantumart.QP8.BLL.Repository
                 CacheData = false,
                 DisableServiceNotifications = true,
                 DisableInternalNotifications = disableInternalNotifications,
-                ExternalExceptionHandler = HandleException
+                ExternalExceptionHandler = HandleException,
+                ThrowNotificationExceptions = false
             };
             foreach (var simpleCode in code.Split(';'))
             {
