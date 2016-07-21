@@ -603,4 +603,7 @@
   <data name="ExpandParents" xml:space="preserve">
     <value>Expand parents</value>
   </data>
+  <data name="TotalSelectedArticles" xml:space="preserve">
+    <value>Total selected articles</value>
+  </data>
 </root>

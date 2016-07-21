@@ -408,7 +408,6 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public static string CurrentCustomerCode
         {
-
             get
             {
                 var result = GetValueFromStorage(_currentCustomerCode, CurrentCustomerCodeKey);
@@ -431,7 +430,6 @@ namespace Quantumart.QP8.BLL
 
         public static Version CurrentSqlVersion
         {
-
             get
             {
                 var result = GetValueFromStorage(_currentSqlVersion, CurrentSqlVersionKey);

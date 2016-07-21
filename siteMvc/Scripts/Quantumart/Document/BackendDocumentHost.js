@@ -776,16 +776,14 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   _fixDocumentWrapperHeight: function(searchBlockHeight) {
     var $documentWrapper = jQuery(this._documentWrapperElement);
-
     var oldDocumentWrapperHeight = parseInt($documentWrapper.height(), 10);
     var oldSearchBlockHeight = this._oldSearchBlockHeight;
     var newSearchBlockHeight = oldSearchBlockHeight;
+    var newDocumentWrapperHeight = 0;
 
     if (!$q.isNull(searchBlockHeight)) {
       newSearchBlockHeight = searchBlockHeight;
     }
-
-    var newDocumentWrapperHeight = 0;
 
     if (newSearchBlockHeight > oldSearchBlockHeight) {
       newDocumentWrapperHeight = oldDocumentWrapperHeight - (newSearchBlockHeight - oldSearchBlockHeight);
@@ -794,10 +792,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
 
     $documentWrapper.height(newDocumentWrapperHeight);
-
     this._oldSearchBlockHeight = newSearchBlockHeight;
-
-    $documentWrapper = null;
   },
 
   loadReadyHtmlContent: function(data) {
@@ -822,14 +817,12 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       this.onDocumentLoaded();
     } else {
       window.alert(data.message);
-
       this.onDocumentError();
     }
   },
 
   onLoadMainComponent: function() {
     var main = this.get_mainComponent();
-
     if (main) {
       if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
         main.onLoad();
@@ -860,13 +853,14 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   onSelectedThroughExecution: function(eventArgs) {
     this.bindExternalCallerContext(eventArgs);
     this.renderPanels();
-    if (this._documentContext)
-    this._documentContext.execSelect(eventArgs);
+
+    if (this._documentContext) {
+      this._documentContext.execSelect(eventArgs);
+    }
   },
 
   unmarkMainComponentAsBusy: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.unmarkGridAsBusy();
     }
@@ -874,7 +868,6 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   markMainComponentAsBusy: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.markGridAsBusy();
     }
@@ -886,7 +879,6 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   onContextSwitching: function(eventType, sender, args) {
     var main = this.get_mainComponent();
-
     if (main) {
       if (Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
         main.resetGrid({ contextQuery: args.get_searchQuery() });

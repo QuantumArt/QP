@@ -98,7 +98,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
         protected abstract string ChangeAction { get; }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult SaveAsChild(string tabId, int parentId)
         {
             if (TempData.ContainsKey(GetChildEntityPermissionModelKey(tabId, parentId)))

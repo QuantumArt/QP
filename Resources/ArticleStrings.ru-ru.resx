@@ -597,4 +597,7 @@
   <data name="ExpandParents" xml:space="preserve">
     <value>Расширить вверх</value>
   </data>
+  <data name="TotalSelectedArticles" xml:space="preserve">
+    <value>Всего выбрано статей</value>
+  </data>
 </root>

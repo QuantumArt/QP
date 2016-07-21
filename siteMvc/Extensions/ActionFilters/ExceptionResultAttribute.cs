@@ -1,21 +1,21 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
+﻿using System.Diagnostics.Contracts;
+using System.Web.Mvc;
+using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using System.Diagnostics.Contracts;
-using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
     /// <summary>
-    /// Режим работы фильтра <see cref="ExceptionResult"/>
+    /// Режим работы фильтра
     /// </summary>
     public enum ExceptionResultMode
     {
         /// <summary>
         /// Возвращает ошибку в формате для  интерфейсных qp-action
         /// </summary>
-        UIAction,
+        UiAction,
         /// <summary>
         /// Возвращает ошибку в формате для  неинтерфейсных qp-action
         /// </summary>
@@ -31,22 +31,22 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
     /// </summary>
     public class ExceptionResultAttribute : FilterAttribute, IExceptionFilter
     {
-        ExceptionResultMode mode;
+        private readonly ExceptionResultMode _mode;
 
-        private string PolicyName { get; set; }
+        private string PolicyName { get; }
 
         public ExceptionResultAttribute(ExceptionResultMode mode) : this(mode, "Policy") { }
 
         public ExceptionResultAttribute(ExceptionResultMode mode, string policyName)
         {
             Contract.Requires(!string.IsNullOrEmpty(policyName));
-            this.mode = mode;
+            _mode = mode;
             PolicyName = policyName;
         }
 
         public void OnException(ExceptionContext filterContext)
         {
-            if (filterContext == null || filterContext.Exception == null)
+            if (filterContext?.Exception == null)
             {
                 return;
             }
@@ -57,7 +57,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
                 return;
             }
 
-            filterContext.Result = ErrorMessageGenerator.GererateJsonError(mode, filterContext.Exception);
+            filterContext.Result = ErrorMessageGenerator.GererateJsonError(_mode, filterContext.Exception);
             EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(filterContext.Exception, PolicyName);
 
             filterContext.ExceptionHandled = true;

@@ -1321,6 +1321,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Total selected articles.
+        /// </summary>
+        public static string TotalSelectedArticles {
+            get {
+                return ResourceManager.GetString("TotalSelectedArticles", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to The number of current article variations - &lt;span class=&quot;currentTotal&quot;&gt;&lt;/span&gt;.
         /// </summary>
         public static string TotalVariationsMessage {

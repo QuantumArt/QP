@@ -21,7 +21,7 @@ Quantumart.QP8.BackendEntityEditor = function(editorGroupCode, documentWrapperEl
   this._entityTypeCode = entityTypeCode;
   this._entityId = entityId;
   this._parentEntityId = options.parentEntityId;
-  this._acionCode = options.actionCode;
+  this._actionCode = options.actionCode;
   this._actionTypeCode = actionTypeCode;
   this._documentWrapperElementId = documentWrapperElementId;
   if (!$q.isNull(options)) {
@@ -126,7 +126,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
   _entityTypeCode: '', // код типа сущности
   _entityId: 0, // идентификатор сущности
   _parentEntityId: 0,
-  _acionCode: '',
+  _actionCode: '',
   _actionTypeCode: '', // код типа действия
   _documentWrapperElementId: '', // идентификатор DOM-элемента, образующего документ
   _formElementId: '', // идентификатор формы
@@ -261,7 +261,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
   },
 
   get_actionCode: function() {
-    return this._acionCode;
+    return this._actionCode;
   },
 
   // Дата модификации сущности (ticks)

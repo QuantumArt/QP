@@ -31,7 +31,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает содержимое блока полнотекстового поиска
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult FullTextBlock(int parentEntityId, string elementIdPrefix)
         {
 
@@ -54,7 +54,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает содержимое блока поиска по всем полям
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult FieldSearchBlock(int parentEntityId, string elementIdPrefix)
         {
             ViewBag.ElementIdPrefix = elementIdPrefix;
@@ -70,7 +70,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока поиска по идентификатору
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult Identifier(string elementIdPrefix)
         {
             ViewBag.ElementIdPrefix = elementIdPrefix;
@@ -87,7 +87,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока поиска по полю c датой
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult DateRange(string elementIdPrefix)
         {
             SetDateOrTimeRangeViewBag(elementIdPrefix);
@@ -98,7 +98,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока поиска по полю c временем
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult TimeRange(string elementIdPrefix)
         {
             SetDateOrTimeRangeViewBag(elementIdPrefix);
@@ -109,7 +109,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока поиска по полю c датой-временем
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult DateTimeRange(string elementIdPrefix)
         {
             SetDateOrTimeRangeViewBag(elementIdPrefix);
@@ -130,7 +130,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока поиска по числовому полю
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult NumericRange(string elementIdPrefix)
         {
             ViewBag.ElementIdPrefix = elementIdPrefix;
@@ -147,7 +147,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока поиска по текстовому полю
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult TextSearch(string elementIdPrefix)
         {
             ViewBag.ElementIdPrefix = elementIdPrefix;
@@ -161,7 +161,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока поиска по строковому перечислению
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult StringEnum(string elementIdPrefix, int fieldID)
         {
             ViewBag.QueryDropDownListID = elementIdPrefix + "_queryDropDownList";
@@ -171,7 +171,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult ContentsListForClassifier(string elementIdPrefix, int fieldID)
         {
             var classifier = FieldService.Read(fieldID);
@@ -186,7 +186,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Разметка блока поиска по связям
         /// </summary>
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult RelationSearch(int parentEntityId, int fieldID, int[] IDs, string elementIdPrefix)
         {
             IDs = IDs ?? new int[0];
@@ -254,7 +254,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает разметку для блока переключения контекста
         /// </summary>
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult ContextBlock(int id, string actionCode, string hostId)
         {
             var model = new ContextBlockViewModel(id, actionCode, hostId);

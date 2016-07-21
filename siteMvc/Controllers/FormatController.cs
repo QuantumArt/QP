@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.PageObjectFormats)]
 		[BackendActionContext(ActionCode.PageObjectFormats)]
 		public ActionResult IndexPageObjectFormats(string tabId, int parentId)
@@ -44,7 +44,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.TemplateObjectFormats)]
 		[BackendActionContext(ActionCode.TemplateObjectFormats)]
 		public ActionResult IndexTemplateObjectFormats(string tabId, int parentId)
@@ -62,10 +62,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		{
 			ListResult<ObjectFormatListItem> serviceResult = _formatService.GetTemplateObjectFormatsByObjectId(command.GetListCommand(), parentId);
 			return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
-		}		
+		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.PageObjectFormatVersions)]
 		[BackendActionContext(ActionCode.PageObjectFormatVersions)]
 		public ActionResult IndexPageObjectFormatVersions(string tabId, int parentId)
@@ -86,7 +86,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.TemplateObjectFormatVersions)]
 		[BackendActionContext(ActionCode.TemplateObjectFormatVersions)]
 		public ActionResult IndexTemplateObjectFormatVersions(string tabId, int parentId)
@@ -108,7 +108,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CancelTemplateObjectFormat)]
 		[BackendActionContext(ActionCode.CancelTemplateObjectFormat)]
 		public ActionResult CancelTemplateObjectFormat(int id)
@@ -119,7 +119,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CancelPageObjectFormat)]
 		[BackendActionContext(ActionCode.CancelPageObjectFormat)]
 		public ActionResult CancelPageObjectFormat(int id)
@@ -129,7 +129,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.AddNewPageObjectFormat)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.PageObjectFormat, "parentId")]
 		[BackendActionContext(ActionCode.AddNewPageObjectFormat)]
@@ -141,8 +141,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewPageObjectFormat)]
 		[BackendActionContext(ActionCode.AddNewPageObjectFormat)]
 		[BackendActionLog]
@@ -164,7 +164,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.AddNewTemplateObjectFormat)]
 		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.TemplateObjectFormat, "parentId")]
 		[BackendActionContext(ActionCode.AddNewTemplateObjectFormat)]
@@ -176,8 +176,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.AddNewTemplateObjectFormat)]
 		[BackendActionContext(ActionCode.AddNewTemplateObjectFormat)]
 		[BackendActionLog]
@@ -199,7 +199,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.PageObjectFormatProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObjectFormat, "id")]
 		[BackendActionContext(ActionCode.PageObjectFormatProperties)]
@@ -213,8 +213,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdatePageObjectFormat)]
 		[BackendActionContext(ActionCode.UpdatePageObjectFormat)]
 		[BackendActionLog]
@@ -235,7 +235,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.TemplateObjectFormatProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormat, "id")]
 		[BackendActionContext(ActionCode.TemplateObjectFormatProperties)]
@@ -249,8 +249,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.UpdateTemplateObjectFormat)]
 		[BackendActionContext(ActionCode.UpdateTemplateObjectFormat)]
 		[BackendActionLog]
@@ -271,7 +271,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.TemplateObjectFormatVersionProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormatVersion, "id")]
 		[BackendActionContext(ActionCode.TemplateObjectFormatVersionProperties)]
@@ -285,7 +285,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.PageObjectFormatVersionProperties)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObjectFormatVersion, "parentId")]
 		[BackendActionContext(ActionCode.PageObjectFormatVersionProperties)]
@@ -299,7 +299,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.CompareWithCurrentTemplateObjectFormatVersion)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormat, "parentId")]
 		[BackendActionContext(ActionCode.CompareWithCurrentTemplateObjectFormatVersion)]
@@ -313,7 +313,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.CompareWithCurrentPageObjectFormatVersion)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObjectFormat, "parentId")]
 		[BackendActionContext(ActionCode.CompareWithCurrentPageObjectFormatVersion)]
@@ -327,7 +327,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.CompareTemplateObjectFormatVersions)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObjectFormat, "parentId")]
 		[BackendActionContext(ActionCode.CompareTemplateObjectFormatVersions)]
@@ -340,7 +340,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		}
 
 		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
+		[ExceptionResult(ExceptionResultMode.UiAction)]
 		[ActionAuthorize(ActionCode.ComparePageObjectFormatVersions)]
 		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObjectFormat, "parentId")]
 		[BackendActionContext(ActionCode.ComparePageObjectFormatVersions)]
@@ -355,7 +355,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemoveTemplateObjectFormat)]
 		[BackendActionContext(ActionCode.RemoveTemplateObjectFormat)]
 		[BackendActionLog]
@@ -368,7 +368,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.RemovePageObjectFormat)]
 		[BackendActionContext(ActionCode.RemovePageObjectFormat)]
 		[BackendActionLog]
@@ -381,7 +381,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemoveTemplateObjectFormatVersion)]
 		[BackendActionContext(ActionCode.MultipleRemoveTemplateObjectFormatVersion)]
 		[BackendActionLog]
@@ -417,7 +417,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.MultipleRemovePageObjectFormatVersion)]
 		[BackendActionContext(ActionCode.MultipleRemovePageObjectFormatVersion)]
 		[BackendActionLog]
@@ -429,7 +429,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CaptureLockTemplateObjectFormat)]
 		[BackendActionContext(ActionCode.CaptureLockTemplateObjectFormat)]
 		[BackendActionLog]
@@ -441,7 +441,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
 		[HttpPost]
 		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
+		[ConnectionScope()]
 		[ActionAuthorize(ActionCode.CaptureLockPageObjectFormat)]
 		[BackendActionContext(ActionCode.CaptureLockPageObjectFormat)]
 		[BackendActionLog]

@@ -1,15 +1,4 @@
-﻿using Moq;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.Security;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -24,6 +13,18 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Script.Serialization;
 using System.Xml.Linq;
+using Moq;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Security;
+using Quantumart.QP8.Utils;
+using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
+
 #pragma warning disable 169
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
@@ -81,11 +82,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public BackendAction BackendAction => _backendAction.Value;
     }
 
-    public class RecordReplayHelper: IRecordHelper, IReplayHelper
+    public class RecordReplayHelper : IRecordHelper, IReplayHelper
     {
         public RecordReplayHelper()
         {
-            _xmlFileName = new InitPropertyValue<string>(GetXmlFileName);
+            _xmlFileName = new InitPropertyValue<string>(GetXmlFilePath);
         }
 
         private InitPropertyValue<XElement> _storage;
@@ -97,11 +98,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         #region record
         public string XmlFileName => _xmlFileName.Value;
 
-        private static string GetXmlFileName()
-        {
-            return $@"{QPConfiguration.TempDirectory}\{QPContext.CurrentCustomerCode}.xml";
-        }
-
         public XElement GetOrCreateRoot(HttpContextBase http)
         {
             XDocument doc;
@@ -111,16 +107,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
             catch (FileNotFoundException)
             {
-                doc = new XDocument
-                (
-                    NewRoot(http)
-                );
+                doc = new XDocument(NewRoot(http));
             }
 
             return GetActionsRoot(doc);
         }
 
-        private XElement NewRoot(HttpContextBase http)
+        private static XElement NewRoot(HttpContextBase http)
         {
             var xml = DbRepository.Get().FpSettingsXml;
             return new XElement(
@@ -130,6 +123,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 GetFpAttribute(xml),
                 GetFpSettingsElement(xml)
             );
+        }
+
+        internal static string GetXmlFilePath()
+        {
+            return $@"{QPConfiguration.TempDirectory}\{GetXmlFileName()}";
+        }
+
+        internal static string GetXmlFileName()
+        {
+            return $"{QPContext.CurrentCustomerCode}.xml";
         }
 
         public void Clear(HttpContextBase http, bool overrideFile)
@@ -143,38 +146,33 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     root.Remove();
                     doc.Add(NewRoot(http));
                 }
+
                 doc.Save(XmlFileName);
             }
-
         }
 
-        private XAttribute GetFpAttribute(XDocument settingsXml)
+        private static XAttribute GetFpAttribute(XDocument settingsXml)
         {
-            if (settingsXml == null)
-                return null;
-            return new XAttribute("fingerPrint", ByteArrayToString(
-                new FingerprintService().GetFingerprint(settingsXml)
-                ));
+            return settingsXml == null ? null : new XAttribute("fingerPrint", ByteArrayToString(new FingerprintService().GetFingerprint(settingsXml)));
         }
 
-        private XAttribute GetBackendUrlAttribute(HttpContextBase http)
+        private static XAttribute GetBackendUrlAttribute(HttpContextBase http)
         {
             return new XAttribute("backendUrl", QPController.GetBackendUrl(http));
         }
 
-        private XElement GetFpSettingsElement(XDocument settingsXml)
+        private static XElement GetFpSettingsElement(XDocument settingsXml)
         {
-            if (settingsXml == null)
-                return null;
-            else
-                return new XElement("settings", settingsXml.Root);
+            return settingsXml == null ? null : new XElement("settings", settingsXml.Root);
         }
 
         public XElement GetActionsRoot(XDocument doc)
         {
             var root = doc.Elements("actions").SingleOrDefault();
             if (root == null)
+            {
                 throw new InvalidDataException($"File {XmlFileName} has invalid format");
+            }
 
             return root;
         }
@@ -182,20 +180,24 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public IEnumerable<XElement> FormToXml(NameValueCollection form)
         {
             if (form == null)
+            {
                 yield break;
+            }
+
             foreach (var key in form.AllKeys)
             {
                 var enumerable = form.GetValues(key);
                 if (enumerable != null)
+                {
                     foreach (var value in enumerable)
-                        yield return new XElement("field",
-                            new XAttribute("name", key),
-                            new XText(value)
-                            );
+                    {
+                        yield return new XElement("field", new XAttribute("name", key), new XText(value));
+                    }
+                }
             }
         }
 
-        private void AppendAttribute(List<XAttribute> result, string name, HttpContextBase context, string key)
+        private static void AppendAttribute(ICollection<XAttribute> result, string name, HttpContextBase context, string key)
         {
             if (context.Items.Contains(key))
             {
@@ -207,7 +209,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var actionTypeCode = action.BackendAction.ActionType.Code;
             var result = new List<XAttribute>();
-
             if (actionTypeCode == ActionTypeCode.Copy)
             {
                 AppendAttribute(result, "resultId", context, "RESULT_ID");
@@ -255,39 +256,36 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     AppendAttribute(result, "formatId", context, "DEFAULT_FORMAT_ID");
                     break;
             }
+
             return result;
         }
 
         public void PersistAction(RecordedAction action, HttpContextBase context)
         {
-
             var root = GetOrCreateRoot(context);
-
-            root.Add(
-                new XElement("action",
-                    new XAttribute("code", action.Code),
-                    new XAttribute("ids", string.Join(",", action.Ids)),
-                    new XAttribute("parentId", action.ParentId),
-                    new XAttribute("lcid", action.Lcid),
-                    new XAttribute("executed", action.Executed.ToString(CultureInfo.InvariantCulture)),
-                    new XAttribute("executedBy", action.ExecutedBy),
-                    GetEntitySpecificAttributesForPersisting(action, context),
-                    FormToXml(action.Form)
-                )
+            root.Add(new XElement("action",
+                new XAttribute("code", action.Code),
+                new XAttribute("ids", string.Join(",", action.Ids)),
+                new XAttribute("parentId", action.ParentId),
+                new XAttribute("lcid", action.Lcid),
+                new XAttribute("executed", action.Executed.ToString(CultureInfo.InvariantCulture)),
+                new XAttribute("executedBy", action.ExecutedBy),
+                GetEntitySpecificAttributesForPersisting(action, context),
+                FormToXml(action.Form))
             );
 
             root.Document?.Save(XmlFileName);
 
         }
-
         #endregion
 
         #region replay
-
         private void AddIdToReplace(string code, int id, HttpContextBase context, string key)
         {
             if (context.Items.Contains(key))
+            {
                 AddIdToReplace(code, id, int.Parse(context.Items[key].ToString()));
+            }
         }
 
         private void AddIdToReplace(string code, int id, int newId)
@@ -298,8 +296,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 {
                     _idsToReplace.Add(code, new Dictionary<int, int>());
                 }
+
                 if (id != 0)
+                {
                     _idsToReplace[code].Add(id, newId);
+                }
             }
         }
 
@@ -309,7 +310,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var parentCode = action.BackendAction.EntityType.ParentCode;
             action.Ids = CorrectListValue(code, action.Ids).ToArray();
             if (!string.IsNullOrEmpty(parentCode))
+            {
                 action.ParentId = CorrectValue(parentCode, action.ParentId);
+            }
+
             switch (code)
             {
                 case EntityTypeCode.Content:
@@ -412,7 +416,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         private void CorrectObjectForm(NameValueCollection form, bool isPageObject)
         {
             CorrectFormValue(EntityTypeCode.TemplateObject, form, "Data.ParentObjectId");
-            CorrectFormValue((isPageObject) ? EntityTypeCode.PageObjectFormat : EntityTypeCode.TemplateObjectFormat, form, "Data.DefaultFormatId");
+            CorrectFormValue(isPageObject ? EntityTypeCode.PageObjectFormat : EntityTypeCode.TemplateObjectFormat, form, "Data.DefaultFormatId");
             CorrectFormValue(EntityTypeCode.Content, form, "Data.Container.ContentId");
             CorrectFormValue(EntityTypeCode.Content, form, "Data.ContentForm.ContentId");
             CorrectFormValue(EntityTypeCode.Page, form, "Data.ContentForm.ThankYouPageId");
@@ -467,6 +471,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                         var newKey = "field_" + newFieldId;
                         var enumerable = form.GetValues(key);
                         if (enumerable != null)
+                        {
                             foreach (var value in enumerable)
                             {
                                 var newValue = value;
@@ -475,8 +480,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                                     var code = relations.ContainsKey(newFieldId) ? EntityTypeCode.Article : EntityTypeCode.Content;
                                     newValue = CorrectCommaListValue(code, value);
                                 }
+
                                 form.Add(newKey, newValue);
                             }
+                        }
+
                         form.Remove(key);
                     }
                     else
@@ -485,12 +493,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                         {
                             var values = form.GetValues(key);
                             form.Remove(key);
+
                             if (values != null)
+                            {
                                 foreach (var value in values)
                                 {
                                     var code = relations.ContainsKey(newFieldId) ? EntityTypeCode.Article : EntityTypeCode.Content;
                                     form.Add(key, CorrectCommaListValue(code, value));
                                 }
+                            }
                         }
 
                     }
@@ -502,7 +513,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             int result;
             var parsed = int.TryParse(value, out result);
-            return (parsed) ? CorrectValue(code, result).ToString() : value;
+            return parsed ? CorrectValue(code, result).ToString() : value;
         }
 
         private void CorrectFormValue(string code, NameValueCollection form, string formKey, bool prefixSearch = false, bool joinModeReplace = false)
@@ -533,14 +544,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                                 }
                                 else
                                 {
-                                    newValue = string.Join(".", value
-                                        .Replace("[", "")
-                                        .Replace("]", "")
-                                        .Split(".".ToCharArray())
-                                        .Select(n => CorrectValue(code, n))
-                                        );
+                                    newValue = string.Join(".", value.Replace("[", "").Replace("]", "").Split(".".ToCharArray()).Select(n => CorrectValue(code, n)));
                                     newValue = "[" + newValue + "]";
                                 }
+
                                 form.Add(key, CorrectValue(code, newValue));
                             }
                     }
@@ -555,13 +562,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 var serializer = new JavaScriptSerializer();
                 var collectionList = serializer.Deserialize<List<Dictionary<string, string>>>(formValue);
-                foreach (var collection in collectionList)
-                {
-                    if (collection.ContainsKey(jsonKey))
-                    {
-                        collection[jsonKey] = CorrectValue(code, collection[jsonKey]);
-                    }
+                foreach (var collection in collectionList.Where(collection => collection.ContainsKey(jsonKey))) {
+                    collection[jsonKey] = CorrectValue(code, collection[jsonKey]);
                 }
+
                 form[formKey] = serializer.Serialize(collectionList);
             }
         }
@@ -577,11 +581,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 int parsedValue;
                 var parsed = int.TryParse(value, out parsedValue);
-                var finalValue = (parsed) ? CorrectValue(code, parsedValue).ToString() : value;
-                yield return finalValue;
+                yield return parsed ? CorrectValue(code, parsedValue).ToString() : value;
             }
         }
-
 
         private int CorrectValue(string code, int value)
         {
@@ -589,10 +591,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 return _idsToReplace[code][value];
             }
-            else
-            {
-                return value;
-            }
+
+            return value;
         }
 
         private void CorrectReplaces(RecordedAction action, HttpContextBase context)
@@ -602,8 +602,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             if (new[] { ActionTypeCode.AddNew, ActionTypeCode.Copy }.Contains(actionTypeCode))
             {
-                var resultCode = (entityTypeCode != EntityTypeCode.VirtualContent) ? entityTypeCode : EntityTypeCode.Content;
-                var resultId = (action.ResultId != 0) ? action.ResultId : int.Parse(action.Ids[0]);
+                var resultCode = entityTypeCode != EntityTypeCode.VirtualContent ? entityTypeCode : EntityTypeCode.Content;
+                var resultId = action.ResultId != 0 ? action.ResultId : int.Parse(action.Ids[0]);
                 AddIdToReplace(resultCode, resultId, context, "RESULT_ID");
             }
 
@@ -650,29 +650,33 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, context, "DEFAULT_FORMAT_ID");
                     break;
             }
-
         }
 
         public static int[] ToIntArray(string input)
         {
-            if (string.IsNullOrEmpty(input))
-                return null;
-            else
-                return input.Split(",".ToCharArray()).Select(int.Parse).ToArray();
+            return string.IsNullOrEmpty(input) ? null : input.Split(",".ToCharArray()).Select(int.Parse).ToArray();
         }
 
         private void AddIdsToReplace(string oldIdsCommaString, HttpContextBase context, string key)
         {
             if (context.Items.Contains(key))
+            {
                 AddIdsToReplace(EntityTypeCode.Field, ToIntArray(oldIdsCommaString), ToIntArray(context.Items[key].ToString()));
+            }
         }
 
         private void AddIdsToReplace(string code, int[] oldIds, int[] newIds)
         {
             if (oldIds == null || newIds == null)
+            {
                 return;
+            }
+
             if (oldIds.Length != newIds.Length)
+            {
                 throw new ArgumentException("Array leghths are not equal");
+            }
+
             for (var i = 0; i < oldIds.Length; i++)
             {
                 AddIdToReplace(code, oldIds[i], newIds[i]);
@@ -686,6 +690,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 result.Add(elem.Attribute("name").Value, elem.Value);
             }
+
             return result;
         }
 
@@ -694,11 +699,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var doc = XDocument.Parse(xmlText);
             if (!CheckFp(doc, fingerPrintSettings))
+            {
                 throw new InvalidOperationException("Fingerprints doesn't match");
+            }
+
             if (!CheckDbVersion(doc))
+            {
                 throw new InvalidOperationException("DB versions doesn't match");
+            }
+
             if (RecordActions())
+            {
                 throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
+            }
 
             SetUp();
             foreach (var action in LoadAllActionsToReplay(doc))
@@ -707,15 +720,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 {
                     ReplayForm(action, userId, doc.Root?.Attribute("backendUrl"));
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new ReplayXmlException(action, ex);
                 }
             }
+
             TearDown();
         }
 
-        private bool RecordActions()
+        private static bool RecordActions()
         {
             return new ApplicationInfoHelper().RecordActions();
         }
@@ -732,17 +746,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 var elem = doc.Descendants("fingerprint").SingleOrDefault();
                 if (elem != null)
+                {
                     fpSettings = new XDocument(elem);
+                }
             }
 
             var fp = doc.Root?.Attribute("fingerPrint");
             if (fp == null || fpSettings == null)
+            {
                 return true;
-            else
-                return fp.Value == GetFingerPrint(fpSettings);
+            }
+
+            return fp.Value == GetFingerPrint(fpSettings);
         }
 
-        private void TearDown()
+        private static void TearDown()
         {
             MvcApplication.UnregisterModelBinders();
             MvcApplication.UnregisterModelValidatorProviders();
@@ -755,172 +773,176 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             MvcApplication.RegisterModelValidatorProviders();
             MvcApplication.RegisterMappings();
             CheatBuildManager();
+
             AreaRegistration.RegisterAllAreas();
             MvcApplication.RegisterUnity();
             MvcApplication.RegisterRoutes(_routes);
         }
 
-        private void CheatBuildManager()
+        private static void CheatBuildManager()
         {
             var memberInfo = typeof(BuildManager).GetField("_theBuildManager", BindingFlags.NonPublic | BindingFlags.Static);
-            if (memberInfo == null) return;
+            if (memberInfo == null)
+            {
+                return;
+            }
+
             var manager = memberInfo.GetValue(null);
             typeof(BuildManager).GetProperty("PreStartInitStage", BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, 2, null);
+
             var fieldInfo = typeof(BuildManager).GetField("_topLevelFilesCompiledStarted", BindingFlags.NonPublic | BindingFlags.Instance);
             fieldInfo?.SetValue(manager, true);
+
             var field = typeof(BuildManager).GetField("_topLevelReferencedAssemblies", BindingFlags.NonPublic | BindingFlags.Instance);
             field?.SetValue(manager, new List<Assembly> { typeof(MvcApplication).Assembly });
         }
 
         private IEnumerable<RecordedAction> LoadAllActionsToReplay(XDocument doc)
         {
-
             var root = GetActionsRoot(doc);
-            return root.Elements("action").Select(n =>
-                new RecordedAction
-                {
-                    Code = n.Attribute("code").Value,
-                    Lcid = GetLcid(n),
-                    Ids = n.Attribute("ids").Value.Split(",".ToCharArray()),
-                    ParentId = int.Parse(n.Attribute("parentId").Value),
-                    Form = FormFromXml(n),
-                    ChildId = GetChildId(n),
-                    ChildIds = GetChildIds(n),
-                    ChildLinkIds = GetChildLinkIds(n),
-                    BackwardId = GetBackwardId(n),
-                    ResultId = GetResultId(n),
-                    ChildActions = GetChildActions(),
-                    VirtualFieldIds = GetVirtualFieldIds(n),
-                    CustomActionCode = GetCustomActionCode(n)
-                }
-
-            ).ToArray();
+            return root.Elements("action").Select(n => new RecordedAction
+            {
+                Code = n.Attribute("code").Value,
+                Lcid = GetLcid(n),
+                Ids = n.Attribute("ids").Value.Split(",".ToCharArray()),
+                ParentId = int.Parse(n.Attribute("parentId").Value),
+                Form = FormFromXml(n),
+                ChildId = GetChildId(n),
+                ChildIds = GetChildIds(n),
+                ChildLinkIds = GetChildLinkIds(n),
+                BackwardId = GetBackwardId(n),
+                ResultId = GetResultId(n),
+                ChildActions = GetChildActions(),
+                VirtualFieldIds = GetVirtualFieldIds(n),
+                CustomActionCode = GetCustomActionCode(n)
+            }).ToArray();
         }
 
-        private string GetCustomActionCode(XElement n)
+        private static string GetCustomActionCode(XElement n)
         {
             var code = n.Attribute("code").Value;
             if (code == ActionCode.AddNewCustomAction && n.Attribute("actionCode") != null)
+            {
                 return n.Attribute("actionCode").Value;
-            else
-                return string.Empty;
+            }
+
+            return string.Empty;
         }
 
-        private int GetLcid(XElement n)
+        private static int GetLcid(XElement n)
         {
             return GetIntAttribute(n, "lcid");
         }
 
-        private string GetVirtualFieldIds(XElement n)
+        private static string GetVirtualFieldIds(XElement n)
         {
             return GetStringAttribute(n, "newVirtualFieldIds");
         }
 
-        private int GetResultId(XElement n)
+        private static int GetResultId(XElement n)
         {
             var code = n.Attribute("code").Value;
             if (new[] { ActionCode.CreateLikeContent, ActionCode.CreateLikeField, ActionCode.CreateLikeArticle }.Contains(code))
             {
                 return GetIntAttribute(n, "resultId");
             }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
 
-        private int GetChildId(XElement n)
+        private static int GetChildId(XElement n)
         {
             var code = n.Attribute("code").Value;
             if (new[] { ActionCode.AddNewField, ActionCode.FieldProperties, ActionCode.CreateLikeField }.Contains(code))
             {
                 return GetIntAttribute(n, "newLinkId");
             }
-            else if (new[] { ActionCode.AddNewNotification, ActionCode.NotificationProperties, ActionCode.AddNewTemplateObject, ActionCode.AddNewPageObject }.Contains(code))
+
+            if (new[] { ActionCode.AddNewNotification, ActionCode.NotificationProperties, ActionCode.AddNewTemplateObject, ActionCode.AddNewPageObject }.Contains(code))
             {
                 return GetIntAttribute(n, "formatId");
             }
-            else if (code == ActionCode.AddNewCustomAction)
+
+            if (code == ActionCode.AddNewCustomAction)
             {
                 return GetIntAttribute(n, "actionId");
             }
-            else
-                return 0;
+
+            return 0;
         }
 
-        private string GetChildIds(XElement n)
+        private static string GetChildIds(XElement n)
         {
             var code = n.Attribute("code").Value;
             if (new[] { ActionCode.CreateLikeContent, ActionCode.AddNewContent }.Contains(code))
             {
                 return n.Attribute("fieldIds").Value;
             }
-            else if (new[] { ActionCode.FieldProperties, ActionCode.AddNewField, ActionCode.CreateLikeField }.Contains(code))
+
+            if (new[] { ActionCode.FieldProperties, ActionCode.AddNewField, ActionCode.CreateLikeField }.Contains(code))
             {
                 return GetStringAttribute(n, "newChildFieldIds");
             }
-            else if (new[] { ActionCode.AddNewVisualEditorPlugin, ActionCode.VisualEditorPluginProperties }.Contains(code))
+
+            if (new[] { ActionCode.AddNewVisualEditorPlugin, ActionCode.VisualEditorPluginProperties }.Contains(code))
             {
                 return GetStringAttribute(n, "commandIds");
             }
-            else if (new[] { ActionCode.AddNewWorkflow, ActionCode.WorkflowProperties }.Contains(code))
+
+            if (new[] { ActionCode.AddNewWorkflow, ActionCode.WorkflowProperties }.Contains(code))
             {
                 return GetStringAttribute(n, "rulesIds");
             }
-            else
-                return null;
+
+            return null;
         }
 
-        private string GetChildLinkIds(XElement n)
+        private static string GetChildLinkIds(XElement n)
         {
             var code = n.Attribute("code").Value;
             if (new[] { ActionCode.CreateLikeContent, ActionCode.AddNewContent }.Contains(code))
             {
                 return GetStringAttribute(n, "linkIds");
             }
-            else if (new[] { ActionCode.FieldProperties, ActionCode.AddNewField, ActionCode.CreateLikeField }.Contains(code))
+
+            if (new[] { ActionCode.FieldProperties, ActionCode.AddNewField, ActionCode.CreateLikeField }.Contains(code))
             {
                 return GetStringAttribute(n, "newChildLinkIds");
             }
-            else
-                return null;
+
+            return null;
         }
 
-        private int GetBackwardId(XElement n)
+        private static int GetBackwardId(XElement n)
         {
             return GetIntAttribute(n, "newBackwardId");
         }
 
-        private string GetStringAttribute(XElement n, string name)
+        private static string GetStringAttribute(XElement n, string name)
         {
-            var attr = n.Attribute(name);
-            return attr?.Value;
+            return n.Attribute(name)?.Value;
         }
 
-        private int GetIntAttribute(XElement n, string name)
+        private static int GetIntAttribute(XElement n, string name)
         {
             var attr = n.Attribute(name);
-            return (attr != null) ? int.Parse(attr.Value) : 0;
+            return attr != null ? int.Parse(attr.Value) : 0;
         }
 
-        private List<RecordedAction> GetChildActions()
+        private static List<RecordedAction> GetChildActions()
         {
-            var result = new List<RecordedAction>();
-            return result;
+            return new List<RecordedAction>();
         }
 
         private void ReplayForm(RecordedAction action, int userId, XAttribute urlAttribute)
         {
-            IControllerFactory factory = new DefaultControllerFactory();//ControllerBuilder.Current.GetControllerFactory();
+            var factory = new DefaultControllerFactory();
 
             var urlParts = action.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && n != "~").ToArray();
-
             CorrectAction(action);
 
             var data = GetRouteData(action, urlParts);
-
             var httpContext = GetHttpContextBase(action, userId, urlAttribute);
-
             var context = new RequestContext(httpContext, data);
 
             var controller = factory.CreateController(context, urlParts[0]);
@@ -928,17 +950,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Controller '{0}' is not found ", urlParts[0]));
             }
+
             var baseController = (ControllerBase)controller;
-            var ci = (action.Lcid == 0) ? CultureInfo.InvariantCulture : new CultureInfo(action.Lcid);
+            var ci = action.Lcid == 0 ? CultureInfo.InvariantCulture : new CultureInfo(action.Lcid);
             Thread.CurrentThread.CurrentCulture = ci;
-            baseController.ValueProvider = new ValueProviderCollection(new[] {
+            baseController.ValueProvider = new ValueProviderCollection(new[]
+            {
                 new DictionaryValueProvider<object>(data.Values, ci),
                 new FormCollection(httpContext.Request.Form).ToValueProvider(),
-                new NameValueCollectionValueProvider(httpContext.Request.QueryString, ci),
+                new NameValueCollectionValueProvider(httpContext.Request.QueryString, ci)
             });
+
             baseController.ControllerContext = new ControllerContext(httpContext, data, baseController);
 
-            PreAction(action, context);
             controller.Execute(context);
             PostAction(action, context);
 
@@ -946,12 +970,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 ReplayForm(childAction, userId, urlAttribute);
             }
-
-        }
-
-        private void PreAction(RecordedAction action, RequestContext context)
-        {
-
         }
 
         private void PostAction(RecordedAction action, RequestContext context)
@@ -981,6 +999,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var result = httpContext.Object;
             AppendItems(result, urlAttribute);
+
             return result;
         }
 
@@ -988,22 +1007,22 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             result.Items.Add("IS_REPLAY", true);
             if (urlAttribute != null)
+            {
                 result.Items.Add("BACKEND_URL", urlAttribute.Value);
+            }
         }
 
         private static QPPrincipal GetQpPrincipal(int userId)
         {
             var user = new UserService().ReadProfile(userId);
             var identity = new QPIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false);
-            var principal = new QPPrincipal(identity, new string[] { });
-            return principal;
+            return new QPPrincipal(identity, new string[] { });
         }
 
         private static HttpRequestMock GetHttpRequestMock(RecordedAction action)
         {
             var httpRequest = new HttpRequestMock();
             var options = QPConnectionScope.Current.IdentityInsertOptions;
-
             var entityTypeCode = action.BackendAction.EntityType.Code;
             if (entityTypeCode == EntityTypeCode.VirtualContent)
             {
@@ -1011,8 +1030,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var actionTypeCode = action.BackendAction.ActionType.Code;
-
             httpRequest.SetForm(action.Form);
+
             if (action.Ids.Length > 1)
             {
                 httpRequest.Form.Add("IDs", string.Join(",", action.Ids));
@@ -1027,36 +1046,73 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 case ActionCode.AddNewContent:
                     if (options.Contains(EntityTypeCode.Field))
+                    {
                         AddListItem(httpRequest.Form, "Data.ForceFieldIds", action.ChildIds);
+                    }
+
                     if (options.Contains(EntityTypeCode.ContentLink))
+                    {
                         AddListItem(httpRequest.Form, "Data.ForceLinkIds", action.ChildLinkIds);
+                    }
+
                     break;
+
                 case ActionCode.CreateLikeContent:
                     if (options.Contains(EntityTypeCode.Content))
+                    {
                         httpRequest.Form.Add("forceId", action.ResultId.ToString());
+                    }
+
                     if (options.Contains(EntityTypeCode.Field))
+                    {
                         httpRequest.Form.Add("forceFieldIds", action.ChildIds);
+                    }
+
                     if (options.Contains(EntityTypeCode.ContentLink))
+                    {
                         httpRequest.Form.Add("forceLinkIds", action.ChildLinkIds);
+                    }
+
                     break;
+
                 case ActionCode.CreateLikeField:
                     if (options.Contains(EntityTypeCode.Field))
+                    {
                         httpRequest.Form.Add("forceId", action.ResultId.ToString());
+                    }
+
                     if (options.Contains(EntityTypeCode.Field))
+                    {
                         httpRequest.Form.Add("forceVirtualFieldIds", action.VirtualFieldIds);
+                    }
+
                     if (options.Contains(EntityTypeCode.Field))
+                    {
                         httpRequest.Form.Add("forceChildFieldIds", action.ChildIds);
+                    }
+
                     if (options.Contains(EntityTypeCode.ContentLink))
+                    {
                         httpRequest.Form.Add("forceLinkId", action.ChildId.ToString());
+                    }
+
                     if (options.Contains(EntityTypeCode.ContentLink))
+                    {
                         httpRequest.Form.Add("forceChildLinkIds", action.ChildLinkIds);
+                    }
+
                     break;
+
                 case ActionCode.AddNewVirtualContents:
                 case ActionCode.VirtualContentProperties:
                 case ActionCode.VirtualFieldProperties:
                     if (options.Contains(EntityTypeCode.Field))
+                    {
                         AddListItem(httpRequest.Form, "Data.ForceVirtualFieldIds", action.VirtualFieldIds);
+                    }
+
                     break;
+
                 case ActionCode.AddNewField:
                 case ActionCode.FieldProperties:
                     if (options.Contains(EntityTypeCode.ContentLink))
@@ -1064,28 +1120,41 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                         httpRequest.Form.Add("Data.ContentLink.ForceLinkId", action.ChildId.ToString());
                         AddListItem(httpRequest.Form, "Data.ForceChildLinkIds", action.ChildIds);
                     }
+
                     if (options.Contains(EntityTypeCode.Field))
                     {
                         AddListItem(httpRequest.Form, "Data.ForceVirtualFieldIds", action.VirtualFieldIds);
                         httpRequest.Form.Add("Data.ForceBackwardId", action.BackwardId.ToString());
                         AddListItem(httpRequest.Form, "Data.ForceChildFieldIds", action.ChildIds);
                     }
+
                     break;
 
                 case ActionCode.AddNewCustomAction:
                     httpRequest.Form.Add("Data.ForceActionCode", action.CustomActionCode);
                     if (options.Contains(EntityTypeCode.BackendAction))
+                    {
                         httpRequest.Form.Add("Data.ForceActionId", action.ChildId.ToString());
+                    }
+
                     break;
+
                 case ActionCode.AddNewVisualEditorPlugin:
                 case ActionCode.VisualEditorPluginProperties:
                     if (options.Contains(EntityTypeCode.VisualEditorCommand))
+                    {
                         AddListItem(httpRequest.Form, "Data.ForceCommandIds", action.ChildIds);
+                    }
+
                     break;
+
                 case ActionCode.AddNewWorkflow:
                 case ActionCode.WorkflowProperties:
                     if (options.Contains(EntityTypeCode.WorkflowRule))
+                    {
                         AddListItem(httpRequest.Form, "Data.ForceRulesIds", action.ChildIds);
+                    }
+
                     break;
             }
 
@@ -1096,13 +1165,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         private static void AddListItem(NameValueCollection collection, string name, string commaList)
         {
             if (!string.IsNullOrEmpty(commaList))
+            {
                 foreach (var id in commaList.Split(",".ToCharArray()))
                 {
                     collection.Add(name, id);
                 }
+            }
         }
 
-        private RouteData GetRouteData(RecordedAction action, string[] urlParts)
+        private static RouteData GetRouteData(RecordedAction action, string[] urlParts)
         {
             var data = new RouteData();
             data.Values["controller"] = urlParts[0];
@@ -1123,23 +1194,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             return data;
         }
-
-
         #endregion
-
-        #region fingerprint
 
         private static string ByteArrayToString(byte[] ba)
         {
-            var hex = BitConverter.ToString(ba);
-            return hex.Replace("-", "");
+            return BitConverter.ToString(ba).Replace("-", "");
         }
 
         public string GetFingerPrint(XDocument settings)
         {
             return ByteArrayToString(new FingerprintService().GetFingerprint(settings));
         }
-
-        #endregion
     }
 }
