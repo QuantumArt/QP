@@ -72,6 +72,7 @@ $currentPath = split-path -parent $MyInvocation.MyCommand.Definition
 
 $schedulerFolder = Join-Path $currentPath "$projectName\bin\Debug"
 $schedulerPath = Join-Path $schedulerFolder "$projectName.exe"
+$schedulerConfigPath = Join-Path $schedulerFolder "$projectName.exe.config"
 $schedulerZipPath = Join-Path $currentPath "CommonScheduler.zip"
 
 if ((Test-Path $schedulerZipPath))
@@ -86,6 +87,10 @@ else
         throw "You should build service $projectName in Debug configuration first";
     }
     
+    [xml]$config = Get-Content -Path $schedulerConfigPath
+    $add = $config.configuration.'system.diagnostics'.switches.add | where {$_.name -eq 'debug'}
+    $add.value = "All"
+
     Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
 }
 
