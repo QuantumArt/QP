@@ -50,6 +50,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseMappingConfigurator.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="EF6Model.Contents.Extensions.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
@@ -65,6 +68,9 @@
     <Compile Include="EF6ModelMappingConfigurator.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="FileMappingConfigurator.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="IMappingConfigurator.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
@@ -75,6 +81,9 @@
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="IQPLibraryService.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MappingConfiguratorBase.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="MarketingProduct.cs">
@@ -131,8 +140,11 @@
     <None Include="QPDataContextInclude\ClassExtensions.ttinclude" />
     <None Include="QPDataContextInclude\ConnectionScope.ttinclude" />
     <None Include="QPDataContextInclude\Classes.ttinclude" />
+    <None Include="QPDataContextInclude\DatabaseMappingConfigurator.ttinclude" />
     <None Include="QPDataContextInclude\ModelExtensions.ttinclude" />
     <None Include="QPDataContextInclude\Model.ttinclude" />
+    <None Include="QPDataContextInclude\MappingConfiguratorOnModelCreating.ttinclude" />
+    <None Include="QPDataContextInclude\FileMappingConfigurator.ttinclude" />
     <None Include="QPDataContextInclude\ModelMappingConfigurator.ttinclude" />
     <None Include="QPDataContextInclude\ReuseableTemplate1.ttinclude" />
     <None Include="QPDataContextInclude\TestClassTemplate.ttinclude" />

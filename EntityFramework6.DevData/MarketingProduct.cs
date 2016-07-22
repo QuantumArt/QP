@@ -38,7 +38,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		/// <summary>
 		/// 
 		/// </summary>		
-		public virtual ICollection<Product> Products { get; set; }
+		public  ICollection<Product> Products { get; set; }
 		
 		#region Generated Content properties
 		// public Int32 ProductTypeExact { get { return this.ProductType == null ? default(Int32) : this.ProductType.Value; } }

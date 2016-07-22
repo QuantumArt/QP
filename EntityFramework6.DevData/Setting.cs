@@ -28,11 +28,11 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		/// <summary>
 		/// 
 		/// </summary>		
-		public virtual ICollection<Setting> RelatedSettings { get; set; }
+		public  ICollection<Setting> RelatedSettings { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for 1657/RelatedSettings
 		/// </summary>		
-		public virtual ICollection<Setting> BackwardForRelatedSettings { get; set; }
+		public  ICollection<Setting> BackwardForRelatedSettings { get; set; }
 		
 		#region Generated Content properties
 		// public Decimal DecimalValueExact { get { return this.DecimalValue == null ? default(Decimal) : this.DecimalValue.Value; } }

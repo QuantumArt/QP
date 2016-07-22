@@ -24,7 +24,7 @@ namespace CodeGeneration.Test
 
             Assert.That(settings.UseContextNameAsConnectionString, Is.True, "UseContextNameAsConnectionString");
             Assert.That(settings.UseReversedAssociations, Is.True, "UseReversedAssociations");
-            //Assert.That(settings.ProxyCreationEnabled, Is.False, "ProxyCreationEnabled");
+            Assert.That(settings.ProxyCreationEnabled, Is.False, "ProxyCreationEnabled");
             Assert.That(settings.LazyLoadingEnabled, Is.True, "LazyLoadingEnabled");
             Assert.That(settings.PlaceContentsInSeparateFiles, Is.True, "PlaceContentsInSeparateFiles");
 

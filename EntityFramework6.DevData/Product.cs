@@ -45,15 +45,15 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		/// <summary>
 		/// 
 		/// </summary>		
-		public virtual ICollection<Region> Regions { get; set; }
+		public  ICollection<Region> Regions { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>		
-		public virtual ICollection<ProductParameter> Parameters { get; set; }
+		public  ICollection<ProductParameter> Parameters { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for field (id: 1192)/Product MobileTariffs
 		/// </summary>		
-		public virtual ICollection<MobileTariff> MobileTariffs { get; set; }
+		public  ICollection<MobileTariff> MobileTariffs { get; set; }
 		
 		#region Generated Content properties
 		// public string PDFUrl { get; set; }

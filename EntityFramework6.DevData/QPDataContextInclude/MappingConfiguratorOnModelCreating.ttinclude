@@ -1,0 +1,141 @@
+﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+<#+ void MappingConfiguratorOnModelCreating(
+		GenerationContext context,
+		Func<ContentInfo, string> getTableMapping,
+		Func<ContentInfo, AttributeInfo, string> getLinkTableMapping,
+		Func<ContentInfo, AttributeInfo, string> getReversedLinkTableMapping
+		)
+{
+var model = context.Model;
+var settings = context.Settings;
+#>
+base.OnModelCreating(modelBuilder);
+<#+
+		foreach(var content in model.Contents)
+		{
+#>
+
+            #region <#=content.MappedName#> mappings
+            modelBuilder.Entity<<#=content.MappedName#>>()
+                .ToTable(<#=getTableMapping(content)#>)
+                .Property(x => x.Id)
+                .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
+                .HasColumnName("CONTENT_ITEM_ID");
+           
+		    modelBuilder.Entity<<#=content.MappedName#>>()                
+                .Property(x => x.LastModifiedBy)
+                .HasColumnName("LAST_MODIFIED_BY");
+            
+            modelBuilder.Entity<<#=content.MappedName#>>()
+                .Property(x => x.StatusTypeId)
+                .HasColumnName("STATUS_TYPE_ID");
+
+			modelBuilder.Entity<<#=content.MappedName#>>()
+                .HasRequired<StatusType>(x => x.StatusType)
+                .WithMany()
+                .HasForeignKey(x => x.StatusTypeId); 
+
+<#+
+            foreach (var attribute in content.Attributes.Where(x => !x.IsRelation && x.Name != x.MappedName))
+            {
+#>
+            modelBuilder.Entity<<#=attribute.Content.MappedName#>>()
+                .Property(x => x.<#=attribute.MappedName#>)
+                .HasColumnName("<#=attribute.Name#>");
+<#+
+	        }
+
+            foreach (var attribute in content.Attributes.Where(x => x.ShouldMap && x.ExplicitMapping != null))
+            {
+#>
+            modelBuilder.Entity<<#=attribute.Content.MappedName#>>()
+                .Property(x => x.<#=attribute.MappedName#>)
+                .HasColumnName("<#=attribute.ExplicitMapping#>");
+<#+
+            }
+
+            foreach (var attribute in content.Attributes.Where(x => x.IsO2M))
+            {
+#>
+            modelBuilder.Entity<<#=attribute.Content.MappedName#>>()
+                .HasOptional<<#=attribute.RelatedContent.MappedName#>>(mp => mp.<#=attribute.MappedName#>)
+                .WithMany(mp => mp.<#=attribute.RelatedAttribute.MappedName#>)
+                .HasForeignKey(fp => fp.<#=attribute.OriginalMappedName#>);
+
+            modelBuilder.Entity<<#=attribute.Content.MappedName#>>()
+                .Property(x => x.<#=attribute.OriginalMappedName#>)
+                .HasColumnName("<#=attribute.MappedName#>");
+<#+
+            }
+
+            foreach (var attribute in content.Attributes.Where(x => x.IsM2M && x.IsSource == true))
+            {
+				if(!settings.UseReversedAssociations || !attribute.RelatedContent.SplitArticles)
+                {
+#>
+            
+			modelBuilder.Entity<<#=attribute.Content.MappedName#>>().HasMany<<#=attribute.RelatedContent.MappedName#>>(p => p.<#=attribute.MappedName#>)
+				.WithMany(r => r.<#=attribute.RelatedAttribute.MappedName#>)
+                .Map(rp =>
+                {
+                    rp.MapLeftKey("id");
+                    rp.MapRightKey("linked_id");
+                    rp.ToTable(<#=getLinkTableMapping(content, attribute)#>);
+                });
+<#+
+				}
+				else
+                {
+#>
+
+            modelBuilder.Entity<<#=attribute.Content.MappedName#>>().HasMany<<#=attribute.RelatedContent.MappedName#>>(p => p.<#=attribute.MappedName#>).WithMany()
+                .Map(rp =>
+                {
+                    rp.MapLeftKey("id");
+                    rp.MapRightKey("linked_id");
+                    rp.ToTable(<#=getLinkTableMapping(content, attribute)#>);
+                });
+
+            modelBuilder.Entity<<#=attribute.RelatedContent.MappedName#>>().HasMany<<#=attribute.Content.MappedName#>>(p => p.<#=attribute.RelatedAttribute.MappedName#>).WithMany()
+                .Map(rp =>
+                { 
+<#+
+					if(attribute.ContentId != attribute.RelatedContentId)
+                    {
+#>
+                    rp.MapLeftKey("id"); // !+
+                    rp.MapRightKey("linked_id");
+<#+
+                    }
+					else
+                    {
+#>
+                    rp.MapLeftKey("linked_id"); // ===
+                    rp.MapRightKey("id");
+<#+
+                    }
+#>
+                    rp.ToTable(<#=getReversedLinkTableMapping(content, attribute)#>);
+                });
+
+<#+
+				}
+            }
+#>
+
+<#+			foreach(var attribute in content.Attributes.Where(x => x.GenerateLibraryUrl)) 
+		    { #>
+            modelBuilder.Entity<<#=attribute.Content.MappedName#>>().Ignore(p => p.<#=attribute.MappedName#>Url);
+<#+			} 
+
+  			foreach(var attribute in content.Attributes.Where(x => x.GenerateUploadPath)) 
+			{
+#>
+            modelBuilder.Entity<<#=attribute.Content.MappedName#>>().Ignore(p => p.<#=attribute.MappedName#>UploadPath);
+<#+
+			}#> 
+            #endregion
+<#+
+        }
+#>
+<#+}#>

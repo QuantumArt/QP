@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Quantumart.QP8.CodeGeneration.Services
 {
@@ -17,10 +18,8 @@ namespace Quantumart.QP8.CodeGeneration.Services
         public List<AttributeInfo> Attributes;
         public List<LinkInfo> Links;
 
-
-        public ModelReader(string path, Action<string> write, bool isStage = true)
+        public ModelReader(XDocument doc, Action<string> write, bool isStage = true)
         {
-            var doc = System.Xml.Linq.XDocument.Load(path);
             Schema = doc.Descendants("schema").Select(x => new SchemaInfo
             {
                 ConnectionStringName = RootUtil.GetAttribute<string>(x, "connectionStringName", true),
@@ -226,6 +225,11 @@ namespace Quantumart.QP8.CodeGeneration.Services
                     }
                 }
             }
+        }
+
+        public ModelReader(string path, Action<string> write, bool isStage = true)
+            : this(XDocument.Load(path), write, isStage)
+        {
         }
 
         private AttributeInfo GenM2M(ContentInfo contentFrom, ContentInfo contentTo, LinkInfo link, AttributeInfo attr)

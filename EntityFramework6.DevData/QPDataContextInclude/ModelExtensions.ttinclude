@@ -26,6 +26,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
             : base(connectionStringOrName)
         {
             this.Configuration.LazyLoadingEnabled = <#=settings.LazyLoadingEnabled.ToString().ToLower()#>;
+			this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
             OnContextCreated();
         }
 
@@ -33,12 +34,14 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
             : base(connection, contextOwnsConnection)
         {
             this.Configuration.LazyLoadingEnabled = <#=settings.LazyLoadingEnabled.ToString().ToLower()#>;
+			this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
             OnContextCreated();
         }
 
         public <#= model.Schema.ClassName#>(DbCompiledModel model) : base(model)
         {
             this.Configuration.LazyLoadingEnabled = <#=settings.LazyLoadingEnabled.ToString().ToLower()#>;
+			this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
             OnContextCreated();
         }
 
@@ -46,6 +49,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
             : base(connection, model, contextOwnsConnection)
         {
             this.Configuration.LazyLoadingEnabled = <#=settings.LazyLoadingEnabled.ToString().ToLower()#>;
+			this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
             OnContextCreated();
         }
 

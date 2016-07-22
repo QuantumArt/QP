@@ -8,33 +8,36 @@ using System.Threading;
 using Quantumart.QP8.CodeGeneration.Services;
 
 
-namespace EntityFramework6.Test.DataContext
+namespace Quantumart.QP8.EntityFramework6.DevData
 {
-    public class EF6ModelMappingConfigurator : MappingConfiguratorBase
-    {	
-        public EF6ModelMappingConfigurator()
+    public class FileMappingConfigurator : MappingConfiguratorBase
+    {
+		private readonly string _path;
+	
+        public FileMappingConfigurator(string path)
             : base()
         {
+			_path = path;
 		}
 
-        public EF6ModelMappingConfigurator(ContentAccess contentAccess)
+        public FileMappingConfigurator(string path, ContentAccess contentAccess)
             : base(contentAccess)
         {
+			_path = path;
 		}
 
 		protected override ModelReader GetDynamicModel()
         {
-			throw new NotImplementedException();
+            return new ModelReader(_path, _ => { });            
         }
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 			base.OnModelCreating(modelBuilder);
-			base.OnModelCreating(modelBuilder);
 
             #region MarketingProduct mappings
             modelBuilder.Entity<MarketingProduct>()
-                .ToTable(GetTableName(287, true))
+                .ToTable(GetTableName("MarketingProduct"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -69,7 +72,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region Product mappings
             modelBuilder.Entity<Product>()
-                .ToTable(GetTableName(288, true))
+                .ToTable(GetTableName("Product"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -125,7 +128,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region ProductParameter mappings
             modelBuilder.Entity<ProductParameter>()
-                .ToTable(GetTableName(291, true))
+                .ToTable(GetTableName("ProductParameter"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -192,7 +195,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region Region mappings
             modelBuilder.Entity<Region>()
-                .ToTable(GetTableName(294, true))
+                .ToTable(GetTableName("Region"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -257,7 +260,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region MobileTariff mappings
             modelBuilder.Entity<MobileTariff>()
-                .ToTable(GetTableName(305, true))
+                .ToTable(GetTableName("MobileTariff"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -288,7 +291,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region Setting mappings
             modelBuilder.Entity<Setting>()
-                .ToTable(GetTableName(349, true))
+                .ToTable(GetTableName("Setting"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");

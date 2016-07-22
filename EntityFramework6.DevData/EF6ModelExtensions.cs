@@ -20,6 +20,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
             : base(connectionStringOrName)
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
@@ -27,12 +28,14 @@ namespace Quantumart.QP8.EntityFramework6.DevData
             : base(connection, contextOwnsConnection)
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
         public EF6Model(DbCompiledModel model) : base(model)
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
@@ -40,6 +43,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
             : base(connection, model, contextOwnsConnection)
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 

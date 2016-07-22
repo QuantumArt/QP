@@ -19,6 +19,7 @@ namespace EntityFramework6.Test.DataContext
             : base("name=EF6Model")
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
 
 			OnContextCreated();
         }

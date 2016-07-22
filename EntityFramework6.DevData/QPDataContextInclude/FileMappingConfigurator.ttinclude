@@ -1,0 +1,61 @@
+﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+<#+ void AddFileMappingConfigurator(GenerationContext context){
+var model = context.Model;
+var settings = context.Settings;
+#>
+using System;
+using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Common;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Threading;
+using Quantumart.QP8.CodeGeneration.Services;
+<#= settings.Usings#>
+
+namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint")#>
+{
+    public class FileMappingConfigurator : MappingConfiguratorBase
+    {
+		private readonly string _path;
+	
+        public FileMappingConfigurator(string path)
+            : base()
+        {
+			_path = path;
+		}
+
+        public FileMappingConfigurator(string path, ContentAccess contentAccess)
+            : base(contentAccess)
+        {
+			_path = path;
+		}
+
+		protected override ModelReader GetDynamicModel()
+        {
+            return new ModelReader(_path, _ => { });            
+        }
+       
+        public override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+			<#+ MappingConfiguratorOnModelCreating(context, GetDynamicMapping, GetDynamicLinkTableMapping, GetDynamicReversedLinkTablMapping); #>
+        }
+    }
+}
+<#+
+}
+string GetDynamicMapping(ContentInfo content)
+{	
+	return string.Format("GetTableName(\"{0}\")", content.MappedName);
+}
+
+string GetDynamicLinkTableMapping(ContentInfo content, AttributeInfo field)
+{
+	return string.Format("GetLinkTableName(\"{0}\", \"{1}\")", content.MappedName, field.MappedName);
+}
+
+string GetDynamicReversedLinkTablMapping(ContentInfo content, AttributeInfo field)
+{
+	return string.Format("GetReversedLinkTableName(\"{0}\", \"{1}\")", content.MappedName, field.MappedName);
+}
+#>

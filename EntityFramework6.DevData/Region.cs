@@ -40,27 +40,27 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		/// <summary>
 		/// 
 		/// </summary>		
-		public virtual ICollection<Region> AllowedRegions { get; set; }
+		public  ICollection<Region> AllowedRegions { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>		
-		public virtual ICollection<Region> DeniedRegions { get; set; }
+		public  ICollection<Region> DeniedRegions { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for field (id: 1138)/Parent Children
 		/// </summary>		
-		public virtual ICollection<Region> Children { get; set; }
+		public  ICollection<Region> Children { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for 1228/Regions
 		/// </summary>		
-		public virtual ICollection<Product> BackwardForRegions { get; set; }
+		public  ICollection<Product> BackwardForRegions { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for 1659/AllowedRegions
 		/// </summary>		
-		public virtual ICollection<Region> BackwardForAllowedRegions { get; set; }
+		public  ICollection<Region> BackwardForAllowedRegions { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for 1660/DeniedRegions
 		/// </summary>		
-		public virtual ICollection<Region> BackwardForDeniedRegions { get; set; }
+		public  ICollection<Region> BackwardForDeniedRegions { get; set; }
 		
 		#region Generated Content properties
 		// public Int32 OldSiteIdExact { get { return this.OldSiteId == null ? default(Int32) : this.OldSiteId.Value; } }

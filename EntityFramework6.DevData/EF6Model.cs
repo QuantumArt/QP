@@ -19,6 +19,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
             : base("name=EF6Model")
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
 
 			OnContextCreated();
         }

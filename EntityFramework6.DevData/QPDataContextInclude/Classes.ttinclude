@@ -69,7 +69,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 		/// <summary>
 		/// <#=attribute.Description??""#>
 		/// </summary>		
-		public virtual ICollection<<#=attribute.RelatedContent.MappedName#>> <#=attribute.MappedName#> { get; set; }
+		public <#+ if( settings.ProxyCreationEnabled ) { #> virtual <#+}#> ICollection<<#=attribute.RelatedContent.MappedName#>> <#=attribute.MappedName#> { get; set; }
 <#+		} #>
 
 <#+	    if(content.Attributes.Any(x => x.GenerateLibraryUrl || x.GenerateUploadPath || x.IsNullable)) { #>		

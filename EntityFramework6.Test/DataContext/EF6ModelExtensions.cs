@@ -20,6 +20,7 @@ namespace EntityFramework6.Test.DataContext
             : base(connectionStringOrName)
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
@@ -27,12 +28,14 @@ namespace EntityFramework6.Test.DataContext
             : base(connection, contextOwnsConnection)
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
         public EF6Model(DbCompiledModel model) : base(model)
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
@@ -40,6 +43,7 @@ namespace EntityFramework6.Test.DataContext
             : base(connection, model, contextOwnsConnection)
         {
             this.Configuration.LazyLoadingEnabled = true;
+			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 

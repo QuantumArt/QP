@@ -10,31 +10,34 @@ using Quantumart.QP8.CodeGeneration.Services;
 
 namespace EntityFramework6.Test.DataContext
 {
-    public class EF6ModelMappingConfigurator : MappingConfiguratorBase
-    {	
-        public EF6ModelMappingConfigurator()
+    public class FileMappingConfigurator : MappingConfiguratorBase
+    {
+		private readonly string _path;
+	
+        public FileMappingConfigurator(string path)
             : base()
         {
+			_path = path;
 		}
 
-        public EF6ModelMappingConfigurator(ContentAccess contentAccess)
+        public FileMappingConfigurator(string path, ContentAccess contentAccess)
             : base(contentAccess)
         {
+			_path = path;
 		}
 
 		protected override ModelReader GetDynamicModel()
         {
-			throw new NotImplementedException();
+            return new ModelReader(_path, _ => { });            
         }
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 			base.OnModelCreating(modelBuilder);
-			base.OnModelCreating(modelBuilder);
 
             #region MarketingProduct mappings
             modelBuilder.Entity<MarketingProduct>()
-                .ToTable(GetTableName(287, true))
+                .ToTable(GetTableName("MarketingProduct"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -69,7 +72,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region Product mappings
             modelBuilder.Entity<Product>()
-                .ToTable(GetTableName(288, true))
+                .ToTable(GetTableName("Product"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -107,7 +110,7 @@ namespace EntityFramework6.Test.DataContext
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(21));
+                    rp.ToTable(GetLinkTableName("Product", "Regions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Product>(p => p.BackwardForRegions).WithMany()
@@ -115,7 +118,7 @@ namespace EntityFramework6.Test.DataContext
                 { 
                     rp.MapLeftKey("id"); // !+
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetReversedLinkTableName(21));
+                    rp.ToTable(GetReversedLinkTableName("Product", "Regions"));
                 });
 
             modelBuilder.Entity<Product>().Ignore(p => p.PDFUrl);
@@ -125,7 +128,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region ProductParameter mappings
             modelBuilder.Entity<ProductParameter>()
-                .ToTable(GetTableName(291, true))
+                .ToTable(GetTableName("ProductParameter"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -192,7 +195,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region Region mappings
             modelBuilder.Entity<Region>()
-                .ToTable(GetTableName(294, true))
+                .ToTable(GetTableName("Region"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -224,7 +227,7 @@ namespace EntityFramework6.Test.DataContext
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(71));
+                    rp.ToTable(GetLinkTableName("Region", "AllowedRegions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.BackwardForAllowedRegions).WithMany()
@@ -232,7 +235,7 @@ namespace EntityFramework6.Test.DataContext
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(71));
+                    rp.ToTable(GetReversedLinkTableName("Region", "AllowedRegions"));
                 });
 
 
@@ -241,7 +244,7 @@ namespace EntityFramework6.Test.DataContext
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(72));
+                    rp.ToTable(GetLinkTableName("Region", "DeniedRegions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.BackwardForDeniedRegions).WithMany()
@@ -249,7 +252,7 @@ namespace EntityFramework6.Test.DataContext
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(72));
+                    rp.ToTable(GetReversedLinkTableName("Region", "DeniedRegions"));
                 });
 
  
@@ -257,7 +260,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region MobileTariff mappings
             modelBuilder.Entity<MobileTariff>()
-                .ToTable(GetTableName(305, true))
+                .ToTable(GetTableName("MobileTariff"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -288,7 +291,7 @@ namespace EntityFramework6.Test.DataContext
 
             #region Setting mappings
             modelBuilder.Entity<Setting>()
-                .ToTable(GetTableName(349, true))
+                .ToTable(GetTableName("Setting"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
@@ -315,7 +318,7 @@ namespace EntityFramework6.Test.DataContext
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(69));
+                    rp.ToTable(GetLinkTableName("Setting", "RelatedSettings"));
                 });
 
             modelBuilder.Entity<Setting>().HasMany<Setting>(p => p.BackwardForRelatedSettings).WithMany()
@@ -323,7 +326,7 @@ namespace EntityFramework6.Test.DataContext
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(69));
+                    rp.ToTable(GetReversedLinkTableName("Setting", "RelatedSettings"));
                 });
 
  

@@ -24,6 +24,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
             : base("name=<#=model.Schema.ConnectionStringName#>")
         {
             this.Configuration.LazyLoadingEnabled = <#=settings.LazyLoadingEnabled.ToString().ToLower()#>;
+			this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
 
 			OnContextCreated();
         }

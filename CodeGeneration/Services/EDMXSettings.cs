@@ -12,6 +12,7 @@ namespace Quantumart.QP8.CodeGeneration.Services
         public bool GenerateModel { get; set; }
         public bool GenerateMappings { get; set; }
         public bool LazyLoadingEnabled { get; set; }
+        public bool ProxyCreationEnabled { get; set; }
         public bool GenerateLive { get; set; }
         public bool GenerateStage { get; set; }
         public bool GenerateUnion { get; set; }
@@ -38,6 +39,7 @@ namespace Quantumart.QP8.CodeGeneration.Services
                 GenerateMappingInterface = RootUtil.GetElementValue<bool>(x, "GenerateMappingInterface"),
                 GenerateClasses = RootUtil.GetElementValue<bool>(x, "GenerateClasses"),
                 LazyLoadingEnabled = RootUtil.GetElementValue<bool>(x, "LazyLoadingEnabled"),
+                ProxyCreationEnabled = RootUtil.GetElementValue<bool>(x, "ProxyCreationEnabled"),
                 GenerateStage = RootUtil.GetElementValue<bool>(x, "GenerateStage"),
                 GenerateLive = RootUtil.GetElementValue<bool>(x, "GenerateLive"),
                 GenerateUnion = RootUtil.GetElementValue<bool>(x, "GenerateUnion"),

@@ -1,0 +1,47 @@
+﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+<#+ void AddDatabaseMappingConfigurator(GenerationContext context){
+var model = context.Model;
+var settings = context.Settings;
+#>
+using System;
+using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Common;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Threading;
+using Quantumart.QP8.CodeGeneration.Services;
+<#= settings.Usings#>
+
+namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint")#>
+{
+    public class DatabaseMappingConfigurator : MappingConfiguratorBase
+    {
+		private readonly string _path;
+	
+        public DatabaseMappingConfigurator(string path)
+            : base()
+        {
+			_path = path;
+		}
+
+        public DatabaseMappingConfigurator(string path, ContentAccess contentAccess)
+            : base(contentAccess)
+        {
+			_path = path;
+		}
+
+		protected override ModelReader GetDynamicModel()
+        {
+			var service = new DatabaseModelMappingService();
+			var modelDoc = service.GetModelMappingResult();
+            return new ModelReader(modelDoc, _ => { });            
+        }
+       
+        public override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+			<#+ MappingConfiguratorOnModelCreating(context, GetDynamicMapping, GetDynamicLinkTableMapping, GetDynamicReversedLinkTablMapping); #>
+        }
+    }
+}
+<#+}#>
