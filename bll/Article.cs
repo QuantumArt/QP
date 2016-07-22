@@ -798,7 +798,7 @@ namespace Quantumart.QP8.BLL
                 foreach (var a in AggregatedArticles)
                 {
                     a.AggregateTo(result);
-                    a.Persist(disableNotifications);
+                    a.Persist(true);
                 }
 
                 if (!IsVariation)
@@ -806,7 +806,7 @@ namespace Quantumart.QP8.BLL
                     foreach (var a in VariationArticles.Where(n => n.UseInVariationUpdate))
                     {
                         a.VariateTo(result);
-                        a.Persist(disableNotifications);
+                        a.Persist(true);
                     }
 
                     if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
