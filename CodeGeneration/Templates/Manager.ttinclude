@@ -262,6 +262,14 @@ class GenerationContext : IDisposable
         }
     }
 
+		public void AddTemplate(Action<GenerationContext> addFile, bool condition = true)
+	{
+		if (condition)
+        {
+			addFile(this);
+        }
+    }
+
 	public void AddCodeFile(string fileName, bool condition = true)
     {
 		if (condition)

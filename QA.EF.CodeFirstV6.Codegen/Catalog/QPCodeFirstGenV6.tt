@@ -57,7 +57,8 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-    <#= settings.Usings#>
+	<#= settings.Usings == null #>
+	***<#= settings.Usings #>||||
 
     public partial class <#=model.Schema.ClassName#> : DbContext
     {

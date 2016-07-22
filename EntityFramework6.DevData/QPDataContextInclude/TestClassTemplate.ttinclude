@@ -1,7 +1,17 @@
 ﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
-<#+ void AddTestClass(GenerationContext context){#>
-public class TestClass
-{
-	public int X { get; set; }
-}
-<#+}#>
+	<#+
+	void AddTestClass(GenerationContext context)
+	{
+	#>
+		aaa
+		bbb
+		ccc
+	<#+
+	foreach(var x in new[]{"qq", "ww", "ee"})
+		{
+			#>
+			[<#=x#>]
+			<#+
+		}
+	}
+	#>

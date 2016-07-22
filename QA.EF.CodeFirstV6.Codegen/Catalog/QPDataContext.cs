@@ -4,7 +4,8 @@ namespace QA.EF.CodeFirstV6.Codegen.Catalog
     using System.Data.Entity;
     using System.ComponentModel.DataAnnotations.Schema;
     using System.Linq;
-    
+	False
+	***||||
 
     public partial class QPDataContext : DbContext
     {

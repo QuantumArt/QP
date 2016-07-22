@@ -34,16 +34,19 @@ namespace Quantumart.QP8.CodeGeneration.Services
             {
                 QPContextMappingResultPath = RootUtil.GetElementValue<string>(x, "QPContextMappingResultPath"),
                 GenerateModel = RootUtil.GetElementValue<bool>(x, "GenerateModel"),
+                GenerateMappings = RootUtil.GetElementValue<bool>(x, "GenerateMappings"),
+                GenerateMappingInterface = RootUtil.GetElementValue<bool>(x, "GenerateMappingInterface"),
                 GenerateClasses = RootUtil.GetElementValue<bool>(x, "GenerateClasses"),
                 LazyLoadingEnabled = RootUtil.GetElementValue<bool>(x, "LazyLoadingEnabled"),
                 GenerateStage = RootUtil.GetElementValue<bool>(x, "GenerateStage"),
                 GenerateLive = RootUtil.GetElementValue<bool>(x, "GenerateLive"),
                 GenerateUnion = RootUtil.GetElementValue<bool>(x, "GenerateUnion"),
                 UseContextNameAsConnectionString = RootUtil.GetElementValue<bool>(x, "UseContextNameAsConnectionString"),
-
+                Usings = RootUtil.GetElementValue<string>(x, "Usings") ?? "",
                 InheritTableExtensions = RootUtil.GetElementValue<bool>(x, "InheritTableExtensions"),
                 GenerateExtensions = RootUtil.GetElementValue<bool>(x, "GenerateExtensions"),
                 GenerateInterface = RootUtil.GetElementValue<bool>(x, "GenerateInterface"),
+                PlaceContentsInSeparateFiles = RootUtil.GetElementValue<bool>(x, "PlaceContentsInSeparateFiles"),
                 UseReversedAssociations = RootUtil.GetElementValue<bool>(x, "UseReversedAssociations"),
                 Localization = x.Descendants("Localization").Select(
                     l => new Localization

@@ -50,23 +50,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\IQPFormService.cs" />
     <Compile Include="Models\IQPArticle.cs" />
-    <Compile Include="Services\IQPFormService.cs" />
     <Compile Include="Models\IQPLibraryService.cs" />
     <Compile Include="Models\StatusType.cs" />
+    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\UserGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Schema\AttributeInfo.cs" />
-    <Compile Include="Services\Schema\ContentInfo.cs" />
-    <Compile Include="Services\Schema\EDMXSettings.cs" />
     <Compile Include="Services\IMappingConfigurator.cs" />
-    <Compile Include="Services\Schema\LinkInfo.cs" />
-    <Compile Include="Services\Schema\Localization.cs" />
-    <Compile Include="Services\Schema\Map.cs" />
-    <Compile Include="Services\Schema\ModelReader.cs" />
     <Compile Include="Services\QPDataContextMappingConfigurator.cs" />
-    <Compile Include="Services\Schema\RootUtil.cs" />
-    <Compile Include="Services\Schema\SchemaInfo.cs" />
-    <Compile Include="Services\Schema\Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
