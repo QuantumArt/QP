@@ -47,13 +47,16 @@ var paths = {
   ],
   images: [
     'Content/**/*.{jpg,jpeg,png,gif}',
+    '!Content/ckeditor/**/*.{jpg,jpeg,png,gif}',
+    '!Content/codemirror/**/*.{jpg,jpeg,png,gif}',
     '!Content/build/**/*.{jpg,jpeg,png,gif}'
   ],
   clean: [
     'Scripts/Quantumart/**/*.{min.js, map}',
     'Content/Quantumart/**/*.{min.css, map}',
+    destPaths.scripts,
     destPaths.styles,
-    destPaths.scripts
+    destPaths.images
   ]
 };
 
@@ -126,7 +129,6 @@ gulp.task('lint-jscs-fix', function() {
 
 
 
-
 gulp.task('assets:js', function() {
   return gulp.src(paths.scripts, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
@@ -162,7 +164,6 @@ gulp.task('assets:css', function() {
     .pipe($.size({ title: 'assets:css', showFiles: true }))
     .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true }));
 });
-
 
 
 

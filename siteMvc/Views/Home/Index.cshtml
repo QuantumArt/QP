@@ -16,7 +16,7 @@
   <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
   @{
-        const string jsVersion = "6.28";
+    const string jsVersion = "6.28";
     var jsVersionFileName = $"Quantumart/version.{jsVersion}.js";
   }
 
@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")">
 
   <script>
+    // TODO: delete and test on build directory
     window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
   </script>
 </head>
