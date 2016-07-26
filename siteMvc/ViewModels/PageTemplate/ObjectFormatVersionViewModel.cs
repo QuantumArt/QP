@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Web;
+using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate

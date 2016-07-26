@@ -11,11 +11,10 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.Utils;
-using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.ListItems;
 using System.Text.RegularExpressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
 
 namespace Quantumart.QP8.BLL
@@ -142,7 +141,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Только для чтения
         /// </summary>
-        public override bool IsReadOnly => ViewType != ArticleViewType.Normal && ViewType != ArticleViewType.PreviewVersion;
+        public override bool IsReadOnly => (ViewType != ArticleViewType.Normal) && (ViewType != ArticleViewType.PreviewVersion);
 
         /// <summary>
         /// Псевдоним статьи
@@ -385,7 +384,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                if (_schedule == null && !_scheduleLoaded)
+                if ((_schedule == null) && !_scheduleLoaded)
                 {
                     _schedule = ScheduleRepository.GetSchedule(this);
                     _scheduleLoaded = true;
@@ -461,7 +460,7 @@ namespace Quantumart.QP8.BLL
 
             foreach (var pair in FieldValues)
             {
-                if (pair.Field.ExactType == FieldExactTypes.M2ORelation && pair.Field.BackRelation != null && pair.Field.BackRelation.Aggregated)
+                if ((pair.Field.ExactType == FieldExactTypes.M2ORelation) && (pair.Field.BackRelation != null) && pair.Field.BackRelation.Aggregated)
                     continue;
                 pair.Validate(errors);
             }
@@ -546,7 +545,7 @@ namespace Quantumart.QP8.BLL
         public static string GetDynamicColumnName(Field field, Dictionary<int, int> relationCounters, bool useFormName = false)
         {
             var relationId = field.RelationId ?? 0;
-            if (field.Type.Name == FieldTypeName.Relation && relationId != 0)
+            if ((field.Type.Name == FieldTypeName.Relation) && (relationId != 0))
             {
                 var currentCount = 1;
                 if (relationCounters.ContainsKey(relationId))
@@ -651,18 +650,18 @@ namespace Quantumart.QP8.BLL
         {
             var predefinedValues = new Dictionary<string, string>();
             var currentId = 0;
-            if (fieldId.HasValue && articleId.HasValue && fieldId.Value != 0 && articleId.Value != 0)
+            if (fieldId.HasValue && articleId.HasValue && (fieldId.Value != 0) && (articleId.Value != 0))
             {
                 var field = FieldRepository.GetById(fieldId.Value);
                 if (field != null)
                 {
-                    if (field.ExactType == FieldExactTypes.M2ORelation && field.BackRelationId.HasValue)
+                    if ((field.ExactType == FieldExactTypes.M2ORelation) && field.BackRelationId.HasValue)
                     {
                         currentId = field.BackRelationId.Value;
                     }
-                    else if (field.ExactType == FieldExactTypes.M2MRelation && field.ContentLink.Symmetric)
+                    else if ((field.ExactType == FieldExactTypes.M2MRelation) && field.ContentLink.Symmetric)
                     {
-                        if (field.RelateToContentId != null && field.RelateToContentId.Value == field.ContentId)
+                        if ((field.RelateToContentId != null) && (field.RelateToContentId.Value == field.ContentId))
                         {
                             currentId = field.Id;
                         }
@@ -672,7 +671,7 @@ namespace Quantumart.QP8.BLL
                         }
                     }
         
-                    else if (field.ExactType == FieldExactTypes.O2MRelation && (isChild.HasValue && isChild.Value)) {
+                    else if ((field.ExactType == FieldExactTypes.O2MRelation) && (isChild.HasValue && isChild.Value)) {
                         currentId = field.Id;
                     }
                 }
@@ -776,7 +775,7 @@ namespace Quantumart.QP8.BLL
             {
                 result = ArticleRepository.Update(this);
                 codes.Add(NotificationCode.Update);
-                if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
+                if ((previousArticle != null) && (previousArticle.StatusTypeId != StatusTypeId))
                 {
                     codes.Add(NotificationCode.ChangeStatus);
                 }
@@ -809,7 +808,7 @@ namespace Quantumart.QP8.BLL
                         a.Persist(true);
                     }
 
-                    if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
+                    if ((previousArticle != null) && (previousArticle.StatusTypeId != StatusTypeId))
                     {
                         var message = ReplaceCommentLink(Comment);
                         var systemStatusType = GetSystemStatusType(previousArticle.StatusTypeId, StatusTypeId, ref message);
@@ -825,7 +824,8 @@ namespace Quantumart.QP8.BLL
         private void OptimizeForHierarchy()
         {
             FieldValues
-                .Where(n => n.Field.ExactType == FieldExactTypes.M2MRelation && n.Field.OptimizeForHierarchy)
+                .Where(n => (n.Field.ExactType == FieldExactTypes.M2MRelation) && n.Field.OptimizeForHierarchy)
+                .ToList()
                 .ForEach(n => new OptimizeHierarchyHelper(n).Process());
         }
 
@@ -859,7 +859,7 @@ namespace Quantumart.QP8.BLL
             var previousStatus = statusTypes.FirstOrDefault(s => s.Id == previousStatusTypeId);
             var currentStatus = statusTypes.FirstOrDefault(s => s.Id == currentStatusTypeId);
 
-            if (currentStatus != null && previousStatus != null)
+            if ((currentStatus != null) && (previousStatus != null))
             {
                 if (previousStatus.Weight > currentStatus.Weight)
                 {
@@ -946,7 +946,7 @@ namespace Quantumart.QP8.BLL
         {
             if (Workflow.IsAssigned)
             {
-                if (!Workflow.UseStatus(Status.Id) && Status.Id != StatusType.GetNone(Content.SiteId).Id)
+                if (!Workflow.UseStatus(Status.Id) && (Status.Id != StatusType.GetNone(Content.SiteId).Id))
                 {
                     Status = Workflow.GetClosestStatus(Status.Weight);
                     StatusTypeId = Status.Id;
@@ -1044,14 +1044,14 @@ namespace Quantumart.QP8.BLL
                         break;
                 }
 
-                if (field.ReplaceUrls && objectValue != null)
+                if (field.ReplaceUrls && (objectValue != null))
                 {
                     objectValue = article.ReplacePlaceHoldersToUrls(objectValue.ToString());
                 }
 
                 if (article.IsNew)
                 {
-                    if (field.IsDateTime && field.Required && objectValue == null)
+                    if (field.IsDateTime && field.Required && (objectValue == null))
                     {
                         objectValue = Converter.ToDbDateTimeString(DateTime.Now);
                     }
@@ -1115,10 +1115,10 @@ namespace Quantumart.QP8.BLL
                 foreach (var field in enumerable1)
                 {
                     object objectValue = null;
-                    if (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne)
+                    if ((field.RelationType == RelationType.ManyToMany) || (field.RelationType == RelationType.ManyToOne))
                     {
                         var dict = itemsForRelations[field.Id];
-                        if (dict != null && dict.ContainsKey(id))
+                        if ((dict != null) && dict.ContainsKey(id))
                             objectValue = dict[id];
                     }
                     else
@@ -1130,7 +1130,7 @@ namespace Quantumart.QP8.BLL
                             objectValue = null;
                         }
 
-                        if (field.ReplaceUrls && objectValue != null)
+                        if (field.ReplaceUrls && (objectValue != null))
                         {
                             objectValue = article.ReplacePlaceHoldersToUrls(objectValue.ToString());
                         }
@@ -1262,7 +1262,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         internal void CreateDynamicImages()
         {
-            foreach (var item in FieldValues.Where(n => n.Field.Type.Name == FieldTypeName.Image && !string.IsNullOrEmpty(n.Value)))
+            foreach (var item in FieldValues.Where(n => (n.Field.Type.Name == FieldTypeName.Image) && !string.IsNullOrEmpty(n.Value)))
             {
                 foreach (var field in item.Field.GetDynamicImages())
                 {
@@ -1309,7 +1309,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="clearType">Тип очистки</param>
         public void ClearFields(int[] fieldIds, ArticleClearType clearType)
         {
-            if (fieldIds != null && fieldIds.Length > 0)
+            if ((fieldIds != null) && (fieldIds.Length > 0))
             {
                 ClearFields(fv => fieldIds.Contains(fv.Field.Id), clearType);
             }
@@ -1322,7 +1322,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="clearType">Тип очистки</param>
         public void ClearFields(string[] fieldNames, ArticleClearType clearType)
         {
-            if (fieldNames != null && fieldNames.Length > 0)
+            if ((fieldNames != null) && (fieldNames.Length > 0))
             {
                 ClearFields(fv => fieldNames.Contains(fv.Field.Name), clearType);
             }
@@ -1407,7 +1407,7 @@ namespace Quantumart.QP8.BLL
         internal void CopyParentPermissions()
         {
             var treeField = Content.TreeField;
-            if (treeField != null && treeField.CopyPermissionsToChildren)
+            if ((treeField != null) && treeField.CopyPermissionsToChildren)
             {
                 var parentId = Converter.ToInt32(FieldValues.Single(n => n.Field.Name == treeField.Name).Value, 0);
                 if (parentId != 0)
@@ -1458,38 +1458,38 @@ namespace Quantumart.QP8.BLL
 
         private void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
         {				
-            if (item.ScheduleType == ScheduleTypeEnum.OneTimeEvent && !item.WithoutEndDate && item.StartDate >= item.EndDate)
+            if ((item.ScheduleType == ScheduleTypeEnum.OneTimeEvent) && !item.WithoutEndDate && (item.StartDate >= item.EndDate))
                 errors.ErrorFor(n => n.Schedule.EndDate, ArticleStrings.StartEndDates);
             // Recurring Mode
             if (item.ScheduleType == ScheduleTypeEnum.Recurring)
             {
                 // Дата окончания повторений должна быть больше Даты начала повторений
                 if (!item.Recurring.RepetitionNoEnd &&
-                    item.Recurring.RepetitionEndDate.Date < item.Recurring.RepetitionStartDate.Date)
+                    (item.Recurring.RepetitionEndDate.Date < item.Recurring.RepetitionStartDate.Date))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.RepetitionStartDate, ArticleStrings.RepetitionStartDateError);
                 }
 
-                if (item.Recurring.ScheduleRecurringValue < ScheduleValidationConstants.ScheduleRecurringMinValue ||
-                    item.Recurring.ScheduleRecurringValue > ScheduleValidationConstants.ScheduleRecurringMaxValue)
+                if ((item.Recurring.ScheduleRecurringValue < ScheduleValidationConstants.ScheduleRecurringMinValue) ||
+                    (item.Recurring.ScheduleRecurringValue > ScheduleValidationConstants.ScheduleRecurringMaxValue))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.ScheduleRecurringValue, ArticleStrings.ScheduleRecurringValueError);
                 }
 
-                if (item.Recurring.DayOfMonth < ScheduleValidationConstants.DayOfMonthMinValue ||
-                    item.Recurring.DayOfMonth > ScheduleValidationConstants.DayOfMonthMaxValue)
+                if ((item.Recurring.DayOfMonth < ScheduleValidationConstants.DayOfMonthMinValue) ||
+                    (item.Recurring.DayOfMonth > ScheduleValidationConstants.DayOfMonthMaxValue))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.DayOfMonth, ArticleStrings.DayOfMonthError);
                 }
 
-                if (item.Recurring.ShowLimitationType == ShowLimitationType.EndTime &&
-                    item.Recurring.ShowEndTime < item.Recurring.ShowStartTime)
+                if ((item.Recurring.ShowLimitationType == ShowLimitationType.EndTime) &&
+                    (item.Recurring.ShowEndTime < item.Recurring.ShowStartTime))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.ShowStartTime, ArticleStrings.ShowStartTimeError);
                 }
 
-                if (item.Recurring.DurationValue < ScheduleValidationConstants.DurationMinValue ||
-                    item.Recurring.DurationValue > ScheduleValidationConstants.DurationMaxValue)
+                if ((item.Recurring.DurationValue < ScheduleValidationConstants.DurationMinValue) ||
+                    (item.Recurring.DurationValue > ScheduleValidationConstants.DurationMaxValue))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.DurationValue, ArticleStrings.DurationValueError);
                 }
@@ -1520,7 +1520,7 @@ namespace Quantumart.QP8.BLL
 
                 foreach (var item in FieldValues)
                 {
-                    if (item.Field.UseVersionControl && (item.Field.Type.Name == FieldTypeName.Image || item.Field.Type.Name == FieldTypeName.File))
+                    if (item.Field.UseVersionControl && ((item.Field.Type.Name == FieldTypeName.Image) || (item.Field.Type.Name == FieldTypeName.File)))
                     {
                         
                         if (mode == CopyFilesMode.ToBackupFolder)
