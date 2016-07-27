@@ -12,6 +12,7 @@ using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.ViewModels;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Telerik.Web.Mvc;
 
 // ReSharper disable InconsistentNaming

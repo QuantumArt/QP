@@ -1,46 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.Resources;
-using C = Quantumart.QP8.Constants;
-using Quantumart.QP8.BLL.Services;
+﻿using C = Quantumart.QP8.Constants;
 
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
 {
     public class ArticleVersionListViewModel : ListViewModel
     {
-		#region creation
+        #region creation
 
-		public static ArticleVersionListViewModel Create(string tabId, int parentId)
-		{
-			ArticleVersionListViewModel model = ViewModel.Create<ArticleVersionListViewModel>(tabId, parentId);
-			model.ShowAddNewItemButton = !model.IsWindow;
-			return model;
-		}
+        public static ArticleVersionListViewModel Create(string tabId, int parentId)
+        {
+            var model = ViewModel.Create<ArticleVersionListViewModel>(tabId, parentId);
+            model.ShowAddNewItemButton = !model.IsWindow;
+            return model;
+        }
 
-		#endregion
+        #endregion
 
-		#region read-only members
+        #region read-only members
 
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return C.EntityTypeCode.ArticleVersion;
-			}
-		}
+        public override string EntityTypeCode => C.EntityTypeCode.ArticleVersion;
 
-		public override string ActionCode
-		{
-			get
-			{
-				return C.ActionCode.ArticleVersions;
-			}
-		}		
+        public override string ActionCode => C.ActionCode.ArticleVersions;
 
-		#endregion
-	}
+        #endregion
+    }
 }

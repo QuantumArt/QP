@@ -7,6 +7,7 @@ using AutoMapper;
 using Quantumart.QP8.BLL.ListItems;
 using B = Quantumart.QP8.BLL;
 using Quantumart.QP8.Utils;
+using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 
 
