@@ -24,20 +24,20 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     jQuery('#' + this._options.iframeElementId).attr("src", this._generateActionUrl());
   },
 
-  _onExternalMessageReceived: function (message, successCallback, errorCallback) {
-    if (message.type == Quantumart.QP8.Interaction.ExternalMessageTypes.ExecuteAction) {
+  _onExternalMessageReceived: function (message, successCallback) {
+    if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.ExecuteAction) {
       this._onExecuteActionMessageReceived(message);
       successCallback(0);
     }
-    else if (message.type == Quantumart.QP8.Interaction.ExternalMessageTypes.CloseBackendHost) {
+    else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CloseBackendHost) {
       this._onCloseHostMessageReceived(message);
       successCallback(0);
     }
-    else if (message.type == Quantumart.QP8.Interaction.ExternalMessageTypes.OpenSelectWindow) {
+    else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.OpenSelectWindow) {
       this._onOpenSelectWindowMessageReceived(message);
       successCallback(0);
     }
-    else if (message.type == Quantumart.QP8.Interaction.ExternalMessageTypes.CheckHost) {
+    else if (message.type === Quantumart.QP8.Interaction.ExternalMessageTypes.CheckHost) {
       successCallback(this._onCheckHostMessageReceived(message));
     }
   },
@@ -48,12 +48,12 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
 
     jQuery('#' + id).css("marginLeft", "1px");
     setTimeout(function() {
-      jQuery('#' + id).css("marginLeft", "0px");
+      jQuery('#' + id).css("marginLeft", "0");
     }, 0);
   },
 
-  _onCheckHostMessageReceived: function (message) {
-    return BACKEND_VERSION;
+  _onCheckHostMessageReceived: function () {
+    return window.BACKEND_VERSION;
   },
 
   _onCloseHostMessageReceived: function (message) {
@@ -81,7 +81,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       );
     }
 
-    if (message.data.options.currentContext) {
+    if (message.data.options && message.data.options.currentContext) {
         message.data.options.contextQuery = JSON.stringify($o.getContextQuery(message.data.parentEntityId, message.data.options.currentContext));
     }
     eventArgs.set_additionalData(message.data.options);
@@ -111,7 +111,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
       }
     }
 
-    selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, message.data.options);
+    var selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(eventArgs, message.data.options);
     selectPopupWindowComponent.callerCallback = message.data.callerCallback;
     selectPopupWindowComponent.selectWindowUID = message.data.selectWindowUID;
     selectPopupWindowComponent.attachObserver(window.EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._popupWindowSelectedHandler, this));
@@ -121,8 +121,17 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   },
 
   _popupWindowSelectedHandler: function (eventType, sender, args) {
+
+    var selectedEntities = args.entities;
+    if ($o.checkEntitiesForPresenceEmptyNames(selectedEntities)) {
+      var selectedEntitiesIDs = _.pluck(selectedEntities, 'Id');
+      var dataItems = $o.getSimpleEntityList(args.entityTypeCode, args.parentEntityId, 0, 0, window.$e.ListSelectionMode.OnlySelectedItems, selectedEntitiesIDs);
+      selectedEntities = $c.getEntitiesFromListItemCollection(dataItems);
+    }
+
     this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.EntitiesSelected, {
-      selectedEntityIDs: jQuery.map(args.entities, function (ent) { return ent.Id; }),
+      selectedEntityIDs: jQuery.map(selectedEntities, function (ent) { return ent.Id; }),
+      selectedEntities: selectedEntities,
       callerCallback: sender.callerCallback,
       selectWindowUID: sender.selectWindowUID
     });
@@ -130,7 +139,7 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
     this._destroySelectPopupWindow(sender);
   },
 
-  _popupWindowClosedHandler: function (eventType, sender, args) {
+  _popupWindowClosedHandler: function (eventType, sender) {
     this._destroySelectPopupWindow(sender);
   },
 
@@ -180,11 +189,11 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   },
 
   _generateActionUrl: function () {
-    var result_url = $q.updateQueryStringParameter(this._options.actionBaseUrl, "hostUID", this._options.hostUID);
+    var resultUrl = $q.updateQueryStringParameter(this._options.actionBaseUrl, "hostUID", this._options.hostUID);
     if (this._options.additionalParams) {
-      result_url += '&' + jQuery.param(this._options.additionalParams);
+      resultUrl += '&' + jQuery.param(this._options.additionalParams);
     }
-    return result_url;
+    return resultUrl;
   },
 
   dispose: function () {
