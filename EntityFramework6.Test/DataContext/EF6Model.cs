@@ -8,7 +8,7 @@ namespace EntityFramework6.Test.DataContext
 {
 	public partial class EF6Model : DbContext
 	{
-      partial void OnContextCreated();
+        partial void OnContextCreated();
 
         static EF6Model()
         {
@@ -37,7 +37,7 @@ namespace EntityFramework6.Test.DataContext
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            var mapping = new EF6ModelMappingConfigurator();
+		    var mapping = new EF6ModelMappingConfigurator();
             mapping.OnModelCreating(modelBuilder);
         }
 	}

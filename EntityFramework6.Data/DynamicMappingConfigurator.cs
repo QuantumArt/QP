@@ -8,28 +8,19 @@ using System.Threading;
 using Quantumart.QP8.CodeGeneration.Services;
 
 
-namespace EntityFramework6.Test.DataContext
+namespace Quantumart.QP8.EntityFramework6.Data
 {
-    public class FileMappingConfigurator : MappingConfiguratorBase
+    public class DynamicMappingConfigurator : DynamicMappingConfiguratorBase
     {
-		private readonly string _path;
-	
-        public FileMappingConfigurator(string path)
-            : base()
+        public DynamicMappingConfigurator(IMappingResolver mappingResolver)
+            : base(mappingResolver)
         {
-			_path = path;
 		}
 
-        public FileMappingConfigurator(string path, ContentAccess contentAccess)
-            : base(contentAccess)
+        public DynamicMappingConfigurator(IMappingResolver mappingResolver, ContentAccess contentAccess)
+            : base(mappingResolver, contentAccess)
         {
-			_path = path;
-		}
-
-		protected override ModelReader GetDynamicModel()
-        {
-            return new ModelReader(_path, _ => { });            
-        }
+		}	
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {

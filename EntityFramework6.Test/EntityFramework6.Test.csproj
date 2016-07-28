@@ -79,6 +79,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -91,10 +92,13 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="DataContext\DatabaseMappingConfigurator.cs">
+    <Compile Include="DataContext\DatabaseMappingResolver.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext\DatabaseModelMappingService.cs">
+    <Compile Include="DataContext\DynamicMappingConfigurator.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\DynamicMappingConfiguratorBase.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\EF6Model.Contents.Extensions.cs">
@@ -112,10 +116,13 @@
     <Compile Include="DataContext\EF6ModelMappingConfigurator.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext\FileMappingConfigurator.cs">
+    <Compile Include="DataContext\FileMappingResolver.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\IMappingConfigurator.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\IMappingResolver.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\IQPArticle.cs">

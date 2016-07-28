@@ -46,17 +46,22 @@
   <ItemGroup>
     <None Include="install.ps1" />
     <None Include="ModelMappingResult.xml" />
-    <None Include="Pub.cmd" />
-    <None Include="QPDataContextGenerator.tt" />
-    <None Include="QPDataContextGenerator.tt.settings.xml" />
+    <None Include="NugetPackage.nuspec">
+      <DependentUpon>NugetPackageGenerator.tt</DependentUpon>
+    </None>
+    <None Include="NugetPackageGenerator.log">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>NugetPackageGenerator.tt</DependentUpon>
+    </None>
+    <None Include="NugetPackageNuspec.ttinclude" />
+    <None Include="NugetPackagePublication.ttinclude" />
+    <None Include="PublishNugetPackage.cmd">
+      <DependentUpon>NugetPackageGenerator.tt</DependentUpon>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="EntityFramework6.CodeGeneration.nuspec">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CodeGeneration\CodeGeneration.csproj">
@@ -71,6 +76,17 @@
       <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
       <Name>Quantumart</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NugetPackageGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NugetPackageGenerator.log</LastGenOutput>
+    </Content>
+    <Content Include="QPDataContextGenerator.tt.settings.xml" />
+    <None Include="QPDataContextGenerator.tt">
+      <DependentUpon>NugetPackageGenerator.tt</DependentUpon>
+      <LastGenOutput>QPDataContextGenerator.log</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

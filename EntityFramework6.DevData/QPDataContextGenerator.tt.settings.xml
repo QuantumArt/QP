@@ -10,7 +10,7 @@
   <GenerateMappingInterface>true</GenerateMappingInterface>
   
   <!--использовать имя класса модели в качестве имени строки подключения-->
-  <UseContextNameAsConnectionString>true</UseContextNameAsConnectionString>
+  <UseContextNameAsConnectionString>false</UseContextNameAsConnectionString>
   
   <!--генерировать маппиинг с использованием обратных таблиц для связей М2М-->
   <UseReversedAssociations>true</UseReversedAssociations>

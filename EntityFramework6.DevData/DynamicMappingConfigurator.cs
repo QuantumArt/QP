@@ -10,26 +10,17 @@ using Quantumart.QP8.CodeGeneration.Services;
 
 namespace Quantumart.QP8.EntityFramework6.DevData
 {
-    public class FileMappingConfigurator : MappingConfiguratorBase
+    public class DynamicMappingConfigurator : DynamicMappingConfiguratorBase
     {
-		private readonly string _path;
-	
-        public FileMappingConfigurator(string path)
-            : base()
+        public DynamicMappingConfigurator(IMappingResolver mappingResolver)
+            : base(mappingResolver)
         {
-			_path = path;
 		}
 
-        public FileMappingConfigurator(string path, ContentAccess contentAccess)
-            : base(contentAccess)
+        public DynamicMappingConfigurator(IMappingResolver mappingResolver, ContentAccess contentAccess)
+            : base(mappingResolver, contentAccess)
         {
-			_path = path;
-		}
-
-		protected override ModelReader GetDynamicModel()
-        {
-            return new ModelReader(_path, _ => { });            
-        }
+		}	
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -110,7 +101,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(21));
+                    rp.ToTable(GetLinkTableName("Product", "Regions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Product>(p => p.BackwardForRegions).WithMany()
@@ -118,7 +109,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 { 
                     rp.MapLeftKey("id"); // !+
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetReversedLinkTableName(21));
+                    rp.ToTable(GetReversedLinkTableName("Product", "Regions"));
                 });
 
             modelBuilder.Entity<Product>().Ignore(p => p.PDFUrl);
@@ -227,7 +218,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(71));
+                    rp.ToTable(GetLinkTableName("Region", "AllowedRegions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.BackwardForAllowedRegions).WithMany()
@@ -235,7 +226,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(71));
+                    rp.ToTable(GetReversedLinkTableName("Region", "AllowedRegions"));
                 });
 
 
@@ -244,7 +235,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(72));
+                    rp.ToTable(GetLinkTableName("Region", "DeniedRegions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.BackwardForDeniedRegions).WithMany()
@@ -252,7 +243,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(72));
+                    rp.ToTable(GetReversedLinkTableName("Region", "DeniedRegions"));
                 });
 
  
@@ -318,7 +309,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(69));
+                    rp.ToTable(GetLinkTableName("Setting", "RelatedSettings"));
                 });
 
             modelBuilder.Entity<Setting>().HasMany<Setting>(p => p.BackwardForRelatedSettings).WithMany()
@@ -326,7 +317,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(69));
+                    rp.ToTable(GetReversedLinkTableName("Setting", "RelatedSettings"));
                 });
 
  

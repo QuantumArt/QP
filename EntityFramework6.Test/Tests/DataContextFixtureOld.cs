@@ -14,7 +14,8 @@ namespace EntityFramework6.Test.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            EF6ModelMappingConfigurator.DefaultContentAccess = EF6ModelMappingConfigurator.ContentAccess.Stage;
+
+            EF6ModelMappingConfigurator.DefaultContentAccess = ContentAccess.Stage;
         }
 
         [Test]
@@ -199,7 +200,7 @@ namespace EntityFramework6.Test.Tests
         public void Test_CodeGen_Test_Live_Access()
         {
             // Читаем опубликованные статьи
-            using (var model = EF6Model.Create(new EF6ModelMappingConfigurator(EF6ModelMappingConfigurator.ContentAccess.Live)))
+            using (var model = EF6Model.CreateWithStaticMapping(ContentAccess.Live))
             {
                 var result1 = model.Products.Count(x => x.StatusTypeId != 125 // 125 - ид статуса Published
                     || x.Visible == false
@@ -212,7 +213,7 @@ namespace EntityFramework6.Test.Tests
         public void Test_CodeGen_Test_Stage_Access()
         {
             // Читаем расщепленные статьи
-            using (var model = EF6Model.Create(new EF6ModelMappingConfigurator(EF6ModelMappingConfigurator.ContentAccess.Stage)))
+            using (var model = EF6Model.CreateWithStaticMapping(ContentAccess.Stage))
             {
                 var stage = model.Products.Count(x => x.StatusTypeId != 125  /* 125 - ид статуса Published*/);
                 Assert.AreNotEqual(0, stage, "Нет продуктов в стейдже!");
@@ -226,7 +227,7 @@ namespace EntityFramework6.Test.Tests
         public void Test_CodeGen_Test_Invisible_Or_Archived()
         {
             // Читаем расщепленные, невидимые и архивные статьи
-            using (var model = EF6Model.Create(new EF6ModelMappingConfigurator(EF6ModelMappingConfigurator.ContentAccess.InvisibleOrArchived)))
+            using (var model = EF6Model.CreateWithStaticMapping(ContentAccess.InvisibleOrArchived))
             {
                 var invisibleOrArchived = model.Regions.Count(x => x.Visible == false || x.Archive == true);
                 Assert.AreNotEqual(0, invisibleOrArchived);
@@ -262,9 +263,7 @@ namespace EntityFramework6.Test.Tests
         [Test]
         public void Test_System_Information_StaticMapping()
         {
-            var mapping = new EF6ModelMappingConfigurator();
-
-            using (var m = EF6Model.Create(mapping))
+            using (var m = EF6Model.CreateWithStaticMapping(ContentAccess.Stage))
             {
                 var r = m.StatusTypes.AsNoTracking().ToList();
 
@@ -279,10 +278,9 @@ namespace EntityFramework6.Test.Tests
         public void Test_System_Information_FileMapping()
         {
             string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            
-            var mapping = new FileMappingConfigurator(Path.Combine(path, @"DataContext\ModelMappingResult.xml"));
+            path = Path.Combine(path, @"DataContext\ModelMappingResult.xml");
 
-            using (var m = EF6Model.Create(mapping))
+            using (var m = EF6Model.CreateWithFileMapping(path, ContentAccess.Stage))
             {
                 var r = m.StatusTypes.AsNoTracking().ToList();
 
@@ -296,11 +294,7 @@ namespace EntityFramework6.Test.Tests
         [Test]
         public void Test_System_Information_DatabaseMapping()
         {
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-            var mapping = new DatabaseMappingConfigurator(Path.Combine(path, @"DataContext\ModelMappingResult.xml"));
-
-            using (var m = EF6Model.Create(mapping))
+            using (var m = EF6Model.CreateWithDatabaseMapping(ContentAccess.Stage))
             {
                 var r = m.StatusTypes.AsNoTracking().ToList();
 

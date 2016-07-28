@@ -194,6 +194,40 @@ namespace EntityFramework6.Test.DataContext
 			return Create(DefaultConnectionString);
 		}
 
+		public static EF6Model CreateWithStaticMapping(ContentAccess contentAccess)
+        {
+            return CreateWithStaticMapping(contentAccess, new SqlConnection(DefaultConnectionString), true);
+        }
+
+        public static EF6Model CreateWithStaticMapping(ContentAccess contentAccess, SqlConnection connection, bool contextOwnsConnection)
+        {
+            var configurator = new EF6ModelMappingConfigurator(contentAccess);
+            return Create(configurator, connection, contextOwnsConnection);
+        }
+
+        public static EF6Model CreateWithDatabaseMapping(ContentAccess contentAccess)
+        {         
+            return CreateWithDatabaseMapping(contentAccess, new SqlConnection(DefaultConnectionString), true);
+        }
+
+        public static EF6Model CreateWithDatabaseMapping(ContentAccess contentAccess, SqlConnection connection, bool contextOwnsConnection)
+        {
+            var resolver = new DatabaseMappingResolver(DefaultSiteName);
+            var configurator = new DynamicMappingConfigurator(resolver, contentAccess);          
+            return Create(configurator, connection, contextOwnsConnection);
+        }
+
+        public static EF6Model CreateWithFileMapping(string path, ContentAccess contentAccess)
+        {
+            return CreateWithFileMapping(path, contentAccess, new SqlConnection(DefaultConnectionString), true);
+        }
+
+        public static EF6Model CreateWithFileMapping(string path, ContentAccess contentAccess, SqlConnection connection, bool contextOwnsConnection)
+        {
+            var resolver = new FileMappingResolver(path);
+            var configurator = new DynamicMappingConfigurator(resolver, contentAccess);
+            return Create(configurator, connection, contextOwnsConnection);
+        }
 		#endregion
 
 		#region Partial methods

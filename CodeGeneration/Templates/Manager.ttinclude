@@ -54,7 +54,7 @@ class Manager {
         CurrentBlock = new Block { Name = name, ContentProcessor = contentProcessor };
     }
 
-	public void LoadFile(String name, IContentProcessor contentProcessor) {
+	public string LoadFile(String name, IContentProcessor contentProcessor) {
 		if (name == null)
             throw new ArgumentNullException("name");
 
@@ -62,7 +62,8 @@ class Manager {
 	   StartNewFile(Path.GetFileName(path), contentProcessor);
 	   var content = File.ReadAllText(path);	   
 	   template.Append(content);
-    }
+       return content;
+    }	
 
     public void StartFooter() {
         CurrentBlock = footer;
@@ -227,6 +228,29 @@ class DefaultNamespaceProcessor : IContentProcessor
     }
 }
 
+class FlatternTemplateProcessor : IContentProcessor
+{
+	private const string ReplaceTemplate = @"$1{0}$3$4";
+	private static Regex IncludeRegex = new Regex(@"(#@\s*include\s+file="")(.*)(\\[^\\]*)(""\s*#)", RegexOptions.Compiled);
+	private static Regex CodeFileRegex = new Regex(@"(AddCodeFile\(@?"")(.*)(\\[^\\""]*)("")", RegexOptions.Compiled);
+
+	private readonly string _template;
+
+	public FlatternTemplateProcessor(string template)
+	{
+		_template = string.Format(ReplaceTemplate, template);
+    }
+
+	public string Process(string content)
+	{
+		foreach(var re in new[] {IncludeRegex, CodeFileRegex})
+		{
+			content = re.Replace(content, _template);
+        }
+		return content;
+    }
+}
+
 class GenerationContext : IDisposable
 {
 	public EDMXSettings Settings { get; private set; }
@@ -238,7 +262,6 @@ class GenerationContext : IDisposable
 	{
 	
 		UsePartialUpdate = false;
-		var s = host.ResolvePath(settingsFile);
 		Settings = EDMXSettings.Parse(host.ResolvePath(settingsFile));
 		Manager = Manager.Create(host, content);
 
@@ -262,7 +285,7 @@ class GenerationContext : IDisposable
         }
     }
 
-		public void AddTemplate(Action<GenerationContext> addFile, bool condition = true)
+	public void AddTemplate(Action<GenerationContext> addFile, bool condition = true)
 	{
 		if (condition)
         {
@@ -275,6 +298,50 @@ class GenerationContext : IDisposable
 		if (condition)
         {
 			Manager.LoadFile(fileName, new DefaultNamespaceProcessor());
+        }
+    }
+
+	public void Dispose()
+	{
+		Manager.Process(true);
+    }
+}
+
+class NugetContext : IDisposable
+{
+	private static Regex IncludeRegex = new Regex(@"#@\s*include\s+file=""(.*\\[^\\]*)""\s*#", RegexOptions.Compiled);
+	private static Regex CodeFileRegex = new Regex(@"AddCodeFile\(@?""(.*)""", RegexOptions.Compiled);
+
+	public Manager Manager { get; private set; }
+	public string Version { get; set; }
+	public string PackageName { get; set; }
+	public string PackageSource { get; set; }
+	public List<string> Files { get; private set; }
+
+	public NugetContext(ITextTemplatingEngineHost host, StringBuilder content)
+    {
+		Manager = Manager.Create(host, content);
+		Files = new List<string>();
+    }
+
+	public void AddTemplateFile(string fileName, Action<NugetContext> addFile)
+	{
+		Manager.StartNewFile(fileName);
+		addFile(this);
+    }
+
+	public void FlatternTemplate(string path)
+	{
+		var processor = new FlatternTemplateProcessor(string.Format(@"..\packages\{0}.{1}\include", PackageName, Version));
+		var content = Manager.LoadFile(path, processor);
+
+		foreach (Regex re in new[] { IncludeRegex, CodeFileRegex })
+        {
+            foreach (Match match in re.Matches(content))
+            {
+                var file = match.Groups[1].Value;
+                Files.Add(file);
+            }
         }
     }
 

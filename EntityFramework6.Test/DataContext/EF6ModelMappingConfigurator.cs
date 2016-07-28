@@ -20,12 +20,7 @@ namespace EntityFramework6.Test.DataContext
         public EF6ModelMappingConfigurator(ContentAccess contentAccess)
             : base(contentAccess)
         {
-		}
-
-		protected override ModelReader GetDynamicModel()
-        {
-			throw new NotImplementedException();
-        }
+		}	
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {

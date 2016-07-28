@@ -3,7 +3,7 @@ using System.Linq;
 using System.Data.Entity;
 using NUnit.Framework;
 using EntityFramework6.Test.DataContext;
-using Quantumart.QP8.EntityFramework.Services;
+//using Quantumart.QP8.EntityFramework.Services;
 
 namespace EntityFramework6.Test.Tests
 {
@@ -13,7 +13,7 @@ namespace EntityFramework6.Test.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            EF6ModelMappingConfigurator.DefaultContentAccess = EF6ModelMappingConfigurator.ContentAccess.Stage;
+            EF6ModelMappingConfigurator.DefaultContentAccess = ContentAccess.Stage;
         }
 
         [Test]

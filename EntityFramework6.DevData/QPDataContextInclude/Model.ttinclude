@@ -13,7 +13,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 {
 	public partial class <#=model.Schema.ClassName#> : DbContext
 	{
-      partial void OnContextCreated();
+        partial void OnContextCreated();
 
         static <#=model.Schema.ClassName#>()
         {
@@ -44,7 +44,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            var mapping = new <#=model.Schema.ClassName#>MappingConfigurator();
+		    var mapping = new <#=model.Schema.ClassName#>MappingConfigurator();
             mapping.OnModelCreating(modelBuilder);
         }
 	}

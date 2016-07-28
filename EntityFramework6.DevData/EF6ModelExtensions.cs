@@ -63,7 +63,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		private const string sitePlaceholder = "<%=site_url%>";
 		private static string _defaultSiteName = "Product Catalog";
 		private static string _defaultConnectionString;
-		private static string _defaultConnectionStringName = "EF6Model";
+		private static string _defaultConnectionStringName = "qp_database";
 		private bool _shouldRemoveSchema = false;
 		private string _siteName;
 		private DBConnector _cnn;

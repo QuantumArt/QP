@@ -30,37 +30,38 @@
 <#@ import namespace="Quantumart.QP8.CodeGeneration.Services" #>
 
 <#@ include file="..\CodeGeneration\Templates\Manager.ttinclude" #>
-<#@ include file="QPDataContextInclude\TestClassTemplate.ttinclude" #>
-<#@ include file="QPDataContextInclude\Model.ttinclude" #>
-<#@ include file="QPDataContextInclude\MappingConfiguratorOnModelCreating.ttinclude" #>
-<#@ include file="QPDataContextInclude\ModelMappingConfigurator.ttinclude" #>
-<#@ include file="QPDataContextInclude\FileMappingConfigurator.ttinclude" #>
-<#@ include file="QPDataContextInclude\DatabaseMappingConfigurator.ttinclude" #>
-<#@ include file="QPDataContextInclude\ModelExtensions.ttinclude" #>
-<#@ include file="QPDataContextInclude\ConnectionScope.ttinclude" #>
-<#@ include file="QPDataContextInclude\Classes.ttinclude" #>
-<#@ include file="QPDataContextInclude\ClassExtensions.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\TestClassTemplate.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\Model.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\MappingConfiguratorOnModelCreating.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\ModelMappingConfigurator.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\DynamicMappingConfigurator.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\ModelExtensions.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\ConnectionScope.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\Classes.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\ClassExtensions.ttinclude" #>
 
 <#
 	using (var context = new GenerationContext(this, Host, GenerationEnvironment, "QPDataContextGenerator.tt.settings.xml"))
 	{
 		var className = context.Model.Schema.ClassName;
 		var settings = context.Settings;
-
+		
 		context.AddTemplateFile(className + ".cs", AddModel, settings.GenerateModel);
 		context.AddTemplateFile(className + "Extensions.cs", AddModelExtensions, settings.GenerateModel);
 		context.AddTemplateFile(className + "ConnectionScope.cs", AddConnectionScope, settings.GenerateModel);
 
 		context.AddTemplateFile(className + "MappingConfigurator.cs", AddModelMappingConfigurator, settings.GenerateMappings);
-		context.AddTemplateFile("FileMappingConfigurator.cs", AddFileMappingConfigurator, settings.GenerateMappings);
-		context.AddTemplateFile("DatabaseMappingConfigurator.cs", AddDatabaseMappingConfigurator, settings.GenerateMappings);
+		context.AddTemplateFile("DynamicMappingConfigurator.cs", AddDynamicMappingConfigurator, settings.GenerateMappings);
+		context.AddCodeFile(@"..\EntityFramework\Services\FileMappingResolver.cs", settings.GenerateInterface);
 		
 		context.AddCodeFile(@"..\EntityFramework\Models\IQPArticle.cs", settings.GenerateInterface);
 		context.AddCodeFile(@"..\EntityFramework\Models\IQPLibraryService.cs", settings.GenerateInterface);
 		context.AddCodeFile(@"..\EntityFramework\Models\IQPFormService.cs", settings.GenerateInterface);
 
 		context.AddCodeFile(@"..\EntityFramework\Services\IMappingConfigurator.cs", settings.GenerateMappingInterface);
+		context.AddCodeFile(@"..\EntityFramework\Services\IMappingResolver.cs", settings.GenerateMappingInterface);
 		context.AddCodeFile(@"..\EntityFramework\Services\MappingConfiguratorBase.cs", settings.GenerateMappingInterface);
+		context.AddCodeFile(@"..\EntityFramework\Services\DynamicMappingConfiguratorBase.cs", settings.GenerateMappingInterface);
 
 		context.AddCodeFile(@"..\EntityFramework\Models\StatusType.cs", settings.GenerateClasses);
 		context.AddCodeFile(@"..\EntityFramework\Models\User.cs", settings.GenerateClasses);

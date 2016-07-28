@@ -20,12 +20,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         public EF6ModelMappingConfigurator(ContentAccess contentAccess)
             : base(contentAccess)
         {
-		}
-
-		protected override ModelReader GetDynamicModel()
-        {
-			return null;
-        }
+		}	
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {

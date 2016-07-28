@@ -14,4 +14,20 @@ namespace EntityFramework6.Test.DataContext
         DbCompiledModel GetBuiltModel(DbConnection connection);
         void OnModelCreating(DbModelBuilder modelBuilder);
     }
+
+    public enum ContentAccess
+    {
+        /// <summary>
+        /// Published articles
+        /// </summary>
+        Live = 0,
+        /// <summary>
+        /// Splitted versions of articles
+        /// </summary>
+        Stage = 1,
+        /// <summary>
+        /// Splitted versions of articles including invisible and archived
+        /// </summary>
+        InvisibleOrArchived = 2
+    }
 }

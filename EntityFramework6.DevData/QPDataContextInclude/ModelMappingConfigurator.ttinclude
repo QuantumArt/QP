@@ -25,12 +25,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
         public <#=model.Schema.ClassName#>MappingConfigurator(ContentAccess contentAccess)
             : base(contentAccess)
         {
-		}
-
-		protected override ModelReader GetDynamicModel()
-        {
-			throw new NotImplementedException();
-        }
+		}	
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {

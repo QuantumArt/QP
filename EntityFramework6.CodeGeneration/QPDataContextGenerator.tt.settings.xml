@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <settings>
   <!--Путь к файлу с описанием модели-->
-  <QPContextMappingResultPath>EF6ModelMappingResult.xml</QPContextMappingResultPath>
+  <QPContextMappingResultPath>ModelMappingResult.xml</QPContextMappingResultPath>
   <GenerateModel>true</GenerateModel>
   <GenerateClasses>true</GenerateClasses>
   <GenerateExtensions>true</GenerateExtensions>

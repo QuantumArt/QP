@@ -80,6 +80,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="RegExpFixture.cs" />
     <Compile Include="EDMXSettingsFixture.cs" />
     <Compile Include="ModelReaderFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

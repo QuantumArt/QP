@@ -16,7 +16,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         }
 
         public EF6Model()
-            : base("name=EF6Model")
+            : base("name=qp_database")
         {
             this.Configuration.LazyLoadingEnabled = true;
 			this.Configuration.ProxyCreationEnabled = false;

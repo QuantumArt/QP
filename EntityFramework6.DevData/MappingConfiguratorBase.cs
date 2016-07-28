@@ -19,9 +19,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
     {
         public static ContentAccess DefaultContentAccess = ContentAccess.Live;
         protected ContentAccess _contentAccess;
-        private static ConcurrentDictionary<ContentAccess, Lazy<DbCompiledModel>> _cache = new ConcurrentDictionary<ContentAccess, Lazy<DbCompiledModel>>();
-        protected ModelReader DynamicModel { get; private set; }
-
+        private static ConcurrentDictionary<ContentAccess, Lazy<DbCompiledModel>> _cache = new ConcurrentDictionary<ContentAccess, Lazy<DbCompiledModel>>();  
 
         #region Constructors
         public MappingConfiguratorBase()
@@ -32,7 +30,6 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         public MappingConfiguratorBase(ContentAccess contentAccess)
         {
             _contentAccess = contentAccess;
-            DynamicModel = GetDynamicModel();
         }
         #endregion
 
@@ -96,41 +93,6 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         #endregion
 
         #region Protected members
-        protected abstract ModelReader GetDynamicModel();
-
-        #region Dynamic maping
-        protected string GetTableName(string mappedName)
-        {
-            var content = DynamicModel.Contents.Single(c => c.MappedName == mappedName);
-            return GetTableName(content.Id, content.UseDefaultFiltration);
-        }
-
-        private int GetLinkId(string contentMappedName, string fieldMappedName)
-        {
-            var linkIds = from c in DynamicModel.Contents
-                          from f in c.Attributes
-                          where
-                              c.MappedName == contentMappedName &&
-                              f.MappedName == fieldMappedName
-                          select f.LinkId;
-
-            return linkIds.Single();
-        }
-
-        protected string GetLinkTableName(string contentMappedName, string fieldMappedName)
-        {
-            int linkId = GetLinkId(contentMappedName, fieldMappedName);
-            return "";
-        }
-
-        protected string GetReversedLinkTableName(string contentMappedName, string fieldMappedName)
-        {
-            int linkId = GetLinkId(contentMappedName, fieldMappedName);
-            return "";
-        }
-        #endregion
-
-        #region Static mapinng
         protected string GetTableName(int contentId, bool useDefaultFiltration)
         {
             switch (_contentAccess)
@@ -175,7 +137,6 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 
             throw new InvalidOperationException(_contentAccess + " is not supported.");
         }
-        #endregion
         #endregion
 
         #region Nested type
