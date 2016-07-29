@@ -52,10 +52,13 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
           var entityIDs = (isMultiple) ? $o.getEntityIDsFromEntities(entities) : [eventArgs.get_entityId()];
           var actionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, {additionalUrlParameters:  additionalUrlParameters});
           if (actionUrl) {
-            var params = {};
-            if (isMultiple || isCustom) {
-              params.IDs = entityIDs;
-            }
+            var postParams = {
+              IDs: entityIDs,
+              actionCode: actionCode,
+              parentEntityId: eventArgs.get_parentEntityId(),
+              entityTypeCode: eventArgs.get_entityTypeCode(),
+              level: selectedAction.ActionType.RequiredPermissionLevel
+            };
 
             //#region Functions
             var normalPreActionCallback = function (data, textStatus, jqXHR) {
@@ -72,10 +75,10 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             var runAction = function () {
 
               if (isCustom) {
-                $q.getCustomActionJson(customData.Url, normalCallback, errorCallback);
+                $q.getCustomActionJson(customData.Url, postParams, normalCallback, errorCallback);
               }
               else {
-                $q.getJsonFromUrl('POST', actionUrl, params, true, false, normalCallback, errorCallback);
+                $q.getJsonFromUrl('POST', actionUrl, postParams, true, false, normalCallback, errorCallback);
               }
             }
 
@@ -98,10 +101,10 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
               if (selectedAction.HasPreAction) {
                 if (!isCustom) {
                   var preActionUrl = Quantumart.QP8.BackendActionExecutor.generateActionUrl(isMultiple, entityIDs, eventArgs.get_parentEntityId(), "0", actionCode, { isPreAction: true, additionalUrlParameters: additionalUrlParameters });
-                  $q.getJsonFromUrl('POST', preActionUrl, params, false, false, normalPreActionCallback, errorCallback);
+                  $q.getJsonFromUrl('POST', preActionUrl, postParams, false, false, normalPreActionCallback, errorCallback);
                 }
                 else {
-                  $q.getCustomActionJson(customData.PreActionUrl, normalPreActionCallback, errorCallback);
+                  $q.getCustomActionJson(customData.PreActionUrl, postParams, normalPreActionCallback, errorCallback);
                 }
               }
               else {
@@ -125,8 +128,8 @@ Quantumart.QP8.BackendActionExecutor.prototype = {
             };
 
             if (isCustom) {
-              params.actionCode = actionCode;
-              $q.getJsonFromUrl('POST', actionUrl, params, false, false, getCustomUrlCallback, errorCallback);
+              postParams.actionCode = actionCode;
+              $q.getJsonFromUrl('POST', actionUrl, postParams, false, false, getCustomUrlCallback, errorCallback);
             }
             else
               preAction();
