@@ -141,7 +141,7 @@
   <data name="EntityStringId" xml:space="preserve">
     <value>Entity ID</value>
   </data>
-	<data name="IsApi" xml:space="preserve">
+  <data name="IsApi" xml:space="preserve">
     <value>API</value>
   </data>
   <data name="EntityTitle" xml:space="preserve">
@@ -191,5 +191,8 @@
   </data>
   <data name="UserLogin" xml:space="preserve">
     <value>User Login</value>
+  </data>
+  <data name="ActionName" xml:space="preserve">
+    <value>Action Name</value>
   </data>
 </root>

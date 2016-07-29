@@ -61,6 +61,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Action Name.
+        /// </summary>
+        public static string ActionName {
+            get {
+                return ResourceManager.GetString("ActionName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Action Type.
         /// </summary>
         public static string ActionTypeName {
