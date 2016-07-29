@@ -10,6 +10,8 @@ namespace Quantumart.QP8.BLL.Services.DTO
 
         public string Text { get; set; }
 
+        public string Url { get; set; }
+
         public int[] FailedIds { get; set; }
 
         private MessageResult(string actionMessageType, string message, int[] failedIds)
@@ -37,6 +39,11 @@ namespace Quantumart.QP8.BLL.Services.DTO
         public static MessageResult Warning(string message, int[] failedIds = null)
         {
             return new MessageResult(ActionMessageType.Warning, message, failedIds);
+        }
+
+        public static MessageResult Download(string url)
+        {
+            return new MessageResult(ActionMessageType.Download, "", null) { Url = url };
         }
     }
 }

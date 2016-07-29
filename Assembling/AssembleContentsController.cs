@@ -144,19 +144,25 @@ namespace Quantumart.QP8.Assembling
         #region paths
 
         private string _siteRoot;
-        private string SiteRoot
+        public string SiteRoot
         {
             get
             {
-                if (null == _siteRoot) {
-                    var resultColumn = SiteRow["is_live"].ToString() == "1" ? "assembly_path" : "stage_assembly_path";
-                    _siteRoot = SiteRow[resultColumn].ToString().Replace(@"\bin", "");
-                }
-                return _siteRoot;
+                var path = SiteRow["is_live"].ToString() == "1" ? "assembly_path" : "stage_assembly_path";
+                return _siteRoot ?? (_siteRoot = SiteRow[path].ToString().Replace(@"\bin", ""));
             }
+            set { _siteRoot = value;  }
         }
 
-        public new bool IsLive => Convert.ToBoolean(int.Parse(SiteRow["is_live"].ToString()));
+        private bool? _isLive;
+
+        public new bool IsLive
+        {
+            get { return _isLive ?? (_isLive = Convert.ToBoolean(int.Parse(SiteRow["is_live"].ToString()))).Value; }
+            set { _isLive = value; }
+        }
+
+        public bool DisableClassGeneration { get; set; }
 
         public bool ProceedMappingWithDb => GetFlag("proceed_mapping_with_db", false);
 
@@ -175,8 +181,8 @@ namespace Quantumart.QP8.Assembling
         {
             get
             {
-                var result = Convert.ToString(SiteRow["context_class_name"]);
-                return string.IsNullOrEmpty(result) ? "QPDataContext" : result;
+                var contextClass = Convert.ToString(SiteRow["context_class_name"]);
+                return string.IsNullOrEmpty(contextClass) ? "QPDataContext" : contextClass;
             }
         }
 
@@ -208,13 +214,17 @@ namespace Quantumart.QP8.Assembling
 
         private void GenerateClasses(FileNameHelper helper)
         {
-            GenerateDbmlFile(helper);
-            ProcessDbmlFile(helper);
-            if (!GenerateMapFileOnly)
+            if (!DisableClassGeneration)
             {
-                GenerateManyToMany(helper);
-                GenerateModifications(helper);
-                GenerateExtensions(helper);
+                GenerateDbmlFile(helper);
+                ProcessDbmlFile(helper);
+                if (!GenerateMapFileOnly)
+                {
+                    GenerateManyToMany(helper);
+                    GenerateModifications(helper);
+                    GenerateExtensions(helper);
+                }
+
             }
         }
 
