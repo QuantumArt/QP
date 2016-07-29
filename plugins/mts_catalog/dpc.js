@@ -41,7 +41,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.getResolverNames = function () {
 
 Quantumart.QP8.BackendDocumentContext.prototype.initHandler = function (editor, $elem) {
 
-    editor._hideFields = jQuery.isArray(editor._hideFields) ? Array.concat(editor._hideFields, this.fieldsToHide) : this.fieldsToHide;
+    editor._hideFields = jQuery.isArray(editor._hideFields) ? editor._hideFields.concat(this.fieldsToHide) : this.fieldsToHide;    
 
     if (this.changeFilters) {
         var resolverNames = this.getResolverNames();

@@ -122,6 +122,9 @@
     <EmbeddedResource Include="..\siteMvc\Bin\Microsoft.Practices.Unity.Interception.dll">
       <Link>References\Microsoft.Practices.Unity.Interception.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\Bin\Microsoft.Web.Infrastructure.dll">
+      <Link>References\Microsoft.Web.Infrastructure.dll</Link>
+    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\Bin\Moq.dll">
       <Link>References\Moq.dll</Link>
     </EmbeddedResource>

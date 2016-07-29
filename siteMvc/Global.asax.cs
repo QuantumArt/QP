@@ -28,6 +28,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using AutoMapper;
+using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.ViewModels.Article;
+using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -175,6 +178,11 @@ namespace Quantumart.QP8.WebMvc
             {
                 EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(exp, "Policy");
             }
+        }
+
+        protected void Application_EndRequest(object sender, EventArgs e)
+        {
+            ConnectionScopeAttribute.DisposeScopes();
         }
     }
 }

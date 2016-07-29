@@ -113,6 +113,7 @@ namespace qp8dbupdate.Infrastructure
             Load("qp8dbupdate.References.Microsoft.Owin.dll", "Microsoft.Owin.dll");
             Load("qp8dbupdate.References.Microsoft.AspNet.SignalR.Core.dll", "Microsoft.AspNet.SignalR.Core.dll");
             Load("qp8dbupdate.References.Microsoft.Practices.EnterpriseLibrary.Logging.dll", "Microsoft.Practices.EnterpriseLibrary.Logging.dll");
+            Load("qp8dbupdate.References.Microsoft.Web.Infrastructure.dll", "Microsoft.Web.Infrastructure.dll");
             Load("qp8dbupdate.References.Newtonsoft.Json.dll", "Newtonsoft.Json.dll");
         }
 

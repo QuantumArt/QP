@@ -81,10 +81,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            var controller = (QPController)filterContext.Controller;
-            if (controller == null || !controller.IsReplayAction())
+            var controller = filterContext.Controller as QPController;
+            if ((controller == null) || !controller.IsReplayAction())
             {
-                base.OnActionExecuting(filterContext);
                 if (Mode == ConnectionScopeMode.TransactionOn)
                 {
                     TransactionScope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
@@ -95,42 +94,47 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
                 ConnectionScope = new QPConnectionScope();
             }
+
+            base.OnActionExecuting(filterContext);
+        }
+
+        public static void DisposeScopes()
+        {
+            if (ConnectionScope != null)
+            {
+                ConnectionScope.ForcedDispose();
+                ConnectionScope = null;
+            }
+
+            if (TransactionScope != null)
+            {
+                TransactionScope.Dispose();
+                TransactionScope = null;
+            }
         }
 
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
-            var controller = (QPController)filterContext.Controller;
-            if (controller == null || !controller.IsReplayAction())
+            var controller = filterContext.Controller as QPController;
+            if ((controller == null) || !controller.IsReplayAction())
             {
 
                 try
                 {
-                    var transactionScope = TransactionScope;
-                    base.OnActionExecuted(filterContext);
-                    if (filterContext.Exception == null
-                        && transactionScope != null
-                        && filterContext.Controller.ViewData.ModelState.IsValid
-                        && Transaction.Current != null
-                        && Transaction.Current.TransactionInformation.Status == TransactionStatus.Active)
+                    if ((filterContext.Exception == null) && (TransactionScope != null) 
+                        && filterContext.Controller.ViewData.ModelState.IsValid 
+                        && (Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active))
                     {
-                        transactionScope.Complete();
+                        TransactionScope.Complete();
                     }
                 }
                 finally
                 {
-                    if (ConnectionScope != null)
-                    {
-                        ConnectionScope.ForcedDispose();
-                        ConnectionScope = null;
-                    }
-
-                    if (TransactionScope != null)
-                    {
-                        TransactionScope.Dispose();
-                        TransactionScope = null;
-                    }
+                    DisposeScopes();
                 }
             }
+
+            base.OnActionExecuted(filterContext);
         }
     }
 }
