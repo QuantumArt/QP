@@ -15,7 +15,7 @@ namespace Quantumart.QP8.EntityFramework.Services
 
         public FileMappingResolver(string path)
         {
-            path = _path;
+            _path = path;
             _model = new ModelReader(path, _ => { });
         }
 

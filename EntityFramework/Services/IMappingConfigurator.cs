@@ -26,8 +26,8 @@ namespace Quantumart.QP8.EntityFramework.Services
         /// </summary>
         Stage = 1,
         /// <summary>
-        /// Splitted versions of articles including invisible and archived
+        /// Splitted versions of articles including invisible and archived (overrides useDefaultFiltration content setting)
         /// </summary>
-        InvisibleOrArchived = 2
+        StageNoDefaultFiltration = 2
     }
 }

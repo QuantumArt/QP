@@ -33,7 +33,7 @@ namespace Quantumart.QP8.EntityFramework.Services
 
         protected override object GetCacheKey()
         {
-            return new { _contentAccess, resolverKey = _mappingResolver.GetHashCode() };
+            return new { _contentAccess, resolverKey = _mappingResolver.GetCacheKey() };
         }
 
         #region Dynamic maping

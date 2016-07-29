@@ -15,7 +15,7 @@ namespace EntityFramework6.Test.DataContext
 
         public FileMappingResolver(string path)
         {
-            path = _path;
+            _path = path;
             _model = new ModelReader(path, _ => { });
         }
 

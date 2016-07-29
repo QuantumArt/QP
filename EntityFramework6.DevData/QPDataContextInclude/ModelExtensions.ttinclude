@@ -211,24 +211,31 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
             return Create(configurator, connection, contextOwnsConnection);
         }
 
-        public static <#= model.Schema.ClassName#> CreateWithDatabaseMapping(ContentAccess contentAccess)
+		  public static <#= model.Schema.ClassName#> CreateWithDatabaseMapping(ContentAccess contentAccess)
         {         
-            return CreateWithDatabaseMapping(contentAccess, new SqlConnection(DefaultConnectionString), true);
+            return CreateWithDatabaseMapping(contentAccess, DefaultSiteName);
         }
 
-        public static <#= model.Schema.ClassName#> CreateWithDatabaseMapping(ContentAccess contentAccess, SqlConnection connection, bool contextOwnsConnection)
+        public static <#= model.Schema.ClassName#> CreateWithDatabaseMapping(ContentAccess contentAccess, string siteName)
+        {         
+            return CreateWithDatabaseMapping(contentAccess, siteName, new SqlConnection(DefaultConnectionString), true);
+        }
+
+        public static <#= model.Schema.ClassName#> CreateWithDatabaseMapping(ContentAccess contentAccess, string siteName, SqlConnection connection, bool contextOwnsConnection)
         {
             var resolver = new DatabaseMappingResolver(DefaultSiteName);
             var configurator = new DynamicMappingConfigurator(resolver, contentAccess);          
-            return Create(configurator, connection, contextOwnsConnection);
+            var context = Create(configurator, connection, contextOwnsConnection);
+			context.SiteName = siteName;
+			return context;
         }
 
-        public static <#= model.Schema.ClassName#> CreateWithFileMapping(string path, ContentAccess contentAccess)
+        public static <#= model.Schema.ClassName#> CreateWithFileMapping(ContentAccess contentAccess, string path)
         {
-            return CreateWithFileMapping(path, contentAccess, new SqlConnection(DefaultConnectionString), true);
+            return CreateWithFileMapping(contentAccess, path, new SqlConnection(DefaultConnectionString), true);
         }
 
-        public static <#= model.Schema.ClassName#> CreateWithFileMapping(string path, ContentAccess contentAccess, SqlConnection connection, bool contextOwnsConnection)
+        public static <#= model.Schema.ClassName#> CreateWithFileMapping(ContentAccess contentAccess, string path, SqlConnection connection, bool contextOwnsConnection)
         {
             var resolver = new FileMappingResolver(path);
             var configurator = new DynamicMappingConfigurator(resolver, contentAccess);

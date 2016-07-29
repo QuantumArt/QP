@@ -227,7 +227,7 @@ namespace EntityFramework6.Test.Tests
         public void Test_CodeGen_Test_Invisible_Or_Archived()
         {
             // Читаем расщепленные, невидимые и архивные статьи
-            using (var model = EF6Model.CreateWithStaticMapping(ContentAccess.InvisibleOrArchived))
+            using (var model = EF6Model.CreateWithStaticMapping(ContentAccess.StageNoDefaultFiltration))
             {
                 var invisibleOrArchived = model.Regions.Count(x => x.Visible == false || x.Archive == true);
                 Assert.AreNotEqual(0, invisibleOrArchived);
@@ -277,10 +277,13 @@ namespace EntityFramework6.Test.Tests
         [Test]
         public void Test_System_Information_FileMapping()
         {
+            var d1 = TestContext.CurrentContext.TestDirectory;
+            var d2 = TestContext.CurrentContext.WorkDirectory;
+
             string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             path = Path.Combine(path, @"DataContext\ModelMappingResult.xml");
 
-            using (var m = EF6Model.CreateWithFileMapping(path, ContentAccess.Stage))
+            using (var m = EF6Model.CreateWithFileMapping(ContentAccess.Stage, path))
             {
                 var r = m.StatusTypes.AsNoTracking().ToList();
 

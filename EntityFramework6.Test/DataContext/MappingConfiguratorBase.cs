@@ -17,6 +17,11 @@ namespace EntityFramework6.Test.DataContext
 {
     public abstract class MappingConfiguratorBase : IMappingConfigurator
     {
+        private const string TableLive = "content_{0}_new";
+        private const string TableStage = "content_{0}_united_new";
+        private const string TableLiveFiltered = "content_{0}_live_new";
+        private const string TableStageFiltered = "content_{0}_stage_new";
+
         public static ContentAccess DefaultContentAccess = ContentAccess.Live;
         protected ContentAccess _contentAccess;
         private static ConcurrentDictionary<object, Lazy<DbCompiledModel>> _cache = new ConcurrentDictionary<object, Lazy<DbCompiledModel>>();  
@@ -103,11 +108,11 @@ namespace EntityFramework6.Test.DataContext
             switch (_contentAccess)
             {
                 case ContentAccess.Live:
-                    return string.Format("content_{0}_live_new", contentId);
+                    return string.Format(useDefaultFiltration ? TableLiveFiltered : TableLive, contentId);
                 case ContentAccess.Stage:
-                    return string.Format("content_{0}_stage_new", contentId);
-                case ContentAccess.InvisibleOrArchived:
-                    return string.Format("content_{0}_united_new", contentId);
+                    return string.Format(useDefaultFiltration ? TableStageFiltered : TableStage, contentId);
+                case ContentAccess.StageNoDefaultFiltration:
+                    return string.Format(TableStage, contentId);
             }
 
             throw new InvalidOperationException(_contentAccess + " is not supported.");
@@ -121,7 +126,7 @@ namespace EntityFramework6.Test.DataContext
                     return string.Format("item_link_{0}", linkId);
                 case ContentAccess.Stage:
                     return string.Format("item_link_{0}_united", linkId);
-                case ContentAccess.InvisibleOrArchived:
+                case ContentAccess.StageNoDefaultFiltration:
                     return string.Format("item_link_{0}_united", linkId);
             }
 
@@ -136,7 +141,7 @@ namespace EntityFramework6.Test.DataContext
                     return string.Format("item_link_{0}_rev", linkId);
                 case ContentAccess.Stage:
                     return string.Format("item_link_{0}_united_rev", linkId);
-                case ContentAccess.InvisibleOrArchived:
+                case ContentAccess.StageNoDefaultFiltration:
                     return string.Format("item_link_{0}_united_rev", linkId);
             }
 
