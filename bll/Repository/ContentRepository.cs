@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.Objects;
 using System.Linq;
 using System.Linq.Expressions;
+using Quantumart.QP8.BLL.Repository.Articles;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -463,20 +464,6 @@ namespace Quantumart.QP8.BLL.Repository
             return scopeExpression;
         }
         #endregion
-
-        internal static IEnumerable<ListItem> GetArticleTitleList(int contentId, string titleName, string filterIds)
-        {
-            using (new QPConnectionScope())
-            {
-                var rows = Common.GetArticleTitleList(
-                    QPConnectionScope.Current.DbConnection,
-                    contentId,
-                    string.IsNullOrEmpty(titleName) ? GetTitleName(contentId) : titleName,
-                    filterIds
-                );
-                return rows.Select(n => new ListItem(n["id"].ToString(), n["title"].ToString()));
-            }
-        }
 
         internal static Field GetTitleField(int contentId)
         {

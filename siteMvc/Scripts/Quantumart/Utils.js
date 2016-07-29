@@ -657,8 +657,8 @@ Quantumart.QP8.Utils.getJsonPFromUrl = function Quantumart$QP8$Utils$getJsonPFro
   });
 };
 
-Quantumart.QP8.Utils.getCustomActionJson = function Quantumart$QP8$Utils$getCustomActionJson(url, callbackSuccess, callbackError) {
-  Quantumart.QP8.Utils.getJsonFromUrl('POST', CONTROLLER_URL_CUSTOM_ACTION + 'Proxy', { url: url }, false, false, callbackSuccess, callbackError);
+Quantumart.QP8.Utils.getCustomActionJson = function Quantumart$QP8$UtilsQuantumart$QP8$Utils$getCustomActionJson(url, params, callbackSuccess, callbackError) {
+  Quantumart.QP8.Utils.getJsonFromUrl('POST', CONTROLLER_URL_CUSTOM_ACTION + 'Proxy', _.extend(params, { url: url }), false, false, callbackSuccess, callbackError);
 };
 
 Quantumart.QP8.Utils.getTextContentFromUrl = function Quantumart$QP8$Utils$getTextContentFromUrl(url, allowCaching) {

@@ -7,13 +7,13 @@
 
 @using (Html.BeginDocumentPadding())
 {
-	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
-	{
-		using (Html.BeginLinkButtonsList())
-		{
-			@Html.AddNewItemLink(Model)
-		}
-	}
+    if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+    {
+        using (Html.BeginLinkButtonsList())
+        {
+            @Html.AddNewItemLink(Model)
+        }
+    }
 
 
     @(Html.Telerik().Grid<CustomActionListItem>().Name(Model.MainComponentId)

@@ -2768,7 +2768,12 @@ namespace Quantumart.QP8.BLL
 
         public IEnumerable<ListItem> GetRelatedTitles(string value)
         {
-            return ContentRepository.GetArticleTitleList(RelateToContentId.Value, ExactType == FieldExactTypes.O2MRelation ? Relation.Name : null, value);
+            if ((value != null) && (RelateToContentId != null))
+            {
+                var ids = value?.Split(",".ToCharArray()).Select(Int32.Parse).ToArray();
+                return ArticleRepository.GetSimpleList(RelateToContentId.Value, null, Id, ListSelectionMode.OnlySelectedItems, ids, null, 0);
+            }
+            return null;
         }
 
 
