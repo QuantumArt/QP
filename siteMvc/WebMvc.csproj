@@ -834,6 +834,10 @@
     <None Include="packages.config" />
     <None Include=".jscsrc" />
     <None Include=".jshintrc" />
+    <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
+    <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
+    <Content Include="Scripts\polyfills\array.find.polyfill.js" />
+    <Content Include="Scripts\polyfills\object.assign.polyfill.js" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\jquery-1.7.1.intellisense.min.js" />
     <Content Include="Scripts\jquery.cookie.min.js" />

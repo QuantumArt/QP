@@ -118,7 +118,7 @@ Quantumart.QP8.BackendContextMenu.prototype = {
       contextMenuElementId = this._contextMenuCode;
     }
 
-    var $menu = jQuery('<ul />', { id: contextMenuElementId, class: 'contextMenu' });
+    var $menu = jQuery('<ul />', { id: contextMenuElementId, 'class': 'contextMenu' });
 
     if (this._zIndex)
     $menu.css('z-index', this._zIndex + 10);
