@@ -5,9 +5,9 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using Assembling.Info;
+using Quantumart.QP8.Assembling.Info;
 
-namespace Assembling
+namespace Quantumart.QP8.Assembling
 {
 
     public enum AssembleMode
@@ -473,7 +473,7 @@ namespace Assembling
 
             FindFormatValues(control, defValues, undefValues);
 
-            if (defValues.Keys.Count > 0 || undefValues.Keys.Count > 0)
+            if ((defValues.Keys.Count > 0) || (undefValues.Keys.Count > 0))
             {
 
                 sb.Append(Padding(padLevel)).AppendFormat("{0}", GetIf(control.IsCSharp, "Not QPTrace Is Nothing", "QPTrace != null")).AppendLine("");
@@ -529,7 +529,7 @@ namespace Assembling
                         var value = m.Groups["key"].Value;
                         var trimValue = value.Length > 2 ? value.Substring(1, value.Length - 2) : value;
                         var key = value.ToLowerInvariant();
-                        if (value.IndexOf('"') != 0 || value.LastIndexOf('"') != value.Length - 1 || trimValue.IndexOf('"') > 0)
+                        if ((value.IndexOf('"') != 0) || (value.LastIndexOf('"') != value.Length - 1) || (trimValue.IndexOf('"') > 0))
                         {
                             if (!undefined.Contains(key))
                             {
@@ -557,7 +557,7 @@ namespace Assembling
             {
                 arr[2] = control.Row["FILTER_VALUE"].ToString();
                 arr[3] = control.Row["SELECT_TOTAL"].ToString();
-                var allowDynamicOrder = control.GetObject("ALLOW_ORDER_DYNAMIC") != DBNull.Value && control.GetNumericBoolean("ALLOW_ORDER_DYNAMIC");
+                var allowDynamicOrder = (control.GetObject("ALLOW_ORDER_DYNAMIC") != DBNull.Value) && control.GetNumericBoolean("ALLOW_ORDER_DYNAMIC");
                 arr[4] = allowDynamicOrder ? control.Row["ORDER_DYNAMIC"].ToString() : "";
             }
             return arr;
@@ -756,7 +756,7 @@ namespace Assembling
 
         private string GetPresentationTimeStamp()
         {
-            return $"{"<%--"}Generated at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}{"--%>"}";
+            return $"<%--Generated at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}--%>";
         }
 
         private string GetCodeTimeStamp(ControlInfo control)
@@ -1076,7 +1076,7 @@ namespace Assembling
                 if (IsDbConnected && !Info.IsAssembleObjectsMode)
                 {
                     ParseFormat(control);
-                    if (Info.IsAssembleFormatMode && Info.Controls.RowIndex == 0)
+                    if (Info.IsAssembleFormatMode && (Info.Controls.RowIndex == 0))
                     {
                         var checkFormat =
                             new ControlInfo(Info.Controls.Data.Rows[Info.Controls.RowIndex + 1], Info);
@@ -1105,7 +1105,7 @@ namespace Assembling
 
                 var sb = new StringBuilder();
                 BeginLoadControlDataSub(control, sb, padLevel);
-                if (control.CurrentType == ControlType.Generic || control.ContentSelected)
+                if ((control.CurrentType == ControlType.Generic) || control.ContentSelected)
                 {
                     WriteControlInitCode(control, sb, checked(padLevel + 1));
                     WriteControlGetDataCode(control, sb, checked(padLevel + 1));
@@ -1117,7 +1117,7 @@ namespace Assembling
 
                 sb.Append(Padding(padLevel)).AppendLine(GetEndSub(control.IsCSharp));
 
-                if (control.CurrentType == ControlType.PublishingContainer && !control.Container.IsNewAssembling)
+                if ((control.CurrentType == ControlType.PublishingContainer) && !control.Container.IsNewAssembling)
                 {
                     WriteTotalRecordsSub(control, sb, padLevel);
                 }
@@ -1146,7 +1146,7 @@ namespace Assembling
 
         protected void WriteControlGetDataCode(ControlInfo control, StringBuilder sb, int padLevel)
         {
-            if (control.CurrentType == ControlType.PublishingForm || (control.CurrentType == ControlType.PublishingContainer && !control.Container.IsNewAssembling))
+            if ((control.CurrentType == ControlType.PublishingForm) || ((control.CurrentType == ControlType.PublishingContainer) && !control.Container.IsNewAssembling))
             {
                 sb.Append(Padding(padLevel)).AppendLine("ContentName = \"" + control.GetString("CONTENT_NAME") + "\"" + LineEnd(control.IsCSharp));
                 sb.Append(Padding(padLevel)).AppendLine(string.Format(CultureInfo.InvariantCulture, "ContentUploadURL = \"{0}\"{1}", Info.Paths.GetContentUploadUrl(control.GetInt32("CONTENT_ID")), LineEnd(control.IsCSharp)));
@@ -1405,7 +1405,7 @@ namespace Assembling
             sb.Append(GetInitCode(control, padLevel));
             sb.Append(GetTraceCode(control, padLevel));
 
-            if (control.CurrentType == ControlType.PublishingForm || control.CurrentType == ControlType.PublishingContainer)
+            if ((control.CurrentType == ControlType.PublishingForm) || (control.CurrentType == ControlType.PublishingContainer))
             {
                 if (string.IsNullOrEmpty(control.GetString("CONTENT_ID")))
                 {
@@ -1605,19 +1605,5 @@ namespace Assembling
             return dt;
         }
 
-        private static string GetInitialPresentation(string presentation)
-        {
-            return CodeTransformer.GetInitialPresentation(presentation);
-        }
-
-        private static string GetInitialCodeBehind(string codeBehind)
-        {
-            return CodeTransformer.GetInitialCodeBehind(codeBehind);
-        }
-
-        public static InitialCode GetInitialCode(Code controlCode)
-        {
-            return new InitialCode(GetInitialPresentation(controlCode.Presentation.Code), GetInitialCodeBehind(controlCode.CodeBehind.Code));
-        }
     }
 }

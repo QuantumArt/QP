@@ -8,8 +8,8 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Xml.Linq;
-using Assembling;
 using Microsoft.VisualBasic;
+using Quantumart.QP8.Assembling;
 using Quantumart.QPublishing.Info;
 using VersionNotFoundException = Quantumart.QPublishing.Info.VersionNotFoundException;
 

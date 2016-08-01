@@ -1,8 +1,8 @@
 using System;
 using System.Data;
-using Assembling.Info;
+using Quantumart.QP8.Assembling.Info;
 
-namespace Assembling
+namespace Quantumart.QP8.Assembling
 {
     public class AssemblePageObjectsController : AssembleControllerBase
     {

@@ -3,9 +3,9 @@ using System.Collections;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Assembling.Info;
+using Quantumart.QP8.Assembling.Info;
 
-namespace Assembling
+namespace Quantumart.QP8.Assembling
 {
     public class CodeTransformer
     {

@@ -9,10 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Assembling.Info;
-using Quantumart.QP8.Assembling;
+using Quantumart.QP8.Assembling.Info;
 
-namespace Assembling
+namespace Quantumart.QP8.Assembling
 {
     public class XmlPreprocessor
     {
@@ -33,6 +32,8 @@ namespace Assembling
 
             public bool IsUserQuery { get; set; }
 
+            public bool SplitArticles { get; set; }
+
             public ContentProperties(int id, bool isVirtual, bool isUserQuery)
             {
                 Id = id;
@@ -44,22 +45,16 @@ namespace Assembling
 
         private ContentProperties GetContentProperties(string name)
         {
-            var dv = new DataView(Controller.ContentsTable)
-            {
-                RowFilter = String.Format(CultureInfo.InvariantCulture, "content_name = '{0}'", name)
-            };
+            var dv = new DataView(Controller.ContentsTable) { RowFilter = $"content_name = '{name}'" };
             if (dv.Count == 0)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Cannot find content {0}", name));
-
+                throw new ArgumentException($"Cannot find content {name}");
             }
-            else
-            {
-                var id = Int32.Parse(dv[0]["content_id"].ToString(), CultureInfo.InvariantCulture);
-                var isVirtual = dv[0]["virtual_type"].ToString() != "0";
-                var isUserQuery = dv[0]["virtual_type"].ToString() == "3";
-                return new ContentProperties(id, isVirtual, isUserQuery);
-            }
+            var id = int.Parse(dv[0]["content_id"].ToString(), CultureInfo.InvariantCulture);
+            var isVirtual = dv[0]["virtual_type"].ToString() != "0";
+            var isUserQuery = dv[0]["virtual_type"].ToString() == "3";
+            var splitArticles = (bool)dv[0]["split_articles"];
+            return new ContentProperties(id, isVirtual, isUserQuery) { SplitArticles = splitArticles };
         }
 
         private static int? GetNullableInt32(DataRowView row, string key)
@@ -153,7 +148,7 @@ namespace Assembling
         private int GetRelatedContentId(DataRowView row)
         {
             var fieldType = GetFieldType(row);
-            if ("O2M" == fieldType || "M2O" == fieldType)
+            if (("O2M" == fieldType) || ("M2O" == fieldType))
             {
                 var dv = new DataView(Controller.FieldsTable);
                 var relatedId = row["O2M" == fieldType ? "related_attribute_id" : "back_related_attribute_id"].ToString();
@@ -334,7 +329,7 @@ namespace Assembling
             contentField.SetAttributeValue("type", fieldType);
             contentField.SetAttributeValue("is_localization", (bool)field["IS_LOCALIZATION"]);
 
-            if ("String" == fieldType || "Numeric" == fieldType)
+            if (("String" == fieldType) || ("Numeric" == fieldType))
             {
                 contentField.SetAttributeValue("size", GetFieldSize(field));
             }
@@ -352,7 +347,7 @@ namespace Assembling
                 contentField.SetAttributeValue("use_inheritance", "true");
             }
 
-            if ("M2M" == fieldType || "O2M" == fieldType || "M2O" == fieldType)
+            if (("M2M" == fieldType) || ("O2M" == fieldType) || ("M2O" == fieldType))
             {
                 var relId = GetRelatedContentId(field);
                 contentField.SetAttributeValue("related_content_id", relId);
@@ -418,6 +413,8 @@ namespace Assembling
             content.SetAttributeValue("id", cp.Id);
             content.SetAttributeValue("virtual", cp.IsVirtual ? "1" : "0");
             content.SetAttributeValue("user_query", cp.IsUserQuery ? "1" : "0");
+            content.SetAttributeValue("split_articles", cp.SplitArticles.ToString().ToLowerInvariant());
+
             return cp.Id;
         }
 
