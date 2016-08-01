@@ -82,7 +82,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.addTransliterateButton = functio
       name: dstInputName,
       title: 'Transliterate',
       suffix: 'translit',
-      class: 'customLinkButton',
+      'class': 'customLinkButton',
       url: '/Backend/Content/QP8/icons/16x16/insert_call.gif',
       onClick: function(evt) {
         var resultInput = evt.data.$input;
