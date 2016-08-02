@@ -12,6 +12,8 @@ namespace Quantumart.QP8.BLL.Services
 		void UpdateSentNotifications(IEnumerable<int> notificationIds);
 		void UpdateUnsentNotifications(IEnumerable<int> notificationIds);
 		void DeleteSentNotifications();
+
+	    bool ExistsSentNotifications();
 	}
 
 	public class ExternalNotificationService : IExternalNotificationService
@@ -35,5 +37,10 @@ namespace Quantumart.QP8.BLL.Services
 		{
 			ExternalNotificationRepository.DeleteSentNotifications();
 		}
+
+	    public bool ExistsSentNotifications()
+	    {
+            return ExternalNotificationRepository.ExistsSentNotifications();
+        }
 	}
 }
