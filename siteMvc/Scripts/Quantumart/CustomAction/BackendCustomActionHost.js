@@ -123,14 +123,17 @@ Quantumart.QP8.BackendCustomActionHost.prototype = {
   _popupWindowSelectedHandler: function (eventType, sender, args) {
 
     var selectedEntities = args.entities;
+    var selectedEntityIDs = _.pluck(selectedEntities, 'Id');
     if ($o.checkEntitiesForPresenceEmptyNames(selectedEntities)) {
-      var selectedEntitiesIDs = _.pluck(selectedEntities, 'Id');
-      var dataItems = $o.getSimpleEntityList(args.entityTypeCode, args.parentEntityId, 0, 0, window.$e.ListSelectionMode.OnlySelectedItems, selectedEntitiesIDs);
-      selectedEntities = $c.getEntitiesFromListItemCollection(dataItems);
+      if (args.entityTypeCode && args.parentEntityId) {
+        var dataItems = $o.getSimpleEntityList(args.entityTypeCode, args.parentEntityId, 0, 0, window.$e.ListSelectionMode.OnlySelectedItems, selectedEntityIDs);
+        selectedEntities = $c.getEntitiesFromListItemCollection(dataItems);
+        selectedEntityIDs: _.pluck(selectedEntities, 'Id');
+      }
     }
 
     this._invokeCallback(Quantumart.QP8.Interaction.BackendEventTypes.EntitiesSelected, {
-      selectedEntityIDs: jQuery.map(selectedEntities, function (ent) { return ent.Id; }),
+      selectedEntityIDs: selectedEntityIDs,
       selectedEntities: selectedEntities,
       callerCallback: sender.callerCallback,
       selectWindowUID: sender.selectWindowUID

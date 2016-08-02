@@ -3,5 +3,6 @@ OptimizeHierarchy
 VeButtons
 HierarchyContextMenu
 ExternalNotifications
+DeleteUser
 
 
