@@ -48,7 +48,7 @@ Quantumart.QP8.BackendSelectPopupWindow.prototype = {
 			if (value == this.SELECT_BUTTON_CODE) {
 				var selectedEntities = this._popupWindowComponent.get_selectedEntities();
 				var context = this._popupWindowComponent.get_selectionContext();
-				this.notify(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, { entities: selectedEntities, context: context });
+				this.notify(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, { entities: selectedEntities, context: context, entityTypeCode: this._entityTypeCode, parentEntityId: this._parentEntityId });
 			}
 			else if (value == this.SELECT_ALL_BUTTON_CODE) {				
 				this._popupWindowComponent.selectAllEntities();
