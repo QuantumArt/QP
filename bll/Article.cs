@@ -367,7 +367,10 @@ namespace Quantumart.QP8.BLL
 
         internal List<FieldValue> LoadFieldValues()
         {
-            _fieldValues = GetFieldValues();
+            if (_fieldValues == null)
+            {
+                _fieldValues = GetFieldValues();
+            }
             return _fieldValues;
         }
 
