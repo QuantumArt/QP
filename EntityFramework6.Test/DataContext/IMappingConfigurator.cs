@@ -1,20 +1,27 @@
-using System;
-using System.Collections.Generic;
+using Quantumart.QP8.CodeGeneration.Services;
 using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EntityFramework6.Test.DataContext
 {
     public interface IMappingConfigurator
     {
-        DbCompiledModel GetBuiltModel(DbConnection connection);
+        MappingInfo GetMappingInfo(DbConnection connection);
         void OnModelCreating(DbModelBuilder modelBuilder);
     }
 
+    public class MappingInfo
+    {
+        public DbCompiledModel DbCompiledModel { get; private set; }
+        public ModelReader Schema { get; private set; }
+
+        public MappingInfo(DbCompiledModel dbCompiledModel, ModelReader schema)
+        {
+            DbCompiledModel = dbCompiledModel;
+            Schema = schema;
+        }
+    }
     public enum ContentAccess
     {
         /// <summary>

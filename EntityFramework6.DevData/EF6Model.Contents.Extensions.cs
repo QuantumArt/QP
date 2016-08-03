@@ -140,7 +140,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		{
 			{ "Title", new Func<ProductParameter, IQPFormService, string>((self, ctx) => self.Title != null ? self.Title : null) },
 			{ "Product_ID", new Func<ProductParameter, IQPFormService, string>((self, ctx) => self.Product_ID != null ? self.Product_ID.ToString() : null) },
-			{ "Group_ID", new Func<ProductParameter, IQPFormService, string>((self, ctx) => self.Group_ID != null ? self.Group_ID.ToString() : null) },
+			{ "GroupMapped_ID", new Func<ProductParameter, IQPFormService, string>((self, ctx) => self.GroupMapped_ID != null ? self.GroupMapped_ID.ToString() : null) },
 			{ "BaseParameter_ID", new Func<ProductParameter, IQPFormService, string>((self, ctx) => self.BaseParameter_ID != null ? self.BaseParameter_ID.ToString() : null) },
 			{ "Zone_ID", new Func<ProductParameter, IQPFormService, string>((self, ctx) => self.Zone_ID != null ? self.Zone_ID.ToString() : null) },
 			{ "Direction_ID", new Func<ProductParameter, IQPFormService, string>((self, ctx) => self.Direction_ID != null ? self.Direction_ID.ToString() : null) },
@@ -157,7 +157,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 
 		#endregion
 		#region Genarated properties
-		public Int32 Group_IDExact { get { return this.Group_ID == null ? default(Int32) : this.Group_ID.Value; } }
+		public Int32 GroupMapped_IDExact { get { return this.GroupMapped_ID == null ? default(Int32) : this.GroupMapped_ID.Value; } }
 		public Int32 BaseParameter_IDExact { get { return this.BaseParameter_ID == null ? default(Int32) : this.BaseParameter_ID.Value; } }
 		public Int32 Zone_IDExact { get { return this.Zone_ID == null ? default(Int32) : this.Zone_ID.Value; } }
 		public Int32 Direction_IDExact { get { return this.Direction_ID == null ? default(Int32) : this.Direction_ID.Value; } }

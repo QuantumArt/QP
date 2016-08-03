@@ -31,9 +31,6 @@ namespace Quantumart.QP8.CodeGeneration.Services
                 IsStageMode = isStage,//GetAttribute<bool>(x, "forStage") 
             }).First();
 
-            Schema.SchemaNamespace = Schema.ConnectionStringName + Schema.ClassName.Replace(".", "");
-            Schema.SchemaContainer = Schema.SchemaNamespace + "StoreContainer";
-
             Contents = doc.Descendants("schema").First().Descendants("content").Select(x => new ContentInfo
             {
                 Id = RootUtil.GetAttribute<int>(x, "id", true),
@@ -71,11 +68,34 @@ namespace Quantumart.QP8.CodeGeneration.Services
                 IsSelf = RootUtil.GetAttribute<bool>(x, "self"),
             }).ToList();
 
+            Build(write);
+        }
+
+        public ModelReader(string path, Action<string> write, bool isStage = true)
+            : this(XDocument.Load(path), write, isStage)
+        {
+        }
+
+        public ModelReader()
+        {
+            Schema = new SchemaInfo();
+            Contents = new List<ContentInfo>();
+            Attributes = new List<AttributeInfo>();
+            Links = new List<LinkInfo>();
+        }
+
+        public void Build()
+        {
+            Build(_ => { });
+        }
+        public void Build(Action<string> write)
+        {
+            Schema.SchemaNamespace = Schema.ConnectionStringName + Schema.ClassName.Replace(".", "");
+            Schema.SchemaContainer = Schema.SchemaNamespace + "StoreContainer";
+
             Attributes = Contents.SelectMany(x => x.Attributes).ToList();
 
             var attributesToDelete = new List<AttributeInfo>();
-
-
 
             foreach (var item in Attributes.Where(x => !string.IsNullOrEmpty(x.MappedBackName) && !Attributes.Any(y => y.RelatedAttributeId == x.Id)).ToList())
             {
@@ -225,11 +245,6 @@ namespace Quantumart.QP8.CodeGeneration.Services
                     }
                 }
             }
-        }
-
-        public ModelReader(string path, Action<string> write, bool isStage = true)
-            : this(XDocument.Load(path), write, isStage)
-        {
         }
 
         private AttributeInfo GenM2M(ContentInfo contentFrom, ContentInfo contentTo, LinkInfo link, AttributeInfo attr)

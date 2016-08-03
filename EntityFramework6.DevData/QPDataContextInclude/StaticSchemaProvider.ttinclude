@@ -1,0 +1,75 @@
+﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+<#+ void AddStaticSchemaProvider(GenerationContext context){
+var model = context.Model;
+var settings = context.Settings;
+#>
+using System.Collections.Generic;
+using System.Linq;
+using Quantumart.QP8.CodeGeneration.Services;
+<#= settings.Usings#>
+
+namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint")#>
+{
+    public class StaticSchemaProvider : ISchemaProvider
+    {
+	   public StaticSchemaProvider()
+       {
+       }
+
+	    #region ISchemaProvider implementation
+        public ModelReader GetSchema()
+        {
+			var schema = new ModelReader();
+
+			schema.Attributes = new List<AttributeInfo>
+            {
+<#+
+            foreach (var attribute in model.Attributes)
+            {
+#>
+                new AttributeInfo
+                {
+                    Id = <#=attribute.Id#>,
+                    ContentId = <#=attribute.ContentId#>,
+                    Name = "<#=attribute.Name#>",
+                    MappedName = "<#=attribute.MappedName#>",
+                    LinkId = <#=attribute.LinkId#>
+                },
+<#+
+			}
+#>
+            };
+
+            var attributesLookup = schema.Attributes.ToLookup(a => a.ContentId, a => a);
+
+            schema.Contents = new List<ContentInfo>
+            {
+<#+
+	            foreach (var content in model.Contents)
+		        {
+#>
+                new ContentInfo
+                {
+                   Id = <#=content.Id#>,
+                   MappedName = "<#=content.MappedName#>",
+                   UseDefaultFiltration = <#=content.UseDefaultFiltration.ToString().ToLower()#>,
+                   Attributes = new List<AttributeInfo>(attributesLookup[<#=content.Id#>])
+                },
+<#+
+			}
+#>
+            };
+
+			schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
+
+			return schema;
+        }
+
+        public object GetCacheKey()
+        {
+            return null;
+        }
+		#endregion
+    }
+}
+<#+}#>

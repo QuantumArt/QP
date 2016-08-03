@@ -33,8 +33,8 @@
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\TestClassTemplate.ttinclude" #>
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\Model.ttinclude" #>
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\MappingConfiguratorOnModelCreating.ttinclude" #>
-<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\ModelMappingConfigurator.ttinclude" #>
-<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\DynamicMappingConfigurator.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\MappingConfigurator.ttinclude" #>
+<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\StaticSchemaProvider.ttinclude" #>
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\ModelExtensions.ttinclude" #>
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\ConnectionScope.ttinclude" #>
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\Classes.ttinclude" #>
@@ -50,18 +50,19 @@
 		context.AddTemplateFile(className + "Extensions.cs", AddModelExtensions, settings.GenerateModel);
 		context.AddTemplateFile(className + "ConnectionScope.cs", AddConnectionScope, settings.GenerateModel);
 
-		context.AddTemplateFile(className + "MappingConfigurator.cs", AddModelMappingConfigurator, settings.GenerateMappings);
-		context.AddTemplateFile("DynamicMappingConfigurator.cs", AddDynamicMappingConfigurator, settings.GenerateMappings);
-		context.AddCodeFile(@"..\EntityFramework\Services\FileMappingResolver.cs", settings.GenerateInterface);
+		context.AddTemplateFile("MappingConfigurator.cs", AddMappingConfigurator, settings.GenerateMappings);
+		context.AddCodeFile(@"..\EntityFramework\Services\MappingResolver.cs", settings.GenerateMappings);
+		context.AddCodeFile(@"..\EntityFramework\Services\FileSchemaProvider.cs", settings.GenerateMappings);
+		context.AddCodeFile(@"..\EntityFramework\Services\DatabaseSchemaProvider.cs", settings.GenerateMappings);
+		context.AddTemplateFile("StaticSchemaProvider.cs", AddStaticSchemaProvider, settings.GenerateMappings);
 		
 		context.AddCodeFile(@"..\EntityFramework\Models\IQPArticle.cs", settings.GenerateInterface);
 		context.AddCodeFile(@"..\EntityFramework\Models\IQPLibraryService.cs", settings.GenerateInterface);
 		context.AddCodeFile(@"..\EntityFramework\Models\IQPFormService.cs", settings.GenerateInterface);
 
 		context.AddCodeFile(@"..\EntityFramework\Services\IMappingConfigurator.cs", settings.GenerateMappingInterface);
-		context.AddCodeFile(@"..\EntityFramework\Services\IMappingResolver.cs", settings.GenerateMappingInterface);
+		context.AddCodeFile(@"..\EntityFramework\Services\ISchemaProvider.cs", settings.GenerateMappingInterface);
 		context.AddCodeFile(@"..\EntityFramework\Services\MappingConfiguratorBase.cs", settings.GenerateMappingInterface);
-		context.AddCodeFile(@"..\EntityFramework\Services\DynamicMappingConfiguratorBase.cs", settings.GenerateMappingInterface);
 
 		context.AddCodeFile(@"..\EntityFramework\Models\StatusType.cs", settings.GenerateClasses);
 		context.AddCodeFile(@"..\EntityFramework\Models\User.cs", settings.GenerateClasses);

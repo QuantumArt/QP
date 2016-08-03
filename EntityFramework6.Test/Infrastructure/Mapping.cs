@@ -1,4 +1,4 @@
-﻿namespace EntityFramework6.Test.Tests
+﻿namespace EntityFramework6.Test.Infrastructure
 {
     public enum Mapping
     {

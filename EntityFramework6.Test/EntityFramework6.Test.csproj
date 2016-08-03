@@ -80,6 +80,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -92,13 +93,10 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="DataContext\DatabaseMappingResolver.cs">
+    <Compile Include="DataContext\AfiellFieldsItem.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext\DynamicMappingConfigurator.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataContext\DynamicMappingConfiguratorBase.cs">
+    <Compile Include="DataContext\DatabaseSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\EF6Model.Contents.Extensions.cs">
@@ -113,16 +111,10 @@
     <Compile Include="DataContext\EF6ModelExtensions.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext\EF6ModelMappingConfigurator.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataContext\FileMappingResolver.cs">
+    <Compile Include="DataContext\FileSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\IMappingConfigurator.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataContext\IMappingResolver.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\IQPArticle.cs">
@@ -134,25 +126,22 @@
     <Compile Include="DataContext\IQPLibraryService.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataContext\IQPSchema.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\ISchemaProvider.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\MappingConfigurator.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataContext\MappingConfiguratorBase.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext\MarketingProduct.cs">
+    <Compile Include="DataContext\MappingResolver.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext\MobileTariff.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataContext\Product.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataContext\ProductParameter.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataContext\Region.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DataContext\Setting.cs">
+    <Compile Include="DataContext\StaticSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\StatusType.cs">
@@ -165,12 +154,14 @@
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Tests\ContentAccessValuesAttribute.cs" />
-    <Compile Include="Tests\DataContextFixtureBase.cs" />
+    <Compile Include="Infrastructure\ContentAccessValuesAttribute.cs" />
+    <Compile Include="Tests\DataContextFixture.cs" />
+    <Compile Include="Infrastructure\DataContextFixtureBase.cs" />
+    <Compile Include="Tests\UpdateFixture.cs" />
+    <Compile Include="Tests\SchemaFixture.cs" />
     <Compile Include="Tests\SystemInformationFixture.cs" />
-    <Compile Include="Tests\DataContextFixtureOld.cs" />
-    <Compile Include="Tests\Mapping.cs" />
-    <Compile Include="Tests\MappingValuesAttribute.cs" />
+    <Compile Include="Infrastructure\Mapping.cs" />
+    <Compile Include="Infrastructure\MappingValuesAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

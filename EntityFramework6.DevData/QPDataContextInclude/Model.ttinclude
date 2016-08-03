@@ -44,7 +44,8 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-		    var mapping = new <#=model.Schema.ClassName#>MappingConfigurator();
+		    var schemaProvider = new StaticSchemaProvider();
+		    var mapping = new MappingConfigurator(ContentAccess.Live, schemaProvider);
             mapping.OnModelCreating(modelBuilder);
         }
 	}

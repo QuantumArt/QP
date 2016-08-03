@@ -1,17 +1,10 @@
-﻿using Quantumart.QP8.CodeGeneration.Services;
-using Quantumart.QP8.EntityFramework.Models;
-//using Quantumart.QPublishing.Info;
+﻿using Quantumart.QP8.EntityFramework.Models;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Common;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Quantumart.QP8.EntityFramework.Services
 {
@@ -22,33 +15,31 @@ namespace Quantumart.QP8.EntityFramework.Services
         private const string TableLiveFiltered = "content_{0}_live_new";
         private const string TableStageFiltered = "content_{0}_stage_new";
 
-        public static ContentAccess DefaultContentAccess = ContentAccess.Live;
-        protected ContentAccess _contentAccess;
-        private static ConcurrentDictionary<object, Lazy<DbCompiledModel>> _cache = new ConcurrentDictionary<object, Lazy<DbCompiledModel>>();  
+        private static ConcurrentDictionary<object, Lazy<MappingInfo>> _cache = new ConcurrentDictionary<object, Lazy<MappingInfo>>();
 
-        #region Constructors
-        public MappingConfiguratorBase()
-            : this(DefaultContentAccess)
-        { }
+        private readonly ISchemaProvider _schemaProvider;
+        private readonly ContentAccess _contentAccess;
+        private IMappingResolver _mappingResolver;
 
-
-        public MappingConfiguratorBase(ContentAccess contentAccess)
+        public MappingConfiguratorBase(ContentAccess contentAccess, ISchemaProvider schemaProvider)
         {
             _contentAccess = contentAccess;
+            _schemaProvider = schemaProvider;
         }
-        #endregion
 
-        #region IMappingConfigurator implementation
-        public virtual DbCompiledModel GetBuiltModel(DbConnection connection)
+        public virtual MappingInfo GetMappingInfo(DbConnection connection)
         {
             return _cache.GetOrAdd(GetCacheKey(), a =>
             {
+                var _schema = _schemaProvider.GetSchema();
+                _mappingResolver = new MappingResolver(_schema);
+
                 var builder = new DbModelBuilder();
                 OnModelCreating(builder);
                 var builtModel = builder.Build(connection);
 
-                return new Lazy<DbCompiledModel>(
-                    () => builtModel.Compile(),
+                return new Lazy<MappingInfo>(
+                    () => new MappingInfo(builtModel.Compile(), _schema),
                     LazyThreadSafetyMode.ExecutionAndPublication);
             }).Value;
         }
@@ -95,15 +86,39 @@ namespace Quantumart.QP8.EntityFramework.Services
 
             #endregion
         }
-        #endregion
 
-        #region Protected members
-        protected virtual object GetCacheKey()
+        private object GetCacheKey()
         {
-            return _contentAccess;
+            return new { _contentAccess, resolverKey = _schemaProvider.GetCacheKey() };
         }
 
-        protected string GetTableName(int contentId, bool useDefaultFiltration)
+        #region Dynamic mapping
+        protected string GetFieldName(string contentMappedName, string fieldMappedName)
+        {
+            return _mappingResolver.GetAttribute(contentMappedName, fieldMappedName).Name;
+        }
+
+        protected string GetTableName(string mappedName)
+        {
+            var content = _mappingResolver.GetContent(mappedName);
+            return GetTableName(content.Id, content.UseDefaultFiltration);
+        }
+
+        protected string GetLinkTableName( string contentMappedName, string fieldMappedName)
+        {
+            int linkId = _mappingResolver.GetAttribute(contentMappedName, fieldMappedName).LinkId;
+            return GetLinkTableName(linkId);
+        }
+
+        protected string GetReversedLinkTableName(string contentMappedName, string fieldMappedName)
+        {
+            int linkId = _mappingResolver.GetAttribute(contentMappedName, fieldMappedName).LinkId;
+            return GetReversedLinkTableName(linkId);
+        }
+        #endregion
+
+        #region Static mapping
+        private string GetTableName(int contentId, bool useDefaultFiltration)
         {
             switch (_contentAccess)
             {
@@ -118,7 +133,7 @@ namespace Quantumart.QP8.EntityFramework.Services
             throw new InvalidOperationException(_contentAccess + " is not supported.");
         }
 
-        protected string GetLinkTableName(int linkId)
+        private string GetLinkTableName(int linkId)
         {
             switch (_contentAccess)
             {
@@ -133,7 +148,7 @@ namespace Quantumart.QP8.EntityFramework.Services
             throw new InvalidOperationException(_contentAccess + " is not supported.");
         }
 
-        protected string GetReversedLinkTableName(int linkId)
+        private string GetReversedLinkTableName(int linkId)
         {
             switch (_contentAccess)
             {
@@ -148,5 +163,6 @@ namespace Quantumart.QP8.EntityFramework.Services
             throw new InvalidOperationException(_contentAccess + " is not supported.");
         }
         #endregion
+
     }
 }

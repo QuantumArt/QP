@@ -8,17 +8,22 @@ using System.Data.Entity.Core.Objects;
 using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using Quantumart.QPublishing.Database;
+using Quantumart.QP8.CodeGeneration.Services;
+using System.Linq.Expressions;
+using System.Collections.Generic;
+using Quantumart.QPublishing.Info;
 
 
 namespace EntityFramework6.Test.DataContext
 {
-    public partial class EF6Model: IQPLibraryService, IQPFormService
+    public partial class EF6Model: IQPLibraryService, IQPFormService, IQPSchema
     {
 		#region Constructors
 
 		public EF6Model(string connectionStringOrName)
             : base(connectionStringOrName)
         {
+			MappingResolver = GetDefaultMappingResolver();
             this.Configuration.LazyLoadingEnabled = true;
 			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
@@ -27,26 +32,34 @@ namespace EntityFramework6.Test.DataContext
 		public EF6Model(DbConnection connection, bool contextOwnsConnection)
             : base(connection, contextOwnsConnection)
         {
+			MappingResolver = GetDefaultMappingResolver();
             this.Configuration.LazyLoadingEnabled = true;
 			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
-        public EF6Model(DbCompiledModel model) : base(model)
+        public EF6Model(DbCompiledModel model, ModelReader schema) : base(model)
         {
+			MappingResolver = new MappingResolver(schema);
             this.Configuration.LazyLoadingEnabled = true;
 			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
-        public EF6Model(DbConnection connection, DbCompiledModel model, bool contextOwnsConnection)
+        public EF6Model(DbConnection connection, DbCompiledModel model, ModelReader schema, bool contextOwnsConnection)
             : base(connection, model, contextOwnsConnection)
         {
+			MappingResolver = new MappingResolver(schema);
             this.Configuration.LazyLoadingEnabled = true;
 			this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
+		private IMappingResolver GetDefaultMappingResolver()
+        {
+            var schema = new StaticSchemaProvider();
+            return new MappingResolver(schema.GetSchema());
+        }
 
 		protected ObjectContext CurrentObjectContext
 		{
@@ -61,7 +74,7 @@ namespace EntityFramework6.Test.DataContext
 		#region Private members
 		private const string uploadPlaceholder = "<%=upload_url%>";
 		private const string sitePlaceholder = "<%=site_url%>";
-		private static string _defaultSiteName = "Product Catalog";
+		private static string _defaultSiteName = "original_site";
 		private static string _defaultConnectionString;
 		private static string _defaultConnectionStringName = "EF6Model";
 		private bool _shouldRemoveSchema = false;
@@ -71,6 +84,8 @@ namespace EntityFramework6.Test.DataContext
 
 		#region Properties
 		public static bool RemoveUploadUrlSchema = false;
+
+		protected IMappingResolver MappingResolver { get; private set; }
 
 		public bool ShouldRemoveSchema { get { return _shouldRemoveSchema; } set { _shouldRemoveSchema = value; } }
 		public Int32 SiteId { get; private set; }
@@ -143,7 +158,8 @@ namespace EntityFramework6.Test.DataContext
 
 		public static EF6Model Create(IMappingConfigurator configurator, SqlConnection connection, bool contextOwnsConnection)
         {
-            var ctx = new EF6Model(connection, configurator.GetBuiltModel(connection), contextOwnsConnection);
+			var mapping = configurator.GetMappingInfo(connection);
+            var ctx = new EF6Model(connection, mapping.DbCompiledModel, mapping.Schema, contextOwnsConnection);
             ctx.SiteName = DefaultSiteName;
             ctx.ConnectionString = connection.ConnectionString;
             return ctx;
@@ -201,7 +217,8 @@ namespace EntityFramework6.Test.DataContext
 
         public static EF6Model CreateWithStaticMapping(ContentAccess contentAccess, SqlConnection connection, bool contextOwnsConnection)
         {
-            var configurator = new EF6ModelMappingConfigurator(contentAccess);
+			var schemaProvider = new StaticSchemaProvider();
+            var configurator = new MappingConfigurator(contentAccess, schemaProvider);
             return Create(configurator, connection, contextOwnsConnection);
         }
 
@@ -217,8 +234,8 @@ namespace EntityFramework6.Test.DataContext
 
         public static EF6Model CreateWithDatabaseMapping(ContentAccess contentAccess, string siteName, SqlConnection connection, bool contextOwnsConnection)
         {
-            var resolver = new DatabaseMappingResolver(DefaultSiteName);
-            var configurator = new DynamicMappingConfigurator(resolver, contentAccess);          
+            var schemaProvider = new DatabaseSchemaProvider(siteName, connection);
+            var configurator = new MappingConfigurator(contentAccess, schemaProvider);         
             var context = Create(configurator, connection, contextOwnsConnection);
 			context.SiteName = siteName;
 			return context;
@@ -231,8 +248,8 @@ namespace EntityFramework6.Test.DataContext
 
         public static EF6Model CreateWithFileMapping(ContentAccess contentAccess, string path, SqlConnection connection, bool contextOwnsConnection)
         {
-            var resolver = new FileMappingResolver(path);
-            var configurator = new DynamicMappingConfigurator(resolver, contentAccess);
+            var schemaProvider = new FileSchemaProvider(path);
+            var configurator = new MappingConfigurator(contentAccess, schemaProvider);
             return Create(configurator, connection, contextOwnsConnection);
         }
 		#endregion
@@ -302,7 +319,97 @@ namespace EntityFramework6.Test.DataContext
 		#region Save changes
 		public override int SaveChanges()
         {
-            return OnSaveChanges();
+            return OnSaveChanges2();
+        }
+
+		private int OnSaveChanges2()
+        {
+            ChangeTracker.DetectChanges();
+
+            var manager = CurrentObjectContext.ObjectStateManager;
+            var modified = manager.GetObjectStateEntries(EntityState.Modified);
+            var added = manager.GetObjectStateEntries(EntityState.Added);
+            var deleted = manager.GetObjectStateEntries(EntityState.Deleted);
+
+            UpdateObjectStateEntries(modified, (content, item) => item.GetModifiedProperties().ToArray(), true);
+            UpdateObjectStateEntries(added, (content, item) => GetProperties(content), false);
+
+            foreach(var deletedItem in deleted)
+            {
+                var article = (IQPArticle)deletedItem.Entity;
+                Cnn.DeleteContentItem(article.Id);
+            }            
+
+            return 0;
+        }
+
+        private void UpdateObjectStateEntries(IEnumerable<ObjectStateEntry> entries, Func<ContentInfo, ObjectStateEntry, string[]> getProperties, bool passNullValues)
+        {
+            foreach (var group in entries.GroupBy(m => m.Entity.GetType().Name))
+            {
+                var contentName = group.Key;
+                var content = MappingResolver.GetContent(contentName);
+
+                var items = group
+                    .Where(item => item.Entity is IQPArticle)
+                    .Select(item => {
+
+                        var article = (IQPArticle)item.Entity;
+                        var properties = getProperties(content, item);
+                        var fieldValues = GetFieldValues(contentName, article, properties, passNullValues);
+
+                        return new
+                        {
+                            article,
+                            fieldValues
+                        };
+                    })
+                    .ToArray();         
+
+                Cnn.MassUpdate(content.Id, items.Select(item => item.fieldValues), 1);
+
+                foreach(var item in items)
+                {
+                    SyncArticle(item.article, item.fieldValues);
+                }
+            }
+        }
+
+        private void SyncArticle(IQPArticle article, Dictionary<string, string> fieldValues)
+        {
+            article.Id = int.Parse(fieldValues[SystemColumnNames.Id]);
+            article.Modified = DateTime.Parse(fieldValues[SystemColumnNames.Modified]);
+            article.Created = DateTime.Parse(fieldValues[SystemColumnNames.Created]);
+        }
+
+        private string[] GetProperties(ContentInfo content)
+        {
+            return content.Columns
+                .Where(c => !c.IsRelation)
+                .Select(c => c.MappedName)
+                .ToArray();
+        }
+
+        private Dictionary<string, string> GetFieldValues(string contentName, IQPArticle article, string[] fields, bool passNullValues)
+        {
+             var fieldValues = article.GetType()
+                .GetProperties()
+                .Where(f => fields.Contains(f.Name))
+                .Select(f => new {
+                    field = MappingResolver.GetAttribute(contentName, f.Name).Name,
+                    value = f.GetValue(article)?.ToString()
+                })
+                .Where(f => passNullValues || f.value != null)
+                .ToDictionary(
+                    f => f.field,
+                    f => f.value
+                );
+           
+            fieldValues[SystemColumnNames.Id] = article.Id.ToString();
+            fieldValues[SystemColumnNames.Created] = article.Created.ToString();
+            fieldValues[SystemColumnNames.Modified] = article.Modified.ToString();
+
+            return fieldValues;
         }
 
         int OnSaveChanges()
@@ -387,5 +494,22 @@ namespace EntityFramework6.Test.DataContext
 		{
 			return Cnn.GetFormNameByNetNames(this.SiteId, netContentName, netFieldName);
 		}
+
+		#region IQPSchema implementation
+        public ContentInfo GetInfo<T>()
+			where T : IQPArticle
+        {
+            return MappingResolver.GetContent(typeof(T).Name);
+        }
+
+		public AttributeInfo GetInfo<Tcontent>(Expression<Func<Tcontent, object>> fieldSelector)
+            where Tcontent : IQPArticle
+        {
+            var contentName = typeof(Tcontent).Name;
+            var expression = (MemberExpression)fieldSelector.Body;
+            var attributeName = expression.Member.Name;
+            return MappingResolver.GetAttribute(contentName, attributeName);
+        }   
+        #endregion
 	}
 }

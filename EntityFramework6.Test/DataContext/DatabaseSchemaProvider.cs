@@ -1,17 +1,14 @@
-using System;
-using System.Data;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Quantumart.QP8.CodeGeneration.Services;
+using System.Data.Common;
 using Quantumart.QPublishing.Database;
 using System.Data.SqlClient;
-using System.Data.Common;
 
 namespace EntityFramework6.Test.DataContext
 {
-    public class DatabaseMappingResolver : IMappingResolver
+    public class DatabaseSchemaProvider : ISchemaProvider
     {
         #region Queries
         private const string ContentQuery = @"
@@ -29,6 +26,7 @@ namespace EntityFramework6.Test.DataContext
 	            a.ATTRIBUTE_ID,
 	            a.CONTENT_ID,
 	            c.NET_CONTENT_NAME,
+                a.ATTRIBUTE_NAME,
 	            a.NET_ATTRIBUTE_NAME,
 	            a.link_id
             from
@@ -38,64 +36,65 @@ namespace EntityFramework6.Test.DataContext
 	            c.SITE_ID = @siteId";
         #endregion
 
-        protected string SiteName { get; private set; }
-        protected ContentInfo[] Contents { get; private set; }
-        private string ConnectionString { get; set; }
+        private readonly string _siteName;
+        private readonly DbConnection _connection;
 
-        public DatabaseMappingResolver(string siteName)
+        public DatabaseSchemaProvider(string siteName, DbConnection connection)
         {
-            SiteName = siteName;
-            Contents = new ContentInfo[0];
+            _siteName = siteName;
+            _connection = connection;
         }
 
-        #region IMappingResolver implementation
+        #region ISchemaProvider implementation
+        public ModelReader GetSchema()
+        {
+            var connector = new DBConnector(_connection);
+            int siteId = connector.GetSiteId(_siteName);
+
+            var attributes = GetAttributes(connector, siteId);
+            var contents = GetContents(connector, siteId, attributes);
+
+            var model = new ModelReader();
+            model.Schema.SiteName = _siteName;
+            model.Attributes.AddRange(attributes);
+            model.Contents.AddRange(contents);
+
+            return model;
+        }
+
         public object GetCacheKey()
         {
-            return new { SiteName, ConnectionString };
-        }
-        public void Initialize(DbConnection connection)
-        {
-            ConnectionString = connection.ConnectionString;
-            var connector = new DBConnector(connection);
-            int siteId = connector.GetSiteId(SiteName);
-            Contents = GetContents(connector, siteId);
-        }
-
-        public AttributeInfo GetAttribute(string contentMappedName, string fieldMappedName)
-        {
-            var attributes = from c in Contents
-                             from a in c.Attributes
-                             where
-                                 c.MappedName == contentMappedName &&
-                                 a.MappedName == fieldMappedName
-                             select a;
-
-            return attributes.Single();
-        }
-
-        public ContentInfo GetContent(string mappedName)
-        {
-            return Contents.Single(c => c.MappedName == mappedName);
+            return new { _siteName, _connection.ConnectionString };
         }
         #endregion
 
         #region Private methods
-        private ContentInfo[] GetContents(DBConnector connector, int siteId)
+        private ContentInfo[] GetContents(DBConnector connector, int siteId, AttributeInfo[] attributes)
         {
             var command = new SqlCommand(ContentQuery);
             command.Parameters.AddWithValue("@siteId", siteId);
 
-            var attributesLookup = GetAttributes(connector, siteId).ToLookup(a => a.ContentId, a => a);
+            var attributesLookup = attributes.ToLookup(a => a.ContentId, a => a);
 
             var contents = connector
                 .GetRealData(command)
                 .AsEnumerable()
-                .Select(row => new ContentInfo
-                {
-                    Id = (int)row.Field<decimal>("CONTENT_ID"),
-                    MappedName = row.Field<string>("NET_CONTENT_NAME"),
-                    UseDefaultFiltration = row.Field<bool>("USE_DEFAULT_FILTRATION"),
-                    Attributes = new List<AttributeInfo>(attributesLookup[(int)row.Field<decimal>("CONTENT_ID")])
+                .Select(row => {
+                    var contentId = (int)row.Field<decimal>("CONTENT_ID");
+                    var mappedName = row.Field<string>("NET_CONTENT_NAME");
+                    var useDefaultFiltration = row.Field<bool>("USE_DEFAULT_FILTRATION");
+
+                    var content = new ContentInfo
+                    {
+                        Id = contentId,
+                        MappedName = mappedName,
+                        UseDefaultFiltration = useDefaultFiltration,
+                        Attributes = new List<AttributeInfo>(attributesLookup[contentId])
+                    };
+
+                    content.Attributes.ForEach(a => a.Content = content);
+
+                    return content;
                 })
                 .ToArray();
 
@@ -114,13 +113,14 @@ namespace EntityFramework6.Test.DataContext
                 {
                     Id = (int)row.Field<decimal>("ATTRIBUTE_ID"),
                     ContentId = (int)row.Field<decimal>("CONTENT_ID"),
+                    Name = row.Field<string>("ATTRIBUTE_NAME"),
                     MappedName = row.Field<string>("NET_ATTRIBUTE_NAME"),
                     LinkId = (int)row.Field<decimal>("ATTRIBUTE_ID")
                 })
                 .ToArray();
 
             return attributes;
-        }
+        }        
         #endregion
     }
 }

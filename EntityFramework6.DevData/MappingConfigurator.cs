@@ -8,33 +8,27 @@ using System.Threading;
 using Quantumart.QP8.CodeGeneration.Services;
 
 
-namespace EntityFramework6.Test.DataContext
+namespace Quantumart.QP8.EntityFramework6.DevData
 {
-    public class EF6ModelMappingConfigurator : MappingConfiguratorBase
-    {	
-        public EF6ModelMappingConfigurator()
-            : base()
+    public class MappingConfigurator : MappingConfiguratorBase
+    {
+        public MappingConfigurator(ContentAccess contentAccess, ISchemaProvider schemaProvider)
+            : base(contentAccess, schemaProvider)
         {
 		}
-
-        public EF6ModelMappingConfigurator(ContentAccess contentAccess)
-            : base(contentAccess)
-        {
-		}	
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 			base.OnModelCreating(modelBuilder);
-			base.OnModelCreating(modelBuilder);
 
             #region MarketingProduct mappings
             modelBuilder.Entity<MarketingProduct>()
-                .ToTable(GetTableName(287, true))
+                .ToTable(GetTableName("MarketingProduct"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<MarketingProduct>()                
+		    modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -49,27 +43,21 @@ namespace EntityFramework6.Test.DataContext
 
             modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.Family_ID)
-                .HasColumnName("Family");
+                .HasColumnName(GetFieldName("MarketingProduct", "Family_ID"));
             modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.MarketingSign_ID)
-                .HasColumnName("MarketingSign");
-            modelBuilder.Entity<MarketingProduct>()
-                .Property(x => x.Family_ID)
-                .HasColumnName("Family");
-            modelBuilder.Entity<MarketingProduct>()
-                .Property(x => x.MarketingSign_ID)
-                .HasColumnName("MarketingSign");
+                .HasColumnName(GetFieldName("MarketingProduct", "MarketingSign_ID"));
  
             #endregion
 
             #region Product mappings
             modelBuilder.Entity<Product>()
-                .ToTable(GetTableName(288, true))
+                .ToTable(GetTableName("Product"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<Product>()                
+		    modelBuilder.Entity<Product>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -84,10 +72,7 @@ namespace EntityFramework6.Test.DataContext
 
             modelBuilder.Entity<Product>()
                 .Property(x => x.MarketingSign_ID)
-                .HasColumnName("MarketingSign");
-            modelBuilder.Entity<Product>()
-                .Property(x => x.MarketingSign_ID)
-                .HasColumnName("MarketingSign");
+                .HasColumnName(GetFieldName("Product", "MarketingSign_ID"));
             modelBuilder.Entity<Product>()
                 .HasOptional<MarketingProduct>(mp => mp.MarketingProduct)
                 .WithMany(mp => mp.Products)
@@ -95,14 +80,14 @@ namespace EntityFramework6.Test.DataContext
 
             modelBuilder.Entity<Product>()
                 .Property(x => x.MarketingProduct_ID)
-                .HasColumnName("MarketingProduct");
+                .HasColumnName(GetFieldName("Product", "MarketingProduct"));
 
             modelBuilder.Entity<Product>().HasMany<Region>(p => p.Regions).WithMany()
                 .Map(rp =>
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(21));
+                    rp.ToTable(GetLinkTableName("Product", "Regions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Product>(p => p.BackwardForRegions).WithMany()
@@ -110,7 +95,7 @@ namespace EntityFramework6.Test.DataContext
                 { 
                     rp.MapLeftKey("id"); // !+
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetReversedLinkTableName(21));
+                    rp.ToTable(GetReversedLinkTableName("Product", "Regions"));
                 });
 
             modelBuilder.Entity<Product>().Ignore(p => p.PDFUrl);
@@ -120,12 +105,12 @@ namespace EntityFramework6.Test.DataContext
 
             #region ProductParameter mappings
             modelBuilder.Entity<ProductParameter>()
-                .ToTable(GetTableName(291, true))
+                .ToTable(GetTableName("ProductParameter"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<ProductParameter>()                
+		    modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -139,41 +124,23 @@ namespace EntityFramework6.Test.DataContext
                 .HasForeignKey(x => x.StatusTypeId); 
 
             modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Group_ID)
-                .HasColumnName("Group");
+                .Property(x => x.GroupMapped_ID)
+                .HasColumnName(GetFieldName("ProductParameter", "GroupMapped_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.BaseParameter_ID)
-                .HasColumnName("BaseParameter");
+                .HasColumnName(GetFieldName("ProductParameter", "BaseParameter_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Zone_ID)
-                .HasColumnName("Zone");
+                .HasColumnName(GetFieldName("ProductParameter", "Zone_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Direction_ID)
-                .HasColumnName("Direction");
+                .HasColumnName(GetFieldName("ProductParameter", "Direction_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Unit_ID)
-                .HasColumnName("Unit");
+                .HasColumnName(GetFieldName("ProductParameter", "Unit_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.MatrixParameter_ID)
-                .HasColumnName("MatrixParameter");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Group_ID)
-                .HasColumnName("Group");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.BaseParameter_ID)
-                .HasColumnName("BaseParameter");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Zone_ID)
-                .HasColumnName("Zone");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Direction_ID)
-                .HasColumnName("Direction");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Unit_ID)
-                .HasColumnName("Unit");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.MatrixParameter_ID)
-                .HasColumnName("MatrixParameter");
+                .HasColumnName(GetFieldName("ProductParameter", "MatrixParameter_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .HasOptional<Product>(mp => mp.Product)
                 .WithMany(mp => mp.Parameters)
@@ -181,18 +148,18 @@ namespace EntityFramework6.Test.DataContext
 
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Product_ID)
-                .HasColumnName("Product");
+                .HasColumnName(GetFieldName("ProductParameter", "Product"));
  
             #endregion
 
             #region Region mappings
             modelBuilder.Entity<Region>()
-                .ToTable(GetTableName(294, true))
+                .ToTable(GetTableName("Region"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<Region>()                
+		    modelBuilder.Entity<Region>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -212,14 +179,14 @@ namespace EntityFramework6.Test.DataContext
 
             modelBuilder.Entity<Region>()
                 .Property(x => x.Parent_ID)
-                .HasColumnName("Parent");
+                .HasColumnName(GetFieldName("Region", "Parent"));
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.AllowedRegions).WithMany()
                 .Map(rp =>
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(71));
+                    rp.ToTable(GetLinkTableName("Region", "AllowedRegions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.BackwardForAllowedRegions).WithMany()
@@ -227,7 +194,7 @@ namespace EntityFramework6.Test.DataContext
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(71));
+                    rp.ToTable(GetReversedLinkTableName("Region", "AllowedRegions"));
                 });
 
 
@@ -236,7 +203,7 @@ namespace EntityFramework6.Test.DataContext
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(72));
+                    rp.ToTable(GetLinkTableName("Region", "DeniedRegions"));
                 });
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.BackwardForDeniedRegions).WithMany()
@@ -244,7 +211,7 @@ namespace EntityFramework6.Test.DataContext
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(72));
+                    rp.ToTable(GetReversedLinkTableName("Region", "DeniedRegions"));
                 });
 
  
@@ -252,12 +219,12 @@ namespace EntityFramework6.Test.DataContext
 
             #region MobileTariff mappings
             modelBuilder.Entity<MobileTariff>()
-                .ToTable(GetTableName(305, true))
+                .ToTable(GetTableName("MobileTariff"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<MobileTariff>()                
+		    modelBuilder.Entity<MobileTariff>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -277,18 +244,18 @@ namespace EntityFramework6.Test.DataContext
 
             modelBuilder.Entity<MobileTariff>()
                 .Property(x => x.Product_ID)
-                .HasColumnName("Product");
+                .HasColumnName(GetFieldName("MobileTariff", "Product"));
  
             #endregion
 
             #region Setting mappings
             modelBuilder.Entity<Setting>()
-                .ToTable(GetTableName(349, true))
+                .ToTable(GetTableName("Setting"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<Setting>()                
+		    modelBuilder.Entity<Setting>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -303,14 +270,14 @@ namespace EntityFramework6.Test.DataContext
 
             modelBuilder.Entity<Setting>()
                 .Property(x => x.ValueMapped)
-                .HasColumnName("Value");
+                .HasColumnName(GetFieldName("Setting", "ValueMapped"));
 
             modelBuilder.Entity<Setting>().HasMany<Setting>(p => p.RelatedSettings).WithMany()
                 .Map(rp =>
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName(69));
+                    rp.ToTable(GetLinkTableName("Setting", "RelatedSettings"));
                 });
 
             modelBuilder.Entity<Setting>().HasMany<Setting>(p => p.BackwardForRelatedSettings).WithMany()
@@ -318,7 +285,7 @@ namespace EntityFramework6.Test.DataContext
                 { 
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
-                    rp.ToTable(GetReversedLinkTableName(69));
+                    rp.ToTable(GetReversedLinkTableName("Setting", "RelatedSettings"));
                 });
 
  

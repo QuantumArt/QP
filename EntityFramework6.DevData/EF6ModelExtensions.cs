@@ -143,7 +143,8 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 
 		public static EF6Model Create(IMappingConfigurator configurator, SqlConnection connection, bool contextOwnsConnection)
         {
-            var ctx = new EF6Model(connection, configurator.GetBuiltModel(connection), contextOwnsConnection);
+			var mapping = configurator.GetMappingInfo(connection);
+            var ctx = new EF6Model(connection, mapping.DbCompiledModel, contextOwnsConnection);
             ctx.SiteName = DefaultSiteName;
             ctx.ConnectionString = connection.ConnectionString;
             return ctx;
@@ -194,6 +195,48 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 			return Create(DefaultConnectionString);
 		}
 
+		public static EF6Model CreateWithStaticMapping(ContentAccess contentAccess)
+        {
+            return CreateWithStaticMapping(contentAccess, new SqlConnection(DefaultConnectionString), true);
+        }
+
+        public static EF6Model CreateWithStaticMapping(ContentAccess contentAccess, SqlConnection connection, bool contextOwnsConnection)
+        {
+			var schemaProvider = new StaticSchemaProvider();
+            var configurator = new MappingConfigurator(contentAccess, schemaProvider);
+            return Create(configurator, connection, contextOwnsConnection);
+        }
+
+		  public static EF6Model CreateWithDatabaseMapping(ContentAccess contentAccess)
+        {         
+            return CreateWithDatabaseMapping(contentAccess, DefaultSiteName);
+        }
+
+        public static EF6Model CreateWithDatabaseMapping(ContentAccess contentAccess, string siteName)
+        {         
+            return CreateWithDatabaseMapping(contentAccess, siteName, new SqlConnection(DefaultConnectionString), true);
+        }
+
+        public static EF6Model CreateWithDatabaseMapping(ContentAccess contentAccess, string siteName, SqlConnection connection, bool contextOwnsConnection)
+        {
+            var schemaProvider = new DatabaseSchemaProvider(siteName, connection);
+            var configurator = new MappingConfigurator(contentAccess, schemaProvider);         
+            var context = Create(configurator, connection, contextOwnsConnection);
+			context.SiteName = siteName;
+			return context;
+        }
+
+        public static EF6Model CreateWithFileMapping(ContentAccess contentAccess, string path)
+        {
+            return CreateWithFileMapping(contentAccess, path, new SqlConnection(DefaultConnectionString), true);
+        }
+
+        public static EF6Model CreateWithFileMapping(ContentAccess contentAccess, string path, SqlConnection connection, bool contextOwnsConnection)
+        {
+            var schemaProvider = new FileSchemaProvider(path);
+            var configurator = new MappingConfigurator(contentAccess, schemaProvider);
+            return Create(configurator, connection, contextOwnsConnection);
+        }
 		#endregion
 
 		#region Partial methods

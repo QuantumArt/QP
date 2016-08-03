@@ -8,7 +8,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 {
 	public partial class EF6Model : DbContext
 	{
-      partial void OnContextCreated();
+        partial void OnContextCreated();
 
         static EF6Model()
         {
@@ -37,7 +37,8 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            var mapping = new EF6ModelMappingConfigurator();
+		    var schemaProvider = new StaticSchemaProvider();
+		    var mapping = new MappingConfigurator(ContentAccess.Live, schemaProvider);
             mapping.OnModelCreating(modelBuilder);
         }
 	}

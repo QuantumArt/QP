@@ -21,7 +21,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         public virtual StatusType StatusType { get; set; }
 
 		public virtual String Title { get; set; }
-		public virtual Int32? Group_ID { get; set; }
+		public virtual Int32? GroupMapped_ID { get; set; }
 		public virtual Int32? BaseParameter_ID { get; set; }
 		public virtual Int32? Zone_ID { get; set; }
 		public virtual Int32? Direction_ID { get; set; }
@@ -44,7 +44,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		public virtual Int32? Product_ID { get; set; }
 		
 		#region Generated Content properties
-		// public Int32 Group_IDExact { get { return this.Group_ID == null ? default(Int32) : this.Group_ID.Value; } }
+		// public Int32 GroupMapped_IDExact { get { return this.GroupMapped_ID == null ? default(Int32) : this.GroupMapped_ID.Value; } }
 		// public Int32 BaseParameter_IDExact { get { return this.BaseParameter_ID == null ? default(Int32) : this.BaseParameter_ID.Value; } }
 		// public Int32 Zone_IDExact { get { return this.Zone_ID == null ? default(Int32) : this.Zone_ID.Value; } }
 		// public Int32 Direction_IDExact { get { return this.Direction_ID == null ? default(Int32) : this.Direction_ID.Value; } }

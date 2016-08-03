@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\IMappingConfigurator.cs" />
     <Compile Include="Models\IQPFormService.cs" />
     <Compile Include="Models\IQPArticle.cs" />
     <Compile Include="Models\IQPLibraryService.cs" />
@@ -57,12 +58,13 @@
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DynamicMappingConfiguratorBase.cs" />
-    <Compile Include="Services\DatabaseMappingResolver.cs" />
-    <Compile Include="Services\FileMappingResolver.cs" />
-    <Compile Include="Services\IMappingConfigurator.cs" />
-    <Compile Include="Services\IMappingResolver.cs" />
+    <Compile Include="Services\DatabaseSchemaProvider.cs" />
+    <Compile Include="Services\FileSchemaProvider.cs" />
+    <Compile Include="Services\IQPSchema.cs" />
+    <Compile Include="Services\IUpdateProvider.cs" />
+    <Compile Include="Services\ISchemaProvider.cs" />
     <Compile Include="Services\MappingConfiguratorBase.cs" />
+    <Compile Include="Services\MappingResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

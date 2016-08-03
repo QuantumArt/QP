@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Data.Entity;
 using NUnit.Framework;
 using EntityFramework6.Test.DataContext;
-using System.IO;
-//using Quantumart.QP8.EntityFramework.Services;
+using EntityFramework6.Test.Infrastructure;
 
 namespace EntityFramework6.Test.Tests
 {
@@ -12,7 +10,7 @@ namespace EntityFramework6.Test.Tests
     public class SystemInformationFixture : DataContextFixtureBase
     {
         [Test, Combinatorial]
-        [Category("Combinatorial")]
+        [Category("DataContext_Users")]
         public void DataContext_Users_Read([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
@@ -23,7 +21,7 @@ namespace EntityFramework6.Test.Tests
         }
 
         [Test, Combinatorial]
-        [Category("Combinatorial")]
+        [Category("DataContext_UserGroups")]
         public void DataContext_UserGroups_Read([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
@@ -34,7 +32,7 @@ namespace EntityFramework6.Test.Tests
         }
 
         [Test, Combinatorial]
-        [Category("Combinatorial")]
+        [Category("DataContext_StatusTypes")]
         public void DataContext_StatusTypes_Read([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))

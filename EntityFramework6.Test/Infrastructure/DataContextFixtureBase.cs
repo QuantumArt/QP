@@ -1,16 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Data.Entity;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using EntityFramework6.Test.DataContext;
 using System.IO;
 
-namespace EntityFramework6.Test.Tests
+namespace EntityFramework6.Test.Infrastructure
 {
     public class DataContextFixtureBase
     {
-        private const string DefaultSiteName = "Product Catalog";
-        private const string DynamicSiteName = "Product Catalog";
+        private const string DefaultSiteName = "original_site";
+        private const string DynamicSiteName = "dynamic_site";
         private const string DefaultMappingResult = @"DataContext\ModelMappingResult.xml";
         private const string DynamicMappingResult = @"DataContext\DynamicMappingResult.xml";
 

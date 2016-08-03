@@ -1,11 +1,6 @@
 ﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EntityFramework6.Test.Tests
+namespace EntityFramework6.Test.Infrastructure
 {
     public class MappingValuesAttribute : ValuesAttribute
     {
@@ -17,7 +12,6 @@ namespace EntityFramework6.Test.Tests
                 Mapping.DatabaseDefaultMapping,
                 Mapping.DatabaseDynamicMapping)
         {
-
         }
     }
 }

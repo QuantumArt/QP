@@ -1,25 +1,34 @@
+using Quantumart.QP8.CodeGeneration.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Quantumart.QP8.CodeGeneration.Services;
 
 namespace Quantumart.QP8.EntityFramework6.DevData
 {
-    public class FileMappingResolver : IMappingResolver
+    public interface IMappingResolver
     {
-        private readonly ModelReader _model;
+        ContentInfo GetContent(string mappedName);
+        AttributeInfo GetAttribute(string contentMappedName, string fieldMappedName);
+    }
 
-        public FileMappingResolver(string path)
+    public class MappingResolver : IMappingResolver
+    {
+        private ModelReader _schema;
+
+        public MappingResolver(ModelReader schema)
         {
-            _model = new ModelReader(path, _ => { });
+            _schema = schema;
         }
 
-        #region IMappingResolver implementation
+        public ContentInfo GetContent(string mappedName)
+        {
+            return _schema.Contents.Single(c => c.MappedName == mappedName);
+        }
         public AttributeInfo GetAttribute(string contentMappedName, string fieldMappedName)
         {
-            var attributes = from c in _model.Contents
+            var attributes = from c in _schema.Contents
                              from a in c.Attributes
                              where
                                  c.MappedName == contentMappedName &&
@@ -28,11 +37,5 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 
             return attributes.Single();
         }
-
-        public ContentInfo GetContent(string mappedName)
-        {
-            return _model.Contents.Single(c => c.MappedName == mappedName);
-        }
-        #endregion
     }
 }

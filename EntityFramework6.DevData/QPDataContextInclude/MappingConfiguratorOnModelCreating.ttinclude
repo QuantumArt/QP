@@ -1,6 +1,7 @@
 ﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
 <#+ void MappingConfiguratorOnModelCreating(
 		GenerationContext context,
+		Func<AttributeInfo, string> getFieldMapping,
 		Func<ContentInfo, string> getTableMapping,
 		Func<ContentInfo, AttributeInfo, string> getLinkTableMapping,
 		Func<ContentInfo, AttributeInfo, string> getReversedLinkTableMapping
@@ -22,7 +23,7 @@ base.OnModelCreating(modelBuilder);
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<<#=content.MappedName#>>()                
+		    modelBuilder.Entity<<#=content.MappedName#>>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -41,18 +42,9 @@ base.OnModelCreating(modelBuilder);
 #>
             modelBuilder.Entity<<#=attribute.Content.MappedName#>>()
                 .Property(x => x.<#=attribute.MappedName#>)
-                .HasColumnName("<#=attribute.Name#>");
+                .HasColumnName(<#=getFieldMapping(attribute)#>);
 <#+
 	        }
-
-            foreach (var attribute in content.Attributes.Where(x => x.ShouldMap && x.ExplicitMapping != null))
-            {
-#>
-            modelBuilder.Entity<<#=attribute.Content.MappedName#>>()
-                .Property(x => x.<#=attribute.MappedName#>)
-                .HasColumnName("<#=attribute.ExplicitMapping#>");
-<#+
-            }
 
             foreach (var attribute in content.Attributes.Where(x => x.IsO2M))
             {
@@ -64,7 +56,7 @@ base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<<#=attribute.Content.MappedName#>>()
                 .Property(x => x.<#=attribute.OriginalMappedName#>)
-                .HasColumnName("<#=attribute.MappedName#>");
+                .HasColumnName(<#=getFieldMapping(attribute)#>);
 <#+
             }
 

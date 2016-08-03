@@ -1,5 +1,5 @@
 ﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
-<#+ void AddDynamicMappingConfigurator(GenerationContext context){
+<#+ void AddMappingConfigurator(GenerationContext context){
 var model = context.Model;
 var settings = context.Settings;
 #>
@@ -15,27 +15,27 @@ using Quantumart.QP8.CodeGeneration.Services;
 
 namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint")#>
 {
-    public class DynamicMappingConfigurator : DynamicMappingConfiguratorBase
+    public class MappingConfigurator : MappingConfiguratorBase
     {
-        public DynamicMappingConfigurator(IMappingResolver mappingResolver)
-            : base(mappingResolver)
+        public MappingConfigurator(ContentAccess contentAccess, ISchemaProvider schemaProvider)
+            : base(contentAccess, schemaProvider)
         {
 		}
-
-        public DynamicMappingConfigurator(IMappingResolver mappingResolver, ContentAccess contentAccess)
-            : base(mappingResolver, contentAccess)
-        {
-		}	
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-			<#+ MappingConfiguratorOnModelCreating(context, GetDynamicMapping, GetDynamicLinkTableMapping, GetDynamicReversedLinkTablMapping); #>
+			<#+ MappingConfiguratorOnModelCreating(context, GetDynamicFieldMapping, GetDynamicTableMapping, GetDynamicLinkTableMapping, GetDynamicReversedLinkTablMapping); #>
         }
     }
 }
 <#+
 }
-string GetDynamicMapping(ContentInfo content)
+string GetDynamicFieldMapping(AttributeInfo attribute)
+{	
+	return string.Format("GetFieldName(\"{0}\", \"{1}\")", attribute.Content.MappedName, attribute.MappedName);
+}
+
+string GetDynamicTableMapping(ContentInfo content)
 {	
 	return string.Format("GetTableName(\"{0}\")", content.MappedName);
 }

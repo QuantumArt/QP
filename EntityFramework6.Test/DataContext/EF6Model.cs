@@ -28,16 +28,12 @@ namespace EntityFramework6.Test.DataContext
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<UserGroup> UserGroups { get; set; }					
 
-        public virtual DbSet<MarketingProduct> MarketingProducts { get; set; }
-        public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<ProductParameter> ProductParameters { get; set; }
-        public virtual DbSet<Region> Regions { get; set; }
-        public virtual DbSet<MobileTariff> MobileTariffs { get; set; }
-        public virtual DbSet<Setting> Settings { get; set; }
+        public virtual DbSet<AfiellFieldsItem> AfiellFieldsItems { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-		    var mapping = new EF6ModelMappingConfigurator();
+		    var schemaProvider = new StaticSchemaProvider();
+		    var mapping = new MappingConfigurator(ContentAccess.Live, schemaProvider);
             mapping.OnModelCreating(modelBuilder);
         }
 	}

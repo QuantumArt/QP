@@ -46,7 +46,7 @@
   <content id="291" name="Параметры продукта" mapped_name="ProductParameter" plural_mapped_name="ProductParameters"  split_articles="true" use_default_filtration="true" virtual="0" user_query="0">
     <attribute name="Title" mapped_name="Title" id="1119" type="Textbox" />
     <attribute name="Product" mapped_back_name="ProductParameters" mapped_name="Product" id="1172" type="O2M" related_content_id="288" has_m2o="true" />
-    <attribute name="Group" mapped_back_name="ProductParameters" mapped_name="Group" id="1170" type="O2M" related_content_id="296" has_m2o="false" />
+    <attribute name="Group" mapped_back_name="ProductParameters" mapped_name="GroupMapped" id="1170" type="O2M" related_content_id="296" has_m2o="false" />
     <attribute name="BaseParameter" mapped_back_name="ProductParameters" mapped_name="BaseParameter" id="1169" type="O2M" related_content_id="292" has_m2o="false" />
     <attribute name="Zone" mapped_back_name="ProductParameters" mapped_name="Zone" id="1396" type="O2M" related_content_id="335" has_m2o="false" />
     <attribute name="Direction" mapped_back_name="ProductParameters" mapped_name="Direction" id="1397" type="O2M" related_content_id="336" has_m2o="false" />

@@ -1,12 +1,7 @@
 ﻿using EntityFramework6.Test.DataContext;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace EntityFramework6.Test.Tests
+namespace EntityFramework6.Test.Infrastructure
 {
     public class ContentAccessValuesAttribute : ValuesAttribute
     {
@@ -16,7 +11,6 @@ namespace EntityFramework6.Test.Tests
                 ContentAccess.Stage,
                 ContentAccess.StageNoDefaultFiltration)
         {
-
         }
     }
 }
