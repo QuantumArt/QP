@@ -90,5 +90,13 @@ namespace Quantumart.QP8.BLL.Repository
 
             return doc;
         }
+
+        public static bool ExistsSentNotifications()
+        {
+            using (new QPConnectionScope())
+            {
+                return CommonExternalNotifications.ExistsSentNotifications(QPConnectionScope.Current.DbConnection);
+            }
+        }
     }
 }

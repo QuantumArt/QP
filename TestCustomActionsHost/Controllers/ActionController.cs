@@ -4,6 +4,7 @@ using TestCustomActionsHost.Models;
 
 namespace TestCustomActionsHost.Controllers
 {
+    [ValidateInput(false)]
     public class ActionController : Controller
     {
         //
@@ -15,6 +16,16 @@ namespace TestCustomActionsHost.Controllers
             {				
                 HostUID = hostUID
             });
+        }
+
+        public ActionResult Notify(string eventName, string newXml)
+        {
+            return Content("OK");
+        }
+
+        public ActionResult NotifyWithService(string eventName, string newXml, string oldXml, int contentId, int siteId, int[] id)
+        {
+            return Content("OK");
         }
 
         public ActionResult ContextIndex(string hostUID)
