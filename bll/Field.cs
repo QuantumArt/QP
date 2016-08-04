@@ -2768,9 +2768,9 @@ namespace Quantumart.QP8.BLL
 
         public IEnumerable<ListItem> GetRelatedTitles(string value)
         {
-            if ((value != null) && (RelateToContentId != null))
+            if (!String.IsNullOrEmpty(value) && (RelateToContentId != null))
             {
-                var ids = value?.Split(",".ToCharArray()).Select(Int32.Parse).ToArray();
+                var ids = value.Split(",".ToCharArray()).Select(Int32.Parse).ToArray();
                 return ArticleRepository.GetSimpleList(RelateToContentId.Value, null, Id, ListSelectionMode.OnlySelectedItems, ids, null, 0);
             }
             return null;
