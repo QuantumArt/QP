@@ -272,7 +272,7 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-        /// Осуществляет слияние 2х коллекций связанных сущьностей
+        /// Осуществляет слияние 2х коллекций связанных сущностей
         /// </summary>
         /// <param name="titles1"></param>
         /// <param name="titles2"></param>
@@ -281,8 +281,8 @@ namespace Quantumart.QP8.BLL
         {
             IEqualityComparer<ListItem> comparer = new LambdaEqualityComparer<ListItem>((x, y) => x.Value.Equals(y.Value), x => x.Value.GetHashCode());
 
-            var titlesArr1 = titles2 as ListItem[] ?? titles2.ToArray();
-            var titlesArr2 = titles1 as ListItem[] ?? titles1.ToArray();
+            var titlesArr1 = titles1?.ToArray() ?? new ListItem[0];
+            var titlesArr2 = titles2?.ToArray() ?? new ListItem[0];
             var same = titlesArr2.Intersect(titlesArr1, comparer)
                 .Select(i => new { id = i.Value, title = $"(#{i.Value}) - {i.Text}"});
             var removed = titlesArr2.Except(titlesArr1, comparer)
