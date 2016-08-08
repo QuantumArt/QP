@@ -57,7 +57,7 @@ namespace Quantumart.QP8.BLL
                         EntityId = ent.Id,
                         EntityStringId = ent.StringId,
                         EntityTitle = ent.Id.HasValue && titles.ContainsKey(ent.Id.Value.ToString())
-                            ? titles[ent.Id.Value.ToString()] 
+                            ? titles[ent.Id.Value.ToString()].Left(255)
                             : null,
                         ActionCode = actionContext.ActionCode,
                         ActionTypeCode = actionContext.ActionTypeCode,									
