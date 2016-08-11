@@ -41,9 +41,11 @@ namespace EntityFramework6.Test.Tests
                     Created = DateTime.Today
                 };
 
-                //context.AfiellFieldsItems.Attach(article);
                 context.AfiellFieldsItems.Add(article);
                 context.SaveChanges();
+
+                Assert.That(article.Id, Is.Not.EqualTo(0));
+                Assert.That(context.AfiellFieldsItems.Any(a => a.Id == article.Id), Is.True);
             }
         }
 

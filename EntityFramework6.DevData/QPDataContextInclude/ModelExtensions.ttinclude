@@ -334,39 +334,86 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 
             var manager = CurrentObjectContext.ObjectStateManager;
             var modified = manager.GetObjectStateEntries(EntityState.Modified);
+            var added = manager.GetObjectStateEntries(EntityState.Added);
+            var deleted = manager.GetObjectStateEntries(EntityState.Deleted);
 
+            UpdateObjectStateEntries(modified, (content, item) => item.GetModifiedProperties().ToArray(), true);
+            UpdateObjectStateEntries(added, (content, item) => GetProperties(content), false);
 
-            foreach(var group in modified.GroupBy(m => m.Entity.GetType().Name))
+            foreach(var deletedItem in deleted)
             {
-                var contentName = group.Key;
-                int contentId = MappingResolver.GetContent(contentName).Id;
-                var values = new List<Dictionary<string, string>>();
-
-                foreach (var modifiedItem in group)
-                {
-                    var article = (IQPArticle)modifiedItem.Entity;
-                    var modifiedProperties = modifiedItem.GetModifiedProperties().ToArray();
-                    var articleValues = GetFieldValues(contentName, article, modifiedProperties);
-                    values.Add(articleValues);
-                }
-
-                Cnn.MassUpdate(contentId, values, 1);
-            }
+                var article = (IQPArticle)deletedItem.Entity;
+                Cnn.DeleteContentItem(article.Id);
+            }            
 
             return 0;
         }
 
-        private Dictionary<string, string> GetFieldValues(string contentName, IQPArticle article, string[] fields)
+        private void UpdateObjectStateEntries(IEnumerable<ObjectStateEntry> entries, Func<ContentInfo, ObjectStateEntry, string[]> getProperties, bool passNullValues)
+        {
+            foreach (var group in entries.GroupBy(m => m.Entity.GetType().Name))
+            {
+                var contentName = group.Key;
+                var content = MappingResolver.GetContent(contentName);
+
+                var items = group
+                    .Where(item => item.Entity is IQPArticle)
+                    .Select(item => {
+
+                        var article = (IQPArticle)item.Entity;
+                        var properties = getProperties(content, item);
+                        var fieldValues = GetFieldValues(contentName, article, properties, passNullValues);
+
+                        return new
+                        {
+                            article,
+                            fieldValues
+                        };
+                    })
+                    .ToArray();         
+
+                Cnn.MassUpdate(content.Id, items.Select(item => item.fieldValues), 1);
+
+                foreach(var item in items)
+                {
+                    SyncArticle(item.article, item.fieldValues);
+                }
+            }
+        }
+
+        private void SyncArticle(IQPArticle article, Dictionary<string, string> fieldValues)
+        {
+            article.Id = int.Parse(fieldValues[SystemColumnNames.Id]);
+            article.Modified = DateTime.Parse(fieldValues[SystemColumnNames.Modified]);
+            article.Created = DateTime.Parse(fieldValues[SystemColumnNames.Created]);
+        }
+
+        private string[] GetProperties(ContentInfo content)
+        {
+            return content.Columns
+                .Where(c => !c.IsRelation)
+                .Select(c => c.MappedName)
+                .ToArray();
+        }
+
+        private Dictionary<string, string> GetFieldValues(string contentName, IQPArticle article, string[] fields, bool passNullValues)
         {
              var fieldValues = article.GetType()
                 .GetProperties()
                 .Where(f => fields.Contains(f.Name))
+                .Select(f => new {
+                    field = MappingResolver.GetAttribute(contentName, f.Name).Name,
+                    value = f.GetValue(article)?.ToString()
+                })
+                .Where(f => passNullValues || f.value != null)
                 .ToDictionary(
-                    f => MappingResolver.GetAttribute(contentName, f.Name).Name,
-                    f => f.GetValue(article).ToString()
+                    f => f.field,
+                    f => f.value
                 );
-
+           
             fieldValues[SystemColumnNames.Id] = article.Id.ToString();
+            fieldValues[SystemColumnNames.Created] = article.Created.ToString();
+            fieldValues[SystemColumnNames.Modified] = article.Modified.ToString();
 
             return fieldValues;
         }
