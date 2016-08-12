@@ -4,13 +4,13 @@ using NUnit.Framework;
 using EntityFramework6.Test.DataContext;
 using EntityFramework6.Test.Infrastructure;
 
-namespace EntityFramework6.Test.Tests
+namespace EntityFramework6.Test.Tests.ReadSystemData
 {
     [TestFixture]
-    public class SystemInformationFixture : DataContextFixtureBase
+    public class ReadUserFixture : DataContextFixtureBase
     {
         [Test, Combinatorial]
-        [Category("DataContext_Users")]
+        [Category("ReadSystemData")]
         public void DataContext_Users_Read([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
@@ -21,7 +21,7 @@ namespace EntityFramework6.Test.Tests
         }
 
         [Test, Combinatorial]
-        [Category("DataContext_UserGroups")]
+        [Category("ReadSystemData")]
         public void DataContext_UserGroups_Read([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
@@ -32,7 +32,7 @@ namespace EntityFramework6.Test.Tests
         }
 
         [Test, Combinatorial]
-        [Category("DataContext_StatusTypes")]
+        [Category("ReadSystemData")]
         public void DataContext_StatusTypes_Read([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))

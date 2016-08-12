@@ -155,11 +155,12 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\ContentAccessValuesAttribute.cs" />
-    <Compile Include="Tests\DataContextFixture.cs" />
+    <Compile Include="Tests\ReadContentData\ReadStringFieldFixture.cs" />
     <Compile Include="Infrastructure\DataContextFixtureBase.cs" />
-    <Compile Include="Tests\UpdateFixture.cs" />
-    <Compile Include="Tests\SchemaFixture.cs" />
-    <Compile Include="Tests\SystemInformationFixture.cs" />
+    <Compile Include="Tests\Shema\SchemaFixture.cs" />
+    <Compile Include="Tests\UpdateContentData\InsertStringFieldFixture.cs" />
+    <Compile Include="Tests\UpdateContentData\UpdateStringFieldFixture.cs" />
+    <Compile Include="Tests\ReadSystemData\ReadUserFixture.cs" />
     <Compile Include="Infrastructure\Mapping.cs" />
     <Compile Include="Infrastructure\MappingValuesAttribute.cs" />
   </ItemGroup>

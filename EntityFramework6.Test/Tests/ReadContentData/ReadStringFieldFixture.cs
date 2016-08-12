@@ -6,11 +6,11 @@ using EntityFramework6.Test.Infrastructure;
 namespace EntityFramework6.Test.Tests
 {
     [TestFixture]
-    public class DataContextFixtureFixture : DataContextFixtureBase
+    public class ReadStringFieldFixture : DataContextFixtureBase
     {
         [Test, Combinatorial]
-        [Category("DataContext_AfiellFieldsItems")]
-        public void DataContext_AfiellFieldsItems_Read([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
+        [Category("ReadContentData")]
+        public void DataContext_StringField_Read([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {

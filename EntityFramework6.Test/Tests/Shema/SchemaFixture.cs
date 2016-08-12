@@ -1,15 +1,15 @@
-﻿using System.Linq;
-using NUnit.Framework;
-using EntityFramework6.Test.DataContext;
+﻿using EntityFramework6.Test.DataContext;
 using EntityFramework6.Test.Infrastructure;
+using NUnit.Framework;
+using System.Linq;
 
-namespace EntityFramework6.Test.Tests
+namespace EntityFramework6.Test.Tests.Shema
 {
     [TestFixture]
     public class SchemaFixture : DataContextFixtureBase
     {
         [Test, Combinatorial]
-        [Category("DataContext_Schema")]
+        [Category("Shema")]
         public void DataContext_Schema_GetContentInfo([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
@@ -22,7 +22,7 @@ namespace EntityFramework6.Test.Tests
         }
 
         [Test, Combinatorial]
-        [Category("DataContext_Schema")]
+        [Category("Shema")]
         public void DataContext_Schema_GetAttributeInfo([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
