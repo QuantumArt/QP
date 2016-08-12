@@ -110,8 +110,7 @@ namespace EntityFramework6.Test.DataContext
 			{
 				if (_cnn == null) 
 				{
-					_cnn = //(CurrentObjectContext.Connection != null) ? new DBConnector(((EntityConnection)CurrentObjectContext.Connection).StoreConnection) : 
-					      new DBConnector(DefaultConnectionString);				
+					_cnn = new DBConnector(Database.Connection);
 					_cnn.UpdateManyToMany = false;
 				}
 				return _cnn;

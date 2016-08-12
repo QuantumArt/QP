@@ -3,6 +3,7 @@ using NUnit.Framework;
 using EntityFramework6.Test.DataContext;
 using EntityFramework6.Test.Infrastructure;
 using System;
+using System.Transactions;
 
 namespace EntityFramework6.Test.Tests
 {
@@ -53,7 +54,7 @@ namespace EntityFramework6.Test.Tests
             where TArticle : class
         {
             using (var context = GetDataContext(access, mapping))
-            //using (var scope = new TransactionScope())
+            using (var scope = new TransactionScope())
             {
                 var oldItem = context.Set<TArticle>().FirstOrDefault();
                 Assert.That(oldItem, Is.Not.Null);
