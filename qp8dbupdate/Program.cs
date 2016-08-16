@@ -55,7 +55,7 @@ namespace qp8dbupdate
                     Console.WriteLine("При обновлении произошла ошибка.");
                     Console.WriteLine(dbEx.Message);
                     Console.WriteLine("Обновление было произведено {0} пользователем #{1} с помощью файла {2}", dbEx.Entry.Applied, dbEx.Entry.UserId, dbEx.Entry.FileName);
-                    Environment.Exit(1);
+                    Environment.Exit(2);
                 }
 
                 Console.WriteLine("Структура базы была успешно обновлена");
