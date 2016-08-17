@@ -20,13 +20,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal string ConfigPath;
 
-        protected internal abstract OptionSet BuildOptionSet();
-
-        protected internal abstract BaseSettingsModel CreateArgumentsModel();
-
         protected BaseConsoleArgsProcessor()
         {
             FilePathes = new List<string>();
+        }
+
+        protected internal abstract BaseSettingsModel CreateSettingsFromArguments();
+
+        protected internal virtual OptionSet BuildOptionSet()
+        {
+            return new OptionSet();
         }
 
         protected internal virtual void PrintEnteredData()
@@ -65,7 +68,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             Console.WriteLine("Parsing is started. Selected options: ");
             PrintEnteredData();
 
-            return CreateArgumentsModel();
+            return CreateSettingsFromArguments();
         }
 
         protected internal OptionSet AddCommonOptions(OptionSet optionSet)

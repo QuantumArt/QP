@@ -10,7 +10,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
 {
     internal static class XmlReaderProcessor
     {
-        internal static string ParseDocuments(IList<string> filePathes, string configPath = null)
+        internal static string Process(IList<string> filePathes)
+        {
+            return Process(filePathes, null);
+        }
+
+        internal static string Process(IList<string> filePathes, string configPath)
         {
             Program.Logger.Debug($"Begin parsing documents: {filePathes.ToJsonLog()} with next config: {configPath}");
             var orderedFilePathes = new List<string>();
@@ -31,7 +36,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                 }
             }
 
-            Program.Logger.Debug($"Documents will be concatenated in next order: {filePathes.ToJsonLog()}");
+            Program.Logger.Debug($"Documents will be processed in next order: {orderedFilePathes.ToJsonLog()}");
             return CombineMultipleDocumentsWithSameRoot(orderedFilePathes.Select(XDocument.Load).ToList()).ToStringWithDeclaration();
         }
 
@@ -64,7 +69,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                 ? GetDefaultXmlReaderSettings(absDirPath)
                 : GetXmlReaderSettings(absDirPath, absOrRelativeConfigPath);
 
-            return config.RecordedXmlFilePathes;
+            return config.FilePathes;
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]

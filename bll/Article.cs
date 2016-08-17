@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
+using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
+using QA.Validation.Xaml;
+using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.BLL.WCF.Notification;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.BLL.WCF.Notification;
 using Quantumart.QP8.Utils;
-using QA.Validation.Xaml;
-using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.BLL.ListItems;
-using System.Text.RegularExpressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
-using QA.Validation.Xaml.Extensions.Rules;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
@@ -32,8 +32,8 @@ namespace Quantumart.QP8.BLL
             FromVersionFolder
         }
 
-        private string _name = String.Empty;
-        private string _alias = String.Empty;
+        private string _name = string.Empty;
+        private string _alias = string.Empty;
         private List<FieldValue> _fieldValues;
         private int _displayContentId;
         private ArticleViewType _ViewType = ArticleViewType.Normal;
@@ -56,8 +56,8 @@ namespace Quantumart.QP8.BLL
         {
             _AggregatedArticles = new InitPropertyValue<IEnumerable<Article>>(() => ArticleRepository.LoadAggregatedArticles(this));
             _VariationArticles = new InitPropertyValue<List<Article>>(() => ArticleRepository.LoadVariationArticles(this));
-            _VariationListItems = new InitPropertyValue<IEnumerable<ArticleVariationListItem>>(() => this.LoadVariationListForClient());
-            _ContextListItems = new InitPropertyValue<IEnumerable<ArticleContextListItem>>(() => this.LoadContextListForClient());
+            _VariationListItems = new InitPropertyValue<IEnumerable<ArticleVariationListItem>>(LoadVariationListForClient);
+            _ContextListItems = new InitPropertyValue<IEnumerable<ArticleContextListItem>>(LoadContextListForClient);
             _IsUpdatableWithRelationSecurity = new InitPropertyValue<bool>(() => QPContext.IsAdmin || ArticleRepository.CheckRelationSecurity(this, false));
             _IsRemovableWithRelationSecurity = new InitPropertyValue<bool>(() => QPContext.IsAdmin || ArticleRepository.CheckRelationSecurity(this, true));
             _StatusHistoryListItem = new InitPropertyValue<StatusHistoryListItem>(() => ArticleRepository.GetStatusHistoryItem(Id));
@@ -117,8 +117,8 @@ namespace Quantumart.QP8.BLL
             {
                 if (String.IsNullOrEmpty(_name))
                 {
-                    string name = Id.ToString();
-                    foreach (FieldValue value in FieldValues)
+                    var name = Id.ToString();
+                    foreach (var value in FieldValues)
                     {
                         if (value.Field.ViewInList)
                         {
@@ -158,8 +158,8 @@ namespace Quantumart.QP8.BLL
             {
                 if (String.IsNullOrEmpty(_alias))
                 {
-                    int treeFieldId = ContentRepository.GetTreeFieldId(ContentId);
-                    string displayTreeFieldName = FieldRepository.GetById(treeFieldId).Relation.Name;
+                    var treeFieldId = ContentRepository.GetTreeFieldId(ContentId);
+                    var displayTreeFieldName = FieldRepository.GetById(treeFieldId).Relation.Name;
                     _alias = FieldValues.Single(n => n.Field.Name == displayTreeFieldName).Value;
                 }
 
@@ -239,8 +239,7 @@ namespace Quantumart.QP8.BLL
             {
                 if (DisplayContentId == ContentId)
                     return (Content != null) ? Content.Name : null;
-                else
-                    return ContentRepository.GetById(DisplayContentId).Name;
+                return ContentRepository.GetById(DisplayContentId).Name;
             }
         }
 
@@ -510,7 +509,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return (WorkflowBinding.IsAssigned) ? (WorkflowBind)WorkflowBinding : (WorkflowBind)Content.WorkflowBinding;
+                return (WorkflowBinding.IsAssigned) ? WorkflowBinding : (WorkflowBind)Content.WorkflowBinding;
             }
         }
 
@@ -569,7 +568,7 @@ namespace Quantumart.QP8.BLL
 
             ValidateRelationSecurity(errors);
 
-            foreach (FieldValue pair in FieldValues)
+            foreach (var pair in FieldValues)
             {
                 if (pair.Field.ExactType == FieldExactTypes.M2ORelation && pair.Field.BackRelation != null && pair.Field.BackRelation.Aggregated)
                     continue;
@@ -591,10 +590,10 @@ namespace Quantumart.QP8.BLL
 
         private void ValidateVariations(RulesException<Article> baseArticleErrors)
         {
-            foreach (Article varArticle in this.VariationArticles)
+            foreach (var varArticle in VariationArticles)
             {
                 var varErrors = new RulesException<Article>();
-                foreach (FieldValue pair in varArticle.VariationEditableFieldValues)
+                foreach (var pair in varArticle.VariationEditableFieldValues)
                 {
                     pair.Validate(varErrors);
                 }
@@ -602,7 +601,7 @@ namespace Quantumart.QP8.BLL
                 varArticle.ValidateCustom(varErrors);
                 varArticle.ValidateAggregated(varErrors);
 
-                string context = varArticle.VariationContextDisplay;
+                var context = varArticle.VariationContextDisplay;
 
                 foreach (var error in varErrors.Errors)
                 {
@@ -617,10 +616,10 @@ namespace Quantumart.QP8.BLL
 
         private void ValidateAggregated(RulesException<Article> errors)
         {
-            foreach (Article aggregated in this.AggregatedArticles)
+            foreach (var aggregated in AggregatedArticles)
             {
-                int aggregatedFieldId = aggregated.FieldValues.Select(n => n.Field).Single(p => p.Aggregated).Id;
-                foreach (FieldValue pair in aggregated.FieldValues.Where(p => p.Field.Id != aggregatedFieldId))
+                var aggregatedFieldId = aggregated.FieldValues.Select(n => n.Field).Single(p => p.Aggregated).Id;
+                foreach (var pair in aggregated.FieldValues.Where(p => p.Field.Id != aggregatedFieldId))
                 {
                     pair.Validate(errors);
                 }
@@ -635,7 +634,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="errors"></param>
         private void ValidateCustom(RulesException<Article> errors)
         {
-            Dictionary<string, string> values = FieldValues
+            var values = FieldValues
                 .Concat(AggregatedArticles.SelectMany(a => a.FieldValues))
                 .Where(v => !v.Field.Aggregated)
                 .ToDictionary(v => v.Field.FormName,
@@ -643,10 +642,10 @@ namespace Quantumart.QP8.BLL
                 );
 
             // Добавялем id и status type id
-            values[Content.ContentItemIdPropertyName] = base.Id.ToString();
+            values[Content.ContentItemIdPropertyName] = Id.ToString();
             values[Content.StatusTypeIdPropertyName] = StatusTypeId.ToString();
 
-            string[] aggregatedXamlValidators = AggregatedArticles
+            var aggregatedXamlValidators = AggregatedArticles
                 .Where(a => !a.Content.DisableXamlValidation && !String.IsNullOrWhiteSpace(a.Content.XamlValidation))
                 .Select(a => a.Content.XamlValidation)
                 .ToArray();
@@ -655,14 +654,14 @@ namespace Quantumart.QP8.BLL
             {
                 try
                 {
-                    ValidationContext vcontext = ValidationServices.ValidateModel(values, Content.XamlValidation, aggregatedXamlValidators, Content.Site.XamlDictionaries);
+                    var vcontext = ValidationServices.ValidateModel(values, Content.XamlValidation, aggregatedXamlValidators, Content.Site.XamlDictionaries);
                     if (!vcontext.IsValid)
                     {
-                        foreach (ValidationError ve in vcontext.Result.Errors)
+                        foreach (var ve in vcontext.Result.Errors)
                         {
                             errors.Error(ve.Definition.PropertyName, values[ve.Definition.PropertyName], ve.Message);
                         }
-                        foreach(string msg in vcontext.Messages)
+                        foreach(var msg in vcontext.Messages)
                         {
                             errors.ErrorForModel(msg);
                         }
@@ -677,47 +676,44 @@ namespace Quantumart.QP8.BLL
 
         public static void TestRemoteValidation()
         {
-            RemoteValidationContext rvc = new RemoteValidationContext();
+            var rvc = new RemoteValidationContext();
         }
 
         public static string GetDynamicColumnName(Field field, Dictionary<int, int> relationCounters, bool useFormName = false)
         {
-            int relationId = (field.RelationId.HasValue) ? field.RelationId.Value : 0;
-            if (field.Type.Name == Constants.FieldTypeName.Relation && relationId != 0)
+            var relationId = (field.RelationId.HasValue) ? field.RelationId.Value : 0;
+            if (field.Type.Name == FieldTypeName.Relation && relationId != 0)
             {
-                int currentCount = 1;
+                var currentCount = 1;
                 if (relationCounters.ContainsKey(relationId))
                 {
                     currentCount = relationCounters[relationId];
                     currentCount++;
                 }
                 relationCounters[relationId] = currentCount;
-                string countSuffix = (currentCount == 1) ? "" : "_" + currentCount;
+                var countSuffix = (currentCount == 1) ? "" : "_" + currentCount;
 
-                string result = "rel_field_" + relationId + countSuffix;
+                var result = "rel_field_" + relationId + countSuffix;
                 if (field.Relation.ExactType == FieldExactTypes.O2MRelation)
                 {
                     result += "_r1";
                 }
                 return result;
             }
-            else
-            {
-                return (useFormName) ? field.FormName : field.Name;
-            }
+            return (useFormName) ? field.FormName : field.Name;
         }
 
         public void UpdateFieldValues(Dictionary<string, string> newValues)
         {
-            foreach (FieldValue pair in VariationEditableFieldValues)
+            foreach (var pair in VariationEditableFieldValues)
             {
                 var value = newValues[pair.Field.FormName];
                 if (pair.Field.ExactType == FieldExactTypes.Boolean)
                 {
                     value = String.IsNullOrEmpty(value) ? "0" : value;
-                    bool isBool = false;
-                    bool boolValue = Boolean.TryParse(value, out isBool);
-                    value = ((isBool) ? Utils.Converter.ToInt32(boolValue) : Utils.Converter.ToInt32(value)).ToString();
+                    var isBool = false;
+                    var boolValue = Boolean.TryParse(value, out isBool);
+                    value = ((isBool) ? Converter.ToInt32(boolValue) : Converter.ToInt32(value)).ToString();
                 }
                 pair.UpdateValue(value);
             }
@@ -735,7 +731,7 @@ namespace Quantumart.QP8.BLL
 
         public void UpdateAggregatedCollection()
         {
-            IEnumerable<int> classifierValues = this.FieldValues
+            var classifierValues = FieldValues
                 .Where(v => v.Field.IsClassifier)
                 .Select(v => Converter.ToNullableInt32(v.Value))
                 .Where(v => v.HasValue)
@@ -755,13 +751,12 @@ namespace Quantumart.QP8.BLL
             if (classifierValue > 0)
             {
                 // так как у статьи не может быть более одной агрегированной статьи из агрегированного контента, то достаточно условия a.ContentId == classifierValue
-                Article aggregated = AggregatedArticles.Where(a => a.ContentId == classifierValue).FirstOrDefault() ?? CreateNew(classifierValue);
+                var aggregated = AggregatedArticles.Where(a => a.ContentId == classifierValue).FirstOrDefault() ?? CreateNew(classifierValue);
                 aggregated.Archived = Archived;
                 aggregated.ViewType = ViewType;
                 return aggregated;
             }
-            else
-                return null;
+            return null;
         }
 
         /// <summary>
@@ -776,21 +771,21 @@ namespace Quantumart.QP8.BLL
 
         public static Article CreateNew(int contentId, int? fieldId, int? articleId, bool? isChild)
         {
-            Content content = ContentRepository.GetById(contentId);
+            var content = ContentRepository.GetById(contentId);
             if (content == null)
                 throw new Exception(String.Format(ContentStrings.ContentNotFound, contentId));
-            Article article = content.CreateArticle(GetPredefinedValues(fieldId, articleId, isChild));
+            var article = content.CreateArticle(GetPredefinedValues(fieldId, articleId, isChild));
             article.DefineViewType();
             return article;
         }
 
         private static Dictionary<string, string> GetPredefinedValues(int? fieldId, int? articleId, bool? isChild)
         {
-            Dictionary<string, string> predefinedValues = new Dictionary<string, string>();
-            int currentId = 0;
+            var predefinedValues = new Dictionary<string, string>();
+            var currentId = 0;
             if (fieldId.HasValue && articleId.HasValue && fieldId.Value != 0 && articleId.Value != 0)
             {
-                Field field = FieldRepository.GetById(fieldId.Value);
+                var field = FieldRepository.GetById(fieldId.Value);
                 if (field != null)
                 {
                     if (field.ExactType == FieldExactTypes.M2ORelation && field.BackRelationId.HasValue)
@@ -826,10 +821,10 @@ namespace Quantumart.QP8.BLL
         /// <returns>пустая статья</returns>
         public static Article CreateNewForSave(int contentId)
         {
-            Content content = ContentRepository.GetById(contentId);
+            var content = ContentRepository.GetById(contentId);
             if (content == null)
                 throw new Exception(String.Format(ContentStrings.ContentNotFound, contentId));
-            Article article = content.CreateArticle();
+            var article = content.CreateArticle();
             return article;
         }
 
@@ -901,7 +896,7 @@ namespace Quantumart.QP8.BLL
 
             ReplaceAllUrlsToPlaceHolders();
             OptimizeForHierarchy();
-            Article result = (IsNew) ? ArticleRepository.Save(this) : ArticleRepository.Update(this);
+            var result = (IsNew) ? ArticleRepository.Save(this) : ArticleRepository.Update(this);
             result.BackupCurrentFiles();
             result.CreateDynamicImages();
 
@@ -932,8 +927,8 @@ namespace Quantumart.QP8.BLL
                     else if (previousArticle.StatusTypeId != StatusTypeId)
                     {
                         result.SendNotificationOneWay(String.Format("{0};{1}", NotificationCode.Update, NotificationCode.ChangeStatus), disableNotifications);
-                        string message = ReplaceCommentLink(Comment);
-                        int systemStatusType = GetSystemStatusType(previousArticle.StatusTypeId, StatusTypeId, ref message);
+                        var message = ReplaceCommentLink(Comment);
+                        var systemStatusType = GetSystemStatusType(previousArticle.StatusTypeId, StatusTypeId, ref message);
                         WorkflowRepository.SaveHistoryStatus(Id, systemStatusType, message, QPContext.CurrentUserId);
                     }
                     else
@@ -955,37 +950,35 @@ namespace Quantumart.QP8.BLL
         {
             if (String.IsNullOrEmpty(context))
                 throw new ArgumentException("context is empty");
-            else
+            var result = VariationArticles.SingleOrDefault(n => n.VariationContext == context);
+            if (result == null)
             {
-                Article result = VariationArticles.SingleOrDefault(n => n.VariationContext == context);
-                if (result == null)
-                {
-                    result = CreateVariationWithFieldValues(GetFieldValuesByContext(context));
-                }
-                return result;
+                result = CreateVariationWithFieldValues(GetFieldValuesByContext(context));
             }
+            return result;
         }
 
-        private string ReplaceCommentLink(string comment) {
+        private string ReplaceCommentLink(string comment)
+        {
             if (!String.IsNullOrEmpty(comment))
                 return Regex.Replace(comment, @"((http|https)://[\w\.-0-9:?=&_]*)", "<a href=\"$1\" target=\"_blank\">$1</a>");
-                else
-                return String.Empty;
+            return String.Empty;
         }
+
         private int GetSystemStatusType(int previousStatusTypeId, int currentStatusTypeId, ref string message) {
             int historyStatusId;
-            IEnumerable<StatusType> statusTypes = StatusTypeRepository.GetList(new int[] { previousStatusTypeId, currentStatusTypeId }).ToList();
-            StatusType previousStatus = statusTypes.Where(s => s.Id == previousStatusTypeId).FirstOrDefault();
-            StatusType currentStatus = statusTypes.Where(s => s.Id == currentStatusTypeId).FirstOrDefault();
+            IEnumerable<StatusType> statusTypes = StatusTypeRepository.GetList(new[] { previousStatusTypeId, currentStatusTypeId }).ToList();
+            var previousStatus = statusTypes.Where(s => s.Id == previousStatusTypeId).FirstOrDefault();
+            var currentStatus = statusTypes.Where(s => s.Id == currentStatusTypeId).FirstOrDefault();
 
             if (previousStatus.Weight > currentStatus.Weight)
             {
-                historyStatusId = (int)Constants.SystemStatusType.ForcedDemoting;
+                historyStatusId = (int)SystemStatusType.ForcedDemoting;
                 message = String.Format("The article status was demoted from [{0}] to [{1}]. Comment: {2}", previousStatus.Name, currentStatus.Name, message);
             }
             else
             {
-                historyStatusId = (int)Constants.SystemStatusType.ForcedPromoting;
+                historyStatusId = (int)SystemStatusType.ForcedPromoting;
                 message = String.Format("The article status was promoted from [{0}] to [{1}]. Comment: {2}", previousStatus.Name, currentStatus.Name, message);
             }
 
@@ -1008,12 +1001,12 @@ namespace Quantumart.QP8.BLL
 
         public void DefineViewType()
         {
-            var ids = new int[] { Id };
-            if (this.LockedByAnyoneElse)
+            var ids = new[] { Id };
+            if (LockedByAnyoneElse)
                 ViewType = ArticleViewType.LockedByOtherUser;
             else if (!IsNew && !IsUpdatable)
                 ViewType = ArticleViewType.ReadOnlyBecauseOfSecurity;
-            else if (!this.IsUpdatableWithWorkflow)
+            else if (!IsUpdatableWithWorkflow)
                 ViewType = ArticleViewType.ReadOnlyBecauseOfWorkflow;
             else if (!IsNew && !CheckRelationSecurity())
                 ViewType = ArticleViewType.ReadOnlyBecauseOfRelationSecurity;
@@ -1024,9 +1017,8 @@ namespace Quantumart.QP8.BLL
         private bool CheckRelationSecurity()
         {
             if (GetRelationSecurityFields().Any())
-                return ArticleRepository.CheckRelationSecurity(ContentId, new int[] { Id }, false)[Id];
-            else
-                return true;
+                return ArticleRepository.CheckRelationSecurity(ContentId, new[] { Id }, false)[Id];
+            return true;
         }
 
         public IEnumerable<FieldValue> GetRelationSecurityFields()
@@ -1057,7 +1049,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         internal void SetDefaultStatusAndVisibility()
         {
-            bool isWorkflowAssigned = Content.WorkflowBinding.IsAssigned;
+            var isWorkflowAssigned = Content.WorkflowBinding.IsAssigned;
             Visible = isWorkflowAssigned;
             Status = (isWorkflowAssigned) ? StatusType.GetNone(Content.SiteId) : StatusType.GetPublished(Content.SiteId);
             StatusTypeId = Status.Id;
@@ -1089,12 +1081,12 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         internal void ResolveFieldConflicts()
         {
-            IEnumerable<ContentConstraint> constraints = ContentConstraintRepository.GetConstraintsByContentId(ContentId);
-            foreach (ContentConstraint constraint in constraints)
+            var constraints = ContentConstraintRepository.GetConstraintsByContentId(ContentId);
+            foreach (var constraint in constraints)
             {
-                List<FieldValue> fieldValuesToResolve = constraint.Filter(FieldValues);
+                var fieldValuesToResolve = constraint.Filter(FieldValues);
                 List<FieldValue> currentFieldValues;
-                int step = 0;
+                var step = 0;
                 do
                 {
                     step++;
@@ -1127,10 +1119,10 @@ namespace Quantumart.QP8.BLL
         internal static List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields, Article article, int versionId = 0, string contentPrefix=null)
         {
             if (data == null) throw new Exception(String.Format(ArticleStrings.ArticleNotFoundInTheContent, article.Id, article.DisplayContentId));
-            List<FieldValue> result = new List<FieldValue>();
-            foreach (Field field in fields)
+            var result = new List<FieldValue>();
+            foreach (var field in fields)
             {
-                string fullFieldName = String.IsNullOrWhiteSpace(contentPrefix) ? field.Name : String.Format("{0}.{1}", contentPrefix, field.Name);
+                var fullFieldName = String.IsNullOrWhiteSpace(contentPrefix) ? field.Name : String.Format("{0}.{1}", contentPrefix, field.Name);
                 if (!data.Table.Columns.Contains(fullFieldName)) throw new Exception(String.Format(ArticleStrings.FieldNotFound, fullFieldName, article.DisplayContentId));
 
                 object objectValue = null;
@@ -1199,10 +1191,10 @@ namespace Quantumart.QP8.BLL
         /// <returns>список значений полей</returns>
         internal static void LoadFieldValuesForArticles(DataTable data, IEnumerable<Field> fields, IEnumerable<Article> articles, int contentId)
         {
-            int[] ids = articles.Select(n => n.Id).ToArray();
-            Dictionary<int, Dictionary<int, string>> itemsForRelations = new Dictionary<int, Dictionary<int, string>>();
+            var ids = articles.Select(n => n.Id).ToArray();
+            var itemsForRelations = new Dictionary<int, Dictionary<int, string>>();
             if (data == null) throw new Exception(String.Join(",", ids.ToString()));
-            foreach (Field field in fields)
+            foreach (var field in fields)
             {
                 if (!data.Columns.Contains(field.Name)) throw new Exception(String.Format(ArticleStrings.FieldNotFound, field.Name, contentId));
 
@@ -1218,18 +1210,18 @@ namespace Quantumart.QP8.BLL
 
             foreach (DataRow dr in data.Rows)
             {
-                List<FieldValue> result = new List<FieldValue>();
-                int id = (int)(decimal)dr["content_item_id"];
-                Article article = articles.Single(n => n.Id == id);
+                var result = new List<FieldValue>();
+                var id = (int)(decimal)dr["content_item_id"];
+                var article = articles.Single(n => n.Id == id);
 
-                int statusTypeId = (int)(decimal)dr["status_type_id"];
+                var statusTypeId = (int)(decimal)dr["status_type_id"];
                 if (article.StatusTypeId != statusTypeId)
                 {
                     article.StatusTypeId = statusTypeId;
                     article.Status = StatusTypeRepository.GetById(statusTypeId);
                 }
 
-                foreach (Field field in fields)
+                foreach (var field in fields)
                 {
                     object objectValue = null;
                     if (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne)
@@ -1272,7 +1264,7 @@ namespace Quantumart.QP8.BLL
 
         public void ReplaceAllUrlsToPlaceHolders()
         {
-            foreach (FieldValue item in FieldValues)
+            foreach (var item in FieldValues)
             {
                 if (item.Field.ReplaceUrls)
                 {
@@ -1293,7 +1285,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="code">код события</param>
         internal void SendNotificationOneWay(string code, bool disableNotifications)
         {
-            if (!disableNotifications && this.Content.HasNotifications(code))
+            if (!disableNotifications && Content.HasNotifications(code))
                 using (var client = GetNotificationServiceClient())
                 {
                     client.SendNotificationOneWay(QPContext.CurrentDbConnectionString, Id, code);
@@ -1313,7 +1305,7 @@ namespace Quantumart.QP8.BLL
 
         internal void SendNotification(string code, string connectionString, bool useDirect)
         {
-            if (useDirect || this.Content.HasNotifications(code))
+            if (useDirect || Content.HasNotifications(code))
                 using (var client = GetNotificationServiceClient())
                 {
                     client.SendNotification(connectionString, Id, code);
@@ -1333,14 +1325,14 @@ namespace Quantumart.QP8.BLL
         {
             if (Content.UseVersionControl)
             {
-                ArticleVersion earliestVersion = ArticleVersionRepository.GetEarliest(Id);
+                var earliestVersion = ArticleVersionRepository.GetEarliest(Id);
                 ArticleVersionRepository.Create(Id);
-                ArticleVersion newVersion = ArticleVersionRepository.GetLatest(Id);
+                var newVersion = ArticleVersionRepository.GetLatest(Id);
 
                 Directory.CreateDirectory(BackupPath);
                 Directory.CreateDirectory(newVersion.PathInfo.Path);
 
-                int count = ArticleVersionRepository.GetVersionsCount(Id);
+                var count = ArticleVersionRepository.GetVersionsCount(Id);
                 if (count == Content.MaxNumOfStoredVersions)
                 {
                     Folder.ForceDelete(earliestVersion.PathInfo.Path);
@@ -1374,7 +1366,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="id">ID версии</param>
         internal void RestoreCurrentFiles(int id)
         {
-            string versionPath = GetVersionPathInfo(id).Path;
+            var versionPath = GetVersionPathInfo(id).Path;
             CopyArticleFiles(CopyFilesMode.FromVersionFolder, BackupPath, versionPath);
             foreach (var a in AggregatedArticles)
             {
@@ -1387,7 +1379,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         internal void RemoveAllVersionFolders()
         {
-            foreach (int id in ArticleVersionRepository.GetIds(Id))
+            foreach (var id in ArticleVersionRepository.GetIds(Id))
                 RemoveVersionFolder(id);
         }
 
@@ -1405,9 +1397,9 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         internal void CreateDynamicImages()
         {
-            foreach (FieldValue item in FieldValues.Where(n => n.Field.Type.Name == FieldTypeName.Image && !String.IsNullOrEmpty(n.Value)))
+            foreach (var item in FieldValues.Where(n => n.Field.Type.Name == FieldTypeName.Image && !String.IsNullOrEmpty(n.Value)))
             {
-                foreach (Field field in item.Field.GetDynamicImages())
+                foreach (var field in item.Field.GetDynamicImages())
                 {
                     field.DynamicImage.CreateDynamicImage(item.Field.PathInfo.GetPath(item.Value), item.Value);
                 }
@@ -1488,7 +1480,7 @@ namespace Quantumart.QP8.BLL
             if (rootArticle.IsNew)
                 throw new ApplicationException("Root article has to be saved.");
 
-            FieldValue aggregatorValue = this.FieldValues.FirstOrDefault(f => f.Field.Aggregated);
+            var aggregatorValue = FieldValues.FirstOrDefault(f => f.Field.Aggregated);
             if (aggregatorValue == null)
                 throw new ApplicationException("There is no aggregated field in article.");
             aggregatorValue.Value = rootArticle.Id.ToString();
@@ -1502,7 +1494,7 @@ namespace Quantumart.QP8.BLL
             if (rootArticle.IsNew)
                 throw new ApplicationException("Root article has to be saved.");
 
-            FieldValue variationValue = this.FieldValues.FirstOrDefault(f => f.Field.UseForVariations);
+            var variationValue = FieldValues.FirstOrDefault(f => f.Field.UseForVariations);
             if (variationValue == null)
                 throw new ApplicationException("There is no variation field in article.");
             variationValue.Value = rootArticle.Id.ToString();
@@ -1522,9 +1514,9 @@ namespace Quantumart.QP8.BLL
 
         internal void ValidateUnique(RulesException errors, int exceptFieldId = 0)
         {
-            foreach (ContentConstraint constraint in Content.Constraints)
+            foreach (var constraint in Content.Constraints)
             {
-                List<FieldValue> fieldValuesToTest = constraint.Filter(FieldValues);
+                var fieldValuesToTest = constraint.Filter(FieldValues);
                 if (fieldValuesToTest[0].Field.Id != exceptFieldId)
                 {
                     string conflictingIds, constraintToDisplay;
@@ -1545,7 +1537,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="aggregatedArticles"></param>
         public void CopyAggregates(IEnumerable<Article> aggregatedArticles)
         {
-            List<Article> result = new List<Article>();
+            var result = new List<Article>();
             foreach (var a in aggregatedArticles)
             {
                 a.AggregateTo(this);
@@ -1556,10 +1548,10 @@ namespace Quantumart.QP8.BLL
 
         internal void CopyParentPermissions()
         {
-            Field treeField = Content.TreeField;
+            var treeField = Content.TreeField;
             if (treeField != null && treeField.CopyPermissionsToChildren)
             {
-                int parentId = Converter.ToInt32(FieldValues.Single(n => n.Field.Name == treeField.Name).Value, 0);
+                var parentId = Converter.ToInt32(FieldValues.Single(n => n.Field.Name == treeField.Name).Value, 0);
                 if (parentId != 0)
                 {
                     ArticleRepository.CopyPermissions(parentId, Id);
@@ -1572,7 +1564,7 @@ namespace Quantumart.QP8.BLL
 
         private void MergeWithFieldValues(List<FieldValue> currentFieldValues)
         {
-            foreach (FieldValue currentValue in currentFieldValues)
+            foreach (var currentValue in currentFieldValues)
             {
                 FieldValues.Single(n => n.Field == currentValue.Field).Value = currentValue.Value;
             }
@@ -1580,34 +1572,31 @@ namespace Quantumart.QP8.BLL
 
         private List<FieldValue> GetFieldValues()
         {
-            DataRow data = ArticleRepository.GetData(Id, DisplayContentId);
-            List<Field> fields = FieldRepository.GetFullList(DisplayContentId);
+            var data = ArticleRepository.GetData(Id, DisplayContentId);
+            var fields = FieldRepository.GetFullList(DisplayContentId);
             return GetFieldValues(data, fields);
         }
 
         private List<FieldValue> GetFieldValues(DataRow data, List<Field> fields)
         {
-            return Article.GetFieldValues(data, fields, this);
+            return GetFieldValues(data, fields, this);
         }
 
-        private void ValidateWorkflow(RulesException<Article> errors)
+        private void ValidateWorkflow(RulesException errors)
         {
             if (!IsUpdatableWithWorkflow)
                 errors.CriticalErrorForModel(IsNew ? ArticleStrings.CannotAddBecauseOfWorkflow : ArticleStrings.CannotUpdateBecauseOfWorkflow);
         }
 
-        private void ValidateRelationSecurity(RulesException<Article> errors)
+        private void ValidateRelationSecurity(RulesException errors)
         {
             if (!ArticleRepository.CheckRelationSecurity(this, false))
             {
-                if (IsNew)
-                    errors.CriticalErrorForModel(ArticleStrings.CannotAddBecauseOfRelationSecurity);
-                else
-                    errors.CriticalErrorForModel(ArticleStrings.CannotUpdateBecauseOfRelationSecurity);
+                errors.CriticalErrorForModel(IsNew ? ArticleStrings.CannotAddBecauseOfRelationSecurity : ArticleStrings.CannotUpdateBecauseOfRelationSecurity);
             }
         }
 
-        private void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
+        private static void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
         {
             if (item.ScheduleType == ScheduleTypeEnum.OneTimeEvent && !item.WithoutEndDate && item.StartDate >= item.EndDate)
                 errors.ErrorFor(n => n.Schedule.EndDate, ArticleStrings.StartEndDates);
@@ -1669,7 +1658,7 @@ namespace Quantumart.QP8.BLL
                     }
                 };
 
-                foreach (FieldValue item in FieldValues)
+                foreach (var item in FieldValues)
                 {
                     if (item.Field.UseVersionControl && (item.Field.Type.Name == FieldTypeName.Image || item.Field.Type.Name == FieldTypeName.File))
                     {
@@ -1677,22 +1666,22 @@ namespace Quantumart.QP8.BLL
                         if (mode == CopyFilesMode.ToBackupFolder)
                         {
                             // не режем откуда, режем куда
-                            string source = Path.Combine(item.Field.PathInfo.Path, item.Value);
-                            string destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
+                            var source = Path.Combine(item.Field.PathInfo.Path, item.Value);
+                            var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
                             copyFile(source, destination);
                         }
                         else if (mode == CopyFilesMode.ToVersionFolder)
                         {
                             // режем откуда, режем куда
-                            string source = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
-                            string destination = Path.Combine(versionPath, Path.GetFileName(item.Value));
+                            var source = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
+                            var destination = Path.Combine(versionPath, Path.GetFileName(item.Value));
                             copyFile(source, destination);
                         }
                         else if (mode == CopyFilesMode.FromVersionFolder)
                         {
                             // режем откуда, режем куда
-                            string source = Path.Combine(versionPath, Path.GetFileName(item.Value));
-                            string destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
+                            var source = Path.Combine(versionPath, Path.GetFileName(item.Value));
+                            var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
                             copyFile(source, destination);
                             // режем откуда, не режем куда
                             destination = Path.Combine(item.Field.PathInfo.Path, item.Value);
@@ -1707,10 +1696,10 @@ namespace Quantumart.QP8.BLL
         private IEnumerable<FieldValue> GetFieldValuesByContext(string context)
         {
             var contextIds = context.Split(",".ToCharArray());
-            foreach (string id in contextIds)
+            foreach (var id in contextIds)
             {
-                int fieldId = 0;
-                foreach (ArticleContextListItem li in ContextListItems)
+                var fieldId = 0;
+                foreach (var li in ContextListItems)
                 {
                     if (li.Ids.ContainsKey(id))
                     {
@@ -1718,7 +1707,7 @@ namespace Quantumart.QP8.BLL
                         break;
                     }
                 }
-                Field field = Content.Fields.Single(n => n.Id == fieldId);
+                var field = Content.Fields.Single(n => n.Id == fieldId);
                 yield return new FieldValue { Field = field, Value = id };
             }
         }
@@ -1727,7 +1716,7 @@ namespace Quantumart.QP8.BLL
         {
             var predefinedValues = fieldValues.ToDictionary(n => n.Field.FormName, n => n.Value);
             //predefinedValues.Add(Content.VariationField.FormName, Id.ToString());
-            Article result = new Article(Content, predefinedValues);
+            var result = new Article(Content, predefinedValues);
             VariationArticles.Add(result);
             return result;
         }
@@ -1736,17 +1725,17 @@ namespace Quantumart.QP8.BLL
 
         private static void RemoveAggregates(Article currentArticle, Article previousArticle)
         {
-            LambdaEqualityComparer<Article> comparer = new LambdaEqualityComparer<Article>((x, y) => x.Id == y.Id, x => x.Id);
+            var comparer = new LambdaEqualityComparer<Article>((x, y) => x.Id == y.Id, x => x.Id);
             // Какие агрегированные статьи удалить
             IEnumerable<Article> deletingAggregated = previousArticle.AggregatedArticles.Except(currentArticle.AggregatedArticles, comparer).ToArray();
 
-            ArticleRepository.MultipleDelete(deletingAggregated.Select(a => a.Id));
+            ArticleRepository.MultipleDelete(deletingAggregated.Select(a => a.Id).ToList());
         }
 
         private void RemoveVariations()
         {
             var baseArticles = VariationArticles.Where(n => !n.UseInVariationUpdate);
-            int[] articlesToRemove = baseArticles
+            var articlesToRemove = baseArticles
                 .SelectMany(n => n.AggregatedArticles.Select(m => m.Id))
                 .Union(baseArticles.Select(m => m.Id))
                 .ToArray();
@@ -1755,14 +1744,14 @@ namespace Quantumart.QP8.BLL
 
         private IEnumerable<ArticleVariationListItem> LoadVariationListForClient()
         {
-            int[] fieldIds = VariationContextFieldValues
+            var fieldIds = VariationContextFieldValues
                 .Select(n => n.Field.Id)
                 .ToArray()
             ;
 
             foreach (var article in VariationArticles.Concat(Enumerable.Repeat(this, 1)))
             {
-                yield return new ArticleVariationListItem()
+                yield return new ArticleVariationListItem
                 {
                     Context = String.Join(",", article.FieldValues
                         .Where(n => fieldIds.Contains(n.Field.Id) && !String.IsNullOrEmpty(n.Value))
@@ -1783,29 +1772,26 @@ namespace Quantumart.QP8.BLL
         private IEnumerable<ArticleContextListItem> LoadContextListForClient()
         {
             var arr = VariationContextFieldValues
-                .Select(n => new { Id = n.Field.Id, ContentId = n.Field.RelateToContentId.Value })
+                .Select(n => new {n.Field.Id, ContentId = n.Field.RelateToContentId.Value })
                 .ToArray();
 
             foreach (var item in arr)
             {
-                var result = new ArticleContextListItem();
-                result.HasHierarchy = ContentRepository.HasContentTreeField(item.ContentId);
-                result.FieldId = item.Id;
-                result.Ids = ArticleRepository.GetHierarchy(item.ContentId).ToDictionary(k => k.Key.ToString(), k => k.Value.ToString());
-                yield return result;
+                yield return new ArticleContextListItem
+                {
+                    HasHierarchy = ContentRepository.HasContentTreeField(item.ContentId),
+                    FieldId = item.Id,
+                    Ids = ArticleRepository.GetHierarchy(item.ContentId).ToDictionary(k => k.Key.ToString(), k => k.Value.ToString())
+                };
             }
         }
-
         #endregion
-
         #endregion
     }
 
-    #region enums
     public enum ArticleClearType
     {
         EmptyValue = 0,
         DefaultValue = 1
     }
-    #endregion
 }

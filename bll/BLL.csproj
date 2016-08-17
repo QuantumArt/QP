@@ -132,6 +132,7 @@
     <Compile Include="ArticleContextSearchBlockItem.cs" />
     <Compile Include="ArticleFieldSearchType.cs" />
     <Compile Include="Db.cs" />
+    <Compile Include="Enums\ImportActions.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
@@ -166,6 +167,8 @@
     <Compile Include="Mappers\TemplateObjectFormatDtoMapper.cs" />
     <Compile Include="Mappers\XmlDbUpdate\XmlDbUpdateActionsLogMapper.cs" />
     <Compile Include="Mappers\XmlDbUpdate\XmlDbUpdateLogMapper.cs" />
+    <Compile Include="Models\CsvDbUpdate\CsvDbUpdateFieldModel.cs" />
+    <Compile Include="Models\CsvDbUpdate\CsvDbUpdateModel.cs" />
     <Compile Include="ObjectFormatVersion.cs" />
     <Compile Include="Processors\TreeProcessors\ArticleFtsProcessor.cs" />
     <Compile Include="Processors\TreeProcessors\ArticleSimpleProcessor.cs" />

@@ -19,7 +19,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 
         public void Process()
         {
-            _xmlDbUpdateReplayService.Process(XmlReaderProcessor.ParseDocuments(_settings.FilePathes, _settings.ConfigPath), _settings.FilePathes);
+            _xmlDbUpdateReplayService.Process(XmlReaderProcessor.Process(_settings.FilePathes, _settings.ConfigPath), _settings.FilePathes);
         }
     }
 }

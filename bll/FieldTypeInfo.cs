@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 
@@ -14,7 +15,8 @@ namespace Quantumart.QP8.BLL
 			RelationId = relationId;
 		}
 
-		public string FormatFieldValue(string value)
+	    [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
+	    public string FormatFieldValue(string value)
 		{
 			switch (ExactType)
 			{

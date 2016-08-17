@@ -12,8 +12,8 @@ namespace Quantumart.QP8.BLL.Services.API
 {
     public class ArticleService : ServiceBase
     {
-        public ArticleService(string connectionString, int userId) : base(connectionString, userId)
-        { }
+        public ArticleService(string connectionString, int userId)
+            : base(connectionString, userId) { }
 
         public Article New(int contentId)
         {
@@ -52,6 +52,7 @@ namespace Quantumart.QP8.BLL.Services.API
                 {
                     return ArticleRepository.GetVirtualById(id, contentId);
                 }
+
                 return Read(id, forceLoadFieldValues);
             }
         }
@@ -64,6 +65,7 @@ namespace Quantumart.QP8.BLL.Services.API
                 {
                     return ArticleRepository.GetList(contentId);
                 }
+
                 return ArticleRepository.GetList(ids, true);
             }
         }
@@ -248,22 +250,6 @@ namespace Quantumart.QP8.BLL.Services.API
         }
 
         #region BatchUpdate
-        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles)
-        {
-            return BatchUpdate(articles, true);
-        }
-
-        private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData)
-        {
-            using (new QPConnectionScope(ConnectionString))
-            {
-                QPContext.CurrentUserId = TestedUserId;
-                var result = ArticleRepository.BatchUpdate(articles.ToArray(), formatArticleData);
-                QPContext.CurrentUserId = 0;
-                return result;
-            }
-        }
-
         public InsertData[] BatchUpdate(IEnumerable<Article> articles)
         {
             var articlesData = articles.Select(article => new ArticleData
@@ -279,6 +265,22 @@ namespace Quantumart.QP8.BLL.Services.API
             });
 
             return BatchUpdate(articlesData, false);
+        }
+
+        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles)
+        {
+            return BatchUpdate(articles, true);
+        }
+
+        private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                QPContext.CurrentUserId = TestedUserId;
+                var result = ArticleRepository.BatchUpdate(articles.ToArray(), formatArticleData);
+                QPContext.CurrentUserId = 0;
+                return result;
+            }
         }
         #endregion
 

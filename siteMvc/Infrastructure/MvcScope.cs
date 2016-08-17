@@ -23,7 +23,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure
 {
-    internal class MvcScope : IDisposable
+    public class MvcScope : IDisposable
     {
         internal MvcScope()
         {

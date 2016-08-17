@@ -17,7 +17,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             };
         }
 
-        protected internal override BaseSettingsModel CreateArgumentsModel()
+        protected internal override BaseSettingsModel CreateSettingsFromArguments()
         {
             return new XmlSettingsModel(FilePathes, CustomerCode, ConfigPath, _disableFieldIdentity, _disableContentIdentity);
         }
@@ -44,7 +44,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
                             _disableContentIdentity = true;
                             break;
                         default:
-                            throw new NotImplementedException("Unknow option disable: " + option.ToLower());
+                            throw new NotImplementedException($"Unknow option \"d|disable=\": \"{option.ToLower()}\"");
                     }
                 }
             }

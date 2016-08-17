@@ -18,12 +18,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
-    /// <summary>
-    /// Service for replaying xml data with recorded actions
-    /// <exception cref="XmlDbUpdateLoggingException">Throws when logging is failed</exception>
-    /// <exception cref="XmlDbUpdateReplayActionException">Throws when xml replaying was failed</exception>
-    /// </summary>
-    public class XmlDbUpdateReplayService
+    public class XmlDbUpdateReplayService : IXmlDbUpdateReplayService
     {
         private readonly string _connectionString;
 
@@ -47,6 +42,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions)
         {
+            Ensure.NotNullOrEmpty(_connectionString, "Connection string should be initialized");
+
             _connectionString = connectionString;
             _identityInsertOptions = identityInsertOptions;
             _actionsCorrecter = new XmlDbUpdateActionCorrectionService();
@@ -56,7 +53,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         public void Process(string xmlString, IList<string> filePathes = null)
         {
             Ensure.Argument.NotNullOrEmpty(xmlString, nameof(xmlString));
-            Ensure.NotNullOrEmpty(_connectionString, "Connection string should be initialized");
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
             ValidateReplayInput(filteredXmlDocument);
@@ -125,14 +121,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                         throw throwEx;
                     }
 
-                    var correctedAction = CorrectActions(mvcScope, action, backendUrl);
+                    var correctedAction = CorrectActionAndReplay(mvcScope, action, backendUrl);
                     logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(correctedAction, backendUrl).ToString();
                     _dbUpdateActionsLogRepository.Insert(logEntry);
                 }
             }
         }
 
-        private XmlDbUpdateRecordedAction CorrectActions(MvcScope mvcScope, XmlDbUpdateRecordedAction action, string backendUrl)
+        public XmlDbUpdateRecordedAction CorrectActionAndReplay(MvcScope mvcScope, XmlDbUpdateRecordedAction action, string backendUrl)
         {
             try
             {

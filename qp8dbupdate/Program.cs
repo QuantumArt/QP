@@ -30,6 +30,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             }
         }
 
+
         public static void Main(string[] args)
         {
             Logger.Debug($"Console db updater is started. Args: {args.ToJsonLog()}");

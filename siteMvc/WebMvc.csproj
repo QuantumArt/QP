@@ -298,6 +298,8 @@
     <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
     <Compile Include="Infrastructure\MvcScope.cs" />
+    <Compile Include="Infrastructure\Services\CsvDbUpdateService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateReplayService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateReplayService.cs" />
     <Compile Include="Infrastructure\Exceptions\XmlDbUpdateReplayActionException.cs" />
     <Compile Include="Extensions\Helpers\ControlOptions.cs" />

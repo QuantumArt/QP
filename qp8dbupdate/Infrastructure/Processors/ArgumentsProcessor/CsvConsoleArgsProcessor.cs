@@ -1,19 +1,24 @@
-﻿using System;
-using Mono.Options;
+﻿using System.Text;
+using CsvHelper.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProcessor
 {
     internal class CsvConsoleArgsProcessor : BaseConsoleArgsProcessor
     {
-        protected internal override OptionSet BuildOptionSet()
+        protected internal override BaseSettingsModel CreateSettingsFromArguments()
         {
-            throw new NotImplementedException();
-        }
-
-        protected internal override BaseSettingsModel CreateArgumentsModel()
-        {
-            throw new NotImplementedException();
+            return new CsvSettingsModel(FilePathes, CustomerCode, ConfigPath)
+            {
+                CsvConfiguration = new CsvConfiguration
+                {
+                    HasHeaderRecord = true,
+                    TrimFields = true,
+                    TrimHeaders = true,
+                    Encoding = Encoding.GetEncoding("windows-1251"),
+                    HasExcelSeparator = true
+                }
+            };
         }
     }
 }

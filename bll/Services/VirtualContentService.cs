@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
-using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.Repository.Results;
-using Quantumart.QP8.Constants;
 using System.Text.RegularExpressions;
-using System.Data.SqlClient;
-using Quantumart.QP8.BLL.Exceptions;
-using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Helpers;
-using System.Data;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -26,9 +22,9 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         public static ContentInitListResult InitUnionSourceList(int siteId)
         {
-            Site site = SiteRepository.GetById(siteId);
+            var site = SiteRepository.GetById(siteId);
             if (site == null)
-                throw new Exception(String.Format(SiteStrings.SiteNotFound, siteId));
+                throw new Exception(string.Format(SiteStrings.SiteNotFound, siteId));
             return new ContentInitListResult { ParentName = site.Name };
         }
 
@@ -46,7 +42,7 @@ namespace Quantumart.QP8.BLL.Services
         public static IEnumerable<ListItem> GetAcceptableContentForVirtualJoin(int siteId)
         {
             if (!SiteRepository.Exists(siteId))
-                throw new ArgumentException(String.Format(SiteStrings.SiteNotFound, siteId));
+                throw new ArgumentException(string.Format(SiteStrings.SiteNotFound, siteId));
             return VirtualContentRepository.GetAcceptableContentForVirtualJoin(siteId);
         }
 
@@ -56,8 +52,6 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Возвращает контент для добавления
         /// </summary>
-        /// <param name="siteId">идентификатор сайта</param>
-        /// <returns>контент</returns>
         public static Content New(int siteId, int? groupId)
         {
             return ContentService.InternalNew(siteId, groupId);
@@ -71,13 +65,13 @@ namespace Quantumart.QP8.BLL.Services
         public static Content Save(Content content)
         {
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
             if (content.VirtualType == VirtualType.None)
                 throw new ApplicationException("Content virtual type is undefined.");
 
             // Сохранить контент
             var helper = new VirtualContentHelper(content.ForceVirtualFieldIds);
-            Content newContent = VirtualContentRepository.Save(content);
+            var newContent = VirtualContentRepository.Save(content);
 
             if (content.VirtualType == VirtualType.Join)
                 newContent = helper.SaveJoinContent(content, newContent);
@@ -87,6 +81,7 @@ namespace Quantumart.QP8.BLL.Services
                 newContent = helper.SaveUserQueryContent(content, newContent);
 
             newContent.NewVirtualFieldIds = helper.NewFieldIds;
+
             return newContent;
         }
 
@@ -118,7 +113,7 @@ namespace Quantumart.QP8.BLL.Services
         public static Content Update(Content content)
         {
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
 
             var helper = new VirtualContentHelper(content.ForceVirtualFieldIds);
             using (VirtualFieldRepository.LoadVirtualFieldsRelationsToMemory(content.Id))
@@ -151,25 +146,20 @@ namespace Quantumart.QP8.BLL.Services
         #region Remove
         public static MessageResult Remove(int id)
         {
-            Content content = ContentRepository.GetById(id);
+            var content = ContentRepository.GetById(id);
             if (content == null)
-                throw new Exception(String.Format(ContentStrings.ContentNotFound, id));
+                throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
 
             if (!content.IsAccessible(ActionTypeCode.Remove))
                 return MessageResult.Error(ArticleStrings.CannotRemoveBecauseOfSecurity);
 
             var violationMessages = content.Die();
-
             if (violationMessages.Any())
             {
-                return MessageResult.Error(String.Join(Environment.NewLine, violationMessages), new[] { id });
-            }
-            else
-            {
-                return null;
+                return MessageResult.Error(string.Join(Environment.NewLine, violationMessages), new[] { id });
             }
 
-
+            return null;
         }
         #endregion
 
@@ -180,13 +170,12 @@ namespace Quantumart.QP8.BLL.Services
         {
             var helper = new VirtualContentHelper();
             // Дочерние поля выбранного поля
-            if (!String.IsNullOrWhiteSpace(entityId))
+            if (!string.IsNullOrWhiteSpace(entityId))
                 return helper.GetChildFieldList(entityId, parentAlias, (f, eid, alias) => Enumerable.Empty<EntityTreeItem>());
             // рутовые поля
-            else if (virtualContentId > 0 || joinedContentId.HasValue)
+            if (virtualContentId > 0 || joinedContentId.HasValue)
                 return helper.GetRootFieldList(virtualContentId, joinedContentId, selectItemIDs);
-            else
-                return null;
+            return null;
         }
 
 
@@ -198,15 +187,16 @@ namespace Quantumart.QP8.BLL.Services
 
         public static IEnumerable<DataRow> CopyVirtualContents(int sourceSiteId, int destinationSiteId)
         {
-            IEnumerable<DataRow> newContents = ContentRepository.CopyVirtualContents(sourceSiteId, destinationSiteId);
-            string newContentIds = String.Join(",", newContents.Select(r => r.Field<int>("content_id_new")));
+            var newContents = ContentRepository.CopyVirtualContents(sourceSiteId, destinationSiteId);
+            var newContentIds = string.Join(",", newContents.Select(r => r.Field<int>("content_id_new")));
 
-            FieldRepository.CopyContentsAttributes(sourceSiteId, destinationSiteId, newContentIds, isContentsVirtual: true);
+            FieldRepository.CopyContentsAttributes(sourceSiteId, destinationSiteId, newContentIds, true);
 
-            string relBetweenAttributes = FieldRepository.GetRelationsBetweenAttributesXML(sourceSiteId, destinationSiteId, String.Empty, forVirtualContents: null, byNewContents: true);
+            var relBetweenAttributes = FieldRepository.GetRelationsBetweenAttributesXml(sourceSiteId, destinationSiteId, string.Empty, null, true);
 
-            if (String.IsNullOrEmpty(newContentIds))
+            if (string.IsNullOrEmpty(newContentIds))
                 newContentIds = "0";
+
             FieldRepository.UpdateAttributes(sourceSiteId, destinationSiteId, relBetweenAttributes, newContentIds);
             ContentRepository.CopyUnionContents(sourceSiteId, destinationSiteId, newContentIds);
             ContentRepository.UpdateVirtualContentAttributes(sourceSiteId, destinationSiteId);
@@ -216,7 +206,7 @@ namespace Quantumart.QP8.BLL.Services
             ContentRepository.CopyContentsGroups(sourceSiteId, destinationSiteId);
             ContentRepository.UpdateContentGroupIds(sourceSiteId, destinationSiteId);
 
-            string relBetweenContents = ContentRepository.GetRelationsBetweenContentsXML(sourceSiteId, destinationSiteId, String.Empty);
+            var relBetweenContents = ContentRepository.GetRelationsBetweenContentsXML(sourceSiteId, destinationSiteId, string.Empty);
             ContentRepository.CopyUserQueryContents(relBetweenContents);
 
             ContentRepository.CopyUserQueryAttributes(relBetweenContents, relBetweenAttributes);
@@ -226,19 +216,20 @@ namespace Quantumart.QP8.BLL.Services
 
         public static string UpdateVirtualContents(int oldSiteId, int newSiteId, IEnumerable<DataRow> rows)
         {
-            StringBuilder contentsWithErrors = new StringBuilder();
+            var contentsWithErrors = new StringBuilder();
             if (rows == null)
-                return String.Empty;
+                return string.Empty;
+
             foreach (var row in rows)
             {
-                int virtualTypeId = Int32.Parse(row["virtual_type"].ToString());
-                int newContentId = Int32.Parse(row["content_id_new"].ToString());
-                VirtualContentHelper helper = new VirtualContentHelper();
-                Content newContent = ContentRepository.GetById(newContentId);
+                var virtualTypeId = int.Parse(row["virtual_type"].ToString());
+                var newContentId = int.Parse(row["content_id_new"].ToString());
+                var helper = new VirtualContentHelper();
+                var newContent = ContentRepository.GetById(newContentId);
                 if (virtualTypeId == VirtualType.UserQuery)
                 {
-                    IEnumerable<DataRow> contentsRelations = ContentRepository.GetRelationsBetweenContents(oldSiteId, newSiteId, String.Empty);
-                    string newSqlQuery = ReplaceOldContentIdsFromQuery(contentsRelations, row["sqlquery"].ToString());
+                    var contentsRelations = ContentRepository.GetRelationsBetweenContents(oldSiteId, newSiteId, string.Empty).ToList();
+                    var newSqlQuery = ReplaceOldContentIdsFromQuery(contentsRelations, row["sqlquery"].ToString());
                     ContentRepository.UpdateVirtualContent(newSqlQuery, newContentId);
                     newContent.UserQuery = newSqlQuery;
                 }
@@ -246,29 +237,30 @@ namespace Quantumart.QP8.BLL.Services
                 {
                     helper.CreateContentViews(newContent);
                 }
-                catch (Exception) {
-                    contentsWithErrors.Append(String.Format("{0}, ", newContent.Name));
+                catch (Exception)
+                {
+                    contentsWithErrors.Append($"{newContent.Name}, ");
                 }
             }
+
             return contentsWithErrors.ToString();
         }
 
-        private static string ReplaceOldContentIdsFromQuery(IEnumerable<DataRow> contentsRelations, string sqlQuery)
+        private static string ReplaceOldContentIdsFromQuery(IList<DataRow> contentsRelations, string sqlQuery)
         {
-            MatchCollection matchValues = Regex.Matches(sqlQuery, @"content_([\d]*)", RegexOptions.IgnoreCase);
-
+            var matchValues = Regex.Matches(sqlQuery, @"content_([\d]*)", RegexOptions.IgnoreCase);
             foreach (Match match in matchValues)
             {
-                DataRow row = contentsRelations.Where(r => r["source_content_id"].ToString() == match.Groups[1].Value).FirstOrDefault();
-                if(row != null){
-                    string newContentId = row["destination_content_id"].ToString();
+                var row = contentsRelations.FirstOrDefault(r => r["source_content_id"].ToString() == match.Groups[1].Value);
+                if (row != null)
+                {
+                    var newContentId = row["destination_content_id"].ToString();
                     sqlQuery = sqlQuery.Replace(match.Groups[1].Value, newContentId);
                 }
             }
+
             return sqlQuery;
         }
-
         #endregion
-
     }
 }

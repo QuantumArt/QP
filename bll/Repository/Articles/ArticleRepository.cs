@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -71,7 +72,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static string FillFullTextSearchParams(int contentId, string filter, IEnumerable<ArticleSearchQueryParam> searchQueryParams, ArticleFullTextSearchQueryParser ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] exstensionContentIds, out ContentReference[] contentReferences)
+        internal static string FillFullTextSearchParams(int contentId, string filter, IList<ArticleSearchQueryParam> searchQueryParams, ArticleFullTextSearchQueryParser ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] exstensionContentIds, out ContentReference[] contentReferences)
         {
             ftsOptions = GetFtsSearchParameter(ftsParser, searchQueryParams, ArticleFullTextSearchSettings.SearchResultLimit);
             var availableForList = QPContext.IsAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
@@ -156,7 +157,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var content = ContentRepository.GetById(contentId);
 
                 bool useMainTable;
-                var contextFilter = GetContextFilter(contextQueryParams, content.Fields, out useMainTable);
+                var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out useMainTable);
 
                 int[] extensionContentIds;
                 ContentReference[] contentReferences;
@@ -177,7 +178,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     RelationSecurityFilters = QPContext.IsAdmin ? null : GetRelationSecurityFilters(content.Fields),
                     PageSize = cmd.PageSize,
                     StartRecord = cmd.StartRecord,
-                    SortExpression = ReplaceDynamicColumnsNamesInSortExpressions(cmd.SortExpression, content.Fields),
+                    SortExpression = ReplaceDynamicColumnsNamesInSortExpressions(cmd.SortExpression, content.Fields.ToList()),
                     UserId = QPContext.CurrentUserId,
                     UseSecurity = !QPContext.IsAdmin && content.AllowItemsPermission,
                     IsVirtual = content.IsVirtual,
@@ -196,7 +197,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// Возвращает список по ids
         /// </summary>
         /// <returns></returns>
-        internal static IEnumerable<Article> GetList(IEnumerable<int> ids, bool loadFieldValues = false)
+        internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false)
         {
             using (new QPConnectionScope())
             {
@@ -369,7 +370,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return new ArticleLinkSearchQueryParser(new ArticleSearchRepository()).Parse(searchQueryParams);
         }
 
-        private static string GetContextFilter(IEnumerable<ArticleContextQueryParam> contextQueryParams, IEnumerable<Field> fields, out bool useMainTable)
+        private static string GetContextFilter(IList<ArticleContextQueryParam> contextQueryParams, IList<Field> fields, out bool useMainTable)
         {
             var variationField = fields.SingleOrDefault(n => n.UseForVariations);
             if (variationField == null)
@@ -450,7 +451,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IEnumerable<ArticleLinkSearchParameter> linkedFilters, IEnumerable<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
+        internal static IEnumerable<EntityTreeItem> GetArticlesTreeForFtsResult(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -477,7 +478,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static string GetSearchFiltersQuery(string commonFilter, Field treeField, string filterQuery, IEnumerable<ArticleLinkSearchParameter> linkedFilters, IEnumerable<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int searchLimit)
+        internal static string GetSearchFiltersQuery(string commonFilter, Field treeField, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int searchLimit)
         {
             if (string.IsNullOrEmpty(filterQuery) && (linkedFilters == null || !linkedFilters.Any()))
             {
@@ -487,7 +488,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var content = ContentRepository.GetById(treeField.ContentId);
 
             bool useMainTable;
-            var contextFilter = GetContextFilter(contextQuery, content.Fields, out useMainTable);
+            var contextFilter = GetContextFilter(contextQuery, content.Fields.ToList(), out useMainTable);
 
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(filterQuery, commonFilter, contextFilter));
             Common.AddLinkFilteringToQuery(linkedFilters, whereBuilder, filterSqlParams);
@@ -764,7 +765,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <summary>
         /// Удаляет статьи
         /// </summary>
-        internal static void MultipleDelete(IEnumerable<int> ids, bool withAggregated = false, bool withAutoArchive = false)
+        internal static void MultipleDelete(IList<int> ids, bool withAggregated = false, bool withAutoArchive = false)
         {
             using (new QPConnectionScope())
             {
@@ -919,7 +920,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <summary>
         /// Устанавливает значение архивного флага для статей
         /// </summary>
-        internal static void SetArchiveFlag(IEnumerable<int> ids, bool flag, bool withAggregated = false)
+        internal static void SetArchiveFlag(IList<int> ids, bool flag, bool withAggregated = false)
         {
             using (new QPConnectionScope())
             {
@@ -934,7 +935,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static void Publish(IEnumerable<int> ids, bool withAggregated = false)
+        internal static void Publish(IList<int> ids, bool withAggregated = false)
         {
             using (new QPConnectionScope())
             {
@@ -998,7 +999,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <param name="sortExpression">настройки сортировки, содержащие автоматически-сгенирированные названия динамических столбцов</param>
         /// <param name="fieldList">cписок объектов типа Field</param>
         /// <returns>настройки сортировки, содержащие физические названия динамических столбцов</returns>
-        private static string ReplaceDynamicColumnsNamesInSortExpressions(string sortExpression, IEnumerable<Field> fieldList)
+        private static string ReplaceDynamicColumnsNamesInSortExpressions(string sortExpression, IList<Field> fieldList)
         {
             var sqlSortExpression = new StringBuilder();
             var sortInfoList = SqlSorting.GetSortingInformations(sortExpression);
@@ -1136,6 +1137,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 a.Content.Fields.Any(f => f.Aggregated));
         }
 
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         internal static bool CheckRelationSecurity(Article article, bool isDeletable)
         {
             var result = true;
@@ -1195,7 +1197,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     var granted = CommonSecurity.CheckArticleSecurity(scope.DbConnection, currentContentId, currentIds, QPContext.CurrentUserId, startLevel);
                     foreach (var t in currentMapping)
                     {
-                        var flag = t.Value == null ? false : t.Value.All(n => granted[n]);
+                        var flag = t.Value != null && t.Value.All(n => granted[n]);
                         partResult[t.Key] = partResult.ContainsKey(t.Key) ? partResult[t.Key] && flag : flag;
                     }
                 }
@@ -1399,7 +1401,10 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 using (var transaction = new TransactionScope())
                 {
                     if (formatArticleData)
+                    {
                         FormatArticleData(scope.DbConnection, articles);
+                    }
+
                     var rows = Common.GetRelations(scope.DbConnection, GetBatchDataTable(articles));
                     var relations = MappersRepository.DataRowMapper.Map<RelationData>(rows);
 
@@ -1426,18 +1431,16 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         private static void FormatArticleData(SqlConnection cnn, ArticleData[] articles)
         {
             var fieldIds = articles.SelectMany(m => m.Fields).Select(n => n.Id).Distinct().ToArray();
-            var types = Common.GetFieldTypes(cnn, fieldIds).AsEnumerable().ToDictionary(
-                    n => (int)n.Field<decimal>("attribute_id"),
-                    m =>
-                    {
-                        var attributeTypeId = (int)m.Field<decimal>("attribute_type_id");
-                        var linkId = (int?)m.Field<decimal?>("link_id");
-                        var backRelatedAttributeId = (int?)m.Field<decimal?>("BACK_RELATED_ATTRIBUTE_ID");
-                        var isClassifier = m.Field<bool>("is_classifier");
-                        var isStringEnum = m.Field<bool>("is_string_enum");
-                        return new FieldTypeInfo(Field.CreateExactType(attributeTypeId, linkId, isClassifier, isStringEnum),
-                            linkId ?? backRelatedAttributeId);
-                    });
+            var types = Common.GetFieldTypes(cnn, fieldIds).AsEnumerable().ToDictionary(n => (int)n.Field<decimal>("attribute_id"), m =>
+            {
+                var attributeTypeId = (int)m.Field<decimal>("attribute_type_id");
+                var linkId = (int?)m.Field<decimal?>("link_id");
+                var backRelatedAttributeId = (int?)m.Field<decimal?>("BACK_RELATED_ATTRIBUTE_ID");
+                var isClassifier = m.Field<bool>("is_classifier");
+                var isStringEnum = m.Field<bool>("is_string_enum");
+                return new FieldTypeInfo(Field.CreateExactType(attributeTypeId, linkId, isClassifier, isStringEnum), linkId ?? backRelatedAttributeId);
+            });
+
             foreach (var field in articles.SelectMany(article => article.Fields))
             {
                 field.Value = types[field.Id].FormatFieldValue(field.Value);
@@ -1463,11 +1466,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return dt;
         }
 
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations)
         {
             return (from a in articles
                     from f in a.Fields
-                    from linkedItemId in f.ArticleIdsOrDefault
+                    from linkedItemId in f.ArticleIds
                     join r in relations on f.Id equals r.FieldId
                     where r.LinkId.HasValue
                     select new LinkData
@@ -1612,39 +1616,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return articles.SelectMany(a => a.Fields.Select(f => f.Id)).Distinct().ToArray();
         }
 
-        /// <summary>
-        /// TODO: check for unused
-        /// </summary>
-        private static XDocument GetAarticlesXml(IEnumerable<ArticleData> articles)
-        {
-            var articlesXml = new XDocument();
-            var rootEl = new XElement("Articles");
-
-            foreach (var article in articles)
-            {
-                var articleEl = new XElement("Article", new XElement("Id", article.Id), new XElement("ContentId", article.ContentId));
-                foreach (var field in article.Fields)
-                {
-                    var fieldEl = new XElement("Field", new XElement("Id", field.Id), new XElement("Value", field.Value));
-                    if (field.ArticleIds != null)
-                    {
-                        foreach (var id in field.ArticleIds)
-                        {
-                            var articleIdEl = new XElement("ArticleId", id);
-                            fieldEl.Add(articleIdEl);
-                        }
-                    }
-
-                    articleEl.Add(fieldEl);
-                }
-
-                rootEl.Add(articleEl);
-            }
-
-            articlesXml.Add(rootEl);
-            return articlesXml;
-        }
-
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string GetLinksXml(IEnumerable<LinkData> links)
         {
             var doc = new XDocument();

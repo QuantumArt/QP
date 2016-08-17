@@ -7,11 +7,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
         internal const string ConfigElementNodeName = "RecordedActionsData";
         internal const string ConfigElementPathAttribute = "RelativePath";
 
-        public XmlReaderSettings(IList<string> recordedXmlFilePathes)
+        public XmlReaderSettings(IList<string> filePathes)
         {
-            RecordedXmlFilePathes = recordedXmlFilePathes;
+            FilePathes = filePathes;
         }
 
-        public IList<string> RecordedXmlFilePathes { get; }
+        public IList<string> FilePathes { get; }
     }
 }

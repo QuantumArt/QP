@@ -4996,7 +4996,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int[] GetIdsToAutoArchive(SqlConnection connection, IEnumerable<int> IDs)
+        public static int[] GetIdsToAutoArchive(SqlConnection connection, IEnumerable<int> ids)
         {
             var result = new List<int>();
             var query = "select content_item_id FROM @ids i inner join content_item ci on i.id = ci.content_item_id inner join content c on c.content_id = ci.content_id where c.auto_archive = 1";
@@ -5004,7 +5004,7 @@ namespace Quantumart.QP8.DAL
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(IDs) });
+                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(ids) });
                 using (IDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
