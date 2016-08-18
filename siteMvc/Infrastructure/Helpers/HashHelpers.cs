@@ -4,7 +4,7 @@ using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    internal class HashHelpers
+    internal static class HashHelpers
     {
         internal static string CalculateMd5Hash(string input)
         {

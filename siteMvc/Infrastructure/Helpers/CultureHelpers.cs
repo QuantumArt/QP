@@ -2,7 +2,7 @@
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    public class CultureHelpers
+    public static class CultureHelpers
     {
         public static CultureInfo GetCultureInfoByLcid(int lcid)
         {

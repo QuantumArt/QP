@@ -4,7 +4,7 @@ using System.Xml.Serialization;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    public class XmlSerializerHelpers
+    public static class XmlSerializerHelpers
     {
         public static string Serialize<T>(T item)
         {

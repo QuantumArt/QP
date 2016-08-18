@@ -14,6 +14,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
@@ -25,8 +26,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly string _connectionString;
 
         private readonly HashSet<string> _identityInsertOptions;
-
-        private readonly XmlDbUpdateActionCorrectionService _actionsCorrecter;
 
         private XmlDbUpdateLogRepository _dbUpdateLogRepository;
 
@@ -49,7 +48,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _userId = userId;
             _connectionString = connectionString;
             _identityInsertOptions = identityInsertOptions;
-            _actionsCorrecter = new XmlDbUpdateActionCorrectionService();
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -124,7 +122,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     throw throwEx;
                 }
 
-                var replayedAction = _actionsCorrecter.EmulateHttpContextRequest(action, backendUrl, _userId);
+                var replayedAction = XmlDbUpdateHttpContextHelpers.EmulateHttpContextRequest(action, backendUrl, _userId);
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToString();
                 _dbUpdateActionsLogRepository.Insert(logEntry);
             }

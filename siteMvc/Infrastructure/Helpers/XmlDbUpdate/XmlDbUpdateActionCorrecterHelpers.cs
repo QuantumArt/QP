@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
-using System.Web;
 using System.Web.Script.Serialization;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.Security;
-using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
+namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
-    internal class XmlDbUpdateActionCorrectionService
+    internal static class XmlDbUpdateActionCorrecterHelpers
     {
-        internal XmlDbUpdateRecordedAction CorrectAction(XmlDbUpdateRecordedAction entry)
+        internal static XmlDbUpdateRecordedAction CorrectAction(XmlDbUpdateRecordedAction entry)
         {
             var code = entry.BackendAction.EntityType.Code;
             entry.Ids = CorrectListValue(entry.Ids).ToArray();
@@ -70,59 +63,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
 
             return entry;
-        }
-
-        internal XmlDbUpdateRecordedAction EmulateHttpContextRequest(XmlDbUpdateRecordedAction xmlAction, string backendUrl, int userId)
-        {
-            try
-            {
-                var correctedAction = CorrectAction(xmlAction);
-                FakeMvcApplication.PostAction(correctedAction, backendUrl, userId);
-                return correctedAction;
-            }
-            catch (Exception ex)
-            {
-                var throwEx = new XmlDbUpdateReplayActionException("Error while replaying xml action.", ex);
-                throwEx.Data.Add("ActionToReplay", xmlAction.ToJsonLog());
-                throw throwEx;
-            }
-        }
-
-        internal static XmlDbUpdateRecordedAction CreateActionFromHttpContext(HttpContextBase httpContext, string actionCode, bool ignoreForm)
-        {
-            var action = new XmlDbUpdateRecordedAction
-            {
-                Code = actionCode,
-                ParentId = BackendActionContext.Current.ParentEntityId.HasValue ? BackendActionContext.Current.ParentEntityId.Value : 0,
-                Lcid = CultureInfo.CurrentCulture.LCID,
-                Executed = DateTime.Now,
-                ExecutedBy = (httpContext.User.Identity as QPIdentity)?.Name,
-                Form = ignoreForm ? null : httpContext.Request.Form,
-                Ids = httpContext.Items.Contains("FROM_ID")
-                    ? new[] { httpContext.Items["FROM_ID"].ToString() }
-                    : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
-                ResultId = GetContextData<int>(httpContext, "RESULT_ID"),
-                VirtualFieldIds = GetContextData<string>(httpContext, "NEW_VIRTUAL_FIELD_IDS"),
-                FieldIds = GetContextData<string>(httpContext, "FIELD_IDS"),
-                LinkIds = GetContextData<string>(httpContext, "LINK_IDS"),
-                NewLinkId = GetContextData<int>(httpContext, "NEW_LINK_ID"),
-                BackwardId = GetContextData<int>(httpContext, "NEW_BACKWARD_ID"),
-                NewChildFieldIds = GetContextData<string>(httpContext, "NEW_CHILD_FIELD_IDS"),
-                NewChildLinkIds = GetContextData<string>(httpContext, "NEW_CHILD_LINK_IDS"),
-                ActionId = GetContextData<int>(httpContext, "ACTION_ID"),
-                ActionCode = GetContextData<string>(httpContext, "ACTION_CODE"),
-                NewCommandIds = GetContextData<string>(httpContext, "NEW_COMMAND_IDS"),
-                NewRulesIds = GetContextData<string>(httpContext, "NEW_RULES_IDS"),
-                NotificationFormatId = GetContextData<int>(httpContext, "NOTIFICATION_FORMAT_ID"),
-                DefaultFormatId = GetContextData<int>(httpContext, "DEFAULT_FORMAT_ID"),
-            };
-
-            return action;
-        }
-
-        private static T GetContextData<T>(HttpContextBase httpContext, string key)
-        {
-            return httpContext.Items.Contains(key) ? (T)httpContext.Items[key] : default(T);
         }
 
         private static void CorrectContentForm(XmlDbUpdateRecordedAction action)

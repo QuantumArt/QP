@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Xml.Linq;
-using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters

@@ -65,7 +65,7 @@ $q.sendAjax = function(opts) {
     ? logData.slice(0, maxLogDataLengthToLog) + '..'
     : logData;
 
-  var debugMessage = ' ajax: ' + options.type + ' ' + options.url + '. Data: ' + cuttedLogData;
+  var debugMessage = 'ajax: ' + options.type + ' ' + options.url + '. Data: ' + cuttedLogData;
   $q.trace('Sending ' + debugMessage, 'Request object: ', options);
   return $.ajax(options).done(function(response) {
     $q.trace('Parsing ' + debugMessage, 'Response object: ', response);

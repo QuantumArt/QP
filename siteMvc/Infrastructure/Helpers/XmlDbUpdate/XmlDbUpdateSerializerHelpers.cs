@@ -10,9 +10,9 @@ using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
+namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
-    internal class XmlDbUpdateSerializerHelpers
+    internal static class XmlDbUpdateSerializerHelpers
     {
         internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string backendUrl)
         {

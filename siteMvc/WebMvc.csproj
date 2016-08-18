@@ -300,6 +300,7 @@
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\CultureHelpers.cs" />
     <Compile Include="Infrastructure\FakeMvcApplication.cs" />
+    <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateActionCorrecterHelpers.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\CsvDbUpdateService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\ICsvDbUpdateService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateReplayService.cs" />
@@ -327,7 +328,7 @@
     <Compile Include="Extensions\Helpers\QPTreeCheckedNode.cs" />
     <Compile Include="Infrastructure\Extensions\StringExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\XmlSerializerHelpers.cs" />
-    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionCorrectionService.cs" />
+    <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateHttpContextHelpers.cs" />
     <Compile Include="Infrastructure\Models\XmlDbUpdateRecordedActionModel.cs" />
     <Compile Include="Extensions\Helpers\SelectOptions.cs" />
     <Compile Include="Extensions\Helpers\TagBuilderExtensions.cs" />
@@ -376,7 +377,7 @@
     <Compile Include="Infrastructure\Extensions\XAttributeExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\HashHelpers.cs" />
     <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateXDocumentConstants.cs" />
-    <Compile Include="Infrastructure\Helpers\XmlDbUpdateSerializerHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
     <Compile Include="Infrastructure\Utf8StringWriter.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
