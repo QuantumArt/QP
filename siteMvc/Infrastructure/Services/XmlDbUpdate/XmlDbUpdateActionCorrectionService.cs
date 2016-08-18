@@ -17,16 +17,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
     internal class XmlDbUpdateActionCorrectionService
     {
-        private readonly Dictionary<string, Dictionary<int, int>> _idsToReplace = new Dictionary<string, Dictionary<int, int>>();
-
         internal XmlDbUpdateRecordedAction CorrectAction(XmlDbUpdateRecordedAction entry)
         {
             var code = entry.BackendAction.EntityType.Code;
-            var parentCode = entry.BackendAction.EntityType.ParentCode;
-            entry.Ids = CorrectListValue(code, entry.Ids).ToArray();
-            if (!string.IsNullOrEmpty(parentCode))
+            entry.Ids = CorrectListValue(entry.Ids).ToArray();
+            if (!string.IsNullOrEmpty(entry.BackendAction.EntityType.ParentCode))
             {
-                entry.ParentId = CorrectValue(parentCode, entry.ParentId);
+                entry.ParentId = entry.ParentId;
             }
 
             switch (code)
@@ -62,10 +59,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     CorrectWorkflowForm(entry.Form);
                     break;
                 case EntityTypeCode.PageObject:
-                    CorrectObjectForm(entry.Form, true);
+                    CorrectObjectForm(entry.Form);
                     break;
                 case EntityTypeCode.TemplateObject:
-                    CorrectObjectForm(entry.Form, false);
+                    CorrectObjectForm(entry.Form);
                     break;
                 case EntityTypeCode.Notification:
                     CorrectNotificationForm(entry.Form);
@@ -81,10 +78,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 var correctedAction = CorrectAction(xmlAction);
                 FakeMvcApplication.PostAction(correctedAction, backendUrl, userId);
-                /*
-                 * Here was a logic that iterate correctedAction.ChildActions and call CorrectReplaces method
-                 */
-
                 return correctedAction;
             }
             catch (Exception ex)
@@ -93,63 +86,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 throwEx.Data.Add("ActionToReplay", xmlAction.ToJsonLog());
                 throw throwEx;
             }
-        }
-
-        private void CorrectReplaces(XmlDbUpdateRecordedAction correctedAction, HttpContextBase context)
-        {
-            var actionTypeCode = correctedAction.BackendAction.ActionType.Code;
-            var entityTypeCode = correctedAction.BackendAction.EntityType.Code;
-
-            if (new[] { ActionTypeCode.AddNew, ActionTypeCode.Copy }.Contains(actionTypeCode))
-            {
-                var resultCode = entityTypeCode != EntityTypeCode.VirtualContent ? entityTypeCode : EntityTypeCode.Content;
-                var resultId = correctedAction.ResultId != 0 ? correctedAction.ResultId : int.Parse(correctedAction.Ids[0]);
-                AddIdToReplace(resultCode, resultId, context, "RESULT_ID");
-            }
-
-            switch (correctedAction.BackendAction.Code)
-            {
-                case ActionCode.AddNewVirtualContents:
-                case ActionCode.VirtualContentProperties:
-                case ActionCode.VirtualFieldProperties:
-                    AddIdsToReplace(correctedAction.VirtualFieldIds, context, "NEW_VIRTUAL_FIELD_IDS");
-                    break;
-                case ActionCode.AddNewContent:
-                case ActionCode.CreateLikeContent:
-                    AddIdsToReplace(correctedAction.ChildIds, context, "FIELD_IDS");
-                    AddIdsToReplace(correctedAction.ChildLinkIds, context, "LINK_IDS");
-                    break;
-                case ActionCode.AddNewField:
-                case ActionCode.FieldProperties:
-                case ActionCode.CreateLikeField:
-                    AddIdToReplace(EntityTypeCode.ContentLink, correctedAction.ChildId, context, "NEW_LINK_ID");
-                    AddIdToReplace(EntityTypeCode.Field, correctedAction.BackwardId, context, "NEW_BACKWARD_ID");
-                    AddIdsToReplace(correctedAction.VirtualFieldIds, context, "NEW_VIRTUAL_FIELD_IDS");
-                    AddIdsToReplace(correctedAction.ChildIds, context, "NEW_CHILD_FIELD_IDS");
-                    AddIdsToReplace(correctedAction.ChildLinkIds, context, "NEW_CHILD_LINK_IDS");
-                    break;
-                case ActionCode.AddNewCustomAction:
-                    AddIdToReplace(EntityTypeCode.BackendAction, correctedAction.ChildId, context, "ACTION_ID");
-                    break;
-                case ActionCode.AddNewVisualEditorPlugin:
-                case ActionCode.VisualEditorPluginProperties:
-                    AddIdsToReplace(correctedAction.ChildIds, context, "NEW_COMMAND_IDS");
-                    break;
-                case ActionCode.AddNewWorkflow:
-                case ActionCode.WorkflowProperties:
-                    AddIdsToReplace(correctedAction.ChildIds, context, "NEW_RULES_IDS");
-                    break;
-                case ActionCode.AddNewNotification:
-                case ActionCode.NotificationProperties:
-                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, correctedAction.ChildId, context, "NOTIFICATION_FORMAT_ID");
-                    break;
-                case ActionCode.AddNewPageObject:
-                    AddIdToReplace(EntityTypeCode.PageObjectFormat, correctedAction.ChildId, context, "DEFAULT_FORMAT_ID");
-                    break;
-                case ActionCode.AddNewTemplateObject:
-                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, correctedAction.ChildId, context, "DEFAULT_FORMAT_ID");
-                    break;
-            };
         }
 
         internal static XmlDbUpdateRecordedAction CreateActionFromHttpContext(HttpContextBase httpContext, string actionCode, bool ignoreForm)
@@ -189,149 +125,123 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return httpContext.Items.Contains(key) ? (T)httpContext.Items[key] : default(T);
         }
 
-        private void CorrectContentForm(XmlDbUpdateRecordedAction action)
+        private static void CorrectContentForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.Workflow, action.Form, "Data.WorkflowBinding.WorkflowId");
-            CorrectFormValue(EntityTypeCode.Content, action.Form, "Data.ParentContentId");
-            CorrectFormValue(EntityTypeCode.ContentGroup, action.Form, "Data.GroupId");
+            CorrectFormValue(action.Form, "Data.WorkflowBinding.WorkflowId");
+            CorrectFormValue(action.Form, "Data.ParentContentId");
+            CorrectFormValue(action.Form, "Data.GroupId");
         }
 
-        private void CorrectVirtualContentForm(XmlDbUpdateRecordedAction action)
+        private static void CorrectVirtualContentForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.Content, action.Form, "Data.JoinRootId");
-            CorrectFormValue(EntityTypeCode.Content, action.Form, "Data.UnionSourceContentIDs");
-            CorrectFormValue(EntityTypeCode.Field, action.Form, "JoinFields", true, true);
-            CorrectFormValue(EntityTypeCode.Field, action.Form, "itemValue", true, true);
+            CorrectFormValue(action.Form, "Data.JoinRootId");
+            CorrectFormValue(action.Form, "Data.UnionSourceContentIDs");
+            CorrectFormValue(action.Form, "JoinFields", true, true);
+            CorrectFormValue(action.Form, "itemValue", true, true);
         }
 
-        private void CorrectUserGroupForm(XmlDbUpdateRecordedAction action)
+        private static void CorrectUserGroupForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.User, action.Form, "BindedUserIDs", true);
-            CorrectFormValue(EntityTypeCode.UserGroup, action.Form, "ParentGroupId");
+            CorrectFormValue(action.Form, "BindedUserIDs", true);
+            CorrectFormValue(action.Form, "ParentGroupId");
         }
 
-        private void CorrectUserForm(XmlDbUpdateRecordedAction action)
+        private static void CorrectUserForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.UserGroup, action.Form, "SelectedGroups", true);
-            CorrectFormValue(EntityTypeCode.Site, action.Form, "ContentDefaultFilter.SiteId");
-            CorrectFormValue(EntityTypeCode.Content, action.Form, "ContentDefaultFilter.ContentId");
-            CorrectFormValue(EntityTypeCode.Article, action.Form, "ContentDefaultFilter.ArticleIDs");
+            CorrectFormValue(action.Form, "SelectedGroups", true);
+            CorrectFormValue(action.Form, "ContentDefaultFilter.SiteId");
+            CorrectFormValue(action.Form, "ContentDefaultFilter.ContentId");
+            CorrectFormValue(action.Form, "ContentDefaultFilter.ArticleIDs");
         }
 
-        private void CorrectFieldForm(NameValueCollection form)
+        private static void CorrectFieldForm(NameValueCollection form)
         {
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.Id");
-            CorrectFormValue(EntityTypeCode.Field, form, "InCombinationWith", true);
-            CorrectFormValue(EntityTypeCode.Content, form, "Data.RelateToContentId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.RelationId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.BackRelationId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.ClassifierId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.BaseImageId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.ListOrderFieldId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.TreeOrderFieldId");
-            CorrectFormValue(EntityTypeCode.ContentLink, form, "Data.ContentLink.LinkId");
-            CorrectFormValue(EntityTypeCode.Article, form, "Data.O2MDefaultValue");
-            CorrectFormValue(EntityTypeCode.Article, form, "DefaultArticleIds", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorCommand, form, "ActiveVeCommands", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorStyle, form, "ActiveVeStyles", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorStyle, form, "ActiveVeFormats", true);
+            CorrectFormValue(form, "Data.Id");
+            CorrectFormValue(form, "InCombinationWith", true);
+            CorrectFormValue(form, "Data.RelateToContentId");
+            CorrectFormValue(form, "Data.RelationId");
+            CorrectFormValue(form, "Data.BackRelationId");
+            CorrectFormValue(form, "Data.ClassifierId");
+            CorrectFormValue(form, "Data.BaseImageId");
+            CorrectFormValue(form, "Data.ListOrderFieldId");
+            CorrectFormValue(form, "Data.TreeOrderFieldId");
+            CorrectFormValue(form, "Data.ContentLink.LinkId");
+            CorrectFormValue(form, "Data.O2MDefaultValue");
+            CorrectFormValue(form, "DefaultArticleIds", true);
+            CorrectFormValue(form, "ActiveVeCommands", true);
+            CorrectFormValue(form, "ActiveVeStyles", true);
+            CorrectFormValue(form, "ActiveVeFormats", true);
         }
 
-        private void CorrectSiteForm(NameValueCollection form)
+        private static void CorrectSiteForm(NameValueCollection form)
         {
-            CorrectFormValue(EntityTypeCode.VisualEditorCommand, form, "ActiveVeCommands", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorStyle, form, "ActiveVeStyles", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorStyle, form, "ActiveVeFormats", true);
+            CorrectFormValue(form, "ActiveVeCommands", true);
+            CorrectFormValue(form, "ActiveVeStyles", true);
+            CorrectFormValue(form, "ActiveVeFormats", true);
         }
 
-        private void CorrectObjectForm(NameValueCollection form, bool isPageObject)
+        private static void CorrectObjectForm(NameValueCollection form)
         {
-            CorrectFormValue(EntityTypeCode.TemplateObject, form, "Data.ParentObjectId");
-            CorrectFormValue(isPageObject ? EntityTypeCode.PageObjectFormat : EntityTypeCode.TemplateObjectFormat, form, "Data.DefaultFormatId");
-            CorrectFormValue(EntityTypeCode.Content, form, "Data.Container.ContentId");
-            CorrectFormValue(EntityTypeCode.Content, form, "Data.ContentForm.ContentId");
-            CorrectFormValue(EntityTypeCode.Page, form, "Data.ContentForm.ThankYouPageId");
-            CorrectFormValue(EntityTypeCode.StatusType, form, "ActiveStatusTypeIds", true);
+            CorrectFormValue(form, "Data.ParentObjectId");
+            CorrectFormValue(form, "Data.DefaultFormatId");
+            CorrectFormValue(form, "Data.Container.ContentId");
+            CorrectFormValue(form, "Data.ContentForm.ContentId");
+            CorrectFormValue(form, "Data.ContentForm.ThankYouPageId");
+            CorrectFormValue(form, "ActiveStatusTypeIds", true);
         }
 
-        private void CorrectCustomActionForm(NameValueCollection form)
+        private static void CorrectCustomActionForm(NameValueCollection form)
         {
-            CorrectFormValue(EntityTypeCode.Site, form, "SelectedSiteIDs", true);
-            CorrectFormValue(EntityTypeCode.Content, form, "SelectedContentIDs", true);
-            CorrectFormValue(EntityTypeCode.BackendAction, form, "SelectedActions", true);
+            CorrectFormValue(form, "SelectedSiteIDs", true);
+            CorrectFormValue(form, "SelectedContentIDs", true);
+            CorrectFormValue(form, "SelectedActions", true);
         }
 
-        private void CorrectVePluginForm(NameValueCollection form)
+        private static void CorrectVePluginForm(NameValueCollection form)
         {
-            CorrectFormValue(EntityTypeCode.VisualEditorCommand, form, "AggregationListItems_VeCommandsDisplay", "Id");
+            CorrectFormValue(form, "AggregationListItems_VeCommandsDisplay", "Id");
         }
 
-        private void CorrectWorkflowForm(NameValueCollection form)
+        private static void CorrectWorkflowForm(NameValueCollection form)
         {
-            CorrectFormValue(EntityTypeCode.StatusType, form, "ActiveStatuses", true);
-            CorrectFormValue(EntityTypeCode.Content, form, "ActiveContentIds", true);
-            CorrectFormValue(EntityTypeCode.WorkflowRule, form, "Workflows_WorkflowRulesDisplay", "Id");
-            CorrectFormValue(EntityTypeCode.StatusType, form, "Workflows_WorkflowRulesDisplay", "StId");
-            CorrectFormValue(EntityTypeCode.User, form, "Workflows_WorkflowRulesDisplay", "UserId");
-            CorrectFormValue(EntityTypeCode.UserGroup, form, "Workflows_WorkflowRulesDisplay", "GroupId");
+            CorrectFormValue(form, "ActiveStatuses", true);
+            CorrectFormValue(form, "ActiveContentIds", true);
+            CorrectFormValue(form, "Workflows_WorkflowRulesDisplay", "Id");
+            CorrectFormValue(form, "Workflows_WorkflowRulesDisplay", "StId");
+            CorrectFormValue(form, "Workflows_WorkflowRulesDisplay", "UserId");
+            CorrectFormValue(form, "Workflows_WorkflowRulesDisplay", "GroupId");
         }
 
-        private void CorrectNotificationForm(NameValueCollection form)
+        private static void CorrectNotificationForm(NameValueCollection form)
         {
-            CorrectFormValue(EntityTypeCode.TemplateObjectFormat, form, "Data.FormatId");
-            CorrectFormValue(EntityTypeCode.User, form, "Data.UserId");
-            CorrectFormValue(EntityTypeCode.UserGroup, form, "Data.GroupId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.EmailFieldId");
-            CorrectFormValue(EntityTypeCode.User, form, "Data.FromBackenduserId");
-            CorrectFormValue(EntityTypeCode.StatusType, form, "Data.NotifyOnStatusTypeId");
+            CorrectFormValue(form, "Data.FormatId");
+            CorrectFormValue(form, "Data.UserId");
+            CorrectFormValue(form, "Data.GroupId");
+            CorrectFormValue(form, "Data.EmailFieldId");
+            CorrectFormValue(form, "Data.FromBackenduserId");
+            CorrectFormValue(form, "Data.NotifyOnStatusTypeId");
         }
 
-        private void CorrectArticleForm(NameValueCollection form, int contentId)
+        private static void CorrectArticleForm(NameValueCollection form, int contentId)
         {
             var relations = ReplayHelper.GetRelations(contentId);
             var classifiers = ReplayHelper.GetClasifiers(contentId);
             foreach (var key in form.AllKeys.Where(n => n.StartsWith("field_")))
             {
-                int result;
-                var parsed = int.TryParse(key.Replace("field_", string.Empty), out result);
+                int fieldId;
+                var parsed = int.TryParse(key.Replace("field_", string.Empty), out fieldId);
                 if (parsed)
                 {
-                    var newFieldId = CorrectValue(EntityTypeCode.Field, result);
-                    if (newFieldId != result)
+                    if (relations.ContainsKey(fieldId) || classifiers.ContainsKey(fieldId))
                     {
-                        var newKey = "field_" + newFieldId;
-                        var enumerable = form.GetValues(key);
-                        if (enumerable != null)
-                        {
-                            foreach (var value in enumerable)
-                            {
-                                var newValue = value;
-                                if (relations.ContainsKey(newFieldId) || classifiers.ContainsKey(newFieldId))
-                                {
-                                    var code = relations.ContainsKey(newFieldId) ? EntityTypeCode.Article : EntityTypeCode.Content;
-                                    newValue = CorrectCommaListValue(code, value);
-                                }
-
-                                form.Add(newKey, newValue);
-                            }
-                        }
-
+                        var values = form.GetValues(key);
                         form.Remove(key);
-                    }
-                    else
-                    {
-                        if (relations.ContainsKey(newFieldId) || classifiers.ContainsKey(newFieldId))
-                        {
-                            var values = form.GetValues(key);
-                            form.Remove(key);
 
-                            if (values != null)
+                        if (values != null)
+                        {
+                            foreach (var value in values)
                             {
-                                foreach (var value in values)
-                                {
-                                    var code = relations.ContainsKey(newFieldId) ? EntityTypeCode.Article : EntityTypeCode.Content;
-                                    form.Add(key, CorrectCommaListValue(code, value));
-                                }
+                                form.Add(key, CorrectCommaListValue(value));
                             }
                         }
                     }
@@ -339,21 +249,21 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private string CorrectValue(string code, string value)
+        private static string CorrectValue(string value)
         {
             int result;
             var parsed = int.TryParse(value, out result);
-            return parsed ? CorrectValue(code, result).ToString() : value;
+            return parsed ? result.ToString() : value;
         }
 
-        private void CorrectFormValue(string code, NameValueCollection form, string formKey, bool prefixSearch = false, bool joinModeReplace = false)
+        private static void CorrectFormValue(NameValueCollection form, string formKey, bool prefixSearch = false, bool joinModeReplace = false)
         {
             if (!prefixSearch)
             {
                 var formValue = form[formKey];
                 if (formValue != null)
                 {
-                    form[formKey] = CorrectValue(code, formValue);
+                    form[formKey] = CorrectValue(formValue);
                 }
             }
             else
@@ -365,27 +275,29 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                         var values = form.GetValues(key);
                         form.Remove(key);
                         if (values != null)
+                        {
                             foreach (var value in values)
                             {
                                 string newValue;
                                 if (!joinModeReplace)
                                 {
-                                    newValue = CorrectValue(code, value);
+                                    newValue = CorrectValue(value);
                                 }
                                 else
                                 {
-                                    newValue = string.Join(".", value.Replace("[", "").Replace("]", "").Split(".".ToCharArray()).Select(n => CorrectValue(code, n)));
+                                    newValue = string.Join(".", value.Replace("[", "").Replace("]", "").Split(".".ToCharArray()).Select(CorrectValue));
                                     newValue = "[" + newValue + "]";
                                 }
 
-                                form.Add(key, CorrectValue(code, newValue));
+                                form.Add(key, CorrectValue(newValue));
                             }
+                        }
                     }
                 }
             }
         }
 
-        private void CorrectFormValue(string code, NameValueCollection form, string formKey, string jsonKey)
+        private static void CorrectFormValue(NameValueCollection form, string formKey, string jsonKey)
         {
             var formValue = form[formKey];
             if (formValue != null)
@@ -394,85 +306,25 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 var collectionList = serializer.Deserialize<List<Dictionary<string, string>>>(formValue);
                 foreach (var collection in collectionList.Where(collection => collection.ContainsKey(jsonKey)))
                 {
-                    collection[jsonKey] = CorrectValue(code, collection[jsonKey]);
+                    collection[jsonKey] = CorrectValue(collection[jsonKey]);
                 }
 
                 form[formKey] = serializer.Serialize(collectionList);
             }
         }
 
-        private string CorrectCommaListValue(string code, string value)
+        private static string CorrectCommaListValue(string value)
         {
-            return string.Join(",", CorrectListValue(code, value.Split(",".ToCharArray())));
+            return string.Join(",", CorrectListValue(value.Split(",".ToCharArray())));
         }
 
-        private IEnumerable<string> CorrectListValue(string code, IEnumerable<string> values)
+        private static IEnumerable<string> CorrectListValue(IEnumerable<string> values)
         {
             foreach (var value in values)
             {
                 int parsedValue;
                 var parsed = int.TryParse(value, out parsedValue);
-                yield return parsed ? CorrectValue(code, parsedValue).ToString() : value;
-            }
-        }
-
-        private int CorrectValue(string code, int value)
-        {
-            if (_idsToReplace.ContainsKey(code) && _idsToReplace[code].ContainsKey(value))
-            {
-                return _idsToReplace[code][value];
-            }
-
-            return value;
-        }
-
-        private void AddIdToReplace(string code, int id, HttpContextBase context, string key)
-        {
-            if (context.Items.Contains(key))
-            {
-                AddIdToReplace(code, id, int.Parse(context.Items[key].ToString()));
-            }
-        }
-
-        private void AddIdToReplace(string code, int id, int newId)
-        {
-            if (id != newId)
-            {
-                if (!_idsToReplace.ContainsKey(code))
-                {
-                    _idsToReplace.Add(code, new Dictionary<int, int>());
-                }
-
-                if (id != 0)
-                {
-                    _idsToReplace[code].Add(id, newId);
-                }
-            }
-        }
-
-        private void AddIdsToReplace(string oldIdsCommaString, HttpContextBase context, string key)
-        {
-            if (context.Items.Contains(key))
-            {
-                AddIdsToReplace(EntityTypeCode.Field, oldIdsCommaString.ToIntArray(), context.Items[key].ToString().ToIntArray());
-            }
-        }
-
-        private void AddIdsToReplace(string code, IReadOnlyList<int> oldIds, IReadOnlyList<int> newIds)
-        {
-            if (oldIds == null || newIds == null)
-            {
-                return;
-            }
-
-            if (oldIds.Count != newIds.Count)
-            {
-                throw new ArgumentException("Array leghths are not equal");
-            }
-
-            for (var i = 0; i < oldIds.Count; i++)
-            {
-                AddIdToReplace(code, oldIds[i], newIds[i]);
+                yield return parsed ? parsedValue.ToString() : value;
             }
         }
     }
