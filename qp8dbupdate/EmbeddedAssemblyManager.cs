@@ -133,6 +133,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.Interception.dll", "Microsoft.Practices.Unity.Interception.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.Configuration.dll", "Microsoft.Practices.Unity.Configuration.dll");
 
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Data.dll", "Microsoft.Practices.EnterpriseLibrary.Data.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Common.dll", "Microsoft.Practices.EnterpriseLibrary.Common.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Logging.dll", "Microsoft.Practices.EnterpriseLibrary.Logging.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Validation.dll", "Microsoft.Practices.EnterpriseLibrary.Validation.dll");

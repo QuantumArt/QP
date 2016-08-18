@@ -66,7 +66,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 Body = filteredXmlString,
                 FileName = filePathes == null ? null : string.Join(",", filePathes),
                 Applied = DateTime.Now,
-                Hash = HashHelpers.CalculateMd5Hash(filteredXmlString)
+                Hash = HashHelpers.CalculateMd5Hash(filteredXmlString),
+                UserId = _userId
             };
 
             _dbUpdateLogRepository = new XmlDbUpdateLogRepository();
@@ -87,63 +88,45 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        public void ReplayActionsFromXml(IEnumerable<XElement> actionElements, string backendUrl, int updateId)
+        private void ReplayActionsFromXml(IEnumerable<XElement> actionElements, string backendUrl, int updateId)
         {
-            using (var mvcScope = new MvcScope())
+            foreach (var xmlAction in actionElements)
             {
-                foreach (var xmlAction in actionElements)
+                XmlDbUpdateRecordedAction action;
+                var xmlActionString = xmlAction.ToString();
+
+                try
                 {
-                    XmlDbUpdateRecordedAction action;
-                    var xmlActionString = xmlAction.ToString();
-
-                    try
-                    {
-                        action = XmlDbUpdateSerializerHelpers.DeserializeAction(xmlAction);
-                    }
-                    catch (Exception ex)
-                    {
-                        var throwEx = new XmlDbUpdateReplayActionException("Error while deserializing xml action string.", ex);
-                        throwEx.Data.Add("XmlActionString", xmlActionString.ToJsonLog());
-                        throw throwEx;
-                    }
-
-                    var logEntry = new XmlDbUpdateActionsLogModel
-                    {
-                        Applied = DateTime.Now,
-                        Ids = string.Join(",", action.Ids),
-                        ParentId = action.ParentId,
-                        UpdateId = updateId,
-                        SourceXml = xmlActionString,
-                        Hash = HashHelpers.CalculateMd5Hash(xmlActionString)
-                    };
-
-                    if (_dbUpdateActionsLogRepository.IsExist(logEntry.Hash))
-                    {
-                        var throwEx = new XmlDbUpdateLoggingException("Current action already applied and exist at XmlDbUpdateAction database.");
-                        throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
-                        throw throwEx;
-                    }
-
-                    var correctedAction = CorrectActionAndReplay(mvcScope, action, backendUrl);
-                    logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(correctedAction, backendUrl).ToString();
-                    _dbUpdateActionsLogRepository.Insert(logEntry);
+                    action = XmlDbUpdateSerializerHelpers.DeserializeAction(xmlAction);
                 }
-            }
-        }
+                catch (Exception ex)
+                {
+                    var throwEx = new XmlDbUpdateReplayActionException("Error while deserializing xml action string.", ex);
+                    throwEx.Data.Add("XmlActionString", xmlActionString.ToJsonLog());
+                    throw throwEx;
+                }
 
-        public XmlDbUpdateRecordedAction CorrectActionAndReplay(MvcScope mvcScope, XmlDbUpdateRecordedAction action, string backendUrl)
-        {
-            try
-            {
-                var recordedAction = _actionsCorrecter.CorrectAction(action);
-                var httpContext = mvcScope.InitializeContext(recordedAction, backendUrl, _userId);
-                return _actionsCorrecter.CorrectReplaces(recordedAction, httpContext);
-            }
-            catch (Exception ex)
-            {
-                var throwEx = new XmlDbUpdateReplayActionException("Error while replaying xml action.", ex);
-                throwEx.Data.Add("ActionToReplay", action.ToJsonLog());
-                throw throwEx;
+                var logEntry = new XmlDbUpdateActionsLogModel
+                {
+                    Applied = DateTime.Now,
+                    Ids = string.Join(",", action.Ids),
+                    ParentId = action.ParentId,
+                    UpdateId = updateId,
+                    SourceXml = xmlActionString,
+                    Hash = HashHelpers.CalculateMd5Hash(xmlActionString),
+                    UserId = _userId
+                };
+
+                if (_dbUpdateActionsLogRepository.IsExist(logEntry.Hash))
+                {
+                    var throwEx = new XmlDbUpdateLoggingException("Current action already applied and exist at XmlDbUpdateAction database.");
+                    throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
+                    throw throwEx;
+                }
+
+                var replayedAction = _actionsCorrecter.EmulateHttpContextRequest(action, backendUrl, _userId);
+                logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToString();
+                _dbUpdateActionsLogRepository.Insert(logEntry);
             }
         }
 

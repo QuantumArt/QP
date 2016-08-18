@@ -9,6 +9,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Security;
+using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
@@ -74,63 +75,81 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return entry;
         }
 
-        internal XmlDbUpdateRecordedAction CorrectReplaces(XmlDbUpdateRecordedAction action, HttpContextBase context)
+        internal XmlDbUpdateRecordedAction EmulateHttpContextRequest(XmlDbUpdateRecordedAction xmlAction, string backendUrl, int userId)
         {
-            var actionTypeCode = action.BackendAction.ActionType.Code;
-            var entityTypeCode = action.BackendAction.EntityType.Code;
+            try
+            {
+                var correctedAction = CorrectAction(xmlAction);
+                FakeMvcApplication.PostAction(correctedAction, backendUrl, userId);
+                /*
+                 * Here was a logic that iterate correctedAction.ChildActions and call CorrectReplaces method
+                 */
+
+                return correctedAction;
+            }
+            catch (Exception ex)
+            {
+                var throwEx = new XmlDbUpdateReplayActionException("Error while replaying xml action.", ex);
+                throwEx.Data.Add("ActionToReplay", xmlAction.ToJsonLog());
+                throw throwEx;
+            }
+        }
+
+        private void CorrectReplaces(XmlDbUpdateRecordedAction correctedAction, HttpContextBase context)
+        {
+            var actionTypeCode = correctedAction.BackendAction.ActionType.Code;
+            var entityTypeCode = correctedAction.BackendAction.EntityType.Code;
 
             if (new[] { ActionTypeCode.AddNew, ActionTypeCode.Copy }.Contains(actionTypeCode))
             {
                 var resultCode = entityTypeCode != EntityTypeCode.VirtualContent ? entityTypeCode : EntityTypeCode.Content;
-                var resultId = action.ResultId != 0 ? action.ResultId : int.Parse(action.Ids[0]);
+                var resultId = correctedAction.ResultId != 0 ? correctedAction.ResultId : int.Parse(correctedAction.Ids[0]);
                 AddIdToReplace(resultCode, resultId, context, "RESULT_ID");
             }
 
-            switch (action.BackendAction.Code)
+            switch (correctedAction.BackendAction.Code)
             {
                 case ActionCode.AddNewVirtualContents:
                 case ActionCode.VirtualContentProperties:
                 case ActionCode.VirtualFieldProperties:
-                    AddIdsToReplace(action.VirtualFieldIds, context, "NEW_VIRTUAL_FIELD_IDS");
+                    AddIdsToReplace(correctedAction.VirtualFieldIds, context, "NEW_VIRTUAL_FIELD_IDS");
                     break;
                 case ActionCode.AddNewContent:
                 case ActionCode.CreateLikeContent:
-                    AddIdsToReplace(action.ChildIds, context, "FIELD_IDS");
-                    AddIdsToReplace(action.ChildLinkIds, context, "LINK_IDS");
+                    AddIdsToReplace(correctedAction.ChildIds, context, "FIELD_IDS");
+                    AddIdsToReplace(correctedAction.ChildLinkIds, context, "LINK_IDS");
                     break;
                 case ActionCode.AddNewField:
                 case ActionCode.FieldProperties:
                 case ActionCode.CreateLikeField:
-                    AddIdToReplace(EntityTypeCode.ContentLink, action.ChildId, context, "NEW_LINK_ID");
-                    AddIdToReplace(EntityTypeCode.Field, action.BackwardId, context, "NEW_BACKWARD_ID");
-                    AddIdsToReplace(action.VirtualFieldIds, context, "NEW_VIRTUAL_FIELD_IDS");
-                    AddIdsToReplace(action.ChildIds, context, "NEW_CHILD_FIELD_IDS");
-                    AddIdsToReplace(action.ChildLinkIds, context, "NEW_CHILD_LINK_IDS");
+                    AddIdToReplace(EntityTypeCode.ContentLink, correctedAction.ChildId, context, "NEW_LINK_ID");
+                    AddIdToReplace(EntityTypeCode.Field, correctedAction.BackwardId, context, "NEW_BACKWARD_ID");
+                    AddIdsToReplace(correctedAction.VirtualFieldIds, context, "NEW_VIRTUAL_FIELD_IDS");
+                    AddIdsToReplace(correctedAction.ChildIds, context, "NEW_CHILD_FIELD_IDS");
+                    AddIdsToReplace(correctedAction.ChildLinkIds, context, "NEW_CHILD_LINK_IDS");
                     break;
                 case ActionCode.AddNewCustomAction:
-                    AddIdToReplace(EntityTypeCode.BackendAction, action.ChildId, context, "ACTION_ID");
+                    AddIdToReplace(EntityTypeCode.BackendAction, correctedAction.ChildId, context, "ACTION_ID");
                     break;
                 case ActionCode.AddNewVisualEditorPlugin:
                 case ActionCode.VisualEditorPluginProperties:
-                    AddIdsToReplace(action.ChildIds, context, "NEW_COMMAND_IDS");
+                    AddIdsToReplace(correctedAction.ChildIds, context, "NEW_COMMAND_IDS");
                     break;
                 case ActionCode.AddNewWorkflow:
                 case ActionCode.WorkflowProperties:
-                    AddIdsToReplace(action.ChildIds, context, "NEW_RULES_IDS");
+                    AddIdsToReplace(correctedAction.ChildIds, context, "NEW_RULES_IDS");
                     break;
                 case ActionCode.AddNewNotification:
                 case ActionCode.NotificationProperties:
-                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, context, "NOTIFICATION_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, correctedAction.ChildId, context, "NOTIFICATION_FORMAT_ID");
                     break;
                 case ActionCode.AddNewPageObject:
-                    AddIdToReplace(EntityTypeCode.PageObjectFormat, action.ChildId, context, "DEFAULT_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.PageObjectFormat, correctedAction.ChildId, context, "DEFAULT_FORMAT_ID");
                     break;
                 case ActionCode.AddNewTemplateObject:
-                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, context, "DEFAULT_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, correctedAction.ChildId, context, "DEFAULT_FORMAT_ID");
                     break;
-            }
-
-            return action;
+            };
         }
 
         internal static XmlDbUpdateRecordedAction CreateActionFromHttpContext(HttpContextBase httpContext, string actionCode, bool ignoreForm)

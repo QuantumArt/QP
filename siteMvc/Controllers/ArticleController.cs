@@ -1,4 +1,6 @@
-﻿using Quantumart.QP8.BLL;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
@@ -9,10 +11,8 @@ using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
-using Quantumart.QP8.WebMvc.ViewModels;
-using System.Collections.Generic;
-using System.Web.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
 using Telerik.Web.Mvc;
 
 // ReSharper disable InconsistentNaming
@@ -211,7 +211,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewArticle)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
         [BackendActionContext(ActionCode.AddNewArticle)]
@@ -224,7 +224,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewArticle)]
         [BackendActionContext(ActionCode.AddNewArticle)]
         [BackendActionLog]
@@ -274,7 +274,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateArticle)]
         [BackendActionContext(ActionCode.UpdateArticle)]
         [BackendActionLog]
@@ -316,7 +316,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikeArticle)]
         [BackendActionContext(ActionCode.CreateLikeArticle)]
         [BackendActionLog]
@@ -331,7 +331,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveArticle)]
         [BackendActionContext(ActionCode.RemoveArticle)]
         [BackendActionLog]
@@ -348,7 +348,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveArticle)]
         [BackendActionContext(ActionCode.MultipleRemoveArticle)]
         [BackendActionLog]
@@ -365,7 +365,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveArticle)]
         [BackendActionContext(ActionCode.RemoveArticle)]
         [BackendActionLog]
@@ -378,7 +378,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveArticleFromArchive)]
         [BackendActionContext(ActionCode.MultipleRemoveArticleFromArchive)]
         [BackendActionLog]
@@ -391,7 +391,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MoveArticleToArchive)]
         [BackendActionContext(ActionCode.MoveArticleToArchive)]
         [BackendActionLog]
@@ -409,7 +409,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RestoreArticleFromArchive)]
         [BackendActionContext(ActionCode.RestoreArticleFromArchive)]
         [BackendActionLog]
@@ -423,7 +423,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultiplePublishArticles)]
         [BackendActionContext(ActionCode.MultiplePublishArticles)]
         [BackendActionLog]
@@ -440,7 +440,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleMoveArticleToArchive)]
         [BackendActionContext(ActionCode.MultipleMoveArticleToArchive)]
         [BackendActionLog]
@@ -457,7 +457,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRestoreArticleFromArchive)]
         [BackendActionContext(ActionCode.MultipleRestoreArticleFromArchive)]
         [BackendActionLog]
@@ -470,7 +470,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CancelArticle)]
         [BackendActionContext(ActionCode.CancelArticle)]
         public ActionResult Cancel(int id)
@@ -481,7 +481,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CaptureLockArticle)]
         [BackendActionContext(ActionCode.CaptureLockArticle)]
         [BackendActionLog]
@@ -493,7 +493,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public ActionResult AggregatedArticle(string tabId, int parentId, int id, int aggregatedContentId)
         {
             var aggregatedArticle = ArticleService.GetAggregatedArticle(id, parentId, aggregatedContentId);
@@ -503,7 +503,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public ActionResult GetContextQuery(int id, string currentContext)
         {
             return Json(ArticleService.GetContextQuery(id, currentContext), JsonRequestBehavior.AllowGet);
@@ -511,7 +511,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public JsonCamelCaseResult<JSendResponse> GetParentIds(List<int> ids, int fieldId, string filter)
         {
             return new JSendResponse
@@ -523,7 +523,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public JsonCamelCaseResult<JSendResponse> GetChildArticleIds(List<int> ids, int fieldId, string filter)
         {
             return new JSendResponse

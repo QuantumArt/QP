@@ -11,9 +11,9 @@ using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure.Services
+namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
 {
-    public class CsvDbUpdateService
+    public class CsvDbUpdateService : ICsvDbUpdateService
     {
         private const char CsvRelationSeparator = ';';
         private readonly string _connectionString;

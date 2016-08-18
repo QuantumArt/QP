@@ -71,9 +71,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 
         private static IEnumerable<XAttribute> GetEntitySpecificAttributesForPersisting(XmlDbUpdateRecordedAction action)
         {
+            var result = new Dictionary<string, object>();
             if (action.BackendAction.ActionType.Code == ActionTypeCode.Copy)
             {
-                yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute, action.ResultId);
+                result.Add(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute, action.ResultId);
             }
 
             switch (action.Code)
@@ -81,53 +82,55 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
                 case ActionCode.AddNewVirtualContents:
                 case ActionCode.VirtualContentProperties:
                 case ActionCode.VirtualFieldProperties:
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionNewVirtualFieldIdsAttribute, action.VirtualFieldIds);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionNewVirtualFieldIdsAttribute, action.VirtualFieldIds);
                     break;
                 case ActionCode.AddNewContent:
                 case ActionCode.CreateLikeContent:
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionFieldIdsAttribute, action.FieldIds);
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionLinkIdsAttribute, action.LinkIds);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionFieldIdsAttribute, action.FieldIds);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionLinkIdsAttribute, action.LinkIds);
                     break;
                 case ActionCode.AddNewField:
                 case ActionCode.FieldProperties:
                 case ActionCode.CreateLikeField:
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionNewVirtualFieldIdsAttribute, action.VirtualFieldIds);
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionNewLinkIdAttribute, action.NewLinkId);
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionNewBackwardIdAttribute, action.BackwardId);
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionNewChildFieldIdsAttribute, action.NewChildFieldIds);
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionNewChildLinkIdsAttribute, action.NewChildLinkIds);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionNewVirtualFieldIdsAttribute, action.VirtualFieldIds);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionNewLinkIdAttribute, action.NewLinkId);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionNewBackwardIdAttribute, action.BackwardId);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionNewChildFieldIdsAttribute, action.NewChildFieldIds);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionNewChildLinkIdsAttribute, action.NewChildLinkIds);
                     break;
                 case ActionCode.AddNewCustomAction:
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionActionId, action.ActionId);
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionActionCode, action.ActionCode);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionActionId, action.ActionId);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionActionCode, action.ActionCode);
                     break;
                 case ActionCode.AddNewVisualEditorPlugin:
                 case ActionCode.VisualEditorPluginProperties:
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionCommandIdsAttribute, action.NewCommandIds);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionCommandIdsAttribute, action.NewCommandIds);
                     break;
                 case ActionCode.AddNewWorkflow:
                 case ActionCode.WorkflowProperties:
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionRulesIdsAttribute, action.NewRulesIds);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionRulesIdsAttribute, action.NewRulesIds);
                     break;
                 case ActionCode.AddNewNotification:
                 case ActionCode.NotificationProperties:
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionFormatIdAttribute, action.NotificationFormatId);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionFormatIdAttribute, action.NotificationFormatId);
                     break;
                 case ActionCode.AddNewPageObject:
                 case ActionCode.AddNewTemplateObject:
-                    yield return new XAttribute(XmlDbUpdateXDocumentConstants.ActionFormatIdAttribute, action.DefaultFormatId);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionFormatIdAttribute, action.DefaultFormatId);
                     break;
             }
+
+            return result.Where(r => r.Value != null).Select(r => new XAttribute(r.Key, r.Value));
         }
 
         private static IEnumerable<XElement> GetActionChildElements(NameValueCollection nvc)
         {
-            return nvc.AllKeys.SelectMany(nvc.GetValues, (fieldNameAttributeValue, fieldElementValue) =>
+            return nvc?.AllKeys.SelectMany(nvc.GetValues, (fieldNameAttributeValue, fieldElementValue) =>
             {
                 var fieldElement = new XElement(XmlDbUpdateXDocumentConstants.FieldElement, fieldElementValue);
                 fieldElement.SetAttributeValue(XmlDbUpdateXDocumentConstants.FieldNameAttribute, fieldNameAttributeValue);
                 return fieldElement;
-            });
+            }) ?? Enumerable.Empty<XElement>();
         }
 
         private static XElement CreateActionsRoot(string backendUrl)
@@ -292,3 +295,4 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
         }
     }
 }
+

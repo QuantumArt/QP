@@ -24,9 +24,9 @@ using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure
 {
-    public class MvcScope : IDisposable
+    public class FakeMvcApplication : IDisposable
     {
-        internal MvcScope()
+        internal FakeMvcApplication()
         {
             MvcApplication.RegisterModelBinders();
             MvcApplication.RegisterModelValidatorProviders();
@@ -38,7 +38,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure
             MvcApplication.RegisterRoutes(new RouteCollection());
         }
 
-        internal HttpContextBase InitializeContext(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId)
+        internal static HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId)
         {
             Ensure.NotNull(QPConnectionScope.Current, "QPConnection scope should be initialized to use fake mvc context");
 
