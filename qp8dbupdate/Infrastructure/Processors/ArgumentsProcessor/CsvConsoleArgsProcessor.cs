@@ -8,17 +8,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
     {
         protected internal override BaseSettingsModel CreateSettingsFromArguments()
         {
-            return new CsvSettingsModel(FilePathes, CustomerCode, ConfigPath)
+            return new CsvSettingsModel(FilePathes, CustomerCode, ConfigPath, new CsvConfiguration
             {
-                CsvConfiguration = new CsvConfiguration
-                {
-                    HasHeaderRecord = true,
-                    TrimFields = true,
-                    TrimHeaders = true,
-                    Encoding = Encoding.GetEncoding("windows-1251"),
-                    HasExcelSeparator = true
-                }
-            };
+                HasHeaderRecord = true,
+                TrimFields = true,
+                TrimHeaders = true,
+                Encoding = Encoding.GetEncoding(1251),
+                HasExcelSeparator = true
+            });
         }
     }
 }

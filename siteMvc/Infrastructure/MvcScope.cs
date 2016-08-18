@@ -19,6 +19,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure
@@ -37,7 +38,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure
             MvcApplication.RegisterRoutes(new RouteCollection());
         }
 
-        internal HttpContextBase InitializeContext(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId = 1)
+        internal HttpContextBase InitializeContext(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId)
         {
             Ensure.NotNull(QPConnectionScope.Current, "QPConnection scope should be initialized to use fake mvc context");
 
@@ -49,7 +50,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure
                 GetRouteData(recordedAction, controllerName, controllerAction)
             );
 
-            BuildController(requestContext, controllerName, recordedAction.Lcid).Execute(requestContext);
+            BuildController(requestContext, controllerName, CultureHelpers.GetCultureInfoByLcid(recordedAction.Lcid)).Execute(requestContext);
             return requestContext.HttpContext;
         }
 
@@ -268,7 +269,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure
             return data;
         }
 
-        private static IController BuildController(RequestContext requestContext, string controllerName, int lcid)
+        private static IController BuildController(RequestContext requestContext, string controllerName, CultureInfo cultureInfo)
         {
             var controller = new DefaultControllerFactory().CreateController(requestContext, controllerName) as ControllerBase;
             if (controller == null)
@@ -276,7 +277,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure
                 throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Controller '{0}' is not found ", controllerName));
             }
 
-            var cultureInfo = lcid == 0 ? CultureInfo.InvariantCulture : new CultureInfo(lcid);
             controller.ControllerContext = new ControllerContext(requestContext.HttpContext, requestContext.RouteData, controller);
             controller.ValueProvider = new ValueProviderCollection(new[]
             {

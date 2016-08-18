@@ -62,14 +62,13 @@ namespace Quantumart.Test
             }
         }
 
-
         [OneTimeSetUp]
         public static void Init()
         {
             QPContext.UseConnectionString = true;
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
-            service.Process(Global.GetXml(@"xmls\files.xml"), null);
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString, 1);
+            service.Process(Global.GetXml(@"xmls\files.xml"));
             Cnn = new DBConnector(Global.ConnectionString)
             {
                 DynamicImageCreator = new FakeDynamicImage(),

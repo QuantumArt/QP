@@ -140,9 +140,9 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <param name="value">String value to compare</param>
         /// <param name="message">Message of the exception if value is null or empty</param>
         /// <exception cref="Exception">string value is null or empty</exception>
-        public static void NotNullOrEmpty(string value, string message = "String cannot be null or empty")
+        public static void NotNullOrWhiteSpace(string value, string message = "String cannot be null or empty")
         {
-            That(!string.IsNullOrWhiteSpace(value), message);
+            That(string.IsNullOrWhiteSpace(value), message);
         }
 
         /// <summary>
@@ -197,7 +197,7 @@ namespace Quantumart.QP8.BLL.Helpers
             /// <exception cref="ArgumentException">
             ///     Thrown if <paramref cref="value"/> is null or empty string
             /// </exception>
-            public static void NotNullOrEmpty(string value, string paramName = "")
+            public static void NotNullOrWhiteSpace(string value, string paramName = "")
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {

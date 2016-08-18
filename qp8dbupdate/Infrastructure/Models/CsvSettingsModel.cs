@@ -7,9 +7,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
     {
         public CsvConfiguration CsvConfiguration { get; set; }
 
-        public CsvSettingsModel(IList<string> filePathes, string customerCode, string configPath)
+        public CsvSettingsModel(IList<string> filePathes, string customerCode, string configPath, CsvConfiguration csvConfiguration)
             : base(filePathes, customerCode, configPath)
         {
+            CsvConfiguration = csvConfiguration;
         }
     }
 }

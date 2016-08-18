@@ -2,6 +2,9 @@
 
 namespace Quantumart.QP8.BLL.Interfaces.Logging
 {
+    /// <summary>
+    /// Manager to create logger from selected factory
+    /// </summary>
     public class LogManager
     {
         private static ILogFactory _logFactory;

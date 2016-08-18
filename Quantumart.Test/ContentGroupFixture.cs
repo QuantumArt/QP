@@ -21,7 +21,7 @@ namespace Quantumart.Test
             QPContext.UseConnectionString = true;
 
             var identityOptions = new HashSet<string>(new[] {EntityTypeCode.ContentGroup});
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString, identityOptions);
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString, identityOptions, 1);
             Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"xmls\group.xml")), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             var id = (decimal)cnn.GetRealScalarData(new SqlCommand($"SELECT content_group_id FROM content_group WHERE name = '{GroupName}'"));
@@ -35,7 +35,7 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString, 1);
             Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"xmls\group.xml").Replace(GroupName, NewGroupName)), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             var id = (decimal)cnn.GetRealScalarData(new SqlCommand($"SELECT content_group_id FROM content_group WHERE name = '{NewGroupName}'"));

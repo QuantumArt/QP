@@ -40,6 +40,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             return CombineMultipleDocumentsWithSameRoot(orderedFilePathes.Select(XDocument.Load).ToList()).ToStringWithDeclaration();
         }
 
+        private static IEnumerable<string> GetOrderedDirectoryFilePathes(string absDirPath, string absOrRelativeConfigPath)
+        {
+            var config = string.IsNullOrWhiteSpace(absOrRelativeConfigPath)
+                ? GetDefaultXmlReaderSettings(absDirPath)
+                : GetXmlReaderSettings(absDirPath, absOrRelativeConfigPath);
+
+            return config.FilePathes;
+        }
+
         private static XmlReaderSettings GetDefaultXmlReaderSettings(string absDirPath)
         {
             return new XmlReaderSettings(Directory.EnumerateFiles(absDirPath, "*.xml", SearchOption.TopDirectoryOnly).OrderBy(fn => fn).ToList());
@@ -61,15 +70,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             var xmlData = XDocument.Load(configPath);
             var actionNodes = xmlData.Root.Elements(XmlReaderSettings.ConfigElementNodeName).Where(el => el.NodeType != XmlNodeType.Comment);
             return new XmlReaderSettings(actionNodes.Select(node => Path.Combine(absDirPath, node.Attribute(XmlReaderSettings.ConfigElementPathAttribute).Value)).ToList());
-        }
-
-        private static IEnumerable<string> GetOrderedDirectoryFilePathes(string absDirPath, string absOrRelativeConfigPath)
-        {
-            var config = string.IsNullOrWhiteSpace(absOrRelativeConfigPath)
-                ? GetDefaultXmlReaderSettings(absDirPath)
-                : GetXmlReaderSettings(absDirPath, absOrRelativeConfigPath);
-
-            return config.FilePathes;
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]

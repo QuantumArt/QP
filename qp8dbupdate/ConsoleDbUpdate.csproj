@@ -59,6 +59,7 @@
     <Compile Include="Infrastructure\FileSystemReaders\CsvReaderProcessor.cs" />
     <Compile Include="Infrastructure\FileSystemReaders\CsvReaderSettings.cs" />
     <Compile Include="Infrastructure\Helpers\ConsoleHelpers.cs" />
+    <Compile Include="Infrastructure\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Infrastructure\Models\BaseSettingsModel.cs" />
     <Compile Include="EmbeddedAssemblyManager.cs" />
     <Compile Include="Infrastructure\Factories\DataProcessorFactory.cs" />
@@ -70,6 +71,7 @@
     <Compile Include="Infrastructure\Processors\DataProcessor\IDataProcessor.cs" />
     <Compile Include="Infrastructure\Processors\DataProcessor\XmlDataProcessor.cs" />
     <Compile Include="Infrastructure\Models\XmlSettingsModel.cs" />
+    <Compile Include="Infrastructure\Adapters\QpUpdateLoggingWrapper.cs" />
     <Compile Include="Infrastructure\Utf8StringWriter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,9 +85,6 @@
     <EmbeddedResource Include="..\packages\NLog.4.3.6\lib\net45\NLog.dll">
       <Link>References\NLog.dll</Link>
     </EmbeddedResource>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -289,6 +288,11 @@
   <ItemGroup>
     <EmbeddedResource Include="..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll">
       <Link>References\Mono.Options.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\packages\CsvHelper.2.16.0.0\lib\net45\CsvHelper.dll">
+      <Link>References\CsvHelper.dll</Link>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

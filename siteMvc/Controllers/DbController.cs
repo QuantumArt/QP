@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System;
 using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
@@ -90,7 +90,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public FileResult GetRecordedUserActions()
         {
-            return File(XmlDbUpdateXDocumentConstants.XmlFilePath, MediaTypeNames.Application.Octet, XmlDbUpdateXDocumentConstants.XmlFilePath.Split('\\').Last());
+            return File(XmlDbUpdateXDocumentConstants.XmlFilePath, MediaTypeNames.Application.Octet, $"{QPContext.CurrentCustomerCode}_{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.xml");
         }
 
         [HttpPost]
@@ -101,7 +101,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             try
             {
-                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity).Process(xmlString);
+                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId).Process(xmlString);
             }
             catch (XmlDbUpdateLoggingException ex)
             {

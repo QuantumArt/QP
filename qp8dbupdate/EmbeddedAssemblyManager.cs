@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.ConsoleDbUpdate
 {
@@ -17,10 +18,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             LoadQpAssemblies();
 
             AppDomain.CurrentDomain.AssemblyResolve += (obj, args) => Get(args.Name);
+            ConsoleHelpers.WriteLineDebug();
         }
 
-        public static void Load(string embeddedResource, string fileName)
+        public static void Load(string embeddedResourceName, string fileName)
         {
+            ConsoleHelpers.WriteDebug($"Loading assembly. EmbeddedResourceName: {embeddedResourceName}. FileName: {fileName}. ");
+
             if (_mapFullnameToAssembly == null)
             {
                 _mapFullnameToAssembly = new Dictionary<string, Assembly>();
@@ -31,11 +35,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 _mapShortNameToAssembly = new Dictionary<string, Assembly>();
             }
 
-            using (var stm = Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResource))
+            using (var stm = Assembly.GetExecutingAssembly().GetManifestResourceStream(embeddedResourceName))
             {
                 if (stm == null)
                 {
-                    throw new Exception(embeddedResource + " is not found in Embedded Resources.");
+                    throw new Exception(embeddedResourceName + " is not found in Embedded Resources");
                 }
 
                 var ba = new byte[(int)stm.Length];
@@ -48,8 +52,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 }
                 catch
                 {
+                    ConsoleHelpers.WriteLineDebug("Loading was failed. Try to load from temp path");
                     LoadFromTempPath(fileName, ba);
                 }
+
+                ConsoleHelpers.WriteLineDebug("Finished.");
             }
         }
 
@@ -81,6 +88,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
         public static Assembly Get(string assemblyFullName)
         {
+            ConsoleHelpers.WriteLineDebug($"Resolving assembly: {assemblyFullName}");
             if ((_mapFullnameToAssembly == null) || (_mapFullnameToAssembly.Count == 0))
             {
                 return null;
@@ -96,7 +104,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 return _mapShortNameToAssembly[assemblyFullName];
             }
 
-            return null;
+            if (assemblyFullName.Contains(","))
+            {
+                var shortenedName = assemblyFullName.Substring(0, assemblyFullName.IndexOf(","));
+                if (_mapShortNameToAssembly.ContainsKey(shortenedName))
+                {
+                    return _mapShortNameToAssembly[shortenedName];
+                }
+            }
+
+            throw new Exception($"{assemblyFullName} couldn't be successfully resolved");
         }
 
         internal static void LoadVendorAssemblies()
@@ -109,16 +126,18 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.System.Web.Mvc.dll", "System.Web.Helpers.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Owin.dll", "Microsoft.Owin.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.AspNet.SignalR.Core.dll", "Microsoft.AspNet.SignalR.Core.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Logging.dll", "Microsoft.Practices.EnterpriseLibrary.Logging.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Newtonsoft.Json.dll", "Newtonsoft.Json.dll");
 
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.dll", "Microsoft.Practices.Unity.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.Configuration.dll", "Microsoft.Practices.Unity.Configuration.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.ServiceLocation.dll", "Microsoft.Practices.ServiceLocation.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.Interception.dll", "Microsoft.Practices.Unity.Interception.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.Configuration.dll", "Microsoft.Practices.Unity.Configuration.dll");
+
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Common.dll", "Microsoft.Practices.EnterpriseLibrary.Common.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Logging.dll", "Microsoft.Practices.EnterpriseLibrary.Logging.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Validation.dll", "Microsoft.Practices.EnterpriseLibrary.Validation.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll", "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll");
+
             Load("Quantumart.QP8.ConsoleDbUpdate.References.AutoMapper.dll", "AutoMapper.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.EFExtensions.dll", "EFExtensions.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Irony.dll", "Irony.dll");
@@ -127,6 +146,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Telerik.Web.Mvc.dll", "Telerik.Web.Mvc.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.WebActivatorEx.dll", "WebActivatorEx.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Mono.Options.dll", "Mono.Options.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.CsvHelper.dll", "CsvHelper.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.NLog.dll", "NLog.dll");
         }
 

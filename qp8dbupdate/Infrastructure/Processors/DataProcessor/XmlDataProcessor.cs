@@ -14,7 +14,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         {
             _settings = settings;
             QPContext.CurrentCustomerCode = _settings.CustomerCode;
-            _xmlDbUpdateReplayService = new XmlDbUpdateReplayService(_settings.DisableFieldIdentity, _settings.DisableContentIdentity);
+            _xmlDbUpdateReplayService = new XmlDbUpdateReplayService(_settings.DisableFieldIdentity, _settings.DisableContentIdentity, _settings.UserId);
         }
 
         public void Process()

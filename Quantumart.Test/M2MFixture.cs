@@ -18,7 +18,9 @@ namespace Quantumart.Test
     public class M2MFixture
     {
         public static int NoneId { get; private set; }
+
         public static int PublishedId { get; private set; }
+
         public static DBConnector Cnn { get; private set; }
 
         public static int ContentId { get; private set; }
@@ -44,8 +46,8 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
-            service.Process(Global.GetXml(@"xmls\m2m.xml"), null);
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString, 1);
+            service.Process(Global.GetXml(@"xmls\m2m.xml"));
             Cnn = new DBConnector(Global.ConnectionString) {ForceLocalCache = true};
             ContentName = "Test M2M";
             ContentId = Global.GetContentId(Cnn, ContentName);
@@ -59,7 +61,6 @@ namespace Quantumart.Test
             NoneId = Cnn.GetStatusTypeId(Global.SiteId, "None");
             PublishedId = Cnn.GetStatusTypeId(Global.SiteId, "Published");
         }
-
 
         [Test]
         public void MassUpdate_SplitAndMergeData_ForStatusChanging()

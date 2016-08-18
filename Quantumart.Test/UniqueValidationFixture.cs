@@ -28,14 +28,13 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
-            service.Process(Global.GetXml(@"xmls\unique.xml"), null);
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString, 1);
+            service.Process(Global.GetXml(@"xmls\unique.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test unique";
             ContentId = Global.GetContentId(Cnn, ContentName);
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
         }
-
 
         [Test]
         public void MassUpdate_DoesntThrowException_SelfValidateForNonExistingFields()
@@ -225,7 +224,8 @@ namespace Quantumart.Test
                 var tr = conn.BeginTransaction();
                 DBConnector localCnn = new DBConnector(conn, tr);
 
-                Assert.DoesNotThrow(() => {
+                Assert.DoesNotThrow(() =>
+                {
                     localCnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
                 }, "Update existing data");
 
@@ -295,7 +295,8 @@ namespace Quantumart.Test
 
             var modified = Global.GetModified(Cnn, ContentId);
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
             }, "Update existing data");
 

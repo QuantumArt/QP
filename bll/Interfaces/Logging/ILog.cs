@@ -16,6 +16,38 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         bool IsDebugEnabled { get; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is info enabled.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// </value>
+        bool IsInfoEnabled { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is warn enabled.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// </value>
+        bool IsWarnEnabled { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is error enabled.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// </value>
+        bool IsErrorEnabled { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether this instance is fatal enabled.
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// </value>
+        bool IsFatalEnabled { get; }
+
+        /// <summary>
         /// Logs a Debug message.
         /// </summary>
         /// <param name="message">The message.</param>

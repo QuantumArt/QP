@@ -4,7 +4,6 @@ using System.Linq;
 using Mono.Options;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
-using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProcessor
 {
@@ -39,7 +38,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             Console.WriteLine("Config: " + (string.IsNullOrWhiteSpace(ConfigPath) ? "disabled" : ConfigPath));
             Console.WriteLine("Verbosity Level: " + VerboseLevel);
             Console.WriteLine();
-            ConsoleHelpers.MakeSureUserWantToContinue();
+
+            if (!Program.IsSilentModeEnabled)
+            {
+                ConsoleHelpers.MakeSureUserWantToContinue();
+            }
         }
 
         public BaseSettingsModel ParseConsoleArguments(string[] args)
@@ -57,12 +60,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
                 ValidateInputData(noNamedOptions);
             }
-            catch (OptionException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + Environment.NewLine);
                 Console.WriteLine("Try `qp8update --help' for more information.");
                 Console.WriteLine(Environment.NewLine);
-                throw new XmlDbUpdateReplayActionException("There was an error while parsing options", ex);
+                throw;
             }
 
             Console.WriteLine("Parsing is started. Selected options: ");
@@ -76,6 +79,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             optionSet.Add("p|path=", "single or multiple <path> to file|directory with xml|csv record actions to replay.", p => FilePathes.Add(p));
             optionSet.Add("c|config=", "the <path> of xml|csv config file to apply", c => ConfigPath = c);
             optionSet.Add("v|verbose", "increase debug message verbosity", v => ++VerboseLevel);
+            optionSet.Add("s|silent", "enable silent mode for automatization", s => { });
+            optionSet.Add("m|mode=", "single value which represents utility mode [xml|csv].", m => { });
             optionSet.Add("h|help", "show this message and exit", h => ShouldShowHelp = h != null);
             return optionSet;
         }
@@ -104,9 +109,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             Console.WriteLine("USAGE: qp8update [OPTIONS]+ <customer_code>" + Environment.NewLine);
             Console.WriteLine("OPTIONS:");
             optionsSet.WriteOptionDescriptions(Console.Out);
-
-            Console.WriteLine(Environment.NewLine);
-            Environment.Exit(0);
+            ConsoleHelpers.ExitProgram(0);
         }
     }
 }

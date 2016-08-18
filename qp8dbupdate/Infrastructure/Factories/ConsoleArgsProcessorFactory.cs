@@ -22,7 +22,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                     break;
                 case ConsoleKey.D3:
                 case ConsoleKey.NumPad3:
-                    Environment.Exit(0);
+                    ConsoleHelpers.ExitProgram(0);
                     break;
                 default:
                     ConsoleHelpers.ClearAndPrintHeader("Unknown option. Try again...");

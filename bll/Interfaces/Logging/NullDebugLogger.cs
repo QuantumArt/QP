@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Quantumart.QP8.BLL.Interfaces.Logging
 {
+    [SuppressMessage("ReSharper", "UnusedMember.Local")]
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public class NullDebugLogger : ILog
     {
@@ -19,6 +20,14 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         public void Debug(object message, Exception exception) { }
 
         public bool IsDebugEnabled { get; set; }
+
+        public bool IsInfoEnabled { get; set; }
+
+        public bool IsWarnEnabled { get; set; }
+
+        public bool IsErrorEnabled { get; set; }
+
+        public bool IsFatalEnabled { get; set; }
 
         public void Debug(object message) { }
 

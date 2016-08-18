@@ -20,6 +20,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
     public class XmlDbUpdateReplayService : IXmlDbUpdateReplayService
     {
+        private readonly int _userId;
+
         private readonly string _connectionString;
 
         private readonly HashSet<string> _identityInsertOptions;
@@ -30,20 +32,21 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateActionsLogRepository _dbUpdateActionsLogRepository;
 
-        public XmlDbUpdateReplayService(string connectionString)
-            : this(connectionString, null)
+        public XmlDbUpdateReplayService(string connectionString, int userId)
+            : this(connectionString, null, userId)
         {
         }
 
-        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity)
-            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity))
+        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId)
+            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions)
+        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId)
         {
-            Ensure.NotNullOrEmpty(_connectionString, "Connection string should be initialized");
+            Ensure.NotNullOrWhiteSpace(_connectionString, "Connection string should be initialized");
 
+            _userId = userId;
             _connectionString = connectionString;
             _identityInsertOptions = identityInsertOptions;
             _actionsCorrecter = new XmlDbUpdateActionCorrectionService();
@@ -52,7 +55,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public void Process(string xmlString, IList<string> filePathes = null)
         {
-            Ensure.Argument.NotNullOrEmpty(xmlString, nameof(xmlString));
+            Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
             ValidateReplayInput(filteredXmlDocument);
@@ -133,7 +136,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             try
             {
                 var recordedAction = _actionsCorrecter.CorrectAction(action);
-                var httpContext = mvcScope.InitializeContext(recordedAction, backendUrl);
+                var httpContext = mvcScope.InitializeContext(recordedAction, backendUrl, _userId);
                 return _actionsCorrecter.CorrectReplaces(recordedAction, httpContext);
             }
             catch (Exception ex)

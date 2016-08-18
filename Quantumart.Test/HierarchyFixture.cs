@@ -32,8 +32,8 @@ namespace Quantumart.Test
         {
             QPContext.UseConnectionString = true;
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
-            service.Process(Global.GetXml(@"xmls\hierarchy.xml"), null);
+            var service = new XmlDbUpdateReplayService(Global.ConnectionString, 1);
+            service.Process(Global.GetXml(@"xmls\hierarchy.xml"));
             RegionContentName = "test regions";
             ProductContentName = "test products";
 

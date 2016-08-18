@@ -2,3 +2,4 @@ MultipleUpdate
 OptimizeHierarchy
 VeButtons
 HierarchyContextMenu
+ConsoleDbUpdate

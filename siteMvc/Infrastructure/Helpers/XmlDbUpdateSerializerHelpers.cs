@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -24,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute, string.Join(",", action.Ids)),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionParentIdAttribute, action.ParentId),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionLcidAttribute, action.Lcid),
-                new XAttribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute, action.Executed.ToString(CultureInfo.InvariantCulture)),
+                new XAttribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute, action.Executed.ToString(CultureHelpers.GetCultureInfoByLcid(action.Lcid))),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionExecutedByAttribute, action.ExecutedBy),
                 GetEntitySpecificAttributesForPersisting(action),
                 GetActionChildElements(action.Form))
@@ -35,12 +33,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 
         internal static XmlDbUpdateRecordedAction DeserializeAction(XElement action)
         {
+            var lcid = GetLcid(action);
             return new XmlDbUpdateRecordedAction
             {
                 Code = GetCode(action),
                 Ids = GetIds(action),
                 ParentId = GetParentId(action),
-                Lcid = GetLcid(action),
+                Lcid = lcid,
                 BackwardId = GetBackwardId(action),
                 VirtualFieldIds = GetVirtualFieldIds(action),
                 ChildId = GetChildIdByCode(action),
@@ -49,7 +48,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
                 ResultId = GetResultIdByCode(action),
                 CustomActionCode = GetCustomActionCodeByCode(action),
                 Form = GetActionFields(action),
-                Executed = GetExecuted(action),
+                Executed = GetExecuted(action, lcid),
                 ExecutedBy = GetExecutedBy(action)
             };
         }
@@ -282,9 +281,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             });
         }
 
-        private static DateTime GetExecuted(XElement action)
+        private static DateTime GetExecuted(XElement action, int lcid)
         {
-            return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value);
+            return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value, CultureHelpers.GetCultureInfoByLcid(lcid));
         }
 
         private static string GetExecutedBy(XElement action)

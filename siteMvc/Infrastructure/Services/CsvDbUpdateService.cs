@@ -26,7 +26,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services
 
         public CsvDbUpdateService(int userId, string connectionString)
         {
-            Ensure.NotNullOrEmpty(connectionString, "Connection string should be initialized");
+            Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
             _connectionString = connectionString;
             _articleService = new ArticleService(connectionString, userId);
