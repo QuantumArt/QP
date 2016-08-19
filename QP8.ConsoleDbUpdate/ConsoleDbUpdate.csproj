@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.ConsoleDbUpdate</RootNamespace>
-    <AssemblyName>qp8dbupdate</AssemblyName>
+    <AssemblyName>qpdbupdate</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
@@ -47,14 +47,20 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Quantumart.QP8.ConsoleDbUpdate.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\Enums\ConsoleLogLevel.cs" />
+    <Compile Include="Infrastructure\Enums\ExitCode.cs" />
     <Compile Include="Infrastructure\Factories\ConsoleArgsProcessorFactory.cs" />
     <Compile Include="Infrastructure\FileSystemReaders\CsvReaderProcessor.cs" />
     <Compile Include="Infrastructure\FileSystemReaders\CsvReaderSettings.cs" />
@@ -299,6 +305,9 @@
     <EmbeddedResource Include="..\packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Data.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="favicon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,5 +1,6 @@
 using System;
 using Mono.Options;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 {
@@ -39,7 +40,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
             Console.Write("Continue processing (y/n): ");
             if (Console.ReadKey().Key != ConsoleKey.Y)
             {
-                ExitProgram(0);
+                ExitProgram(ExitCode.Success);
             }
 
             Console.WriteLine(Environment.NewLine);
@@ -57,34 +58,32 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 
         internal static ConsoleKey GetUtilityMode(string[] args)
         {
-            var utilityMode = string.Empty;
+            var utilityMode = "ask";
             var options = new OptionSet
             {
                 { "m|mode=", m => { utilityMode = m; } },
-                { "s|silent", "enable silent mode for automatization", s => Program.IsSilentModeEnabled = s != null }
+                { "s|silent", "enable silent mode for automatization", s => Program.IsSilentModeEnabled = s != null },
+                { "v|verbose", "increase debug message verbosity. [v|vv|vvv]:[error|warning|info]", v => ++Program.VerboseLevel }
             };
 
             options.Parse(args);
-            if (!Program.IsSilentModeEnabled)
-            {
-                return AskUserToSelectUtilityMode();
-            }
-
             switch (utilityMode.ToLower())
             {
                 case "xml":
                     return ConsoleKey.NumPad1;
                 case "csv":
                     return ConsoleKey.NumPad2;
+                case "ask":
+                    return AskUserToSelectUtilityMode();
             }
 
             throw new OptionException("Unexpected utility mode was specified", "m|mode=");
         }
 
-        internal static void ExitProgram(int exitCode)
+        internal static void ExitProgram(ExitCode exitCode)
         {
             Program.Logger.Flush();
-            Environment.Exit(exitCode);
+            Environment.Exit((int)exitCode);
         }
     }
 }

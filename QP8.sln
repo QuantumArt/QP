@@ -53,7 +53,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merger", "Merger\Merger.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.Test", "Quantumart.Test\Quantumart.Test.csproj", "{712F28B9-2390-4358-895C-1A3002ECA068}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDbUpdate", "qp8dbupdate\ConsoleDbUpdate.csproj", "{0978B8F2-3561-4E20-8ED3-91917B0600D0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDbUpdate", "QP8.ConsoleDbUpdate\ConsoleDbUpdate.csproj", "{0978B8F2-3561-4E20-8ED3-91917B0600D0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.FunctionalTests", "QP8.FunctionalTests\QP8.FunctionalTests.csproj", "{3DFA052F-930F-4914-BD6D-66E982CC31A3}"
 EndProject

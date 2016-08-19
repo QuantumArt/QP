@@ -1,4 +1,5 @@
 ﻿using System;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProcessor;
 
@@ -9,7 +10,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
         internal static BaseConsoleArgsProcessor Create(ConsoleKey userSelectedMode)
         {
             BaseConsoleArgsProcessor processor = null;
-            switch (userSelectedMode) {
+            switch (userSelectedMode)
+            {
                 case ConsoleKey.D1:
                 case ConsoleKey.NumPad1:
                     processor = new XmlConsoleArgsProcessor();
@@ -22,7 +24,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                     break;
                 case ConsoleKey.D3:
                 case ConsoleKey.NumPad3:
-                    ConsoleHelpers.ExitProgram(0);
+                    ConsoleHelpers.ExitProgram(ExitCode.Success);
                     break;
                 default:
                     ConsoleHelpers.ClearAndPrintHeader("Unknown option. Try again...");

@@ -123,10 +123,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.System.Web.WebPages.dll", "System.Web.WebPages.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.System.Web.WebPages.Razor.dll", "System.Web.WebPages.Razor.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.System.Web.WebPages.Deployment.dll", "System.Web.WebPages.Deployment.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.System.Web.Mvc.dll", "System.Web.Helpers.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Owin.dll", "Microsoft.Owin.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.AspNet.SignalR.Core.dll", "Microsoft.AspNet.SignalR.Core.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Newtonsoft.Json.dll", "Newtonsoft.Json.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.System.Web.Mvc.dll", "System.Web.Helpers.dll");
 
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.dll", "Microsoft.Practices.Unity.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.ServiceLocation.dll", "Microsoft.Practices.ServiceLocation.dll");

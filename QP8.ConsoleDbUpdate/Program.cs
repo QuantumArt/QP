@@ -1,6 +1,7 @@
 ﻿using System;
 using Mono.Options;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
@@ -11,6 +12,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 {
     internal class Program
     {
+        internal static int VerboseLevel;
         internal static bool IsSilentModeEnabled;
         internal static /*TODO: readonly ILog*/ QpUpdateLoggingWrapper Logger;
 
@@ -18,7 +20,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         {
             try
             {
-                //EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
+                EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
             }
             catch (Exception ex)
             {
@@ -31,13 +33,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         public static void Main(string[] args)
         {
             Logger = new QpUpdateLoggingWrapper();
-            var exitCode = 0;
             Logger.Debug($"Console db updater is started. Args: {args.ToJsonLog()}");
 
             try
             {
                 ConsoleHelpers.PrintHelloMessage();
                 var selectedMode = ConsoleHelpers.GetUtilityMode(args);
+                Logger.SetLogLevel(VerboseLevel);
+
                 var argsParser = ConsoleArgsProcessorFactory.Create(selectedMode);
                 var settings = argsParser.ParseConsoleArguments(args);
                 Logger.Debug($"Parsed settings: {settings.ToJsonLog()}");
@@ -46,28 +49,28 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 dataProcessor.Process();
 
                 Console.WriteLine("Processing successfuly finished...");
+                ConsoleHelpers.ExitProgram(ExitCode.Success);
             }
             catch (OptionException ex)
             {
                 Logger.Error($"Some params to qpupdate utility was wrong. Option name: \"{ex.OptionName}\"", ex);
-                exitCode = 1;
+                ConsoleHelpers.ExitProgram(ExitCode.Error);
             }
             catch (XmlDbUpdateLoggingException ex)
             {
                 Logger.Warn("Some problems were countered while updating database", ex);
-                exitCode = 2;
+                ConsoleHelpers.ExitProgram(ExitCode.DbUpdateError);
             }
             catch (XmlDbUpdateReplayActionException ex)
             {
                 Logger.Error("There was a problem while replaying xml db update process", ex);
+                ConsoleHelpers.ExitProgram(ExitCode.Error);
             }
             catch (Exception ex)
             {
                 Logger.Fatal("There was an unexpected exception in xml db updater", ex);
-                exitCode = 1;
+                ConsoleHelpers.ExitProgram(ExitCode.Error);
             }
-
-            ConsoleHelpers.ExitProgram(exitCode);
         }
     }
 }
