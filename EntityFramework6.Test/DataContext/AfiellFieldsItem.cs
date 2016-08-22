@@ -46,3 +46,4 @@ namespace EntityFramework6.Test.DataContext
 		#endregion
 	}
 }
+	

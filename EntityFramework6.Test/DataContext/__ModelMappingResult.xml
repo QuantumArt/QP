@@ -34,7 +34,9 @@
   <content id="627" name="ReplacingPlaceholdersItem" mapped_name="ReplacingPlaceholdersItem" plural_mapped_name="ReplacingPlaceholdersItems" use_default_filtration="true" virtual="0" user_query="0">
     <attribute name="Title" mapped_name="Title" id="38039" type="String" is_localization="false" size="255" />
   </content>
-  <content id="628" name="FileFieldsItem" mapped_name="FileFieldsItem" plural_mapped_name="FileFieldsItems" use_default_filtration="true" virtual="0" user_query="0" />
+  <content id="628" name="FileFieldsItem" mapped_name="FileFieldsItem" plural_mapped_name="FileFieldsItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="FileItem" mapped_name="FileItem" id="38041" type="File" is_localization="false" />
+  </content>
   <content id="629" name="SymmetricRelationItems" mapped_name="SymmetricRelationItem" plural_mapped_name="SymmetricRelationItems" use_default_filtration="true" virtual="0" user_query="0">
     <attribute name="M2MSymmField" mapped_name="M2MSymmField" id="38044" type="M2M" is_localization="false" related_content_id="630" link_id="98" use_separate_reverse_views="false" />
   </content>
@@ -51,8 +53,4 @@
   <status_type id="146" name="Approved" site_id="53" />
   <status_type id="147" name="Published" site_id="53" />
   <status_type id="148" name="None" site_id="53" />
-  <status_type id="161" name="Created" site_id="57" />
-  <status_type id="162" name="Approved" site_id="57" />
-  <status_type id="163" name="Published" site_id="57" />
-  <status_type id="164" name="None" site_id="57" />
 </schema>

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<schema connectionStringName="qp_database" class="EF6Model" namespace="QA.EF" useLongUrls="true" replaceUrls="true" dbIndependent="true" isPartial="true" sendNotifications="false" siteName="original_site" siteId="52" forStage="true" connectionString="Initial Catalog=qp_ef6_test;Data Source=MSCSQL01;Workstation ID=MSCDEV02;User ID=publishing;Password=QuantumartHost.SQL" connectionStringObject="System.Configuration.ConfigurationManager.ConnectionStrings">
+  <content id="618" name="AfiellFieldsItem" mapped_name="AfiellFieldsItem" plural_mapped_name="AfiellFieldsItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringField" mapped_name="String" id="38004" type="String" is_localization="false" size="255" />
+    <attribute name="IntegerField" mapped_name="Integer" id="38005" type="Numeric" is_localization="false" size="0" is_long="false" />
+    <attribute name="DecimalField" mapped_name="Decimal" id="38006" type="Numeric" is_localization="false" size="2" is_long="true" />
+    <attribute name="BooleanFiled" mapped_name="Boolean" id="38007" type="Boolean" is_localization="false" />
+    <attribute name="DateField" mapped_name="Date" id="38008" type="Date" is_localization="false" />
+    <attribute name="TimeField" mapped_name="Time" id="38009" type="Time" is_localization="false" />
+    <attribute name="DateTimeField" mapped_name="DateTime" id="38010" type="DateTime" is_localization="false" />
+    <attribute name="FileField" mapped_name="File" id="38011" type="File" is_localization="false" />
+    <attribute name="ImageField" mapped_name="Image" id="38012" type="Image" is_localization="false" />
+    <attribute name="TextBoxField" mapped_name="TextBox" id="38013" type="Textbox" is_localization="false" />
+    <attribute name="VisualEditField" mapped_name="VisualEdit" id="38014" type="VisualEdit" is_localization="false" />
+    <attribute name="DynamicImageField" mapped_name="DynamicImage" id="38015" type="Dynamic Image" is_localization="false" />
+    <attribute name="EnumField" mapped_name="Enum" id="38016" type="String" is_localization="false" size="255" />
+  </content>
+  <status_type id="141" name="Created" site_id="52" />
+  <status_type id="142" name="Approved" site_id="52" />
+  <status_type id="143" name="Published" site_id="52" />
+  <status_type id="144" name="None" site_id="52" />
+  <status_type id="145" name="Created" site_id="53" />
+  <status_type id="146" name="Approved" site_id="53" />
+  <status_type id="147" name="Published" site_id="53" />
+  <status_type id="148" name="None" site_id="53" />
+</schema>
