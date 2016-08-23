@@ -10,7 +10,8 @@ namespace EntityFramework6.Test.Tests.ReadContentData
     {
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        public void Check_That_Published_nonSplitted_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        //public void Check_That_Published_nonSplitted_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
+        public void Check_That_Published_nonSplitted_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -21,21 +22,22 @@ namespace EntityFramework6.Test.Tests.ReadContentData
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        public void Check_That_nonPublished_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        //public void Check_That_nonPublished_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
+        public void Check_That_nonPublished_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
-                var items = context.PublishedNotPublishedItems.Where(x => x.StatusTypeId == 144).ToArray();
+                var status = GetNonPublishedStatus(mapping);
+                var items = context.PublishedNotPublishedItems.Where(x => x.StatusTypeId == status).ToArray();
                 Assert.That(items, Is.Not.Null.And.Not.Empty);
             }
         }
 
         private static string ALIAS_FOR_SPLITTED_ARTICLES = "SplittedItem";
         private static string TITLE_FOR_SPLITTED_ARTICLES = "SplittedArticle";
-        private static string TITLE_FOR_SPLITTED_PPUBLISHED_ARTICLES = "PublishArticle";
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        public void Check_That_Splitted_Article_isLoaded_Splitted_Version([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Splitted_Article_isLoaded_Splitted_Version([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -46,7 +48,7 @@ namespace EntityFramework6.Test.Tests.ReadContentData
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        public void Check_That_Archive_Article_notLoaded([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Archive_Article_notLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -57,12 +59,24 @@ namespace EntityFramework6.Test.Tests.ReadContentData
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        public void Check_That_Invisible_Article_notLoaded([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Invisible_Article_notLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
                 var inVisibleItems = context.PublishedNotPublishedItems.Where(x => !x.Visible).ToArray();
                 Assert.That(inVisibleItems, Is.Null.Or.Empty);
+            }
+        }
+
+        private int GetNonPublishedStatus(Mapping mapping)
+        {
+            if (new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping))
+            {
+                return 148;
+            }
+            else
+            {
+                return 144;
             }
         }
     }

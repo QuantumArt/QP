@@ -260,81 +260,81 @@ namespace EntityFramework6.Test.DataContext
  
             #endregion
 
-            #region SymmetricRelationItem mappings
-            modelBuilder.Entity<SymmetricRelationItem>()
-                .ToTable(GetTableName("SymmetricRelationItem"))
+            #region SymmetricRelationArticle mappings
+            modelBuilder.Entity<SymmetricRelationArticle>()
+                .ToTable(GetTableName("SymmetricRelationArticle"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<SymmetricRelationItem>()
+		    modelBuilder.Entity<SymmetricRelationArticle>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
-            modelBuilder.Entity<SymmetricRelationItem>()
+            modelBuilder.Entity<SymmetricRelationArticle>()
                 .Property(x => x.StatusTypeId)
                 .HasColumnName("STATUS_TYPE_ID");
 
-			modelBuilder.Entity<SymmetricRelationItem>()
+			modelBuilder.Entity<SymmetricRelationArticle>()
                 .HasRequired<StatusType>(x => x.StatusType)
                 .WithMany()
                 .HasForeignKey(x => x.StatusTypeId); 
 
 
-            modelBuilder.Entity<SymmetricRelationItem>().HasMany<SymmetricToItem>(p => p.M2MSymmField).WithMany()
+            modelBuilder.Entity<SymmetricRelationArticle>().HasMany<ToSymmetricRelationAtricle>(p => p.SymmetricRelation).WithMany()
                 .Map(rp =>
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName("SymmetricRelationItem", "M2MSymmField"));
+                    rp.ToTable(GetLinkTableName("SymmetricRelationArticle", "SymmetricRelation"));
                 });
 
-            modelBuilder.Entity<SymmetricToItem>().HasMany<SymmetricRelationItem>(p => p.BackwardForM2MSymmField).WithMany()
+            modelBuilder.Entity<ToSymmetricRelationAtricle>().HasMany<SymmetricRelationArticle>(p => p.BackwardForSymmetricRelation).WithMany()
                 .Map(rp =>
                 { 
                     rp.MapLeftKey("id"); // !+
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetReversedLinkTableName("SymmetricRelationItem", "M2MSymmField"));
+                    rp.ToTable(GetReversedLinkTableName("SymmetricRelationArticle", "SymmetricRelation"));
                 });
 
  
             #endregion
 
-            #region SymmetricToItem mappings
-            modelBuilder.Entity<SymmetricToItem>()
-                .ToTable(GetTableName("SymmetricToItem"))
+            #region ToSymmetricRelationAtricle mappings
+            modelBuilder.Entity<ToSymmetricRelationAtricle>()
+                .ToTable(GetTableName("ToSymmetricRelationAtricle"))
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<SymmetricToItem>()
+		    modelBuilder.Entity<ToSymmetricRelationAtricle>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
-            modelBuilder.Entity<SymmetricToItem>()
+            modelBuilder.Entity<ToSymmetricRelationAtricle>()
                 .Property(x => x.StatusTypeId)
                 .HasColumnName("STATUS_TYPE_ID");
 
-			modelBuilder.Entity<SymmetricToItem>()
+			modelBuilder.Entity<ToSymmetricRelationAtricle>()
                 .HasRequired<StatusType>(x => x.StatusType)
                 .WithMany()
                 .HasForeignKey(x => x.StatusTypeId); 
 
 
-            modelBuilder.Entity<SymmetricToItem>().HasMany<SymmetricRelationItem>(p => p.M2MSymmField).WithMany()
+            modelBuilder.Entity<ToSymmetricRelationAtricle>().HasMany<SymmetricRelationArticle>(p => p.ToSymmetricRelation).WithMany()
                 .Map(rp =>
                 {
                     rp.MapLeftKey("id");
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetLinkTableName("SymmetricToItem", "M2MSymmField"));
+                    rp.ToTable(GetLinkTableName("ToSymmetricRelationAtricle", "ToSymmetricRelation"));
                 });
 
-            modelBuilder.Entity<SymmetricRelationItem>().HasMany<SymmetricToItem>(p => p.BackwardForM2MSymmField).WithMany()
+            modelBuilder.Entity<SymmetricRelationArticle>().HasMany<ToSymmetricRelationAtricle>(p => p.BackwardForToSymmetricRelation).WithMany()
                 .Map(rp =>
                 { 
                     rp.MapLeftKey("id"); // !+
                     rp.MapRightKey("linked_id");
-                    rp.ToTable(GetReversedLinkTableName("SymmetricToItem", "M2MSymmField"));
+                    rp.ToTable(GetReversedLinkTableName("ToSymmetricRelationAtricle", "ToSymmetricRelation"));
                 });
 
  

@@ -168,10 +168,10 @@
     <Compile Include="DataContext\StringItemForUpdate.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext\SymmetricRelationItem.cs">
+    <Compile Include="DataContext\SymmetricRelationArticle.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="DataContext\SymmetricToItem.cs">
+    <Compile Include="DataContext\ToSymmetricRelationAtricle.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\User.cs">

@@ -180,7 +180,7 @@ namespace EntityFramework6.Test.DataContext
                 },
                 new AttributeInfo
                 {
-                    Id = 38041,
+                    Id = 38182,
                     ContentId = 628,
                     Name = "FileItem",
                     MappedName = "FileItem",
@@ -188,35 +188,35 @@ namespace EntityFramework6.Test.DataContext
                 },
                 new AttributeInfo
                 {
-                    Id = 38044,
-                    ContentId = 629,
-                    Name = "M2MSymmField",
-                    MappedName = "M2MSymmField",
-                    LinkId = 98
+                    Id = 38259,
+                    ContentId = 694,
+                    Name = "SymmetricRelation",
+                    MappedName = "SymmetricRelation",
+                    LinkId = 100
                 },
                 new AttributeInfo
                 {
-                    Id = 38045,
-                    ContentId = 630,
-                    Name = "M2MSymmField",
-                    MappedName = "M2MSymmField",
-                    LinkId = 99
+                    Id = 38260,
+                    ContentId = 695,
+                    Name = "ToSymmetricRelation",
+                    MappedName = "ToSymmetricRelation",
+                    LinkId = 101
                 },
                 new AttributeInfo
                 {
-                    Id = 38046,
-                    ContentId = 630,
-                    Name = "BackwardForM2MSymmField",
-                    MappedName = "BackwardForM2MSymmField",
-                    LinkId = 98
+                    Id = 38261,
+                    ContentId = 695,
+                    Name = "BackwardForSymmetricRelation",
+                    MappedName = "BackwardForSymmetricRelation",
+                    LinkId = 100
                 },
                 new AttributeInfo
                 {
-                    Id = 38047,
-                    ContentId = 629,
-                    Name = "BackwardForM2MSymmField",
-                    MappedName = "BackwardForM2MSymmField",
-                    LinkId = 99
+                    Id = 38262,
+                    ContentId = 694,
+                    Name = "BackwardForToSymmetricRelation",
+                    MappedName = "BackwardForToSymmetricRelation",
+                    LinkId = 101
                 },
             };
 
@@ -282,17 +282,17 @@ namespace EntityFramework6.Test.DataContext
                 },
                 new ContentInfo
                 {
-                   Id = 629,
-                   MappedName = "SymmetricRelationItem",
+                   Id = 694,
+                   MappedName = "SymmetricRelationArticle",
                    UseDefaultFiltration = true,
-                   Attributes = new List<AttributeInfo>(attributesLookup[629])
+                   Attributes = new List<AttributeInfo>(attributesLookup[694])
                 },
                 new ContentInfo
                 {
-                   Id = 630,
-                   MappedName = "SymmetricToItem",
+                   Id = 695,
+                   MappedName = "ToSymmetricRelationAtricle",
                    UseDefaultFiltration = true,
-                   Attributes = new List<AttributeInfo>(attributesLookup[630])
+                   Attributes = new List<AttributeInfo>(attributesLookup[695])
                 },
             };
 

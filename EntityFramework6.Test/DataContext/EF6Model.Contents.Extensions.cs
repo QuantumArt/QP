@@ -11,7 +11,7 @@ namespace EntityFramework6.Test.DataContext
 		#region Static members
 		protected static readonly Dictionary<string, Func<AfiellFieldsItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<AfiellFieldsItem,  IQPFormService, string>>
 		{
-			{ "String", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.String != null ? self.String : null) },
+			{ "String", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.String != null ? ctx.ReplacePlaceholders(self.String) : null) },
 			{ "Integer", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.Integer != null ? self.Integer.ToString() : null) },
 			{ "Decimal", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.Decimal != null ? self.Decimal.ToString() : null) },
 			{ "Boolean", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.Boolean != null ? self.Boolean.Value ? "1" : "0" : null) },
@@ -21,9 +21,9 @@ namespace EntityFramework6.Test.DataContext
 			{ "File", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.File != null ? self.File : null) },
 			{ "Image", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.Image != null ? self.Image : null) },
 			{ "TextBox", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.TextBox != null ? self.TextBox : null) },
-			{ "VisualEdit", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.VisualEdit != null ? self.VisualEdit : null) },
+			{ "VisualEdit", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.VisualEdit != null ? ctx.ReplacePlaceholders(self.VisualEdit) : null) },
 			{ "DynamicImage", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.DynamicImage != null ? self.DynamicImage : null) },
-			{ "Enum", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.Enum != null ? self.Enum : null) },
+			{ "Enum", new Func<AfiellFieldsItem, IQPFormService, string>((self, ctx) => self.Enum != null ? ctx.ReplacePlaceholders(self.Enum) : null) },
 		};
 
 		#endregion
@@ -40,6 +40,9 @@ namespace EntityFramework6.Test.DataContext
 		#region Methods
 		void IQPArticle.OnMaterialized(IQPLibraryService context)
 		{
+			this.String = context.ReplacePlaceholders(this.String);
+			this.VisualEdit = context.ReplacePlaceholders(this.VisualEdit);
+			this.Enum = context.ReplacePlaceholders(this.Enum);
 			this.FileUrl = context.GetUrl(this.File, "AfiellFieldsItem", "File");
 			this.ImageUrl = context.GetUrl(this.Image, "AfiellFieldsItem", "Image");
 			this.DynamicImageUrl = context.GetUrl(this.DynamicImage, "AfiellFieldsItem", "DynamicImage");
@@ -76,13 +79,14 @@ namespace EntityFramework6.Test.DataContext
 		#region Static members
 		protected static readonly Dictionary<string, Func<Schema, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<Schema,  IQPFormService, string>>
 		{
-			{ "Title", new Func<Schema, IQPFormService, string>((self, ctx) => self.Title != null ? self.Title : null) },
+			{ "Title", new Func<Schema, IQPFormService, string>((self, ctx) => self.Title != null ? ctx.ReplacePlaceholders(self.Title) : null) },
 		};
 
 		#endregion
 		#region Methods
 		void IQPArticle.OnMaterialized(IQPLibraryService context)
 		{
+			this.Title = context.ReplacePlaceholders(this.Title);
 		}
 
 		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
@@ -114,13 +118,14 @@ namespace EntityFramework6.Test.DataContext
 		#region Static members
 		protected static readonly Dictionary<string, Func<StringItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<StringItem,  IQPFormService, string>>
 		{
-			{ "StringValue", new Func<StringItem, IQPFormService, string>((self, ctx) => self.StringValue != null ? self.StringValue : null) },
+			{ "StringValue", new Func<StringItem, IQPFormService, string>((self, ctx) => self.StringValue != null ? ctx.ReplacePlaceholders(self.StringValue) : null) },
 		};
 
 		#endregion
 		#region Methods
 		void IQPArticle.OnMaterialized(IQPLibraryService context)
 		{
+			this.StringValue = context.ReplacePlaceholders(this.StringValue);
 		}
 
 		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
@@ -152,13 +157,14 @@ namespace EntityFramework6.Test.DataContext
 		#region Static members
 		protected static readonly Dictionary<string, Func<StringItemForUpdate, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<StringItemForUpdate,  IQPFormService, string>>
 		{
-			{ "StringValue", new Func<StringItemForUpdate, IQPFormService, string>((self, ctx) => self.StringValue != null ? self.StringValue : null) },
+			{ "StringValue", new Func<StringItemForUpdate, IQPFormService, string>((self, ctx) => self.StringValue != null ? ctx.ReplacePlaceholders(self.StringValue) : null) },
 		};
 
 		#endregion
 		#region Methods
 		void IQPArticle.OnMaterialized(IQPLibraryService context)
 		{
+			this.StringValue = context.ReplacePlaceholders(this.StringValue);
 		}
 
 		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
@@ -190,13 +196,14 @@ namespace EntityFramework6.Test.DataContext
 		#region Static members
 		protected static readonly Dictionary<string, Func<StringItemForUnsert, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<StringItemForUnsert,  IQPFormService, string>>
 		{
-			{ "StringValue", new Func<StringItemForUnsert, IQPFormService, string>((self, ctx) => self.StringValue != null ? self.StringValue : null) },
+			{ "StringValue", new Func<StringItemForUnsert, IQPFormService, string>((self, ctx) => self.StringValue != null ? ctx.ReplacePlaceholders(self.StringValue) : null) },
 		};
 
 		#endregion
 		#region Methods
 		void IQPArticle.OnMaterialized(IQPLibraryService context)
 		{
+			this.StringValue = context.ReplacePlaceholders(this.StringValue);
 		}
 
 		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
@@ -228,14 +235,16 @@ namespace EntityFramework6.Test.DataContext
 		#region Static members
 		protected static readonly Dictionary<string, Func<PublishedNotPublishedItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<PublishedNotPublishedItem,  IQPFormService, string>>
 		{
-			{ "Title", new Func<PublishedNotPublishedItem, IQPFormService, string>((self, ctx) => self.Title != null ? self.Title : null) },
-			{ "Alias", new Func<PublishedNotPublishedItem, IQPFormService, string>((self, ctx) => self.Alias != null ? self.Alias : null) },
+			{ "Title", new Func<PublishedNotPublishedItem, IQPFormService, string>((self, ctx) => self.Title != null ? ctx.ReplacePlaceholders(self.Title) : null) },
+			{ "Alias", new Func<PublishedNotPublishedItem, IQPFormService, string>((self, ctx) => self.Alias != null ? ctx.ReplacePlaceholders(self.Alias) : null) },
 		};
 
 		#endregion
 		#region Methods
 		void IQPArticle.OnMaterialized(IQPLibraryService context)
 		{
+			this.Title = context.ReplacePlaceholders(this.Title);
+			this.Alias = context.ReplacePlaceholders(this.Alias);
 		}
 
 		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
@@ -267,13 +276,14 @@ namespace EntityFramework6.Test.DataContext
 		#region Static members
 		protected static readonly Dictionary<string, Func<ReplacingPlaceholdersItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<ReplacingPlaceholdersItem,  IQPFormService, string>>
 		{
-			{ "Title", new Func<ReplacingPlaceholdersItem, IQPFormService, string>((self, ctx) => self.Title != null ? self.Title : null) },
+			{ "Title", new Func<ReplacingPlaceholdersItem, IQPFormService, string>((self, ctx) => self.Title != null ? ctx.ReplacePlaceholders(self.Title) : null) },
 		};
 
 		#endregion
 		#region Methods
 		void IQPArticle.OnMaterialized(IQPLibraryService context)
 		{
+			this.Title = context.ReplacePlaceholders(this.Title);
 		}
 
 		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
@@ -344,10 +354,10 @@ namespace EntityFramework6.Test.DataContext
         }
 		#endregion
 	}
-	public partial class SymmetricRelationItem: IQPArticle
+	public partial class SymmetricRelationArticle: IQPArticle
 	{
 		#region Static members
-		protected static readonly Dictionary<string, Func<SymmetricRelationItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<SymmetricRelationItem,  IQPFormService, string>>
+		protected static readonly Dictionary<string, Func<SymmetricRelationArticle, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<SymmetricRelationArticle,  IQPFormService, string>>
 		{
 		};
 
@@ -365,7 +375,7 @@ namespace EntityFramework6.Test.DataContext
             if (propertyNames == null || propertyNames.Length == 0)
             {
 				// todo: filter null values
-                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("SymmetricRelationItem", x.Key), y => y.Value(this, context)));
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("SymmetricRelationArticle", x.Key), y => y.Value(this, context)));
             }
             else
             {
@@ -381,10 +391,10 @@ namespace EntityFramework6.Test.DataContext
         }
 		#endregion
 	}
-	public partial class SymmetricToItem: IQPArticle
+	public partial class ToSymmetricRelationAtricle: IQPArticle
 	{
 		#region Static members
-		protected static readonly Dictionary<string, Func<SymmetricToItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<SymmetricToItem,  IQPFormService, string>>
+		protected static readonly Dictionary<string, Func<ToSymmetricRelationAtricle, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<ToSymmetricRelationAtricle,  IQPFormService, string>>
 		{
 		};
 
@@ -402,7 +412,7 @@ namespace EntityFramework6.Test.DataContext
             if (propertyNames == null || propertyNames.Length == 0)
             {
 				// todo: filter null values
-                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("SymmetricToItem", x.Key), y => y.Value(this, context)));
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("ToSymmetricRelationAtricle", x.Key), y => y.Value(this, context)));
             }
             else
             {

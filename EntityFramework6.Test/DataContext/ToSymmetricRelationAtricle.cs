@@ -5,12 +5,12 @@ using System.Collections;
 using System.Collections.Generic;
 namespace EntityFramework6.Test.DataContext
 {
-	public partial class SymmetricRelationItem: IQPArticle
+	public partial class ToSymmetricRelationAtricle: IQPArticle
 	{
-        public SymmetricRelationItem()
+        public ToSymmetricRelationAtricle()
         {
-		    M2MSymmField = new HashSet<SymmetricToItem>();
-		    BackwardForM2MSymmField = new HashSet<SymmetricToItem>();
+		    ToSymmetricRelation = new HashSet<SymmetricRelationArticle>();
+		    BackwardForSymmetricRelation = new HashSet<SymmetricRelationArticle>();
         }
 
 		public virtual Int32 Id { get; set; }
@@ -25,11 +25,10 @@ namespace EntityFramework6.Test.DataContext
 		/// <summary>
 		/// 
 		/// </summary>		
-		public  ICollection<SymmetricToItem> M2MSymmField { get; set; }
+		public  ICollection<SymmetricRelationArticle> ToSymmetricRelation { get; set; }
 		/// <summary>
-		/// Auto-generated backing property for 38045/M2MSymmField
+		/// Auto-generated backing property for 38259/SymmetricRelation
 		/// </summary>		
-		public  ICollection<SymmetricToItem> BackwardForM2MSymmField { get; set; }
+		public  ICollection<SymmetricRelationArticle> BackwardForSymmetricRelation { get; set; }
 	}
 }
-	

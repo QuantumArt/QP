@@ -36,8 +36,8 @@ namespace EntityFramework6.Test.DataContext
         public virtual DbSet<PublishedNotPublishedItem> PublishedNotPublishedItems { get; set; }
         public virtual DbSet<ReplacingPlaceholdersItem> ReplacingPlaceholdersItems { get; set; }
         public virtual DbSet<FileFieldsItem> FileFieldsItems { get; set; }
-        public virtual DbSet<SymmetricRelationItem> SymmetricRelationItems { get; set; }
-        public virtual DbSet<SymmetricToItem> SymmetricToItems { get; set; }
+        public virtual DbSet<SymmetricRelationArticle> SymmetricRelationArticles { get; set; }
+        public virtual DbSet<ToSymmetricRelationAtricle> ToSymmetricRelationAtricles { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
