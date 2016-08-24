@@ -1,5 +1,10 @@
-﻿using Quantumart.QP8.Assembling;
-using Quantumart.QP8.BLL.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Text;
+using Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -7,13 +12,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils.FullTextSearch;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Data;
-using Assembling;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -701,7 +699,7 @@ namespace Quantumart.QP8.BLL.Services
             int templateIdNew = PageTemplateRepository.CopySiteTemplates(sourceSiteId, destinationSiteId, templateNumber);
 
             string relBetweenTemplates = PageTemplateRepository.GetRelationsBetweenTemplates(sourceSiteId, destinationSiteId, templateIdNew);
-            string relBetweenContents = ContentRepository.GetRelationsBetweenContentsXML(sourceSiteId, destinationSiteId, String.Empty);
+            string relBetweenContents = ContentRepository.GetRelationsBetweenContentsXml(sourceSiteId, destinationSiteId, String.Empty);
 
             PageRepository.CopySiteTemplatePages(sourceSiteId, destinationSiteId, relBetweenTemplates);
 
@@ -719,7 +717,7 @@ namespace Quantumart.QP8.BLL.Services
 
             string relBetweenStatuses = ContentRepository.GetRelationsBetweenStatuses(sourceSiteId, destinationSiteId);
             ObjectRepository.CopyContainerStatuses(relBetweenStatuses, relBetweenObjects);
-            
+
             NotificationRepository.CopySiteUpdateNotifications(relBetweenObjectFormats, relBetweenContents);
 
             return templateIdNew != 0 ? 1 : 0;

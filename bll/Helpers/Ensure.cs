@@ -142,7 +142,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <exception cref="Exception">string value is null or empty</exception>
         public static void NotNullOrWhiteSpace(string value, string message = "String cannot be null or empty")
         {
-            That(string.IsNullOrWhiteSpace(value), message);
+            That(!string.IsNullOrWhiteSpace(value), message);
         }
 
         /// <summary>

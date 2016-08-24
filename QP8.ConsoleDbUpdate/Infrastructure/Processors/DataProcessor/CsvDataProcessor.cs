@@ -1,7 +1,6 @@
 ﻿using Quantumart.QP8.BLL;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
-using Quantumart.QP8.WebMvc.Infrastructure.Services;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor

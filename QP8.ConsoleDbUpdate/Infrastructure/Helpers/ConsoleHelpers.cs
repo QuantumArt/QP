@@ -13,16 +13,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
             Console.WriteLine($"Assembly version {typeof(Program).Assembly.GetName().Version}.");
         }
 
+        internal static void WriteLineDebug(string message = null)
+        {
+            WriteDebug($"{message}{Environment.NewLine}");
+        }
+
         internal static void WriteDebug(string message = null)
         {
 #if DEBUG
             Console.Write(message ?? string.Empty);
 #endif
-        }
-
-        internal static void WriteLineDebug(string message = null)
-        {
-            WriteDebug($"{message}{Environment.NewLine}");
         }
 
         internal static void ClearAndPrintHeader(string headerMessage)

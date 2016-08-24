@@ -1,4 +1,11 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Objects;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Linq.Expressions;
+using AutoMapper;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
@@ -8,13 +15,6 @@ using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Objects;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -22,8 +22,6 @@ namespace Quantumart.QP8.BLL.Repository
     {
         internal static ObjectQuery<FieldDAL> DefaultFieldQuery => QPContext.EFContext.FieldSet.Include("Content").Include("Type").Include("LastModifiedByUser");
 
-        #region Methods
-        #region Get
         public static Field GetById(int fieldId)
         {
             return GetByIdFromCache(fieldId) ?? MappersRepository.FieldMapper.GetBizObject(DefaultFieldQuery.SingleOrDefault(f => f.Id == fieldId));
@@ -46,7 +44,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         public static IEnumerable<Field> GetList(IEnumerable<int> ids)
         {
-            IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
+            var decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
             return MappersRepository.FieldMapper.GetBizList(DefaultFieldQuery.Where(f => decIDs.Contains(f.Id)).ToList());
         }
 
@@ -278,9 +276,7 @@ namespace Quantumart.QP8.BLL.Repository
             return result;
         }
 
-        #endregion
 
-        #region Save
         /// <summary>
         /// Добавляет новое поле
         /// </summary>
@@ -356,9 +352,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        #endregion
 
-        #region Update
         /// <summary>
         /// Обновляет информацию о поле
         /// </summary>
@@ -532,9 +526,7 @@ namespace Quantumart.QP8.BLL.Repository
                 }
             }
         }
-        #endregion
 
-        #region Remove
         /// <summary>
         /// Удаляет поле по его идентификатору
         /// </summary>
@@ -554,9 +546,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.RemoveLinkVersions(scope.DbConnection, fieldId);
             }
         }
-        #endregion
 
-        #region Checkings
         internal static bool Exists(int id)
         {
             return QPContext.EFContext.FieldSet.Any(n => n.Id == id);
@@ -706,7 +696,6 @@ namespace Quantumart.QP8.BLL.Repository
                 .Select(f => f.Aggregators.Any())
                 .Single();
         }
-        #endregion
 
         private static void BindFieldToContstraint(Field item, ContentConstraint constraint)
         {
@@ -875,7 +864,6 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.ClearFieldTreeOrder(scope.DbConnection, id);
             }
         }
-        #endregion
 
         internal static Field Copy(Field field)
         {

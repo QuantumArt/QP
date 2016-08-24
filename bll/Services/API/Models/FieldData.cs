@@ -15,8 +15,6 @@ namespace Quantumart.QP8.BLL.Services.API.Models
 
 		public int[] ArticleIds { get; set; }
 
-		public int[] ArticleIdsOrDefault => ArticleIds != null && ArticleIds.Any() ? ArticleIds : new[] { 0 };
-
 	    public override string ToString()
 		{
 			return new

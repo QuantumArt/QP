@@ -15,7 +15,6 @@ namespace Quantumart.QP8.BLL.Services
 {
     public static class VirtualContentService
     {
-
         #region Getting Lists
         /// <summary>
         /// Инициализация списка контентов
@@ -206,7 +205,7 @@ namespace Quantumart.QP8.BLL.Services
             ContentRepository.CopyContentsGroups(sourceSiteId, destinationSiteId);
             ContentRepository.UpdateContentGroupIds(sourceSiteId, destinationSiteId);
 
-            var relBetweenContents = ContentRepository.GetRelationsBetweenContentsXML(sourceSiteId, destinationSiteId, string.Empty);
+            var relBetweenContents = ContentRepository.GetRelationsBetweenContentsXml(sourceSiteId, destinationSiteId, string.Empty);
             ContentRepository.CopyUserQueryContents(relBetweenContents);
 
             ContentRepository.CopyUserQueryAttributes(relBetweenContents, relBetweenAttributes);

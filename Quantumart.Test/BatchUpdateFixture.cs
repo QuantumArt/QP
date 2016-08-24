@@ -421,7 +421,7 @@ namespace Quantumart.Test
                         new FieldData
                         {
                             Id = BaseFieldEx2Id,
-                            Value = Ex21ContentId.ToString(CultureInfo.InvariantCulture),
+                            Value = Ex21ContentId.ToString(),
                             ArticleIds = new[] { -1 }
 
                         }

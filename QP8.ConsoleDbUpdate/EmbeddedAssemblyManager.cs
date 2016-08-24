@@ -165,6 +165,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Validators.dll", "Quantumart.QP8.Validators.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Security.dll", "Quantumart.QP8.Security.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.BLL.dll", "Quantumart.QP8.BLL.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Merger.dll", "Quantumart.QP8.Merger.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Configuration.dll", "Quantumart.QP8.Configuration.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Logging.Loggers.dll", "Quantumart.QP8.Logging.Loggers.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Logging.Web.dll", "Quantumart.QP8.Logging.Web.dll");

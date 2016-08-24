@@ -20,7 +20,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         {
             try
             {
-                EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
+                //EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
             }
             catch (Exception ex)
             {
@@ -49,6 +49,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 dataProcessor.Process();
 
                 Console.WriteLine("Processing successfuly finished...");
+                Logger.Debug("Processing successfuly finished...");
                 ConsoleHelpers.ExitProgram(ExitCode.Success);
             }
             catch (OptionException ex)
