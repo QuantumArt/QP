@@ -1,21 +1,19 @@
-﻿using NUnit.Framework;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.API;
-using Quantumart.QP8.BLL.Services.API.Models;
-using Quantumart.QPublishing.Database;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using NUnit.Framework;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QPublishing.Database;
 
 namespace Quantumart.Test
 {
     [TestFixture]
     public class BatchUpdateFixture
     {
-        #region Constants
-        #region Assert messages
         public const string ArticlesNotFound = "Статьи для контента не найдены";
         public const string ValuesNotFound = "Значения не найдены";
         public const string BatchUpdateResultIncorrect = "Неверный результат";
@@ -24,9 +22,7 @@ namespace Quantumart.Test
         public const string WrongMtMRelation = "Неверно проставлена связь MtM";
         public const string WrongMtORelation = "Неверно проставлена связь MtO";
         public const string ContentDataIsEmpty = "Не заданы поля в CONTENT_DATA";
-        #endregion
 
-        #region Base content
         public const string BaseContent = "Test_BatchUpdate_Base";
         public const string BaseFieldEx1 = "Field_Ex1";
         public const string BaseFieldEx2 = "Field_Ex2";
@@ -44,49 +40,37 @@ namespace Quantumart.Test
         public const string BaseFieldVisualEdit = "Field_VisualEdit";
         public const string BaseFieldDynamicImage = "Field_DynamicImage";
         public const string BaseFieldEnum = "Field_Enum";
-        #endregion
 
-        #region Dictionary content
         public const string DictionaryContent = "Test_BatchUpdate_Dictionary";
 
         public const string DictionaryKey = "Key";
         public const string DictionaryValue = "Value";
         public const string DictionaryFieldMtMBackward = "Field_MtM_Backward";
         public const string DictionaryFieldMtOBackward = "Field_MtO_Backward";
-        #endregion
 
-        #region Ex1_1 content
         public const string Ex11Content = "Test_BatchUpdate_Ex1_1";
 
         public const string Ex11Parent = "Parent";
         public const string Ex11Field1 = "Field1";
         public const string Ex11Field2 = "Field2";
-        #endregion
 
-        #region Ex1_2 content
         public const string Ex12Content = "Test_BatchUpdate_Ex1_2";
 
         public const string Ex12Parent = "Parent";
         public const string Ex12Field1 = "Field1";
-        #endregion
 
-        #region Ex2_1 content
         public const string Ex21Content = "Test_BatchUpdate_Ex2_1";
         public const string Ex21Parent = "Parent";
-        #endregion
 
-        #region Ex2_2 content
         public const string Ex22Content = "Test_BatchUpdate_Ex2_2";
         public const string Ex22Parent = "Parent";
-        #endregion
-        #endregion
 
-        #region Properties
         public static DBConnector Cnn { get; private set; }
+
         public static ArticleService ArticleService { get; private set; }
+
         public static Random Random { get; private set; }
 
-        #region Base content
         public static int BaseContentId { get; private set; }
 
         public static int BaseFieldEx1Id { get; private set; }
@@ -105,44 +89,31 @@ namespace Quantumart.Test
         public static int BaseFieldVisualEditId { get; private set; }
         public static int BaseFieldDynamicImageId { get; private set; }
         public static int BaseFieldEnumId { get; private set; }
-        #endregion
 
-        #region Dictionary content
         public static int DictionaryContentId { get; private set; }
 
         public static int DictionaryKeyId { get; private set; }
         public static int DictionaryValueId { get; private set; }
         public static int DictionaryFieldMtMBackwardId { get; private set; }
         public static int DictionaryFieldMtOBackwardId { get; private set; }
-        #endregion
 
-        #region Ex1_1 content
         public static int Ex11ContentId { get; private set; }
 
         public static int Ex11ParentId { get; private set; }
         public static int Ex11Field1Id { get; private set; }
         public static int Ex11Field2Id { get; private set; }
-        #endregion
 
-        #region Ex1_2 content
         public static int Ex12ContentId { get; private set; }
         public static int Ex12ParentId { get; private set; }
         public static int Ex12Field1Id { get; private set; }
-        #endregion
 
-        #region Ex2_1 content
         public static int Ex21ContentId { get; private set; }
         public static int Ex21ParentId { get; private set; }
-        #endregion
 
-        #region Ex2_2 content
         public static int Ex22ContentId { get; private set; }
         public static int Ex22ParentId { get; private set; }
-        #endregion
 
-        #endregion
 
-        #region Test actions
         [OneTimeSetUp]
         public static void Init()
         {
@@ -154,7 +125,6 @@ namespace Quantumart.Test
             ArticleService = new ArticleService(Global.ConnectionString, 1);
             Random = new Random();
 
-            #region Base content
             BaseContentId = Global.GetContentId(Cnn, BaseContent);
 
             BaseFieldEx1Id = Global.GetFieldId(Cnn, BaseContent, BaseFieldEx1);
@@ -173,40 +143,29 @@ namespace Quantumart.Test
             BaseFieldVisualEditId = Global.GetFieldId(Cnn, BaseContent, BaseFieldVisualEdit);
             BaseFieldDynamicImageId = Global.GetFieldId(Cnn, BaseContent, BaseFieldDynamicImage);
             BaseFieldEnumId = Global.GetFieldId(Cnn, BaseContent, BaseFieldEnum);
-            #endregion
 
-            #region Dictionary content
             DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
 
             DictionaryKeyId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryKey);
             DictionaryValueId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryValue);
             DictionaryFieldMtMBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtMBackward);
             DictionaryFieldMtOBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtOBackward);
-            #endregion
 
-            #region Ex1_1 content
             Ex11ContentId = Global.GetContentId(Cnn, Ex11Content);
 
             Ex11ParentId = Global.GetFieldId(Cnn, Ex11Content, Ex11Parent);
             Ex11Field1Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field1);
             Ex11Field2Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field2);
-            #endregion
 
-            #region Ex1_2 content
             Ex12ContentId = Global.GetContentId(Cnn, Ex12Content);
             Ex12ParentId = Global.GetFieldId(Cnn, Ex12Content, Ex12Parent);
             Ex12Field1Id = Global.GetFieldId(Cnn, Ex12Content, Ex12Field1);
-            #endregion
 
-            #region Ex2_1 content
             Ex21ContentId = Global.GetContentId(Cnn, Ex21Content);
             Ex21ParentId = Global.GetFieldId(Cnn, Ex21Content, Ex21Parent);
-            #endregion
 
-            #region Ex2_2 content
             Ex22ContentId = Global.GetContentId(Cnn, Ex22Content);
             Ex22ParentId = Global.GetFieldId(Cnn, Ex22Content, Ex22Parent);
-            #endregion
         }
 
         [OneTimeTearDown]
@@ -236,9 +195,7 @@ namespace Quantumart.Test
 
             QPContext.UseConnectionString = false;
         }
-        #endregion
 
-        #region Tests
         [Test]
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         public void BatchUpdate_DictionaryContent_RecoverContentData()
@@ -300,7 +257,8 @@ namespace Quantumart.Test
             Assert.That(contentData, Is.Not.Null);
             Assert.That(contentData, Has.Length.EqualTo(4), ContentDataIsEmpty);
 
-            using (new QPConnectionScope(Global.ConnectionString)) {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
 
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -376,7 +334,8 @@ namespace Quantumart.Test
             Assert.That(DictionaryContentId, Is.EqualTo(articleResult.ContentId));
             Assert.That(articleResult.OriginalArticleId, Is.Not.EqualTo(articleResult.CreatedArticleId));
 
-            using (new QPConnectionScope(Global.ConnectionString)) {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
 
                 Assert.That(article, Is.Not.Null, CantReadArticle);
@@ -540,9 +499,7 @@ namespace Quantumart.Test
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
             UpdateField(BaseContentId, BaseFieldTimeId, BaseFieldTime, value, value.ToString(CultureInfo.InvariantCulture));
         }
-        #endregion
 
-        #region Private methods
         private static void UpdateField<T>(int contentId, int fieldId, string fieldName, T value, string stringValue)
         {
             var articleId = GetArticleId(contentId);
@@ -575,7 +532,8 @@ namespace Quantumart.Test
 
         private static void ClearClassifierField(int articleId)
         {
-            using (new QPConnectionScope(Global.ConnectionString)) {
+            using (new QPConnectionScope(Global.ConnectionString))
+            {
                 var article = ArticleService.Read(articleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
 
@@ -601,6 +559,5 @@ namespace Quantumart.Test
             Assert.That(ids, Is.Not.Null.And.Not.Empty, ArticlesNotFound);
             return ids[0];
         }
-        #endregion
     }
 }
