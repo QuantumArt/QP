@@ -43,7 +43,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId)
         {
-            Ensure.NotNullOrWhiteSpace(_connectionString, "Connection string should be initialized");
+            Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
             _userId = userId;
             _connectionString = connectionString;
@@ -155,6 +155,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static bool ValidateDbVersion(XContainer doc)
         {
             var root = doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();

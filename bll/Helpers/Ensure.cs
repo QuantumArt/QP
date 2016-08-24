@@ -203,7 +203,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 {
                     if (string.IsNullOrWhiteSpace(paramName))
                     {
-                        throw new ArgumentException($"String parameter {paramName} cannot be null or empty", paramName);
+                        throw new ArgumentException($@"String parameter {paramName} cannot be null or empty", paramName);
                     }
 
                     throw new ArgumentException("String value cannot be empty");

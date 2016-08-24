@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -91,7 +90,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public FileResult GetRecordedUserActions()
         {
-            return File(XmlDbUpdateXDocumentConstants.XmlFilePath, MediaTypeNames.Application.Octet, $"{QPContext.CurrentCustomerCode}_{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}.xml");
+            var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(XmlDbUpdateXDocumentConstants.XmlFilePath):yyyy-MM-dd_HH-mm-ss}.xml";
+            return File(XmlDbUpdateXDocumentConstants.XmlFilePath, MediaTypeNames.Application.Octet, fileName);
         }
 
         [HttpPost]

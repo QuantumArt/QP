@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -163,16 +164,19 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string GetCode(XElement action)
         {
             return action.Attribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute).Value;
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string[] GetIds(XElement action)
         {
             return action.Attribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute).Value.Split(",".ToCharArray());
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static int GetParentId(XElement action)
         {
             return int.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionParentIdAttribute).Value);
@@ -275,6 +279,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static NameValueCollection GetActionFields(XContainer root)
         {
             return root.Elements().Aggregate(new NameValueCollection(), (seed, curr) =>
@@ -284,6 +289,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             });
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static DateTime GetExecuted(XElement action, int lcid)
         {
             return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value, CultureHelpers.GetCultureInfoByLcid(lcid));
