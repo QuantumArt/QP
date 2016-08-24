@@ -855,6 +855,10 @@
     <None Include="packages.config" />
     <None Include=".jscsrc" />
     <None Include=".jshintrc" />
+    <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
+    <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
+    <Content Include="Scripts\polyfills\array.find.polyfill.js" />
+    <Content Include="Scripts\polyfills\object.assign.polyfill.js" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\jquery-1.7.1.intellisense.min.js" />
     <Content Include="Scripts\jquery.cookie.min.js" />
@@ -937,7 +941,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\globalSettings.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
-    <Content Include="Scripts\Quantumart\version.6.28.js" />
+    <Content Include="Scripts\Quantumart\version.6.30.js" />
     <Content Include="Scripts\Silverlight.min.js" />
     <Content Include="Scripts\SilverlightUpload.min.js" />
     <Content Include="Scripts\underscore.min.js" />

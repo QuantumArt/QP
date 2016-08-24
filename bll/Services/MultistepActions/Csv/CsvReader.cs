@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -22,9 +21,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
     {
         private readonly int _contentId;
         private readonly int _siteId;
+        private readonly NotificationPushRepository _notificationRepository;
         private readonly ImportSettings _importSetts;
         private List<string> _titleHeaders;
-        private List<Field> _baseFields;
         private Dictionary<int, List<Field>> _fieldsMap;
         private Dictionary<Field, int> _headersMap;
         private Dictionary<int, Content> _aggregatedContentsMap;
@@ -38,6 +37,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             _contentId = contentId;
             _siteId = siteId;
             _importSetts = setts;
+            _notificationRepository = new NotificationPushRepository() { IgnoreInternal = true };
             _reader = new FileReader(setts);
         }
 
@@ -63,17 +63,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             get
             {
-                if (_csvLines == null || !_csvLines.Any())
-                {
-                    return @"N/A";
-                }
 
+                if (_csvLines == null || !_csvLines.Any())
+                    return @"N/A";
                 var num = _csvLines.First().Number - 1;
                 if (num == 0 || num == 1 && _reader.Lines.First().Skip || num == 2 && _reader.Lines.First().Skip && _reader.Lines.Skip(1).First().Skip)
-                {
                     return @"N/A";
-                }
-
                 return num.ToString();
             }
         }
@@ -205,24 +200,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static bool IsEmpty(string value)
         {
-            if (string.IsNullOrWhiteSpace(value))
-                return true;
-            if (value == "NULL")
-                return true;
-            if (value.Length >= 2 && value.First() == '"' && value.Last() == '"' && (value.Length == 2 || string.IsNullOrWhiteSpace(value.Substring(1, value.Length - 2))))
-                return true;
-            return false;
+            return string.IsNullOrWhiteSpace(value)
+                   || value == "NULL"
+                   || (value.Length >= 2 && value.First() == '"' && value.Last() == '"' && (value.Length == 2 || string.IsNullOrWhiteSpace(value.Substring(1, value.Length - 2))));
         }
 
-        private string PrepareValue(string inittialValue)
+        private static string PrepareValue(string inittialValue)
         {
             var value = inittialValue.Replace("\"\"", "\"");
             if (value.StartsWith("\"") && value.EndsWith("\""))
             {
                 value = value.Remove(0, 1);
                 if (value.Length > 0)
+                {
                     value = value.Remove(value.Length - 1);
+                }
             }
+
             return value;
         }
 
@@ -244,14 +238,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 throw new ArgumentException($"There is no column {ArticleStrings.IsChanged} in the specified file");
             }
 
-            if (fieldValues[isChangedindex] == "1")
-            {
-                article.Created = DateTime.MinValue;
-            }
-            else
-            {
-                article.Created = DateTime.Now;
-            }
+            article.Created = fieldValues[isChangedindex] == "1" ? DateTime.MinValue : DateTime.Now;
         }
 
         private void ReadUniqueField(ref Article article, string[] fieldValues)
@@ -316,7 +303,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return fieldIndex;
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private void FormatFieldValue(Field field, string value, ref FieldValue fieldDbValue)
         {
             switch (field.ExactType)
@@ -338,7 +324,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     break;
                 case FieldExactTypes.M2MRelation:
                     fieldDbValue.NewRelatedItems = MultistepActionHelper.M2MFormat(value).ToArray();
-                    fieldDbValue.Value = field.LinkId.Value.ToString();
+                    fieldDbValue.Value = field.LinkId?.ToString();
                     break;
                 case FieldExactTypes.M2ORelation:
                     break;
@@ -397,10 +383,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return existingArticles;
         }
 
+        // Добавляет статьи
         private void InsertArticles(ExstendedArticleList articleList)
         {
             var baseArticles = articleList.GetBaseArticles();
-            var idsList = InsertArticlesIds(baseArticles);
+            var idsList = InsertArticlesIds(baseArticles).ToArray();
+
+            _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Create);
             InsertArticleValues(idsList.ToArray(), baseArticles);
 
             if (_importSetts.ContainsO2MRelationOrM2MRelationFields)
@@ -408,7 +397,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 SaveNewRelationsToFile(baseArticles, idsList);
             }
 
-            for (var i = 0; i < idsList.Count; i++)
+            for (var i = 0; i < idsList.Length; i++)
             {
                 var id = idsList[i];
                 var article = articleList[i];
@@ -432,13 +421,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     SaveNewRelationsToFile(aggregatedArticleList, aggregatedIdsList);
                 }
             }
+
+            _notificationRepository.SendNotifications();
         }
 
+        //Обновление статей
         private ExstendedArticleList UpdateArticles(ExstendedArticleList articlesList)
         {
             var existingArticles = GetExistingArticles(articlesList);
             var exstensionsMap = ContentRepository.GetAggregatedArticleIdsMap(_contentId, existingArticles.GetBaseArticleIds().ToArray());
-            InsertArticleValues(existingArticles.GetBaseArticleIds().ToArray(), existingArticles.GetBaseArticles(), true);
+            var idsList = existingArticles.GetBaseArticleIds().ToArray();
+            _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Update);
+            InsertArticleValues(idsList, existingArticles.GetBaseArticles(), updateArticles: true);
 
             var idsToDelete = new List<int>();
             var articlesToInsert = new List<Article>();
@@ -496,38 +490,41 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 articlesToUpdate.AddRange(articlesToInsert);
             }
 
-            InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, true);
+            InsertArticleValues(idsToUpdate.ToArray(), articlesToUpdate, updateArticles: true);
+            _notificationRepository.SendNotifications();
             return existingArticles;
         }
 
+        // Добавление статей (id)
         private static List<int> InsertArticlesIds(IList<Article> articleList)
         {
-            var insertTemplate = @"SELECT {0}, {1}, {2}, {3} {4}";
+            const string insertTemplate = @"SELECT {0}, {1}, {2}, {3} {4}";
             var query = new StringBuilder();
             var unionAll = " UNION ALL ";
             var i = 1;
             foreach (var article in articleList)
             {
-                if (i == articleList.Count())
+                if (i == articleList.Count)
                 {
                     unionAll = string.Empty;
                 }
+
                 var visible = article.Visible ? 1 : 0;
                 query.AppendFormat(insertTemplate, visible, article.StatusTypeId, article.ContentId, QPContext.CurrentUserId, unionAll);
                 i++;
             }
+
             var result = query.ToString();
             return ArticleRepository.InsertArticleIds(result);
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        private void InsertArticleValues(int[] idsList, IList<Article> articleList, bool updateArticles = false)
+        //Добавление значений полей статей
+        private static void InsertArticleValues(int[] idsList, IList<Article> articleList, bool updateArticles = false)
         {
             if (updateArticles)
             {
                 UpdateArticlesDateTime(idsList);
             }
-
             var doc = new XDocument();
             var o2MDoc = new XDocument();
             var parametersXml = new XElement("PARAMETERS");
@@ -535,6 +532,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             o2MDoc.Add(parametersXml);
 
             var k = 0;
+
             var m2MValues = new List<KeyValuePair<int, FieldValue>>();
             var o2MValues = new List<KeyValuePair<int, FieldValue>>();
 
@@ -546,7 +544,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     foreach (var fieldValue in article.FieldValues)
                     {
                         var fieldValueXml = GetFieldValueElement(fieldValue, articleId);
-                        doc.Root.Add(fieldValueXml);
+
+                        doc.Root?.Add(fieldValueXml);
 
                         if (fieldValue.Field.ExactType == FieldExactTypes.M2MRelation)
                         {
@@ -555,14 +554,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         else if (fieldValue.Field.ExactType == FieldExactTypes.O2MRelation)
                         {
                             o2MValues.Add(new KeyValuePair<int, FieldValue>(articleId, fieldValue));
-                            o2MDoc.Root.Add(fieldValueXml);
+                            o2MDoc.Root?.Add(fieldValueXml);
                         }
                     }
                 }
-
                 k++;
             }
-
             ArticleRepository.ValidateO2MValues(o2MDoc.ToString(SaveOptions.None));
             ValidateO2MRelationSecurity(o2MValues);
             ArticleRepository.InsertArticleValues(doc.ToString(SaveOptions.None));
@@ -595,177 +592,202 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return fieldValueXml;
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private static void ValidateO2MRelationSecurity(List<KeyValuePair<int, FieldValue>> o2mValues)
+        private static void ValidateO2MRelationSecurity(List<KeyValuePair<int, FieldValue>> o2MValues)
         {
-            var fieldsToCheck = o2mValues.Select(n => n.Value.Field).Distinct().Where(n => n.UseRelationSecurity);
+            var fieldsToCheck = o2MValues.Select(n => n.Value.Field).Distinct().Where(n => n.UseRelationSecurity);
             foreach (var field in fieldsToCheck)
             {
-                var ids = o2mValues.Where(n => n.Value.Field == field).Select(n => n.Value.Value).Distinct().Select(int.Parse).ToArray();
-                var notAccessedData = ArticleRepository.CheckRelationSecurity(field.RelateToContentId.Value, ids, false).Where(n => !n.Value).Select(n => n.Key.ToString()).ToArray();
-                var notAccessedHashset = new HashSet<string>(notAccessedData);
-                if (notAccessedHashset.Any())
+                var ids =
+                    o2MValues.Where(n => Equals(n.Value.Field, field))
+                        .Select(n => n.Value.Value)
+                        .Distinct()
+                        .Select(int.Parse)
+                        .ToArray();
+                if (field.RelateToContentId != null)
                 {
-                    var errorItem = o2mValues.First(n => notAccessedHashset.Contains(n.Value.Value));
-                    throw new ArgumentException(string.Format(ImportStrings.InaccessibleO2M, errorItem.Key, field.Name,
-                        errorItem.Value.Value));
+                    var notAccessed = new HashSet<string>
+                        (
+                        ArticleRepository.CheckRelationSecurity(field.RelateToContentId.Value, ids, false)
+                            .Where(n => !n.Value)
+                            .Select(n => n.Key.ToString())
+                            .ToArray()
+                        );
+
+                    if (notAccessed.Any())
+                    {
+                        var errorItem = o2MValues.First(n => notAccessed.Contains(n.Value.Value));
+                        throw new ArgumentException(string.Format(ImportStrings.InaccessibleO2M, errorItem.Key, field.Name,
+                            errorItem.Value.Value));
+                    }
                 }
             }
         }
 
         #region Update M2MRelation And O2MRelation Fields
+        // Добавление значений m2m и o2m полей
         public void PostUpdateM2MRelationAndO2MRelationFields()
         {
             if (_importSetts.ContainsO2MRelationOrM2MRelationFields)
             {
-                var values = new List<RelSourceDestinationValue>();
-
                 //get all relations between old and new article ids
-                GetNewValues(ref values);
-                PostUpdateM2MValues(values);
-                PostUpdateO2MValues(values);
+                var values = GetNewValues();
+                if (values.Any())
+                {
+                    var repo = new NotificationPushRepository();
+                    repo.PrepareNotifications(_contentId, values.Select(n => n.NewId).Distinct().ToArray(), NotificationCode.Update);
+                    PostUpdateM2MValues(values);
+                    PostUpdateO2MValues(values);
+                    repo.SendNotifications();
+                }
             }
         }
 
         // Обновление значений o2m полей
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        private static void PostUpdateO2MValues(List<RelSourceDestinationValue> m2mValues)
+        private static void PostUpdateO2MValues(List<RelSourceDestinationValue> m2MValues)
         {
             var doc = new XDocument();
             var items = new XElement("items");
             doc.Add(items);
 
-            foreach (var item in m2mValues.Where(s => !s.IsM2M))
+            foreach (var item in m2MValues.Where(s => !s.IsM2M))
             {
                 if (item.NewRelatedItems != null)
                 {
                     var oldId = item.NewRelatedItems[0];
-                    var oldElem = m2mValues.FirstOrDefault(s => s.OldId == oldId);
+                    var oldElem = m2MValues.FirstOrDefault(s => s.OldId == oldId);
                     if (oldElem != null && item.OldId != oldId)
                     {
                         var itemXml = new XElement("item");
                         itemXml.Add(new XAttribute("id", item.NewId));
                         itemXml.Add(new XAttribute("linked_id", oldElem.NewId));
                         itemXml.Add(new XAttribute("field_id", item.FieldId));
-                        doc.Root.Add(itemXml);
+                        doc.Root?.Add(itemXml);
 
                     }
                 }
             }
-
             ArticleRepository.InsertO2MFieldValues(doc.ToString(SaveOptions.None));
         }
 
         // Обновление значений m2m полей
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        private static void PostUpdateM2MValues(List<RelSourceDestinationValue> m2mValues)
+        private static void PostUpdateM2MValues(List<RelSourceDestinationValue> m2MValues)
         {
             var doc = new XDocument();
             var items = new XElement("items");
             doc.Add(items);
 
-            foreach (var item in m2mValues.Where(s => s.IsM2M))
+            foreach (var item in m2MValues.Where(s => s.IsM2M))
             {
                 if (item.NewRelatedItems != null)
                 {
-                    var result = GetM2MRelatedArtsWithNewIds(item.NewRelatedItems, m2mValues);
+                    var result = GetM2MRelatedArtsWithNewIds(item.NewRelatedItems, m2MValues);
                     var itemXml = new XElement("item");
                     itemXml.Add(new XAttribute("id", item.NewId));
                     itemXml.Add(new XAttribute("linkId", item.FieldId));
                     itemXml.Add(new XAttribute("value", string.Join(",", result)));
-                    doc.Root.Add(itemXml);
+                    doc.Root?.Add(itemXml);
                 }
 
             }
-
             ArticleRepository.UpdateM2MValues(doc.ToString(SaveOptions.None));
         }
 
         // Получение списка серверных id вместо пользовательских
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        private static IEnumerable<int> GetM2MRelatedArtsWithNewIds(IEnumerable<int> oldRelatedIds, IEnumerable<RelSourceDestinationValue> m2mValues)
+        private static IEnumerable<int> GetM2MRelatedArtsWithNewIds(IEnumerable<int> oldRelatedIds, List<RelSourceDestinationValue> m2MValues)
         {
-            return (from oldId in oldRelatedIds
-                    where m2mValues.FirstOrDefault(s => s.OldId == oldId) != null
-                    select m2mValues.FirstOrDefault(s => s.OldId == oldId).NewId).ToList();
+            var result = new List<int>();
+            foreach (var oldId in oldRelatedIds)
+            {
+                var value = m2MValues.FirstOrDefault(s => s.OldId == oldId);
+                if (value != null)
+                {
+                    result.Add(value.NewId);
+                }
+
+            }
+
+            return result;
         }
         #endregion
 
         #region Insert M2M relation field values
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
+
         private static void UpdateM2MValues(List<KeyValuePair<int, FieldValue>> values)
         {
-            var m2mFields = new Dictionary<string, Field>();
-
+            var m2MFields = new Dictionary<string, Field>();
             // Getting m2m fields
-            foreach (var fieldV in values.Where(fieldV => !m2mFields.Keys.Contains(fieldV.Value.Field.Name)))
+            foreach (var fieldV in values)
             {
-                m2mFields.Add(fieldV.Value.Field.Name, fieldV.Value.Field);
+                if (!m2MFields.Keys.Contains(fieldV.Value.Field.Name))
+                {
+                    m2MFields.Add(fieldV.Value.Field.Name, fieldV.Value.Field);
+                }
             }
 
             var doc = new XDocument();
             var items = new XElement("items");
             doc.Add(items);
 
-            foreach (var field in m2mFields.Values)
+            foreach (var field in m2MFields.Values)
             {
-                var condition = field.RelationCondition;
-                var linkId = field.LinkId ?? 0;
-                var contentId = field.RelateToContentId.Value;
 
-                //Filtering values with m2mFields
-                var filteredValues = values.Where(f => f.Value.Field.Name == field.Name).ToList();
-                var relatedIds = filteredValues
-                    .Where(n => n.Value.NewRelatedItems != null)
-                    .SelectMany(n => n.Value.NewRelatedItems)
-                    .Distinct()
-                    .ToList();
-
-                var validatedIds = new HashSet<int>(ArticleRepository.CheckForArticleExistence(relatedIds, condition, contentId));
-                var grantedIds = field.UseRelationSecurity
-                    ? new HashSet<int>(ArticleRepository.CheckRelationSecurity(contentId, validatedIds.ToArray(), false).Where(n => n.Value).Select(m => m.Key))
-                    : validatedIds;
-
-                foreach (var item in filteredValues)
+                var m2MField = field;
+                var condition = m2MField.RelationCondition;
+                var linkId = m2MField.LinkId ?? 0;
+                if (m2MField.RelateToContentId != null)
                 {
-                    var value = string.Empty;
-                    if (item.Value.NewRelatedItems != null)
+                    var contentId = m2MField.RelateToContentId.Value;
+
+                    //Filtering values with m2mFields
+                    var filteredValues = values.Where(f => f.Value.Field.Name == m2MField.Name).ToArray();
+                    var relatedIds = filteredValues
+                        .Where(n => n.Value.NewRelatedItems != null)
+                        .SelectMany(n => n.Value.NewRelatedItems)
+                        .Distinct()
+                        .ToList();
+
+                    var validatedIds = new HashSet<int>(ArticleRepository.CheckForArticleExistence(relatedIds, condition, contentId));
+                    var grantedIds = field.UseRelationSecurity ?
+                        new HashSet<int>(
+                            ArticleRepository.CheckRelationSecurity(contentId, validatedIds.ToArray(), false)
+                                .Where(n => n.Value).Select(m => m.Key)
+                            ) : validatedIds;
+
+                    foreach (var item in filteredValues)
                     {
-                        var notValidIds = item.Value.NewRelatedItems.Where(n => !validatedIds.Contains(n)).ToArray();
-                        if (notValidIds.Any())
+                        var value = "";
+                        if (item.Value.NewRelatedItems != null)
                         {
-                            throw new ArgumentException(string.Format(ImportStrings.IncorrectM2M, item.Key, item.Value.Field.Name, string.Join(",", notValidIds)));
+                            var notValidIds = item.Value.NewRelatedItems.Where(n => !validatedIds.Contains(n)).ToArray();
+                            if (notValidIds.Any())
+                                throw new ArgumentException(string.Format(ImportStrings.IncorrectM2M, item.Key, item.Value.Field.Name, string.Join(",", notValidIds)));
+
+                            var notGrantedIds = item.Value.NewRelatedItems.Where(n => !grantedIds.Contains(n)).ToArray();
+                            if (notGrantedIds.Any())
+                                throw new ArgumentException(string.Format(ImportStrings.InaccessibleM2M, item.Key, item.Value.Field.Name, string.Join(",", notGrantedIds)));
+
+                            value = string.Join(",", item.Value.NewRelatedItems);
                         }
 
-                        var notGrantedIds = item.Value.NewRelatedItems.Where(n => !grantedIds.Contains(n)).ToArray();
-                        if (notGrantedIds.Any())
-                        {
-                            throw new ArgumentException(string.Format(ImportStrings.InaccessibleM2M, item.Key, item.Value.Field.Name, string.Join(",", notGrantedIds)));
-                        }
-
-                        value = string.Join(",", item.Value.NewRelatedItems);
+                        var itemXml = new XElement("item");
+                        itemXml.Add(new XAttribute("id", item.Key));
+                        itemXml.Add(new XAttribute("linkId", linkId));
+                        itemXml.Add(new XAttribute("value", value));
+                        doc.Root?.Add(itemXml);
                     }
-
-                    var itemXml = new XElement("item");
-                    itemXml.Add(new XAttribute("id", item.Key));
-                    itemXml.Add(new XAttribute("linkId", linkId));
-                    itemXml.Add(new XAttribute("value", value));
-                    doc.Root.Add(itemXml);
                 }
             }
-
             ArticleRepository.UpdateM2MValues(doc.ToString(SaveOptions.None));
         }
+
         #endregion
 
         #region File methods
         // Сериализация соответствий новых статей в файл
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private void SaveNewRelationsToFile(IList<Article> articles, IEnumerable<int> idsList)
         {
             var k = 0;
-            var m2mValues = new List<RelSourceDestinationValue>();
+            var m2MValues = new List<RelSourceDestinationValue>();
 
             // idsList - список добавленнынх id, необходимо пройти по каждому из них и обновить данные полей.
             foreach (var id in idsList)
@@ -773,20 +795,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var art = articles[k];
                 foreach (var fv in art.FieldValues)
                 {
-                    if (fv.Field.ExactType == FieldExactTypes.M2MRelation && fv.Field.RelateToContentId.Value == art.ContentId)
+                    if (fv.Field.RelateToContentId != null && fv.Field.ExactType == FieldExactTypes.M2MRelation && fv.Field.RelateToContentId.Value == art.ContentId)
                     {
-                        var val = new RelSourceDestinationValue
+                        if (fv.Field.LinkId != null)
                         {
-                            NewId = id,
-                            OldId = art.Id,
-                            FieldId = fv.Field.LinkId.Value,
-                            NewRelatedItems = fv.NewRelatedItems,
-                            IsM2M = true
-                        };
-
-                        m2mValues.Add(val);
+                            var val = new RelSourceDestinationValue
+                            {
+                                NewId = id,
+                                OldId = art.Id,
+                                FieldId = fv.Field.LinkId.Value,
+                                NewRelatedItems = fv.NewRelatedItems,
+                                IsM2M = true
+                            };
+                            m2MValues.Add(val);
+                        }
                     }
-                    else if (fv.Field.ExactType == FieldExactTypes.O2MRelation && fv.Field.RelateToContentId.Value == art.ContentId)
+                    else if (fv.Field.RelateToContentId != null && fv.Field.ExactType == FieldExactTypes.O2MRelation && fv.Field.RelateToContentId.Value == art.ContentId)
                     {
                         var val = new RelSourceDestinationValue
                         {
@@ -797,19 +821,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                             IsM2M = false
                         };
 
-                        m2mValues.Add(val);
+                        m2MValues.Add(val);
                     }
                 }
-
                 k++;
             }
-
             try
             {
                 using (Stream sw = File.Open(_importSetts.TempFileForRelFields, FileMode.Append))
                 {
                     var bin = new BinaryFormatter();
-                    bin.Serialize(sw, m2mValues);
+                    bin.Serialize(sw, m2MValues);
                 }
             }
             catch
@@ -819,30 +841,28 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         }
 
         // Десериализация всех соответствий (после добавления статей)
-        private void GetNewValues(ref List<RelSourceDestinationValue> m2mValues)
+        private List<RelSourceDestinationValue> GetNewValues()
         {
-            if (!File.Exists(_importSetts.TempFileForRelFields))
-            {
-                return;
-            }
-
-            try
-            {
-                using (Stream stream = File.Open(_importSetts.TempFileForRelFields, FileMode.Open))
+            var m2MValues = new List<RelSourceDestinationValue>();
+            if (File.Exists(_importSetts.TempFileForRelFields))
+                try
                 {
-                    var bin = new BinaryFormatter();
-
-                    while (stream.Position != stream.Length)
+                    using (Stream stream = File.Open(_importSetts.TempFileForRelFields, FileMode.Open))
                     {
-                        var vals = (List<RelSourceDestinationValue>)bin.Deserialize(stream);
-                        m2mValues.AddRange(vals);
+                        var bin = new BinaryFormatter();
+
+                        while (stream.Position != stream.Length)
+                        {
+                            var vals = (List<RelSourceDestinationValue>)bin.Deserialize(stream);
+                            m2MValues.AddRange(vals);
+                        }
                     }
                 }
-            }
-            catch
-            {
-                throw new ArgumentException();
-            }
+                catch
+                {
+                    throw new ArgumentException();
+                }
+            return m2MValues;
         }
 
         #endregion
@@ -851,19 +871,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         #region Help private methods
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static void SaveUpdatedArticleIdsToSettings(IEnumerable<int> articleIds)
         {
             var setts = HttpContext.Current.Session["ImportArticlesService.Settings"] as ImportSettings;
-            setts.UpdatedArticleIds.AddRange(articleIds);
+            setts?.UpdatedArticleIds.AddRange(articleIds);
             HttpContext.Current.Session["ImportArticlesService.Settings"] = setts;
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static void SaveInsertedArticleIdsToSettings(IEnumerable<int> articleIds)
         {
             var setts = HttpContext.Current.Session["ImportArticlesService.Settings"] as ImportSettings;
-            setts.InsertedArticleIds.AddRange(articleIds);
+            setts?.InsertedArticleIds.AddRange(articleIds);
             HttpContext.Current.Session["ImportArticlesService.Settings"] = setts;
         }
 
@@ -877,7 +895,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return ArticleRepository.GetExistingArticleIdsMap(values, fieldName, string.Empty, _contentId);
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        // Обновление даты изменения статей
         private static void UpdateArticlesDateTime(int[] articlesIds)
         {
             var doc = new XDocument();
@@ -889,7 +907,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 var itemXml = new XElement("item");
                 itemXml.Add(new XAttribute("id", id));
                 itemXml.Add(new XAttribute("modifiedBy", QPContext.CurrentUserId));
-                doc.Root.Add(itemXml);
+                doc.Root?.Add(itemXml);
+
             }
 
             ArticleRepository.UpdateArticlesDateTime(doc.ToString(SaveOptions.None));
@@ -902,14 +921,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private string[] SplitToValues(int countColumns, string line)
         {
-            return line.Split(_importSetts.Delimiter).Count() == countColumns ? line.Split(_importSetts.Delimiter) : ParseLine(line);
+            return line.Split(_importSetts.Delimiter).Length == countColumns ? line.Split(_importSetts.Delimiter) : ParseLine(line);
         }
 
         private string[] ParseLine(string line)
         {
-            const char quote = '"';
-
             var fieldValues = new List<string>();
+            const char quote = '"';
             var lineByChar = line.ToCharArray();
             var startIndex = 0;
             var quoteCounter = 0;
@@ -954,7 +972,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             {
                 sb.Append(charLine[i].ToString());
             }
-
             return sb.ToString();
         }
 
@@ -968,9 +985,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 ContentId = contentId,
                 FieldValues = new List<FieldValue>()
             };
-
             return article;
         }
+
         #endregion
 
         #region Public static methods
@@ -983,11 +1000,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 {
                     throw new ArgumentException(ImportStrings.FirstLineEmpty);
                 }
-
                 return firstLine.Split(delimiter).ToList();
             }
-
-            var columnsCount = firstLine.Split(delimiter).Count();
+            var columnsCount = firstLine.Split(delimiter).Length;
             var columnIndexes = Enumerable.Range(0, columnsCount).ToArray();
             return columnIndexes.Select(k => k.ToString()).ToList();
         }
@@ -996,18 +1011,21 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         #region extension methods
         private void InitFields()
         {
-            _baseFields = _importSetts.FieldsList.Where(f => f.Value.ContentId == _contentId).Select(f => f.Value).ToList();
             _fieldsMap = (from f in _importSetts.FieldsList.Select(f => f.Value)
-                         group f by f.ContentId into g
-                         select g)
+                          group f by f.ContentId into g
+                          select g)
                          .ToDictionary(g => g.Key, g => g.ToList());
 
             _headersMap = _importSetts.FieldsList.ToDictionary(f => f.Value, f => _titleHeaders.FindIndex(s => s == f.Key));
+
             _aggregatedContentsMap = ContentRepository.GetAggregatedContents(_contentId).ToDictionary(c => c.Id, c => c);
+
             _articlesListFromCsv = new ExstendedArticleList();
+
             _uniqueValuesList = new List<string>();
         }
         #endregion
+
     }
 
     public class FileReader
@@ -1023,10 +1041,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public IEnumerable<Line> Lines => _lines.Value;
 
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         public void CopyFileToTempDir()
         {
-            var fileInfo = new FileInfo(HttpUtility.UrlDecode(_setts.UploadFilePath));
+            var fileInfo = new FileInfo(HttpUtility.UrlDecode(_setts.UploadFilePath) ?? "");
             if (fileInfo.Exists)
             {
                 var newFileUploadPath = $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";
@@ -1065,12 +1082,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return Lines.Count(s => !s.Skip);
         }
     }
-
     public class CustomStreamReader : StreamReader
     {
         private readonly string _lineDelimiter;
         private readonly char _fieldDelimiter;
-
         public CustomStreamReader(Stream stream, Encoding encoding, string lineDelimiter, char fieldDelimiter)
             : base(stream, encoding)
         {
@@ -1080,9 +1095,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private bool IsEmpty(string line)
         {
-            return string.IsNullOrEmpty(line.Trim(_fieldDelimiter, '"', '\r', '\n')) || string.IsNullOrWhiteSpace(line);
+            var res = line.Trim(_fieldDelimiter, '"', '\r', '\n');
+            return string.IsNullOrEmpty(res) || string.IsNullOrWhiteSpace(line);
         }
-
         public override string ReadLine()
         {
             var c = Read();
@@ -1104,7 +1119,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 {
                     quoteOpen = false;
                 }
-
                 var lineSepArr = _lineDelimiter.ToCharArray();
                 var sep = lineSepArr[0];
                 if (lineSepArr.Length == 2)
@@ -1113,23 +1127,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
 
                 var ch = (char)c;
+
                 if (ch == sep && !quoteOpen && (lineSepArr.Length == 1 || (lineSepArr.Length == 2 && lastCh == lineSepArr[0])))
                 {
                     if (!IsEmpty(sb.ToString()))
                     {
                         return sb.ToString();
                     }
-
                     sb.Remove(0, sb.Length);
                 }
                 else
                 {
                     sb.Append(ch);
                 }
-
                 lastCh = (char)c;
-            } while ((c = Read()) != -1);
 
+            } while ((c = Read()) != -1);
             return sb.ToString();
         }
     }
@@ -1138,20 +1151,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
     public class RelSourceDestinationValue
     {
         public int OldId { get; set; }
-
         public int NewId { get; set; }
-
         public int FieldId { get; set; }
-
         public int[] NewRelatedItems { get; set; }
-
         public bool IsM2M { get; set; }
     }
 
     public class ExstendedArticle
     {
         public Article BaseArticle { get; }
-
         public Dictionary<Field, Article> Exstensions { get; }
 
         public ExstendedArticle(Article baseArticle)
@@ -1192,13 +1200,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public IEnumerable<List<Article>> GetAllAggregatedArticles()
         {
-            return ExstensionFields.Select(GetAggregatedArticles);
+            foreach (var field in ExstensionFields)
+            {
+                yield return GetAggregatedArticles(field);
+            }
         }
 
         public ExstendedArticleList Filter(Func<Article, bool> predicate)
         {
             var result = new ExstendedArticleList(this);
-            result.AddRange(this.Where(article => predicate(article.BaseArticle)));
+            foreach (var article in this)
+            {
+                if (predicate(article.BaseArticle))
+                {
+                    result.Add(article);
+                }
+            }
             return result;
         }
     }
@@ -1211,4 +1228,5 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public bool Skip { get; set; }
     }
+
 }

@@ -115,11 +115,14 @@ namespace Quantumart.QP8.BLL.Helpers
 
         public static string BoolFormat(string value)
         {
-            if (value == "False")
-                return "0";
-            if (value == "True")
-                return "1";
-            if (new[] { "1", "0", "NULL", "" }.Contains(value))
+            switch (value)
+            {
+                case "False":
+                    return "0";
+                case "True":
+                    return "1";
+            }
+            if (new[] {"1", "0", "NULL", ""}.Contains(value))
                 return value;
             throw new FormatException(string.Format(ImportStrings.BoolFormatError, value));
         }
@@ -231,7 +234,6 @@ namespace Quantumart.QP8.BLL.Helpers
             return GetXmlFromDataRows(rows, source, destination);
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static string GetXmlFromDataRows(IEnumerable<DataRow> rows, string sourceColumnName, string destinationColumnName)
         {
             var xDocument = new XDocument();
@@ -243,7 +245,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 var itemXml = new XElement("item");
                 itemXml.Add(new XAttribute("sourceId", row[sourceColumnName].ToString()));
                 itemXml.Add(new XAttribute("destinationId", row[destinationColumnName].ToString()));
-                xDocument.Root.Add(itemXml);
+                xDocument.Root?.Add(itemXml);
             }
 
             return xDocument.ToString();

@@ -439,6 +439,7 @@ namespace Quantumart.QP8.WebMvc.Backend
             constants.AppendLine("// Фильтры по колонкам Action Log");
             constants.AppendLine(GenerateEnumeration("Quantumart.QP8.Enums.ActionLogFilteredColumns", new Dictionary<string, int>
             {
+                { "ActionName",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.ActionName},
                 { "ActionTypeName",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.ActionTypeName},
                 { "EntityStringId",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.EntityStringId},
                 { "EntityTitle",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.EntityTitle},

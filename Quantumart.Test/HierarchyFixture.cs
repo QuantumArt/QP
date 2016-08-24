@@ -57,7 +57,7 @@ namespace Quantumart.Test
             using (new QPConnectionScope(Global.ConnectionString))
             {
 
-                var articleService = new ArticleService(Global.ConnectionString, 1);
+                var articleService = new ArticleService(1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = String.Join(",", ids);
@@ -79,7 +79,7 @@ namespace Quantumart.Test
             using (new QPConnectionScope(Global.ConnectionString))
             {
 
-                var articleService = new ArticleService(Global.ConnectionString, 1);
+                var articleService = new ArticleService(1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = String.Join(",", ids);
@@ -101,7 +101,7 @@ namespace Quantumart.Test
             using (new QPConnectionScope(Global.ConnectionString))
             {
 
-                var articleService = new ArticleService(Global.ConnectionString, 1);
+                var articleService = new ArticleService(1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = String.Join(",", ids);
@@ -123,7 +123,7 @@ namespace Quantumart.Test
             using (new QPConnectionScope(Global.ConnectionString))
             {
 
-                var articleService = new ArticleService(Global.ConnectionString, 1);
+                var articleService = new ArticleService(1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = String.Join(",", ids);

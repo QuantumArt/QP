@@ -12,6 +12,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Utils;
+using Quantumart.QP8.BLL.Repository.Articles;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -440,20 +441,6 @@ namespace Quantumart.QP8.BLL.Repository
         {
             Expression<Func<ContentToContentDAL, bool>> scopeExpression = n => n.Content.SiteId == content.SiteId;
             return scopeExpression;
-        }
-
-        internal static IEnumerable<ListItem> GetArticleTitleList(int contentId, string titleName, string filterIds)
-        {
-            using (new QPConnectionScope())
-            {
-                var rows = Common.GetArticleTitleList(
-                    QPConnectionScope.Current.DbConnection,
-                    contentId,
-                    string.IsNullOrEmpty(titleName) ? GetTitleName(contentId) : titleName,
-                    filterIds
-                );
-                return rows.Select(n => new ListItem(n["id"].ToString(), n["title"].ToString()));
-            }
         }
 
         internal static Field GetTitleField(int contentId)

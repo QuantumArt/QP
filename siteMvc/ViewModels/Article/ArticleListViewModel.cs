@@ -1,15 +1,15 @@
-﻿using Quantumart.QP8.BLL.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Dynamic;
 using C = Quantumart.QP8.Constants;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
     public class ArticleListViewModel : ListViewModel
     {
@@ -103,13 +103,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         }
 
         #region overrides
-        public override bool IsReadOnly
-        {
-            get
-            {
-                return base.IsReadOnly || ShowArchive;
-            }
-        }
+        public override bool IsReadOnly => base.IsReadOnly || ShowArchive;
 
         public override string EntityTypeCode
         {
@@ -147,43 +141,19 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             }
         }
 
-        public override string AddNewItemText
-        {
-            get
-            {
-                return ArticleStrings.Link_AddNewArticle;
-            }
-        }
+        public override string AddNewItemText => ArticleStrings.Link_AddNewArticle;
 
-        public override string AddNewItemActionCode
-        {
-            get
-            {
-                return C.ActionCode.AddNewArticle;
-            }
-        }
+        public override string AddNewItemActionCode => C.ActionCode.AddNewArticle;
 
-        public override bool IsListDynamic
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsListDynamic => true;
 
-        public override string KeyColumnName
-        {
-            get
-            {
-                return C.FieldName.CONTENT_ITEM_ID;
-            }
-        }
+        public override string KeyColumnName => C.FieldName.CONTENT_ITEM_ID;
 
         public override string Filter
         {
             get
             {
-                var filter = string.Format("c.archive = {0}", Convert.ToInt32(ShowArchive));
+                var filter = $"c.archive = {Convert.ToInt32(ShowArchive)}";
                 return CustomFilter.Contains(filter) ? CustomFilter : SqlFilterComposer.Compose(CustomFilter, filter);
             }
         }
@@ -223,7 +193,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             }
         }
 
-        public override bool AllowFilterSelectedEntities { get { return true; } }
+        public override bool AllowFilterSelectedEntities => true;
+
         #endregion
     }
 }

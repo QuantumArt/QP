@@ -19,12 +19,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         {
             SiteId = siteId;
             ContentId = contentId;
-			Id = Guid.NewGuid();
-			UpdatedArticleIds = new List<int>();
-			InsertedArticleIds = new List<int>();
+            Id = Guid.NewGuid();
+            UpdatedArticleIds = new List<int>();
+            InsertedArticleIds = new List<int>();
         }
 
-		public Guid Id { get; private set; }
+        public Guid Id { get; private set; }
 
         public string UploadFilePath => GetUploadFilePath();
 
@@ -32,8 +32,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         {
             get
             {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                var fileInfo = new FileInfo(HttpUtility.UrlDecode(UploadFilePath));
+                var url = HttpUtility.UrlDecode(UploadFilePath) ?? "";
+                var fileInfo = new FileInfo(url);
                 return $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";
             }
         }
@@ -71,7 +71,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public bool UpdateAndInsert { get; set; }
 
-		public Field UniqueContentField { get; set; }
+        public Field UniqueContentField { get; set; }
 
         public string UniqueFieldToUpdate { get; set; } = string.Empty;
 
@@ -79,9 +79,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
 		public List<KeyValuePair<string, Field>> FieldsList { get; set; }
 
-		public List<int> UpdatedArticleIds { get; set; }
+        public List<int> UpdatedArticleIds { get; set; }
 
-		public List<int> InsertedArticleIds { get; set; }
+        public List<int> InsertedArticleIds { get; set; }
 
         private string GetUploadFilePath()
         {

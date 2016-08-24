@@ -10,18 +10,28 @@ namespace Quantumart.QP8.BLL.Services.API
 
         protected ServiceBase(string connectionString, int userId)
         {
+            Setup(connectionString, userId);
+        }
+        private void Setup(string connectionString, int userId)
+        {
             if (string.IsNullOrEmpty(connectionString))
-            {
                 throw new ArgumentNullException(nameof(connectionString));
-            }
 
             ConnectionString = connectionString;
             UserId = userId;
         }
 
-        public string ConnectionString { get; }
+        protected ServiceBase(int userId)
+        {
+            if (QPConnectionScope.Current == null)
+                throw new ApplicationException("Attempt to create service instance without external QPConnectionScope object");
 
-        public int UserId { get; }
+            Setup(QPConnectionScope.Current.DbConnection.ConnectionString, userId);
+        }
+
+        public string ConnectionString { get; private set; }
+
+        public int UserId { get; private set; }
 
         public int TestedUserId
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Practices.Unity;
+using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
 
 namespace Quantumart.QP8.ArticleScheduler

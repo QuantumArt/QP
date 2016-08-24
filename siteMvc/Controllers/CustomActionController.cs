@@ -1,5 +1,12 @@
-﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.ListItems;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Security;
+using System.Text;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -8,33 +15,28 @@ using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
-using System;
-using System.IO;
-using System.Net;
-using System.Security;
-using System.Text;
-using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
+    // ReSharper disable InconsistentNaming
     public class CustomActionController : QPController
     {
-        private readonly ICustomActionService service;
+        private readonly ICustomActionService _service;
 
         #region Executing
         public CustomActionController(ICustomActionService service)
         {
-            this.service = service;
+            _service = service;
         }
 
         [HttpPost]
-        public ActionResult Execute(string tabId, int parentId, int[] IDs, string actionCode)
+        public ActionResult Execute(string tabId, int parentId, int[] ids, string actionCode)
         {
             CustomActionPrepareResult result = null;
             try
             {
-                result = service.PrepareForExecuting(actionCode, tabId, IDs, parentId);
+                result = _service.PrepareForExecuting(actionCode, tabId, ids, parentId);
                 if (!result.IsActionAccessable)
                 {
                     throw new SecurityException(result.SecurityErrorMesage);
@@ -42,48 +44,42 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 if (result.CustomAction.Action.IsInterface)
                 {
-                    ExecuteCustomActionViewModel model = ExecuteCustomActionViewModel.Create(tabId, parentId, IDs, result.CustomAction);
+                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, ids, result.CustomAction);
                     return JsonHtml("ExecuteAction", model);
                 }
-                else
-                {
-                    return Json(new { Url = result.CustomAction.FullUrl, PreActionUrl = result.CustomAction.PreActionFullUrl });
-                }
+                return Json(new { Url = result.CustomAction.FullUrl, PreActionUrl = result.CustomAction.PreActionFullUrl });
             }
             catch (Exception exp)
             {
-                if (result == null || result.CustomAction == null || result.CustomAction.Action == null)
+                if (result?.CustomAction?.Action == null)
                 {
                     throw;
                 }
-                else if (result.CustomAction.Action.IsInterface)
+                if (result.CustomAction.Action.IsInterface)
                 {
                     return new JsonNetResult<object>(new { success = false, message = exp.Message });
                 }
-                else
-                {
-                    return new JsonResult { Data = MessageResult.Error(exp.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
-                }
+                return new JsonResult { Data = MessageResult.Error(exp.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
 
         [HttpPost]
-        public ActionResult ExecutePreAction(string tabId, int parentId, int[] IDs, string actionCode)
+        public ActionResult ExecutePreAction(string tabId, int parentId, int[] ids, string actionCode)
         {
-            return Json(MessageResult.Confirm(String.Format("Action: {0}, ParentId: {1}, IDs: {2}", actionCode, parentId, String.Join(";", IDs))));
+            return Json(MessageResult.Confirm($"Action: {actionCode}, ParentId: {parentId}, IDs: {string.Join(";", ids)}"));
         }
 
         [HttpPost]
-        public ActionResult Proxy(string url, string callback)
+        public ActionResult Proxy(string url, string actionCode, int level, int[] ids, int? parentEntityId)
         {
             var parts = url.Split("?".ToCharArray(), 2);
-            var req = HttpWebRequest.Create(parts[0]);
+            var req = WebRequest.Create(parts[0]);
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
-            ASCIIEncoding ascii = new ASCIIEncoding();
-            byte[] postBytes = ascii.GetBytes(parts[1]);
+            var ascii = new ASCIIEncoding();
+            var postBytes = ascii.GetBytes(parts[1]);
             req.ContentLength = postBytes.Length;
-            using (Stream postStream = req.GetRequestStream())
+            using (var postStream = req.GetRequestStream())
             {
                 postStream.Write(postBytes, 0, postBytes.Length);
                 postStream.Flush();
@@ -91,14 +87,32 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
             try
             {
-                var resp = req.GetResponse();
-                var strmReader = new StreamReader(resp.GetResponseStream());
-                return Content(strmReader.ReadToEnd());
+                var result = "";
+                var resp = req.GetResponse().GetResponseStream();
+                if (resp != null)
+                {
+                    result = new StreamReader(resp).ReadToEnd();
+                }
+                if (level >= PermissionLevel.Modify)
+                {
+                    CreateLogs(actionCode, ids, parentEntityId);
+                }
+                return Content(result);
             }
             catch (Exception ex)
             {
-                return this.JsonMessageResult(MessageResult.Error(ex.Message));
+                return JsonMessageResult(MessageResult.Error(ex.Message));
             }
+        }
+
+        private static void CreateLogs(string actionCode, int[] ids, int? parentEntityId)
+        {
+            var repo = DependencyResolver.Current.GetService<IBackendActionLogRepository>();
+
+            BackendActionContext.SetCurrent(actionCode, ids.Select(n => n.ToString()), parentEntityId);
+            var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, repo);
+            repo.Save(logs);
+            BackendActionContext.ResetCurrent();
         }
 
         #endregion
@@ -110,9 +124,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.CustomActions)]
         public ActionResult Index(string tabId, int parentId)
         {
-            CustomActionInitListResult initList = service.InitList(parentId);
-            CustomActionListViewModel model = CustomActionListViewModel.Create(initList, tabId, parentId);
-            return this.JsonHtml("Index", model);
+            var initList = _service.InitList(parentId);
+            var model = CustomActionListViewModel.Create(initList, tabId, parentId);
+            return JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -121,8 +135,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.CustomActions)]
         public ActionResult _Index(string tabId, int parentId, GridCommand command)
         {
-            ListResult<CustomActionListItem> serviceResult = service.List(command.GetListCommand());
-            return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            var serviceResult = _service.List(command.GetListCommand());
+            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
         #endregion
 
@@ -132,34 +146,33 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewCustomAction)]
         public ActionResult New(string tabId, int parentId)
         {
-            CustomAction action = service.New();
-            CustomActionViewModel model = CustomActionViewModel.Create(action, tabId, parentId, service);
-            return this.JsonHtml("Properties", model);
+            var action = _service.New();
+            var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
+            return JsonHtml("Properties", model);
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewCustomAction)]
         [BackendActionContext(ActionCode.AddNewCustomAction)]
         [BackendActionLog]
         [Record]
         public ActionResult New(string tabId, int parentId, int id, FormCollection collection)
         {
-            CustomAction action = service.NewForSave();
-            CustomActionViewModel model = CustomActionViewModel.Create(action, tabId, parentId, service);
+            var action = _service.NewForSave();
+            var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                model.Data = service.Save(model.Data, model.SelectedActionsIds);
-                this.PersistResultId(model.Data.Id);
-                this.PersistActionId(model.Data.ActionId);
-                this.PersistActionCode(model.Data.Action.Code);
-                return Redirect("Properties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.SaveCustomAction });
+                model.Data = _service.Save(model.Data, model.SelectedActionsIds);
+                PersistResultId(model.Data.Id);
+                PersistActionId(model.Data.ActionId);
+                PersistActionCode(model.Data.Action.Code);
+                return Redirect("Properties", new {tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveCustomAction });
             }
-            else
-                return JsonHtml("Properties", model);
+            return JsonHtml("Properties", model);
         }
 
         [HttpGet]
@@ -169,45 +182,44 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.CustomActionsProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
         {
-            CustomAction action = service.Read(id);
-            CustomActionViewModel model = CustomActionViewModel.Create(action, tabId, parentId, service);
+            var action = _service.Read(id);
+            var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
             model.SuccesfulActionCode = successfulActionCode;
-            return this.JsonHtml("Properties", model);
+            return JsonHtml("Properties", model);
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateCustomAction)]
         [BackendActionContext(ActionCode.UpdateCustomAction)]
         [BackendActionLog]
         [Record(ActionCode.CustomActionsProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
-            CustomAction action = service.ReadForUpdate(id);
-            CustomActionViewModel model = CustomActionViewModel.Create(action, tabId, parentId, service);
+            var action = _service.ReadForUpdate(id);
+            var model = CustomActionViewModel.Create(action, tabId, parentId, _service);
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                model.Data = service.Update(model.Data, model.SelectedActionsIds);
-                return Redirect("Properties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.UpdateCustomAction });
+                model.Data = _service.Update(model.Data, model.SelectedActionsIds);
+                return Redirect("Properties", new {tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateCustomAction });
             }
-            else
-                return JsonHtml("Properties", model);
+            return JsonHtml("Properties", model);
         }
 
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveCustomAction)]
         [BackendActionContext(ActionCode.RemoveCustomAction)]
         [BackendActionLog]
         [Record]
         public ActionResult Remove(int id)
         {
-            MessageResult result = service.Remove(id);
+            var result = _service.Remove(id);
             return JsonMessageResult(result);
         }
     }

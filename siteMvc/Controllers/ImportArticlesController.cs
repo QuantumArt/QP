@@ -30,13 +30,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public ActionResult PreSettings(int parentId, int id)
         {
-			var db = DbService.ReadSettings();
-			if (db.RecordActions && db.SingleUserId != QPContext.CurrentUserId)
-			{
-				throw new Exception(DBStrings.SingeUserModeMessage);
-			}
+            var db = DbService.ReadSettings();
+            if (db.RecordActions && db.SingleUserId != QPContext.CurrentUserId)
+            {
+                throw new Exception(DBStrings.SingeUserModeMessage);
+            }
 
-			var prms = _service.MultistepActionSettings(parentId, id);
+            var prms = _service.MultistepActionSettings(parentId, id);
             return Json(prms);
         }
 
@@ -65,7 +65,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             TryUpdateModel(model);
             model.SetCorrespondingFieldName(collection);
             var settings = model.GetImportSettingsObject(parentId, id);
-			var reader = new FileReader(settings);
+            var reader = new FileReader(settings);
             var fieldsList = MultistepActionHelper.GetFileFields(settings, reader);
             return Json(fieldsList);
         }
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-		public ActionResult Setup(int parentId, int id, bool? boundToExternal)
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
             var settings = _service.Setup(parentId, id, boundToExternal);
             return Json(settings);

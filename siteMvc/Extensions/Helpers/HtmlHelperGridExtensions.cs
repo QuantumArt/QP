@@ -18,6 +18,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.WebMvc.ViewModels.Article;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {

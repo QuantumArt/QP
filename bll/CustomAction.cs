@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -14,11 +13,11 @@ namespace Quantumart.QP8.BLL
 	/// </summary>
 	public class CustomAction : EntityObject
 	{
-		private static readonly string SID_PARAM_NAME = "backend_sid";
+	    private const string SidParamName = "backend_sid";
 
-		public override string EntityTypeCode { get { return Constants.EntityTypeCode.CustomAction; } }
+	    public override string EntityTypeCode => Constants.EntityTypeCode.CustomAction;
 
-		internal static CustomAction CreateNew()
+	    internal static CustomAction CreateNew()
 		{
 			return new CustomAction
 			{
@@ -42,7 +41,7 @@ namespace Quantumart.QP8.BLL
 
 			if (Order < 0)
 				errors.ErrorFor(a => a.Order, CustomActionStrings.OrderIsNotInRange);
-			else if (Order > 0 && Action.EntityTypeId > 0 && !IsOrderUniq(Id, Order, Action.EntityTypeId))
+			else if ((Order > 0) && (Action.EntityTypeId > 0) && !IsOrderUniq(Id, Order, Action.EntityTypeId))
 			{
 				int freeOrder = GetFreeOrder(Action.EntityTypeId);
 				errors.ErrorFor(a => a.Order, String.Format(CustomActionStrings.OrderValueIsNotUniq, freeOrder));
@@ -78,12 +77,13 @@ namespace Quantumart.QP8.BLL
 		private int GetFreeOrder(int entityTypeId)
 		{
 			IEnumerable<int> existingOrders = CustomActionRepository.GetActionOrdersForEntityType(entityTypeId);
-			if (existingOrders.Any())
+		    var enumerable = existingOrders as int[] ?? existingOrders.ToArray();
+		    if (enumerable.Any())
 			{
 				// получить максимальный используемый Order 
-				int maxOrder = existingOrders.Max();
+				int maxOrder = enumerable.Max();
 				// получить минимальное из неиспользуемых значений Order
-				return Enumerable.Range(1, maxOrder + 1).Except(existingOrders).Min();
+				return Enumerable.Range(1, maxOrder + 1).Except(enumerable).Min();
 			}
 			else
 				return 1;
@@ -134,51 +134,40 @@ namespace Quantumart.QP8.BLL
 		[LocalizedDisplayName("ShowInToolbar", NameResourceType = typeof(CustomActionStrings))]
 		public bool ShowInToolbar { get; set; }
 
-		private BackendAction action = null;
+		private BackendAction _action;
 		public BackendAction Action
 		{
-			get { return action; }
+			get { return _action; }
 			set
 			{
-				action = value;
-				ToolbarButton toolbarButton = (action.ToolbarButtons ?? Enumerable.Empty<ToolbarButton>()).FirstOrDefault();
-				ParentActions = (action.ToolbarButtons == null) ? null : action.ToolbarButtons.Select(n => n.ParentActionId).ToArray();
+				_action = value;
+			    ParentActions = _action.ToolbarButtons?.Select(n => n.ParentActionId).ToArray();
 			}
 		}
 		public IEnumerable<Content> Contents { get; set; }
 		public IEnumerable<Site> Sites { get; set; }
 
-		public string SessionID { get; set; }
-		public IEnumerable<int> IDs { get; set; }
+		public string SessionId { get; set; }
+		public IEnumerable<int> Ids { get; set; }
 		public int ParentId { get; set; }
-		public string FullUrl
-		{
-			get
-			{
-				return GetFullUrl(Url);
-			}
-		}
+		public string FullUrl => GetFullUrl(Url);
 
-		private string GetFullUrl(string url)
+	    private string GetFullUrl(string url)
 		{
-			string template = "{0}{6}{1}={2}&{3}={4}&customerCode={5}&actionCode={7}";
-			string parentContextName = null;
+		    string parentContextName = null;
 			if (Action.EntityType.ParentId.HasValue)
 			{
 				EntityType parentEt = EntityTypeRepository.GetById(Action.EntityType.ParentId.Value);
 				parentContextName = parentEt.ContextName;
 			}
 
-			string result = String.Format(template,
-				url ?? "",
-				SID_PARAM_NAME, SessionID ?? "",
-				Action.EntityType.ContextName ?? "", IDs != null ? String.Join(",", IDs) : "",
-				QPContext.CurrentCustomerCode,
-				Quantumart.QP8.Utils.Url.IsQueryEmpty(url) ? "?" : "&",
-				Action.Code
-				);
+		    var symbol = (Utils.Url.IsQueryEmpty(url) ? "?" : "&");
+		    var ids = (Ids != null ? String.Join(",", Ids) : "");
+		    var paramName = Action.EntityType.ContextName ?? "";
+		    var sid = SessionId ?? "";
+		    string result = $"{url ?? ""}{symbol}{SidParamName}={sid}&{paramName}={ids}&param_name={paramName}&customerCode={QPContext.CurrentCustomerCode}&actionCode={Action.Code}";
 			if (parentContextName != null)
-				result = result + String.Format("&{0}={1}", parentContextName, ParentId);
+				result = result + $"&{parentContextName}={ParentId}&parent_param_name={parentContextName}";
 			return result;
 		}
 

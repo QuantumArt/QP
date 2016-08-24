@@ -1690,6 +1690,22 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
+        public ObjectSet<ExternalNotificationDAL> ExternalNotificationSet
+        {
+            get
+            {
+                if ((_ExternalNotificationSet == null))
+                {
+                    _ExternalNotificationSet = base.CreateObjectSet<ExternalNotificationDAL>("ExternalNotificationSet");
+                }
+                return _ExternalNotificationSet;
+            }
+        }
+        private ObjectSet<ExternalNotificationDAL> _ExternalNotificationSet;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
         public ObjectSet<XmlDbUpdateLogEntity> XML_DB_UPDATE
         {
             get
@@ -2428,13 +2444,21 @@ namespace Quantumart.QP8.DAL
         }
     
         /// <summary>
+        /// Deprecated Method for adding a new object to the ExternalNotificationSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToExternalNotificationSet(ExternalNotificationDAL externalNotificationDAL)
+        {
+            base.AddObject("ExternalNotificationSet", externalNotificationDAL);
+        }
+        
+        /// <summary>
         /// Deprecated Method for adding a new object to the XML_DB_UPDATE EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
         public void AddToXML_DB_UPDATE(XmlDbUpdateLogEntity xmlDbUpdateLogEntity)
         {
             base.AddObject("XML_DB_UPDATE", xmlDbUpdateLogEntity);
         }
-    
+        
         /// <summary>
         /// Deprecated Method for adding a new object to the XML_DB_UPDATE_ACTIONS EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -16657,6 +16681,339 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ExternalNotificationDAL")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class ExternalNotificationDAL : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new ExternalNotificationDAL object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="articleId">Initial value of the ArticleId property.</param>
+        /// <param name="created">Initial value of the Created property.</param>
+        /// <param name="url">Initial value of the Url property.</param>
+        /// <param name="tries">Initial value of the Tries property.</param>
+        /// <param name="sent">Initial value of the Sent property.</param>
+        /// <param name="modified">Initial value of the Modified property.</param>
+        public static ExternalNotificationDAL CreateExternalNotificationDAL(global::System.Decimal id, global::System.Decimal articleId, global::System.DateTime created, global::System.String url, global::System.Decimal tries, global::System.Boolean sent, global::System.DateTime modified)
+        {
+            ExternalNotificationDAL externalNotificationDAL = new ExternalNotificationDAL();
+            externalNotificationDAL.Id = id;
+            externalNotificationDAL.ArticleId = articleId;
+            externalNotificationDAL.Created = created;
+            externalNotificationDAL.Url = url;
+            externalNotificationDAL.Tries = tries;
+            externalNotificationDAL.Sent = sent;
+            externalNotificationDAL.Modified = modified;
+            return externalNotificationDAL;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Decimal _Id;
+        partial void OnIdChanging(global::System.Decimal value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String EventName
+        {
+            get
+            {
+                return _EventName;
+            }
+            set
+            {
+                OnEventNameChanging(value);
+                ReportPropertyChanging("EventName");
+                _EventName = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("EventName");
+                OnEventNameChanged();
+            }
+        }
+        private global::System.String _EventName;
+        partial void OnEventNameChanging(global::System.String value);
+        partial void OnEventNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal ArticleId
+        {
+            get
+            {
+                return _ArticleId;
+            }
+            set
+            {
+                OnArticleIdChanging(value);
+                ReportPropertyChanging("ArticleId");
+                _ArticleId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ArticleId");
+                OnArticleIdChanged();
+            }
+        }
+        private global::System.Decimal _ArticleId;
+        partial void OnArticleIdChanging(global::System.Decimal value);
+        partial void OnArticleIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Created
+        {
+            get
+            {
+                return _Created;
+            }
+            set
+            {
+                OnCreatedChanging(value);
+                ReportPropertyChanging("Created");
+                _Created = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Created");
+                OnCreatedChanged();
+            }
+        }
+        private global::System.DateTime _Created;
+        partial void OnCreatedChanging(global::System.DateTime value);
+        partial void OnCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Url
+        {
+            get
+            {
+                return _Url;
+            }
+            set
+            {
+                OnUrlChanging(value);
+                ReportPropertyChanging("Url");
+                _Url = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Url");
+                OnUrlChanged();
+            }
+        }
+        private global::System.String _Url;
+        partial void OnUrlChanging(global::System.String value);
+        partial void OnUrlChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal Tries
+        {
+            get
+            {
+                return _Tries;
+            }
+            set
+            {
+                OnTriesChanging(value);
+                ReportPropertyChanging("Tries");
+                _Tries = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Tries");
+                OnTriesChanged();
+            }
+        }
+        private global::System.Decimal _Tries;
+        partial void OnTriesChanging(global::System.Decimal value);
+        partial void OnTriesChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String NewXml
+        {
+            get
+            {
+                return _NewXml;
+            }
+            set
+            {
+                OnNewXmlChanging(value);
+                ReportPropertyChanging("NewXml");
+                _NewXml = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("NewXml");
+                OnNewXmlChanged();
+            }
+        }
+        private global::System.String _NewXml;
+        partial void OnNewXmlChanging(global::System.String value);
+        partial void OnNewXmlChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String OldXml
+        {
+            get
+            {
+                return _OldXml;
+            }
+            set
+            {
+                OnOldXmlChanging(value);
+                ReportPropertyChanging("OldXml");
+                _OldXml = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("OldXml");
+                OnOldXmlChanged();
+            }
+        }
+        private global::System.String _OldXml;
+        partial void OnOldXmlChanging(global::System.String value);
+        partial void OnOldXmlChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean Sent
+        {
+            get
+            {
+                return _Sent;
+            }
+            set
+            {
+                OnSentChanging(value);
+                ReportPropertyChanging("Sent");
+                _Sent = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Sent");
+                OnSentChanged();
+            }
+        }
+        private global::System.Boolean _Sent;
+        partial void OnSentChanging(global::System.Boolean value);
+        partial void OnSentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Modified
+        {
+            get
+            {
+                return _Modified;
+            }
+            set
+            {
+                OnModifiedChanging(value);
+                ReportPropertyChanging("Modified");
+                _Modified = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Modified");
+                OnModifiedChanged();
+            }
+        }
+        private global::System.DateTime _Modified;
+        partial void OnModifiedChanging(global::System.DateTime value);
+        partial void OnModifiedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Decimal> ContentId
+        {
+            get
+            {
+                return _ContentId;
+            }
+            set
+            {
+                OnContentIdChanging(value);
+                ReportPropertyChanging("ContentId");
+                _ContentId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ContentId");
+                OnContentIdChanged();
+            }
+        }
+        private Nullable<global::System.Decimal> _ContentId;
+        partial void OnContentIdChanging(Nullable<global::System.Decimal> value);
+        partial void OnContentIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Decimal> SiteId
+        {
+            get
+            {
+                return _SiteId;
+            }
+            set
+            {
+                OnSiteIdChanging(value);
+                ReportPropertyChanging("SiteId");
+                _SiteId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SiteId");
+                OnSiteIdChanged();
+            }
+        }
+        private Nullable<global::System.Decimal> _SiteId;
+        partial void OnSiteIdChanging(Nullable<global::System.Decimal> value);
+        partial void OnSiteIdChanged();
+
+        #endregion
+
+    
     }
     
     /// <summary>

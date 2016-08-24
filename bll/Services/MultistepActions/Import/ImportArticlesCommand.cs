@@ -13,7 +13,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
     {
         private const int ItemsPerStep = 20;
         private readonly ILogReader _logReader;
-		private readonly IImportArticlesLogger _logger;
+        private readonly IImportArticlesLogger _logger;
 
         public int SiteId { get; set; }
 
@@ -21,18 +21,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public int ItemCount { get; set; }
 
-		public ImportArticlesCommand(MultistepActionStageCommandState state, ILogReader logReader, IImportArticlesLogger logger)
-			: this(state.ParentId, state.Id, 0, logReader, logger)
-		{
-		}
+        public ImportArticlesCommand(MultistepActionStageCommandState state, ILogReader logReader, IImportArticlesLogger logger)
+            : this(state.ParentId, state.Id, 0, logReader, logger)
+        {
+        }
 
-		public ImportArticlesCommand(int siteId, int contentId, int itemCount, ILogReader logReader, IImportArticlesLogger logger)
+        public ImportArticlesCommand(int siteId, int contentId, int itemCount, ILogReader logReader, IImportArticlesLogger logger)
         {
             SiteId = siteId;
             ContentId = contentId;
             ItemCount = itemCount;
-			_logReader = logReader;
-			_logger = logger;
+            _logReader = logReader;
+            _logger = logger;
         }
 
         public MultistepActionStageCommandState GetState()
@@ -54,8 +54,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             var setts = HttpContext.Current.Session["ImportArticlesService.Settings"] as ImportSettings;
             var reader = new CsvReader(SiteId, ContentId, setts);
             var result = new MultistepActionStepResult();
-			using (var tscope = new TransactionScope())
-			{
+            using (var tscope = new TransactionScope())
+            {
                 using (new QPConnectionScope())
                 {
                     try
@@ -78,8 +78,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                     }
                 }
 
-			    tscope.Complete();
-			}
+                tscope.Complete();
+            }
 
             return result;
         }

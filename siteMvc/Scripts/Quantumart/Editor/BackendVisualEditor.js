@@ -39,7 +39,8 @@
         tabSize: 2,
         indentUnit: 2,
         smartIndent: false,
-        indentWithTabs: false
+        indentWithTabs: false,
+        autoCloseTags: false
       },
       fillEmptyBlocks: false,
       forcePasteAsPlainText: true,

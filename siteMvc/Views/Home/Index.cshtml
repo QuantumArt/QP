@@ -5,7 +5,7 @@
 @model Quantumart.QP8.WebMvc.ViewModels.HomePage.IndexViewModel
 
 @{
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <head>
@@ -14,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9"/>
     <link href="~/Content/QP8/favicon.ico" rel="shortcut icon"/>
     @{
-        const string jsVersion = "6.28";
+        const string jsVersion = "6.30";
         const string cssVersion = "6.5";
 
         var allowCombineStylesheets = !HttpContext.Current.IsDebuggingEnabled;
@@ -52,11 +52,11 @@
               .Add("QpCodemirror.css")
               .Add(cssVersionFileName)
               .Combined(allowCombineStylesheets)
-	      )))
+          )))
 
-	<script>
-		window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
-	</script>
+    <script>
+        window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
+    </script>
 </head>
 
 <body data-dbhash="@Model.DbHash">
@@ -147,6 +147,10 @@
           // Common Libraries
           .AddGroup("CommonLibraries", g => g
               .Add("es5-shim.js")
+              .Add("polyfills/object.assign.polyfill.js")
+              .Add("polyfills/array.includes.polyfill.js")
+              .Add("polyfills/array.find.polyfill.js")
+              .Add("polyfills/console.fns.polyfill.js")
               .Add("jquery-1.7.1.js")
               .Add("telerik.common.js")
               .Add("Quantumart/jQueryExtensions.js")
