@@ -19,6 +19,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
@@ -54,22 +55,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             };
 
             return action;
-        }
-
-        internal static XmlDbUpdateRecordedAction EmulateHttpContextRequest(XmlDbUpdateRecordedAction xmlAction, string backendUrl, int userId)
-        {
-            try
-            {
-                var correctedAction = XmlDbUpdateActionCorrecterHelpers.CorrectAction(xmlAction);
-                PostAction(correctedAction, backendUrl, userId);
-                return correctedAction;
-            }
-            catch (Exception ex)
-            {
-                var throwEx = new XmlDbUpdateReplayActionException("Error while replaying xml action.", ex);
-                throwEx.Data.Add("ActionToReplay", xmlAction.ToJsonLog());
-                throw throwEx;
-            }
         }
 
         internal static HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId)

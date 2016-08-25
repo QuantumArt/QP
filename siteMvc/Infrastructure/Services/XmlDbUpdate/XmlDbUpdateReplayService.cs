@@ -31,6 +31,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateActionsLogRepository _dbUpdateActionsLogRepository;
 
+        private readonly XmlDbUpdateActionCorrecterService _actionsCorrecterService;
+
         public XmlDbUpdateReplayService(string connectionString, int userId)
             : this(connectionString, null, userId)
         {
@@ -48,6 +50,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _userId = userId;
             _connectionString = connectionString;
             _identityInsertOptions = identityInsertOptions;
+            _actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -122,9 +125,25 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     throw throwEx;
                 }
 
-                var replayedAction = XmlDbUpdateHttpContextHelpers.EmulateHttpContextRequest(action, backendUrl, _userId);
+                var replayedAction = ReplayAction(action, backendUrl);
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToString();
                 _dbUpdateActionsLogRepository.Insert(logEntry);
+            }
+        }
+
+        private XmlDbUpdateRecordedAction ReplayAction(XmlDbUpdateRecordedAction xmlAction, string backendUrl)
+        {
+            try
+            {
+                var correctedAction = _actionsCorrecterService.CorrectAction(xmlAction);
+                var httpContext = XmlDbUpdateHttpContextHelpers.PostAction(correctedAction, backendUrl, _userId);
+                return _actionsCorrecterService.CorrectReplaces(correctedAction, httpContext);
+            }
+            catch (Exception ex)
+            {
+                var throwEx = new XmlDbUpdateReplayActionException("Error while replaying xml action.", ex);
+                throwEx.Data.Add("ActionToReplay", xmlAction.ToJsonLog());
+                throw throwEx;
             }
         }
 

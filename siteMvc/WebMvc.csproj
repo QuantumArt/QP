@@ -300,7 +300,7 @@
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\CultureHelpers.cs" />
     <Compile Include="Infrastructure\FakeMvcApplication.cs" />
-    <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateActionCorrecterHelpers.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionCorrecterService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\CsvDbUpdateService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\ICsvDbUpdateService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateReplayService.cs" />
