@@ -655,6 +655,8 @@
     <Compile Include="Services\IVisualEditorService.cs" />
     <Compile Include="Services\VisualEditor\VisualEditorService.cs" />
     <Compile Include="Services\WorkflowService.cs" />
+    <Compile Include="Services\XmlDbUpdate\IXmlDbUpdateLogService.cs" />
+    <Compile Include="Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="SessionsLog.cs" />
     <Compile Include="SharedLogic\CustomActionResolver.cs" />
     <Compile Include="SimpleListItem.cs" />

@@ -16,10 +16,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
-using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
-using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {

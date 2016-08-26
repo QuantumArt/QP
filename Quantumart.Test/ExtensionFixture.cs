@@ -1,7 +1,10 @@
 ﻿using System;
+using Moq;
 using NUnit.Framework;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
@@ -50,9 +53,12 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString, 1);
+            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
             service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
 
             Cnn = new DBConnector(Global.ConnectionString)

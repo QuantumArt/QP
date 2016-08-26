@@ -14,7 +14,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
-    internal class XmlDbUpdateActionCorrecterService
+    public class XmlDbUpdateActionCorrecterService
     {
         private readonly Dictionary<string, Dictionary<int, int>> _idsToReplace = new Dictionary<string, Dictionary<int, int>>();
 

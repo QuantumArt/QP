@@ -655,7 +655,9 @@ namespace Quantumart.QP8.BLL
         }
 
         private static IContextStorage _externalContextStorage;
+
         private static HashSet<string> _externalContextStorageKeys;
+
         public static IContextStorage ExternalContextStorage
         {
             set
@@ -667,6 +669,5 @@ namespace Quantumart.QP8.BLL
                 _externalContextStorageKeys = new HashSet<string>(value.Keys);
             }
         }
-
     }
 }

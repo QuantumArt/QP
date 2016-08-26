@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using Nunit3AllureAdapter;
 using NUnit.Framework;
+using Nunit3AllureAdapter;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using QP8.FunctionalTests.Configuration;

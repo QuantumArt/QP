@@ -1,7 +1,9 @@
 ﻿using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
@@ -102,7 +104,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             try
             {
-                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId).Process(xmlString);
+                // TODO: UNITY
+                var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+                var dbLogService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
+                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, dbLogService, actionsCorrecterService).Process(xmlString);
             }
             catch (XmlDbUpdateLoggingException ex)
             {

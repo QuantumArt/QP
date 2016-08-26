@@ -1,4 +1,14 @@
-﻿using Quantumart.QP8.BLL.ListItems;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Transactions;
+using System.Xml.Linq;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services.API.Models;
@@ -10,16 +20,6 @@ using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Utils.Sorting;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Transactions;
-using System.Xml.Linq;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
 {
@@ -1107,7 +1107,10 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             using (var scope = new QPConnectionScope())
             {
                 if (article.IsNew || !article.UseVariations)
+                {
                     return new List<Article>();
+                }
+
                 var variationArticlesId = Common.GetVariationArticlesIDs(scope.DbConnection, article.Id, article.ContentId, article.Content.VariationField.Name).ToList();
                 if (variationArticlesId.Any())
                 {
@@ -1252,7 +1255,10 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         internal static Dictionary<int, int> GetHierarchy(int contentId)
         {
             var treeName = ContentRepository.GetTreeFieldName(contentId);
-            if (string.IsNullOrEmpty(treeName)) return null;
+            if (string.IsNullOrEmpty(treeName))
+            {
+                return null;
+            }
             using (var scope = new QPConnectionScope())
             {
                 return Common.GetArticleHierarchy(scope.DbConnection, contentId, treeName);
@@ -1456,6 +1462,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             dt.Columns.Add("Value", typeof(string));
 
             if (articles != null)
+            {
                 foreach (var article in articles)
                 {
                     foreach (var field in article.Fields)
@@ -1463,6 +1470,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                         dt.Rows.Add(article.Id, article.ContentId, field.Id, field.Value);
                     }
                 }
+            }
+
             return dt;
         }
 
@@ -1471,7 +1480,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             return (from a in articles
                     from f in a.Fields
-                    from linkedItemId in f.ArticleIds
+                    from linkedItemId in f.ArticleIds ?? new int[0]
                     join r in relations on f.Id equals r.FieldId
                     where r.LinkId.HasValue
                     select new LinkData
@@ -1628,7 +1637,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var itemXml = new XElement("item");
                 itemXml.Add(new XAttribute("id", group.Key.ItemId));
                 itemXml.Add(new XAttribute("linkId", group.Key.LinkId));
-                itemXml.Add(new XAttribute("value", string.Join(",", group.Select(l => l.LinkedItemId.HasValue ? l.LinkedItemId.Value.ToString() : "").Distinct().ToArray())));
+                itemXml.Add(new XAttribute("value", string.Join(",", group.Select(l => l.LinkedItemId?.ToString() ?? string.Empty).Distinct().ToArray())));
                 doc.Root.Add(itemXml);
             }
 

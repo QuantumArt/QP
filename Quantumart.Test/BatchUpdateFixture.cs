@@ -2,10 +2,13 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using Moq;
 using NUnit.Framework;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
 
@@ -117,9 +120,12 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString, 1);
+            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
             service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ArticleService = new ArticleService(Global.ConnectionString, 1);
@@ -421,6 +427,7 @@ namespace Quantumart.Test
         {
             var value = "Key1";
             UpdateField(BaseContentId, BaseFieldEnumId, BaseFieldEnum, value, value);
+
             value = "Key2";
             UpdateField(BaseContentId, BaseFieldEnumId, BaseFieldEnum, value, value);
         }
@@ -428,21 +435,21 @@ namespace Quantumart.Test
         [Test]
         public void BatchUpdate_BaseContent_UpdateFileField()
         {
-            var value = Guid.NewGuid().ToString() + ".txt";
+            var value = Guid.NewGuid() + ".txt";
             UpdateField(BaseContentId, BaseFieldFileId, BaseFieldFile, value, value);
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateImageField()
         {
-            var value = Guid.NewGuid().ToString() + ".png";
+            var value = Guid.NewGuid() + ".png";
             UpdateField(BaseContentId, BaseFieldImageId, BaseFieldImage, value, value);
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateDynamicImageField()
         {
-            var value = Guid.NewGuid().ToString() + ".png";
+            var value = Guid.NewGuid() + ".png";
             UpdateField(BaseContentId, BaseFieldDynamicImageId, BaseFieldDynamicImage, value, value);
         }
 
@@ -463,18 +470,18 @@ namespace Quantumart.Test
         [Test]
         public void BatchUpdate_BaseContent_UpdateNumericIntegerField()
         {
-            int range = 1000;
+            const int range = 1000;
             decimal value = Random.Next(-range, range);
-            UpdateField<object>(BaseContentId, BaseFieldNumericIntegerId, BaseFieldNumericInteger, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField<object>(BaseContentId, BaseFieldNumericIntegerId, BaseFieldNumericInteger, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateNumericDecimalField()
         {
-            int range = 100000;
+            const int range = 100000;
             decimal value = Random.Next(-range, range);
             value /= 100;
-            UpdateField<object>(BaseContentId, BaseFieldNumericDecimalId, BaseFieldNumericDecimal, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField<object>(BaseContentId, BaseFieldNumericDecimalId, BaseFieldNumericDecimal, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         [Test]
@@ -482,14 +489,14 @@ namespace Quantumart.Test
         {
             var value = DateTime.Now;
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
-            UpdateField(BaseContentId, BaseFieldDateTimeId, BaseFieldDateTime, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField(BaseContentId, BaseFieldDateTimeId, BaseFieldDateTime, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateDateField()
         {
             var value = DateTime.Today;
-            UpdateField(BaseContentId, BaseFieldDateId, BaseFieldDate, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField(BaseContentId, BaseFieldDateId, BaseFieldDate, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         [Test]
@@ -497,7 +504,7 @@ namespace Quantumart.Test
         {
             var value = DateTime.Now;
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
-            UpdateField(BaseContentId, BaseFieldTimeId, BaseFieldTime, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField(BaseContentId, BaseFieldTimeId, BaseFieldTime, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         private static void UpdateField<T>(int contentId, int fieldId, string fieldName, T value, string stringValue)

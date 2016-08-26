@@ -4,14 +4,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Moq;
-using Quantumart.QP8.BLL;
-using Quantumart.QPublishing.Database;
-using Quantumart.QPublishing.Info;
-using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 using NUnit.Framework;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
+using Quantumart.QPublishing.Info;
 using Quantumart.QPublishing.Resizer;
+using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 
 namespace Quantumart.Test
 {
@@ -19,8 +21,11 @@ namespace Quantumart.Test
     public class DynamicImageFixture
     {
         private const string ImageName = "BaseImage";
+
         public static int NoneId { get; private set; }
+
         public static int PublishedId { get; private set; }
+
         public static DBConnector Cnn { get; private set; }
 
         public static int ContentId { get; private set; }
@@ -32,6 +37,7 @@ namespace Quantumart.Test
         private class CopyFile : IEquatable<CopyFile>
         {
             private string From { get; }
+
             private string To { get; }
 
             public CopyFile(string from, string to)
@@ -65,9 +71,12 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString, 1);
+            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
             service.Process(Global.GetXml(@"xmls\files.xml"));
             Cnn = new DBConnector(Global.ConnectionString)
             {
@@ -182,7 +191,7 @@ namespace Quantumart.Test
 
             var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { CreateVersions = false}), "Update");
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { CreateVersions = false }), "Update");
 
             var versions = Global.GetMaxVersions(Cnn, ids).ToArray();
 
@@ -205,12 +214,12 @@ namespace Quantumart.Test
             );
 
             var values = new List<Dictionary<string, string>>();
-            var name1 = "test234";
-            var name2 = "test456";
-            var ext1 = "jpg";
-            var ext2 = "png";
-            var folder2 = "center";
-            var ids = new[] {BaseArticlesIds[0], BaseArticlesIds[1]};
+            const string name1 = "test234";
+            const string name2 = "test456";
+            const string ext1 = "jpg";
+            const string ext2 = "png";
+            const string folder2 = "center";
+            var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
 
             var article1 = new Dictionary<string, string>
             {
@@ -271,7 +280,6 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_CopyFiles_ContentHasFileFields()
         {
-
             var mockFileSystem = new Mock<IFileSystem>();
             Cnn.FileSystem = mockFileSystem.Object;
             var list = new List<CopyFile>();
@@ -281,15 +289,13 @@ namespace Quantumart.Test
                 list.Add(new CopyFile(from, to));
             });
 
-            var name1 = "test123";
-            var ext1 = "jpg";
-
-            var name2 = "test456";
-            var ext2 = "png";
-            var folder2 = "center";
+            const string name1 = "test123";
+            const string ext1 = "jpg";
+            const string name2 = "test456";
+            const string ext2 = "png";
+            const string folder2 = "center";
 
             var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
-
             var article1 = new Hashtable()
             {
                 [imageName] = $"{name1}.{ext1}"
@@ -476,7 +482,7 @@ namespace Quantumart.Test
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
             var id = int.Parse(values[0][SystemColumnNames.Id]);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-            var paths = Global.GetMaxVersions(Cnn, new[] {id}).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
+            var paths = Global.GetMaxVersions(Cnn, new[] { id }).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
 
@@ -547,11 +553,12 @@ namespace Quantumart.Test
                 });
 
             var values = new List<Dictionary<string, string>>();
-            var name1 = "test789";
-            var name2 = "test321";
-            var ext1 = "jpg";
-            var ext2 = "png";
-            var folder2 = "cnt";
+
+            const string name1 = "test789";
+            const string name2 = "test321";
+            const string ext1 = "jpg";
+            const string ext2 = "png";
+            const string folder2 = "cnt";
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
 
             var article1 = new Dictionary<string, string>
@@ -619,11 +626,11 @@ namespace Quantumart.Test
                     actualImages.Add(info);
                 });
 
-            var name1 = "test789";
-            var name2 = "test321";
-            var ext1 = "jpg";
-            var ext2 = "png";
-            var folder2 = "cnt";
+            const string name1 = "test789";
+            const string name2 = "test321";
+            const string ext1 = "jpg";
+            const string ext2 = "png";
+            const string folder2 = "cnt";
 
             var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
 

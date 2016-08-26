@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <actions backendUrl="http://mscdev02:90/Backend/" dbVersion="7.9.9.0">
-  <action code="new_content" ids="1647" parentId="35" lcid="1033" executed="07/11/2016 13:44:34" executedBy="KoryakinS" fieldIds="6112">
+  <action code="new_content" ids="1647" parentId="35" lcid="1049" executed="11/07/2016 13:44:34" executedBy="KoryakinS" fieldIds="6112">
     <field name="Data.Name">Test_BatchUpdate_Base</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
@@ -31,7 +31,7 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">save_content_and_up</field>
   </action>
-  <action code="new_content" ids="1648" parentId="35" lcid="1033" executed="07/11/2016 13:46:22" executedBy="KoryakinS" fieldIds="6113">
+  <action code="new_content" ids="1648" parentId="35" lcid="1049" executed="11/07/2016 13:46:22" executedBy="KoryakinS" fieldIds="6113">
     <field name="Data.Name">Test_BatchUpdate_Ex1_1</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
@@ -62,7 +62,7 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">save_content</field>
   </action>
-  <action code="new_content" ids="1649" parentId="35" lcid="1033" executed="07/11/2016 13:46:45" executedBy="KoryakinS" fieldIds="6114">
+  <action code="new_content" ids="1649" parentId="35" lcid="1049" executed="11/07/2016 13:46:45" executedBy="KoryakinS" fieldIds="6114">
     <field name="Data.Name">Test_BatchUpdate_Ex2_1</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
@@ -93,10 +93,10 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">save_content_and_up</field>
   </action>
-  <action code="remove_field" ids="6113" parentId="1648" lcid="1033" executed="07/11/2016 13:47:07" executedBy="KoryakinS" />
-  <action code="remove_field" ids="6114" parentId="1649" lcid="1033" executed="07/11/2016 13:47:13" executedBy="KoryakinS" />
-  <action code="remove_field" ids="6112" parentId="1647" lcid="1033" executed="07/11/2016 13:48:22" executedBy="KoryakinS" />
-  <action code="new_field" ids="6115" parentId="1647" lcid="1033" executed="07/11/2016 13:48:41" executedBy="KoryakinS">
+  <action code="remove_field" ids="6113" parentId="1648" lcid="1049" executed="11/07/2016 13:47:07" executedBy="KoryakinS" />
+  <action code="remove_field" ids="6114" parentId="1649" lcid="1049" executed="11/07/2016 13:47:13" executedBy="KoryakinS" />
+  <action code="remove_field" ids="6112" parentId="1647" lcid="1049" executed="11/07/2016 13:48:22" executedBy="KoryakinS" />
+  <action code="new_field" ids="6115" parentId="1647" lcid="1049" executed="11/07/2016 13:48:41" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_Ex1</field>
     <field name="Data.FriendlyName"></field>
@@ -125,7 +125,7 @@
     <field name="Data.ClassifierDefaultValue"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6116" parentId="1647" lcid="1033" executed="07/11/2016 13:49:05" executedBy="KoryakinS">
+  <action code="new_field" ids="6116" parentId="1647" lcid="1049" executed="11/07/2016 13:49:05" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_Ex2</field>
     <field name="Data.FriendlyName"></field>
@@ -155,7 +155,7 @@
     <field name="Data.ClassifierDefaultValue"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6117" parentId="1647" lcid="1033" executed="07/11/2016 13:50:54" executedBy="KoryakinS">
+  <action code="new_field" ids="6117" parentId="1647" lcid="1049" executed="11/07/2016 13:50:54" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_String</field>
     <field name="Data.FriendlyName"></field>
@@ -187,7 +187,7 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6118" parentId="1648" lcid="1033" executed="07/11/2016 13:51:56" executedBy="KoryakinS">
+  <action code="new_field" ids="6118" parentId="1648" lcid="1049" executed="11/07/2016 13:51:56" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Parent</field>
     <field name="Data.FriendlyName"></field>
@@ -236,7 +236,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6119" parentId="1649" lcid="1033" executed="07/11/2016 13:52:54" executedBy="KoryakinS">
+  <action code="new_field" ids="6119" parentId="1649" lcid="1049" executed="11/07/2016 13:52:54" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Parent</field>
     <field name="Data.FriendlyName"></field>
@@ -285,7 +285,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field</field>
   </action>
-  <action code="new_field" ids="6120" parentId="1648" lcid="1033" executed="07/11/2016 13:53:43" executedBy="KoryakinS">
+  <action code="new_field" ids="6120" parentId="1648" lcid="1049" executed="11/07/2016 13:53:43" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field1</field>
     <field name="Data.FriendlyName"></field>
@@ -318,7 +318,7 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6121" parentId="1648" lcid="1033" executed="07/11/2016 13:53:58" executedBy="KoryakinS">
+  <action code="new_field" ids="6121" parentId="1648" lcid="1049" executed="11/07/2016 13:53:58" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field2</field>
     <field name="Data.FriendlyName"></field>
@@ -350,8 +350,8 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="copy_content" ids="1648" parentId="35" lcid="1033" executed="07/11/2016 13:54:10" executedBy="KoryakinS" resultId="1650" fieldIds="6122,6123,6124" />
-  <action code="edit_field" ids="6123" parentId="1650" lcid="1033" executed="07/11/2016 13:54:26" executedBy="KoryakinS">
+  <action code="copy_content" ids="1648" parentId="35" lcid="1049" executed="11/07/2016 13:54:10" executedBy="KoryakinS" resultId="1650" fieldIds="6122,6123,6124" />
+  <action code="edit_field" ids="6123" parentId="1650" lcid="1049" executed="11/07/2016 13:54:26" executedBy="KoryakinS">
     <field name="Data.Id">6123</field>
     <field name="Data.Name">Field1</field>
     <field name="Data.FriendlyName"></field>
@@ -383,8 +383,8 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">update_field</field>
   </action>
-  <action code="remove_field" ids="6124" parentId="1650" lcid="1033" executed="07/11/2016 13:54:32" executedBy="KoryakinS" />
-  <action code="edit_content" ids="1650" parentId="35" lcid="1033" executed="07/11/2016 13:54:51" executedBy="KoryakinS">
+  <action code="remove_field" ids="6124" parentId="1650" lcid="1049" executed="11/07/2016 13:54:32" executedBy="KoryakinS" />
+  <action code="edit_content" ids="1650" parentId="35" lcid="1049" executed="11/07/2016 13:54:51" executedBy="KoryakinS">
     <field name="Data.Name">Test_BatchUpdate_Ex1_2</field>
     <field name="Data.Description"></field>
     <field name="Data.GroupId">11</field>
@@ -413,8 +413,8 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">update_content_and_up</field>
   </action>
-  <action code="copy_content" ids="1649" parentId="35" lcid="1033" executed="07/11/2016 13:55:07" executedBy="KoryakinS" resultId="1651" fieldIds="6125" />
-  <action code="edit_content" ids="1651" parentId="35" lcid="1033" executed="07/11/2016 13:55:21" executedBy="KoryakinS">
+  <action code="copy_content" ids="1649" parentId="35" lcid="1049" executed="11/07/2016 13:55:07" executedBy="KoryakinS" resultId="1651" fieldIds="6125" />
+  <action code="edit_content" ids="1651" parentId="35" lcid="1049" executed="11/07/2016 13:55:21" executedBy="KoryakinS">
     <field name="Data.Name">Test_BatchUpdate_Ex2_2</field>
     <field name="Data.Description"></field>
     <field name="Data.GroupId">11</field>
@@ -443,7 +443,7 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">update_content_and_up</field>
   </action>
-  <action code="new_content" ids="1652" parentId="35" lcid="1033" executed="07/11/2016 13:56:48" executedBy="KoryakinS" fieldIds="6126">
+  <action code="new_content" ids="1652" parentId="35" lcid="1049" executed="11/07/2016 13:56:48" executedBy="KoryakinS" fieldIds="6126">
     <field name="Data.Name">Test_BatchUpdate_Dictionary</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
@@ -474,8 +474,8 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">save_content_and_up</field>
   </action>
-  <action code="remove_field" ids="6126" parentId="1652" lcid="1033" executed="07/11/2016 13:57:01" executedBy="KoryakinS" />
-  <action code="new_field" ids="6127" parentId="1652" lcid="1033" executed="07/11/2016 13:57:18" executedBy="KoryakinS">
+  <action code="remove_field" ids="6126" parentId="1652" lcid="1049" executed="11/07/2016 13:57:01" executedBy="KoryakinS" />
+  <action code="new_field" ids="6127" parentId="1652" lcid="1049" executed="11/07/2016 13:57:18" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Key</field>
     <field name="Data.FriendlyName"></field>
@@ -510,7 +510,7 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6128" parentId="1652" lcid="1033" executed="07/11/2016 13:57:30" executedBy="KoryakinS">
+  <action code="new_field" ids="6128" parentId="1652" lcid="1049" executed="11/07/2016 13:57:30" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Value</field>
     <field name="Data.FriendlyName"></field>
@@ -542,7 +542,7 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="edit_field" ids="6127" parentId="1652" lcid="1033" executed="07/11/2016 15:09:25" executedBy="KoryakinS">
+  <action code="edit_field" ids="6127" parentId="1652" lcid="1049" executed="11/07/2016 15:09:25" executedBy="KoryakinS">
     <field name="Data.Id">6127</field>
     <field name="Data.Name">Key</field>
     <field name="Data.FriendlyName"></field>
@@ -578,7 +578,7 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">update_field</field>
   </action>
-  <action code="edit_field" ids="6128" parentId="1652" lcid="1033" executed="07/11/2016 15:09:46" executedBy="KoryakinS">
+  <action code="edit_field" ids="6128" parentId="1652" lcid="1049" executed="11/07/2016 15:09:46" executedBy="KoryakinS">
     <field name="Data.Id">6128</field>
     <field name="Data.Name">Value</field>
     <field name="Data.FriendlyName"></field>
@@ -611,7 +611,7 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="new_field" ids="6129" parentId="1647" lcid="1033" executed="07/11/2016 15:11:05" executedBy="KoryakinS" newLinkId="558" newBackwardId="6130">
+  <action code="new_field" ids="6129" parentId="1647" lcid="1049" executed="11/07/2016 15:11:05" executedBy="KoryakinS" newLinkId="558" newBackwardId="6130">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_MtM</field>
     <field name="Data.FriendlyName"></field>
@@ -665,7 +665,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6131" parentId="1647" lcid="1033" executed="07/11/2016 15:12:44" executedBy="KoryakinS" newBackwardId="6132">
+  <action code="new_field" ids="6131" parentId="1647" lcid="1049" executed="11/07/2016 15:12:44" executedBy="KoryakinS" newBackwardId="6132">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_OtM</field>
     <field name="Data.FriendlyName"></field>
@@ -711,7 +711,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="edit_field" ids="6117" parentId="1647" lcid="1033" executed="07/11/2016 15:13:34" executedBy="KoryakinS">
+  <action code="edit_field" ids="6117" parentId="1647" lcid="1049" executed="11/07/2016 15:13:34" executedBy="KoryakinS">
     <field name="Data.Id">6117</field>
     <field name="Data.Name">Field_String</field>
     <field name="Data.FriendlyName"></field>
@@ -743,7 +743,7 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="new_field" ids="6133" parentId="1647" lcid="1033" executed="07/11/2016 15:14:18" executedBy="KoryakinS">
+  <action code="new_field" ids="6133" parentId="1647" lcid="1049" executed="11/07/2016 15:14:18" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_Numeric_Integer</field>
     <field name="Data.FriendlyName"></field>
@@ -773,7 +773,7 @@
     <field name="Data.DecimalPlaces">2</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6134" parentId="1647" lcid="1033" executed="07/11/2016 15:14:52" executedBy="KoryakinS">
+  <action code="new_field" ids="6134" parentId="1647" lcid="1049" executed="11/07/2016 15:14:52" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_Numeric_Decimal</field>
     <field name="Data.FriendlyName"></field>
@@ -802,7 +802,7 @@
     <field name="Data.DecimalPlaces">2</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6135" parentId="1647" lcid="1033" executed="07/11/2016 15:15:20" executedBy="KoryakinS">
+  <action code="new_field" ids="6135" parentId="1647" lcid="1049" executed="11/07/2016 15:15:20" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_Date</field>
     <field name="Data.FriendlyName"></field>
@@ -829,7 +829,7 @@
     <field name="Data.DateDefaultValue"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6136" parentId="1647" lcid="1033" executed="07/11/2016 15:15:47" executedBy="KoryakinS">
+  <action code="new_field" ids="6136" parentId="1647" lcid="1049" executed="11/07/2016 15:15:47" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_Time</field>
     <field name="Data.FriendlyName"></field>
@@ -856,7 +856,7 @@
     <field name="Data.TimeDefaultValue"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6137" parentId="1647" lcid="1033" executed="07/11/2016 15:17:03" executedBy="KoryakinS">
+  <action code="new_field" ids="6137" parentId="1647" lcid="1049" executed="11/07/2016 15:17:03" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_DateTime</field>
     <field name="Data.FriendlyName"></field>
@@ -883,7 +883,7 @@
     <field name="Data.DateTimeDefaultValue"></field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6138" parentId="1647" lcid="1033" executed="07/11/2016 15:17:25" executedBy="KoryakinS">
+  <action code="new_field" ids="6138" parentId="1647" lcid="1049" executed="11/07/2016 15:17:25" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_File</field>
     <field name="Data.FriendlyName"></field>
@@ -914,7 +914,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6139" parentId="1647" lcid="1033" executed="07/11/2016 15:17:45" executedBy="KoryakinS">
+  <action code="new_field" ids="6139" parentId="1647" lcid="1049" executed="11/07/2016 15:17:45" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_Image</field>
     <field name="Data.FriendlyName"></field>
@@ -945,7 +945,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6140" parentId="1647" lcid="1033" executed="07/11/2016 15:18:21" executedBy="KoryakinS">
+  <action code="new_field" ids="6140" parentId="1647" lcid="1049" executed="11/07/2016 15:18:21" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_TextBox</field>
     <field name="Data.FriendlyName"></field>
@@ -973,7 +973,7 @@
     <field name="Data.TextBoxRows">5</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6141" parentId="1647" lcid="1033" executed="07/11/2016 15:20:28" executedBy="KoryakinS">
+  <action code="new_field" ids="6141" parentId="1647" lcid="1049" executed="11/07/2016 15:20:28" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_VisualEdit</field>
     <field name="Data.FriendlyName"></field>
@@ -1177,7 +1177,7 @@
     <field name="ActiveVeFormats[9]">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6142" parentId="1647" lcid="1033" executed="07/11/2016 15:21:05" executedBy="KoryakinS">
+  <action code="new_field" ids="6142" parentId="1647" lcid="1049" executed="11/07/2016 15:21:05" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_DynamicImage</field>
     <field name="Data.FriendlyName"></field>
@@ -1209,7 +1209,7 @@
     <field name="Data.DynamicImage.Quality">90</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="6143" parentId="1647" lcid="1033" executed="07/11/2016 15:25:38" executedBy="KoryakinS">
+  <action code="new_field" ids="6143" parentId="1647" lcid="1049" executed="11/07/2016 15:25:38" executedBy="KoryakinS">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Field_Enum</field>
     <field name="Data.FriendlyName"></field>
@@ -1237,7 +1237,7 @@
     <field name="AggregationListItems_Data_StringEnumItems">[{"Value":"Key1","Alias":"Val1","IsDefault":"","Invalid":false},{"Value":"Key2","Alias":"Val2","IsDefault":"","Invalid":false}]</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_article" ids="1989545" parentId="1652" lcid="1033" executed="07/11/2016 15:26:05" executedBy="KoryakinS">
+  <action code="new_article" ids="1989545" parentId="1652" lcid="1049" executed="11/07/2016 15:26:05" executedBy="KoryakinS">
     <field name="field_6127">k1</field>
     <field name="field_6128">v1</field>
     <field name="group_field_6130">1</field>
@@ -1245,7 +1245,7 @@
     <field name="Data.Schedule.ScheduleType">Invisible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1989545" parentId="1652" lcid="1033" executed="07/11/2016 15:26:14" executedBy="KoryakinS">
+  <action code="edit_article" ids="1989545" parentId="1652" lcid="1049" executed="11/07/2016 15:26:14" executedBy="KoryakinS">
     <field name="Data.PermanentLock">false</field>
     <field name="field_6127">k1</field>
     <field name="field_6128">v1</field>
@@ -1254,7 +1254,7 @@
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="edit_field" ids="6130" parentId="1652" lcid="1033" executed="07/11/2016 15:26:23" executedBy="KoryakinS">
+  <action code="edit_field" ids="6130" parentId="1652" lcid="1049" executed="11/07/2016 15:26:23" executedBy="KoryakinS">
     <field name="Data.Id">6130</field>
     <field name="Data.Name">Field_MtM_Backward</field>
     <field name="Data.FriendlyName"></field>
@@ -1307,7 +1307,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="edit_field" ids="6132" parentId="1652" lcid="1033" executed="07/11/2016 15:26:30" executedBy="KoryakinS">
+  <action code="edit_field" ids="6132" parentId="1652" lcid="1049" executed="11/07/2016 15:26:30" executedBy="KoryakinS">
     <field name="Data.Id">6132</field>
     <field name="Data.Name">Field_MtO_Backward</field>
     <field name="Data.FriendlyName"></field>
@@ -1335,7 +1335,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="edit_field" ids="6115" parentId="1647" lcid="1033" executed="07/11/2016 15:26:48" executedBy="KoryakinS">
+  <action code="edit_field" ids="6115" parentId="1647" lcid="1049" executed="11/07/2016 15:26:48" executedBy="KoryakinS">
     <field name="Data.Id">6115</field>
     <field name="Data.Name">Field_Ex1</field>
     <field name="Data.FriendlyName"></field>
@@ -1366,7 +1366,7 @@
     <field name="Data.ClassifierDefaultValue"></field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="edit_field" ids="6116" parentId="1647" lcid="1033" executed="07/11/2016 15:26:54" executedBy="KoryakinS">
+  <action code="edit_field" ids="6116" parentId="1647" lcid="1049" executed="11/07/2016 15:26:54" executedBy="KoryakinS">
     <field name="Data.Id">6116</field>
     <field name="Data.Name">Field_Ex2</field>
     <field name="Data.FriendlyName"></field>
@@ -1398,7 +1398,7 @@
     <field name="Data.ClassifierDefaultValue"></field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="edit_field" ids="6117" parentId="1647" lcid="1033" executed="07/11/2016 15:27:01" executedBy="KoryakinS">
+  <action code="edit_field" ids="6117" parentId="1647" lcid="1049" executed="11/07/2016 15:27:01" executedBy="KoryakinS">
     <field name="Data.Id">6117</field>
     <field name="Data.Name">Field_String</field>
     <field name="Data.FriendlyName"></field>
@@ -1431,7 +1431,7 @@
     <field name="Data.InputMask"></field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="edit_field" ids="6129" parentId="1647" lcid="1033" executed="07/11/2016 15:27:11" executedBy="KoryakinS">
+  <action code="edit_field" ids="6129" parentId="1647" lcid="1049" executed="11/07/2016 15:27:11" executedBy="KoryakinS">
     <field name="Data.Id">6129</field>
     <field name="Data.Name">Field_MtM</field>
     <field name="Data.FriendlyName"></field>
@@ -1483,7 +1483,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="edit_field" ids="6131" parentId="1647" lcid="1033" executed="07/11/2016 15:27:19" executedBy="KoryakinS">
+  <action code="edit_field" ids="6131" parentId="1647" lcid="1049" executed="11/07/2016 15:27:19" executedBy="KoryakinS">
     <field name="Data.Id">6131</field>
     <field name="Data.Name">Field_OtM</field>
     <field name="Data.FriendlyName"></field>
@@ -1528,7 +1528,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">update_field_and_up</field>
   </action>
-  <action code="new_article" ids="1989546" parentId="1652" lcid="1033" executed="07/11/2016 15:27:50" executedBy="KoryakinS">
+  <action code="new_article" ids="1989546" parentId="1652" lcid="1049" executed="11/07/2016 15:27:50" executedBy="KoryakinS">
     <field name="field_6127">k2</field>
     <field name="field_6128">v2</field>
     <field name="group_field_6130">1</field>
@@ -1536,7 +1536,7 @@
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1989547" parentId="1652" lcid="1033" executed="07/11/2016 15:28:03" executedBy="KoryakinS">
+  <action code="new_article" ids="1989547" parentId="1652" lcid="1049" executed="11/07/2016 15:28:03" executedBy="KoryakinS">
     <field name="field_6127">k3</field>
     <field name="field_6128">v3</field>
     <field name="group_field_6130">1</field>
@@ -1544,7 +1544,7 @@
     <field name="Data.Schedule.ScheduleType">Invisible</field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="edit_article" ids="1989547" parentId="1652" lcid="1033" executed="07/11/2016 15:28:10" executedBy="KoryakinS">
+  <action code="edit_article" ids="1989547" parentId="1652" lcid="1049" executed="11/07/2016 15:28:10" executedBy="KoryakinS">
     <field name="Data.PermanentLock">false</field>
     <field name="field_6127">k3</field>
     <field name="field_6128">v3</field>
@@ -1553,7 +1553,7 @@
     <field name="Data.Schedule.ScheduleType">Visible</field>
     <field name="backendActionCode">update_article_and_up</field>
   </action>
-  <action code="new_article" ids="1989548" parentId="1647" lcid="1033" executed="07/11/2016 15:31:17" executedBy="KoryakinS">
+  <action code="new_article" ids="1989548" parentId="1647" lcid="1049" executed="11/07/2016 15:31:17" executedBy="KoryakinS">
     <field name="field_6115">1648</field>
     <field name="field_6120">f1</field>
     <field name="field_6121">f2</field>

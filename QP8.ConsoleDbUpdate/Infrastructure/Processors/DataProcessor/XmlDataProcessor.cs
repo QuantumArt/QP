@@ -1,4 +1,6 @@
 ﻿using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
@@ -15,7 +17,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         {
             _settings = settings;
             QPContext.CurrentCustomerCode = _settings.CustomerCode;
-            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(settings.DisableFieldIdentity, settings.DisableContentIdentity, _settings.UserId));
+
+            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            var dbLogService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
+            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(settings.DisableFieldIdentity, settings.DisableContentIdentity, _settings.UserId, dbLogService, actionsCorrecterService));
         }
 
         public void Process()

@@ -147,7 +147,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                if (!IdentityInsertOptions.Any())
+                if (IdentityInsertOptions == null || !IdentityInsertOptions.Any())
                 {
                     return Mdw;
                 }
@@ -194,6 +194,7 @@ namespace Quantumart.QP8.BLL
             CorrectEntityType(ssdl, ns, EntityTypeCode.Notification, "NOTIFICATIONS", "NOTIFICATION_ID");
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private void CorrectEntityType(XContainer ssdl, XNamespace ns, string entityTypeCode, string tableName, string keyName)
         {
             if (IdentityInsertOptions != null && IdentityInsertOptions.Contains(entityTypeCode))

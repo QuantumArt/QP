@@ -5,30 +5,26 @@ using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
-using System.Reflection;
 using System.Xml;
-using System.Linq;
-using Microsoft.Win32;
 using Microsoft.VisualBasic;
+using Microsoft.Win32;
 using Quantumart.QPublishing.FileSystem;
 using Quantumart.QPublishing.Helpers;
 using Quantumart.QPublishing.Info;
 using Quantumart.QPublishing.Resizer;
 
-
 namespace Quantumart.QPublishing.Database
 {
-
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
-
         #region fields and properties
-
-        private static readonly string IdentityParamString = "@itemId";
+        private const string IdentityParamString = "@itemId";
 
         public static readonly string LastModifiedByKey = "QP_LAST_MODIFIED_BY_KEY";
 
@@ -74,20 +70,7 @@ namespace Quantumart.QPublishing.Database
 
         public string CustomConnectionString { get; set; }
 
-        public string InstanceConnectionString
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(CustomConnectionString))
-                {
-                    return CustomConnectionString;
-                }
-                else
-                {
-                    return ConnectionString;
-                }
-            }
-        }
+        public string InstanceConnectionString => !string.IsNullOrEmpty(CustomConnectionString) ? CustomConnectionString : ConnectionString;
 
         public IDbConnection ExternalConnection { get; set; }
 
@@ -101,7 +84,10 @@ namespace Quantumart.QPublishing.Database
         {
             InternalConnection = GetActualSqlConnection();
             if (InternalConnection.State == ConnectionState.Closed)
+            {
                 InternalConnection.Open();
+            }
+
             if (withTransaction)
             {
                 var extTr = GetActualSqlTransaction();
@@ -112,7 +98,9 @@ namespace Quantumart.QPublishing.Database
         private void CommitInternalTransaction()
         {
             if (ExternalTransaction == null)
+            {
                 InternalTransaction.Commit();
+            }
         }
 
         private void DisposeInternalConnection()
@@ -129,6 +117,7 @@ namespace Quantumart.QPublishing.Database
         private bool NeedToDisposeActualSqlConnection => ExternalConnection == null && InternalConnection == null;
 
         private string _instanceCachePrefix;
+
         public string InstanceCachePrefix => _instanceCachePrefix ?? (_instanceCachePrefix = ExtractCachePrefix(InstanceConnectionString));
 
         public static string Version => Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -138,6 +127,7 @@ namespace Quantumart.QPublishing.Database
         public IDynamicImage DynamicImageCreator { get; set; }
 
         private bool? _isStage;
+
         public bool IsStage
         {
             get
@@ -146,14 +136,13 @@ namespace Quantumart.QPublishing.Database
                 {
                     return _isStage.Value;
                 }
-                else if (CacheManager.Page != null)
+
+                if (CacheManager.Page != null)
                 {
                     return CacheManager.Page.IsStage;
                 }
-                else
-                {
-                    return !CheckIsLive();
-                }
+
+                return !CheckIsLive();
             }
             set
             {
@@ -229,10 +218,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return node.Value.Replace("Provider=SQLOLEDB;", "");
             }
-            else
-            {
-                throw new InvalidOperationException("Cannot load connection string for Asp.NET in QP7 configuration file");
-            }
+
+            throw new InvalidOperationException("Cannot load connection string for Asp.NET in QP7 configuration file");
         }
 
         public static XmlDocument GetQpConfig()
@@ -247,15 +234,11 @@ namespace Quantumart.QPublishing.Database
                     doc.Load(regValue.ToString());
                     return doc;
                 }
-                else
-                {
-                    throw new InvalidOperationException("QP7 records in the registry are inconsistent or damaged");
-                }
+
+                throw new InvalidOperationException("QP7 records in the registry are inconsistent or damaged");
             }
-            else
-            {
-                throw new InvalidOperationException("QP7 is not installed");
-            }
+
+            throw new InvalidOperationException("QP7 is not installed");
         }
 
         public static string GetQpTempDirectory()
@@ -266,10 +249,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return node.Value;
             }
-            else
-            {
-                throw new InvalidOperationException("Cannot load TempDirectory parameter from QP7 configuration file");
-            }
+
+            throw new InvalidOperationException("Cannot load TempDirectory parameter from QP7 configuration file");
         }
 
         public static string GetString(object obj, string defaultValue)
@@ -301,17 +282,21 @@ namespace Quantumart.QPublishing.Database
                     .FirstOrDefault();
 
                 if (dbName == null)
+                {
                     throw new ArgumentException("The connection supplied string should contain at least 'Initial Catalog' or 'Database' keyword.");
+                }
 
 
                 var serverName = cnnParams
-                    .Where(n =>  string.Equals(n.Key, "Data Source", StringComparison.InvariantCultureIgnoreCase)
+                    .Where(n => string.Equals(n.Key, "Data Source", StringComparison.InvariantCultureIgnoreCase)
                         || string.Equals(n.Key, "Server", StringComparison.InvariantCultureIgnoreCase))
                     .Select(n => n.Value)
                     .FirstOrDefault();
 
                 if (serverName == null)
+                {
                     throw new ArgumentException("The connection string supplied should contain at least 'Data Source' or 'Server' keyword.");
+                }
 
 
                 result = $"{dbName}.{serverName}.";
@@ -355,10 +340,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return GetNumInt(command.Parameters[IdentityParamString].Value);
             }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
 
         public string ReplaceCommas(string str)
@@ -481,7 +464,7 @@ namespace Quantumart.QPublishing.Database
         public bool IsTargetTableAsync(int id)
         {
 
-            var cmd = new SqlCommand("qp_is_target_table_async") {CommandType = CommandType.StoredProcedure};
+            var cmd = new SqlCommand("qp_is_target_table_async") { CommandType = CommandType.StoredProcedure };
             var idParam = cmd.Parameters.Add("@content_item_id", SqlDbType.Decimal);
             idParam.Value = id;
             var returnParam = cmd.Parameters.Add("@is_target_table_async", SqlDbType.Bit);
@@ -508,7 +491,7 @@ namespace Quantumart.QPublishing.Database
 
         public DataRowView GetMaximumWeightStatusRow(int siteId)
         {
-            var dv = GetStatuses("SITE_ID = " + siteId.ToString());
+            var dv = GetStatuses("SITE_ID = " + siteId);
             dv.Sort = "WEIGHT DESC";
             return dv[0];
         }
@@ -521,10 +504,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return GetNumInt(dv[0]["STATUS_TYPE_ID"]);
             }
-            else
-            {
-                return LegacyNotFound;
-            }
+
+            return LegacyNotFound;
         }
 
         public DataRow GetPreviousStatusHistoryRecord(int id)
@@ -553,7 +534,9 @@ namespace Quantumart.QPublishing.Database
                 try
                 {
                     if (connection.State == ConnectionState.Closed)
+                    {
                         connection.Open();
+                    }
 
                     adapter.SelectCommand = new SqlCommand(searchSp, connection)
                     {
@@ -572,7 +555,9 @@ namespace Quantumart.QPublishing.Database
                 finally
                 {
                     if (NeedToDisposeActualSqlConnection)
+                    {
                         connection.Dispose();
+                    }
                 }
 
                 if (ds.Tables[0].Rows.Count > 0)
@@ -607,7 +592,9 @@ namespace Quantumart.QPublishing.Database
                 try
                 {
                     if (connection.State == ConnectionState.Closed)
+                    {
                         connection.Open();
+                    }
 
                     adapter.SelectCommand = new SqlCommand(searchSp, connection)
                     {
@@ -630,7 +617,9 @@ namespace Quantumart.QPublishing.Database
                 finally
                 {
                     if (NeedToDisposeActualSqlConnection)
+                    {
                         connection.Dispose();
+                    }
                 }
 
                 if (ds.Tables[0].Rows.Count > 0)
@@ -651,16 +640,16 @@ namespace Quantumart.QPublishing.Database
 
         #region Publishing Container
 
-        public string CorrectStatuses(int srcSiteId, int destSiteId, string @where)
+        public string CorrectStatuses(int srcSiteId, int destSiteId, string where)
         {
-            var result = @where;
+            var result = where;
 
             if (destSiteId != 0 && srcSiteId != destSiteId)
             {
                 result = result.ToUpperInvariant();
-                var simpleExpression = "AND C.STATUS_TYPE_ID = ";
-                var complexExpressionBegin = "AND C.STATUS_TYPE_ID IN (";
-                var complexExpressionEnd = ")";
+                const string simpleExpression = "AND C.STATUS_TYPE_ID = ";
+                const string complexExpressionBegin = "AND C.STATUS_TYPE_ID IN (";
+                const string complexExpressionEnd = ")";
                 var divider = ",";
                 var statusString = "";
 
@@ -739,7 +728,11 @@ namespace Quantumart.QPublishing.Database
         public string GetBinDirectory(int siteId, bool isLive)
         {
             var site = GetSite(siteId);
-            if (site == null) return String.Empty;
+            if (site == null)
+            {
+                return String.Empty;
+            }
+
             return isLive ? site.AssemblyDirectory : site.StageAssemblyDirectory;
         }
 

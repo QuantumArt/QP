@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
-using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
@@ -27,30 +27,30 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private readonly HashSet<string> _identityInsertOptions;
 
-        private XmlDbUpdateLogRepository _dbUpdateLogRepository;
-
-        private XmlDbUpdateActionsLogRepository _dbUpdateActionsLogRepository;
+        private readonly IXmlDbUpdateLogService _dbLogService;
 
         private readonly XmlDbUpdateActionCorrecterService _actionsCorrecterService;
 
-        public XmlDbUpdateReplayService(string connectionString, int userId)
-            : this(connectionString, null, userId)
+        public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
+            : this(connectionString, null, userId, dbLogService, actionsCorrecterService)
         {
         }
 
-        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId)
-            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId)
+        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
+            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId, dbLogService, actionsCorrecterService)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId)
+        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
             _userId = userId;
             _connectionString = connectionString;
-            _identityInsertOptions = identityInsertOptions;
-            _actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
+
+            _dbLogService = dbLogService;
+            _actionsCorrecterService = actionsCorrecterService;
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -59,9 +59,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
-            ValidateReplayInput(filteredXmlDocument);
-            var filteredXmlString = filteredXmlDocument.ToStringWithDeclaration();
+            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
+            using (new QPConnectionScope(_connectionString, _identityInsertOptions))
+            {
+                ValidateReplayInput(filteredXmlDocument);
+            }
 
+            var filteredXmlString = filteredXmlDocument.ToStringWithDeclaration();
             var dbLogEntry = new XmlDbUpdateLogModel
             {
                 Body = filteredXmlString,
@@ -71,19 +75,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 UserId = _userId
             };
 
-            _dbUpdateLogRepository = new XmlDbUpdateLogRepository();
-            _dbUpdateActionsLogRepository = new XmlDbUpdateActionsLogRepository();
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(_connectionString, _identityInsertOptions))
             {
-                if (_dbUpdateLogRepository.IsExist(dbLogEntry.Hash))
+                if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
                 {
                     var throwEx = new XmlDbUpdateLoggingException("Current xml document already applied and exist at XmlDbUpdate database.");
                     throwEx.Data.Add("LogEntry", dbLogEntry.ToJsonLog());
                     throw throwEx;
                 }
 
-                var updateId = _dbUpdateLogRepository.Insert(dbLogEntry);
+                var updateId = _dbLogService.InsertFileLogEntry(dbLogEntry);
                 ReplayActionsFromXml(filteredXmlDocument.Root.Elements(), filteredXmlDocument.Root.Attribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute).Value, updateId);
                 ts.Complete();
             }
@@ -118,7 +120,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     UserId = _userId
                 };
 
-                if (_dbUpdateActionsLogRepository.IsExist(logEntry.Hash))
+                if (_dbLogService.IsActionAlreadyReplayed(logEntry.Hash))
                 {
                     var throwEx = new XmlDbUpdateLoggingException("Current action already applied and exist at XmlDbUpdateAction database.");
                     throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
@@ -127,7 +129,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 var replayedAction = ReplayAction(action, backendUrl);
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToString();
-                _dbUpdateActionsLogRepository.Insert(logEntry);
+                _dbLogService.InsertActionLogEntry(logEntry);
             }
         }
 
