@@ -43,8 +43,8 @@ namespace Quantumart.QP8.WebMvc
             routes.IgnoreRoute("WebServices/{*pathInfo}");
             routes.MapRoute(
                 "MultistepAction",
-                "Multistep/{command}/{action}/{tabId}/{parentId}/{id}",
-                new { controller = "Multistep", parentId = 0, id = 0 },
+                "Multistep/{command}/{action}/{tabId}/{parentId}",
+                new { controller = "Multistep", parentId = 0 },
                 new { parentId = @"\d+" }
             );
 
