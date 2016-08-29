@@ -1,4 +1,4 @@
-﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
 	<#+
 	void AddTestClass(GenerationContext context)
 	{

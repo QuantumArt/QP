@@ -1,4 +1,4 @@
-﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
 <#+ 
   // Note: You can call this method from the outside of the template,
   //       please add parameters as needed.	

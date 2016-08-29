@@ -29,16 +29,15 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="Quantumart.QP8.CodeGeneration.Services" #>
 
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\Manager.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\TestClassTemplate.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\Model.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\MappingConfiguratorOnModelCreating.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\ModelMappingConfigurator.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\DynamicMappingConfigurator.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\ModelExtensions.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\ConnectionScope.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\Classes.ttinclude" #>
-<#@ include file="..\packages\QP8.EntityFramework6.1.0.0\include\ClassExtensions.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\Manager.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\Model.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\MappingConfiguratorOnModelCreating.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\MappingConfigurator.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\StaticSchemaProvider.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\ModelExtensions.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\ConnectionScope.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\Classes.ttinclude" #>
+<#@ include file="..\packages\QP8.EntityFramework6.1.0.2\include\ClassExtensions.ttinclude" #>
 
 <#
 	using (var context = new GenerationContext(this, Host, GenerationEnvironment, "QPDataContextGenerator.tt.settings.xml"))
@@ -50,22 +49,24 @@
 		context.AddTemplateFile(className + "Extensions.cs", AddModelExtensions, settings.GenerateModel);
 		context.AddTemplateFile(className + "ConnectionScope.cs", AddConnectionScope, settings.GenerateModel);
 
-		context.AddTemplateFile(className + "MappingConfigurator.cs", AddModelMappingConfigurator, settings.GenerateMappings);
-		context.AddTemplateFile("DynamicMappingConfigurator.cs", AddDynamicMappingConfigurator, settings.GenerateMappings);
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\FileMappingResolver.cs", settings.GenerateInterface);
+		context.AddTemplateFile("MappingConfigurator.cs", AddMappingConfigurator, settings.GenerateMappings);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\MappingResolver.cs", settings.GenerateMappings);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\FileSchemaProvider.cs", settings.GenerateMappings);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\DatabaseSchemaProvider.cs", settings.GenerateMappings);
+		context.AddTemplateFile("StaticSchemaProvider.cs", AddStaticSchemaProvider, settings.GenerateMappings);
 		
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\IQPArticle.cs", settings.GenerateInterface);
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\IQPLibraryService.cs", settings.GenerateInterface);
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\IQPFormService.cs", settings.GenerateInterface);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\IQPArticle.cs", settings.GenerateInterface);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\IQPLibraryService.cs", settings.GenerateInterface);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\IQPFormService.cs", settings.GenerateInterface);
 
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\IMappingConfigurator.cs", settings.GenerateMappingInterface);
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\IMappingResolver.cs", settings.GenerateMappingInterface);
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\MappingConfiguratorBase.cs", settings.GenerateMappingInterface);
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\DynamicMappingConfiguratorBase.cs", settings.GenerateMappingInterface);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\IQPSchema.cs", settings.GenerateMappingInterface);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\IMappingConfigurator.cs", settings.GenerateMappingInterface);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\ISchemaProvider.cs", settings.GenerateMappingInterface);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\MappingConfiguratorBase.cs", settings.GenerateMappingInterface);
 
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\StatusType.cs", settings.GenerateClasses);
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\User.cs", settings.GenerateClasses);
-		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.0\include\UserGroup.cs", settings.GenerateClasses);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\StatusType.cs", settings.GenerateClasses);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\User.cs", settings.GenerateClasses);
+		context.AddCodeFile(@"..\packages\QP8.EntityFramework6.1.0.2\include\UserGroup.cs", settings.GenerateClasses);
 		context.AddTemplate(AddClasses, settings.GenerateClasses);
 		context.AddTemplateFile(className + ".Contents.Extensions.cs", AddClassExtensions, settings.GenerateClasses && settings.GenerateExtensions);
 	}

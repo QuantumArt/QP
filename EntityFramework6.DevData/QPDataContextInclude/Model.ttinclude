@@ -1,4 +1,4 @@
-﻿<#@ IntelliSenseLanguage processor="tangibleT4Editor" language="C#" #>
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
 <#+ void AddModel(GenerationContext context){
 var model = context.Model;
 var settings = context.Settings;
@@ -13,6 +13,8 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 {
 	public partial class <#=model.Schema.ClassName#> : DbContext
 	{
+		public static ContentAccess DefaultContentAccess = ContentAccess.Live;
+
         partial void OnContextCreated();
 
         static <#=model.Schema.ClassName#>()
@@ -45,7 +47,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 		    var schemaProvider = new StaticSchemaProvider();
-		    var mapping = new MappingConfigurator(ContentAccess.Live, schemaProvider);
+		    var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
             mapping.OnModelCreating(modelBuilder);
         }
 	}

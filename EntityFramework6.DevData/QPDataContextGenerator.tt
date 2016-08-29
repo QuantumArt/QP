@@ -30,7 +30,6 @@
 <#@ import namespace="Quantumart.QP8.CodeGeneration.Services" #>
 
 <#@ include file="..\CodeGeneration\Templates\Manager.ttinclude" #>
-<#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\TestClassTemplate.ttinclude" #>
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\Model.ttinclude" #>
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\MappingConfiguratorOnModelCreating.ttinclude" #>
 <#@ include file="..\EntityFramework6.DevData\QPDataContextInclude\MappingConfigurator.ttinclude" #>
@@ -60,6 +59,7 @@
 		context.AddCodeFile(@"..\EntityFramework\Models\IQPLibraryService.cs", settings.GenerateInterface);
 		context.AddCodeFile(@"..\EntityFramework\Models\IQPFormService.cs", settings.GenerateInterface);
 
+		context.AddCodeFile(@"..\EntityFramework\Services\IQPSchema.cs", settings.GenerateMappingInterface);
 		context.AddCodeFile(@"..\EntityFramework\Services\IMappingConfigurator.cs", settings.GenerateMappingInterface);
 		context.AddCodeFile(@"..\EntityFramework\Services\ISchemaProvider.cs", settings.GenerateMappingInterface);
 		context.AddCodeFile(@"..\EntityFramework\Services\MappingConfiguratorBase.cs", settings.GenerateMappingInterface);

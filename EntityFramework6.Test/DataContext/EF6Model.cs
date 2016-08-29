@@ -8,6 +8,8 @@ namespace EntityFramework6.Test.DataContext
 {
 	public partial class EF6Model : DbContext
 	{
+		public static ContentAccess DefaultContentAccess = ContentAccess.Live;
+
         partial void OnContextCreated();
 
         static EF6Model()
@@ -33,7 +35,7 @@ namespace EntityFramework6.Test.DataContext
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
 		    var schemaProvider = new StaticSchemaProvider();
-		    var mapping = new MappingConfigurator(ContentAccess.Live, schemaProvider);
+		    var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
             mapping.OnModelCreating(modelBuilder);
         }
 	}

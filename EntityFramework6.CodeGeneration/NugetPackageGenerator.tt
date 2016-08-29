@@ -36,7 +36,7 @@
 <#
 	using (var context = new NugetContext(Host, GenerationEnvironment))
     {
-		context.Version = "1.0.0";
+		context.Version = "1.0.2";
 		context.PackageName = "QP8.EntityFramework6";
 		context.PackageSource = "file://mscbuild01.artq.com/Packages/";
 

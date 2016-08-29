@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>QP8.EntityFramework6</id>
-    <version>1.0.0</version>
+    <version>1.0.2</version>
     <title>title</title>
     <authors>author</authors>
     <owners>author</owners>
@@ -21,23 +21,24 @@
   </metadata>
   <files>
     <file src="..\CodeGeneration\Templates\Manager.ttinclude" target="include" />
-    <file src="..\EntityFramework6.DevData\QPDataContextInclude\TestClassTemplate.ttinclude" target="include" />
     <file src="..\EntityFramework6.DevData\QPDataContextInclude\Model.ttinclude" target="include" />
     <file src="..\EntityFramework6.DevData\QPDataContextInclude\MappingConfiguratorOnModelCreating.ttinclude" target="include" />
-    <file src="..\EntityFramework6.DevData\QPDataContextInclude\ModelMappingConfigurator.ttinclude" target="include" />
-    <file src="..\EntityFramework6.DevData\QPDataContextInclude\DynamicMappingConfigurator.ttinclude" target="include" />
+    <file src="..\EntityFramework6.DevData\QPDataContextInclude\MappingConfigurator.ttinclude" target="include" />
+    <file src="..\EntityFramework6.DevData\QPDataContextInclude\StaticSchemaProvider.ttinclude" target="include" />
     <file src="..\EntityFramework6.DevData\QPDataContextInclude\ModelExtensions.ttinclude" target="include" />
     <file src="..\EntityFramework6.DevData\QPDataContextInclude\ConnectionScope.ttinclude" target="include" />
     <file src="..\EntityFramework6.DevData\QPDataContextInclude\Classes.ttinclude" target="include" />
     <file src="..\EntityFramework6.DevData\QPDataContextInclude\ClassExtensions.ttinclude" target="include" />
-    <file src="..\EntityFramework\Services\FileMappingResolver.cs" target="include" />
+    <file src="..\EntityFramework\Services\MappingResolver.cs" target="include" />
+    <file src="..\EntityFramework\Services\FileSchemaProvider.cs" target="include" />
+    <file src="..\EntityFramework\Services\DatabaseSchemaProvider.cs" target="include" />
     <file src="..\EntityFramework\Models\IQPArticle.cs" target="include" />
     <file src="..\EntityFramework\Models\IQPLibraryService.cs" target="include" />
     <file src="..\EntityFramework\Models\IQPFormService.cs" target="include" />
+    <file src="..\EntityFramework\Services\IQPSchema.cs" target="include" />
     <file src="..\EntityFramework\Services\IMappingConfigurator.cs" target="include" />
-    <file src="..\EntityFramework\Services\IMappingResolver.cs" target="include" />
+    <file src="..\EntityFramework\Services\ISchemaProvider.cs" target="include" />
     <file src="..\EntityFramework\Services\MappingConfiguratorBase.cs" target="include" />
-    <file src="..\EntityFramework\Services\DynamicMappingConfiguratorBase.cs" target="include" />
     <file src="..\EntityFramework\Models\StatusType.cs" target="include" />
     <file src="..\EntityFramework\Models\User.cs" target="include" />
     <file src="..\EntityFramework\Models\UserGroup.cs" target="include" />

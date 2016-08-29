@@ -30,7 +30,6 @@
 <#@ import namespace="Quantumart.QP8.CodeGeneration.Services" #>
 
 <#@ include file="..\..\CodeGeneration\Templates\Manager.ttinclude" #>
-<#@ include file="..\..\EntityFramework6.DevData\QPDataContextInclude\TestClassTemplate.ttinclude" #>
 <#@ include file="..\..\EntityFramework6.DevData\QPDataContextInclude\Model.ttinclude" #>
 <#@ include file="..\..\EntityFramework6.DevData\QPDataContextInclude\MappingConfiguratorOnModelCreating.ttinclude" #>
 <#@ include file="..\..\EntityFramework6.DevData\QPDataContextInclude\MappingConfigurator.ttinclude" #>

@@ -46,6 +46,11 @@ namespace Quantumart.QP8.EntityFramework.Services
 
         public virtual void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            if (_mappingResolver == null)
+            {
+                _mappingResolver = new MappingResolver(_schemaProvider.GetSchema());
+            }
+
             #region StatusType
             modelBuilder.Entity<StatusType>()
                 .ToTable("STATUS_TYPE_NEW")

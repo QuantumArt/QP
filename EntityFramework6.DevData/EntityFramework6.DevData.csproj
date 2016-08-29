@@ -80,6 +80,9 @@
     <Compile Include="IQPLibraryService.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="IQPSchema.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="ISchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
