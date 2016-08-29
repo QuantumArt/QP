@@ -51,7 +51,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.CreateLikeSite)]
         [BackendActionContext(ActionCode.CreateLikeSite)]
         [BackendActionLog]
-		public ActionResult Setup(int parentId, int id, bool? boundToExternal)
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
             MultistepActionSettings settings = multistepService.Setup(parentId, id, boundToExternal);
             return Json(settings);
@@ -73,11 +73,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
             Site sourceSite = SiteService.Read(id);
             model.Data.AssemblingType = sourceSite.AssemblingType;
             model.Validate(ModelState);
+            string viewName = $"{folderForTemplate}/CreateLikeSiteTemplate";
 
             if (ModelState.IsValid)
             {
                 List<int> emptyArray = new List<int>();
-                model.Data = SiteService.Save(model.Data, emptyArray.ToArray(), emptyArray.ToArray());
+                try
+                {
+                    model.Data = SiteService.Save(model.Data, emptyArray.ToArray(), emptyArray.ToArray());
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("Exception", ex.Message);
+                    return JsonHtml(viewName, model);
+                }
+
                 this.PersistResultId(model.Data.Id);
 
                 IMultistepActionParams settings = new CopySiteSettings(newSite.Id, id, DateTime.Now, model.DoNotCopyArticles, model.DoNotCopyTemplates, model.DoNotCopyFiles);
@@ -88,7 +98,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
             else
             {
-                string viewName = String.Format("{0}/CreateLikeSiteTemplate", folderForTemplate);
                 return JsonHtml(viewName, model);
             }
         }
