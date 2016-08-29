@@ -1,10 +1,12 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security;
 using System.Text;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -29,12 +31,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public ActionResult Execute(string tabId, int parentId, int[] ids, string actionCode)
         {
             CustomActionPrepareResult result = null;
             try
             {
-                result = _service.PrepareForExecuting(actionCode, tabId, IDs, parentId);
+                result = _service.PrepareForExecuting(actionCode, tabId, ids, parentId);
                 if (!result.IsActionAccessable)
                 {
                     throw new SecurityException(result.SecurityErrorMesage);
@@ -42,9 +44,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 if (result.CustomAction.Action.IsInterface)
                 {
-                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, IDs, result.CustomAction);
+                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, ids, result.CustomAction);
                     return JsonHtml("ExecuteAction", model);
                 }
+
                 return Json(new { Url = result.CustomAction.FullUrl, PreActionUrl = result.CustomAction.PreActionFullUrl });
             }
             catch (Exception exp)
@@ -64,9 +67,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public ActionResult ExecutePreAction(string tabId, int parentId, int[] ids, string actionCode)
         {
-            return Json(MessageResult.Confirm($"Action: {actionCode}, ParentId: {parentId}, IDs: {string.Join(";", IDs)}"));
+            return Json(MessageResult.Confirm($"Action: {actionCode}, ParentId: {parentId}, IDs: {string.Join(";", ids)}"));
         }
 
         [HttpPost]
@@ -76,27 +79,32 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var req = WebRequest.Create(parts[0]);
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
+
             var ascii = new ASCIIEncoding();
             var postBytes = ascii.GetBytes(parts[1]);
             req.ContentLength = postBytes.Length;
+
             using (var postStream = req.GetRequestStream())
             {
                 postStream.Write(postBytes, 0, postBytes.Length);
                 postStream.Flush();
                 postStream.Close();
             }
+
             try
             {
-                // ReSharper disable once AssignNullToNotNullAttribute
-                var strmReader = new StreamReader(req.GetResponse().GetResponseStream());
+                var result = string.Empty;
+                var resp = req.GetResponse().GetResponseStream();
                 if (resp != null)
                 {
                     result = new StreamReader(resp).ReadToEnd();
                 }
+
                 if (level >= PermissionLevel.Modify)
                 {
                     CreateLogs(actionCode, ids, parentEntityId);
                 }
+
                 return Content(result);
             }
             catch (Exception ex)
@@ -108,9 +116,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         private static void CreateLogs(string actionCode, int[] ids, int? parentEntityId)
         {
             var repo = DependencyResolver.Current.GetService<IBackendActionLogRepository>();
-
             BackendActionContext.SetCurrent(actionCode, ids.Select(n => n.ToString()), parentEntityId);
             var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, repo);
+
             repo.Save(logs);
             BackendActionContext.ResetCurrent();
         }
