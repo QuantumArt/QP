@@ -8913,16 +8913,22 @@ namespace Quantumart.QP8.DAL
                     
                     drop table #disable_create_new_views
 
-                    declare @content_id numeric
-                    while exists(select * from @content_ids)
+                    if exists(select * from sys.procedures where name = 'qp_content_new_views_recreate')
                     begin
-                        select @content_id = id from @content_ids
+                        declare @content_id numeric
+                        while exists(select * from @content_ids)
+                        begin
+                            select @content_id = id from @content_ids
 
-                        exec qp_content_new_views_recreate @content_id
+                            exec qp_content_new_views_recreate @content_id
 
-                        delete from @content_ids where id = @content_id
+                            delete from @content_ids where id = @content_id
 
+                        end
                     end
+                    
+
+
             end", GetColumnsForTable(sqlConnection, "content_attribute", excludeColumns)
                   , GetColumnsForTable(sqlConnection, "content_attribute", new List<string> { "attribute_id", "content_id" }, changeValues, new Dictionary<string, string> { { "rbc.destination_content_id", "" } }, "ATTRIBUTE_NAME")
                   , isContentsVirtual ? "c.virtual_type != 0" : "c.virtual_type = 0");
