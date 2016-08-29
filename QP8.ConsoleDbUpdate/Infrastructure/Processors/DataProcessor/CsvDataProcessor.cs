@@ -12,8 +12,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 
         public CsvDataProcessor(CsvSettingsModel settings)
         {
+            QPContext.CurrentCustomerCode = settings.CustomerCode;
+
             _settings = settings;
-            QPContext.CurrentCustomerCode = _settings.CustomerCode;
             _csvDbUpdateService = new CsvDbUpdateService(_settings.UserId);
         }
 

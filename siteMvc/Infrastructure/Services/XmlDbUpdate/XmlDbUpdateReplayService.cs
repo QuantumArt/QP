@@ -23,13 +23,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
     {
         private readonly int _userId;
 
-        private readonly string _connectionString;
-
         private readonly HashSet<string> _identityInsertOptions;
 
         private readonly IXmlDbUpdateLogService _dbLogService;
 
         private readonly XmlDbUpdateActionCorrecterService _actionsCorrecterService;
+
+        protected readonly string ConnectionString;
 
         public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
             : this(connectionString, null, userId, dbLogService, actionsCorrecterService)
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
             _userId = userId;
-            _connectionString = connectionString;
+            ConnectionString = connectionString;
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             _dbLogService = dbLogService;
@@ -60,7 +60,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
             using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
-            using (new QPConnectionScope(_connectionString, _identityInsertOptions))
+            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
             {
                 ValidateReplayInput(filteredXmlDocument);
             }
@@ -76,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             };
 
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
-            using (new QPConnectionScope(_connectionString, _identityInsertOptions))
+            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
             {
                 if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
                 {

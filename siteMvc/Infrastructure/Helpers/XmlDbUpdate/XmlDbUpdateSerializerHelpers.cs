@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
@@ -54,13 +55,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             };
         }
 
-        internal static void ErasePreviouslyRecordedActions(string backendUrl, bool overrideFile)
+        internal static void ErasePreviouslyRecordedActions(string backendUrl)
         {
             var root = GetOrCreateRoot(backendUrl);
             var doc = root.Document;
             if (doc != null)
             {
-                if (root.HasElements && overrideFile)
+                if (root.HasElements)
                 {
                     root.Remove();
                     doc.Add(CreateActionsRoot(backendUrl));
@@ -151,16 +152,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         private static XElement GetOrCreateRoot(string backendUrl)
         {
-            XDocument doc;
-            try
-            {
-                doc = XDocument.Load(XmlDbUpdateXDocumentConstants.XmlFilePath);
-            }
-            catch (FileNotFoundException)
-            {
-                doc = new XDocument(CreateActionsRoot(backendUrl));
-            }
-
+            var doc = File.Exists(XmlDbUpdateXDocumentConstants.XmlFilePath) ? XDocument.Load(XmlDbUpdateXDocumentConstants.XmlFilePath) : new XDocument(CreateActionsRoot(backendUrl));
             return doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
         }
 
@@ -292,7 +284,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static DateTime GetExecuted(XElement action, int lcid)
         {
-            return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value, CultureHelpers.GetCultureInfoByLcid(lcid));
+            try
+            {
+                return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value, CultureHelpers.GetCultureInfoByLcid(lcid));
+            }
+            catch
+            {
+                //TODO: DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! And remove unusing references then.
+                return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value, CultureInfo.InvariantCulture);
+            }
         }
 
         private static string GetExecutedBy(XElement action)

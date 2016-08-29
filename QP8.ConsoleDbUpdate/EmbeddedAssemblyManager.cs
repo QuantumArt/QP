@@ -142,6 +142,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.AutoMapper.dll", "AutoMapper.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.EFExtensions.dll", "EFExtensions.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Irony.dll", "Irony.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Castle.Core.dll", "Castle.Core.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Moq.dll", "Moq.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.RazorGenerator.Mvc.dll", "RazorGenerator.Mvc.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Telerik.Web.Mvc.dll", "Telerik.Web.Mvc.dll");

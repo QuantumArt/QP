@@ -60,7 +60,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 var needSendMessage = false;
                 if (model.Data.RecordActions)
                 {
-                    XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext), model.OverrideRecordsFile);
+                    if (model.OverrideRecordsFile)
+                    {
+                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext));
+                    }
+
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)
                     {
                         model.Data.SingleUserId = QPContext.CurrentUserId;

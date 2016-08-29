@@ -20,7 +20,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         {
             try
             {
-                EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
+                //EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
             }
             catch (Exception ex)
             {

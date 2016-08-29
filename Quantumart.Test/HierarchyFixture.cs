@@ -6,7 +6,6 @@ using NUnit.Framework;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
-using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
@@ -38,7 +37,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
-            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService, false);
             service.Process(Global.GetXml(@"xmls\hierarchy.xml"));
             RegionContentName = "test regions";
             ProductContentName = "test products";

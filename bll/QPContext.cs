@@ -36,9 +36,6 @@ namespace Quantumart.QP8.BLL
         private const string CanUnlockItemsKey = "CanUnlockItems";
         private const string IsLiveKey = "IsLive";
 
-        /// <summary>
-        /// текущий объект ObjectContext для работы с ADO.Net Entity Framework
-        /// </summary>
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public static QP8Entities EFContext
         {
@@ -91,8 +88,6 @@ namespace Quantumart.QP8.BLL
                 HttpContext.Current.Items[key] = value;
             }
         }
-
-        #region Cache
 
         internal static Dictionary<int, Field> GetFieldCache()
         {
@@ -179,17 +174,25 @@ namespace Quantumart.QP8.BLL
         {
             ClearInternalStructureCache();
             if (clearExternal)
+            {
                 ClearExternalStructureCache();
+            }
 
             if (GetSiteCache() == null)
+            {
                 SetSiteCache(SiteRepository.GetAll().ToDictionary(n => n.Id));
+            }
 
             if (GetContentCache() == null)
+            {
                 SetContentCache(ContentRepository.GetAll().ToDictionary(n => n.Id));
+            }
 
             IEnumerable<Field> fields = new Field[0];
             if (GetFieldCache() == null || GetContentFieldCache() == null)
+            {
                 fields = FieldRepository.GetAll();
+            }
 
             if (GetFieldCache() == null)
             {
@@ -212,16 +215,18 @@ namespace Quantumart.QP8.BLL
                 foreach (var item in fields)
                 {
                     if (dict.ContainsKey(item.ContentId))
+                    {
                         dict[item.ContentId].Add(item.Id);
+                    }
                     else
+                    {
                         dict.Add(item.ContentId, new List<int> { item.Id });
+                    }
                 }
+
                 SetContentFieldCache(dict);
             }
-
         }
-
-        #endregion
 
         [ThreadStatic]
         private static int? _currentUserId;
@@ -410,14 +415,8 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// имя текущего пользователя
-        /// </summary>
         public static string CurrentUserName => (HttpContext.Current.User.Identity as QPIdentity)?.Name;
 
-        /// <summary>
-        /// текущий код клиента
-        /// </summary>
         public static string CurrentCustomerCode
         {
             get
@@ -464,37 +463,20 @@ namespace Quantumart.QP8.BLL
 
         public static QPIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QPIdentity : null;
 
-        /// <summary>
-        /// текущая строка подключения к БД
-        /// </summary>
         public static string CurrentDbConnectionString => UseConnectionString ? CurrentCustomerCode : QPConfiguration.ConfigConnectionString(CurrentCustomerCode);
 
-        /// <summary>
-        /// текущая строка подключения к БД для ADO.Net Entity Framework
-        /// </summary>
         private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDbConnectionString);
 
-        /// <summary>
-        /// Подготавливает строку подключения к БД для использования в Entity Framework
-        /// </summary>
-        /// <param name="connectionString">строка подключения к БД</param>
-        /// <returns>строка подключения к БД для Entity Framework</returns>
         private static string PreparingDbConnectionStringForEntities(string connectionString)
         {
             return $"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
         }
 
-        /// <summary>
-        /// Проверяет существование кода клиента
-        /// </summary>
-        /// <param name="customerCode">код клиента</param>
-        /// <returns>результат проверки (true - существует; false - не существует)</returns>
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static bool CheckCustomerCode(string customerCode)
         {
             return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name").Value).Contains(customerCode);
         }
-
-        #region Log In/Out
 
         /// <summary>
         /// Возвращает информацию о пользователя по его логину и паролю
@@ -536,7 +518,9 @@ namespace Quantumart.QP8.BLL
                         }
                     }
                     else
+                    {
                         CreateFaildSession(data, dbContext);
+                    }
                 }
                 catch (SqlException ex)
                 {
@@ -545,7 +529,6 @@ namespace Quantumart.QP8.BLL
                     CreateFaildSession(data, dbContext);
                 }
             }
-
 
             return resultUser;
         }
@@ -567,9 +550,7 @@ namespace Quantumart.QP8.BLL
                 return loginUrl;
             }
         }
-        #endregion
 
-        #region User Session Log
         /// <summary>
         /// Создать сессию при успешном логине
         /// </summary>
@@ -645,7 +626,6 @@ namespace Quantumart.QP8.BLL
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
         }
-        #endregion
 
         public static IUnityContainer CurrentUnityContainer { get; private set; }
 
@@ -663,7 +643,9 @@ namespace Quantumart.QP8.BLL
             set
             {
                 if (value.Keys == null || !value.Keys.Any())
+                {
                     throw new ArgumentException("Keys collection is empty");
+                }
 
                 _externalContextStorage = value;
                 _externalContextStorageKeys = new HashSet<string>(value.Keys);

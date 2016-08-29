@@ -1,6 +1,6 @@
 ﻿using System.Configuration;
-using Quantumart.QP8.Configuration.Globalization;
 using Quantumart.QP8.Configuration.Authentication;
+using Quantumart.QP8.Configuration.Globalization;
 
 namespace Quantumart.QP8.Configuration
 {
@@ -54,8 +54,7 @@ namespace Quantumart.QP8.Configuration
         [ConfigurationProperty("relationLimit", DefaultValue = 500)]
         public int RelationCountLimit => (int)base["relationLimit"];
 
-
-        [ConfigurationProperty("cmdTimeout", DefaultValue=120 )]
+        [ConfigurationProperty("cmdTimeout", DefaultValue = 120)]
         public int CommandTimeout => (int)base["cmdTimeout"];
     }
 }

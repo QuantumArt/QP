@@ -5,11 +5,11 @@ using System.Web.Compilation;
 using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure
+namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
 {
-    public class FakeMvcApplication : IDisposable
+    public class FakeMvcApplicationContext : IDisposable
     {
-        internal FakeMvcApplication()
+        internal FakeMvcApplicationContext()
         {
             MvcApplication.RegisterModelBinders();
             MvcApplication.RegisterModelValidatorProviders();
