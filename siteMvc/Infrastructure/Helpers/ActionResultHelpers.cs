@@ -2,7 +2,6 @@
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;

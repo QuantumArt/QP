@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
+﻿namespace Quantumart.QP8.WebMvc.Infrastructure.Enums
 {
     /// <summary>
     /// Режим работы фильтра

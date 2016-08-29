@@ -1,29 +1,24 @@
-﻿using Quantumart.QP8.BLL;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
-
-// ReSharper disable InconsistentNaming
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    /// <summary>
-    /// Контроллер для блока поиска по Article
-    /// </summary>
     public class ArticleSearchBlockController : QPController
     {
         private readonly IArticleSearchService _articleSearchService;
 
         public ArticleSearchBlockController(IArticleSearchService articleSearchService)
         {
-            Contract.Requires(articleSearchService != null);
             _articleSearchService = articleSearchService;
         }
 
@@ -162,6 +157,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult StringEnum(string elementIdPrefix, int fieldID)
         {
             ViewBag.QueryDropDownListID = elementIdPrefix + "_queryDropDownList";
@@ -172,6 +168,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult ContentsListForClassifier(string elementIdPrefix, int fieldID)
         {
             var classifier = FieldService.Read(fieldID);
@@ -187,6 +184,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// </summary>
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult RelationSearch(int parentEntityId, int fieldID, int[] IDs, string elementIdPrefix)
         {
             IDs = IDs ?? new int[0];

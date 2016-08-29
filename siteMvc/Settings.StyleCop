@@ -1,0 +1,22 @@
+<StyleCopSettings Version="105">
+  <GlobalSettings>
+    <StringProperty Name="Culture">ru-RU</StringProperty>
+  </GlobalSettings>
+  <Analyzers>
+    <Analyzer AnalyzerId="StyleCop.CSharp.DocumentationRules">
+      <Rules>
+        <Rule Name="ElementsMustBeDocumented">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+        <Rule Name="FileMustHaveHeader">
+          <RuleSettings>
+            <BooleanProperty Name="Enabled">False</BooleanProperty>
+          </RuleSettings>
+        </Rule>
+      </Rules>
+      <AnalyzerSettings />
+    </Analyzer>
+  </Analyzers>
+</StyleCopSettings>

@@ -1,12 +1,10 @@
-﻿using System;
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security;
 using System.Text;
 using System.Web.Mvc;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -14,6 +12,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Telerik.Web.Mvc;
 
@@ -24,19 +23,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly ICustomActionService _service;
 
-        #region Executing
         public CustomActionController(ICustomActionService service)
         {
             _service = service;
         }
 
         [HttpPost]
-        public ActionResult Execute(string tabId, int parentId, int[] ids, string actionCode)
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         {
             CustomActionPrepareResult result = null;
             try
             {
-                result = _service.PrepareForExecuting(actionCode, tabId, ids, parentId);
+                result = _service.PrepareForExecuting(actionCode, tabId, IDs, parentId);
                 if (!result.IsActionAccessable)
                 {
                     throw new SecurityException(result.SecurityErrorMesage);
@@ -44,7 +42,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 if (result.CustomAction.Action.IsInterface)
                 {
-                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, ids, result.CustomAction);
+                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, IDs, result.CustomAction);
                     return JsonHtml("ExecuteAction", model);
                 }
                 return Json(new { Url = result.CustomAction.FullUrl, PreActionUrl = result.CustomAction.PreActionFullUrl });
@@ -55,18 +53,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     throw;
                 }
+
                 if (result.CustomAction.Action.IsInterface)
                 {
                     return new JsonNetResult<object>(new { success = false, message = exp.Message });
                 }
+
                 return new JsonResult { Data = MessageResult.Error(exp.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
 
         [HttpPost]
-        public ActionResult ExecutePreAction(string tabId, int parentId, int[] ids, string actionCode)
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         {
-            return Json(MessageResult.Confirm($"Action: {actionCode}, ParentId: {parentId}, IDs: {string.Join(";", ids)}"));
+            return Json(MessageResult.Confirm($"Action: {actionCode}, ParentId: {parentId}, IDs: {string.Join(";", IDs)}"));
         }
 
         [HttpPost]
@@ -87,8 +87,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
             try
             {
-                var result = "";
-                var resp = req.GetResponse().GetResponseStream();
+                // ReSharper disable once AssignNullToNotNullAttribute
+                var strmReader = new StreamReader(req.GetResponse().GetResponseStream());
                 if (resp != null)
                 {
                     result = new StreamReader(resp).ReadToEnd();
@@ -115,9 +115,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             BackendActionContext.ResetCurrent();
         }
 
-        #endregion
-
-        #region List
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CustomActions)]
@@ -138,7 +135,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = _service.List(command.GetListCommand());
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
-        #endregion
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -170,7 +166,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistResultId(model.Data.Id);
                 PersistActionId(model.Data.ActionId);
                 PersistActionCode(model.Data.Action.Code);
-                return Redirect("Properties", new {tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveCustomAction });
+                return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveCustomAction });
             }
             return JsonHtml("Properties", model);
         }
@@ -204,7 +200,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (ModelState.IsValid)
             {
                 model.Data = _service.Update(model.Data, model.SelectedActionsIds);
-                return Redirect("Properties", new {tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateCustomAction });
+                return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateCustomAction });
             }
             return JsonHtml("Properties", model);
         }

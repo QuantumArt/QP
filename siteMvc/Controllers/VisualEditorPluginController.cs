@@ -1,11 +1,12 @@
-﻿using Quantumart.QP8.BLL.Services;
+using System.Linq;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
-using System.Linq;
-using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -19,7 +20,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _visualEditorService = visualEditorService;
         }
 
-        #region	list actions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VisualEditorPlugins)]
@@ -40,7 +40,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = _visualEditorService.GetVisualEditorPlugins(command.GetListCommand(), parentId);
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
-        #endregion
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -117,6 +116,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var plugin = _visualEditorService.NewVisualEditorPluginPropertiesForUpdate(parentId);
             var model = VisualEditorPluginViewModel.Create(plugin, tabId, parentId);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)

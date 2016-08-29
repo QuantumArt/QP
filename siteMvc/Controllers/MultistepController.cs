@@ -1,8 +1,10 @@
-﻿using Quantumart.QP8.BLL.Services.MultistepActions;
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using System;
-using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -25,6 +27,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult PreAction(string command, int parentId, int id, int[] IDs)
         {
             return Json(_getService(command).PreAction(parentId, id, IDs));
@@ -32,6 +35,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult Setup(string command, int parentId, int id, int[] IDs, bool? boundToExternal)
         {
             return Json(_getService(command).Setup(parentId, id, IDs, boundToExternal));

@@ -1,4 +1,7 @@
-﻿using Quantumart.QP8.BLL;
+using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -6,9 +9,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
-using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

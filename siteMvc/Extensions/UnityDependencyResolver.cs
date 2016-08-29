@@ -1,4 +1,7 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using Microsoft.Practices.Unity;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -20,12 +23,7 @@ using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Logging.Web;
 using Quantumart.QP8.Utils.FullTextSearch;
 using Quantumart.QP8.WebMvc.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Hubs;
-using System;
-using System.Collections.Generic;
-using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Extensions
 {

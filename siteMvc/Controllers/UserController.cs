@@ -1,4 +1,6 @@
-﻿using Quantumart.QP8.BLL;
+using System.Diagnostics.CodeAnalysis;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -7,8 +9,8 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
-using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -22,7 +24,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _service = service;
         }
 
-        #region List
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Users)]
@@ -38,8 +39,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Users)]
         [BackendActionContext(ActionCode.Users)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
+        public ActionResult _Index(string tabId, int parentId, GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
         {
             var serviceResult = _service.List(command.GetListCommand(), filter);
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
@@ -58,6 +58,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleSelect(string tabId, int parentId, int[] IDs)
         {
             var model = UserSelectableListViewModel.Create(tabId, parentId, IDs, true);
@@ -68,6 +69,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelect(string tabId, string IDs, GridCommand command,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
         {
@@ -96,9 +98,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = _service.List(command.GetListCommand(), filter, new[] { id });
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
-        #endregion
 
-        #region Form Actions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewUser)]
@@ -121,6 +121,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var user = _service.NewProperties();
             var model = UserViewModel.Create(user, tabId, parentId, _service);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
@@ -129,6 +130,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveUser });
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -155,6 +157,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var user = _service.ReadProperties(id);
             var model = UserViewModel.Create(user, tabId, parentId, _service);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
@@ -162,9 +165,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = _service.UpdateProperties(model.Data);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateUser });
             }
+
             return JsonHtml("Properties", model);
         }
-        #endregion
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

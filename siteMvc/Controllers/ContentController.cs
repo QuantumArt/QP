@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
@@ -13,6 +13,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Content;
@@ -27,8 +28,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ContentController : QPController
     {
-        #region list actions
-        #region Contents
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Contents)]
@@ -51,9 +50,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = ContentService.List(filter, command.GetListCommand());
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
-        #endregion
 
-        #region Virtual Content
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VirtualContents)]
@@ -76,10 +73,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = VirtualContentService.List(normFilter, command.GetListCommand());
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
-        #endregion
-        #endregion
 
-        #region form actions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
@@ -105,6 +99,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var content = ContentService.NewForSave(parentId);
             var model = ContentViewModel.Create(content, tabId, parentId);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
@@ -241,6 +236,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var group = ContentService.ReadGroupForUpdate(id, parentId);
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
@@ -248,12 +244,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = ContentService.UpdateGroup(model.Data);
                 return Redirect("GroupProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateContentGroup });
             }
+
             return JsonHtml("GroupProperties", model);
         }
-
-        #endregion
-
-        #region non-interface actions
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
@@ -299,10 +292,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        #endregion
-
-        #region helper actions
-
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult SearchBlock(int id, string actionCode, string hostId)
@@ -310,10 +299,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = new ContentSearchBlockViewModel(id, actionCode, hostId);
             return JsonHtml("SearchBlock", model);
         }
-
-        #endregion
-
-        #region library actions
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -380,9 +365,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        #endregion
-
-        #region fields actions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Content, "contentId")]
@@ -441,11 +423,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
         }
-        #endregion
-
-        #region select actions
-
-        #region single actions
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -567,11 +544,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-
-        #endregion
-
-        #region multiple actions
-
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectContent)]
@@ -677,7 +649,5 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = ContentService.ListForUnion(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
-        #endregion
-        #endregion
     }
 }
