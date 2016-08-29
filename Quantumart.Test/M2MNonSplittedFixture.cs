@@ -1,10 +1,13 @@
 using System.Collections.Generic;
+using Moq;
+using NUnit.Framework;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.Info;
 using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
-using NUnit.Framework;
-using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.Test
 {
@@ -12,7 +15,9 @@ namespace Quantumart.Test
     public class M2MNonSplittedFixture
     {
         public static int NoneId { get; private set; }
+
         public static int PublishedId { get; private set; }
+
         public static DBConnector Cnn { get; private set; }
 
         public static int ContentId { get; private set; }
@@ -26,10 +31,13 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
-            service.Process(Global.GetXml(@"xmls\m2m_nonsplitted.xml"), null);
+            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
+            service.Process(Global.GetXml(@"xmls\m2m_nonsplitted.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentId = Global.GetContentId(Cnn, "Test M2M");
             DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
@@ -39,13 +47,12 @@ namespace Quantumart.Test
             PublishedId = Cnn.GetStatusTypeId(Global.SiteId, "Published");
         }
 
-
- [Test]
+        [Test]
         public void MassUpdate_NoSplitAndMerge_ForSynWorkflow()
         {
             var values = new List<Dictionary<string, string>>();
-            var ints1 = new[] {CategoryIds[1], CategoryIds[3], CategoryIds[5]};
-            var ints2 = new[] {CategoryIds[2], CategoryIds[3], CategoryIds[4]};
+            var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
+            var ints2 = new[] { CategoryIds[2], CategoryIds[3], CategoryIds[4] };
 
             var article1 = new Dictionary<string, string>
             {
@@ -74,7 +81,7 @@ namespace Quantumart.Test
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
 
-            var titles = new[] {"xnewtest", "xnewtest"};
+            var titles = new[] { "xnewtest", "xnewtest" };
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             var intsNew2 = new[] { CategoryIds[3], CategoryIds[5] };
             article1["Categories"] = string.Join(",", intsNew1);
@@ -143,7 +150,7 @@ namespace Quantumart.Test
             };
             values.Add(article2);
 
-            var ids = new[] {int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id])};
+            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change");

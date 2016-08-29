@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Globalization;
 using System.Web.Caching;
 using Quantumart.QPublishing.Info;
@@ -23,7 +24,9 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 if (connection.State == ConnectionState.Closed)
+                {
                     connection.Open();
+                }
 
                 var adapter = new SqlDataAdapter { AcceptChangesDuringFill = false };
                 dataset.EnforceConstraints = false;
@@ -54,7 +57,9 @@ namespace Quantumart.QPublishing.Database
             finally
             {
                 if (NeedToDisposeActualSqlConnection)
+                {
                     connection.Dispose();
+                }
             }
         }
 
@@ -78,7 +83,9 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 if (cnn.State == ConnectionState.Closed)
+                {
                     cnn.Open();
+                }
 
                 cmd.Connection = cnn;
                 cmd.Transaction = tr;
@@ -86,12 +93,15 @@ namespace Quantumart.QPublishing.Database
                 {
                     SelectCommand = cmd
                 };
+
                 return GetFilledDataTable(adapter);
             }
             finally
             {
                 if (disposeConnection)
+                {
                     cnn.Dispose();
+                }
             }
         }
 
@@ -101,7 +111,9 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 if (connection.State == ConnectionState.Closed)
+                {
                     connection.Open();
+                }
 
                 var adapter = new SqlDataAdapter();
                 var cmd = new SqlCommand(queryString, connection) { Transaction = GetActualSqlTransaction() };
@@ -112,7 +124,9 @@ namespace Quantumart.QPublishing.Database
             finally
             {
                 if (NeedToDisposeActualSqlConnection)
+                {
                     connection.Dispose();
+                }
             }
         }
 
@@ -122,7 +136,9 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 if (connection.State == ConnectionState.Closed)
+                {
                     connection.Open();
+                }
 
                 command.Connection = connection;
                 command.Transaction = GetActualSqlTransaction();
@@ -131,7 +147,9 @@ namespace Quantumart.QPublishing.Database
             finally
             {
                 if (NeedToDisposeActualSqlConnection)
+                {
                     connection.Dispose();
+                }
             }
         }
 
@@ -151,14 +169,7 @@ namespace Quantumart.QPublishing.Database
 
         private DataTable GetData(string queryString, double cacheInterval, bool useDefaultInterval)
         {
-            if (AppSettings["CacheGetData"] == "1")
-            {
-                return GetCachedData(queryString, cacheInterval, useDefaultInterval, false);
-            }
-            else
-            {
-                return GetRealData(queryString);
-            }
+            return AppSettings["CacheGetData"] == "1" ? GetCachedData(queryString, cacheInterval, useDefaultInterval, false) : GetRealData(queryString);
         }
 
         #endregion
@@ -186,17 +197,13 @@ namespace Quantumart.QPublishing.Database
             {
                 return CacheManager.GetCachedTable(CacheManager.GetDataKeyPrefix + queryString, 0, true);
             }
-            else
+
+            if (useDefaultInterval)
             {
-                if (useDefaultInterval)
-                {
-                    return CacheManager.GetCachedTable(CacheManager.GetDataKeyPrefix + queryString);
-                }
-                else
-                {
-                    return CacheManager.GetCachedTable(CacheManager.GetDataKeyPrefix + queryString, cacheInterval, false);
-                }
+                return CacheManager.GetCachedTable(CacheManager.GetDataKeyPrefix + queryString);
             }
+
+            return CacheManager.GetCachedTable(CacheManager.GetDataKeyPrefix + queryString, cacheInterval, false);
         }
 
         #endregion
@@ -224,7 +231,9 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 if (connection.State == ConnectionState.Closed)
+                {
                     connection.Open();
+                }
 
                 cmd.Connection = connection;
                 cmd.ExecuteNonQuery();
@@ -233,7 +242,9 @@ namespace Quantumart.QPublishing.Database
             finally
             {
                 if (NeedToDisposeActualSqlConnection)
+                {
                     connection.Dispose();
+                }
             }
             return result;
         }
@@ -272,7 +283,9 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 if (cnn.State == ConnectionState.Closed)
+                {
                     cnn.Open();
+                }
                 adapter.SelectCommand.Connection = cnn;
                 adapter.SelectCommand.Transaction = GetActualSqlTransaction();
                 var result = GetFilledDataTable(adapter);
@@ -294,16 +307,22 @@ namespace Quantumart.QPublishing.Database
 
                     }
                     else
+                    {
                         totalRecords = (int)adapter.SelectCommand.Parameters[obj.OutputParamName].Value;
+                    }
                 }
                 else
+                {
                     totalRecords = result.Rows.Count;
+                }
                 return new QueryResult { DataTable = result, TotalRecords = totalRecords };
             }
             finally
             {
                 if (NeedToDisposeActualSqlConnection)
+                {
                     cnn.Dispose();
+                }
             }
 
         }
@@ -340,7 +359,9 @@ namespace Quantumart.QPublishing.Database
         public SqlDataReader GetContentDataReader(ContentDataQueryObject obj, CommandBehavior readerParams = CommandBehavior.Default)
         {
             if (ExternalConnection == null)
+            {
                 throw new ApplicationException("ExternalConnection for DbConnector instance has not been defined");
+            }
             {
                 obj.GetCount = false;
                 obj.UseClientSelection = false;
@@ -348,7 +369,9 @@ namespace Quantumart.QPublishing.Database
                 cmd.Connection = ExternalConnection as SqlConnection;
                 cmd.Transaction = GetActualSqlTransaction();
                 if (cmd.Connection != null && cmd.Connection.State == ConnectionState.Closed)
+                {
                     cmd.Connection.Open();
+                }
                 return cmd.ExecuteReader(readerParams);
             }
         }
@@ -359,18 +382,32 @@ namespace Quantumart.QPublishing.Database
             var result = CacheManager.GetQueryResult(obj, out totalRecords);
 
             if ((!CacheData || !obj.CacheResult) && !obj.UseClientSelection)
+            {
                 return result;
+            }
 
             var dv = new DataView(result);
 
             if (obj.UseClientSelection)
             {
                 var hasRegionId = dv.Table.Columns.Contains("RegionId");
-                if (!string.IsNullOrEmpty(obj.Where)) dv.RowFilter = obj.Where;
+                if (!string.IsNullOrEmpty(obj.Where))
+                {
+                    dv.RowFilter = obj.Where;
+                }
                 totalRecords = dv.Count;
-                if (!string.IsNullOrEmpty(obj.OrderBy)) dv.Sort = obj.OrderBy;
-                if (obj.StartRow < 1) obj.StartRow = 1;
-                if (obj.PageSize < 0) obj.PageSize = 0;
+                if (!string.IsNullOrEmpty(obj.OrderBy))
+                {
+                    dv.Sort = obj.OrderBy;
+                }
+                if (obj.StartRow < 1)
+                {
+                    obj.StartRow = 1;
+                }
+                if (obj.PageSize < 0)
+                {
+                    obj.PageSize = 0;
+                }
                 if (obj.StartRow > 1 || obj.PageSize > 0)
                 {
                     if (dv.Count > 0)
@@ -531,7 +568,9 @@ namespace Quantumart.QPublishing.Database
             try
             {
                 if (cnn.State == ConnectionState.Closed)
+                {
                     cnn.Open();
+                }
 
                 command.Connection = cnn;
                 command.Transaction = tr;
@@ -540,7 +579,9 @@ namespace Quantumart.QPublishing.Database
             finally
             {
                 if (disposeConnection)
+                {
                     cnn.Dispose();
+                }
             }
         }
 
@@ -555,7 +596,9 @@ namespace Quantumart.QPublishing.Database
                 try
                 {
                     if (connection.State == ConnectionState.Closed)
+                    {
                         connection.Open();
+                    }
 
                     try
                     {
@@ -579,10 +622,10 @@ namespace Quantumart.QPublishing.Database
                         }
                         catch (Exception ex)
                         {
-                            var errorMessage =
-                                $"{"DbConnector.cs, ProcessDataAsNewTransaction(SqlCommand command)"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                            System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+                            var errorMessage = $"DbConnector.cs, ProcessDataAsNewTransaction(SqlCommand command), MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
+                            EventLog.WriteEntry("Application", errorMessage);
                         }
+
                         //error with rollback
                         //assume rollback already happened automatically
                         //do nothing
@@ -603,6 +646,7 @@ namespace Quantumart.QPublishing.Database
                                 throw;
                             }
                         }
+
                         if (retry == 0)
                         {
                             throw;
@@ -611,20 +655,20 @@ namespace Quantumart.QPublishing.Database
                     catch (Exception ex)
                     {
                         var errorMessage =
-                            $"{"DbConnector.cs, ProcessDataAsNewTransaction(SqlCommand command)"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                        System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+                            $"DbConnector.cs, ProcessDataAsNewTransaction(SqlCommand command), MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
+                        EventLog.WriteEntry("Application", errorMessage);
                     }
                 }
                 finally
                 {
                     if (NeedToDisposeActualSqlConnection)
+                    {
                         connection.Dispose();
+                    }
                 }
             }
         }
-
         #endregion
-
         #endregion
     }
 }

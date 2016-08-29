@@ -4,11 +4,11 @@ using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    internal class HashHelpers
+    internal static class HashHelpers
     {
         internal static string CalculateMd5Hash(string input)
         {
-            Ensure.Argument.NotNullOrEmpty(input);
+            Ensure.Argument.NotNullOrWhiteSpace(input);
 
             var md5 = MD5.Create();
             var inputBytes = Encoding.UTF8.GetBytes(input);

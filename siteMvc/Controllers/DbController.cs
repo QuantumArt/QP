@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
@@ -12,6 +13,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.ViewModels;
 
@@ -90,7 +92,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public FileResult GetRecordedUserActions()
         {
-            return File(XmlDbUpdateXDocumentConstants.XmlFilePath, MediaTypeNames.Application.Octet, XmlDbUpdateXDocumentConstants.XmlFilePath.Split('\\').Last());
+            var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(XmlDbUpdateXDocumentConstants.XmlFilePath):yyyy-MM-dd_HH-mm-ss}.xml";
+            return File(XmlDbUpdateXDocumentConstants.XmlFilePath, MediaTypeNames.Application.Octet, fileName);
         }
 
         [HttpPost]
@@ -101,7 +104,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             try
             {
-                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity).Process(xmlString);
+                // TODO: UNITY
+                var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+                var dbLogService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
+                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, dbLogService, actionsCorrecterService).Process(xmlString);
             }
             catch (XmlDbUpdateLoggingException ex)
             {

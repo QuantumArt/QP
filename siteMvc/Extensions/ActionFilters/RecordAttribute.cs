@@ -5,9 +5,9 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
-using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
@@ -47,13 +47,20 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
-            var isValid = filterContext.Exception == null && filterContext.Controller.ViewData.ModelState.IsValid && !QPController.IsError(filterContext.HttpContext);
-            if (isValid && DbRepository.Get().RecordActions)
+            try
             {
-                var actionToSerialize = XmlDbUpdateActionCorrectionService.CreateActionFromHttpContext(filterContext.HttpContext, _code ?? BackendActionContext.Current.ActionCode, _ignoreForm);
-                XmlDbUpdateSerializerHelpers
-                    .SerializeAction(actionToSerialize, CommonHelpers.GetBackendUrl(filterContext.HttpContext))
-                    .Save(XmlDbUpdateXDocumentConstants.XmlFilePath);
+                var isValid = filterContext.Exception == null && filterContext.Controller.ViewData.ModelState.IsValid && !QPController.IsError(filterContext.HttpContext);
+                if (isValid && DbRepository.Get().RecordActions)
+                {
+                    var actionToSerialize = XmlDbUpdateHttpContextHelpers.CreateXmlDbUpdateActionFromHttpContext(filterContext.HttpContext, _code ?? BackendActionContext.Current.ActionCode, _ignoreForm);
+                    XmlDbUpdateSerializerHelpers
+                        .SerializeAction(actionToSerialize, CommonHelpers.GetBackendUrl(filterContext.HttpContext))
+                        .Save(XmlDbUpdateXDocumentConstants.XmlFilePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("There was an error while recording xml actions", ex);
             }
 
             base.OnActionExecuted(filterContext);

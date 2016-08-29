@@ -627,7 +627,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     else {
       var defaultSettings =
       {
-        class: 'customButton'
+        'class': 'customButton'
       };
 
       settings = jQuery.extend(defaultSettings, settings);
@@ -650,13 +650,13 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       var $fieldWrapper = $input.parent('.fieldWrapper');
 
       if ($fieldWrapper.length == 0) {
-        $input.wrap($('<div/>', { id: $input.prop('id') + '_wrapper', class: 'fieldWrapper group myClass' }));
+        $input.wrap($('<div/>', { id: $input.prop('id') + '_wrapper', 'class': 'fieldWrapper group myClass' }));
         $fieldWrapper = $input.parent('.fieldWrapper');
       }
 
       var options = {
         id: $input.prop('id') + '_' + settings.suffix,
-        class: settings['class'],
+        'class': settings['class'],
         title: settings.title
       };
 
@@ -689,7 +689,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
     else {
       var defaultSettings =
       {
-        class: 'pick'
+        'class': 'pick'
       };
 
       settings = jQuery.extend(defaultSettings, settings);
@@ -715,7 +715,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
       var $fieldWrapper = $input.parent('.fieldWrapper');
 
       if ($fieldWrapper.length == 0) {
-        $input.wrap($('<div/>', { class: 'fieldWrapper group myClass' }));
+        $input.wrap($('<div/>', { 'class': 'fieldWrapper group myClass' }));
         $fieldWrapper = $input.parent('.fieldWrapper');
       }
 
@@ -728,7 +728,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       var options = {
         id: $input.prop('id') + '_' + settings.suffix,
-        class: settings['class'],
+        'class': settings['class'],
         title: settings.title
       };
 

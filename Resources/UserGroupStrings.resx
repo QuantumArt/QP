@@ -174,10 +174,19 @@
   <data name="UseParallelWorkflow" xml:space="preserve">
     <value>Parallel Workflow</value>
   </data>
-	<data name="CanUnlockItems" xml:space="preserve">
+  <data name="CanUnlockItems" xml:space="preserve">
     <value>Group members can unlock entities</value>
   </data>
   <data name="WorkflowsExist" xml:space="preserve">
     <value>You cannot remove group because there are workflows which involve users in group. Workflows: {0}</value>
+  </data>
+  <data name="NtGroup" xml:space="preserve">
+    <value>NT-group</value>
+  </data>
+  <data name="NtGroupInvalidFormat" xml:space="preserve">
+    <value>Invalid NT-group</value>
+  </data>
+  <data name="NtGroupLengthExceeded" xml:space="preserve">
+    <value>The length of NT-group should not exceed {5} characters!</value>
   </data>
 </root>

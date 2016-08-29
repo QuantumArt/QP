@@ -1,33 +1,31 @@
 ﻿@model ArticleVersionListViewModel
-		   
-@using Quantumart.QP8
 @using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
-@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
+@using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
 
 @using (Html.BeginDocumentPadding())
 {
     @(Html.Telerik().Grid<ArticleVersionListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
-            {
-                c.Bound("")
-                    .Title(@"<input type='checkbox' />")
-                    .Width(30)
-                    .HeaderHtmlAttributes(new { @class = "t-select-header" })
-                    .ClientTemplate(@"<input type='checkbox' name='SelectedArticleVersionsIDs' value='<#= Id #>' />")
-                    .HtmlAttributes(new { @class = "t-select-cell" })
-                    .Sortable(false);
+        {
+            c.Bound("")
+                .Title(@"<input type='checkbox' />")
+                .Width(30)
+                .HeaderHtmlAttributes(new { @class = "t-select-header" })
+                .ClientTemplate(@"<input type='checkbox' name='SelectedArticleVersionsIDs' value='<#= Id #>' />")
+                .HtmlAttributes(new { @class = "t-select-cell" })
+                .Sortable(false);
 
-                c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
-                    .Width(30)
-                    .HtmlAttributes(new { @class = "id" })
-                    ;
-                c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
-                c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
-            }
+            c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
+                .Width(30)
+                .HtmlAttributes(new { @class = "id" })
+                ;
+            c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
+            c.Bound(s => s.LastModifiedByUser).Title(EntityObjectStrings.LastModifiedBy);
+            c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
+            c.Bound(s => s.CreatedByUser).Title(EntityObjectStrings.CreatedBy);
+        }
         )
         .DataBinding(db => db.Ajax()
             .Select("_Index", "ArticleVersion")

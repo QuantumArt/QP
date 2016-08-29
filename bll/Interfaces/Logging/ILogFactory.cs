@@ -10,11 +10,13 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         /// <summary>
         /// Gets the logger.
         /// </summary>
+        /// <param name="type">The type.</param>
         ILog GetLogger(Type type);
 
         /// <summary>
         /// Gets the logger.
         /// </summary>
+        /// <param name="typeName">Name of the type.</param>
         ILog GetLogger(string typeName);
     }
 }

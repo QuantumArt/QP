@@ -1,6 +1,6 @@
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE_ACTIONS]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
 BEGIN
-  CREATE TABLE mts_catalog.dbo.XML_DB_UPDATE_ACTIONS (
+  CREATE TABLE dbo.XML_DB_UPDATE_ACTIONS (
     Id int IDENTITY,
     UpdateId int NULL,
     Ids nvarchar(max) NOT NULL,

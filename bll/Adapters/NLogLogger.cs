@@ -74,13 +74,17 @@ namespace Quantumart.QP8.BLL.Adapters
         public void Error(object message)
         {
             if (IsErrorEnabled)
+            {
                 Log(LogLevel.Error, AsString(message));
+            }
         }
 
         public void Error(object message, Exception exception)
         {
             if (IsErrorEnabled)
+            {
                 Log(LogLevel.Error, AsString(message), exception);
+            }
         }
 
         public void ErrorFormat(string format, params object[] args)

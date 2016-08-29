@@ -1,7 +1,7 @@
 ﻿using AllureCSharpCommons.AllureModel;
 using AllureCSharpCommons.Attributes;
-using Nunit3AllureAdapter;
 using NUnit.Framework;
+using Nunit3AllureAdapter;
 using QP8.FunctionalTests.Configuration;
 using QP8.FunctionalTests.PageObjects.Pages.Authentication;
 using QP8.FunctionalTests.TestsData.Authentication;
@@ -18,7 +18,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
         [AllureSeverity(severitylevel.normal)]
         [AllureTitle("Authentication with invalid password")]
         [AllureDescription("Invalid password", descriptiontype.html)]
-        [TestCaseSource(typeof(AuthenticationTestsData), "InvalidPassword")]
+        [TestCaseSource(typeof(AuthenticationTestsData), nameof(AuthenticationTestsData.InvalidPassword))]
         public void InvalidPasswordTest(string password)
         {
             var page = new AuthenticationPage(Driver);

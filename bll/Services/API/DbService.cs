@@ -11,8 +11,15 @@ namespace Quantumart.QP8.BLL.Services.API
 
 		public DbService(string connectionString, int userId) :  base(connectionString, userId)
 		{
+
 		}
-		public Dictionary<string, string> GetAppSettings()
+
+        public DbService(int userId) : base(userId)
+        {
+
+        }
+
+        public Dictionary<string, string> GetAppSettings()
 		{
 			using (new QPConnectionScope(ConnectionString))
 			{

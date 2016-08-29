@@ -1,4 +1,6 @@
-﻿using Quantumart.QP8.BLL;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
@@ -9,10 +11,9 @@ using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
-using Quantumart.QP8.WebMvc.ViewModels;
-using System.Collections.Generic;
-using System.Web.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Telerik.Web.Mvc;
 
 // ReSharper disable InconsistentNaming
@@ -211,7 +212,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewArticle)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
         [BackendActionContext(ActionCode.AddNewArticle)]
@@ -222,13 +223,12 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewArticle)]
         [BackendActionContext(ActionCode.AddNewArticle)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, string backendActionCode, bool? boundToExternal, FormCollection collection)
         {
             var data = ArticleService.NewForSave(parentId);
@@ -272,13 +272,12 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.EditArticle)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateArticle)]
         [BackendActionContext(ActionCode.UpdateArticle)]
         [BackendActionLog]
-        [Record(ActionCode.EditArticle)]
         public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, FormCollection collection)
         {
             var data = ArticleService.ReadForUpdate(id, parentId);
@@ -314,13 +313,12 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         #region non-interface actions
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikeArticle)]
         [BackendActionContext(ActionCode.CreateLikeArticle)]
         [BackendActionLog]
-        [Record]
         public ActionResult Copy(int id, bool? boundToExternal)
         {
             var result = ArticleService.Copy(id, boundToExternal, IsReplayAction());
@@ -329,13 +327,12 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonMessageResult(result.Message);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveArticle)]
         [BackendActionContext(ActionCode.RemoveArticle)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int parentId, int id, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.Remove(parentId, id, false, boundToExternal, IsReplayAction()));
@@ -346,13 +343,12 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonMessageResult(ArticleService.RemovePreAction(parentId, id));
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveArticle)]
         [BackendActionContext(ActionCode.MultipleRemoveArticle)]
         [BackendActionLog]
-        [Record]
         public ActionResult MultipleRemove(int parentId, int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.Remove(parentId, IDs, false, boundToExternal, IsReplayAction()));
@@ -363,39 +359,36 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonMessageResult(ArticleService.MultipleRemovePreAction(parentId, IDs));
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveArticle)]
         [BackendActionContext(ActionCode.RemoveArticle)]
         [BackendActionLog]
-        [Record]
         public ActionResult RemoveFromArchive(int parentId, int id, bool? boundToExternal)
         {
             var result = ArticleService.Remove(parentId, id, true, boundToExternal, IsReplayAction());
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveArticleFromArchive)]
         [BackendActionContext(ActionCode.MultipleRemoveArticleFromArchive)]
         [BackendActionLog]
-        [Record]
         public ActionResult MultipleRemoveFromArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
             var result = ArticleService.Remove(parentId, IDs, true, boundToExternal, IsReplayAction());
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MoveArticleToArchive)]
         [BackendActionContext(ActionCode.MoveArticleToArchive)]
         [BackendActionLog]
-        [Record]
         public ActionResult MoveToArchive(int id, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.MoveToArchive(id, boundToExternal, IsReplayAction()));
@@ -406,28 +399,24 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonMessageResult(ArticleService.MoveToArchivePreAction(id));
         }
 
-
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RestoreArticleFromArchive)]
         [BackendActionContext(ActionCode.RestoreArticleFromArchive)]
         [BackendActionLog]
-        [Record]
         public ActionResult RestoreFromArchive(int id, bool? boundToExternal)
         {
             var result = ArticleService.RestoreFromArchive(id, boundToExternal, IsReplayAction());
             return JsonMessageResult(result);
         }
 
-
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultiplePublishArticles)]
         [BackendActionContext(ActionCode.MultiplePublishArticles)]
         [BackendActionLog]
-        [Record]
         public ActionResult MultiplePublish(int parentId, int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.Publish(parentId, IDs, boundToExternal, IsReplayAction()));
@@ -438,13 +427,12 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonMessageResult(null);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleMoveArticleToArchive)]
         [BackendActionContext(ActionCode.MultipleMoveArticleToArchive)]
         [BackendActionLog]
-        [Record]
         public ActionResult MultipleMoveToArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.MoveToArchive(parentId, IDs, boundToExternal, IsReplayAction()));
@@ -455,13 +443,12 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonMessageResult(ArticleService.MultipleMoveToArchivePreAction(IDs));
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRestoreArticleFromArchive)]
         [BackendActionContext(ActionCode.MultipleRestoreArticleFromArchive)]
         [BackendActionLog]
-        [Record]
         public ActionResult MultipleRestoreFromArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
             var result = ArticleService.RestoreFromArchive(parentId, IDs, boundToExternal, IsReplayAction());
@@ -470,7 +457,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CancelArticle)]
         [BackendActionContext(ActionCode.CancelArticle)]
         public ActionResult Cancel(int id)
@@ -481,7 +468,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CaptureLockArticle)]
         [BackendActionContext(ActionCode.CaptureLockArticle)]
         [BackendActionLog]
@@ -493,7 +480,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public ActionResult AggregatedArticle(string tabId, int parentId, int id, int aggregatedContentId)
         {
             var aggregatedArticle = ArticleService.GetAggregatedArticle(id, parentId, aggregatedContentId);
@@ -503,7 +490,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public ActionResult GetContextQuery(int id, string currentContext)
         {
             return Json(ArticleService.GetContextQuery(id, currentContext), JsonRequestBehavior.AllowGet);
@@ -511,7 +498,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public JsonCamelCaseResult<JSendResponse> GetParentIds(List<int> ids, int fieldId, string filter)
         {
             return new JSendResponse
@@ -523,7 +510,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
 
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public JsonCamelCaseResult<JSendResponse> GetChildArticleIds(List<int> ids, int fieldId, string filter)
         {
             return new JSendResponse

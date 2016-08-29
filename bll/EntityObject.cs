@@ -268,6 +268,24 @@ namespace Quantumart.QP8.BLL
             VerifyIdentityInserting(entityTypeCode, Id, ForceId);
         }
 
+        #region override
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            return Id != 0 && Id == ((EntityObject)obj).Id;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id == 0 ? base.GetHashCode() : Id;
+        }
+
+        #endregion
+
         protected virtual void ValidateSecurity(RulesException errors)
         {
             if (IsNew)

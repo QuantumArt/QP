@@ -73,8 +73,8 @@ namespace Quantumart.QP8.BLL.Services
 			session.Sid = Guid.NewGuid().ToString();
 			repository.Update(session);
 
-			action.SessionID = session.Sid;
-			action.IDs = IDs;
+			action.SessionId = session.Sid;
+			action.Ids = IDs;
 			action.ParentId = parentId;
 
 			return SecurityCheck(

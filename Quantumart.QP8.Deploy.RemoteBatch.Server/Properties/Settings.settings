@@ -1,9 +1,0 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Quantumart.QP8.Deploy.RemoteBatch.Server.Properties" GeneratedClassName="Settings">
-  <Profiles />
-  <Settings>
-    <Setting Name="CmdFilePath" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">C:\inetpub\wwwroot\QP8\qp8release\app\deploy.cmd</Value>
-    </Setting>
-  </Settings>
-</SettingsFile>

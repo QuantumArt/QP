@@ -9,7 +9,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    public class ActionResultHelpers
+    public static class ActionResultHelpers
     {
         public static ActionResult GererateJsonError(ExceptionResultMode responseType, Exception ex)
         {

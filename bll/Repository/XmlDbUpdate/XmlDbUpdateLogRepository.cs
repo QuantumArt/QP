@@ -1,5 +1,4 @@
-﻿using System.Data.Objects;
-using System.Linq;
+﻿using System.Linq;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 

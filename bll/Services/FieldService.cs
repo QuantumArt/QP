@@ -341,10 +341,5 @@ namespace Quantumart.QP8.BLL.Services
 
             return result;
         }
-
-        public static Field GetById(int fieldId)
-        {
-            return FieldRepository.GetById(fieldId);
-        }
     }
 }

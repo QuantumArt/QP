@@ -65,7 +65,7 @@ $q.sendAjax = function(opts) {
     ? logData.slice(0, maxLogDataLengthToLog) + '..'
     : logData;
 
-  var debugMessage = ' ajax: ' + options.type + ' ' + options.url + '. Data: ' + cuttedLogData;
+  var debugMessage = 'ajax: ' + options.type + ' ' + options.url + '. Data: ' + cuttedLogData;
   $q.trace('Sending ' + debugMessage, 'Request object: ', options);
   return $.ajax(options).done(function(response) {
     $q.trace('Parsing ' + debugMessage, 'Response object: ', response);
@@ -664,8 +664,8 @@ Quantumart.QP8.Utils.getJsonPFromUrl = function Quantumart$QP8$Utils$getJsonPFro
   });
 };
 
-Quantumart.QP8.Utils.getCustomActionJson = function Quantumart$QP8$Utils$getCustomActionJson(url, callbackSuccess, callbackError) {
-  Quantumart.QP8.Utils.getJsonFromUrl('POST', CONTROLLER_URL_CUSTOM_ACTION + 'Proxy', { url: url }, false, false, callbackSuccess, callbackError);
+Quantumart.QP8.Utils.getCustomActionJson = function Quantumart$QP8$UtilsQuantumart$QP8$Utils$getCustomActionJson(url, params, callbackSuccess, callbackError) {
+  Quantumart.QP8.Utils.getJsonFromUrl('POST', CONTROLLER_URL_CUSTOM_ACTION + 'Proxy', _.extend(params, { url: url }), false, false, callbackSuccess, callbackError);
 };
 
 Quantumart.QP8.Utils.getTextContentFromUrl = function Quantumart$QP8$Utils$getTextContentFromUrl(url, allowCaching) {

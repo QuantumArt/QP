@@ -50,23 +50,6 @@ namespace Quantumart.QP8.DAL
         }
 
 
-        public static IEnumerable<DataRow> GetArticleTitleList(SqlConnection connection, long contentId,
-            string titleName, string filterIds)
-        {
-            if (!string.IsNullOrWhiteSpace(filterIds))
-            {
-                filterIds = "," + filterIds;
-            }
-
-            using (var cmd = SqlCommandFactory.Create($"select [{titleName}] as title, content_item_id as id from content_{contentId}_united with(nolock) where content_item_id in (0 {filterIds}) order by content_item_id ", connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                return dt.AsEnumerable().ToArray();
-            }
-        }
-
         public static string GetFieldName(SqlConnection connection, int fieldId)
         {
             using (var cmd = SqlCommandFactory.Create("select ATTRIBUTE_NAME from CONTENT_ATTRIBUTE WHERE ATTRIBUTE_ID = @fieldId", connection))
@@ -1619,6 +1602,7 @@ namespace Quantumart.QP8.DAL
         }
 
         public static IEnumerable<DataRow> GetActionLogPage(SqlConnection sqlConnection, string orderBy,
+            string actionCode,
             string actionTypeCode,
             string entityTypeCode,
             string entityStringId,
@@ -1631,6 +1615,12 @@ namespace Quantumart.QP8.DAL
             Debug.Assert(userIDs != null, "userIDs is null");
 
             var filters = new List<string>();
+
+            if (!string.IsNullOrEmpty(actionCode))
+            {
+                filters.Add(string.Format("BA.CODE = '{0}'", Cleaner.ToSafeSqlString(actionCode)));
+            }
+
             if (!string.IsNullOrEmpty(actionTypeCode))
             {
                 filters.Add(string.Format("AT.CODE = '{0}'", Cleaner.ToSafeSqlString(actionTypeCode)));
@@ -1678,11 +1668,13 @@ namespace Quantumart.QP8.DAL
                 sqlConnection,
                 EntityTypeCode.CustomerCode,
                 "L.ID as Id, L.EXEC_TIME AS ExecutionTime, L.API as IsApi, AT.CODE AS ActionTypeCode, AT.NAME AS ActionTypeName, ET.CODE AS EntityTypeCode, ET.NAME AS EntityTypeName" +
-                ", L.ENTITY_STRING_ID AS EntityStringId, L.PARENT_ENTITY_ID AS ParentEntityId, L.ENTITY_TITLE AS EntityTitle, U.[USER_ID] as UserId, U.[LOGIN] as UserLogin",
+                ", L.ENTITY_STRING_ID AS EntityStringId, L.PARENT_ENTITY_ID AS ParentEntityId, L.ENTITY_TITLE AS EntityTitle, U.[USER_ID] as UserId, U.[LOGIN] as UserLogin, BA.NAME as ActionName",
 
                 "BACKEND_ACTION_LOG L LEFT JOIN USERS U ON L.[USER_ID] = U.[USER_ID]" +
                 " INNER JOIN ACTION_TYPE AT ON AT.CODE = L.ACTION_TYPE_CODE" +
-                " INNER JOIN ENTITY_TYPE ET ON ET.CODE = L.ENTITY_TYPE_CODE",
+                " INNER JOIN ENTITY_TYPE ET ON ET.CODE = L.ENTITY_TYPE_CODE" +
+                " INNER JOIN BACKEND_ACTION BA ON BA.CODE = L.ACTION_CODE"
+                ,
 
                 !string.IsNullOrEmpty(orderBy) ? orderBy : "ExecutionTime DESC",
                 string.Join(" AND ", filters),
@@ -4996,7 +4988,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int[] GetIdsToAutoArchive(SqlConnection connection, IEnumerable<int> IDs)
+        public static int[] GetIdsToAutoArchive(SqlConnection connection, IEnumerable<int> ids)
         {
             var result = new List<int>();
             var query = "select content_item_id FROM @ids i inner join content_item ci on i.id = ci.content_item_id inner join content c on c.content_id = ci.content_id where c.auto_archive = 1";
@@ -5004,7 +4996,7 @@ namespace Quantumart.QP8.DAL
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(IDs) });
+                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(ids) });
                 using (IDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())

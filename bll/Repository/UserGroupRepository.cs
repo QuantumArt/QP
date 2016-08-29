@@ -19,7 +19,14 @@ namespace Quantumart.QP8.BLL.Repository
 			return MappersRepository.UserGroupMapper.GetBizList(QPContext.EFContext.UserGroupSet.ToList());
 		}
 
-		internal static IEnumerable<UserGroupListItem> List(ListCommand cmd, out int totalRecords, IEnumerable<int> selectedIDs)
+        internal static IEnumerable<UserGroup> GetNtGroups()
+        {
+            var groups = QPContext.EFContext.UserGroupSet.Include("ParentGroups").Where(f => f.NtGroup != null);
+            return MappersRepository.UserGroupMapper.GetBizList(groups.ToList());
+        }
+
+
+        internal static IEnumerable<UserGroupListItem> List(ListCommand cmd, out int totalRecords, IEnumerable<int> selectedIDs)
 		{
 			using (var scope = new QPConnectionScope())
 			{

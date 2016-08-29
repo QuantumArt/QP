@@ -4,7 +4,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    internal class CommonHelpers
+    internal static class CommonHelpers
     {
         internal static bool IsXmlDbUpdateReplayAction(HttpContextBase context)
         {

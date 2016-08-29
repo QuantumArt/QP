@@ -3,14 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Web;
 using Moq;
-using Quantumart.QP8.BLL;
-using Quantumart.QPublishing.Database;
-using Quantumart.QPublishing.Info;
-using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 using NUnit.Framework;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
+using Quantumart.QPublishing.Info;
 
 namespace Quantumart.Test
 {
@@ -18,7 +21,9 @@ namespace Quantumart.Test
     public class M2MFixture
     {
         public static int NoneId { get; private set; }
+
         public static int PublishedId { get; private set; }
+
         public static DBConnector Cnn { get; private set; }
 
         public static int ContentId { get; private set; }
@@ -42,11 +47,14 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateReplayService(Global.ConnectionString);
-            service.Process(Global.GetXml(@"xmls\m2m.xml"), null);
-            Cnn = new DBConnector(Global.ConnectionString) {ForceLocalCache = true};
+            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
+            service.Process(Global.GetXml(@"xmls\m2m.xml"));
+            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test M2M";
             ContentId = Global.GetContentId(Cnn, ContentName);
             TitleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
@@ -59,7 +67,6 @@ namespace Quantumart.Test
             NoneId = Cnn.GetStatusTypeId(Global.SiteId, "None");
             PublishedId = Cnn.GetStatusTypeId(Global.SiteId, "Published");
         }
-
 
         [Test]
         public void MassUpdate_SplitAndMergeData_ForStatusChanging()
@@ -78,7 +85,7 @@ namespace Quantumart.Test
             };
             values.Add(article2);
 
-            var ints = new[] {BaseArticlesIds[0], BaseArticlesIds[1]};
+            var ints = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
 
             var cntAsyncBefore = Global.CountLinks(Cnn, ints, true);
             var cntBefore = Global.CountLinks(Cnn, ints);
@@ -142,8 +149,8 @@ namespace Quantumart.Test
         public void MassUpdate_InsertSplitAndMergeData_ForM2MAndStatusChanging()
         {
             var values = new List<Dictionary<string, string>>();
-            var ints1 = new[] {CategoryIds[1], CategoryIds[3], CategoryIds[5]};
-            var ints2 = new[] {CategoryIds[2], CategoryIds[3], CategoryIds[4]};
+            var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
+            var ints2 = new[] { CategoryIds[2], CategoryIds[3], CategoryIds[4] };
 
             var article1 = new Dictionary<string, string>
             {
@@ -172,7 +179,7 @@ namespace Quantumart.Test
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
 
-            var titles = new[] {"xnewtest", "xnewtest"};
+            var titles = new[] { "xnewtest", "xnewtest" };
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             var intsNew2 = new[] { CategoryIds[3], CategoryIds[5] };
             article1["Categories"] = string.Join(",", intsNew1);
@@ -232,7 +239,7 @@ namespace Quantumart.Test
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
 
             var titles1 = new[] { "newtest" };
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [TitleName] = titles1[0],
                 [CategoryName] = string.Join(",", ints1),
@@ -359,7 +366,7 @@ namespace Quantumart.Test
         {
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
 
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [TitleName] = "newtest",
                 [CategoryName] = string.Join(",", ints1),
@@ -373,13 +380,13 @@ namespace Quantumart.Test
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Create");
 
-            var ids = new[] {id};
+            var ids = new[] { id };
             var intsSaved1 = Global.GetLinks(Cnn, ids);
 
             Assert.That(id, Is.Not.EqualTo(0), "Saved");
             Assert.That(ints1, Is.EqualTo(intsSaved1), "Article M2M saved");
 
-            var title1 = "xnewtest";
+            const string title1 = "xnewtest";
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             article1[CategoryName] = string.Join(",", intsNew1);
             article1[TitleName] = title1;
@@ -411,7 +418,7 @@ namespace Quantumart.Test
         public void MassUpdate_UpdateOK_ForAsymmetricData()
         {
 
-            var ids = new[] {BaseArticlesIds[0], BaseArticlesIds[1]};
+            var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
             var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
             var numbersBefore = Global.GetNumbers(Cnn, ContentId, ids);
             var values = new List<Dictionary<string, string>>();
@@ -430,7 +437,7 @@ namespace Quantumart.Test
             var article2 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
-                ["Title"] = title2,
+                ["Title"] = title2
             };
             values.Add(article2);
 
@@ -487,14 +494,14 @@ namespace Quantumart.Test
             {
                 [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
                 ["Title"] = title1,
-                ["Number"] = num.ToString(),
+                ["Number"] = num.ToString()
 
             };
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
-                ["Title"] = title2,
+                ["Title"] = title2
 
             };
             values2.Add(article4);
@@ -551,14 +558,14 @@ namespace Quantumart.Test
             {
                 [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
                 ["Title"] = title1,
-                ["Number"] = num.ToString(),
+                ["Number"] = num.ToString()
 
             };
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
-                ["Title"] = title2,
+                ["Title"] = title2
 
             };
             values2.Add(article4);
@@ -615,21 +622,21 @@ namespace Quantumart.Test
             {
                 [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
                 ["Title"] = title1,
-                ["Number"] = num.ToString(),
+                ["Number"] = num.ToString()
 
             };
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
-                ["Title"] = title2,
+                ["Title"] = title2
 
             };
             values2.Add(article4);
 
             var titleId = Cnn.FieldID(Global.SiteId, Cnn.GetContentName(ContentId), "Title");
             var numberId = Cnn.FieldID(Global.SiteId, Cnn.GetContentName(ContentId), "Number");
-            var attrIds = new[] {titleId, numberId};
+            var attrIds = new[] { titleId, numberId };
 
 
             Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2, 1, attrIds, true), "Update");
@@ -697,7 +704,7 @@ namespace Quantumart.Test
         public void AddFormToContent_ReturnModified_ReturnModifiedTrue()
         {
 
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [TitleName] = "abc",
                 [MainCategoryName] = CategoryIds[0]
@@ -705,7 +712,8 @@ namespace Quantumart.Test
 
             var id = 0;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
@@ -713,7 +721,8 @@ namespace Quantumart.Test
 
             var modified = DateTime.MinValue;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, true, false, true, ref modified);
             }, "Update article");
 
@@ -739,7 +748,7 @@ namespace Quantumart.Test
             };
             values.Add(article2);
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { ReturnModified = false }) , "Update");
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { ReturnModified = false }), "Update");
 
             var noOneHasModified = values.All(n => !n.ContainsKey(SystemColumnNames.Modified));
             Assert.That(noOneHasModified, Is.EqualTo(true), "All articles has Modified");
@@ -760,7 +769,7 @@ namespace Quantumart.Test
 
             Assert.That(
                 () => Cnn.MassUpdate(ContentId, values, 1),
-                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("type is incorrect"),
+                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("type is incorrect"),
                 "Validate numeric data"
             );
         }
@@ -768,17 +777,18 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_ThrowsException_ValidateAttributeValueInvalidNumericData()
         {
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [NumberName] = "test",
                 [MainCategoryName] = CategoryIds[0]
             };
 
             Assert.That(
-                () => {
+                () =>
+                {
                     Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
                 },
-                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("type is incorrect"),
+                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("type is incorrect"),
                 "Validate numeric data"
             );
         }
@@ -796,7 +806,7 @@ namespace Quantumart.Test
 
             Assert.That(
                 () => Cnn.MassUpdate(ContentId, values, 1),
-                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("input mask"),
+                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("input mask"),
                 "Validate input mask"
             );
         }
@@ -804,17 +814,18 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_ThrowsException_ValidateAttributeValueStringDoesNotComplyInputMask()
         {
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [TitleName] = "test123",
                 [MainCategoryName] = CategoryIds[0]
             };
 
             Assert.That(
-                () => {
-                     Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
+                () =>
+                {
+                    Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
                 },
-                Throws.Exception.TypeOf<QPInvalidAttributeException>().And.Message.Contains("input mask"),
+                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("input mask"),
                 "Validate input mask"
             );
         }
@@ -826,14 +837,14 @@ namespace Quantumart.Test
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0",
-                ["Title"] = "newtest",
+                ["Title"] = "newtest"
             };
             values.Add(article1);
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
 
-            int id = int.Parse(values[0][SystemColumnNames.Id]);
-            var ids = new[] {id};
+            var id = int.Parse(values[0][SystemColumnNames.Id]);
+            var ids = new[] { id };
 
             Assert.That(id, Is.Not.EqualTo(0), "Return id");
 
@@ -859,7 +870,7 @@ namespace Quantumart.Test
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
 
-            int id = int.Parse(values[0][SystemColumnNames.Id]);
+            var id = int.Parse(values[0][SystemColumnNames.Id]);
             var ids = new[] { id };
 
             var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
@@ -878,9 +889,9 @@ namespace Quantumart.Test
             };
             values.Add(article1);
 
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { ReplaceUrls = false}), "Add article");
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { ReplaceUrls = false }), "Add article");
 
-            int id = int.Parse(values[0][SystemColumnNames.Id]);
+            var id = int.Parse(values[0][SystemColumnNames.Id]);
             var ids = new[] { id };
 
             var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
@@ -891,14 +902,15 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_ArticleAddedWithDefaultValues_ValidateAttributeValueNewArticleWithMissedData()
         {
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
-                [TitleName] = "newtest",
+                [TitleName] = "newtest"
             };
 
             var id = 0;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
@@ -942,7 +954,7 @@ namespace Quantumart.Test
         public void AddFormToContent_UpdateArchiveVisible_UpdateFlagsTrue()
         {
 
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [TitleName] = "abc",
                 [MainCategoryName] = CategoryIds[0]
@@ -950,7 +962,8 @@ namespace Quantumart.Test
 
             var id = 0;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
@@ -961,7 +974,8 @@ namespace Quantumart.Test
 
             var modified = DateTime.MinValue;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, false, true, true, ref modified);
             }, "Update article");
 
@@ -978,13 +992,13 @@ namespace Quantumart.Test
         public void AddFormToContent_UpdateOnlyOneField_AttrIdProvided()
         {
 
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [TitleName] = "txt",
                 [MainCategoryName] = CategoryIds[0]
             };
 
-            var article2 = new Hashtable()
+            var article2 = new Hashtable
             {
                 [MainCategoryName] = CategoryIds[1]
             };
@@ -993,7 +1007,8 @@ namespace Quantumart.Test
 
             var id = 0;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
@@ -1002,9 +1017,10 @@ namespace Quantumart.Test
             var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
             var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
 
-            var files = (System.Web.HttpFileCollection) null;
+            var files = (HttpFileCollection)null;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article2, ref files, id, true, mainCatId);
             }, "Update article");
 
@@ -1020,14 +1036,14 @@ namespace Quantumart.Test
         public void AddFormToContent_UpdateOnlyNonEmpty_UpdateEmptyTrue()
         {
 
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [TitleName] = "pdf",
                 [NumberName] = "10",
                 [MainCategoryName] = CategoryIds[0]
             };
 
-            var article2 = new Hashtable()
+            var article2 = new Hashtable
             {
                 [TitleName] = "docx",
                 [NumberName] = ""
@@ -1036,7 +1052,8 @@ namespace Quantumart.Test
 
             var id = 0;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
@@ -1046,9 +1063,10 @@ namespace Quantumart.Test
             var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
             var numBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "Number", ids)[0];
 
-            var files = (System.Web.HttpFileCollection)null;
+            var files = (HttpFileCollection)null;
 
-            Assert.DoesNotThrow(() => {
+            Assert.DoesNotThrow(() =>
+            {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, ref files, id, false);
             }, "Update article");
 
@@ -1067,7 +1085,7 @@ namespace Quantumart.Test
         {
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
 
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [TitleName] = "newtest",
                 [CategoryName] = string.Join(",", ints1),
@@ -1075,7 +1093,7 @@ namespace Quantumart.Test
 
             };
 
-            var article2 = new Hashtable()
+            var article2 = new Hashtable
             {
                 [TitleName] = "newtest",
                 [CategoryName] = "",

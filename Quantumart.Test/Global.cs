@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Quantumart.QPublishing.Database;
-using System.Data.SqlClient;
 
 namespace Quantumart.Test
 {
@@ -23,6 +23,15 @@ namespace Quantumart.Test
         public static int[] GetIds(DBConnector cnn, int contentId)
         {
             return cnn.GetRealData($"select content_item_id from content_{contentId}_united")
+                .AsEnumerable()
+                .Select(n => (int)n.Field<decimal>("content_item_id"))
+                .OrderBy(n => n)
+                .ToArray();
+        }
+
+        public static int[] GetIdsFromArchive(DBConnector cnn, int[] ids)
+        {
+            return cnn.GetRealData($"select content_item_id from content_item where archive = 1 and content_item_id in ({string.Join(",", ids)})")
                 .AsEnumerable()
                 .Select(n => (int)n.Field<decimal>("content_item_id"))
                 .OrderBy(n => n)

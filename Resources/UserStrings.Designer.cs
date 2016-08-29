@@ -439,6 +439,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid NT-login.
+        /// </summary>
+        public static string NtLoginInvalidFormat {
+            get {
+                return ResourceManager.GetString("NtLoginInvalidFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The length of NT-login should not exceed {5} characters!.
         /// </summary>
         public static string NtLoginLengthExceeded {

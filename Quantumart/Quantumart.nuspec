@@ -8,7 +8,7 @@
     <owners>Quantum Art</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Added MassUpdate method to DBConnector class</releaseNotes>
+    <releaseNotes>ContentItem.Save restrictions became softer</releaseNotes>
     <copyright>Copyright 2016</copyright>
     <tags>QP8 Frontend API</tags>
   </metadata>

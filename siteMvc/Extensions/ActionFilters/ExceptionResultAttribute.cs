@@ -20,7 +20,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
         public ExceptionResultAttribute(ExceptionResultMode mode, string policyName)
         {
-            Ensure.Argument.NotNullOrEmpty(policyName, nameof(policyName));
+            Ensure.Argument.NotNullOrWhiteSpace(policyName, nameof(policyName));
 
             _mode = mode;
             PolicyName = policyName;

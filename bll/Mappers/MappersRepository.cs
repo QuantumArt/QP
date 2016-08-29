@@ -257,6 +257,8 @@ namespace Quantumart.QP8.BLL.Mappers
 
         internal static readonly TemplateObjectFormatDtoRowMapper TemplateObjectFormatDtoRowMapper = Create<TemplateObjectFormatDtoRowMapper>();
 
+        internal static readonly ExternalNotificationMapper ExternalNotificationMapper = Create<ExternalNotificationMapper>();
+
         internal static readonly DataRowMapper DataRowMapper = new DataRowMapper();
 
         internal static readonly XmlDbUpdateLogMapper XmlDbUpdateLogMapper = new XmlDbUpdateLogMapper();

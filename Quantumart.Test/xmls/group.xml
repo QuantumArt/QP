@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <actions backendUrl="http://localhost:90/Backend/" dbVersion="7.9.9.0">
-  <action code="new_content_group" ids="999" parentId="35" lcid="1049" executed="05/30/2016 11:26:09" executedBy="CelutP">
+  <action code="new_content_group" ids="999" parentId="35" lcid="1049" executed="30/05/2016 11:26:09" executedBy="CelutP">
     <field name="Data.Name">dsf</field>
     <field name="backendActionCode">save_content_group</field>
   </action>
