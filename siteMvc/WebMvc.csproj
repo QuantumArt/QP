@@ -63,6 +63,10 @@
       <HintPath>..\packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
       <Private>True</Private>
@@ -132,8 +136,8 @@
       <Private>True</Private>
       <HintPath>$(SolutionDir)packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.5.21.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.5.21\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -254,11 +258,9 @@
     <Compile Include="Controllers\CustomActionController.cs" />
     <Compile Include="Controllers\FieldController.cs" />
     <Compile Include="Controllers\FieldDefaultValueController.cs" />
-    <Compile Include="Controllers\MutlistepTestController.cs" />
     <Compile Include="Controllers\RecreateDynamicImagesController.cs" />
     <Compile Include="Controllers\SiteFolderController.cs" />
     <Compile Include="Controllers\SitePermissionController.cs" />
-    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\ThumbnailController.cs" />
     <Compile Include="Controllers\UserGroupController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
@@ -292,11 +294,25 @@
     <Compile Include="Extensions\Controllers\QPController.cs" />
     <Compile Include="Extensions\Controllers\RulesViolationExceptionExtensions.cs" />
     <Compile Include="Extensions\Helpers\AggregationListTemplateField.cs" />
-    <Compile Include="Extensions\Helpers\API\ReplayService.cs" />
-    <Compile Include="Extensions\Helpers\API\ReplayXmlException.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
+    <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateCommonConstants.cs" />
+    <Compile Include="Infrastructure\Enums\ExceptionResultMode.cs" />
+    <Compile Include="Infrastructure\Enums\JSendStatus.cs" />
+    <Compile Include="Infrastructure\Extensions\ArrayExtensions.cs" />
+    <Compile Include="Infrastructure\Extensions\ObjectExtensions.cs" />
+    <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
+    <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\CultureHelpers.cs" />
+    <Compile Include="Infrastructure\Adapters\FakeMvcApplicationContext.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionCorrecterService.cs" />
+    <Compile Include="Infrastructure\Services\CsvDbUpdate\CsvDbUpdateService.cs" />
+    <Compile Include="Infrastructure\Services\CsvDbUpdate\ICsvDbUpdateService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateReplayService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateReplayService.cs" />
+    <Compile Include="Infrastructure\Exceptions\XmlDbUpdateReplayActionException.cs" />
     <Compile Include="Extensions\Helpers\ControlOptions.cs" />
     <Compile Include="Extensions\Helpers\EntityDataListArgs.cs" />
-    <Compile Include="Extensions\Helpers\ErrorMessageGenerator.cs" />
+    <Compile Include="Infrastructure\Helpers\ActionResultHelpers.cs" />
     <Compile Include="Extensions\Helpers\GridExtensions.cs" />
     <Compile Include="Extensions\Helpers\HighlightedTAreaToolbarHelper.cs" />
     <Compile Include="Extensions\Helpers\HighlightModeSelectHelper.cs" />
@@ -314,7 +330,10 @@
     <Compile Include="Extensions\Helpers\QPCheckedItem.cs" />
     <Compile Include="Extensions\Helpers\QPSelectListItem.cs" />
     <Compile Include="Extensions\Helpers\QPTreeCheckedNode.cs" />
-    <Compile Include="Extensions\Helpers\RecordReplayHelper.cs" />
+    <Compile Include="Infrastructure\Extensions\StringExtensions.cs" />
+    <Compile Include="Infrastructure\Helpers\XmlSerializerHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateHttpContextHelpers.cs" />
+    <Compile Include="Infrastructure\Models\XmlDbUpdateRecordedActionModel.cs" />
     <Compile Include="Extensions\Helpers\SelectOptions.cs" />
     <Compile Include="Extensions\Helpers\TagBuilderExtensions.cs" />
     <Compile Include="Extensions\Helpers\UnvalidatedRequestValuesMock.cs" />
@@ -358,6 +377,12 @@
     <Compile Include="Hubs\SingleUserModeHub.cs" />
     <Compile Include="Hubs\CommunicationHub.cs" />
     <Compile Include="Hubs\CommunicationService.cs" />
+    <Compile Include="Infrastructure\Exceptions\XmlDbUpdateLoggingException.cs" />
+    <Compile Include="Infrastructure\Extensions\XAttributeExtensions.cs" />
+    <Compile Include="Infrastructure\Helpers\HashHelpers.cs" />
+    <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateXDocumentConstants.cs" />
+    <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
+    <Compile Include="Infrastructure\Utf8StringWriter.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

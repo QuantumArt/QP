@@ -1,12 +1,20 @@
 ﻿using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Hubs;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -29,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
 
-            ViewBag.IsRecordAvailableForDownload = System.IO.File.Exists(RecordReplayHelper.GetXmlFilePath());
+            ViewBag.IsRecordAvailableForDownload = System.IO.File.Exists(XmlDbUpdateXDocumentConstants.XmlFilePath);
             return JsonHtml("Settings", model);
         }
 
@@ -52,7 +60,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 var needSendMessage = false;
                 if (model.Data.RecordActions)
                 {
-                    new RecordReplayHelper().Clear(HttpContext, model.OverrideRecordsFile);
+                    if (model.OverrideRecordsFile)
+                    {
+                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext));
+                    }
+
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)
                     {
                         model.Data.SingleUserId = QPContext.CurrentUserId;
@@ -84,7 +96,37 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         public FileResult GetRecordedUserActions()
         {
-            return File(RecordReplayHelper.GetXmlFilePath(), MediaTypeNames.Application.Octet, RecordReplayHelper.GetXmlFileName());
+            var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(XmlDbUpdateXDocumentConstants.XmlFilePath):yyyy-MM-dd_HH-mm-ss}.xml";
+            return File(XmlDbUpdateXDocumentConstants.XmlFilePath, MediaTypeNames.Application.Octet, fileName);
+        }
+
+        [HttpPost]
+        [ActionAuthorize(ActionCode.DbSettings)]
+        [BackendActionContext(ActionCode.DbSettings)]
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
+        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool disableFieldIdentity, bool disableContentIdentity)
+        {
+            try
+            {
+                // TODO: UNITY
+                var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+                var dbLogService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
+                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, dbLogService, actionsCorrecterService).Process(xmlString);
+            }
+            catch (XmlDbUpdateLoggingException ex)
+            {
+                return new JSendResponse
+                {
+                    Status = JSendStatus.Fail,
+                    Message = ex.Message
+                };
+            }
+
+            return new JSendResponse
+            {
+                Status = JSendStatus.Success,
+                Message = "Xml data successfully processed"
+            };
         }
     }
 }

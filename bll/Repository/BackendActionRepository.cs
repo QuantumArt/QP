@@ -45,7 +45,7 @@ namespace Quantumart.QP8.BLL.Repository
                 throw new ApplicationException(String.Format(CustomActionStrings.ActionNotFoundByCode, actionCode));
             return action;
         }
-        
+
         internal static IEnumerable<BackendActionCacheRecord> GetActionContextCacheData()
         {
             return BackendActionCache.Actions

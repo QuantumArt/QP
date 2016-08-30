@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Quantumart.QP8.DAL
 {
-	public partial class ArticleDAL
-	{
-		public ArticleDAL()
-		{
-			Name = String.Empty;
-			AliasForTree = String.Empty;
-			ParentId = null;
-			HasChildren = false;
-		}
-		
-		public string Name { get; set; }
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public partial class ArticleDAL
+    {
+        public ArticleDAL()
+        {
+            Name = string.Empty;
+            AliasForTree = string.Empty;
+            ParentId = null;
+            HasChildren = false;
+        }
 
-		public string AliasForTree { get; set; }
+        public string Name { get; set; }
 
-		public decimal? ParentId { get; set; }
+        public string AliasForTree { get; set; }
 
-		public bool HasChildren { get; set; }
-	}
+        public decimal? ParentId { get; set; }
+
+        public bool HasChildren { get; set; }
+    }
 }

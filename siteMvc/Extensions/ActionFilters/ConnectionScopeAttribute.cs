@@ -58,7 +58,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
                 return null;
             }
-
             set
             {
                 if (value != null)
@@ -118,7 +117,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
             var controller = filterContext.Controller as QPController;
             if ((controller == null) || !controller.IsReplayAction())
             {
-
                 try
                 {
                     if ((filterContext.Exception == null) && (TransactionScope != null) 

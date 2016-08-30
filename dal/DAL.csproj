@@ -130,7 +130,6 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>QP8Model.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="QP8Model.tt">
       <Generator>TextTemplatingFileGenerator</Generator>

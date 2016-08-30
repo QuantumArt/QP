@@ -24,19 +24,10 @@ namespace Quantumart.QP8.Logging.Web.Listeners
 		public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
 		{
 			var logEntry = data as LogEntry;
-
 			if (logEntry != null && Formatter != null)
 			{
-				var templateFormatter = Formatter as TemplateFormatter;
-
-				if (templateFormatter == null)
-				{
-					WriteLine(Formatter.Format(logEntry));
-				}
-				else
-				{
-					WriteLine(templateFormatter.Format(logEntry, TraceOutputOptions));
-				}
+			    var templateFormatter = Formatter as TemplateFormatter;
+			    WriteLine(templateFormatter == null ? Formatter.Format(logEntry) : templateFormatter.Format(logEntry, TraceOutputOptions));
 			}
 		}
 	}

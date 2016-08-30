@@ -1,7 +1,7 @@
 ﻿using AllureCSharpCommons.AllureModel;
 using AllureCSharpCommons.Attributes;
-using Nunit3AllureAdapter;
 using NUnit.Framework;
+using Nunit3AllureAdapter;
 using QP8.FunctionalTests.Configuration;
 using QP8.FunctionalTests.PageObjects.Pages.Authentication;
 using QP8.FunctionalTests.TestsData.Authentication;
@@ -18,14 +18,16 @@ namespace QP8.FunctionalTests.Tests.Authentication
         public void LocalSetUp()
         {
             if (Config.Tests.BackendCustomerCodeFieldIsDropdown)
+            {
                 Assert.Ignore("Test ingnored");
+            }
         }
 
         [AllureTest]
         [AllureSeverity(severitylevel.normal)]
         [AllureTitle("Authentication with invalid customer code")]
         [AllureDescription("Invalid customer code", descriptiontype.html)]
-        [TestCaseSource(typeof(AuthenticationTestsData), "InvalidCustomerCode")]
+        [TestCaseSource(typeof(AuthenticationTestsData), nameof(AuthenticationTestsData.InvalidCustomerCode))]
         public void InvalidCustomerCodeTest(string customerCode)
         {
             var page = new AuthenticationPage(Driver);

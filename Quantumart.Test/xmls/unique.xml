@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <actions backendUrl="http://localhost:90/Backend/" dbVersion="7.9.9.0">
-  <action code="new_content" ids="428" parentId="35" lcid="1049" executed="03/29/2016 11:10:19" executedBy="CelutP" fieldIds="1905">
+  <action code="new_content" ids="428" parentId="35" lcid="1049" executed="29/03/2016 11:10:19" executedBy="CelutP" fieldIds="1905">
     <field name="Data.Name">Test unique</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
@@ -30,7 +30,7 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">save_content_and_up</field>
   </action>
-  <action code="new_field" ids="1906" parentId="428" lcid="1049" executed="03/29/2016 11:11:06" executedBy="CelutP">
+  <action code="new_field" ids="1906" parentId="428" lcid="1049" executed="29/03/2016 11:11:06" executedBy="CelutP">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Number</field>
     <field name="Data.FriendlyName"></field>
@@ -62,7 +62,7 @@
     <field name="Data.DecimalPlaces">2</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="1907" parentId="428" lcid="1049" executed="03/29/2016 11:11:30" executedBy="CelutP">
+  <action code="new_field" ids="1907" parentId="428" lcid="1049" executed="29/03/2016 11:11:30" executedBy="CelutP">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Description</field>
     <field name="Data.FriendlyName"></field>
@@ -89,7 +89,7 @@
     <field name="Data.TextBoxRows">5</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_article" ids="1979376" parentId="428" lcid="1049" executed="03/29/2016 11:11:50" executedBy="CelutP">
+  <action code="new_article" ids="1979376" parentId="428" lcid="1049" executed="29/03/2016 11:11:50" executedBy="CelutP">
     <field name="field_1905">Name1</field>
     <field name="field_1906">10</field>
     <field name="field_1907">Описание</field>
@@ -100,7 +100,7 @@
     <field name="Data.Comment"></field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="new_article" ids="1979377" parentId="428" lcid="1049" executed="03/29/2016 11:12:14" executedBy="CelutP">
+  <action code="new_article" ids="1979377" parentId="428" lcid="1049" executed="29/03/2016 11:12:14" executedBy="CelutP">
     <field name="field_1905">Name2</field>
     <field name="field_1906">9,5</field>
     <field name="field_1907">Описание</field>
@@ -111,7 +111,7 @@
     <field name="Data.Comment"></field>
     <field name="backendActionCode">save_article_and_up</field>
   </action>
-  <action code="edit_field" ids="1905" parentId="428" lcid="1049" executed="03/29/2016 11:12:44" executedBy="CelutP">
+  <action code="edit_field" ids="1905" parentId="428" lcid="1049" executed="29/03/2016 11:12:44" executedBy="CelutP">
     <field name="Data.Id">1905</field>
     <field name="Data.Name">Title</field>
     <field name="Data.FriendlyName"></field>

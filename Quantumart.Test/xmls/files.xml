@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <actions backendUrl="http://localhost:90/Backend/" dbVersion="7.9.9.0">
-  <action code="new_content" ids="463" parentId="35" lcid="1049" executed="03/31/2016 10:40:56" executedBy="CelutP" fieldIds="2010">
+  <action code="new_content" ids="463" parentId="35" lcid="1049" executed="31/03/2016 10:40:56" executedBy="CelutP" fieldIds="2010">
     <field name="Data.Name">test files</field>
     <field name="Data.Description"></field>
     <field name="Data.ParentContentId"></field>
@@ -30,7 +30,7 @@
     <field name="Data.DisableXamlValidation">false</field>
     <field name="backendActionCode">save_content_and_up</field>
   </action>
-  <action code="new_field" ids="2011" parentId="463" lcid="1049" executed="03/31/2016 10:41:39" executedBy="CelutP">
+  <action code="new_field" ids="2011" parentId="463" lcid="1049" executed="31/03/2016 10:41:39" executedBy="CelutP">
     <field name="Data.Id">0</field>
     <field name="Data.Name">BaseImage</field>
     <field name="Data.FriendlyName"></field>
@@ -60,7 +60,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="2012" parentId="463" lcid="1049" executed="03/31/2016 10:42:44" executedBy="CelutP">
+  <action code="new_field" ids="2012" parentId="463" lcid="1049" executed="31/03/2016 10:42:44" executedBy="CelutP">
     <field name="Data.Id">0</field>
     <field name="Data.Name">JpgImage</field>
     <field name="Data.FriendlyName"></field>
@@ -91,7 +91,7 @@
     <field name="Data.DynamicImage.Quality">90</field>
     <field name="backendActionCode">save_field</field>
   </action>
-  <action code="new_field" ids="2013" parentId="463" lcid="1049" executed="03/31/2016 10:43:22" executedBy="CelutP">
+  <action code="new_field" ids="2013" parentId="463" lcid="1049" executed="31/03/2016 10:43:22" executedBy="CelutP">
     <field name="Data.Id">0</field>
     <field name="Data.Name">PngImage</field>
     <field name="Data.FriendlyName"></field>
@@ -122,7 +122,7 @@
     <field name="Data.DynamicImage.Quality">90</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="2014" parentId="463" lcid="1049" executed="03/31/2016 10:44:20" executedBy="CelutP">
+  <action code="new_field" ids="2014" parentId="463" lcid="1049" executed="31/03/2016 10:44:20" executedBy="CelutP">
     <field name="Data.Id">0</field>
     <field name="Data.Name">GifImage</field>
     <field name="Data.FriendlyName"></field>
@@ -153,7 +153,7 @@
     <field name="Data.DynamicImage.Quality">90</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_field" ids="2015" parentId="463" lcid="1049" executed="03/31/2016 10:45:19" executedBy="CelutP">
+  <action code="new_field" ids="2015" parentId="463" lcid="1049" executed="31/03/2016 10:45:19" executedBy="CelutP">
     <field name="Data.Id">0</field>
     <field name="Data.Name">File</field>
     <field name="Data.FriendlyName"></field>
@@ -184,7 +184,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field</field>
   </action>
-  <action code="new_field" ids="2016" parentId="463" lcid="1049" executed="03/31/2016 10:46:02" executedBy="CelutP">
+  <action code="new_field" ids="2016" parentId="463" lcid="1049" executed="31/03/2016 10:46:02" executedBy="CelutP">
     <field name="Data.Id">0</field>
     <field name="Data.Name">Video</field>
     <field name="Data.FriendlyName"></field>
@@ -215,7 +215,7 @@
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
-  <action code="new_article" ids="1979478" parentId="463" lcid="1049" executed="03/31/2016 10:46:54" executedBy="CelutP">
+  <action code="new_article" ids="1979478" parentId="463" lcid="1049" executed="31/03/2016 10:46:54" executedBy="CelutP">
     <field name="field_2010"></field>
     <field name="field_2011">test1.jpg</field>
     <field name="field_2012"></field>
@@ -230,7 +230,7 @@
     <field name="Data.Comment"></field>
     <field name="backendActionCode">save_article</field>
   </action>
-  <action code="edit_article" ids="1979478" parentId="463" lcid="1049" executed="03/31/2016 10:47:46" executedBy="CelutP">
+  <action code="edit_article" ids="1979478" parentId="463" lcid="1049" executed="31/03/2016 10:47:46" executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_2010">test1</field>
     <field name="field_2011">test1.jpg</field>
@@ -246,7 +246,7 @@
     <field name="Data.Comment"></field>
     <field name="backendActionCode">update_article</field>
   </action>
-  <action code="edit_article" ids="1979478" parentId="463" lcid="1049" executed="03/31/2016 10:48:20" executedBy="CelutP">
+  <action code="edit_article" ids="1979478" parentId="463" lcid="1049" executed="31/03/2016 10:48:20" executedBy="CelutP">
     <field name="Data.PermanentLock">false</field>
     <field name="field_2010">test1 title</field>
     <field name="field_2011">test1.jpg</field>
@@ -262,7 +262,7 @@
     <field name="Data.Comment"></field>
     <field name="backendActionCode">update_article</field>
   </action>
-  <action code="new_article" ids="1979479" parentId="463" lcid="1049" executed="03/31/2016 10:50:06" executedBy="CelutP">
+  <action code="new_article" ids="1979479" parentId="463" lcid="1049" executed="31/03/2016 10:50:06" executedBy="CelutP">
     <field name="field_2010">test2 title</field>
     <field name="field_2011">test2.jpg</field>
     <field name="field_2012"></field>

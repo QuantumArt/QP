@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -25,11 +26,10 @@ namespace Quantumart.QPublishing.Database
         public bool CreateVersions { get; set; }
 
         public bool ReturnModified { get; set; }
-        
-        public bool ReplaceUrls { get; set; }
 
+        public bool ReplaceUrls { get; set; }
     }
-    
+
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
@@ -40,7 +40,6 @@ namespace Quantumart.QPublishing.Database
 
         public void MassUpdate(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, MassUpdateOptions options)
         {
-
             var content = GetContentObject(contentId);
             if (content == null)
             {
@@ -55,7 +54,7 @@ namespace Quantumart.QPublishing.Database
             var arrValues = values as Dictionary<string, string>[] ?? values.ToArray();
             var existingIds = arrValues.Select(n => int.Parse(n[SystemColumnNames.Id])).Where(n => n != 0).ToArray();
             var versionIdsToRemove = GetVersionIdsToRemove(existingIds, content.MaxVersionNumber);
-            bool createVersions = options.CreateVersions && content.UseVersionControl;
+            var createVersions = options.CreateVersions && content.UseVersionControl;
 
             CreateInternalConnection(true);
             try
@@ -84,12 +83,13 @@ namespace Quantumart.QPublishing.Database
                 }
 
                 if (options.ReturnModified)
+                {
                     UpdateModified(arrValues, existingIds, newIds, contentId);
+                }
 
                 if (createVersions)
                 {
                     CreateFilesVersions(arrValues, existingIds, contentId);
-
                     foreach (var id in versionIdsToRemove)
                     {
                         var oldFolder = GetVersionFolderForContent(contentId, id);
@@ -117,12 +117,15 @@ namespace Quantumart.QPublishing.Database
                 {
                     names.UnionWith(GetDynamicImageExtraNames(arrValues, fullAttrs));
                 }
-                resultAttrs = fullAttrs.Where(n => names.Contains(n.Name.ToLowerInvariant())).ToArray();
 
+                resultAttrs = fullAttrs.Where(n => names.Contains(n.Name.ToLowerInvariant())).ToArray();
             }
+
             return resultAttrs;
         }
 
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private static IEnumerable<string> GetDynamicImageExtraNames(Dictionary<string, string>[] arrValues, ContentAttribute[] fullAttrs)
         {
             var baseImages = fullAttrs.Where(n => n.Type == AttributeType.Image).
@@ -150,12 +153,11 @@ namespace Quantumart.QPublishing.Database
             return extraNames;
         }
 
-        private void UpdateModified(Dictionary<string, string>[] arrValues, int[] existingIds, int[] newIds, int contentId)
+        private void UpdateModified(IEnumerable<Dictionary<string, string>> arrValues, IEnumerable<int> existingIds, int[] newIds, int contentId)
         {
-            var cmd = new SqlCommand()
+            var cmd = new SqlCommand
             {
-                CommandText =
-                    $"select content_item_id, Modified from content_{contentId}_united where content_item_id in (select id from @ids)",
+                CommandText = $"select content_item_id, Modified from content_{contentId}_united where content_item_id in (select id from @ids)",
                 CommandType = CommandType.Text,
                 Parameters =
                 {
@@ -172,7 +174,6 @@ namespace Quantumart.QPublishing.Database
                 .ToDictionary(n => (int)n.Field<decimal>("content_item_id"), m => m.Field<DateTime>("modified"));
 
             var newHash = new HashSet<int>(newIds);
-
             foreach (var value in arrValues)
             {
                 var id = int.Parse(value[SystemColumnNames.Id]);
@@ -204,14 +205,18 @@ namespace Quantumart.QPublishing.Database
             };
             cmd.Parameters.AddWithValue("@maxNumber", maxNumber);
             cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(ids) });
-            return GetRealData(cmd).AsEnumerable().Select(n => (int) n.Field<decimal>("content_item_version_id")).ToArray();
+            return GetRealData(cmd).AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_version_id")).ToArray();
         }
 
         private void CreateDynamicImages(Dictionary<string, string>[] arrValues, ContentAttribute[] fullAttrs)
         {
             foreach (var dynImageAttr in fullAttrs.Where(n => n.RelatedImageId.HasValue))
             {
-                if (dynImageAttr.RelatedImageId == null) continue;
+                if (dynImageAttr.RelatedImageId == null)
+                {
+                    continue;
+                }
+
                 var imageAttr = fullAttrs.Single(n => n.Id == dynImageAttr.RelatedImageId.Value);
                 var attrDir = GetDirectoryForFileAttribute(imageAttr.Id);
                 var contentDir = GetContentLibraryDirectory(imageAttr.SiteId, imageAttr.ContentId);
@@ -220,7 +225,7 @@ namespace Quantumart.QPublishing.Database
                     string image;
                     if (article.TryGetValue(imageAttr.Name, out image))
                     {
-                        var info = new DynamicImageInfo()
+                        var info = new DynamicImageInfo
                         {
                             ContentLibraryPath = contentDir,
                             ImagePath = attrDir,
@@ -287,27 +292,29 @@ namespace Quantumart.QPublishing.Database
 
         }
 
-        private void ValidateConstraints(IEnumerable<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content, bool replaceUrls)
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
+        private void ValidateConstraints(IList<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content, bool replaceUrls)
         {
             var validatedAttrs = attrs.Where(n => n.ConstraintId.HasValue).ToArray();
             if (validatedAttrs.Any())
             {
                 var constraints = validatedAttrs.GroupBy(n => n.ConstraintId).Select(n => new
                 {
-                    Id = (int) n.Key,
+                    Id = (int)n.Key,
                     Attrs = n.ToArray()
                 }).ToArray();
 
                 foreach (var constraint in constraints)
                 {
-                    XDocument validatedDataDoc = GetValidatedDataDocument(values, constraint.Attrs, content, replaceUrls);
+                    var validatedDataDoc = GetValidatedDataDocument(values, constraint.Attrs, content, replaceUrls);
                     SelfValidate(validatedDataDoc);
                     ValidateConstraint(validatedDataDoc, constraint.Attrs);
                 }
             }
         }
 
-        private void SelfValidate(XDocument validatedDataDoc)
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        private static void SelfValidate(XDocument validatedDataDoc)
         {
             if (validatedDataDoc.Root != null)
             {
@@ -321,8 +328,9 @@ namespace Quantumart.QPublishing.Database
                         if (set.Contains(str))
                         {
                             var msg = string.Join(", ", item.Descendants("DATA").Select(n => $"[{n.Attribute("name").Value}] = '{n.Value}'"));
-                            throw new QPInvalidAttributeException("Unique constraint violation between articles being added/updated: " + msg);
+                            throw new QpInvalidAttributeException("Unique constraint violation between articles being added/updated: " + msg);
                         }
+
                         set.Add(str);
                     }
                 }
@@ -344,19 +352,26 @@ namespace Quantumart.QPublishing.Database
                     string value;
                     var valueExists = m.TryGetValue(n.Name, out value);
                     if (valueExists)
+                    {
                         value = FormatResult(n, value, longUploadUrl, longSiteStageUrl, longSiteLiveUrl, replaceUrls);
-                    var elem = (valueExists) ? new XElement("DATA", value) : new XElement("MISSED_DATA");
+                    }
+
+                    var elem = valueExists ? new XElement("DATA", value) : new XElement("MISSED_DATA");
                     elem.Add(new XAttribute("name", n.Name));
                     elem.Add(new XAttribute("id", n.Id));
+
                     return elem;
                 }));
+
                 return temp;
             }));
+
             result.Add(root);
             return result;
         }
 
-        private void ValidateConstraint(XDocument validatedDataDoc, ContentAttribute[] attrs)
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
+        private void ValidateConstraint(XContainer validatedDataDoc, IReadOnlyList<ContentAttribute> attrs)
         {
             var sb = new StringBuilder();
             var validatedIds = validatedDataDoc
@@ -364,24 +379,32 @@ namespace Quantumart.QPublishing.Database
                 .Where(n => !n.Descendants("MISSED_DATA").Any())
                 .Select(n => int.Parse(n.Attribute("id").Value))
                 .ToArray();
-            int contentId = attrs[0].ContentId;
+
+            var contentId = attrs[0].ContentId;
             var attrNames = string.Join(", ", attrs.Select(n => n.Name));
             sb.AppendLine($"WITH X(CONTENT_ITEM_ID, {attrNames})");
-            sb.AppendLine(@"AS (  SELECT doc.col.value('./@id', 'int') CONTENT_ITEM_ID");
+            sb.AppendLine(@"AS (SELECT doc.col.value('./@id', 'int') CONTENT_ITEM_ID");
             foreach (var attr in attrs)
             {
                 sb.AppendLine($",doc.col.value('(DATA)[@id={attr.Id}][1]', 'nvarchar(max)') {attr.Name}");
             }
+
             sb.AppendLine("FROM @xmlParameter.nodes('/ITEMS/ITEM') doc(col))");
             sb.AppendLine($" SELECT c.CONTENT_ITEM_ID FROM dbo.CONTENT_{contentId}_UNITED c INNER JOIN X ON c.CONTENT_ITEM_ID NOT IN (select id from @validatedIds)");
             foreach (var attr in attrs)
             {
                 if (attr.IsNumeric)
+                {
                     sb.AppendLine($"AND c.[{attr.Name}] = cast (X.[{attr.Name}] as numeric(18, {attr.Size}))");
+                }
                 else if (attr.IsDateTime)
+                {
                     sb.AppendLine($"AND c.[{attr.Name}] = cast (X.[{attr.Name}] as datetime)");
+                }
                 else
+                {
                     sb.AppendLine($"AND c.[{attr.Name}] = X.[{attr.Name}]");
+                }
             }
 
             var cmd = new SqlCommand(sb.ToString())
@@ -389,13 +412,15 @@ namespace Quantumart.QPublishing.Database
                 CommandTimeout = 120,
                 CommandType = CommandType.Text
             };
+
             cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = validatedDataDoc.ToString(SaveOptions.None) });
             cmd.Parameters.Add(new SqlParameter("@validatedIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(validatedIds) });
 
-            var conflictIds = GetRealData(cmd).AsEnumerable().Select(n => (int) n.Field<decimal>("CONTENT_ITEM_ID")).ToArray();
+            var conflictIds = GetRealData(cmd).AsEnumerable().Select(n => (int)n.Field<decimal>("CONTENT_ITEM_ID")).ToArray();
             if (conflictIds.Any())
-                throw new QPInvalidAttributeException($"Unique constraint violation for content articles. Fields: {attrNames}. Article IDs: {string.Join(", ", conflictIds.ToArray())}");
-
+            {
+                throw new QpInvalidAttributeException($"Unique constraint violation for content articles. Fields: {attrNames}. Article IDs: {string.Join(", ", conflictIds.ToArray())}");
+            }
         }
 
         private XDocument GetMassUpdateContentDataDocument(IEnumerable<Dictionary<string, string>> values, ContentAttribute[] attrs, int[] newIds, Content content, bool replaceUrls)
@@ -405,6 +430,7 @@ namespace Quantumart.QPublishing.Database
             var longSiteStageUrl = GetSiteUrl(content.SiteId, false);
             var dataDoc = new XDocument();
             dataDoc.Add(new XElement("ITEMS"));
+
             foreach (var value in values)
             {
                 var isNewArticle = newIds.Contains(int.Parse(value[SystemColumnNames.Id]));
@@ -418,7 +444,10 @@ namespace Quantumart.QPublishing.Database
                     if (attr.LinkId.HasValue)
                     {
                         if (!valueExists && isNewArticle && !string.IsNullOrEmpty(attr.DefaultValue))
+                        {
                             value[attr.Name] = attr.DefaultValue;
+                        }
+
                         result = attr.LinkId.Value.ToString();
                         valueExists = true;
                     }
@@ -445,6 +474,7 @@ namespace Quantumart.QPublishing.Database
 
                 }
             }
+
             return dataDoc;
         }
 
@@ -458,34 +488,33 @@ namespace Quantumart.QPublishing.Database
             {
                 result = result.Replace(",", ".");
             }
-            else if (attr.Type == AttributeType.String || attr.Type == AttributeType.Textbox ||
-                     attr.Type == AttributeType.VisualEdit)
+            else if (attr.Type == AttributeType.String || attr.Type == AttributeType.Textbox || attr.Type == AttributeType.VisualEdit)
             {
                 if (replaceUrls)
                 {
-                    result = (result)
+                    result = result
                        .Replace(longUploadUrl, UploadPlaceHolder)
                        .Replace(longSiteStageUrl, SitePlaceHolder)
-                       .Replace(longSiteLiveUrl, SitePlaceHolder)
-                       ;
+                       .Replace(longSiteLiveUrl, SitePlaceHolder);
                 }
             }
+
             return result;
         }
 
         private int[] MassUpdateContentItem(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, XDocument doc, bool createVersions)
         {
-            var createVersionsString = (createVersions)
+            var createVersionsString = createVersions
                 ? "exec qp_create_content_item_versions @OldIds, @lastModifiedBy"
                 : "";
 
             var insertInto = $@"
-                DECLARE @Articles TABLE 
+                DECLARE @Articles TABLE
                 (
                     CONTENT_ITEM_ID NUMERIC,
                     STATUS_TYPE_ID NUMERIC,
                     VISIBLE NUMERIC,
-                    ARCHIVE NUMERIC                
+                    ARCHIVE NUMERIC
                 )
 
                 DECLARE @NewArticles [Ids]
@@ -508,10 +537,10 @@ namespace Quantumart.QPublishing.Database
                 SELECT @contentId, VISIBLE, ARCHIVE, STATUS_TYPE_ID, @lastModifiedBy, @notForReplication
                 FROM @Articles a WHERE a.CONTENT_ITEM_ID = 0
 
-                INSERT INTO @OldIds    
+                INSERT INTO @OldIds
                 SELECT a.CONTENT_ITEM_ID from @Articles a INNER JOIN content_item ci on a.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
 
-                {createVersionsString} 
+                {createVersionsString}
 
                 INSERT INTO @OldNonSplittedIds
                 SELECT i.Id from @OldIds i INNER JOIN content_item ci on i.id = ci.CONTENT_ITEM_ID where ci.SPLITTED = 0
@@ -519,9 +548,9 @@ namespace Quantumart.QPublishing.Database
                 INSERT INTO @OldSplittedIds
                 SELECT i.Id from @OldIds i INNER JOIN content_item ci on i.id = ci.CONTENT_ITEM_ID where ci.SPLITTED = 1
 
-                UPDATE CONTENT_ITEM SET 
-                    VISIBLE = COALESCE(a.visible, ci.visible), 
-                    ARCHIVE = COALESCE(a.archive, ci.archive), 
+                UPDATE CONTENT_ITEM SET
+                    VISIBLE = COALESCE(a.visible, ci.visible),
+                    ARCHIVE = COALESCE(a.archive, ci.archive),
                     STATUS_TYPE_ID = COALESCE(a.STATUS_TYPE_ID, ci.STATUS_TYPE_ID),
                     LAST_MODIFIED_BY = @lastModifiedBy,
                     MODIFIED = GETDATE()
@@ -535,8 +564,8 @@ namespace Quantumart.QPublishing.Database
 
                 exec qp_split_articles @NewSplittedIds, @lastModifiedBy
 
-                exec qp_merge_articles @NewNonSplittedIds, @lastModifiedBy, 1    
-                   
+                exec qp_merge_articles @NewNonSplittedIds, @lastModifiedBy, 1
+
                 SELECT ID FROM @NewArticles
                 ";
             var cmd = new SqlCommand(insertInto) { CommandType = CommandType.Text };
@@ -553,7 +582,9 @@ namespace Quantumart.QPublishing.Database
             foreach (var value in values)
             {
                 if (value[SystemColumnNames.Id] == "0")
+                {
                     value[SystemColumnNames.Id] = ids.Dequeue().ToString();
+                }
             }
 
             return newIds;

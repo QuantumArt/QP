@@ -15,7 +15,7 @@ namespace Quantumart.QP8.Logging.Templates.Default
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\ContextTextTemplate.tt"
+    #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\ContextTextTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
     public partial class ContextTextTemplate : ContextTextTemplateBase
     {
@@ -25,17 +25,16 @@ namespace Quantumart.QP8.Logging.Templates.Default
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\n");
-            this.Write("\nContext:\n    CustomerCode: ");
+            this.Write("Context:\r\n    CustomerCode: ");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\ContextTextTemplate.tt"
+            #line 4 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\ContextTextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Context.CustomerCode));
             
             #line default
             #line hidden
-            this.Write("\n    UserName: ");
+            this.Write("\r\n    UserName: ");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\ContextTextTemplate.tt"
+            #line 5 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\ContextTextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Context.UserIdentity.Name));
             
             #line default
@@ -43,7 +42,7 @@ namespace Quantumart.QP8.Logging.Templates.Default
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\ContextTextTemplate.tt"
+        #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\ContextTextTemplate.tt"
 
 private global::Quantumart.QP8.Logging.Loggers.LoggerContext _ContextField;
 

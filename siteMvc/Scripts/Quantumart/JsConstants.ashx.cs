@@ -28,7 +28,7 @@ namespace Quantumart.QP8.WebMvc.Backend
 
             //Версия приложения
             constants.AppendLine("// Версия приложения");
-            constants.AppendLine(GenerateStringConstant("BACKEND_VERSION", new ApplicationInfoHelper().GetCurrentDBVersion()));
+            constants.AppendLine(GenerateStringConstant("BACKEND_VERSION", new ApplicationInfoHelper().GetCurrentDbVersion()));
 
             // Константы кодов типов узлов
             constants.AppendLine("// Константы кодов типов узлов");

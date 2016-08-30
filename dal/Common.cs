@@ -569,11 +569,10 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<string, List<string>> GetM2OValuesBatch(SqlConnection connection, int contentId,
-            int fieldId, string fieldName, IEnumerable<int> ids, string displayFieldName, int maxNumberOfRecords)
+        public static Dictionary<string, List<string>> GetM2OValuesBatch(SqlConnection connection, int contentId, int fieldId, string fieldName, IEnumerable<int> ids, string displayFieldName, int maxNumberOfRecords)
         {
             var result = new Dictionary<string, List<string>>();
-            if (ids.Count() > 0)
+            if (ids.Any())
             {
                 var query = new StringBuilder();
                 query.AppendFormatLine(" select subsel.content_item_id, {0}, Title from ( ", fieldName);
@@ -605,11 +604,10 @@ namespace Quantumart.QP8.DAL
             return result;
         }
 
-        public static Dictionary<string, List<string>> GetM2MValuesBatch(SqlConnection sqlConnection,
-            IEnumerable<int> ids, int linkId, int maxNumberOfRecords, string displayFieldName, int contentId)
+        public static Dictionary<string, List<string>> GetM2MValuesBatch(SqlConnection sqlConnection, IEnumerable<int> ids, int linkId, int maxNumberOfRecords, string displayFieldName, int contentId)
         {
             var result = new Dictionary<string, List<string>>();
-            if (ids.Count() > 0)
+            if (ids.Any())
             {
                 var query =
                     string.Format(
@@ -4990,7 +4988,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static int[] GetIdsToAutoArchive(SqlConnection connection, IEnumerable<int> IDs)
+        public static int[] GetIdsToAutoArchive(SqlConnection connection, IEnumerable<int> ids)
         {
             var result = new List<int>();
             var query = "select content_item_id FROM @ids i inner join content_item ci on i.id = ci.content_item_id inner join content c on c.content_id = ci.content_id where c.auto_archive = 1";
@@ -4998,7 +4996,7 @@ namespace Quantumart.QP8.DAL
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(IDs) });
+                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(ids) });
                 using (IDataReader dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())

@@ -20,16 +20,19 @@ namespace QP8.FunctionalTests.Tests
             var environmentXmlPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "environment.xml");
 
             if (!Directory.Exists(resultsPath))
+            {
                 Directory.CreateDirectory(resultsPath);
+            }
 
             AllureConfig.ResultsPath = resultsPath;
             AllureConfig.AllowEmptySuites = true;
 
             if (File.Exists(environmentXmlPath))
+            {
                 File.Copy(environmentXmlPath, Path.Combine(resultsPath, "environment.xml"), true);
+            }
 
-            GridHub = ExtensionCore.GetGridHubManager()
-                                   .ConnectToHub(Config.Environment.GridHubHost, Config.Environment.GridHubPort);
+            GridHub = ExtensionCore.GetGridHubManager().ConnectToHub(Config.Environment.GridHubHost, Config.Environment.GridHubPort);
         }
 
         [OneTimeTearDown]

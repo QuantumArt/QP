@@ -11,6 +11,8 @@ using Quantumart.QP8.WebMvc.ViewModels.Field;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.Utils;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using StringExtensions = Quantumart.QP8.WebMvc.Infrastructure.Extensions.StringExtensions;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -329,9 +331,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 		{
 			var fieldToCopy = FieldService.Read(id);
 			FieldCopyResult result = FieldService.Copy(id, forceId, forceLinkId,
-				RecordReplayHelper.ToIntArray(forceVirtualFieldIds),
-				RecordReplayHelper.ToIntArray(forceChildFieldIds),
-				RecordReplayHelper.ToIntArray(forceChildLinkIds)
+				StringExtensions.ToIntArray(forceVirtualFieldIds),
+				StringExtensions.ToIntArray(forceChildFieldIds),
+				StringExtensions.ToIntArray(forceChildLinkIds)
 			);
 			this.PersistResultId(result.Id);
 			this.PersistFromId(id);

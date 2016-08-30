@@ -58,7 +58,14 @@ $q.sendAjax = function(opts) {
     window.console.error('Sync requests cannot be combined with jsonp');
   }
 
-  var debugMessage = ' ajax: ' + options.type + ' ' + options.url + '. Data: ' + JSON.stringify(options.data);
+  var maxLogDataLengthToLog = 300;
+  var logData = JSON.stringify(options.data);
+  var logDataLength = logData.length;
+  var cuttedLogData = logDataLength > maxLogDataLengthToLog
+    ? logData.slice(0, maxLogDataLengthToLog) + '..'
+    : logData;
+
+  var debugMessage = 'ajax: ' + options.type + ' ' + options.url + '. Data: ' + cuttedLogData;
   $q.trace('Sending ' + debugMessage, 'Request object: ', options);
   return $.ajax(options).done(function(response) {
     $q.trace('Parsing ' + debugMessage, 'Response object: ', response);
@@ -95,7 +102,7 @@ $q.getAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
 $q.postAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
     url: url,
-    data: data,
+    data: JSON.stringify(data),
     type: 'POST',
     jsendSuccess: jsendSuccess,
     jsendFail: jsendFail,

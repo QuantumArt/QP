@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace Quantumart.QP8.DAL
 {
-	public partial class SiteFolderDAL
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public partial class SiteFolderDAL
 	{
 		public SiteFolderDAL()
 		{
@@ -13,6 +11,5 @@ namespace Quantumart.QP8.DAL
 		}
 
 		public bool HasChildren { get; set; }
-
 	}
 }

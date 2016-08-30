@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Moq;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
-using Quantumart.QPublishing.Database;
-using Quantumart.QPublishing.Info;
-using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 using NUnit.Framework;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
 using Quantumart.QPublishing.Resizer;
+using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 
 namespace Quantumart.Test
 {
@@ -34,10 +32,13 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new ReplayService(Global.ConnectionString, 1, true);
-            service.ReplayXml(Global.GetXml(@"xmls\hierarchy.xml"));
+            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService, false);
+            service.Process(Global.GetXml(@"xmls\hierarchy.xml"));
             RegionContentName = "test regions";
             ProductContentName = "test products";
 
