@@ -1122,8 +1122,6 @@
           <Property Name="ROOT_ELEMENT_CLASS" Type="nvarchar" MaxLength="50" />
           <Property Name="XAML_DICTIONARIES" Type="ntext" />
           <Property Name="CONTENT_FORM_SCRIPT" Type="ntext" />
-          <Property Name="EXTERNAL_DEVELOPMENT" Type="bit" Nullable="false" />
-          <Property Name="DOWNLOAD_EF_SOURCE" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="SITE_ACCESS">
           <Key>
@@ -7229,8 +7227,6 @@
           <Property Type="String" Name="RootElementClass" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="XamlDictionaries" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ContentFormScript" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="EXTERNAL_DEVELOPMENT" Type="Boolean" Nullable="false" />
-          <Property Name="DOWNLOAD_EF_SOURCE" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="SitePermissionDAL">
           <Key>
@@ -11336,8 +11332,6 @@
           <EntitySetMapping Name="SiteSet">
             <EntityTypeMapping TypeName="QP8Model.SiteDAL">
               <MappingFragment StoreEntitySet="SITE">
-                <ScalarProperty Name="DOWNLOAD_EF_SOURCE" ColumnName="DOWNLOAD_EF_SOURCE" />
-                <ScalarProperty Name="EXTERNAL_DEVELOPMENT" ColumnName="EXTERNAL_DEVELOPMENT" />
                 <ScalarProperty Name="ContentFormScript" ColumnName="CONTENT_FORM_SCRIPT" />
                 <ScalarProperty Name="XamlDictionaries" ColumnName="XAML_DICTIONARIES" />
                 <ScalarProperty Name="RootElementClass" ColumnName="ROOT_ELEMENT_CLASS" />
