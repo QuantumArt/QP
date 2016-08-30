@@ -5,7 +5,7 @@ namespace Quantumart.QP8.BLL.Adapters
 {
     public class NonQpEnvironmentContext : IDisposable
     {
-        public NonQpEnvironmentContext(string connectionString)
+        public NonQpEnvironmentContext()
         {
             QPConfiguration._tempDirectory = @"c:\temp\";
         }

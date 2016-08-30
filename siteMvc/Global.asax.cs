@@ -83,10 +83,12 @@ namespace Quantumart.QP8.WebMvc
         {
             RouteTable.Routes.Clear();
         }
+
         internal static void UnregisterValueProviders()
         {
             ValueProviderFactories.Factories.Clear();
         }
+
         internal static void RegisterValueProviders()
         {
             ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().FirstOrDefault());

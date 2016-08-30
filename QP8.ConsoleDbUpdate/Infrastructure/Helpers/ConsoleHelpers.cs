@@ -82,6 +82,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 
         internal static void ExitProgram(ExitCode exitCode)
         {
+            Console.WriteLine(exitCode == ExitCode.Success
+                ? "Processing successfuly finished."
+                : ">>> There was an exception in xml db updater <<<");
+
             Program.Logger.Flush();
             Environment.Exit((int)exitCode);
         }

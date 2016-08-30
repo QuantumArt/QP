@@ -570,6 +570,42 @@ exec qp_update_translations 'Unselect Child Articles', 'Отменить выб�
 
 GO
 
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE_ACTIONS]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+  CREATE TABLE dbo.XML_DB_UPDATE_ACTIONS (
+    Id int IDENTITY,
+    UpdateId int NULL,
+    Ids nvarchar(max) NOT NULL,
+    ParentId int NOT NULL,
+    Hash nvarchar(100) NOT NULL,
+    Applied datetime NOT NULL,
+    UserId int NOT NULL,
+    SourceXml nvarchar(max) NOT NULL,
+    ResultXml nvarchar(max) NOT NULL,
+    CONSTRAINT PK_XML_DB_UPDATE_ACTIONS_Id PRIMARY KEY CLUSTERED (Id),
+    CONSTRAINT FK_XML_DB_UPDATE_ACTIONS_UpdateId FOREIGN KEY (UpdateId) REFERENCES dbo.XML_DB_UPDATE (Id)
+  )
+  ON [PRIMARY]
+  TEXTIMAGE_ON [PRIMARY]
+END
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+  CREATE TABLE dbo.XML_DB_UPDATE (
+    Id int IDENTITY,
+    Applied datetime NOT NULL,
+    Hash nvarchar(100) NOT NULL,
+    FileName nvarchar(300) NULL,
+    USER_ID int NOT NULL,
+    Body nvarchar(max) NULL,
+    Version nvarchar(10) NULL,
+    CONSTRAINT PK_XML_DB_UPDATE PRIMARY KEY CLUSTERED (Id)
+  )
+  ON [PRIMARY]
+  TEXTIMAGE_ON [PRIMARY]
+END
+
+GO
+
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'MODIFIED' and TABLE_NAME = 'EXTERNAL_NOTIFICATION_QUEUE')
 	ALTER TABLE dbo.EXTERNAL_NOTIFICATION_QUEUE ADD

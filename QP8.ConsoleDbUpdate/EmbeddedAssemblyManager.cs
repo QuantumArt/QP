@@ -23,7 +23,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
         public static void Load(string embeddedResourceName, string fileName)
         {
-            ConsoleHelpers.WriteDebug($"Loading assembly. EmbeddedResourceName: {embeddedResourceName}. FileName: {fileName}. ");
+            ConsoleHelpers.WriteDebug($"Loading assembly. EmbeddedResourceName: {embeddedResourceName}. FileName: {fileName}");
 
             if (_mapFullnameToAssembly == null)
             {
@@ -56,7 +56,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                     LoadFromTempPath(fileName, ba);
                 }
 
-                ConsoleHelpers.WriteLineDebug("Finished.");
+                ConsoleHelpers.WriteLineDebug(" .. Ok");
             }
         }
 
@@ -88,7 +88,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
         public static Assembly Get(string assemblyFullName)
         {
-            ConsoleHelpers.WriteLineDebug($"Resolving assembly: {assemblyFullName}");
+            ConsoleHelpers.WriteDebug($"Resolving assembly: {assemblyFullName}");
             if ((_mapFullnameToAssembly == null) || (_mapFullnameToAssembly.Count == 0))
             {
                 return null;
@@ -96,11 +96,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
             if (_mapFullnameToAssembly.ContainsKey(assemblyFullName))
             {
+                ConsoleHelpers.WriteLineDebug(" .. Ok");
                 return _mapFullnameToAssembly[assemblyFullName];
             }
 
             if (_mapShortNameToAssembly.ContainsKey(assemblyFullName))
             {
+                ConsoleHelpers.WriteLineDebug(" .. Ok");
                 return _mapShortNameToAssembly[assemblyFullName];
             }
 
@@ -109,10 +111,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 var shortenedName = assemblyFullName.Substring(0, assemblyFullName.IndexOf(","));
                 if (_mapShortNameToAssembly.ContainsKey(shortenedName))
                 {
+                    ConsoleHelpers.WriteLineDebug(" .. Ok");
                     return _mapShortNameToAssembly[shortenedName];
                 }
             }
 
+            ConsoleHelpers.WriteLineDebug(" .. Fail");
             throw new Exception($"{assemblyFullName} couldn't be successfully resolved");
         }
 
