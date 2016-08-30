@@ -6,7 +6,7 @@ using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
 {
-    internal class QpUpdateLoggingWrapper//TODO: : ILog
+    internal class QpUpdateLoggingWrapper
     {
         private readonly ILog _logger;
 

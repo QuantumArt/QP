@@ -14,13 +14,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate
     {
         internal static int VerboseLevel;
         internal static bool IsSilentModeEnabled;
-        internal static /*TODO: readonly ILog*/ QpUpdateLoggingWrapper Logger;
+        internal static QpUpdateLoggingWrapper Logger;
 
         static Program()
         {
             try
             {
-                //EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
+                EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
             }
             catch (Exception ex)
             {

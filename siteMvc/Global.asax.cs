@@ -79,7 +79,6 @@ namespace Quantumart.QP8.WebMvc
             RegisterValueProviders();
         }
 
-
         internal static void UnregisterRoutes()
         {
             RouteTable.Routes.Clear();
@@ -107,10 +106,10 @@ namespace Quantumart.QP8.WebMvc
 
         internal static void RegisterUnity()
         {
-            var dresolver = new UnityDependencyResolver();
-            DependencyResolver.SetResolver(dresolver);
-            QPContext.SetUnityContainer(dresolver.UnityContainer);
-            GlobalHost.DependencyResolver = new SignalRUnityDependencyResolver(dresolver.UnityContainer);
+            var resolver = new UnityDependencyResolver();
+            DependencyResolver.SetResolver(resolver);
+            QPContext.SetUnityContainer(resolver.UnityContainer);
+            GlobalHost.DependencyResolver = new SignalRUnityDependencyResolver(resolver.UnityContainer);
         }
 
         internal static void RegisterMappings()

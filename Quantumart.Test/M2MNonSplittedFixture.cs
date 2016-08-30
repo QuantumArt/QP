@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
@@ -34,8 +33,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\m2m_nonsplitted.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentId = Global.GetContentId(Cnn, "Test M2M");
@@ -159,14 +157,12 @@ namespace Quantumart.Test
             Assert.That(versions, Is.Empty, "Versions created");
         }
 
-
         [OneTimeTearDown]
         public static void TearDown()
         {
             var srv = new ContentService(Global.ConnectionString, 1);
             srv.Delete(ContentId);
             srv.Delete(DictionaryContentId);
-            QPContext.UseConnectionString = false;
         }
     }
 }

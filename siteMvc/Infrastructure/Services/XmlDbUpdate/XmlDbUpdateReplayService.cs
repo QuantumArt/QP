@@ -31,17 +31,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         protected readonly string ConnectionString;
 
-        public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
-            : this(connectionString, null, userId, dbLogService, actionsCorrecterService)
+        public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService)
+            : this(connectionString, null, userId, dbLogService)
         {
         }
 
-        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
-            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId, dbLogService, actionsCorrecterService)
+        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService)
+            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId, dbLogService)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
+        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
@@ -50,7 +50,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             _dbLogService = dbLogService;
-            _actionsCorrecterService = actionsCorrecterService;
+            _actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -59,7 +59,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
-            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
             {
                 ValidateReplayInput(filteredXmlDocument);

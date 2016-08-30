@@ -25,12 +25,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         public XmlDataProcessor(XmlSettingsModel settings)
         {
             QPContext.CurrentCustomerCode = settings.CustomerCode;
-
-            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
             var dbLogService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
 
             _settings = settings;
-            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(settings.DisableFieldIdentity, settings.DisableContentIdentity, _settings.UserId, dbLogService, actionsCorrecterService);
+            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(settings.DisableFieldIdentity, settings.DisableContentIdentity, _settings.UserId, dbLogService);
         }
 
         public void Process()

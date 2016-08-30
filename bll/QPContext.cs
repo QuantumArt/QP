@@ -267,9 +267,6 @@ namespace Quantumart.QP8.BLL
         [ThreadStatic]
         private static Version _currentSqlVersion;
 
-        [ThreadStatic]
-        private static bool _useConnectionString;
-
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
             SetValueToStorage(ref _currentUserId, value, CurrentUserIdKey);
@@ -344,20 +341,16 @@ namespace Quantumart.QP8.BLL
                     {
                         result = Common.IsAdmin(QPConnectionScope.Current.DbConnection, CurrentUserId);
                     }
+
                     SetIsAdminValueToStorage(result);
                 }
+
                 return (bool)result;
             }
             set
             {
                 SetIsAdminValueToStorage(value);
             }
-        }
-
-        public static bool UseConnectionString
-        {
-            get { return _useConnectionString; }
-            set { _useConnectionString = value; }
         }
 
         public static int[] CurrentGroupIds
@@ -371,8 +364,10 @@ namespace Quantumart.QP8.BLL
                     {
                         result = Common.GetGroupIds(QPConnectionScope.Current.DbConnection, CurrentUserId);
                     }
+
                     SetCurrentGroupIdsValueToStorage(result);
                 }
+
                 return result;
             }
             set
@@ -463,7 +458,7 @@ namespace Quantumart.QP8.BLL
 
         public static QPIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QPIdentity : null;
 
-        public static string CurrentDbConnectionString => UseConnectionString ? CurrentCustomerCode : QPConfiguration.ConfigConnectionString(CurrentCustomerCode);
+        public static string CurrentDbConnectionString => QPConfiguration.ConfigConnectionString(CurrentCustomerCode);
 
         private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDbConnectionString);
 
