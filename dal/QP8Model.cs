@@ -2450,7 +2450,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("ExternalNotificationSet", externalNotificationDAL);
         }
-        
+    
         /// <summary>
         /// Deprecated Method for adding a new object to the XML_DB_UPDATE EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -2458,7 +2458,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("XML_DB_UPDATE", xmlDbUpdateLogEntity);
         }
-        
+    
         /// <summary>
         /// Deprecated Method for adding a new object to the XML_DB_UPDATE_ACTIONS EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -29297,9 +29297,7 @@ namespace Quantumart.QP8.DAL
         /// <param name="permanentLock">Initial value of the PermanentLock property.</param>
         /// <param name="useEnglishQuotes">Initial value of the UseEnglishQuotes property.</param>
         /// <param name="sendNotifications">Initial value of the SendNotifications property.</param>
-        /// <param name="eXTERNAL_DEVELOPMENT">Initial value of the EXTERNAL_DEVELOPMENT property.</param>
-        /// <param name="dOWNLOAD_EF_SOURCE">Initial value of the DOWNLOAD_EF_SOURCE property.</param>
-        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String liveDirectory, global::System.String liveVirtualRoot, global::System.String stageDirectory, global::System.String stageVirtualRoot, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications, global::System.Boolean eXTERNAL_DEVELOPMENT, global::System.Boolean dOWNLOAD_EF_SOURCE)
+        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String liveDirectory, global::System.String liveVirtualRoot, global::System.String stageDirectory, global::System.String stageVirtualRoot, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications)
         {
             SiteDAL siteDAL = new SiteDAL();
             siteDAL.Id = id;
@@ -29335,8 +29333,6 @@ namespace Quantumart.QP8.DAL
             siteDAL.PermanentLock = permanentLock;
             siteDAL.UseEnglishQuotes = useEnglishQuotes;
             siteDAL.SendNotifications = sendNotifications;
-            siteDAL.EXTERNAL_DEVELOPMENT = eXTERNAL_DEVELOPMENT;
-            siteDAL.DOWNLOAD_EF_SOURCE = dOWNLOAD_EF_SOURCE;
             return siteDAL;
         }
 
@@ -30522,54 +30518,6 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ContentFormScript;
         partial void OnContentFormScriptChanging(global::System.String value);
         partial void OnContentFormScriptChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean EXTERNAL_DEVELOPMENT
-        {
-            get
-            {
-                return _EXTERNAL_DEVELOPMENT;
-            }
-            set
-            {
-                OnEXTERNAL_DEVELOPMENTChanging(value);
-                ReportPropertyChanging("EXTERNAL_DEVELOPMENT");
-                _EXTERNAL_DEVELOPMENT = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("EXTERNAL_DEVELOPMENT");
-                OnEXTERNAL_DEVELOPMENTChanged();
-            }
-        }
-        private global::System.Boolean _EXTERNAL_DEVELOPMENT;
-        partial void OnEXTERNAL_DEVELOPMENTChanging(global::System.Boolean value);
-        partial void OnEXTERNAL_DEVELOPMENTChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean DOWNLOAD_EF_SOURCE
-        {
-            get
-            {
-                return _DOWNLOAD_EF_SOURCE;
-            }
-            set
-            {
-                OnDOWNLOAD_EF_SOURCEChanging(value);
-                ReportPropertyChanging("DOWNLOAD_EF_SOURCE");
-                _DOWNLOAD_EF_SOURCE = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("DOWNLOAD_EF_SOURCE");
-                OnDOWNLOAD_EF_SOURCEChanged();
-            }
-        }
-        private global::System.Boolean _DOWNLOAD_EF_SOURCE;
-        partial void OnDOWNLOAD_EF_SOURCEChanging(global::System.Boolean value);
-        partial void OnDOWNLOAD_EF_SOURCEChanged();
 
         #endregion
 
