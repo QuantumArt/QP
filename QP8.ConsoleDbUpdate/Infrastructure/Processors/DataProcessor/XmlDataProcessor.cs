@@ -19,7 +19,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
     internal class XmlDataProcessor : IDataProcessor
     {
         private readonly BaseSettingsModel _settings;
-        private readonly IXmlDbUpdateReplayService _xmlDbUpdateReplayService;
+        private readonly XmlDbUpdateNonMvcReplayService _xmlDbUpdateReplayService;
 
         public XmlDataProcessor(XmlSettingsModel settings)
         {
