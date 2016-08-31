@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-using System.Transactions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
@@ -25,12 +24,10 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         public XmlDataProcessor(XmlSettingsModel settings)
         {
             QPContext.CurrentCustomerCode = settings.CustomerCode;
-
-            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
             var dbLogService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
 
             _settings = settings;
-            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(settings.DisableFieldIdentity, settings.DisableContentIdentity, _settings.UserId, dbLogService, actionsCorrecterService);
+            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(settings.DisableFieldIdentity, settings.DisableContentIdentity, _settings.UserId, dbLogService);
         }
 
         public void Process()
@@ -73,7 +70,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
                     identityTypes.Add(EntityTypeCode.ContentGroup);
                 }
 
-                using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
                 using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
                 {
                     if (logService.IsFileAlreadyReplayed(logEntry.Hash))
@@ -82,8 +78,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
                         throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
                         throw throwEx;
                     }
-
-                    ts.Complete();
                 }
             }
             #endregion DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!!

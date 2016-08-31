@@ -36,8 +36,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\hierarchy.xml"));
             RegionContentName = "test regions";
             ProductContentName = "test products";
@@ -148,7 +147,6 @@ namespace Quantumart.Test
             var srv = new ContentService(Global.ConnectionString, 1);
             srv.Delete(ProductContentId);
             srv.Delete(RegionContentId);
-            QPContext.UseConnectionString = false;
         }
     }
 }

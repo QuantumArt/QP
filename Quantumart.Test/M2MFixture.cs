@@ -6,7 +6,6 @@ using System.Linq;
 using System.Web;
 using Moq;
 using NUnit.Framework;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
@@ -50,8 +49,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\m2m.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test M2M";
@@ -1110,8 +1108,6 @@ namespace Quantumart.Test
             var cntLinks = Global.CountLinks(Cnn, ids);
 
             Assert.That(cntLinks, Is.Not.EqualTo(0), "Links saved");
-
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
@@ -1127,7 +1123,6 @@ namespace Quantumart.Test
             var srv = new ContentService(Global.ConnectionString, 1);
             srv.Delete(ContentId);
             srv.Delete(DictionaryContentId);
-            QPContext.UseConnectionString = false;
         }
     }
 }

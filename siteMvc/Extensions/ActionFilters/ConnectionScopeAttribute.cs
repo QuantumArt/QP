@@ -31,7 +31,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
                 return null;
             }
-
             set
             {
                 if (value != null)
@@ -119,8 +118,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
             {
                 try
                 {
-                    if ((filterContext.Exception == null) && (TransactionScope != null) 
-                        && filterContext.Controller.ViewData.ModelState.IsValid 
+                    if ((filterContext.Exception == null) && (TransactionScope != null)
+                        && filterContext.Controller.ViewData.ModelState.IsValid
                         && (Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active))
                     {
                         TransactionScope.Complete();

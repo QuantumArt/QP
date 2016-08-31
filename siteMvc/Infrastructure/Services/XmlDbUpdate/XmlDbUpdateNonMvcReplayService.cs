@@ -9,25 +9,25 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
     {
         private readonly bool _isQpInstalled;
 
-        public XmlDbUpdateNonMvcReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService, bool isQpInstalled = true)
-            : base(disableFieldIdentity, disableContentIdentity, userId, dbLogService, actionsCorrecterService)
+        public XmlDbUpdateNonMvcReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService, bool isQpInstalled = true)
+            : base(disableFieldIdentity, disableContentIdentity, userId, dbLogService)
         {
             _isQpInstalled = isQpInstalled;
         }
 
-        public XmlDbUpdateNonMvcReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService, bool isQpInstalled = true)
-            : base(connectionString, userId, dbLogService, actionsCorrecterService)
+        public XmlDbUpdateNonMvcReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService, bool isQpInstalled = true)
+            : base(connectionString, userId, dbLogService)
         {
             _isQpInstalled = isQpInstalled;
         }
 
-        public XmlDbUpdateNonMvcReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService, bool isQpInstalled = true)
-            : base(connectionString, identityInsertOptions, userId, dbLogService, actionsCorrecterService)
+        public XmlDbUpdateNonMvcReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService, bool isQpInstalled = true)
+            : base(connectionString, identityInsertOptions, userId, dbLogService)
         {
             _isQpInstalled = isQpInstalled;
         }
 
-        public new void Process(string xmlString, IList<string> filePathes = null)
+        public override void Process(string xmlString, IList<string> filePathes = null)
         {
             if (_isQpInstalled)
             {
@@ -49,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void QpNotInstalledProcess(string xmlString, IList<string> filePathes)
         {
-            using (new NonQpEnvironmentContext(ConnectionString))
+            using (new NonQpEnvironmentContext())
             using (new FakeMvcApplicationContext())
             {
                 base.Process(xmlString, filePathes);

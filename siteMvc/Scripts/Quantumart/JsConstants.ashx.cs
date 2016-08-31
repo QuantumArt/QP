@@ -449,7 +449,6 @@ namespace Quantumart.QP8.WebMvc.Backend
                 { "UserLogin",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.UserLogin}
             }));
 
-            // TODO: THESAURUS
             constants.AppendLine(GenerateStringConstant("CKEDITOR_CONFIG_TIMESTAMP", DateTime.Now.Ticks.ToString()));
             constants.AppendLine(GenerateStringConstant("BACKEND_ACTION_CODE_HIDDEN_NAME", Default.ActionCodeHiddenName));
 

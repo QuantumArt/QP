@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Mono.Options;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
@@ -14,17 +14,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate
     {
         internal static int VerboseLevel;
         internal static bool IsSilentModeEnabled;
-        internal static /*TODO: readonly ILog*/ QpUpdateLoggingWrapper Logger;
+        internal static QpUpdateLoggingWrapper Logger;
 
         static Program()
         {
             try
             {
-                //EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
+                EmbeddedAssemblyManager.LoadAssembliesAndAttachEvents();
             }
             catch (Exception ex)
             {
-                Console.WriteLine("There was an exception in xml db updater");
                 Console.WriteLine(ex.Dump());
                 Environment.Exit(1);
             }
@@ -48,7 +47,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 var dataProcessor = DataProcessorFactory.Create(settings);
                 dataProcessor.Process();
 
-                Console.WriteLine("Processing successfuly finished...");
                 Logger.Debug("Processing successfuly finished...");
                 ConsoleHelpers.ExitProgram(ExitCode.Success);
             }
