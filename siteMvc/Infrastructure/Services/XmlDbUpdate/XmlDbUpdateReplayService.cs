@@ -59,10 +59,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
-            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
-            {
-                ValidateReplayInput(filteredXmlDocument);
-            }
+            ValidateReplayInput(filteredXmlDocument);
 
             var filteredXmlString = filteredXmlDocument.ToStringWithDeclaration();
             var dbLogEntry = new XmlDbUpdateLogModel
@@ -162,16 +159,19 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return document;
         }
 
-        private static void ValidateReplayInput(XContainer xmlDocument)
+        private void ValidateReplayInput(XContainer xmlDocument)
         {
-            if (!ValidateDbVersion(xmlDocument))
+            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
             {
-                throw new InvalidOperationException("DB versions doesn't match");
-            }
+                if (!ValidateDbVersion(xmlDocument))
+                {
+                    throw new InvalidOperationException("DB versions doesn't match");
+                }
 
-            if (ApplicationInfoHelper.RecordActions())
-            {
-                throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
+                if (ApplicationInfoHelper.RecordActions())
+                {
+                    throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
+                }
             }
         }
 
