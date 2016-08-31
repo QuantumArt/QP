@@ -54,7 +54,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        public void Process(string xmlString, IList<string> filePathes = null)
+        public virtual void Process(string xmlString, IList<string> filePathes = null)
         {
             Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
 

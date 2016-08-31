@@ -27,7 +27,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _isQpInstalled = isQpInstalled;
         }
 
-        public new void Process(string xmlString, IList<string> filePathes = null)
+        public override void Process(string xmlString, IList<string> filePathes = null)
         {
             if (_isQpInstalled)
             {
