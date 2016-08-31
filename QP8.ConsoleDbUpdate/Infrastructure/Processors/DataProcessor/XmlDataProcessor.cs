@@ -71,6 +71,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
                     identityTypes.Add(EntityTypeCode.ContentGroup);
                 }
 
+                Program.Logger.Debug($"Old version compatability enabled. Check hash {logEntry.Hash} in database.");
                 using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
                 {
                     if (logService.IsFileAlreadyReplayed(logEntry.Hash))
