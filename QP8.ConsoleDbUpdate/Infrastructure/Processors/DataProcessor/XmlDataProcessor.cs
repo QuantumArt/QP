@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Quantumart.QP8.BLL;
@@ -37,7 +38,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             if (_settings.FilePathes.Count == 1 && _settings.FilePathes[0].EndsWith(".xml"))
             {
                 var logService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
-                var xmlString = XmlReaderProcessor.Process(_settings.FilePathes, _settings.ConfigPath);
+                var xmlString = File.ReadAllText(_settings.FilePathes[0], Encoding.UTF8);
                 var logEntry = new XmlDbUpdateLogModel
                 {
                     Body = xmlString,
