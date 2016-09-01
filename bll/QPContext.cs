@@ -57,6 +57,11 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        public static string GetRecordXmlFilePath()
+        {
+            return $"{QPConfiguration.TempDirectory}{CurrentCustomerCode}.xml";
+        }
+
         private static T GetValueFromStorage<T>(T threadStorage, string key)
         {
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))

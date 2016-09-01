@@ -8,7 +8,6 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
-using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
@@ -38,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
 
-            ViewBag.IsRecordAvailableForDownload = System.IO.File.Exists(XmlDbUpdateXDocumentConstants.XmlFilePath);
+            ViewBag.IsRecordAvailableForDownload = System.IO.File.Exists(QPContext.GetRecordXmlFilePath());
             return JsonHtml("Settings", model);
         }
 
@@ -100,8 +99,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
         public FileResult GetRecordedUserActions()
         {
-            var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(XmlDbUpdateXDocumentConstants.XmlFilePath):yyyy-MM-dd_HH-mm-ss}.xml";
-            return File(XmlDbUpdateXDocumentConstants.XmlFilePath, MediaTypeNames.Application.Octet, fileName);
+            var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(QPContext.GetRecordXmlFilePath()):yyyy-MM-dd_HH-mm-ss}.xml";
+            return File(QPContext.GetRecordXmlFilePath(), MediaTypeNames.Application.Octet, fileName);
         }
 
         [HttpPost]
