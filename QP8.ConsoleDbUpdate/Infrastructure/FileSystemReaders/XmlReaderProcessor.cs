@@ -8,11 +8,12 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
+using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -188,7 +189,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static XDocument CombineMultipleDocumentsWithSameRoot(IList<XDocument> xmlDocuments)
         {
-            Ensure.That<InvalidOperationException>(xmlDocuments.Any(), "There are no xml files for replay or all of them already used before.");
+            if (!xmlDocuments.Any())
+            {
+                Program.Logger.Warn("There are no xml files for replay or all of them already used before.");
+                ConsoleHelpers.ExitProgram(ExitCode.Success);
+            }
 
             if (xmlDocuments.Count == 1)
             {
