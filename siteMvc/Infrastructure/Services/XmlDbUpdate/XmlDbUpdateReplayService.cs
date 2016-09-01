@@ -76,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
                 {
-                    var throwEx = new XmlDbUpdateLoggingException("Current xml document already applied and exist at XmlDbUpdate database.");
+                    var throwEx = new XmlDbUpdateLoggingException("Current xml document(s) already applied and exist at XmlDbUpdate database.");
                     throwEx.Data.Add("LogEntry", dbLogEntry.ToJsonLog());
                     throw throwEx;
                 }
@@ -118,9 +118,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 if (_dbLogService.IsActionAlreadyReplayed(logEntry.Hash))
                 {
-                    var throwEx = new XmlDbUpdateLoggingException("Current action already applied and exist at XmlDbUpdateAction database.");
-                    throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
-                    throw throwEx;
+                    continue;
+                    //var throwEx = new XmlDbUpdateLoggingException("Current action already applied and exist at XmlDbUpdateAction database.");
+                    //throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
+                    //throw throwEx;
                 }
 
                 var replayedAction = ReplayAction(action, backendUrl);
