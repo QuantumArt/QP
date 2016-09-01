@@ -1,12 +1,7 @@
-﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.Configuration;
-
-namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
+﻿namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
 {
     internal class XmlDbUpdateXDocumentConstants
     {
-        internal static readonly string XmlFilePath = $"{QPConfiguration.TempDirectory}{QPContext.CurrentCustomerCode}.xml";
-
         internal const string RootElement = "actions";
 
         internal const string RootBackendUrlAttribute = "backendUrl";

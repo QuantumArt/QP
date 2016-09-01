@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
@@ -67,7 +68,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                     doc.Add(CreateActionsRoot(backendUrl));
                 }
 
-                doc.Save(XmlDbUpdateXDocumentConstants.XmlFilePath);
+                doc.Save(QPContext.GetRecordXmlFilePath());
             }
         }
 
@@ -152,7 +153,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         private static XElement GetOrCreateRoot(string backendUrl)
         {
-            var doc = File.Exists(XmlDbUpdateXDocumentConstants.XmlFilePath) ? XDocument.Load(XmlDbUpdateXDocumentConstants.XmlFilePath) : new XDocument(CreateActionsRoot(backendUrl));
+            var doc = File.Exists(QPContext.GetRecordXmlFilePath()) ? XDocument.Load(QPContext.GetRecordXmlFilePath()) : new XDocument(CreateActionsRoot(backendUrl));
             return doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
         }
 
@@ -301,4 +302,3 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         }
     }
 }
-
