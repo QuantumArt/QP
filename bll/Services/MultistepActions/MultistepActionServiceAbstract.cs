@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Web;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions
 {
@@ -54,7 +54,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
         public virtual MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
         {
             if (HasAlreadyRun())
+            {
                 throw new ApplicationException(MultistepActionStrings.ActionHasAlreadyRun);
+            }
 
             var context = CreateContext(parentId, id, boundToExternal);
             HttpContext.Current.Session[ContextSessionKey] = context;

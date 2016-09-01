@@ -23,47 +23,43 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
     {
         private readonly int _userId;
 
-        private readonly string _connectionString;
-
         private readonly HashSet<string> _identityInsertOptions;
 
         private readonly IXmlDbUpdateLogService _dbLogService;
 
         private readonly XmlDbUpdateActionCorrecterService _actionsCorrecterService;
 
-        public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
-            : this(connectionString, null, userId, dbLogService, actionsCorrecterService)
+        protected readonly string ConnectionString;
+
+        public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService)
+            : this(connectionString, null, userId, dbLogService)
         {
         }
 
-        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
-            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId, dbLogService, actionsCorrecterService)
+        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService)
+            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId, dbLogService)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService, XmlDbUpdateActionCorrecterService actionsCorrecterService)
+        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
             _userId = userId;
-            _connectionString = connectionString;
+            ConnectionString = connectionString;
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             _dbLogService = dbLogService;
-            _actionsCorrecterService = actionsCorrecterService;
+            _actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        public void Process(string xmlString, IList<string> filePathes = null)
+        public virtual void Process(string xmlString, IList<string> filePathes = null)
         {
             Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
 
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
-            using (new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
-            using (new QPConnectionScope(_connectionString, _identityInsertOptions))
-            {
-                ValidateReplayInput(filteredXmlDocument);
-            }
+            ValidateReplayInput(filteredXmlDocument);
 
             var filteredXmlString = filteredXmlDocument.ToStringWithDeclaration();
             var dbLogEntry = new XmlDbUpdateLogModel
@@ -76,7 +72,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             };
 
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
-            using (new QPConnectionScope(_connectionString, _identityInsertOptions))
+            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
             {
                 if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
                 {
@@ -163,16 +159,19 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return document;
         }
 
-        private static void ValidateReplayInput(XContainer xmlDocument)
+        private void ValidateReplayInput(XContainer xmlDocument)
         {
-            if (!ValidateDbVersion(xmlDocument))
+            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
             {
-                throw new InvalidOperationException("DB versions doesn't match");
-            }
+                if (!ValidateDbVersion(xmlDocument))
+                {
+                    throw new InvalidOperationException("DB versions doesn't match");
+                }
 
-            if (ApplicationInfoHelper.RecordActions())
-            {
-                throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
+                if (ApplicationInfoHelper.RecordActions())
+                {
+                    throw new InvalidOperationException("Replaying actions cannot be proceeded on the database which has recording option on");
+                }
             }
         }
 

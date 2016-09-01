@@ -8,7 +8,6 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
-using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
 
@@ -124,8 +123,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
-            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ArticleService = new ArticleService(Global.ConnectionString, 1);
@@ -198,8 +196,6 @@ namespace Quantumart.Test
 
             contentService.Delete(DictionaryContentId);
             contentService.Delete(BaseContentId);
-
-            QPContext.UseConnectionString = false;
         }
 
         [Test]

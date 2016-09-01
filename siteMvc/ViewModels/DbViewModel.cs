@@ -1,67 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.BLL;
+﻿using System.Collections.Generic;
+using System.Web.Script.Serialization;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using B = Quantumart.QP8.BLL;
 using C = Quantumart.QP8.Constants;
-using System.Web.Script.Serialization;
-using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
-	public class DbViewModel : EntityViewModel
-	{
-		public DbViewModel()
-		{
-			OverrideRecordsFile = false;
-		}
+    public class DbViewModel : EntityViewModel
+    {
+        public DbViewModel()
+        {
+            OverrideRecordsFile = false;
+        }
 
-		public new B.Db Data
-		{
-			get
-			{
-				return (B.Db)EntityData;
-			}
+        public new B.Db Data
+        {
+            get
+            {
+                return (B.Db)EntityData;
+            }
 
-			set
-			{
-				EntityData = value;
-			}
-		}
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return C.EntityTypeCode.CustomerCode;
-			}
-		}
+            set
+            {
+                EntityData = value;
+            }
+        }
 
-		public override string ActionCode
-		{
-			get
-			{
-					return C.ActionCode.DbSettings;
-			}
-		}
+        public override string EntityTypeCode => C.EntityTypeCode.CustomerCode;
 
-		[LocalizedDisplayName("OverrideRecordsFile", NameResourceType = typeof(DBStrings))]
-		public bool OverrideRecordsFile { get; set; }
+        public override string ActionCode => C.ActionCode.DbSettings;
 
-		[LocalizedDisplayName("OverrideRecordsUser", NameResourceType = typeof(DBStrings))]
-		public bool OverrideRecordsUser { get; set; }
+        [LocalizedDisplayName("OverrideRecordsFile", NameResourceType = typeof(DBStrings))]
+        public bool OverrideRecordsFile { get; set; }
 
-		public string AggregationListItems_Data_AppSettings { get; set; }
+        [LocalizedDisplayName("OverrideRecordsUser", NameResourceType = typeof(DBStrings))]
+        public bool OverrideRecordsUser { get; set; }
 
-		public void DoCustomBinding()
-		{
-			if (!String.IsNullOrEmpty(AggregationListItems_Data_AppSettings))
-			{
-				Data.AppSettings = new JavaScriptSerializer().Deserialize<List<AppSettingsItem>>(AggregationListItems_Data_AppSettings);
-			}
-		}
+        public string AggregationListItemsDataAppSettings { get; set; }
 
-	}
+        public void DoCustomBinding()
+        {
+            if (!string.IsNullOrEmpty(AggregationListItemsDataAppSettings))
+            {
+                Data.AppSettings = new JavaScriptSerializer().Deserialize<List<AppSettingsItem>>(AggregationListItemsDataAppSettings);
+            }
+        }
+    }
 }

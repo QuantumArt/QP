@@ -46,7 +46,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 .OrderBy(itm => itm.Text)
                 .ToArray();
 
-            return JsonHtml("Actions", model);
+            model.ActionList = _actionLogService.GetActionList()
+                .Select(t => new QPSelectListItem { Text = Translator.Translate(t.NotTranslatedName), Value = t.Code, Selected = false })
                 .OrderBy(itm => itm.Text)
                 .ToArray();
 
@@ -56,20 +57,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ActionLog)]
         [BackendActionContext(ActionCode.ActionLog)]
         [GridAction(EnableCustomBinding = true)]
-        public ActionResult _Actions(GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<BackendActionLogFilter>))]BackendActionLogFilter filter
-        )
+        public ActionResult _Actions(GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<BackendActionLogFilter>))]BackendActionLogFilter filter)
         {
             var list = _actionLogService.GetLogPage(command.GetListCommand(), filter);
             return View(new GridModel
             {
                 Data = list.Data.Select(r =>
-                    {
-                        r.ActionTypeName = Translator.Translate(r.ActionTypeName);
-                        r.ActionName = Translator.Translate(r.ActionName);
-                        r.EntityTypeName = Translator.Translate(r.EntityTypeName);
-                        return r;
-                    }),
+                {
+                    r.ActionTypeName = Translator.Translate(r.ActionTypeName);
+                    r.ActionName = Translator.Translate(r.ActionName);
+                    r.EntityTypeName = Translator.Translate(r.EntityTypeName);
+                    return r;
+                }),
                 Total = list.TotalRecords
             });
         }

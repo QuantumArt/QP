@@ -5,7 +5,10 @@ CREATE PROCEDURE [dbo].[qp_content_new_views_create]
   @content_id NUMERIC
 AS
 BEGIN 
-		declare @ca table (
+
+    if object_id('tempdb..#disable_create_new_views') is null
+    begin 		
+        declare @ca table (
 			id numeric identity(1,1) primary key,
 			attribute_id numeric, 
 			attribute_name nvarchar(255), 
@@ -118,34 +121,34 @@ BEGIN
 
 
 
-  SET @result_sql =  ' create view dbo.content_' + cast(@content_id as varchar(20)) + '_new as (select ' + char(13) + @sql
-  + char(13) + ' from content_' + cast(@content_id as varchar(20)) + ')'
-  print(@result_sql)
-  exec(@result_sql)
+        SET @result_sql =  ' create view dbo.content_' + cast(@content_id as varchar(20)) + '_new as (select ' + char(13) + @sql
+            + char(13) + ' from content_' + cast(@content_id as varchar(20)) + ')'
+        print(@result_sql)
+        exec(@result_sql)
 
-  
-  declare @virtual_type int
-  select @virtual_type = virtual_type from content where content_id = @content_id
+      
+        declare @virtual_type int
+        select @virtual_type = virtual_type from content where content_id = @content_id
 
-  if (@virtual_type <> 3)
-  begin
-	set @result_sql = ' create view dbo.content_' + cast(@content_id as varchar(20)) + '_async_new as (select ' + char(13) + @sql
-		+ char(13) + ' from content_' + cast(@content_id as varchar(20)) + '_async )'
-	print(@result_sql)
-	exec(@result_sql)
+        if (@virtual_type <> 3)
+        begin
+    	   set @result_sql = ' create view dbo.content_' + cast(@content_id as varchar(20)) + '_async_new as (select ' + char(13) + @sql
+    		  + char(13) + ' from content_' + cast(@content_id as varchar(20)) + '_async )'
+    	   print(@result_sql)
+    	   exec(@result_sql)
 
-	exec qp_content_united_view_create @content_id, 1
+    	   exec qp_content_united_view_create @content_id, 1
 
-  end
-  else begin
-	set @result_sql = ' create view dbo.content_' + cast(@content_id as varchar(20)) + '_united_new as (select ' + char(13) + @sql
-		+ char(13) + ' from content_' + cast(@content_id as varchar(20)) + '_united )'
-	print(@result_sql)
-	exec(@result_sql)
-  end
-  
-  exec qp_content_frontend_views_create @content_id, 1	
-
+        end
+         else begin
+    	   set @result_sql = ' create view dbo.content_' + cast(@content_id as varchar(20)) + '_united_new as (select ' + char(13) + @sql
+    		+ char(13) + ' from content_' + cast(@content_id as varchar(20)) + '_united )'
+    	   print(@result_sql)
+    	   exec(@result_sql)
+        end
+      
+        exec qp_content_frontend_views_create @content_id, 1
+    end	
 END
 GO
 

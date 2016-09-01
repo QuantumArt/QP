@@ -42,8 +42,8 @@ namespace Quantumart.QP8.WebMvc
             routes.IgnoreRoute("WebServices/{*pathInfo}");
             routes.MapRoute(
                 "MultistepAction",
-                "Multistep/{command}/{action}/{tabId}/{parentId}/{id}",
-                new { controller = "Multistep", parentId = 0, id = 0 },
+                "Multistep/{command}/{action}/{tabId}/{parentId}",
+                new { controller = "Multistep", parentId = 0 },
                 new { parentId = @"\d+" }
             );
 
@@ -79,15 +79,16 @@ namespace Quantumart.QP8.WebMvc
             RegisterValueProviders();
         }
 
-
         internal static void UnregisterRoutes()
         {
             RouteTable.Routes.Clear();
         }
+
         internal static void UnregisterValueProviders()
         {
             ValueProviderFactories.Factories.Clear();
         }
+
         internal static void RegisterValueProviders()
         {
             ValueProviderFactories.Factories.Remove(ValueProviderFactories.Factories.OfType<JsonValueProviderFactory>().FirstOrDefault());
@@ -107,10 +108,10 @@ namespace Quantumart.QP8.WebMvc
 
         internal static void RegisterUnity()
         {
-            var dresolver = new UnityDependencyResolver();
-            DependencyResolver.SetResolver(dresolver);
-            QPContext.SetUnityContainer(dresolver.UnityContainer);
-            GlobalHost.DependencyResolver = new SignalRUnityDependencyResolver(dresolver.UnityContainer);
+            var resolver = new UnityDependencyResolver();
+            DependencyResolver.SetResolver(resolver);
+            QPContext.SetUnityContainer(resolver.UnityContainer);
+            GlobalHost.DependencyResolver = new SignalRUnityDependencyResolver(resolver.UnityContainer);
         }
 
         internal static void RegisterMappings()

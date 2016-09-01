@@ -46,7 +46,6 @@ namespace Quantumart.Test
                 .ToDictionary(n => n.Title, n => n.Id);
         }
 
-
         public static DateTime[] GetModified(DBConnector cnn, int contentId)
         {
             return cnn.GetRealData($"select Modified from content_{contentId}_united")

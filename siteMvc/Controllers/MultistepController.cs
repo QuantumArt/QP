@@ -28,17 +28,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult PreAction(string command, int parentId, int id, int[] IDs)
+        public ActionResult PreAction(string command, int parentId, int[] IDs)
         {
-            return Json(_getService(command).PreAction(parentId, id, IDs));
+            return Json(_getService(command).PreAction(parentId, 0, IDs));
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult Setup(string command, int parentId, int id, int[] IDs, bool? boundToExternal)
+        public ActionResult Setup(string command, int parentId, int[] IDs, bool? boundToExternal)
         {
-            return Json(_getService(command).Setup(parentId, id, IDs, boundToExternal));
+            return Json(_getService(command).Setup(parentId, 0, IDs, boundToExternal));
         }
 
         [HttpPost]
@@ -73,7 +73,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             var filters = base.GetFilters(controllerContext, actionDescriptor);
             filters.AuthorizationFilters.Add(new ActionAuthorizeAttribute(actionCode));
-            filters.ActionFilters.Add(new BackendActionContextAttribute(actionCode));
+
+            if (actionDescriptor.ActionName == nameof(MultistepController.Setup))
+            {
+                filters.ActionFilters.Add(new BackendActionContextAttribute(actionCode));
+                filters.ActionFilters.Add(new BackendActionLogAttribute());
+                filters.ActionFilters.Add(new RecordAttribute());
+            }
+
             return filters;
         }
     }

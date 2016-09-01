@@ -79,18 +79,25 @@ namespace Quantumart.QP8.WebMvc.Controllers
             model.Data.AssemblingType = sourceSite.AssemblingType;
             model.Validate(ModelState);
 
+            var viewName = $"{FolderForTemplate}/CreateLikeSiteTemplate";
             if (ModelState.IsValid)
             {
-                model.Data = SiteService.Save(model.Data, new List<int>().ToArray(), new List<int>().ToArray());
-                PersistResultId(model.Data.Id);
+                try
+                {
+                    model.Data = SiteService.Save(model.Data, new List<int>().ToArray(), new List<int>().ToArray());
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("Exception", ex.Message);
+                    return JsonHtml(viewName, model);
+                }
 
-                IMultistepActionParams settings = new CopySiteSettings(newSite.Id, id, DateTime.Now, model.DoNotCopyArticles, model.DoNotCopyTemplates, model.DoNotCopyFiles);
+                var settings = new CopySiteSettings(newSite.Id, id, DateTime.Now, model.DoNotCopyArticles, model.DoNotCopyTemplates, model.DoNotCopyFiles);
                 _multistepService.SetupWithParams(parentId, id, settings);
 
                 return Json(string.Empty);
             }
 
-            var viewName = $"{FolderForTemplate}/CreateLikeSiteTemplate";
             return JsonHtml(viewName, model);
         }
 

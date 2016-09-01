@@ -5,10 +5,8 @@ using System.Data.SqlClient;
 using System.Globalization;
 using Moq;
 using NUnit.Framework;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
-using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.Info;
@@ -33,8 +31,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
-            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\unique.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test unique";
@@ -241,13 +238,13 @@ namespace Quantumart.Test
             var values = new List<Dictionary<string, string>>();
             var first = ContentItem.Read(BaseArticlesIds[0], Cnn);
             var second = ContentItem.Read(BaseArticlesIds[1], Cnn);
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
                 ["Title"] = first.FieldValues["Title"].Data,
                 ["Number"] = first.FieldValues["Number"].Data
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
@@ -258,7 +255,6 @@ namespace Quantumart.Test
             values.Add(article2);
 
             var modified = Global.GetModified(Cnn, ContentId);
-
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update existing data");
 
             var modified2 = Global.GetModified(Cnn, ContentId);
@@ -268,7 +264,6 @@ namespace Quantumart.Test
             Assert.That(modified, Is.Not.EqualTo(modified2), "Modification dates should be changed");
             Assert.That(first2.FieldValues["Title"].Data, Is.EqualTo(first.FieldValues["Title"].Data), "Data should remain the same");
             Assert.That(second2.FieldValues["Title"].Data, Is.EqualTo(second.FieldValues["Title"].Data), "Data should remain the same");
-
         }
 
         [Test]
@@ -298,7 +293,6 @@ namespace Quantumart.Test
             Assert.That(first2.FieldValues["Title"].Data, Is.EqualTo(first.FieldValues["Title"].Data), "Data should remain the same");
 
         }
-
 
         [Test]
         public void MassUpdate_IsValid_ValidateConstraintSwapData()
@@ -392,7 +386,6 @@ namespace Quantumart.Test
         [Test]
         public void AddFormToContent_ThrowsException_ValidateAttributeValueStringSizeExceeded()
         {
-
             var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             var article1 = new Hashtable
             {
@@ -408,13 +401,11 @@ namespace Quantumart.Test
             );
         }
 
-
         [OneTimeTearDown]
         public static void TearDown()
         {
             var srv = new ContentService(Global.ConnectionString, 1);
             srv.Delete(ContentId);
-            QPContext.UseConnectionString = false;
         }
     }
 }

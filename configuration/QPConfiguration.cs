@@ -13,7 +13,9 @@ namespace Quantumart.QP8.Configuration
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class QPConfiguration
     {
-        private static string _configPath;
+        internal static string _configPath;
+
+        internal static string _tempDirectory;
 
         /// <summary>
         /// Проверка, запущен ли пул в 64-битном режиме
@@ -98,7 +100,22 @@ namespace Quantumart.QP8.Configuration
             return builder.ToString();
         }
 
-        public static string TempDirectory => ConfigVariable(Config.TempKey).ToLowerInvariant();
+        public static string TempDirectory
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_tempDirectory))
+                {
+                    _tempDirectory = ConfigVariable(Config.TempKey).ToLowerInvariant();
+                }
+
+                return _tempDirectory;
+            }
+            set
+            {
+                _tempDirectory = value;
+            }
+        }
 
         public static bool UseScheduleService => ConfigVariable(Config.UseScheduleService).ToLowerInvariant() == "yes";
 
@@ -109,22 +126,16 @@ namespace Quantumart.QP8.Configuration
         public static string ADsConnectionString => ConfigVariable(Config.ADsConnectionStringKey).ToLowerInvariant();
 
         public static string ADsConnectionUsername => ConfigVariable(Config.ADsConnectionUsernameKey);
-  
+
         public static string ADsConnectionPassword => ConfigVariable(Config.ADsConnectionPasswordKey);
 
         public static string ADsPath => ConfigVariable(Config.ADsPathKey);
 
         public static string ADsFieldName => ConfigVariable(Config.ADsFieldNameKey).ToLowerInvariant();
 
-        /// <summary>
-        /// Конфигурационный файл QP
-        /// </summary>
         public static XDocument XmlConfig => XDocument.Load(XmlConfigPath);
 
-        /// <summary>
-        /// Путь к конфигурационному файлу в реестре
-        /// </summary>
-        private static string XmlConfigPath
+        public static string XmlConfigPath
         {
             get
             {
@@ -163,7 +174,7 @@ namespace Quantumart.QP8.Configuration
             settings[Config.MailHostKey] = ConfigVariable(Config.MailHostKey);
             settings[Config.MailLoginKey] = ConfigVariable(Config.MailLoginKey);
             settings[Config.MailPasswordKey] = ConfigVariable(Config.MailPasswordKey);
-            settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : ""; // inverting backend and frontend default logic
+            settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : string.Empty; // inverting backend and frontend default logic
             settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
         }
     }

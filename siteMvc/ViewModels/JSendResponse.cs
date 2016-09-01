@@ -8,7 +8,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
     public class JSendResponse<T>
     {
-        [JsonConverter(typeof(StringEnumConverter))] // TODO: why VS show like error?
+        [JsonConverter(typeof(StringEnumConverter))]
         public JSendStatus Status { get; set; }
 
         public T Data { get; set; }

@@ -34,9 +34,24 @@ namespace Quantumart.QP8.BLL.Helpers
         public static void That<TException>(bool condition, string message = "")
             where TException : Exception
         {
+            That<TException>(condition, new object[] { message });
+        }
+
+        /// <summary>
+        /// Ensures that the given expression is true
+        /// </summary>
+        /// <typeparam name="TException">Type of exception to throw</typeparam>
+        /// <param name="condition">Condition to test/ensure</param>
+        /// <param name="message">Message for the exception</param>
+        /// <param name="args">args for TException constructor></param>
+        /// <exception>Thrown when <cref>TException</cref><paramref name="condition"/> is false</exception>
+        /// <remarks><see cref="TException"/> must have a constructor that takes a single string</remarks>
+        public static void That<TException>(bool condition, params object[] args)
+            where TException : Exception
+        {
             if (!condition)
             {
-                throw (TException)Activator.CreateInstance(typeof(TException), message);
+                throw (TException)Activator.CreateInstance(typeof(TException), args);
             }
         }
 

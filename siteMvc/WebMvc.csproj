@@ -294,7 +294,7 @@
     <Compile Include="Extensions\Controllers\QPController.cs" />
     <Compile Include="Extensions\Controllers\RulesViolationExceptionExtensions.cs" />
     <Compile Include="Extensions\Helpers\AggregationListTemplateField.cs" />
-    <Compile Include="Infrastructure\Adapters\XmlDbUpdateNonMvcAppReplayServiceWrapper.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
     <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateCommonConstants.cs" />
     <Compile Include="Infrastructure\Enums\ExceptionResultMode.cs" />
     <Compile Include="Infrastructure\Enums\JSendStatus.cs" />
@@ -303,7 +303,7 @@
     <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\CultureHelpers.cs" />
-    <Compile Include="Infrastructure\FakeMvcApplication.cs" />
+    <Compile Include="Infrastructure\Adapters\FakeMvcApplicationContext.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionCorrecterService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\CsvDbUpdateService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\ICsvDbUpdateService.cs" />

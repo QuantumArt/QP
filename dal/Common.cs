@@ -8894,6 +8894,8 @@ namespace Quantumart.QP8.DAL
                     insert into @content_ids(id)
                     SELECT convert(numeric, nstr) from dbo.splitNew(@new_content_ids, ',')
 
+                    select 1 as A into #disable_create_new_views
+
                     delete from content_attribute where content_id in (select id from @content_ids)
 
                     insert into content_attribute ({0})
@@ -8906,7 +8908,26 @@ namespace Quantumart.QP8.DAL
                             on nc.content_name = c.content_name and nc.site_id = @destination_site_id
                         where c.site_id = @source_site_id and {2}
                     ) as rbc on ca.CONTENT_ID = rbc.source_content_id and rbc.destination_content_id in (select id from @content_ids)
-                end", GetColumnsForTable(sqlConnection, "content_attribute", excludeColumns)
+                    
+                    drop table #disable_create_new_views
+
+                    if exists(select * from sys.procedures where name = 'qp_content_new_views_recreate')
+                    begin
+                        declare @content_id numeric
+                        while exists(select * from @content_ids)
+                        begin
+                            select @content_id = id from @content_ids
+
+                            exec qp_content_new_views_recreate @content_id
+
+                            delete from @content_ids where id = @content_id
+
+                        end
+                    end
+                    
+
+
+            end", GetColumnsForTable(sqlConnection, "content_attribute", excludeColumns)
                   , GetColumnsForTable(sqlConnection, "content_attribute", new List<string> { "attribute_id", "content_id" }, changeValues, new Dictionary<string, string> { { "rbc.destination_content_id", "" } }, "ATTRIBUTE_NAME")
                   , isContentsVirtual ? "c.virtual_type != 0" : "c.virtual_type = 0");
             using (var cmd = new SqlCommand(query, sqlConnection))

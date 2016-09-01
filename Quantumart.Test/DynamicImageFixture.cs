@@ -5,9 +5,7 @@ using System.IO;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
-using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
@@ -75,8 +73,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
-            var service = new XmlDbUpdateNonMvcAppReplayServiceWrapper(new XmlDbUpdateReplayService(Global.ConnectionString, 1, dbLogService.Object, actionsCorrecterService));
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\files.xml"));
             Cnn = new DBConnector(Global.ConnectionString)
             {
@@ -634,7 +631,6 @@ namespace Quantumart.Test
 
             var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
 
-
             var article1 = new Hashtable()
             {
                 [imageName] = $"{name1}.{ext1}"
@@ -653,7 +649,6 @@ namespace Quantumart.Test
 
             var ids = new[] { id };
 
-
             const string imagePng = "PngImage";
             const string imageJpg = "JpgImage";
             const string imageGif = "GifImage";
@@ -661,7 +656,6 @@ namespace Quantumart.Test
             var pngs1 = Global.GetFieldValues<string>(Cnn, ContentId, imagePng, ids);
             var jpgs1 = Global.GetFieldValues<string>(Cnn, ContentId, imageJpg, ids);
             var gifs1 = Global.GetFieldValues<string>(Cnn, ContentId, imageGif, ids);
-
 
             Assert.DoesNotThrow(() =>
             {
@@ -671,7 +665,6 @@ namespace Quantumart.Test
             var pngs2 = Global.GetFieldValues<string>(Cnn, ContentId, imagePng, ids);
             var jpgs2 = Global.GetFieldValues<string>(Cnn, ContentId, imageJpg, ids);
             var gifs2 = Global.GetFieldValues<string>(Cnn, ContentId, imageGif, ids);
-
 
             var pngId = Cnn.FieldID(Global.SiteId, ContentName, imagePng);
             var jpgId = Cnn.FieldID(Global.SiteId, ContentName, imageJpg);
@@ -720,7 +713,6 @@ namespace Quantumart.Test
             mockDynamicImage.Verify(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()), Times.Never(), "Shouldn't be called for empty image fields");
         }
 
-
         [TearDown]
         public static void TestTearDown()
         {
@@ -729,13 +721,11 @@ namespace Quantumart.Test
             Cnn.DynamicImageCreator = new FakeDynamicImage();
         }
 
-
         [OneTimeTearDown]
         public static void TearDown()
         {
             var srv = new ContentService(Global.ConnectionString, 1);
             srv.Delete(ContentId);
-            QPContext.UseConnectionString = false;
         }
     }
 }

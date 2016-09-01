@@ -134,11 +134,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
                 }
             }
 
-            if (dbf.IsClassifier)
-            {
-                result.Value = fieldValue;
-            }
-
             return result;
         }
 

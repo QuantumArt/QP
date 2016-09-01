@@ -1,7 +1,6 @@
 using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Constants;
@@ -22,10 +21,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class DbController : QPController
     {
         private readonly ICommunicationService _communicationService;
+        private readonly IXmlDbUpdateLogService _xmlDbUpdateLogService;
 
-        public DbController(ICommunicationService communicationService)
+        public DbController(ICommunicationService communicationService, IXmlDbUpdateLogService xmlDbUpdateServce)
         {
             _communicationService = communicationService;
+            _xmlDbUpdateLogService = xmlDbUpdateServce;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -60,7 +61,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 var needSendMessage = false;
                 if (model.Data.RecordActions)
                 {
-                    XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext), model.OverrideRecordsFile);
+                    if (model.OverrideRecordsFile)
+                    {
+                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext));
+                    }
+
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)
                     {
                         model.Data.SingleUserId = QPContext.CurrentUserId;
@@ -90,6 +95,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Settings", model);
         }
 
+        [ActionAuthorize(ActionCode.DbSettings)]
+        [BackendActionContext(ActionCode.DbSettings)]
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
         public FileResult GetRecordedUserActions()
         {
             var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(XmlDbUpdateXDocumentConstants.XmlFilePath):yyyy-MM-dd_HH-mm-ss}.xml";
@@ -104,10 +112,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             try
             {
-                // TODO: UNITY
-                var actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
-                var dbLogService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
-                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, dbLogService, actionsCorrecterService).Process(xmlString);
+                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, _xmlDbUpdateLogService).Process(xmlString);
             }
             catch (XmlDbUpdateLoggingException ex)
             {

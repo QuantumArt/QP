@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 Name = entry.Name,
                 Element = entry.Tag,
-                Overrides = entry.OverridesTag, // TODO: проверить
+                Overrides = entry.OverridesTag,
                 Styles = entry.StylesItems.Any() ? entry.StylesItems.ToDictionary(k => k.Name.Replace(' ', '_'), v => v.ItemValue) : null,
                 Attributes = entry.AttributeItems.Any() ? entry.AttributeItems.ToDictionary(k => k.Name, v => v.ItemValue) : null
             };

@@ -5,6 +5,7 @@ using Microsoft.Practices.Unity;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
 using Quantumart.QP8.BLL.Services.Audit;
@@ -18,6 +19,7 @@ using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.BLL.Services.MultistepActions.Rebuild;
 using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
 using Quantumart.QP8.BLL.Services.VisualEditor;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Logging.Loggers;
 using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Logging.Web;
@@ -54,6 +56,7 @@ namespace Quantumart.QP8.WebMvc.Extensions
                 .RegisterType<IRecreateDynamicImagesService, RecreateDynamicImagesService>()
                 .RegisterType<IUserService, UserService>()
                 .RegisterType<IUserGroupService, UserGroupService>()
+                .RegisterType<IXmlDbUpdateLogService, XmlDbUpdateLogService>(new InjectionConstructor(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository()))
 
                 .RegisterType<ClearContentController>(new InjectionFactory(c => new ClearContentController(new ClearContentService())))
                 .RegisterType<RemoveContentController>(new InjectionFactory(c => new RemoveContentController(new RemoveContentService())))
@@ -91,10 +94,8 @@ namespace Quantumart.QP8.WebMvc.Extensions
                 .RegisterType<IActionPermissionTreeService, ActionPermissionTreeService>()
 
                 .RegisterType<ISecurityService, SecurityService>()
-
                 .RegisterType<ICommunicationService, CommunicationService>()
                 .RegisterType<SingleUserModeHub>();
-
 
             UnityContainer.AddNewExtension<LoggersContainerConfiguration>();
             UnityContainer.AddNewExtension<LogServicesContainerConfigutation>();
