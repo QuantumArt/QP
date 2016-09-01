@@ -37,7 +37,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             }
 
             Program.Logger.Debug($"Documents will be processed in next order: {orderedFilePathes.ToJsonLog()}");
-            return CombineMultipleDocumentsWithSameRoot(orderedFilePathes.Select(XDocument.Load).ToList()).ToStringWithDeclaration();
+            return CombineMultipleDocumentsWithSameRoot(orderedFilePathes.Select(XDocument.Load).ToList()).ToStringWithDeclaration(SaveOptions.DisableFormatting);
         }
 
         private static IEnumerable<string> GetOrderedDirectoryFilePathes(string absDirPath, string absOrRelativeConfigPath)

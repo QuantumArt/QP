@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Quantumart.QP8.BLL;
@@ -37,7 +38,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             if (_settings.FilePathes.Count == 1 && _settings.FilePathes[0].EndsWith(".xml"))
             {
                 var logService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
-                var xmlString = XmlReaderProcessor.Process(_settings.FilePathes, _settings.ConfigPath);
+                var xmlString = File.ReadAllText(_settings.FilePathes[0], Encoding.UTF8);
                 var logEntry = new XmlDbUpdateLogModel
                 {
                     Body = xmlString,
@@ -70,6 +71,53 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
                     identityTypes.Add(EntityTypeCode.ContentGroup);
                 }
 
+                Program.Logger.Debug($"Old version (Mixed) compatability enabled. Check hash {logEntry.Hash} in database.");
+                using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
+                {
+                    if (logService.IsFileAlreadyReplayed(logEntry.Hash))
+                    {
+                        var throwEx = new XmlDbUpdateLoggingException("Current xml document already applied and exist at XmlDbUpdate database.");
+                        throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
+                        throw throwEx;
+                    }
+                }
+
+
+
+                inputBytes = Encoding.UTF8.GetBytes(xmlString.Replace("\r\n", "\n"));
+                hash = md5.ComputeHash(inputBytes);
+                sb = new StringBuilder();
+                foreach (var t in hash)
+                {
+                    sb.Append(t.ToString("X2"));
+                }
+
+                logEntry.Hash = sb.ToString();
+
+                Program.Logger.Debug($"Old version (Unix) compatability enabled. Check hash {logEntry.Hash} in database.");
+                using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
+                {
+                    if (logService.IsFileAlreadyReplayed(logEntry.Hash))
+                    {
+                        var throwEx = new XmlDbUpdateLoggingException("Current xml document already applied and exist at XmlDbUpdate database.");
+                        throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
+                        throw throwEx;
+                    }
+                }
+
+
+
+                inputBytes = Encoding.UTF8.GetBytes(xmlString.Replace("\n", "\r\n"));
+                hash = md5.ComputeHash(inputBytes);
+                sb = new StringBuilder();
+                foreach (var t in hash)
+                {
+                    sb.Append(t.ToString("X2"));
+                }
+
+                logEntry.Hash = sb.ToString();
+
+                Program.Logger.Debug($"Old version (Windows) compatability enabled. Check hash {logEntry.Hash} in database.");
                 using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
                 {
                     if (logService.IsFileAlreadyReplayed(logEntry.Hash))
