@@ -319,6 +319,9 @@
     <EmbeddedResource Include="..\packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll">
       <Link>References\AutoMapper.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
+      <Link>References\Microsoft.Web.Infrastructure.dll</Link>
+    </EmbeddedResource>
     <Content Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup />
