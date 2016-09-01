@@ -11,8 +11,7 @@ namespace EntityFramework6.Test.Tests
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_Published_Article_isLoaded([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_Published_Article_isLoaded([Values(ContentAccess.Live)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Published_Article_isLoaded([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -26,8 +25,7 @@ namespace EntityFramework6.Test.Tests
         private static string TITLE_FOR_SPLITTED_PPUBLISHED_ARTICLES = "PublishArticle";
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_Splitted_Article_isLoaded_Published_Version([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_Splitted_Article_isLoaded_Published_Version([Values(ContentAccess.Live)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Splitted_Article_isLoaded_Published_Version([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -38,20 +36,19 @@ namespace EntityFramework6.Test.Tests
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_nonPublished_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_nonPublished_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_nonPublished_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
-                var nonpublishedItems = context.PublishedNotPublishedItems.Where(x => x.StatusTypeId == GetNonPublishedStatus(mapping)).ToArray();
+                var status = ValuesHelper.GetNonPublishedStatus(mapping);
+                var nonpublishedItems = context.PublishedNotPublishedItems.Where(x => x.StatusTypeId == status).ToArray();
                 Assert.That(nonpublishedItems, Is.Null.Or.Empty);
             }
         }
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_Archive_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_Archive_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Archive_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -62,25 +59,12 @@ namespace EntityFramework6.Test.Tests
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_Invisible_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_Invisible_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Invisible_Article_notLoaded([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
                 var inVisibleItems = context.PublishedNotPublishedItems.Where(x => !x.Visible).ToArray();
                 Assert.That(inVisibleItems, Is.Null.Or.Empty);
-            }
-        }
-
-        private int GetNonPublishedStatus(Mapping mapping)
-        {
-            if (new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping))
-            {
-                return 148;
-            }
-            else
-            {
-                return 144;
             }
         }
     }

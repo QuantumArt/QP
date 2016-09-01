@@ -10,7 +10,6 @@ namespace EntityFramework6.Test.Tests.ReadContentData
     {
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_Published_nonSplitted_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         public void Check_That_Published_nonSplitted_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
@@ -22,12 +21,11 @@ namespace EntityFramework6.Test.Tests.ReadContentData
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_nonPublished_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         public void Check_That_nonPublished_Article_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
-                var status = GetNonPublishedStatus(mapping);
+                var status = ValuesHelper.GetNonPublishedStatus(mapping);
                 var items = context.PublishedNotPublishedItems.Where(x => x.StatusTypeId == status).ToArray();
                 Assert.That(items, Is.Not.Null.And.Not.Empty);
             }
@@ -65,18 +63,6 @@ namespace EntityFramework6.Test.Tests.ReadContentData
             {
                 var inVisibleItems = context.PublishedNotPublishedItems.Where(x => !x.Visible).ToArray();
                 Assert.That(inVisibleItems, Is.Null.Or.Empty);
-            }
-        }
-
-        private int GetNonPublishedStatus(Mapping mapping)
-        {
-            if (new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping))
-            {
-                return 148;
-            }
-            else
-            {
-                return 144;
             }
         }
     }

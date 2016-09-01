@@ -1,27 +1,50 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<schema connectionStringName="qp_database" class="EF6Model" namespace="QA.EF" useLongUrls="true" replaceUrls="true" dbIndependent="true" isPartial="false" sendNotifications="false" siteName="dynamic_site" siteId="53" forStage="true" connectionString="Initial Catalog=qp_ef6_test;Data Source=MSCSQL01;Workstation ID=MSCDEV02;User ID=publishing;Password=QuantumartHost.SQL" connectionStringObject="System.Configuration.ConfigurationManager.ConnectionStrings">
-  <content id="619" name="DynamicAfiellFieldsItem" mapped_name="AfiellFieldsItem" plural_mapped_name="AfiellFieldsItems" use_default_filtration="true" virtual="0" user_query="0">
-    <attribute name="DynamicStringField" mapped_name="String" id="38018" type="String" is_localization="false" size="255" />
-    <attribute name="DynamicIntegerField" mapped_name="Integer" id="38019" type="Numeric" is_localization="false" size="0" is_long="false" />
-    <attribute name="DynamicDecimalField" mapped_name="Decimal" id="38020" type="Numeric" is_localization="false" size="2" is_long="true" />
-    <attribute name="DynamicBooleanFiled" mapped_name="Boolean" id="38021" type="Boolean" is_localization="false" />
-    <attribute name="DynamicDateField" mapped_name="Date" id="38022" type="Date" is_localization="false" />
-    <attribute name="DynamicTimeField" mapped_name="Time" id="38023" type="Time" is_localization="false" />
-    <attribute name="DynamicDateTimeField" mapped_name="DateTime" id="38024" type="DateTime" is_localization="false" />
-    <attribute name="DynamicFileField" mapped_name="File" id="38025" type="File" is_localization="false" />
-    <attribute name="DImageField" mapped_name="Image" id="38026" type="Image" is_localization="false" />
-    <attribute name="DynamicTextBoxField" mapped_name="TextBox" id="38027" type="Textbox" is_localization="false" />
-    <attribute name="DynamicVisualEditField" mapped_name="VisualEdit" id="38028" type="VisualEdit" is_localization="false" />
-    <attribute name="DDynamicImageField" mapped_name="DynamicImage" id="38029" type="Dynamic Image" is_localization="false" />
-    <attribute name="DynamicEnumField" mapped_name="Enum" id="38030" type="String" is_localization="false" size="255" />
+<schema connectionStringName="qp_database" class="QPDataContext" namespace="QA.EF" useLongUrls="false" replaceUrls="false" dbIndependent="true" isPartial="false" sendNotifications="false" siteName="dynamic_site" siteId="76" forStage="true" connectionString="Initial Catalog=qp_ef6_test;Data Source=MSCSQL01;Workstation ID=MSCDEV02;User ID=publishing;Password=QuantumartHost.SQL" connectionStringObject="System.Configuration.ConfigurationManager.ConnectionStrings">
+  <content id="757" name="AfiellFieldsItem" mapped_name="AfiellFieldsItem" plural_mapped_name="AfiellFieldsItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringField" mapped_name="String" id="38525" type="String" is_localization="false" size="255" />
+    <attribute name="IntegerField" mapped_name="Integer" id="38524" type="Numeric" is_localization="false" size="0" is_long="false" />
+    <attribute name="DecimalField" mapped_name="Decimal" id="38519" type="Numeric" is_localization="false" size="2" is_long="true" />
+    <attribute name="BooleanFiled" mapped_name="Boolean" id="38516" type="Boolean" is_localization="false" />
+    <attribute name="DateField" mapped_name="Date" id="38517" type="Date" is_localization="false" />
+    <attribute name="TimeField" mapped_name="Time" id="38527" type="Time" is_localization="false" />
+    <attribute name="DateTimeField" mapped_name="DateTime" id="38518" type="DateTime" is_localization="false" />
+    <attribute name="FileField" mapped_name="File" id="38522" type="File" is_localization="false" />
+    <attribute name="ImageField" mapped_name="Image" id="38523" type="Image" is_localization="false" />
+    <attribute name="TextBoxField" mapped_name="TextBox" id="38526" type="Textbox" is_localization="false" />
+    <attribute name="VisualEditField" mapped_name="VisualEdit" id="38528" type="VisualEdit" is_localization="false" />
+    <attribute name="DynamicImageField" mapped_name="DynamicImage" id="38520" type="Dynamic Image" is_localization="false" />
+    <attribute name="EnumField" mapped_name="Enum" id="38521" type="String" is_localization="false" size="255" />
   </content>
-  <content id="692" name="DynamicPublishedNotPublishedItem" mapped_name="PublishedNotPublishedItem" plural_mapped_name="PublishedNotPublishedItems" use_default_filtration="true" virtual="0" user_query="0">
-    <attribute name="Title" mapped_name="Title" id="38253" type="String" is_localization="false" size="255" />
-    <attribute name="Alias" mapped_name="Alias" id="38254" type="String" is_localization="false" size="255" />
+  <content id="758" name="Schema" mapped_name="Schema" plural_mapped_name="Schemas" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38529" type="String" is_localization="false" size="255" />
   </content>
-  <content id="693" name="DynamicFileFieldsItem" mapped_name="FileFieldsItem" plural_mapped_name="FileFieldsItems" use_default_filtration="true" virtual="0" user_query="0">
-    <attribute name="FileItem" mapped_name="FileItem" id="38256" type="File" is_localization="false" />
+  <content id="759" name="StringItem" mapped_name="StringItem" plural_mapped_name="StringItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringValueField" mapped_name="StringValue" id="38530" type="String" is_localization="false" size="255" />
   </content>
+  <content id="760" name="StringItemForUpdate" mapped_name="StringItemForUpdate" plural_mapped_name="StringItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringValueField" mapped_name="StringValue" id="38531" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="761" name="StringItemForInsert" mapped_name="StringItemForUnsert" plural_mapped_name="StringItemsForInsert" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringValueField" mapped_name="StringValue" id="38532" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="764" name="PublishedNotPublishedItem" mapped_name="PublishedNotPublishedItem" plural_mapped_name="PublishedNotPublishedItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38536" type="String" is_localization="false" size="255" />
+    <attribute name="Alias" mapped_name="Alias" id="38535" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="765" name="ReplacingPlaceholdersItem" mapped_name="ReplacingPlaceholdersItem" plural_mapped_name="ReplacingPlaceholdersItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38537" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="767" name="SymmetricRelationArticles" mapped_name="SymmetricRelationArticle" plural_mapped_name="SymmetricRelationArticles" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="SymmetricRelation" mapped_name="SymmetricRelation" id="38542" type="M2M" is_localization="false" related_content_id="768" link_id="104" use_separate_reverse_views="false" />
+  </content>
+  <content id="768" name="ToSymmetricRelationAtricles" mapped_name="ToSymmetricRelationAtricle" plural_mapped_name="ToSymmetricRelationAtricles" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="ToSymmetricRelation" mapped_name="ToSymmetricRelation" id="38545" type="M2M" is_localization="false" related_content_id="767" link_id="105" use_separate_reverse_views="false" />
+  </content>
+  <content id="771" name="FileFieldsItem" mapped_name="FileFieldsItem" plural_mapped_name="FileFieldsItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="FileItem" mapped_name="FileItem" id="38551" type="File" is_localization="false" />
+  </content>
+  <link id="104" self="0" content_id="767" linked_content_id="768" mapped_name="SymmetricRelationArticlesToSymmetricRelationAtriclesArticle" plural_mapped_name="SymmetricRelationArticlesToSymmetricRelationAtriclesArticles" />
+  <link id="105" self="0" content_id="768" linked_content_id="767" mapped_name="ToSymmetricRelationAtriclesSymmetricRelationArticlesArticle" plural_mapped_name="ToSymmetricRelationAtriclesSymmetricRelationArticlesArticles" />
   <status_type id="141" name="Created" site_id="52" />
   <status_type id="142" name="Approved" site_id="52" />
   <status_type id="143" name="Published" site_id="52" />
@@ -38,4 +61,8 @@
   <status_type id="174" name="Approved" site_id="60" />
   <status_type id="175" name="Published" site_id="60" />
   <status_type id="176" name="None" site_id="60" />
+  <status_type id="237" name="Created" site_id="76" />
+  <status_type id="238" name="Approved" site_id="76" />
+  <status_type id="239" name="Published" site_id="76" />
+  <status_type id="240" name="None" site_id="76" />
 </schema>

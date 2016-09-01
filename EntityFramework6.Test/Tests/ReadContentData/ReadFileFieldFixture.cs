@@ -11,8 +11,7 @@ namespace EntityFramework6.Test.Tests.ReadContentData
     {
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        public void Check_That_Field_FileFieldUrl_isGenerated([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
-        //public void Check_That_Field_FileFieldUrl_isGenerated([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Field_FileFieldUrl_isGenerated([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -23,8 +22,7 @@ namespace EntityFramework6.Test.Tests.ReadContentData
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_Field_FileFieldUploadPath_isGenerated([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_Field_FileFieldUploadPath_isGenerated([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_Field_FileFieldUploadPath_isGenerated([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -35,8 +33,7 @@ namespace EntityFramework6.Test.Tests.ReadContentData
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_FileFieldUrl_isCorrect_Fill([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_FileFieldUrl_isCorrect_Fill([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_FileFieldUrl_isCorrect_Fill([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -50,22 +47,19 @@ namespace EntityFramework6.Test.Tests.ReadContentData
         private static string UPLOAD_PATH = @"C:\Inetpub\stageroot\tele2\upload\contents\";
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_FileFieldUploadPath_isCorrect_Fill([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_FileFieldUploadPath_isCorrect_Fill([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_FileFieldUploadPath_isCorrect_Fill([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
                 var items = context.FileFieldsItems.FirstOrDefault();
-                var expectedUploadPath = UPLOAD_PATH + GetContentId(mapping);
+                var expectedUploadPath = UPLOAD_PATH + ValuesHelper.GetFileContentId(mapping);
                 Assert.That(items.FileItemUploadPath, Is.EqualTo(expectedUploadPath));
             }
         }
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_FileFieldUrl_Changed([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
-
-        public void Check_That_FileFieldUrl_Changed([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping)] Mapping mapping)
+        public void Check_That_FileFieldUrl_Changed([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
@@ -89,23 +83,11 @@ namespace EntityFramework6.Test.Tests.ReadContentData
         {
             if (string.IsNullOrEmpty(pref))
             {
-                return String.Format("{0}{1}/{2}", UploadUrlRel, GetContentId(mapping), fileName);
+                return String.Format("{0}{1}/{2}", UploadUrlRel, ValuesHelper.GetFileContentId(mapping), fileName);
             }
             else
             {
-                return String.Format("{0}{1}/{2}", UploadUrlAbs, GetContentId(mapping), fileName);
-            }
-        }
-
-        private string GetContentId(Mapping mapping)
-        {
-            if (new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping))
-            {
-                return "693";
-            }
-            else
-            {
-                return "628";
+                return String.Format("{0}{1}/{2}", UploadUrlAbs, ValuesHelper.GetFileContentId(mapping), fileName);
             }
         }
     }

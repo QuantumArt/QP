@@ -12,25 +12,23 @@ namespace EntityFramework6.Test.Tests.ReadContentData
     {
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_Symmetric_Relation_Field_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_Symmetric_Relation_Field_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.FileDefaultMapping, Mapping.StaticMapping)] Mapping mapping)
+        public void Check_That_Symmetric_Relation_Field_isLoaded([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
-                var items = context.SymmetricRelationArticles.Include(x => x.SymmetricRelation).FirstOrDefault();
-                Assert.That(items.SymmetricRelation.Count, Is.Not.EqualTo(0));
+               var items = context.SymmetricRelationArticles.Include(x => x.SymmetricRelation).FirstOrDefault();
+                Assert.That(items.SymmetricRelation.Count, Is.Not.EqualTo(0));                
             }
         }
 
         [Test, Combinatorial]
         [Category("ReadContentData")]
-        //public void Check_That_BackSymmetric_Relation_Field_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [MappingValues] Mapping mapping)
-        public void Check_That_BackSymmetric_Relation_Field_isLoaded([Values(ContentAccess.Stage)] ContentAccess access, [Values(Mapping.StaticMapping)] Mapping mapping)
+        public void Check_That_BackSymmetric_Relation_Field_isLoaded([ContentAccessValues] ContentAccess access, [MappingValues] Mapping mapping)
         {
             using (var context = GetDataContext(access, mapping))
             {
                 var items = context.SymmetricRelationArticles.Include(x => x.SymmetricRelation.Select(y => y.ToSymmetricRelation)).FirstOrDefault();
-                if (items.SymmetricRelation.Count > 0)
+                if (items.SymmetricRelation.Count == 0)
                 {
                     Assert.Fail("SymmerticRelation field not filled");
                 }
