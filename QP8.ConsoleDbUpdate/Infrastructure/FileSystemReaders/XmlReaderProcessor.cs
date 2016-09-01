@@ -8,24 +8,19 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
 {
     internal static class XmlReaderProcessor
     {
-        internal static string Process(IList<string> filePathes)
-        {
-            return Process(filePathes, null);
-        }
-
         internal static string Process(IList<string> filePathes, string configPath, XmlSettingsModel settingsTemp = null)
         {
             Program.Logger.Debug($"Begin parsing documents: {filePathes.ToJsonLog()} with next config: {configPath}");
@@ -48,9 +43,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             }
 
             Program.Logger.Debug($"Documents will be processed in next order: {orderedFilePathes.ToJsonLog()}");
+            var filteredOrderedFilePathes = new List<string>();
             //TODO: DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! And remove unusing references then.
             #region DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!!
-            if (settingsTemp != null)
+            if (settingsTemp == null)
+            {
+                filteredOrderedFilePathes = orderedFilePathes;
+            }
+            else
             {
                 foreach (var ofp in orderedFilePathes)
                 {
@@ -82,7 +82,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                         identityTypes.Add(EntityTypeCode.ContentLink);
                     }
 
-                    if (!(settingsTemp).DisableContentIdentity)
+                    if (!settingsTemp.DisableContentIdentity)
                     {
                         identityTypes.Add(EntityTypeCode.Content);
                         identityTypes.Add(EntityTypeCode.ContentGroup);
@@ -93,9 +93,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {
-                            var throwEx = new XmlDbUpdateLoggingException("Current xml document already applied and exist at XmlDbUpdate database.");
-                            throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
-                            throw throwEx;
+                            Program.Logger.Debug($"Current xml document {ofp} already applied and exist at XmlDbUpdate database.");
+                            continue;
                         }
                     }
 
@@ -116,9 +115,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {
-                            var throwEx = new XmlDbUpdateLoggingException("Current xml document already applied and exist at XmlDbUpdate database.");
-                            throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
-                            throw throwEx;
+                            Program.Logger.Debug($"Current xml document {ofp} already applied and exist at XmlDbUpdate database.");
+                            continue;
                         }
                     }
 
@@ -139,15 +137,20 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {
-                            var throwEx = new XmlDbUpdateLoggingException("Current xml document already applied and exist at XmlDbUpdate database.");
-                            throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
-                            throw throwEx;
+                            Program.Logger.Debug($"Current xml document {ofp} already applied and exist at XmlDbUpdate database.");
+                            continue;
                         }
                     }
+
+
+
+                    filteredOrderedFilePathes.Add(ofp);
                 }
             }
             #endregion DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!!
-            return CombineMultipleDocumentsWithSameRoot(orderedFilePathes.Select(XDocument.Load).ToList()).ToStringWithDeclaration(SaveOptions.DisableFormatting);
+
+            Program.Logger.Debug($"Documents will be processed in next order: {filteredOrderedFilePathes.ToJsonLog()}");
+            return CombineMultipleDocumentsWithSameRoot(filteredOrderedFilePathes.Select(XDocument.Load).ToList()).ToStringWithDeclaration(SaveOptions.DisableFormatting);
         }
 
         private static IEnumerable<string> GetOrderedDirectoryFilePathes(string absDirPath, string absOrRelativeConfigPath)
@@ -185,6 +188,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static XDocument CombineMultipleDocumentsWithSameRoot(IList<XDocument> xmlDocuments)
         {
+            Ensure.That<InvalidOperationException>(xmlDocuments.Any(), "There are no xml files for replay or all of them already used before.");
+
             if (xmlDocuments.Count == 1)
             {
                 return xmlDocuments.Single();
