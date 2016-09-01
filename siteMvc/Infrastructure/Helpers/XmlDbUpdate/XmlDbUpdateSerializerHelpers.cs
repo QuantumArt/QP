@@ -128,7 +128,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         private static IEnumerable<XElement> GetActionChildElements(NameValueCollection nvc)
         {
-            return nvc?.AllKeys.SelectMany(nvc.GetValues, (fieldNameAttributeValue, fieldElementValue) =>
+            return nvc?.AllKeys.SelectMany(k => nvc.GetValues(k) ?? Enumerable.Empty<string>(), (fieldNameAttributeValue, fieldElementValue) =>
             {
                 var fieldElement = new XElement(XmlDbUpdateXDocumentConstants.FieldElement, fieldElementValue);
                 fieldElement.SetAttributeValue(XmlDbUpdateXDocumentConstants.FieldNameAttribute, fieldNameAttributeValue);
