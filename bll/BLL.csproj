@@ -153,8 +153,8 @@
     <Compile Include="Interfaces\Logging\ILog.cs" />
     <Compile Include="Interfaces\Logging\ILogFactory.cs" />
     <Compile Include="Factories\Logging\LogProvider.cs" />
-    <Compile Include="Adapters\Logging\NullDebugLogger.cs" />
-    <Compile Include="Factories\Logging\NullLogFactory.cs" />
+    <Compile Include="Adapters\Logging\DiagnosticsDebugLogger.cs" />
+    <Compile Include="Factories\Logging\DiagnosticsDebugLogFactory.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />

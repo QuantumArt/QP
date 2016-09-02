@@ -68,46 +68,6 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         void DebugFormat(string format, params object[] args);
 
         /// <summary>
-        /// Logs a Error message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        void Error(object message);
-
-        /// <summary>
-        /// Logs a Error message and exception.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
-        void Error(object message, Exception exception);
-
-        /// <summary>
-        /// Logs a Error format message.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="args">The args.</param>
-        void ErrorFormat(string format, params object[] args);
-
-        /// <summary>
-        /// Logs a Fatal message.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        void Fatal(object message);
-
-        /// <summary>
-        /// Logs a Fatal message and exception.
-        /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
-        void Fatal(object message, Exception exception);
-
-        /// <summary>
-        /// Logs a Error format message.
-        /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="args">The args.</param>
-        void FatalFormat(string format, params object[] args);
-
-        /// <summary>
         /// Logs an Info message and exception.
         /// </summary>
         /// <param name="message">The message.</param>
@@ -146,6 +106,46 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         /// <param name="format">The format.</param>
         /// <param name="args">The args.</param>
         void WarnFormat(string format, params object[] args);
+
+        /// <summary>
+        /// Logs a Error message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        void Error(object message);
+
+        /// <summary>
+        /// Logs a Error message and exception.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="exception">The exception.</param>
+        void Error(object message, Exception exception);
+
+        /// <summary>
+        /// Logs a Error format message.
+        /// </summary>
+        /// <param name="format">The format.</param>
+        /// <param name="args">The args.</param>
+        void ErrorFormat(string format, params object[] args);
+
+        /// <summary>
+        /// Logs a Fatal message.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        void Fatal(object message);
+
+        /// <summary>
+        /// Logs a Fatal message and exception.
+        /// </summary>
+        /// <param name="message">The message.</param>
+        /// <param name="exception">The exception.</param>
+        void Fatal(object message, Exception exception);
+
+        /// <summary>
+        /// Logs a Error format message.
+        /// </summary>
+        /// <param name="format">The format.</param>
+        /// <param name="args">The args.</param>
+        void FatalFormat(string format, params object[] args);
 
         /// <summary>
         /// Flush log data

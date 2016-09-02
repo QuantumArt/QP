@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using Moq;
 using NUnit.Framework;
+using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
@@ -19,6 +20,7 @@ namespace Quantumart.Test
         [Test]
         public void ReplayXML_CreateContentGroup_WithSpecifiedIdentity()
         {
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
@@ -34,6 +36,7 @@ namespace Quantumart.Test
         [Test]
         public void ReplayXML_CreateContentGroup_WithGeneratedIdentity()
         {
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);

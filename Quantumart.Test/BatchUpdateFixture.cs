@@ -5,6 +5,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
@@ -44,20 +45,17 @@ namespace Quantumart.Test
         public const string BaseFieldEnum = "Field_Enum";
 
         public const string DictionaryContent = "Test_BatchUpdate_Dictionary";
-
         public const string DictionaryKey = "Key";
         public const string DictionaryValue = "Value";
         public const string DictionaryFieldMtMBackward = "Field_MtM_Backward";
         public const string DictionaryFieldMtOBackward = "Field_MtO_Backward";
 
         public const string Ex11Content = "Test_BatchUpdate_Ex1_1";
-
         public const string Ex11Parent = "Parent";
         public const string Ex11Field1 = "Field1";
         public const string Ex11Field2 = "Field2";
 
         public const string Ex12Content = "Test_BatchUpdate_Ex1_2";
-
         public const string Ex12Parent = "Parent";
         public const string Ex12Field1 = "Field1";
 
@@ -76,49 +74,73 @@ namespace Quantumart.Test
         public static int BaseContentId { get; private set; }
 
         public static int BaseFieldEx1Id { get; private set; }
+
         public static int BaseFieldEx2Id { get; private set; }
+
         public static int BaseFieldStringId { get; private set; }
+
         public static int BaseFieldMtMId { get; private set; }
+
         public static int BaseFieldOtMId { get; private set; }
+
         public static int BaseFieldNumericIntegerId { get; private set; }
+
         public static int BaseFieldNumericDecimalId { get; private set; }
+
         public static int BaseFieldDateId { get; private set; }
+
         public static int BaseFieldTimeId { get; private set; }
+
         public static int BaseFieldDateTimeId { get; private set; }
+
         public static int BaseFieldFileId { get; private set; }
+
         public static int BaseFieldImageId { get; private set; }
+
         public static int BaseFieldTextBoxId { get; private set; }
+
         public static int BaseFieldVisualEditId { get; private set; }
+
         public static int BaseFieldDynamicImageId { get; private set; }
+
         public static int BaseFieldEnumId { get; private set; }
 
         public static int DictionaryContentId { get; private set; }
 
         public static int DictionaryKeyId { get; private set; }
+
         public static int DictionaryValueId { get; private set; }
+
         public static int DictionaryFieldMtMBackwardId { get; private set; }
+
         public static int DictionaryFieldMtOBackwardId { get; private set; }
 
         public static int Ex11ContentId { get; private set; }
 
         public static int Ex11ParentId { get; private set; }
+
         public static int Ex11Field1Id { get; private set; }
+
         public static int Ex11Field2Id { get; private set; }
 
         public static int Ex12ContentId { get; private set; }
+
         public static int Ex12ParentId { get; private set; }
+
         public static int Ex12Field1Id { get; private set; }
 
         public static int Ex21ContentId { get; private set; }
+
         public static int Ex21ParentId { get; private set; }
 
         public static int Ex22ContentId { get; private set; }
-        public static int Ex22ParentId { get; private set; }
 
+        public static int Ex22ParentId { get; private set; }
 
         [OneTimeSetUp]
         public static void Init()
         {
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
@@ -177,7 +199,6 @@ namespace Quantumart.Test
         {
             var contentService = new ContentService(Global.ConnectionString, 1);
             var fieldService = new FieldService(Global.ConnectionString, 1);
-
             var dictionaryIds = Global.GetIds(Cnn, DictionaryContentId);
             var baseIds = Global.GetIds(Cnn, BaseContentId);
 
@@ -205,7 +226,6 @@ namespace Quantumart.Test
             var random = Guid.NewGuid().ToString();
             var key = "key_" + random;
             var value = "value_" + random;
-
             var data = new[]
             {
                 new ArticleData
@@ -297,7 +317,6 @@ namespace Quantumart.Test
             var random = Guid.NewGuid().ToString();
             var key = "key_" + random;
             var value = "value_" + random;
-
             var data = new[]
             {
                 new ArticleData
@@ -367,9 +386,7 @@ namespace Quantumart.Test
         public void BatchUpdate_BaseContent_UpdateExstensionField()
         {
             var articleId = GetArticleId(BaseContentId);
-
             ClearClassifierField(articleId);
-
 
             var data = new[]
             {
@@ -506,7 +523,6 @@ namespace Quantumart.Test
         private static void UpdateField<T>(int contentId, int fieldId, string fieldName, T value, string stringValue)
         {
             var articleId = GetArticleId(contentId);
-
             var data = new[]
             {
                 new ArticleData

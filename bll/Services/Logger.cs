@@ -5,6 +5,6 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class Logger
     {
-        public static ILog Log { get; } = LogProvider.GetLogger();
+        public static ILog Log { get; set; } = LogProvider.GetLogger();
     }
 }
