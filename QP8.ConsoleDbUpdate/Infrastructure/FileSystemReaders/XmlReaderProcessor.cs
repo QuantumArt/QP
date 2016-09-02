@@ -143,8 +143,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                         }
                     }
 
-
-
                     filteredOrderedFilePathes.Add(ofp);
                 }
             }

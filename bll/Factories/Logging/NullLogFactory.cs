@@ -1,6 +1,8 @@
 ﻿using System;
+using Quantumart.QP8.BLL.Adapters.Logging;
+using Quantumart.QP8.BLL.Interfaces.Logging;
 
-namespace Quantumart.QP8.BLL.Interfaces.Logging
+namespace Quantumart.QP8.BLL.Factories.Logging
 {
     /// <summary>
     /// Creates a Debug Logger, that logs all messages to: System.Diagnostics.Debug

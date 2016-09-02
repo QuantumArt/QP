@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using Quantumart.QP8.BLL.Interfaces.Logging;
 
-namespace Quantumart.QP8.BLL.Interfaces.Logging
+namespace Quantumart.QP8.BLL.Adapters.Logging
 {
     [SuppressMessage("ReSharper", "UnusedMember.Local")]
     [SuppressMessage("ReSharper", "UnusedParameter.Local")]

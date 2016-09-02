@@ -5,6 +5,7 @@ namespace Quantumart.QP8.Constants
     /// <summary>
     /// Коды типов действий
     /// </summary>
+    // TODO: Fix for record xml logs
     public static class ActionCode
     {
         public const string None = "";

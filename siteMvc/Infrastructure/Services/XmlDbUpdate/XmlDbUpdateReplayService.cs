@@ -76,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
                 {
-                    var throwEx = new XmlDbUpdateLoggingException("Current xml document(s) already applied and exist at XmlDbUpdate database.");
+                    var throwEx = new XmlDbUpdateLoggingException("XmlDbUpdate conflict: current xml document(s) already applied and exist at database.");
                     throwEx.Data.Add("LogEntry", dbLogEntry.ToJsonLog());
                     throw throwEx;
                 }
@@ -92,7 +92,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             foreach (var xmlAction in actionElements)
             {
                 XmlDbUpdateRecordedAction action;
-                var xmlActionString = xmlAction.ToString();
+                var xmlActionString = xmlAction.ToString(SaveOptions.DisableFormatting);
+                BLL.Services.Logger.Log.Info($"Begin processing action: {xmlActionString}");
 
                 try
                 {
@@ -118,13 +119,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 if (_dbLogService.IsActionAlreadyReplayed(logEntry.Hash))
                 {
+                    BLL.Services.Logger.Log.Warn($"XmlDbUpdateAction conflict: Current action already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
                     continue;
-                    //var throwEx = new XmlDbUpdateLoggingException("Current action already applied and exist at XmlDbUpdateAction database.");
-                    //throwEx.Data.Add("LogEntry", logEntry.ToJsonLog());
-                    //throw throwEx;
                 }
 
+                BLL.Services.Logger.Log.Warn("Start replaying action.");
                 var replayedAction = ReplayAction(action, backendUrl);
+                BLL.Services.Logger.Log.Warn("Finish replaying action.");
+
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToString();
                 _dbLogService.InsertActionLogEntry(logEntry);
             }

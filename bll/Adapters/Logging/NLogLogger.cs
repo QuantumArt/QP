@@ -3,7 +3,7 @@ using NLog;
 using Quantumart.QP8.BLL.Interfaces.Logging;
 using LogManager = NLog.LogManager;
 
-namespace Quantumart.QP8.BLL.Adapters
+namespace Quantumart.QP8.BLL.Adapters.Logging
 {
     /// <summary>
     /// Wrapper over the NLog 2.0 beta and above logger
