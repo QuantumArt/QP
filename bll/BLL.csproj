@@ -128,7 +128,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\NLogLogger.cs" />
+    <Compile Include="Adapters\Logging\NLogLogger.cs" />
     <Compile Include="Adapters\NonQpEnvironmentContext.cs" />
     <Compile Include="ArticleContextQueryParam.cs" />
     <Compile Include="ArticleContextSearchBlockItem.cs" />
@@ -139,7 +139,7 @@
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
-    <Compile Include="Factories\NLogFactory.cs" />
+    <Compile Include="Factories\Logging\NLogFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
@@ -152,9 +152,9 @@
     <Compile Include="Helpers\SortingItemHelper.cs" />
     <Compile Include="Interfaces\Logging\ILog.cs" />
     <Compile Include="Interfaces\Logging\ILogFactory.cs" />
-    <Compile Include="Interfaces\Logging\LogManager.cs" />
-    <Compile Include="Interfaces\Logging\NullDebugLogger.cs" />
-    <Compile Include="Interfaces\Logging\NullLogFactory.cs" />
+    <Compile Include="Factories\Logging\LogProvider.cs" />
+    <Compile Include="Adapters\Logging\DiagnosticsDebugLogger.cs" />
+    <Compile Include="Factories\Logging\DiagnosticsDebugLogFactory.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />
@@ -445,6 +445,7 @@
     <Compile Include="Services\ExternalNotificationService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
+    <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesCommand.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesService.cs" />
     <Compile Include="Services\MultistepActions\Archive\RestoreArticlesCommand.cs" />

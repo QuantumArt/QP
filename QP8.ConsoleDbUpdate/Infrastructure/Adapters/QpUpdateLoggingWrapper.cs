@@ -1,5 +1,5 @@
 ﻿using System;
-using Quantumart.QP8.BLL.Factories;
+using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Interfaces.Logging;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Extensions;
@@ -14,8 +14,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
 
         public QpUpdateLoggingWrapper(ConsoleLogLevel consoleLogLevel = ConsoleLogLevel.Fatal)
         {
-            LogManager.LogFactory = new NLogFactory();
-            _logger = LogManager.GetLogger("QP8Update");
+            LogProvider.LogFactory = new NLogFactory();
+            _logger = LogProvider.GetLogger("QP8Update");
             _consoleLogLevel = consoleLogLevel;
         }
 

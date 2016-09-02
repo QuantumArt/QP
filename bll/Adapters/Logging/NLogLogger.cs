@@ -3,7 +3,7 @@ using NLog;
 using Quantumart.QP8.BLL.Interfaces.Logging;
 using LogManager = NLog.LogManager;
 
-namespace Quantumart.QP8.BLL.Adapters
+namespace Quantumart.QP8.BLL.Adapters.Logging
 {
     /// <summary>
     /// Wrapper over the NLog 2.0 beta and above logger
@@ -42,16 +42,11 @@ namespace Quantumart.QP8.BLL.Adapters
 
         public bool IsFatalEnabled => _log.IsFatalEnabled;
 
-        private static string AsString(object message)
-        {
-            return message?.ToString();
-        }
-
         public void Debug(object message)
         {
             if (IsDebugEnabled)
             {
-                Log(LogLevel.Debug, AsString(message));
+                Log(LogLevel.Debug, message?.ToString());
             }
         }
 
@@ -59,7 +54,7 @@ namespace Quantumart.QP8.BLL.Adapters
         {
             if (IsDebugEnabled)
             {
-                Log(LogLevel.Debug, AsString(message), exception);
+                Log(LogLevel.Debug, message?.ToString(), exception);
             }
         }
 
@@ -71,59 +66,11 @@ namespace Quantumart.QP8.BLL.Adapters
             }
         }
 
-        public void Error(object message)
-        {
-            if (IsErrorEnabled)
-            {
-                Log(LogLevel.Error, AsString(message));
-            }
-        }
-
-        public void Error(object message, Exception exception)
-        {
-            if (IsErrorEnabled)
-            {
-                Log(LogLevel.Error, AsString(message), exception);
-            }
-        }
-
-        public void ErrorFormat(string format, params object[] args)
-        {
-            if (IsErrorEnabled)
-            {
-                Log(LogLevel.Error, format, args);
-            }
-        }
-
-        public void Fatal(object message)
-        {
-            if (IsFatalEnabled)
-            {
-                Log(LogLevel.Fatal, AsString(message));
-            }
-        }
-
-        public void Fatal(object message, Exception exception)
-        {
-            if (IsFatalEnabled)
-            {
-                Log(LogLevel.Fatal, AsString(message), exception);
-            }
-        }
-
-        public void FatalFormat(string format, params object[] args)
-        {
-            if (IsFatalEnabled)
-            {
-                Log(LogLevel.Fatal, format, args);
-            }
-        }
-
         public void Info(object message)
         {
             if (IsInfoEnabled)
             {
-                Log(LogLevel.Info, AsString(message));
+                Log(LogLevel.Info, message?.ToString());
             }
         }
 
@@ -131,7 +78,7 @@ namespace Quantumart.QP8.BLL.Adapters
         {
             if (IsInfoEnabled)
             {
-                Log(LogLevel.Info, AsString(message), exception);
+                Log(LogLevel.Info, message?.ToString(), exception);
             }
         }
 
@@ -147,7 +94,7 @@ namespace Quantumart.QP8.BLL.Adapters
         {
             if (IsWarnEnabled)
             {
-                Log(LogLevel.Warn, AsString(message));
+                Log(LogLevel.Warn, message?.ToString());
             }
         }
 
@@ -155,7 +102,7 @@ namespace Quantumart.QP8.BLL.Adapters
         {
             if (IsWarnEnabled)
             {
-                Log(LogLevel.Warn, AsString(message), exception);
+                Log(LogLevel.Warn, message?.ToString(), exception);
             }
         }
 
@@ -164,6 +111,54 @@ namespace Quantumart.QP8.BLL.Adapters
             if (IsWarnEnabled)
             {
                 Log(LogLevel.Warn, format, args);
+            }
+        }
+
+        public void Error(object message)
+        {
+            if (IsErrorEnabled)
+            {
+                Log(LogLevel.Error, message?.ToString());
+            }
+        }
+
+        public void Error(object message, Exception exception)
+        {
+            if (IsErrorEnabled)
+            {
+                Log(LogLevel.Error, message?.ToString(), exception);
+            }
+        }
+
+        public void ErrorFormat(string format, params object[] args)
+        {
+            if (IsErrorEnabled)
+            {
+                Log(LogLevel.Error, format, args);
+            }
+        }
+
+        public void Fatal(object message)
+        {
+            if (IsFatalEnabled)
+            {
+                Log(LogLevel.Fatal, message?.ToString());
+            }
+        }
+
+        public void Fatal(object message, Exception exception)
+        {
+            if (IsFatalEnabled)
+            {
+                Log(LogLevel.Fatal, message?.ToString(), exception);
+            }
+        }
+
+        public void FatalFormat(string format, params object[] args)
+        {
+            if (IsFatalEnabled)
+            {
+                Log(LogLevel.Fatal, format, args);
             }
         }
 
