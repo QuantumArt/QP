@@ -8909,7 +8909,6 @@ namespace Quantumart.QP8.DAL
                         where c.site_id = @source_site_id and {2}
                     ) as rbc on ca.CONTENT_ID = rbc.source_content_id and rbc.destination_content_id in (select id from @content_ids)
                     
-                    drop table #disable_create_new_views
 
                     if exists(select * from sys.procedures where name = 'qp_content_new_views_recreate')
                     begin
@@ -8924,7 +8923,8 @@ namespace Quantumart.QP8.DAL
 
                         end
                     end
-                    
+
+                    drop table #disable_create_new_views
 
 
             end", GetColumnsForTable(sqlConnection, "content_attribute", excludeColumns)
