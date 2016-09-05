@@ -290,6 +290,10 @@
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
     </ProjectReference>
+    <ProjectReference Include="..\siteMvc\WebMvc.csproj">
+      <Project>{8be1bb60-1938-45e8-bafb-1d008d62059c}</Project>
+      <Name>WebMvc</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CsvHelper">
@@ -297,9 +301,6 @@
     </Reference>
     <Reference Include="Mono.Options">
       <HintPath>..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
-    </Reference>
-    <Reference Include="Quantumart.QP8.WebMvc">
-      <HintPath>..\siteMvc\Bin\Quantumart.QP8.WebMvc.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
