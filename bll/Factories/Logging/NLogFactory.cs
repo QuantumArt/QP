@@ -12,7 +12,7 @@ namespace Quantumart.QP8.BLL.Factories.Logging
     {
         public ILog GetLogger()
         {
-            return new NLogLogger(Assembly.GetEntryAssembly().GetName().Name);
+            return new NLogLogger((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Name);
         }
 
         public ILog GetLogger(Type type)
