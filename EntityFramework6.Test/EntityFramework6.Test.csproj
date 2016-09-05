@@ -111,6 +111,9 @@
     <Compile Include="DataContext\EF6ModelExtensions.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataContext\FileFieldsItem.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataContext\FileSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
@@ -141,10 +144,34 @@
     <Compile Include="DataContext\MappingResolver.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataContext\PublishedNotPublishedItem.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\ReplacingPlaceholdersItem.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\Schema.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataContext\StaticSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\StatusType.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\StringItem.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\StringItemForUnsert.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\StringItemForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\SymmetricRelationArticle.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\ToSymmetricRelationAtricle.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\User.cs">
@@ -153,10 +180,17 @@
     <Compile Include="DataContext\UserGroup.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="Infrastructure\ValuesHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\ContentAccessValuesAttribute.cs" />
+    <Compile Include="Tests\ReadContentData\ReadFileFieldFixture.cs" />
+    <Compile Include="Tests\ReadContentData\ReadInvisibleOrArchive.cs" />
+    <Compile Include="Tests\ReadContentData\ReadLiveArticlesFixture.cs" />
+    <Compile Include="Tests\ReadContentData\ReadStageArticleFixture.cs" />
     <Compile Include="Tests\ReadContentData\ReadStringFieldFixture.cs" />
     <Compile Include="Infrastructure\DataContextFixtureBase.cs" />
+    <Compile Include="Tests\ReadContentData\ReplacingPlaceholdersFixture.cs" />
+    <Compile Include="Tests\ReadContentData\SymmetricRelationFixture.cs" />
     <Compile Include="Tests\Shema\SchemaFixture.cs" />
     <Compile Include="Tests\UpdateContentData\InsertStringFieldFixture.cs" />
     <Compile Include="Tests\UpdateContentData\UpdateStringFieldFixture.cs" />

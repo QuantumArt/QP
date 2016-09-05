@@ -31,6 +31,15 @@ namespace EntityFramework6.Test.DataContext
         public virtual DbSet<UserGroup> UserGroups { get; set; }					
 
         public virtual DbSet<AfiellFieldsItem> AfiellFieldsItems { get; set; }
+        public virtual DbSet<Schema> Schemas { get; set; }
+        public virtual DbSet<StringItem> StringItems { get; set; }
+        public virtual DbSet<StringItemForUpdate> StringItemsForUpdate { get; set; }
+        public virtual DbSet<StringItemForUnsert> StringItemsForInsert { get; set; }
+        public virtual DbSet<PublishedNotPublishedItem> PublishedNotPublishedItems { get; set; }
+        public virtual DbSet<ReplacingPlaceholdersItem> ReplacingPlaceholdersItems { get; set; }
+        public virtual DbSet<FileFieldsItem> FileFieldsItems { get; set; }
+        public virtual DbSet<SymmetricRelationArticle> SymmetricRelationArticles { get; set; }
+        public virtual DbSet<ToSymmetricRelationAtricle> ToSymmetricRelationAtricles { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

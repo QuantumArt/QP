@@ -74,4 +74,358 @@ namespace EntityFramework6.Test.DataContext
         }
 		#endregion
 	}
+	public partial class Schema: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<Schema, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<Schema,  IQPFormService, string>>
+		{
+			{ "Title", new Func<Schema, IQPFormService, string>((self, ctx) => self.Title != null ? ctx.ReplacePlaceholders(self.Title) : null) },
+		};
+
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+			this.Title = context.ReplacePlaceholders(this.Title);
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("Schema", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
+	public partial class StringItem: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<StringItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<StringItem,  IQPFormService, string>>
+		{
+			{ "StringValue", new Func<StringItem, IQPFormService, string>((self, ctx) => self.StringValue != null ? ctx.ReplacePlaceholders(self.StringValue) : null) },
+		};
+
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+			this.StringValue = context.ReplacePlaceholders(this.StringValue);
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("StringItem", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
+	public partial class StringItemForUpdate: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<StringItemForUpdate, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<StringItemForUpdate,  IQPFormService, string>>
+		{
+			{ "StringValue", new Func<StringItemForUpdate, IQPFormService, string>((self, ctx) => self.StringValue != null ? ctx.ReplacePlaceholders(self.StringValue) : null) },
+		};
+
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+			this.StringValue = context.ReplacePlaceholders(this.StringValue);
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("StringItemForUpdate", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
+	public partial class StringItemForUnsert: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<StringItemForUnsert, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<StringItemForUnsert,  IQPFormService, string>>
+		{
+			{ "StringValue", new Func<StringItemForUnsert, IQPFormService, string>((self, ctx) => self.StringValue != null ? ctx.ReplacePlaceholders(self.StringValue) : null) },
+		};
+
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+			this.StringValue = context.ReplacePlaceholders(this.StringValue);
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("StringItemForUnsert", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
+	public partial class PublishedNotPublishedItem: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<PublishedNotPublishedItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<PublishedNotPublishedItem,  IQPFormService, string>>
+		{
+			{ "Title", new Func<PublishedNotPublishedItem, IQPFormService, string>((self, ctx) => self.Title != null ? ctx.ReplacePlaceholders(self.Title) : null) },
+			{ "Alias", new Func<PublishedNotPublishedItem, IQPFormService, string>((self, ctx) => self.Alias != null ? ctx.ReplacePlaceholders(self.Alias) : null) },
+		};
+
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+			this.Title = context.ReplacePlaceholders(this.Title);
+			this.Alias = context.ReplacePlaceholders(this.Alias);
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("PublishedNotPublishedItem", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
+	public partial class ReplacingPlaceholdersItem: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<ReplacingPlaceholdersItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<ReplacingPlaceholdersItem,  IQPFormService, string>>
+		{
+			{ "Title", new Func<ReplacingPlaceholdersItem, IQPFormService, string>((self, ctx) => self.Title != null ? ctx.ReplacePlaceholders(self.Title) : null) },
+		};
+
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+			this.Title = context.ReplacePlaceholders(this.Title);
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("ReplacingPlaceholdersItem", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
+	public partial class FileFieldsItem: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<FileFieldsItem, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<FileFieldsItem,  IQPFormService, string>>
+		{
+			{ "FileItem", new Func<FileFieldsItem, IQPFormService, string>((self, ctx) => self.FileItem != null ? self.FileItem : null) },
+		};
+
+		#endregion
+		#region Genarated properties
+		public string FileItemUrl { get; set; }
+		public string FileItemUploadPath { get; set; }
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+			this.FileItemUrl = context.GetUrl(this.FileItem, "FileFieldsItem", "FileItem");
+			this.FileItemUploadPath = context.GetUploadPath(this.FileItem, "FileFieldsItem", "FileItem");
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("FileFieldsItem", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
+	public partial class SymmetricRelationArticle: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<SymmetricRelationArticle, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<SymmetricRelationArticle,  IQPFormService, string>>
+		{
+		};
+
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("SymmetricRelationArticle", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
+	public partial class ToSymmetricRelationAtricle: IQPArticle
+	{
+		#region Static members
+		protected static readonly Dictionary<string, Func<ToSymmetricRelationAtricle, IQPFormService, string>> _valueExtractors = new Dictionary<string, Func<ToSymmetricRelationAtricle,  IQPFormService, string>>
+		{
+		};
+
+		#endregion
+		#region Methods
+		void IQPArticle.OnMaterialized(IQPLibraryService context)
+		{
+		}
+
+		// для Poco перенести из класса куда-нибудь, так как нарушается концепция доступа к БД
+		Hashtable IQPArticle.Pack(IQPFormService context, params string[] propertyNames)
+        {
+            Hashtable table;
+
+            if (propertyNames == null || propertyNames.Length == 0)
+            {
+				// todo: filter null values
+                table = new Hashtable(_valueExtractors.ToDictionary(x => context.GetFormNameByNetNames("ToSymmetricRelationAtricle", x.Key), y => y.Value(this, context)));
+            }
+            else
+            {
+                table = new Hashtable();
+                foreach (var prop in propertyNames.Join(_valueExtractors.Keys, x => x, x => x, (x, y) => x))
+                {
+					string value = _valueExtractors[prop](this, context);
+					table.Add(prop, value);
+                }
+            }
+
+            return table;
+        }
+		#endregion
+	}
 }

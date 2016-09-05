@@ -261,3 +261,4 @@ siteMvc/Content/build
 !siteMvc/ToCopy/bin/*.pdb
 !bll/Services/MultistepActions/Publish/
 !binaries/*.pdb
+/EntityFramework6.Test/DataContext/__DynamicMappingResult.xml
