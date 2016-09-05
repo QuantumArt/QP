@@ -28,10 +28,12 @@ namespace Quantumart.QP8.EntityFramework.Services
 	            c.NET_CONTENT_NAME,
                 a.ATTRIBUTE_NAME,
 	            a.NET_ATTRIBUTE_NAME,
-	            a.link_id
+	            a.link_id,
+                t.[TYPE_NAME]
             from
 	            CONTENT_ATTRIBUTE a
 	            join CONTENT c on a.CONTENT_ID = c.CONTENT_ID
+                join ATTRIBUTE_TYPE t on a.ATTRIBUTE_TYPE_ID = t.ATTRIBUTE_TYPE_ID
             where
 	            c.SITE_ID = @siteId";
         #endregion
@@ -50,11 +52,20 @@ namespace Quantumart.QP8.EntityFramework.Services
         {
             var connector = new DBConnector(_connection);
             int siteId = connector.GetSiteId(_siteName);
+            bool replaceUrls;
+
+            using (var cmd = new SqlCommand("SELECT TOP 1 REPLACE_URLS FROM SITE WHERE SITE_ID = @siteId"))
+            {
+                cmd.Parameters.AddWithValue("@siteId", siteId);
+                replaceUrls = (bool)connector.GetRealScalarData(cmd);
+            }
 
             var attributes = GetAttributes(connector, siteId);
             var contents = GetContents(connector, siteId, attributes);
 
             var model = new ModelReader();
+
+            model.Schema.ReplaceUrls = replaceUrls;
             model.Schema.SiteName = _siteName;
             model.Attributes.AddRange(attributes);
             model.Contents.AddRange(contents);
@@ -115,12 +126,40 @@ namespace Quantumart.QP8.EntityFramework.Services
                     ContentId = (int)row.Field<decimal>("CONTENT_ID"),
                     Name = row.Field<string>("ATTRIBUTE_NAME"),
                     MappedName = row.Field<string>("NET_ATTRIBUTE_NAME"),
-                    LinkId = (int)row.Field<decimal>("ATTRIBUTE_ID")
+                    LinkId = (int)(row.Field<decimal?>("LINK_ID")?? 0),
+                    Type = row.Field<string>("TYPE_NAME")
                 })
                 .ToArray();
 
+            foreach (var a in attributes)
+            {
+                a.Type = GetType(a);
+            }
+
             return attributes;
-        }        
+        }
+        
+        private string GetType(AttributeInfo attribute)
+        {
+            if (attribute.Type == "Relation")
+            {
+                if (attribute.LinkId == 0)
+                {
+                    return "O2M";
+                }
+                else
+                {
+                    return "M2M";
+                }
+            }
+            else if (attribute.Type == "Relation Many-to-One")
+            {
+                return "M2O";
+            }
+
+            return attribute.Type;
+        }
+                    
         #endregion
     }
 }

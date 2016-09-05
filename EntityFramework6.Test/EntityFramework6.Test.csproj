@@ -99,6 +99,12 @@
     <Compile Include="DataContext\DatabaseSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataContext\DateItemForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\DateTimeItemForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataContext\EF6Model.Contents.Extensions.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
@@ -114,7 +120,13 @@
     <Compile Include="DataContext\FileFieldsItem.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataContext\FileItemForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataContext\FileSchemaProvider.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\ImageItemForUpdate.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\IMappingConfigurator.cs">
@@ -135,6 +147,12 @@
     <Compile Include="DataContext\ISchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataContext\ItemForInsert.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\ItemForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataContext\MappingConfigurator.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
@@ -142,6 +160,18 @@
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\MappingResolver.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\MtMDictionaryForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\MtMItemForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\OtMDictionaryForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DataContext\OtMItemForUpdate.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="DataContext\PublishedNotPublishedItem.cs">
@@ -171,6 +201,9 @@
     <Compile Include="DataContext\SymmetricRelationArticle.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="DataContext\TimeItemForUpdate.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="DataContext\ToSymmetricRelationAtricle.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
@@ -192,8 +225,14 @@
     <Compile Include="Tests\ReadContentData\ReplacingPlaceholdersFixture.cs" />
     <Compile Include="Tests\ReadContentData\SymmetricRelationFixture.cs" />
     <Compile Include="Tests\Shema\SchemaFixture.cs" />
-    <Compile Include="Tests\UpdateContentData\InsertStringFieldFixture.cs" />
+    <Compile Include="Tests\UpdateContentData\DataContextUpdateFixtureBase.cs" />
+    <Compile Include="Tests\UpdateContentData\UpdateFileFieldFixture.cs" />
+    <Compile Include="Tests\UpdateContentData\UpdateOtMFieldFixture.cs" />
+    <Compile Include="Tests\UpdateContentData\UpdateMtMFieldFixture.cs" />
+    <Compile Include="Tests\UpdateContentData\UpdateArticleFixture.cs" />
+    <Compile Include="Tests\UpdateContentData\UpdateDateFieldFixture.cs" />
     <Compile Include="Tests\UpdateContentData\UpdateStringFieldFixture.cs" />
+    <Compile Include="Tests\UpdateContentData\UpdateFieldFixture.cs" />
     <Compile Include="Tests\ReadSystemData\ReadUserFixture.cs" />
     <Compile Include="Infrastructure\Mapping.cs" />
     <Compile Include="Infrastructure\MappingValuesAttribute.cs" />

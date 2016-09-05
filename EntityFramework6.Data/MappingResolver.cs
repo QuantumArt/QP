@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EntityFramework6.Test.DataContext
+namespace Quantumart.QP8.EntityFramework6.Data
 {
     public interface IMappingResolver
     {

@@ -5,12 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 namespace EntityFramework6.Test.DataContext
 {
-	public partial class ToSymmetricRelationAtricle: IQPArticle
+	public partial class DateTimeItemForUpdate: IQPArticle
 	{
-        public ToSymmetricRelationAtricle()
+        public DateTimeItemForUpdate()
         {
-		    ToSymmetricRelation = new HashSet<SymmetricRelationArticle>();
-		    BackwardForSymmetricRelation = new HashSet<SymmetricRelationArticle>();
         }
 
 		public virtual Int32 Id { get; set; }
@@ -22,14 +20,7 @@ namespace EntityFramework6.Test.DataContext
         public virtual Int32 LastModifiedBy { get; set; }
         public virtual StatusType StatusType { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>		
-		public  ICollection<SymmetricRelationArticle> ToSymmetricRelation { get; set; }
-		/// <summary>
-		/// Auto-generated backing property for 38259/SymmetricRelation
-		/// </summary>		
-		public  ICollection<SymmetricRelationArticle> BackwardForSymmetricRelation { get; set; }
+		public virtual DateTime? DateTimeValueField { get; set; }
 	}
 }
 	

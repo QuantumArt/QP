@@ -21,6 +21,9 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
         {
 			var schema = new ModelReader();
 
+			schema.Schema.SiteName = "<#=model.Schema.SiteName ?? ""#>";
+			schema.Schema.ReplaceUrls = <#=model.Schema.ReplaceUrls.ToString().ToLower()#>;
+
 			schema.Attributes = new List<AttributeInfo>
             {
 <#+
@@ -33,7 +36,8 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
                     ContentId = <#=attribute.ContentId#>,
                     Name = "<#=attribute.Name#>",
                     MappedName = "<#=attribute.MappedName#>",
-                    LinkId = <#=attribute.LinkId#>
+                    LinkId = <#=attribute.LinkId#>,
+					Type = "<#=attribute.Type#>"
                 },
 <#+
 			}

@@ -14,8 +14,8 @@ namespace EntityFramework6.Test.Tests.Shema
         {
             using (var context = GetDataContext(access, mapping))
             {
-                var contentId = context.GetInfo<AfiellFieldsItem>().Id;
-                var expectedContentId = GetContentId(mapping);
+                var contentId = context.GetInfo<Schema>().Id;
+                int expectedContentId = ValuesHelper.GetSchemaContentId(mapping);
 
                 Assert.That(contentId, Is.EqualTo(expectedContentId));
             }
@@ -27,34 +27,10 @@ namespace EntityFramework6.Test.Tests.Shema
         {
             using (var context = GetDataContext(access, mapping))
             {
-                var attributeId = context.GetInfo<AfiellFieldsItem>(a => a.TextBox).Id;
-                var expectedattributeId = GetFieldId(mapping);
+                var attributeId = context.GetInfo<Schema>(a => a.Title).Id;
+                var expectedattributeId = ValuesHelper.GetSchemaTitleFieldId(mapping);
 
                 Assert.That(attributeId, Is.EqualTo(expectedattributeId));
-            }
-        }
-
-        private int GetContentId(Mapping mapping)
-        {
-            if (new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping))
-            {
-                return 619;
-            }
-            else
-            {
-                return 618;
-            }
-        }
-
-        private int GetFieldId(Mapping mapping)
-        {
-            if (new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping))
-            {
-                return 38027;
-            }
-            else
-            {
-                return 38013;
             }
         }
     }

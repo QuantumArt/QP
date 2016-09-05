@@ -10,7 +10,7 @@ namespace EntityFramework6.Test.Infrastructure
     {
         public static int GetNonPublishedStatus(Mapping mapping)
         {
-            if (new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping))
+            if (IsDynamicMapping(mapping))
             {
                 return 240;
             }
@@ -22,7 +22,7 @@ namespace EntityFramework6.Test.Infrastructure
 
         public static string GetFileContentId(Mapping mapping)
         {
-            if (new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping))
+            if (IsDynamicMapping(mapping))
             {
                 return "771";
             }
@@ -30,6 +30,35 @@ namespace EntityFramework6.Test.Infrastructure
             {
                 return "628";
             }
+        }
+
+        public static int GetSchemaContentId(Mapping mapping)
+        {
+            if (IsDynamicMapping(mapping))
+            {
+                return 758;
+            }
+            else
+            {
+                return 620;
+            }
+        }
+
+        public static int GetSchemaTitleFieldId(Mapping mapping)
+        {
+            if (IsDynamicMapping(mapping))
+            {
+                return 38529;
+            }
+            else
+            {
+                return 38031;
+            }
+        }
+
+        private static bool IsDynamicMapping(Mapping mapping)
+        {
+            return new[] { Mapping.DatabaseDynamicMapping, Mapping.FileDynamicMapping }.Contains(mapping);
         }
     }
 }

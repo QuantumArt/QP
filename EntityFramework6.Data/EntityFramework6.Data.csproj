@@ -47,11 +47,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.CodeGeneration, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QP8.EntityFramework6.1.0.0\lib\net45\Quantumart.QP8.CodeGeneration.dll</HintPath>
+      <HintPath>..\packages\QP8.EntityFramework6.1.1.1\lib\net45\Quantumart.QP8.CodeGeneration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.EntityFramework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QP8.EntityFramework6.1.0.0\lib\net45\Quantumart.QP8.EntityFramework.dll</HintPath>
+      <HintPath>..\packages\QP8.EntityFramework6.1.1.1\lib\net45\Quantumart.QP8.EntityFramework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -66,10 +66,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DynamicMappingConfigurator.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DynamicMappingConfiguratorBase.cs">
+    <Compile Include="DatabaseSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="EF6Model.Contents.Extensions.cs">
@@ -84,16 +81,10 @@
     <Compile Include="EF6ModelExtensions.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
-    <Compile Include="EF6ModelMappingConfigurator.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="FileMappingResolver.cs">
+    <Compile Include="FileSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="IMappingConfigurator.cs">
-      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
-    </Compile>
-    <Compile Include="IMappingResolver.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="IQPArticle.cs">
@@ -105,7 +96,19 @@
     <Compile Include="IQPLibraryService.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
+    <Compile Include="IQPSchema.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ISchemaProvider.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MappingConfigurator.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
     <Compile Include="MappingConfiguratorBase.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MappingResolver.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="MarketingProduct.cs">
@@ -125,6 +128,9 @@
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="Setting.cs">
+      <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StaticSchemaProvider.cs">
       <DependentUpon>QPDataContextGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="StatusType.cs">

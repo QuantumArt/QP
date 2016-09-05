@@ -12,6 +12,8 @@ using Quantumart.QP8.CodeGeneration.Services;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using Quantumart.QPublishing.Info;
+using System.Data.Entity.Core;
+using System.Collections;
 
 
 namespace EntityFramework6.Test.DataContext
@@ -110,7 +112,8 @@ namespace EntityFramework6.Test.DataContext
 			{
 				if (_cnn == null) 
 				{
-					_cnn = new DBConnector(Database.Connection);
+					_cnn = new DBConnector();
+                    _cnn.ExternalConnection = Database.Connection;
 					_cnn.UpdateManyToMany = false;
 				}
 				return _cnn;
@@ -159,7 +162,7 @@ namespace EntityFramework6.Test.DataContext
         {
 			var mapping = configurator.GetMappingInfo(connection);
             var ctx = new EF6Model(connection, mapping.DbCompiledModel, mapping.Schema, contextOwnsConnection);
-            ctx.SiteName = DefaultSiteName;
+            ctx.SiteName = mapping.Schema.Schema.SiteName;
             ctx.ConnectionString = connection.ConnectionString;
             return ctx;
         }
@@ -261,7 +264,7 @@ namespace EntityFramework6.Test.DataContext
 		public string ReplacePlaceholders(string input)
 		{
 			string result = input;
-			if (result != null)
+			if (result != null && MappingResolver.GetSchema().ReplaceUrls)
 			{
 				result = result.Replace(uploadPlaceholder, UploadUrl);
 				result = result.Replace(sitePlaceholder, SiteUrl);
@@ -330,21 +333,36 @@ namespace EntityFramework6.Test.DataContext
             var added = manager.GetObjectStateEntries(EntityState.Added);
             var deleted = manager.GetObjectStateEntries(EntityState.Deleted);
 
-            UpdateObjectStateEntries(modified, (content, item) => item.GetModifiedProperties().ToArray(), true);
-            UpdateObjectStateEntries(added, (content, item) => GetProperties(content), false);
-
-            foreach(var deletedItem in deleted)
+            if (Database.Connection.State == System.Data.ConnectionState.Closed)
             {
-                var article = (IQPArticle)deletedItem.Entity;
-                Cnn.DeleteContentItem(article.Id);
-            }            
+                Database.Connection.Open();
+            }
+
+            using (var transaction = Database.Connection.BeginTransaction())
+            {
+                Cnn.ExternalTransaction = transaction;
+
+                UpdateObjectStateEntries(modified, (content, item) => item.GetModifiedProperties().ToArray(), true);
+                UpdateObjectStateEntries(added, (content, item) => GetProperties(content), false);
+
+                foreach (var deletedItem in deleted)
+                {
+                    var article = (IQPArticle)deletedItem.Entity;
+                    Cnn.DeleteContentItem(article.Id);
+                }
+
+                transaction.Commit();
+                Cnn.ExternalTransaction = null;
+            }
+
+            Database.Connection.Close();
 
             return 0;
         }
 
-        private void UpdateObjectStateEntries(IEnumerable<ObjectStateEntry> entries, Func<ContentInfo, ObjectStateEntry, string[]> getProperties, bool passNullValues)
+      private void UpdateObjectStateEntries(IEnumerable<ObjectStateEntry> entries, Func<ContentInfo, ObjectStateEntry, string[]> getProperties, bool passNullValues)
         {
-            foreach (var group in entries.GroupBy(m => m.Entity.GetType().Name))
+            foreach (var group in entries.Where(e => !e.IsRelationship).GroupBy(m => m.Entity.GetType().Name))
             {
                 var contentName = group.Key;
                 var content = MappingResolver.GetContent(contentName);
@@ -363,15 +381,51 @@ namespace EntityFramework6.Test.DataContext
                             fieldValues
                         };
                     })
-                    .ToArray();         
+                    .ToArray();
 
                 Cnn.MassUpdate(content.Id, items.Select(item => item.fieldValues), 1);
 
-                foreach(var item in items)
+                foreach (var item in items)
                 {
                     SyncArticle(item.article, item.fieldValues);
                 }
             }
+
+            var relations = (from e in entries
+                    where e.IsRelationship
+                    let entityKey = (EntityKey)e.CurrentValues[0]
+                    let relatedEntityKey = (EntityKey)e.CurrentValues[1]
+                    let entry = e.ObjectStateManager.GetObjectStateEntry(entityKey)
+                    let relatedEntry = e.ObjectStateManager.GetObjectStateEntry(relatedEntityKey)
+                    let id = ((IQPArticle)entry.Entity).Id
+                    let relatedId = ((IQPArticle)relatedEntry.Entity).Id
+                    let attribute = MappingResolver.GetAttribute(e.EntitySet.Name)
+                    let item = new
+                    {
+                        Id = id,
+                        RelatedId = relatedId,
+                        ContentId = attribute.ContentId,
+                        Field = attribute.MappedName
+                    }
+                    group item by item.ContentId into g
+                    select new { ContentId = g.Key, Items = g.ToArray() }
+                    )                    
+                    .ToArray();
+
+            foreach (var relation in relations)
+            {
+                var values = relation.Items
+                    .GroupBy(r => r.Id)
+                    .Select(g =>
+                    {
+                        var d = g.GroupBy(x => x.Field).ToDictionary(x => x.Key, x => string.Join(",", x.Select(y => y.RelatedId)));
+                        d[SystemColumnNames.Id] = g.Key.ToString();
+                        return d;
+                    })
+                    .ToArray();
+                
+                Cnn.MassUpdate(relation.ContentId, values, 1);
+            }  
         }
 
         private void SyncArticle(IQPArticle article, Dictionary<string, string> fieldValues)
@@ -383,8 +437,8 @@ namespace EntityFramework6.Test.DataContext
 
         private string[] GetProperties(ContentInfo content)
         {
-            return content.Columns
-                .Where(c => !c.IsRelation)
+            return content.Attributes
+                .Where(c => !c.IsM2O)
                 .Select(c => c.MappedName)
                 .ToArray();
         }
@@ -395,8 +449,8 @@ namespace EntityFramework6.Test.DataContext
                 .GetProperties()
                 .Where(f => fields.Contains(f.Name))
                 .Select(f => new {
-                    field = MappingResolver.GetAttribute(contentName, f.Name).Name,
-                    value = f.GetValue(article)?.ToString()
+					field = MappingResolver.GetAttribute(contentName, f.Name.Replace("_ID", "")).Name,
+                    value = GetValue(f.GetValue(article))
                 })
                 .Where(f => passNullValues || f.value != null)
                 .ToDictionary(
@@ -408,8 +462,39 @@ namespace EntityFramework6.Test.DataContext
             fieldValues[SystemColumnNames.Created] = article.Created.ToString();
             fieldValues[SystemColumnNames.Modified] = article.Modified.ToString();
 
+            if (article.StatusTypeId != 0)
+            {
+                fieldValues[SystemColumnNames.StatusTypeId] = article.StatusTypeId.ToString();
+            }
+
             return fieldValues;
         }
+
+        private string GetValue(object o)
+        {
+            if (o == null)
+            {
+                return null;
+            }
+			else if (o is IQPArticle)
+            {
+                return ((IQPArticle)o).Id.ToString();
+            }
+            else if (o is string)
+            {
+                return (string)o;
+            }
+            else if (o is IEnumerable)
+            {
+                var ids = ((IEnumerable)o).OfType<IQPArticle>().Select(a => a.Id).ToArray();
+                return string.Join(",", ids);
+            }
+            else
+            {
+                return o.ToString();
+            }
+        }
+
 
         int OnSaveChanges()
         {
@@ -495,6 +580,11 @@ namespace EntityFramework6.Test.DataContext
 		}
 
 		#region IQPSchema implementation
+		public SchemaInfo GetInfo()
+        {
+            return MappingResolver.GetSchema();
+        }
+
         public ContentInfo GetInfo<T>()
 			where T : IQPArticle
         {

@@ -9,8 +9,10 @@ namespace Quantumart.QP8.EntityFramework.Services
 {
     public interface IMappingResolver
     {
+        SchemaInfo GetSchema();
         ContentInfo GetContent(string mappedName);
         AttributeInfo GetAttribute(string contentMappedName, string fieldMappedName);
+        AttributeInfo GetAttribute(string key);
     }
 
     public class MappingResolver : IMappingResolver
@@ -22,9 +24,24 @@ namespace Quantumart.QP8.EntityFramework.Services
             _schema = schema;
         }
 
+        public SchemaInfo GetSchema()
+        {
+            return _schema.Schema;
+        }
+
         public ContentInfo GetContent(string mappedName)
         {
             return _schema.Contents.Single(c => c.MappedName == mappedName);
+        }
+
+        public AttributeInfo GetAttribute(string key)
+        {
+            var attributes = from c in _schema.Contents
+                             from a in c.Attributes
+                             where key == c.MappedName + "_" + a.MappedName
+                             select a;
+
+            return attributes.Single();
         }
         public AttributeInfo GetAttribute(string contentMappedName, string fieldMappedName)
         {

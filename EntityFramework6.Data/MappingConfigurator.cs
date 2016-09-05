@@ -10,17 +10,12 @@ using Quantumart.QP8.CodeGeneration.Services;
 
 namespace Quantumart.QP8.EntityFramework6.Data
 {
-    public class DynamicMappingConfigurator : DynamicMappingConfiguratorBase
+    public class MappingConfigurator : MappingConfiguratorBase
     {
-        public DynamicMappingConfigurator(IMappingResolver mappingResolver)
-            : base(mappingResolver)
+        public MappingConfigurator(ContentAccess contentAccess, ISchemaProvider schemaProvider)
+            : base(contentAccess, schemaProvider)
         {
 		}
-
-        public DynamicMappingConfigurator(IMappingResolver mappingResolver, ContentAccess contentAccess)
-            : base(mappingResolver, contentAccess)
-        {
-		}	
        
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -33,7 +28,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<MarketingProduct>()                
+		    modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -48,16 +43,10 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.Family_ID)
-                .HasColumnName("Family");
+                .HasColumnName(GetFieldName("MarketingProduct", "Family_ID"));
             modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.MarketingSign_ID)
-                .HasColumnName("MarketingSign");
-            modelBuilder.Entity<MarketingProduct>()
-                .Property(x => x.Family_ID)
-                .HasColumnName("Family");
-            modelBuilder.Entity<MarketingProduct>()
-                .Property(x => x.MarketingSign_ID)
-                .HasColumnName("MarketingSign");
+                .HasColumnName(GetFieldName("MarketingProduct", "MarketingSign_ID"));
  
             #endregion
 
@@ -68,7 +57,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<Product>()                
+		    modelBuilder.Entity<Product>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -83,10 +72,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Product>()
                 .Property(x => x.MarketingSign_ID)
-                .HasColumnName("MarketingSign");
-            modelBuilder.Entity<Product>()
-                .Property(x => x.MarketingSign_ID)
-                .HasColumnName("MarketingSign");
+                .HasColumnName(GetFieldName("Product", "MarketingSign_ID"));
             modelBuilder.Entity<Product>()
                 .HasOptional<MarketingProduct>(mp => mp.MarketingProduct)
                 .WithMany(mp => mp.Products)
@@ -94,7 +80,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Product>()
                 .Property(x => x.MarketingProduct_ID)
-                .HasColumnName("MarketingProduct");
+                .HasColumnName(GetFieldName("Product", "MarketingProduct"));
 
             modelBuilder.Entity<Product>().HasMany<Region>(p => p.Regions).WithMany()
                 .Map(rp =>
@@ -124,7 +110,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<ProductParameter>()                
+		    modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -139,40 +125,22 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Group_ID)
-                .HasColumnName("Group");
+                .HasColumnName(GetFieldName("ProductParameter", "Group_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.BaseParameter_ID)
-                .HasColumnName("BaseParameter");
+                .HasColumnName(GetFieldName("ProductParameter", "BaseParameter_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Zone_ID)
-                .HasColumnName("Zone");
+                .HasColumnName(GetFieldName("ProductParameter", "Zone_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Direction_ID)
-                .HasColumnName("Direction");
+                .HasColumnName(GetFieldName("ProductParameter", "Direction_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Unit_ID)
-                .HasColumnName("Unit");
+                .HasColumnName(GetFieldName("ProductParameter", "Unit_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.MatrixParameter_ID)
-                .HasColumnName("MatrixParameter");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Group_ID)
-                .HasColumnName("Group");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.BaseParameter_ID)
-                .HasColumnName("BaseParameter");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Zone_ID)
-                .HasColumnName("Zone");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Direction_ID)
-                .HasColumnName("Direction");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.Unit_ID)
-                .HasColumnName("Unit");
-            modelBuilder.Entity<ProductParameter>()
-                .Property(x => x.MatrixParameter_ID)
-                .HasColumnName("MatrixParameter");
+                .HasColumnName(GetFieldName("ProductParameter", "MatrixParameter_ID"));
             modelBuilder.Entity<ProductParameter>()
                 .HasOptional<Product>(mp => mp.Product)
                 .WithMany(mp => mp.Parameters)
@@ -180,7 +148,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Product_ID)
-                .HasColumnName("Product");
+                .HasColumnName(GetFieldName("ProductParameter", "Product"));
  
             #endregion
 
@@ -191,7 +159,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<Region>()                
+		    modelBuilder.Entity<Region>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -211,7 +179,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Region>()
                 .Property(x => x.Parent_ID)
-                .HasColumnName("Parent");
+                .HasColumnName(GetFieldName("Region", "Parent"));
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.AllowedRegions).WithMany()
                 .Map(rp =>
@@ -256,7 +224,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<MobileTariff>()                
+		    modelBuilder.Entity<MobileTariff>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -276,7 +244,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<MobileTariff>()
                 .Property(x => x.Product_ID)
-                .HasColumnName("Product");
+                .HasColumnName(GetFieldName("MobileTariff", "Product"));
  
             #endregion
 
@@ -287,7 +255,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
            
-		    modelBuilder.Entity<Setting>()                
+		    modelBuilder.Entity<Setting>()
                 .Property(x => x.LastModifiedBy)
                 .HasColumnName("LAST_MODIFIED_BY");
             
@@ -302,7 +270,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Setting>()
                 .Property(x => x.ValueMapped)
-                .HasColumnName("Value");
+                .HasColumnName(GetFieldName("Setting", "ValueMapped"));
 
             modelBuilder.Entity<Setting>().HasMany<Setting>(p => p.RelatedSettings).WithMany()
                 .Map(rp =>

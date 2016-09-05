@@ -27,6 +27,12 @@
   <content id="623" name="StringItemForInsert" mapped_name="StringItemForUnsert" plural_mapped_name="StringItemsForInsert" use_default_filtration="true" virtual="0" user_query="0">
     <attribute name="StringValueField" mapped_name="StringValue" id="38034" type="String" is_localization="false" size="255" />
   </content>
+  <content id="624" name="ItemForUpdate" mapped_name="ItemForUpdate" plural_mapped_name="ItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38035" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="625" name="ItemForInsert" mapped_name="ItemForInsert" plural_mapped_name="ItemsForInsert" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38036" type="String" is_localization="false" size="255" />
+  </content>
   <content id="626" name="PublishedNotPublishedItem" mapped_name="PublishedNotPublishedItem" plural_mapped_name="PublishedNotPublishedItems" use_default_filtration="true" virtual="0" user_query="0">
     <attribute name="Title" mapped_name="Title" id="38037" type="String" is_localization="false" size="255" />
     <attribute name="Alias" mapped_name="Alias" id="38038" type="String" is_localization="false" size="255" />
@@ -43,8 +49,38 @@
   <content id="695" name="ToSymmetricRelationAtricles" mapped_name="ToSymmetricRelationAtricle" plural_mapped_name="ToSymmetricRelationAtricles" use_default_filtration="true" virtual="0" user_query="0">
     <attribute name="ToSymmetricRelation" mapped_name="ToSymmetricRelation" id="38260" type="M2M" is_localization="false" related_content_id="694" link_id="101" use_separate_reverse_views="false" />
   </content>
+  <content id="993" name="MtMItemForUpdate" mapped_name="MtMItemForUpdate" plural_mapped_name="MtMItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="39282" type="String" is_localization="false" size="255" />
+    <attribute name="Reference" mapped_name="Reference" id="39284" type="M2M" is_localization="false" related_content_id="994" link_id="149" use_separate_reverse_views="false" />
+  </content>
+  <content id="994" name="MtMDictionaryForUpdate" mapped_name="MtMDictionaryForUpdate" plural_mapped_name="MtMDictionaryForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="39283" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="998" name="OtMItemForUpdate" mapped_name="OtMItemForUpdate" plural_mapped_name="OtMItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="39290" type="String" is_localization="false" size="255" />
+    <attribute name="Reference" mapped_back_name="BackReference" mapped_name="Reference" id="39293" type="O2M" is_localization="false" related_content_id="999" has_m2o="false" />
+  </content>
+  <content id="999" name="OtMDictionaryForUpdate" mapped_name="OtMDictionaryForUpdate" plural_mapped_name="OtMDictionaryForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="39291" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="1002" name="DateItemForUpdate" mapped_name="DateItemForUpdate" plural_mapped_name="DateItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="DateValueField" mapped_name="DateValueField" id="39298" type="Date" is_localization="false" />
+  </content>
+  <content id="1003" name="TimeItemForUpdate" mapped_name="TimeItemForUpdate" plural_mapped_name="TimeItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="TimeValueField" mapped_name="TimeValueField" id="39299" type="Time" is_localization="false" />
+  </content>
+  <content id="1004" name="DateTimeItemForUpdate" mapped_name="DateTimeItemForUpdate" plural_mapped_name="DateTimeItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="DateTimeValueField" mapped_name="DateTimeValueField" id="39300" type="DateTime" is_localization="false" />
+  </content>
+  <content id="1008" name="FileItemForUpdate" mapped_name="FileItemForUpdate" plural_mapped_name="FileItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="FileValueField" mapped_name="FileValueField" id="39308" type="File" is_localization="false" />
+  </content>
+  <content id="1009" name="ImageItemForUpdate" mapped_name="ImageItemForUpdate" plural_mapped_name="ImageItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="ImageValueField" mapped_name="ImageValueField" id="39309" type="Image" is_localization="false" />
+  </content>
   <link id="100" self="0" content_id="694" linked_content_id="695" mapped_name="SymmetricRelationArticlesToSymmetricRelationAtriclesArticle" plural_mapped_name="SymmetricRelationArticlesToSymmetricRelationAtriclesArticles" />
   <link id="101" self="0" content_id="695" linked_content_id="694" mapped_name="ToSymmetricRelationAtriclesSymmetricRelationArticlesArticle" plural_mapped_name="ToSymmetricRelationAtriclesSymmetricRelationArticlesArticles" />
+  <link id="149" self="0" content_id="993" linked_content_id="994" mapped_name="MtMItemForUpdateMtMDictionaryForUpdateArticle" plural_mapped_name="MtMItemForUpdateMtMDictionaryForUpdateArticles" />
   <status_type id="141" name="Created" site_id="52" />
   <status_type id="142" name="Approved" site_id="52" />
   <status_type id="143" name="Published" site_id="52" />
