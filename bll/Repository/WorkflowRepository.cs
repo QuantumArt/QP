@@ -177,12 +177,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             QP8Entities entities = QPContext.EFContext;
 
-            int i = 1;
-            foreach (var rule in workflow.WorkflowRules.OrderBy(n => n.StatusType.Weight))
-            {
-                rule.RuleOrder = i;
-                i++;
-            }
+            UpdateRuleOrder(workflow);
 
             //workflowRules
             var newWorkflowRules = workflow.WorkflowRules.Where(x => x.Id == 0).ToArray();
@@ -241,6 +236,16 @@ namespace Quantumart.QP8.BLL.Repository
             return MappersRepository.WorkflowMapper.GetBizObject(dal);
         }
 
+        private static void UpdateRuleOrder(Workflow workflow)
+        {
+            int i = 1;
+            foreach (var rule in workflow.WorkflowRules.OrderBy(n => n.StatusType.Weight))
+            {
+                rule.RuleOrder = i;
+                i++;
+            }
+        }
+
         internal static IEnumerable<int> GetBindedContetnsIds(int workflowId)
         {
             using (var scope = new QPConnectionScope())
@@ -268,6 +273,8 @@ namespace Quantumart.QP8.BLL.Repository
         internal static Workflow SaveProperties(Workflow workflow)
         {
             QP8Entities entities = QPContext.EFContext;
+
+            UpdateRuleOrder(workflow);
 
             Queue<int> forceIds = (workflow.ForceRulesIds == null) ? null : new Queue<int>(workflow.ForceRulesIds);
 
