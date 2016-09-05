@@ -25,11 +25,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return GetThumbnailResult(ContentFolderService.GetPath(folderId, fileName));
         }
 
-        /// <summary>
-        /// Сформировать Thumbnail из файла и FileResult с картинкой
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
         private FileResult GetThumbnailResult(string path)
         {
             var stream = new MemoryStream();
@@ -64,14 +59,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                         using (var resImg = new Bitmap(w, h))
                         {
-                            using (var oGraphic = Graphics.FromImage(resImg))
+                            using (var graphic = Graphics.FromImage(resImg))
                             {
-                                oGraphic.CompositingQuality = CompositingQuality.HighQuality;
-                                oGraphic.SmoothingMode = SmoothingMode.HighQuality;
-                                oGraphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                                graphic.CompositingQuality = CompositingQuality.HighQuality;
+                                graphic.SmoothingMode = SmoothingMode.HighQuality;
+                                graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
 
-                                var oRectangle = new Rectangle(0, 0, w, h);
-                                oGraphic.DrawImage(img, oRectangle);
+                                var rectangle = new Rectangle(0, 0, w, h);
+                                graphic.DrawImage(img, rectangle);
                             }
 
                             resImg.Save(stream, ImageFormat.Jpeg);

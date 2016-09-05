@@ -509,7 +509,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static MvcHtmlString QpDropDownList(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, string optionLabel,
             ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
-            options.SetDropDownOptions(name, source.UniqueId(name), list, entityDataListArgs);
+            options.SetDropDownOptions(name, source.UniqueId(name), list.ToList(), entityDataListArgs);
             if (entityDataListArgs.ShowIds)
             {
                 list = list.Select(n => n.CopyWithIdInText());
@@ -609,7 +609,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
             TagBuilder div = new TagBuilder("div");
-            options.SetRadioButtonListOptions(name, source.UniqueId(name), list, repeatDirection, entityDataListArgs);
+            options.SetRadioButtonListOptions(name, source.UniqueId(name), list.ToList(), repeatDirection, entityDataListArgs);
             div.MergeAttributes(options.HtmlAttributes);
 
             StringBuilder sb = new StringBuilder();
@@ -1331,7 +1331,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             if (dropDownOptions != null && !String.IsNullOrEmpty(dropDownOptions.DefaultOption))
                 showedList = new[] { new QPSelectListItem { Value = "", Text = dropDownOptions.DefaultOption } }.Concat(list).ToArray();
 
-            options.SetDropDownOptions(name, source.UniqueId(name), list, dropDownOptions.EntityDataListArgs);
+            options.SetDropDownOptions(name, source.UniqueId(name), list.ToList(), dropDownOptions.EntityDataListArgs);
             options.HtmlAttributes.Merge(htmlAttributes, true);
             return source.DropDownListFor(expression, showedList, options.HtmlAttributes);
         }
@@ -1390,7 +1390,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             ControlOptions localOptions = options ?? new ControlOptions();
             localOptions.Enabled &= !source.IsReadOnly();
-            localOptions.SetRadioButtonListOptions(name, id, list, repeatDirection, entityDataListArgs);
+            localOptions.SetRadioButtonListOptions(name, id, list.ToList(), repeatDirection, entityDataListArgs);
             div.MergeAttributes(localOptions.HtmlAttributes);
 
             StringBuilder sb = new StringBuilder();

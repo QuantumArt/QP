@@ -19,9 +19,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [DisableBrowserCache]
         public ActionResult Index(DirectLinkOptions directLinkOptions)
         {
-            var data = DbService.ReadSettings();
-            var dhHash = DbService.GetDbHash();
-            return View(new IndexViewModel(directLinkOptions, data, dhHash));
+            return View(new IndexViewModel(directLinkOptions, DbService.ReadSettings(), DbService.GetDbHash()));
         }
 
         [HttpGet]
@@ -76,7 +74,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var result = ArticleService.ListLocked(command.GetListCommand());
             return View(new GridModel { Data = result.Data, Total = result.TotalRecords });
         }
-
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]

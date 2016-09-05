@@ -101,6 +101,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveUserGroup });
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -150,6 +151,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = _service.UpdateProperties(model.Data);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateUserGroup });
             }
+
             return JsonHtml("Properties", model);
         }
 

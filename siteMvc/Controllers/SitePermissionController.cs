@@ -11,7 +11,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class SitePermissionController : PermissionControllerBase
     {
-        public SitePermissionController(IPermissionService service) : base(service) { }
+        public SitePermissionController(IPermissionService service)
+            : base(service)
+        {
+        }
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]

@@ -56,7 +56,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateVisualEditorPlugin)]
         [BackendActionContext(ActionCode.UpdateVisualEditorPlugin)]
         [BackendActionLog]
@@ -84,7 +84,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveVisualEditorPlugin)]
         [BackendActionContext(ActionCode.RemoveVisualEditorPlugin)]
         [BackendActionLog]
@@ -107,7 +107,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewVisualEditorPlugin)]
         [BackendActionContext(ActionCode.AddNewVisualEditorPlugin)]
         [BackendActionLog]

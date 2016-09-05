@@ -23,13 +23,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает содержимое блока полнотекстового поиска
+        /// Возвращает содержимое блока полнотекстового поиска.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult FullTextBlock(int parentEntityId, string elementIdPrefix)
         {
-
             ViewBag.ElementIdPrefix = elementIdPrefix;
             ViewBag.TextFieldsComboID = $"{elementIdPrefix}_TextFieldsCombo";
             ViewBag.QueryTextBoxID = $"{elementIdPrefix}_QueryTextBox";
@@ -46,7 +45,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает содержимое блока поиска по всем полям
+        /// Возвращает содержимое блока поиска по всем полям.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -62,7 +61,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает разметку для блока поиска по идентификатору
+        /// Возвращает разметку для блока поиска по идентификатору.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -79,7 +78,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает разметку для блока поиска по полю c датой
+        /// Возвращает разметку для блока поиска по полю c датой.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -90,7 +89,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает разметку для блока поиска по полю c временем
+        /// Возвращает разметку для блока поиска по полю c временем.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -101,7 +100,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает разметку для блока поиска по полю c датой-временем
+        /// Возвращает разметку для блока поиска по полю c датой-временем.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -122,7 +121,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает разметку для блока поиска по числовому полю
+        /// Возвращает разметку для блока поиска по числовому полю.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -139,7 +138,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает разметку для блока поиска по текстовому полю
+        /// Возвращает разметку для блока поиска по текстовому полю.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -153,7 +152,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает разметку для блока поиска по строковому перечислению
+        /// Возвращает разметку для блока поиска по строковому перечислению.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -180,7 +179,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Разметка блока поиска по связям
+        /// Разметка блока поиска по связям.
         /// </summary>
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -249,7 +248,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает разметку для блока переключения контекста
+        /// Возвращает разметку для блока переключения контекста.
         /// </summary>
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]

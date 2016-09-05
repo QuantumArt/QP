@@ -72,6 +72,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistResultId(model.Data.Id);
                 return Redirect("PageProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SavePage });
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -107,6 +108,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = _pageService.UpdatePageProperties(model.Data);
                 return Redirect("PageProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdatePageTemplate });
             }
+
             return JsonHtml("Properties", model);
         }
 

@@ -37,7 +37,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Articles)]
         [BackendActionContext(ActionCode.Articles)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command,
+        public ActionResult _Index(
+            string tabId,
+            int parentId,
+            GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery,
             string customFilter,
@@ -65,7 +68,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArchiveArticles)]
         [BackendActionContext(ActionCode.ArchiveArticles)]
-        public ActionResult _ArchiveIndex(string tabId, int parentId, GridCommand command,
+        public ActionResult _ArchiveIndex(
+            string tabId,
+            int parentId,
+            GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery,
             string customFilter,
@@ -103,8 +109,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectArticle)]
         [BackendActionContext(ActionCode.SelectArticle)]
-        public ActionResult _Select(string tabId, int parentId, int id, GridCommand command, [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery, string customFilter
-        )
+        public ActionResult _Select(
+            string tabId,
+            int parentId,
+            int id,
+            GridCommand command,
+            [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
+            string customFilter)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var serviceResult = ArticleService.List(parentId, new[] { id }, command.GetListCommand(), searchQuery, null, customFilter, ftsParser);
@@ -139,11 +150,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelect(string tabId, int parentId, string IDs, GridCommand command,
+        public ActionResult _MultipleSelect(
+            string tabId,
+            int parentId,
+            string IDs,
+            GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             string customFilter,
-            bool? onlyIds
-        )
+            bool? onlyIds)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
@@ -254,6 +268,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     return JsonHtml("Properties", model);
                 }
             }
+
             return JsonHtml("Properties", model);
         }
 

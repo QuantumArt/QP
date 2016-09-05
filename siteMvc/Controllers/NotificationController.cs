@@ -78,6 +78,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = _notificationService.UpdateNotificationTemplateFormat(model.Data);
                 return Redirect("NotificationTemplateFormatProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateContentGroup });
             }
+
             return JsonHtml("NotificationTemplateFormatProperties", model);
         }
 
@@ -113,7 +114,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     model.Data = _notificationService.SaveNotificationProperties(model.Data, model.CreateDefaultFormat, CommonHelpers.GetBackendUrl(HttpContext));
                     PersistResultId(model.Data.Id);
                     if (model.CreateDefaultFormat)
+                    {
                         PersistNotificationFormatId(model.Data.FormatId);
+                    }
+
                     return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveNotification });
                 }
                 catch (ActionNotAllowedException nae)
@@ -122,6 +126,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     return JsonHtml("Properties", model);
                 }
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -162,6 +167,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateNotification });
             }
+
             return JsonHtml("Properties", model);
         }
 

@@ -4,15 +4,10 @@ using System.Web;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
-    public enum ConnectionScopeMode
-    {
-        TransactionOff,
-        TransactionOn
-    }
-
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class ConnectionScopeAttribute : ActionFilterAttribute
     {

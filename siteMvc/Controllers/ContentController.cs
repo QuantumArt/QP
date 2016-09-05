@@ -167,12 +167,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (VirtualContentProcessingException vcpe)
                 {
                     if (IsReplayAction())
+                    {
                         throw;
+                    }
+
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
                     return JsonHtml("Properties", model);
                 }
+
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = backendActionCode, groupChanged = oldGroupId != model.Data.GroupId });
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -188,7 +193,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = ContentGroupViewModel.Create(group, tabId, parentId);
             return JsonHtml("GroupProperties", model);
         }
-
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -209,6 +213,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistResultId(model.Data.Id);
                 return Redirect("GroupProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveContentGroup });
             }
+
             return JsonHtml("GroupProperties", model);
         }
 
@@ -324,12 +329,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.ContentFolder, "folderId")]
         public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
         {
-            var serviceResult = ContentService.GetFileList(new ListCommand { PageSize = pageSize, StartPage = pageNumber + 1 }, folderId,
+            var serviceResult = ContentService.GetFileList(
+                new ListCommand
+                {
+                    PageSize = pageSize,
+                    StartPage = pageNumber + 1
+                },
+                folderId,
                 new LibraryFileFilter
                 {
                     FileType = (FolderFileType?)fileTypeId,
                     FileNameFilter = fileNameFilter
-                });
+                }
+            );
 
             return new JsonResult
             {
@@ -371,6 +383,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult _RelateableFields(int? contentId, int? fieldId)
         {
             if (contentId == null)
+            {
                 return new JsonResult
                 {
                     Data = new
@@ -379,23 +392,26 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     },
                     JsonRequestBehavior = JsonRequestBehavior.AllowGet
                 };
+            }
 
             var content = ContentService.Read(contentId.Value);
             if (content == null)
+            {
                 throw new ArgumentException(string.Format(ContentStrings.ContentNotFound, contentId.Value));
+            }
 
             Func<Field, bool> fieldFilter = f => true;
             if (fieldId.HasValue)
+            {
                 fieldFilter = f => !f.IsNew && f.Id != fieldId.Value;
+            }
 
             return new JsonResult
             {
                 Data = new
                 {
                     success = true,
-                    data = content.RelateableFields
-                            .Where(fieldFilter)
-                            .Select(f => new { id = f.Id, text = f.Name })
+                    data = content.RelateableFields.Where(fieldFilter).Select(f => new { id = f.Id, text = f.Name })
                 },
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
             };
@@ -408,7 +424,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var content = ContentService.Read(contentId);
             if (content == null)
+            {
                 throw new ArgumentException(string.Format(ContentStrings.ContentNotFound, contentId));
+            }
 
             return new JsonResult
             {
@@ -440,7 +458,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
-        public ActionResult _Select(string tabId, int parentId, int id, GridCommand command,
+        public ActionResult _Select(
+            string tabId,
+            int parentId,
+            int id,
+            GridCommand command,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
@@ -464,7 +486,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForObjectContainer)]
         [BackendActionContext(ActionCode.SelectContentForObjectContainer)]
-        public ActionResult _SelectForObjectContainer(string tabId, int id, GridCommand command, int parentId,
+        public ActionResult _SelectForObjectContainer(
+            string tabId,
+            int id,
+            GridCommand command,
+            int parentId,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
@@ -488,7 +514,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForObjectForm)]
         [BackendActionContext(ActionCode.SelectContentForObjectForm)]
-        public ActionResult _SelectForObjectForm(string tabId, int id, GridCommand command, int parentId,
+        public ActionResult _SelectForObjectForm(
+            string tabId,
+            int id,
+            GridCommand command,
+            int parentId,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
@@ -512,7 +542,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForJoin)]
         [BackendActionContext(ActionCode.SelectContentForJoin)]
-        public ActionResult _SelectForJoin(string tabId, int parentId, int id, GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+        public ActionResult _SelectForJoin(
+            string tabId,
+            int parentId,
+            int id,
+            GridCommand command,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
@@ -535,7 +570,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectContentForField)]
         [BackendActionContext(ActionCode.SelectContentForField)]
-        public ActionResult _SelectForField(string tabId, int parentId, int id, GridCommand command,
+        public ActionResult _SelectForField(
+            string tabId,
+            int parentId,
+            int id,
+            GridCommand command,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
@@ -561,7 +600,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectContent)]
         [BackendActionContext(ActionCode.MultipleSelectContent)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelect(string tabId, int parentId, string IDs, GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
+        public ActionResult _MultipleSelect(
+            string tabId,
+            int parentId,
+            string IDs,
+            GridCommand command,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
@@ -587,12 +631,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectContentForCustomAction)]
         [BackendActionContext(ActionCode.MultipleSelectContentForCustomAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForCustomAction(string tabId, int parentId, string IDs, GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter, string customFilter)
+        public ActionResult _MultipleSelectForCustomAction(
+            string tabId,
+            int parentId,
+            string IDs,
+            GridCommand command,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            string customFilter)
         {
             filter = filter ?? new ContentListFilter();
             if (!string.IsNullOrEmpty(customFilter))
+            {
                 filter.CustomFilter = customFilter;
+            }
+
             var serviceResult = ContentService.ListForCustomAction(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
@@ -614,8 +666,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectContentForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectContentForWorkflow)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForWorkflow(string tabId, int parentId, string IDs, GridCommand command,
-            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter, string customFilter)
+        public ActionResult _MultipleSelectForWorkflow(
+            string tabId,
+            int parentId,
+            string IDs,
+            GridCommand command,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter,
+            string customFilter)
         {
             filter = filter ?? new ContentListFilter();
             filter.SiteId = parentId;
@@ -641,7 +698,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectContentForUnion)]
         [BackendActionContext(ActionCode.MultipleSelectContentForUnion)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelectForUnion(string tabId, int parentId, string IDs, GridCommand command,
+        public ActionResult _MultipleSelectForUnion(
+            string tabId,
+            int parentId,
+            string IDs,
+            GridCommand command,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<ContentListFilter>))] ContentListFilter filter)
         {
             filter = filter ?? new ContentListFilter();

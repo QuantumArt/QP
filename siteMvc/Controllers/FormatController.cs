@@ -159,6 +159,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistResultId(model.Data.Id);
                 return Redirect("PageObjectFormatProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SavePageObjectFormat });
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -193,6 +194,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistResultId(model.Data.Id);
                 return Redirect("TemplateObjectFormatProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveTemplateObjectFormat });
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -228,6 +230,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = _formatService.UpdateObjectFormatProperties(model.Data);
                 return Redirect("PageObjectFormatProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdatePageObjectFormat });
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -263,6 +266,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = _formatService.UpdateObjectFormatProperties(model.Data);
                 return Redirect("TemplateObjectFormatProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateTemplateObjectFormat });
             }
+
             return JsonHtml("Properties", model);
         }
 

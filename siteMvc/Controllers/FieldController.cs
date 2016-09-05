@@ -79,10 +79,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 catch (VirtualContentProcessingException vcpe)
                 {
                     if (IsReplayAction())
+                    {
                         throw;
+                    }
+
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
                     return JsonHtml("Properties", model);
                 }
+
                 return Redirect("Properties", new
                 {
                     tabId,
@@ -92,6 +96,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     viewInListAffected = model.Data.ViewInList
                 });
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -233,6 +238,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
                     return JsonHtml("Properties", model);
                 }
+
                 var newViewInList = model.Data.ViewInList;
                 return Redirect("VirtualProperties", new
                 {
@@ -339,7 +345,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult Copy(int id, int? forceId, int? forceLinkId, string forceVirtualFieldIds, string forceChildFieldIds, string forceChildLinkIds)
         {
             FieldService.Read(id); // TODO: unused
-            var result = FieldService.Copy(id, forceId, forceLinkId,
+            var result = FieldService.Copy(
+                id,
+                forceId,
+                forceLinkId,
                 StringExtensions.ToIntArray(forceVirtualFieldIds),
                 StringExtensions.ToIntArray(forceChildFieldIds),
                 StringExtensions.ToIntArray(forceChildLinkIds)

@@ -12,7 +12,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class EntityTypePermissionController : PermissionWithChangeControllerBase
     {
-        public EntityTypePermissionController(IPermissionService service, IActionPermissionChangeService changeService) : base(service, changeService) { }
+        public EntityTypePermissionController(IPermissionService service, IActionPermissionChangeService changeService)
+            : base(service, changeService)
+        {
+        }
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]

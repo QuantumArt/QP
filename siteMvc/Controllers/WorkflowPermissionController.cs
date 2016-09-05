@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
@@ -10,7 +11,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class WorkflowPermissionController : PermissionControllerBase
     {
-        public WorkflowPermissionController(IPermissionService service) : base(service) { }
+        public WorkflowPermissionController(IPermissionService service)
+            : base(service)
+        {
+        }
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -41,7 +45,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewWorkflowPermission)]
         [BackendActionContext(ActionCode.AddNewWorkflowPermission)]
         [BackendActionLog]
@@ -62,7 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateWorkflowPermission)]
         [BackendActionContext(ActionCode.UpdateWorkflowPermission)]
         [BackendActionLog]
@@ -74,11 +78,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveWorkflowPermission)]
         [BackendActionContext(ActionCode.MultipleRemoveWorkflowPermission)]
         [BackendActionLog]
         [Record]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleRemove(int parentId, int[] IDs)
         {
             return base.MultipleRemove(parentId, IDs);
@@ -86,7 +91,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveWorkflowPermission)]
         [BackendActionContext(ActionCode.RemoveWorkflowPermission)]
         [BackendActionLog]

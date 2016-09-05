@@ -14,7 +14,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 
         private string PolicyName { get; }
 
-        public ExceptionResultAttribute(ExceptionResultMode mode) : this(mode, "Policy") { }
+        public ExceptionResultAttribute(ExceptionResultMode mode)
+            : this(mode, "Policy")
+        {
+        }
 
         public ExceptionResultAttribute(ExceptionResultMode mode, string policyName)
         {

@@ -118,6 +118,7 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
                     ModelState.AddModelError("OperationIsNotAllowedForAggregated", nae.Message);
                     return JsonHtml("ChildEntityPermissionProperties", model);
                 }
+
                 TempData[GetChildEntityPermissionModelKey(tabId, parentId)] = model;
                 return Redirect("SaveAsChild", new { tabId, parentId });
             }

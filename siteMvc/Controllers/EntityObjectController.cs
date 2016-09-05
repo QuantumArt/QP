@@ -5,6 +5,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
@@ -22,11 +23,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Проверяет сущность на наличие рекурсивных связей
+        /// Проверяет сущность на наличие рекурсивных связей.
         /// </summary>
-        /// <param name="entityTypeCode">код типа сущности</param>
-        /// <param name="entityId">идентификатор сущности</param>
-        /// <returns>результат проверки (true - есть рекурсивные связи; false - нет)</returns>
+        /// <param name="entityTypeCode">Код типа сущности.</param>
+        /// <param name="entityId">Идентификатор сущности.</param>
+        /// <returns>Результат проверки (true - есть рекурсивные связи; false - нет).</returns>
         [HttpGet]
         public JsonNetResult<bool> CheckPresenceSelfRelations(string entityTypeCode, int entityId)
         {
@@ -34,11 +35,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Проверяет сущность на наличие вариаций
+        /// Проверяет сущность на наличие вариаций.
         /// </summary>
-        /// <param name="entityTypeCode">код типа сущности</param>
-        /// <param name="entityId">идентификатор сущности</param>
-        /// <returns>результат проверки (true - есть вариации; false - нет)</returns>
+        /// <param name="entityTypeCode">Код типа сущности.</param>
+        /// <param name="entityId">Идентификатор сущности.</param>
+        /// <returns>Результат проверки (true - есть вариации; false - нет).</returns>
         [HttpGet]
         public JsonNetResult<bool> CheckForVariations(string entityTypeCode, int entityId)
         {
@@ -52,17 +53,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает список дочерних сущностей
+        /// Возвращает список дочерних сущностей.
         /// </summary>
-        /// <param name="entityTypeCode">код типа сущности</param>
-        /// <param name="parentEntityId">идентификатор родительской сущности</param>
-        /// <param name="entityId">идентификатор сущности</param>
-        /// <param name="returnSelf">возвращает саму сущность по entityId (необходимо в случае генерации корня поддерева)</param>
-        /// <param name="filter"></param>
-        /// <param name="selectItemIDs"></param>
-        /// <param name="searchQuery"></param>
-        /// <param name="contextQuery"></param>
-        /// <returns>список дочерних сущностей</returns>
         [HttpPost]
         public JsonNetResult<IList<EntityTreeItem>> GetChildList(string entityTypeCode,
             int? parentEntityId,
@@ -79,34 +71,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         /// <summary>
-        /// Возвращает упрощенный список сущностей
+        /// Возвращает упрощенный список сущностей.
         /// </summary>
-        /// <param name="entityTypeCode">код типа сущности</param>
-        /// <param name="parentEntityId">идентификатор родительской сущности</param>
-        /// <param name="entityId">идентификатор сущности</param>
-        /// <param name="listId">дополнительный параметр для идентификации списка</param>
-        /// <param name="selectionMode">режим выделения списка</param>
-        /// <param name="selectedEntitiesIDs">идентификаторы выбранных сущностей</param>
-        /// <param name="filter"></param>
-        /// <param name="testEntityId"></param>
-        /// <returns>упрощенный список сущностей</returns>
         [HttpPost]
         public JsonNetResult<IList<ListItem>> GetSimpleList(string entityTypeCode, int parentEntityId, int? entityId, int? listId, int selectionMode, int[] selectedEntitiesIDs, string filter, int testEntityId = 0)
         {
-            var listSelectionMode = (Constants.ListSelectionMode)Enum.Parse(typeof(Constants.ListSelectionMode), selectionMode.ToString());
-            return EntityObjectService.SimpleList(entityTypeCode, parentEntityId,
+            var listSelectionMode = (ListSelectionMode)Enum.Parse(typeof(ListSelectionMode), selectionMode.ToString());
+            return EntityObjectService.SimpleList(
+                entityTypeCode,
+                parentEntityId,
                 entityId > 0 ? entityId : null,
                 listId > 0 ? listId : null,
-                listSelectionMode, selectedEntitiesIDs, filter, testEntityId);
+                listSelectionMode,
+                selectedEntitiesIDs,
+                filter,
+                testEntityId
+            );
         }
 
         /// <summary>
-        /// Возвращает название сущности
+        /// Возвращает название сущности.
         /// </summary>
-        /// <param name="entityTypeCode">код типа сущности</param>
-        /// <param name="entityId">идентификатор сущности</param>
-        /// <param name="parentEntityId"></param>
-        /// <returns>название сущности</returns>
         [HttpGet]
         public JsonNetResult<string> GetName(string entityTypeCode, int entityId, int? parentEntityId)
         {
@@ -159,7 +144,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         public JsonNetResult<object> UnlockAllEntities()
         {
             EntityObjectService.UnlockAllEntitiesLockedByCurrentUser();

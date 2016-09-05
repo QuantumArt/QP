@@ -370,10 +370,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 var format = _pageTemplateService.ReadFormatProperties(formatId.Value, true, false);
                 languageId = format.NetLanguageId;
                 assemblingType = _pageTemplateService.ReadPageTemplateProperties(templateId).Site.AssemblingType;
+
                 var obj = _pageTemplateService.ReadObjectProperties(format.ObjectId, false);
                 isContainer = obj.IsObjectContainerType;
                 pageId = obj.PageId;
                 isForm = obj.IsObjectFormType;
+
                 if (isForm)
                 {
                     contentId = obj.ContentForm.ContentId;
@@ -396,8 +398,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 Data = new
                 {
-                    html = RenderPartialView("InsertPopupWindow", new InsertPopupViewModel(templateId,
-                languageId, assemblingType, presentationOrCodeBehind, isContainer, isForm, contentId, pageId, _pageTemplateService))
+                    html = RenderPartialView("InsertPopupWindow", new InsertPopupViewModel(templateId, languageId, assemblingType, presentationOrCodeBehind, isContainer, isForm, contentId, pageId, _pageTemplateService))
                 },
                 JsonRequestBehavior = JsonRequestBehavior.DenyGet
             };

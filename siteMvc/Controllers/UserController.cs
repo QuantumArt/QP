@@ -39,7 +39,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Users)]
         [BackendActionContext(ActionCode.Users)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command, [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
+        public ActionResult _Index(
+            string tabId,
+            int parentId,
+            GridCommand command,
+            [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
         {
             var serviceResult = _service.List(command.GetListCommand(), filter);
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
@@ -52,7 +56,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = new UserSearchBlockViewModel(hostId);
             return JsonHtml("SearchBlock", model);
         }
-
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -70,7 +73,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult _MultipleSelect(string tabId, string IDs, GridCommand command,
+        public ActionResult _MultipleSelect(
+            string tabId,
+            string IDs,
+            GridCommand command,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
         {
             var selectedIDs = Converter.ToInt32Collection(IDs, ',');
@@ -92,7 +98,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectUser)]
         [BackendActionContext(ActionCode.MultipleSelectUser)]
-        public ActionResult _Select(string tabId, int id, GridCommand command,
+        public ActionResult _Select(
+            string tabId,
+            int id,
+            GridCommand command,
             [Bind(Prefix = "searchQuery")] [ModelBinder(typeof(JsonStringModelBinder<UserListFilter>))] UserListFilter filter)
         {
             var serviceResult = _service.List(command.GetListCommand(), filter, new[] { id });
@@ -112,7 +121,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewUser)]
         [BackendActionContext(ActionCode.AddNewUser)]
         [BackendActionLog]
@@ -148,7 +157,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateUser)]
         [BackendActionContext(ActionCode.UpdateUser)]
         [BackendActionLog]
@@ -171,7 +180,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveUser)]
         [BackendActionContext(ActionCode.RemoveUser)]
         [BackendActionLog]
@@ -184,7 +193,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikeUser)]
         [BackendActionContext(ActionCode.CreateLikeUser)]
         [BackendActionLog]
@@ -197,7 +206,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result.Message);
         }
 
-        #region profile
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword
         [HttpGet]
         public ActionResult Profile(string tabId, int parentId, string successfulActionCode)
@@ -224,6 +232,5 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Profile", model);
         }
 #pragma warning restore CS0108 // Member hides inherited member; missing new keyword
-        #endregion
     }
 }

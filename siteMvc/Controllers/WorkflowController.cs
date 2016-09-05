@@ -172,17 +172,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(',').Select(int.Parse).ToList();
             var model = new JavaScriptSerializer().Deserialize<List<WorkflowRuleSimpleItem>>(modelString);
 
-            foreach (var wfStage in model)
+            foreach (var stage in model)
             {
                 foreach (var contentId in contentIds)
                 {
-                    if (wfStage.UserId.HasValue && !_workflowService.IsContentAccessibleForUser(contentId, wfStage.UserId.Value))
+                    if (stage.UserId.HasValue && !_workflowService.IsContentAccessibleForUser(contentId, stage.UserId.Value))
                     {
-                        contentAccessSummary.Add(new { wfStage.StName, Message = string.Format(WorkflowStrings.InAccessibleForUser, _workflowService.getContentNameById(contentId)) });
+                        contentAccessSummary.Add(new { stage.StName, Message = string.Format(WorkflowStrings.InAccessibleForUser, _workflowService.getContentNameById(contentId)) });
                     }
-                    else if (wfStage.GroupId.HasValue && !_workflowService.IsContentAccessibleForUserGroup(contentId, wfStage.GroupId.Value))
+                    else if (stage.GroupId.HasValue && !_workflowService.IsContentAccessibleForUserGroup(contentId, stage.GroupId.Value))
                     {
-                        contentAccessSummary.Add(new { wfStage.StName, Message = string.Format(WorkflowStrings.InAccessibleForGroup, _workflowService.getContentNameById(contentId)) });
+                        contentAccessSummary.Add(new { stage.StName, Message = string.Format(WorkflowStrings.InAccessibleForGroup, _workflowService.getContentNameById(contentId)) });
                     }
                 }
             }

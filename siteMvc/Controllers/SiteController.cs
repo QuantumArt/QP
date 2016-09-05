@@ -197,7 +197,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.SiteFolder, "folderId")]
         public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
         {
-            var serviceResult = SiteService.GetFileList(new ListCommand { PageSize = pageSize, StartPage = pageNumber + 1 }, folderId,
+            var serviceResult = SiteService.GetFileList(
+                new ListCommand
+                {
+                    PageSize = pageSize,
+                    StartPage = pageNumber + 1
+                },
+                folderId,
                 new LibraryFileFilter
                 {
                     FileType = (FolderFileType?)fileTypeId,

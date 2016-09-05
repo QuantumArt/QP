@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -78,6 +79,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = SiteFolderService.Update(model.Data);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }
+
             return JsonHtml("FolderProperties", model);
         }
 
@@ -129,6 +131,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 SiteFolderService.SaveFile(model.File);
                 return Redirect("FileProperties", new { tabId, parentId, id = model.Id, successfulActionCode = ActionCode.UpdateSiteFile });
             }
+
             return JsonHtml("FileProperties", model);
         }
 
@@ -138,6 +141,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.SiteFolder, "parentId")]
         [BackendActionContext(ActionCode.MultipleRemoveSiteFile)]
         [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemoveFiles(int parentId, string[] IDs)
         {
             var result = SiteFolderService.RemoveFiles(parentId, IDs);
@@ -152,8 +156,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult RemoveFile(int parentId, string id)
         {
-            string[] IDs = { id };
-            var result = SiteFolderService.RemoveFiles(parentId, IDs);
+            string[] ids = { id };
+            var result = SiteFolderService.RemoveFiles(parentId, ids);
             return Json(result);
         }
     }

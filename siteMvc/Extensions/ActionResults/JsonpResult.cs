@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionResults
 
             if (!string.IsNullOrEmpty(jsoncallback))
             {
-                if (string.IsNullOrEmpty(base.ContentType))
+                if (string.IsNullOrEmpty(ContentType))
                 {
                     ContentType = "application/x-javascript";
                 }

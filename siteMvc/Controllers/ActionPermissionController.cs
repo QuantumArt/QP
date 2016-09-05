@@ -12,7 +12,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ActionPermissionController : PermissionWithChangeControllerBase
     {
-        public ActionPermissionController(IPermissionService service, IActionPermissionChangeService changeService) : base(service, changeService) { }
+        public ActionPermissionController(IPermissionService service, IActionPermissionChangeService changeService)
+            : base(service, changeService)
+        {
+        }
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]

@@ -147,7 +147,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             });
         }
 
-
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.FailedSession)]

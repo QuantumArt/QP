@@ -11,7 +11,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         protected readonly IMultistepActionService Service;
 
-        public AssembleTemplateBaseController() { }
+        public AssembleTemplateBaseController()
+        {
+        }
 
         public AssembleTemplateBaseController(IMultistepActionService service)
         {

@@ -79,6 +79,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistResultId(model.Data.Id);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateSite });
             }
+
             return JsonHtml("FolderProperties", model);
         }
 
@@ -130,6 +131,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 ContentFolderService.SaveFile(model.File);
                 return Redirect("FileProperties", new { tabId, parentId, id = model.Id, successfulActionCode = ActionCode.UpdateContentFile });
             }
+
             return JsonHtml("FileProperties", model);
         }
 

@@ -9,8 +9,8 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Telerik.Web.Mvc;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
+using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -104,9 +104,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     boundToExternal
                 });
             }
+
             return JsonHtml("Properties", model);
         }
-
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]

@@ -11,7 +11,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ArticlePermissionController : PermissionWithChildControllerBase
     {
-        public ArticlePermissionController(IPermissionService service, IChildEntityPermissionService childContentService) : base(service, childContentService) { }
+        public ArticlePermissionController(IPermissionService service, IChildEntityPermissionService childContentService)
+            : base(service, childContentService)
+        {
+        }
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -42,7 +45,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewArticlePermission)]
         [BackendActionContext(ActionCode.AddNewArticlePermission)]
         [BackendActionLog]
@@ -63,7 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateArticlePermission)]
         [BackendActionContext(ActionCode.UpdateArticlePermission)]
         [BackendActionLog]
@@ -75,7 +78,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveArticlePermission)]
         [BackendActionContext(ActionCode.MultipleRemoveArticlePermission)]
         [BackendActionLog]
@@ -88,7 +91,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveArticlePermission)]
         [BackendActionContext(ActionCode.RemoveArticlePermission)]
         [BackendActionLog]
@@ -128,7 +131,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleChangeChildArticlePermissions)]
         [BackendActionContext(ActionCode.MultipleChangeChildArticlePermissions)]
         [BackendActionLog]
@@ -149,7 +152,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.ChangeAllChildArticlePermissions)]
         [BackendActionContext(ActionCode.ChangeAllChildArticlePermissions)]
         [BackendActionLog]
@@ -170,7 +173,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.ChangeChildArticlePermission)]
         [BackendActionContext(ActionCode.ChangeChildArticlePermission)]
         [BackendActionLog]
@@ -182,7 +185,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveChildArticlePermissions)]
         [BackendActionContext(ActionCode.MultipleRemoveChildArticlePermissions)]
         [BackendActionLog]
@@ -195,7 +198,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveAllChildArticlePermissions)]
         [BackendActionContext(ActionCode.RemoveAllChildArticlePermissions)]
         [BackendActionLog]
@@ -207,7 +210,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveChildArticlePermission)]
         [BackendActionContext(ActionCode.RemoveChildArticlePermission)]
         [BackendActionLog]
