@@ -3,10 +3,15 @@
 namespace Quantumart.QP8.BLL.Interfaces.Logging
 {
     /// <summary>
-    /// Factory to create ILog instances
+    /// Factory to create ILog instances.
     /// </summary>
     public interface ILogFactory
     {
+        /// <summary>
+        /// Gets the logger.
+        /// </summary>
+        ILog GetLogger();
+
         /// <summary>
         /// Gets the logger.
         /// </summary>

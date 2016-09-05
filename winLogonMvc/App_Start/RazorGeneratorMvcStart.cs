@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
@@ -7,21 +8,24 @@ using Quantumart.QP8.WebMvc.WinLogOn;
 using RazorGenerator.Mvc;
 
 [assembly: WebActivatorEx.PostApplicationStartMethod(typeof(RazorGeneratorMvcStart), "Start")]
+
 namespace Quantumart.QP8.WebMvc.WinLogOn
 {
     public static class RazorGeneratorMvcStart
     {
         public static void Start()
         {
-            PrecompiledMvcEngine engine;
             try
             {
-                engine = new PrecompiledMvcEngine(typeof(RazorGeneratorMvcStart).Assembly)
+                var engine = new PrecompiledMvcEngine(typeof(RazorGeneratorMvcStart).Assembly)
                 {
                     UsePhysicalViewsIfNewer = HttpContext.Current.Request.IsLocal
                 };
+
+                ViewEngines.Engines.Insert(0, engine);
+                VirtualPathFactoryManager.RegisterVirtualPathFactory(engine);
             }
-            catch (System.Reflection.ReflectionTypeLoadException e)
+            catch (ReflectionTypeLoadException e)
             {
                 var exceptions = new StringBuilder("The following DLL load exceptions occurred:");
                 foreach (var x in e.LoaderExceptions)
@@ -31,9 +35,6 @@ namespace Quantumart.QP8.WebMvc.WinLogOn
 
                 throw new Exception($"Error loading Razor Generator Stuff:\n{exceptions}");
             }
-
-            ViewEngines.Engines.Insert(0, engine);
-            VirtualPathFactoryManager.RegisterVirtualPathFactory(engine);
         }
     }
 }

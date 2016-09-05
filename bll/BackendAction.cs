@@ -1,15 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using Quantumart.QP8;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.BLL.Repository;
+﻿using System.Collections.Generic;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
-
 
 namespace Quantumart.QP8.BLL
 {
@@ -29,7 +20,6 @@ namespace Quantumart.QP8.BLL
         /// идентификатор типа сущности
         /// </summary>
         public int EntityTypeId { get; set; }
-        
 
         /// <summary>
         /// название действия
@@ -42,7 +32,7 @@ namespace Quantumart.QP8.BLL
         /// краткое название действия
         /// </summary>
         public string ShortName { get; set; }
-        
+
         /// <summary>
         /// код действия
         /// </summary>
@@ -50,106 +40,106 @@ namespace Quantumart.QP8.BLL
 
         /// <summary>
         /// URL действия контроллера
-        /// </summary>        
+        /// </summary>
         public string ControllerActionUrl { get; set; }
 
         /// <summary>
         /// дополнительный URL действия контроллера
-        /// </summary>        
+        /// </summary>
         public string AdditionalControllerActionUrl { get; set; }
 
         /// <summary>
-        /// текст предупреждения, которое выводится 
+        /// текст предупреждения, которое выводится
         /// перед запуском действия
         /// </summary>
         [LocalizedDisplayName("ConfirmPhrase", NameResourceType = typeof(CustomActionStrings))]
         [MaxLengthValidator(1000, MessageTemplateResourceName = "ConfirmPhraseLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
         public string ConfirmPhrase { get; set; }
-        
+
         /// <summary>
         /// признак того, что для выполнения действия требуется пользовательский интерфейс
         /// </summary>
         [LocalizedDisplayName("IsInterface", NameResourceType = typeof(CustomActionStrings))]
-        public bool IsInterface	 { get; set; }
+        public bool IsInterface { get; set; }
 
         [LocalizedDisplayName("HasPreAction", NameResourceType = typeof(CustomActionStrings))]
         public bool HasPreAction { get; set; }
 
         [LocalizedDisplayName("HasSettings", NameResourceType = typeof(CustomActionStrings))]
         public bool HasSettings { get; set; }
-        
+
         /// <summary>
         /// признак того, что для выполнения действия требуется всплывающее окно
-        /// </summary>        
+        /// </summary>
         [LocalizedDisplayName("IsWindow", NameResourceType = typeof(CustomActionStrings))]
-        public bool IsWindow { get; set; }        
+        public bool IsWindow { get; set; }
 
         /// <summary>
         /// ширина окна
-        /// </summary>        
+        /// </summary>
         [LocalizedDisplayName("WindowWidth", NameResourceType = typeof(CustomActionStrings))]
-        public int? WindowWidth { get; set; }        
+        public int? WindowWidth { get; set; }
 
         /// <summary>
         /// высота окна
-        /// </summary>        
+        /// </summary>
         [LocalizedDisplayName("WindowHeight", NameResourceType = typeof(CustomActionStrings))]
-        public int? WindowHeight { get; set; }        
+        public int? WindowHeight { get; set; }
 
         /// <summary>
         /// представление, выбранное по умолчанию
         /// </summary>
-        public ViewType DefaultViewType { get; set; }		
+        public ViewType DefaultViewType { get; set; }
 
         /// <summary>
         /// разрешает поиск
         /// </summary>
-        public bool AllowSearch { get; set; }		
+        public bool AllowSearch { get; set; }
 
         /// <summary>
         /// разрешает предварительный просмотр
         /// </summary>
-        public bool AllowPreview { get; set; }		
+        public bool AllowPreview { get; set; }
 
         /// <summary>
         /// идентификатор родительского действия
         /// </summary>
-        public int? ParentId { get; set; }		
+        public int? ParentId { get; set; }
 
         /// <summary>
         /// тип действия
         /// </summary>
-        public BackendActionType ActionType { get; set; }		
+        public BackendActionType ActionType { get; set; }
 
         /// <summary>
         /// тип сущности
         /// </summary>
-        public EntityType EntityType { get; set; }		
+        public EntityType EntityType { get; set; }
 
         /// <summary>
         /// список представлений
         /// </summary>
-        public List<BackendActionView> Views { get; set; }		
+        public List<BackendActionView> Views { get; set; }
 
         /// <summary>
         /// идентификатор действия, которое должно быть произведено после успешного выполнения текущего действия
         /// </summary>
-        public int? NextSuccessfulActionId { get; set; }		
+        public int? NextSuccessfulActionId { get; set; }
 
         /// <summary>
         /// код действия, которое должно быть произведено после успешного выполнения текущего действия
         /// </summary>
-        public string NextSuccessfulActionCode { get; set; }		
+        public string NextSuccessfulActionCode { get; set; }
 
         /// <summary>
         /// идентификатор действия, которое должно быть произведено после неуспешного выполнения текущего действия
         /// </summary>
         public int? NextFailedActionId { get; set; }
-        
+
         /// <summary>
         /// код действия, которое должно быть произведено после неуспешного выполнения текущего действия
         /// </summary>
-        public string NextFailedActionCode { get; set; }		
+        public string NextFailedActionCode { get; set; }
 
         /// <summary>
         /// Признак того, что действие является пользовательским

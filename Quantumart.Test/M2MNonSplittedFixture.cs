@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
+using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
@@ -29,6 +30,7 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);

@@ -26,8 +26,9 @@ using Quantumart.QP8.Logging.Web;
 using Quantumart.QP8.Utils.FullTextSearch;
 using Quantumart.QP8.WebMvc.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
+using Quantumart.QP8.WebMvc.Infrastructure.Configuration;
 
-namespace Quantumart.QP8.WebMvc.Extensions
+namespace Quantumart.QP8.WebMvc
 {
     public class UnityDependencyResolver : IDependencyResolver
     {
@@ -99,6 +100,7 @@ namespace Quantumart.QP8.WebMvc.Extensions
 
             UnityContainer.AddNewExtension<LoggersContainerConfiguration>();
             UnityContainer.AddNewExtension<LogServicesContainerConfigutation>();
+            UnityContainer.AddNewExtension<NLogConfiguration>();
 
             RegisterMultistepActionServices(UnityContainer);
         }

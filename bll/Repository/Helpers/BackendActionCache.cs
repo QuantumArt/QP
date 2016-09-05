@@ -1,115 +1,98 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Quantumart.QP8.DAL;
 using System.Web;
 using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
 {
-	internal static class BackendActionCache
-	{
-		private static readonly string ACTION_CACHE_KEY = "BackendActionCache.BackendActions";
-		private static readonly string CUSTOM_ACTION_CACHE_KEY = "BackendActionCache.CustomBackendActions";
+    internal static class BackendActionCache
+    {
+        private const string ActionCacheKey = "BackendActionCache.BackendActions";
+        private const string CustomActionCacheKey = "BackendActionCache.CustomBackendActions";
 
-		private static IEnumerable<BackendAction> _Actions;
-		private static IEnumerable<CustomAction> _CustomActions;
+        private static IEnumerable<BackendAction> _actions;
+        private static IEnumerable<CustomAction> _customActions;
 
+        public static IEnumerable<BackendAction> Actions
+        {
+            get
+            {
+                if (HttpContext.Current == null || HttpContext.Current.Session == null)
+                {
+                    return _actions ?? (_actions = LoadActions());
+                }
 
-		public static IEnumerable<BackendAction> Actions 
-		{ 
-			get
-			{
-				if (HttpContext.Current == null || HttpContext.Current.Session == null)
-				{
-					if (_Actions == null)
-					{
-						_Actions = LoadActions();
-					}
-					return _Actions;
-				}
-				else
-				{
-					if (HttpContext.Current.Session[ACTION_CACHE_KEY] == null)
-					{
-						HttpContext.Current.Session[ACTION_CACHE_KEY] = LoadActions();
-					}
-					return HttpContext.Current.Session[ACTION_CACHE_KEY] as IEnumerable<BackendAction>;
-				}
-			}
-		}
+                if (HttpContext.Current.Session[ActionCacheKey] == null)
+                {
+                    HttpContext.Current.Session[ActionCacheKey] = LoadActions();
+                }
 
-		private static IEnumerable<BackendAction> LoadActions()
-		{
-			return MappersRepository.BackendActionMapper.GetBizList(
-				QPContext.EFContext.BackendActionSet
-					.Include("EntityType")
-					.Include("EntityType.Parent")
-					.Include("EntityType.CancelAction")
-					.Include("ActionType.PermissionLevel")
-					.Include("DefaultViewType")
-					.Include("Views.ViewType")
-					.Include("NextSuccessfulAction")
-					.Include("NextFailedAction")
-					.Include("Excludes")
-					.ToList()
-			);
-		}
+                return HttpContext.Current.Session[ActionCacheKey] as IEnumerable<BackendAction>;
+            }
+        }
 
-		private static IEnumerable<CustomAction> LoadCustomActions()
-		{
-			return MappersRepository.CustomActionMapper.GetBizList(
-				QPContext.EFContext.CustomActionSet
-					.Include("Action.EntityType.ContextMenu")
-					.Include("Action.ToolbarButtons")
-					.Include("Action.ContextMenuItems")
-					.Include("Action.ActionType.PermissionLevel")
-					.Include("Action.Excludes")
-					.Include("Contents.Site")
-					.Include("Sites")
-					.ToList()
-			);
-			
-		}
+        private static IEnumerable<BackendAction> LoadActions()
+        {
+            return MappersRepository.BackendActionMapper.GetBizList(
+                QPContext.EFContext.BackendActionSet
+                    .Include("EntityType")
+                    .Include("EntityType.Parent")
+                    .Include("EntityType.CancelAction")
+                    .Include("ActionType.PermissionLevel")
+                    .Include("DefaultViewType")
+                    .Include("Views.ViewType")
+                    .Include("NextSuccessfulAction")
+                    .Include("NextFailedAction")
+                    .Include("Excludes")
+                    .ToList()
+            );
+        }
 
-		public static IEnumerable<CustomAction> CustomActions
-		{
-			get
-			{
-				if (HttpContext.Current == null || HttpContext.Current.Session == null)
-				{
-					if (_CustomActions == null)
-					{
-						_CustomActions = LoadCustomActions();
-					}
-					return _CustomActions;
-				}
-				else 
-				{
+        private static IEnumerable<CustomAction> LoadCustomActions()
+        {
+            return MappersRepository.CustomActionMapper.GetBizList(
+                QPContext.EFContext.CustomActionSet
+                    .Include("Action.EntityType.ContextMenu")
+                    .Include("Action.ToolbarButtons")
+                    .Include("Action.ContextMenuItems")
+                    .Include("Action.ActionType.PermissionLevel")
+                    .Include("Action.Excludes")
+                    .Include("Contents.Site")
+                    .Include("Sites")
+                    .ToList()
+            );
+        }
 
-					if (HttpContext.Current.Session[CUSTOM_ACTION_CACHE_KEY] == null)
-					{
-						HttpContext.Current.Session[CUSTOM_ACTION_CACHE_KEY] = LoadCustomActions();
-					}
-					return HttpContext.Current.Session[CUSTOM_ACTION_CACHE_KEY] as IEnumerable<CustomAction>;
-				}
-			}
-		}
+        public static IEnumerable<CustomAction> CustomActions
+        {
+            get
+            {
+                if (HttpContext.Current == null || HttpContext.Current.Session == null)
+                {
+                    return _customActions ?? (_customActions = LoadCustomActions());
+                }
 
-		public static void Reset()
-		{
-			if (HttpContext.Current == null || HttpContext.Current.Session == null)
-			{
-				_Actions = null;
-				_CustomActions = null;
-			}
-			else
-			{
-				HttpContext.Current.Session.Remove(ACTION_CACHE_KEY);
-				HttpContext.Current.Session.Remove(CUSTOM_ACTION_CACHE_KEY);
-			}
+                if (HttpContext.Current.Session[CustomActionCacheKey] == null)
+                {
+                    HttpContext.Current.Session[CustomActionCacheKey] = LoadCustomActions();
+                }
 
-		}
-	}
+                return HttpContext.Current.Session[CustomActionCacheKey] as IEnumerable<CustomAction>;
+            }
+        }
+
+        public static void Reset()
+        {
+            if (HttpContext.Current == null || HttpContext.Current.Session == null)
+            {
+                _actions = null;
+                _customActions = null;
+            }
+            else
+            {
+                HttpContext.Current.Session.Remove(ActionCacheKey);
+                HttpContext.Current.Session.Remove(CustomActionCacheKey);
+            }
+        }
+    }
 }
