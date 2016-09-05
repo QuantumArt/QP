@@ -1,4 +1,12 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Web;
+using System.Web.Mvc;
+using System.Web.Routing;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Quantumart.QP8.BLL;
@@ -6,11 +14,14 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions;
+using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Extensions.ValidatorProviders;
 using Quantumart.QP8.WebMvc.Extensions.ValueProviders;
 using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.WebMvc.ViewModels.Article;
+using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
@@ -19,17 +30,6 @@ using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Quantumart.QP8.WebMvc.ViewModels.Article;
-using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -137,8 +137,8 @@ namespace Quantumart.QP8.WebMvc
             ModelBinders.Binders.Add(typeof(FieldViewModel), new FieldViewModelBinder());
             ModelBinders.Binders.Add(typeof(VirtualContentViewModel), new VirtualContentViewModelBinder());
             ModelBinders.Binders.Add(typeof(CustomActionViewModel), new CustomActionViewModelBinder());
-            ModelBinders.Binders.Add(typeof(QPCheckedItem), new QPCheckedItemModelBinder());
-            ModelBinders.Binders.Add(typeof(IList<QPCheckedItem>), new QPCheckedItemListModelBinder());
+            ModelBinders.Binders.Add(typeof(QPCheckedItem), new QpCheckedItemModelBinder());
+            ModelBinders.Binders.Add(typeof(IList<QPCheckedItem>), new QpCheckedItemListModelBinder());
             ModelBinders.Binders.Add(typeof(UserViewModel), new UserViewModelBinder());
             ModelBinders.Binders.Add(typeof(UserGroupViewModel), new UserGroupViewModelBinder());
             ModelBinders.Binders.Add(typeof(PermissionViewModel), new PermissionViewModelBinder());
