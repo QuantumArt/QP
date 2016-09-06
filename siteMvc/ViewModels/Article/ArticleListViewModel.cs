@@ -7,7 +7,6 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
@@ -111,15 +110,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             {
                 if (ShowArchive)
                 {
-                    return C.EntityTypeCode.ArchiveArticle;
+                    return Constants.EntityTypeCode.ArchiveArticle;
                 }
 
                 if (IsVirtual)
                 {
-                    return C.EntityTypeCode.VirtualArticle;
+                    return Constants.EntityTypeCode.VirtualArticle;
                 }
 
-                return C.EntityTypeCode.Article;
+                return Constants.EntityTypeCode.Article;
             }
         }
 
@@ -129,25 +128,25 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             {
                 if (ShowArchive)
                 {
-                    return C.ActionCode.ArchiveArticles;
+                    return Constants.ActionCode.ArchiveArticles;
                 }
 
                 if (IsVirtual)
                 {
-                    return C.ActionCode.VirtualArticles;
+                    return Constants.ActionCode.VirtualArticles;
                 }
 
-                return C.ActionCode.Articles;
+                return Constants.ActionCode.Articles;
             }
         }
 
         public override string AddNewItemText => ArticleStrings.Link_AddNewArticle;
 
-        public override string AddNewItemActionCode => C.ActionCode.AddNewArticle;
+        public override string AddNewItemActionCode => Constants.ActionCode.AddNewArticle;
 
         public override bool IsListDynamic => true;
 
-        public override string KeyColumnName => C.FieldName.CONTENT_ITEM_ID;
+        public override string KeyColumnName => Constants.FieldName.CONTENT_ITEM_ID;
 
         public override string Filter
         {

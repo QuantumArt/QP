@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Quantumart.QP8.Resources;
@@ -10,53 +8,27 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 namespace Quantumart.QP8.WebMvc.ViewModels.Audit
 {
     public sealed class ActionLogAreaViewModel : AreaViewModel
-    {		
-        #region creation
-
+    {
         public static ActionLogAreaViewModel Create(string tabId, int parentId)
         {
-            ActionLogAreaViewModel model = ViewModel.Create<ActionLogAreaViewModel>(tabId, parentId);						
-            return model;
+            return Create<ActionLogAreaViewModel>(tabId, parentId);
         }
 
-        #endregion
+        public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;
 
-        public override string EntityTypeCode
-        {
-            get {return Constants.EntityTypeCode.CustomerCode; }			
-        }
+        public override string ActionCode => Constants.ActionCode.ActionLog;
 
-        public override string ActionCode
-        {
-            get { return Constants.ActionCode.ActionLog; }
-        }
-        
+        public string GridElementId => UniqueId("Grid");
 
-        public string GridElementId
-        {
-            get
-            {
-                return UniqueId("Grid");
-            }
-        }
+        public string FilterElementId => UniqueId("LogFilter");
 
-        public string FilterElementId { get { return UniqueId("LogFilter"); } }
+        public IEnumerable<QPSelectListItem> ActionTypeList { get; internal set; }
 
-        public IEnumerable<QPSelectListItem> ActionTypeList
-        {
-            get;
-            internal set;
-        }
-
-        public IEnumerable<QPSelectListItem> ActionList
-        {
-            get;
-            internal set;
-        }
+        public IEnumerable<QPSelectListItem> ActionList { get; internal set; }
 
         public MvcHtmlString ActionTypeListJson
         {
-            get 
+            get
             {
                 return MvcHtmlString.Create(
                     new JavaScriptSerializer().Serialize(
@@ -108,83 +80,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Audit
             }
         }
 
-        
-        public enum FilteredColumnsEnum
+        public IEnumerable<QPSelectListItem> FilterList => new[]
         {
-            ActionTypeName = 1,
-            EntityTypeName,
-            EntityStringId,
-            EntityTitle,
-            ParentEntityId,
-            ExecutionTime,
-            UserLogin,
-            ActionName
-        }
-
-        
-        public IEnumerable<QPSelectListItem> FilterList
-        {
-            get
-            {
-                return new[]
-                {
-                    new QPSelectListItem
-                    {
-                        Text = AuditStrings.ActionName,
-                        Value = ((int)FilteredColumnsEnum.ActionName).ToString(),
-                        Selected = false
-                    },
-
-                    new QPSelectListItem
-                    {
-                        Text = AuditStrings.ActionTypeName,
-                        Value = ((int)FilteredColumnsEnum.ActionTypeName).ToString(),
-                        Selected = false
-                    },
-
-                    new QPSelectListItem
-                    {
-                        Text = AuditStrings.EntityTypeName,
-                        Value = ((int)FilteredColumnsEnum.EntityTypeName).ToString(),
-                        Selected = false
-                    },
-
-                    new QPSelectListItem
-                    {
-                        Text = AuditStrings.EntityStringId,
-                        Value = ((int)FilteredColumnsEnum.EntityStringId).ToString(),
-                        Selected = false
-                    },
-
-                    new QPSelectListItem
-                    {
-                        Text = AuditStrings.EntityTitle,
-                        Value = ((int)FilteredColumnsEnum.EntityTitle).ToString(),
-                        Selected = false
-                    },
-
-                    new QPSelectListItem
-                    {
-                        Text = AuditStrings.ParentEntityId,
-                        Value = ((int)FilteredColumnsEnum.ParentEntityId).ToString(),
-                        Selected = false
-                    },
-
-                    new QPSelectListItem
-                    {
-                        Text = AuditStrings.ExecutionTime,
-                        Value = ((int)FilteredColumnsEnum.ExecutionTime).ToString(),
-                        Selected = false
-                    },
-
-                    new QPSelectListItem
-                    {
-                        Text = AuditStrings.UserLogin,
-                        Value = ((int)FilteredColumnsEnum.UserLogin).ToString(),
-                        Selected = false
-                    }
-                };
-            }
-        }
+            new QPSelectListItem{Text = AuditStrings.ActionName,Value = ((int)FilteredColumnsEnum.ActionName).ToString(),Selected = false},
+            new QPSelectListItem{Text = AuditStrings.ActionTypeName,Value = ((int)FilteredColumnsEnum.ActionTypeName).ToString(),Selected = false},
+            new QPSelectListItem{Text = AuditStrings.EntityTypeName,Value = ((int)FilteredColumnsEnum.EntityTypeName).ToString(),Selected = false},
+            new QPSelectListItem{Text = AuditStrings.EntityStringId,Value = ((int)FilteredColumnsEnum.EntityStringId).ToString(),Selected = false},
+            new QPSelectListItem{Text = AuditStrings.EntityTitle,Value = ((int)FilteredColumnsEnum.EntityTitle).ToString(),Selected = false},
+            new QPSelectListItem{Text = AuditStrings.ParentEntityId,Value = ((int)FilteredColumnsEnum.ParentEntityId).ToString(),Selected = false},
+            new QPSelectListItem{Text = AuditStrings.ExecutionTime,Value = ((int)FilteredColumnsEnum.ExecutionTime).ToString(),Selected = false},
+            new QPSelectListItem{Text = AuditStrings.UserLogin,Value = ((int)FilteredColumnsEnum.UserLogin).ToString(),Selected = false}
+        };
     }
 }

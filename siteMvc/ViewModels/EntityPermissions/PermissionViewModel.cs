@@ -1,100 +1,84 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 {
-	public class PermissionViewModel : EntityViewModel
-	{
-		
+    public class PermissionViewModel : EntityViewModel
+    {
+        private IPermissionService _service;
+        private IPermissionViewModelSettings _settings;
 
-		private IPermissionService service;
-		private IPermissionViewModelSettings settings;
+        public static PermissionViewModel Create(EntityPermission permission, string tabId, int parentId, IPermissionService service, IPermissionViewModelSettings settings = null, bool? isPostBack = null)
+        {
+            var model = Create<PermissionViewModel>(permission, tabId, parentId);
+            model._service = service;
+            model._settings = settings ?? service.ViewModelSettings;
+            model.IsPostBack = isPostBack ?? false;
+            model.Init();
+            return model;
+        }
 
-		public static PermissionViewModel Create(EntityPermission permission, string tabId, int parentId, IPermissionService service, IPermissionViewModelSettings settings = null, bool? isPostBack = null)
-		{
-			PermissionViewModel model = EntityViewModel.Create<PermissionViewModel>(permission, tabId, parentId);
-			model.service = service;
-			model.settings = settings ?? service.ViewModelSettings;
-			model.IsPostBack = isPostBack ?? false;
-			model.Init();
-			return model;
-		}
-		
-		public new EntityPermission Data
-		{
-			get
-			{
-				return (EntityPermission)EntityData;
-			}
-			set
-			{
-				EntityData = value;
-			}
-		}
+        public new EntityPermission Data
+        {
+            get
+            {
+                return (EntityPermission)EntityData;
+            }
+            set
+            {
+                EntityData = value;
+            }
+        }
 
-		private void Init()
-		{
-			if (IsNew)
-				Data.ParentEntityId = ParentEntityId;
-			Data.Init(service.Repository);
-		}
+        private void Init()
+        {
+            if (IsNew)
+            {
+                Data.ParentEntityId = ParentEntityId;
+            }
 
-		internal void DoCustomBinding()
-		{
-			Data.DoCustomBinding();
-		}
+            Data.Init(_service.Repository);
+        }
 
-		#region override
-		public override string EntityTypeCode
-		{
-			get { return settings.EntityTypeCode; }
-		}
+        internal void DoCustomBinding()
+        {
+            Data.DoCustomBinding();
+        }
 
-		public override string ActionCode
-		{
-			get { return settings.ActionCode; }
-		} 
-		#endregion
+        public override string EntityTypeCode => _settings.EntityTypeCode;
 
-		#region props
-		public bool IsPropagateable { get { return settings.IsPropagateable; } }
+        public override string ActionCode => _settings.ActionCode;
 
-		public bool CanHide { get { return settings.CanHide; } }
+        public bool IsPropagateable => _settings.IsPropagateable;
 
-		public QPSelectListItem UserListItem { get { return Data.User != null ? new QPSelectListItem { Value = Data.User.Id.ToString(), Text = Data.User.LogOn, Selected = true } : null; } }
+        public bool CanHide => _settings.CanHide;
 
-		public QPSelectListItem GroupListItem { get { return Data.Group != null ? new QPSelectListItem { Value = Data.Group.Id.ToString(), Text = Data.Group.Name, Selected = true } : null; } }
+        public QPSelectListItem UserListItem => Data.User != null ? new QPSelectListItem { Value = Data.User.Id.ToString(), Text = Data.User.LogOn, Selected = true } : null;
 
-		public bool IsPostBack { get; set; }
+        public QPSelectListItem GroupListItem => Data.Group != null ? new QPSelectListItem { Value = Data.Group.Id.ToString(), Text = Data.Group.Name, Selected = true } : null;
 
-		public bool IsContentPermission { get { return StringComparer.InvariantCultureIgnoreCase.Equals(EntityTypeCode, Constants.EntityTypeCode.ContentPermission); } }
-		#endregion
+        public bool IsPostBack { get; set; }
 
-		#region list items
-		public IEnumerable<ListItem> GetMemberTypes()
-		{
-			return new[]
-			{
-				new ListItem(EntityPermission.GROUP_MEMBER_TYPE, EntityPermissionStrings.Group, "GroupMemberPanel"),
-				new ListItem(EntityPermission.USER_MEMBER_TYPE, EntityPermissionStrings.User, "UserMemberPanel")			
-			};
-		}
+        public bool IsContentPermission => StringComparer.InvariantCultureIgnoreCase.Equals(EntityTypeCode, Constants.EntityTypeCode.ContentPermission);
 
-		public IEnumerable<ListItem> GetPermissionLevels()
-		{
-			return service.GetPermissionLevels()
-				.Select(l => new ListItem { Value = l.Id.ToString(), Text = Translator.Translate(l.Name) })
-				.ToArray();
+        public IEnumerable<ListItem> GetMemberTypes()
+        {
+            return new[]
+            {
+                new ListItem(EntityPermission.GROUP_MEMBER_TYPE, EntityPermissionStrings.Group, "GroupMemberPanel"),
+                new ListItem(EntityPermission.USER_MEMBER_TYPE, EntityPermissionStrings.User, "UserMemberPanel")
+            };
+        }
 
-		}
-		#endregion						
-	}
+        public IEnumerable<ListItem> GetPermissionLevels()
+        {
+            return _service.GetPermissionLevels().Select(l => new ListItem { Value = l.Id.ToString(), Text = Translator.Translate(l.Name) }).ToArray();
+
+        }
+    }
 }
