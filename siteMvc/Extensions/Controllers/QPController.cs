@@ -62,12 +62,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         public ActionResult Redirect(string actionName, object routeValues)
         {
-            if (IsReplayAction())
-            {
-                return null;
-            }
-
-            return RedirectToAction(actionName, routeValues);
+            return IsReplayAction() ? null : RedirectToAction(actionName, routeValues);
         }
 
         public JsonNetResult<MessageResult> JsonMessageResult(MessageResult result)

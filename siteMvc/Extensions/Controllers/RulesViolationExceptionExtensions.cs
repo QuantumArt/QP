@@ -16,7 +16,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         {
             prefix = string.IsNullOrEmpty(prefix) ? string.Empty : prefix + ".";
             var criticalErrors = ex.Errors.Where(n => n.Critical).ToList();
-
             foreach (var error in criticalErrors)
             {
                 CopyError(modelState, prefix, error);

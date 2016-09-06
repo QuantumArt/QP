@@ -26,8 +26,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         private static readonly Regex TabIdRegExp = new Regex(@"^tab[0-9]+$");
         private static readonly Regex WindowIdRegExp = new Regex(@"^win[0-9]+$");
 
-        #region Private And Internal Members
-
         public static string FieldTemplate(this HtmlHelper html, string id, string title, bool forCheckbox = false, string example = null, bool required = false, string description = null)
         {
             var label = html.QpLabel(html.UniqueId(id), title, !forCheckbox).ToString();
@@ -277,8 +275,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.VersionText(id, resultValue);
         }
 
-        #endregion
-
         /// <summary>
         /// Генерирует ID, уникальный для текущего таба (id таба берется из RouteData)
         /// </summary>
@@ -345,8 +341,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return isWindow;
         }
 
-        #region Untyped helpers
-
         public static MvcHtmlString Field(this HtmlHelper html, FieldValue pair, bool articleIsAgregated = false, bool forceReadonly = false)
         {
             // Если статья уже отображается как агрегированная, то у нее не отображаются поля-классификаторы и агрегирующие поля
@@ -380,11 +374,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 string.Format(html.FieldTemplate(id, title), html.Span(html.UniqueId(id), value))
             );
         }
-
-
-        #endregion
-
-        #region Typed helpers
 
         public static ModelMetadata GetMetaData<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
         {
@@ -930,6 +919,5 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 }
             });
         }
-        #endregion
     }
 }

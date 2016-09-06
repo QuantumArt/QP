@@ -101,19 +101,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                         result.Add("OnScreen", "OnScreen(Value, ItemID);");
                         result.Add("OnScreenFlyEdit", "OnScreenFlyEdit(Value, ItemID, FieldName);");
                     }
-
                     else
                     {
                         result.Add("GetContentID", "GetContentID(content_name);");
                         result.Add("GetContentUploadUrl", "GetContentUploadUrl(content_name);");
-                        if (isContainer)
-                        {
-                            result.Add("GetFieldUploadUrl", "GetFieldUploadUrl(field_name);");
-                        }
-                        else
-                        {
-                            result.Add("GetFieldUploadUrl", "GetFieldUploadUrl(content_name, field_name);");
-                        }
+                        result.Add("GetFieldUploadUrl", isContainer ? "GetFieldUploadUrl(field_name);" : "GetFieldUploadUrl(content_name, field_name);");
                         result.Add("GetContentItemLinkIDs", "GetContentItemLinkIDs(linkFieldName, itemID);");
                         result.Add("GetLinkIDs", "GetLinkIDs(LinkFieldName);");
                         result.Add("FieldName", "FieldName(content_name, field_name);");

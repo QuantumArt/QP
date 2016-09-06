@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -281,6 +281,7 @@
     <Compile Include="Extensions\ActionFilters\BackendActionContextAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\BackendActionLogAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\ConnectionScopeAttribute.cs" />
+    <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
     <Compile Include="Extensions\ActionFilters\DisableBrowserCache.cs" />
     <Compile Include="Extensions\ActionFilters\EntityAuthorizeAttribute.cs" />
@@ -289,7 +290,7 @@
     <Compile Include="Extensions\ActionFilters\RecordAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\RequestHeaderAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\ResponseHeaderAttribute.cs" />
-    <Compile Include="Extensions\ActionResults\IframeJsonResult.cs" />
+    <Compile Include="Extensions\ActionResults\FileUploadJsonResult.cs" />
     <Compile Include="Extensions\ActionResults\JsonpResult.cs" />
     <Compile Include="Extensions\ActionResults\JsonNetResult.cs" />
     <Compile Include="Extensions\ActionResults\JsonCamelCaseResult.cs" />
@@ -356,8 +357,8 @@
     <Compile Include="Extensions\ModelBinders\ObjectViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\PageTemplateViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\PermissionViewModelBinder.cs" />
-    <Compile Include="Extensions\ModelBinders\QPCheckedItemListModelBinder.cs" />
-    <Compile Include="Extensions\ModelBinders\QPCheckedItemModelBinder.cs" />
+    <Compile Include="Extensions\ModelBinders\QpCheckedItemListModelBinder.cs" />
+    <Compile Include="Extensions\ModelBinders\QpCheckedItemModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\QpModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\RecurringScheduleModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\SiteModelBinder.cs" />
