@@ -283,6 +283,9 @@
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
       <Link>References\Microsoft.Web.Infrastructure.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\CsvHelper.2.16.1.0\lib\net45\CsvHelper.dll">
+      <Link>References\CsvHelper.dll</Link>
+    </EmbeddedResource>
     <Content Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
