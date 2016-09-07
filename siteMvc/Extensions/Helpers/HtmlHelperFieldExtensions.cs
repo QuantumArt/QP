@@ -23,13 +23,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         private const string RowClassName = "row";
         private const string DescriptionClassName = "description";
 
-        private static readonly Regex TabIdRegExp = new Regex(@"^tab[0-9]+$");
         private static readonly Regex WindowIdRegExp = new Regex(@"^win[0-9]+$");
 
         public static string FieldTemplate(this HtmlHelper html, string id, string title, bool forCheckbox = false, string example = null, bool required = false, string description = null)
         {
             var label = html.QpLabel(html.UniqueId(id), title, !forCheckbox).ToString();
-
             if (!string.IsNullOrWhiteSpace(description))
             {
                 label = $"{label} <span class='linkButton fieldDescription' data-field_description_text='{description}'>" + "<a href='javascript:void(0);'>" + "<span class='text'>(?)</span>" + "</a>" + "</span>";
@@ -49,6 +47,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var validatorWrapper = new TagBuilder("em");
             validatorWrapper.AddCssClass(ValidatorsClassName);
+
             var validator = html.ValidationMessage(id, new { id = html.UniqueId(id) + "_validator" });
             if (validator != null)
             {
@@ -56,9 +55,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var exampleCode = string.IsNullOrEmpty(example) ? string.Empty : RenderDescription(example);
-
             var fieldCell = new TagBuilder("dd");
             fieldCell.AddCssClass(FieldClassName);
+
             var cellHtml = "{0}" + (forCheckbox ? " " + label : exampleCode);
             fieldCell.InnerHtml = cellHtml + validatorWrapper;
 
@@ -66,8 +65,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             row.AddCssClass(RowClassName);
             row.MergeDataAttribute("field_form_name", id);
             row.InnerHtml = labelCell + fieldCell.ToString();
-            return row.ToString();
 
+            return row.ToString();
         }
 
         private static string RenderDescription(string example)
@@ -171,7 +170,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         internal static MvcHtmlString VersionRelation(this HtmlHelper source, string id, string value, string valueToMerge, Field field, int articleId, ArticleViewType viewType)
         {
-
             if (viewType == ArticleViewType.CompareVersions)
             {
                 var titles1 = field.GetRelatedTitles(value);
@@ -309,26 +307,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         }
 
         /// <summary>
-        /// Определяет на основе идентификатора таба является ли контейнер табом
-        /// </summary>
-        /// <param name="tabId">идентификатор таба</param>
-        /// <returns>результат проверки (true - таб; false - не таб)</returns>
-        public static bool IsTab(string tabId)
-        {
-            var isTab = false;
-            if (!string.IsNullOrWhiteSpace(tabId))
-            {
-                isTab = TabIdRegExp.IsMatch(tabId);
-            }
-
-            return isTab;
-        }
-
-        /// <summary>
         /// Определяет на основе идентификатора таба является ли контейнер всплывающим окном
         /// </summary>
-        /// <param name="tabId">идентификатор таба</param>
-        /// <returns>результат проверки (true - окно; false - не окно)</returns>
         public static bool IsWindow(string tabId)
         {
             var isWindow = false;
@@ -370,9 +350,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString DisplayField(this HtmlHelper html, string id, string title, object value)
         {
-            return MvcHtmlString.Create(
-                string.Format(html.FieldTemplate(id, title), html.Span(html.UniqueId(id), value))
-            );
+            return MvcHtmlString.Create(string.Format(html.FieldTemplate(id, title), html.Span(html.UniqueId(id), value)));
         }
 
         public static ModelMetadata GetMetaData<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression)
@@ -404,7 +382,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 )
             );
         }
-
 
         public static MvcHtmlString TextAreaFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
         {
@@ -490,7 +467,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return html.SelectFieldFor(expression, list, null, options);
         }
 
-
         public static MvcHtmlString SelectFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes = null, SelectOptions options = null, bool required = false)
         {
             var data = GetMetaData(html, expression);
@@ -557,17 +533,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             );
         }
 
-        public static MvcHtmlString PlUploadFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, string val, Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.PlUploadFor(expression, val, htmlAttributes)
-                )
-            );
-        }
-
         public static MvcHtmlString FileForFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Field field, Dictionary<string, object> htmlAttributes = null)
         {
             var data = GetMetaData(html, expression);
@@ -618,23 +583,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static MvcHtmlString VersionAreaFieldFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, TValue text)
         {
             var data = GetMetaData(source, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    source.VersionAreaFor(ExpressionHelper.GetExpressionText(expression), text.ToString())
-                )
-            );
-        }
-
-        public static MvcHtmlString WorkflowFieldFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<TValue>>> expression, IEnumerable<TValue> list)
-        {
-            var data = GetMetaData(source, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-            source.WorkflowFor(ExpressionHelper.GetExpressionText(expression), list)
-                )
-            );
+            return MvcHtmlString.Create(string.Format(
+                source.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
+                source.VersionAreaFor(ExpressionHelper.GetExpressionText(expression), text.ToString())
+            ));
         }
 
         public static MvcHtmlString WorkflowFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<TValue>>> expression, IEnumerable<TValue> list)
@@ -642,88 +594,83 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.WorkflowFor(ExpressionHelper.GetExpressionText(expression), list);
         }
 
-        public static MvcHtmlString CheckboxListFieldFor<TModel>(this HtmlHelper<TModel> html, Expression<Func<TModel, IList<QPCheckedItem>>> expression,
-            IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes, RepeatDirection repeatDirection = RepeatDirection.Vertical)
+        public static MvcHtmlString CheckboxListFieldFor<TModel>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, IList<QPCheckedItem>>> expression,
+            IEnumerable<QPSelectListItem> list,
+            EntityDataListArgs entityDataListArgs,
+            Dictionary<string, object> htmlAttributes,
+            RepeatDirection repeatDirection = RepeatDirection.Vertical)
         {
             var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
+            return MvcHtmlString.Create(string.Format(
+                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
+                html.QpCheckBoxListFor(expression, list, entityDataListArgs, htmlAttributes, repeatDirection)
+            ));
+        }
+
+        public static MvcHtmlString CheckBoxTreeFieldFor<TModel>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression,
+            string entityTypeCode,
+            int? parentEntityId,
+            string actionCode,
+            bool allowGlobalSelection = false,
+            Dictionary<string, object> htmlAttributes = null)
+        {
+            var data = GetMetaData(html, expression);
+            return MvcHtmlString.Create(string.Format(
+                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
+                html.CheckBoxTreeFor(expression, entityTypeCode, parentEntityId, actionCode, allowGlobalSelection, htmlAttributes).ToHtmlString()
+            ));
+        }
+
+        public static MvcHtmlString VirtualFieldTreeFieldFor<TModel>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression,
+            int? parentEntityId,
+            int virtualContentId,
+            Dictionary<string, object> htmlAttributes = null)
+        {
+            var data = GetMetaData(html, expression);
+            return MvcHtmlString.Create(string.Format(
                     html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.QpCheckBoxListFor(expression, list, entityDataListArgs, htmlAttributes, repeatDirection)
+                    html.VirtualFieldTreeFor(expression, parentEntityId, virtualContentId, htmlAttributes).ToHtmlString()
                 )
             );
         }
 
-        public static MvcHtmlString CheckBoxTreeFieldFor<TModel>(this HtmlHelper<TModel> html, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression,
-                            string entityTypeCode, int? parentEntityId, string actionCode, bool allowGlobalSelection = false, Dictionary<string, object> htmlAttributes = null)
+        public static MvcHtmlString UnionContentsFieldFor<TModel>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, IEnumerable<int>>> expression,
+            IEnumerable<ListItem> selectedItemList,
+            int siteId,
+            Dictionary<string, object> htmlAttributes = null)
         {
             var data = GetMetaData(html, expression);
-
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.CheckBoxTreeFor(expression,
-                                         entityTypeCode,
-                                         parentEntityId,
-                                         actionCode,
-                                         allowGlobalSelection,
-                                         htmlAttributes)
-                        .ToHtmlString()
-                )
-            );
+            return MvcHtmlString.Create(string.Format(
+                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
+                html.UnionContentsFor(expression, selectedItemList, siteId, htmlAttributes).ToHtmlString()
+            ));
         }
 
-        public static MvcHtmlString VirtualFieldTreeFieldFor<TModel>(this HtmlHelper<TModel> html, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression,
-            int? parentEntityId, int virtualContentId, Dictionary<string, object> htmlAttributes = null)
+        public static MvcHtmlString MultipleItemPickerFieldFor<TModel>(
+            this HtmlHelper<TModel> html,
+            Expression<Func<TModel, IEnumerable<int>>> expression,
+            IEnumerable<ListItem> selectedItemList,
+            EntityDataListArgs entityDataListArgs,
+            Dictionary<string, object> htmlAttributes = null)
         {
             var data = GetMetaData(html, expression);
-
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.VirtualFieldTreeFor(expression,
-                                         parentEntityId,
-                                         virtualContentId,
-                                         htmlAttributes)
-                        .ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString UnionContentsFieldFor<TModel>(this HtmlHelper<TModel> html, Expression<Func<TModel, IEnumerable<int>>> expression, IEnumerable<ListItem> selectedItemList, int siteId, Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.UnionContentsFor(expression, selectedItemList, siteId, htmlAttributes).ToHtmlString()
-                )
-            );
-        }
-
-        public static MvcHtmlString MultipleItemPickerFieldFor<TModel>(this HtmlHelper<TModel> html, Expression<Func<TModel, IEnumerable<int>>> expression, IEnumerable<ListItem> selectedItemList,
-            EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes = null)
-        {
-            var data = GetMetaData(html, expression);
-
-            return MvcHtmlString.Create(
-                string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.MultipleItemPickerFor(expression, selectedItemList, entityDataListArgs, htmlAttributes).ToHtmlString()
-                )
-            );
+            return MvcHtmlString.Create(string.Format(
+                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
+                html.MultipleItemPickerFor(expression, selectedItemList, entityDataListArgs, htmlAttributes).ToHtmlString()
+            ));
         }
 
         /// <summary>
         /// Поле-классификатор
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="field"></param>
-        /// <param name="article"></param>
-        /// <param name="forceReadOnly"></param>
-        /// <returns></returns>
         private static MvcHtmlString ClassifierField(this HtmlHelper source, string name, string value, Field field, Article article, bool forceReadOnly)
         {
             // Получить агрегированную статью
@@ -742,22 +689,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 var classifierContent = ArticleViewModel.GetContentById(Converter.ToNullableInt32(value));
                 var classifierContentName = classifierContent?.Name;
-                sb.Append(
-                    source.QpTextBox(name, classifierContentName,
-                        new Dictionary<string, object> { { "class", HtmlHelpersExtensions.ARTICLE_TEXTBOX_CLASS_NAME }, { "disabled", "disabled" } }
-                    )
-                );
+                sb.Append(source.QpTextBox(name, classifierContentName, new Dictionary<string, object> { { "class", HtmlHelpersExtensions.ARTICLE_TEXTBOX_CLASS_NAME }, { "disabled", "disabled" } }));
             }
             else
             {
                 var contentListHtmlAttrs = new Dictionary<string, object> { { "class", "dropDownList classifierContentList" } };
-                sb.Append(
-                    source.DropDownList(name,
-                        source.List(ArticleViewModel.GetAggregatableContentsForClassifier(field, value)),
-                        FieldStrings.SelectContent,
-                        contentListHtmlAttrs
-                    ).ToHtmlString()
-                );
+                sb.Append(source.DropDownList(name, source.List(ArticleViewModel.GetAggregatableContentsForClassifier(field, value)), FieldStrings.SelectContent, contentListHtmlAttrs).ToHtmlString());
             }
 
             // Содержимое агрегированной статьи (если она есть)
@@ -766,34 +703,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 sb.Append(HttpUtility.HtmlEncode(source.AggregatedArticle(aggregatedArticle).ToHtmlString()));
             }
+
             sb.Append(EndAggregatedArticleData());
-
             sb.Append(EndClassifierFieldComponent());
-
             return MvcHtmlString.Create(sb.ToString());
         }
 
         /// <summary>
         /// Поле-классификатор в версии статьи
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="field"></param>
-        /// <param name="article"></param>
-        /// <param name="version"></param>
-        /// <param name="forceReadOnly"></param>
-        /// <param name="valueToMerge"></param>
-        /// <returns></returns>
         private static MvcHtmlString VersionClassifierField(this HtmlHelper source, string name, string value, Field field, Article article, ArticleVersion version = null, bool forceReadOnly = true, string valueToMerge = null)
         {
-
             var name1 = version?.GetAggregatedContent(value)?.Name;
             if (!StringComparer.InvariantCultureIgnoreCase.Equals(value, valueToMerge) && article.ViewType == ArticleViewType.CompareVersions)
             {
-
                 var name2 = version?.VersionToMerge.GetAggregatedContent(valueToMerge)?.Name;
-
                 var mergedValue = ArticleVersion.Merge(Formatter.ProtectHtml(name1), Formatter.ProtectHtml(name2));
                 return source.VersionText(name, mergedValue);
             }
@@ -842,6 +766,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var aggregatedArticleId = aggregatedArticle?.Id.ToString() ?? string.Empty;
             return $"<div id={componentElemId} data-host_id=\"{source.TabId()}\" data-field_name=\"{name}\" data-aggregated_content_id=\"{value}\" data-aggregated_article_id=\"{aggregatedArticleId}\" data-root_content_id=\"{article.ContentId}\" data-classifier_id=\"{field.Id}\" data-root_article_id=\"{article.Id}\" data-acticle_html_id=\"{acticleHtmlElemId}\" data-is_not_changeable=\"{!article.IsNew && !field.Changeable}\" class=\"classifierComponent\">";
         }
+
         private static string EndClassifierFieldComponent()
         {
             return "</div>";
@@ -851,18 +776,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             return $"<script type=\"text/plain\" id=\"{acticleHtmlElemId}\">";
         }
+
         private static string EndAggregatedArticleData()
         {
             return "</script>";
         }
 
-
         /// <summary>
         /// Возвращает разметку формы агрегируемой статьи
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="article"></param>
-        /// <returns></returns>
         public static MvcHtmlString AggregatedArticle(this HtmlHelper source, Article article)
         {
             return source.AggregatedFieldValues(article.FieldValues.Where(n => !n.Field.Aggregated));
@@ -884,13 +806,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <summary>
         /// Редактор строкового перечисления
         /// </summary>
-        /// <param name="html"></param>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="field"></param>
-        /// <param name="forceReadOnly"></param>
-        /// <param name="isNew"></param>
-        /// <returns></returns>
         private static MvcHtmlString StringEnumEditor(this HtmlHelper html, string name, string value, Field field, bool forceReadOnly, bool isNew)
         {
             const string specClass = "qp-stringEnumEditor";

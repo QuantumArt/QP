@@ -331,11 +331,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return MvcHtmlString.Create(tb.ToString());
         }
 
-        public static MvcHtmlString Span(this HtmlHelper source, MvcHtmlString id, object value)
-        {
-            return source.Span(id.ToString(), value);
-        }
-
         public static MvcHtmlString NumericTextBox(this HtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, Field field)
         {
             return source.NumericTextBox(name, value, htmlAttributes, field.DecimalPlaces);
@@ -371,10 +366,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             if (relationType == RelationType.OneToMany)
             {
-                return !isListOverflow ? source.QpDropDownList(id, list, GlobalStrings.NotSelected, options, entityDataListArgs) : source.QpSingleItemPicker(id, list, options, entityDataListArgs);
+                return !isListOverflow ? source.QpDropDownList(id, list, GlobalStrings.NotSelected, options, entityDataListArgs) : source.QpSingleItemPicker(id, list.ToList(), options, entityDataListArgs);
             }
 
-            return !isListOverflow ? source.QpCheckBoxList(id, list, options, entityDataListArgs) : source.QpMultipleItemPicker(id, list, options, entityDataListArgs);
+            return !isListOverflow ? source.QpCheckBoxList(id, list, options, entityDataListArgs) : source.QpMultipleItemPicker(id, list.ToList(), options, entityDataListArgs);
         }
 
         public static MvcHtmlString SingleItemPickerFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, QPSelectListItem selected, EntityDataListArgs entityDataListArgs, ControlOptions options)
@@ -426,7 +421,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.Warning(new[] { new MvcHtmlString(message) });
         }
 
-        public static MvcHtmlString Warning(this HtmlHelper source, IEnumerable<MvcHtmlString> messages)
+        public static MvcHtmlString Warning(this HtmlHelper source, IList<MvcHtmlString> messages)
         {
             var url = new UrlHelper(source.ViewContext.RequestContext);
             var wrapper = new TagBuilder("div");
@@ -436,7 +431,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             img.AddCssClass("w-item");
             img.MergeAttribute("src", url.Content("~/Content/QP8/exclamation.png"));
 
-            var messageSpans = new List<TagBuilder>(messages.Count());
+            var messageSpans = new List<TagBuilder>(messages.Count);
             foreach (var message in messages)
             {
                 var text = new TagBuilder("span");
@@ -482,35 +477,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             return source.DropDownList(name, list, optionLabel, options.HtmlAttributes);
-        }
-
-        /// <summary>
-        /// Генерирует код cписка
-        /// </summary>
-        /// <param name="source">HTML-хелпер</param>
-        /// <param name="name">имя списка</param>
-        /// <param name="list">список элементов списка</param>
-        /// <param name="options">дополнительные настройки списка</param>
-        /// <returns>код cписка</returns>
-        public static MvcHtmlString QpListBox(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list,
-            ControlOptions options)
-        {
-            return source.QpListBox(name, list, options, null);
-        }
-
-        /// <summary>
-        /// Генерирует код cписка
-        /// </summary>
-        /// <param name="source">HTML-хелпер</param>
-        /// <param name="name">имя списка</param>
-        /// <param name="list">список элементов списка</param>
-        /// <param name="options">дополнительные настройки списка</param>
-        /// <param name="entityDataListArgs">свойства списка сущностей</param>
-        /// <returns>код раскрывающегося списка</returns>
-        public static MvcHtmlString QpListBox(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs)
-        {
-            options.SetListBoxOptions(name, source.UniqueId(name), list, entityDataListArgs);
-            return source.ListBox(name, list, options.HtmlAttributes);
         }
 
         /// <summary>
@@ -652,9 +618,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString QpSingleItemPicker(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs, bool ignoreIdSet = false)
         {
-            var item = list.FirstOrDefault(i => i.Selected);
-            var itemValue = item != null ? item.Value : string.Empty;
-            var itemText = item != null ? item.Text : string.Empty;
+            var item = list?.FirstOrDefault(i => i.Selected);
+            var itemValue = item?.Value ?? string.Empty;
+            var itemText = item?.Text ?? string.Empty;
 
             string valueId, wrapperId;
             if (options.HtmlAttributes != null && options.HtmlAttributes.ContainsKey("id"))
@@ -730,22 +696,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return idBuilder.ToString();
         }
 
-        public static MvcHtmlString QpMultipleItemPicker(this HtmlHelper source, string name, IEnumerable<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs)
+        private static MvcHtmlString QpMultipleItemPicker(this HtmlHelper source, string name, IList<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
-
             var wrapper = new TagBuilder("div");
             options.SetMultiplePickerOptions(name, source.UniqueId(name), entityDataListArgs);
             wrapper.MergeAttributes(options.HtmlAttributes);
 
             var sb = new StringBuilder();
-            if (list != null && list.Count() >= QPConfiguration.WebConfigSection.RelationCountLimit)
+            if (list != null && list.Count >= QPConfiguration.WebConfigSection.RelationCountLimit)
             {
                 var value = string.Join(",", list.Select(n => n.Value).ToArray());
                 sb.AppendLine(source.Hidden(name, value, new { @class = MULTIPLE_PICKER_OVERFLOW_HIDDEN_VALUE, id = source.UniqueId(name) }).ToString());
             }
 
             sb.AppendLine("<ul>");
-            if (list != null && list.Count() < QPConfiguration.WebConfigSection.RelationCountLimit)
+            if (list != null && list.Count < QPConfiguration.WebConfigSection.RelationCountLimit)
             {
                 var itemIndex = 0;
                 foreach (var item in list)
@@ -916,33 +881,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 default:
                     throw new NotSupportedException();
             }
-        }
-
-        public static MvcHtmlString PlUpload(this HtmlHelper source, string name, string value, Dictionary<string, object> htmlAttributes)
-        {
-            var tb = new TagBuilder("div");
-            tb.MergeAttribute("name", name, true);
-            tb.MergeDataAttribute("currentValue", value);
-            tb.AddCssClass("pl_upload_component");
-            tb.MergeAttributes(htmlAttributes);
-
-            var innerHtmlSb = new StringBuilder();
-            var fileList = new TagBuilder("div");
-            fileList.AddCssClass("pl_filelist");
-            innerHtmlSb.AppendLine(fileList.ToString());
-            var pickup = new TagBuilder("a");
-            pickup.AddCssClass("pl_pickup");
-            pickup.Attributes.Add(new KeyValuePair<string, string>("href", "#"));
-            pickup.InnerHtml = "Pickup";
-            innerHtmlSb.AppendLine(pickup.ToString());
-            var upload = new TagBuilder("a");
-            upload.Attributes.Add(new KeyValuePair<string, string>("href", "#"));
-            upload.AddCssClass("pl_upload");
-            upload.InnerHtml = "Upload";
-            innerHtmlSb.AppendLine(upload.ToString());
-
-            tb.InnerHtml = innerHtmlSb.ToString();
-            return MvcHtmlString.Create(tb.ToString());
         }
 
         public static MvcHtmlString File(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, int? entityId, ArticleVersion version, bool? isReadOnly = null, bool? allowUpload = null, bool allowPreview = true, bool allowDownload = true)
@@ -1203,15 +1141,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.NumericTextBox(ExpressionHelper.GetExpressionText(expression), data.Model, source.QPHtmlProperties(expression, EditorType.Numeric).Merge(htmlAttributes, true), decimalDigits, minValue, maxValue);
         }
 
-        public static MvcHtmlString PlUploadFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, string val, Dictionary<string, object> htmlAttributes)
-        {
-            var name = ExpressionHelper.GetExpressionText(expression);
-            var options = source.QPHtmlProperties(expression, EditorType.File);
-            options.Merge(htmlAttributes, true);
-
-            return source.PlUpload(name, val, htmlAttributes);
-        }
-
         public static MvcHtmlString FileFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Field field, Dictionary<string, object> htmlAttributes)
         {
             var name = ExpressionHelper.GetExpressionText(expression);
@@ -1258,34 +1187,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             options.SetDropDownOptions(name, source.UniqueId(name), list.ToList(), dropDownOptions.EntityDataListArgs);
             options.HtmlAttributes.Merge(htmlAttributes, true);
             return source.DropDownListFor(expression, showedList, options.HtmlAttributes);
-        }
-
-        /// <summary>
-        /// Генерирует код списка
-        /// </summary>
-        /// <param name="source">HTML-хелпер</param>
-        /// <param name="expression">выражение</param>
-        /// <param name="list">список элементов списка</param>
-        /// <returns>код списка</returns>
-        public static MvcHtmlString QpListBoxFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list)
-        {
-            return source.QpListBoxFor(expression, list, null);
-        }
-
-        /// <summary>
-        /// Генерирует код списка
-        /// </summary>
-        /// <param name="source">HTML-хелпер</param>
-        /// <param name="expression">выражение</param>
-        /// <param name="list">список элементов списка</param>
-        /// <param name="entityDataListArgs">свойства списка сущностей</param>
-        /// <returns>код списка</returns>
-        public static MvcHtmlString QpListBoxFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs)
-        {
-            var options = new ControlOptions { Enabled = !source.IsReadOnly(), HtmlAttributes = source.QPHtmlProperties(expression, EditorType.ListBox) };
-            var name = ExpressionHelper.GetExpressionText(expression);
-            options.SetListBoxOptions(name, source.UniqueId(name), list, entityDataListArgs);
-            return source.ListBoxFor(expression, list, options.HtmlAttributes);
         }
 
         /// <summary>
@@ -1451,6 +1352,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <summary>
         /// Преобразует список ListItem(BLL) в список SelectListItem(Web)
         /// </summary>
+        /// TODO: CHECK UNUSED
         public static IEnumerable<QPSelectListItem> List(this HtmlHelper source, IEnumerable<ListItem> list, string value)
         {
             var values = value.Split(',');
@@ -1460,8 +1362,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 Value = n.Value,
                 Selected = values.Contains(n.Value),
                 HasDependentItems = n.HasDependentItems
-            }
-            );
+            });
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]

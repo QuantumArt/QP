@@ -28,7 +28,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             HtmlAttributes.AddData("count_limit", QPConfiguration.WebConfigSection.RelationCountLimit);
-
             SetDataListOptions(name, eventArgs);
         }
 
