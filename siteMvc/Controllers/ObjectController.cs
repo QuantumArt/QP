@@ -184,7 +184,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (ModelState.IsValid)
             {
                 model.Data.DefaultValues = model.Data.UseDefaultValues
-                    ? new JavaScriptSerializer().Deserialize<List<DefaultValue>>(model.AggregationListItems_Data_DefaultValues)
+                    ? new JavaScriptSerializer().Deserialize<List<DefaultValue>>(model.AggregationListItemsDataDefaultValues)
                     : Enumerable.Empty<DefaultValue>();
 
                 model.Data = _objectService.UpdateObjectProperties(model.Data, model.ActiveStatusTypeIds);
@@ -225,7 +225,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (ModelState.IsValid)
             {
                 model.Data.DefaultValues = model.Data.UseDefaultValues
-                    ? new JavaScriptSerializer().Deserialize<List<DefaultValue>>(model.AggregationListItems_Data_DefaultValues)
+                    ? new JavaScriptSerializer().Deserialize<List<DefaultValue>>(model.AggregationListItemsDataDefaultValues)
                     : Enumerable.Empty<DefaultValue>();
 
                 model.Data = _objectService.UpdateObjectProperties(model.Data, model.ActiveStatusTypeIds);

@@ -412,7 +412,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 Data = new
                 {
-                    html = RenderPartialView("HTAreaToolbar", new HTAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
+                    html = RenderPartialView("HTAreaToolbar", new HtAreaToolbarViewModel(presentationOrCodeBehind, formatId, templateId))
                 },
                 JsonRequestBehavior = JsonRequestBehavior.DenyGet
             };

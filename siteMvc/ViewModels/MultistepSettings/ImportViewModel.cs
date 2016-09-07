@@ -8,6 +8,7 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
@@ -19,8 +20,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public override string ActionCode => Constants.ActionCode.ImportArticles;
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Content;
-
-        #region Properties
 
         public int ContentId { get; set; }
 
@@ -126,7 +125,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         }
 
         public int BlockedFieldId { get; set; }
-        #endregion
 
         public IEnumerable<ListItem> FieldsList
         {
@@ -235,20 +233,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public List<ExstendedListItem> Fields { get; }
 
         public List<ImportFieldGroupViewModel> Groups { get; }
-    }
-
-    public class ExstendedListItem : SimpleListItem
-    {
-        public string Description { get; set; }
-
-        public bool Required { get; set; }
-
-        public bool IsIdentifier { get; set; }
-
-        public bool IsAggregated { get; set; }
-
-        public bool Unique { get; set; }
-
-        public bool BrokenDataIntegrity { get; set; }
     }
 }

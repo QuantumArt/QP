@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -131,10 +132,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectStatusesForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectStatusesForWorkflow)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleSelectForWorkflow(string tabId, int parentId, int[] IDs)
         {
-            var result = _statusTypeService.InitList(parentId);
-            var model = new StatusTypeSelectableListViewModel(result, tabId, parentId, IDs);
+            // TODO: check
+            _statusTypeService.InitList(parentId);
+            var model = new StatusTypeSelectableListViewModel(tabId, parentId, IDs);
             return JsonHtml("MultiSelectIndex", model);
         }
 
@@ -142,6 +145,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectStatusesForWorkflow)]
         [BackendActionContext(ActionCode.MultipleSelectStatusesForWorkflow)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult _MultipleSelectForWorkflow(string tabId, string IDs, GridCommand command, int parentId)
         {
             var serviceResult = _statusTypeService.ListForWorkflow(command.GetListCommand(), Converter.ToInt32Collection(IDs, ','), parentId);

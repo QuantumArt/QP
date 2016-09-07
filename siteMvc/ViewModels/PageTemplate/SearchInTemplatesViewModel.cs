@@ -1,67 +1,24 @@
-﻿using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
+﻿namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
-	public sealed class SearchInTemplatesViewModel : ListViewModel
-	{
-		#region creation
+    public sealed class SearchInTemplatesViewModel : ListViewModel
+    {
+        public static SearchInTemplatesViewModel Create(string tabId, int parentId)
+        {
+            return Create<SearchInTemplatesViewModel>(tabId, parentId);
+        }
 
-		public static SearchInTemplatesViewModel Create(string tabId, int parentId)
-		{
-			SearchInTemplatesViewModel model = ViewModel.Create<SearchInTemplatesViewModel>(tabId, parentId);
-			return model;
-		}
+        public override string EntityTypeCode => Constants.EntityTypeCode.PageTemplate;
 
-		#endregion
+        public override string ActionCode => Constants.ActionCode.SearchInTemplates;
 
-		public override string EntityTypeCode
-		{
-			get { return Constants.EntityTypeCode.PageTemplate; }
-		}
+        public string GridElementId => UniqueId("Grid");
 
-		public override string ActionCode
-		{
-			get { return Constants.ActionCode.SearchInTemplates; }
-		}
+        public string FilterElementId => UniqueId("Filter");
 
+        public override string ContextMenuCode => string.Empty;
 
-		public string GridElementId
-		{
-			get
-			{
-				return UniqueId("Grid");
-			}
-		}
+        public override bool LinkOpenNewTab => true;
 
-		public string FilterElementId { get { return UniqueId("Filter"); } }
-
-		public override string ContextMenuCode
-		{
-			get
-			{
-				return String.Empty;
-			}
-		}
-
-		public override bool LinkOpenNewTab
-		{
-			get
-			{
-				return true;
-			}
-		}
-
-		public override string ActionCodeForLink
-		{
-			get
-			{
-				return Constants.ActionCode.PageTemplateProperties;
-			}
-		}
-	}
+        public override string ActionCodeForLink => Constants.ActionCode.PageTemplateProperties;
+    }
 }
