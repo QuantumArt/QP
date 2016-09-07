@@ -32,7 +32,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         public static void Main(string[] args)
         {
             Logger = new QpUpdateLoggingWrapper();
-            Logger.Debug($"Console db updater is started. Args: {args.ToJsonLog()}");
+            Logger.Info($"Console db updater is started. Args: {args.ToJsonLog()}");
 
             try
             {
@@ -47,7 +47,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 var dataProcessor = DataProcessorFactory.Create(settings);
                 dataProcessor.Process();
 
-                Logger.Debug("Processing successfuly finished...");
+                Logger.Info("Processing successfuly finished...");
                 ConsoleHelpers.ExitProgram(ExitCode.Success);
             }
             catch (OptionException ex)

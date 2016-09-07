@@ -24,13 +24,13 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
     {
         internal static string Process(IList<string> filePathes, string configPath, XmlSettingsModel settingsTemp = null)
         {
-            Program.Logger.Debug($"Begin parsing documents: {filePathes.ToJsonLog()} with next config: {configPath}");
+            Program.Logger.Debug($"Begin parsing documents: {filePathes.ToJsonLog()} with next config: {configPath ?? "<default>"}");
             var orderedFilePathes = new List<string>();
             foreach (var path in filePathes)
             {
                 if (!File.Exists(path) && !Directory.Exists(path))
                 {
-                    throw new FileNotFoundException("Неправильно указан путь к файлам записанных действий: " + path);
+                    throw new FileNotFoundException($"Неправильно указан путь к файлам записанных действий: {path}");
                 }
 
                 if ((File.GetAttributes(path) & FileAttributes.Directory) == FileAttributes.Directory)
@@ -89,12 +89,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                         identityTypes.Add(EntityTypeCode.ContentGroup);
                     }
 
-                    Program.Logger.Debug($"Old version (Mixed) compatability enabled. Check hash {logEntry.Hash} in database.");
+                    Program.Logger.Debug($"Old version (Mixed) compatability mode enabled for {ofp}. Check hash {logEntry.Hash} in database.");
                     using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {
-                            Program.Logger.Debug($"Current xml document {ofp} already applied and exist at XmlDbUpdate database.");
+                            Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
                             continue;
                         }
                     }
@@ -111,12 +111,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
 
                     logEntry.Hash = sb.ToString();
 
-                    Program.Logger.Debug($"Old version (Unix) compatability enabled. Check hash {logEntry.Hash} in database.");
+                    Program.Logger.Debug($"Old version (Unix) compatability enabled for {ofp}. Check hash {logEntry.Hash} in database.");
                     using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {
-                            Program.Logger.Debug($"Current xml document {ofp} already applied and exist at XmlDbUpdate database.");
+                            Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
                             continue;
                         }
                     }
@@ -133,12 +133,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
 
                     logEntry.Hash = sb.ToString();
 
-                    Program.Logger.Debug($"Old version (Windows) compatability enabled. Check hash {logEntry.Hash} in database.");
+                    Program.Logger.Debug($"Old version (Windows) compatability enabled for {ofp}. Check hash {logEntry.Hash} in database.");
                     using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {
-                            Program.Logger.Debug($"Current xml document {ofp} already applied and exist at XmlDbUpdate database.");
+                            Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
                             continue;
                         }
                     }
