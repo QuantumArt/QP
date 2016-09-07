@@ -126,7 +126,6 @@ BEGIN
 END
 GO
 
-exec qp_recreate_link_tables
 
 exec qp_drop_existing 'qp_insert_link_table_item', 'IsProcedure'
 GO
@@ -214,5 +213,7 @@ GO
 exec qp_rebuild_all_new_views
 GO
 exec qp_rebuild_all_link_views
+GO
+exec qp_recreate_link_tables
 GO
 
