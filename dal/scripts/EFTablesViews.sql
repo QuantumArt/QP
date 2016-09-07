@@ -409,11 +409,6 @@ deallocate contents
 end
 GO
 
-exec qp_rebuild_all_new_views
-GO
-exec qp_rebuild_all_link_views
-GO
-
 exec qp_drop_existing 'STATUS_TYPE_NEW', 'IsView'
 GO
 
@@ -654,6 +649,11 @@ BEGIN
 END
 GO
 
+GO
+
+exec qp_rebuild_all_new_views
+GO
+exec qp_rebuild_all_link_views
 GO
 
 

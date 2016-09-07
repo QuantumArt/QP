@@ -211,3 +211,8 @@ GO
 
 GO
 
+exec qp_rebuild_all_new_views
+GO
+exec qp_rebuild_all_link_views
+GO
+
