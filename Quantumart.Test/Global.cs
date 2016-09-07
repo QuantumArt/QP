@@ -64,7 +64,28 @@ namespace Quantumart.Test
                 .Single();
         }
 
+        public static int CountEFLinks(DBConnector cnn, int[] ids, bool isAsync = false)
+        {
+            var asyncString = isAsync ? "_async" : string.Empty;
+            return cnn.GetRealData(
+                $"select count(*) as cnt from item_link{asyncString} where item_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => n.Field<int>("cnt"))
+                .Single();
+        }
+
         public static int[] GetLinks(DBConnector cnn, int[] ids, bool isAsync = false)
+        {
+            var asyncString = isAsync ? "_async" : string.Empty;
+            return cnn.GetRealData(
+                $"select linked_item_id as id from item_link{asyncString} where item_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => (int)n.Field<decimal>("id"))
+                .OrderBy(n => n)
+                .ToArray();
+        }
+
+        public static int[] GetEFLinks(DBConnector cnn, int[] ids, bool isAsync = false)
         {
             var asyncString = isAsync ? "_async" : string.Empty;
             return cnn.GetRealData(
