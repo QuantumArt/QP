@@ -29,6 +29,8 @@ namespace Quantumart.Test
 
         public static string ContentName { get; private set; }
 
+        public static bool EFLinksExists { get; private set; }        
+
         public static string TitleName { get; private set; }
 
         public static string MainCategoryName { get; private set; }
@@ -56,6 +58,7 @@ namespace Quantumart.Test
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test M2M";
             ContentId = Global.GetContentId(Cnn, ContentName);
+            EFLinksExists = Global.EFLinksExists(Cnn, ContentId);
             TitleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             MainCategoryName = Cnn.FieldName(Global.SiteId, ContentName, "MainCategory");
             NumberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
@@ -1108,15 +1111,28 @@ namespace Quantumart.Test
 
             var ids = new[] { id };
             var cntLinks = Global.CountLinks(Cnn, ids);
+            var cntEFLinks = Global.CountEFLinks(Cnn, ids, ContentId, false, EFLinksExists);
 
             Assert.That(cntLinks, Is.Not.EqualTo(0), "Links saved");
+
+            if (EFLinksExists)
+            {
+                Assert.That(cntEFLinks, Is.EqualTo(cntLinks), "EF links saved");
+            }
+
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
             }, "Update");
 
             var cntLinksAfter = Global.CountLinks(Cnn, ids);
+            var cntEFLinksAfter = Global.CountEFLinks(Cnn, ids, ContentId, false, EFLinksExists);
             Assert.That(cntLinksAfter, Is.EqualTo(0), "Links nullified");
+
+            if (EFLinksExists)
+            {
+                Assert.That(cntEFLinksAfter, Is.EqualTo(0), "EF links nullified");
+            }
         }
 
         [OneTimeTearDown]
