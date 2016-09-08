@@ -64,6 +64,16 @@ namespace Quantumart.Test
                 .Single();
         }
 
+        public static int CountEFLinks(DBConnector cnn, int[] ids, int contentId, bool isAsync = false)
+        {      
+            var asyncString = isAsync ? "_async" : string.Empty;
+            return cnn.GetRealData(
+                $"select count(*) as cnt from item_link_{contentId}{asyncString} where item_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => n.Field<int>("cnt"))
+                .Single();
+        }
+
         public static int[] GetLinks(DBConnector cnn, int[] ids, bool isAsync = false)
         {
             var asyncString = isAsync ? "_async" : string.Empty;
@@ -73,6 +83,23 @@ namespace Quantumart.Test
                 .Select(n => (int)n.Field<decimal>("id"))
                 .OrderBy(n => n)
                 .ToArray();
+        }
+
+        public static int[] GetEFLinks(DBConnector cnn, int[] ids, int contentId, bool isAsync = false)
+        {
+            var asyncString = isAsync ? "_async" : string.Empty;
+            return cnn.GetRealData(
+                $"select linked_item_id as id from item_link{contentId}{asyncString} where item_id in ({string.Join(",", ids)})")
+                .AsEnumerable()
+                .Select(n => (int)n.Field<decimal>("id"))
+                .OrderBy(n => n)
+                .ToArray();
+        }
+
+        public static bool EFLinksExists(DBConnector cnn, int contentId)
+        {
+            var cmd = new SqlCommand($"select cast(count(null) as bit) cnt from sysobjects where xtype='u' and name='item_link_{contentId}'");
+            return (bool)cnn.GetRealScalarData(cmd);
         }
 
         public static int CountData(DBConnector cnn, int[] ids)
