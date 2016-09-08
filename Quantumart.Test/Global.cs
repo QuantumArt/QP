@@ -64,13 +64,8 @@ namespace Quantumart.Test
                 .Single();
         }
 
-        public static int CountEFLinks(DBConnector cnn, int[] ids, int contentId, bool isAsync, bool efLinksExists)
-        {
-            if (!efLinksExists)
-            {
-                return 0;
-            }
-
+        public static int CountEFLinks(DBConnector cnn, int[] ids, int contentId, bool isAsync = false)
+        {      
             var asyncString = isAsync ? "_async" : string.Empty;
             return cnn.GetRealData(
                 $"select count(*) as cnt from item_link_{contentId}{asyncString} where item_id in ({string.Join(",", ids)})")
@@ -90,13 +85,8 @@ namespace Quantumart.Test
                 .ToArray();
         }
 
-        public static int[] GetEFLinks(DBConnector cnn, int[] ids, int contentId, bool isAsync, bool efLinksExists)
+        public static int[] GetEFLinks(DBConnector cnn, int[] ids, int contentId, bool isAsync = false)
         {
-            if (!efLinksExists)
-            {
-                return new int[0];
-            }
-
             var asyncString = isAsync ? "_async" : string.Empty;
             return cnn.GetRealData(
                 $"select linked_item_id as id from item_link{contentId}{asyncString} where item_id in ({string.Join(",", ids)})")
