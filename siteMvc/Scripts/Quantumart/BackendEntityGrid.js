@@ -480,7 +480,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   getRowByEntityId: function(entityId) {
     return [].find.call(this.getRows(), function(rowEl) {
-      return this.getEntityId(rowEl) === entityId;
+      return this.getEntityId(rowEl) === +entityId;
     }, this);
   },
 

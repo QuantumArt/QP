@@ -94,12 +94,15 @@ BEGIN
   )
   
   insert into @contentIds
-  select distinct convert(numeric, DATA) as ids from content_data 
-  where CONTENT_ITEM_ID in (select id from @ids)
-  and DATA is not null
-  and ATTRIBUTE_ID in (
-  select attribute_id from CONTENT_ATTRIBUTE where content_id in (select distinct content_id from @items) and IS_CLASSIFIER = 1
-  )
+  select convert(numeric, DATA) as ids
+  from
+  (
+	select distinct DATA from content_data 
+	where CONTENT_ITEM_ID in (select id from @ids)
+	and DATA is not null
+	and ATTRIBUTE_ID in (
+	select attribute_id from CONTENT_ATTRIBUTE where content_id in (select distinct content_id from @items) and IS_CLASSIFIER = 1)
+  ) as p
 
   --print 'contents defined'
   
