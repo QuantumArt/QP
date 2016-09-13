@@ -1,5 +1,7 @@
 ﻿declare @query varchar(max) = '
 	select
+		s.site_id,
+		s.site_name,
 		c.content_id,
 		c.content_name,
 		a.attribute_name,
@@ -23,5 +25,6 @@ set @query = substring(@query, 0, @len) + ') l1
 	left join (select link_id, count(*) cnt from item_link group by link_id) l2 on l1.link_id = l2.link_id
 	join content_attribute a on l1.link_id = a.link_id
 	join content c on a.content_id = c.content_id
+	join site s on c.site_id = s.site_id
 	order by diff desc'
 exec(@query)
