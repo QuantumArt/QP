@@ -1,13 +1,13 @@
-﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Controllers
@@ -62,12 +62,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         public ActionResult Redirect(string actionName, object routeValues)
         {
-            if (IsReplayAction())
-            {
-                return null;
-            }
-
-            return RedirectToAction(actionName, routeValues);
+            return IsReplayAction() ? null : RedirectToAction(actionName, routeValues);
         }
 
         public JsonNetResult<MessageResult> JsonMessageResult(MessageResult result)

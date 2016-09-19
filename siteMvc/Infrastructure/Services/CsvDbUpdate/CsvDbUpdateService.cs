@@ -20,7 +20,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
         private readonly ArticleService _articleService;
 
         public CsvDbUpdateService(int userId)
-            : this(userId, QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode)) { }
+            : this(userId, QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode))
+        {
+        }
 
         public CsvDbUpdateService(int userId, string connectionString)
         {

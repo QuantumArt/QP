@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
@@ -17,52 +17,52 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public bool IsViewChangable { get; protected set; }
 
         protected ViewModel()
-		{
-			IsVirtual = false;
-			IsViewChangable = true;
-			HostUID = Guid.NewGuid().ToString();
-		}
+        {
+            IsVirtual = false;
+            IsViewChangable = true;
+            HostUID = Guid.NewGuid().ToString();
+        }
 
-		public static T Create<T>(string tabId, int parentId) where T : ViewModel, new()
-		{
-		    var model = new T
-		    {
-		        ParentEntityId = parentId,
-		        TabId = tabId
-		    };
+        public static T Create<T>(string tabId, int parentId) where T : ViewModel, new()
+        {
+            var model = new T
+            {
+                ParentEntityId = parentId,
+                TabId = tabId
+            };
 
-		    return model;
-		}
+            return model;
+        }
 
-		public abstract string EntityTypeCode { get; }
+        public abstract string EntityTypeCode { get; }
 
-		public abstract string ActionCode { get; }
+        public abstract string ActionCode { get; }
 
-		public abstract C.MainComponentType MainComponentType { get; }
+        public abstract Constants.MainComponentType MainComponentType { get; }
 
-		public abstract string MainComponentId { get; }
+        public abstract string MainComponentId { get; }
 
-		public virtual C.DocumentContextState DocumentContextState => C.DocumentContextState.None;
+        public virtual Constants.DocumentContextState DocumentContextState => Constants.DocumentContextState.None;
 
         public virtual ExpandoObject MainComponentParameters
-		{
-			get
-			{
-				dynamic result = new ExpandoObject();
-				result.hostId = DocumentHostId;
-				result.hostUID = HostUID;
-				result.isWindow = IsWindow;
-				result.parentEntityId = ParentEntityId;
-				result.entityTypeCode = EntityTypeCode;
-				result.actionCode = ActionCode;
-				result.state = DocumentContextState;
-				result.mainComponentType = (int)MainComponentType;
-				result.mainComponentId = MainComponentId;
-				return result;
-			}
-		}
+        {
+            get
+            {
+                dynamic result = new ExpandoObject();
+                result.hostId = DocumentHostId;
+                result.hostUID = HostUID;
+                result.isWindow = IsWindow;
+                result.parentEntityId = ParentEntityId;
+                result.entityTypeCode = EntityTypeCode;
+                result.actionCode = ActionCode;
+                result.state = DocumentContextState;
+                result.mainComponentType = (int)MainComponentType;
+                result.mainComponentId = MainComponentId;
+                return result;
+            }
+        }
 
-		public virtual ExpandoObject MainComponentOptions => new ExpandoObject();
+        public virtual ExpandoObject MainComponentOptions => new ExpandoObject();
 
         public string AddNewItemLinkId => UniqueId("addNewItemLink");
 
@@ -72,7 +72,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public string ValidationSummaryId => UniqueId("Summary");
 
-        // ReSharper disable once InconsistentNaming
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public string HostUID { get; }
 
         public bool IsWindow => HtmlHelperFieldExtensions.IsWindow(TabId);
@@ -82,6 +82,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             return HtmlHelperFieldExtensions.UniqueId(id, TabId);
         }
 
-		public bool IsAdmin => QPContext.IsAdmin;
-     }
+        public bool IsAdmin => QPContext.IsAdmin;
+    }
 }

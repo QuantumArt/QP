@@ -1,9 +1,9 @@
-﻿using Quantumart.QP8.BLL.Helpers.VisualEditor;
-using Quantumart.QP8.BLL.Services.VisualEditor;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Quantumart.QP8.BLL.Helpers.VisualEditor;
+using Quantumart.QP8.BLL.Services.VisualEditor;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 {

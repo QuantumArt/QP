@@ -1,27 +1,30 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.CopySite;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class CopySiteController : QPController
     {
-        private readonly IMultistepActionService multistepService;
-        private readonly string folderForTemplate = "MultistepSettingsTemplates";
+        private readonly IMultistepActionService _multistepService;
+        private const string FolderForTemplate = "MultistepSettingsTemplates";
 
         public CopySiteController(IMultistepActionService multistepService)
         {
             if (multistepService == null)
-                throw new ArgumentNullException("multistepService");
-            this.multistepService = multistepService;
+            {
+                throw new ArgumentNullException(nameof(multistepService));
+            }
+
+            _multistepService = multistepService;
         }
 
         [HttpPost]
@@ -30,7 +33,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.CreateLikeSite)]
         public ActionResult PreSettings(int parentId, int id)
         {
-            IMultistepActionSettings prms = multistepService.MultistepActionSettings(parentId, id);
+            var prms = _multistepService.MultistepActionSettings(parentId, id);
             return Json(prms);
         }
 
@@ -40,10 +43,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.CreateLikeSite)]
         public ActionResult Settings(string tabId, int parentId, int id)
         {
-            CreateLikeSiteModel model = EntityViewModel.Create<CreateLikeSiteModel>(tabId, parentId);
+            var model = ViewModel.Create<CreateLikeSiteModel>(tabId, parentId);
             model.Data = SiteService.Read(id);
-            string viewName = String.Format("{0}/CreateLikeSiteTemplate", folderForTemplate);
-            return this.JsonHtml(viewName, model);
+            var viewName = $"{FolderForTemplate}/CreateLikeSiteTemplate";
+            return JsonHtml(viewName, model);
         }
 
         [HttpPost]
@@ -53,7 +56,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
-            MultistepActionSettings settings = multistepService.Setup(parentId, id, boundToExternal);
+            var settings = _multistepService.Setup(parentId, id, boundToExternal);
             return Json(settings);
         }
 
@@ -61,26 +64,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CreateLikeSite)]
         [BackendActionContext(ActionCode.CreateLikeSite)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [BackendActionLog]
         [ValidateInput(false)]
         [Record]
         public ActionResult SetupWithParams(string tabId, int parentId, int id, FormCollection collection)
         {
-            Site newSite = SiteService.NewForSave();
-            CreateLikeSiteModel model = CreateLikeSiteModel.Create(newSite, tabId, parentId);
+            var newSite = SiteService.NewForSave();
+            var model = CreateLikeSiteModel.Create(newSite, tabId, parentId);
+
             TryUpdateModel(model);
-            Site sourceSite = SiteService.Read(id);
+
+            var sourceSite = SiteService.Read(id);
             model.Data.AssemblingType = sourceSite.AssemblingType;
             model.Validate(ModelState);
-            string viewName = $"{folderForTemplate}/CreateLikeSiteTemplate";
 
+            var viewName = $"{FolderForTemplate}/CreateLikeSiteTemplate";
             if (ModelState.IsValid)
             {
-                List<int> emptyArray = new List<int>();
                 try
                 {
-                    model.Data = SiteService.Save(model.Data, emptyArray.ToArray(), emptyArray.ToArray());
+                    model.Data = SiteService.Save(model.Data, new List<int>().ToArray(), new List<int>().ToArray());
                 }
                 catch (Exception ex)
                 {
@@ -88,36 +92,29 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     return JsonHtml(viewName, model);
                 }
 
-                this.PersistResultId(model.Data.Id);
+                var settings = new CopySiteSettings(newSite.Id, id, DateTime.Now, model.DoNotCopyArticles, model.DoNotCopyTemplates, model.DoNotCopyFiles);
+                _multistepService.SetupWithParams(parentId, id, settings);
 
-                IMultistepActionParams settings = new CopySiteSettings(newSite.Id, id, DateTime.Now, model.DoNotCopyArticles, model.DoNotCopyTemplates, model.DoNotCopyFiles);
-
-                multistepService.SetupWithParams(parentId, id, settings);
-
-                return Json(String.Empty);
+                return Json(string.Empty);
             }
-            else
-            {
-                return JsonHtml(viewName, model);
-            }
+
+            return JsonHtml(viewName, model);
         }
 
         [HttpPost]
-        [NoTransactionConnectionScopeAttribute]
+        [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public ActionResult Step(int stage, int step)
         {
-            MultistepActionStepResult stepResult = multistepService.Step(stage, step);
+            var stepResult = _multistepService.Step(stage, step);
             return Json(stepResult);
         }
 
         [HttpPost]
         public ActionResult TearDown(bool isError)
         {
-            multistepService.TearDown();
+            _multistepService.TearDown();
             return null;
         }
-
-
     }
 }

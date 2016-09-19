@@ -1,19 +1,22 @@
-﻿using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.Controllers.Base;
-using Quantumart.QP8.BLL.Services.EntityPermissions;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Quantumart.QP8.Constants;
-using Telerik.Web.Mvc;
+using System.Diagnostics.CodeAnalysis;
+using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
+using Quantumart.QP8.BLL.Services.EntityPermissions;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Controllers.Base;
+using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ActionPermissionController : PermissionWithChangeControllerBase
     {
-        public ActionPermissionController(IPermissionService service, IActionPermissionChangeService changeService) : base(service, changeService) { }
+        public ActionPermissionController(IPermissionService service, IActionPermissionChangeService changeService)
+            : base(service, changeService)
+        {
+        }
 
-
-        #region Action Permissions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ActionPermissions)]
@@ -43,7 +46,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewActionPermission)]
         [BackendActionContext(ActionCode.AddNewActionPermission)]
         [BackendActionLog]
@@ -64,7 +67,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateActionPermission)]
         [BackendActionContext(ActionCode.UpdateActionPermission)]
         [BackendActionLog]
@@ -76,11 +79,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveActionPermission)]
         [BackendActionContext(ActionCode.MultipleRemoveActionPermission)]
         [BackendActionLog]
         [Record]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleRemove(int parentId, int[] IDs)
         {
             return base.MultipleRemove(parentId, IDs);
@@ -88,7 +92,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveActionPermission)]
         [BackendActionContext(ActionCode.RemoveActionPermission)]
         [BackendActionLog]
@@ -97,9 +101,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             return base.Remove(parentId, id);
         }
-        #endregion
 
-        #region Change
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeActionPermission)]
@@ -111,7 +113,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateActionPermissionChanges)]
         [BackendActionContext(ActionCode.UpdateActionPermissionChanges)]
         [BackendActionLog]
@@ -122,7 +124,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveEntityTypePermissionChanges)]
         [BackendActionContext(ActionCode.RemoveEntityTypePermissionChanges)]
         [BackendActionLog]
@@ -130,8 +132,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             return base.RemoveForNode(parentId, userId, groupId);
         }
-        #endregion
 
-        protected override string ControllerName { get { return "ActionPermission"; } }
+        protected override string ControllerName => "ActionPermission";
     }
 }

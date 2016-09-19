@@ -14,7 +14,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 if (html == null)
                 {
-                    throw new ArgumentNullException("html");
+                    throw new ArgumentNullException(nameof(html));
                 }
 
                 _html = html;

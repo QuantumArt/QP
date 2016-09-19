@@ -1,4 +1,9 @@
-﻿using Quantumart.QP8.BLL;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Web;
+using System.Web.SessionState;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
@@ -6,11 +11,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Audit;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Web;
-using System.Web.SessionState;
 
 // ReSharper disable once CheckNamespace
 namespace Quantumart.QP8.WebMvc.Backend
@@ -439,14 +439,14 @@ namespace Quantumart.QP8.WebMvc.Backend
             constants.AppendLine("// Фильтры по колонкам Action Log");
             constants.AppendLine(GenerateEnumeration("Quantumart.QP8.Enums.ActionLogFilteredColumns", new Dictionary<string, int>
             {
-                { "ActionName",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.ActionName},
-                { "ActionTypeName",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.ActionTypeName},
-                { "EntityStringId",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.EntityStringId},
-                { "EntityTitle",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.EntityTitle},
-                { "EntityTypeName",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.EntityTypeName},
-                { "ExecutionTime",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.ExecutionTime},
-                { "ParentEntityId",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.ParentEntityId},
-                { "UserLogin",  (int)ActionLogAreaViewModel.FilteredColumnsEnum.UserLogin}
+                { "ActionName", (int)FilteredColumnsEnum.ActionName },
+                { "ActionTypeName", (int)FilteredColumnsEnum.ActionTypeName },
+                { "EntityStringId", (int)FilteredColumnsEnum.EntityStringId },
+                { "EntityTitle", (int)FilteredColumnsEnum.EntityTitle },
+                { "EntityTypeName", (int)FilteredColumnsEnum.EntityTypeName },
+                { "ExecutionTime", (int)FilteredColumnsEnum.ExecutionTime },
+                { "ParentEntityId", (int)FilteredColumnsEnum.ParentEntityId },
+                { "UserLogin", (int)FilteredColumnsEnum.UserLogin }
             }));
 
             constants.AppendLine(GenerateStringConstant("CKEDITOR_CONFIG_TIMESTAMP", DateTime.Now.Ticks.ToString()));
@@ -480,12 +480,12 @@ namespace Quantumart.QP8.WebMvc.Backend
 
         private static string GenerateStringConstant(string name, string value)
         {
-            return $"var {name}	= \"{value}\";";
+            return $"var {name} = \"{value}\";";
         }
 
         private static string GenerateIntegerConstant(string name, int value)
         {
-            return $"var {name}	= {value};";
+            return $"var {name} = {value};";
         }
 
         private static string GenerateEnumeration(string typeName, Dictionary<string, int> items)
@@ -498,7 +498,7 @@ namespace Quantumart.QP8.WebMvc.Backend
             foreach (var key in items.Keys)
             {
                 enumeration.AppendLine(itemIndex > 0 ? "," : "");
-                enumeration.Append($"	{key}:	{items[key]}");
+                enumeration.Append($"   {key}:  {items[key]}");
                 itemIndex++;
             }
 

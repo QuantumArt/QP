@@ -1,25 +1,24 @@
-﻿using System;
 using System.Linq;
 using System.Web.Mvc;
-using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
-using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ExportArticlesController : QPController
     {
-        private readonly IMultistepActionService service;
-        private readonly string folderForTemplate = "MultistepSettingsTemplates";
+        private readonly IMultistepActionService _service;
+        private const string FolderForTemplate = "MultistepSettingsTemplates";
 
         public ExportArticlesController(IMultistepActionService service)
         {
-            this.service = service;
+            _service = service;
         }
 
         [HttpPost]
@@ -28,7 +27,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ExportArticles)]
         public ActionResult PreSettings(int parentId, int id)
         {
-            IMultistepActionSettings prms = service.MultistepActionSettings(parentId, id, null);
+            var prms = _service.MultistepActionSettings(parentId, id, null);
             return Json(prms);
         }
 
@@ -38,10 +37,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ExportArticles)]
         public ActionResult Settings(string tabId, int parentId, int id)
         {
-            ExportViewModel model = new ExportViewModel();
-            model.ContentId = id;
-            string viewName = String.Format("{0}/ExportTemplate", folderForTemplate);
-            return this.JsonHtml(viewName, model);
+            var model = new ExportViewModel
+            {
+                ContentId = id
+            };
+
+            var viewName = $"{FolderForTemplate}/ExportTemplate";
+            return JsonHtml(viewName, model);
         }
 
         [HttpPost]
@@ -49,9 +51,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
         [BackendActionLog]
-		public ActionResult Setup(int parentId, int id, bool? boundToExternal)
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
-            MultistepActionSettings settings = service.Setup(parentId, id, boundToExternal);
+            var settings = _service.Setup(parentId, id, boundToExternal);
             return Json(settings);
         }
 
@@ -62,41 +64,41 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult SetupWithParams(int parentId, int id, FormCollection collection)
         {
-            ExportViewModel model = new ExportViewModel();
+            var model = new ExportViewModel();
             TryUpdateModel(model);
-            ExportSettings settings = new ExportSettings(parentId, null)
+            var settings = new ExportSettings(parentId, null)
             {
                 Culture = MultistepActionHelper.GetCulture(model.Culture),
                 Delimiter = MultistepActionHelper.GetDelimiter(model.Delimiter),
                 Encoding = MultistepActionHelper.GetEncoding(model.Encoding),
                 LineSeparator = MultistepActionHelper.GetLineSeparator(model.LineSeparator),
-				AllFields = model.AllFields,
+                AllFields = model.AllFields,
                 OrderByField = model.OrderByField
             };
-			if (!settings.AllFields)
-			{
-				settings.CustomFieldIds = model.CustomFields.ToArray();
-				settings.ExcludeSystemFields = model.ExcludeSystemFields;
-				settings.FieldIdsToExpand = model.FieldsToExpand.ToArray();
-			}
+            if (!settings.AllFields)
+            {
+                settings.CustomFieldIds = model.CustomFields.ToArray();
+                settings.ExcludeSystemFields = model.ExcludeSystemFields;
+                settings.FieldIdsToExpand = model.FieldsToExpand.ToArray();
+            }
 
-            service.SetupWithParams(parentId, id, (IMultistepActionParams)settings);
-            return Json(String.Empty);
+            _service.SetupWithParams(parentId, id, settings);
+            return Json(string.Empty);
         }
 
         [HttpPost]
-        [NoTransactionConnectionScopeAttribute]
+        [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public ActionResult Step(int stage, int step)
         {
-            MultistepActionStepResult stepResult = service.Step(stage, step);
+            var stepResult = _service.Step(stage, step);
             return Json(stepResult);
         }
 
         [HttpPost]
         public ActionResult TearDown(bool isError)
         {
-            service.TearDown();
+            _service.TearDown();
             return null;
         }
     }

@@ -1,82 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using C=Quantumart.QP8.Constants;
+﻿using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
-	public class FileViewModel : EntityViewModel
-	{
-		#region creation
+    public class FileViewModel : EntityViewModel
+    {
+        public FileViewModel()
+        {
+            IsSite = true;
+        }
 
-		public FileViewModel()
-		{
-			IsSite = true;
-		}
+        public static FileViewModel Create(FolderFile file, string tabId, int parentId, bool isSite)
+        {
+            var model = new FileViewModel
+            {
+                File = file,
+                TabId = tabId,
+                ParentEntityId = parentId,
+                IsSite = isSite
+            };
 
-		public static FileViewModel Create(FolderFile file, string tabId, int parentId, bool isSite)
-		{
-			FileViewModel model = new FileViewModel();
-			model.File = file;
-			model.TabId = tabId;
-			model.ParentEntityId = parentId;
-			model.IsSite = isSite;
-			return model;
-		}
+            return model;
+        }
 
-		#endregion
+        public FolderFile File { get; set; }
 
-		public FolderFile File { get; set; }
+        public bool IsSite { get; set; }
 
-		public bool IsSite { get; set; }
+        public override string EntityTypeCode => IsSite ? Constants.EntityTypeCode.SiteFile : Constants.EntityTypeCode.ContentFile;
 
-		#region overrides
+        public override string ActionCode => IsSite ? Constants.ActionCode.SiteFileProperties : Constants.ActionCode.ContentFileProperties;
 
-		public override string EntityTypeCode
-		{
-			get { return (IsSite) ? C.EntityTypeCode.SiteFile : C.EntityTypeCode.ContentFile; }
-		}
+        public override void Validate(ModelStateDictionary modelState)
+        {
+            try
+            {
+                File.Validate();
+            }
+            catch (RulesException ex)
+            {
+                ex.CopyTo(modelState, "Data");
+                IsValid = false;
+            }
+        }
 
-		public override string ActionCode
-		{
-			get { return (IsSite) ? C.ActionCode.SiteFileProperties : C.ActionCode.ContentFileProperties; }
-		}
+        public override string Id => File.Name;
 
-		public override void Validate(ModelStateDictionary modelState)
-		{
-			try
-			{
-				File.Validate();
-			}
-			catch (RulesException ex)
-			{
-				ex.CopyTo(modelState, "Data");
-				this.IsValid = false;
-			}
-		}
-
-		public override string Id
-		{
-			get
-			{
-				return File.Name;
-			}
-		}
-
-		public override string Name
-		{
-			get
-			{
-				return File.Name;
-			}
-		}
-
-		#endregion
-
-
+        public override string Name => File.Name;
     }
 }

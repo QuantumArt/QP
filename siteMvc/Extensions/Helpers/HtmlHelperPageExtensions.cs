@@ -27,12 +27,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// </summary>
         public static MvcHtmlString CustomScript(this HtmlHelper html, string script, string contextObjectName)
         {
-            if (string.IsNullOrEmpty(script))
-            {
-                return MvcHtmlString.Create(string.Empty);
-            }
-
-            return MvcHtmlString.Create($"<script>{script.Replace("QP_CURRENT_CONTEXT", contextObjectName)}</script>");
+            return MvcHtmlString.Create(string.IsNullOrEmpty(script) ? string.Empty : $"<script>{script.Replace("QP_CURRENT_CONTEXT", contextObjectName)}</script>");
         }
 
         /// <summary>

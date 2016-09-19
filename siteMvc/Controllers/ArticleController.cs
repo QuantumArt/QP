@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
@@ -16,15 +17,11 @@ using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Telerik.Web.Mvc;
 
-// ReSharper disable InconsistentNaming
-// ReSharper disable CheckNamespace
-
-namespace Quantumart.QP8.WebMvc.Backend.Controllers
+namespace Quantumart.QP8.WebMvc.Controllers
 {
     [ValidateInput(false)]
     public class ArticleController : QPController
     {
-        #region list actions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Articles)]
@@ -40,7 +37,10 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.Articles)]
         [BackendActionContext(ActionCode.Articles)]
-        public ActionResult _Index(string tabId, int parentId, GridCommand command,
+        public ActionResult _Index(
+            string tabId,
+            int parentId,
+            GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery,
             string customFilter,
@@ -68,7 +68,10 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.ArchiveArticles)]
         [BackendActionContext(ActionCode.ArchiveArticles)]
-        public ActionResult _ArchiveIndex(string tabId, int parentId, GridCommand command,
+        public ActionResult _ArchiveIndex(
+            string tabId,
+            int parentId,
+            GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery,
             string customFilter,
@@ -106,8 +109,13 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.SelectArticle)]
         [BackendActionContext(ActionCode.SelectArticle)]
-        public ActionResult _Select(string tabId, int parentId, int id, GridCommand command, [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery, string customFilter
-        )
+        public ActionResult _Select(
+            string tabId,
+            int parentId,
+            int id,
+            GridCommand command,
+            [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
+            string customFilter)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var serviceResult = ArticleService.List(parentId, new[] { id }, command.GetListCommand(), searchQuery, null, customFilter, ftsParser);
@@ -129,6 +137,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleSelect(string tabId, int parentId, int[] IDs, bool? boundToExternal)
         {
             var articleList = ArticleService.InitList(parentId, boundToExternal);
@@ -140,11 +149,15 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [GridAction(EnableCustomBinding = true)]
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
-        public ActionResult _MultipleSelect(string tabId, int parentId, string IDs, GridCommand command,
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public ActionResult _MultipleSelect(
+            string tabId,
+            int parentId,
+            string IDs,
+            GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             string customFilter,
-            bool? onlyIds
-        )
+            bool? onlyIds)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
             var selectedArticleIDs = Converter.ToInt32Collection(IDs, ',');
@@ -156,6 +169,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleSelectArticle)]
         [BackendActionContext(ActionCode.MultipleSelectArticle)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleSelectTree(string tabId, int parentId, int[] IDs, bool? boundToExternal)
         {
             var result = ArticleService.InitTree(parentId, true, boundToExternal);
@@ -182,9 +196,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             var result = ArticleService.ArticleStatusHistory(command.GetListCommand(), parentId);
             return View(new GridModel { Data = result.Data, Total = result.TotalRecords });
         }
-        #endregion
 
-        #region form actions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ViewVirtualArticle)]
@@ -256,6 +268,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
                     return JsonHtml("Properties", model);
                 }
             }
+
             return JsonHtml("Properties", model);
         }
 
@@ -309,10 +322,6 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
             return JsonHtml("Properties", model);
         }
 
-        #endregion
-
-        #region non-interface actions
-
         [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
@@ -349,11 +358,13 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveArticle)]
         [BackendActionContext(ActionCode.MultipleRemoveArticle)]
         [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemove(int parentId, int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.Remove(parentId, IDs, false, boundToExternal, IsReplayAction()));
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemovePreAction(int parentId, int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.MultipleRemovePreAction(parentId, IDs));
@@ -377,6 +388,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [ActionAuthorize(ActionCode.MultipleRemoveArticleFromArchive)]
         [BackendActionContext(ActionCode.MultipleRemoveArticleFromArchive)]
         [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemoveFromArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
             var result = ArticleService.Remove(parentId, IDs, true, boundToExternal, IsReplayAction());
@@ -417,11 +429,13 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [ActionAuthorize(ActionCode.MultiplePublishArticles)]
         [BackendActionContext(ActionCode.MultiplePublishArticles)]
         [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultiplePublish(int parentId, int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.Publish(parentId, IDs, boundToExternal, IsReplayAction()));
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultiplePublishPreAction(int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(null);
@@ -433,11 +447,13 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [ActionAuthorize(ActionCode.MultipleMoveArticleToArchive)]
         [BackendActionContext(ActionCode.MultipleMoveArticleToArchive)]
         [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleMoveToArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.MoveToArchive(parentId, IDs, boundToExternal, IsReplayAction()));
         }
 
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleMoveToArchivePreAction(int[] IDs, bool? boundToExternal)
         {
             return JsonMessageResult(ArticleService.MultipleMoveToArchivePreAction(IDs));
@@ -449,6 +465,7 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
         [ActionAuthorize(ActionCode.MultipleRestoreArticleFromArchive)]
         [BackendActionContext(ActionCode.MultipleRestoreArticleFromArchive)]
         [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRestoreFromArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
             var result = ArticleService.RestoreFromArchive(parentId, IDs, boundToExternal, IsReplayAction());
@@ -519,6 +536,5 @@ namespace Quantumart.QP8.WebMvc.Backend.Controllers
                 Data = ArticleService.GetChildArticles(ids, fieldId, filter)
             };
         }
-        #endregion
     }
 }
