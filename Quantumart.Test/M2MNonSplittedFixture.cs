@@ -27,6 +27,8 @@ namespace Quantumart.Test
 
         public static int[] CategoryIds { get; private set; }
 
+        public static bool EFLinksExists { get; private set; }
+
         [OneTimeSetUp]
         public static void Init()
         {
@@ -39,6 +41,7 @@ namespace Quantumart.Test
             service.Process(Global.GetXml(@"xmls\m2m_nonsplitted.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentId = Global.GetContentId(Cnn, "Test M2M");
+            EFLinksExists = Global.EFLinksExists(Cnn, ContentId);
             DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
             CategoryIds = Global.GetIds(Cnn, DictionaryContentId);
@@ -80,6 +83,16 @@ namespace Quantumart.Test
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
 
+            if (EFLinksExists)
+            {
+                var intsEFSaved1 = Global.GetEFLinks(Cnn, ids1, ContentId);
+                var intsEFSaved2 = Global.GetEFLinks(Cnn, ids2, ContentId);
+
+                Assert.That(ints1, Is.EqualTo(intsEFSaved1), "First article EF M2M saved");
+                Assert.That(ints2, Is.EqualTo(intsEFSaved2), "Second article EF M2M saved");
+
+            }
+
             var titles = new[] { "xnewtest", "xnewtest" };
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             var intsNew2 = new[] { CategoryIds[3], CategoryIds[5] };
@@ -102,6 +115,19 @@ namespace Quantumart.Test
             Assert.That(intsUpdatedAsync1, Is.Empty, "No first async M2M ");
             Assert.That(intsUpdatedAsync2, Is.Empty, "No second async M2M ");
 
+            if (EFLinksExists)
+            {
+                var intsEFUpdated2 = Global.GetEFLinks(Cnn, ids2, ContentId);
+                var intsEFUpdated1 = Global.GetEFLinks(Cnn, ids1, ContentId);
+                var intsEFUpdatedAsync1 = Global.GetEFLinks(Cnn, ids1, ContentId, true);
+                var intsEFUpdatedAsync2 = Global.GetEFLinks(Cnn, ids2, ContentId, true);
+
+                Assert.That(intsNew1, Is.EqualTo(intsEFUpdated1), "First article EF M2M (main) saved");
+                Assert.That(intsNew2, Is.EqualTo(intsEFUpdated2), "Second article EF M2M (main) saved");
+                Assert.That(intsEFUpdatedAsync1, Is.Empty, "No first async EF M2M ");
+                Assert.That(intsEFUpdatedAsync2, Is.Empty, "No second async EF M2M ");
+            }
+
             var values2 = new List<Dictionary<string, string>>();
             var article3 = new Dictionary<string, string>
             {
@@ -123,6 +149,14 @@ namespace Quantumart.Test
 
             Assert.That(intsPublished1, Is.EqualTo(intsUpdated1), "First article same");
             Assert.That(intsPublished2, Is.EqualTo(intsUpdated2), "Second article same");
+
+            if (EFLinksExists)
+            {
+                var intsEFPublished1 = Global.GetEFLinks(Cnn, ids1, ContentId);
+                var intsEFPublished2 = Global.GetEFLinks(Cnn, ids2, ContentId);
+                Assert.That(intsEFPublished1, Is.EqualTo(intsUpdated1), "First EF article same");
+                Assert.That(intsEFPublished2, Is.EqualTo(intsUpdated2), "Second EF article same");
+            }
         }
 
         [Test]

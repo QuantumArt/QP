@@ -49,8 +49,9 @@ if (!$p) {
     Write-Host "Creating application pool..."
 
     $p = New-Item –Path "IIS:\AppPools\$name"
-    $p | Set-ItemProperty -Name startMode -Value AlwaysRunning
-    $p | Set-ItemProperty -Name managedRuntimeVersion -Value 'v4.0'
+    $p.startMode = "AlwaysRunning"
+    $p.managedRuntimeVersion = "v4.0"
+    Set-Item –Path "IIS:\AppPools\$name" $p
 
     Write-Host "Done"
 }

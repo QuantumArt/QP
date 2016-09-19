@@ -570,6 +570,21 @@ exec qp_update_translations 'Unselect Child Articles', 'Отменить выб�
 
 GO
 
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+  CREATE TABLE dbo.XML_DB_UPDATE (
+    Id int IDENTITY,
+    Applied datetime NOT NULL,
+    Hash nvarchar(100) NOT NULL,
+    FileName nvarchar(300) NULL,
+    USER_ID int NOT NULL,
+    Body nvarchar(max) NULL,
+    Version nvarchar(10) NULL,
+    CONSTRAINT PK_XML_DB_UPDATE PRIMARY KEY CLUSTERED (Id)
+  )
+  ON [PRIMARY]
+  TEXTIMAGE_ON [PRIMARY]
+END
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE_ACTIONS]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
 BEGIN
   CREATE TABLE dbo.XML_DB_UPDATE_ACTIONS (
@@ -584,21 +599,6 @@ BEGIN
     ResultXml nvarchar(max) NOT NULL,
     CONSTRAINT PK_XML_DB_UPDATE_ACTIONS_Id PRIMARY KEY CLUSTERED (Id),
     CONSTRAINT FK_XML_DB_UPDATE_ACTIONS_UpdateId FOREIGN KEY (UpdateId) REFERENCES dbo.XML_DB_UPDATE (Id)
-  )
-  ON [PRIMARY]
-  TEXTIMAGE_ON [PRIMARY]
-END
-IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
-BEGIN
-  CREATE TABLE dbo.XML_DB_UPDATE (
-    Id int IDENTITY,
-    Applied datetime NOT NULL,
-    Hash nvarchar(100) NOT NULL,
-    FileName nvarchar(300) NULL,
-    USER_ID int NOT NULL,
-    Body nvarchar(max) NULL,
-    Version nvarchar(10) NULL,
-    CONSTRAINT PK_XML_DB_UPDATE PRIMARY KEY CLUSTERED (Id)
   )
   ON [PRIMARY]
   TEXTIMAGE_ON [PRIMARY]
@@ -694,6 +694,34 @@ BEGIN
 	UPDATE VE_COMMAND SET last_modified_by = 1 FROM VE_COMMAND c inner join deleted d on c.last_modified_by = d.user_id
 	
 	delete users from users c inner join deleted d on c.user_id = d.user_id
+END
+
+GO
+
+ALTER TRIGGER [dbo].[td_content_to_content] ON [dbo].[content_to_content] AFTER DELETE
+AS 
+BEGIN
+
+	declare @link_id numeric, @i numeric, @count numeric
+	
+	declare @cc table (
+		id numeric identity(1,1) primary key,
+		link_id numeric
+	)
+	
+	insert into @cc (link_id) select d.link_id from deleted d 
+
+	set @i = 1
+	select @count = count(id) from @cc
+
+	while @i < @count + 1
+	begin
+		select @link_id = link_id from @cc where id = @i
+		exec qp_drop_link_view @link_id
+		set @i = @i + 1
+	end
+
+
 END
 
 GO

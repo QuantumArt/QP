@@ -957,7 +957,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\globalSettings.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
-    <Content Include="Scripts\Quantumart\version.6.30.js" />
+    <Content Include="Scripts\Quantumart\version.6.31.js" />
     <Content Include="Scripts\Silverlight.min.js" />
     <Content Include="Scripts\SilverlightUpload.min.js" />
     <Content Include="Scripts\underscore.min.js" />
