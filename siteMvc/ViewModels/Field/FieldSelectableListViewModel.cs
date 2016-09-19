@@ -1,83 +1,63 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
-using C = Quantumart.QP8.Constants;
 using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.BLL.Services;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Field
 {
-	public class FieldSelectableListViewModel : ListViewModel
-	{
-		public List<FieldListItem> Data { get; set; }
+    public class FieldSelectableListViewModel : ListViewModel
+    {
+        public List<FieldListItem> Data { get; set; }
 
-		public string ParentName { get; set; }
+        public string ParentName { get; set; }
 
-		public string GroupName { get; set; }
+        public string GroupName { get; set; }
 
-		public bool IsMultiple { get; set; }
+        public bool IsMultiple { get; set; }
 
-		#region creation
+        public FieldSelectableListViewModel(FieldInitListResult result, string tabId, int parentId, int[] ids, string actionCode)
+        {
+            ParentEntityId = parentId;
+            TabId = tabId;
+            ParentName = result.ParentName;
+            SelectedIDs = ids;
+            AutoGenerateLink = false;
+            ShowAddNewItemButton = !IsWindow;
+            _actionCode = actionCode;
+        }
 
+        public sealed override string EntityTypeCode => Constants.EntityTypeCode.Field;
 
-		public FieldSelectableListViewModel(FieldInitListResult result, string tabId, int parentId, int[] IDs, string actionCode)
-		{
-			this.ParentEntityId = parentId;
-			this.TabId = tabId;
-			this.ParentName = result.ParentName;
-			this.SelectedIDs = IDs;
-			this.AutoGenerateLink = false;
-			this.ShowAddNewItemButton = !IsWindow;
-			this.actionCode = actionCode;
-		}
+        public override bool AllowMultipleEntitySelection
+        {
+            get
+            {
+                return IsMultiple;
+            }
+            set
+            {
+            }
+        }
 
-		#endregion
+        private readonly string _actionCode;
 
-		#region read-only members
+        public override string ActionCode => _actionCode;
 
-		public sealed override string EntityTypeCode
-		{
-			get
-			{
-				return C.EntityTypeCode.Field;
-			}
-		}
+        public virtual string GetDataAction
+        {
+            get
+            {
+                if (_actionCode == Constants.ActionCode.MultipleSelectFieldForExport)
+                {
+                    return "_MultipleSelectForExport";
+                }
 
-		public override bool AllowMultipleEntitySelection
-		{
-			get
-			{
-				return IsMultiple;
-			}
-			set
-			{
-			}
-		}
+                if (_actionCode == Constants.ActionCode.MultipleSelectFieldForExportExpanded)
+                {
+                    return "_MultipleSelectForExportExpanded";
+                }
 
-		private string actionCode = null;
-
-		public override string ActionCode
-		{
-			get { return actionCode; }
-		}
-
-
-		public virtual string GetDataAction
-		{
-			get
-			{
-				if (actionCode == C.ActionCode.MultipleSelectFieldForExport)
-					return "_MultipleSelectForExport";
-				else if (actionCode == C.ActionCode.MultipleSelectFieldForExportExpanded)
-					return "_MultipleSelectForExportExpanded";
-				else
-					return String.Empty;
-			}
-		}
-
-		#endregion
-
-	}
+                return string.Empty;
+            }
+        }
+    }
 }

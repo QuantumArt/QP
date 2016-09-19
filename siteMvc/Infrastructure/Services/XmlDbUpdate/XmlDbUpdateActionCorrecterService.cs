@@ -346,6 +346,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                         var values = form.GetValues(key);
                         form.Remove(key);
                         if (values != null)
+                        {
                             foreach (var value in values)
                             {
                                 string newValue;
@@ -355,12 +356,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                                 }
                                 else
                                 {
-                                    newValue = string.Join(".", value.Replace("[", "").Replace("]", "").Split(".".ToCharArray()).Select(n => CorrectValue(code, n)));
+                                    newValue = string.Join(".", value.Replace("[", string.Empty).Replace("]", string.Empty).Split(".".ToCharArray()).Select(n => CorrectValue(code, n)));
                                     newValue = "[" + newValue + "]";
                                 }
 
                                 form.Add(key, CorrectValue(code, newValue));
                             }
+                        }
                     }
                 }
             }

@@ -1,40 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
-
-namespace Quantumart.QP8.WebMvc.ViewModels.Audit
+﻿namespace Quantumart.QP8.WebMvc.ViewModels.Audit
 {
-	public sealed class ButtonTraceAreaViewModel : AreaViewModel
-	{
-		#region creation
+    public sealed class ButtonTraceAreaViewModel : AreaViewModel
+    {
+        public static ButtonTraceAreaViewModel Create(string tabId, int parentId)
+        {
+            return Create<ButtonTraceAreaViewModel>(tabId, parentId);
+        }
 
-		public static ButtonTraceAreaViewModel Create(string tabId, int parentId)
-		{
-			ButtonTraceAreaViewModel model = ViewModel.Create<ButtonTraceAreaViewModel>(tabId, parentId);
-			return model;
-		}
+        public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;
 
-		#endregion
+        public override string ActionCode => Constants.ActionCode.ButtonTrace;
 
-		public override string EntityTypeCode
-		{
-			get { return Constants.EntityTypeCode.CustomerCode; }
-		}
-
-		public override string ActionCode
-		{
-			get { return Constants.ActionCode.ButtonTrace; }
-		}
-
-
-		public string GridElementId
-		{
-			get
-			{
-				return UniqueId("Grid");
-			}
-		}
-	}	
+        public string GridElementId => UniqueId("Grid");
+    }
 }

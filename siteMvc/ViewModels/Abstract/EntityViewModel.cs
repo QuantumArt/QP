@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public static T Create<T>(EntityObject obj, string tabId, int parentId) where T : EntityViewModel, new()
         {
-            var model = ViewModel.Create<T>(tabId, parentId);
+            var model = Create<T>(tabId, parentId);
             model.EntityData = obj;
             model.IsValid = true;
             return model;
@@ -55,8 +55,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             {
                 dynamic result = base.MainComponentParameters;
                 result.validationSummaryElementId = ValidationSummaryId;
-                result.modifiedDateTime = (Data != null && !Data.IsNew) ? Data.Modified.Ticks : new long?();
-                result.entityTypeAllowedToAutosave = (Data != null && EntityType.CheckToAutosave(Data.EntityTypeCode));
+                result.modifiedDateTime = Data != null && !Data.IsNew ? Data.Modified.Ticks : new long?();
+                result.entityTypeAllowedToAutosave = Data != null && EntityType.CheckToAutosave(Data.EntityTypeCode);
 
                 var saveAndCloseAction = Data?.SaveAndCloseAction;
                 if (saveAndCloseAction != null)
@@ -79,15 +79,18 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             get
             {
                 int entityId;
-                if(!int.TryParse(Id, out entityId))
+                if (!int.TryParse(Id, out entityId))
+                {
                     entityId = 0;
+                }
+
                 return new DirectLinkOptions
                 {
-                    actionCode = ActionCode,
-                    customerCode = QPContext.CurrentCustomerCode,
-                    entityId = entityId > 0 ? entityId : new int?(),
-                    entityTypeCode = EntityTypeCode,
-                    parentEntityId = ParentEntityId > 0 ? ParentEntityId : new int?()
+                    ActionCode = ActionCode,
+                    CustomerCode = QPContext.CurrentCustomerCode,
+                    EntityId = entityId > 0 ? entityId : new int?(),
+                    EntityTypeCode = EntityTypeCode,
+                    ParentEntityId = ParentEntityId > 0 ? ParentEntityId : new int?()
                 };
             }
         }

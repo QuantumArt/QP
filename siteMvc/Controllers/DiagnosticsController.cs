@@ -8,7 +8,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            return this.JsonHtml("Index", new object());
+            return JsonHtml("Index", new object());
         }
     }
 }

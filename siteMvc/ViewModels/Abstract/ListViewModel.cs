@@ -81,7 +81,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public virtual string ActionCodeForLink => EntityTypeService.GetDefaultActionCodeByEntityTypeCode(EntityTypeCode);
 
-        public override MainComponentType MainComponentType => (IsTree) ? MainComponentType.Tree : MainComponentType.Grid;
+        public override MainComponentType MainComponentType => IsTree ? MainComponentType.Tree : MainComponentType.Grid;
 
         public override string MainComponentId => IsTree ? UniqueId("Tree") : UniqueId("Grid");
 

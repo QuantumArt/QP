@@ -29,6 +29,8 @@ namespace Quantumart.Test
 
         public static string ContentName { get; private set; }
 
+        public static bool EFLinksExists { get; private set; }        
+
         public static string TitleName { get; private set; }
 
         public static string MainCategoryName { get; private set; }
@@ -56,6 +58,7 @@ namespace Quantumart.Test
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentName = "Test M2M";
             ContentId = Global.GetContentId(Cnn, ContentName);
+            EFLinksExists = Global.EFLinksExists(Cnn, ContentId);
             TitleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             MainCategoryName = Cnn.FieldName(Global.SiteId, ContentName, "MainCategory");
             NumberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
@@ -97,6 +100,15 @@ namespace Quantumart.Test
             Assert.That(cntBefore, Is.Not.EqualTo(0));
             Assert.That(cntArticlesAsyncBefore, Is.EqualTo(0));
             Assert.That(cntArticlesBefore, Is.Not.EqualTo(0));
+
+            if (EFLinksExists)
+            {
+                var cntEFAsyncBefore = Global.CountEFLinks(Cnn, ints, ContentId, true);
+                var cntEFBefore = Global.CountEFLinks(Cnn, ints, ContentId, false);
+                Assert.That(cntEFAsyncBefore, Is.EqualTo(cntAsyncBefore));
+                Assert.That(cntEFBefore, Is.EqualTo(cntBefore));
+            }
+
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
 
             var cntAsyncAfterSplit = Global.CountLinks(Cnn, ints, true);
@@ -109,6 +121,14 @@ namespace Quantumart.Test
             Assert.That(cntAfterSplit, Is.EqualTo(cntAsyncAfterSplit));
             Assert.That(cntArticlesAfterSplit, Is.Not.EqualTo(0));
             Assert.That(cntArticlesAsyncAfterSplit, Is.EqualTo(cntArticlesAfterSplit));
+
+            if (EFLinksExists)
+            {
+                var cntEFAsyncAfterSplit = Global.CountEFLinks(Cnn, ints, ContentId, true);
+                var cntEFAfterSplit = Global.CountEFLinks(Cnn, ints, ContentId, false);
+                Assert.That(cntEFAsyncAfterSplit, Is.EqualTo(cntAsyncAfterSplit));
+                Assert.That(cntEFAfterSplit, Is.EqualTo(cntAfterSplit));
+            }
 
             var values2 = new List<Dictionary<string, string>>();
             var article3 = new Dictionary<string, string>
@@ -141,6 +161,14 @@ namespace Quantumart.Test
 
             Assert.That(titlesBefore, Is.EqualTo(titlesAfterMerge));
             Assert.That(titlesBefore, Is.EqualTo(asyncTitlesAfterSplit));
+
+            if (EFLinksExists)
+            {
+                var cntEFAsyncAfterMerge = Global.CountEFLinks(Cnn, ints, ContentId, true);
+                var cntEFAfterMerge = Global.CountEFLinks(Cnn, ints, ContentId, false);
+                Assert.That(cntEFAsyncAfterMerge, Is.EqualTo(cntAsyncAfterMerge));
+                Assert.That(cntEFAfterMerge, Is.EqualTo(cntAfterMerge));
+            }
         }
 
 
@@ -178,6 +206,14 @@ namespace Quantumart.Test
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
 
+            if (EFLinksExists)
+            {
+                var intsEFSaved1 = Global.GetEFLinks(Cnn, ids1, ContentId, false);
+                var intsEFSaved2 = Global.GetEFLinks(Cnn, ids2, ContentId, false);
+                Assert.That(intsEFSaved1, Is.EquivalentTo(intsSaved1));
+                Assert.That(intsEFSaved2, Is.EquivalentTo(intsSaved2));
+            }
+
             var titles = new[] { "xnewtest", "xnewtest" };
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             var intsNew2 = new[] { CategoryIds[3], CategoryIds[5] };
@@ -199,6 +235,18 @@ namespace Quantumart.Test
             Assert.That(ints2, Is.EqualTo(intsUpdated2), "Second article M2M (main) remains the same");
             Assert.That(intsNew1, Is.EqualTo(intsUpdatedAsync1), "First article M2M (async) saved");
             Assert.That(intsNew2, Is.EqualTo(intsUpdatedAsync2), "Second article M2M (async) saved");
+
+            if (EFLinksExists)
+            {
+                var intsEFUpdated1 = Global.GetEFLinks(Cnn, ids1, ContentId, false);
+                var intsEFUpdated2 = Global.GetEFLinks(Cnn, ids2, ContentId, false);
+                var intsEFUpdatedAsync1 = Global.GetEFLinks(Cnn, ids1, ContentId, true);
+                var intsEFUpdatedAsync2 = Global.GetEFLinks(Cnn, ids2, ContentId, true);
+                Assert.That(intsEFUpdated1, Is.EquivalentTo(intsUpdated1));
+                Assert.That(intsEFUpdated2, Is.EquivalentTo(intsUpdated2));
+                Assert.That(intsEFUpdatedAsync1, Is.EquivalentTo(intsUpdatedAsync1));
+                Assert.That(intsEFUpdatedAsync2, Is.EquivalentTo(intsUpdatedAsync2));
+            }
 
             var values2 = new List<Dictionary<string, string>>();
             var article3 = new Dictionary<string, string>
@@ -230,6 +278,18 @@ namespace Quantumart.Test
             Assert.That(intsMerged1, Is.EqualTo(intsUpdatedAsync1), "First article M2M (main) merged");
             Assert.That(intsMergedAsync1, Is.Empty, "First article M2M (async) cleared");
             Assert.That(intsMergedAsync2, Is.Empty, "Second article M2M (async) cleared");
+
+            if (EFLinksExists)
+            {
+                var intsEFMerged1 = Global.GetEFLinks(Cnn, ids1, ContentId, false);
+                var intsEFMerged2 = Global.GetEFLinks(Cnn, ids2, ContentId, false);
+                var intsEFMergedAsync1 = Global.GetEFLinks(Cnn, ids1, ContentId, true);
+                var intsEFMergedAsync2 = Global.GetEFLinks(Cnn, ids2, ContentId, true);
+                Assert.That(intsEFMerged1, Is.EquivalentTo(intsMerged1));
+                Assert.That(intsEFMerged2, Is.EquivalentTo(intsMerged2));
+                Assert.That(intsEFMergedAsync1, Is.EquivalentTo(intsMergedAsync1));
+                Assert.That(intsEFMergedAsync2, Is.EquivalentTo(intsMergedAsync2));
+            }
         }
 
         [Test]
@@ -259,6 +319,13 @@ namespace Quantumart.Test
 
             Assert.That(ints1, Is.EqualTo(intsSaved1), "article M2M saved");
 
+            if (EFLinksExists)
+            {
+                var intsEFSaved1 = Global.GetEFLinks(Cnn, ids1, ContentId, false);
+                Assert.That(ints1, Is.EqualTo(intsEFSaved1), "article EF M2M saved");
+            }
+
+
             var titles2 = new[] { "xnewtest" };
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             article1[CategoryName] = string.Join(",", intsNew1);
@@ -279,6 +346,14 @@ namespace Quantumart.Test
             Assert.That(ints1, Is.EqualTo(intsUpdated1), "Article M2M (main) remains the same");
             Assert.That(intsNew1, Is.EqualTo(intsUpdatedAsync1), "Article M2M (async) saved");
 
+            if (EFLinksExists)
+            {
+                var intsEFUpdated1 = Global.GetEFLinks(Cnn, ids1, ContentId, false);
+                var intsEFUpdatedAsync1 = Global.GetEFLinks(Cnn, ids1, ContentId, true);
+                Assert.That(ints1, Is.EqualTo(intsEFUpdated1), "Article EF M2M (main) remains the same");
+                Assert.That(intsNew1, Is.EqualTo(intsEFUpdatedAsync1), "Article EF M2M (async) saved");
+            }
+
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
@@ -294,6 +369,14 @@ namespace Quantumart.Test
             Assert.That(mergedTitlesAsync, Is.Empty, "Empty article (async) after merge");
             Assert.That(intsMerged1, Is.EqualTo(intsUpdatedAsync1), "Article M2M (main) merged");
             Assert.That(intsMergedAsync1, Is.Empty, "Article M2M (async) cleared");
+
+            if (EFLinksExists)
+            {
+                var intsEFMerged1 = Global.GetEFLinks(Cnn, ids1, ContentId, false);
+                var intsEFMergedAsync1 = Global.GetEFLinks(Cnn, ids1, ContentId, true);
+                Assert.That(intsEFMerged1, Is.EqualTo(intsUpdatedAsync1), "Article EF M2M (main) merged");
+                Assert.That(intsEFMergedAsync1, Is.Empty, "Article EF M2M (async) cleared");
+            }
         }
 
         [Test]
@@ -331,6 +414,14 @@ namespace Quantumart.Test
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
 
+            if (EFLinksExists)
+            {
+                var intsEFSaved1 = Global.GetEFLinks(Cnn, ids1, ContentId, false);
+                var intsEFSaved2 = Global.GetEFLinks(Cnn, ids2, ContentId, false);
+                Assert.That(ints1, Is.EqualTo(intsEFSaved1), "First article EF M2M saved");
+                Assert.That(ints2, Is.EqualTo(intsEFSaved2), "Second article EF M2M saved");
+            }
+
             var titles = new[] { "xnewtest", "xnewtest" };
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             var intsNew2 = new[] { CategoryIds[3], CategoryIds[5] };
@@ -342,6 +433,12 @@ namespace Quantumart.Test
             var cntData = Global.CountData(Cnn, ids);
             var cntLinks = Global.CountLinks(Cnn, ids);
 
+            if (EFLinksExists)
+            {
+                var cntEFLinks = Global.CountEFLinks(Cnn, ids, ContentId, false);
+                Assert.That(cntEFLinks, Is.EqualTo(cntLinks), "EF links");
+            }
+
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change");
 
@@ -350,6 +447,14 @@ namespace Quantumart.Test
 
             Assert.That(intsNew1, Is.EqualTo(intsUpdated1), "First article M2M updated");
             Assert.That(intsNew2, Is.EqualTo(intsUpdated2), "Second article M2M updated");
+
+            if (EFLinksExists)
+            {
+                var intsEFUpdated1 = Global.GetEFLinks(Cnn, ids1, ContentId, false);
+                var intsEFUpdated2 = Global.GetEFLinks(Cnn, ids2, ContentId, false);
+                Assert.That(intsNew1, Is.EqualTo(intsEFUpdated1), "First article EF M2M updated");
+                Assert.That(intsNew2, Is.EqualTo(intsEFUpdated2), "Second article EF M2M updated");
+            }
 
             var versions = Global.GetMaxVersions(Cnn, ids);
             var cntVersionData = Global.CountVersionData(Cnn, versions);
@@ -385,6 +490,12 @@ namespace Quantumart.Test
             Assert.That(id, Is.Not.EqualTo(0), "Saved");
             Assert.That(ints1, Is.EqualTo(intsSaved1), "Article M2M saved");
 
+            if (EFLinksExists)
+            {
+                var intsEFSaved1 = Global.GetEFLinks(Cnn, ids, ContentId, false);
+                Assert.That(ints1, Is.EqualTo(intsEFSaved1), "Article EF M2M saved");
+            }
+
             const string title1 = "xnewtest";
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             article1[CategoryName] = string.Join(",", intsNew1);
@@ -393,6 +504,11 @@ namespace Quantumart.Test
             var cntData = Global.CountData(Cnn, ids);
             var cntLinks = Global.CountLinks(Cnn, ids);
 
+            if (EFLinksExists)
+            {
+                var cntEFLinks = Global.CountEFLinks(Cnn, ids, ContentId, false);
+                Assert.That(cntEFLinks, Is.EqualTo(cntLinks), "EF links");
+            }
 
             Assert.DoesNotThrow(() =>
             {
@@ -400,8 +516,14 @@ namespace Quantumart.Test
             }, "Update");
 
             var intsUpdated1 = Global.GetLinks(Cnn, ids);
-
+        
             Assert.That(intsNew1, Is.EqualTo(intsUpdated1), "Article M2M updated");
+
+            if (EFLinksExists)
+            {
+                var intsEFUpdated1 = Global.GetEFLinks(Cnn, ids, ContentId, false);
+                Assert.That(intsNew1, Is.EqualTo(intsEFUpdated1), "Article EF M2M updated");
+            }
 
             var versions = Global.GetMaxVersions(Cnn, ids);
             var cntVersionData = Global.CountVersionData(Cnn, versions);
@@ -854,6 +976,12 @@ namespace Quantumart.Test
             Assert.That(num, Is.Not.EqualTo(0), "Default number");
             Assert.That(desc, Is.Not.Null.Or.Empty, "Default description");
             Assert.That(cnt, Is.EqualTo(2), "Default M2M");
+
+            if (EFLinksExists)
+            {
+                var cntEF = Global.CountEFLinks(Cnn, ids, ContentId, false);
+                Assert.That(cntEF, Is.EqualTo(2), "Default EF M2M");
+            }
         }
 
         [Test]
@@ -924,6 +1052,12 @@ namespace Quantumart.Test
             Assert.That(num, Is.Not.EqualTo(0), "Default number");
             Assert.That(desc, Is.Not.Null.Or.Empty, "Default description");
             Assert.That(cnt, Is.EqualTo(2), "Default M2M");
+
+            if (EFLinksExists)
+            {
+                var cntEF = Global.CountEFLinks(Cnn, ids, ContentId, false);
+                Assert.That(cntEF, Is.EqualTo(2), "Default EF M2M");
+            }
         }
 
         [Test]
@@ -1108,15 +1242,29 @@ namespace Quantumart.Test
 
             var ids = new[] { id };
             var cntLinks = Global.CountLinks(Cnn, ids);
+            var cntEFLinks = 0;
 
             Assert.That(cntLinks, Is.Not.EqualTo(0), "Links saved");
+
+            if (EFLinksExists)
+            {
+                cntEFLinks = Global.CountEFLinks(Cnn, ids, ContentId, false);
+                Assert.That(cntEFLinks, Is.EqualTo(cntLinks), "EF links saved");
+            }
+
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
             }, "Update");
 
-            var cntLinksAfter = Global.CountLinks(Cnn, ids);
+            var cntLinksAfter = Global.CountLinks(Cnn, ids);            
             Assert.That(cntLinksAfter, Is.EqualTo(0), "Links nullified");
+
+            if (EFLinksExists)
+            {
+                var cntEFLinksAfter = Global.CountEFLinks(Cnn, ids, ContentId, false);
+                Assert.That(cntEFLinksAfter, Is.EqualTo(0), "EF links nullified");
+            }
         }
 
         [OneTimeTearDown]

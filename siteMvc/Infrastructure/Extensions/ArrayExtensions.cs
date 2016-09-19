@@ -6,7 +6,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
     {
         public static string ConvertToString(this byte[] vals)
         {
-            return BitConverter.ToString(vals).Replace("-", "");
+            return BitConverter.ToString(vals).Replace("-", string.Empty);
         }
     }
 }

@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
     public class SiteModelBinder : QpModelBinder
     {
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
-            Site site = (bindingContext.Model as Site);
+            var site = (bindingContext.Model as Site);
             site.DoCustomBinding();
             base.OnModelUpdated(controllerContext, bindingContext);
         }
