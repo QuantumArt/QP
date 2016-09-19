@@ -1,28 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.MultistepActions;
+using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
-using Quantumart.QP8.BLL.Services.MultistepActions.Import;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ImportArticlesController : QPController
     {
-        private readonly IMultistepActionService service;
-        private readonly string folderForTemplate = "MultistepSettingsTemplates";
+        private readonly IMultistepActionService _service;
+
+        private const string FolderForTemplate = "MultistepSettingsTemplates";
 
         public ImportArticlesController(IMultistepActionService service)
         {
-            this.service = service;
+            _service = service;
         }
 
         [HttpPost]
@@ -31,13 +31,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public ActionResult PreSettings(int parentId, int id)
         {
-			var db = DbService.ReadSettings();
-			if (db.RecordActions && db.SingleUserId != QPContext.CurrentUserId)
-			{
-				throw new Exception(DBStrings.SingeUserModeMessage);
-			}
+            var db = DbService.ReadSettings();
+            if (db.RecordActions && db.SingleUserId != QPContext.CurrentUserId)
+            {
+                throw new Exception(DBStrings.SingeUserModeMessage);
+            }
 
-			IMultistepActionSettings prms = service.MultistepActionSettings(parentId, id);
+            var prms = _service.MultistepActionSettings(parentId, id);
             return Json(prms);
         }
 
@@ -47,11 +47,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public ActionResult Settings(string tabId, int parentId, int id, int blockedFieldId)
         {
-            ImportViewModel model = new ImportViewModel();
-            model.ContentId = id;
-			model.BlockedFieldId = blockedFieldId;
-            string viewName = String.Format("{0}/ImportTemplate", folderForTemplate);
-            return this.JsonHtml(viewName, model);
+            var model = new ImportViewModel
+            {
+                ContentId = id,
+                BlockedFieldId = blockedFieldId
+            };
+
+            return JsonHtml($"{FolderForTemplate}/ImportTemplate", model);
         }
 
         [HttpPost]
@@ -60,22 +62,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public ActionResult FileFields(int parentId, int id, FormCollection collection)
         {
-            ImportViewModel model = new ImportViewModel();
+            var model = new ImportViewModel();
             TryUpdateModel(model);
             model.SetCorrespondingFieldName(collection);
-            ImportSettings settings = model.GetImportSettingsObject(parentId, id);
-			FileReader reader = new FileReader(settings);
-            List<string> fieldsList = MultistepActionHelper.GetFileFields(settings, reader);
+            var settings = model.GetImportSettingsObject(parentId, id);
+            var reader = new FileReader(settings);
+            var fieldsList = MultistepActionHelper.GetFileFields(settings, reader);
             return Json(fieldsList);
         }
+
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
         [BackendActionLog]
-		public ActionResult Setup(int parentId, int id, bool? boundToExternal)
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
-            MultistepActionSettings settings = service.Setup(parentId, id, boundToExternal);
+            var settings = _service.Setup(parentId, id, boundToExternal);
             return Json(settings);
         }
 
@@ -86,29 +89,28 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult SetupWithParams(int parentId, int id, FormCollection collection)
         {
-            ImportViewModel model = new ImportViewModel();
+            var model = new ImportViewModel();
             TryUpdateModel(model);
             model.SetCorrespondingFieldName(collection);
             IMultistepActionParams settings = model.GetImportSettingsObject(parentId, id);
-            service.SetupWithParams(parentId, id, settings);
-            return Json(String.Empty);
+            _service.SetupWithParams(parentId, id, settings);
+            return Json(string.Empty);
         }
 
         [HttpPost]
-        [NoTransactionConnectionScopeAttribute]
+        [NoTransactionConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public ActionResult Step(int stage, int step)
         {
-            MultistepActionStepResult stepResult = service.Step(stage, step);
+            var stepResult = _service.Step(stage, step);
             return Json(stepResult);
         }
 
         [HttpPost]
         public ActionResult TearDown(bool isError)
         {
-            service.TearDown();
+            _service.TearDown();
             return null;
         }
-
     }
 }

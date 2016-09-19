@@ -1,12 +1,18 @@
-﻿using System.Net.Mime;
+using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Hubs;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -14,10 +20,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
     public class DbController : QPController
     {
         private readonly ICommunicationService _communicationService;
+        private readonly IXmlDbUpdateLogService _xmlDbUpdateLogService;
 
-        public DbController(ICommunicationService communicationService)
+        public DbController(ICommunicationService communicationService, IXmlDbUpdateLogService xmlDbUpdateServce)
         {
             _communicationService = communicationService;
+            _xmlDbUpdateLogService = xmlDbUpdateServce;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -29,7 +37,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = EntityViewModel.Create<DbViewModel>(db, tabId, parentId);
             model.SuccesfulActionCode = successfulActionCode;
 
-            ViewBag.IsRecordAvailableForDownload = System.IO.File.Exists(RecordReplayHelper.GetXmlFilePath());
+            ViewBag.IsRecordAvailableForDownload = System.IO.File.Exists(QPContext.GetRecordXmlFilePath());
             return JsonHtml("Settings", model);
         }
 
@@ -52,7 +60,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 var needSendMessage = false;
                 if (model.Data.RecordActions)
                 {
-                    new RecordReplayHelper().Clear(HttpContext, model.OverrideRecordsFile);
+                    if (model.OverrideRecordsFile)
+                    {
+                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext));
+                    }
+
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)
                     {
                         model.Data.SingleUserId = QPContext.CurrentUserId;
@@ -82,9 +94,39 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Settings", model);
         }
 
+        [ActionAuthorize(ActionCode.DbSettings)]
+        [BackendActionContext(ActionCode.DbSettings)]
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
         public FileResult GetRecordedUserActions()
         {
-            return File(RecordReplayHelper.GetXmlFilePath(), MediaTypeNames.Application.Octet, RecordReplayHelper.GetXmlFileName());
+            var fileName = $"{QPContext.CurrentCustomerCode}_{System.IO.File.GetLastWriteTime(QPContext.GetRecordXmlFilePath()):yyyy-MM-dd_HH-mm-ss}.xml";
+            return File(QPContext.GetRecordXmlFilePath(), MediaTypeNames.Application.Octet, fileName);
+        }
+
+        [HttpPost]
+        [ActionAuthorize(ActionCode.DbSettings)]
+        [BackendActionContext(ActionCode.DbSettings)]
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
+        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool disableFieldIdentity, bool disableContentIdentity)
+        {
+            try
+            {
+                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, _xmlDbUpdateLogService).Process(xmlString);
+            }
+            catch (XmlDbUpdateLoggingException ex)
+            {
+                return new JSendResponse
+                {
+                    Status = JSendStatus.Fail,
+                    Message = ex.Message
+                };
+            }
+
+            return new JSendResponse
+            {
+                Status = JSendStatus.Success,
+                Message = "Xml data successfully processed"
+            };
         }
     }
 }

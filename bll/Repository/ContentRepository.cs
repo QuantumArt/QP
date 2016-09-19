@@ -1,22 +1,23 @@
-﻿using Quantumart.QP8.BLL.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.Objects;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Linq.Expressions;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
 using Quantumart.QP8.Utils;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Objects;
-using System.Linq;
-using System.Linq.Expressions;
+using Quantumart.QP8.BLL.Repository.Articles;
 
 namespace Quantumart.QP8.BLL.Repository
 {
-    internal class ContentRepository
+    public class ContentRepository
     {
-        #region lists
         /// <summary>
         /// Возвращает список контентов сайта
         /// </summary>
@@ -52,9 +53,10 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Возвращает список контентов по спику id
         /// </summary>
-        internal static IEnumerable<Content> GetList(IEnumerable<int> IDs, bool loadSite = false, bool loadFields = false)
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
+        internal static IEnumerable<Content> GetList(IEnumerable<int> ids, bool loadSite = false, bool loadFields = false)
         {
-            if (IDs != null && IDs.Any())
+            if (ids != null && ids.Any())
             {
                 ObjectQuery<ContentDAL> context = QPContext.EFContext.ContentSet;
                 if (loadSite)
@@ -63,7 +65,7 @@ namespace Quantumart.QP8.BLL.Repository
                     context = context.Include("Fields");
 
 
-                IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
+                IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
                 return MappersRepository.ContentMapper.GetBizList(context.Where(c => decIDs.Contains(c.Id)).ToList());
             }
             return Enumerable.Empty<Content>();
@@ -96,12 +98,12 @@ namespace Quantumart.QP8.BLL.Repository
         /// Простой список контентов по выбранному списку ID (для MultipeItemPicker)
         /// </summary>
         /// <param name="currentSiteId">текущий сайт (если контент не с текущего сайта, то возвращается полное имя)</param>
-        /// <param name="IDs">список выбранных ID</param>
+        /// <param name="ids">список выбранных ID</param>
         /// <returns></returns>
-        internal static IEnumerable<ListItem> GetSimpleList(int currentSiteId, IEnumerable<int> IDs)
+        internal static IEnumerable<ListItem> GetSimpleList(int currentSiteId, IEnumerable<int> ids)
         {
-            var contents = GetList(IDs, true);
-            return contents.Select(c => new ListItem(c.Id.ToString(), c.SiteId == currentSiteId ? c.Name : string.Format("{0}.{1}", c.Site.Name, c.Name)));
+            var contents = GetList(ids, true);
+            return contents.Select(c => new ListItem(c.Id.ToString(), c.SiteId == currentSiteId ? c.Name : $"{c.Site.Name}.{c.Name}"));
         }
 
         /// <summary>
@@ -113,15 +115,13 @@ namespace Quantumart.QP8.BLL.Repository
         {
             return Converter.ToInt32Collection(QPContext.EFContext.ContentSet.Where(c => c.DisableChangingActions).Select(c => c.Id).ToArray());
         }
-        #endregion
 
-        #region CRUD
         /// <summary>
         /// Возвращает контент по идентификатору
         /// </summary>
         /// <param name="id">идентификатор контента</param>
         /// <returns>информация о контенте</returns>
-        internal static Content GetById(int id)
+        public static Content GetById(int id)
         {
             var result = GetByIdFromCache(id);
             if (result != null)
@@ -152,8 +152,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>информация о контенте</returns>
         internal static Content GetByIdWithFields(int id)
         {
-            var content = MappersRepository.ContentMapper.GetBizObject(QPContext.EFContext.ContentSet.Include("LastModifiedByUser").Include("Fields").SingleOrDefault(n => n.Id == id));
-            return content;
+            return MappersRepository.ContentMapper.GetBizObject(QPContext.EFContext.ContentSet.Include("LastModifiedByUser").Include("Fields").SingleOrDefault(n => n.Id == id));
         }
 
         internal static int GetSiteId(int id)
@@ -239,32 +238,24 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         /// <summary>
-        /// Удаляет контенты
-        /// </summary>
-        /// <param name="IDs">идентификаторы контентов</param>
-        internal static void MultipleDelete(int[] IDs)
-        {
-            if (IDs.Length > 0)
-            {
-                DefaultRepository.Delete<ContentDAL>(IDs);
-            }
-        }
-
-        /// <summary>
         /// Копирует контент
         /// </summary>
-        /// <param name="content">контент</param>
         internal static Content Copy(Content content, int? forceId, int[] forceFieldIds, int[] forceLinkIds, bool forHierarchy)
         {
             var oldId = content.Id;
             content.LoadWorkflowBinding();
             content.Id = 0;
+
             if (forceId.HasValue)
+            {
                 content.ForceId = forceId.Value;
+            }
+
             if (!forHierarchy)
             {
                 content.MutateNames();
             }
+
             var newContent = Save(content, false);
             var newId = newContent.Id;
             var helper = new ContentCopyHelper(oldId, newId, forHierarchy)
@@ -276,9 +267,7 @@ namespace Quantumart.QP8.BLL.Repository
             helper.Proceed();
             return GetById(newId);
         }
-        #endregion
 
-        #region content groups
         /// <summary>
         /// Получить список групп контентов для сайта
         /// </summary>
@@ -329,10 +318,6 @@ namespace Quantumart.QP8.BLL.Repository
             return MappersRepository.ContentGroupMapper.GetBizObject(newDal);
         }
 
-        #endregion
-
-        #region content links
-
         internal static ContentLink GetContentLinkById(int linkId)
         {
             return MappersRepository.ContentLinkMapper.GetBizObject(
@@ -375,11 +360,6 @@ namespace Quantumart.QP8.BLL.Repository
             result.WasNew = false;
             return result;
         }
-
-
-        #endregion
-
-        #region check existence
 
         internal static bool Exists(int id)
         {
@@ -462,21 +442,6 @@ namespace Quantumart.QP8.BLL.Repository
             Expression<Func<ContentToContentDAL, bool>> scopeExpression = n => n.Content.SiteId == content.SiteId;
             return scopeExpression;
         }
-        #endregion
-
-        internal static IEnumerable<ListItem> GetArticleTitleList(int contentId, string titleName, string filterIds)
-        {
-            using (new QPConnectionScope())
-            {
-                var rows = Common.GetArticleTitleList(
-                    QPConnectionScope.Current.DbConnection,
-                    contentId,
-                    string.IsNullOrEmpty(titleName) ? GetTitleName(contentId) : titleName,
-                    filterIds
-                );
-                return rows.Select(n => new ListItem(n["id"].ToString(), n["title"].ToString()));
-            }
-        }
 
         internal static Field GetTitleField(int contentId)
         {
@@ -496,32 +461,30 @@ namespace Quantumart.QP8.BLL.Repository
             using (new QPConnectionScope())
             {
                 IEnumerable<DataRow> rows = Common.GetDisplayFields(QPConnectionScope.Current.DbConnection, contentId, withRelations).AsEnumerable();
-                return rows
-                    .Select(n =>
-                        new
-                        {
-                            id = Converter.ToInt32(n.Field<decimal>("ATTRIBUTE_ID")),
-                            viewInList = n.Field<bool>("view_in_list"),
-                            priority = n.Field<int>("attribute_priority"),
-                            order = n.Field<decimal>("attribute_order")
-                        })
-                    .Where(n => n.id != excludeId)
-                    .OrderByDescending(n => n.viewInList)
-                    .OrderByDescending(n => n.priority) //TODO: check then by
-                    .OrderBy(n => n.order)
-                    .Select(n => n.id);
+                return rows.Select(n => new
+                {
+                    id = Converter.ToInt32(n.Field<decimal>("ATTRIBUTE_ID")),
+                    viewInList = n.Field<bool>("view_in_list"),
+                    priority = n.Field<int>("attribute_priority"),
+                    order = n.Field<decimal>("attribute_order")
+                })
+                .Where(n => n.id != excludeId)
+                .OrderByDescending(n => n.viewInList)
+                .ThenByDescending(n => n.priority)
+                .ThenBy(n => n.order)
+                .Select(n => n.id);
             }
         }
 
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         internal static IEnumerable<Field> GetDisplayFields(int contentId, Field field = null)
         {
             var excludeId = field != null && field.ExactType == FieldExactTypes.M2ORelation ? field.BackRelationId.Value : 0;
-
             var fields = field == null || field.ListFieldTitleCount <= 1 && field.ExactType == FieldExactTypes.O2MRelation || field.ListFieldTitleCount <= 0 ? null : GetDisplayFieldIds(contentId, field.IncludeRelationsInTitle, excludeId)
                 .Take(field.ListFieldTitleCount)
                 .Select(FieldRepository.GetById);
 
-            var displayField = field != null && field.Relation != null && field.ExactType == FieldExactTypes.O2MRelation ?
+            var displayField = field?.Relation != null && field.ExactType == FieldExactTypes.O2MRelation ?
                 field.Relation :
                 GetTitleField(contentId);
 
@@ -640,7 +603,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-
         /// <summary>
         /// Переключает RelationId равный currentRelationFieldId на значение newRelationFieldId
         /// </summary>
@@ -717,7 +679,6 @@ namespace Quantumart.QP8.BLL.Repository
 
             return new Content[0];
         }
-
 
         public static IEnumerable<Field> GetRelatedO2MFields(int contentId)
         {
@@ -812,12 +773,12 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<ListItem> GetGroupSimpleList(int siteId, int[] selectedIds = null)
         {
-            var groups = GetSiteContentGroups(siteId).Select(g => new ListItem(g.Id.ToString(), g.Name));
+            var groups = GetSiteContentGroups(siteId).Select(g => new ListItem(g.Id.ToString(), g.Name)).ToList();
             if (selectedIds != null)
             {
-                foreach (var @group in groups.Where(@group => selectedIds.Contains(int.Parse(@group.Value))))
+                foreach (var gr in groups.Where(gr => selectedIds.Contains(int.Parse(gr.Value))))
                 {
-                    @group.Selected = true;
+                    gr.Selected = true;
                 }
             }
 
@@ -905,7 +866,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static string GetRelationsBetweenContentsXML(int sourceSiteId, int destinationSiteId, string newContentIds)
+        internal static string GetRelationsBetweenContentsXml(int sourceSiteId, int destinationSiteId, string newContentIds)
         {
             using (new QPConnectionScope())
             {
@@ -922,7 +883,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static void CopyContentConstraints(string relationsBetweenContentsXml, ref string result)
+        internal static void CopyContentConstraints(string relationsBetweenContentsXml, out string result)
         {
             using (new QPConnectionScope())
             {
@@ -931,7 +892,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static int CopyContents(int oldSiteId, int newSiteId, int startFrom, int endOn, ref string result)
+        internal static int CopyContents(int oldSiteId, int newSiteId, int startFrom, int endOn, out string result)
         {
             using (new QPConnectionScope())
             {
@@ -940,6 +901,7 @@ namespace Quantumart.QP8.BLL.Repository
                 return rows.Count;
             }
         }
+
         internal static IEnumerable<Content> GetChildList(int contentId)
         {
             return MappersRepository.ContentMapper.GetBizList(
@@ -1070,7 +1032,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static void CopyContentLinks(int sourceSiteId, int destinationSiteId, ref string result)
+        internal static void CopyContentLinks(int sourceSiteId, int destinationSiteId, out string result)
         {
             using (new QPConnectionScope())
             {
@@ -1094,6 +1056,7 @@ namespace Quantumart.QP8.BLL.Repository
                 return Common.GetContentIdsToCopy(QPConnectionScope.Current.DbConnection, noMoreThanNArticles, sourceSiteId);
             }
         }
+
         internal static string GetContentIdsBySiteId(int sourceSiteId)
         {
             using (new QPConnectionScope())
@@ -1101,6 +1064,7 @@ namespace Quantumart.QP8.BLL.Repository
                 return Common.GetContentIdsBySiteId(QPConnectionScope.Current.DbConnection, sourceSiteId);
             }
         }
+
         internal static void CopyContentsGroups(int sourceSiteId, int destinationSiteId)
         {
             using (new QPConnectionScope())
@@ -1108,6 +1072,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopyContentsGroups(QPConnectionScope.Current.DbConnection, sourceSiteId, destinationSiteId);
             }
         }
+
         internal static void UpdateContentGroupIds(int sourceSiteId, int destinationSiteId)
         {
             using (new QPConnectionScope())
@@ -1131,6 +1096,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopyArticleWorkflowBind(QPConnectionScope.Current.DbConnection, sourceSiteId, destinationSiteId, relationsBetweenArticles);
             }
         }
+
         internal static void UpdateContentDataAfterCopyingArticles(string relationsBetweenArticles, string relationsBetweenLinks)
         {
             using (new QPConnectionScope())
@@ -1138,6 +1104,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.UpdateContentDataAfterCopyingArticles(QPConnectionScope.Current.DbConnection, relationsBetweenArticles, relationsBetweenLinks);
             }
         }
+
         internal static void CopyItemToItems(string relationsBetweenArticles, string relationsBetweenLinks)
         {
             using (new QPConnectionScope())
@@ -1145,6 +1112,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopyItemToItems(QPConnectionScope.Current.DbConnection, relationsBetweenArticles, relationsBetweenLinks);
             }
         }
+
         internal static void UpdateItemToItem(string relationsBetweenArticles, string relationsBetweenLinks)
         {
             using (new QPConnectionScope())
@@ -1152,6 +1120,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.UpdateItemToItem(QPConnectionScope.Current.DbConnection, relationsBetweenArticles, relationsBetweenLinks);
             }
         }
+
         internal static string GetRelationsBetweenLinks(int sourceSiteId, int destinationSiteId)
         {
             using (new QPConnectionScope())
@@ -1160,6 +1129,7 @@ namespace Quantumart.QP8.BLL.Repository
                 return MultistepActionHelper.GetXmlFromDataRows(rows, "link");
             }
         }
+
         internal static void CopyUserQueryContents(string relationsBetweenContents)
         {
             using (new QPConnectionScope())
@@ -1176,7 +1146,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        #region Aggregated content
         internal static int[] GetReferencedAggregatedContentIds(int contentId, int[] articleIds)
         {
             using (var scope = new QPConnectionScope())
@@ -1200,6 +1169,5 @@ namespace Quantumart.QP8.BLL.Repository
                 return Common.GetAggregatedArticleIdsMap(scope.DbConnection, contentId, articleIds);
             }
         }
-        #endregion
     }
 }

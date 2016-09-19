@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0978B8F2-3561-4E20-8ED3-91917B0600D0}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Quantumart.QP8.ConsoleDbUpdate</RootNamespace>
+    <AssemblyName>qpdbupdate</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Quantumart.QP8.ConsoleDbUpdate.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Infrastructure\Enums\ConsoleLogLevel.cs" />
+    <Compile Include="Infrastructure\Enums\ExitCode.cs" />
+    <Compile Include="Infrastructure\Factories\ConsoleArgsProcessorFactory.cs" />
+    <Compile Include="Infrastructure\FileSystemReaders\CsvReaderProcessor.cs" />
+    <Compile Include="Infrastructure\FileSystemReaders\CsvReaderSettings.cs" />
+    <Compile Include="Infrastructure\Helpers\ConsoleHelpers.cs" />
+    <Compile Include="Infrastructure\Extensions\ExceptionExtensions.cs" />
+    <Compile Include="Infrastructure\Models\BaseSettingsModel.cs" />
+    <Compile Include="EmbeddedAssemblyManager.cs" />
+    <Compile Include="Infrastructure\Factories\DataProcessorFactory.cs" />
+    <Compile Include="Infrastructure\Models\CsvSettingsModel.cs" />
+    <Compile Include="Infrastructure\Processors\ArgumentsProcessor\BaseConsoleArgsProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\ArgumentsProcessor\CsvConsoleArgsProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\ArgumentsProcessor\XmlConsoleArgsProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\DataProcessor\CsvDataProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\DataProcessor\IDataProcessor.cs" />
+    <Compile Include="Infrastructure\Processors\DataProcessor\XmlDataProcessor.cs" />
+    <Compile Include="Infrastructure\Models\XmlSettingsModel.cs" />
+    <Compile Include="Infrastructure\Adapters\QpUpdateLoggingWrapper.cs" />
+    <Compile Include="Infrastructure\Utf8StringWriter.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Infrastructure\FileSystemReaders\XmlReaderProcessor.cs" />
+    <Compile Include="Infrastructure\FileSystemReaders\XmlReaderSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <EmbeddedResource Include="..\packages\NLog.4.3.6\lib\net45\NLog.dll">
+      <Link>References\NLog.dll</Link>
+    </EmbeddedResource>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Owin.dll">
+      <Link>References\Microsoft.Owin.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\EFExtensions.dll">
+      <Link>References\EFExtensions.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Irony.dll">
+      <Link>References\Irony.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Common.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.Common.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Validation.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.Validation.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.ServiceLocation.dll">
+      <Link>References\Microsoft.Practices.ServiceLocation.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.Unity.Configuration.dll">
+      <Link>References\Microsoft.Practices.Unity.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.Unity.dll">
+      <Link>References\Microsoft.Practices.Unity.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.Unity.Interception.dll">
+      <Link>References\Microsoft.Practices.Unity.Interception.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Moq.dll">
+      <Link>References\Moq.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Configuration.dll">
+      <Link>References\QA.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.dll">
+      <Link>References\QA.Validation.Xaml.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Assembling.dll">
+      <Link>References\Quantumart.QP8.Assembling.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.dll">
+      <Link>References\Quantumart.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.BLL.dll">
+      <Link>References\Quantumart.QP8.BLL.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Configuration.dll">
+      <Link>References\Quantumart.QP8.Configuration.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Constants.dll">
+      <Link>References\Quantumart.QP8.Constants.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.DAL.dll">
+      <Link>References\Quantumart.QP8.DAL.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Resources.dll">
+      <Link>References\Quantumart.QP8.Resources.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Security.dll">
+      <Link>References\Quantumart.QP8.Security.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Utils.dll">
+      <Link>References\Quantumart.QP8.Utils.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Validators.dll">
+      <Link>References\Quantumart.QP8.Validators.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.WebMvc.dll">
+      <Link>References\Quantumart.QP8.WebMvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\RazorGenerator.Mvc.dll">
+      <Link>References\RazorGenerator.Mvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Telerik.Web.Mvc.dll">
+      <Link>References\Telerik.Web.Mvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\WebActivatorEx.dll">
+      <Link>References\WebActivatorEx.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.Extensions.dll">
+      <Link>References\QA.Validation.Xaml.Extensions.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.Helpers.dll">
+      <Link>References\System.Web.Helpers.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.Mvc.dll">
+      <Link>References\System.Web.Mvc.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.Razor.dll">
+      <Link>References\System.Web.Razor.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.WebPages.Deployment.dll">
+      <Link>References\System.Web.WebPages.Deployment.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.WebPages.dll">
+      <Link>References\System.Web.WebPages.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\System.Web.WebPages.Razor.dll">
+      <Link>References\System.Web.WebPages.Razor.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.AspNet.SignalR.Core.dll">
+      <Link>References\Microsoft.AspNet.SignalR.Core.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Logging.Loggers.dll">
+      <Link>References\Quantumart.QP8.Logging.Loggers.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Logging.Web.dll">
+      <Link>References\Quantumart.QP8.Logging.Web.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.EnterpriseLibrary.Logging.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.Logging.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Logging.dll">
+      <Link>References\Quantumart.QP8.Logging.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Newtonsoft.Json.dll">
+      <Link>References\Newtonsoft.Json.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll">
+      <Link>References\Mono.Options.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Data.dll">
+      <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
+      <Link>References\Quantumart.QP8.Merger.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll">
+      <Link>References\Castle.Core.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll">
+      <Link>References\AutoMapper.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
+      <Link>References\Microsoft.Web.Infrastructure.dll</Link>
+    </EmbeddedResource>
+    <Content Include="favicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\bll\BLL.csproj">
+      <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
+      <Name>BLL</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\configuration\Configuration.csproj">
+      <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
+      <Name>Configuration</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\constants\Constants.csproj">
+      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
+      <Name>Constants</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\siteMvc\WebMvc.csproj">
+      <Project>{8be1bb60-1938-45e8-bafb-1d008d62059c}</Project>
+      <Name>WebMvc</Name>
+      <Private>False</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Mono.Options">
+      <HintPath>..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

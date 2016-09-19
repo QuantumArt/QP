@@ -8,42 +8,43 @@
 
 @using (Html.BeginDocumentPadding())
 {
-    <div id="@Model.MainComponentId" class="alMainContaner">	
-	    <form class="formLayout" action='javascript:void(0);'>
-		    <div id="@Model.FilterElementId" class="simpleSeachBlock">
-				
-				@Html.QpDropDownList("filterCombo", Model.FilterList, AuditStrings.SelectFilter,
+    <div id="@Model.MainComponentId" class="alMainContaner">
+        <form class="formLayout" action='javascript:void(0);'>
+            <div id="@Model.FilterElementId" class="simpleSeachBlock">
+
+                @Html.QpDropDownList("filterCombo", Model.FilterList, AuditStrings.SelectFilter,
                     new ControlOptions
                     {
-                        HtmlAttributes = new Dictionary<string, object> 
-					    { 
-						    { "class", "alFilterCombo" }
-					    }
+                        HtmlAttributes = new Dictionary<string, object>
+                        {
+                            { "class", "alFilterCombo" }
+                        }
                     }
                 )
 
-				<div class="alTilesContainer"></div>
+                <div class="alTilesContainer"></div>
 
-				<div class="alButtons">
-				    <input id="@Html.UniqueId("findButton")" type="button" class="alSearchButton button" value="@AuditStrings.Find" />
-				    <input id="@Html.UniqueId("resetButton")" type="button" class="alResetButton button" value="@AuditStrings.ResetFilter" />			
-				</div>
-		    </div>
-	    </form>			
+                <div class="alButtons">
+                    <input id="@Html.UniqueId("findButton")" type="button" class="alSearchButton button" value="@AuditStrings.Find" />
+                    <input id="@Html.UniqueId("resetButton")" type="button" class="alResetButton button" value="@AuditStrings.ResetFilter" />
+                </div>
+            </div>
+        </form>
 
-	    @(Html.Telerik().Grid<BackendActionLog>().Name(Model.GridElementId)
+        @(Html.Telerik().Grid<BackendActionLog>().Name(Model.GridElementId)
                 .DataKeys(k => k.Add(s => s.Id))
                 .Columns(c =>
-                    {
-                        c.Bound(s => s.ActionTypeName);
-                        c.Bound(s => s.EntityTypeName);
-                        c.Bound(s => s.EntityStringId);
-                        c.Bound(s => s.EntityTitle).Sortable(false);
-                        c.Bound(s => s.ParentEntityId);
-						c.Bound(s => s.IsApi).ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (IsApi)  { #> checked=""checked"" <# } #> />");
-                        c.Bound(s => s.ExecutionTime);
-                        c.Bound(s => s.UserLogin);
-                    }
+                {
+                    c.Bound(s => s.ActionName);
+                    c.Bound(s => s.ActionTypeName);
+                    c.Bound(s => s.EntityTypeName);
+                    c.Bound(s => s.EntityStringId);
+                    c.Bound(s => s.EntityTitle).Sortable(false);
+                    c.Bound(s => s.ParentEntityId);
+                    c.Bound(s => s.IsApi).ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <# if (IsApi)  { #> checked=""checked"" <# } #> />");
+                    c.Bound(s => s.ExecutionTime);
+                    c.Bound(s => s.UserLogin);
+                }
                 )
                 .DataBinding(db => db.Ajax().Select("_Actions", "ActionLog"))
                 .EnableCustomBinding(true)
@@ -59,14 +60,15 @@
 }
 
 @Html.PrepareInitScript(Model)
-<script type="text/javascript">	
-	@(Model.ContextObjectName).set_initializedCallback(function() {				
-		this.filterComponent = new Quantumart.QP8.ActionLogComponent("@Model.FilterElementId", "@Model.GridElementId", @Model.ActionTypeListJson, @Model.EntityTypeListJson);		
-		this.filterComponent.initialize();
-	});	
-	@(Model.ContextObjectName).set_terminatingCallback(function() {								
-		this.filterComponent.dispose();
-		this.filterComponent = null;
-	});
+<script type="text/javascript">
+
+    @(Model.ContextObjectName).set_initializedCallback(function() {
+        this.filterComponent = new Quantumart.QP8.ActionLogComponent("@Model.FilterElementId", "@Model.GridElementId", @Model.ActionTypeListJson, @Model.EntityTypeListJson, @Model.ActionListJson);
+        this.filterComponent.initialize();
+    });
+    @(Model.ContextObjectName).set_terminatingCallback(function() {
+        this.filterComponent.dispose();
+        this.filterComponent = null;
+    });
 </script>
 @Html.RunInitScript(Model)

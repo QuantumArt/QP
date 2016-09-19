@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Web;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Logging.Services;
+using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
@@ -29,21 +25,23 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         {
 			var importSettings = settingsParams as ImportSettings;
 			_logger.LogStartImport(importSettings);
-            Content content = ContentRepository.GetById(id);
+            var content = ContentRepository.GetById(id);
             if (content == null)
-                throw new Exception(String.Format(ContentStrings.ContentNotFound, id));
+            {
+                throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
+            }
 
-			HttpContext.Current.Session[ImportSettingsSessionKey] = importSettings;
+            HttpContext.Current.Session[ImportSettingsSessionKey] = importSettings;
         }
 
 		public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
         {
-            ImportSettings setts = HttpContext.Current.Session[ImportSettingsSessionKey] as ImportSettings;
+            var setts = HttpContext.Current.Session[ImportSettingsSessionKey] as ImportSettings;
 			try
 			{
-				FileReader fileReader = new FileReader(setts);
+				var fileReader = new FileReader(setts);
 				fileReader.CopyFileToTempDir();
-				int linesTotalCount = fileReader.RowsCount();
+				var linesTotalCount = fileReader.RowsCount();
 				command = new ImportArticlesCommand(parentId, id, linesTotalCount, _logReader, _logger);
 				return base.Setup(parentId, id, boundToExternal);
 			}
@@ -56,8 +54,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         {
             return new MultistepActionSettings
             {
-                Stages = new[] 
-				{ 
+                Stages = new[]
+				{
                     command.GetStageSettings()
 				}
             };
@@ -65,7 +63,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
 		protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
         {
-            MultistepActionStageCommandState commandState = command.GetState();
+            var commandState = command.GetState();
             return new MultistepActionServiceContext { CommandStates = new[] { commandState } };
         }
 
@@ -86,7 +84,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         }
 
         public override void TearDown()
-        {            
+        {
 			var setts = HttpContext.Current.Session[ImportSettingsSessionKey] as ImportSettings;
 			RemoveFileFromTemp();
 			_logger.LogEndImport(setts);
@@ -96,7 +94,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         private void RemoveFileFromTemp()
         {
-            ImportSettings setts = HttpContext.Current.Session[ImportSettingsSessionKey] as ImportSettings;
+            var setts = HttpContext.Current.Session[ImportSettingsSessionKey] as ImportSettings;
             RemoveTempFiles(setts);
         }
 

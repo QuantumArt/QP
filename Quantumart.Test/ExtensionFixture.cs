@@ -1,13 +1,15 @@
 ﻿using System;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
-using Quantumart.QPublishing.Database;
-using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
+using Moq;
 using NUnit.Framework;
+using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
 using Quantumart.QPublishing.Info;
 using Quantumart.QPublishing.Resizer;
+using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 
 namespace Quantumart.Test
 {
@@ -22,7 +24,6 @@ namespace Quantumart.Test
         public const string ExContent21 = "Test_BatchUpdate_Ex2_1";
         public const string ExContent22 = "Test_BatchUpdate_Ex2_2";
         public const string DictionaryContent = "Test_BatchUpdate_Dictionary";
-
 
         public const string Classifier1 = "Field_Ex1";
         public const string Classifier2 = "Field_Ex2";
@@ -51,10 +52,13 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new ReplayService(Global.ConnectionString, 1, true);
-            service.ReplayXml(Global.GetXml(@"xmls\batchupdate.xml"));
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
+            service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
 
             Cnn = new DBConnector(Global.ConnectionString)
             {
@@ -80,7 +84,7 @@ namespace Quantumart.Test
             var id = BaseArticlesIds[0];
             var extId1 = ExtArticlesIds1[0];
             var extId2 = ExtArticlesIds2[0];
-            var ids = new[] {id, extId1, extId2};
+            var ids = new[] { id, extId1, extId2 };
 
             Assert.That(() => SetArchive(ids, Cnn, true), Throws.Nothing);
             Assert.That(() => SetArchive(ids, Cnn, true), Throws.Nothing);
@@ -146,8 +150,6 @@ namespace Quantumart.Test
 
             contentService.Delete(DictionaryContentId);
             contentService.Delete(BaseContentId);
-
-            QPContext.UseConnectionString = false;
         }
     }
 }

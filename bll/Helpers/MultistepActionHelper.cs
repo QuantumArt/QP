@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
@@ -16,26 +17,28 @@ namespace Quantumart.QP8.BLL.Helpers
         public static int GetStepCount(int itemsCount, int itemsPerStep)
         {
             var stepCount = itemsCount / itemsPerStep;
-            stepCount = (itemsCount % itemsPerStep) > 0 ? ++stepCount : stepCount;
+            stepCount = itemsCount % itemsPerStep > 0 ? ++stepCount : stepCount;
             return stepCount;
         }
 
         public static Dictionary<string, string> ParseListOfParameters(List<string> prms)
         {
             var result = new Dictionary<string, string>();
-
             foreach (var param in prms)
             {
                 var keyValuePair = param.Split('=');
-                if (keyValuePair.Length != 2) continue;
-                if (!result.ContainsKey(keyValuePair[0].Replace("Data.", "")))
+                if (keyValuePair.Length == 2)
                 {
-                    result.Add(keyValuePair[0].Replace("Data.", ""), keyValuePair[1]);
+                    if (!result.ContainsKey(keyValuePair[0].Replace("Data.", "")))
+                    {
+                        result.Add(keyValuePair[0].Replace("Data.", ""), keyValuePair[1]);
+                    }
                 }
             }
 
             return result;
         }
+
         public static string GetEncoding(string encodingInt)
         {
             string result;
@@ -60,8 +63,10 @@ namespace Quantumart.QP8.BLL.Helpers
                     result = "Windows-1251";
                     break;
             }
+
             return result;
         }
+
         public static string GetCulture(string cultureNum)
         {
             string result;
@@ -77,6 +82,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     result = "ru-RU";
                     break;
             }
+
             return result;
         }
 
@@ -91,6 +97,7 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 return string.Empty;
             }
+
             value = result.ToString(CultureInfo.GetCultureInfo(toCulture).NumberFormat);
             return value;
         }
@@ -99,9 +106,11 @@ namespace Quantumart.QP8.BLL.Helpers
         {
             int res;
             if (int.TryParse(value, out res))
+            {
                 return res.ToString();
-            else
-                throw new FormatException(string.Format(ImportStrings.O2MFormatError, value));
+            }
+
+            throw new FormatException(string.Format(ImportStrings.O2MFormatError, value));
         }
 
         public static string BoolFormat(string value)
@@ -121,15 +130,17 @@ namespace Quantumart.QP8.BLL.Helpers
         public static IEnumerable<int> M2MFormat(string value)
         {
             var ids = value.Trim(',', '"', ';').Split(',', ';');
-            foreach (var val in ids)
+            foreach (var val in ids.Where(val => !string.IsNullOrEmpty(val)))
             {
-                if (string.IsNullOrEmpty(val)) continue;
                 int res;
                 if (int.TryParse(val, out res))
                 {
                     yield return res;
                 }
-                else throw new FormatException(string.Format(ImportStrings.M2MFormatError, val));
+                else
+                {
+                    throw new FormatException(string.Format(ImportStrings.M2MFormatError, val));
+                }
             }
         }
 
@@ -140,14 +151,16 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 throw new FormatException(string.Format(ImportStrings.DateTimeFormatError, value));
             }
+
             if (value == "NULL")
             {
                 return string.Empty;
             }
+
             value = result.ToString(CultureInfo.GetCultureInfo(toCulture).DateTimeFormat);
             return value;
         }
-        
+
         public static char GetDelimiter(string delimiterId)
         {
             char delimiterChar;
@@ -166,8 +179,10 @@ namespace Quantumart.QP8.BLL.Helpers
                     delimiterChar = ';';
                     break;
             }
+
             return delimiterChar;
         }
+
         public static string GetLineSeparator(string separatorId)
         {
             string separator;
@@ -186,17 +201,22 @@ namespace Quantumart.QP8.BLL.Helpers
                     separator = "\r";
                     break;
             }
+
             return separator;
         }
+
         public static List<string> GetFileFields(ImportSettings setts, FileReader reader)
         {
             reader.CopyFileToTempDir();
-            IEnumerable<string> firstline = reader.Lines.Select(n => n.Value).Where(s => !s.StartsWith("sep=")).Take(1).ToArray();
-            if (!firstline.Any()) {
+            var firstline = reader.Lines.Select(n => n.Value).Where(s => !s.StartsWith("sep=")).Take(1).ToList();
+            if (!firstline.Any())
+            {
                 throw new ArgumentException(ImportStrings.NoLines);
             }
+
             return CsvReader.GetFieldNames(firstline, setts.Delimiter, setts.NoHeaders);
         }
+
         public static IEnumerable<ListItem> GetLocalesAsListItems()
         {
             return PageTemplateRepository.GetLocalesList().Select(locale => new ListItem { Text = locale.Name, Value = locale.Id.ToString() });
@@ -207,9 +227,10 @@ namespace Quantumart.QP8.BLL.Helpers
             return PageTemplateRepository.GetCharsetsList().Select(charset => new ListItem { Text = charset.Subj, Value = charset.Subj });
         }
 
-        public static string GetXmlFromDataRows(IEnumerable<DataRow> rows, string columnName) {
-            string source = $"source_{columnName}_id";
-            string destination = $"destination_{columnName}_id";
+        public static string GetXmlFromDataRows(IEnumerable<DataRow> rows, string columnName)
+        {
+            var source = $"source_{columnName}_id";
+            var destination = $"destination_{columnName}_id";
             return GetXmlFromDataRows(rows, source, destination);
         }
 
@@ -218,6 +239,7 @@ namespace Quantumart.QP8.BLL.Helpers
             var xDocument = new XDocument();
             var items = new XElement("items");
             xDocument.Add(items);
+
             foreach (var row in rows)
             {
                 var itemXml = new XElement("item");
@@ -225,6 +247,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 itemXml.Add(new XAttribute("destinationId", row[destinationColumnName].ToString()));
                 xDocument.Root?.Add(itemXml);
             }
+
             return xDocument.ToString();
         }
     }

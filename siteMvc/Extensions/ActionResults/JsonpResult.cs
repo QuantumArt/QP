@@ -14,15 +14,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionResults
 
             var request = context.HttpContext.Request;
             var response = context.HttpContext.Response;
-            var jsoncallback = (context.RouteData.Values["callback"] as string) ?? request["callback"];
+            var jsoncallback = context.RouteData.Values["callback"] as string ?? request["callback"];
             if (string.IsNullOrEmpty(jsoncallback))
             {
-                jsoncallback = (context.RouteData.Values["jsoncallback"] as string) ?? request["jsoncallback"];
+                jsoncallback = context.RouteData.Values["jsoncallback"] as string ?? request["jsoncallback"];
             }
 
             if (!string.IsNullOrEmpty(jsoncallback))
             {
-                if (string.IsNullOrEmpty(base.ContentType))
+                if (string.IsNullOrEmpty(ContentType))
                 {
                     ContentType = "application/x-javascript";
                 }

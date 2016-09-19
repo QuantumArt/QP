@@ -4,7 +4,7 @@
     <id>$id$</id>
     <version>$version$</version>
     <title>$title$</title>
-    <authors>Pavel Celut</authors>
+    <authors>Pavel Celut, Alex Kostyukov</authors>
     <owners>Quantum Art</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
@@ -13,6 +13,6 @@
     <tags>QP8 Frontend API</tags>
   </metadata>
   <files>
-    <file src="bin\*.dll" target="lib\net45" />
+    <file src="$OutputPath$*.dll" target="lib\net45" />
   </files>
 </package>

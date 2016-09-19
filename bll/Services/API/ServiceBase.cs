@@ -12,7 +12,6 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             Setup(connectionString, userId);
         }
-
         private void Setup(string connectionString, int userId)
         {
             if (string.IsNullOrEmpty(connectionString))
@@ -39,7 +38,10 @@ namespace Quantumart.QP8.BLL.Services.API
             get
             {
                 if (!_userTested)
+                {
                     TestUser();
+                }
+
                 return UserId;
             }
         }
@@ -50,7 +52,6 @@ namespace Quantumart.QP8.BLL.Services.API
             {
                 return QPContext.IsLive;
             }
-
             set
             {
                 QPContext.IsLive = value;
@@ -72,7 +73,10 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 if (st != null)
+                {
                     QPContext.ExternalContextStorage = st;
+                }
+
                 QPContext.LoadStructureCache(resetExternal);
             }
         }
@@ -83,10 +87,12 @@ namespace Quantumart.QP8.BLL.Services.API
             {
                 var user = UserRepository.GetById(UserId);
                 if (user == null)
-                    throw new ApplicationException(String.Format(UserStrings.UserNotFound, UserId));
+                {
+                    throw new ApplicationException(string.Format(UserStrings.UserNotFound, UserId));
+                }
+
                 _userTested = true;
             }
-            
         }
     }
 }

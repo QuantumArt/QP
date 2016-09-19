@@ -48,6 +48,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\binaries\EFExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=10.1.5.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.10.1.5\lib\net\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
       <Private>True</Private>
@@ -72,8 +76,8 @@
       <HintPath>..\packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.1.0\lib\NET35\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -90,6 +94,10 @@
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.3.6\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="QA.Configuration, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -117,29 +125,40 @@
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\Logging\NLogLogger.cs" />
+    <Compile Include="Adapters\NonQpEnvironmentContext.cs" />
     <Compile Include="ArticleContextQueryParam.cs" />
     <Compile Include="ArticleContextSearchBlockItem.cs" />
     <Compile Include="ArticleFieldSearchType.cs" />
     <Compile Include="Db.cs" />
+    <Compile Include="Enums\ImportActions.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
+    <Compile Include="Factories\Logging\NLogFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
+    <Compile Include="Helpers\Ensure.cs" />
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />
     <Compile Include="Helpers\ReplayHelper.cs" />
     <Compile Include="Helpers\SiteUrlHelper.cs" />
     <Compile Include="Helpers\SortingItemHelper.cs" />
+    <Compile Include="Interfaces\Logging\ILog.cs" />
+    <Compile Include="Interfaces\Logging\ILogFactory.cs" />
+    <Compile Include="Factories\Logging\LogProvider.cs" />
+    <Compile Include="Adapters\Logging\DiagnosticsDebugLogger.cs" />
+    <Compile Include="Factories\Logging\DiagnosticsDebugLogFactory.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />
@@ -154,6 +173,10 @@
     <Compile Include="Mappers\StatusHistoryItemMapper.cs" />
     <Compile Include="Mappers\StatusTypeRowMapper.cs" />
     <Compile Include="Mappers\TemplateObjectFormatDtoMapper.cs" />
+    <Compile Include="Mappers\XmlDbUpdate\XmlDbUpdateActionsLogMapper.cs" />
+    <Compile Include="Mappers\XmlDbUpdate\XmlDbUpdateLogMapper.cs" />
+    <Compile Include="Models\CsvDbUpdate\CsvDbUpdateFieldModel.cs" />
+    <Compile Include="Models\CsvDbUpdate\CsvDbUpdateModel.cs" />
     <Compile Include="ObjectFormatVersion.cs" />
     <Compile Include="Processors\TreeProcessors\ArticleFtsProcessor.cs" />
     <Compile Include="Processors\TreeProcessors\ArticleSimpleProcessor.cs" />
@@ -192,6 +215,8 @@
     <Compile Include="Repository\NotificationPushRepository.cs" />
     <Compile Include="Repository\ObjectRepository.cs" />
     <Compile Include="Repository\PageRepository.cs" />
+    <Compile Include="Repository\XmlDbUpdate\XmlDbUpdateLogRepository.cs" />
+    <Compile Include="Repository\XmlDbUpdate\XmlDbUpdateActionsLogRepository.cs" />
     <Compile Include="ServiceField.cs" />
     <Compile Include="ArticleVersion.cs" />
     <Compile Include="ArticleWorkflowBind.cs" />
@@ -422,9 +447,9 @@
     <Compile Include="Services\EntityPermissions\SitePermissionService.cs" />
     <Compile Include="Services\ActionPermissions\ActionPermissionTreeService.cs" />
     <Compile Include="Services\ExternalNotificationService.cs" />
-    <Compile Include="Services\FingerprintService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
+    <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesCommand.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesService.cs" />
     <Compile Include="Services\MultistepActions\Archive\RestoreArticlesCommand.cs" />
@@ -636,6 +661,8 @@
     <Compile Include="Services\IVisualEditorService.cs" />
     <Compile Include="Services\VisualEditor\VisualEditorService.cs" />
     <Compile Include="Services\WorkflowService.cs" />
+    <Compile Include="Services\XmlDbUpdate\IXmlDbUpdateLogService.cs" />
+    <Compile Include="Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="SessionsLog.cs" />
     <Compile Include="SharedLogic\CustomActionResolver.cs" />
     <Compile Include="SimpleListItem.cs" />
@@ -665,6 +692,8 @@
     <Compile Include="Workflow.cs" />
     <Compile Include="WorkflowBinding.cs" />
     <Compile Include="WorkflowRule.cs" />
+    <Compile Include="Models\XmlDbUpdate\XmlDbUpdateActionsLogModel.cs" />
+    <Compile Include="Models\XmlDbUpdate\XmlDbUpdateLogModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Assembling\Assembling.csproj">

@@ -1,12 +1,14 @@
-﻿using AutoMapper;
+﻿using System.Collections.Generic;
+using System.Data;
+using AutoMapper;
 using Quantumart.QP8.BLL.Mappers.EntityPermissions;
 using Quantumart.QP8.BLL.Mappers.VisualEditor;
+using Quantumart.QP8.BLL.Mappers.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.VisualEditor;
-using System.Collections.Generic;
-using System.Data;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -31,12 +33,12 @@ namespace Quantumart.QP8.BLL.Mappers
 
         static MappersRepository()
         {
-            Mapper.CreateMap<decimal, bool>().ConvertUsing(src => Utils.Converter.ToBoolean(src));
-            Mapper.CreateMap<decimal?, int?>().ConvertUsing(src => Utils.Converter.ToNullableInt32(src));
-            Mapper.CreateMap<bool, decimal>().ConvertUsing(src => Utils.Converter.ToDecimal(src));
-            Mapper.CreateMap<int, decimal>().ConvertUsing(src => (decimal)src);
-            Mapper.CreateMap<decimal, int>().ConvertUsing(src => Utils.Converter.ToInt32(src));
-            Mapper.CreateMap<int?, decimal?>().ConvertUsing(src => Utils.Converter.ToNullableDecimal(src));
+            Mapper.CreateMap<decimal, bool>().ConvertUsing(src => Converter.ToBoolean(src));
+            Mapper.CreateMap<decimal?, int?>().ConvertUsing(Converter.ToNullableInt32);
+            Mapper.CreateMap<bool, decimal>().ConvertUsing(src => Converter.ToDecimal(src));
+            Mapper.CreateMap<int, decimal>().ConvertUsing(src => src);
+            Mapper.CreateMap<decimal, int>().ConvertUsing(src => Converter.ToInt32(src));
+            Mapper.CreateMap<int?, decimal?>().ConvertUsing(Converter.ToNullableDecimal);
 
             Mapper.CreateMap<IDataReader, IEnumerable<SearchInArticlesResultItem>>();
             Mapper.CreateMap<IDataReader, IEnumerable<VisualEditFieldParams>>();
@@ -258,5 +260,9 @@ namespace Quantumart.QP8.BLL.Mappers
         internal static readonly ExternalNotificationMapper ExternalNotificationMapper = Create<ExternalNotificationMapper>();
 
         internal static readonly DataRowMapper DataRowMapper = new DataRowMapper();
+
+        internal static readonly XmlDbUpdateLogMapper XmlDbUpdateLogMapper = new XmlDbUpdateLogMapper();
+
+        internal static readonly XmlDbUpdateActionsLogMapper XmlDbUpdateActionsLogMapper = new XmlDbUpdateActionsLogMapper();
     }
 }

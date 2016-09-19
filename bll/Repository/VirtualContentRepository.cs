@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.DAL;
 using System.Data;
-using AutoMapper;
 using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Utils;
@@ -15,7 +13,7 @@ using System.Transactions;
 namespace Quantumart.QP8.BLL.Repository
 {
 	internal class VirtualContentRepository
-	{		
+	{
 		/// <summary>
 		/// Добавляет новый виртуальный контент
 		/// </summary>
@@ -52,14 +50,14 @@ namespace Quantumart.QP8.BLL.Repository
 			{
 				DataTable dt = Common.GetVirtualFieldData(scope.DbConnection, contentId);
 
-				// Транформировать в Biz коллекцию			
+				// Транформировать в Biz коллекцию
 				var result = MappersRepository.VirtualFieldDataMapper.GetBizList(dt.AsEnumerable().ToList());
 
 				return result;
 			}
 		}
 
-		// Возвращает список join-контентов которые содержат виртуальные поля построенные на основе полей родительского контента			
+		// Возвращает список join-контентов которые содержат виртуальные поля построенные на основе полей родительского контента
 		internal static IEnumerable<Content> GetJoinRelatedContents(Content parentContent)
 		{
 			IEnumerable<decimal> baseFieldIds = Converter.ToDecimalCollection(parentContent.Fields.Select(f => f.Id)).Distinct().ToArray();
@@ -157,7 +155,7 @@ namespace Quantumart.QP8.BLL.Repository
 		}
 
 		/// <summary>
-		/// Возвращает контенты-источники для UNION 
+		/// Возвращает контенты-источники для UNION
 		/// </summary>
 		/// <param name="contentId"></param>
 		/// <returns></returns>
@@ -186,10 +184,10 @@ namespace Quantumart.QP8.BLL.Repository
 		{
 			try
 			{
-				ChangeUnionContentTriggerState(false);				
+				ChangeUnionContentTriggerState(false);
 				int virtualContentId = virtualContent.Id;
 
-				// Удалить 
+				// Удалить
 				var recToRemove = QPContext.EFContext.UnionContentsSet
 					.Where(u => u.VirtualContentId == virtualContentId)
 					.ToArray();
@@ -207,7 +205,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static void RemoveUnionSourcesInfo(Content virtualContent)
 		{
 			int virtualContentId = virtualContent.Id;
-			// Удалить 
+			// Удалить
 			var recToRemove = QPContext.EFContext.UnionContentsSet
 				.Where(u => u.VirtualContentId == virtualContentId)
 				.ToArray();
@@ -229,20 +227,20 @@ namespace Quantumart.QP8.BLL.Repository
 					string viewName = String.Format("uq_v_test_{0}", DateTime.Now.Ticks.ToString());
 					string createTestViewSql = String.Format("CREATE VIEW [dbo].{0} AS {1}", viewName, userQuery);
 
-					using (SqlConnection connect = new SqlConnection(QPContext.CurrentDBConnectionString))
+					using (SqlConnection connect = new SqlConnection(QPContext.CurrentDbConnectionString))
 					{
 						connect.Open();
 						Common.ExecuteSql(connect, createTestViewSql);
-						Common.DropView(connect, viewName);						
-					}										
+						Common.DropView(connect, viewName);
+					}
 					return true;
 				}
 				catch (SqlException ex)
 				{
-					errorMessage = ex.ErrorsToString();					
+					errorMessage = ex.ErrorsToString();
 					return false;
 				}
-			}					
+			}
 		}
 
 		/// <summary>
@@ -253,7 +251,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<UserQueryColumn> GetQuerySchema(string sqlQuery)
 		{
 			using (var scope = new QPConnectionScope())
-			{								
+			{
 
 				string viewName = String.Format("uq_v_test_{0}", DateTime.Now.Ticks.ToString());
 				string createTestViewSql = String.Format("CREATE VIEW [dbo].{0} AS {1}", viewName, sqlQuery);
@@ -275,7 +273,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<UserQueryColumn> GetViewSchema(string viewName)
 		{
 			using (var scope = new QPConnectionScope())
-			{				
+			{
 				DataTable dtTU = Common.GetViewColumnUsage(scope.DbConnection, viewName);
 				IEnumerable<UserQueryColumn> result = DataTableToUserQueryColumns(dtTU);
 
@@ -303,7 +301,7 @@ namespace Quantumart.QP8.BLL.Repository
 		/// </summary>
 		/// <param name="unionSourceContentIDs"></param>
 		internal static void RecreateUserQuerySourcesInfo(Content uqVirtualContent)
-		{			
+		{
 			int virtualContentId = uqVirtualContent.Id;
 
 			// Удалить записи для контента
@@ -314,7 +312,7 @@ namespace Quantumart.QP8.BLL.Repository
 				uqVirtualContent.UserQueryContentViewSchema
 				.SelectUniqContentIDs()
 				.Select(usID => new UserQueryContentsDAL { VirtualContentId = virtualContentId, RealContentId = usID, IsIdSource = false })
-			);			
+			);
 		}
 
 		internal static void RemoveUserQuerySourcesInfo(Content uqVirtualContent)
@@ -339,9 +337,9 @@ namespace Quantumart.QP8.BLL.Repository
 				DataTable relationView = Common.GetVirtualContentRelations(scope.DbConnection);
 				var graph = relationView.AsEnumerable()
 					.GroupBy(r => r.Field<decimal>("BASE_CONTENT_ID"))
-					.Select(g => new 
-					{ 
-						BaseContentID = g.Key, 
+					.Select(g => new
+					{
+						BaseContentID = g.Key,
 						ParentContentIDs = g.Select(vr => vr.Field<decimal>("VIRTUAL_CONTENT_ID")).ToArray()
 					});
 				Dictionary<int, int[]> result = new Dictionary<int, int[]>();
@@ -375,7 +373,7 @@ namespace Quantumart.QP8.BLL.Repository
 				.GetBizList(QPContext.EFContext.ContentSet
 					.Where(f => decIDs.Contains(f.Id))
 					.ToList()
-				);			
+				);
 		}
 	}
 }

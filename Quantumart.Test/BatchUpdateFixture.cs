@@ -1,23 +1,22 @@
-﻿using NUnit.Framework;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services.API;
-using Quantumart.QP8.BLL.Services.API.Models;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
-using Quantumart.QPublishing.Database;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Moq;
+using NUnit.Framework;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Factories.Logging;
+using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.BLL.Services.API.Models;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QPublishing.Database;
 
 namespace Quantumart.Test
 {
     [TestFixture]
     public class BatchUpdateFixture
     {
-        #region Constants
-        #region Assert messages
         public const string ArticlesNotFound = "Статьи для контента не найдены";
         public const string ValuesNotFound = "Значения не найдены";
         public const string BatchUpdateResultIncorrect = "Неверный результат";
@@ -26,191 +25,173 @@ namespace Quantumart.Test
         public const string WrongMtMRelation = "Неверно проставлена связь MtM";
         public const string WrongMtORelation = "Неверно проставлена связь MtO";
         public const string ContentDataIsEmpty = "Не заданы поля в CONTENT_DATA";
-        #endregion
 
-        #region Base content
-        public const string Base_Content = "Test_BatchUpdate_Base";
+        public const string BaseContent = "Test_BatchUpdate_Base";
+        public const string BaseFieldEx1 = "Field_Ex1";
+        public const string BaseFieldEx2 = "Field_Ex2";
+        public const string BaseFieldString = "Field_String";
+        public const string BaseFieldMtM = "Field_MtM";
+        public const string BaseFieldOtM = "Field_OtM";
+        public const string BaseFieldNumericInteger = "Field_Numeric_Integer";
+        public const string BaseFieldNumericDecimal = "Field_Numeric_Decimal";
+        public const string BaseFieldDate = "Field_Date";
+        public const string BaseFieldTime = "Field_Time";
+        public const string BaseFieldDateTime = "Field_DateTime";
+        public const string BaseFieldFile = "Field_File";
+        public const string BaseFieldImage = "Field_Image";
+        public const string BaseFieldTextBox = "Field_TextBox";
+        public const string BaseFieldVisualEdit = "Field_VisualEdit";
+        public const string BaseFieldDynamicImage = "Field_DynamicImage";
+        public const string BaseFieldEnum = "Field_Enum";
 
-        public const string Base_Field_Ex1 = "Field_Ex1";
-        public const string Base_Field_Ex2 = "Field_Ex2";
-        public const string Base_Field_String = "Field_String";
-        public const string Base_Field_MtM = "Field_MtM";
-        public const string Base_Field_OtM = "Field_OtM";
-        public const string Base_Field_Numeric_Integer = "Field_Numeric_Integer";
-        public const string Base_Field_Numeric_Decimal = "Field_Numeric_Decimal";
-        public const string Base_Field_Date = "Field_Date";
-        public const string Base_Field_Time = "Field_Time";
-        public const string Base_Field_DateTime = "Field_DateTime";
-        public const string Base_Field_File = "Field_File";
-        public const string Base_Field_Image = "Field_Image";
-        public const string Base_Field_TextBox = "Field_TextBox";
-        public const string Base_Field_VisualEdit = "Field_VisualEdit";
-        public const string Base_Field_DynamicImage = "Field_DynamicImage";
-        public const string Base_Field_Enum = "Field_Enum";
-        #endregion
+        public const string DictionaryContent = "Test_BatchUpdate_Dictionary";
+        public const string DictionaryKey = "Key";
+        public const string DictionaryValue = "Value";
+        public const string DictionaryFieldMtMBackward = "Field_MtM_Backward";
+        public const string DictionaryFieldMtOBackward = "Field_MtO_Backward";
 
-        #region Dictionary content
-        public const string Dictionary_Content = "Test_BatchUpdate_Dictionary";
+        public const string Ex11Content = "Test_BatchUpdate_Ex1_1";
+        public const string Ex11Parent = "Parent";
+        public const string Ex11Field1 = "Field1";
+        public const string Ex11Field2 = "Field2";
 
-        public const string Dictionary_Key = "Key";
-        public const string Dictionary_Value = "Value";
-        public const string Dictionary_Field_MtM_Backward = "Field_MtM_Backward";
-        public const string Dictionary_Field_MtO_Backward = "Field_MtO_Backward";
-        #endregion
+        public const string Ex12Content = "Test_BatchUpdate_Ex1_2";
+        public const string Ex12Parent = "Parent";
+        public const string Ex12Field1 = "Field1";
 
-        #region Ex1_1 content
-        public const string Ex1_1_Content = "Test_BatchUpdate_Ex1_1";
+        public const string Ex21Content = "Test_BatchUpdate_Ex2_1";
+        public const string Ex21Parent = "Parent";
 
-        public const string Ex1_1_Parent = "Parent";
-        public const string Ex1_1_Field1 = "Field1";
-        public const string Ex1_1_Field2 = "Field2";
-        #endregion
+        public const string Ex22Content = "Test_BatchUpdate_Ex2_2";
+        public const string Ex22Parent = "Parent";
 
-        #region Ex1_2 content
-        public const string Ex1_2_Content = "Test_BatchUpdate_Ex1_2";
-
-        public const string Ex1_2_Parent = "Parent";
-        public const string Ex1_2_Field1 = "Field1";
-        #endregion
-
-        #region Ex2_1 content
-        public const string Ex2_1_Content = "Test_BatchUpdate_Ex2_1";
-        public const string Ex2_1_Parent = "Parent";
-        #endregion
-
-        #region Ex2_2 content
-        public const string Ex2_2_Content = "Test_BatchUpdate_Ex2_2";
-        public const string Ex2_2_Parent = "Parent";
-        #endregion
-        #endregion
-
-        #region Properties
         public static DBConnector Cnn { get; private set; }
+
         public static ArticleService ArticleService { get; private set; }
+
         public static Random Random { get; private set; }
 
-        #region Base content
-        public static int Base_ContentId { get; private set; }
+        public static int BaseContentId { get; private set; }
 
-        public static int Base_Field_Ex1Id { get; private set; }
-        public static int Base_Field_Ex2Id { get; private set; }
-        public static int Base_Field_StringId { get; private set; }
-        public static int Base_Field_MtMId { get; private set; }
-        public static int Base_Field_OtMId { get; private set; }
-        public static int Base_Field_Numeric_IntegerId { get; private set; }
-        public static int Base_Field_Numeric_DecimalId { get; private set; }
-        public static int Base_Field_DateId { get; private set; }
-        public static int Base_Field_TimeId { get; private set; }
-        public static int Base_Field_DateTimeId { get; private set; }
-        public static int Base_Field_FileId { get; private set; }
-        public static int Base_Field_ImageId { get; private set; }
-        public static int Base_Field_TextBoxId { get; private set; }
-        public static int Base_Field_VisualEditId { get; private set; }
-        public static int Base_Field_DynamicImageId { get; private set; }
-        public static int Base_Field_EnumId { get; private set; }
-        #endregion
+        public static int BaseFieldEx1Id { get; private set; }
 
-        #region Dictionary content
-        public static int Dictionary_ContentId { get; private set; }
+        public static int BaseFieldEx2Id { get; private set; }
 
-        public static int Dictionary_KeyId { get; private set; }
-        public static int Dictionary_ValueId { get; private set; }
-        public static int Dictionary_Field_MtM_BackwardId { get; private set; }
-        public static int Dictionary_Field_MtO_BackwardId { get; private set; }
-        #endregion
+        public static int BaseFieldStringId { get; private set; }
 
-        #region Ex1_1 content
-        public static int Ex1_1_ContentId { get; private set; }
+        public static int BaseFieldMtMId { get; private set; }
 
-        public static int Ex1_1_ParentId { get; private set; }
-        public static int Ex1_1_Field1Id { get; private set; }
-        public static int Ex1_1_Field2Id { get; private set; }
-        #endregion
+        public static int BaseFieldOtMId { get; private set; }
 
-        #region Ex1_2 content
-        public static int Ex1_2_ContentId { get; private set; }
-        public static int Ex1_2_ParentId { get; private set; }
-        public static int Ex1_2_Field1Id { get; private set; }
-        #endregion
+        public static int BaseFieldNumericIntegerId { get; private set; }
 
-        #region Ex2_1 content
-        public static int Ex2_1_ContentId { get; private set; }
-        public static int Ex2_1_ParentId { get; private set; }
-        #endregion
+        public static int BaseFieldNumericDecimalId { get; private set; }
 
-        #region Ex2_2 content
-        public static int Ex2_2_ContentId { get; private set; }
-        public static int Ex2_2_ParentId { get; private set; }
-        #endregion
+        public static int BaseFieldDateId { get; private set; }
 
-        #endregion
+        public static int BaseFieldTimeId { get; private set; }
 
-        #region Test actions
+        public static int BaseFieldDateTimeId { get; private set; }
+
+        public static int BaseFieldFileId { get; private set; }
+
+        public static int BaseFieldImageId { get; private set; }
+
+        public static int BaseFieldTextBoxId { get; private set; }
+
+        public static int BaseFieldVisualEditId { get; private set; }
+
+        public static int BaseFieldDynamicImageId { get; private set; }
+
+        public static int BaseFieldEnumId { get; private set; }
+
+        public static int DictionaryContentId { get; private set; }
+
+        public static int DictionaryKeyId { get; private set; }
+
+        public static int DictionaryValueId { get; private set; }
+
+        public static int DictionaryFieldMtMBackwardId { get; private set; }
+
+        public static int DictionaryFieldMtOBackwardId { get; private set; }
+
+        public static int Ex11ContentId { get; private set; }
+
+        public static int Ex11ParentId { get; private set; }
+
+        public static int Ex11Field1Id { get; private set; }
+
+        public static int Ex11Field2Id { get; private set; }
+
+        public static int Ex12ContentId { get; private set; }
+
+        public static int Ex12ParentId { get; private set; }
+
+        public static int Ex12Field1Id { get; private set; }
+
+        public static int Ex21ContentId { get; private set; }
+
+        public static int Ex21ParentId { get; private set; }
+
+        public static int Ex22ContentId { get; private set; }
+
+        public static int Ex22ParentId { get; private set; }
+
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new ReplayService(Global.ConnectionString, 1, true);
-            service.ReplayXml(Global.GetXml(@"xmls\batchupdate.xml"));
-            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };            
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
+            service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
+            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ArticleService = new ArticleService(Global.ConnectionString, 1);
             Random = new Random();
 
-            #region Base content
-            Base_ContentId = Global.GetContentId(Cnn, Base_Content);
+            BaseContentId = Global.GetContentId(Cnn, BaseContent);
 
-            Base_Field_Ex1Id = Global.GetFieldId(Cnn, Base_Content, Base_Field_Ex1);
-            Base_Field_Ex2Id = Global.GetFieldId(Cnn, Base_Content, Base_Field_Ex2);
-            Base_Field_StringId = Global.GetFieldId(Cnn, Base_Content, Base_Field_String);
-            Base_Field_MtMId = Global.GetFieldId(Cnn, Base_Content, Base_Field_MtM);
-            Base_Field_OtMId = Global.GetFieldId(Cnn, Base_Content, Base_Field_OtM);
-            Base_Field_Numeric_IntegerId = Global.GetFieldId(Cnn, Base_Content, Base_Field_Numeric_Integer);
-            Base_Field_Numeric_DecimalId = Global.GetFieldId(Cnn, Base_Content, Base_Field_Numeric_Decimal);
-            Base_Field_DateId = Global.GetFieldId(Cnn, Base_Content, Base_Field_Date);
-            Base_Field_TimeId = Global.GetFieldId(Cnn, Base_Content, Base_Field_Time);
-            Base_Field_DateTimeId = Global.GetFieldId(Cnn, Base_Content, Base_Field_DateTime);
-            Base_Field_FileId = Global.GetFieldId(Cnn, Base_Content, Base_Field_File);
-            Base_Field_ImageId = Global.GetFieldId(Cnn, Base_Content, Base_Field_Image);
-            Base_Field_TextBoxId = Global.GetFieldId(Cnn, Base_Content, Base_Field_TextBox);
-            Base_Field_VisualEditId = Global.GetFieldId(Cnn, Base_Content, Base_Field_VisualEdit);
-            Base_Field_DynamicImageId = Global.GetFieldId(Cnn, Base_Content, Base_Field_DynamicImage);
-            Base_Field_EnumId = Global.GetFieldId(Cnn, Base_Content, Base_Field_Enum);
-            #endregion
+            BaseFieldEx1Id = Global.GetFieldId(Cnn, BaseContent, BaseFieldEx1);
+            BaseFieldEx2Id = Global.GetFieldId(Cnn, BaseContent, BaseFieldEx2);
+            BaseFieldStringId = Global.GetFieldId(Cnn, BaseContent, BaseFieldString);
+            BaseFieldMtMId = Global.GetFieldId(Cnn, BaseContent, BaseFieldMtM);
+            BaseFieldOtMId = Global.GetFieldId(Cnn, BaseContent, BaseFieldOtM);
+            BaseFieldNumericIntegerId = Global.GetFieldId(Cnn, BaseContent, BaseFieldNumericInteger);
+            BaseFieldNumericDecimalId = Global.GetFieldId(Cnn, BaseContent, BaseFieldNumericDecimal);
+            BaseFieldDateId = Global.GetFieldId(Cnn, BaseContent, BaseFieldDate);
+            BaseFieldTimeId = Global.GetFieldId(Cnn, BaseContent, BaseFieldTime);
+            BaseFieldDateTimeId = Global.GetFieldId(Cnn, BaseContent, BaseFieldDateTime);
+            BaseFieldFileId = Global.GetFieldId(Cnn, BaseContent, BaseFieldFile);
+            BaseFieldImageId = Global.GetFieldId(Cnn, BaseContent, BaseFieldImage);
+            BaseFieldTextBoxId = Global.GetFieldId(Cnn, BaseContent, BaseFieldTextBox);
+            BaseFieldVisualEditId = Global.GetFieldId(Cnn, BaseContent, BaseFieldVisualEdit);
+            BaseFieldDynamicImageId = Global.GetFieldId(Cnn, BaseContent, BaseFieldDynamicImage);
+            BaseFieldEnumId = Global.GetFieldId(Cnn, BaseContent, BaseFieldEnum);
 
-            #region Dictionary content
-            Dictionary_ContentId = Global.GetContentId(Cnn, Dictionary_Content);
+            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
 
-            Dictionary_KeyId = Global.GetFieldId(Cnn, Dictionary_Content, Dictionary_Key);
-            Dictionary_ValueId = Global.GetFieldId(Cnn, Dictionary_Content, Dictionary_Value);
-            Dictionary_Field_MtM_BackwardId = Global.GetFieldId(Cnn, Dictionary_Content, Dictionary_Field_MtM_Backward);
-            Dictionary_Field_MtO_BackwardId = Global.GetFieldId(Cnn, Dictionary_Content, Dictionary_Field_MtO_Backward);
-            #endregion
+            DictionaryKeyId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryKey);
+            DictionaryValueId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryValue);
+            DictionaryFieldMtMBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtMBackward);
+            DictionaryFieldMtOBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtOBackward);
 
-            #region Ex1_1 content
-            Ex1_1_ContentId = Global.GetContentId(Cnn, Ex1_1_Content);
+            Ex11ContentId = Global.GetContentId(Cnn, Ex11Content);
 
-            Ex1_1_ParentId = Global.GetFieldId(Cnn, Ex1_1_Content, Ex1_1_Parent);
-            Ex1_1_Field1Id = Global.GetFieldId(Cnn, Ex1_1_Content, Ex1_1_Field1);
-            Ex1_1_Field2Id = Global.GetFieldId(Cnn, Ex1_1_Content, Ex1_1_Field2);
-            #endregion
+            Ex11ParentId = Global.GetFieldId(Cnn, Ex11Content, Ex11Parent);
+            Ex11Field1Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field1);
+            Ex11Field2Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field2);
 
-            #region Ex1_2 content
-            Ex1_2_ContentId = Global.GetContentId(Cnn, Ex1_2_Content);
-            Ex1_2_ParentId = Global.GetFieldId(Cnn, Ex1_2_Content, Ex1_2_Parent);
-            Ex1_2_Field1Id = Global.GetFieldId(Cnn, Ex1_2_Content, Ex1_2_Field1);
-            #endregion
+            Ex12ContentId = Global.GetContentId(Cnn, Ex12Content);
+            Ex12ParentId = Global.GetFieldId(Cnn, Ex12Content, Ex12Parent);
+            Ex12Field1Id = Global.GetFieldId(Cnn, Ex12Content, Ex12Field1);
 
-            #region Ex2_1 content
-            Ex2_1_ContentId = Global.GetContentId(Cnn, Ex2_1_Content);
-            Ex2_1_ParentId = Global.GetFieldId(Cnn, Ex2_1_Content, Ex2_1_Parent);
-            #endregion
+            Ex21ContentId = Global.GetContentId(Cnn, Ex21Content);
+            Ex21ParentId = Global.GetFieldId(Cnn, Ex21Content, Ex21Parent);
 
-            #region Ex2_2 content
-            Ex2_2_ContentId = Global.GetContentId(Cnn, Ex2_2_Content);
-            Ex2_2_ParentId = Global.GetFieldId(Cnn, Ex2_2_Content, Ex2_2_Parent);
-            #endregion
-
+            Ex22ContentId = Global.GetContentId(Cnn, Ex22Content);
+            Ex22ParentId = Global.GetFieldId(Cnn, Ex22Content, Ex22Parent);
         }
 
         [OneTimeTearDown]
@@ -218,63 +199,58 @@ namespace Quantumart.Test
         {
             var contentService = new ContentService(Global.ConnectionString, 1);
             var fieldService = new FieldService(Global.ConnectionString, 1);
+            var dictionaryIds = Global.GetIds(Cnn, DictionaryContentId);
+            var baseIds = Global.GetIds(Cnn, BaseContentId);
 
-            var dictionaryIds = Global.GetIds(Cnn, Dictionary_ContentId);
-            var baseIds = Global.GetIds(Cnn, Base_ContentId);
-            
-            ArticleService.Delete(Dictionary_ContentId, dictionaryIds);
-            ArticleService.Delete(Base_ContentId, baseIds);
+            ArticleService.Delete(DictionaryContentId, dictionaryIds);
+            ArticleService.Delete(BaseContentId, baseIds);
 
-            contentService.Delete(Ex1_1_ContentId);
-            contentService.Delete(Ex1_2_ContentId);
-            contentService.Delete(Ex2_1_ContentId);
-            contentService.Delete(Ex2_2_ContentId);
+            contentService.Delete(Ex11ContentId);
+            contentService.Delete(Ex12ContentId);
+            contentService.Delete(Ex21ContentId);
+            contentService.Delete(Ex22ContentId);
 
-            fieldService.Delete(Dictionary_Field_MtM_BackwardId);
-            fieldService.Delete(Dictionary_Field_MtO_BackwardId);
-            fieldService.Delete(Base_Field_MtMId);
-            fieldService.Delete(Base_Field_OtMId);
+            fieldService.Delete(DictionaryFieldMtMBackwardId);
+            fieldService.Delete(DictionaryFieldMtOBackwardId);
+            fieldService.Delete(BaseFieldMtMId);
+            fieldService.Delete(BaseFieldOtMId);
 
-            contentService.Delete(Dictionary_ContentId);
-            contentService.Delete(Base_ContentId);
-
-            QPContext.UseConnectionString = false;
+            contentService.Delete(DictionaryContentId);
+            contentService.Delete(BaseContentId);
         }
-        #endregion
 
-        #region Tests
         [Test]
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         public void BatchUpdate_DictionaryContent_RecoverContentData()
         {
             var random = Guid.NewGuid().ToString();
             var key = "key_" + random;
             var value = "value_" + random;
-
             var data = new[]
             {
                 new ArticleData
                 {
-                    ContentId = Dictionary_ContentId,
+                    ContentId = DictionaryContentId,
                     Id = -1,
                     Fields = new[]
                     {
                         new FieldData
                         {
-                            Id = Dictionary_KeyId,
+                            Id = DictionaryKeyId,
                             Value = ""
                         },
                         new FieldData
                         {
-                            Id = Dictionary_ValueId,
+                            Id = DictionaryValueId,
                             Value = ""
                         },
                         new FieldData
                         {
-                            Id = Dictionary_Field_MtM_BackwardId
+                            Id = DictionaryFieldMtMBackwardId
                         },
                         new FieldData
                         {
-                            Id = Dictionary_Field_MtO_BackwardId
+                            Id = DictionaryFieldMtOBackwardId
                         }
                     }.ToList()
                 }
@@ -285,9 +261,9 @@ namespace Quantumart.Test
             Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
             var articleResult = result[0];
-            Assert.That(articleResult.ContentId, Is.EqualTo(Dictionary_ContentId));
+            Assert.That(articleResult.ContentId, Is.EqualTo(DictionaryContentId));
             Assert.That(articleResult.CreatedArticleId, Is.Not.EqualTo(articleResult.OriginalArticleId));
-         
+
             data[0].Id = articleResult.CreatedArticleId;
             data[0].Fields[0].Value = key;
             data[0].Fields[1].Value = value;
@@ -303,69 +279,69 @@ namespace Quantumart.Test
             Assert.That(contentData, Is.Not.Null);
             Assert.That(contentData, Has.Length.EqualTo(4), ContentDataIsEmpty);
 
-            using (var scope = new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
 
                 Assert.That(article, Is.Not.Null, CantReadArticle);
 
-                var keyFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Key);
+                var keyFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryKey);
                 Assert.That(keyFv, Is.Not.Null);
                 Assert.That(key, Is.EqualTo(keyFv.Value));
-                Assert.That(contentData.Any(itm => itm.FieldId == Dictionary_KeyId && itm.Data == key));
+                Assert.That(contentData.Any(itm => itm.FieldId == DictionaryKeyId && itm.Data == key));
 
-                var valueFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Value);
+                var valueFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryValue);
                 Assert.That(valueFv, Is.Not.Null);
                 Assert.That(value, Is.EqualTo(valueFv.Value));
-                Assert.That(contentData.Any(itm => itm.FieldId == Dictionary_ValueId && itm.Data == value));
+                Assert.That(contentData.Any(itm => itm.FieldId == DictionaryValueId && itm.Data == value));
 
-                var mtoValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtO_Backward, articleResult.CreatedArticleId);
-                Assert.That(mtoValue, Is.EqualTo(Base_Field_OtMId), WrongMtORelation);
-                Assert.That(contentData.Any(itm => itm.FieldId == Dictionary_Field_MtO_BackwardId && itm.Data == Base_Field_OtMId.ToString(CultureInfo.InvariantCulture)), WrongMtORelation);
+                var mtoValue = GetFieldValue<decimal?>(DictionaryContentId, DictionaryFieldMtOBackward, articleResult.CreatedArticleId);
+                Assert.That(mtoValue, Is.EqualTo(BaseFieldOtMId), WrongMtORelation);
+                Assert.That(contentData.Any(itm => itm.FieldId == DictionaryFieldMtOBackwardId && itm.Data == BaseFieldOtMId.ToString(CultureInfo.InvariantCulture)), WrongMtORelation);
 
-                var mtmValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtM_Backward, articleResult.CreatedArticleId);
+                var mtmValue = GetFieldValue<decimal?>(DictionaryContentId, DictionaryFieldMtMBackward, articleResult.CreatedArticleId);
                 Assert.That(mtmValue, Is.Not.Null, WrongMtMRelation);
-                var mtmFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Field_MtM_Backward);
+                var mtmFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryFieldMtMBackward);
                 Assert.That(mtmFv, Is.Not.Null);
                 Assert.That(mtmFv.Field.Default, Is.EqualTo(mtmValue.Value.ToString(CultureInfo.InvariantCulture)), WrongMtMRelation);
-                Assert.That(contentData.Any(itm => itm.FieldId == Dictionary_Field_MtM_BackwardId && itm.Data == mtmFv.Field.Default), WrongMtMRelation);
+                Assert.That(contentData.Any(itm => itm.FieldId == DictionaryFieldMtMBackwardId && itm.Data == mtmFv.Field.Default), WrongMtMRelation);
 
                 ArticleService.Delete(article.Id);
             }
         }
 
         [Test]
+        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         public void BatchUpdate_DictionaryContent_InsertArticle()
         {
             var random = Guid.NewGuid().ToString();
             var key = "key_" + random;
             var value = "value_" + random;
-
             var data = new[]
             {
                 new ArticleData
                 {
-                    ContentId = Dictionary_ContentId,
+                    ContentId = DictionaryContentId,
                     Id = -1,
                     Fields = new[]
                     {
                         new FieldData
                         {
-                            Id = Dictionary_KeyId,
+                            Id = DictionaryKeyId,
                             Value = key
                         },
                         new FieldData
                         {
-                            Id = Dictionary_ValueId,
+                            Id = DictionaryValueId,
                             Value = value
                         },
                         new FieldData
                         {
-                            Id = Dictionary_Field_MtM_BackwardId
+                            Id = DictionaryFieldMtMBackwardId
                         },
                         new FieldData
                         {
-                            Id = Dictionary_Field_MtO_BackwardId
+                            Id = DictionaryFieldMtOBackwardId
                         }
                     }.ToList()
                 }
@@ -376,29 +352,29 @@ namespace Quantumart.Test
             Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
             var articleResult = result[0];
-            Assert.That(Dictionary_ContentId, Is.EqualTo(articleResult.ContentId));
+            Assert.That(DictionaryContentId, Is.EqualTo(articleResult.ContentId));
             Assert.That(articleResult.OriginalArticleId, Is.Not.EqualTo(articleResult.CreatedArticleId));
 
-            using (var scope = new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
 
                 Assert.That(article, Is.Not.Null, CantReadArticle);
 
-                var keyFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Key);
+                var keyFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryKey);
                 Assert.That(keyFv, Is.Not.Null);
                 Assert.That(key, Is.EqualTo(keyFv.Value));
 
-                var valueFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Value);
+                var valueFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryValue);
                 Assert.That(valueFv, Is.Not.Null);
                 Assert.That(value, Is.EqualTo(valueFv.Value));
 
-                var mtoValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtO_Backward, articleResult.CreatedArticleId);
-                Assert.That(mtoValue, Is.EqualTo(Base_Field_OtMId), WrongMtORelation);
+                var mtoValue = GetFieldValue<decimal?>(DictionaryContentId, DictionaryFieldMtOBackward, articleResult.CreatedArticleId);
+                Assert.That(mtoValue, Is.EqualTo(BaseFieldOtMId), WrongMtORelation);
 
-                var mtmValue = GetFieldValue<decimal?>(Dictionary_ContentId, Dictionary_Field_MtM_Backward, articleResult.CreatedArticleId);
+                var mtmValue = GetFieldValue<decimal?>(DictionaryContentId, DictionaryFieldMtMBackward, articleResult.CreatedArticleId);
                 Assert.That(mtmValue, Is.Not.Null, WrongMtMRelation);
-                var mtmFv = article.FieldValues.Single(fv => fv.Field.Name == Dictionary_Field_MtM_Backward);
+                var mtmFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryFieldMtMBackward);
                 Assert.That(mtmFv, Is.Not.Null);
                 Assert.That(mtmFv.Field.Default, Is.EqualTo(mtmValue.Value.ToString(CultureInfo.InvariantCulture)), WrongMtMRelation);
 
@@ -409,23 +385,21 @@ namespace Quantumart.Test
         [Test]
         public void BatchUpdate_BaseContent_UpdateExstensionField()
         {
-            var articleId = GetArticleId(Base_ContentId);
-
-            ClearClassifierField(articleId, Base_Field_Ex2Id);
-
+            var articleId = GetArticleId(BaseContentId);
+            ClearClassifierField(articleId);
 
             var data = new[]
             {
                 new ArticleData
                 {
-                    ContentId = Base_ContentId,
+                    ContentId = BaseContentId,
                     Id = articleId,
                     Fields = new []
                     {
                         new FieldData
                         {
-                            Id = Base_Field_Ex2Id,
-                            Value = Ex2_1_ContentId.ToString(CultureInfo.InvariantCulture),
+                            Id = BaseFieldEx2Id,
+                            Value = Ex21ContentId.ToString(),
                             ArticleIds = new[] { -1 }
 
                         }
@@ -433,7 +407,7 @@ namespace Quantumart.Test
                 },
                 new ArticleData
                 {
-                    ContentId = Ex2_1_ContentId,
+                    ContentId = Ex21ContentId,
                     Id = -1
                 }
             };
@@ -443,10 +417,10 @@ namespace Quantumart.Test
             Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
             var exstensionResult = result[0];
-            Assert.That(exstensionResult.ContentId, Is.EqualTo(Ex2_1_ContentId));
+            Assert.That(exstensionResult.ContentId, Is.EqualTo(Ex21ContentId));
             Assert.That(exstensionResult.OriginalArticleId, Is.Not.EqualTo(exstensionResult.CreatedArticleId));
 
-            var parentValues = Global.GetFieldValues<decimal>(Cnn, Ex2_1_ContentId, Ex2_1_Parent, new[] { exstensionResult.CreatedArticleId });
+            var parentValues = Global.GetFieldValues<decimal>(Cnn, Ex21ContentId, Ex21Parent, new[] { exstensionResult.CreatedArticleId });
             Assert.That(parentValues, Is.Not.Null, ValuesNotFound);
             Assert.That(parentValues, Has.Length.EqualTo(1));
             var parentValue = parentValues[0];
@@ -458,68 +432,69 @@ namespace Quantumart.Test
         public void BatchUpdate_BaseContent_UpdateStringField()
         {
             var value = Guid.NewGuid().ToString();
-            UpdateField(Base_ContentId, Base_Field_StringId, Base_Field_String, value, value);
+            UpdateField(BaseContentId, BaseFieldStringId, BaseFieldString, value, value);
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateEnumField()
         {
             var value = "Key1";
-            UpdateField(Base_ContentId, Base_Field_EnumId, Base_Field_Enum, value, value);
+            UpdateField(BaseContentId, BaseFieldEnumId, BaseFieldEnum, value, value);
+
             value = "Key2";
-            UpdateField(Base_ContentId, Base_Field_EnumId, Base_Field_Enum, value, value);
+            UpdateField(BaseContentId, BaseFieldEnumId, BaseFieldEnum, value, value);
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateFileField()
         {
-            var value = Guid.NewGuid().ToString() + ".txt";
-            UpdateField(Base_ContentId, Base_Field_FileId, Base_Field_File, value, value);
+            var value = Guid.NewGuid() + ".txt";
+            UpdateField(BaseContentId, BaseFieldFileId, BaseFieldFile, value, value);
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateImageField()
         {
-            var value = Guid.NewGuid().ToString() + ".png";
-            UpdateField(Base_ContentId, Base_Field_ImageId, Base_Field_Image, value, value);
+            var value = Guid.NewGuid() + ".png";
+            UpdateField(BaseContentId, BaseFieldImageId, BaseFieldImage, value, value);
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateDynamicImageField()
         {
-            var value = Guid.NewGuid().ToString() + ".png";
-            UpdateField(Base_ContentId, Base_Field_DynamicImageId, Base_Field_DynamicImage, value, value);
+            var value = Guid.NewGuid() + ".png";
+            UpdateField(BaseContentId, BaseFieldDynamicImageId, BaseFieldDynamicImage, value, value);
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateTextBoxField()
         {
             var value = Guid.NewGuid().ToString();
-            UpdateField(Base_ContentId, Base_Field_TextBoxId, Base_Field_TextBox, value, value);
+            UpdateField(BaseContentId, BaseFieldTextBoxId, BaseFieldTextBox, value, value);
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateVisualEditField()
         {
             var value = Guid.NewGuid().ToString();
-            UpdateField(Base_ContentId, Base_Field_VisualEditId, Base_Field_VisualEdit, value, value);
-        }      
+            UpdateField(BaseContentId, BaseFieldVisualEditId, BaseFieldVisualEdit, value, value);
+        }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateNumericIntegerField()
         {
-            int range = 1000;
+            const int range = 1000;
             decimal value = Random.Next(-range, range);
-            UpdateField<object>(Base_ContentId, Base_Field_Numeric_IntegerId, Base_Field_Numeric_Integer, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField<object>(BaseContentId, BaseFieldNumericIntegerId, BaseFieldNumericInteger, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateNumericDecimalField()
         {
-            int range = 100000;
+            const int range = 100000;
             decimal value = Random.Next(-range, range);
             value /= 100;
-            UpdateField<object>(Base_ContentId, Base_Field_Numeric_DecimalId, Base_Field_Numeric_Decimal, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField<object>(BaseContentId, BaseFieldNumericDecimalId, BaseFieldNumericDecimal, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         [Test]
@@ -527,14 +502,14 @@ namespace Quantumart.Test
         {
             var value = DateTime.Now;
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
-            UpdateField(Base_ContentId, Base_Field_DateTimeId, Base_Field_DateTime, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField(BaseContentId, BaseFieldDateTimeId, BaseFieldDateTime, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         [Test]
         public void BatchUpdate_BaseContent_UpdateDateField()
         {
             var value = DateTime.Today;
-            UpdateField(Base_ContentId, Base_Field_DateId, Base_Field_Date, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField(BaseContentId, BaseFieldDateId, BaseFieldDate, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
 
         [Test]
@@ -542,15 +517,12 @@ namespace Quantumart.Test
         {
             var value = DateTime.Now;
             value = value.AddTicks(-(value.Ticks % TimeSpan.TicksPerSecond));
-            UpdateField(Base_ContentId, Base_Field_TimeId, Base_Field_Time, value, value.ToString(CultureInfo.InvariantCulture));
+            UpdateField(BaseContentId, BaseFieldTimeId, BaseFieldTime, value, value.ToString(CultureInfo.GetCultureInfo(1049)));
         }
-        #endregion          
 
-        #region Private methods
-        private void UpdateField<T>(int contentId, int fieldId, string fieldName, T value, string stringValue)
+        private static void UpdateField<T>(int contentId, int fieldId, string fieldName, T value, string stringValue)
         {
             var articleId = GetArticleId(contentId);
-
             var data = new[]
             {
                 new ArticleData
@@ -571,20 +543,20 @@ namespace Quantumart.Test
             var result = ArticleService.BatchUpdate(data);
 
             Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
-    
+
             var newValue = GetFieldValue<T>(contentId, fieldName, articleId);
 
             Assert.That(value, Is.EqualTo(newValue));
         }
-    
-        private void ClearClassifierField(int articleId, int fieldId)
+
+        private static void ClearClassifierField(int articleId)
         {
-            using (var scope = new QPConnectionScope(Global.ConnectionString))
+            using (new QPConnectionScope(Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleId);
                 Assert.That(article, Is.Not.Null, CantReadArticle);
 
-                var fv = article.FieldValues.Find(itm => itm.Field.IsClassifier && itm.Field.Id == Base_Field_Ex2Id);
+                var fv = article.FieldValues.Find(itm => itm.Field.IsClassifier && itm.Field.Id == BaseFieldEx2Id);
                 Assert.That(fv, Is.Not.Null, NoClassifierField);
                 fv.Value = null;
 
@@ -592,7 +564,7 @@ namespace Quantumart.Test
             }
         }
 
-        T GetFieldValue<T>(int contentId, string fieldName, int articleId)
+        private static T GetFieldValue<T>(int contentId, string fieldName, int articleId)
         {
             var values = Global.GetFieldValues<T>(Cnn, contentId, fieldName, new[] { articleId });
             Assert.That(values, Is.Not.Null, ValuesNotFound);
@@ -600,12 +572,11 @@ namespace Quantumart.Test
             return values[0];
         }
 
-        private int GetArticleId(int contentId)
+        private static int GetArticleId(int contentId)
         {
             var ids = Global.GetIds(Cnn, contentId);
             Assert.That(ids, Is.Not.Null.And.Not.Empty, ArticlesNotFound);
             return ids[0];
         }
-        #endregion
     }
 }

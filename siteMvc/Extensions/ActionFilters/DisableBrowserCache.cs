@@ -4,9 +4,6 @@ using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
-    /// <summary>
-    /// Запрещает броузеру кэшировать результат действия
-    /// </summary>
     public class DisableBrowserCache : ActionFilterAttribute
     {
         public override void OnResultExecuting(ResultExecutingContext filterContext)

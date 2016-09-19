@@ -9,10 +9,11 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.DAL
 {
-	public class CommonExternalNotifications
-	{
-		#region External Notification
-		private const string InsertNotificationsQuery =
+    public class CommonExternalNotifications
+    {
+        #region External Notification
+
+        private const string InsertNotificationsQuery =
             @"INSERT INTO [dbo].[EXTERNAL_NOTIFICATION_QUEUE]
 			(
 				[EVENT_NAME],
@@ -33,60 +34,77 @@ namespace Quantumart.QP8.DAL
 				  col.value('(OldXml)[1]','nvarchar(max)') [OLD_XML]      
 			FROM 
 				@notifications.nodes('/Notifications/Notification') AS tbl(col)";
-		private const string UpdateSentNotificationsQuery =
-			@"UPDATE EXTERNAL_NOTIFICATION_QUEUE SET
+
+        private const string UpdateSentNotificationsQuery =
+            @"UPDATE EXTERNAL_NOTIFICATION_QUEUE SET
 				SENT = 1,
 				MODIFIED = getdate()
 			WHERE ID IN (SELECT Id FROM @ids)";
-		private const string UpdateUnsentNotificationsQuery =
-			@"UPDATE EXTERNAL_NOTIFICATION_QUEUE SET
+
+        private const string UpdateUnsentNotificationsQuery =
+            @"UPDATE EXTERNAL_NOTIFICATION_QUEUE SET
 				TRIES = TRIES + 1,
 				MODIFIED = getdate()
 			WHERE ID IN (SELECT Id FROM @ids)";
-		private const string DeleteSentNotificationsQuery = @"DELETE EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
 
-		private static void ExecuteIdsQuery(SqlConnection connection, string Query, IEnumerable<int> ids)
-		{
-			using (SqlCommand cmd = SqlCommandFactory.Create(Query, connection))
-			{
-				cmd.CommandType = CommandType.Text;
-				var idsTable = Common.IdsToDataTable(ids);
-				var parameter = cmd.Parameters.AddWithValue("@ids", idsTable);
-				parameter.SqlDbType = SqlDbType.Structured;
-				parameter.TypeName = "dbo.Ids";
-				cmd.ExecuteNonQuery();
-			}
-		}
+        private const string DeleteSentNotificationsQuery = @"DELETE EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
 
-		public static void InsertNotifications(SqlConnection connection, string notificationsXml)
-		{
-			using (SqlCommand cmd = SqlCommandFactory.Create(InsertNotificationsQuery, connection))
-			{
-				cmd.CommandType = CommandType.Text;
-				var parameter = cmd.Parameters.AddWithValue("@notifications", notificationsXml);
-				parameter.SqlDbType = SqlDbType.Xml;
-				cmd.ExecuteNonQuery();
-			}
-		}
+        private const string ExistsSentNotificationsQuery = @"SELECT COUNT(ID) FROM EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
 
-		public static void UpdateSentNotifications(SqlConnection connection, IEnumerable<int> ids)
-		{
-			ExecuteIdsQuery(connection, UpdateSentNotificationsQuery, ids);
-		}
 
-		public static void UpdateUnsentNotifications(SqlConnection connection, IEnumerable<int> ids)
-		{
-			ExecuteIdsQuery(connection, UpdateUnsentNotificationsQuery, ids);
-		}
+        private static void ExecuteIdsQuery(SqlConnection connection, string Query, IEnumerable<int> ids)
+        {
+            using (SqlCommand cmd = SqlCommandFactory.Create(Query, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var idsTable = Common.IdsToDataTable(ids);
+                var parameter = cmd.Parameters.AddWithValue("@ids", idsTable);
+                parameter.SqlDbType = SqlDbType.Structured;
+                parameter.TypeName = "dbo.Ids";
+                cmd.ExecuteNonQuery();
+            }
+        }
 
-		public static void DeleteSentNotifications(SqlConnection connection)
-		{
-			using (SqlCommand cmd = SqlCommandFactory.Create(DeleteSentNotificationsQuery, connection))
-			{
-				cmd.CommandType = CommandType.Text;
-				cmd.ExecuteNonQuery();
-			}
-		}
-		#endregion
-	}
+        public static void InsertNotifications(SqlConnection connection, string notificationsXml)
+        {
+            using (SqlCommand cmd = SqlCommandFactory.Create(InsertNotificationsQuery, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                var parameter = cmd.Parameters.AddWithValue("@notifications", notificationsXml);
+                parameter.SqlDbType = SqlDbType.Xml;
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        public static void UpdateSentNotifications(SqlConnection connection, IEnumerable<int> ids)
+        {
+            ExecuteIdsQuery(connection, UpdateSentNotificationsQuery, ids);
+        }
+
+        public static void UpdateUnsentNotifications(SqlConnection connection, IEnumerable<int> ids)
+        {
+            ExecuteIdsQuery(connection, UpdateUnsentNotificationsQuery, ids);
+        }
+
+        public static void DeleteSentNotifications(SqlConnection connection)
+        {
+            using (SqlCommand cmd = SqlCommandFactory.Create(DeleteSentNotificationsQuery, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        #endregion
+
+        public static bool ExistsSentNotifications(SqlConnection connection)
+        {
+            using (SqlCommand cmd = SqlCommandFactory.Create(ExistsSentNotificationsQuery, connection))
+            {
+                cmd.CommandType = CommandType.Text;
+                return (int) cmd.ExecuteScalar() > 0;
+
+            }
+        }
+    }
 }

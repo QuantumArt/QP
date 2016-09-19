@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.Utils;
 using Quantumart.QP8.BLL.Exceptions;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -51,7 +51,7 @@ namespace Quantumart.QP8.BLL.Services
             result.IsUpdatable = content.IsUpdatable;
 
             var titleField = FieldRepository.GetTitleField(contentId);
-            result.TitleFieldName = (titleField == null) ? FieldName.CONTENT_ITEM_ID : titleField.FormName;
+            result.TitleFieldName = titleField == null ? FieldName.CONTENT_ITEM_ID : titleField.FormName;
             result.DisplayFields = FieldRepository.GetList(contentId, true);
             result.IsAddNewAccessable = !isArchive && SecurityRepository.IsActionAccessible(ActionCode.AddNewArticle) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update);
             result.IsArticleChangingActionsAllowed = content.IsArticleChangingActionsAllowed(boundToExternal);
@@ -63,26 +63,24 @@ namespace Quantumart.QP8.BLL.Services
         private static MessageResult ConfirmHasChildren(int articleId, bool countArchived)
         {
             var count = ArticleRepository.CountChildren(articleId, countArchived);
-            var format = (countArchived) ? ArticleStrings.WarningHasChildren : ArticleStrings.WarningHasNonArchiveChildren;
-            var message = (count == 0) ? null : string.Format(format, count);
-            return (string.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+            var format = countArchived ? ArticleStrings.WarningHasChildren : ArticleStrings.WarningHasNonArchiveChildren;
+            var message = count == 0 ? null : string.Format(format, count);
+            return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
 
-        private static MessageResult MultipleConfirmHasChildren(int[] ids, bool countArchived)
+        private static MessageResult MultipleConfirmHasChildren(IEnumerable<int> ids, bool countArchived)
         {
             var parentIds = ids.Where(id => ArticleRepository.CountChildren(id, countArchived) != 0).ToList();
-            var format = (countArchived) ? ArticleStrings.WarningHasChildrenMultiple : ArticleStrings.WarningHasNonArchiveChildrenMultiple;
-            var message = (!parentIds.Any()) ? null : string.Format(format, string.Join(", ", parentIds.ToArray()));
-            return (string.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+            var format = countArchived ? ArticleStrings.WarningHasChildrenMultiple : ArticleStrings.WarningHasNonArchiveChildrenMultiple;
+            var message = !parentIds.Any() ? null : string.Format(format, string.Join(", ", parentIds.ToArray()));
+            return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
         #endregion
 
         /// <summary>
         /// Инициализация списка статей
         /// </summary>
-        /// <param name="contentId">ID контента</param>
         /// <param name="boundToExternal"></param>
-        /// <returns>DTO</returns>
         public static ArticleInitListResult InitList(int contentId, bool? boundToExternal)
         {
             return InitList(contentId, false, boundToExternal);
@@ -257,12 +255,10 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Генерирует пустую статью для показа
         /// </summary>
-        /// <param name="contentId">идентификатор контента</param>
         /// <param name="fieldId"></param>
         /// <param name="articleId"></param>
         /// <param name="isChild"></param>
         /// <param name="boundToExternal"></param>
-        /// <returns>пустая статья</returns>
         public static Article New(int contentId, int? fieldId, int? articleId, bool? isChild, bool? boundToExternal)
         {
             var article = Article.CreateNew(contentId, fieldId, articleId, isChild);
@@ -278,8 +274,6 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Генерирует пустую статью для сохранения
         /// </summary>
-        /// <param name="contentId">идентификатор контента</param>
-        /// <returns>пустая статья</returns>
         public static Article NewForSave(int contentId)
         {
             return Article.CreateNewForSave(contentId);
@@ -288,7 +282,6 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Копирует статью
         /// </summary>
-        /// <param name="id">идентификатор статьи</param>
         /// <param name="boundToExternal"></param>
         /// <param name="disableNotifications"></param>
         public static CopyResult Copy(int id, bool? boundToExternal, bool disableNotifications)
@@ -302,28 +295,28 @@ namespace Quantumart.QP8.BLL.Services
 
             if (article.IsAggregated)
             {
-                return new CopyResult() { Message = MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated) };
+                return new CopyResult { Message = MessageResult.Error(ArticleStrings.OperationIsNotAllowedForAggregated) };
             }
 
             if (!article.IsArticleChangingActionsAllowed(boundToExternal))
             {
-                return new CopyResult() { Message = MessageResult.Error(ContentStrings.ArticleChangingIsProhibited) };
+                return new CopyResult { Message = MessageResult.Error(ContentStrings.ArticleChangingIsProhibited) };
             }
 
             article.LoadFieldValues();
             if (!article.Content.IsUpdatable || !article.IsAccessible(ActionTypeCode.Read))
             {
-                return new CopyResult() { Message = MessageResult.Error(ArticleStrings.CannotCopyBecauseOfSecurity) };
+                return new CopyResult { Message = MessageResult.Error(ArticleStrings.CannotCopyBecauseOfSecurity) };
             }
 
             if (!article.IsUpdatableWithWorkflow)
             {
-                return new CopyResult() { Message = MessageResult.Error(ArticleStrings.CannotAddBecauseOfWorkflow) };
+                return new CopyResult { Message = MessageResult.Error(ArticleStrings.CannotAddBecauseOfWorkflow) };
             }
 
             if (!article.IsUpdatableWithRelationSecurity)
             {
-                return new CopyResult() { Message = MessageResult.Error(ArticleStrings.CannotAddBecauseOfRelationSecurity) };
+                return new CopyResult { Message = MessageResult.Error(ArticleStrings.CannotAddBecauseOfRelationSecurity) };
             }
 
             var previousAggregatedArticles = article.AggregatedArticles;
@@ -349,11 +342,9 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Добавляет новую статью
         /// </summary>
-        /// <param name="article">информация о статье</param>
         /// <param name="backendActionCode"></param>
         /// <param name="boundToExternal"></param>
         /// <param name="disableNotifications"></param>
-        /// <returns>информация о статье</returns>
         public static Article Save(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
         {
             if (article == null)
@@ -377,11 +368,9 @@ namespace Quantumart.QP8.BLL.Services
         /// <summary>
         /// Обновляет информацию о статье
         /// </summary>
-        /// <param name="article">информация о статье</param>
         /// <param name="backendActionCode"></param>
         /// <param name="boundToExternal"></param>
         /// <param name="disableNotifications"></param>
-        /// <returns>информация о статье</returns>
         public static Article Update(Article article, string backendActionCode, bool? boundToExternal, bool disableNotifications)
         {
 
@@ -415,7 +404,6 @@ namespace Quantumart.QP8.BLL.Services
         /// Удаляет статью
         /// </summary>
         /// <param name="contentId"></param>
-        /// <param name="id">идентификатор статьи</param>
         /// <param name="fromArchive"></param>
         /// <param name="boundToExternal"></param>
         /// <param name="disableNotifications"></param>
@@ -595,6 +583,7 @@ namespace Quantumart.QP8.BLL.Services
             ArticleRepository.Publish(idsToProceed);
             repo.SendNotifications();
             
+
             return result.GetServiceResult();
         }
 
@@ -741,6 +730,7 @@ namespace Quantumart.QP8.BLL.Services
             ArticleRepository.SetArchiveFlag(idsToProceed, false);
             repo.SendNotifications();
 
+
             return result.GetServiceResult();
         }
 
@@ -801,9 +791,7 @@ namespace Quantumart.QP8.BLL.Services
         /// Возврщает агрегированную статью
         /// </summary>
         /// <param name="rootContentId"></param>
-        /// <param name="aggregatedContentId"></param>
         /// <param name="rootArticleId"></param>
-        /// <returns></returns>
         public static Article GetAggregatedArticle(int rootArticleId, int rootContentId, int aggregatedContentId)
         {
             if (aggregatedContentId <= 0) return null;
@@ -835,7 +823,6 @@ namespace Quantumart.QP8.BLL.Services
         public static List<ListItem> GetListOfFieldsToSort(int contentId)
         {
             var list = new List<ListItem> {new ListItem {Text = ArticleStrings.ID, Value = ArticleStrings.ID}};
-            list.AddRange(FieldRepository.GetList(contentId, false).Where(f => (!f.IsBlob && !f.IsClassifier && f.RelatedToContent == null)).Select(f => new ListItem { Text = f.Name, Value = f.Name }).ToList());
             return list;
         }
 

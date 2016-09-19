@@ -5,6 +5,7 @@ using Quantumart.QP8.Scheduler.API.Extensions;
 using Quantumart.QP8.Scheduler.Notification.Providers;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -15,7 +16,8 @@ namespace Quantumart.QP8.Scheduler.Notification
 {
     public class NotificationProcessor : IProcessor
     {
-        private const string NotificationLogMessage = "send event {0} to {1} with status {2}";
+        private const string NotificationLogMessage = "sent event {0} to {1} with status {2}";
+        private const string NotificationErrorMessage = "";
 
         private readonly TraceSource _logger;
         private readonly IConnectionStrings _connectionStrings;
@@ -37,25 +39,28 @@ namespace Quantumart.QP8.Scheduler.Notification
         #region IProcessor implementation
         public async Task Run(CancellationToken token)
         {
-            _logger.TraceInformation("Start notification");
+            _logger.TraceInformation("Start sending notifications");
 
             foreach (var connection in _connectionStrings)
             {
+                var builder = new SqlConnectionStringBuilder(connection);
+
                 if (token.IsCancellationRequested)
                 {
                     break;
                 }
 
-                _logger.TraceInformation("Notification for: " + connection);
 
-                IEnumerable<ExternalNotification> notifications = null;
+
+                ExternalNotification[] notifications = null;
                 var sentNotificationIds = new List<int>();
                 var unsentNotificationIds = new List<int>();
 
                 using (var scope = new QPConnectionScope(connection))
                 {
-                    notifications = _externalNotificationService.GetPendingNotifications();
+                    notifications = _externalNotificationService.GetPendingNotifications().ToArray();
                 }
+
 
                 var notificatioData = from g in notifications.GroupBySequence(n => new { n.Url, n.EventName, n.SiteId, n.ContentId }, n => n)
                                       select new
@@ -84,10 +89,11 @@ namespace Quantumart.QP8.Scheduler.Notification
                         }
 
                         var status = await _notificationProvider.Notify(item.NotificationModel);
+                        var message = $"sent event { item.NotificationModel.EventName} to {item.NotificationModel.Url} with status {status} for database {builder.InitialCatalog} on server {builder.DataSource}";
 
                         if (status == HttpStatusCode.OK)
                         {
-                            _logger.TraceEvent(TraceEventType.Information, EventIdentificators.Common, NotificationLogMessage, item.NotificationModel.EventName, item.NotificationModel.Url, status);
+                            _logger.TraceInformation(message);
 
                             foreach (var param in item.NotificationModel.Parameters)
                             {
@@ -98,14 +104,16 @@ namespace Quantumart.QP8.Scheduler.Notification
                         }
                         else
                         {
-                            _logger.TraceEvent(TraceEventType.Warning, EventIdentificators.Common, NotificationLogMessage, item.NotificationModel.EventName, item.NotificationModel.Url, status);
+                            _logger.TraceEvent(TraceEventType.Warning, EventIdentificators.Common, message);
                             unsentNotificationIds.AddRange(item.NotificationIds);
                         }
                     }
                     catch (Exception ex)
                     {
                         unsentNotificationIds.AddRange(item.NotificationIds);
-                        _logger.TraceData(TraceEventType.Warning, EventIdentificators.Common, ex);
+                        var message = $"not sent event {item.NotificationModel.EventName} to {item.NotificationModel.Url} with message {ex.Message} for database {builder.InitialCatalog} on server {builder.DataSource}";
+                        _logger.TraceEvent(TraceEventType.Error, EventIdentificators.Common, message);
+                        _logger.TraceData(TraceEventType.Error, EventIdentificators.Common, ex);
                     }
                 }
 
@@ -123,7 +131,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 }
             }
 
-            _logger.TraceInformation("End notification");
+            _logger.TraceInformation("End sending notifications");
         }
         #endregion
     }

@@ -1,94 +1,85 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
+using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     [ValidateInput(false)]
     public class LogOnController : QPController
     {
-        /// <summary>
-        /// Выводит форму ввода логина и пароля
-        /// </summary>
         [HttpGet]
         [DisableBrowserCache]
         [ResponseHeader("QP-Not-Authenticated", "True")]
         public ActionResult Index(DirectLinkOptions directLinkOptions)
         {
             if (!Request.IsAuthenticated && AuthenticationHelper.ShouldUseWindowsAuthentication(Request.UserHostAddress))
-            {				
-                // Если IP-адрес пользователя входит в диапазон IP-адресов 
-                // внутренней сети, то перенаправляем его на страницу Windows-аутентификации
-                if (directLinkOptions != null)
-                    return Redirect(directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl));
-                else
-                    return Redirect(AuthenticationHelper.WindowsAuthenticationUrl);
-            }
-            else
             {
-                InitViewBag();
-                return LogOnView();
+                // Если IP-адрес пользователя входит в диапазон IP-адресов
+                // внутренней сети, то перенаправляем его на страницу Windows-аутентификации
+                return Redirect(directLinkOptions != null
+                    ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl)
+                    : AuthenticationHelper.WindowsAuthenticationUrl);
             }
+
+            InitViewBag();
+            return LogOnView();
         }
 
-        /// <summary>
-        /// Аутентифицирует пользователя
-        /// </summary>
-        /// <param name="directLinkOptions"></param>
-        /// <param name="data">данные формы</param>
         [HttpPost]
         [DisableBrowserCache]
         public ActionResult Index(DirectLinkOptions directLinkOptions, LogOnCredentials data)
         {
-            // Проверяем правильность введенных значений
-            try { data.Validate(); } catch (RulesException ex) { ex.CopyTo(ModelState); }
+            try
+            {
+                data.Validate();
+            }
+            catch (RulesException ex)
+            {
+                ex.CopyTo(ModelState);
+            }
 
             if (ModelState.IsValid && data.User != null)
             {
                 AuthenticationHelper.CompleteAuthentication(data.User);
-
                 if (Request.IsAjaxRequest())
                 {
-                    return Json( new
+                    return Json(new
                     {
                         success = true,
                         isAuthenticated = true,
                         userName = data.User.Name
                     });
                 }
-                else
-                {					
-                    if (directLinkOptions != null && directLinkOptions.IsDefined())
-                        return RedirectToAction("Index", "Home", directLinkOptions);
-                    else
-                        return RedirectToAction("Index", "Home");
-                }
-            }
-            else
-            {
-                // Отображаем форму ввода логина и пароля с сообщениями об ошибках
-                InitViewBag();
-                return LogOnView();
-            }
-        }	
 
-        /// <summary>
-        /// Производит завершение аутентификационной сессии пользователя
-        /// </summary>
+                if (directLinkOptions != null && directLinkOptions.IsDefined())
+                {
+                    return RedirectToAction("Index", "Home", directLinkOptions);
+                }
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            InitViewBag();
+            return LogOnView();
+        }
+
         [HttpGet]
         [DisableBrowserCache]
         public ActionResult LogOut(DirectLinkOptions directLinkOptions)
-        {			
-            string loginUrl = QPContext.LogOut();
+        {
+            var loginUrl = QPContext.LogOut();
             if (directLinkOptions != null)
+            {
                 loginUrl = directLinkOptions.AddToUrl(loginUrl);
-            return Redirect(loginUrl);			
+            }
+
+            return Redirect(loginUrl);
         }
 
         private void InitViewBag()
@@ -99,14 +90,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private ActionResult LogOnView()
         {
-            if (Request.IsAjaxRequest())
-            {
-                return JsonHtml("Popup", null);
-            }
-            else
-            {
-                return View();
-            }
+            return Request.IsAjaxRequest()
+                ? JsonHtml("Popup", null)
+                : View();
         }
     }
 }

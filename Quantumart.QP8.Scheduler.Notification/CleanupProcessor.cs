@@ -1,7 +1,7 @@
 ﻿using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Scheduler.API;
-using System;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,10 +31,13 @@ namespace Quantumart.QP8.Scheduler.Notification
             _logger.TraceInformation("Start cleanup notification queue");
             foreach (var connection in _connectionStrings)
             {
-                using (var scope = new QPConnectionScope(connection))
-                {
-                    _logger.TraceInformation("Cleanup notification queue for: " + connection);
-                    _externalNotificationService.DeleteSentNotifications();
+                var builder = new SqlConnectionStringBuilder(connection);
+                using (new QPConnectionScope(connection)) {
+                    if (_externalNotificationService.ExistsSentNotifications())
+                    {
+                        _logger.TraceInformation($"Cleanup notification queue for database {builder.InitialCatalog} on server {builder.DataSource}");
+                        _externalNotificationService.DeleteSentNotifications();
+                    }
                 }
                 await Task.Delay(DelayDuration, token);
             }

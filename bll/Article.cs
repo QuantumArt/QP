@@ -3,34 +3,33 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
+using QA.Validation.Xaml;
+using QA.Validation.Xaml.Extensions.Rules;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
-using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.Utils;
-using QA.Validation.Xaml;
-using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.BLL.ListItems;
-using System.Text.RegularExpressions;
-using Microsoft.Practices.EnterpriseLibrary.Common.Utility;
-using QA.Validation.Xaml.Extensions.Rules;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public class Article : LockableEntityObject
     {
         #region private fields and types
-        
+
         private enum CopyFilesMode
         {
             ToBackupFolder,
             ToVersionFolder,
             FromVersionFolder
         }
-            
+
         private string _name = string.Empty;
         private string _alias = string.Empty;
         private List<FieldValue> _fieldValues;
@@ -64,16 +63,16 @@ namespace Quantumart.QP8.BLL
             CancelSplit = false;
             UseInVariationUpdate = false;
         }
-            
-        
+
+
         internal Article(Content content) : this()
         {
             ContentId = content.Id;
             Content = content;
-            SetDefaultStatusAndVisibility();			
+            SetDefaultStatusAndVisibility();
         }
 
-        internal Article (Content content, Dictionary<string, string> predefinedValues) : this(content)
+        internal Article(Content content, Dictionary<string, string> predefinedValues) : this(content)
         {
             PredefinedValues = predefinedValues;
         }
@@ -104,7 +103,7 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("CancelSplit", NameResourceType = typeof(ArticleStrings))]
         public bool CancelSplit { get; set; }
 
-        [LocalizedDisplayName("LeaveComment", NameResourceType=typeof(ArticleStrings))]
+        [LocalizedDisplayName("LeaveComment", NameResourceType = typeof(ArticleStrings))]
         public string Comment { get; set; }
 
         public Dictionary<string, string> PredefinedValues { get; set; }
@@ -142,7 +141,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Только для чтения
         /// </summary>
-        public override bool IsReadOnly => ViewType != ArticleViewType.Normal && ViewType != ArticleViewType.PreviewVersion;
+        public override bool IsReadOnly => (ViewType != ArticleViewType.Normal) && (ViewType != ArticleViewType.PreviewVersion);
 
         /// <summary>
         /// Псевдоним статьи
@@ -174,7 +173,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return (_displayContentId == 0) ? ContentId : _displayContentId;
+                return _displayContentId == 0 ? ContentId : _displayContentId;
             }
             set
             {
@@ -368,10 +367,8 @@ namespace Quantumart.QP8.BLL
 
         internal List<FieldValue> LoadFieldValues()
         {
-            _fieldValues = GetFieldValues();
-            return _fieldValues;
+            return _fieldValues ?? (_fieldValues = GetFieldValues());
         }
-
 
         /// <summary>
         /// Режим отображения статьи
@@ -385,7 +382,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                if (_schedule == null && !_scheduleLoaded)
+                if ((_schedule == null) && !_scheduleLoaded)
                 {
                     _schedule = ScheduleRepository.GetSchedule(this);
                     _scheduleLoaded = true;
@@ -402,20 +399,20 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Фактический Workflow статьи (с учетом Article Workflow)
         /// </summary>
-        public WorkflowBind Workflow => (WorkflowBinding.IsAssigned) ? WorkflowBinding : (WorkflowBind)Content.WorkflowBinding;
+        public WorkflowBind Workflow => WorkflowBinding.IsAssigned ? WorkflowBinding : (WorkflowBind)Content.WorkflowBinding;
 
         /// <summary>
         /// Связанные агрегированные статьи
-        /// </summary>		
-        public IEnumerable<Article> AggregatedArticles 
-        { 
+        /// </summary>
+        public IEnumerable<Article> AggregatedArticles
+        {
             get { return _aggregatedArticles.Value; }
             set { _aggregatedArticles.Value = value; }
         }
 
         /// <summary>
         /// Связанные статьи-вариации
-        /// </summary>		
+        /// </summary>
         public List<Article> VariationArticles
         {
             get { return _variationArticles.Value; }
@@ -445,7 +442,7 @@ namespace Quantumart.QP8.BLL
 
         #region methods
 
-        #region public		
+        #region public
         /// <summary>
         /// Осуществляет валидацию статьи, в случае неудачи генерируется суммарное исключение
         /// </summary>
@@ -453,7 +450,7 @@ namespace Quantumart.QP8.BLL
         {
             var errors = new RulesException<Article>();
 
-            base.Validate(errors);			
+            base.Validate(errors);
 
             ValidateWorkflow(errors);
 
@@ -461,7 +458,7 @@ namespace Quantumart.QP8.BLL
 
             foreach (var pair in FieldValues)
             {
-                if (pair.Field.ExactType == FieldExactTypes.M2ORelation && pair.Field.BackRelation != null && pair.Field.BackRelation.Aggregated)
+                if ((pair.Field.ExactType == FieldExactTypes.M2ORelation) && (pair.Field.BackRelation != null) && pair.Field.BackRelation.Aggregated)
                     continue;
                 pair.Validate(errors);
             }
@@ -472,8 +469,8 @@ namespace Quantumart.QP8.BLL
             // Пользовательская валидация на основе Xaml описаний
             // валидация производится одновременно и для основной статьи и для агрегированных статей
             ValidateCustom(errors);
-                
-            ValidateSchedule(errors, Schedule);			
+
+            ValidateSchedule(errors, Schedule);
 
             if (!errors.IsEmpty)
                 throw errors;
@@ -502,8 +499,8 @@ namespace Quantumart.QP8.BLL
             var values = FieldValues
                 .Concat(AggregatedArticles.SelectMany(a => a.FieldValues))
                 .Where(v => !v.Field.Aggregated)
-                .ToDictionary(v => v.Field.FormName, 
-                    v => (v.Field.ExactType == FieldExactTypes.Boolean ? Converter.ToBoolean(v.Value).ToString() : v.Value)
+                .ToDictionary(v => v.Field.FormName,
+                    v => v.Field.ExactType == FieldExactTypes.Boolean ? Converter.ToBoolean(v.Value).ToString() : v.Value
                 );
 
             // Добавялем id и status type id
@@ -526,7 +523,7 @@ namespace Quantumart.QP8.BLL
                         {
                             errors.Error(ve.Definition.PropertyName, values[ve.Definition.PropertyName], ve.Message);
                         }
-                        foreach(var msg in vcontext.Messages)
+                        foreach (var msg in vcontext.Messages)
                         {
                             errors.ErrorForModel(msg);
                         }
@@ -546,7 +543,7 @@ namespace Quantumart.QP8.BLL
         public static string GetDynamicColumnName(Field field, Dictionary<int, int> relationCounters, bool useFormName = false)
         {
             var relationId = field.RelationId ?? 0;
-            if (field.Type.Name == FieldTypeName.Relation && relationId != 0)
+            if ((field.Type.Name == FieldTypeName.Relation) && (relationId != 0))
             {
                 var currentCount = 1;
                 if (relationCounters.ContainsKey(relationId))
@@ -555,7 +552,7 @@ namespace Quantumart.QP8.BLL
                     currentCount++;
                 }
                 relationCounters[relationId] = currentCount;
-                var countSuffix = (currentCount == 1) ? "" : "_" + currentCount;
+                var countSuffix = currentCount == 1 ? "" : "_" + currentCount;
 
                 var result = "rel_field_" + relationId + countSuffix;
                 if (field.Relation.ExactType == FieldExactTypes.O2MRelation)
@@ -564,10 +561,7 @@ namespace Quantumart.QP8.BLL
                 }
                 return result;
             }
-            else
-            {
-                return (useFormName) ? field.FormName : field.Name;
-            }
+            return useFormName ? field.FormName : field.Name;
         }
 
         public void UpdateFieldValues(Dictionary<string, string> newValues)
@@ -580,7 +574,7 @@ namespace Quantumart.QP8.BLL
                     value = string.IsNullOrEmpty(value) ? "0" : value;
                     bool isBool;
                     var boolValue = bool.TryParse(value, out isBool);
-                    value = ((isBool) ? Converter.ToInt32(boolValue) : Converter.ToInt32(value)).ToString();
+                    value = (isBool ? Converter.ToInt32(boolValue) : Converter.ToInt32(value)).ToString();
                 }
                 pair.UpdateValue(value);
             }
@@ -623,10 +617,10 @@ namespace Quantumart.QP8.BLL
                 aggregated.ViewType = ViewType;
                 return aggregated;
             }
-            else
-                return null;
+
+            return null;
         }
-        
+
         /// <summary>
         /// Генерирует пустую статью для показа
         /// </summary>
@@ -651,18 +645,18 @@ namespace Quantumart.QP8.BLL
         {
             var predefinedValues = new Dictionary<string, string>();
             var currentId = 0;
-            if (fieldId.HasValue && articleId.HasValue && fieldId.Value != 0 && articleId.Value != 0)
+            if (fieldId.HasValue && articleId.HasValue && (fieldId.Value != 0) && (articleId.Value != 0))
             {
                 var field = FieldRepository.GetById(fieldId.Value);
                 if (field != null)
                 {
-                    if (field.ExactType == FieldExactTypes.M2ORelation && field.BackRelationId.HasValue)
+                    if ((field.ExactType == FieldExactTypes.M2ORelation) && field.BackRelationId.HasValue)
                     {
                         currentId = field.BackRelationId.Value;
                     }
-                    else if (field.ExactType == FieldExactTypes.M2MRelation && field.ContentLink.Symmetric)
+                    else if ((field.ExactType == FieldExactTypes.M2MRelation) && field.ContentLink.Symmetric)
                     {
-                        if (field.RelateToContentId != null && field.RelateToContentId.Value == field.ContentId)
+                        if ((field.RelateToContentId != null) && (field.RelateToContentId.Value == field.ContentId))
                         {
                             currentId = field.Id;
                         }
@@ -671,8 +665,9 @@ namespace Quantumart.QP8.BLL
                             currentId = field.M2MBackwardField.Id;
                         }
                     }
-        
-                    else if (field.ExactType == FieldExactTypes.O2MRelation && (isChild.HasValue && isChild.Value)) {
+
+                    else if ((field.ExactType == FieldExactTypes.O2MRelation) && isChild.HasValue && isChild.Value)
+                    {
                         currentId = field.Id;
                     }
                 }
@@ -759,7 +754,7 @@ namespace Quantumart.QP8.BLL
 
                 RemoveVariations();
             }
-            
+
             FixNonUsedStatus(true);
 
             ReplaceAllUrlsToPlaceHolders();
@@ -776,7 +771,7 @@ namespace Quantumart.QP8.BLL
             {
                 result = ArticleRepository.Update(this);
                 codes.Add(NotificationCode.Update);
-                if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
+                if ((previousArticle != null) && (previousArticle.StatusTypeId != StatusTypeId))
                 {
                     codes.Add(NotificationCode.ChangeStatus);
                 }
@@ -791,14 +786,14 @@ namespace Quantumart.QP8.BLL
             {
                 result.CopyParentPermissions();
             }
-            
+
             if (!IsAggregated)
             {
 
                 foreach (var a in AggregatedArticles)
                 {
                     a.AggregateTo(result);
-                    a.Persist(disableNotifications);
+                    a.Persist(true);
                 }
 
                 if (!IsVariation)
@@ -806,10 +801,10 @@ namespace Quantumart.QP8.BLL
                     foreach (var a in VariationArticles.Where(n => n.UseInVariationUpdate))
                     {
                         a.VariateTo(result);
-                        a.Persist(disableNotifications);
+                        a.Persist(true);
                     }
 
-                    if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
+                    if ((previousArticle != null) && (previousArticle.StatusTypeId != StatusTypeId))
                     {
                         var message = ReplaceCommentLink(Comment);
                         var systemStatusType = GetSystemStatusType(previousArticle.StatusTypeId, StatusTypeId, ref message);
@@ -825,7 +820,8 @@ namespace Quantumart.QP8.BLL
         private void OptimizeForHierarchy()
         {
             FieldValues
-                .Where(n => n.Field.ExactType == FieldExactTypes.M2MRelation && n.Field.OptimizeForHierarchy)
+                .Where(n => (n.Field.ExactType == FieldExactTypes.M2MRelation) && n.Field.OptimizeForHierarchy)
+                .ToList()
                 .ForEach(n => new OptimizeHierarchyHelper(n).Process());
         }
 
@@ -833,12 +829,9 @@ namespace Quantumart.QP8.BLL
         {
             if (string.IsNullOrEmpty(context))
                 throw new ArgumentException(nameof(context));
-            else
-            {
-                var result = VariationArticles.SingleOrDefault(n => n.VariationContext == context) ??
-                    CreateVariationWithFieldValues(GetFieldValuesByContext(context));
-                return result;
-            }
+            var result = VariationArticles.SingleOrDefault(n => n.VariationContext == context) ??
+                         CreateVariationWithFieldValues(GetFieldValuesByContext(context));
+            return result;
         }
 
         internal RemoteValidationResult ProceedRemoteValidation()
@@ -847,19 +840,21 @@ namespace Quantumart.QP8.BLL
             return new RemoteValidationResult();
         }
 
-        private string ReplaceCommentLink(string comment) {
-            if (!string.IsNullOrEmpty(comment))
-                return Regex.Replace(comment, @"((http|https)://[\w\.-0-9:?=&_]*)", "<a href=\"$1\" target=\"_blank\">$1</a>");
-                else
-                return string.Empty;
+        private static string ReplaceCommentLink(string comment)
+        {
+            return !string.IsNullOrEmpty(comment)
+                ? Regex.Replace(comment, @"((http|https)://[\w\.-0-9:?=&_]*)", "<a href=\"$1\" target=\"_blank\">$1</a>")
+                : string.Empty;
         }
-        private int GetSystemStatusType(int previousStatusTypeId, int currentStatusTypeId, ref string message) {
+
+        private static int GetSystemStatusType(int previousStatusTypeId, int currentStatusTypeId, ref string message)
+        {
             var historyStatusId = 0;
             IEnumerable<StatusType> statusTypes = StatusTypeRepository.GetList(new[] { previousStatusTypeId, currentStatusTypeId }).ToList();
             var previousStatus = statusTypes.FirstOrDefault(s => s.Id == previousStatusTypeId);
             var currentStatus = statusTypes.FirstOrDefault(s => s.Id == currentStatusTypeId);
 
-            if (currentStatus != null && previousStatus != null)
+            if ((currentStatus != null) && (previousStatus != null))
             {
                 if (previousStatus.Weight > currentStatus.Weight)
                 {
@@ -908,8 +903,7 @@ namespace Quantumart.QP8.BLL
         {
             if (GetRelationSecurityFields().Any())
                 return ArticleRepository.CheckRelationSecurity(ContentId, new[] { Id }, false)[Id];
-            else
-                return true;
+            return true;
         }
 
         public IEnumerable<FieldValue> GetRelationSecurityFields()
@@ -934,7 +928,7 @@ namespace Quantumart.QP8.BLL
         {
             var isWorkflowAssigned = Content.WorkflowBinding.IsAssigned;
             Visible = isWorkflowAssigned;
-            Status = (isWorkflowAssigned) ? StatusType.GetNone(Content.SiteId) : StatusType.GetPublished(Content.SiteId);
+            Status = isWorkflowAssigned ? StatusType.GetNone(Content.SiteId) : StatusType.GetPublished(Content.SiteId);
             StatusTypeId = Status.Id;
         }
 
@@ -946,7 +940,7 @@ namespace Quantumart.QP8.BLL
         {
             if (Workflow.IsAssigned)
             {
-                if (!Workflow.UseStatus(Status.Id) && Status.Id != StatusType.GetNone(Content.SiteId).Id)
+                if (!Workflow.UseStatus(Status.Id) && (Status.Id != StatusType.GetNone(Content.SiteId).Id))
                 {
                     Status = Workflow.GetClosestStatus(Status.Weight);
                     StatusTypeId = Status.Id;
@@ -964,7 +958,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         internal void ResolveFieldConflicts()
         {
-            var constraints = ContentConstraintRepository.GetConstraintsByContentId(ContentId);				
+            var constraints = ContentConstraintRepository.GetConstraintsByContentId(ContentId);
             foreach (var constraint in constraints)
             {
                 var fieldValuesToResolve = constraint.Filter(FieldValues);
@@ -992,7 +986,7 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-        /// Получение списка значений полей 
+        /// Получение списка значений полей
         /// </summary>
         /// <param name="data">DataRow значение</param>
         /// <param name="fields">список полей</param>
@@ -1000,7 +994,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="versionId">ID версии (необязателен)</param>
         /// <param name="contentPrefix"></param>
         /// <returns>список значений полей</returns>
-        internal static List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields, Article article, int versionId = 0, string contentPrefix=null)
+        internal static List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields, Article article, int versionId = 0, string contentPrefix = null)
         {
             if (data == null) throw new Exception(string.Format(ArticleStrings.ArticleNotFoundInTheContent, article.Id, article.DisplayContentId));
             var result = new List<FieldValue>();
@@ -1019,7 +1013,7 @@ namespace Quantumart.QP8.BLL
                         {
                             var linkId = field.GetBaseField(article.Id).LinkId;
                             if (linkId != null)
-                                objectValue = versionId != 0 ? ArticleVersionRepository.GetLinkedItems(versionId, field.Id) 
+                                objectValue = versionId != 0 ? ArticleVersionRepository.GetLinkedItems(versionId, field.Id)
                                     : ArticleRepository.GetLinkedItems(linkId.Value, article.Id);
                         }
 
@@ -1031,7 +1025,7 @@ namespace Quantumart.QP8.BLL
                     case RelationType.ManyToOne:
                         var backRelationId = field.GetBaseField(article.Id).BackRelationId;
                         if (backRelationId != null)
-                            objectValue = versionId != 0 ? ArticleVersionRepository.GetRelatedItems(versionId, field.Id) 
+                            objectValue = versionId != 0 ? ArticleVersionRepository.GetRelatedItems(versionId, field.Id)
                                 : ArticleRepository.GetRelatedItems(backRelationId.Value, article.Id);
                         break;
                     case RelationType.None:
@@ -1044,18 +1038,18 @@ namespace Quantumart.QP8.BLL
                         break;
                 }
 
-                if (field.ReplaceUrls && objectValue != null)
+                if (field.ReplaceUrls && (objectValue != null))
                 {
                     objectValue = article.ReplacePlaceHoldersToUrls(objectValue.ToString());
                 }
 
                 if (article.IsNew)
                 {
-                    if (field.IsDateTime && field.Required && objectValue == null)
+                    if (field.IsDateTime && field.Required && (objectValue == null))
                     {
                         objectValue = Converter.ToDbDateTimeString(DateTime.Now);
                     }
-                    
+
                     if (article.PredefinedValues.ContainsKey(field.FormName))
                     {
                         objectValue = article.PredefinedValues[field.FormName];
@@ -1068,7 +1062,7 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-        /// Получение списка значений полей 
+        /// Получение списка значений полей
         /// </summary>
         /// <param name="data">DataRow значение</param>
         /// <param name="fields">список полей</param>
@@ -1115,10 +1109,10 @@ namespace Quantumart.QP8.BLL
                 foreach (var field in enumerable1)
                 {
                     object objectValue = null;
-                    if (field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne)
+                    if ((field.RelationType == RelationType.ManyToMany) || (field.RelationType == RelationType.ManyToOne))
                     {
                         var dict = itemsForRelations[field.Id];
-                        if (dict != null && dict.ContainsKey(id))
+                        if ((dict != null) && dict.ContainsKey(id))
                             objectValue = dict[id];
                     }
                     else
@@ -1130,7 +1124,7 @@ namespace Quantumart.QP8.BLL
                             objectValue = null;
                         }
 
-                        if (field.ReplaceUrls && objectValue != null)
+                        if (field.ReplaceUrls && (objectValue != null))
                         {
                             objectValue = article.ReplacePlaceHoldersToUrls(objectValue.ToString());
                         }
@@ -1142,7 +1136,7 @@ namespace Quantumart.QP8.BLL
             }
 
         }
-        
+
         private string ReplacePlaceHoldersToUrls(string value)
         {
             return PlaceHolderHelper.ReplacePlaceHoldersToUrls(Content.Site, value);
@@ -1180,7 +1174,7 @@ namespace Quantumart.QP8.BLL
                 var earliestVersion = ArticleVersionRepository.GetEarliest(Id);
                 ArticleVersionRepository.Create(Id);
                 var newVersion = ArticleVersionRepository.GetLatest(Id);
-                
+
                 Directory.CreateDirectory(BackupPath);
                 Directory.CreateDirectory(newVersion.PathInfo.Path);
 
@@ -1192,7 +1186,7 @@ namespace Quantumart.QP8.BLL
 
                 CopyArticleFiles(CopyFilesMode.ToVersionFolder, BackupPath, newVersion.PathInfo.Path);
                 foreach (var a in AggregatedArticles)
-                {					
+                {
                     a.CopyArticleFiles(CopyFilesMode.ToVersionFolder, a.BackupPath, newVersion.PathInfo.Path);
                 }
 
@@ -1262,13 +1256,13 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         internal void CreateDynamicImages()
         {
-            foreach (var item in FieldValues.Where(n => n.Field.Type.Name == FieldTypeName.Image && !string.IsNullOrEmpty(n.Value)))
+            foreach (var item in FieldValues.Where(n => (n.Field.Type.Name == FieldTypeName.Image) && !string.IsNullOrEmpty(n.Value)))
             {
                 foreach (var field in item.Field.GetDynamicImages())
                 {
                     field.DynamicImage.CreateDynamicImage(item.Field.PathInfo.GetPath(item.Value), item.Value);
                 }
-                   
+
             }
         }
 
@@ -1309,7 +1303,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="clearType">Тип очистки</param>
         public void ClearFields(int[] fieldIds, ArticleClearType clearType)
         {
-            if (fieldIds != null && fieldIds.Length > 0)
+            if ((fieldIds != null) && (fieldIds.Length > 0))
             {
                 ClearFields(fv => fieldIds.Contains(fv.Field.Id), clearType);
             }
@@ -1322,7 +1316,7 @@ namespace Quantumart.QP8.BLL
         /// <param name="clearType">Тип очистки</param>
         public void ClearFields(string[] fieldNames, ArticleClearType clearType)
         {
-            if (fieldNames != null && fieldNames.Length > 0)
+            if ((fieldNames != null) && (fieldNames.Length > 0))
             {
                 ClearFields(fv => fieldNames.Contains(fv.Field.Name), clearType);
             }
@@ -1367,7 +1361,7 @@ namespace Quantumart.QP8.BLL
             CancelSplit = fromArticle.CancelSplit;
             Schedule.CopyFrom(fromArticle.Schedule);
             StatusTypeId = fromArticle.StatusTypeId;
-            LastModifiedBy = fromArticle.LastModifiedBy;	
+            LastModifiedBy = fromArticle.LastModifiedBy;
         }
 
         internal void ValidateUnique(RulesException errors, int exceptFieldId)
@@ -1402,12 +1396,12 @@ namespace Quantumart.QP8.BLL
                 result.Add(ArticleRepository.Copy(a));
             }
             AggregatedArticles = result;
-        }	
+        }
 
         internal void CopyParentPermissions()
         {
             var treeField = Content.TreeField;
-            if (treeField != null && treeField.CopyPermissionsToChildren)
+            if ((treeField != null) && treeField.CopyPermissionsToChildren)
             {
                 var parentId = Converter.ToInt32(FieldValues.Single(n => n.Field.Name == treeField.Name).Value, 0);
                 if (parentId != 0)
@@ -1427,26 +1421,26 @@ namespace Quantumart.QP8.BLL
                 FieldValues.Single(n => Equals(n.Field, currentValue.Field)).Value = currentValue.Value;
             }
         }
-            
+
         private List<FieldValue> GetFieldValues()
         {
             var data = ArticleRepository.GetData(Id, DisplayContentId);
             var fields = FieldRepository.GetFullList(DisplayContentId);
             return GetFieldValues(data, fields);
         }
-            
-        private List<FieldValue> GetFieldValues(DataRow data, List<Field> fields)
+
+        private List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields)
         {
             return GetFieldValues(data, fields, this);
         }
 
-        private void ValidateWorkflow(RulesException<Article> errors)
+        private void ValidateWorkflow(RulesException errors)
         {
             if (!IsUpdatableWithWorkflow)
                 errors.CriticalErrorForModel(IsNew ? ArticleStrings.CannotAddBecauseOfWorkflow : ArticleStrings.CannotUpdateBecauseOfWorkflow);
         }
 
-        private void ValidateRelationSecurity(RulesException<Article> errors)
+        private void ValidateRelationSecurity(RulesException errors)
         {
             if (!ArticleRepository.CheckRelationSecurity(this, false))
             {
@@ -1456,40 +1450,43 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
-        {				
-            if (item.ScheduleType == ScheduleTypeEnum.OneTimeEvent && !item.WithoutEndDate && item.StartDate >= item.EndDate)
+        private static void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
+        {
+            if ((item.ScheduleType == ScheduleTypeEnum.OneTimeEvent) && !item.WithoutEndDate && (item.StartDate >= item.EndDate))
+            {
                 errors.ErrorFor(n => n.Schedule.EndDate, ArticleStrings.StartEndDates);
+            }
+
             // Recurring Mode
             if (item.ScheduleType == ScheduleTypeEnum.Recurring)
             {
                 // Дата окончания повторений должна быть больше Даты начала повторений
                 if (!item.Recurring.RepetitionNoEnd &&
-                    item.Recurring.RepetitionEndDate.Date < item.Recurring.RepetitionStartDate.Date)
+                    (item.Recurring.RepetitionEndDate.Date < item.Recurring.RepetitionStartDate.Date))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.RepetitionStartDate, ArticleStrings.RepetitionStartDateError);
                 }
 
-                if (item.Recurring.ScheduleRecurringValue < ScheduleValidationConstants.ScheduleRecurringMinValue ||
-                    item.Recurring.ScheduleRecurringValue > ScheduleValidationConstants.ScheduleRecurringMaxValue)
+                if ((item.Recurring.ScheduleRecurringValue < ScheduleValidationConstants.ScheduleRecurringMinValue) ||
+                    (item.Recurring.ScheduleRecurringValue > ScheduleValidationConstants.ScheduleRecurringMaxValue))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.ScheduleRecurringValue, ArticleStrings.ScheduleRecurringValueError);
                 }
 
-                if (item.Recurring.DayOfMonth < ScheduleValidationConstants.DayOfMonthMinValue ||
-                    item.Recurring.DayOfMonth > ScheduleValidationConstants.DayOfMonthMaxValue)
+                if ((item.Recurring.DayOfMonth < ScheduleValidationConstants.DayOfMonthMinValue) ||
+                    (item.Recurring.DayOfMonth > ScheduleValidationConstants.DayOfMonthMaxValue))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.DayOfMonth, ArticleStrings.DayOfMonthError);
                 }
 
-                if (item.Recurring.ShowLimitationType == ShowLimitationType.EndTime &&
-                    item.Recurring.ShowEndTime < item.Recurring.ShowStartTime)
+                if ((item.Recurring.ShowLimitationType == ShowLimitationType.EndTime) &&
+                    (item.Recurring.ShowEndTime < item.Recurring.ShowStartTime))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.ShowStartTime, ArticleStrings.ShowStartTimeError);
                 }
 
-                if (item.Recurring.DurationValue < ScheduleValidationConstants.DurationMinValue ||
-                    item.Recurring.DurationValue > ScheduleValidationConstants.DurationMaxValue)
+                if ((item.Recurring.DurationValue < ScheduleValidationConstants.DurationMinValue) ||
+                    (item.Recurring.DurationValue > ScheduleValidationConstants.DurationMaxValue))
                 {
                     errors.ErrorFor(n => n.Schedule.Recurring.DurationValue, ArticleStrings.DurationValueError);
                 }
@@ -1520,22 +1517,22 @@ namespace Quantumart.QP8.BLL
 
                 foreach (var item in FieldValues)
                 {
-                    if (item.Field.UseVersionControl && (item.Field.Type.Name == FieldTypeName.Image || item.Field.Type.Name == FieldTypeName.File))
+                    if (item.Field.UseVersionControl && ((item.Field.Type.Name == FieldTypeName.Image) || (item.Field.Type.Name == FieldTypeName.File)))
                     {
-                        
+
                         if (mode == CopyFilesMode.ToBackupFolder)
                         {
                             // не режем откуда, режем куда
                             var source = Path.Combine(item.Field.PathInfo.Path, item.Value);
                             var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value));
-                            copyFile(source, destination);							
+                            copyFile(source, destination);
                         }
                         else if (mode == CopyFilesMode.ToVersionFolder)
                         {
-                            // режем откуда, режем куда							
+                            // режем откуда, режем куда
                             var source = Path.Combine(currentVersionPath, Path.GetFileName(item.Value) ?? "");
                             var destination = Path.Combine(versionPath, Path.GetFileName(item.Value) ?? "");
-                            copyFile(source, destination);							
+                            copyFile(source, destination);
                         }
                         else if (mode == CopyFilesMode.FromVersionFolder)
                         {
@@ -1543,7 +1540,7 @@ namespace Quantumart.QP8.BLL
                             var source = Path.Combine(versionPath, Path.GetFileName(item.Value) ?? "");
                             var destination = Path.Combine(currentVersionPath, Path.GetFileName(item.Value) ?? "");
                             copyFile(source, destination);
-                            // режем откуда, не режем куда							
+                            // режем откуда, не режем куда
                             destination = Path.Combine(item.Field.PathInfo.Path, item.Value);
                             copyFile(source, destination);
                         }
@@ -1586,10 +1583,8 @@ namespace Quantumart.QP8.BLL
         private static void RemoveAggregates(Article currentArticle, Article previousArticle)
         {
             var comparer = new LambdaEqualityComparer<Article>((x, y) => x.Id == y.Id, x => x.Id);
-            // Какие агрегированные статьи удалить
-            IEnumerable<Article> deletingAggregated = previousArticle.AggregatedArticles.Except(currentArticle.AggregatedArticles, comparer).ToArray();
-
-            ArticleRepository.MultipleDelete(deletingAggregated.Select(a => a.Id));
+            var deletingAggregated = previousArticle.AggregatedArticles.Except(currentArticle.AggregatedArticles, comparer).Select(a => a.Id).ToList();
+            ArticleRepository.MultipleDelete(deletingAggregated);
         }
 
         private void RemoveVariations()
@@ -1612,7 +1607,7 @@ namespace Quantumart.QP8.BLL
 
             foreach (var article in VariationArticles.Concat(Enumerable.Repeat(this, 1)))
             {
-                yield return new ArticleVariationListItem()
+                yield return new ArticleVariationListItem
                 {
                     Context = string.Join(",", article.FieldValues
                         .Where(n => fieldIds.Contains(n.Field.Id) && !string.IsNullOrEmpty(n.Value))
@@ -1634,7 +1629,7 @@ namespace Quantumart.QP8.BLL
         {
             var arr = VariationContextFieldValues
                 .Where(n => n.Field.RelateToContentId.HasValue)
-                .Select(n => new {n.Field.Id, ContentId = n.Field.RelateToContentId.Value })
+                .Select(n => new { n.Field.Id, ContentId = n.Field.RelateToContentId.Value })
                 .ToArray();
 
             foreach (var item in arr)
@@ -1652,8 +1647,7 @@ namespace Quantumart.QP8.BLL
         }
 
         #endregion
-
-        #endregion     
+        #endregion
     }
 
     #region enums

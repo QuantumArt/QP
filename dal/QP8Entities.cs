@@ -1,26 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Data.Objects;
-using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
 using System.Data.Metadata.Edm;
 using System.Linq;
-using System.Xml;
 using System.Xml.Linq;
-using System.ComponentModel;
-using System.Xml.Serialization;
-using System.Runtime.Serialization;
 using System.Reflection;
-using System.Resources;
-using System.IO;
 using System.Runtime.Caching;
 using Microsoft.Data.Extensions;
-using Quantumart.QP8;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Utils.Sorting;
 
@@ -70,7 +60,7 @@ namespace Quantumart.QP8.DAL
 		/// </summary>
 		public XDocument ConceptualModel
 		{
-			get 
+			get
 			{
 				if (_conceptualModel == null)
 				{
@@ -177,7 +167,7 @@ namespace Quantumart.QP8.DAL
 				LastModifiedBy = r.Field<decimal>("LAST_MODIFIED_BY"),
 				HasChildren = r.Field<bool>("HAS_CHILDREN")
 			}
-		);        
+		);
 
 		/// <summary>
 		/// Преобразует параметры сортировки концептуальной модели
@@ -365,7 +355,7 @@ namespace Quantumart.QP8.DAL
         {
             UserDAL user = null;
 
-            object[] parameters = 
+            object[] parameters =
 			{
                 new SqlParameter() { ParameterName = "login", DbType = DbType.String, Size = 255, Value = login },
                 new SqlParameter() { ParameterName = "password", DbType = DbType.String, Size = 20, Value = password ?? String.Empty },
@@ -402,9 +392,9 @@ namespace Quantumart.QP8.DAL
 			List<SiteFolderDAL> articleList = new List<SiteFolderDAL>();
 			totalRecords = -1;
 
-			object[] parameters = 
+			object[] parameters =
 			{
-				new SqlParameter() { ParameterName = "user_id", DbType = DbType.Decimal, Value = userId }, 
+				new SqlParameter() { ParameterName = "user_id", DbType = DbType.Decimal, Value = userId },
 				new SqlParameter() { ParameterName = "parent_entity_id", DbType = DbType.Decimal, Value = siteId },
 				new SqlParameter() { ParameterName = "is_site", DbType = DbType.Boolean, Value = true },
 				new SqlParameter() { ParameterName = "parent_folder_id", DbType = DbType.Decimal, IsNullable = true, Value = folderId },
@@ -462,9 +452,9 @@ namespace Quantumart.QP8.DAL
 			List<ContentFolderDAL> articleList = new List<ContentFolderDAL>();
 			totalRecords = -1;
 
-			object[] parameters = 
+			object[] parameters =
 			{
-				new SqlParameter() { ParameterName = "user_id", DbType = DbType.Decimal, Value = userId }, 
+				new SqlParameter() { ParameterName = "user_id", DbType = DbType.Decimal, Value = userId },
 				new SqlParameter() { ParameterName = "parent_entity_id", DbType = DbType.Decimal, Value = contentId },
 				new SqlParameter() { ParameterName = "is_site", DbType = DbType.Boolean, Value = false },
 				new SqlParameter() { ParameterName = "parent_folder_id", DbType = DbType.Decimal, IsNullable = true, Value = folderId },
@@ -518,7 +508,7 @@ namespace Quantumart.QP8.DAL
 		{
 			string entityName = String.Empty;
 
-			object[] parameters = 
+			object[] parameters =
 			{
 				new SqlParameter() { ParameterName = "entity_type_code", DbType = DbType.String, Size = 50, Value = entityTypeCode },
 				new SqlParameter() { ParameterName = "entity_id", DbType = DbType.Int32, Value = entityId },
@@ -541,7 +531,7 @@ namespace Quantumart.QP8.DAL
 		}
 
 		/// <summary>
-		/// Проверяет существование сущности 
+		/// Проверяет существование сущности
 		/// </summary>
 		/// <param name="entityTypeCode">код типа сущности</param>
 		/// <param name="entityId">идентификатор сущности</param>
@@ -550,7 +540,7 @@ namespace Quantumart.QP8.DAL
 		{
 			bool result = false;
 
-			object[] parameters = 
+			object[] parameters =
 			{
 				new SqlParameter() { ParameterName = "entity_type_code", DbType = DbType.String, Size = 50, Value = entityTypeCode },
 				new SqlParameter() { ParameterName = "entity_id", DbType = DbType.Int32, Value = entityId }
@@ -576,7 +566,7 @@ namespace Quantumart.QP8.DAL
 	    /// <param name="lastModifiedBy"></param>
 	    public void SetContentItemVisible(int contentItemId, bool isVisible, int lastModifiedBy = 1)
 		{
-			object[] parameters = 
+			object[] parameters =
 			{
                 new SqlParameter() { ParameterName = "id", DbType = DbType.Decimal, Value = contentItemId },
 				new SqlParameter() { ParameterName = "is_visible", DbType = DbType.Decimal, Value = isVisible ? 1 : 0 },
@@ -585,7 +575,7 @@ namespace Quantumart.QP8.DAL
 
 			using (DbCommand dbCommand = this.CreateStoreCommand("UPDATE content_item with(rowlock) SET visible = @is_visible, modified = getdate(), last_modified_by = @last_modified_by WHERE content_item_id = @id", CommandType.Text, parameters))
 			{
-				dbCommand.ExecuteNonQuery();	
+				dbCommand.ExecuteNonQuery();
 			}
 		}
 
@@ -596,7 +586,7 @@ namespace Quantumart.QP8.DAL
 	    /// <param name="lastModifiedBy"></param>
 	    public void MergeArticle(int contentItemId, int lastModifiedBy = 1)
 		{
-			object[] parameters = 
+			object[] parameters =
 			{
                 new SqlParameter() { ParameterName = "item_id", DbType = DbType.Decimal, Value = contentItemId },
                 new SqlParameter() { ParameterName = "last_modified_by", DbType = DbType.Decimal, Value = lastModifiedBy },
@@ -609,7 +599,7 @@ namespace Quantumart.QP8.DAL
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="siteId"></param>
 		/// <param name="searchString"></param>
@@ -620,7 +610,7 @@ namespace Quantumart.QP8.DAL
 		public DataTable SearchInArticles(int siteId, int userId, string searchString, int? articleId, string sortExpression, int startRow, int pageSize, out int totalRecords)
 		{
 			totalRecords = -1;
-			object[] parameters = 
+			object[] parameters =
 			{
                 new SqlParameter() { ParameterName = "p_site_id", DbType = DbType.Int32, Value = siteId},
 				new SqlParameter() { ParameterName = "p_user_id", DbType = DbType.Int32, Value = userId},
@@ -648,16 +638,16 @@ namespace Quantumart.QP8.DAL
 		/// <returns></returns>
 		public IEnumerable<string> GetWordForms(string searchString)
 		{
-			object[] parameters = 
+			object[] parameters =
 			{
-                new SqlParameter() { ParameterName = "searchString", DbType = DbType.String, Value = Cleaner.ToSafeSqlString(searchString)},				
+                new SqlParameter() { ParameterName = "searchString", DbType = DbType.String, Value = Cleaner.ToSafeSqlString(searchString)},
             };
 
 			DataTable dt = new DataTable();
 
 			using (DbCommand dbCommand = this.CreateStoreCommand("usp_fts_parser", CommandType.StoredProcedure, parameters))
-			{				
-				new SqlDataAdapter((SqlCommand)dbCommand).Fill(dt);				
+			{
+				new SqlDataAdapter((SqlCommand)dbCommand).Fill(dt);
 			}
 
 			return dt.AsEnumerable().Select(r => r.Field<string>("display_term")).ToArray();
@@ -705,6 +695,6 @@ namespace Quantumart.QP8.DAL
 				}
 			}
 			return result;
-		}		
+		}
 	}
 }

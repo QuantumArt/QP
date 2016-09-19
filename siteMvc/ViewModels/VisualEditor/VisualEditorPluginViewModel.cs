@@ -1,11 +1,11 @@
-﻿using Quantumart.QP8.BLL.Services.VisualEditor;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Quantumart.QP8.BLL.Services.VisualEditor;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 {

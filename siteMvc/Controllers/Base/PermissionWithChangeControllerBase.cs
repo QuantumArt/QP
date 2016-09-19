@@ -1,59 +1,55 @@
 ﻿using System.Web.Mvc;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
-using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.BLL.Services.ActionPermissions;
+using Quantumart.QP8.BLL.Services.EntityPermissions;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 
 namespace Quantumart.QP8.WebMvc.Controllers.Base
 {
-	public abstract class PermissionWithChangeControllerBase : PermissionControllerBase
-	{
-		protected readonly IActionPermissionChangeService changeService;
-		
-		public PermissionWithChangeControllerBase(IPermissionService service, IActionPermissionChangeService changeService) : base(service) 
-		{
-			this.changeService = changeService;
-		}
+    public abstract class PermissionWithChangeControllerBase : PermissionControllerBase
+    {
+        protected readonly IActionPermissionChangeService ChangeService;
 
-		#region Change				
-		public virtual ActionResult Change(string tabId, int parentId, int? userId, int? groupId, bool? isPostBack)
-		{
-			EntityPermission permission = changeService.ReadOrDefault(parentId, userId, groupId);
-			PermissionViewModel model = PermissionViewModel.Create(permission, tabId, parentId, service, changeService.ViewModelSettings, isPostBack);
-			return this.JsonHtml("ActionPermissionChange", model);
-		}
+        protected PermissionWithChangeControllerBase(IPermissionService service, IActionPermissionChangeService changeService) : base(service)
+        {
+            ChangeService = changeService;
+        }
 
-		
-		public virtual ActionResult Change(string tabId, int parentId, int? userId, int? groupId, FormCollection collection)
-		{
-			EntityPermission permission = changeService.ReadOrDefaultForChange(parentId, userId, groupId);
-			PermissionViewModel model = PermissionViewModel.Create(permission, tabId, parentId, service, changeService.ViewModelSettings);
-			TryUpdateModel(model);
-			model.Validate(ModelState);
-			if (ModelState.IsValid)
-			{
-				model.Data = changeService.Change(model.Data);
-				return Redirect("Change", new
-				{
-					tabId = tabId,
-					parentId = parentId,
-					userId = model.Data.UserId,
-					groupId = model.Data.GroupId,
-					isPostBack = true,
-					successfulActionCode = Constants.ActionCode.ChangeEntityTypePermission
-				});
-			}
-			else
-			{
-				model.IsPostBack = true;
-				return JsonHtml("ActionPermissionChange", model);
-			}
-		}
+        public virtual ActionResult Change(string tabId, int parentId, int? userId, int? groupId, bool? isPostBack)
+        {
+            var permission = ChangeService.ReadOrDefault(parentId, userId, groupId);
+            var model = PermissionViewModel.Create(permission, tabId, parentId, Service, ChangeService.ViewModelSettings, isPostBack);
+            return JsonHtml("ActionPermissionChange", model);
+        }
 
-		public virtual ActionResult RemoveForNode(int parentId, int? userId, int? groupId)
-		{
-			return JsonMessageResult(changeService.Remove(parentId, userId, groupId));
-		}
-		#endregion
-	}
+        public virtual ActionResult Change(string tabId, int parentId, int? userId, int? groupId, FormCollection collection)
+        {
+            var permission = ChangeService.ReadOrDefaultForChange(parentId, userId, groupId);
+            var model = PermissionViewModel.Create(permission, tabId, parentId, Service, ChangeService.ViewModelSettings);
+
+            TryUpdateModel(model);
+            model.Validate(ModelState);
+            if (ModelState.IsValid)
+            {
+                model.Data = ChangeService.Change(model.Data);
+                return Redirect("Change", new
+                {
+                    tabId,
+                    parentId,
+                    userId = model.Data.UserId,
+                    groupId = model.Data.GroupId,
+                    isPostBack = true,
+                    successfulActionCode = ActionCode.ChangeEntityTypePermission
+                });
+            }
+
+            model.IsPostBack = true;
+            return JsonHtml("ActionPermissionChange", model);
+        }
+
+        public virtual ActionResult RemoveForNode(int parentId, int? userId, int? groupId)
+        {
+            return JsonMessageResult(ChangeService.Remove(parentId, userId, groupId));
+        }
+    }
 }

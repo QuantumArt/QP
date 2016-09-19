@@ -12,6 +12,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
     public class ImportSettings : IMultistepActionParams
     {
         private int SiteId { get; }
+
         private int ContentId { get; }
 
         public ImportSettings(int siteId, int contentId)
@@ -24,6 +25,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         }
 
         public Guid Id { get; private set; }
+
         public string UploadFilePath => GetUploadFilePath();
 
         public string TempFileUploadPath
@@ -35,6 +37,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 return $"{QPConfiguration.TempDirectory}\\{fileInfo.Name}";
             }
         }
+
         public string TempFileForRelFields
         {
             get
@@ -48,49 +51,48 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         {
             get
             {
-                var fields = FieldRepository.GetFullList(ContentId);
-                return fields.Any(a => a.ExactType == FieldExactTypes.O2MRelation || a.ExactType == FieldExactTypes.M2MRelation);
+                return FieldRepository.GetFullList(ContentId).Any(a => a.ExactType == FieldExactTypes.O2MRelation || a.ExactType == FieldExactTypes.M2MRelation);
             }
         }
 
-        #region Properties
-
         public int ImportAction { get; set; }
+
         public string FileName { get; set; }
+
         public char Delimiter { get; set; }
+
         public bool NoHeaders { get; set; }
+
         public string Culture { get; set; }
+
         public string Encoding { get; set; }
+
         public string LineSeparator { get; set; }
+
         public bool UpdateAndInsert { get; set; }
+
         public Field UniqueContentField { get; set; }
 
         public string UniqueFieldToUpdate { get; set; } = string.Empty;
 
         public Dictionary<int, string> UniqueAggregatedFieldsToUpdate { get; set; }
-        public List<KeyValuePair<string, Field>> FieldsList { get; set; }
+
+		public List<KeyValuePair<string, Field>> FieldsList { get; set; }
 
         public List<int> UpdatedArticleIds { get; set; }
+
         public List<int> InsertedArticleIds { get; set; }
-        #endregion
 
         private string GetUploadFilePath()
         {
             var currentSite = SiteRepository.GetById(SiteId);
 
             if (!Directory.Exists(currentSite.UploadDir))
+            {
                 throw new DirectoryNotFoundException();
+            }
 
-            string result = $"{currentSite.UploadDir}\\contents\\{ContentId}\\{FileName}";
-            return HttpUtility.UrlDecode(result);
+            return HttpUtility.UrlDecode($"{currentSite.UploadDir}\\contents\\{ContentId}\\{FileName}");
         }
-    }
-    public enum ImportActions
-    {
-        InsertAll = 0,
-        InsertNew = 1,
-        InsertAndUpdate = 2,
-        Update = 3,
-        UpdateIfChanged = 4
     }
 }

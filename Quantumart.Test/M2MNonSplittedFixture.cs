@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Helpers.API;
+using System.Collections.Generic;
+using Moq;
+using NUnit.Framework;
+using Quantumart.QP8.BLL.Factories.Logging;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.Info;
 using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
-using NUnit.Framework;
 
 namespace Quantumart.Test
 {
@@ -12,7 +14,9 @@ namespace Quantumart.Test
     public class M2MNonSplittedFixture
     {
         public static int NoneId { get; private set; }
+
         public static int PublishedId { get; private set; }
+
         public static DBConnector Cnn { get; private set; }
 
         public static int ContentId { get; private set; }
@@ -23,15 +27,21 @@ namespace Quantumart.Test
 
         public static int[] CategoryIds { get; private set; }
 
+        public static bool EFLinksExists { get; private set; }
+
         [OneTimeSetUp]
         public static void Init()
         {
-            QPContext.UseConnectionString = true;
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new ReplayService(Global.ConnectionString, 1, true);
-            service.ReplayXml(Global.GetXml(@"xmls\m2m_nonsplitted.xml"));
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
+            service.Process(Global.GetXml(@"xmls\m2m_nonsplitted.xml"));
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             ContentId = Global.GetContentId(Cnn, "Test M2M");
+            EFLinksExists = Global.EFLinksExists(Cnn, ContentId);
             DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
             CategoryIds = Global.GetIds(Cnn, DictionaryContentId);
@@ -39,13 +49,12 @@ namespace Quantumart.Test
             PublishedId = Cnn.GetStatusTypeId(Global.SiteId, "Published");
         }
 
-
- [Test]
+        [Test]
         public void MassUpdate_NoSplitAndMerge_ForSynWorkflow()
         {
             var values = new List<Dictionary<string, string>>();
-            var ints1 = new[] {CategoryIds[1], CategoryIds[3], CategoryIds[5]};
-            var ints2 = new[] {CategoryIds[2], CategoryIds[3], CategoryIds[4]};
+            var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
+            var ints2 = new[] { CategoryIds[2], CategoryIds[3], CategoryIds[4] };
 
             var article1 = new Dictionary<string, string>
             {
@@ -74,7 +83,17 @@ namespace Quantumart.Test
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
 
-            var titles = new[] {"xnewtest", "xnewtest"};
+            if (EFLinksExists)
+            {
+                var intsEFSaved1 = Global.GetEFLinks(Cnn, ids1, ContentId);
+                var intsEFSaved2 = Global.GetEFLinks(Cnn, ids2, ContentId);
+
+                Assert.That(ints1, Is.EqualTo(intsEFSaved1), "First article EF M2M saved");
+                Assert.That(ints2, Is.EqualTo(intsEFSaved2), "Second article EF M2M saved");
+
+            }
+
+            var titles = new[] { "xnewtest", "xnewtest" };
             var intsNew1 = new[] { CategoryIds[0], CategoryIds[2], CategoryIds[3] };
             var intsNew2 = new[] { CategoryIds[3], CategoryIds[5] };
             article1["Categories"] = string.Join(",", intsNew1);
@@ -95,6 +114,19 @@ namespace Quantumart.Test
             Assert.That(intsNew2, Is.EqualTo(intsUpdated2), "Second article M2M (main) saved");
             Assert.That(intsUpdatedAsync1, Is.Empty, "No first async M2M ");
             Assert.That(intsUpdatedAsync2, Is.Empty, "No second async M2M ");
+
+            if (EFLinksExists)
+            {
+                var intsEFUpdated2 = Global.GetEFLinks(Cnn, ids2, ContentId);
+                var intsEFUpdated1 = Global.GetEFLinks(Cnn, ids1, ContentId);
+                var intsEFUpdatedAsync1 = Global.GetEFLinks(Cnn, ids1, ContentId, true);
+                var intsEFUpdatedAsync2 = Global.GetEFLinks(Cnn, ids2, ContentId, true);
+
+                Assert.That(intsNew1, Is.EqualTo(intsEFUpdated1), "First article EF M2M (main) saved");
+                Assert.That(intsNew2, Is.EqualTo(intsEFUpdated2), "Second article EF M2M (main) saved");
+                Assert.That(intsEFUpdatedAsync1, Is.Empty, "No first async EF M2M ");
+                Assert.That(intsEFUpdatedAsync2, Is.Empty, "No second async EF M2M ");
+            }
 
             var values2 = new List<Dictionary<string, string>>();
             var article3 = new Dictionary<string, string>
@@ -117,6 +149,14 @@ namespace Quantumart.Test
 
             Assert.That(intsPublished1, Is.EqualTo(intsUpdated1), "First article same");
             Assert.That(intsPublished2, Is.EqualTo(intsUpdated2), "Second article same");
+
+            if (EFLinksExists)
+            {
+                var intsEFPublished1 = Global.GetEFLinks(Cnn, ids1, ContentId);
+                var intsEFPublished2 = Global.GetEFLinks(Cnn, ids2, ContentId);
+                Assert.That(intsEFPublished1, Is.EqualTo(intsUpdated1), "First EF article same");
+                Assert.That(intsEFPublished2, Is.EqualTo(intsUpdated2), "Second EF article same");
+            }
         }
 
         [Test]
@@ -143,7 +183,7 @@ namespace Quantumart.Test
             };
             values.Add(article2);
 
-            var ids = new[] {int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id])};
+            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change");
@@ -153,14 +193,12 @@ namespace Quantumart.Test
             Assert.That(versions, Is.Empty, "Versions created");
         }
 
- 
         [OneTimeTearDown]
         public static void TearDown()
         {
             var srv = new ContentService(Global.ConnectionString, 1);
             srv.Delete(ContentId);
             srv.Delete(DictionaryContentId);
-            QPContext.UseConnectionString = false;
         }
     }
 }

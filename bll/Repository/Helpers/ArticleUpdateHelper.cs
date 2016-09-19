@@ -409,6 +409,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             {
                 Common.ExecuteSql(QPConnectionScope.Current.DbConnection, SqlString, Parameters, ItemParamName, out id);
             }
+
             Article = ArticleRepository.GetById(id);
             return Article;
         }

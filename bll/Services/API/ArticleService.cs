@@ -1,19 +1,19 @@
-﻿using Quantumart.QP8.BLL.Repository;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
     public class ArticleService : ServiceBase
     {
-        public ArticleService(string connectionString, int userId) : base(connectionString, userId)
-        { }
+        public ArticleService(string connectionString, int userId)
+            : base(connectionString, userId) { }
 
         public ArticleService(int userId) : base(userId)
         {
@@ -57,10 +57,8 @@ namespace Quantumart.QP8.BLL.Services.API
                 {
                     return ArticleRepository.GetVirtualById(id, contentId);
                 }
-                else
-                {
-                    return Read(id, forceLoadFieldValues);
-                }
+
+                return Read(id, forceLoadFieldValues);
             }
         }
 
@@ -72,10 +70,8 @@ namespace Quantumart.QP8.BLL.Services.API
                 {
                     return ArticleRepository.GetList(contentId);
                 }
-                else
-                {
-                    return ArticleRepository.GetList(ids, true);
-                }
+
+                return ArticleRepository.GetList(ids, true);
             }
         }
 
@@ -130,7 +126,7 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                var result = BLL.Services.ArticleService.Copy(article.Id, true, false);
+                var result = Services.ArticleService.Copy(article.Id, true, false);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -141,7 +137,7 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                Article result = article.Persist(disableNotifications);
+                var result = article.Persist(disableNotifications);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -151,17 +147,14 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                MessageResult result = null;
                 QPContext.CurrentUserId = TestedUserId;
-                Article articleToRemove = ArticleRepository.GetById(articleId);
+                var articleToRemove = ArticleRepository.GetById(articleId);
                 if (articleToRemove == null)
                 {
                     throw new ApplicationException(string.Format(ArticleStrings.ArticleNotFound, articleId));
                 }
-                else
-                {
-                    result = Services.ArticleService.Remove(articleToRemove.ContentId, articleId, false, true, false);
-                }
+
+                var result = Services.ArticleService.Remove(articleToRemove.ContentId, articleId, false, true, false);
 
                 QPContext.CurrentUserId = 0;
                 return result;
@@ -173,7 +166,7 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                MessageResult result = BLL.Services.ArticleService.Remove(contentId, articleIds, false, true, false);
+                var result = Services.ArticleService.Remove(contentId, articleIds, false, true, false);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -194,15 +187,9 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                MessageResult result;
-                if (flag)
-                {
-                    result = Services.ArticleService.MoveToArchive(contentId, articleIds, true, false);
-                }
-                else
-                {
-                    result = Services.ArticleService.RestoreFromArchive(contentId, articleIds, true, false);
-                }
+                var result = flag
+                    ? Services.ArticleService.MoveToArchive(contentId, articleIds, true, false)
+                    : Services.ArticleService.RestoreFromArchive(contentId, articleIds, true, false);
 
                 QPContext.CurrentUserId = 0;
                 return result;
@@ -224,7 +211,7 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                MessageResult result = BLL.Services.ArticleService.Publish(contentId, articleIds, true, false);
+                var result = Services.ArticleService.Publish(contentId, articleIds, true, false);
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -268,22 +255,6 @@ namespace Quantumart.QP8.BLL.Services.API
         }
 
         #region BatchUpdate
-        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles)
-        {
-            return BatchUpdate(articles, true);
-        }
-
-        private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData)
-        {
-            using (new QPConnectionScope(ConnectionString))
-            {
-                QPContext.CurrentUserId = TestedUserId;
-                var result = ArticleRepository.BatchUpdate(articles.ToArray(), formatArticleData);
-                QPContext.CurrentUserId = 0;
-                return result;
-            }
-        }
-
         public InsertData[] BatchUpdate(IEnumerable<Article> articles)
         {
             var articlesData = articles.Select(article => new ArticleData
@@ -300,11 +271,27 @@ namespace Quantumart.QP8.BLL.Services.API
 
             return BatchUpdate(articlesData, false);
         }
+
+        public InsertData[] BatchUpdate(IEnumerable<ArticleData> articles)
+        {
+            return BatchUpdate(articles, true);
+        }
+
+        private InsertData[] BatchUpdate(IEnumerable<ArticleData> articles, bool formatArticleData)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                QPContext.CurrentUserId = TestedUserId;
+                var result = ArticleRepository.BatchUpdate(articles.ToArray(), formatArticleData);
+                QPContext.CurrentUserId = 0;
+                return result;
+            }
+        }
         #endregion
 
         public IList<int> GetParentIds(int id, int fieldId)
         {
-            return GetParentIds(new int[] { id }, fieldId);
+            return GetParentIds(new[] { id }, fieldId);
         }
 
         public IList<int> GetParentIds(IList<int> ids, int fieldId)

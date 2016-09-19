@@ -16,7 +16,7 @@
   <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
   @{
-        const string jsVersion = "6.28";
+    const string jsVersion = "6.31";
     var jsVersionFileName = $"Quantumart/version.{jsVersion}.js";
   }
 
@@ -102,6 +102,10 @@
           .Add("es5-shim.js")
           .Add("jquery/jquery-1.7.1.js")
           .Add("telerik/telerik.common.js")
+          .Add("polyfills/object.assign.polyfill.js")
+          .Add("polyfills/array.includes.polyfill.js")
+          .Add("polyfills/array.find.polyfill.js")
+          .Add("polyfills/console.fns.polyfill.js")
           .Add("Quantumart/jQueryExtensions.js")
           .Add("microsoft/MicrosoftAjax.js")
           .Add("Quantumart/MicrosoftAjaxTraceExtensions.js")
