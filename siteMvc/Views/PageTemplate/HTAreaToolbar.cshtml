@@ -1,16 +1,14 @@
-﻿@model  HTAreaToolbarViewModel
+﻿@model  HtAreaToolbarViewModel
 
 @using Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 
+<div class="codeMirrorToolbar">
 
- 
- <div class="codeMirrorToolbar">
-       
-        <ul class="linkButtons group" style="display: block;">
-
-        @if (Model.PresentationOrCodeBehind == true) {
+    <ul class="linkButtons group" style="display: block;">
+        @if (Model.PresentationOrCodeBehind == true)
+        {
             <li>
                 <span class="linkButton actionLink libraryButton">
                     <a href="javascript:void(0);">
@@ -23,7 +21,8 @@
             </li>
         }
 
-        @if (Model.FormatId != null && Model.FormatId != 0) {
+        @if (Model.FormatId != null && Model.FormatId != 0)
+        {
             <li>
                 <span class="linkButton actionLink restoreButton">
                     <a href="javascript:void(0);">
@@ -36,7 +35,7 @@
             </li>
         }
 
-        @if ( Model.TemplateId != null && Model.TemplateId != 0 && Model.FormatId != 0)
+        @if (Model.TemplateId != null && Model.TemplateId != 0 && Model.FormatId != 0)
         {
             <li>
                 <span class="linkButton actionLink insertButton">
@@ -49,5 +48,5 @@
                 </span>
             </li>
         }
-        </ul>
- </div>
+    </ul>
+</div>

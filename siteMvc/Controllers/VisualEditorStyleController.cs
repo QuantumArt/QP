@@ -1,10 +1,11 @@
-﻿using Quantumart.QP8.BLL.Services;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
-using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -18,7 +19,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _visualEditorService = visualEditorService;
         }
 
-        #region	list actions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VisualEditorStyles)]
@@ -39,7 +39,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = _visualEditorService.GetVisualEditorStyles(command.GetListCommand(), parentId);
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
-        #endregion
 
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -56,7 +55,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateVisualEditorStyle)]
         [BackendActionContext(ActionCode.UpdateVisualEditorStyle)]
         [BackendActionLog]
@@ -78,7 +77,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveVisualEditorStyle)]
         [BackendActionContext(ActionCode.RemoveVisualEditorStyle)]
         [BackendActionLog]
@@ -101,7 +100,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionContext(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionLog]

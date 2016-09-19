@@ -239,6 +239,7 @@
     <Compile Include="Controllers\ExportSelectedArticlesController.cs" />
     <Compile Include="Controllers\FormatController.cs" />
     <Compile Include="Controllers\ImportArticlesController.cs" />
+    <Compile Include="Controllers\MultistepActionInvoker.cs" />
     <Compile Include="Controllers\MultistepController.cs" />
     <Compile Include="Controllers\ObjectController.cs" />
     <Compile Include="Controllers\PageController.cs" />
@@ -280,6 +281,8 @@
     <Compile Include="Extensions\ActionFilters\BackendActionContextAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\BackendActionLogAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\ConnectionScopeAttribute.cs" />
+    <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
+    <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
     <Compile Include="Extensions\ActionFilters\DisableBrowserCache.cs" />
     <Compile Include="Extensions\ActionFilters\EntityAuthorizeAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\ExceptionResultAttribute.cs" />
@@ -287,7 +290,7 @@
     <Compile Include="Extensions\ActionFilters\RecordAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\RequestHeaderAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\ResponseHeaderAttribute.cs" />
-    <Compile Include="Extensions\ActionResults\IframeJsonResult.cs" />
+    <Compile Include="Extensions\ActionResults\FileUploadJsonResult.cs" />
     <Compile Include="Extensions\ActionResults\JsonpResult.cs" />
     <Compile Include="Extensions\ActionResults\JsonNetResult.cs" />
     <Compile Include="Extensions\ActionResults\JsonCamelCaseResult.cs" />
@@ -354,8 +357,8 @@
     <Compile Include="Extensions\ModelBinders\ObjectViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\PageTemplateViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\PermissionViewModelBinder.cs" />
-    <Compile Include="Extensions\ModelBinders\QPCheckedItemListModelBinder.cs" />
-    <Compile Include="Extensions\ModelBinders\QPCheckedItemModelBinder.cs" />
+    <Compile Include="Extensions\ModelBinders\QpCheckedItemListModelBinder.cs" />
+    <Compile Include="Extensions\ModelBinders\QpCheckedItemModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\QpModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\RecurringScheduleModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\SiteModelBinder.cs" />
@@ -959,6 +962,7 @@
     <Content Include="Scripts\SilverlightUpload.min.js" />
     <Content Include="Scripts\underscore.min.js" />
     <Content Include="Scripts\_references.min.js" />
+    <Content Include="Settings.StyleCop" />
     <None Include="_package.json" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Content\QpCodemirror.css" />
@@ -1046,11 +1050,15 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\ActionPermissions\ActionPermissionsTreeViewModel.cs" />
+    <Compile Include="ViewModels\ArticleVersion\ArticleVersionViewType.cs" />
+    <Compile Include="ViewModels\ArticleVersion\ClientEntity.cs" />
     <Compile Include="ViewModels\Article\ArticleStatusHistoryListViewModel.cs" />
     <Compile Include="ViewModels\Article\ContextBlockViewModel.cs" />
+    <Compile Include="ViewModels\Article\RelationListResult.cs" />
     <Compile Include="ViewModels\Audit\ActionLogAreaViewModel.cs" />
     <Compile Include="ViewModels\Audit\ButtonTraceAreaViewModel.cs" />
     <Compile Include="ViewModels\Audit\FailedSessionsAreaViewModel.cs" />
+    <Compile Include="ViewModels\Audit\FilteredColumnsEnum.cs" />
     <Compile Include="ViewModels\Audit\SucessfullSessionsAreaViewModel.cs" />
     <Compile Include="ViewModels\Audit\RemovedEntitiesAreaViewModel.cs" />
     <Compile Include="ViewModels\Article\ArticleListViewModel.cs" />
@@ -1072,13 +1080,13 @@
     <Compile Include="ViewModels\CustomAction\CustomActionListViewModel.cs" />
     <Compile Include="ViewModels\CustomAction\CustomActionViewModel.cs" />
     <Compile Include="ViewModels\CustomAction\ExecuteCustomActionViewModel.cs" />
+    <Compile Include="ViewModels\CustomAction\SelectionMode.cs" />
     <Compile Include="ViewModels\DbViewModel.cs" />
     <Compile Include="ViewModels\DirectLink\DirectLinkOptions.cs" />
     <Compile Include="ViewModels\EntityPermissions\ChildEntityPermissionListViewModel.cs" />
     <Compile Include="ViewModels\EntityPermissions\ChildEntityPermissionViewModel.cs" />
     <Compile Include="ViewModels\EntityPermissions\PermissionViewModel.cs" />
     <Compile Include="ViewModels\EntityPermissions\PermissionListViewModel.cs" />
-    <Compile Include="ViewModels\Field\EntityDataListEventArgs.cs" />
     <Compile Include="ViewModels\Field\FieldContentViewModel.cs" />
     <Compile Include="ViewModels\Field\FieldSelectableListViewModel.cs" />
     <Compile Include="ViewModels\HomePage\AboutViewModel.cs" />
@@ -1090,10 +1098,12 @@
     <Compile Include="ViewModels\JSendResponse.cs" />
     <Compile Include="ViewModels\Library\ContentFolderViewModel.cs" />
     <Compile Include="ViewModels\Library\FolderViewModel.cs" />
+    <Compile Include="ViewModels\Library\LibraryMode.cs" />
     <Compile Include="ViewModels\Library\SiteFolderViewModel.cs" />
     <Compile Include="ViewModels\MultistepSettings\CreateLikeSiteModel.cs" />
     <Compile Include="ViewModels\MultistepSettings\ExportImportModel.cs" />
     <Compile Include="ViewModels\MultistepSettings\ExportViewModel.cs" />
+    <Compile Include="ViewModels\MultistepSettings\ExstendedListItem.cs" />
     <Compile Include="ViewModels\Notification\NotificationListViewModel.cs" />
     <Compile Include="ViewModels\Notification\NotificationTemplateFormatViewModel.cs" />
     <Compile Include="ViewModels\Notification\NotificationViewModel.cs" />
@@ -1156,7 +1166,6 @@
     <Compile Include="ViewModels\VisualEditor\VisualEditorStyleViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowContentViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowListViewModel.cs" />
-    <Compile Include="ViewModels\Workflow\WorkflowSourceListViewModel.cs" />
     <Compile Include="ViewModels\Workflow\WorkflowViewModel.cs" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepBaseSettings.js" />
     <Content Include="Scripts\Quantumart\MultistepAction\Settings\BackendMultistepCopySiteSettings.js" />
@@ -1908,7 +1917,6 @@
   <ItemGroup>
     <Folder Include="Content\imgareaselectcss\" />
     <Folder Include="Content\Temp\" />
-    <Folder Include="ViewModels\Common\" />
     <Folder Include="Views\ContentFolder\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
   </ItemGroup>

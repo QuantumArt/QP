@@ -1,15 +1,15 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL
@@ -772,7 +772,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Генерирует XAML словарь по умолчанию
         /// </summary>
-        /// <returns></returns>
         private string GenerateDefaultXamlDictionary()
         {
             var container = new DynamicResourceDictionaryContainer();

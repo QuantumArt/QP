@@ -7,9 +7,6 @@ using Quantumart.QP8.Security;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
-    /// <summary>
-    /// Фильтр для авторизации по коду действия
-    /// </summary>
     public class EntityAuthorizeAttribute : FilterAttribute, IAuthorizationFilter
     {
         private readonly string _actionTypeCode;

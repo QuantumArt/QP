@@ -160,18 +160,21 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string GetCode(XElement action)
         {
+            // ReSharper disable once PossibleNullReferenceException
             return action.Attribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute).Value;
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string[] GetIds(XElement action)
         {
+            // ReSharper disable once PossibleNullReferenceException
             return action.Attribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute).Value.Split(",".ToCharArray());
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static int GetParentId(XElement action)
         {
+            // ReSharper disable once PossibleNullReferenceException
             return int.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionParentIdAttribute).Value);
         }
 
@@ -277,6 +280,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         {
             return root.Elements().Aggregate(new NameValueCollection(), (seed, curr) =>
             {
+                // ReSharper disable once PossibleNullReferenceException
                 seed.Add(curr.Attribute(XmlDbUpdateXDocumentConstants.FieldNameAttribute).Value, curr.Value);
                 return seed;
             });
@@ -291,7 +295,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
             catch
             {
-                //TODO: DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! And remove unusing references then.
+                // TODO: DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! And remove unusing references then.
                 return Convert.ToDateTime(action.Attribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute).Value, CultureInfo.InvariantCulture);
             }
         }

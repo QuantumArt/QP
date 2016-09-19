@@ -1,70 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.Utils;
+﻿using System.Dynamic;
 using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Utils;
+using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 {
-	public class IndexViewModel
-	{
-		private DirectLinkOptions directLinkOptions;
-		private Db data;
-		private string dbHash;
-		private string title = "QP8 Backend";
+    public class IndexViewModel
+    {
+        private readonly DirectLinkOptions _directLinkOptions;
+        private const string BackendTitle = "QP8 Backend";
 
-		public IndexViewModel(DirectLinkOptions directLinkOptions, Db data, string dbHash)
-		{
-			this.directLinkOptions = directLinkOptions;
-			this.data = data;
-			this.dbHash = dbHash;
-		}
+        public IndexViewModel(DirectLinkOptions directLinkOptions, Db data, string dbHash)
+        {
+            _directLinkOptions = directLinkOptions;
+            Data = data;
+            DbHash = dbHash;
+        }
 
-		public Db Data
-		{
-			get { return data; }
-		}
+        public Db Data { get; }
 
-		public string DbHash
-		{
-			get { return dbHash; }
-		}
+        public string DbHash { get; }
 
-		public string Title
-		{
-			get 
-			{
-				string configTitle = QPConfiguration.ApplicationTitle
-					.Replace("{release}", Default.ReleaseNumber);
+        public string Title
+        {
+            get
+            {
+                var configTitle = QPConfiguration.ApplicationTitle.Replace("{release}", Default.ReleaseNumber);
+                var instanceName = QPConfiguration.WebConfigSection.InstanceName;
+                if (!string.IsNullOrEmpty(configTitle) && !string.IsNullOrEmpty(instanceName))
+                {
+                    return instanceName + " " + configTitle;
+                }
 
-				string instanceName = QPConfiguration.WebConfigSection.InstanceName;
-				if (!String.IsNullOrEmpty(configTitle) && !String.IsNullOrEmpty(instanceName))
-				{
-					return instanceName + " " + configTitle;
-				}
+                return !string.IsNullOrEmpty(configTitle) ? configTitle : BackendTitle;
+            }
+        }
 
-				return !String.IsNullOrEmpty(configTitle) ? configTitle : title; 
-			}
-		}
+        public MvcHtmlString BackendComponentOptions
+        {
+            get
+            {
+                dynamic result = new ExpandoObject();
+                result.currentCustomerCode = QPContext.CurrentCustomerCode;
+                result.currentUserId = QPContext.CurrentUserId;
+                result.autoLoadHome = Data.AutoOpenHome;
+                if (_directLinkOptions != null && _directLinkOptions.IsDefined())
+                {
+                    result.directLinkOptions = _directLinkOptions;
+                }
 
-		public MvcHtmlString BackendComponentOptions
-		{ 
-			get 
-			{
-				dynamic result = new ExpandoObject();
-				result.currentCustomerCode = QPContext.CurrentCustomerCode;
-				result.currentUserId = QPContext.CurrentUserId;
-				result.autoLoadHome = data.AutoOpenHome;
-				if(directLinkOptions != null && directLinkOptions.IsDefined())
-					result.directLinkOptions = directLinkOptions;
-				return MvcHtmlString.Create(((ExpandoObject)result).ToJson());
-			} 
-		}
-	}
+                return MvcHtmlString.Create(((ExpandoObject)result).ToJson());
+            }
+        }
+    }
 }

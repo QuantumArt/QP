@@ -3,9 +3,6 @@ using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
-    /// <summary>
-    /// Добавляет X-Requested-With="XMLHttpRequest" в заголовок запроса
-    /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class ResponseHeaderAttribute : ActionFilterAttribute
     {

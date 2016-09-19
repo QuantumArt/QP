@@ -1,9 +1,11 @@
-﻿using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.Controllers.Base;
+using System.Diagnostics.CodeAnalysis;
+using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Telerik.Web.Mvc;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Controllers.Base;
+using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -12,10 +14,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ContentPermissionController(IPermissionService service, IChildEntityPermissionService childContentService)
             : base(service, childContentService)
         {
-
         }
 
-        #region Content Permissions
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentPermissions)]
@@ -45,7 +45,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewContentPermission)]
         [BackendActionContext(ActionCode.AddNewContentPermission)]
         [BackendActionLog]
@@ -66,11 +66,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateContentPermission)]
         [BackendActionContext(ActionCode.UpdateContentPermission)]
         [BackendActionLog]
-        [Record(ActionCode.ContentPermissionProperties)]
+        [Record]
         public override ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             return base.Properties(tabId, parentId, id, collection);
@@ -78,11 +78,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveContentPermission)]
         [BackendActionContext(ActionCode.MultipleRemoveContentPermission)]
         [BackendActionLog]
         [Record]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleRemove(int parentId, int[] IDs)
         {
             return base.MultipleRemove(parentId, IDs);
@@ -90,7 +91,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveContentPermission)]
         [BackendActionContext(ActionCode.RemoveContentPermission)]
         [BackendActionLog]
@@ -99,11 +100,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             return base.Remove(parentId, id);
         }
-        #endregion
 
-        #region Child Content Permissions
-
-        #region list
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChildContentPermissions)]
@@ -121,14 +118,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             return base._ChildIndex(tabId, parentId, userId, groupId, command);
         }
-        #endregion
 
-        #region Changes
-        #region MultipleChange
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.MultipleChangeChildContentPermissions)]
         [BackendActionContext(ActionCode.MultipleChangeChildContentPermissions)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleChangeAsChild(string tabId, int parentId, int[] IDs, int? userId, int? groupId)
         {
             return base.MultipleChangeAsChild(tabId, parentId, IDs, userId, groupId);
@@ -136,7 +131,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleChangeChildContentPermissions)]
         [BackendActionContext(ActionCode.MultipleChangeChildContentPermissions)]
         [BackendActionLog]
@@ -145,9 +140,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             return base.SaveMultipleChangeAsChild(tabId, parentId, collection);
         }
-        #endregion
 
-        #region AllChange
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeAllChildContentPermissions)]
@@ -159,7 +152,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.ChangeAllChildContentPermissions)]
         [BackendActionContext(ActionCode.ChangeAllChildContentPermissions)]
         [BackendActionLog]
@@ -168,9 +161,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             return base.AllChangeAsChild(tabId, parentId, collection);
         }
-        #endregion
 
-        #region Change
         [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ChangeChildContentPermission)]
@@ -182,7 +173,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.ChangeChildContentPermission)]
         [BackendActionContext(ActionCode.ChangeChildContentPermission)]
         [BackendActionLog]
@@ -191,17 +182,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             return base.ChangeAsChild(tabId, parentId, collection);
         }
-        #endregion
-        #endregion
 
-        #region Remove
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveChildContentPermissions)]
         [BackendActionContext(ActionCode.MultipleRemoveChildContentPermissions)]
         [BackendActionLog]
         [Record]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleRemoveAsChild(int parentId, int[] IDs, int? userId, int? groupId)
         {
             return base.MultipleRemoveAsChild(parentId, IDs, userId, groupId);
@@ -209,7 +198,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveAllChildContentPermissions)]
         [BackendActionContext(ActionCode.RemoveAllChildContentPermissions)]
         [BackendActionLog]
@@ -221,7 +210,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope()]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveChildContentPermission)]
         [BackendActionContext(ActionCode.RemoveChildContentPermission)]
         [BackendActionLog]
@@ -230,16 +219,15 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             return base.RemoveAsChild(parentId, id, userId, groupId);
         }
-        #endregion
 
-        protected override string SaveChildPermissionAction { get { return ActionCode.SaveChildContentPermission; } }
-        protected override string MultipleChangeAction { get { return ActionCode.MultipleChangeChildContentPermissions; } }
-        protected override string AllChangeAction { get { return ActionCode.ChangeAllChildContentPermissions; } }
-        protected override string ChangeAction { get { return ActionCode.ChangeChildContentPermission; } }
+        protected override string SaveChildPermissionAction => ActionCode.SaveChildContentPermission;
 
-        #endregion
+        protected override string MultipleChangeAction => ActionCode.MultipleChangeChildContentPermissions;
 
-        protected override string ControllerName { get { return "ContentPermission"; } }
+        protected override string AllChangeAction => ActionCode.ChangeAllChildContentPermissions;
 
+        protected override string ChangeAction => ActionCode.ChangeChildContentPermission;
+
+        protected override string ControllerName => "ContentPermission";
     }
 }

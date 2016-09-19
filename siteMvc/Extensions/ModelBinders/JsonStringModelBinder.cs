@@ -13,14 +13,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
         {
             var key = bindingContext.ModelName;
             var val = bindingContext.ValueProvider.GetValue(key);
-            if (val != null && !string.IsNullOrEmpty(val.AttemptedValue))
+            if (!string.IsNullOrEmpty(val?.AttemptedValue))
             {
                 bindingContext.ModelState.SetModelValue(key, val);
 
-                string incomingString = null;
-                if (val.RawValue is string[])
+                string incomingString;
+                var value = val.RawValue as string[];
+                if (value != null)
                 {
-                    incomingString = ((string[])val.RawValue)[0];
+                    incomingString = value[0];
                 }
                 else if (val.RawValue is string)
                 {
@@ -41,10 +42,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
                     return null;
                 }
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
     }
 }

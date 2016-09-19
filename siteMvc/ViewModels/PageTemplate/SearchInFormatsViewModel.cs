@@ -1,115 +1,72 @@
-﻿using Quantumart.QP8.BLL;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
-	public sealed class SearchInFormatsViewModel : ListViewModel
-	{
-		#region creation
+    public sealed class SearchInFormatsViewModel : ListViewModel
+    {
+        private IPageTemplateService _service;
 
-		private IPageTemplateService _service;
+        public static SearchInFormatsViewModel Create(string tabId, int parentId, int siteId, IPageTemplateService service, int? templateId = null, int? pageId = null)
+        {
+            var model = Create<SearchInFormatsViewModel>(tabId, parentId);
+            model._service = service;
+            model.PageId = pageId;
+            model.TemplateId = templateId;
+            model.SiteId = siteId;
+            return model;
+        }
 
-		public static SearchInFormatsViewModel Create(string tabId, int parentId, int siteId, IPageTemplateService service, int? templateId = null, int? pageId = null)
-		{
-			SearchInFormatsViewModel model = ViewModel.Create<SearchInFormatsViewModel>(tabId, parentId);			
-			model._service = service;
-			model.PageId = pageId;
-			model.TemplateId = templateId;
-			model.SiteId = siteId;				
-			return model;
-		}
+        public override string EntityTypeCode => string.Empty;
 
-		#endregion
+        public override string ActionCode => Constants.ActionCode.SearchInCode;
 
-		public override string EntityTypeCode
-		{
-			get { return string.Empty; }
-		}
+        public string GridElementId => UniqueId("Grid");
 
-		public override string ActionCode
-		{
-			get { return Constants.ActionCode.SearchInCode; }
-		}
+        public string FilterElementId => UniqueId("Filter");
 
-		public string GridElementId
-		{
-			get
-			{
-				return UniqueId("Grid");
-			}
-		}
+        public int SiteId { get; set; }
 
-		public string FilterElementId { get { return UniqueId("Filter"); } }
+        [LocalizedDisplayName("SelectPage", NameResourceType = typeof(TemplateStrings))]
+        public int? PageId { get; set; }
 
-		public int SiteId { get; set; }
+        [LocalizedDisplayName("SelectTemplate", NameResourceType = typeof(TemplateStrings))]
+        public int? TemplateId { get; set; }
 
-		[LocalizedDisplayName("SelectPage", NameResourceType = typeof(TemplateStrings))]
-		public int? PageId { get; set; }
+        public QPSelectListItem PageListItem => PageId == null ? null : new QPSelectListItem { Value = PageId.ToString(), Text = _service.ReadPageProperties(PageId.Value).Name, Selected = true };
 
-		[LocalizedDisplayName("SelectTemplate", NameResourceType = typeof(TemplateStrings))]
-		public int? TemplateId { get; set; }
+        private List<ListItem> _templates;
 
-		public QPSelectListItem PageListItem
-		{
-			get
-			{
-				if (PageId == null)
-					return null;
-				return
-					new QPSelectListItem { Value = PageId.ToString(), Text = _service.ReadPageProperties(PageId.Value).Name, Selected = true };
-			}
-		}
+        public List<ListItem> Templates
+        {
+            get
+            {
+                if (_templates == null)
+                {
+                    _templates = _service.GetAllSiteTemplates(SiteId).Select(x => new ListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
+                    _templates.Insert(0, new ListItem { Value = null, Text = TemplateStrings.SelectTemplate, Selected = true });
+                }
 
-		private List<ListItem> _templates;
-		public List<ListItem> Templates
-		{
-			get
-			{
-				if (_templates == null)
-				{					
-					_templates = _service.GetAllSiteTemplates(SiteId).Select(x => new ListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
-					_templates.Insert(0, new ListItem { Value = null, Text = TemplateStrings.SelectTemplate, Selected = true });
-				}
-				return _templates;
-			}
-			set
-			{
-				_templates = value;
-			}
-		}
+                return _templates;
+            }
+            set
+            {
+                _templates = value;
+            }
+        }
 
-		public override string ContextMenuCode
-		{
-			get
-			{
-				return String.Empty;
-			}
-		}			
+        public override string ContextMenuCode => string.Empty;
 
-		/// <summary>
-		/// костыль для повторного использования метода select pages
-		/// </summary>
-		public int SiteAnyTemplateId
-		{
-			get
-			{
-				return _service.GetAllSiteTemplates(SiteId).First().Id;
-			}
-		}
+        /// <summary>
+        /// костыль для повторного использования метода select pages
+        /// </summary>
+        public int SiteAnyTemplateId => _service.GetAllSiteTemplates(SiteId).First().Id;
 
-		public override bool LinkOpenNewTab
-		{
-			get
-			{
-				return true;
-			}
-		}				
-	}
+        public override bool LinkOpenNewTab => true;
+    }
 }

@@ -1,27 +1,16 @@
-﻿using C = Quantumart.QP8.Constants;
-
-
-namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
+﻿namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
 {
     public class ArticleVersionListViewModel : ListViewModel
     {
-        #region creation
-
         public static ArticleVersionListViewModel Create(string tabId, int parentId)
         {
-            var model = ViewModel.Create<ArticleVersionListViewModel>(tabId, parentId);
+            var model = Create<ArticleVersionListViewModel>(tabId, parentId);
             model.ShowAddNewItemButton = !model.IsWindow;
             return model;
         }
 
-        #endregion
+        public override string EntityTypeCode => Constants.EntityTypeCode.ArticleVersion;
 
-        #region read-only members
-
-        public override string EntityTypeCode => C.EntityTypeCode.ArticleVersion;
-
-        public override string ActionCode => C.ActionCode.ArticleVersions;
-
-        #endregion
+        public override string ActionCode => Constants.ActionCode.ArticleVersions;
     }
 }

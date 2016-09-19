@@ -1,50 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
+﻿using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
-	public class UserSearchBlockViewModel
-	{
-		private readonly string hostId;
+    public class UserSearchBlockViewModel
+    {
+        private readonly string _hostId;
 
-		public UserSearchBlockViewModel(string hostId)
-		{
-			this.hostId = hostId;
-		}
+        public UserSearchBlockViewModel(string hostId)
+        {
+            _hostId = hostId;
+        }
 
-		public string LoginElementId
-		{
-			get
-			{
-				return HtmlHelperFieldExtensions.UniqueId("txtLogin", hostId);
-			}
-		}
+        public string LoginElementId => HtmlHelperFieldExtensions.UniqueId("txtLogin", _hostId);
 
-		public string EmailElementId
-		{
-			get
-			{
-				return HtmlHelperFieldExtensions.UniqueId("txtEmail", hostId);
-			}
-		}
+        public string EmailElementId => HtmlHelperFieldExtensions.UniqueId("txtEmail", _hostId);
 
-		public string FirstNameElementId
-		{
-			get
-			{
-				return HtmlHelperFieldExtensions.UniqueId("txtFirstName", hostId);
-			}
-		}
+        public string FirstNameElementId => HtmlHelperFieldExtensions.UniqueId("txtFirstName", _hostId);
 
-		public string LastNameElementId
-		{
-			get
-			{
-				return HtmlHelperFieldExtensions.UniqueId("txtLastName", hostId);
-			}
-		}
-	}
+        public string LastNameElementId => HtmlHelperFieldExtensions.UniqueId("txtLastName", _hostId);
+    }
 }

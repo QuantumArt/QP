@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
@@ -7,8 +6,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
     public class ArticleVersionViewModelBinder : QpModelBinder
     {
         protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
-        {            
-            var model = (bindingContext.Model as ArticleVersionViewModel);
+        {
+            var model = bindingContext.Model as ArticleVersionViewModel;
             if (model != null)
             {
                 var version = model.Data;
@@ -23,8 +22,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
                     ArticleViewModelBinder.UpdateFieldValues(bindingContext, aggArticle.FieldValues, true);
                 }
             }
+
             base.OnModelUpdated(controllerContext, bindingContext);
         }
     }
-
 }

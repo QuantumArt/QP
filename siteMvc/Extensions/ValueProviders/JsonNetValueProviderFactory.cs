@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,6 +6,8 @@ using System.Dynamic;
 using System.Globalization;
 using System.IO;
 using System.Web.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ValueProviders
 {
@@ -97,7 +97,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ValueProviders
 
         private static string MakePropertyKey(string prefix, string propertyName)
         {
-            return (string.IsNullOrEmpty(prefix)) ? propertyName : prefix + "." + propertyName;
+            return string.IsNullOrEmpty(prefix) ? propertyName : prefix + "." + propertyName;
         }
 
         private class EntryLimitedDictionary

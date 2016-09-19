@@ -1,88 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using B = Quantumart.QP8.BLL;
-using Quantumart.QP8.Resources;
-using C = Quantumart.QP8.Constants;
+﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
-
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
     public class SiteListViewModel : ListViewModel
     {
+        public List<SiteListItem> Data { get; set; }
 
-		public List<SiteListItem> Data { get; set; }
+        public string GettingDataActionName => IsSelect ? "_MultipleSelect" : "_Index";
 
-		public string GettingDataActionName
-		{
-			get
-			{
-				return (IsSelect) ? "_MultipleSelect" : "_Index";				
-			}
-		}
-
-		#region creation
-
-		public static SiteListViewModel Create(SiteInitListResult result, string tabId, int parentId, bool isSelect = false, int[] ids = null)
-		{
-			SiteListViewModel model = ViewModel.Create<SiteListViewModel>(tabId, parentId);
+        public static SiteListViewModel Create(SiteInitListResult result, string tabId, int parentId, bool isSelect = false, int[] ids = null)
+        {
+            var model = Create<SiteListViewModel>(tabId, parentId);
             model.IsSelect = isSelect;
             if (isSelect)
-				model.AutoGenerateLink = false;
-			model.SelectedIDs = ids;
-			model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
-			return model;
-		}
+            {
+                model.AutoGenerateLink = false;
+            }
 
-		#endregion
+            model.SelectedIDs = ids;
+            model.ShowAddNewItemButton = result.IsAddNewAccessable && !model.IsWindow;
+            return model;
+        }
 
-		#region read-only members
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return C.EntityTypeCode.Site;
-			}
-		}
+        public override string EntityTypeCode => Constants.EntityTypeCode.Site;
 
-		public override string ActionCode
-		{
-			get
-			{
-				if (IsSelect)
-					return C.ActionCode.MultipleSelectSites;
-				else
-					return C.ActionCode.Sites;
-			}
-		}
+        public override string ActionCode => IsSelect ? Constants.ActionCode.MultipleSelectSites : Constants.ActionCode.Sites;
 
-		public override string AddNewItemText
-		{
-			get
-			{
-				return SiteStrings.Link_AddNewSite;
-			}
-		}
+        public override string AddNewItemText => SiteStrings.Link_AddNewSite;
 
-		public override string AddNewItemActionCode
-		{
-			get
-			{
-				return C.ActionCode.AddNewSite;
-			}
-		}
+        public override string AddNewItemActionCode => Constants.ActionCode.AddNewSite;
 
-		public override bool IsReadOnly
-		{
-			get
-			{
-				return base.IsReadOnly || IsSelect;
-			}
-		}
-		#endregion
-
+        public override bool IsReadOnly => base.IsReadOnly || IsSelect;
     }
 }
