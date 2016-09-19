@@ -157,7 +157,6 @@
     <None Include="QPDataContextInclude\Model.ttinclude" />
     <None Include="QPDataContextInclude\MappingConfiguratorOnModelCreating.ttinclude" />
     <None Include="QPDataContextInclude\MappingConfigurator.ttinclude" />
-    <None Include="QPDataContextInclude\ReuseableTemplate1.ttinclude" />
     <None Include="QPDataContextInclude\TestClassTemplate.ttinclude" />
   </ItemGroup>
   <ItemGroup>
