@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -957,7 +957,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\globalSettings.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
-    <Content Include="Scripts\Quantumart\version.6.31.js" />
+    <Content Include="Scripts\Quantumart\version.6.32.js" />
     <Content Include="Scripts\Silverlight.min.js" />
     <Content Include="Scripts\SilverlightUpload.min.js" />
     <Content Include="Scripts\underscore.min.js" />
