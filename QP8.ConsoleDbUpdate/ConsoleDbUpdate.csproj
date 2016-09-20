@@ -275,32 +275,41 @@
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
       <Link>References\Microsoft.Web.Infrastructure.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\CsvHelper.2.16.1.0\lib\net45\CsvHelper.dll">
+      <Link>References\CsvHelper.dll</Link>
+    </EmbeddedResource>
     <Content Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\bll\BLL.csproj">
       <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
       <Name>BLL</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\constants\Constants.csproj">
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\siteMvc\WebMvc.csproj">
       <Project>{8be1bb60-1938-45e8-bafb-1d008d62059c}</Project>
       <Name>WebMvc</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CsvHelper">
       <HintPath>..\packages\CsvHelper.2.16.1.0\lib\net45\CsvHelper.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Options">
       <HintPath>..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
