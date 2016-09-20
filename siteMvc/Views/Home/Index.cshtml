@@ -14,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9"/>
     <link href="~/Content/QP8/favicon.ico" rel="shortcut icon"/>
     @{
-        const string jsVersion = "6.31";
+        const string jsVersion = "6.32";
         const string cssVersion = "6.5";
 
         var allowCombineStylesheets = !HttpContext.Current.IsDebuggingEnabled;
@@ -226,6 +226,7 @@
               .Add("~/Content/codemirror/mode/javascript/javascript.js")
               .Add("~/Content/codemirror/mode/htmlmixed/htmlmixed.js")
               .Add("~/Content/codemirror/mode/htmlembedded/htmlembedded.js")
+              .Add("~/Content/codemirror/addon/mode/multiplex.js")
               .Add(jsVersionFileName)
               .Combined(allowCombineScripts)
           )
