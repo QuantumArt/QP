@@ -9,14 +9,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 {
     internal class CsvConsoleArgsProcessor : BaseConsoleArgsProcessor
     {
-        private string _encoding = "utf-8";
+        private string _encoding = "windows-1251";
         private string _cultureInfo = "ru-RU";
 
         protected internal override OptionSet BuildOptionSet()
         {
             return new OptionSet
             {
-                { "encoding=", "csv file encoding", en => _encoding = en },
+                { "encoding=", "csv file encoding", enc => _encoding = enc },
                 { "culture=", "csv file culture info", ci => _cultureInfo = ci }
             };
         }
