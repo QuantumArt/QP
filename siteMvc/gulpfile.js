@@ -1,4 +1,9 @@
 /// <binding AfterBuild='lint, images, styles' Clean='clean' />
+
+// Install Steps:
+// 1. Install external node js and npm from official site
+// 2. Set priority for VS: https://blogs.msdn.microsoft.com/webdev/2015/03/19/customize-external-web-tools-in-visual-studio-2015/
+
 var fs = require('fs');
 var del = require('del');
 var gulp = require('gulp');
@@ -93,6 +98,7 @@ var paths = {
     'Content/codemirror/mode/javascript/javascript.js',
     'Content/codemirror/mode/htmlmixed/htmlmixed.js',
     'Content/codemirror/mode/htmlembedded/htmlembedded.js',
+    'Content/codemirror/addon/mode/multiplex.js',
 
     'Scripts/PlUpload/moxie.js',
     'Scripts/PlUpload/plupload.dev.js',

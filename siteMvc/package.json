@@ -11,7 +11,6 @@
     "url": "http://tfs:8080/tfs/QuantumartCollection/QP/_workitems"
   },
   "dependencies": {
-    "gulp-dotnet-assembly-info": "^0.1.12",
     "jquery": "^2.2.3"
   },
   "devDependencies": {
@@ -23,6 +22,7 @@
     "gulp-autoprefixer": "^3.1.0",
     "gulp-concat": "^2.6.0",
     "gulp-cssnano": "^2.1.1",
+    "gulp-dotnet-assembly-info": "^0.1.12",
     "gulp-imagemin": "^2.4.0",
     "gulp-jscs": "^3.0.2",
     "gulp-jshint": "^2.0.0",
@@ -40,7 +40,8 @@
     "jscs": "^2.11.0",
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.1.0",
-    "merge-stream": "^1.0.0"
+    "merge-stream": "^1.0.0",
+    "node-sass": "^3.10.1"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

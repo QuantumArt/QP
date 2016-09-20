@@ -1,4 +1,4 @@
-﻿var EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING = "OnDirectLinkActionExecuting";
+var EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING = "OnDirectLinkActionExecuting";
 
 //#region class DirectLinkExecutor
 Quantumart.QP8.DirectLinkExecutor = function (currentCustomerCode, directLinkOptions) {
@@ -34,12 +34,12 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 			var actionParams = jQuery.parseJSON(e.newValue);
 			this._executeAction(actionParams, true);
 		}
-		else if (e.key == this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG && $q.isInt(e.newValue)) {			
+		else if (e.key == this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG && $q.isInt(e.newValue)) {
 			// если запрос от другого сервера то пишем в ответ true, сигнализируя что есть работающий инстанс
 			if (e.newValue != this._uid) {
 				this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE, "true");
 			}
-		}		
+		}
 	},
 	_onDirectLinkOpenRequestedHandler: null,
 
@@ -50,14 +50,13 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 				actionParams.customerCode = this._currentCustomerCode;
 			if (actionParams.customerCode.toLowerCase() == this._currentCustomerCode.toLowerCase()) // customer code тот же ?
 			{
-				// сообщение о запросе на выполнение 
+				// сообщение о запросе на выполнение
 				if (!byRequest || confirm($l.BackendDirectLinkExecutor.OpenDirectLinkConfirmation)) {
 
 					var action = $a.getBackendActionByCode(actionParams.actionCode);
 					if (!action) {
-						alert($l.Common.ajaxDataReceivingErrorMessage);
-					}
-					else {
+						$q.alertError($l.Common.ajaxDataReceivingErrorMessage);
+					} else {
 						var actionTypeCode = action.ActionType.Code;
 						var params = new Quantumart.QP8.BackendActionParameters({
 							entityTypeCode: actionParams.entityTypeCode,
@@ -90,21 +89,21 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 		window.localStorage.removeItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME);
 		window.localStorage.setItem(type, message);
 		if ("onstorage" in document) {
-			window.localStorage.setItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME, type);			
+			window.localStorage.setItem(this.LOCAL_STORAGE_KEY_SENT_KEY_NAME, type);
 		}
 	},
 
 	// Открыт ли уже другой инстанс?
 	_instanceExistenceCheck: function () {
 		var dfr = new jQuery.Deferred();
-		
+
 		var instanceExists = !$q.isNullOrEmpty(window.localStorage.getItem(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG));
 		// если есть флаг, то необходимо послать запрос для проверки существования другого инстанса
-		if (instanceExists === true) {			
+		if (instanceExists === true) {
 			this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, this._uid);
 			var that = this;
 			setTimeout(function () {
-				// проверяем есть ли что либо в ответе 
+				// проверяем есть ли что либо в ответе
 				var testResponse = $q.toBoolean(window.localStorage.getItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE), false);
 				window.localStorage.removeItem(that.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE);
 				// если в ответе true значит другой инстанс существует
@@ -114,12 +113,12 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 		else {
 			dfr.resolveWith(this, [false])
 		}
-		
+
 		return dfr.promise();
 	},
 
 	_registerInstance: function(){
-		this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, "true");		
+		this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG, "true");
 	},
 
 	_unregisterInstance: function () {
@@ -141,8 +140,8 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 				}
 				else if (document.attachEvent) {
 					document.attachEvent("onstorage", this._onDirectLinkOpenRequestedHandler);
-				}				
-				
+				}
+
 				var openByDirectLink = false;
 				if (this._urlLinkParams)
 					openByDirectLink = true;
@@ -158,15 +157,14 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 				// послать запрос на выполнение действие (url) существующему инcтансу
 				if (this._urlLinkParams) {
 					// сообщение что будет выполнено в первом инстансе
-					if (confirm($l.BackendDirectLinkExecutor.WillBeRunInFirstInstanceConfirmation)) {						
+					if (confirm($l.BackendDirectLinkExecutor.WillBeRunInFirstInstanceConfirmation)) {
 						this._send(this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM, JSON.stringify(this._urlLinkParams));
 					}
 				}
-				else {					
+				else {
 					// сообщаем что инстанс уже открыт
-					alert($l.BackendDirectLinkExecutor.InstanceIsAllreadyOpen);
+					$q.alertError($l.BackendDirectLinkExecutor.InstanceIsAllreadyOpen);
 				}
-				//TODO: закрыть окно 
 			}
 		});
 	},
@@ -182,7 +180,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 			}
 			else if (document.detachEvent) {
 				document.detachEvent("onstorage", this._onDirectLinkOpenRequestedHandler);
-			}			
+			}
 		}
 	}
 };

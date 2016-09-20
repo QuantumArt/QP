@@ -147,7 +147,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
       itemValue = $item.attr("code");
     }
     else {
-      alert("Ошибка!");
+      $q.alertError("Ошибка!");
       return;
     }
 
@@ -165,7 +165,6 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     }
 
     $item = null;
-
     return itemText;
   },
 
@@ -184,14 +183,12 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   markBreadCrumbsAsBusy: function () {
     var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
     $breadCrumbsItemList.addClass(this.ITEM_BUSY_CLASS_NAME);
-
     $breadCrumbsItemList = null;
   },
 
   unmarkBreadCrumbsAsBusy: function () {
     var $breadCrumbsItemList = jQuery(this._breadCrumbsItemListElement);
     $breadCrumbsItemList.removeClass(this.ITEM_BUSY_CLASS_NAME);
-
     $breadCrumbsItemList = null;
   },
 
@@ -334,9 +331,8 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     if (!$q.isNullOrWhiteSpace(actionCode)) {
       var action = $a.getBackendActionByCode(actionCode);
       if (action == null) {
-        alert($l.Common.ajaxDataReceivingErrorMessage);
-      }
-      else {
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
+      } else {
         var host = this._documentHost;
         if (host) {
           var params = new Quantumart.QP8.BackendActionParameters({
