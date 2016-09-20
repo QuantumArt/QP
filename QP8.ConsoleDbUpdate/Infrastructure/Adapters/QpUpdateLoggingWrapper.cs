@@ -15,7 +15,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         public QpUpdateLoggingWrapper(ConsoleLogLevel consoleLogLevel = ConsoleLogLevel.Fatal)
         {
             LogProvider.LogFactory = new NLogFactory();
-            _logger = LogProvider.GetLogger("QP8Update");
+            _logger = LogProvider.GetLogger();
             _consoleLogLevel = consoleLogLevel;
         }
 

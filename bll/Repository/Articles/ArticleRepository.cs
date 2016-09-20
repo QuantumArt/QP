@@ -76,7 +76,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             ftsOptions = GetFtsSearchParameter(ftsParser, searchQueryParams, ArticleFullTextSearchSettings.SearchResultLimit);
             var availableForList = QPContext.IsAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
-            if (!availableForList || (ftsOptions.HasError.HasValue && ftsOptions.HasError.Value))
+            if (!availableForList || ftsOptions.HasError.HasValue && ftsOptions.HasError.Value)
             {
                 filter = SqlFilterComposer.Compose(filter, "1 = 0");
             }
@@ -985,12 +985,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private static string GetSqlExpression(FieldValue item)
         {
-            if (string.IsNullOrEmpty(item.Value))
-            {
-                return $"([{item.Field.Name}] IS NULL)";
-            }
-
-            return $"([{item.Field.Name}] = {item.Field.ParamName})";
+            return string.IsNullOrEmpty(item.Value) ? $"([{item.Field.Name}] IS NULL)" : $"([{item.Field.Name}] = {item.Field.ParamName})";
         }
 
         /// <summary>

@@ -3053,7 +3053,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="splitted">Initial value of the Splitted property.</param>
         /// <param name="permanentLock">Initial value of the PermanentLock property.</param>
         /// <param name="cancelSplit">Initial value of the CancelSplit property.</param>
-        public static ArticleDAL CreateArticleDAL(global::System.Decimal id, global::System.Decimal visible, global::System.Decimal statusTypeId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal contentId, global::System.Decimal lastModifiedBy, global::System.Decimal archived, global::System.Boolean notForReplication, global::System.Boolean delayed, global::System.Boolean splitted, global::System.Boolean permanentLock, global::System.Boolean cancelSplit)
+        /// <param name="uNIQUE_ID">Initial value of the UNIQUE_ID property.</param>
+        public static ArticleDAL CreateArticleDAL(global::System.Decimal id, global::System.Decimal visible, global::System.Decimal statusTypeId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal contentId, global::System.Decimal lastModifiedBy, global::System.Decimal archived, global::System.Boolean notForReplication, global::System.Boolean delayed, global::System.Boolean splitted, global::System.Boolean permanentLock, global::System.Boolean cancelSplit, global::System.Guid uNIQUE_ID)
         {
             ArticleDAL articleDAL = new ArticleDAL();
             articleDAL.Id = id;
@@ -3069,6 +3070,7 @@ namespace Quantumart.QP8.DAL
             articleDAL.Splitted = splitted;
             articleDAL.PermanentLock = permanentLock;
             articleDAL.CancelSplit = cancelSplit;
+            articleDAL.UNIQUE_ID = uNIQUE_ID;
             return articleDAL;
         }
 
@@ -3438,6 +3440,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _CancelSplit;
         partial void OnCancelSplitChanging(global::System.Boolean value);
         partial void OnCancelSplitChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid UNIQUE_ID
+        {
+            get
+            {
+                return _UNIQUE_ID;
+            }
+            set
+            {
+                OnUNIQUE_IDChanging(value);
+                ReportPropertyChanging("UNIQUE_ID");
+                _UNIQUE_ID = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UNIQUE_ID");
+                OnUNIQUE_IDChanged();
+            }
+        }
+        private global::System.Guid _UNIQUE_ID;
+        partial void OnUNIQUE_IDChanging(global::System.Guid value);
+        partial void OnUNIQUE_IDChanged();
 
         #endregion
 

@@ -94,7 +94,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 XmlDbUpdateRecordedAction action;
                 var xmlActionString = xmlAction.ToString(SaveOptions.DisableFormatting);
-                BLL.Services.Logger.Log.Debug($"Begin processing action: {xmlActionString}");
 
                 try
                 {
@@ -124,9 +123,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     continue;
                 }
 
-                BLL.Services.Logger.Log.Debug("Start replaying action.");
+                var xmlActionStringLog = xmlAction.RemoveDescendants().ToString(SaveOptions.DisableFormatting);
+                BLL.Services.Logger.Log.Debug($"-> Begin replaying action: -> {xmlActionStringLog}");
                 var replayedAction = ReplayAction(action, backendUrl);
-                BLL.Services.Logger.Log.Debug("Finish replaying action.");
+                BLL.Services.Logger.Log.Debug($"End replaying action: {xmlActionStringLog}");
 
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToString();
                 _dbLogService.InsertActionLogEntry(logEntry);

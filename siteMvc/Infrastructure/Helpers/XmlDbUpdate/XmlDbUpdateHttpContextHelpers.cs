@@ -57,7 +57,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         internal static HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId)
         {
             Ensure.NotNull(QPConnectionScope.Current.DbConnection, "QPConnection scope should be initialized to use fake mvc context");
-            var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && (n != "~")).ToArray();
+            var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && n != "~").ToArray();
             var controllerName = urlParts[0];
             var controllerAction = urlParts[1];
             var requestContext = new RequestContext(
@@ -111,7 +111,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 httpRequest.Form.Add("IDs", string.Join(",", action.Ids));
             }
 
-            if ((actionTypeCode == ActionTypeCode.AddNew) && options.Contains(entityTypeCode))
+            if (actionTypeCode == ActionTypeCode.AddNew && options.Contains(entityTypeCode))
             {
                 httpRequest.Form.Add("Data.ForceId", action.Ids[0]);
             }
@@ -270,7 +270,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             data.Values["action"] = controllerAction;
             data.Values["tabId"] = "tab_virtual";
             data.Values["parentId"] = action.ParentId;
-            if ((action.Ids.Length > 0) && !string.IsNullOrEmpty(action.Ids[0]))
+            if (action.Ids.Length > 0 && !string.IsNullOrEmpty(action.Ids[0]))
             {
                 if (action.Ids.Length == 1)
                 {

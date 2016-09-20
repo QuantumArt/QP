@@ -38,12 +38,22 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
         internal static void MakeSureUserWantToContinue()
         {
             Console.Write("Continue processing (y/n): ");
-            if (Console.ReadKey().Key != ConsoleKey.Y)
-            {
-                ExitProgram(ExitCode.Success);
-            }
+            var enteredKey = Console.ReadKey().Key;
+            Console.WriteLine();
 
-            Console.WriteLine(Environment.NewLine);
+            switch (enteredKey)
+            {
+                case ConsoleKey.Y:
+                    Console.WriteLine();
+                    break;
+                case ConsoleKey.Escape:
+                case ConsoleKey.N:
+                    ExitProgram(ExitCode.Success);
+                    break;
+                default:
+                    MakeSureUserWantToContinue();
+                    break;
+            }
         }
 
         internal static ConsoleKey AskUserToSelectUtilityMode()

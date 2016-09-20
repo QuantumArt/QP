@@ -345,6 +345,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     {
                         var values = form.GetValues(key);
                         form.Remove(key);
+
                         if (values != null)
                         {
                             foreach (var value in values)

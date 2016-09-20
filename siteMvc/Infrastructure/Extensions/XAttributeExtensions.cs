@@ -6,9 +6,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
 {
     public static class XAttributeExtensions
     {
-        public static string GetValueOrDefault(this XAttribute attribute, string defaultValue = null)
+        public static string GetValueOrDefault(this XAttribute attr, string defaultValue = null)
         {
-            return attribute?.Value ?? defaultValue;
+            return attr?.Value ?? defaultValue;
         }
 
         public static T GetValueOrDefault<T>(this XAttribute attr)

@@ -1,4 +1,6 @@
-﻿namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
+﻿using System.Xml.Linq;
+
+namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
 {
     internal class XmlDbUpdateXDocumentConstants
     {
@@ -15,6 +17,8 @@
         internal const string ActionIdsAttribute = "ids";
 
         internal const string ActionParentIdAttribute = "parentId";
+
+        internal const string ActionUniqueIdAttribute = "uniqueId";
 
         internal const string ActionLcidAttribute = "lcid";
 

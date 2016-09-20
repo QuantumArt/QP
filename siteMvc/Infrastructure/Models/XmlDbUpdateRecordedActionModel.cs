@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Models
 {
-    public class XmlDbUpdateRecordedAction : IXmlSerializable
+    public class XmlDbUpdateRecordedAction
     {
         private readonly InitPropertyValue<BackendAction> _backendAction;
 
@@ -21,6 +18,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Models
         public string[] Ids { get; set; }
 
         public int ParentId { get; set; }
+
+        public Guid UniqueId { get; set; }
 
         public int ResultId { get; set; }
 
@@ -69,20 +68,5 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Models
         public int NotificationFormatId { get; set; }
 
         public int DefaultFormatId { get; set; }
-
-        public XmlSchema GetSchema()
-        {
-            return null;
-        }
-
-        public void ReadXml(XmlReader reader)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void WriteXml(XmlWriter writer)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
