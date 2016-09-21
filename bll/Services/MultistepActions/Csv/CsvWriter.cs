@@ -109,9 +109,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private void WriteFieldNames()
         {
             //Add parameter to file, so Excel can understand field delimiter
-            sb.AppendFormat("sep={0}", setts.Delimiter);
-
-            sb.Append(setts.LineSeparator);
+            if (setts.Delimiter != '\t')
+            {
+                sb.AppendFormat("sep={0}", setts.Delimiter);
+                sb.Append(setts.LineSeparator);
+            }
 
             //Write field content_item_id
             sb.Append(ArticleStrings.CONTENT_ITEM_ID);
