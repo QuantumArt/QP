@@ -21,15 +21,9 @@ namespace QP8.FunctionalTests.PageObjects.Elements
         /// Выполняется путём получения значения атрибута 'href' с помощью метода<br/>
         /// 'IWebElement.GetAttribute(string attribute)'
         /// </remarks>
-        public string Href
-        {
-            get
-            {
-                return ProxyWebElement.GetAttribute("href");
-            }
-        }
+        public string Href => ProxyWebElement.GetAttribute("href");
 
-        public Link(IWebElement webElement, IWebDriver webDriver) 
+        public Link(IWebElement webElement, IWebDriver webDriver)
             : base(webElement, webDriver)
         {
         }

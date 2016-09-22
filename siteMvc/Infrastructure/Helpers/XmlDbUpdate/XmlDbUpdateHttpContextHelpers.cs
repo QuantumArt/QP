@@ -56,8 +56,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         internal static HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId)
         {
-            Ensure.NotNull(QPConnectionScope.Current, "QPConnection scope should be initialized to use fake mvc context");
-
+            Ensure.NotNull(QPConnectionScope.Current.DbConnection, "QPConnection scope should be initialized to use fake mvc context");
             var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && (n != "~")).ToArray();
             var controllerName = urlParts[0];
             var controllerAction = urlParts[1];

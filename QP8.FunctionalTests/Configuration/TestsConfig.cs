@@ -24,15 +24,15 @@ namespace QP8.FunctionalTests.Configuration
                 }
             }
 
-            public static string BackendUrl { get { return StringValue("BackendUrl", "http://mscdev02:90/Backend/"); } }
-            public static string BackendLogin { get { return StringValue("BackendLogin", "AutotestQuantumart"); } }
-            public static string BackendPassword { get { return StringValue("BackendPassword", "1q2w-p=[Password"); } }
-            public static string BackendCustomerCode { get { return StringValue("BackendCustomerCode", "qp_beeline_main"); } }
+            public static string BackendUrl => StringValue("BackendUrl", "http://mscdev02:90/Backend/");
 
-            public static bool BackendCustomerCodeFieldIsDropdown
-            {
-                get { return BoolValue("BackendCustomerCodeFieldIsDropdown"); }
-            }
+            public static string BackendLogin => StringValue("BackendLogin", "AutotestQuantumart");
+
+            public static string BackendPassword => StringValue("BackendPassword", "1q2w-p=[Password");
+
+            public static string BackendCustomerCode => StringValue("BackendCustomerCode", "qp_beeline_main");
+
+            public static bool BackendCustomerCodeFieldIsDropdown => BoolValue("BackendCustomerCodeFieldIsDropdown");
 
             private static string AvoidSpecialCharacters(string inputString)
             {
