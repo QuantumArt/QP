@@ -8,7 +8,7 @@ using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Factories
 {
-    internal class JsonCamelCaseResultFabric
+    internal class JsonCamelCaseResultErrorHandlerFabric
     {
         internal static JsonCamelCaseResult<JSendResponse> Create(Exception ex)
         {

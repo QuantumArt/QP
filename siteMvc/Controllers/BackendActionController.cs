@@ -61,10 +61,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult GetStatusesList(string actionCode, string entityId, int parentEntityId, bool? boundToExternal)
         {
             int idResult;
-            var result = int.TryParse(entityId, out idResult)
-                ? BackendActionService.GetStatusesList(actionCode, idResult, parentEntityId)
-                : null;
-
+            var result = int.TryParse(entityId, out idResult) ? BackendActionService.GetStatusesList(actionCode, idResult, parentEntityId) : null;
             return new JsonResult
             {
                 Data = new

@@ -320,10 +320,11 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
                     false,
                     false,
                     function(data) {
-                      if (data.success)
-                          filterStates = data.filterStates;
-                      else
-                          alert(data.message);
+                      if (data.success) {
+                        filterStates = data.filterStates;
+                      } else {
+                        $q.alertFail(data.message);
+                      }
                     },
                     function(jqXHR) {
                       filterStates = null;
@@ -392,7 +393,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     var action = $a.getBackendActionByCode(actionCode);
 
     if (action == null) {
-      alert($l.Common.ajaxDataReceivingErrorMessage);
+      $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
     } else {
       var entityId = this._entityId;
       var entityName = this._entityName;
@@ -414,7 +415,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
         filteredEntities = null;
 
         if (entities.length == 0) {
-          alert($l.DocumentHost.noEntitiesToExecuteActionErrorMessage);
+          $q.alertError($l.DocumentHost.noEntitiesToExecuteActionErrorMessage);
           this.refresh();
           return;
         }
@@ -1189,21 +1190,19 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   selectAllEntities: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.selectAllRows();
     } else {
-      alert($l.Toolbar.selectAllIsNotAllowed);
+      window.alert($l.Toolbar.selectAllIsNotAllowed);
     }
   },
 
   deselectAllEntities: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.deselectAllRows();
     } else {
-      alert($l.Toolbar.selectAllIsNotAllowed);
+      window.alert($l.Toolbar.selectAllIsNotAllowed);
     }
   },
 

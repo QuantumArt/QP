@@ -22,9 +22,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 // Если IP-адрес пользователя входит в диапазон IP-адресов
                 // внутренней сети, то перенаправляем его на страницу Windows-аутентификации
-                return Redirect(directLinkOptions != null
-                    ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl)
-                    : AuthenticationHelper.WindowsAuthenticationUrl);
+                return Redirect(directLinkOptions != null ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl) : AuthenticationHelper.WindowsAuthenticationUrl);
             }
 
             InitViewBag();
@@ -90,9 +88,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private ActionResult LogOnView()
         {
-            return Request.IsAjaxRequest()
-                ? JsonHtml("Popup", null)
-                : View();
+            return Request.IsAjaxRequest() ? JsonHtml("Popup", null) : View();
         }
     }
 }

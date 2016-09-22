@@ -3,21 +3,21 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.Utils;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 {
     public class IndexViewModel
     {
-        private readonly DirectLinkOptions _directLinkOptions;
         private const string BackendTitle = "QP8 Backend";
+        private readonly DirectLinkOptions _directLinkOptions;
 
         public IndexViewModel(DirectLinkOptions directLinkOptions, Db data, string dbHash)
         {
-            _directLinkOptions = directLinkOptions;
             Data = data;
             DbHash = dbHash;
+            _directLinkOptions = directLinkOptions;
         }
 
         public Db Data { get; }
@@ -44,15 +44,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
             get
             {
                 dynamic result = new ExpandoObject();
-                result.currentCustomerCode = QPContext.CurrentCustomerCode;
-                result.currentUserId = QPContext.CurrentUserId;
-                result.autoLoadHome = Data.AutoOpenHome;
+                result.CurrentCustomerCode = QPContext.CurrentCustomerCode;
+                result.CurrentUserId = QPContext.CurrentUserId;
+                result.AutoLoadHome = Data.AutoOpenHome;
+
                 if (_directLinkOptions != null && _directLinkOptions.IsDefined())
                 {
-                    result.directLinkOptions = _directLinkOptions;
+                    result.DirectLinkOptions = _directLinkOptions;
                 }
 
-                return MvcHtmlString.Create(((ExpandoObject)result).ToJson());
+                return MvcHtmlString.Create(((object)result).ToJsonLog());
             }
         }
     }

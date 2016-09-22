@@ -141,31 +141,28 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 
   getItemValue: function (itemElem) {
     var $item = this.getItem(itemElem);
-    var itemValue = "";
+    var itemValue = '';
 
     if (!$q.isNullOrEmpty($item)) {
-      itemValue = $item.attr("code");
-    }
-    else {
-      alert("Ошибка!");
+      itemValue = $item.attr('code');
+    } else {
+      window.alert('Ошибка!');
       return;
     }
 
     $item = null;
-
     return itemValue;
   },
 
   getItemText: function (item) {
     var $item = this.getItem(item);
-    var itemText = "";
+    var itemText = '';
 
     if (!$q.isNullOrEmpty($item)) {
-      itemText = jQuery("SPAN.text", $item).text();
+      itemText = jQuery('SPAN.text', $item).text();
     }
 
     $item = null;
-
     return itemText;
   },
 
@@ -334,9 +331,8 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     if (!$q.isNullOrWhiteSpace(actionCode)) {
       var action = $a.getBackendActionByCode(actionCode);
       if (action == null) {
-        alert($l.Common.ajaxDataReceivingErrorMessage);
-      }
-      else {
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
+      } else {
         var host = this._documentHost;
         if (host) {
           var params = new Quantumart.QP8.BackendActionParameters({
