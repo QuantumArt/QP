@@ -1,4 +1,4 @@
-﻿//#region event types of Action Permission tree
+//#region event types of Action Permission tree
 var EVENT_TYPE_ACTION_PERMISSIONS_TREE_EXECUTING = "OnActionPermissionsTreeExecuting";
 //#endregion
 
@@ -71,7 +71,7 @@ Quantumart.QP8.BackendActionPermissionTree.prototype = {
 		if (!$q.isNullOrEmpty($node)) {
 			var action = $a.getBackendActionByCode(actionCode);
 			if (!action) {
-				alert($l.Common.ajaxDataReceivingErrorMessage);
+				$q.alertError($l.Common.ajaxDataReceivingErrorMessage);
 				return;
 			}
 			if (action.ActionType.Code == ACTION_TYPE_CODE_REFRESH) {

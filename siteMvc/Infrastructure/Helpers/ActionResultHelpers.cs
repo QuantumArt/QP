@@ -21,7 +21,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
                 case ExceptionResultMode.OperationAction:
                     return new JsonResult { Data = MessageResult.Error(ex.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
                 case ExceptionResultMode.JSendResponse:
-                    return JsonCamelCaseResultFabric.Create(ex);
+                    return JsonCamelCaseResultErrorHandlerFabric.Create(ex);
 
                 default:
                     throw new NotImplementedException();
