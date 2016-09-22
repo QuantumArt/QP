@@ -19,15 +19,9 @@ namespace QP8.FunctionalTests.PageObjects.Elements
         /// <remarks>
         /// Выполняется путём поиска дочернего элемента 'input' и получения его текста
         /// </remarks>
-        public new string Text
-        {
-            get
-            {
-                return ProxyWebElement.FindElement(By.CssSelector("input")).GetAttribute("value");
-            }
-        }
+        public new string Text => ProxyWebElement.FindElement(By.CssSelector("input")).GetAttribute("value");
 
-        public InputBasedElement(IWebElement webElement, IWebDriver webDriver) 
+        public InputBasedElement(IWebElement webElement, IWebDriver webDriver)
             : base(webElement, webDriver)
         {
         }

@@ -18,8 +18,6 @@ namespace QP8.FunctionalTests.Tests.Authentication
     {
         private const string Title = "Authentication form tests";
 
-        #region common steps
-
         protected void AuthenticationSteps(AuthenticationPage page, string login, string password, string customerCode)
         {
             Step($"Opening {Config.Tests.BackendUrl}", () =>
@@ -29,9 +27,7 @@ namespace QP8.FunctionalTests.Tests.Authentication
 
             Step("Authentication", () =>
             {
-                MakeAttachment(string.Format("Login: {1}{0}Password: {2}{0}CustomerCodeInput: {3}{0}",
-                                             Environment.NewLine, login, password, customerCode),
-                               "Authentication data", TextType.textPlain);
+                MakeAttachment(string.Format("Login: {1}{0}Password: {2}{0}CustomerCodeInput: {3}{0}", Environment.NewLine, login, password, customerCode), "Authentication data", TextType.textPlain);
 
                 page.Login.SendKeys(login);
                 page.Password.SendKeys(password);
@@ -49,25 +45,15 @@ namespace QP8.FunctionalTests.Tests.Authentication
             });
         }
 
-        protected void CheckValidationSteps(AuthenticationPage page, Input fieldToCheck,
-                                            string fieldToCheckName, string validationErrorText)
+        protected void CheckValidationSteps(AuthenticationPage page, Input fieldToCheck, string fieldToCheckName, string validationErrorText)
         {
             Step("Check validation", () =>
             {
-                Assert.That(fieldToCheck.Valid, Is.False,
-                    $"{fieldToCheckName} input field is not highlighted with red");
-
-                Assert.That(fieldToCheck.ValidationText, Is.EqualTo(validationErrorText),
-                    $"{fieldToCheckName} input field validation text is incorrect");
-
-                Assert.That(page.Password.Text, Is.Empty,
-                    "Password input field is not empty");
-
-                Assert.That(page.ValidationErrors.Count(), Is.EqualTo(1),
-                    "Validation errors miscount");
-
-                Assert.That(page.ValidationErrors[0].Text, Is.EqualTo(validationErrorText),
-                    "Incorrect validation error text");
+                Assert.That(fieldToCheck.Valid, Is.False, $"{fieldToCheckName} input field is not highlighted with red");
+                Assert.That(fieldToCheck.ValidationText, Is.EqualTo(validationErrorText), $"{fieldToCheckName} input field validation text is incorrect");
+                Assert.That(page.Password.Text, Is.Empty, "Password input field is not empty");
+                Assert.That(page.ValidationErrors.Count(), Is.EqualTo(1), "Validation errors miscount");
+                Assert.That(page.ValidationErrors[0].Text, Is.EqualTo(validationErrorText), "Incorrect validation error text");
             });
         }
 
@@ -98,7 +84,5 @@ namespace QP8.FunctionalTests.Tests.Authentication
 
             Assert.That(jsErrors, Is.Empty, "Found JavaScript errors");
         }
-
-        #endregion
     }
 }

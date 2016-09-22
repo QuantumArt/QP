@@ -48,10 +48,16 @@ namespace Quantumart.QP8.Configuration
         {
             if (!string.IsNullOrWhiteSpace(customerCode))
             {
-                var xElement = XmlConfig.Descendants("customer").Single(n => n.Attribute("customer_name").Value == customerCode).Element("db");
-                if (xElement != null)
+                var customerElement = XmlConfig.Descendants("customer").SingleOrDefault(n => n.Attribute("customer_name").Value == customerCode);
+                if (customerElement == null)
                 {
-                    return TuneConnectionString(xElement.Value, appName);
+                    throw new Exception($"Данный customer code: {customerCode}, - отсутствует в конфиге");
+                }
+
+                var dbConnectionString = customerElement.Element("db");
+                if (dbConnectionString != null)
+                {
+                    return TuneConnectionString(dbConnectionString.Value, appName);
                 }
             }
 
@@ -72,7 +78,6 @@ namespace Quantumart.QP8.Configuration
 
             return result.ToArray();
         }
-
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static string[] CustomerCodes
@@ -166,7 +171,6 @@ namespace Quantumart.QP8.Configuration
         /// <summary>
         /// Возвращает кастомную конфигурационную секцию в файле web.config
         /// </summary>
-        /// <returns></returns>
         public static QPublishingSection WebConfigSection => WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
 
         public static void SetAppSettings(NameValueCollection settings)
@@ -174,7 +178,7 @@ namespace Quantumart.QP8.Configuration
             settings[Config.MailHostKey] = ConfigVariable(Config.MailHostKey);
             settings[Config.MailLoginKey] = ConfigVariable(Config.MailLoginKey);
             settings[Config.MailPasswordKey] = ConfigVariable(Config.MailPasswordKey);
-            settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : string.Empty; // inverting backend and frontend default logic
+            settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : string.Empty;
             settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
         }
     }

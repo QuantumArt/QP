@@ -463,7 +463,19 @@ namespace Quantumart.QP8.BLL
 
         public static QPIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QPIdentity : null;
 
-        public static string CurrentDbConnectionString => QPConfiguration.ConfigConnectionString(CurrentCustomerCode);
+        private static string _currentDbConnectionString;
+
+        public static string CurrentDbConnectionString
+        {
+            get
+            {
+                return _currentDbConnectionString ?? QPConfiguration.ConfigConnectionString(CurrentCustomerCode);
+            }
+            set
+            {
+                _currentDbConnectionString = value;
+            }
+        }
 
         private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDbConnectionString);
 

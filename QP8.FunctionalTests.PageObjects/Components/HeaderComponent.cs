@@ -9,15 +9,15 @@ namespace QP8.FunctionalTests.PageObjects.Components
     public class HeaderComponent : Component
     {
         [By(How.CssSelector, "#communicationMessage>span.qpversion")]
-        public Element QPVersion;
-        
+        public Element QpVersion;
+
         [By(How.CssSelector, "#userInformation>span.userName")]
         public Element UserName;
 
         [By(How.CssSelector, "#userInformation>a.signOut")]
         public Link Exit;
 
-        public HeaderComponent(IWebElement webElement, IWebDriver webDriver) 
+        public HeaderComponent(IWebElement webElement, IWebDriver webDriver)
             : base(webElement, webDriver)
         {
         }

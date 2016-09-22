@@ -15,8 +15,6 @@ namespace QP8.FunctionalTests.Tests.Authentication
     {
         private const string Story = "Login";
 
-        #region valid login
-
         [AllureTest]
         [AllureSeverity(severitylevel.critical)]
         [AllureTitle("Authentication with valid login")]
@@ -39,10 +37,6 @@ namespace QP8.FunctionalTests.Tests.Authentication
             CheckJavaScriptErrors();
         }
 
-        #endregion
-
-        #region invalid login
-
         [AllureTest]
         [AllureSeverity(severitylevel.normal)]
         [AllureTitle("Authentication with invalid login")]
@@ -56,7 +50,5 @@ namespace QP8.FunctionalTests.Tests.Authentication
             CheckValidationSteps(page, page.Login, "Login", "Your account does not exist!");
             CheckJavaScriptErrors();
         }
-
-        #endregion
     }
 }

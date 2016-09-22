@@ -9,11 +9,11 @@ namespace QP8.FunctionalTests.PageObjects.Elements
     /// <code>
     /// Примеры вёрстки:
     /// <br/>
-    /// 1.  &lt;dd class=&quot;field&quot;&gt; 
-    ///         &lt;input class=&quot;input-validation-error textbox&quot; type=&quot;text&quot;&gt; 
+    /// 1.  &lt;dd class=&quot;field&quot;&gt;
+    ///         &lt;input class=&quot;input-validation-error textbox&quot; type=&quot;text&quot;&gt;
     ///         &lt;em class=&quot;validators&quot;&gt;
     ///             &lt;span class=&quot;field-validation-error&quot; &gt;
-    ///         &lt;/em&gt; 
+    ///         &lt;/em&gt;
     ///      &lt;/dd&gt;
     /// </code>
     /// </summary>
@@ -41,10 +41,7 @@ namespace QP8.FunctionalTests.PageObjects.Elements
         /// <remarks>
         /// Выполняется путём получения активного элемента на странице и его сравнения с полем ввода
         /// </remarks>
-        public bool Focused
-        {
-            get { return ProxyWebElement.Equals(WebDriver.SwitchTo().ActiveElement()); }
-        }
+        public bool Focused => ProxyWebElement.Equals(WebDriver.SwitchTo().ActiveElement());
 
         /// <summary>
         /// Проверка валидации поля

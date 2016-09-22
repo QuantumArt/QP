@@ -5,7 +5,7 @@ namespace QP8.FunctionalTests.PageObjects.Components
 {
     public class TreeComponent : Component
     {
-        public TreeComponent(IWebElement webElement, IWebDriver webDriver) 
+        public TreeComponent(IWebElement webElement, IWebDriver webDriver)
             : base(webElement, webDriver)
         {
         }
