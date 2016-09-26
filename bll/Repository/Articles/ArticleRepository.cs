@@ -38,6 +38,19 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return article;
         }
 
+        internal static Article GetByGuid(Guid guid)
+        {
+            var article = MappersRepository.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
+                .Include("Status")
+                .Include("Content")
+                .Include("LastModifiedByUser")
+                .Include("LockedByUser")
+                .SingleOrDefault(n => n.UniqueId == guid)
+            );
+
+            return article;
+        }
+
         internal static void LockForUpdate(int id)
         {
             using (var scope = new QPConnectionScope())
@@ -125,11 +138,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return result;
         }
 
-        /// <summary>
-        /// Возвращает количество статей в контенте
-        /// </summary>
-        /// <param name="contentId">идентификатор контента</param>
-        /// <returns>количество статей</returns>
         internal static int GetCount(int contentId)
         {
             using (new QPConnectionScope())
@@ -146,10 +154,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Возвращает список статей
-        /// </summary>
-        /// <returns>список статей</returns>
         internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
         {
             using (new QPConnectionScope())
@@ -193,10 +197,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Возвращает список по ids
-        /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false)
         {
             using (new QPConnectionScope())
@@ -217,10 +217,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         }
 
-        /// <summary>
-        /// Возвращает список по ids
-        /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<Article> GetList(int contentId)
         {
             var data = GetData(null, contentId);
@@ -275,12 +271,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return result;
         }
 
-        /// <summary>
-        /// Возвращает список заблокированных пользователем статей
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="totalRecords"></param>
-        /// <returns></returns>
         internal static List<ArticleListItem> GetLockedList(ListCommand cmd, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
@@ -655,12 +645,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return orderExpression;
         }
 
-        /// <summary>
-        /// Получает данные полей для статьи
-        /// </summary>
-        /// <param name="id">ID статьи</param>
-        /// <param name="contentId">ID контента</param>
-        /// <returns>DataRow с данными</returns>
         internal static DataRow GetData(int id, int contentId)
         {
             using (new QPConnectionScope())
@@ -715,15 +699,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Копирует статью
-        /// </summary>
-        /// <param name="article">статья</param>
         internal static Article Copy(Article article)
         {
             var id = article.Id;
             article.PrepareForCopy(false, true);
-            var result = Save(article);
+            var result = Create(article);
             using (new QPConnectionScope())
             {
                 Common.AdjustManyToMany(QPConnectionScope.Current.DbConnection, id, result.Id);
@@ -732,39 +712,16 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return result;
         }
 
-        /// <summary>
-        /// Добавляет новую статью
-        /// </summary>
-        /// <param name="article">информация о статье</param>
-        /// <returns>информация о статье</returns>
-        internal static Article Save(Article article)
+        internal static Article Create(Article article)
         {
             return InternalUpdate(article);
         }
 
-        /// <summary>
-        /// Обновляет информацию о статье
-        /// </summary>
-        /// <param name="article">информация о статье</param>
-        /// <returns>информация о статье</returns>
         internal static Article Update(Article article)
         {
             return InternalUpdate(article);
         }
 
-
-        /// <summary>
-        /// Удаляет статью
-        /// </summary>
-        /// <param name="id">идентификатор статьи</param>
-        internal static void Delete(int id)
-        {
-            DefaultRepository.Delete<ArticleDAL>(id);
-        }
-
-        /// <summary>
-        /// Удаляет статьи
-        /// </summary>
         internal static void MultipleDelete(IList<int> ids, bool withAggregated = false, bool withAutoArchive = false)
         {
             using (new QPConnectionScope())
@@ -963,8 +920,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        #region Private Members
-
         private static readonly Regex DynamicColumnNamePattern = new Regex($@"^{Field.Prefix}(\d+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static string GetDisplayExpression(FieldValue item)
@@ -974,9 +929,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private static Article InternalUpdate(Article item)
         {
-            var helper = new ArticleUpdateHelper(item);
+            var articleUpdater = new ArticleUpdateService(item);
             var schedule = item.Schedule;
-            item = helper.Update();
+            item = articleUpdater.Update();
             item.Schedule = schedule;
             ScheduleRepository.UpdateSchedule(item);
             ScheduleRepository.CopyScheduleToChildDelays(item);
@@ -1038,7 +993,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             return sqlSortExpression.ToString();
         }
-        #endregion
 
         internal static bool CheckRelationCondition(int id, int contentId, string relCondition)
         {

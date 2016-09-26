@@ -6498,7 +6498,7 @@
           <NavigationProperty Name="LastModifiedByUser" Relationship="QP8Model.FK_CONTENT_ITEM_LAST_MODIFIED_BY" FromRole="ArticleDAL" ToRole="UserDAL" />
           <Property Type="Boolean" Name="CancelSplit" Nullable="false" />
           <NavigationProperty Name="USER_DEFAULT_FILTER" Relationship="QP8Model.FK_USER_DEFAULT_FILTER_CONTENT_ITEM" FromRole="ArticleDAL" ToRole="USER_DEFAULT_FILTER" />
-          <Property Name="UNIQUE_ID" Type="Guid" Nullable="false" />
+          <Property Name="UniqueId" Type="Guid" Nullable="false" />
 
         </EntityType>
         <EntityType Name="ArticlePermissionDAL">
@@ -10745,7 +10745,7 @@
           <EntitySetMapping Name="ArticleSet">
             <EntityTypeMapping TypeName="QP8Model.ArticleDAL">
               <MappingFragment StoreEntitySet="CONTENT_ITEM">
-                <ScalarProperty Name="UNIQUE_ID" ColumnName="UNIQUE_ID" />
+                <ScalarProperty Name="UniqueId" ColumnName="UNIQUE_ID" />
                 <ScalarProperty Name="CancelSplit" ColumnName="CANCEL_SPLIT" />
                 <ScalarProperty Name="Splitted" ColumnName="SPLITTED" />
                 <ScalarProperty Name="Id" ColumnName="CONTENT_ITEM_ID" />
@@ -11957,7 +11957,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="57">
+      <Diagram Name="QP8Model" ZoomLevel="74">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />

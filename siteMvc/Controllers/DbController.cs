@@ -21,11 +21,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly ICommunicationService _communicationService;
         private readonly IXmlDbUpdateLogService _xmlDbUpdateLogService;
+        private readonly IXmlDbUpdateActionService _xmlDbUpdateActionService;
 
-        public DbController(ICommunicationService communicationService, IXmlDbUpdateLogService xmlDbUpdateServce)
+        public DbController(ICommunicationService communicationService, IXmlDbUpdateLogService xmlDbUpdateServce, IXmlDbUpdateActionService xmlDbUpdateActionService)
         {
             _communicationService = communicationService;
             _xmlDbUpdateLogService = xmlDbUpdateServce;
+            _xmlDbUpdateActionService = xmlDbUpdateActionService;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -111,7 +113,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             try
             {
-                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, _xmlDbUpdateLogService).Process(xmlString);
+                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, _xmlDbUpdateLogService, _xmlDbUpdateActionService).Process(xmlString);
             }
             catch (XmlDbUpdateLoggingException ex)
             {

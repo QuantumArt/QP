@@ -36,11 +36,13 @@ namespace Quantumart.Test
             Clear();
 
             LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
+
+            var dbActionService = new Mock<IXmlDbUpdateActionService>();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, dbActionService.Object, false);
             service.Process(Global.GetXml(@"xmls\m2m_nonsplitted.xml"));
 
             ContentId = Global.GetContentId(Cnn, "Test M2M");

@@ -68,8 +68,8 @@ namespace Quantumart.QP8.BLL.Services
         public MessageResult AssembleNotificationPreAction(int id)
         {
             var site = NotificationRepository.GetPropertiesById(id).Content.Site;
-            var message = (!site.IsLive) ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
-            return (string.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+            var message = !site.IsLive ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
+            return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
 
         public MessageResult AssembleNotification(int id)
@@ -91,8 +91,11 @@ namespace Quantumart.QP8.BLL.Services
             foreach (var cnt in notifications.Select(notification =>
             {
                 if (notification.FormatId != null)
+                {
                     return new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification,
                         QPContext.CurrentCustomerCode);
+                }
+
                 return null;
             }))
             {
@@ -105,19 +108,24 @@ namespace Quantumart.QP8.BLL.Services
         public MessageResult MultipleAssembleNotificationPreAction(int[] ids)
         {
             if (ids == null)
+            {
                 throw new ArgumentNullException(nameof(ids));
+            }
+
             var site = NotificationRepository.GetPropertiesById(ids[0]).Content.Site;
-            var message = (!site.IsLive) ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
-            return (string.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+            var message = !site.IsLive ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
+            return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
 
         public MessageResult MultipleRemove(int[] ids)
         {
             if (ids == null)
+            {
                 throw new ArgumentNullException(nameof(ids));
-                        
+            }
+
             NotificationRepository.MultipleDelete(ids);
-            
+
             return null;
         }
 
@@ -147,7 +155,10 @@ namespace Quantumart.QP8.BLL.Services
         public NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
+
             return ObjectFormatRepository.UpdateNotificationTemplateFormat(item);
         }
 
@@ -160,10 +171,13 @@ namespace Quantumart.QP8.BLL.Services
         {
             var notification = NotificationRepository.GetPropertiesById(id);
             if (notification == null)
+            {
                 throw new ApplicationException(string.Format(NotificationStrings.NotificationNotFound, id));
+            }
+
             NotificationRepository.Delete(id);
             return null;
-        }		
+        }
 
         public IEnumerable<ListItem> GetStringFieldsAsListItemsByContentId(int contentId)
         {
@@ -189,7 +203,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (createDefaultFormat  && !notification.FormatId.HasValue && !notification.IsExternal)
             {
-                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);				
+                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);
             }
             return NotificationRepository.UpdateProperties(notification);
         }
@@ -197,21 +211,26 @@ namespace Quantumart.QP8.BLL.Services
         public Notification SaveNotificationProperties(Notification notification,  bool createDefaultFormat, string backendUrl)
         {
             if (ContentRepository.IsAnyAggregatedFields(notification.ParentEntityId))
-                throw ActionNotAllowedException.CreateNotAllowedForAggregatedContentException();
+            {
+                throw new ActionNotAllowedException(ContentStrings.OperationIsNotAllowedForAggregated);
+            }
 
             if (createDefaultFormat && !notification.IsExternal)
             {
-                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);				
+                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);
             }
-            var result = NotificationRepository.SaveProperties(notification);
-            return result;
+
+            return NotificationRepository.SaveProperties(notification);
         }
 
         public Notification ReadNotificationProperties(int id)
         {
             var notification = NotificationRepository.GetPropertiesById(id);
             if (notification == null)
+            {
                 throw new ApplicationException(string.Format(NotificationStrings.NotificationNotFound, id));
+            }
+
             return notification;
         }
 
@@ -238,14 +257,19 @@ namespace Quantumart.QP8.BLL.Services
             {
                 var article = ArticleRepository.GetById(id);
                 if(article == null)
+                {
                     throw new ArgumentException(string.Format(ArticleStrings.ArticleNotFound, id));
+                }
+
                 site = article.Content.Site;
             }
-            
+
             var repository = new NotificationRepository();
             var codes = code.Split(';');
             foreach (var currentCode in codes)
+            {
                 repository.SendNotification(connectionString, site.Id, currentCode, id, site.IsLive || site.AssembleFormatsInLive);
+            }
         }
 
         public MessageResult UnbindNotification(int notificationId)
@@ -253,7 +277,7 @@ namespace Quantumart.QP8.BLL.Services
             var notification = ReadNotificationProperties(notificationId);
             notification.WorkFlowId = null;
             NotificationRepository.UpdateProperties(notification);
-            return MessageResult.Info(NotificationStrings.UnbindedMessage);			
+            return MessageResult.Info(NotificationStrings.UnbindedMessage);
         }
 
         public bool IsSiteDotNetByObjectFormatId(int objectFormatId)
@@ -261,11 +285,10 @@ namespace Quantumart.QP8.BLL.Services
             return ObjectFormatRepository.IsSiteDotNeByObjectFormatId(objectFormatId);
         }
 
-        private int CreateDefaultFormat(int contentId, string backendUrl, string currentCustomerCode)
+        private static int CreateDefaultFormat(int contentId, string backendUrl, string currentCustomerCode)
         {
             return ObjectFormatRepository.CreateDefaultFormat(contentId, backendUrl, currentCustomerCode);
         }
-
 
         public PageTemplate ReadPageTemplateByObjectFormatId(int id)
         {

@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
@@ -75,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var controller = filterContext.Controller as QPController;
-            if ((controller == null) || !controller.IsReplayAction())
+            if (controller == null || !controller.IsReplayAction())
             {
                 if (Mode == ConnectionScopeMode.TransactionOn)
                 {
@@ -109,13 +110,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             var controller = filterContext.Controller as QPController;
-            if ((controller == null) || !controller.IsReplayAction())
+            if (controller == null || !CommonHelpers.IsXmlDbUpdateReplayAction(filterContext.HttpContext))
             {
                 try
                 {
-                    if ((filterContext.Exception == null) && (TransactionScope != null)
+                    if (filterContext.Exception == null && TransactionScope != null
                         && filterContext.Controller.ViewData.ModelState.IsValid
-                        && (Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active))
+                        && Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active)
                     {
                         TransactionScope.Complete();
                     }

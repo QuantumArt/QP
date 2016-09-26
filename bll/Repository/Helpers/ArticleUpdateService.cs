@@ -11,15 +11,13 @@ using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
 {
-    public class ArticleUpdateHelper
+    public class ArticleUpdateService
     {
         private int Counter { get; set; }
 
         private StringBuilder Result { get; }
 
         private Article Article { get; set; }
-
-        private string SqlString => Result.ToString();
 
         private List<SqlParameter> Parameters { get; }
 
@@ -79,14 +77,14 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 
         private string UpdateM2OSql => $"exec qp_update_m2o {ItemParamName}, {BackFieldParamName}, {BackFieldValueParamName}, 0;";
 
-        public ArticleUpdateHelper()
+        public ArticleUpdateService()
         {
             Counter = 0;
             Result = new StringBuilder();
             Parameters = new List<SqlParameter>();
         }
 
-        public ArticleUpdateHelper(Article item)
+        public ArticleUpdateService(Article item)
             : this()
         {
             Article = item;
@@ -139,6 +137,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             {
                 data = GetDynamicImageData(field);
             }
+
             Parameters.Add(new SqlParameter(DataParamName, SqlDbType.NVarChar, 3500) { Value = GetParameterValue(data) });
             Result.AppendLine(UpdateDataSql);
         }
@@ -204,7 +203,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             int id;
             using (new QPConnectionScope())
             {
-                Common.ExecuteSql(QPConnectionScope.Current.DbConnection, SqlString, Parameters, ItemParamName, out id);
+                Common.ExecuteSql(QPConnectionScope.Current.DbConnection, Result.ToString(), Parameters, ItemParamName, out id);
             }
 
             Article = ArticleRepository.GetById(id);

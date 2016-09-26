@@ -21,11 +21,13 @@ namespace Quantumart.Test
         public void ReplayXML_CreateContentGroup_WithSpecifiedIdentity()
         {
             LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
+
+            var dbActionService = new Mock<IXmlDbUpdateActionService>();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, new HashSet<string>(new[] { EntityTypeCode.ContentGroup }), 1, dbLogService.Object, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, new HashSet<string>(new[] { EntityTypeCode.ContentGroup }), 1, dbLogService.Object, dbActionService.Object, false);
             Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"xmls\group.xml")), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             var id = (decimal)cnn.GetRealScalarData(new SqlCommand($"SELECT content_group_id FROM content_group WHERE name = '{GroupName}'"));
@@ -37,11 +39,13 @@ namespace Quantumart.Test
         public void ReplayXML_CreateContentGroup_WithGeneratedIdentity()
         {
             LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
+
+            var dbActionService = new Mock<IXmlDbUpdateActionService>();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, dbActionService.Object, false);
             Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"xmls\group.xml").Replace(GroupName, NewGroupName)), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             var id = (decimal)cnn.GetRealScalarData(new SqlCommand($"SELECT content_group_id FROM content_group WHERE name = '{NewGroupName}'"));

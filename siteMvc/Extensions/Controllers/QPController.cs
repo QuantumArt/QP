@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         public ActionResult JsonHtml(string viewName, object model)
         {
-            if (IsReplayAction())
+            if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
             {
                 if (ModelState.IsValid)
                 {

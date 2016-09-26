@@ -13,6 +13,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Telerik.Web.Mvc;
@@ -251,7 +252,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 try
                 {
-                    model.Data = ArticleService.Save(model.Data, backendActionCode, boundToExternal, IsReplayAction());
+                    model.Data = ArticleService.Create(model.Data, backendActionCode, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
                     PersistResultId(model.Data.Id);
                     return Redirect("Properties", new
                     {

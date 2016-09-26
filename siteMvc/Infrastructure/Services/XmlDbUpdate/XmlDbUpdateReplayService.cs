@@ -27,21 +27,23 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private readonly IXmlDbUpdateLogService _dbLogService;
 
+        private readonly IXmlDbUpdateActionService _dbActionService;
+
         private readonly XmlDbUpdateActionCorrecterService _actionsCorrecterService;
 
         protected readonly string ConnectionString;
 
-        public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService)
-            : this(connectionString, null, userId, dbLogService)
+        public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
+            : this(connectionString, null, userId, dbLogService, dbActionService)
         {
         }
 
-        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService)
-            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId, dbLogService)
+        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
+            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId, dbLogService, dbActionService)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService)
+        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
@@ -51,6 +53,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             _dbLogService = dbLogService;
+            _dbActionService = dbActionService;
             _actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
         }
 
@@ -125,6 +128,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 var xmlActionStringLog = xmlAction.RemoveDescendants().ToString(SaveOptions.DisableFormatting);
                 BLL.Services.Logger.Log.Debug($"-> Begin replaying action: -> {xmlActionStringLog}");
+                if (true)
+                {
+                    action.ActionId = UpdateArticleIdsUsingGuids(action);
+                }
+
                 var replayedAction = ReplayAction(action, backendUrl);
                 BLL.Services.Logger.Log.Debug($"End replaying action: {xmlActionStringLog}");
 
@@ -162,6 +170,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
 
             return document;
+        }
+
+        private int UpdateArticleIdsUsingGuids(XmlDbUpdateRecordedAction recordedAction)
+        {
+            return _dbActionService.GetArticleIdByGuid(recordedAction.UniqueId);
         }
 
         private void ValidateReplayInput(XContainer xmlDocument)

@@ -267,9 +267,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
-      <Link>References\CsvHelper.dll</Link>
-    </EmbeddedResource>
     <Content Include="gulpfile.js" />
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
       <Link>References\Quantumart.QP8.Merger.dll</Link>

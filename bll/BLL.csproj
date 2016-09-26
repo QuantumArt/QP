@@ -49,7 +49,7 @@
       <HintPath>..\binaries\EFExtensions.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=10.1.5.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
-      <HintPath>..\packages\JetBrains.Annotations.10.1.5\lib\net\JetBrains.Annotations.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\JetBrains.Annotations.10.1.5\lib\net\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -546,7 +546,7 @@
     <Compile Include="Repository\Articles\ArticleFullTextSearchQueryParser.cs" />
     <Compile Include="Repository\Articles\ArticleLinkSearchQueryParser.cs" />
     <Compile Include="Repository\Articles\ArticleSearchRepository.cs" />
-    <Compile Include="Repository\Helpers\ArticleUpdateHelper.cs" />
+    <Compile Include="Repository\Helpers\ArticleUpdateService.cs" />
     <Compile Include="Mappers\ContentFolderMapper.cs" />
     <Compile Include="Mappers\GenericMapper.cs" />
     <Compile Include="Mappers\SiteFolderMapper.cs" />
@@ -661,7 +661,9 @@
     <Compile Include="Services\IVisualEditorService.cs" />
     <Compile Include="Services\VisualEditor\VisualEditorService.cs" />
     <Compile Include="Services\WorkflowService.cs" />
+    <Compile Include="Services\XmlDbUpdate\IXmlDbUpdateActionService.cs" />
     <Compile Include="Services\XmlDbUpdate\IXmlDbUpdateLogService.cs" />
+    <Compile Include="Services\XmlDbUpdate\XmlDbUpdateActionService.cs" />
     <Compile Include="Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="SessionsLog.cs" />
     <Compile Include="SharedLogic\CustomActionResolver.cs" />

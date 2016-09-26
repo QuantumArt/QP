@@ -1,5 +1,5 @@
 ﻿@model Quantumart.QP8.WebMvc.ViewModels.Article.ArticleViewModel
-		
+
 @using Quantumart.QP8.Constants
 @using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
@@ -7,7 +7,7 @@
 @using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
 @if (!Model.Data.IsUpdatableWithWorkflow)
-{ 
+{
 	@Html.Warning(Model.WorkflowWarning)
 }
 
@@ -17,9 +17,9 @@
 }
 
 @using (Html.BeginTabForm(Model))
-{	
+{
 	if (Model.ShowLockInfo)
-	{ 
+	{
 		@Html.Partial("Locking", Model)
 	}
 
@@ -37,15 +37,15 @@
 
     using (Html.BeginFieldGroup(ArticleStrings.CustomFieldsGroup))
 	{
-		
+
         if (Model.Data.UseVariations)
-        { 
+        {
             @Html.HiddenFor(n => n.VariationModel, new { id = Html.UniqueId("VariationModel"), @class = "variationModel textbox simple-text"})
             @Html.HiddenFor(n => n.CurrentContext, new { id = Html.UniqueId("CurrentContext"), @class = "currentContext qp-notChangeTrack textbox simple-text"})
             @Html.HiddenFor(n => n.ContextModel, new { id = Html.UniqueId("ContextModel"), @class = "contextModel qp-notChangeTrack"})
             @Html.HiddenFor(n => n.ErrorModel, new { id = Html.UniqueId("ErrorModel"), @class = "errorModel qp-notChangeTrack textbox simple-text"})
         }
-        
+
         foreach (FieldValue pair in Model.Data.VariationEditableFieldValues)
 		{
 			@Html.Field(pair, forceReadonly: Model.IsChangingActionsProhibited)

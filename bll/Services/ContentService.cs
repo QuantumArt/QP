@@ -27,11 +27,15 @@ namespace Quantumart.QP8.BLL.Services
         {
             var site = SiteRepository.GetById(siteId);
             if (site == null)
+            {
                 throw new Exception(string.Format(SiteStrings.SiteNotFound, siteId));
+            }
 
             var content = new Content(site);
             if (groupId.HasValue)
+            {
                 content.GroupId = groupId.Value;
+            }
 
             return content;
         }
@@ -55,9 +59,14 @@ namespace Quantumart.QP8.BLL.Services
         {
             var content = ContentRepository.GetById(id);
             if (content == null)
+            {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
+            }
+
             if (!content.IsUpdatable)
+            {
                 content.IsReadOnly = true;
+            }
             return content;
         }
 
@@ -69,7 +78,10 @@ namespace Quantumart.QP8.BLL.Services
         public static Content Save(Content item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
+
             item = item.Persist();
 
             return item;
@@ -78,11 +90,18 @@ namespace Quantumart.QP8.BLL.Services
         public static Content Update(Content item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
             if (!ContentRepository.Exists(item.Id))
+            {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, item.Id));
+            }
             if (!item.IsContentChangingActionsAllowed)
-                throw ActionNotAllowedException.CreateNotAllowedForContentChangingActionException();
+            {
+                throw new ActionNotAllowedException(ContentStrings.ContentChangingIsProhibited);
+            }
+
             item = item.Persist();
             return item;
         }
@@ -98,7 +117,7 @@ namespace Quantumart.QP8.BLL.Services
             var violationMessages = item.Die().ToList();
             if (violationMessages.Any())
             {
-                return MessageResult.Error(string.Join(Environment.NewLine, violationMessages), new[] {id});
+                return MessageResult.Error(string.Join(Environment.NewLine, violationMessages), new[] { id });
             }
 
             return null;
@@ -108,9 +127,15 @@ namespace Quantumart.QP8.BLL.Services
         {
             var group = ContentRepository.GetGroupById(id);
             if (group == null)
+            {
                 throw new Exception(string.Format(ContentStrings.GroupNotFound, id));
+            }
+
             if (!group.IsUpdatable || group.IsDefault)
+            {
                 group.IsReadOnly = true;
+            }
+
             return group;
         }
 
@@ -132,34 +157,41 @@ namespace Quantumart.QP8.BLL.Services
         public static ContentGroup SaveGroup(ContentGroup item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
+
             return ContentRepository.SaveGroup(item);
         }
 
         public static ContentGroup UpdateGroup(ContentGroup item)
         {
             if (item == null)
+            {
                 throw new ArgumentNullException(nameof(item));
+            }
+
             return ContentRepository.UpdateGroup(item);
         }
 
-
-        /// <summary>
-        /// Копирует статью
-        /// </summary>
-        /// <param name="id">идентификатор статьи</param>
         public static ContentCopyResult Copy(int id, int? forceId, int[] forceFieldIds, int[] forceLinkIds)
         {
             var result = new ContentCopyResult();
             var content = ContentRepository.GetById(id);
             if (content == null)
+            {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
+            }
 
             if (!content.Site.IsUpdatable || !content.IsAccessible(ActionTypeCode.Read))
+            {
                 result.Message = MessageResult.Error(ContentStrings.CannotCopyBecauseOfSecurity);
+            }
 
             if (!content.IsContentChangingActionsAllowed)
-                throw ActionNotAllowedException.CreateNotAllowedForContentChangingActionException();
+            {
+                throw new ActionNotAllowedException(ContentStrings.ContentChangingIsProhibited);
+            }
 
             if (result.Message == null)
             {
@@ -171,9 +203,6 @@ namespace Quantumart.QP8.BLL.Services
             return result;
         }
 
-        /// <summary>
-        /// Инициализация списка контентов
-        /// </summary>
         public static ContentInitListResult InitList(int siteId, bool isVirtual = false)
         {
             var isActionAccessable = !isVirtual && SecurityRepository.IsActionAccessible(ActionCode.AddNewContent);
@@ -181,7 +210,9 @@ namespace Quantumart.QP8.BLL.Services
             {
                 var site = SiteRepository.GetById(siteId);
                 if (site == null)
+                {
                     throw new Exception(string.Format(SiteStrings.SiteNotFound, siteId));
+                }
 
                 var isSiteAccessable = !isVirtual && SecurityRepository.IsEntityAccessible(EntityTypeCode.Site, siteId, ActionTypeCode.Update);
                 return new ContentInitListResult
@@ -213,9 +244,9 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        public static IEnumerable<ListItem> GetContentsForUnion(int currentSiteId, IEnumerable<int> IDs)
+        public static IEnumerable<ListItem> GetContentsForUnion(int currentSiteId, IEnumerable<int> ids)
         {
-            return ContentRepository.GetSimpleList(currentSiteId, IDs);
+            return ContentRepository.GetSimpleList(currentSiteId, ids);
         }
 
         public static IEnumerable<ListItem> GetContentsForParentContent(int currentSiteId, int id)
@@ -288,7 +319,10 @@ namespace Quantumart.QP8.BLL.Services
         public static LibraryResult Library(int id, string subFolder)
         {
             if (!ContentRepository.Exists(id))
+            {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
+            }
+
             var factory = new ContentFolderFactory();
             var repository = factory.CreateRepository();
             var folder = repository.GetBySubFolder(id, subFolder);
@@ -301,7 +335,10 @@ namespace Quantumart.QP8.BLL.Services
             var repository = factory.CreateRepository();
             var folder = repository.GetById(parentFolderId);
             if (folder == null)
+            {
                 throw new Exception(string.Format(LibraryStrings.ContentFolderNotExists, parentFolderId));
+            }
+
             return folder.GetFiles(command, filter);
         }
 
@@ -310,15 +347,13 @@ namespace Quantumart.QP8.BLL.Services
             return ContentFolder.GetPathInfo(folderId);
         }
 
-        /// <summary>
-        /// Вернуть список контентов доступных для связи с текущим контентом
-        /// </summary>
-        /// <param name="contentId"></param>
-        /// <returns></returns>
         public static IEnumerable<ListItem> GetAcceptableContentForRelation(int contentId)
         {
             if (!ContentRepository.Exists(contentId))
+            {
                 throw new ArgumentException(string.Format(ContentStrings.ContentNotFound, contentId));
+            }
+
             return ContentRepository.GetAcceptableContentForRelation(contentId);
         }
 
@@ -354,7 +389,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static void CopyContentLinks(int sourceSiteId, int destinationSiteId)
         {
-            var relBetweenLinks = string.Empty;
+            string relBetweenLinks;
             ContentRepository.CopyContentLinks(sourceSiteId, destinationSiteId, out relBetweenLinks);
             FieldRepository.UpdateAttributeLinkIdAndDefaultValue(sourceSiteId, destinationSiteId, relBetweenLinks);
         }
@@ -384,9 +419,7 @@ namespace Quantumart.QP8.BLL.Services
             var relBetweenStatuses = ContentRepository.GetRelationsBetweenStatuses(sourceSiteId, destinationSiteId);
 
             FieldRepository.CopyContentsAttributes(sourceSiteId, destinationSiteId, newContentIds, false);
-
             var relBetweenAttributes = FieldRepository.GetRelationsBetweenAttributesXml(sourceSiteId, destinationSiteId, newContentIds, false, true);
-
             NotificationRepository.CopyContentNotifications(relBetweenContents, relBetweenStatuses, relBetweenAttributes);
 
             string relBetweenConstraints;
@@ -395,7 +428,6 @@ namespace Quantumart.QP8.BLL.Services
 
             FieldRepository.CopyDynamicImageAttributes(relBetweenAttributes);
             ContentRepository.CopyContentWorkflowBind(sourceSiteId, destinationSiteId, relBetweenContents);
-
             return count;
         }
 
@@ -412,9 +444,7 @@ namespace Quantumart.QP8.BLL.Services
             ContentRepository.CopyContentItemAccess(relBetweenItems);
 
             var relBetweenAttributes = FieldRepository.GetRelationsBetweenAttributesXml(sourceSiteId, destinationSiteId, string.Empty, false, true);
-
             ContentRepository.UpdateContentData(relBetweenAttributes, relBetweenItems);
-
             return items;
         }
 
