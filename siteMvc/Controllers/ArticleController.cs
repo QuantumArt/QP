@@ -223,7 +223,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewArticle)]
@@ -236,13 +235,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost, Record]
+        [HttpPost, ActionName("New"), Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewArticle)]
         [BackendActionContext(ActionCode.AddNewArticle)]
         [BackendActionLog]
-        public ActionResult New(string tabId, int parentId, string backendActionCode, bool? boundToExternal, FormCollection collection)
+        public ActionResult NewPost(string tabId, int parentId, string backendActionCode, bool? boundToExternal)
         {
             var data = ArticleService.NewForSave(parentId);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
@@ -273,7 +272,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [RequestHeader("X-Requested-With", "XMLHttpRequest")]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.EditArticle)]
@@ -286,24 +284,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost, Record(ActionCode.EditArticle)]
+        [HttpPost, ActionName("Properties"), Record(ActionCode.EditArticle)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateArticle)]
         [BackendActionContext(ActionCode.UpdateArticle)]
         [BackendActionLog]
-        public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, FormCollection collection)
+        public ActionResult PropertiesPost(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal)
         {
             var data = ArticleService.ReadForUpdate(id, parentId);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
             TryUpdateModel(model);
             model.Validate(ModelState);
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    model.Data = ArticleService.Update(model.Data, backendActionCode, boundToExternal, IsReplayAction());
+                    model.Data = ArticleService.Update(model.Data, backendActionCode, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
                     return Redirect("Properties", new
                     {
                         tabId,
@@ -331,7 +328,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Copy(int id, bool? boundToExternal)
         {
-            var result = ArticleService.Copy(id, boundToExternal, IsReplayAction());
+            var result = ArticleService.Copy(id, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
             PersistResultId(result.Id);
             PersistFromId(id);
             return JsonMessageResult(result.Message);
@@ -345,7 +342,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Remove(int parentId, int id, bool? boundToExternal)
         {
-            return JsonMessageResult(ArticleService.Remove(parentId, id, false, boundToExternal, IsReplayAction()));
+            return JsonMessageResult(ArticleService.Remove(parentId, id, false, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext)));
         }
 
         public ActionResult RemovePreAction(int parentId, int id, bool? boundToExternal)
@@ -362,7 +359,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemove(int parentId, int[] IDs, bool? boundToExternal)
         {
-            return JsonMessageResult(ArticleService.Remove(parentId, IDs, false, boundToExternal, IsReplayAction()));
+            return JsonMessageResult(ArticleService.Remove(parentId, IDs, false, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext)));
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -379,7 +376,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult RemoveFromArchive(int parentId, int id, bool? boundToExternal)
         {
-            var result = ArticleService.Remove(parentId, id, true, boundToExternal, IsReplayAction());
+            var result = ArticleService.Remove(parentId, id, true, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
             return JsonMessageResult(result);
         }
 
@@ -392,7 +389,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemoveFromArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
-            var result = ArticleService.Remove(parentId, IDs, true, boundToExternal, IsReplayAction());
+            var result = ArticleService.Remove(parentId, IDs, true, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
             return JsonMessageResult(result);
         }
 
@@ -404,7 +401,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult MoveToArchive(int id, bool? boundToExternal)
         {
-            return JsonMessageResult(ArticleService.MoveToArchive(id, boundToExternal, IsReplayAction()));
+            return JsonMessageResult(ArticleService.MoveToArchive(id, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext)));
         }
 
         public ActionResult MoveToArchivePreAction(int id, bool? boundToExternal)
@@ -420,7 +417,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult RestoreFromArchive(int id, bool? boundToExternal)
         {
-            var result = ArticleService.RestoreFromArchive(id, boundToExternal, IsReplayAction());
+            var result = ArticleService.RestoreFromArchive(id, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
             return JsonMessageResult(result);
         }
 
@@ -433,7 +430,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultiplePublish(int parentId, int[] IDs, bool? boundToExternal)
         {
-            return JsonMessageResult(ArticleService.Publish(parentId, IDs, boundToExternal, IsReplayAction()));
+            return JsonMessageResult(ArticleService.Publish(parentId, IDs, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext)));
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -451,7 +448,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleMoveToArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
-            return JsonMessageResult(ArticleService.MoveToArchive(parentId, IDs, boundToExternal, IsReplayAction()));
+            return JsonMessageResult(ArticleService.MoveToArchive(parentId, IDs, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext)));
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
@@ -469,7 +466,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRestoreFromArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
-            var result = ArticleService.RestoreFromArchive(parentId, IDs, boundToExternal, IsReplayAction());
+            var result = ArticleService.RestoreFromArchive(parentId, IDs, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
             return JsonMessageResult(result);
         }
 

@@ -600,4 +600,10 @@
   <data name="TotalSelectedArticles" xml:space="preserve">
     <value>Всего выбрано статей</value>
   </data>
+  <data name="UniqueId" xml:space="preserve">
+    <value>Уникальный идентификатор</value>
+  </data>
+  <data name="GuidShouldBeUniqueNotEmpty" xml:space="preserve">
+    <value>Guid должен быть уникальным и не пустым</value>
+  </data>
 </root>

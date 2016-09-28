@@ -198,7 +198,6 @@ namespace Quantumart.QP8.BLL
                 round(result);
                 return result;
             }
-
         }
 
         public class TreeItem
@@ -209,17 +208,11 @@ namespace Quantumart.QP8.BLL
         }
 
         public const int MinPageSize = 5;
-
         public const int MaxPageSize = 100;
-
         public const int DefaultPageSize = 20;
-
         public const int MinLimitOfStoredVersions = 1;
-
         public const int MaxLimitOfStoredVersions = 30;
-
         public const int DefaultLimitOfStoredVersions = 10;
-
         internal const string ContentItemIdPropertyName = "CONTENT_ITEM_ID";
         internal const string StatusTypeIdPropertyName = "STATUS_TYPE_ID";
 
@@ -234,32 +227,19 @@ namespace Quantumart.QP8.BLL
             new UserQueryColumn {ColumnName = "LAST_MODIFIED_BY", DbType = "numeric", NumericScale = 0}
         });
 
-        private ContentWorkflowBind _workflowBinding;
-
         private Site _site;
-
         private IEnumerable<Field> _fields;
-
+        private ContentWorkflowBind _workflowBinding;
         private IEnumerable<ContentConstraint> _constraints;
-
         private readonly Lazy<IEnumerable<Content>> _aggregatedContents;
-
         private readonly InitPropertyValue<Field> _treeField;
-
         private readonly InitPropertyValue<Field> _variationField;
-
         private readonly InitPropertyValue<IEnumerable<int>> _unionContentIDs;
-
         private readonly Lazy<IEnumerable<Content>> _virtualSubContents;
-
         private readonly Lazy<IEnumerable<UserQueryColumn>> _userQueryContentViewSchema;
-
         private readonly InitPropertyValue<IEnumerable<VirtualFieldNode>> _virtualJoinFieldNodes;
-
         private readonly InitPropertyValue<Content> _parentContent;
-
         private readonly InitPropertyValue<IEnumerable<Content>> _childContents;
-
         private readonly InitPropertyValue<ContentGroup> _contentGroup;
 
         public Content()

@@ -180,10 +180,9 @@ namespace Quantumart.QP8.BLL.Repository
             return GetById(newContent.Id);
         }
 
-        private static void CreateDefaultField(Content newContent, int[] forceFieldIds)
+        private static void CreateDefaultField(Content newContent, IReadOnlyList<int> forceFieldIds)
         {
             var field = new Field(newContent).Init();
-
             field.ExactType = FieldExactTypes.String;
             field.Name = "Title";
             field.Description = "&nbsp;";
@@ -191,10 +190,11 @@ namespace Quantumart.QP8.BLL.Repository
             field.ViewInList = true;
             field.StringSize = 255;
             field.Order = 1;
-            if (forceFieldIds != null && forceFieldIds.Length > 0)
+            if (forceFieldIds != null && forceFieldIds.Count > 0)
             {
                 field.ForceId = forceFieldIds[0];
             }
+
             field.PersistWithVirtualRebuild(true);
         }
 

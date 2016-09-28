@@ -606,4 +606,10 @@
   <data name="TotalSelectedArticles" xml:space="preserve">
     <value>Total selected articles</value>
   </data>
+  <data name="UniqueId" xml:space="preserve">
+    <value>Unique Id</value>
+  </data>
+  <data name="GuidShouldBeUniqueNotEmpty" xml:space="preserve">
+    <value>Guid should be unique and not empty</value>
+  </data>
 </root>

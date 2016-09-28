@@ -15,72 +15,19 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
     {
         private int Counter { get; set; }
 
-        private StringBuilder Result { get; }
-
         private Article Article { get; set; }
 
         private List<SqlParameter> Parameters { get; }
 
-        private string DataParamName => $"@qp_data{Counter}";
-
-        private string BlobDataParamName => $"@qp_blob_data{Counter}";
-
         private string FieldParamName => $"@field{Counter}";
 
-        private string LinkParamName => $"@link{Counter}";
-
-        private string LinkValueParamName => $"@linkValue{Counter}";
-
-        private string BackFieldParamName => $"@backField{Counter}";
-
-        private string BackFieldValueParamName => $"@backFieldValue{Counter}";
-
-        private static string ResultIdTableName => "#resultIds";
-
-        private static string ItemParamName => "@ItemId";
-
-        private static string ContentParamName => "@contentId";
-
-        private static string StatusParamName => "@statusId";
-
-        private static string VisibleParamName => "@visible";
-
-        private static string ArchiveParamName => "@archive";
-
-        private static string LastModifiedParamName => "@lastModifiedBy";
-
-        private static string DelayedParamName => "@scheduleNewVersion";
+        private static string ContentItemId => "@ItemId";
 
         private static string SplittedParamName => "@splitted";
-
-        private static string PermanentLockParamName => "@permanentLock";
-
-        private static string CancelSplitParamName => "@cancelSplit";
-
-        private static string InsertItemSql => string.Format("insert into content_item (CONTENT_ID, STATUS_TYPE_ID, VISIBLE, ARCHIVE, NOT_FOR_REPLICATION, LAST_MODIFIED_BY, SCHEDULE_NEW_VERSION_PUBLICATION, PERMANENT_LOCK) Values({0}, {1}, {2}, {3}, 1, {4}, {5}, {8});SELECT {6} = SCOPE_IDENTITY();SELECT {7} = splitted from content_item where content_item_id = {6};", ContentParamName, StatusParamName, VisibleParamName, ArchiveParamName, LastModifiedParamName, DelayedParamName, ItemParamName, SplittedParamName, PermanentLockParamName);
-
-        private static string UpdateItemSql => string.Format("update content_item set modified = getdate(), last_modified_by = {0}, STATUS_TYPE_ID = {1}, VISIBLE = {2}, ARCHIVE = {3}, SCHEDULE_NEW_VERSION_PUBLICATION = {4}, PERMANENT_LOCK = {7}, CANCEL_SPLIT = {8} where content_item_id = {5};SELECT {6} = splitted from content_item where content_item_id = {5};", LastModifiedParamName, StatusParamName, VisibleParamName, ArchiveParamName, DelayedParamName, ItemParamName, SplittedParamName, PermanentLockParamName, CancelSplitParamName);
-
-        private string UpdateDataSql => $"exec qp_update_data {ItemParamName}, {FieldParamName}, {DataParamName}, 1;";
-
-        private string UpdateBlobDataSql => $"exec qp_update_blob_data {ItemParamName}, {FieldParamName}, {BlobDataParamName}, 1;";
-
-        private static string AfterUpdateSql => $"exec qp_update_m2o_final {ItemParamName};";
-
-        private static string ReplicateSql => $"exec qp_replicate {ItemParamName}";
-
-        private static string CreateTempTableSql => $"create table {ResultIdTableName} (id numeric, attribute_id numeric not null, to_remove bit not null default 0);";
-
-        private static string DropTempTableSql => $"drop table {ResultIdTableName};";
-
-        private string UpdateM2MSql => $"exec qp_update_m2m {ItemParamName}, {LinkParamName}, {LinkValueParamName}, {SplittedParamName}, 0;";
-
-        private string UpdateM2OSql => $"exec qp_update_m2o {ItemParamName}, {BackFieldParamName}, {BackFieldValueParamName}, 0;";
 
         public ArticleUpdateService()
         {
             Counter = 0;
-            Result = new StringBuilder();
             Parameters = new List<SqlParameter>();
         }
 
@@ -90,28 +37,29 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             Article = item;
         }
 
-        private void CollectSql()
+        private string GetSqlQuery()
         {
-            Result.AppendLine(CreateTempTableSql);
-            CollectSqlForItem();
+            var sqlResult = new StringBuilder();
+            sqlResult.AppendLine("CREATE TABLE #resultIds (id numeric, attribute_id numeric not null, to_remove bit not null default 0);");
+            sqlResult = CollectSqlForItem(sqlResult);
 
             foreach (var item in Article.FieldValues)
             {
                 Parameters.Add(new SqlParameter(FieldParamName, SqlDbType.Int) { Value = item.Field.Id });
                 if (item.Field.Type.DatabaseType == "NTEXT")
                 {
-                    CollectSqlForBlobData(item.Value);
+                    sqlResult = CollectSqlForBlobData(sqlResult, item.Value);
                 }
                 else
                 {
-                    CollectSqlForData(item.Field, item.Value);
+                    sqlResult = CollectSqlForData(sqlResult, item.Field, item.Value);
                     switch (item.Field.RelationType)
                     {
                         case RelationType.ManyToMany:
-                            СollectSqlForManyToMany(item.Field, item.Value);
+                            sqlResult = СollectSqlForManyToMany(sqlResult, item.Field, item.Value);
                             break;
                         case RelationType.ManyToOne:
-                            СollectSqlForManyToOne(item.Field, item.Value);
+                            sqlResult = СollectSqlForManyToOne(sqlResult, item.Field, item.Value);
                             break;
                     }
                 }
@@ -119,66 +67,89 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                 Counter++;
             }
 
-            Result.AppendLine(ReplicateSql);
-            Result.AppendLine(AfterUpdateSql);
-            Result.AppendLine(DropTempTableSql);
+            sqlResult.AppendLine($"EXEC qp_replicate {ContentItemId}");
+            sqlResult.AppendLine($"EXEC qp_update_m2o_final {ContentItemId};");
+            sqlResult.AppendLine("DROP TABLE #resultIds;");
+            return sqlResult.ToString();
         }
 
-        private void CollectSqlForBlobData(string value)
+        private StringBuilder CollectSqlForBlobData(StringBuilder sqlResult, string value)
         {
-            Parameters.Add(new SqlParameter(BlobDataParamName, SqlDbType.NText) { Value = GetParameterValue(value) });
-            Result.AppendLine(UpdateBlobDataSql);
+            var blobDataParamName = $"@qp_blob_data{Counter}";
+            Parameters.Add(new SqlParameter(blobDataParamName, SqlDbType.NText) { Value = GetParameterValue(value) });
+            sqlResult.AppendLine($"EXEC qp_update_blob_data {ContentItemId}, {FieldParamName}, {blobDataParamName}, 1;");
+            return sqlResult;
         }
 
-        private void CollectSqlForData(Field field, string value)
+        private StringBuilder CollectSqlForData(StringBuilder sqlResult, Field field, string value)
         {
+            var dataParamName = $"@qp_data{Counter}";
             var data = field.TypeInfo.FormatFieldValue(value);
             if (field.Type.Name == FieldTypeName.DynamicImage)
             {
                 data = GetDynamicImageData(field);
             }
 
-            Parameters.Add(new SqlParameter(DataParamName, SqlDbType.NVarChar, 3500) { Value = GetParameterValue(data) });
-            Result.AppendLine(UpdateDataSql);
+            Parameters.Add(new SqlParameter(dataParamName, SqlDbType.NVarChar, 3500) { Value = GetParameterValue(data) });
+            sqlResult.AppendLine($"EXEC qp_update_data {ContentItemId}, {FieldParamName}, {dataParamName}, 1;");
+            return sqlResult;
         }
 
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private void СollectSqlForManyToMany(Field field, string value)
+        private StringBuilder СollectSqlForManyToMany(StringBuilder sqlResult, Field field, string value)
         {
-            Parameters.Add(new SqlParameter(LinkParamName, SqlDbType.Int) { Value = field.LinkId.Value });
-            Parameters.Add(new SqlParameter(LinkValueParamName, SqlDbType.NVarChar, -1) { Value = !string.IsNullOrEmpty(value) ? (object)value : DBNull.Value });
-            Result.AppendLine(UpdateM2MSql);
+            var linkParamName = $"@link{Counter}";
+            var linkValueParamName = $"@linkValue{Counter}";
+            Parameters.Add(new SqlParameter(linkParamName, SqlDbType.Int) { Value = field.LinkId.Value });
+            Parameters.Add(new SqlParameter(linkValueParamName, SqlDbType.NVarChar, -1) { Value = !string.IsNullOrEmpty(value) ? (object)value : DBNull.Value });
+            sqlResult.AppendLine($"EXEC qp_update_m2m {ContentItemId}, {linkParamName}, {linkValueParamName}, {SplittedParamName}, 0;");
+            return sqlResult;
         }
 
         [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private void СollectSqlForManyToOne(Field field, string value)
+        private StringBuilder СollectSqlForManyToOne(StringBuilder sqlResult, Field field, string value)
         {
-            Parameters.Add(new SqlParameter(BackFieldParamName, SqlDbType.Int) { Value = field.BackRelationId.Value });
-            Parameters.Add(new SqlParameter(BackFieldValueParamName, SqlDbType.NVarChar, -1) { Value = !string.IsNullOrEmpty(value) ? (object)value : DBNull.Value });
-            Result.AppendLine(UpdateM2OSql);
+            var backFieldParamName = $"@backField{Counter}";
+            var backFieldValueParamName = $"@backFieldValue{Counter}";
+            Parameters.Add(new SqlParameter(backFieldParamName, SqlDbType.Int) { Value = field.BackRelationId.Value });
+            Parameters.Add(new SqlParameter(backFieldValueParamName, SqlDbType.NVarChar, -1) { Value = !string.IsNullOrEmpty(value) ? (object)value : DBNull.Value });
+            sqlResult.AppendLine($"EXEC qp_update_m2o {ContentItemId}, {backFieldParamName}, {backFieldValueParamName}, 0;");
+            return sqlResult;
         }
 
-        private void CollectSqlForItem()
+        private StringBuilder CollectSqlForItem(StringBuilder sqlResult)
         {
-            Parameters.Add(new SqlParameter(ItemParamName, SqlDbType.Int) { Value = Article.Id, Direction = ParameterDirection.InputOutput });
+            const string contentParamName = "@contentId";
+            const string statusParamName = "@statusId";
+            const string visibleParamName = "@visible";
+            const string archiveParamName = "@archive";
+            const string lastModifiedParamName = "@lastModifiedBy";
+            const string delayedParamName = "@scheduleNewVersion";
+            const string permanentLockParamName = "@permanentLock";
+            const string uniqueIdParamName = "@uniqueId";
+            const string cancelSplitParamName = "@cancelSplit";
+
+            Parameters.Add(new SqlParameter(ContentItemId, SqlDbType.Int) { Value = Article.Id, Direction = ParameterDirection.InputOutput });
             Parameters.Add(new SqlParameter(SplittedParamName, SqlDbType.Bit) { Direction = ParameterDirection.Output });
             if (Article.IsNew)
             {
-                Parameters.Add(new SqlParameter(ContentParamName, SqlDbType.Int) { Value = Article.ContentId });
-                Result.AppendLine(InsertItemSql);
+                Parameters.Add(new SqlParameter(contentParamName, SqlDbType.Int) { Value = Article.ContentId });
+                sqlResult.AppendLine($"INSERT INTO content_item (CONTENT_ID, STATUS_TYPE_ID, VISIBLE, ARCHIVE, NOT_FOR_REPLICATION, LAST_MODIFIED_BY, SCHEDULE_NEW_VERSION_PUBLICATION, PERMANENT_LOCK, UNIQUE_ID) Values({contentParamName}, {statusParamName}, {visibleParamName}, {archiveParamName}, 1, {lastModifiedParamName}, {delayedParamName}, {permanentLockParamName}, {uniqueIdParamName});SELECT {ContentItemId} = SCOPE_IDENTITY();SELECT {SplittedParamName} = splitted FROM content_item WHERE content_item_id = {ContentItemId};");
             }
             else
             {
-                Result.AppendLine(UpdateItemSql);
+                sqlResult.AppendLine($"UPDATE content_item SET modified = getdate(), last_modified_by = {lastModifiedParamName}, STATUS_TYPE_ID = {statusParamName}, VISIBLE = {visibleParamName}, ARCHIVE = {archiveParamName}, SCHEDULE_NEW_VERSION_PUBLICATION = {delayedParamName}, PERMANENT_LOCK = {permanentLockParamName}, UNIQUE_ID = {uniqueIdParamName}, CANCEL_SPLIT = {cancelSplitParamName} WHERE content_item_id = {ContentItemId};SELECT {SplittedParamName} = splitted FROM content_item WHERE content_item_id = {ContentItemId};");
             }
 
-            Parameters.Add(new SqlParameter(StatusParamName, SqlDbType.Int) { Value = Article.StatusTypeId });
-            Parameters.Add(new SqlParameter(LastModifiedParamName, SqlDbType.Int) { Value = QPContext.CurrentUserId });
-            Parameters.Add(new SqlParameter(VisibleParamName, SqlDbType.Bit) { Value = Article.Visible });
-            Parameters.Add(new SqlParameter(ArchiveParamName, SqlDbType.Bit) { Value = Article.Archived });
-            Parameters.Add(new SqlParameter(DelayedParamName, SqlDbType.Bit) { Value = Article.Delayed });
-            Parameters.Add(new SqlParameter(PermanentLockParamName, SqlDbType.Bit) { Value = Article.PermanentLock });
-            Parameters.Add(new SqlParameter(CancelSplitParamName, SqlDbType.Bit) { Value = Article.CancelSplit });
+            Parameters.Add(new SqlParameter(statusParamName, SqlDbType.Int) { Value = Article.StatusTypeId });
+            Parameters.Add(new SqlParameter(visibleParamName, SqlDbType.Bit) { Value = Article.Visible });
+            Parameters.Add(new SqlParameter(archiveParamName, SqlDbType.Bit) { Value = Article.Archived });
+            Parameters.Add(new SqlParameter(lastModifiedParamName, SqlDbType.Int) { Value = QPContext.CurrentUserId });
+            Parameters.Add(new SqlParameter(delayedParamName, SqlDbType.Bit) { Value = Article.Delayed });
+            Parameters.Add(new SqlParameter(permanentLockParamName, SqlDbType.Bit) { Value = Article.PermanentLock });
+            Parameters.Add(new SqlParameter(uniqueIdParamName, SqlDbType.UniqueIdentifier) { Value = Article.UniqueId });
+            Parameters.Add(new SqlParameter(cancelSplitParamName, SqlDbType.Bit) { Value = Article.CancelSplit });
+            return sqlResult;
         }
 
         private static object GetParameterValue(string value)
@@ -199,11 +170,10 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 
         public Article Update()
         {
-            CollectSql();
             int id;
             using (new QPConnectionScope())
             {
-                Common.ExecuteSql(QPConnectionScope.Current.DbConnection, Result.ToString(), Parameters, ItemParamName, out id);
+                Common.ExecuteSql(QPConnectionScope.Current.DbConnection, GetSqlQuery(), Parameters, ContentItemId, out id);
             }
 
             Article = ArticleRepository.GetById(id);

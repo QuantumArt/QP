@@ -76,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var controller = filterContext.Controller as QPController;
-            if (controller == null || !controller.IsReplayAction())
+            if (controller == null || !CommonHelpers.IsXmlDbUpdateReplayAction(filterContext.HttpContext))
             {
                 if (Mode == ConnectionScopeMode.TransactionOn)
                 {

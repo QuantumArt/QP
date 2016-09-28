@@ -30,11 +30,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ActionPermissions
         {
             return new[]
             {
-                new ListItem(EntityPermission.GROUP_MEMBER_TYPE, EntityPermissionStrings.Group, "GroupMemberPanel"),
-                new ListItem(EntityPermission.USER_MEMBER_TYPE, EntityPermissionStrings.User, "UserMemberPanel")
+				new ListItem(EntityPermission.GroupMemberType, EntityPermissionStrings.Group, "GroupMemberPanel"),
+				new ListItem(EntityPermission.UserMemberType, EntityPermissionStrings.User, "UserMemberPanel")
             };
         }
 
-        public int MemberType => EntityPermission.GROUP_MEMBER_TYPE;
+		public int MemberType { get { return EntityPermission.GroupMemberType; } }
     }
 }

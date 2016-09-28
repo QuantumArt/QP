@@ -47,19 +47,20 @@ namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 
         public override bool LinkOpenNewTab => true;
 
-        public int MemberType => EntityPermission.GROUP_MEMBER_TYPE;
+		public int MemberType { get { return EntityPermission.GroupMemberType; } }
 
         public IEnumerable<ListItem> GetMemberTypes()
         {
             return new[]
             {
-                new ListItem(EntityPermission.GROUP_MEMBER_TYPE, EntityPermissionStrings.Group, "GroupMemberPanel"),
-                new ListItem(EntityPermission.USER_MEMBER_TYPE, EntityPermissionStrings.User, "UserMemberPanel")
+				new ListItem(EntityPermission.GroupMemberType, EntityPermissionStrings.Group, "GroupMemberPanel"),
+				new ListItem(EntityPermission.UserMemberType, EntityPermissionStrings.User, "UserMemberPanel")
             };
         }
 
         public string SearchBlockId => UniqueId("SearchBlockId");
 
         public bool ShowParentPermissionButton { get; private set; }
+
     }
 }

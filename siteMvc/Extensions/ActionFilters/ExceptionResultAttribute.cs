@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
             }
 
             var controller = (QPController)filterContext.Controller;
-            if (controller == null || controller.IsReplayAction())
+            if (controller == null || CommonHelpers.IsXmlDbUpdateReplayAction(filterContext.HttpContext))
             {
                 return;
             }

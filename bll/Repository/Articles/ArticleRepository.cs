@@ -303,7 +303,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-
         private static IEnumerable<ArticleRelationSecurityParameter> GetRelationSecurityFilters(IEnumerable<Field> fields)
         {
             return fields.Where(n => n.UseRelationSecurity && !n.IsClassifier && n.RelatedToContent.AllowItemsPermission || n.UseTypeSecurity).Select(n => new ArticleRelationSecurityParameter
@@ -703,7 +702,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             var id = article.Id;
             article.PrepareForCopy(false, true);
-            var result = Create(article);
+            var result = CreateOrUpdate(article);
             using (new QPConnectionScope())
             {
                 Common.AdjustManyToMany(QPConnectionScope.Current.DbConnection, id, result.Id);
@@ -712,14 +711,15 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return result;
         }
 
-        internal static Article Create(Article article)
+        internal static Article CreateOrUpdate(Article article)
         {
-            return InternalUpdate(article);
-        }
-
-        internal static Article Update(Article article)
-        {
-            return InternalUpdate(article);
+            var articleUpdater = new ArticleUpdateService(article);
+            var schedule = article.Schedule;
+            article = articleUpdater.Update();
+            article.Schedule = schedule;
+            ScheduleRepository.UpdateSchedule(article);
+            ScheduleRepository.CopyScheduleToChildDelays(article);
+            return article;
         }
 
         internal static void MultipleDelete(IList<int> ids, bool withAggregated = false, bool withAutoArchive = false)
@@ -747,24 +747,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Проверяет уникальность списка значений
-        /// </summary>
-        /// <param name="fieldValuesToTest">список значений</param>
-        /// <returns>результат проверки</returns>
         internal static bool ValidateUnique(List<FieldValue> fieldValuesToTest)
         {
             string constraintToDisplay, conflictingIds;
             return ValidateUnique(fieldValuesToTest, out constraintToDisplay, out conflictingIds);
         }
 
-        /// <summary>
-        /// Проверяет уникальность списка значений
-        /// </summary>
-        /// <param name="fieldValuesToTest">список значений</param>
-        /// <param name="constraintToDisplay">нарушенное ограничение уникальности </param>
-        /// <param name="conflictingIds">список конфликтующих ID через запятую</param>
-        /// <returns>результат проверки</returns>
         internal static bool ValidateUnique(List<FieldValue> fieldValuesToTest, out string constraintToDisplay, out string conflictingIds)
         {
             if (fieldValuesToTest.Any())
@@ -927,28 +915,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return $"[{item.Field.Name}]";
         }
 
-        private static Article InternalUpdate(Article item)
-        {
-            var articleUpdater = new ArticleUpdateService(item);
-            var schedule = item.Schedule;
-            item = articleUpdater.Update();
-            item.Schedule = schedule;
-            ScheduleRepository.UpdateSchedule(item);
-            ScheduleRepository.CopyScheduleToChildDelays(item);
-            return item;
-        }
-
         private static string GetSqlExpression(FieldValue item)
         {
             return string.IsNullOrEmpty(item.Value) ? $"([{item.Field.Name}] IS NULL)" : $"([{item.Field.Name}] = {item.Field.ParamName})";
         }
 
-        /// <summary>
-        /// Заменяет автоматически-сгенирированные названия динамических столбцов на их физические названия
-        /// </summary>
-        /// <param name="sortExpression">настройки сортировки, содержащие автоматически-сгенирированные названия динамических столбцов</param>
-        /// <param name="fieldList">cписок объектов типа Field</param>
-        /// <returns>настройки сортировки, содержащие физические названия динамических столбцов</returns>
         private static string ReplaceDynamicColumnsNamesInSortExpressions(string sortExpression, IList<Field> fieldList)
         {
             var sqlSortExpression = new StringBuilder();
@@ -1010,10 +981,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Возвращает список агрегированных статей для статьи
-        /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<Article> LoadAggregatedArticles(Article article)
         {
             using (var scope = new QPConnectionScope())
@@ -1047,10 +1014,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Возвращает список агрегированных статей для статьи
-        /// </summary>
-        /// <returns></returns>
         internal static List<Article> LoadVariationArticles(Article article)
         {
             using (var scope = new QPConnectionScope())
@@ -1077,11 +1040,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Есть ли у статьи агрегированные поля
-        /// </summary>
-        /// <param name="articleId"></param>
-        /// <returns></returns>
         internal static bool IsAnyAggregatedFields(int articleId)
         {
             return QPContext.EFContext.ArticleSet.Any(a =>
@@ -1093,21 +1051,19 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         internal static bool CheckRelationSecurity(Article article, bool isDeletable)
         {
             var result = true;
-            if (QPContext.IsAdmin)
+            if (!QPContext.IsAdmin)
             {
-                return true;
-            }
-
-            using (new QPConnectionScope())
-            {
-                foreach (var item in article.GetRelationSecurityFields().Where(n => !string.IsNullOrEmpty(n.Value) && !n.Field.IsClassifier))
+                using (new QPConnectionScope())
                 {
-                    var testValues = new Dictionary<int, int[]> { { article.Id, Converter.ToInt32Collection(item.Value, ',') } };
-                    var checkResult = CheckRelationSecurity(item.Field.RelateToContentId.Value, testValues, isDeletable);
-                    if (!checkResult[article.Id])
+                    foreach (var item in article.GetRelationSecurityFields().Where(n => !string.IsNullOrEmpty(n.Value) && !n.Field.IsClassifier))
                     {
-                        result = false;
-                        break;
+                        var testValues = new Dictionary<int, int[]> {{article.Id, Converter.ToInt32Collection(item.Value, ',')}};
+                        var checkResult = CheckRelationSecurity(item.Field.RelateToContentId.Value, testValues, isDeletable);
+                        if (!checkResult[article.Id])
+                        {
+                            result = false;
+                            break;
+                        }
                     }
                 }
             }
@@ -1201,6 +1157,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 Common.CopyArticleAccess(scope.DbConnection, fromId, toId, QPContext.CurrentUserId);
             }
         }
+
         internal static Dictionary<int, int> GetHierarchy(int contentId)
         {
             var treeName = ContentRepository.GetTreeFieldName(contentId);

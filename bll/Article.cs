@@ -58,7 +58,6 @@ namespace Quantumart.QP8.BLL
             UseInVariationUpdate = false;
         }
 
-
         internal Article(Content content) : this()
         {
             ContentId = content.Id;
@@ -84,6 +83,9 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("DelayPublication", NameResourceType = typeof(ArticleStrings))]
         public bool Delayed { get; set; }
+
+        [LocalizedDisplayName("UniqueId", NameResourceType = typeof(ArticleStrings))]
+        public Guid UniqueId { get; set; }
 
         [LocalizedDisplayName("CancelSplit", NameResourceType = typeof(ArticleStrings))]
         public bool CancelSplit { get; set; }
@@ -141,10 +143,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-
-        /// <summary>
-        /// ID контента, в котором показывается статья
-        /// </summary>
         public int DisplayContentId
         {
             get
@@ -216,13 +214,9 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Код сущности
-        /// </summary>
         public override string EntityTypeCode => Constants.EntityTypeCode.Article;
 
         public bool UseVariations => Content.VariationField != null;
-
 
         public IEnumerable<FieldValue> VariationContextFieldValues
         {
@@ -250,6 +244,7 @@ namespace Quantumart.QP8.BLL
                 );
             }
         }
+
         public string VariationContextDisplay
         {
             get
@@ -261,13 +256,11 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private int[] SelfAndAggregatedIds
+        private IEnumerable<int> SelfAndAggregatedIds
         {
             get
             {
-                return Enumerable.Repeat(Id, 1).Union(
-                    AggregatedArticles.Select(n => n.Id)
-                ).ToArray();
+                return Enumerable.Repeat(Id, 1).Union(AggregatedArticles.Select(n => n.Id));
             }
         }
 
@@ -372,6 +365,37 @@ namespace Quantumart.QP8.BLL
 
             ValidateWorkflow(errors);
             ValidateRelationSecurity(errors);
+            ValidateFields(errors);
+            ValidateAggregated(errors);
+            ValidateXaml(errors);
+            ValidateSchedule(errors, Schedule);
+
+            if (!errors.IsEmpty)
+            {
+                throw errors;
+            }
+        }
+
+        private void ValidateWorkflow(RulesException errors)
+        {
+            if (!IsUpdatableWithWorkflow)
+            {
+                errors.CriticalErrorForModel(IsNew ? ArticleStrings.CannotAddBecauseOfWorkflow : ArticleStrings.CannotUpdateBecauseOfWorkflow);
+            }
+        }
+
+        private void ValidateRelationSecurity(RulesException errors)
+        {
+            if (!ArticleRepository.CheckRelationSecurity(this, false))
+            {
+                errors.CriticalErrorForModel(IsNew
+                    ? ArticleStrings.CannotAddBecauseOfRelationSecurity
+                    : ArticleStrings.CannotUpdateBecauseOfRelationSecurity);
+            }
+        }
+
+        private void ValidateFields(RulesException<Article> errors)
+        {
             foreach (var pair in FieldValues)
             {
                 if (pair.Field.ExactType == FieldExactTypes.M2ORelation && pair.Field.BackRelation != null && pair.Field.BackRelation.Aggregated)
@@ -382,17 +406,9 @@ namespace Quantumart.QP8.BLL
                 pair.Validate(errors);
             }
 
-            // Валидация агрегированных статей
-            ValidateAggregated(errors);
-
-            // Пользовательская валидация на основе Xaml описаний
-            // валидация производится одновременно и для основной статьи и для агрегированных статей
-            ValidateCustom(errors);
-            ValidateSchedule(errors, Schedule);
-
-            if (!errors.IsEmpty)
+            if (UniqueId == default(Guid) || ArticleRepository.GetByGuid(UniqueId) != null)
             {
-                throw errors;
+                errors.CriticalErrorForModel(ArticleStrings.GuidShouldBeUniqueNotEmpty);
             }
         }
 
@@ -405,22 +421,18 @@ namespace Quantumart.QP8.BLL
                 {
                     pair.Validate(errors);
                 }
+
                 aggregated.ValidateUnique(errors, aggregatedFieldId);
             }
         }
 
-        /// <summary>
-        /// Пользовательская валидация на основе Xaml описаний
-        /// валидация производится одновременно и для основной статьи и для агрегированных статей
-        /// </summary>
-        private void ValidateCustom(RulesException errors)
+        private void ValidateXaml(RulesException errors)
         {
             var values = FieldValues
                 .Concat(AggregatedArticles.SelectMany(a => a.FieldValues))
                 .Where(v => !v.Field.Aggregated)
                 .ToDictionary(v => v.Field.FormName, v => v.Field.ExactType == FieldExactTypes.Boolean ? Converter.ToBoolean(v.Value).ToString() : v.Value);
 
-            // Добавялем id и status type id
             values[Content.ContentItemIdPropertyName] = Id.ToString();
             values[Content.StatusTypeIdPropertyName] = StatusTypeId.ToString();
 
@@ -449,6 +461,42 @@ namespace Quantumart.QP8.BLL
                 catch (Exception exp)
                 {
                     errors.ErrorForModel(string.Format(ArticleStrings.CustomValidationFailed, exp.Message));
+                }
+            }
+        }
+
+        private static void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
+        {
+            if (item.ScheduleType == ScheduleTypeEnum.OneTimeEvent && !item.WithoutEndDate && item.StartDate >= item.EndDate)
+            {
+                errors.ErrorFor(n => n.Schedule.EndDate, ArticleStrings.StartEndDates);
+            }
+
+            if (item.ScheduleType == ScheduleTypeEnum.Recurring)
+            {
+                if (!item.Recurring.RepetitionNoEnd && item.Recurring.RepetitionEndDate.Date < item.Recurring.RepetitionStartDate.Date)
+                {
+                    errors.ErrorFor(n => n.Schedule.Recurring.RepetitionStartDate, ArticleStrings.RepetitionStartDateError);
+                }
+
+                if (item.Recurring.ScheduleRecurringValue < ScheduleValidationConstants.ScheduleRecurringMinValue || item.Recurring.ScheduleRecurringValue > ScheduleValidationConstants.ScheduleRecurringMaxValue)
+                {
+                    errors.ErrorFor(n => n.Schedule.Recurring.ScheduleRecurringValue, ArticleStrings.ScheduleRecurringValueError);
+                }
+
+                if (item.Recurring.DayOfMonth < ScheduleValidationConstants.DayOfMonthMinValue || item.Recurring.DayOfMonth > ScheduleValidationConstants.DayOfMonthMaxValue)
+                {
+                    errors.ErrorFor(n => n.Schedule.Recurring.DayOfMonth, ArticleStrings.DayOfMonthError);
+                }
+
+                if (item.Recurring.ShowLimitationType == ShowLimitationType.EndTime && item.Recurring.ShowEndTime < item.Recurring.ShowStartTime)
+                {
+                    errors.ErrorFor(n => n.Schedule.Recurring.ShowStartTime, ArticleStrings.ShowStartTimeError);
+                }
+
+                if (item.Recurring.DurationValue < ScheduleValidationConstants.DurationMinValue || item.Recurring.DurationValue > ScheduleValidationConstants.DurationMaxValue)
+                {
+                    errors.ErrorFor(n => n.Schedule.Recurring.DurationValue, ArticleStrings.DurationValueError);
                 }
             }
         }
@@ -674,24 +722,13 @@ namespace Quantumart.QP8.BLL
             FixNonUsedStatus(true);
             ReplaceAllUrlsToPlaceHolders();
             OptimizeForHierarchy();
-            Article result, articleToPrepare;
-            var codes = new List<string>();
-            if (IsNew)
-            {
-                result = ArticleRepository.Create(this);
-                codes.Add(NotificationCode.Create);
-                articleToPrepare = result;
-            }
-            else
-            {
-                result = ArticleRepository.Update(this);
-                codes.Add(NotificationCode.Update);
-                if (previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
-                {
-                    codes.Add(NotificationCode.ChangeStatus);
-                }
 
-                articleToPrepare = previousArticle;
+            var result = ArticleRepository.CreateOrUpdate(this);
+            var articleToPrepare = IsNew ? result : previousArticle;
+            var codes = new List<string> { IsNew ? NotificationCode.Create : NotificationCode.Update };
+            if (!IsNew && previousArticle != null && previousArticle.StatusTypeId != StatusTypeId)
+            {
+                codes.Add(NotificationCode.ChangeStatus);
             }
 
             var repo = new NotificationPushRepository();
@@ -842,7 +879,6 @@ namespace Quantumart.QP8.BLL
                 art.LoadFieldValues();
             }
         }
-
 
         /// <summary>
         /// Инициализирует дефолтный статус и Visible
@@ -1302,7 +1338,7 @@ namespace Quantumart.QP8.BLL
             LastModifiedBy = fromArticle.LastModifiedBy;
         }
 
-        internal void ValidateUnique(RulesException errors, int exceptFieldId)
+        internal RulesException ValidateUnique(RulesException errors, int exceptFieldId)
         {
             foreach (var constraint in Content.Constraints)
             {
@@ -1323,6 +1359,8 @@ namespace Quantumart.QP8.BLL
                     }
                 }
             }
+
+            return errors;
         }
 
         /// <summary>
@@ -1366,73 +1404,12 @@ namespace Quantumart.QP8.BLL
         {
             var data = ArticleRepository.GetData(Id, DisplayContentId);
             var fields = FieldRepository.GetFullList(DisplayContentId);
-            return GetFieldValues(data, fields);
-        }
-
-        private List<FieldValue> GetFieldValues(DataRow data, IEnumerable<Field> fields)
-        {
             return GetFieldValues(data, fields, this);
         }
 
-        private void ValidateWorkflow(RulesException errors)
+        protected override RulesException ValidateUnique(RulesException errors)
         {
-            if (!IsUpdatableWithWorkflow)
-            {
-                errors.CriticalErrorForModel(IsNew ? ArticleStrings.CannotAddBecauseOfWorkflow : ArticleStrings.CannotUpdateBecauseOfWorkflow);
-            }
-        }
-
-        private void ValidateRelationSecurity(RulesException errors)
-        {
-            if (!ArticleRepository.CheckRelationSecurity(this, false))
-            {
-                errors.CriticalErrorForModel(IsNew
-                    ? ArticleStrings.CannotAddBecauseOfRelationSecurity
-                    : ArticleStrings.CannotUpdateBecauseOfRelationSecurity);
-            }
-        }
-
-        private static void ValidateSchedule(RulesException<Article> errors, ArticleSchedule item)
-        {
-            if (item.ScheduleType == ScheduleTypeEnum.OneTimeEvent && !item.WithoutEndDate && item.StartDate >= item.EndDate)
-            {
-                errors.ErrorFor(n => n.Schedule.EndDate, ArticleStrings.StartEndDates);
-            }
-
-            // Recurring Mode
-            if (item.ScheduleType == ScheduleTypeEnum.Recurring)
-            {
-                // Дата окончания повторений должна быть больше Даты начала повторений
-                if (!item.Recurring.RepetitionNoEnd && item.Recurring.RepetitionEndDate.Date < item.Recurring.RepetitionStartDate.Date)
-                {
-                    errors.ErrorFor(n => n.Schedule.Recurring.RepetitionStartDate, ArticleStrings.RepetitionStartDateError);
-                }
-
-                if (item.Recurring.ScheduleRecurringValue < ScheduleValidationConstants.ScheduleRecurringMinValue || item.Recurring.ScheduleRecurringValue > ScheduleValidationConstants.ScheduleRecurringMaxValue)
-                {
-                    errors.ErrorFor(n => n.Schedule.Recurring.ScheduleRecurringValue, ArticleStrings.ScheduleRecurringValueError);
-                }
-
-                if (item.Recurring.DayOfMonth < ScheduleValidationConstants.DayOfMonthMinValue || item.Recurring.DayOfMonth > ScheduleValidationConstants.DayOfMonthMaxValue)
-                {
-                    errors.ErrorFor(n => n.Schedule.Recurring.DayOfMonth, ArticleStrings.DayOfMonthError);
-                }
-
-                if (item.Recurring.ShowLimitationType == ShowLimitationType.EndTime && item.Recurring.ShowEndTime < item.Recurring.ShowStartTime)
-                {
-                    errors.ErrorFor(n => n.Schedule.Recurring.ShowStartTime, ArticleStrings.ShowStartTimeError);
-                }
-
-                if (item.Recurring.DurationValue < ScheduleValidationConstants.DurationMinValue || item.Recurring.DurationValue > ScheduleValidationConstants.DurationMaxValue)
-                {
-                    errors.ErrorFor(n => n.Schedule.Recurring.DurationValue, ArticleStrings.DurationValueError);
-                }
-            }
-        }
-
-        protected override void ValidateUnique(RulesException errors)
-        {
-            ValidateUnique(errors, 0);
+            return ValidateUnique(errors, 0);
         }
 
         private void CopyArticleFiles(CopyFilesMode mode, string currentVersionPath, string versionPath = "")
@@ -1486,7 +1463,6 @@ namespace Quantumart.QP8.BLL
                 }
             }
         }
-
 
         private IEnumerable<FieldValue> GetFieldValuesByContext(string context)
         {

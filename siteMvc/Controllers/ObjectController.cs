@@ -10,6 +10,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Telerik.Web.Mvc;
 
@@ -95,7 +96,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, IsReplayAction());
+                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
                 PersistResultId(model.Data.Id);
                 PersistDefaultFormatId(model.Data.DefaultFormatId);
                 return Redirect("PageObjectProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SavePageObject });
@@ -132,7 +133,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, IsReplayAction());
+                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
                 PersistResultId(model.Data.Id);
                 PersistDefaultFormatId(model.Data.DefaultFormatId);
                 return Redirect("TemplateObjectProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveTemplateObject });

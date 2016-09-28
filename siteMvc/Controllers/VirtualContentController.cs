@@ -5,6 +5,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 
@@ -57,7 +58,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (UserQueryContentCreateViewException uqe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -67,7 +68,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -77,7 +78,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (CycleInContentGraphException)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -128,7 +129,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (UserQueryContentCreateViewException uqe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -138,7 +139,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -148,7 +149,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (CycleInContentGraphException)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -163,13 +164,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveVirtualContent)]
         [BackendActionContext(ActionCode.RemoveVirtualContent)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
             return JsonMessageResult(VirtualContentService.Remove(id));

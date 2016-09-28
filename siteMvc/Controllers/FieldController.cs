@@ -8,6 +8,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 using Telerik.Web.Mvc;
 using StringExtensions = Quantumart.QP8.WebMvc.Infrastructure.Extensions.StringExtensions;
@@ -78,7 +79,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -145,7 +146,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (UserQueryContentCreateViewException uqe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -155,7 +156,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -220,7 +221,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (UserQueryContentCreateViewException uqe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }
@@ -230,7 +231,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
                     {
                         throw;
                     }

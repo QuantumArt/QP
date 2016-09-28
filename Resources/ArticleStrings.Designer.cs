@@ -529,6 +529,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Guid should be unique and not empty.
+        /// </summary>
+        public static string GuidShouldBeUniqueNotEmpty {
+            get {
+                return ResourceManager.GetString("GuidShouldBeUniqueNotEmpty", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Hours.
         /// </summary>
         public static string HoursLimitationUnit {
@@ -1356,6 +1365,15 @@ namespace Quantumart.QP8.Resources {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Unique Id.
+        /// </summary>
+        public static string UniqueId {
+            get {
+                return ResourceManager.GetString("UniqueId", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Create Like operation doesn&apos;t support some of the content unique constraints .
         /// </summary>

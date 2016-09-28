@@ -62,12 +62,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         public ActionResult Redirect(string actionName, object routeValues)
         {
-            return IsReplayAction() ? null : RedirectToAction(actionName, routeValues);
+            return CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext) ? null : RedirectToAction(actionName, routeValues);
         }
 
         public JsonNetResult<MessageResult> JsonMessageResult(MessageResult result)
         {
-            if (IsReplayAction())
+            if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
             {
                 if (result != null && result.Type == ActionMessageType.Error)
                 {
@@ -192,12 +192,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             {
                 ControllerContext.HttpContext.Items["NOTIFICATION_FORMAT_ID"] = formatId.Value;
             }
-        }
-
-        // TODO: fix referenced code
-        public bool IsReplayAction()
-        {
-            return CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext);
         }
     }
 }
