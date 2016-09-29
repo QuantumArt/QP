@@ -8,7 +8,7 @@ namespace Quantumart.QP8.BLL.Repository
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetCurrentDBVersion(scope.DbConnection);
+                return Common.GetCurrentDbVersion(scope.DbConnection);
             }
         }
 

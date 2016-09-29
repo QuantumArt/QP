@@ -410,9 +410,13 @@ namespace Quantumart.QP8.BLL
             {
                 errors.CriticalErrorForModel(ArticleStrings.GuidWrongFormat);
             }
-            else if (ArticleRepository.GetByGuid(UniqueId.Value) != null)
+            else
             {
-                errors.CriticalErrorForModel(ArticleStrings.GuidShouldBeUnique);
+                var articleByGuid = ArticleRepository.GetByGuid(UniqueId.Value);
+                if (articleByGuid != null && articleByGuid.Id != Id)
+                {
+                    errors.CriticalErrorForModel(ArticleStrings.GuidShouldBeUnique);
+                }
             }
         }
 
@@ -829,11 +833,6 @@ namespace Quantumart.QP8.BLL
             return historyStatusId;
         }
 
-        /// <summary>
-        /// Проверяет можно ли для статей контента выполнять изменяющие операции
-        /// </summary>
-        /// <param name="boundToExternal"></param>
-        /// <returns></returns>
         public bool IsArticleChangingActionsAllowed(bool? boundToExternal)
         {
             return Content.IsArticleChangingActionsAllowed(boundToExternal);
@@ -884,9 +883,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Инициализирует дефолтный статус и Visible
-        /// </summary>
         internal void SetDefaultStatusAndVisibility()
         {
             var isWorkflowAssigned = Content.WorkflowBinding.IsAssigned;

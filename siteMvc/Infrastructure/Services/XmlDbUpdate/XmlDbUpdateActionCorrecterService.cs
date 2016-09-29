@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
+using Quantumart.QP8.WebMvc.ViewModels.Article;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
@@ -18,17 +22,23 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
     {
         private readonly Dictionary<string, Dictionary<int, int>> _idsToReplace = new Dictionary<string, Dictionary<int, int>>();
 
+        private readonly IXmlDbUpdateActionService _dbActionService;
+
+        public XmlDbUpdateActionCorrecterService(IXmlDbUpdateActionService dbActionService)
+        {
+            _dbActionService = dbActionService;
+        }
+
         internal XmlDbUpdateRecordedAction CorrectAction(XmlDbUpdateRecordedAction entry)
         {
-            var code = entry.BackendAction.EntityType.Code;
-            var parentCode = entry.BackendAction.EntityType.ParentCode;
-            entry.Ids = CorrectListValue(code, entry.Ids).ToArray();
-            if (!string.IsNullOrEmpty(parentCode))
+            entry.Ids = CorrectIdsFromGuid(entry);
+            entry.Ids = CorrectListValue(entry.BackendAction.EntityType.Code, entry.Ids).ToArray();
+            if (!string.IsNullOrEmpty(entry.BackendAction.EntityType.ParentCode))
             {
-                entry.ParentId = CorrectValue(parentCode, entry.ParentId);
+                entry.ParentId = CorrectValue(entry.BackendAction.EntityType.ParentCode, entry.ParentId);
             }
 
-            switch (code)
+            switch (entry.BackendAction.EntityType.Code)
             {
                 case EntityTypeCode.Content:
                     CorrectContentForm(entry);
@@ -74,59 +84,51 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return entry;
         }
 
-        internal XmlDbUpdateRecordedAction CorrectReplaces(XmlDbUpdateRecordedAction action, HttpContextBase context)
+        internal XmlDbUpdateRecordedAction CorrectReplaces(XmlDbUpdateRecordedAction action, HttpContextBase httpContext)
         {
-            var actionTypeCode = action.BackendAction.ActionType.Code;
-            var entityTypeCode = action.BackendAction.EntityType.Code;
-
-            if (new[] { ActionTypeCode.AddNew, ActionTypeCode.Copy }.Contains(actionTypeCode))
-            {
-                var resultCode = entityTypeCode != EntityTypeCode.VirtualContent ? entityTypeCode : EntityTypeCode.Content;
-                var resultId = action.ResultId != 0 ? action.ResultId : int.Parse(action.Ids[0]);
-                AddIdToReplace(resultCode, resultId, context, "RESULT_ID");
-            }
-
+            // TODO: MOVE CONSTANTS TO FILE
+            AddResultId(action, httpContext);
             switch (action.BackendAction.Code)
             {
                 case ActionCode.AddNewVirtualContents:
                 case ActionCode.VirtualContentProperties:
                 case ActionCode.VirtualFieldProperties:
-                    AddIdsToReplace(action.VirtualFieldIds, context, "NEW_VIRTUAL_FIELD_IDS");
+                    AddIdsToReplace(action.VirtualFieldIds, httpContext, "NEW_VIRTUAL_FIELD_IDS");
                     break;
                 case ActionCode.AddNewContent:
                 case ActionCode.CreateLikeContent:
-                    AddIdsToReplace(action.ChildIds, context, "FIELD_IDS");
-                    AddIdsToReplace(action.ChildLinkIds, context, "LINK_IDS");
+                    AddIdsToReplace(action.ChildIds, httpContext, "FIELD_IDS");
+                    AddIdsToReplace(action.ChildLinkIds, httpContext, "LINK_IDS");
                     break;
                 case ActionCode.AddNewField:
                 case ActionCode.FieldProperties:
                 case ActionCode.CreateLikeField:
-                    AddIdToReplace(EntityTypeCode.ContentLink, action.ChildId, context, "NEW_LINK_ID");
-                    AddIdToReplace(EntityTypeCode.Field, action.BackwardId, context, "NEW_BACKWARD_ID");
-                    AddIdsToReplace(action.VirtualFieldIds, context, "NEW_VIRTUAL_FIELD_IDS");
-                    AddIdsToReplace(action.ChildIds, context, "NEW_CHILD_FIELD_IDS");
-                    AddIdsToReplace(action.ChildLinkIds, context, "NEW_CHILD_LINK_IDS");
+                    AddIdToReplace(EntityTypeCode.ContentLink, action.ChildId, httpContext, "NEW_LINK_ID");
+                    AddIdToReplace(EntityTypeCode.Field, action.BackwardId, httpContext, "NEW_BACKWARD_ID");
+                    AddIdsToReplace(action.VirtualFieldIds, httpContext, "NEW_VIRTUAL_FIELD_IDS");
+                    AddIdsToReplace(action.ChildIds, httpContext, "NEW_CHILD_FIELD_IDS");
+                    AddIdsToReplace(action.ChildLinkIds, httpContext, "NEW_CHILD_LINK_IDS");
                     break;
                 case ActionCode.AddNewCustomAction:
-                    AddIdToReplace(EntityTypeCode.BackendAction, action.ChildId, context, "ACTION_ID");
+                    AddIdToReplace(EntityTypeCode.BackendAction, action.ChildId, httpContext, "ACTION_ID");
                     break;
                 case ActionCode.AddNewVisualEditorPlugin:
                 case ActionCode.VisualEditorPluginProperties:
-                    AddIdsToReplace(action.ChildIds, context, "NEW_COMMAND_IDS");
+                    AddIdsToReplace(action.ChildIds, httpContext, "NEW_COMMAND_IDS");
                     break;
                 case ActionCode.AddNewWorkflow:
                 case ActionCode.WorkflowProperties:
-                    AddIdsToReplace(action.ChildIds, context, "NEW_RULES_IDS");
+                    AddIdsToReplace(action.ChildIds, httpContext, "NEW_RULES_IDS");
                     break;
                 case ActionCode.AddNewNotification:
                 case ActionCode.NotificationProperties:
-                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, context, "NOTIFICATION_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, httpContext, "NOTIFICATION_FORMAT_ID");
                     break;
                 case ActionCode.AddNewPageObject:
-                    AddIdToReplace(EntityTypeCode.PageObjectFormat, action.ChildId, context, "DEFAULT_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.PageObjectFormat, action.ChildId, httpContext, "DEFAULT_FORMAT_ID");
                     break;
                 case ActionCode.AddNewTemplateObject:
-                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, context, "DEFAULT_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, httpContext, "DEFAULT_FORMAT_ID");
                     break;
             }
 
@@ -163,6 +165,46 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             };
 
             return action;
+        }
+
+        private void AddResultId(XmlDbUpdateRecordedAction action, HttpContextBase httpContext)
+        {
+            if (IsActionNewOrCopy(action))
+            {
+                var entityTypeCode = action.BackendAction.EntityType.Code != EntityTypeCode.VirtualContent
+                    ? action.BackendAction.EntityType.Code
+                    : EntityTypeCode.Content;
+
+                var resultId = action.ResultId != 0 ? action.ResultId : int.Parse(action.Ids[0]);
+                AddIdToReplace(entityTypeCode, resultId, httpContext, "RESULT_ID");
+            }
+        }
+
+        private static bool IsActionNewOrCopy(XmlDbUpdateRecordedAction action)
+        {
+            return new[] { ActionTypeCode.AddNew, ActionTypeCode.Copy }.Contains(action.BackendAction.ActionType.Code);
+        }
+
+        private string[] CorrectIdsFromGuid(XmlDbUpdateRecordedAction action)
+        {
+            if (!IsActionNewOrCopy(action))
+            {
+                var idFromGuid = GetIdByGuid(action);
+                if (idFromGuid.HasValue)
+                {
+                    action.Ids = new[] { idFromGuid.ToString() };
+                }
+            }
+
+            return action.Ids;
+        }
+
+        private int? GetIdByGuid(XmlDbUpdateRecordedAction recordedAction)
+        {
+            Expression<Func<ArticleViewModel, Guid?>> guidExpression = vm => vm.Data.UniqueId;
+            var fieldName = ExpressionHelper.GetExpressionText(guidExpression);
+            var rawGuid = recordedAction.Form[fieldName];
+            return !string.IsNullOrWhiteSpace(rawGuid) ? _dbActionService.GetArticleIdByGuid(rawGuid) : (int?)null;
         }
 
         private static T GetContextData<T>(HttpContextBase httpContext, string key)

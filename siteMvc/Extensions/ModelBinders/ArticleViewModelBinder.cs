@@ -57,7 +57,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
                     varArticle.UpdateFieldValuesWithAggregated(newValues);
                     varArticle.UseInVariationUpdate = true;
                 }
-
             }
         }
 

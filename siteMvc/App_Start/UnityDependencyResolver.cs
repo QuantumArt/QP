@@ -58,6 +58,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<IUserService, UserService>()
                 .RegisterType<IUserGroupService, UserGroupService>()
                 .RegisterType<IXmlDbUpdateLogService, XmlDbUpdateLogService>(new InjectionConstructor(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository()))
+                .RegisterType<IXmlDbUpdateActionService, XmlDbUpdateActionService>()
 
                 .RegisterType<ClearContentController>(new InjectionFactory(c => new ClearContentController(new ClearContentService())))
                 .RegisterType<RemoveContentController>(new InjectionFactory(c => new RemoveContentController(new RemoveContentService())))

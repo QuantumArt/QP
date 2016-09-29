@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -26,8 +27,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly HashSet<string> _identityInsertOptions;
 
         private readonly IXmlDbUpdateLogService _dbLogService;
-
-        private readonly IXmlDbUpdateActionService _dbActionService;
 
         private readonly XmlDbUpdateActionCorrecterService _actionsCorrecterService;
 
@@ -53,8 +52,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             _dbLogService = dbLogService;
-            _dbActionService = dbActionService;
-            _actionsCorrecterService = new XmlDbUpdateActionCorrecterService();
+            _actionsCorrecterService = new XmlDbUpdateActionCorrecterService(dbActionService);
         }
 
         [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
@@ -68,11 +66,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var filteredXmlString = filteredXmlDocument.ToStringWithDeclaration();
             var dbLogEntry = new XmlDbUpdateLogModel
             {
+                UserId = _userId,
                 Body = filteredXmlString,
                 FileName = filePathes == null ? null : string.Join(",", filePathes),
                 Applied = DateTime.Now,
-                Hash = HashHelpers.CalculateMd5Hash(filteredXmlString),
-                UserId = _userId
+                Hash = HashHelpers.CalculateMd5Hash(filteredXmlString)
             };
 
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
@@ -111,31 +109,26 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
                 var logEntry = new XmlDbUpdateActionsLogModel
                 {
+                    UserId = _userId,
                     Applied = DateTime.Now,
-                    Ids = string.Join(",", action.Ids),
                     ParentId = action.ParentId,
                     UpdateId = updateId,
                     SourceXml = xmlActionString,
-                    Hash = HashHelpers.CalculateMd5Hash(xmlActionString),
-                    UserId = _userId
+                    Hash = HashHelpers.CalculateMd5Hash(xmlActionString)
                 };
 
                 if (_dbLogService.IsActionAlreadyReplayed(logEntry.Hash))
                 {
-                    BLL.Services.Logger.Log.Warn($"XmlDbUpdateAction conflict: Current action already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
+                    Logger.Log.Warn($"XmlDbUpdateAction conflict: Current action already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
                     continue;
                 }
 
                 var xmlActionStringLog = xmlAction.RemoveDescendants().ToString(SaveOptions.DisableFormatting);
-                BLL.Services.Logger.Log.Debug($"-> Begin replaying action: -> {xmlActionStringLog}");
-                if (true)
-                {
-                    action.ActionId = UpdateArticleIdsUsingGuids(action);
-                }
-
+                Logger.Log.Debug($"-> Begin replaying action: -> {xmlActionStringLog}");
                 var replayedAction = ReplayAction(action, backendUrl);
-                BLL.Services.Logger.Log.Debug($"End replaying action: {xmlActionStringLog}");
+                Logger.Log.Debug($"End replaying action: {xmlActionStringLog}");
 
+                logEntry.Ids = string.Join(",", replayedAction.Ids);
                 logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToString();
                 _dbLogService.InsertActionLogEntry(logEntry);
             }
@@ -147,7 +140,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 var correctedAction = _actionsCorrecterService.CorrectAction(xmlAction);
                 var httpContext = XmlDbUpdateHttpContextHelpers.PostAction(correctedAction, backendUrl, _userId);
-
                 return _actionsCorrecterService.CorrectReplaces(correctedAction, httpContext);
             }
             catch (Exception ex)
@@ -170,11 +162,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
 
             return document;
-        }
-
-        private int UpdateArticleIdsUsingGuids(XmlDbUpdateRecordedAction recordedAction)
-        {
-            return _dbActionService.GetArticleIdByGuid(recordedAction.UniqueId);
         }
 
         private void ValidateReplayInput(XContainer xmlDocument)

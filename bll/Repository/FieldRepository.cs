@@ -423,7 +423,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 using (var scope = new QPConnectionScope())
                 {
-                    Common.O2MToM2MTranferData(scope.DbConnection, newItem.Id, newItem.LinkId.Value);
+                    Common.O2MtoM2MTranferData(scope.DbConnection, newItem.Id, newItem.LinkId.Value);
                 }
 
             }
@@ -432,7 +432,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 using (var scope = new QPConnectionScope())
                 {
-                    Common.M2MToO2MTranferData(scope.DbConnection, newItem.Id, preUpdateField.LinkId.Value);
+                    Common.M2MtoO2MTranferData(scope.DbConnection, newItem.Id, preUpdateField.LinkId.Value);
                 }
             }
         }
@@ -505,9 +505,13 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 BindFieldToContstraint(newItem, constraint);
                 if (constraint.IsNew)
+                {
                     ContentConstraintRepository.Save(constraint);
+                }
                 else
+                {
                     ContentConstraintRepository.Update(constraint);
+                }
             }
         }
 
@@ -617,7 +621,9 @@ namespace Quantumart.QP8.BLL.Repository
         internal static bool LinqPropertyNameExists(Field field)
         {
             if (field == null)
+            {
                 throw new ArgumentException("field");
+            }
 
             // Существуют ли в контенте данного поля, c таким же именем прямого Linq-свойства
             var existFieldInContent = QPContext.EFContext.FieldSet
@@ -771,7 +777,6 @@ namespace Quantumart.QP8.BLL.Repository
             public string Name { get; set; }
 
             public decimal SiteId { get; set; }
-
         }
 
         /// <summary>
@@ -804,7 +809,7 @@ namespace Quantumart.QP8.BLL.Repository
             return new int[] { };
         }
 
-        private static ContentListItem[] AggregatedContentListItems(Field classifier, string excludeValue)
+        private static IEnumerable<ContentListItem> AggregatedContentListItems(Field classifier, string excludeValue)
         {
             var items = QPContext.EFContext.FieldSet
                 .Where(f => f.Id == classifier.Id)
@@ -909,7 +914,7 @@ namespace Quantumart.QP8.BLL.Repository
             List<int> activeIds;
             using (var scope = new QPConnectionScope())
             {
-                activeIds = Common.GetActiveArticlesIdsForM2mField(scope.DbConnection, fieldId).ToList();
+                activeIds = Common.GetActiveArticlesIdsForM2MField(scope.DbConnection, fieldId).ToList();
             }
 
             var entities = QPContext.EFContext;
@@ -986,6 +991,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.UpdateAttributesOrder(scope.DbConnection, destinationSiteId, relationsBetweenAttributesXml, newContents);
             }
         }
+
         internal static void UpdateAttributes(int sourceSiteId, int destinationSiteId, string relationsBetweenAttributesXml, string contentIds)
         {
             using (new QPConnectionScope())
@@ -993,6 +999,7 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.UpdateAttributes(QPConnectionScope.Current.DbConnection, sourceSiteId, destinationSiteId, relationsBetweenAttributesXml, contentIds);
             }
         }
+
         internal static void UpdateAttributeLinkIdAndDefaultValue(int sourceSiteId, int destinationSiteId, string relationsBetweenLinksXml)
         {
             using (new QPConnectionScope())
