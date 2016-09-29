@@ -51,7 +51,7 @@
 
     using (Html.BeginFieldGroup(ArticleStrings.UniqueId))
     {
-        @Html.TextBoxFieldFor(s => s.Data.UniqueId)
+        @Html.TextBoxField(s => s.Data.UniqueId, Model.Data.UniqueId?.ToString())
     }
 
     if (!Model.IsReadOnly)

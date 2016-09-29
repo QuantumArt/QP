@@ -527,13 +527,22 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Friday", resourceCulture);
             }
         }
-        
+
         /// <summary>
-        ///   Looks up a localized string similar to Guid should be unique and not empty.
+        ///   Looks up a localized string similar to Entered guid is already exists.
         /// </summary>
-        public static string GuidShouldBeUniqueNotEmpty {
+        public static string GuidShouldBeUnique {
             get {
-                return ResourceManager.GetString("GuidShouldBeUniqueNotEmpty", resourceCulture);
+                return ResourceManager.GetString("GuidShouldBeUnique", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Wrong guid format.
+        /// </summary>
+        public static string GuidWrongFormat {
+            get {
+                return ResourceManager.GetString("GuidWrongFormat", resourceCulture);
             }
         }
 

@@ -10,7 +10,7 @@
 	@Html.SelectFieldFor(m => m.ContentDefaultFilter.SiteId, Html.List(Model.AllSitesListItems),
 		new Dictionary<string, object> 
 		{
-			{"class", "qp-deffilter-site " + HtmlHelpersExtensions.DROP_DOWN_LIST_CLASS_NAME} 
+			{"class", "qp-deffilter-site " + HtmlHelpersExtensions.DropDownListClassName}
 		}
 	)
 

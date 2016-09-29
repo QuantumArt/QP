@@ -20,11 +20,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public void SetMultiplePickerOptions(string name, string id, EntityDataListArgs eventArgs)
         {
             HtmlAttributes["id"] = (HtmlAttributes.ContainsKey("id") ? HtmlAttributes["id"].ToString() : id) + "_list";
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.MULTIPLE_ITEM_PICKER_CLASS_NAME);
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.SELF_CLEAR_FLOATS_CLASS_NAME);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.MultipleItemPickerClassName);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.SelfClearFloatsClassName);
             if (!Enabled)
             {
-                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DISABLED_CLASS_NAME);
+                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DisabledClassName);
             }
 
             HtmlAttributes.AddData("count_limit", QPConfiguration.WebConfigSection.RelationCountLimit);
@@ -38,7 +38,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 HtmlAttributes.Add("id", id);
             }
 
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DROP_DOWN_LIST_CLASS_NAME);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DropDownListClassName);
             if (list.Where(i => i.HasDependentItems).ToList().Count > 0)
             {
                 var panelsHash = QPSelectListItem.GetPanelHash(id, list);
@@ -48,7 +48,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             if (!Enabled)
             {
-                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DISABLED_CLASS_NAME);
+                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DisabledClassName);
                 if (!HtmlAttributes.ContainsKey("disabled"))
                 {
                     HtmlAttributes.Add("disabled", "disabled");
@@ -70,11 +70,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 HtmlAttributes.Add("data-bind", "value: " + name + "Id," + " attr: {id: '" + id + "'+$index(), name:'" + id + "'+$index()}");
             }
 
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.SINGLE_ITEM_PICKER_CLASS_NAME);
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.SELF_CLEAR_FLOATS_CLASS_NAME);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.SingleItemPickerClassName);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.SelfClearFloatsClassName);
             if (!Enabled)
             {
-                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DISABLED_CLASS_NAME);
+                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DisabledClassName);
             }
 
             SetDataListOptions(name, entityDataListArgs);
@@ -87,11 +87,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 HtmlAttributes.Add("id", id);
             }
 
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.CHECKBOXS_LIST_CLASS_NAME);
-            HtmlAttributes.AddCssClass(repeatDirection == RepeatDirection.Vertical ? HtmlHelpersExtensions.VERTICAL_DIRECTION_CLASS_NAME : HtmlHelpersExtensions.HORIZONTAL_DIRECTION_CLASS_NAME);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.CheckboxsListClassName);
+            HtmlAttributes.AddCssClass(repeatDirection == RepeatDirection.Vertical ? HtmlHelpersExtensions.VerticalDirectionClassName : HtmlHelpersExtensions.HorizontalDirectionClassName);
             if (!Enabled)
             {
-                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DISABLED_CLASS_NAME);
+                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DisabledClassName);
             }
 
             SetDataListOptions(name, entityDataListArgs);
@@ -99,10 +99,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public void SetListBoxOptions(string name, string id, IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs)
         {
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.LISTBOX_CLASS_NAME);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.ListboxClassName);
             if (Enabled)
             {
-                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DISABLED_CLASS_NAME);
+                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DisabledClassName);
                 if (!HtmlAttributes.ContainsKey("disabled"))
                 {
                     HtmlAttributes.Add("disabled", "disabled");
@@ -112,11 +112,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public void SetRadioButtonListOptions(string name, string id, IList<QPSelectListItem> list, RepeatDirection repeatDirection, EntityDataListArgs entityDataListArgs)
         {
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.RADIO_BUTTONS_LIST_CLASS_NAME);
-            HtmlAttributes.AddCssClass(repeatDirection == RepeatDirection.Vertical ? HtmlHelpersExtensions.VERTICAL_DIRECTION_CLASS_NAME : HtmlHelpersExtensions.HORIZONTAL_DIRECTION_CLASS_NAME);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.RadioButtonsListClassName);
+            HtmlAttributes.AddCssClass(repeatDirection == RepeatDirection.Vertical ? HtmlHelpersExtensions.VerticalDirectionClassName : HtmlHelpersExtensions.HorizontalDirectionClassName);
             if (!Enabled)
             {
-                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DISABLED_CLASS_NAME);
+                HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DisabledClassName);
             }
 
             if (list.Where(item => item.HasDependentItems).ToList().Count > 0)
@@ -132,7 +132,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private void SetDataListOptions(string name, EntityDataListArgs entityDataListArgs)
         {
-            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DATA_LIST_CLASS_NAME);
+            HtmlAttributes.AddCssClass(HtmlHelpersExtensions.DataListClassName);
             HtmlAttributes.AddData("list_item_name", name);
             if (entityDataListArgs != null)
             {

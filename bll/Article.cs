@@ -85,7 +85,7 @@ namespace Quantumart.QP8.BLL
         public bool Delayed { get; set; }
 
         [LocalizedDisplayName("UniqueId", NameResourceType = typeof(ArticleStrings))]
-        public Guid UniqueId { get; set; }
+        public Guid? UniqueId { get; set; }
 
         [LocalizedDisplayName("CancelSplit", NameResourceType = typeof(ArticleStrings))]
         public bool CancelSplit { get; set; }
@@ -406,9 +406,13 @@ namespace Quantumart.QP8.BLL
                 pair.Validate(errors);
             }
 
-            if (UniqueId == default(Guid) || ArticleRepository.GetByGuid(UniqueId) != null)
+            if (UniqueId == null)
             {
-                errors.CriticalErrorForModel(ArticleStrings.GuidShouldBeUniqueNotEmpty);
+                errors.CriticalErrorForModel(ArticleStrings.GuidWrongFormat);
+            }
+            else if (ArticleRepository.GetByGuid(UniqueId.Value) != null)
+            {
+                errors.CriticalErrorForModel(ArticleStrings.GuidShouldBeUnique);
             }
         }
 
@@ -1363,10 +1367,6 @@ namespace Quantumart.QP8.BLL
             return errors;
         }
 
-        /// <summary>
-        /// Добавляет новые агрегированные статьи
-        /// </summary>
-        /// <param name="aggregatedArticles"></param>
         public void CopyAggregates(IEnumerable<Article> aggregatedArticles)
         {
             var result = new List<Article>();

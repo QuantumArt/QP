@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -183,7 +184,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             }
         }
 
-
         public override string ActionCode
         {
             get
@@ -238,9 +238,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public IEnumerable<ListItem> AvailableStatuses => Data.Workflow.AvailableStatuses.Select(GetStatusListItem);
 
-        /// <summary>
-        /// Возвращает список контентов для Relation-полей
-        /// </summary>
         internal static RelationListResult GetListForRelation(BLL.Field field, string value, int articleId)
         {
             var baseField = field.GetBaseField(articleId);
@@ -260,21 +257,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return new RelationListResult { IsListOverflow = isListOverflow, Items = list };
         }
 
-        /// <summary>
-        /// Возвращает список контентов для классификатора
-        /// </summary>
-        /// <param name="classifier"></param>
-        /// <param name="excludeValue"></param>
-        /// <returns></returns>
         internal static IEnumerable<ListItem> GetAggregatableContentsForClassifier(BLL.Field classifier, string excludeValue)
         {
             return ArticleService.GetAggregetableContentsForClassifier(classifier, excludeValue);
         }
 
-        /// <summary>
-        /// Возвращает контент по ID
-        /// </summary>
-        /// <returns></returns>
         internal static BLL.Content GetContentById(int? contentId)
         {
             return contentId.HasValue ? ContentService.Read(contentId.Value) : null;
@@ -282,7 +269,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public void DoCustomBinding()
         {
-            Data.VariationListItems = new JavaScriptSerializer().Deserialize<List<ArticleVariationListItem>>(VariationModel);
+            Data.VariationListItems = JsonConvert.DeserializeObject<List<ArticleVariationListItem>>(VariationModel);
         }
 
         public string RemoveVariationCode

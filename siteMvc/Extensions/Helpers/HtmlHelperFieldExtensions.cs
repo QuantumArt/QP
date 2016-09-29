@@ -112,7 +112,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var readOnly = forceReadonly || pair.Article.IsReadOnly || field.IsReadOnly || !articleIsAgregated && pair.Article.Content.HasAggregatedFields;
-            var htmlAttributes = html.QPHtmlProperties(id, field, readOnly);
+            var htmlAttributes = html.QpHtmlProperties(id, field, readOnly);
 
             switch (field.ExactType)
             {
@@ -369,6 +369,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             );
         }
 
+        public static MvcHtmlString TextBoxField<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, string defaultValue, Dictionary<string, object> htmlAttributes = null)
+        {
+            var fieldName = ExpressionHelper.GetExpressionText(expression);
+            var data = html.GetMetaData(expression);
+            return MvcHtmlString.Create(
+                string.Format(
+                    html.FieldTemplate(fieldName,
+                    data.DisplayName,
+                    false,
+                    html.GetExampleText(data.ContainerType, data.PropertyName)),
+                    html.QpTextBox(fieldName, defaultValue, htmlAttributes).ToHtmlString()
+                )
+            );
+        }
+
         public static MvcHtmlString TextBoxFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
         {
             var data = html.GetMetaData(expression);
@@ -516,7 +531,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 string.Format(
                     html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
                     html.PasswordFor(expression,
-                    html.QPHtmlProperties(expression,
+                    html.QpHtmlProperties(expression,
                     EditorType.Password))
                 )
             );
@@ -689,7 +704,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 var classifierContent = ArticleViewModel.GetContentById(Converter.ToNullableInt32(value));
                 var classifierContentName = classifierContent?.Name;
-                sb.Append(source.QpTextBox(name, classifierContentName, new Dictionary<string, object> { { "class", HtmlHelpersExtensions.ARTICLE_TEXTBOX_CLASS_NAME }, { "disabled", "disabled" } }));
+                sb.Append(source.QpTextBox(name, classifierContentName, new Dictionary<string, object> { { "class", HtmlHelpersExtensions.ArticleTextboxClassName }, { "disabled", "disabled" } }));
             }
             else
             {

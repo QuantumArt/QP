@@ -67,13 +67,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             return type != typeof(int) || Converter.CanParse<int>(attemptedValue);
         }
 
-        /// <summary>
-        /// Получить полное имя свойства в моделе
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="bindingContext"></param>
-        /// <param name="e"></param>
-        /// <returns></returns>
         protected string GetModelPropertyName<T>(ModelBindingContext bindingContext, Expression<Func<T>> e)
         {
             return string.IsNullOrWhiteSpace(bindingContext.ModelName) ? e.GetPropertyName() : string.Concat(bindingContext.ModelName, ".", e.GetPropertyName());

@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
@@ -29,12 +32,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             {
                 UpdateArticle(bindingContext, item, false);
                 item.UpdateAggregatedCollection();
-
                 foreach (var aggArticle in item.AggregatedArticles)
                 {
                     UpdateArticle(bindingContext, aggArticle, true);
                 }
             }
+
+            item.UniqueId = GetGuidOrGenerate(bindingContext);
         }
 
         internal static void UpdateArticleWithVariations(ModelBindingContext bindingContext, Article article)
@@ -107,16 +111,24 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             }
         }
 
+        private static string GetValue(ModelBindingContext bindingContext, string fieldName)
+        {
+            var value = bindingContext.ValueProvider.GetValue(fieldName);
+            return value?.AttemptedValue.Trim() ?? string.Empty;
+        }
+
         private static string GetBooleanValue(ModelBindingContext bindingContext, string fieldName)
         {
             var value = GetValue(bindingContext, fieldName);
             return string.IsNullOrEmpty(value) ? false.ToString() : value.Split(',')[0];
         }
 
-        private static string GetValue(ModelBindingContext bindingContext, string fieldName)
+        private static Guid? GetGuidOrGenerate(ModelBindingContext bindingContext)
         {
-            var value = bindingContext.ValueProvider.GetValue(fieldName);
-            return value?.AttemptedValue.Trim() ?? string.Empty;
+            Expression<Func<ArticleViewModel, Guid?>> guidExpression = vm => vm.Data.UniqueId;
+            var fieldName = ExpressionHelper.GetExpressionText(guidExpression);
+            var rawGuid = GetValue(bindingContext, fieldName);
+            return string.IsNullOrWhiteSpace(rawGuid) ? Guid.NewGuid() : GuidHelpers.GetGuidOrDefault(rawGuid);
         }
     }
 }
