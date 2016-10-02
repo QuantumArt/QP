@@ -1,8 +1,10 @@
-﻿using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
@@ -19,12 +21,18 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             var dbActionService = new XmlDbUpdateActionService();
 
             _settings = settings;
-            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(settings.DisableFieldIdentity, settings.DisableContentIdentity, _settings.UserId, dbLogService, dbActionService);
+            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(
+                QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode),
+                CommonHelpers.GetDbIdentityInsertOptions(settings.DisableFieldIdentity,
+                settings.DisableContentIdentity),
+                _settings.UserId,
+                dbLogService,
+                dbActionService);
         }
 
         public void Process()
         {
-            var xmlActionsString = XmlReaderProcessor.Process(_settings.FilePathes, _settings.ConfigPath, (XmlSettingsModel) _settings);
+            var xmlActionsString = XmlReaderProcessor.Process(_settings.FilePathes, _settings.ConfigPath, (XmlSettingsModel)_settings);
             _xmlDbUpdateReplayService.Process(xmlActionsString, _settings.FilePathes);
         }
     }

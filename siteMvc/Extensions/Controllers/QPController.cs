@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,7 +8,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 {
@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         public ActionResult JsonHtml(string viewName, object model)
         {
-            if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+            if (HttpContext.IsXmlDbUpdateReplayAction())
             {
                 if (ModelState.IsValid)
                 {
@@ -62,12 +62,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         public ActionResult Redirect(string actionName, object routeValues)
         {
-            return CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext) ? null : RedirectToAction(actionName, routeValues);
+            return HttpContext.IsXmlDbUpdateReplayAction() ? null : RedirectToAction(actionName, routeValues);
         }
 
         public JsonNetResult<MessageResult> JsonMessageResult(MessageResult result)
         {
-            if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+            if (HttpContext.IsXmlDbUpdateReplayAction())
             {
                 if (result != null && result.Type == ActionMessageType.Error)
                 {

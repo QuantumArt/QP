@@ -1,9 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -15,8 +13,8 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
 {
@@ -56,85 +54,18 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                 foreach (var ofp in orderedFilePathes)
                 {
                     var logService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
-                    var xmlString = File.ReadAllText(ofp, Encoding.UTF8);
+                    var xmlString = XDocument.Parse(File.ReadAllText(ofp, Encoding.UTF8)).ToStringWithDeclaration(SaveOptions.DisableFormatting);
                     var logEntry = new XmlDbUpdateLogModel
                     {
                         Body = xmlString,
                         FileName = ofp,
                         Applied = DateTime.Now,
-                        UserId = 1
+                        UserId = 1,
+                        Hash = HashHelpers.CalculateMd5Hash(xmlString)
                     };
 
-                    var md5 = MD5.Create();
-                    var inputBytes = Encoding.UTF8.GetBytes(xmlString);
-                    var hash = md5.ComputeHash(inputBytes);
-                    var sb = new StringBuilder();
-                    foreach (var t in hash)
-                    {
-                        sb.Append(t.ToString("X2"));
-                    }
-
-                    logEntry.Hash = sb.ToString();
-
-                    var identityTypes = new HashSet<string>();
-                    if (!settingsTemp.DisableFieldIdentity)
-                    {
-                        identityTypes.Add(EntityTypeCode.Field);
-                        identityTypes.Add(EntityTypeCode.ContentLink);
-                    }
-
-                    if (!settingsTemp.DisableContentIdentity)
-                    {
-                        identityTypes.Add(EntityTypeCode.Content);
-                        identityTypes.Add(EntityTypeCode.ContentGroup);
-                    }
-
-                    Program.Logger.Debug($"Old version (Mixed) compatability mode enabled for {ofp}. Check hash {logEntry.Hash} in database.");
-                    using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
-                    {
-                        if (logService.IsFileAlreadyReplayed(logEntry.Hash))
-                        {
-                            Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
-                            continue;
-                        }
-                    }
-
-
-
-                    inputBytes = Encoding.UTF8.GetBytes(xmlString.Replace("\r\n", "\n"));
-                    hash = md5.ComputeHash(inputBytes);
-                    sb = new StringBuilder();
-                    foreach (var t in hash)
-                    {
-                        sb.Append(t.ToString("X2"));
-                    }
-
-                    logEntry.Hash = sb.ToString();
-
-                    Program.Logger.Debug($"Old version (Unix) compatability enabled for {ofp}. Check hash {logEntry.Hash} in database.");
-                    using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
-                    {
-                        if (logService.IsFileAlreadyReplayed(logEntry.Hash))
-                        {
-                            Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
-                            continue;
-                        }
-                    }
-
-
-
-                    inputBytes = Encoding.UTF8.GetBytes(xmlString.Replace("\n", "\r\n"));
-                    hash = md5.ComputeHash(inputBytes);
-                    sb = new StringBuilder();
-                    foreach (var t in hash)
-                    {
-                        sb.Append(t.ToString("X2"));
-                    }
-
-                    logEntry.Hash = sb.ToString();
-
                     Program.Logger.Debug($"Old version (Windows) compatability enabled for {ofp}. Check hash {logEntry.Hash} in database.");
-                    using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), identityTypes))
+                    using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), CommonHelpers.GetDbIdentityInsertOptions(settingsTemp.DisableFieldIdentity, settingsTemp.DisableContentIdentity)))
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {
@@ -166,7 +97,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             return new XmlReaderSettings(Directory.EnumerateFiles(absDirPath, "*.xml", SearchOption.TopDirectoryOnly).OrderBy(fn => fn).ToList());
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static XmlReaderSettings GetXmlReaderSettings(string absDirPath, string absOrRelativeConfigPath)
         {
             var configPath = absOrRelativeConfigPath;
@@ -184,7 +114,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             return new XmlReaderSettings(actionNodes.Select(node => Path.Combine(absDirPath, node.Attribute(XmlReaderSettings.ConfigElementPathAttribute).Value)).ToList());
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static XDocument CombineMultipleDocumentsWithSameRoot(IList<XDocument> xmlDocuments)
         {
             if (!xmlDocuments.Any())

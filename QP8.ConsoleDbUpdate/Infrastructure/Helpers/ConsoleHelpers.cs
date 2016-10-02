@@ -1,6 +1,7 @@
 using System;
 using Mono.Options;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 {
@@ -10,7 +11,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
         {
             WriteLineDebug();
             Console.WriteLine("QuantumArt DBUpdate for QP8 version 6.0.");
-            Console.WriteLine($"Assembly version {typeof(Program).Assembly.GetName().Version}.");
+            Console.WriteLine($"Assembly version {CommonHelpers.GetAssemblyVersion()}.");
         }
 
         internal static void WriteLineDebug(string message = null)

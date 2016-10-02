@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -46,8 +45,7 @@ namespace Quantumart.QP8.BLL
             set;
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public void AutoLock()
+                public void AutoLock()
         {
             if (!LockedByAnyone)
             {

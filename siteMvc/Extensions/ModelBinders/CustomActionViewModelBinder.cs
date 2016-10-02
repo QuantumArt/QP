@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Web.Mvc;
 using Quantumart.QP8.Utils;
@@ -10,7 +9,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
     public class CustomActionViewModelBinder : QpModelBinder
     {
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         protected override void BindProperty(System.Web.Mvc.ControllerContext controllerContext, System.Web.Mvc.ModelBindingContext bindingContext, System.ComponentModel.PropertyDescriptor propertyDescriptor)
         {
             var model = bindingContext.Model as CustomActionViewModel;
@@ -33,7 +31,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             var model = bindingContext.Model as CustomActionViewModel;

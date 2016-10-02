@@ -4,6 +4,7 @@ using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
@@ -35,7 +36,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
             }
 
             var controller = (QPController)filterContext.Controller;
-            if (controller == null || CommonHelpers.IsXmlDbUpdateReplayAction(filterContext.HttpContext))
+            if (controller == null || filterContext.HttpContext.IsXmlDbUpdateReplayAction())
             {
                 return;
             }

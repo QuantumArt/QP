@@ -300,6 +300,7 @@
     <Compile Include="Extensions\Controllers\QPController.cs" />
     <Compile Include="Extensions\Controllers\RulesViolationExceptionExtensions.cs" />
     <Compile Include="Extensions\Helpers\AggregationListTemplateField.cs" />
+    <Compile Include="Infrastructure\Extensions\HttpContextBaseExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\UnityContainerExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XElementExtensions.cs" />
     <Compile Include="Infrastructure\Factories\JsonCamelCaseResultFabric.cs" />

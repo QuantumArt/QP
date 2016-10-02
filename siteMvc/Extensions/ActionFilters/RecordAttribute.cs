@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using System.Xml.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
@@ -56,7 +57,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
                     var actionToSerialize = XmlDbUpdateHttpContextHelpers.CreateXmlDbUpdateActionFromHttpContext(filterContext.HttpContext, _code ?? BackendActionContext.Current.ActionCode, _ignoreForm);
                     XmlDbUpdateSerializerHelpers
                         .SerializeAction(actionToSerialize, CommonHelpers.GetBackendUrl(filterContext.HttpContext))
-                        .Save(QPContext.GetRecordXmlFilePath());
+                        .Save(QPContext.GetRecordXmlFilePath(), SaveOptions.None);
                 }
             }
             catch (Exception ex)

@@ -8,9 +8,9 @@ using Quantumart.QP8.WebMvc.Infrastructure.Factories;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    public static class ActionResultHelpers
+    internal static class ActionResultHelpers
     {
-        public static ActionResult GererateJsonError(ExceptionResultMode responseType, Exception ex)
+        internal static ActionResult GererateJsonError(ExceptionResultMode responseType, Exception ex)
         {
             Ensure.NotNull(ex);
 

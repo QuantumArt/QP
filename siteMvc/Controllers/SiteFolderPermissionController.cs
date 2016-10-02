@@ -76,26 +76,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return base.Properties(tabId, parentId, id, collection);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveSiteFolderPermission)]
         [BackendActionContext(ActionCode.MultipleRemoveSiteFolderPermission)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleRemove(int parentId, int[] IDs)
         {
             return base.MultipleRemove(parentId, IDs);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveSiteFolderPermission)]
         [BackendActionContext(ActionCode.RemoveSiteFolderPermission)]
         [BackendActionLog]
-        [Record]
         public override ActionResult Remove(int parentId, int id)
         {
             return base.Remove(parentId, id);

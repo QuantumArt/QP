@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
@@ -9,7 +8,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
     public class ArticleScheduleModelBinder : QpModelBinder
     {
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public override object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             var item = base.BindModel(controllerContext, bindingContext) as ArticleSchedule;
@@ -46,7 +44,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             return item;
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             var item = bindingContext.Model as ArticleSchedule;

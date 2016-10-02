@@ -9,17 +9,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
     {
         private readonly bool _isQpInstalled;
 
-        public XmlDbUpdateNonMvcReplayService(bool disableFieldIdentity,
-            bool disableContentIdentity,
-            int userId,
-            IXmlDbUpdateLogService dbLogService,
-            IXmlDbUpdateActionService dbActionService,
-            bool isQpInstalled = true)
-            : base(disableFieldIdentity, disableContentIdentity, userId, dbLogService, dbActionService)
-        {
-            _isQpInstalled = isQpInstalled;
-        }
-
         public XmlDbUpdateNonMvcReplayService(string connectionString,
             int userId,
             IXmlDbUpdateLogService dbLogService,

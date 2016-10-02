@@ -2,9 +2,9 @@
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    public class GuidHelpers
+    internal class GuidHelpers
     {
-        public static Guid? GetGuidOrDefault(string rawGuid, Guid? defaultValue = null)
+        internal static Guid? GetGuidOrDefault(string rawGuid, Guid? defaultValue = null)
         {
             Guid result;
             Guid.TryParse(rawGuid, out result);

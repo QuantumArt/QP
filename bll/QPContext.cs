@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
@@ -20,8 +20,11 @@ namespace Quantumart.QP8.BLL
     public interface IContextStorage
     {
         T GetValue<T>(string key);
+
         void SetValue<T>(T value, string key);
+
         void ResetValue(string key);
+
         IEnumerable<string> Keys { get; }
     }
 
@@ -484,7 +487,6 @@ namespace Quantumart.QP8.BLL
             return $"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static bool CheckCustomerCode(string customerCode)
         {
             return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name").Value).Contains(customerCode);

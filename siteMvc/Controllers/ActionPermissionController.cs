@@ -44,13 +44,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return base.New(tabId, parentId);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewActionPermission)]
         [BackendActionContext(ActionCode.AddNewActionPermission)]
         [BackendActionLog]
-        [Record]
         public override ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             return base.New(tabId, parentId, collection);
@@ -65,38 +64,35 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return base.Properties(tabId, parentId, id, successfulActionCode);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.ActionPermissionProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateActionPermission)]
         [BackendActionContext(ActionCode.UpdateActionPermission)]
         [BackendActionLog]
-        [Record(ActionCode.ActionPermissionProperties)]
         public override ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             return base.Properties(tabId, parentId, id, collection);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveActionPermission)]
         [BackendActionContext(ActionCode.MultipleRemoveActionPermission)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleRemove(int parentId, int[] IDs)
         {
             return base.MultipleRemove(parentId, IDs);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveActionPermission)]
         [BackendActionContext(ActionCode.RemoveActionPermission)]
         [BackendActionLog]
-        [Record]
         public override ActionResult Remove(int parentId, int id)
         {
             return base.Remove(parentId, id);

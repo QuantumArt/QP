@@ -15,7 +15,6 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Content;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
@@ -114,7 +113,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -167,7 +166,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }

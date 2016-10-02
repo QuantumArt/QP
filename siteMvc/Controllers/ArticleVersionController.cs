@@ -9,7 +9,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 using Telerik.Web.Mvc;
 
@@ -95,7 +95,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (ModelState.IsValid)
             {
-                model.Data.Article = ArticleVersionService.Restore(model.Data, boundToExternal, CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext));
+                model.Data.Article = ArticleVersionService.Restore(model.Data, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
                 return Redirect("Properties", new
                 {
                     tabId,

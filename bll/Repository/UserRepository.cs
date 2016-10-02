@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -280,8 +279,7 @@ namespace Quantumart.QP8.BLL.Repository
                 }).ToArray();
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private static IEnumerable<UserDefaultFilterItemDAL> MapUserDefaultFilter(User biz, IQPEntityObject dal)
+                private static IEnumerable<UserDefaultFilterItemDAL> MapUserDefaultFilter(User biz, IQPEntityObject dal)
         {
             return biz.ContentDefaultFilters
                 .Where(f => f.ArticleIDs.Any())

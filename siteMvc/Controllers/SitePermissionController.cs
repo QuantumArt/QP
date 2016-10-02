@@ -43,13 +43,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return base.New(tabId, parentId);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewSitePermission)]
         [BackendActionContext(ActionCode.AddNewSitePermission)]
         [BackendActionLog]
-        [Record]
         public override ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             return base.New(tabId, parentId, collection);
@@ -76,26 +75,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return base.Properties(tabId, parentId, id, collection);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveSitePermission)]
         [BackendActionContext(ActionCode.MultipleRemoveSitePermission)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public override ActionResult MultipleRemove(int parentId, int[] IDs)
         {
             return base.MultipleRemove(parentId, IDs);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveSitePermission)]
         [BackendActionContext(ActionCode.RemoveSitePermission)]
         [BackendActionLog]
-        [Record]
         public override ActionResult Remove(int parentId, int id)
         {
             return base.Remove(parentId, id);

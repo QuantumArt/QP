@@ -7,6 +7,7 @@ using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.ConsoleDbUpdate
 {
@@ -32,7 +33,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         public static void Main(string[] args)
         {
             Logger = new QpUpdateLoggingWrapper();
-            Logger.Info($"Console db updater is started. Args: {args.ToJsonLog()}");
+            Logger.Info($"Console db updater is started. Version: {CommonHelpers.GetAssemblyVersion()}. Args: {args.ToJsonLog()}");
 
             try
             {

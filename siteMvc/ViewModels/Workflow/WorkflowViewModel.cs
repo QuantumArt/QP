@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
@@ -97,7 +96,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Workflow
             set { _contents.Value = value; }
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public IEnumerable<object> WorkflowRulesDisplay
         {
             get

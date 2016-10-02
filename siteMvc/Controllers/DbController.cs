@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
@@ -113,7 +114,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             try
             {
-                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, _xmlDbUpdateLogService, _xmlDbUpdateActionService).Process(xmlString);
+                new XmlDbUpdateReplayService(
+                    QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode),
+                    CommonHelpers.GetDbIdentityInsertOptions(disableFieldIdentity, disableContentIdentity),
+                    QPContext.CurrentUserId,
+                    _xmlDbUpdateLogService,
+                    _xmlDbUpdateActionService).Process(xmlString);
             }
             catch (XmlDbUpdateLoggingException ex)
             {

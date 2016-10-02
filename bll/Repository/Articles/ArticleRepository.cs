@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1047,8 +1046,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 a.Content.Fields.Any(f => f.Aggregated));
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        internal static bool CheckRelationSecurity(Article article, bool isDeletable)
+                internal static bool CheckRelationSecurity(Article article, bool isDeletable)
         {
             var result = true;
             if (!QPContext.IsAdmin)
@@ -1381,8 +1379,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return dt;
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations)
+                private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations)
         {
             return (from a in articles
                     from f in a.Fields
@@ -1531,7 +1528,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return articles.SelectMany(a => a.Fields.Select(f => f.Id)).Distinct().ToArray();
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string GetLinksXml(IEnumerable<LinkData> links)
         {
             var doc = new XDocument();

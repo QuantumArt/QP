@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using System.Xml.Linq;
@@ -9,8 +8,6 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -37,11 +34,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
         }
 
-        public XmlDbUpdateReplayService(bool disableFieldIdentity, bool disableContentIdentity, int userId, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
-            : this(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), GetIdentityInsertOptions(disableFieldIdentity, disableContentIdentity), userId, dbLogService, dbActionService)
-        {
-        }
-
         public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
@@ -55,7 +47,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _actionsCorrecterService = new XmlDbUpdateActionCorrecterService(dbActionService);
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public virtual void Process(string xmlString, IList<string> filePathes = null)
         {
             Ensure.Argument.NotNullOrWhiteSpace(xmlString, nameof(xmlString));
@@ -129,7 +120,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 Logger.Log.Debug($"End replaying action: {xmlActionStringLog}");
 
                 logEntry.Ids = string.Join(",", replayedAction.Ids);
-                logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToString();
+                logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, backendUrl).ToStringWithDeclaration(SaveOptions.DisableFormatting);
                 _dbLogService.InsertActionLogEntry(logEntry);
             }
         }
@@ -150,7 +141,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static XDocument FilterFromSubRootNodeDuplicates(string xmlString)
         {
             var document = XDocument.Parse(xmlString);
@@ -180,29 +170,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static bool ValidateDbVersion(XContainer doc)
         {
             var root = doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
             return root.Attribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute) == null || root.Attribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute).Value == new ApplicationInfoHelper().GetCurrentDbVersion();
-        }
-
-        private static HashSet<string> GetIdentityInsertOptions(bool disableFieldIdentity, bool disableContentIdentity)
-        {
-            var identityTypes = new HashSet<string>();
-            if (!disableFieldIdentity)
-            {
-                identityTypes.Add(EntityTypeCode.Field);
-                identityTypes.Add(EntityTypeCode.ContentLink);
-            }
-
-            if (!disableContentIdentity)
-            {
-                identityTypes.Add(EntityTypeCode.Content);
-                identityTypes.Add(EntityTypeCode.ContentGroup);
-            }
-
-            return identityTypes;
         }
     }
 }

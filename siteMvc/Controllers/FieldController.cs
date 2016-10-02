@@ -8,7 +8,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 using Telerik.Web.Mvc;
 using StringExtensions = Quantumart.QP8.WebMvc.Infrastructure.Extensions.StringExtensions;
@@ -79,7 +79,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -146,7 +146,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (UserQueryContentCreateViewException uqe)
                 {
-                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -156,7 +156,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -221,7 +221,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (UserQueryContentCreateViewException uqe)
                 {
-                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -231,7 +231,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (CommonHelpers.IsXmlDbUpdateReplayAction(HttpContext))
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -255,26 +255,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("VirtualProperties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveField)]
         [BackendActionContext(ActionCode.RemoveField)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
             var result = FieldService.Remove(id);
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveField)]
         [BackendActionContext(ActionCode.MultipleRemoveField)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemove(int[] IDs)
         {

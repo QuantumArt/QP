@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services;
@@ -171,13 +171,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UnbindNotification)]
         [BackendActionContext(ActionCode.UnbindNotification)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult Unbind(int Id)
         {
@@ -185,26 +184,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveNotification)]
         [BackendActionContext(ActionCode.RemoveNotification)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
             var result = _notificationService.Remove(id);
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveNotification)]
         [BackendActionContext(ActionCode.MultipleRemoveNotification)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemove(int parentId, int[] IDs)
         {

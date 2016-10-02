@@ -4,9 +4,9 @@ using System.Xml.Serialization;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
-    public static class XmlSerializerHelpers
+    internal static class XmlSerializerHelpers
     {
-        public static string Serialize<T>(T item)
+        internal static string Serialize<T>(T item)
         {
             var xs = new XmlSerializer(item.GetType());
             using (var sw = new StringWriter())
@@ -16,7 +16,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             }
         }
 
-        public static string Serialize<T>(T item, string rootName)
+        internal static string Serialize<T>(T item, string rootName)
         {
             var xs = new XmlSerializer(item.GetType(), new XmlRootAttribute(rootName));
             using (var sw = new StringWriter())
@@ -26,7 +26,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             }
         }
 
-        public static T Deserialize<T>(string xmlString)
+        internal static T Deserialize<T>(string xmlString)
         {
             if (string.IsNullOrWhiteSpace(xmlString))
             {

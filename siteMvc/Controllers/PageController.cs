@@ -112,26 +112,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemovePage)]
         [BackendActionContext(ActionCode.MultipleRemovePage)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemovePage(int parentId, int[] IDs)
         {
             return JsonMessageResult(_pageService.MultipleRemovePage(IDs));
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemovePage)]
         [BackendActionContext(ActionCode.RemovePage)]
         [BackendActionLog]
-        [Record]
         public ActionResult RemovePage(int id)
         {
             var result = _pageService.RemovePage(id);

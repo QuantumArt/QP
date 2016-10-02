@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects;
@@ -460,7 +460,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         internal static IEnumerable<Field> GetDisplayFields(int contentId, Field field = null)
         {
             var excludeId = field != null && field.ExactType == FieldExactTypes.M2ORelation ? field.BackRelationId.Value : 0;

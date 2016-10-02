@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -95,8 +94,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             return sqlResult;
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private StringBuilder СollectSqlForManyToMany(StringBuilder sqlResult, Field field, string value)
+                private StringBuilder СollectSqlForManyToMany(StringBuilder sqlResult, Field field, string value)
         {
             var linkParamName = $"@link{Counter}";
             var linkValueParamName = $"@linkValue{Counter}";
@@ -106,8 +104,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             return sqlResult;
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private StringBuilder СollectSqlForManyToOne(StringBuilder sqlResult, Field field, string value)
+                private StringBuilder СollectSqlForManyToOne(StringBuilder sqlResult, Field field, string value)
         {
             var backFieldParamName = $"@backField{Counter}";
             var backFieldValueParamName = $"@backFieldValue{Counter}";

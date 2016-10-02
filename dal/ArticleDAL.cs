@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace Quantumart.QP8.DAL
 {

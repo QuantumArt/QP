@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -806,7 +805,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return MvcHtmlString.Create(componentTag.ToString());
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static void SetVisualEditorAttributes(Dictionary<string, object> htmlAttributes, Field field, bool forceReadOnly)
         {
             htmlAttributes.AddCssClass(VisualEditorClassName);
@@ -1175,7 +1173,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <param name="htmlAttributes"></param>
         /// <param name="dropDownOptions">дополнительные опции</param>
         /// <returns>код раскрывающегося списка</returns>
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static MvcHtmlString QpDropDownListFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes, SelectOptions dropDownOptions)
         {
             var options = new ControlOptions { Enabled = !source.IsReadOnly() && !dropDownOptions.ReadOnly };

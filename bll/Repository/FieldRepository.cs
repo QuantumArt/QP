@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using AutoMapper;
@@ -395,8 +394,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Обновляет данные связей при изменении типов связей или связанных контентов
         /// </summary>
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private static void UpdateRelationData(Field newItem, Field preUpdateField)
+                private static void UpdateRelationData(Field newItem, Field preUpdateField)
         {
             // M2M -> M2O или новое базовое поле для M2O
             if (preUpdateField.ExactType == FieldExactTypes.M2MRelation && newItem.ExactType == FieldExactTypes.M2ORelation ||
@@ -586,8 +584,7 @@ namespace Quantumart.QP8.BLL.Repository
             return QPContext.EFContext.ContentToContentSet.Include("Content").Any(n => n.NetPluralLinkName == link.NetPluralLinkName && n.LinkId != link.LinkId && n.Content.SiteId == link.Content.SiteId);
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        internal static bool LinqBackPropertyNameExists(Field field)
+                internal static bool LinqBackPropertyNameExists(Field field)
         {
             if (field == null)
             {
@@ -617,8 +614,7 @@ namespace Quantumart.QP8.BLL.Repository
             return existFieldInRelatedContent || existSameNetBackNameFields;
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        internal static bool LinqPropertyNameExists(Field field)
+                internal static bool LinqPropertyNameExists(Field field)
         {
             if (field == null)
             {

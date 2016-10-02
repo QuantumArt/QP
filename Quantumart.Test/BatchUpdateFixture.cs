@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.Globalization;
 using System.Linq;
 using Moq;
@@ -270,8 +269,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public void BatchUpdate_DictionaryContent_RecoverContentData()
+                public void BatchUpdate_DictionaryContent_RecoverContentData()
         {
             var random = Guid.NewGuid().ToString();
             var key = "key_" + random;
@@ -361,8 +359,7 @@ namespace Quantumart.Test
         }
 
         [Test]
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public void BatchUpdate_DictionaryContent_InsertArticle()
+                public void BatchUpdate_DictionaryContent_InsertArticle()
         {
             var random = Guid.NewGuid().ToString();
             var key = "key_" + random;

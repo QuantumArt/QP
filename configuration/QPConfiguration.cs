@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Data.SqlClient;
@@ -30,9 +30,6 @@ namespace Quantumart.QP8.Configuration
         /// <summary>
         /// Получение переменной приложения из QP конфига
         /// </summary>
-        /// <param name="name">имя переменной</param>
-        /// <returns>значение переменной</returns>
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static string ConfigVariable(string name)
         {
             var elem = XmlConfig.Descendants("app_var").SingleOrDefault(n => n.Attribute("app_var_name").Value == name);
@@ -42,8 +39,6 @@ namespace Quantumart.QP8.Configuration
         /// <summary>
         /// Получение строки подключения к БД из QP конфига
         /// </summary>
-        /// <returns>строка подключения</returns>
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static string ConfigConnectionString(string customerCode, string appName = "QP8Backend")
         {
             if (!string.IsNullOrWhiteSpace(customerCode))
@@ -67,8 +62,6 @@ namespace Quantumart.QP8.Configuration
         /// <summary>
         /// Получение всех строк подключения к БД из QP конфига
         /// </summary>
-        /// <returns>строка подключения</returns>
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static IEnumerable<string> ConfigConnectionStrings(string appName = null, IEnumerable<string> exceptCustomerCodes = null)
         {
             exceptCustomerCodes = exceptCustomerCodes ?? new string[0];
@@ -79,7 +72,6 @@ namespace Quantumart.QP8.Configuration
             return result.ToArray();
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static string[] CustomerCodes
         {
             get

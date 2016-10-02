@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.EntityClient;
 using System.Data.Mapping;
@@ -142,7 +142,6 @@ namespace Quantumart.QP8.BLL
             "res://*/QP8Model.msl"
         }, new[] { typeof(QP8Entities).Assembly });
 
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         private MetadataWorkspace MetadataWorkspace
         {
             get
@@ -194,7 +193,6 @@ namespace Quantumart.QP8.BLL
             CorrectEntityType(ssdl, ns, EntityTypeCode.Notification, "NOTIFICATIONS", "NOTIFICATION_ID");
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private void CorrectEntityType(XContainer ssdl, XNamespace ns, string entityTypeCode, string tableName, string keyName)
         {
             if (IdentityInsertOptions != null && IdentityInsertOptions.Contains(entityTypeCode))

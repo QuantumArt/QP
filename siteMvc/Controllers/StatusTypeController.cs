@@ -90,14 +90,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewStatusType)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewStatusType)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var status = _statusTypeService.NewStatusTypePropertiesForUpdate(parentId);
@@ -115,13 +114,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveStatusType)]
         [BackendActionContext(ActionCode.RemoveStatusType)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
             var result = _statusTypeService.Remove(id);
