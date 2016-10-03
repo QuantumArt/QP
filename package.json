@@ -1,8 +1,8 @@
 {
-  "name": "qp8",
-  "version": "1.0.0",
+  "name": "QuantumArt.Qp8",
+  "version": "0.1.0",
   "author": "Quantum Art",
-  "description": "Quantum Art qp8 solution",
+  "description": "Quantum Art QP8 project",
   "repository": {
     "type": "git",
     "url": "http://tfs:8080/tfs/QuantumartCollection/_git/QP"
@@ -41,12 +41,13 @@
     "jshint": "^2.9.1",
     "jshint-stylish": "^2.1.0",
     "merge-stream": "^1.0.0",
-    "node-sass": "^3.10.1"
+    "node-sass": "^3.10.1",
+    "yargs": "^6.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp",
-    "lint": "gulp lint",
+    "build-dev": "cross-env NODE_ENV=development gulp",
     "postrestore": "echo something like npm install shoud here",
     "prepare": "echo something like bower install should be here",
     "predeploy": "echo im about to deploy",

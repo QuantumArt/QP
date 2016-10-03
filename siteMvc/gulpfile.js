@@ -2,7 +2,8 @@
 
 // Install Steps:
 // 1. Install external node js and npm from official site
-// 2. Set priority for VS: https://blogs.msdn.microsoft.com/webdev/2015/03/19/customize-external-web-tools-in-visual-studio-2015/
+// 2. Install global packages for npm runner: gulp, cross-env
+// 3. Set priority for VS: https://blogs.msdn.microsoft.com/webdev/2015/03/19/customize-external-web-tools-in-visual-studio-2015/
 
 var fs = require('fs');
 var del = require('del');
@@ -15,15 +16,26 @@ es6Promise.polyfill();
 
 var $ = require('gulp-load-plugins')();
 var argv = require('yargs').argv;
-var project = JSON.parse(fs.readFileSync('./package.json'));
+var project = JSON.parse(fs.readFileSync('../package.json'));
 
 var config = {
   name: project.name,
   version: project.version,
-  environment: process.env.NODE_ENV || argv.production || 'development',
-  commit: process.env.APPVEYOR_REPO_COMMIT || '0',
-  buildNumber: process.env.APPVEYOR_BUILD_VERSION || '0',
+  environment: 'development',
+  commit: process.env.BUILD_SOURCEVERSION || '0',
+  branchName: process.env.BUILD_SOURCEBRANCHNAME || '',
+  buildNumber: process.env.BUILD_BUILDNUMBER || ''
 };
+
+// Nodejs arguments
+if (process.env.NODE_ENV && (process.env.NODE_ENV.toLowerCase() === 'production' || process.env.NODE_ENV.toLowerCase() === 'release')) {
+  config.environment = 'production';
+}
+
+// Gulp arguments
+if (argv.env && (argv.env.toLowerCase() === 'production' || argv.env.toLowerCase() === 'release')) {
+  config.environment = 'production';
+}
 
 var AUTOPREFIXER_BROWSERS = [
   'ie >= 8',
@@ -311,24 +323,33 @@ gulp.task('assets:revisions', function() {
     .pipe($.plumber({ errorHandler: reportError }))
     .pipe($.replaceTask({
       patterns: [{
-          match: 'version',
-          replacement: config.version
-        }
-      ]
+        match: 'version',
+        replacement: config.version
+      }]
     }))
     .pipe($.rename('Index.cshtml'))
     .pipe(gulp.dest('Views/Home/'));
 
-  var assemblies = gulp.src('Properties/AssemblyVersion.base.cs')
-    .pipe($.plumber({ errorHandler: reportError }))
-    .pipe($.rename('AssemblyVersion.cs'))
-    .pipe($.dotnetAssemblyInfo({
-      version: config.version,
-      configuration: config.environment,
-      fileVersion: config.version,
-      description: 'Build: ' +  config.buildNumber + ', Sha: ' + config.commit
-    }))
-    .pipe(gulp.dest('Properties/'));
+    var assemblyFileVersion = config.version + '.' + 0;
+    var assemblyDescription = 'Local builded at ' + new Date().toLocaleDateString();
+    if (config.commit && config.buildNumber) {
+      var splitted = config.buildNumber.split('.');
+      assemblyFileVersion = config.version + '.' + splitted[splitted.length - 1];
+      assemblyDescription = 'Server builded at ' +  config.buildNumber + ', Sha: ' + config.commit;
+    }
+
+    // TODO: Add local build tag from gulp-git
+    var assemblyInfo = assemblyFileVersion + '+' + config.branchName + '.Sha.' + config.commit;
+
+    var assemblies = gulp.src('Properties/AssemblyInfo.cs')
+      .pipe($.plumber({ errorHandler: reportError }))
+      .pipe($.dotnetAssemblyInfo({
+        version: config.version,
+        fileVersion: assemblyFileVersion,
+        informationalVersion: assemblyInfo,
+        description: assemblyDescription
+      }))
+      .pipe(gulp.dest('Properties/'));
 
   return merge(views, assemblies);
 });
@@ -352,7 +373,7 @@ gulp.task('assets:js2', ['assets:revisions'], function() {
   return gulp.src(paths.scripts2, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, debug: true }))
-    .pipe($.rename({ suffix: '.min' }))
+    //.pipe($.rename({ suffix: '.min' }))
     .pipe($.uglify())
     .pipe($.concat('app2.min.js'))
     .pipe($.sourcemaps.write('maps'))
@@ -377,7 +398,7 @@ gulp.task('assets:css', ['assets:revisions'], function() {
     .pipe($.sass().on('error', bs.notify))
     .pipe($.replace(/url\(\'/g, 'url(\'images/'))
     .pipe($.autoprefixer({ browsers: AUTOPREFIXER_BROWSERS }))
-    //.pipe($.cssnano())
+    .pipe($.cssnano())
     .pipe($.concat('app.min.css'))
     .pipe($.sourcemaps.write('maps'))
     .pipe(gulp.dest(destPaths.styles))

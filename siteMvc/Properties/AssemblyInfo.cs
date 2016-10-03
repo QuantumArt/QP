@@ -1,11 +1,14 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Quantumart.QP8.WebMvc")]
-[assembly: AssemblyCompany("Quantumart")]
-[assembly: AssemblyProduct("Quantumart.QP8.WebMvc")]
-[assembly: AssemblyCopyright("Copyright © Quantumart 1998")]
+[assembly: AssemblyTitle("QP8 Backend Web MVC Project")]
+[assembly: AssemblyDescription("Local builded at 2016-10-06")]
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: AssemblyVersion("0.1.0")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyInformationalVersion("0.1.0.0+.Sha.0")]
+
 [assembly: ComVisible(false)]
 [assembly: Guid("bf0fce66-3590-472b-abf9-2dcee321929c")]
+[assembly: InternalsVisibleTo("qpdbupdate")]

@@ -61,6 +61,9 @@
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>References\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Infrastructure\Enums\ConsoleLogLevel.cs" />
     <Compile Include="Infrastructure\Enums\ExitCode.cs" />
     <Compile Include="Infrastructure\Factories\ConsoleArgsProcessorFactory.cs" />
@@ -264,6 +267,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="gulpfile.js" />
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
       <Link>References\Quantumart.QP8.Merger.dll</Link>
     </EmbeddedResource>
