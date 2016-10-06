@@ -1,4 +1,4 @@
-﻿//#region class BackendActionType
+//#region class BackendActionType
 Quantumart.QP8.BackendActionType = function () {};
 
 // Возвращает код типа действия по коду действия

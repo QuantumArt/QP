@@ -1,4 +1,4 @@
-﻿//#region class BackendEntitySingleItemPicker
+//#region class BackendEntitySingleItemPicker
 // === Класс "Cписок сущностей в виде элемента управления одиночного выбора" ===
 Quantumart.QP8.BackendEntitySingleItemPicker = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
 	Quantumart.QP8.BackendEntitySingleItemPicker.initializeBase(this,
@@ -128,7 +128,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		$displayField.html(html);
 		var oldValue = $stateField.val();
 		$stateField.val(value);
-		
+
 		if (oldValue != value) {
 		    $stateField.addClass(CHANGED_FIELD_CLASS_NAME)
 		    var operation = (refreshOnly) ? "addClass" : "removeClass";
@@ -160,7 +160,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 				this._loadSelectedItems(selectedEntityIDs);
 				selectedEntityIDs = null;
 			}
-		}		
+		}
 	},
 
 	enableList: function () {
@@ -197,14 +197,14 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		if (!this.isListDisabled()) {
 			this._openPopupWindow();
 		}
-		event.stopImmediatePropagation();		
+		event.stopImmediatePropagation();
 	},
 
 	_onDeselectButtonClickHandler: function (event) {
 		if (!this.isListDisabled()) {
 			this.deselectAllListItems();
 		}
-		event.stopImmediatePropagation();		
+		event.stopImmediatePropagation();
 	},
 
 	dispose: function () {

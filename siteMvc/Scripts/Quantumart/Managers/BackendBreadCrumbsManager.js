@@ -1,4 +1,4 @@
-﻿//#region class BackendBreadCrumbsManager
+//#region class BackendBreadCrumbsManager
 // === Класс "Менеджер хлебных крошек" ===
 Quantumart.QP8.BackendBreadCrumbsManager = function (breadCrumbsContainerElementId, options) {
 	Quantumart.QP8.BackendBreadCrumbsManager.initializeBase(this);

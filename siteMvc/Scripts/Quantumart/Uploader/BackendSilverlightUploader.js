@@ -1,4 +1,4 @@
-﻿//#region class BackendSilverlightUploader
+//#region class BackendSilverlightUploader
 // === Класс "Silverlight загрузчик" ===
 Quantumart.QP8.BackendSilverlightUploader = function (parentElement, options) {
 	Quantumart.QP8.BackendSilverlightUploader.initializeBase(this);

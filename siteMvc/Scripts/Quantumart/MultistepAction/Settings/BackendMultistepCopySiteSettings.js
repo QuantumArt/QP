@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.MultistepActionCopySiteSettings = function () {
+Quantumart.QP8.MultistepActionCopySiteSettings = function () {
 };
 Quantumart.QP8.MultistepActionCopySiteSettings.prototype = {
     COPY_BUTTON: "Create like site",

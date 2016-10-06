@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.ClassifierFieldSearch
+//#region class BackendArticleSearchBlock.ClassifierFieldSearch
 // === Класс блока поиска по числовому полю
 Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType) {
     Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, searchType]);
@@ -144,8 +144,8 @@ Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.prototype = {
 
     _searchType: 0, //тип поиска Classifier
 
-    _isNullCheckBoxElement: null, // dom-элемент чекбокса isNull        
-    _contentID: null // 
+    _isNullCheckBoxElement: null, // dom-элемент чекбокса isNull
+    _contentID: null //
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.ClassifierFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);

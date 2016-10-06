@@ -160,3 +160,4 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
 };
 
 Quantumart.QP8.DirectLinkExecutor.registerClass('Quantumart.QP8.DirectLinkExecutor', Quantumart.QP8.Observable);
+

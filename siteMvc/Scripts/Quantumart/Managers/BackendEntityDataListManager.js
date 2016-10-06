@@ -1,4 +1,4 @@
-﻿//#region class BackendEntityDataListManager
+//#region class BackendEntityDataListManager
 // === Класс "Менеджер упрощенных списков сущностей" ===
 Quantumart.QP8.BackendEntityDataListManager = function () {
 	Quantumart.QP8.BackendEntityDataListManager.initializeBase(this);

@@ -1,4 +1,4 @@
-﻿//#region class BackendEntityEditorManager
+//#region class BackendEntityEditorManager
 var EVENT_TYPE_ENTITY_EDITOR_IS_READY = "OnEntityEditorIsReady";
 var EVENT_TYPE_ENTITY_EDITOR_DISPOSED = "OnEntityEditorDisposed";
 var EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED = "OnEntityEditorFieldChanged";
@@ -173,7 +173,7 @@ Quantumart.QP8.BackendEntityEditorManager.prototype = {
 	onEntityEditorDisposed: function (documentWrapperElementId) {
 		var eventArgs = new Sys.EventArgs();
 		eventArgs.documentWrapperElementId = documentWrapperElementId;
-		this.notify(EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);		
+		this.notify(EVENT_TYPE_ENTITY_EDITOR_DISPOSED, eventArgs);
 	},
 
 	onFieldValueChanged: function(args){

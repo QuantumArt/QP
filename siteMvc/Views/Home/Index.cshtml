@@ -1,380 +1,102 @@
-﻿@using Quantumart.QP8.Utils
+@using Quantumart.QP8.Utils
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.BLL
+@using Quantumart.QP8.WebMvc.ViewModels.HomePage;
 
-@model Quantumart.QP8.WebMvc.ViewModels.HomePage.IndexViewModel
+@model IndexViewModel
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+  Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <head>
-    <title>@Model.Title</title>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9"/>
-    <link href="~/Content/QP8/favicon.ico" rel="shortcut icon"/>
-    @{
-        const string jsVersion = "6.32";
-        const string cssVersion = "6.5";
+  <title>@Model.Title</title>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
+  <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
-        var allowCombineStylesheets = !HttpContext.Current.IsDebuggingEnabled;
-        var currentThemeName = Html.GetCurrentTheme();
-        var jsVersionFileName = string.Format("Quantumart/version.{0}.js", jsVersion);
-        var cssVersionFileName = string.Format("version.{0}.css", cssVersion);
-    }
+  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.min.css?rel=0.1.0")">
+  <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")">
 
-    @(Html.Telerik().StyleSheetRegistrar().StyleSheets(css => css
-          // Common Styles
-          .AddGroup("CommonStyles", g => g
-              .Add("basic.css")
-              .Add("page.css")
-              .Add("telerik.common.css")
-              .Add("jquery.nouislider.css")
-              .Add("jquery.qtip.css")
-              .Add("imgCropResizeClient.css")
-              .Add("imgareaselect.css")
-              .Add(cssVersionFileName)
-              .Combined(allowCombineStylesheets)
-          ).Add("~/Css/CustomCss/")
-
-          // Current Skin Styles
-          .AddGroup("CurrentSkinStyles", g => g
-              .Add("jquery.jeegoocontext." + currentThemeName + ".css")
-              .Add("telerik." + currentThemeName + ".css")
-              .Add(cssVersionFileName)
-              .Combined(allowCombineStylesheets)
-          )
-
-          // Codemirror Styles
-          .AddGroup("CodemirrorStyles", g => g
-              .Add("codemirror/lib/codemirror.css")
-              .Add("codemirrorTheme.css")
-              .Add("QpCodemirror.css")
-              .Add(cssVersionFileName)
-              .Combined(allowCombineStylesheets)
-          )))
-
-    <script>
-        window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
-    </script>
+  <script>
+    window.CKEDITOR_BASEPATH = "@Url.Content("~/Content/ckeditor/")";
+  </script>
 </head>
 
 <body data-dbhash="@Model.DbHash">
-    <div id="page" class="twoColumnLayout">
-        <div id="header">
-            <div id="serviceActions">
-                @if (HttpContext.Current.IsDebuggingEnabled)
-                {
-                    <a href="javascript:void(0);" id="traceWindowLink" class="js">@GlobalStrings.ServiceActions_Link_TraceConsole</a>
-                }
-            </div>
-
-            <div id="communicationMessage">
-                <span class="singleusermode"></span>
-            </div>
-
-            <div id="userInformation">
-                @GlobalStrings.UserInfo_Label_LoggedInAs <span data-userid="@QPContext.CurrentUserId" class="userName">@QPContext.CurrentUserName</span>
-                @Html.ActionLink(GlobalStrings.UserInfo_Link_Exit, "LogOut", "LogOn", null, new { @class = "signOut" })
-            </div>
-        </div>
-
-        @{Html.Telerik().Splitter()
-                    .Name("splitter")
-                    .Orientation(SplitterOrientation.Horizontal)
-                    .Panes(panes =>
-                    {
-                    panes.Add().Content(
-                        @<div id="menuContainer" style="display:none;">
-                            <div class="lineTop"></div>
-                            <em class="tl"></em>
-                            <em class="tr"></em>
-                            <em class="bl"></em>
-                            <em class="br"></em>
-                            <div id="tree">
-                                @(Html.Telerik().TreeView().Name("MainTreeMenu"))
-                            </div>
-                            <div class="lineBottom"></div>
-                        </div>
-)
-                    .Size("270px")
-                    .MinSize("50px")
-                    .MaxSize("400px")
-                    .Collapsible(false)
-                    .Resizable(true)
-                    .Scrollable(false)
-                    .HtmlAttributes(new { id = "leftMenu", @class = "corners" });
-
-                    panes.Add().Content(
-                        @<div>
-                            <div id="tabs">
-                                <div class="tabStrip" id="MainTabStrip">
-                                </div>
-                            </div>
-                            <div id="editingArea" class="corners">
-                                <div class="lineTop"></div>
-                                <em class="tl"></em>
-                                <em class="tr"></em>
-                                <em class="bl"></em>
-                                <em class="br"></em>
-                                <div id="breadCrumbs">
-                                </div>
-                                <div id="toolbar">
-                                    <div id="actionToolbar"></div>
-                                    <div id="viewToolbar"></div>
-                                </div>
-                                <div id="document">
-                                    <div id="context"></div>
-                                    <div id="search"></div>
-                                </div>
-                                <div class="lineBottom"></div>
-                            </div>
-                        </div>
-)
-                .HtmlAttributes(new { id = "content", @class = "content" });
-                    }).Render();
+  <div id="page" class="twoColumnLayout">
+    <div id="header">
+      <div id="serviceActions">
+        @if (HttpContext.Current.IsDebuggingEnabled)
+        {
+          <a href="javascript:void(0);" id="traceWindowLink" class="js">@GlobalStrings.ServiceActions_Link_TraceConsole</a>
         }
+      </div>
+
+      <div id="communicationMessage">
+        <span class="singleusermode"></span>
+      </div>
+
+      <div id="userInformation">
+        @GlobalStrings.UserInfo_Label_LoggedInAs <span data-userid="@QPContext.CurrentUserId" class="userName">@QPContext.CurrentUserName</span>
+        @Html.ActionLink(GlobalStrings.UserInfo_Link_Exit, "LogOut", "LogOn", null, new { @class = "signOut" })
+      </div>
     </div>
 
-    @{
-        var isDebugMode = HttpContext.Current.IsDebuggingEnabled; // признак, того что приложение запущено в режиме отладки
-        var allowCombineScripts = !isDebugMode;
+    @{Html.Telerik().Splitter()
+        .Name("splitter")
+        .Orientation(SplitterOrientation.Horizontal)
+        .Panes(panes =>
+        {
+          panes.Add().Content(
+            @<div id="menuContainer" style="display:none;">
+              <div class="lineTop"></div>
+              <em class="tl"></em>
+              <em class="tr"></em>
+              <em class="bl"></em>
+              <em class="br"></em>
+              <div id="tree">
+                @(Html.Telerik().TreeView().Name("MainTreeMenu"))
+              </div>
+              <div class="lineBottom"></div>
+            </div>)
+          .Size("270px")
+          .MinSize("50px")
+          .MaxSize("400px")
+          .Collapsible(false)
+          .Resizable(true)
+          .Scrollable(false)
+          .HtmlAttributes(new { id = "leftMenu", @class = "corners" });
+
+          panes.Add().Content(
+            @<div>
+              <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
+              <div id="editingArea" class="corners"><div class="lineTop"></div>
+                <em class="tl"></em>
+                <em class="tr"></em>
+                <em class="bl"></em>
+                <em class="br"></em>
+                <div id="breadCrumbs"></div>
+                <div id="toolbar"><div id="actionToolbar"></div><div id="viewToolbar"></div></div>
+                <div id="document"><div id="context"></div><div id="search"></div></div>
+                <div class="lineBottom"></div>
+              </div>
+            </div>
+          ).HtmlAttributes(new { id = "content", @class = "content" });
+        }).Render();
     }
+  </div>
 
-@(Html.Telerik().ScriptRegistrar()
-      .DefaultGroup(g => g.Enabled(false))
-      .Scripts(js => js
-          // Common Libraries
-          .AddGroup("CommonLibraries", g => g
-              .Add("es5-shim.js")
-              .Add("polyfills/object.assign.polyfill.js")
-              .Add("polyfills/array.includes.polyfill.js")
-              .Add("polyfills/array.find.polyfill.js")
-              .Add("polyfills/console.fns.polyfill.js")
-              .Add("jquery-1.7.1.js")
-              .Add("telerik.common.js")
-              .Add("Quantumart/jQueryExtensions.js")
-              .Add("MicrosoftAjax.js")
-              .Add("Quantumart/MicrosoftAjaxTraceExtensions.js")
-              .Add("json2.js")
-              .Add("Silverlight.js")
-              .Add("pmrpc.js")
-              .Add("underscore.js")
-              .Add("knockout.js")
-              .Add(jsVersionFileName)
-              .Combined(allowCombineScripts)
-          )
+  <script src="@Url.Content("~/Scripts/build/app1.min.js?rel=0.1.0")"></script>
+  <script src="/Backend/Scripts/Quantumart/JsConstants.ashx"></script>
+  <script src="/Backend/Scripts/Quantumart/JsLanguage.ashx"></script>
+  <script src="/Backend/signalr/hubs"></script>
+  <script src="@Url.Content("~/Scripts/build/app2.min.js?rel=0.1.0")"></script>
+  @(Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false)));
 
-          // jQuery Plugins
-          .AddGroup("jQueryPlugins", g => g
-              .Add("jquery.cookie.js")
-              .Add("jquery.timers.js")
-              .Add("jquery.scrollTo-1.4.2.js")
-              .Add("jquery.splitter.js")
-              .Add("jquery.form.js")
-              .Add("jquery.validate.js")
-              .Add("jquery.jeegoocontext.js")
-              .Add("jquery.verticalResizer.js")
-              .Add("jquery.qtip.js")
-              .Add("jquery.imgareaselect.js")
-              .Add("jquery.nouislider.link.js")
-              .Add("jquery.nouislider.js")
-              .Add("jquery.signalR-2.2.0.js")
-              .Add(jsVersionFileName)
-              .Combined(allowCombineScripts)
-          )
-
-          // Telerik Controls
-          .AddGroup("TelerikControls", g => g
-              .Add("telerik.draganddrop.js")
-              .Add("telerik.treeview.js")
-              .Add("telerik.window.js")
-              .Add("telerik.textbox.js")
-              .Add("telerik.combobox.js")
-              .Add("telerik.calendar.js")
-              .Add("telerik.datepicker.js")
-              .Add("telerik.timepicker.js")
-              .Add("telerik.datetimepicker.js")
-              .Add("telerik.grid.js")
-              .Add("telerik.grid.resizing.js")
-              .Add("telerik.grid.filtering.js")
-              .Add("telerik.grid.grouping.js")
-              .Add("telerik.grid.editing.js")
-              .Add("telerik.upload.js")
-              .Add("telerik.splitter.js")
-              .Add(jsVersionFileName)
-              .Combined(allowCombineScripts)
-          )
-
-          // Quantumart Constants
-          .Add("Quantumart/JsConstants.ashx")
-
-          // Quantumart Localizations
-          .Add("Quantumart/JsLanguage.ashx")
-
-          // SignalR
-          .Add("~/signalr/hubs")
-
-          // CodeMirror
-          .AddGroup("CodeMirrorScripts", g => g
-              .Add("~/Content/codemirror/lib/codemirror.js")
-              .Add("~/Content/codemirror/mode/clike/clike.js")
-              .Add("~/Content/codemirror/mode/sql/sql.js")
-              .Add("~/Content/codemirror/mode/xml/xml.js")
-              .Add("~/Content/codemirror/mode/css/css.js")
-              .Add("~/Content/codemirror/mode/vb/vb.js")
-              .Add("~/Content/codemirror/mode/javascript/javascript.js")
-              .Add("~/Content/codemirror/mode/htmlmixed/htmlmixed.js")
-              .Add("~/Content/codemirror/mode/htmlembedded/htmlembedded.js")
-              .Add("~/Content/codemirror/addon/mode/multiplex.js")
-              .Add(jsVersionFileName)
-              .Combined(allowCombineScripts)
-          )
-
-          .AddGroup("PlUploadScripts", g => g
-              .Add("PlUpload/moxie.js")
-              .Add("PlUpload/plupload.dev.js")
-              .Add("Quantumart/Uploader/plupload/plupload.filters.js")
-              .Add(jsVersionFileName)
-              .Combined(allowCombineScripts)
-          )
-
-          .AddGroup("CkEditorScripts", g => g
-              .Add("~/Content/ckeditor/ckeditor.js")
-              .Add("Quantumart/ckeditor/aspell/plugin.js")
-              .Add("Quantumart/ckeditor/typographer/plugin.js")
-              .Add("Quantumart/ckeditor/globalSettings.js")
-              .Add(jsVersionFileName)
-              .Combined(allowCombineScripts)
-          )
-
-          // Quantumart
-          .AddGroup("QuantumartScripts", g => g
-              .Add("Quantumart/Utils.js")
-              .Add("Quantumart/Cache.js")
-              .Add("Quantumart/Common.js")
-              .Add("Quantumart/ControlHelpers.js")
-              .Add("Quantumart/Info/BackendEntityType.js")
-              .Add("Quantumart/Info/BackendEntityObject.js")
-              .Add("Quantumart/Info/BackendActionType.js")
-              .Add("Quantumart/BackendActionExecutor.js")
-              .Add("Quantumart/BackendSplitter.js")
-              .Add("Quantumart/BackendContextMenu.js")
-              .Add("Quantumart/BackendBreadCrumbs.js")
-              .Add("Quantumart/Tree/BackendTreeBase.js")
-              .Add("Quantumart/Tree/BackendTreeMenu.js")
-              .Add("Quantumart/Tree/BackendEntityTree.js")
-              .Add("Quantumart/Tree/BackendActionPermissionTree.js")
-              .Add("Quantumart/BackendTabStrip.js")
-              .Add("Quantumart/Toolbar/BackendToolbar.js")
-              .Add("Quantumart/Toolbar/BackendActionToolbar.js")
-              .Add("Quantumart/Toolbar/BackendViewToolbar.js")
-              .Add("Quantumart/Search/BackendSearchBlockBase.js")
-              .Add("Quantumart/Search/BackendSearchInArticle.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchBase.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/IdentifierFieldSearch.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/BooleanFieldSearch.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/DateOrTimeRangeFieldSearch.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/NumericRangeFieldSearch.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/RelationFieldSearch.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/TextFieldSearch.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/StringEnumFieldSearch.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/ClassifierFieldSearch.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/FullTextBlock.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchBlock.js")
-              .Add("Quantumart/Search/BackendArticleSearchBlock/FieldSearchContainer.js")
-              .Add("Quantumart/Search/BackendContentSearchBlock.js")
-              .Add("Quantumart/Search/BackendUserSearchBlock.js")
-              .Add("Quantumart/Search/BackendUserAndGroupSearchBlock.js")
-              .Add("Quantumart/Search/BackendContextBlock.js")
-              .Add("Quantumart/Document/BackendDocumentHostStateStorage.js")
-              .Add("Quantumart/Document/BackendDocumentHost.js")
-              .Add("Quantumart/Document/BackendDocumentContext.js")
-              .Add("Quantumart/Document/BackendEditingDocument.js")
-              .Add("Quantumart/Document/BackendEditingArea.js")
-              .Add("Quantumart/Document/BackendPopupWindow.js")
-              .Add("Quantumart/BackendEntityGrid.js")
-              .Add("Quantumart/List/BackendEntityDataListBase.js")
-              .Add("Quantumart/List/BackendEntityDropDownList.js")
-              .Add("Quantumart/List/BackendEntityCheckBoxList.js")
-              .Add("Quantumart/List/BackendEntitySingleItemPicker.js")
-              .Add("Quantumart/List/BackendEntityMultipleItemPicker.js")
-              .Add("Quantumart/List/BackendSelectPopupWindow.js")
-              .Add("Quantumart/List/BackendSettingsPopupWindow.js")
-              .Add("Quantumart/BackendActionLink.js")
-              .Add("Quantumart/BackendTraceWindow.js")
-              .Add("Quantumart/BackendLogOnWindow.js")
-              .Add("Quantumart/Library/BackendLibrary.js")
-              .Add("Quantumart/Library/BackendPager.js")
-              .Add("Quantumart/Library/BackendFileList.js")
-              .Add("Quantumart/Library/BackendFileNameListView.js")
-              .Add("Quantumart/Library/BackendFilePreviewListView.js")
-              .Add("Quantumart/Mediators/BackendFieldProperties.js")
-              .Add("Quantumart/Editor/BackendFileField.js")
-              .Add("Quantumart/Mediators/BackendVirtualContentProperties.js")
-              .Add("Quantumart/Mediators/ContentDefaultFilters.js")
-              .Add("Quantumart/Editor/BackendVirtualFieldTree.js")
-              .Add("Quantumart/Editor/BackendEntityEditor.js")
-              .Add("Quantumart/Mediators/BackendNotificationProperties.js")
-              .Add("Quantumart/Mediators/BackendTemplateObjectProperties.js")
-              .Add("Quantumart/Mediators/BackendPagePropertiesMediator.js")
-              .Add("Quantumart/Editor/LibraryPopupWindow.js")
-              .Add("Quantumart/Editor/BackendVisualEditor.js")
-              .Add("Quantumart/Editor/BackendAggregationList.js")
-              .Add("Quantumart/Editor/BackendWorkflowEditor.js")
-              .Add("Quantumart/Editor/BackendHightedTextAreaEditor.js")
-              .Add("Quantumart/Editor/BackendEditorsAutoSaver.js")
-              .Add("Quantumart/Editor/BackendClassifierField.js")
-              .Add("Quantumart/Uploader/IBackendUploader.js")
-              .Add("Quantumart/Uploader/BackendHtmlUploader.js")
-              .Add("Quantumart/Uploader/BackendPlUploader.js")
-              .Add("Quantumart/Uploader/BackendSilverlightUploader.js")
-              .Add("Quantumart/Audit/ActionLogComponent.js")
-              .Add("Quantumart/Audit/ActionLogFilterTile.js")
-              .Add("Quantumart/Audit/ActionLogFilterBase.js")
-              .Add("Quantumart/Audit/ActionLogTextFilter.js")
-              .Add("Quantumart/Audit/ActionLogDatetimeFilter.js")
-              .Add("Quantumart/Audit/ActionLogItemListFilter.js")
-              .Add("Quantumart/Audit/ActionLogUserFilter.js")
-              .Add("Quantumart/SearchInCodeComponent.js")
-              .Add("Quantumart/CustomAction/CustomActionProperties.js")
-              .Add("Quantumart/CustomAction/QP8BackendApi.Interaction.js")
-              .Add("Quantumart/CustomAction/BackendCustomActionHost.js")
-              .Add("Quantumart/ActionPermissions/BackendActionPermissionView.js")
-              .Add("Quantumart/Managers/BackendBreadCrumbsManager.js")
-              .Add("Quantumart/Managers/BackendEntityGridManager.js")
-              .Add("Quantumart/Managers/BackendEntityTreeManager.js")
-              .Add("Quantumart/Managers/BackendEntityEditorManager.js")
-              .Add("Quantumart/Managers/BackendTreeMenuContextMenuManager.js")
-              .Add("Quantumart/Managers/BackendContextMenuManager.js")
-              .Add("Quantumart/Managers/BackendEntityDataListManager.js")
-              .Add("Quantumart/Managers/BackendPopupWindowManager.js")
-              .Add("Quantumart/Managers/BackendLibraryManager.js")
-              .Add("Quantumart/Managers/BackendSearchBlockManager.js")
-              .Add("Quantumart/Managers/BackendActionPermissionViewManager.js")
-              .Add("Quantumart/Managers/BackendCustomActionHostManager.js")
-              .Add("Quantumart/MultistepAction/BackendProgressBar.jquery.js")
-              .Add("Quantumart/MultistepAction/BackendMultistepActionWindow.js")
-              .Add("Quantumart/MultistepAction/Settings/BackendMultistepBaseSettings.js")
-              .Add("Quantumart/MultistepAction/Settings/BackendMultistepImportSettings.js")
-              .Add("Quantumart/MultistepAction/Settings/BackendMultistepExportSettings.js")
-              .Add("Quantumart/MultistepAction/Settings/BackendMultistepCopySiteSettings.js")
-              .Add("Quantumart/EntityPermissions/BackendChildEntityPermissionList.js")
-              .Add("Quantumart/BackendDirectLinkExecutor.js")
-              .Add("Quantumart/BackendExpandedContainer.js")
-              .Add("Quantumart/BackendLogin.js")
-              .Add("Quantumart/Backend.js")
-              .Add("Quantumart/BackendImageCropResizeClient.js")
-              .Add("Quantumart/Home.js")
-              .Add(jsVersionFileName)
-              .Combined(allowCombineScripts)
-          )
-      ).Globalization(true))
-
-<script>
-    CKEDITOR.timestamp = '@jsVersion';
+  <script>
+    CKEDITOR.timestamp = '@DateTime.Now.Ticks';
     var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
     var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
-</script>
+  </script>
 </body>
