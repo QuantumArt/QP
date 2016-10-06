@@ -1,4 +1,4 @@
-﻿Backend.Lang.TraceWindow = {
+Backend.Lang.TraceWindow = {
 	windowTitle: "Trace console",
 	startButtonTooltip:	"Start trace",
 	stopButtonTooltip: "Stop trace",

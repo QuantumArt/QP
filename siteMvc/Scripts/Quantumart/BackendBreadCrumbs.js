@@ -141,27 +141,25 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 
   getItemValue: function (itemElem) {
     var $item = this.getItem(itemElem);
-    var itemValue = "";
+    var itemValue = '';
 
     if (!$q.isNullOrEmpty($item)) {
-      itemValue = $item.attr("code");
-    }
-    else {
+      itemValue = $item.attr('code');
+    } else {
       $q.alertError("Ошибка!");
       return;
     }
 
     $item = null;
-
     return itemValue;
   },
 
   getItemText: function (item) {
     var $item = this.getItem(item);
-    var itemText = "";
+    var itemText = '';
 
     if (!$q.isNullOrEmpty($item)) {
-      itemText = jQuery("SPAN.text", $item).text();
+      itemText = jQuery('SPAN.text', $item).text();
     }
 
     $item = null;

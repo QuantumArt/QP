@@ -1,4 +1,4 @@
-﻿// ****************************************************************************
+// ****************************************************************************
 // *** Компонент "Краткий список файлов"									***
 // ****************************************************************************
 
@@ -52,7 +52,7 @@ Quantumart.QP8.BackendFileList = function (listElementId, fileEntityTypeCode, ac
 };
 
 Quantumart.QP8.BackendFileList.prototype = {
-	_fileEntityTypeCode: 0, // EntityTypeCode файлов	
+	_fileEntityTypeCode: 0, // EntityTypeCode файлов
 	_contextMenuCode: 0, // код контекстного меня
 	_viewMode: FILE_LIST_MODE_NAME_LIST, // режим отображения списка файлов
 	_selectMode: FILE_LIST_SELECT_MODE_MULTIPLE, // режим выбора элементов списка
@@ -60,7 +60,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 
 	_currentDataQueryOptions: null, // текущие параметры запроса списка файлов
 
-	_listElementId: "", // id корневого элемента списка 
+	_listElementId: "", // id корневого элемента списка
 	_listElement: null, // корневой dom-элемент компонента
 	_allSelectorElement: null, // dom-элемент чекбокс выбора всех файлов
 	_fileListContentElement: null, // dom-элемент контейнера списка файлов
@@ -81,9 +81,9 @@ Quantumart.QP8.BackendFileList.prototype = {
 	_onListViewSelected: function (eventType, sender, args) {
 		// выставить или снять чекбокс "Выбрать все" в зависимости о того, все ли выбраны
 		jQuery(this._allSelectorElement).prop('checked', this._listViewComponent.isAllSelected());
-	
+
 		this._raiseMultipleEventArgsEvent(EVENT_TYPE_FILE_LIST_SELECTED, args);
-	
+
 		action = null;
 		eventArgs = null;
 	},
@@ -103,7 +103,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 			url = CONTROLLER_URL_CONTENT + '_FileList';
 		else
 			throw new Error('fileEntityTypeCode is unknown.');
-	
+
 		var result;
 		$q.getJsonFromUrl(
 			"GET",
@@ -130,7 +130,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 				$q.processGenericAjaxError(jqXHR);
 			}
 		);
-	
+
 		return result;
 	},
  // получение данных с сервера
@@ -143,10 +143,10 @@ Quantumart.QP8.BackendFileList.prototype = {
 				eventArgs.set_entities(args.get_entities());
 			eventArgs.set_entityTypeCode(this._fileEntityTypeCode);
 			eventArgs.set_parentEntityId(this._currentDataQueryOptions.folderId);
-	
+
 			this.notify(eventType, eventArgs);
 		}
-	
+
 		action = null;
 		eventArgs = null;
 	},
@@ -155,9 +155,9 @@ Quantumart.QP8.BackendFileList.prototype = {
 	initialize: function () {
 		var $listElement = jQuery(this._listElementId);
 		this._listElement = $listElement.get(0);
-	
+
 		var html = new $.telerik.stringBuilder();
-	
+
 		html.cat('<div class="fileList">')
 						.cat('<div class="fileListArea">')
 							.cat('<div class="fileListHeader">')
@@ -169,18 +169,18 @@ Quantumart.QP8.BackendFileList.prototype = {
 						.cat('<div class="fileListPager"></div>')
 					 .cat('</div>');
 		$listElement.html(html.string());
-	
+
 		// пейджер
 		var pagerComponent = new Quantumart.QP8.BackendPager($listElement.find('.fileListPager').get(0));
 		pagerComponent.initialize();
 		pagerComponent.attachObserver(EVENT_TYPE_PAGE_NUMBER_CHANGED, jQuery.proxy(this._onPageNumberChanged, this));
 		this._pagerComponent = pagerComponent;
-	
+
 		// checkbox выбора всех файлов
 		var $allSelectorElement = $listElement.find('.fileListAllSelector');
 		$allSelectorElement.click(jQuery.proxy(this._onAllSelectorClicked, this));
 		this._allSelectorElement = $allSelectorElement.get(0);
-	
+
 		// область view списка файлов
 		this._fileListContentElement = $listElement.find('.fileListContent').get(0);
 		var listViewComponent = null;
@@ -190,13 +190,13 @@ Quantumart.QP8.BackendFileList.prototype = {
 		    listViewComponent = new Quantumart.QP8.BackendFilePreviewListView(this._fileListContentElement, this._contextMenuCode, this._selectMode, this._zIndex);
 		else
 			throw new Error('View Mode is unknown.');
-	
+
 		// -----
 		listViewComponent.initialize();
 		listViewComponent.attachObserver(EVENT_TYPE_FILE_LIST_SELECTED, jQuery.proxy(this._onListViewSelected, this));
 		listViewComponent.attachObserver(EVENT_TYPE_FILE_LIST_ACTION_EXECUTING, jQuery.proxy(this._onContextMenuItemClicked, this));
 		this._listViewComponent = listViewComponent;
-	
+
 		pagerComponent = null;
 		listViewComponent = null;
 		$allSelectorElement = null;
@@ -205,7 +205,7 @@ Quantumart.QP8.BackendFileList.prototype = {
  // нициализация
 	rebind: function (options) {
 		//this.notify(EVENT_TYPE_FILE_LIST_DATA_BINDING, {});
-	
+
 		// установить новые значения параметров поиска
 		if ($q.isObject(options)) {
 			if (!$q.isNull(options.pageSize))
@@ -219,7 +219,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 			if (!$q.isNull(options.fileNameFilter))
 				this._currentDataQueryOptions.fileNameFilter = options.fileNameFilter;
 		}
-	
+
 		// загрузить данные с сервера
 		var data = this._loadData();
 		if (data) {
@@ -229,7 +229,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 				folderId: this._currentDataQueryOptions.folderId,
 				fileEntityTypeCode: this._fileEntityTypeCode
 			});
-	
+
 			// перерисовать pager
 			this._pagerComponent.set(
 			{
@@ -243,7 +243,7 @@ Quantumart.QP8.BackendFileList.prototype = {
 			this._pagerComponent.redraw();
 			// ------------------
 		}
-	
+
 		this._raiseMultipleEventArgsEvent(EVENT_TYPE_FILE_LIST_DATA_BOUND);
 	},
  // получение данных с сервера и отрисовка
@@ -252,21 +252,21 @@ Quantumart.QP8.BackendFileList.prototype = {
 			this._pagerComponent.detachObserver(EVENT_TYPE_PAGE_NUMBER_CHANGED);
 			this._pagerComponent.dispose();
 		}
-	
+
 		if (this._listViewComponent) {
 			this._listViewComponent.detachObserver(EVENT_TYPE_FILE_LIST_SELECTED);
 			this._listViewComponent.detachObserver(EVENT_TYPE_FILE_LIST_ACTION_EXECUTING);
 			this._listViewComponent.dispose();
 		}
-	
+
 		jQuery(this._allSelectorElement).unbind();
-	
+
 		jQuery(this._listElement).children().remove();
-	
+
 		this._listElement = null;
 		this._allSelectorElement = null;
 		this._fileListContentElement = null;
-	
+
 		this._contextMenuComponent = null;
 		this._pagerComponent = null;
 	} // dispose

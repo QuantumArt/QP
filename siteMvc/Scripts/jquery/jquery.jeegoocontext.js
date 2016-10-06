@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2009 - 2010 Erik van den Berg (http://www.planitworks.nl)
+// Copyright (c) 2009 - 2010 Erik van den Berg (http://www.planitworks.nl)
 // Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
 // and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
 //

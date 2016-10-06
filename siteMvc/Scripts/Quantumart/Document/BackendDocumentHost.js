@@ -323,7 +323,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
                       if (data.success) {
                         filterStates = data.filterStates;
                       } else {
-                        window.alert(data.message);
+                        $q.alertFail(data.message);
                       }
                     },
                     function(jqXHR) {
@@ -1190,7 +1190,6 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   selectAllEntities: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.selectAllRows();
     } else {
@@ -1200,7 +1199,6 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   deselectAllEntities: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.deselectAllRows();
     } else {

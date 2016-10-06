@@ -47,6 +47,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
             _userId = userId;
             ConnectionString = connectionString;
+            QPContext.CurrentDbConnectionString = connectionString;
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             _dbLogService = dbLogService;
@@ -138,6 +139,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 var correctedAction = _actionsCorrecterService.CorrectAction(xmlAction);
                 var httpContext = XmlDbUpdateHttpContextHelpers.PostAction(correctedAction, backendUrl, _userId);
+
                 return _actionsCorrecterService.CorrectReplaces(correctedAction, httpContext);
             }
             catch (Exception ex)

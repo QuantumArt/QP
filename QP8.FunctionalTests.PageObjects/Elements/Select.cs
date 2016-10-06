@@ -12,17 +12,14 @@ namespace QP8.FunctionalTests.PageObjects.Elements
     /// <code>
     /// Примеры вёрстки:
     /// <br/>
-    /// 1.  &lt;select&gt; 
-    ///         &lt;option value=&quot;option_value&quot;&gt;  
+    /// 1.  &lt;select&gt;
+    ///         &lt;option value=&quot;option_value&quot;&gt;
     ///      &lt;/select&gt;
     /// </code>
     /// </summary>
     public class Select : Element, IEnabled
     {
-        protected SelectElement SelectElement
-        {
-            get { return new SelectElement(ProxyWebElement); }
-        }
+        protected SelectElement SelectElement => new SelectElement(ProxyWebElement);
 
         /// <summary>
         /// Проверка доступности выпадающего списка
@@ -31,21 +28,15 @@ namespace QP8.FunctionalTests.PageObjects.Elements
         /// Выполняется путём проверки отсутствия атрибута 'disabled'<br/>
         /// и вызова свойства 'IWebElement.Enabled'
         /// </remarks>
-        public bool Enabled
-        {
-            get { return string.IsNullOrEmpty(GetAttribute("disabled")) && ProxyWebElement.Enabled; }
-        }
+        public bool Enabled => string.IsNullOrEmpty(GetAttribute("disabled")) && ProxyWebElement.Enabled;
 
-        /// <summary> 
+        /// <summary>
         /// Проверка поддержки множественного выбора
         /// </summary>
         /// <remarks>
         /// Выполняется путём проверки наличия атрибута 'multiple'
         /// </remarks>
-        public bool IsMultiple
-        {
-            get { return !string.IsNullOrEmpty(GetAttribute("multiple")); }
-        }
+        public bool IsMultiple => !string.IsNullOrEmpty(GetAttribute("multiple"));
 
         /// <summary>
         /// Получение элементов выпадающего списка
@@ -137,7 +128,7 @@ namespace QP8.FunctionalTests.PageObjects.Elements
         {
             SelectElement.DeselectByIndex(index);
         }
-        
+
         /// <summary>
         /// Снятие флагов со всех выбранных элементов
         /// </summary>

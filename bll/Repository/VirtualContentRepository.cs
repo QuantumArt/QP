@@ -1,379 +1,311 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Quantumart.QP8.DAL;
 using System.Data;
-using Quantumart.QP8.BLL.Repository.Results;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.Constants;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Transactions;
+using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.BLL.Repository.Results;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
+using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace Quantumart.QP8.BLL.Repository
 {
-	internal class VirtualContentRepository
-	{
-		/// <summary>
-		/// Добавляет новый виртуальный контент
-		/// </summary>
-		/// <param name="content">информация о контенте</param>
-		/// <returns>информация о контенте</returns>
-		internal static Content Save(Content content)
-		{
-			DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
-			Content newContent = DefaultRepository.Save<Content, ContentDAL>(content);
-			DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
-			return newContent;
-		}
+    internal class VirtualContentRepository
+    {
+        /// <summary>
+        /// Добавляет новый виртуальный контент
+        /// </summary>
+        internal static Content Save(Content content)
+        {
+            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
+            var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
 
-		/// <summary>
-		/// Обновляет информацию о контенте
-		/// </summary>
-		/// <param name="content">информация о контенте</param>
-		/// <returns>информация о контенте</returns>
-		internal static Content Update(Content content)
-		{
-			Content newContent = DefaultRepository.Update<Content, ContentDAL>(content);
-			return newContent;
-		}
+            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
+            return newContent;
+        }
 
-		/// <summary>
-		/// Возвращает данные о виртуальных полях JOIN-контента
-		/// </summary>
-		/// <param name="contentId"></param>
-		/// <returns></returns>
-		internal static IEnumerable<VirtualFieldData> GetJoinFieldData(int contentId)
-		{
-			// Получить данные из БД
-			using (var scope = new QPConnectionScope())
-			{
-				DataTable dt = Common.GetVirtualFieldData(scope.DbConnection, contentId);
+        /// <summary>
+        /// Обновляет информацию о контенте
+        /// </summary>
+        internal static Content Update(Content content)
+        {
+            return DefaultRepository.Update<Content, ContentDAL>(content);
+        }
 
-				// Транформировать в Biz коллекцию
-				var result = MappersRepository.VirtualFieldDataMapper.GetBizList(dt.AsEnumerable().ToList());
+        /// <summary>
+        /// Возвращает данные о виртуальных полях JOIN-контента
+        /// </summary>
+        internal static IEnumerable<VirtualFieldData> GetJoinFieldData(int contentId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                var dt = Common.GetVirtualFieldData(scope.DbConnection, contentId).AsEnumerable().ToList();
+                return MappersRepository.VirtualFieldDataMapper.GetBizList(dt);
+            }
+        }
 
-				return result;
-			}
-		}
+        /// <summary>
+        /// Возвращает список join-контентов которые содержат виртуальные поля построенные на основе полей родительского контента
+        /// </summary>
+        internal static IEnumerable<Content> GetJoinRelatedContents(Content parentContent)
+        {
+            var baseFieldIds = Converter.ToDecimalCollection(parentContent.Fields.Select(f => f.Id)).Distinct().ToArray();
+            var joinRelatedContentIDs = Converter.ToInt32Collection(QPContext.EFContext.FieldSet
+                .Where(f => f.PersistentId != null && baseFieldIds.Contains(f.PersistentId.Value))
+                .Select(f => f.ContentId)
+                .Distinct()
+                .ToArray()
+            );
 
-		// Возвращает список join-контентов которые содержат виртуальные поля построенные на основе полей родительского контента
-		internal static IEnumerable<Content> GetJoinRelatedContents(Content parentContent)
-		{
-			IEnumerable<decimal> baseFieldIds = Converter.ToDecimalCollection(parentContent.Fields.Select(f => f.Id)).Distinct().ToArray();
-			IEnumerable<int> joinRelatedContentIDs = Converter.ToInt32Collection(
-					QPContext.EFContext.FieldSet
-					.Where(f => f.PersistentId != null && baseFieldIds.Contains(f.PersistentId.Value))
-					.Select(f => f.ContentId)
-					.Distinct()
-					.ToArray()
-			);
-			return ContentRepository.GetList(joinRelatedContentIDs)
-				.Where(c => c.VirtualType == VirtualType.Join)
-				.ToArray();
-		}
+            return ContentRepository.GetList(joinRelatedContentIDs).Where(c => c.VirtualType == VirtualType.Join).ToArray();
+        }
 
-		/// <summary>
-		/// Выполнить DDL запрос на создание View
-		/// </summary>
-		/// <param name="viewCreateDDL"></param>
-		internal static void RunCreateViewDDL(string viewCreateDDL)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				Common.ExecuteSql(scope.DbConnection, viewCreateDDL);
-			}
-		}
+        internal static void RunCreateViewDdl(string viewCreateDdl)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.ExecuteSql(scope.DbConnection, viewCreateDdl);
+            }
+        }
 
-		internal static void CreateUnitedView(int contentId)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				Common.CreateUnitedView(scope.DbConnection, contentId);
-			}
-		}
+        internal static void CreateUnitedView(int contentId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.CreateUnitedView(scope.DbConnection, contentId);
+            }
+        }
 
-		internal static void CreateFrontedViews(int contentId)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				Common.CreateFrontedViews(scope.DbConnection, contentId);
-			}
-		}
+        internal static void CreateFrontedViews(int contentId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.CreateFrontedViews(scope.DbConnection, contentId);
+            }
+        }
 
-		internal static void DropView(string viewName)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				Common.DropView(scope.DbConnection, viewName);
-			}
-		}
+        internal static void DropView(string viewName)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.DropView(scope.DbConnection, viewName);
+            }
+        }
 
-		internal static void RefreshView(string viewName)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				Common.RefreshView(scope.DbConnection, viewName);
-			}
-		}
+        internal static void RefreshView(string viewName)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.RefreshView(scope.DbConnection, viewName);
+            }
+        }
 
-		/// <summary>
-		/// Возвращает список контентов на основе которых можно строить виртуальные контетны типа join
-		/// </summary>
-		/// <param name="siteId"></param>
-		/// <returns></returns>
-		internal static IEnumerable<ListItem> GetAcceptableContentForVirtualJoin(int siteId)
-		{
-			return QPContext.EFContext.ContentSet
-				.Where(c =>
-						c.VirtualType == (decimal)VirtualType.None &&
-						(
-							c.SiteId == siteId ||
-							(c.SiteId != siteId && c.IsShared)
-						)
-					  )
-				.Select(c => new { Id = c.Id, Text = c.Name })
-				.ToArray()
-				.OrderBy(c => c.Text, StringComparer.InvariantCultureIgnoreCase)
-				.Select(c => new ListItem() { Value = c.Id.ToString(), Text = c.Text })
-				.ToArray();
-		}
+        /// <summary>
+        /// Возвращает список контентов на основе которых можно строить виртуальные контетны типа join
+        /// </summary>
+        internal static IEnumerable<ListItem> GetAcceptableContentForVirtualJoin(int siteId)
+        {
+            return QPContext.EFContext.ContentSet.Where(c => c.VirtualType == VirtualType.None && (c.SiteId == siteId || c.SiteId != siteId && c.IsShared))
+                .Select(c => new { c.Id, Text = c.Name })
+                .ToArray()
+                .OrderBy(c => c.Text, StringComparer.InvariantCultureIgnoreCase)
+                .Select(c => new ListItem { Value = c.Id.ToString(), Text = c.Text })
+                .ToArray();
+        }
 
-		/// <summary>
-		/// Возвращает поля всех контентов id которых указаны
-		/// </summary>
-		/// <param name="contentIDs"></param>
-		/// <returns></returns>
-		internal static IEnumerable<Field> GetFieldsOfContents(IEnumerable<int> contentIDs)
-		{
-			var dContentIDs = Converter.ToDecimalCollection(contentIDs);
-			return MappersRepository.FieldMapper.GetBizList(FieldRepository.DefaultFieldQuery
-					.Where(f => dContentIDs.Contains(f.ContentId))
-					.OrderBy(f => f.ContentId)
-					.ToList()
-			);
-		}
+        /// <summary>
+        /// Возвращает поля всех контентов id которых указаны
+        /// </summary>
+        internal static IEnumerable<Field> GetFieldsOfContents(IEnumerable<int> contentIds)
+        {
+            var dContentIDs = Converter.ToDecimalCollection(contentIds);
+            return MappersRepository.FieldMapper.GetBizList(FieldRepository.DefaultFieldQuery
+                    .Where(f => dContentIDs.Contains(f.ContentId))
+                    .OrderBy(f => f.ContentId)
+                    .ToList()
+            );
+        }
 
-		/// <summary>
-		/// Возвращает контенты-источники для UNION
-		/// </summary>
-		/// <param name="contentId"></param>
-		/// <returns></returns>
-		internal static IEnumerable<int> GetUnionSourceContents(int contentId)
-		{
-			return Converter.ToInt32Collection(QPContext.EFContext.UnionContentsSet
-				.Where(r => r.VirtualContentId == contentId)
-				.Select(r => r.UnionContentId)
-				.Distinct()
-				.ToArray());
-		}
+        /// <summary>
+        /// Возвращает контенты-источники для UNION
+        /// </summary>
+        internal static IEnumerable<int> GetUnionSourceContents(int contentId)
+        {
+            return Converter.ToInt32Collection(QPContext.EFContext.UnionContentsSet
+                .Where(r => r.VirtualContentId == contentId)
+                .Select(r => r.UnionContentId)
+                .Distinct()
+                .ToArray());
+        }
 
-		internal static void ChangeUnionContentTriggerState(bool enable)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				Common.ChangeTriggerState(scope.DbConnection, "ti_union_contents_auto_map_attrs", enable);
-			}
-		}
+        internal static void ChangeUnionContentTriggerState(bool enable)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.ChangeTriggerState(scope.DbConnection, "ti_union_contents_auto_map_attrs", enable);
+            }
+        }
 
-		/// <summary>
-		/// Сохранить записи в таблице union_contents
-		/// </summary>
-		/// <param name="unionSourceContentIDs"></param>
-		internal static void RecreateUnionSourcesInfo(Content virtualContent, IEnumerable<int> unionSourceContentIDs)
-		{
-			try
-			{
-				ChangeUnionContentTriggerState(false);
-				int virtualContentId = virtualContent.Id;
+        /// <summary>
+        /// Сохранить записи в таблице union_contents
+        /// </summary>
+        internal static void RecreateUnionSourcesInfo(Content virtualContent, IEnumerable<int> unionSourceContentIDs)
+        {
+            try
+            {
+                ChangeUnionContentTriggerState(false);
+                var virtualContentId = virtualContent.Id;
+                var recToRemove = QPContext.EFContext.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
 
-				// Удалить
-				var recToRemove = QPContext.EFContext.UnionContentsSet
-					.Where(u => u.VirtualContentId == virtualContentId)
-					.ToArray();
-				DefaultRepository.SimpleDelete(recToRemove);
+                DefaultRepository.SimpleDelete(recToRemove);
+                DefaultRepository.SimpleSave(unionSourceContentIDs.Select(id => new UnionContentsDAL { VirtualContentId = virtualContentId, UnionContentId = id }));
+            }
+            finally
+            {
+                ChangeUnionContentTriggerState(true);
+            }
+        }
 
-				// создать новые
-				DefaultRepository.SimpleSave(unionSourceContentIDs.Select(usID => new UnionContentsDAL { VirtualContentId = virtualContentId, UnionContentId = usID }));
-			}
-			finally
-			{
-				ChangeUnionContentTriggerState(true);
-			}
-		}
+        internal static void RemoveUnionSourcesInfo(Content virtualContent)
+        {
+            var virtualContentId = virtualContent.Id;
+            var recToRemove = QPContext.EFContext.UnionContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
+            DefaultRepository.SimpleDelete(recToRemove);
+        }
 
-		internal static void RemoveUnionSourcesInfo(Content virtualContent)
-		{
-			int virtualContentId = virtualContent.Id;
-			// Удалить
-			var recToRemove = QPContext.EFContext.UnionContentsSet
-				.Where(u => u.VirtualContentId == virtualContentId)
-				.ToArray();
-			DefaultRepository.SimpleDelete(recToRemove);
-		}
+        /// <summary>
+        /// Проверяет текст запроса на корректность
+        /// </summary>
+        internal static bool IsQueryQueryCorrect(string userQuery, out string errorMessage)
+        {
+            errorMessage = null;
+            using (new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
+            {
+                try
+                {
+                    var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
+                    var createTestViewSql = $"CREATE VIEW [dbo].{viewName} AS {userQuery}";
+                    using (var connect = new SqlConnection(QPContext.CurrentDbConnectionString))
+                    {
+                        connect.Open();
+                        Common.ExecuteSql(connect, createTestViewSql);
+                        Common.DropView(connect, viewName);
+                    }
 
-		/// <summary>
-		/// Проверяет текст запроса на корректность
-		/// </summary>
-		/// <param name="connection"></param>
-		/// <param name="sqlQuery"></param>
-		internal static bool IsQueryQueryCorrect(string userQuery, out string errorMessage)
-		{
-			errorMessage = null;
-			using (new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = System.Transactions.IsolationLevel.ReadCommitted }))
-			{
-				try
-				{
-					string viewName = String.Format("uq_v_test_{0}", DateTime.Now.Ticks.ToString());
-					string createTestViewSql = String.Format("CREATE VIEW [dbo].{0} AS {1}", viewName, userQuery);
+                    return true;
+                }
+                catch (SqlException ex)
+                {
+                    errorMessage = ex.ErrorsToString();
+                    return false;
+                }
+            }
+        }
 
-					using (SqlConnection connect = new SqlConnection(QPContext.CurrentDbConnectionString))
-					{
-						connect.Open();
-						Common.ExecuteSql(connect, createTestViewSql);
-						Common.DropView(connect, viewName);
-					}
-					return true;
-				}
-				catch (SqlException ex)
-				{
-					errorMessage = ex.ErrorsToString();
-					return false;
-				}
-			}
-		}
+        /// <summary>
+        /// Возвращает информацию о столбцах запроса
+        /// </summary>
+        internal static IEnumerable<UserQueryColumn> GetQuerySchema(string sqlQuery)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
+                var createTestViewSql = $"CREATE VIEW [dbo].{viewName} AS {sqlQuery}";
+                RunCreateViewDdl(createTestViewSql);
 
-		/// <summary>
-		/// Возвращает информацию о столбцах запроса
-		/// </summary>
-		/// <param name="connection"></param>
-		/// <param name="sqlQuery"></param>
-		internal static IEnumerable<UserQueryColumn> GetQuerySchema(string sqlQuery)
-		{
-			using (var scope = new QPConnectionScope())
-			{
+                var dttU = Common.GetViewColumnUsage(scope.DbConnection, viewName);
+                DropView(viewName);
 
-				string viewName = String.Format("uq_v_test_{0}", DateTime.Now.Ticks.ToString());
-				string createTestViewSql = String.Format("CREATE VIEW [dbo].{0} AS {1}", viewName, sqlQuery);
-				RunCreateViewDDL(createTestViewSql);
-				DataTable dtTU = Common.GetViewColumnUsage(scope.DbConnection, viewName);
-				DropView(viewName);
+                return DataTableToUserQueryColumns(dttU);
+            }
+        }
 
-				IEnumerable<UserQueryColumn> result = DataTableToUserQueryColumns(dtTU);
+        /// <summary>
+        /// Возвращает информацию о столбцах View
+        /// </summary>
+        internal static IEnumerable<UserQueryColumn> GetViewSchema(string viewName)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return DataTableToUserQueryColumns(Common.GetViewColumnUsage(scope.DbConnection, viewName));
+            }
+        }
 
-				return result;
-			}
-		}
+        private static IEnumerable<UserQueryColumn> DataTableToUserQueryColumns(DataTable dt)
+        {
+            return dt.AsEnumerable().Select(r => new UserQueryColumn
+            {
+                ColumnName = r.Field<string>("ColumnName"),
+                DbType = r.Field<string>("DbType"),
+                TableName = r.Field<string>("TableName"),
+                TableDbType = r.Field<string>("TableDbType"),
+                NumericScale = r.Field<int?>("NumericScale"),
+                CharMaxLength = r.Field<int?>("CharMaxLength")
+            }).ToArray();
+        }
 
-		/// <summary>
-		/// Возвращает информацию о столбцах View
-		/// </summary>
-		/// <param name="connection"></param>
-		/// <param name="sqlQuery"></param>
-		internal static IEnumerable<UserQueryColumn> GetViewSchema(string viewName)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				DataTable dtTU = Common.GetViewColumnUsage(scope.DbConnection, viewName);
-				IEnumerable<UserQueryColumn> result = DataTableToUserQueryColumns(dtTU);
+        /// <summary>
+        /// Сохранить записи в таблице union_contents
+        /// </summary>
+        internal static void RecreateUserQuerySourcesInfo(Content uqVirtualContent)
+        {
+            var virtualContentId = uqVirtualContent.Id;
+            RemoveUserQuerySourcesInfo(uqVirtualContent);
+            DefaultRepository.SimpleSave(uqVirtualContent.UserQueryContentViewSchema.SelectUniqContentIDs().Select(id => new UserQueryContentsDAL
+            {
+                IsIdSource = false,
+                RealContentId = id,
+                VirtualContentId = virtualContentId
+            }));
+        }
 
-				return result;
-			}
-		}
+        internal static void RemoveUserQuerySourcesInfo(Content uqVirtualContent)
+        {
+            var virtualContentId = uqVirtualContent.Id;
+            var recToRemove = QPContext.EFContext.UserQueryContentsSet.Where(u => u.VirtualContentId == virtualContentId).ToArray();
+            DefaultRepository.SimpleDelete(recToRemove);
+        }
 
-		private static IEnumerable<UserQueryColumn> DataTableToUserQueryColumns(DataTable dt)
-		{
-			return dt.AsEnumerable()
-				.Select(r => new UserQueryColumn
-				{
-					ColumnName = r.Field<string>("ColumnName"),
-					DbType = r.Field<string>("DbType"),
-					TableName = r.Field<string>("TableName"),
-					TableDbType = r.Field<string>("TableDbType"),
-					NumericScale = r.Field<int?>("NumericScale"),
-					CharMaxLength = r.Field<int?>("CharMaxLength"),
-				})
-				.ToArray();
-		}
+        /// <summary>
+        /// Возвращает граф связей контентов
+        /// </summary>
+        internal static Dictionary<int, int[]> GetContentRelationGraph()
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                var relationView = Common.GetVirtualContentRelations(scope.DbConnection);
+                var graph = relationView.AsEnumerable().GroupBy(r => r.Field<decimal>("BASE_CONTENT_ID")).Select(g => new
+                {
+                    BaseContentID = g.Key,
+                    ParentContentIDs = g.Select(vr => vr.Field<decimal>("VIRTUAL_CONTENT_ID")).ToArray()
+                });
 
-		/// <summary>
-		/// Сохранить записи в таблице union_contents
-		/// </summary>
-		/// <param name="unionSourceContentIDs"></param>
-		internal static void RecreateUserQuerySourcesInfo(Content uqVirtualContent)
-		{
-			int virtualContentId = uqVirtualContent.Id;
+                return graph.ToDictionary(p => Converter.ToInt32(p.BaseContentID), p => Converter.ToInt32Collection(p.ParentContentIDs).ToArray());
+            }
+        }
 
-			// Удалить записи для контента
-			RemoveUserQuerySourcesInfo(uqVirtualContent);
+        internal static Field GetAcceptableBaseFieldForCloning(string fieldName, string contentIds, int virtualContentId, bool forNew)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                var ids = Common.GetAcceptableBaseFieldIdsForCloning(scope.DbConnection, fieldName, contentIds, virtualContentId, forNew).ToList();
+                if (ids.Any())
+                {
+                    var id = ids.Select(vr => (int)vr.Field<decimal>("id")).First();
+                    return FieldRepository.GetById(id);
+                }
 
-			// создать новые
-			DefaultRepository.SimpleSave(
-				uqVirtualContent.UserQueryContentViewSchema
-				.SelectUniqContentIDs()
-				.Select(usID => new UserQueryContentsDAL { VirtualContentId = virtualContentId, RealContentId = usID, IsIdSource = false })
-			);
-		}
+                return null;
+            }
+        }
 
-		internal static void RemoveUserQuerySourcesInfo(Content uqVirtualContent)
-		{
-			int virtualContentId = uqVirtualContent.Id;
-
-			// Удалить записи для контента
-			var recToRemove = QPContext.EFContext.UserQueryContentsSet
-					.Where(u => u.VirtualContentId == virtualContentId)
-					.ToArray();
-			DefaultRepository.SimpleDelete(recToRemove);
-		}
-
-		/// <summary>
-		/// Возвращает граф связей контентов
-		/// </summary>
-		/// <returns></returns>
-		internal static Dictionary<int, int[]> GetContentRelationGraph()
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				DataTable relationView = Common.GetVirtualContentRelations(scope.DbConnection);
-				var graph = relationView.AsEnumerable()
-					.GroupBy(r => r.Field<decimal>("BASE_CONTENT_ID"))
-					.Select(g => new
-					{
-						BaseContentID = g.Key,
-						ParentContentIDs = g.Select(vr => vr.Field<decimal>("VIRTUAL_CONTENT_ID")).ToArray()
-					});
-				Dictionary<int, int[]> result = new Dictionary<int, int[]>();
-				foreach (var p in graph)
-				{
-					result.Add(Converter.ToInt32(p.BaseContentID), Converter.ToInt32Collection(p.ParentContentIDs).ToArray());
-				}
-				return result;
-			}
-		}
-
-		internal static Field GetAcceptableBaseFieldForCloning(string fieldName, string contentIds, int virtualContentId, bool forNew)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				IEnumerable<DataRow> ids = Common.GetAcceptableBaseFieldIdsForCloning(scope.DbConnection, fieldName, contentIds, virtualContentId, forNew);
-				if (ids.Any())
-				{
-					int id = ids.Select(vr => (int)vr.Field<decimal>("id")).First();
-					return FieldRepository.GetById(id);
-				}
-				else
-					return null;
-			}
-		}
-
-		internal static IEnumerable<EntityObject> GetList(IEnumerable<int> IDs)
-		{
-			IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
-			return MappersRepository.ContentMapper
-				.GetBizList(QPContext.EFContext.ContentSet
-					.Where(f => decIDs.Contains(f.Id))
-					.ToList()
-				);
-		}
-	}
+        internal static IEnumerable<EntityObject> GetList(IEnumerable<int> ids)
+        {
+            var decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
+            return MappersRepository.ContentMapper.GetBizList(QPContext.EFContext.ContentSet.Where(f => decIDs.Contains(f.Id)).ToList());
+        }
+    }
 }

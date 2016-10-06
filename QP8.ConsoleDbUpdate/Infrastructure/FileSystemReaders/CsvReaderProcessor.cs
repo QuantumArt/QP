@@ -43,7 +43,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
         {
             foreach (var path in filePathes)
             {
-                using (var stream = File.OpenText(path))
+                using (var stream = new StreamReader(path, csvConfiguration.Encoding, true))
                 using (var csv = new CsvReader(stream, csvConfiguration))
                 {
                     var csvFieldsData = new Dictionary<int, IList<CsvDbUpdateFieldModel>>();

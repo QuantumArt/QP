@@ -13,7 +13,7 @@ namespace QP8.FunctionalTests.PageObjects.Pages.Main
         [By(How.CssSelector, "#tree")]
         public TreeComponent Tree;
 
-        public MainPage(IWebDriver webDriver) 
+        public MainPage(IWebDriver webDriver)
             : base(webDriver)
         {
         }

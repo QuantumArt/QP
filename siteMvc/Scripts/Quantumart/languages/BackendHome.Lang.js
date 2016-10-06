@@ -1,4 +1,4 @@
-﻿Backend.Lang.Home = {
+Backend.Lang.Home = {
 	list: "List",
 	search: "Search",
 	profile: "Edit profile"

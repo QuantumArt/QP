@@ -1,5 +1,3 @@
-/// <binding AfterBuild='lint, images, styles' Clean='clean' />
-
 // Install Steps:
 // 1. Install external node js and npm from official site
 // 2. Install global packages for npm runner: gulp, cross-env

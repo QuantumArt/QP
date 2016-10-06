@@ -1,4 +1,4 @@
-﻿if (typeof (Backend) == 'undefined') {
+if (typeof (Backend) == 'undefined') {
 	Backend = {};
 }
 

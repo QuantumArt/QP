@@ -1,4 +1,4 @@
-﻿Backend.Lang.EntityEditor = {
+Backend.Lang.EntityEditor = {
 	refreshConfirmMessage: "В поля формы внесены изменения.\nВы действительно хотите обновить документ?",
 	changeConfirmMessage: "В поля формы внесены изменения.\nВы действительно хотите сменить документ?",
 	closeConfirmMessage: "В поля формы внесены изменения.\nВы действительно хотите закрыть документ?",

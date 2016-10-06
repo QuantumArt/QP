@@ -1,5 +1,3 @@
-/// <binding AfterBuild='lint, images, styles' Clean='clean' />
-
 // Install Steps:
 // 1. Install external node js and npm from official site
 // 2. Install global packages for npm runner: gulp, cross-env
@@ -98,7 +96,7 @@ var paths = {
     'Scripts/telerik/telerik.grid.grouping.js',
     'Scripts/telerik/telerik.grid.editing.js',
     'Scripts/telerik/telerik.upload.js',
-    'Scripts/telerik/telerik.splitter.js',
+    'Scripts/telerik/telerik.splitter.js'
   ],
   scripts2: [
     'Content/codemirror/lib/codemirror.js',

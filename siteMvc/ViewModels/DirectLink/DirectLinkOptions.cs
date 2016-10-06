@@ -3,9 +3,6 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.DirectLink
 {
-    /// <summary>
-    /// Параметры внешней ссылки
-    /// </summary>
     public class DirectLinkOptions
     {
         public string CustomerCode { get; set; }

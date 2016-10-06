@@ -31,8 +31,7 @@ namespace QP8.FunctionalTests.Tests
                 () =>
                 {
                     var screenshot = Driver.GetFullPageScreenshot();
-                    MakeAttachment(Image.FromStream(new MemoryStream(screenshot.AsByteArray)),
-                        "Exception screenshot", ImageType.imageJpeg);
+                    MakeAttachment(Image.FromStream(new MemoryStream(screenshot.AsByteArray)),"Exception screenshot", ImageType.imageJpeg);
                 }
             };
 
@@ -43,7 +42,6 @@ namespace QP8.FunctionalTests.Tests
         public void SetUp()
         {
             Driver.Manage().Cookies.DeleteAllCookies();
-
             Wait = ExtensionCore.GetWaiter();
             Wait.Timeout = Config.Environment.ImplicitlyTimeout;
             Wait.IgnoreExceptionTypes(typeof(NotFoundException), typeof(StaleElementReferenceException));

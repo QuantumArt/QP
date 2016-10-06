@@ -1288,9 +1288,11 @@ namespace Quantumart.QP8.DAL
             if (string.IsNullOrWhiteSpace(viewName))
                 throw new ArgumentNullException("viewName");
 
-            using (var cmd = SqlCommandFactory.Create("sp_refreshview", connection))
+            string sql = "if exists(select * from INFORMATION_SCHEMA.VIEWS where table_name = @viewName) exec sp_refreshview @viewName";
+
+            using (var cmd = SqlCommandFactory.Create(sql, connection))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@viewname", viewName);
                 cmd.ExecuteNonQuery();
             }

@@ -804,7 +804,7 @@ Quantumart.QP8.Utils.processGenericAjaxError = function Quantumart$QP8$Utils$pro
     errorMessage = $l.Common.ajaxDataReceivingErrorMessage;
   }
 
-  alert(errorMessage);
+  window.alert(errorMessage);
 };
 
 Quantumart.QP8.Utils.generateErrorMessageText = function Quantumart$QP8$Utils$generateErrorMessageText(status) {

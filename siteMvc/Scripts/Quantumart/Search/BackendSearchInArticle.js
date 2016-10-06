@@ -1,4 +1,4 @@
-﻿// === Класс "Блок поиска по всем статьям" ===
+// === Класс "Блок поиска по всем статьям" ===
 Quantumart.QP8.BackendSearchInArticle = function (gridElementId, searchBlockElementId, initQuery, documentContext) {
 	this._gridElementId = gridElementId;
 	this._searchBlockElementId = searchBlockElementId;
@@ -12,8 +12,8 @@ Quantumart.QP8.BackendSearchInArticle.prototype = {
 	_searchBlockElementId: "", // клиентский идентификатор блока поиска
 	_initQuery: "",
 	_documentContext: null,
-	
-	_onSearchButtonClick: function () {		
+
+	_onSearchButtonClick: function () {
 		var searchQuery = jQuery("#" + this._searchBlockElementId + " input.textbox").val();
 		Quantumart.QP8.BackendEntityGridManager.getInstance().resetGrid(this._gridElementId, { "searchQuery": searchQuery });
 	},

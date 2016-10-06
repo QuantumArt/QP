@@ -1,4 +1,4 @@
-﻿Backend.Lang.Toolbar = {
+Backend.Lang.Toolbar = {
 	itemNotSpecified: "You do not specify a toolbar item!",
 	viewsDropDownTooltip: "Change your view",
 	viewsDropDownArrowTooltip: "More options",

@@ -28,7 +28,7 @@ namespace QP8.FunctionalTests.PageObjects.Pages.Authentication
         [ItemsBy(How.XPath, ".//dd[input[@id='Login']]/div/ul/li")]
         public ElementsList<Element> ValidationErrors;
 
-        public AuthenticationPage(IWebDriver webDriver) 
+        public AuthenticationPage(IWebDriver webDriver)
             : base(webDriver)
         {
         }

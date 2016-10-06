@@ -1,4 +1,4 @@
-﻿Backend.Lang.Toolbar = {
+Backend.Lang.Toolbar = {
 	itemNotSpecified: "Вы не задали элемент панели инструментов!",
 	viewsDropDownTooltip: "Изменить представление",
 	viewsDropDownArrowTooltip: "Открыть список представлений",

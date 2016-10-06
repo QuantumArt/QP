@@ -1,4 +1,4 @@
-﻿Backend.Lang.Action = {
+Backend.Lang.Action = {
 	actionExecutingErrorMessage: "When action executing an error occurred!",
 	currentActionNotSpecified: "Current action not specified!",
 	actionExecutingTimeoutMessage: "Action executing timeout expired!",

@@ -29,7 +29,7 @@ namespace QP8.FunctionalTests.PageObjects.Elements
             }
         }
 
-        public Button(IWebElement webElement, IWebDriver webDriver) 
+        public Button(IWebElement webElement, IWebDriver webDriver)
             : base(webElement, webDriver)
         {
         }

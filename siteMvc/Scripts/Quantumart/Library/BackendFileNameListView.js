@@ -1,4 +1,4 @@
-﻿//#region class BackendFileNameListView
+//#region class BackendFileNameListView
 // === Класс "Краткий список файлов" ===
 Quantumart.QP8.BackendFileNameListView = function (fileListContentElement, contextMenuCode, selectMode, zIndex) {
 	Quantumart.QP8.BackendFileNameListView.initializeBase(this);
@@ -11,7 +11,7 @@ Quantumart.QP8.BackendFileNameListView = function (fileListContentElement, conte
 
 Quantumart.QP8.BackendFileNameListView.prototype = {
 	_fileListContentElement: null, // контейнер списка файлов
-	_contextMenuComponent: null, // контекстоное меняю	
+	_contextMenuComponent: null, // контекстоное меняю
 	_contextMenuCode: 0, // код контекстного меню
 	_contextMenuActionCode: "",
 	_currentContextMenuSelectedElement: null,
@@ -172,7 +172,7 @@ Quantumart.QP8.BackendFileNameListView.prototype = {
 		var $fileListContentElement = jQuery(this._fileListContentElement);
 
 		if (!event.ctrlKey || this._selectMode == FILE_LIST_SELECT_MODE_SINGLE) {
-			// снять выбор со всех выбранных файлов				
+			// снять выбор со всех выбранных файлов
 		    $fileListContentElement.find('.' + this.SELECTED_CLASS).removeClass(this.SELECTED_CLASS);
 			$fileListContentElement.find('.fileItem input:checkbox:checked').prop('checked', false);
 		}

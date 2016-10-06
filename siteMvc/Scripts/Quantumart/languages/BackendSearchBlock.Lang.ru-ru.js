@@ -1,4 +1,4 @@
-﻿Backend.Lang.SearchBlock = {
+Backend.Lang.SearchBlock = {
 	findButtonText: "Найти",
 	resetButtonText: "Очистить",
 	defaultFilterButtonText: "По умолчанию",
