@@ -1,4 +1,4 @@
-﻿// ****************************************************************************
+// ****************************************************************************
 // *** Компонент "Древовидное меню"                     ***
 // ****************************************************************************
 
@@ -516,7 +516,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       var action = $a.getBackendActionByCode(actionCode);
 
       if (!action) {
-        alert($l.Common.ajaxDataReceivingErrorMessage);
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
         var actionTypeCode = action.ActionType.Code;
         var isCustomAction = action.IsCustom;
@@ -563,7 +563,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
       var entityType = Quantumart.QP8.BackendEntityType.getEntityTypeByCode(entityTypeCode);
 
       if (!entityType) {
-        alert($l.Common.ajaxDataReceivingErrorMessage);
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
         var parentNodeCode = this.generateNodeCode(entityTypeCode, entityType.Id, parentEntityId, true);
         var nodeCode = this.generateNodeCode(entityTypeCode, entityId, parentEntityId, false);

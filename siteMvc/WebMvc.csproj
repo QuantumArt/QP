@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.WebMvc</RootNamespace>
     <AssemblyName>Quantumart.QP8.WebMvc</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <PrecompileRazorFiles>true</PrecompileRazorFiles>
     <BuildWithScript>false</BuildWithScript>
     <MvcBuildViews>false</MvcBuildViews>
@@ -65,6 +65,10 @@
     </Reference>
     <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="GitVersionCore, Version=3.6.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\GitVersion.3.6.4\lib\Net45\GitVersionCore.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -141,7 +145,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.8.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -168,9 +172,9 @@
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
       <Private>True</Private>
@@ -211,6 +215,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs">
+      <Link>References\SharedAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
     <Compile Include="Controllers\ActionLogController.cs" />
     <Compile Include="Controllers\ActionPermissionController.cs" />
@@ -389,11 +396,6 @@
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
     <Compile Include="Infrastructure\Utf8StringWriter.cs" />
     <Compile Include="Infrastructure\Configuration\NLogConfiguration.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
     <Compile Include="Scripts\Quantumart\JsLanguage.ashx.cs">
       <DependentUpon>JsLanguage.ashx</DependentUpon>
     </Compile>
@@ -755,36 +757,557 @@
     <Content Include="Content\ckeditor\samples\toolbarconfigurator\lib\codemirror\neo.css" />
     <Content Include="Content\ckeditor\samples\toolbarconfigurator\lib\codemirror\show-hint.css" />
     <Content Include="Content\ckeditor\samples\toolbarconfigurator\lib\codemirror\show-hint.js" />
-    <Content Include="Content\ckeditor\skins\moono\dialog.css" />
-    <Content Include="Content\ckeditor\skins\moono\dialog_ie.css" />
-    <Content Include="Content\ckeditor\skins\moono\dialog_ie7.css" />
-    <Content Include="Content\ckeditor\skins\moono\dialog_ie8.css" />
-    <Content Include="Content\ckeditor\skins\moono\dialog_iequirks.css" />
-    <Content Include="Content\ckeditor\skins\moono\editor.css" />
-    <Content Include="Content\ckeditor\skins\moono\editor_gecko.css" />
-    <Content Include="Content\ckeditor\skins\moono\editor_ie.css" />
-    <Content Include="Content\ckeditor\skins\moono\editor_ie7.css" />
-    <Content Include="Content\ckeditor\skins\moono\editor_ie8.css" />
-    <Content Include="Content\ckeditor\skins\moono\editor_iequirks.css" />
-    <Content Include="Content\ckeditor\skins\moono\icons.png" />
-    <Content Include="Content\ckeditor\skins\moono\icons_hidpi.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\arrow.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\close.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\hidpi\close.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\hidpi\lock-open.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\hidpi\lock.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\hidpi\refresh.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\lock-open.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\lock.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\refresh.png" />
-    <Content Include="Content\ckeditor\skins\moono\images\spinner.gif" />
+    <Content Include="Content\ckeditor\skins\moonocolor\dialog.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\dialog_ie.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\dialog_ie7.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\dialog_ie8.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\dialog_iequirks.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\editor.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\editor_gecko.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\editor_ie.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\editor_ie7.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\editor_ie8.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\editor_iequirks.css" />
+    <Content Include="Content\ckeditor\skins\moonocolor\icons.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\icons_hidpi.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\arrow.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\close.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\hidpi\close.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\hidpi\lock-open.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\hidpi\lock.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\hidpi\refresh.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\lock-open.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\lock.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\refresh.png" />
+    <Content Include="Content\ckeditor\skins\moonocolor\images\spinner.gif" />
+    <Content Include="Content\ckeditor\skins\moonocolor\skin.js" />
     <Content Include="Content\ckeditor\styles.js" />
     <Content Include="Content\codemirror.css" />
     <Content Include="Content\codemirrorTheme.css" />
-    <Content Include="Content\QP8\icons\16x16\green_arrow_down.png" />
-    <Content Include="Content\QP8\icons\16x16\green_arrow_up.png" />
+    <Content Include="Content\codemirror\.gitattributes" />
+    <Content Include="Content\codemirror\.gitignore" />
+    <Content Include="Content\codemirror\addon\comment\comment.js" />
+    <Content Include="Content\codemirror\addon\comment\continuecomment.js" />
+    <Content Include="Content\codemirror\addon\dialog\dialog.css" />
+    <Content Include="Content\codemirror\addon\dialog\dialog.js" />
+    <Content Include="Content\codemirror\addon\dialog\dialog.min.css" />
+    <Content Include="Content\codemirror\addon\display\autorefresh.js" />
+    <Content Include="Content\codemirror\addon\display\fullscreen.css" />
+    <Content Include="Content\codemirror\addon\display\fullscreen.js" />
+    <Content Include="Content\codemirror\addon\display\fullscreen.min.css" />
+    <Content Include="Content\codemirror\addon\display\panel.js" />
+    <Content Include="Content\codemirror\addon\display\placeholder.js" />
+    <Content Include="Content\codemirror\addon\display\rulers.js" />
+    <Content Include="Content\codemirror\addon\edit\closebrackets.js" />
+    <Content Include="Content\codemirror\addon\edit\closetag.js" />
+    <Content Include="Content\codemirror\addon\edit\continuelist.js" />
+    <Content Include="Content\codemirror\addon\edit\matchbrackets.js" />
+    <Content Include="Content\codemirror\addon\edit\matchtags.js" />
+    <Content Include="Content\codemirror\addon\edit\trailingspace.js" />
+    <Content Include="Content\codemirror\addon\fold\brace-fold.js" />
+    <Content Include="Content\codemirror\addon\fold\comment-fold.js" />
+    <Content Include="Content\codemirror\addon\fold\foldcode.js" />
+    <Content Include="Content\codemirror\addon\fold\foldgutter.css" />
+    <Content Include="Content\codemirror\addon\fold\foldgutter.js" />
+    <Content Include="Content\codemirror\addon\fold\foldgutter.min.css" />
+    <Content Include="Content\codemirror\addon\fold\indent-fold.js" />
+    <Content Include="Content\codemirror\addon\fold\markdown-fold.js" />
+    <Content Include="Content\codemirror\addon\fold\xml-fold.js" />
+    <Content Include="Content\codemirror\addon\hint\anyword-hint.js" />
+    <Content Include="Content\codemirror\addon\hint\css-hint.js" />
+    <Content Include="Content\codemirror\addon\hint\html-hint.js" />
+    <Content Include="Content\codemirror\addon\hint\javascript-hint.js" />
+    <Content Include="Content\codemirror\addon\hint\show-hint.css" />
+    <Content Include="Content\codemirror\addon\hint\show-hint.js" />
+    <Content Include="Content\codemirror\addon\hint\show-hint.min.css" />
+    <Content Include="Content\codemirror\addon\hint\sql-hint.js" />
+    <Content Include="Content\codemirror\addon\hint\xml-hint.js" />
+    <Content Include="Content\codemirror\addon\lint\coffeescript-lint.js" />
+    <Content Include="Content\codemirror\addon\lint\css-lint.js" />
+    <Content Include="Content\codemirror\addon\lint\html-lint.js" />
+    <Content Include="Content\codemirror\addon\lint\javascript-lint.js" />
+    <Content Include="Content\codemirror\addon\lint\json-lint.js" />
+    <Content Include="Content\codemirror\addon\lint\lint.css" />
+    <Content Include="Content\codemirror\addon\lint\lint.js" />
+    <Content Include="Content\codemirror\addon\lint\lint.min.css" />
+    <Content Include="Content\codemirror\addon\lint\yaml-lint.js" />
+    <Content Include="Content\codemirror\addon\merge\merge.css" />
+    <Content Include="Content\codemirror\addon\merge\merge.js" />
+    <Content Include="Content\codemirror\addon\merge\merge.min.css" />
+    <Content Include="Content\codemirror\addon\mode\loadmode.js" />
+    <Content Include="Content\codemirror\addon\mode\multiplex.js" />
+    <Content Include="Content\codemirror\addon\mode\multiplex_test.js" />
+    <Content Include="Content\codemirror\addon\mode\overlay.js" />
+    <Content Include="Content\codemirror\addon\mode\simple.js" />
+    <Content Include="Content\codemirror\addon\runmode\colorize.js" />
+    <Content Include="Content\codemirror\addon\runmode\runmode-standalone.js" />
+    <Content Include="Content\codemirror\addon\runmode\runmode.js" />
+    <Content Include="Content\codemirror\addon\runmode\runmode.node.js" />
+    <Content Include="Content\codemirror\addon\scroll\annotatescrollbar.js" />
+    <Content Include="Content\codemirror\addon\scroll\scrollpastend.js" />
+    <Content Include="Content\codemirror\addon\scroll\simplescrollbars.css" />
+    <Content Include="Content\codemirror\addon\scroll\simplescrollbars.js" />
+    <Content Include="Content\codemirror\addon\scroll\simplescrollbars.min.css" />
+    <Content Include="Content\codemirror\addon\search\jump-to-line.js" />
+    <Content Include="Content\codemirror\addon\search\match-highlighter.js" />
+    <Content Include="Content\codemirror\addon\search\matchesonscrollbar.css" />
+    <Content Include="Content\codemirror\addon\search\matchesonscrollbar.js" />
+    <Content Include="Content\codemirror\addon\search\matchesonscrollbar.min.css" />
+    <Content Include="Content\codemirror\addon\search\search.js" />
+    <Content Include="Content\codemirror\addon\search\searchcursor.js" />
+    <Content Include="Content\codemirror\addon\selection\active-line.js" />
+    <Content Include="Content\codemirror\addon\selection\mark-selection.js" />
+    <Content Include="Content\codemirror\addon\selection\selection-pointer.js" />
+    <Content Include="Content\codemirror\addon\tern\tern.css" />
+    <Content Include="Content\codemirror\addon\tern\tern.js" />
+    <Content Include="Content\codemirror\addon\tern\tern.min.css" />
+    <Content Include="Content\codemirror\addon\tern\worker.js" />
+    <Content Include="Content\codemirror\addon\wrap\hardwrap.js" />
+    <Content Include="Content\codemirror\demo\activeline.html" />
+    <Content Include="Content\codemirror\demo\anywordhint.html" />
+    <Content Include="Content\codemirror\demo\bidi.html" />
+    <Content Include="Content\codemirror\demo\btree.html" />
+    <Content Include="Content\codemirror\demo\buffers.html" />
+    <Content Include="Content\codemirror\demo\changemode.html" />
+    <Content Include="Content\codemirror\demo\closebrackets.html" />
+    <Content Include="Content\codemirror\demo\closetag.html" />
+    <Content Include="Content\codemirror\demo\complete.html" />
+    <Content Include="Content\codemirror\demo\emacs.html" />
+    <Content Include="Content\codemirror\demo\folding.html" />
+    <Content Include="Content\codemirror\demo\fullscreen.html" />
+    <Content Include="Content\codemirror\demo\hardwrap.html" />
+    <Content Include="Content\codemirror\demo\html5complete.html" />
+    <Content Include="Content\codemirror\demo\indentwrap.html" />
+    <Content Include="Content\codemirror\demo\lint.html" />
+    <Content Include="Content\codemirror\demo\loadmode.html" />
+    <Content Include="Content\codemirror\demo\marker.html" />
+    <Content Include="Content\codemirror\demo\markselection.html" />
+    <Content Include="Content\codemirror\demo\matchhighlighter.html" />
+    <Content Include="Content\codemirror\demo\matchtags.html" />
+    <Content Include="Content\codemirror\demo\merge.html" />
+    <Content Include="Content\codemirror\demo\multiplex.html" />
+    <Content Include="Content\codemirror\demo\mustache.html" />
+    <Content Include="Content\codemirror\demo\panel.html" />
+    <Content Include="Content\codemirror\demo\placeholder.html" />
+    <Content Include="Content\codemirror\demo\preview.html" />
+    <Content Include="Content\codemirror\demo\requirejs.html" />
+    <Content Include="Content\codemirror\demo\resize.html" />
+    <Content Include="Content\codemirror\demo\rulers.html" />
+    <Content Include="Content\codemirror\demo\runmode.html" />
+    <Content Include="Content\codemirror\demo\search.html" />
+    <Content Include="Content\codemirror\demo\simplemode.html" />
+    <Content Include="Content\codemirror\demo\simplescrollbars.html" />
+    <Content Include="Content\codemirror\demo\spanaffectswrapping_shim.html" />
+    <Content Include="Content\codemirror\demo\sublime.html" />
+    <Content Include="Content\codemirror\demo\tern.html" />
+    <Content Include="Content\codemirror\demo\theme.html" />
+    <Content Include="Content\codemirror\demo\trailingspace.html" />
+    <Content Include="Content\codemirror\demo\variableheight.html" />
+    <Content Include="Content\codemirror\demo\vim.html" />
+    <Content Include="Content\codemirror\demo\visibletabs.html" />
+    <Content Include="Content\codemirror\demo\widget.html" />
+    <Content Include="Content\codemirror\demo\xmlcomplete.html" />
+    <Content Include="Content\codemirror\doc\activebookmark.js" />
+    <Content Include="Content\codemirror\doc\compress.html" />
+    <Content Include="Content\codemirror\doc\docs.css" />
+    <Content Include="Content\codemirror\doc\docs.min.css" />
+    <Content Include="Content\codemirror\doc\internals.html" />
+    <Content Include="Content\codemirror\doc\logo.png" />
+    <Content Include="Content\codemirror\doc\logo.svg" />
+    <Content Include="Content\codemirror\doc\manual.html" />
+    <Content Include="Content\codemirror\doc\realworld.html" />
+    <Content Include="Content\codemirror\doc\releases.html" />
+    <Content Include="Content\codemirror\doc\reporting.html" />
+    <Content Include="Content\codemirror\doc\upgrade_v2.2.html" />
+    <Content Include="Content\codemirror\doc\upgrade_v3.html" />
+    <Content Include="Content\codemirror\doc\upgrade_v4.html" />
+    <Content Include="Content\codemirror\doc\yinyang.png" />
+    <Content Include="Content\codemirror\index.html" />
+    <Content Include="Content\codemirror\keymap\emacs.js" />
+    <Content Include="Content\codemirror\keymap\sublime.js" />
+    <Content Include="Content\codemirror\keymap\vim.js" />
+    <Content Include="Content\codemirror\lib\codemirror.css" />
+    <Content Include="Content\codemirror\lib\codemirror.js" />
+    <Content Include="Content\codemirror\lib\codemirror.min.css" />
+    <Content Include="Content\codemirror\mode\apl\apl.js" />
+    <Content Include="Content\codemirror\mode\apl\index.html" />
+    <Content Include="Content\codemirror\mode\asciiarmor\asciiarmor.js" />
+    <Content Include="Content\codemirror\mode\asciiarmor\index.html" />
+    <Content Include="Content\codemirror\mode\asn.1\asn.1.js" />
+    <Content Include="Content\codemirror\mode\asn.1\index.html" />
+    <Content Include="Content\codemirror\mode\asterisk\asterisk.js" />
+    <Content Include="Content\codemirror\mode\asterisk\index.html" />
+    <Content Include="Content\codemirror\mode\brainfuck\brainfuck.js" />
+    <Content Include="Content\codemirror\mode\brainfuck\index.html" />
+    <Content Include="Content\codemirror\mode\clike\clike.js" />
+    <Content Include="Content\codemirror\mode\clike\index.html" />
+    <Content Include="Content\codemirror\mode\clike\scala.html" />
+    <Content Include="Content\codemirror\mode\clike\test.js" />
+    <Content Include="Content\codemirror\mode\clojure\clojure.js" />
+    <Content Include="Content\codemirror\mode\clojure\index.html" />
+    <Content Include="Content\codemirror\mode\cmake\cmake.js" />
+    <Content Include="Content\codemirror\mode\cmake\index.html" />
+    <Content Include="Content\codemirror\mode\cobol\cobol.js" />
+    <Content Include="Content\codemirror\mode\cobol\index.html" />
+    <Content Include="Content\codemirror\mode\coffeescript\coffeescript.js" />
+    <Content Include="Content\codemirror\mode\coffeescript\index.html" />
+    <Content Include="Content\codemirror\mode\commonlisp\commonlisp.js" />
+    <Content Include="Content\codemirror\mode\commonlisp\index.html" />
+    <Content Include="Content\codemirror\mode\crystal\crystal.js" />
+    <Content Include="Content\codemirror\mode\crystal\index.html" />
+    <Content Include="Content\codemirror\mode\css\css.js" />
+    <Content Include="Content\codemirror\mode\css\gss.html" />
+    <Content Include="Content\codemirror\mode\css\gss_test.js" />
+    <Content Include="Content\codemirror\mode\css\index.html" />
+    <Content Include="Content\codemirror\mode\css\less.html" />
+    <Content Include="Content\codemirror\mode\css\less_test.js" />
+    <Content Include="Content\codemirror\mode\css\scss.html" />
+    <Content Include="Content\codemirror\mode\css\scss_test.js" />
+    <Content Include="Content\codemirror\mode\css\test.js" />
+    <Content Include="Content\codemirror\mode\cypher\cypher.js" />
+    <Content Include="Content\codemirror\mode\cypher\index.html" />
+    <Content Include="Content\codemirror\mode\dart\dart.js" />
+    <Content Include="Content\codemirror\mode\dart\index.html" />
+    <Content Include="Content\codemirror\mode\diff\diff.js" />
+    <Content Include="Content\codemirror\mode\diff\index.html" />
+    <Content Include="Content\codemirror\mode\django\django.js" />
+    <Content Include="Content\codemirror\mode\django\index.html" />
+    <Content Include="Content\codemirror\mode\dockerfile\dockerfile.js" />
+    <Content Include="Content\codemirror\mode\dockerfile\index.html" />
+    <Content Include="Content\codemirror\mode\dtd\dtd.js" />
+    <Content Include="Content\codemirror\mode\dtd\index.html" />
+    <Content Include="Content\codemirror\mode\dylan\dylan.js" />
+    <Content Include="Content\codemirror\mode\dylan\index.html" />
+    <Content Include="Content\codemirror\mode\dylan\test.js" />
+    <Content Include="Content\codemirror\mode\d\d.js" />
+    <Content Include="Content\codemirror\mode\d\index.html" />
+    <Content Include="Content\codemirror\mode\ebnf\ebnf.js" />
+    <Content Include="Content\codemirror\mode\ebnf\index.html" />
+    <Content Include="Content\codemirror\mode\ecl\ecl.js" />
+    <Content Include="Content\codemirror\mode\ecl\index.html" />
+    <Content Include="Content\codemirror\mode\eiffel\eiffel.js" />
+    <Content Include="Content\codemirror\mode\eiffel\index.html" />
+    <Content Include="Content\codemirror\mode\elm\elm.js" />
+    <Content Include="Content\codemirror\mode\elm\index.html" />
+    <Content Include="Content\codemirror\mode\erlang\erlang.js" />
+    <Content Include="Content\codemirror\mode\erlang\index.html" />
+    <Content Include="Content\codemirror\mode\factor\factor.js" />
+    <Content Include="Content\codemirror\mode\factor\index.html" />
+    <Content Include="Content\codemirror\mode\fcl\fcl.js" />
+    <Content Include="Content\codemirror\mode\fcl\index.html" />
+    <Content Include="Content\codemirror\mode\forth\forth.js" />
+    <Content Include="Content\codemirror\mode\forth\index.html" />
+    <Content Include="Content\codemirror\mode\fortran\fortran.js" />
+    <Content Include="Content\codemirror\mode\fortran\index.html" />
+    <Content Include="Content\codemirror\mode\gas\gas.js" />
+    <Content Include="Content\codemirror\mode\gas\index.html" />
+    <Content Include="Content\codemirror\mode\gfm\gfm.js" />
+    <Content Include="Content\codemirror\mode\gfm\index.html" />
+    <Content Include="Content\codemirror\mode\gfm\test.js" />
+    <Content Include="Content\codemirror\mode\gherkin\gherkin.js" />
+    <Content Include="Content\codemirror\mode\gherkin\index.html" />
+    <Content Include="Content\codemirror\mode\go\go.js" />
+    <Content Include="Content\codemirror\mode\go\index.html" />
+    <Content Include="Content\codemirror\mode\groovy\groovy.js" />
+    <Content Include="Content\codemirror\mode\groovy\index.html" />
+    <Content Include="Content\codemirror\mode\haml\haml.js" />
+    <Content Include="Content\codemirror\mode\haml\index.html" />
+    <Content Include="Content\codemirror\mode\haml\test.js" />
+    <Content Include="Content\codemirror\mode\handlebars\handlebars.js" />
+    <Content Include="Content\codemirror\mode\handlebars\index.html" />
+    <Content Include="Content\codemirror\mode\haskell-literate\haskell-literate.js" />
+    <Content Include="Content\codemirror\mode\haskell-literate\index.html" />
+    <Content Include="Content\codemirror\mode\haskell\haskell.js" />
+    <Content Include="Content\codemirror\mode\haskell\index.html" />
+    <Content Include="Content\codemirror\mode\haxe\haxe.js" />
+    <Content Include="Content\codemirror\mode\haxe\index.html" />
+    <Content Include="Content\codemirror\mode\htmlembedded\htmlembedded.js" />
+    <Content Include="Content\codemirror\mode\htmlembedded\index.html" />
+    <Content Include="Content\codemirror\mode\htmlmixed\htmlmixed.js" />
+    <Content Include="Content\codemirror\mode\htmlmixed\index.html" />
+    <Content Include="Content\codemirror\mode\http\http.js" />
+    <Content Include="Content\codemirror\mode\http\index.html" />
+    <Content Include="Content\codemirror\mode\idl\idl.js" />
+    <Content Include="Content\codemirror\mode\idl\index.html" />
+    <Content Include="Content\codemirror\mode\index.html" />
+    <Content Include="Content\codemirror\mode\jade\index.html" />
+    <Content Include="Content\codemirror\mode\jade\jade.js" />
+    <Content Include="Content\codemirror\mode\javascript\index.html" />
+    <Content Include="Content\codemirror\mode\javascript\javascript.js" />
+    <Content Include="Content\codemirror\mode\javascript\json-ld.html" />
+    <Content Include="Content\codemirror\mode\javascript\test.js" />
+    <Content Include="Content\codemirror\mode\javascript\typescript.html" />
+    <Content Include="Content\codemirror\mode\jinja2\index.html" />
+    <Content Include="Content\codemirror\mode\jinja2\jinja2.js" />
+    <Content Include="Content\codemirror\mode\jsx\index.html" />
+    <Content Include="Content\codemirror\mode\jsx\jsx.js" />
+    <Content Include="Content\codemirror\mode\jsx\test.js" />
+    <Content Include="Content\codemirror\mode\julia\index.html" />
+    <Content Include="Content\codemirror\mode\julia\julia.js" />
+    <Content Include="Content\codemirror\mode\livescript\index.html" />
+    <Content Include="Content\codemirror\mode\livescript\livescript.js" />
+    <Content Include="Content\codemirror\mode\lua\index.html" />
+    <Content Include="Content\codemirror\mode\lua\lua.js" />
+    <Content Include="Content\codemirror\mode\markdown\index.html" />
+    <Content Include="Content\codemirror\mode\markdown\markdown.js" />
+    <Content Include="Content\codemirror\mode\markdown\test.js" />
+    <Content Include="Content\codemirror\mode\mathematica\index.html" />
+    <Content Include="Content\codemirror\mode\mathematica\mathematica.js" />
+    <Content Include="Content\codemirror\mode\meta.js" />
+    <Content Include="Content\codemirror\mode\mirc\index.html" />
+    <Content Include="Content\codemirror\mode\mirc\mirc.js" />
+    <Content Include="Content\codemirror\mode\mllike\index.html" />
+    <Content Include="Content\codemirror\mode\mllike\mllike.js" />
+    <Content Include="Content\codemirror\mode\modelica\index.html" />
+    <Content Include="Content\codemirror\mode\modelica\modelica.js" />
+    <Content Include="Content\codemirror\mode\mscgen\index.html" />
+    <Content Include="Content\codemirror\mode\mscgen\mscgen.js" />
+    <Content Include="Content\codemirror\mode\mscgen\mscgen_test.js" />
+    <Content Include="Content\codemirror\mode\mscgen\msgenny_test.js" />
+    <Content Include="Content\codemirror\mode\mscgen\xu_test.js" />
+    <Content Include="Content\codemirror\mode\mumps\index.html" />
+    <Content Include="Content\codemirror\mode\mumps\mumps.js" />
+    <Content Include="Content\codemirror\mode\nginx\index.html" />
+    <Content Include="Content\codemirror\mode\nginx\nginx.js" />
+    <Content Include="Content\codemirror\mode\nsis\index.html" />
+    <Content Include="Content\codemirror\mode\nsis\nsis.js" />
+    <Content Include="Content\codemirror\mode\ntriples\index.html" />
+    <Content Include="Content\codemirror\mode\ntriples\ntriples.js" />
+    <Content Include="Content\codemirror\mode\octave\index.html" />
+    <Content Include="Content\codemirror\mode\octave\octave.js" />
+    <Content Include="Content\codemirror\mode\oz\index.html" />
+    <Content Include="Content\codemirror\mode\oz\oz.js" />
+    <Content Include="Content\codemirror\mode\pascal\index.html" />
+    <Content Include="Content\codemirror\mode\pascal\pascal.js" />
+    <Content Include="Content\codemirror\mode\pegjs\index.html" />
+    <Content Include="Content\codemirror\mode\pegjs\pegjs.js" />
+    <Content Include="Content\codemirror\mode\perl\index.html" />
+    <Content Include="Content\codemirror\mode\perl\perl.js" />
+    <Content Include="Content\codemirror\mode\php\index.html" />
+    <Content Include="Content\codemirror\mode\php\php.js" />
+    <Content Include="Content\codemirror\mode\php\test.js" />
+    <Content Include="Content\codemirror\mode\pig\index.html" />
+    <Content Include="Content\codemirror\mode\pig\pig.js" />
+    <Content Include="Content\codemirror\mode\properties\index.html" />
+    <Content Include="Content\codemirror\mode\properties\properties.js" />
+    <Content Include="Content\codemirror\mode\protobuf\index.html" />
+    <Content Include="Content\codemirror\mode\protobuf\protobuf.js" />
+    <Content Include="Content\codemirror\mode\puppet\index.html" />
+    <Content Include="Content\codemirror\mode\puppet\puppet.js" />
+    <Content Include="Content\codemirror\mode\python\index.html" />
+    <Content Include="Content\codemirror\mode\python\python.js" />
+    <Content Include="Content\codemirror\mode\q\index.html" />
+    <Content Include="Content\codemirror\mode\q\q.js" />
+    <Content Include="Content\codemirror\mode\rpm\changes\index.html" />
+    <Content Include="Content\codemirror\mode\rpm\index.html" />
+    <Content Include="Content\codemirror\mode\rpm\rpm.js" />
+    <Content Include="Content\codemirror\mode\rst\index.html" />
+    <Content Include="Content\codemirror\mode\rst\rst.js" />
+    <Content Include="Content\codemirror\mode\ruby\index.html" />
+    <Content Include="Content\codemirror\mode\ruby\ruby.js" />
+    <Content Include="Content\codemirror\mode\ruby\test.js" />
+    <Content Include="Content\codemirror\mode\rust\index.html" />
+    <Content Include="Content\codemirror\mode\rust\rust.js" />
+    <Content Include="Content\codemirror\mode\rust\test.js" />
+    <Content Include="Content\codemirror\mode\r\index.html" />
+    <Content Include="Content\codemirror\mode\r\r.js" />
+    <Content Include="Content\codemirror\mode\sass\index.html" />
+    <Content Include="Content\codemirror\mode\sass\sass.js" />
+    <Content Include="Content\codemirror\mode\scheme\index.html" />
+    <Content Include="Content\codemirror\mode\scheme\scheme.js" />
+    <Content Include="Content\codemirror\mode\shell\index.html" />
+    <Content Include="Content\codemirror\mode\shell\shell.js" />
+    <Content Include="Content\codemirror\mode\shell\test.js" />
+    <Content Include="Content\codemirror\mode\sieve\index.html" />
+    <Content Include="Content\codemirror\mode\sieve\sieve.js" />
+    <Content Include="Content\codemirror\mode\slim\index.html" />
+    <Content Include="Content\codemirror\mode\slim\slim.js" />
+    <Content Include="Content\codemirror\mode\slim\test.js" />
+    <Content Include="Content\codemirror\mode\smalltalk\index.html" />
+    <Content Include="Content\codemirror\mode\smalltalk\smalltalk.js" />
+    <Content Include="Content\codemirror\mode\smarty\index.html" />
+    <Content Include="Content\codemirror\mode\smarty\smarty.js" />
+    <Content Include="Content\codemirror\mode\solr\index.html" />
+    <Content Include="Content\codemirror\mode\solr\solr.js" />
+    <Content Include="Content\codemirror\mode\soy\index.html" />
+    <Content Include="Content\codemirror\mode\soy\soy.js" />
+    <Content Include="Content\codemirror\mode\sparql\index.html" />
+    <Content Include="Content\codemirror\mode\sparql\sparql.js" />
+    <Content Include="Content\codemirror\mode\spreadsheet\index.html" />
+    <Content Include="Content\codemirror\mode\spreadsheet\spreadsheet.js" />
+    <Content Include="Content\codemirror\mode\sql\index.html" />
+    <Content Include="Content\codemirror\mode\sql\sql.js" />
+    <Content Include="Content\codemirror\mode\stex\index.html" />
+    <Content Include="Content\codemirror\mode\stex\stex.js" />
+    <Content Include="Content\codemirror\mode\stex\test.js" />
+    <Content Include="Content\codemirror\mode\stylus\index.html" />
+    <Content Include="Content\codemirror\mode\stylus\stylus.js" />
+    <Content Include="Content\codemirror\mode\swift\index.html" />
+    <Content Include="Content\codemirror\mode\swift\swift.js" />
+    <Content Include="Content\codemirror\mode\tcl\index.html" />
+    <Content Include="Content\codemirror\mode\tcl\tcl.js" />
+    <Content Include="Content\codemirror\mode\textile\index.html" />
+    <Content Include="Content\codemirror\mode\textile\test.js" />
+    <Content Include="Content\codemirror\mode\textile\textile.js" />
+    <Content Include="Content\codemirror\mode\tiddlywiki\index.html" />
+    <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.css" />
+    <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.js" />
+    <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.min.css" />
+    <Content Include="Content\codemirror\mode\tiki\index.html" />
+    <Content Include="Content\codemirror\mode\tiki\tiki.css" />
+    <Content Include="Content\codemirror\mode\tiki\tiki.js" />
+    <Content Include="Content\codemirror\mode\tiki\tiki.min.css" />
+    <Content Include="Content\codemirror\mode\toml\index.html" />
+    <Content Include="Content\codemirror\mode\toml\toml.js" />
+    <Content Include="Content\codemirror\mode\tornado\index.html" />
+    <Content Include="Content\codemirror\mode\tornado\tornado.js" />
+    <Content Include="Content\codemirror\mode\troff\index.html" />
+    <Content Include="Content\codemirror\mode\troff\troff.js" />
+    <Content Include="Content\codemirror\mode\ttcn-cfg\index.html" />
+    <Content Include="Content\codemirror\mode\ttcn-cfg\ttcn-cfg.js" />
+    <Content Include="Content\codemirror\mode\ttcn\index.html" />
+    <Content Include="Content\codemirror\mode\ttcn\ttcn.js" />
+    <Content Include="Content\codemirror\mode\turtle\index.html" />
+    <Content Include="Content\codemirror\mode\turtle\turtle.js" />
+    <Content Include="Content\codemirror\mode\twig\index.html" />
+    <Content Include="Content\codemirror\mode\twig\twig.js" />
+    <Content Include="Content\codemirror\mode\vbscript\index.html" />
+    <Content Include="Content\codemirror\mode\vbscript\vbscript.js" />
+    <Content Include="Content\codemirror\mode\vb\index.html" />
+    <Content Include="Content\codemirror\mode\vb\vb.js" />
+    <Content Include="Content\codemirror\mode\velocity\index.html" />
+    <Content Include="Content\codemirror\mode\velocity\velocity.js" />
+    <Content Include="Content\codemirror\mode\verilog\index.html" />
+    <Content Include="Content\codemirror\mode\verilog\test.js" />
+    <Content Include="Content\codemirror\mode\verilog\verilog.js" />
+    <Content Include="Content\codemirror\mode\vhdl\index.html" />
+    <Content Include="Content\codemirror\mode\vhdl\vhdl.js" />
+    <Content Include="Content\codemirror\mode\vue\index.html" />
+    <Content Include="Content\codemirror\mode\vue\vue.js" />
+    <Content Include="Content\codemirror\mode\xml\index.html" />
+    <Content Include="Content\codemirror\mode\xml\test.js" />
+    <Content Include="Content\codemirror\mode\xml\xml.js" />
+    <Content Include="Content\codemirror\mode\xquery\index.html" />
+    <Content Include="Content\codemirror\mode\xquery\test.js" />
+    <Content Include="Content\codemirror\mode\xquery\xquery.js" />
+    <Content Include="Content\codemirror\mode\yaml-frontmatter\index.html" />
+    <Content Include="Content\codemirror\mode\yaml-frontmatter\yaml-frontmatter.js" />
+    <Content Include="Content\codemirror\mode\yaml\index.html" />
+    <Content Include="Content\codemirror\mode\yaml\yaml.js" />
+    <Content Include="Content\codemirror\mode\z80\index.html" />
+    <Content Include="Content\codemirror\mode\z80\z80.js" />
+    <Content Include="Content\codemirror\test\comment_test.js" />
+    <Content Include="Content\codemirror\test\doc_test.js" />
+    <Content Include="Content\codemirror\test\driver.js" />
+    <Content Include="Content\codemirror\test\emacs_test.js" />
+    <Content Include="Content\codemirror\test\index.html" />
+    <Content Include="Content\codemirror\test\lint.js" />
+    <Content Include="Content\codemirror\test\mode_test.css" />
+    <Content Include="Content\codemirror\test\mode_test.js" />
+    <Content Include="Content\codemirror\test\mode_test.min.css" />
+    <Content Include="Content\codemirror\test\multi_test.js" />
+    <Content Include="Content\codemirror\test\phantom_driver.js" />
+    <Content Include="Content\codemirror\test\run.js" />
+    <Content Include="Content\codemirror\test\scroll_test.js" />
+    <Content Include="Content\codemirror\test\search_test.js" />
+    <Content Include="Content\codemirror\test\sql-hint-test.js" />
+    <Content Include="Content\codemirror\test\sublime_test.js" />
+    <Content Include="Content\codemirror\test\test.js" />
+    <Content Include="Content\codemirror\test\vim_test.js" />
+    <Content Include="Content\codemirror\theme\3024-day.css" />
+    <Content Include="Content\codemirror\theme\3024-day.min.css" />
+    <Content Include="Content\codemirror\theme\3024-night.css" />
+    <Content Include="Content\codemirror\theme\3024-night.min.css" />
+    <Content Include="Content\codemirror\theme\abcdef.css" />
+    <Content Include="Content\codemirror\theme\abcdef.min.css" />
+    <Content Include="Content\codemirror\theme\ambiance-mobile.css" />
+    <Content Include="Content\codemirror\theme\ambiance-mobile.min.css" />
+    <Content Include="Content\codemirror\theme\ambiance.css" />
+    <Content Include="Content\codemirror\theme\ambiance.min.css" />
+    <Content Include="Content\codemirror\theme\base16-dark.css" />
+    <Content Include="Content\codemirror\theme\base16-dark.min.css" />
+    <Content Include="Content\codemirror\theme\base16-light.css" />
+    <Content Include="Content\codemirror\theme\base16-light.min.css" />
+    <Content Include="Content\codemirror\theme\bespin.css" />
+    <Content Include="Content\codemirror\theme\bespin.min.css" />
+    <Content Include="Content\codemirror\theme\blackboard.css" />
+    <Content Include="Content\codemirror\theme\blackboard.min.css" />
+    <Content Include="Content\codemirror\theme\cobalt.css" />
+    <Content Include="Content\codemirror\theme\cobalt.min.css" />
+    <Content Include="Content\codemirror\theme\colorforth.css" />
+    <Content Include="Content\codemirror\theme\colorforth.min.css" />
+    <Content Include="Content\codemirror\theme\dracula.css" />
+    <Content Include="Content\codemirror\theme\dracula.min.css" />
+    <Content Include="Content\codemirror\theme\eclipse.css" />
+    <Content Include="Content\codemirror\theme\eclipse.min.css" />
+    <Content Include="Content\codemirror\theme\elegant.css" />
+    <Content Include="Content\codemirror\theme\elegant.min.css" />
+    <Content Include="Content\codemirror\theme\erlang-dark.css" />
+    <Content Include="Content\codemirror\theme\erlang-dark.min.css" />
+    <Content Include="Content\codemirror\theme\hopscotch.css" />
+    <Content Include="Content\codemirror\theme\hopscotch.min.css" />
+    <Content Include="Content\codemirror\theme\icecoder.css" />
+    <Content Include="Content\codemirror\theme\icecoder.min.css" />
+    <Content Include="Content\codemirror\theme\isotope.css" />
+    <Content Include="Content\codemirror\theme\isotope.min.css" />
+    <Content Include="Content\codemirror\theme\lesser-dark.css" />
+    <Content Include="Content\codemirror\theme\lesser-dark.min.css" />
+    <Content Include="Content\codemirror\theme\liquibyte.css" />
+    <Content Include="Content\codemirror\theme\liquibyte.min.css" />
+    <Content Include="Content\codemirror\theme\material.css" />
+    <Content Include="Content\codemirror\theme\material.min.css" />
+    <Content Include="Content\codemirror\theme\mbo.css" />
+    <Content Include="Content\codemirror\theme\mbo.min.css" />
+    <Content Include="Content\codemirror\theme\mdn-like.css" />
+    <Content Include="Content\codemirror\theme\mdn-like.min.css" />
+    <Content Include="Content\codemirror\theme\midnight.css" />
+    <Content Include="Content\codemirror\theme\midnight.min.css" />
+    <Content Include="Content\codemirror\theme\monokai.css" />
+    <Content Include="Content\codemirror\theme\monokai.min.css" />
+    <Content Include="Content\codemirror\theme\neat.css" />
+    <Content Include="Content\codemirror\theme\neat.min.css" />
+    <Content Include="Content\codemirror\theme\neo.css" />
+    <Content Include="Content\codemirror\theme\neo.min.css" />
+    <Content Include="Content\codemirror\theme\night.css" />
+    <Content Include="Content\codemirror\theme\night.min.css" />
+    <Content Include="Content\codemirror\theme\paraiso-dark.css" />
+    <Content Include="Content\codemirror\theme\paraiso-dark.min.css" />
+    <Content Include="Content\codemirror\theme\paraiso-light.css" />
+    <Content Include="Content\codemirror\theme\paraiso-light.min.css" />
+    <Content Include="Content\codemirror\theme\pastel-on-dark.css" />
+    <Content Include="Content\codemirror\theme\pastel-on-dark.min.css" />
+    <Content Include="Content\codemirror\theme\railscasts.css" />
+    <Content Include="Content\codemirror\theme\railscasts.min.css" />
+    <Content Include="Content\codemirror\theme\rubyblue.css" />
+    <Content Include="Content\codemirror\theme\rubyblue.min.css" />
+    <Content Include="Content\codemirror\theme\seti.css" />
+    <Content Include="Content\codemirror\theme\seti.min.css" />
+    <Content Include="Content\codemirror\theme\solarized.css" />
+    <Content Include="Content\codemirror\theme\solarized.min.css" />
+    <Content Include="Content\codemirror\theme\the-matrix.css" />
+    <Content Include="Content\codemirror\theme\the-matrix.min.css" />
+    <Content Include="Content\codemirror\theme\tomorrow-night-bright.css" />
+    <Content Include="Content\codemirror\theme\tomorrow-night-bright.min.css" />
+    <Content Include="Content\codemirror\theme\tomorrow-night-eighties.css" />
+    <Content Include="Content\codemirror\theme\tomorrow-night-eighties.min.css" />
+    <Content Include="Content\codemirror\theme\ttcn.css" />
+    <Content Include="Content\codemirror\theme\ttcn.min.css" />
+    <Content Include="Content\codemirror\theme\twilight.css" />
+    <Content Include="Content\codemirror\theme\twilight.min.css" />
+    <Content Include="Content\codemirror\theme\vibrant-ink.css" />
+    <Content Include="Content\codemirror\theme\vibrant-ink.min.css" />
+    <Content Include="Content\codemirror\theme\xq-dark.css" />
+    <Content Include="Content\codemirror\theme\xq-dark.min.css" />
+    <Content Include="Content\codemirror\theme\xq-light.css" />
+    <Content Include="Content\codemirror\theme\xq-light.min.css" />
+    <Content Include="Content\codemirror\theme\yeti.css" />
+    <Content Include="Content\codemirror\theme\yeti.min.css" />
+    <Content Include="Content\codemirror\theme\zenburn.css" />
+    <Content Include="Content\codemirror\theme\zenburn.min.css" />
     <Content Include="Content\jquery.qtip.css" />
     <Content Include="Content\QP8\icons\16x16\crop.gif" />
+    <Content Include="Content\QP8\icons\16x16\green_arrow_down.png" />
+    <Content Include="Content\QP8\icons\16x16\green_arrow_up.png" />
     <Content Include="Content\QP8\imgareaselect\border-anim-h.gif" />
     <Content Include="Content\QP8\imgareaselect\border-anim-v.gif" />
     <Content Include="Content\QP8\imgareaselect\border-h.gif" />
@@ -843,7 +1366,6 @@
     <Content Include="Content\QP8\icons\16x16\visual_editor_style.gif" />
     <Content Include="Content\QP8\icons\16x16\visual_editor_styles.gif" />
     <Content Include="Content\version.6.5.css" />
-    <Content Include="gulpfile.js" />
     <Content Include="Content\ckeditor\CHANGES.md" />
     <Content Include="Content\ckeditor\LICENSE.md" />
     <Content Include="Content\ckeditor\plugins\scayt\CHANGELOG.md" />
@@ -858,16 +1380,27 @@
     <Content Include="Content\ckeditor\samples\toolbarconfigurator\font\fontello.ttf" />
     <Content Include="Content\ckeditor\samples\toolbarconfigurator\font\fontello.woff" />
     <Content Include="Content\ckeditor\samples\toolbarconfigurator\lib\codemirror\LICENSE" />
-    <Content Include="Content\ckeditor\skins\moono\readme.md" />
     <Content Include="Content\ckeditor\.editorconfig" />
     <Content Include="Content\ckeditor\.jscsrc" />
     <Content Include="Content\ckeditor\.jshintrc" />
+    <Content Include="fix_dbo.sql" />
+    <Content Include="gulpfile.js" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
+    <Content Include="Content\codemirror\.npmignore" />
+    <Content Include="Content\codemirror\.travis.yml" />
+    <Content Include="Content\codemirror\AUTHORS" />
+    <Content Include="Content\codemirror\bower.json" />
+    <Content Include="Content\codemirror\CHANGELOG.md" />
+    <Content Include="Content\codemirror\CONTRIBUTING.md" />
+    <Content Include="Content\codemirror\LICENSE" />
+    <Content Include="Content\codemirror\package.json" />
+    <Content Include="Content\codemirror\README.md" />
+    <Content Include="Content\ckeditor\skins\moonocolor\readme.md" />
     <None Include="packages.config" />
     <None Include=".jscsrc" />
     <None Include=".jshintrc" />
@@ -875,75 +1408,6 @@
     <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
     <Content Include="Scripts\polyfills\array.find.polyfill.js" />
     <Content Include="Scripts\polyfills\object.assign.polyfill.js" />
-    <Content Include="Scripts\es5-shim.min.js" />
-    <Content Include="Scripts\jquery-1.7.1.intellisense.min.js" />
-    <Content Include="Scripts\jquery.cookie.min.js" />
-    <Content Include="Scripts\jquery.form.min.js" />
-    <Content Include="Scripts\jquery.jeegoocontext.min.js" />
-    <Content Include="Scripts\jquery.nouislider.link.min.js" />
-    <Content Include="Scripts\jquery.nouislider.min.js" />
-    <Content Include="Scripts\jquery.scrollToElement.min.js" />
-    <Content Include="Scripts\jquery.splitter.min.js" />
-    <Content Include="Scripts\jquery.timers.min.js" />
-    <Content Include="Scripts\jquery.validate-vsdoc.min.js" />
-    <Content Include="Scripts\jquery.verticalResizer.min.js" />
-    <Content Include="Scripts\json2.min.js" />
-    <Content Include="Scripts\knockout.min.js" />
-    <Content Include="Scripts\Languages\BackendActionExecutor.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendActionExecutor.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendActionLink.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendActionLink.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendBreadCrumbs.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendBreadCrumbs.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendCommon.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendCommon.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendCommunacation.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendCommunacation.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendContextMenu.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendContextMenu.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendDirectLinkExecutor.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendDirectLinkExecutor.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendDocumentHost.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendDocumentHost.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendEditingArea.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendEditingArea.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendEntityDataList.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendEntityDataList.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendEntityEditor.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendEntityEditor.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendEntityEditorAutoSaver.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendEntityEditorAutoSaver.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendEntityGrid.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendEntityGrid.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendExpandedContainer.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendExpandedContainer.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendFileField.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendFileField.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendFileList.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendFileList.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendHome.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendHome.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendImageCropResizeClient.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendImageCropResizeClient.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendMultistepAction.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendMultistepAction.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendPager.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendPager.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendPermission.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendPermission.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendPopupWindow.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendPopupWindow.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendSearchBlock.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendSearchBlock.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendTabStrip.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendTabStrip.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendToolbar.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendToolbar.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\Languages\BackendTraceWindow.Lang.min.js" />
-    <Content Include="Scripts\Languages\BackendTraceWindow.Lang.ru-ru.min.js" />
-    <Content Include="Scripts\PlUpload\moxie.min.js" />
-    <Content Include="Scripts\PlUpload\plupload.dev.min.js" />
-    <Content Include="Scripts\pmrpc.min.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\dialogs\aspell.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\plugin.js" />
     <Content Include="Scripts\Quantumart\ckeditor\aspell\spellerpages\blank.html" />
@@ -958,49 +1422,40 @@
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
     <Content Include="Scripts\Quantumart\version.6.31.js" />
-    <Content Include="Scripts\Silverlight.min.js" />
-    <Content Include="Scripts\SilverlightUpload.min.js" />
-    <Content Include="Scripts\underscore.min.js" />
-    <Content Include="Scripts\_references.min.js" />
+    <None Include="Scripts\jquery\jquery-1.7.1.intellisense.js" />
     <Content Include="Settings.StyleCop" />
-    <None Include="_package.json" />
-    <None Include="Scripts\jquery-1.7.1.intellisense.js" />
     <Content Include="Content\QpCodemirror.css" />
     <Content Include="Scripts\es5-shim.js" />
-    <Content Include="Scripts\jquery.imgareaselect.js" />
-    <Content Include="Scripts\jquery.imgareaselect.min.js" />
-    <Content Include="Scripts\jquery.nouislider.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.js" />
-    <Content Include="Scripts\jquery.signalR-2.2.0.min.js" />
-    <Content Include="Scripts\Languages\BackendDocumentHost.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendDocumentHost.Lang.js" />
-    <Content Include="Scripts\Languages\BackendCommunacation.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendCommunacation.Lang.js" />
-    <Content Include="Scripts\Languages\BackendHome.Lang.js" />
-    <Content Include="Scripts\Languages\BackendHome.Lang.ru-ru.js" />
-    <Content Include="Scripts\jquery.nouislider.link.js" />
-    <Content Include="Scripts\Languages\BackendImageCropResizeClient.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendImageCropResizeClient.Lang.js" />
+    <Content Include="Scripts\jquery\jquery.imgareaselect.js" />
+    <Content Include="Scripts\jquery\jquery.nouislider.js" />
+    <Content Include="Scripts\jquery\jquery.signalR-2.2.0.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendDocumentHost.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendDocumentHost.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendCommunacation.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendCommunacation.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendHome.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendHome.Lang.ru-ru.js" />
+    <Content Include="Scripts\jquery\jquery.nouislider.link.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendImageCropResizeClient.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendImageCropResizeClient.Lang.js" />
     <Content Include="Scripts\PlUpload\moxie.js" />
     <Content Include="Scripts\PlUpload\Moxie.swf" />
     <Content Include="Scripts\PlUpload\Moxie.xap" />
     <Content Include="Scripts\Quantumart\Uploader\plupload\plupload.filters.js" />
     <Content Include="Scripts\PlUpload\plupload.dev.js" />
     <Content Include="Scripts\Quantumart\Home.js" />
-    <Content Include="Scripts\jquery-1.7.1.js" />
-    <Content Include="Scripts\jquery-1.7.1.min.js" />
-    <Content Include="Scripts\jquery.qtip.js" />
-    <Content Include="Scripts\jquery.qtip.min.js" />
+    <Content Include="Scripts\jquery\jquery-1.7.1.js" />
+    <Content Include="Scripts\jquery\jquery.qtip.js" />
     <Content Include="Scripts\knockout.js" />
-    <Content Include="Scripts\Languages\BackendDirectLinkExecutor.Lang.js" />
-    <Content Include="Scripts\Languages\BackendEntityEditorAutoSaver.Lang.js" />
-    <Content Include="Scripts\Languages\BackendEntityEditorAutoSaver.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendEntityGrid.Lang.js" />
-    <Content Include="Scripts\Languages\BackendEntityGrid.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendMultistepAction.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendPermission.Lang.js" />
-    <Content Include="Scripts\Languages\BackendPermission.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendExpandedContainer.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendDirectLinkExecutor.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEntityEditorAutoSaver.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEntityEditorAutoSaver.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEntityGrid.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEntityGrid.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendMultistepAction.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendPermission.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendPermission.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendExpandedContainer.Lang.ru-ru.js" />
     <Content Include="Scripts\pmrpc.js" />
     <Content Include="Scripts\Quantumart\ActionPermissions\BackendActionPermissionView.js" />
     <Content Include="Scripts\Quantumart\Audit\ActionLogComponent.js" />
@@ -1047,7 +1502,6 @@
     <Content Include="Scripts\Quantumart\Managers\BackendEntityDataListManager.js" />
     <Content Include="Scripts\Quantumart\Managers\BackendEntityEditorManager.js" />
     <Content Include="Scripts\Quantumart\Managers\BackendEntityGridManager.js" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ViewModels\ActionPermissions\ActionPermissionsTreeViewModel.cs" />
     <Compile Include="ViewModels\ArticleVersion\ArticleVersionViewType.cs" />
@@ -1378,8 +1832,8 @@
     <Content Include="Content\QP8\splitter\vsplitter_active_bg.png" />
     <Content Include="Content\QP8\splitter\vsplitter_bg.png" />
     <Content Include="Scripts\Quantumart\List\BackendEntityDropDownList.js" />
-    <Content Include="Scripts\Languages\BackendFileList.Lang.js" />
-    <Content Include="Scripts\Languages\BackendFileList.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendFileList.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendFileList.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\Backend.js" />
     <Content Include="Scripts\Quantumart\Document\BackendDocumentContext.js" />
     <Content Include="Scripts\Quantumart\Document\BackendDocumentHost.js" />
@@ -1388,28 +1842,24 @@
     <Content Include="Scripts\Quantumart\List\BackendEntitySingleItemPicker.js" />
     <Content Include="Scripts\Quantumart\Mediators\BackendFieldProperties.js" />
     <Content Include="Scripts\Quantumart\Library\BackendFileList.js" />
-    <Content Include="Scripts\Languages\BackendPager.Lang.js" />
-    <Content Include="Scripts\Languages\BackendPager.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendPager.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendPager.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\Document\BackendEditingDocument.js" />
-    <Content Include="Scripts\jquery.verticalResizer.js" />
-    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
-    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\Languages\BackendActionLink.Lang.js" />
-    <Content Include="Scripts\Languages\BackendActionLink.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendBreadCrumbs.Lang.js" />
-    <Content Include="Scripts\Languages\BackendBreadCrumbs.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendEntityDataList.Lang.js" />
-    <Content Include="Scripts\Languages\BackendFileField.Lang.js" />
-    <Content Include="Scripts\Languages\BackendFileField.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendPopupWindow.Lang.js" />
-    <Content Include="Scripts\Languages\BackendSearchBlock.Lang.js" />
-    <Content Include="Scripts\Languages\BackendTraceWindow.Lang.js" />
-    <Content Include="Scripts\Languages\BackendTraceWindow.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendEntityDataList.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendPopupWindow.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendSearchBlock.Lang.ru-ru.js" />
+    <Content Include="Scripts\jquery\jquery.verticalResizer.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendActionLink.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendActionLink.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendBreadCrumbs.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendBreadCrumbs.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEntityDataList.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendFileField.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendFileField.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendPopupWindow.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendSearchBlock.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendTraceWindow.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendTraceWindow.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEntityDataList.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendPopupWindow.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendSearchBlock.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\Info\BackendActionType.js" />
     <Content Include="Scripts\Quantumart\BackendBreadCrumbs.js" />
     <Content Include="Scripts\Quantumart\List\BackendEntityDataListBase.js" />
@@ -1448,29 +1898,28 @@
     <Content Include="Scripts\Quantumart\Editor\BackendFileField.js" />
     <Content Include="Scripts\Quantumart\BackendTraceWindow.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendTreeBase.js" />
-    <Content Include="Scripts\jquery.cookie.js" />
-    <Content Include="Scripts\jquery.form.js" />
-    <Content Include="Scripts\jquery.jeegoocontext.js" />
-    <Content Include="Scripts\jquery.scrollTo-1.4.2.min.js" />
-    <Content Include="Scripts\jquery.scrollTo-1.4.2.js" />
-    <Content Include="Scripts\jquery.scrollToElement.js" />
-    <Content Include="Scripts\jquery.splitter.js" />
-    <Content Include="Scripts\jquery.timers.js" />
+    <Content Include="Scripts\jquery\jquery.cookie.js" />
+    <Content Include="Scripts\jquery\jquery.form.js" />
+    <Content Include="Scripts\jquery\jquery.jeegoocontext.js" />
+    <Content Include="Scripts\jquery\jquery.scrollTo-1.4.2.js" />
+    <Content Include="Scripts\jquery\jquery.scrollToElement.js" />
+    <Content Include="Scripts\jquery\jquery.splitter.js" />
+    <Content Include="Scripts\jquery\jquery.timers.js" />
     <Content Include="Scripts\json2.js" />
-    <Content Include="Scripts\Languages\BackendActionExecutor.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendCommon.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendContextMenu.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendEditingArea.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendEntityEditor.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendTabStrip.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendToolbar.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendActionExecutor.Lang.js" />
-    <Content Include="Scripts\Languages\BackendCommon.Lang.js" />
-    <Content Include="Scripts\Languages\BackendContextMenu.Lang.js" />
-    <Content Include="Scripts\Languages\BackendEditingArea.Lang.js" />
-    <Content Include="Scripts\Languages\BackendEntityEditor.Lang.js" />
-    <Content Include="Scripts\Languages\BackendTabStrip.Lang.js" />
-    <Content Include="Scripts\Languages\BackendToolbar.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendActionExecutor.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendCommon.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendContextMenu.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEditingArea.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEntityEditor.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendTabStrip.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendToolbar.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendActionExecutor.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendCommon.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendContextMenu.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEditingArea.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendEntityEditor.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendTabStrip.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendToolbar.Lang.js" />
     <Content Include="Scripts\Quantumart\BackendActionExecutor.js" />
     <Content Include="Scripts\Quantumart\BackendActionLink.js" />
     <Content Include="Scripts\Quantumart\BackendContextMenu.js" />
@@ -1491,61 +1940,33 @@
     <Content Include="Scripts\Quantumart\Utils.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Scripts\SilverlightUpload.js" />
-    <Content Include="Scripts\telerik.autocomplete.js" />
-    <Content Include="Scripts\telerik.autocomplete.min.js" />
-    <Content Include="Scripts\telerik.calendar.js" />
-    <Content Include="Scripts\telerik.calendar.min.js" />
-    <Content Include="Scripts\telerik.chart.js" />
-    <Content Include="Scripts\telerik.chart.min.js" />
-    <Content Include="Scripts\telerik.combobox.js" />
-    <Content Include="Scripts\telerik.combobox.min.js" />
-    <Content Include="Scripts\telerik.common.js" />
-    <Content Include="Scripts\telerik.common.min.js" />
-    <Content Include="Scripts\telerik.datepicker.js" />
-    <Content Include="Scripts\telerik.datepicker.min.js" />
-    <Content Include="Scripts\telerik.datetimepicker.js" />
-    <Content Include="Scripts\telerik.datetimepicker.min.js" />
-    <Content Include="Scripts\telerik.draganddrop.js" />
-    <Content Include="Scripts\telerik.draganddrop.min.js" />
-    <Content Include="Scripts\telerik.editor.js" />
-    <Content Include="Scripts\telerik.editor.min.js" />
-    <Content Include="Scripts\telerik.grid.editing.js" />
-    <Content Include="Scripts\telerik.grid.editing.min.js" />
-    <Content Include="Scripts\telerik.grid.filtering.js" />
-    <Content Include="Scripts\telerik.grid.filtering.min.js" />
-    <Content Include="Scripts\telerik.grid.grouping.js" />
-    <Content Include="Scripts\telerik.grid.grouping.min.js" />
-    <Content Include="Scripts\telerik.grid.js" />
-    <Content Include="Scripts\telerik.grid.min.js" />
-    <Content Include="Scripts\telerik.grid.reordering.js" />
-    <Content Include="Scripts\telerik.grid.reordering.min.js" />
-    <Content Include="Scripts\telerik.grid.resizing.js" />
-    <Content Include="Scripts\telerik.grid.resizing.min.js" />
-    <Content Include="Scripts\telerik.imagebrowser.js" />
-    <Content Include="Scripts\telerik.imagebrowser.min.js" />
-    <Content Include="Scripts\telerik.list.js" />
-    <Content Include="Scripts\telerik.list.min.js" />
-    <Content Include="Scripts\telerik.menu.js" />
-    <Content Include="Scripts\telerik.menu.min.js" />
-    <Content Include="Scripts\telerik.panelbar.js" />
-    <Content Include="Scripts\telerik.panelbar.min.js" />
-    <Content Include="Scripts\telerik.slider.js" />
-    <Content Include="Scripts\telerik.slider.min.js" />
-    <Content Include="Scripts\telerik.splitter.js" />
-    <Content Include="Scripts\telerik.splitter.min.js" />
-    <Content Include="Scripts\telerik.tabstrip.js" />
-    <Content Include="Scripts\telerik.tabstrip.min.js" />
-    <Content Include="Scripts\telerik.textbox.js" />
-    <Content Include="Scripts\telerik.textbox.min.js" />
-    <Content Include="Scripts\telerik.timepicker.js" />
-    <Content Include="Scripts\telerik.timepicker.min.js" />
-    <Content Include="Scripts\telerik.treeview.js" />
-    <Content Include="Scripts\telerik.treeview.min.js" />
-    <Content Include="Scripts\telerik.upload.js" />
-    <Content Include="Scripts\telerik.upload.min.js" />
-    <Content Include="Scripts\telerik.window.js" />
-    <Content Include="Scripts\telerik.window.min.js" />
-    <Content Include="Scripts\_references.js" />
+    <Content Include="Scripts\telerik\telerik.autocomplete.js" />
+    <Content Include="Scripts\telerik\telerik.calendar.js" />
+    <Content Include="Scripts\telerik\telerik.chart.js" />
+    <Content Include="Scripts\telerik\telerik.combobox.js" />
+    <Content Include="Scripts\telerik\telerik.common.js" />
+    <Content Include="Scripts\telerik\telerik.datepicker.js" />
+    <Content Include="Scripts\telerik\telerik.datetimepicker.js" />
+    <Content Include="Scripts\telerik\telerik.draganddrop.js" />
+    <Content Include="Scripts\telerik\telerik.editor.js" />
+    <Content Include="Scripts\telerik\telerik.grid.editing.js" />
+    <Content Include="Scripts\telerik\telerik.grid.filtering.js" />
+    <Content Include="Scripts\telerik\telerik.grid.grouping.js" />
+    <Content Include="Scripts\telerik\telerik.grid.js" />
+    <Content Include="Scripts\telerik\telerik.grid.reordering.js" />
+    <Content Include="Scripts\telerik\telerik.grid.resizing.js" />
+    <Content Include="Scripts\telerik\telerik.imagebrowser.js" />
+    <Content Include="Scripts\telerik\telerik.list.js" />
+    <Content Include="Scripts\telerik\telerik.menu.js" />
+    <Content Include="Scripts\telerik\telerik.panelbar.js" />
+    <Content Include="Scripts\telerik\telerik.slider.js" />
+    <Content Include="Scripts\telerik\telerik.splitter.js" />
+    <Content Include="Scripts\telerik\telerik.tabstrip.js" />
+    <Content Include="Scripts\telerik\telerik.textbox.js" />
+    <Content Include="Scripts\telerik\telerik.timepicker.js" />
+    <Content Include="Scripts\telerik\telerik.treeview.js" />
+    <Content Include="Scripts\telerik\telerik.upload.js" />
+    <Content Include="Scripts\telerik\telerik.window.js" />
     <Content Include="ToCopy\bin\Quantumart.dll" />
     <Content Include="ToCopy\App_Data\Extensions.xslt">
       <SubType>Designer</SubType>
@@ -1572,11 +1993,11 @@
     <Content Include="Views\ActionLog\FailedSessions.cshtml">
       <LastGenOutput>FailedSessions.generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Scripts\Languages\BackendMultistepAction.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendMultistepAction.Lang.js" />
     <Content Include="Views\ActionPermissionTree\Index.cshtml">
     </Content>
-    <Content Include="Scripts\Languages\BackendDirectLinkExecutor.Lang.ru-ru.js" />
-    <Content Include="Scripts\Languages\BackendExpandedContainer.Lang.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendDirectLinkExecutor.Lang.ru-ru.js" />
+    <Content Include="Scripts\Quantumart\languages\BackendExpandedContainer.Lang.js" />
     <Content Include="Views\ArticleSearchBlock\ContentsListForClassifier.cshtml">
     </Content>
     <Content Include="Views\ArticleSearchBlock\DateTimeRange.cshtml" />
@@ -1609,10 +2030,6 @@
     </None>
     <None Include="Views\ArticleSearchBlock\StatusTypeRelation.cshtml">
       <LastGenOutput>StatusTypeRelation.generated.cs</LastGenOutput>
-    </None>
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Views\ArticleVersion\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
@@ -1676,8 +2093,6 @@
     </Content>
     <Content Include="Views\Shared\FolderProperties.cshtml">
     </Content>
-    <Content Include="Views\Home\JQueryTest.cshtml">
-    </Content>
     <Content Include="Views\Home\LockedArticles.cshtml">
     </Content>
     <Content Include="Views\Home\ArticlesForApproval.cshtml">
@@ -1687,9 +2102,6 @@
     <Content Include="Views\Field\MultiSelectIndex.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
     </Content>
-    <None Include="Views\Home\Test.cshtml">
-      <LastGenOutput>Test.generated.cs</LastGenOutput>
-    </None>
     <None Include="Views\Article\Properties.cshtml">
       <LastGenOutput>Properties.generated.cs</LastGenOutput>
     </None>
@@ -1809,15 +2221,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\MicrosoftAjax.js" />
-    <Content Include="Scripts\MicrosoftAjax.debug.js" />
-    <Content Include="Scripts\MicrosoftMvcAjax.js" />
-    <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
-    <Content Include="Scripts\MicrosoftMvcValidation.js" />
-    <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
+    <Content Include="Scripts\jquery\jquery.validate.js" />
+    <Content Include="Scripts\microsoft\MicrosoftAjax.js" />
+    <Content Include="Scripts\microsoft\MicrosoftAjax.debug.js" />
     <None Include="Views\Web.config">
       <SubType>Designer</SubType>
     </None>
@@ -1915,10 +2321,14 @@
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Content\build\" />
     <Folder Include="Content\imgareaselectcss\" />
     <Folder Include="Content\Temp\" />
     <Folder Include="Views\ContentFolder\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
@@ -1945,16 +2355,6 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\MicrosoftAjax\ajaxmin.tasks" />
-  <Target Name="AfterBuild">
-    <ItemGroup>
-      <JS Include="**\*.js" Exclude="**\*.min.js;gulpfile.js;Content\ckeditor\**\*.js;Content\codemirror\**\*.js;**\jquery-1.7.1.js;**\jquery.scrollTo-1.4.2.js;**\jquery.unobtrusive-ajax.js;**\jquery.validate.js;**\jquery.validate.unobtrusive.js;**\telerik.*.js;**\MicrosoftAjax.debug.js;**\MicrosoftAjax.js;**\MicrosoftMvcAjax.debug.js;**\MicrosoftMvcAjax.js;**\MicrosoftMvcValidation.js;**\MicrosoftMvcValidation.debug.js;**\jquery.imgareaselect.js;**\jquery.qtip.js;" />
-    </ItemGroup>
-    <ItemGroup>
-      <CSS Include="**\*.css" Exclude="**\*.min.css;Content\ckeditor\*.css;Content\ckeditor\**\*.css" />
-    </ItemGroup>
-    <AjaxMin JsSourceFiles="@(JS)" JsSourceExtensionPattern="\.js$" JsTargetExtension=".min.js" JsCollapseToLiteral="true" JsEvalTreatment="MakeAllSafe" JsLocalRenaming="KeepLocalizationVars" JsMacSafariQuirks="true" JsRemoveUnneededCode="true" JsStripDebugStatements="true" JsOutputMode="SingleLine" CssSourceFiles="@(CSS)" CssSourceExtensionPattern="\.css$" CssTargetExtension=".min.css" CssColorNames="Hex" CssCommentMode="Hacks" CssTermSemicolons="true" />
-  </Target>
   <PropertyGroup>
     <PostBuildEvent>
       if not exist "$(WebProjectOutputDir)\bin\Roslyn" md "$(WebProjectOutputDir)\bin\Roslyn"
@@ -1967,6 +2367,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
     <Error Condition="!Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets'))" />
+    <Error Condition="!Exists('..\packages\GitVersionTask.3.6.4\build\dotnet\GitVersionTask.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\GitVersionTask.3.6.4\build\dotnet\GitVersionTask.targets'))" />
   </Target>
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
+  <Import Project="..\packages\GitVersionTask.3.6.4\build\dotnet\GitVersionTask.targets" Condition="Exists('..\packages\GitVersionTask.3.6.4\build\dotnet\GitVersionTask.targets')" />
 </Project>

@@ -1,18 +1,16 @@
-﻿using System.Dynamic;
-using System.Web.Mvc;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.Configuration;
+﻿using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
+using System.Dynamic;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 {
     public class IndexViewModel
     {
         private readonly DirectLinkOptions _directLinkOptions;
-        private const string BackendTitle = "QP8 Backend";
-
         public IndexViewModel(DirectLinkOptions directLinkOptions, Db data, string dbHash)
         {
             _directLinkOptions = directLinkOptions;
@@ -35,7 +33,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
                     return instanceName + " " + configTitle;
                 }
 
-                return !string.IsNullOrEmpty(configTitle) ? configTitle : BackendTitle;
+                return !string.IsNullOrEmpty(configTitle) ? configTitle : "QP8 Backend";
             }
         }
 

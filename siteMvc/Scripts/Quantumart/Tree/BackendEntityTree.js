@@ -935,7 +935,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       var action = $a.getBackendActionByCode(actionCode);
 
       if (!action) {
-        window.alert($l.Common.ajaxDataReceivingErrorMessage);
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
         return;
       }
 
