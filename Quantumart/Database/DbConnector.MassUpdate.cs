@@ -157,7 +157,7 @@ namespace Quantumart.QPublishing.Database
         {
             var cmd = new SqlCommand
             {
-                CommandText = $"select content_item_id, Modified from content_{contentId}_united where content_item_id in (select id from @ids)",
+                CommandText = $"select content_item_id, Modified from content_{contentId}_united with(nolock) where content_item_id in (select id from @ids)",
                 CommandType = CommandType.Text,
                 Parameters =
                 {
