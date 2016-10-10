@@ -18,7 +18,5 @@
   <files>
     <file src="Scripts\pmrpc.js" target="Content\Scripts" />
     <file src="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.js" target="Content\Scripts" />
-    <file src="Scripts\pmrpc.min.js" target="Content\Scripts" />
-    <file src="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.min.js" target="Content\Scripts" />
   </files>
 </package>
