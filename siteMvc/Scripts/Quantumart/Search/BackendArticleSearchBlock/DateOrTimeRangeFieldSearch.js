@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.DateOrTimeRangeFieldSearch
+//#region class BackendArticleSearchBlock.DateOrTimeRangeFieldSearch
 // === Класс блока поиска по полю с датой или с временем
 Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID, rangeType) {
     Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
@@ -138,7 +138,7 @@ Quantumart.QP8.BackendArticleSearchBlock.DateOrTimeRangeFieldSearch.prototype = 
 	},
 
 	_onIsNullCheckBoxChange: function () {
-		// дизейблим текст бокс если пользователь выбрал IS NULL        
+		// дизейблим текст бокс если пользователь выбрал IS NULL
 		if (this.get_IsNull()) {
 			$c.disableDateTimePicker(this._dateFromElement);
 			$c.disableDateTimePicker(this._dateToElement);

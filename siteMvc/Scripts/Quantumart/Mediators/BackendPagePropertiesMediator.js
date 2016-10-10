@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.BackendPagePropertiesMediator = function (rootElementId) {
+Quantumart.QP8.BackendPagePropertiesMediator = function (rootElementId) {
 
     var $componentElem = jQuery('#' + rootElementId);
     var $cacheHours = $componentElem.find('.cache-hours-container');
@@ -8,7 +8,7 @@
 
     $displayCacheHours.change(manageCacheHours);
 
-    function manageCacheHours() {        
+    function manageCacheHours() {
         if ($displayCacheHours.is(":checked")) {
             $cacheHours.show();
         }
@@ -17,7 +17,7 @@
         }
     }
 
-    function dispose() {        
+    function dispose() {
         $componentElem = null;
         $cacheHours = null;
         $displayCacheHours = null;

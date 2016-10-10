@@ -1,4 +1,4 @@
-﻿// -- Компонент Search in code
+// -- Компонент Search in code
 Quantumart.QP8.SearchInCodeComponent = function (filterElementId, gridElementId) {
     this._filterElementId = filterElementId;
     this._gridElementId = gridElementId;
@@ -44,7 +44,7 @@ Quantumart.QP8.SearchInCodeComponent.prototype = {
         $filter.find('.sic_templateSelector select').val('0');
         $filter.find('.singleItemPicker').data('entity_data_list_component').deselectAllListItems();
         jQuery(".sic_search_button", this.$filter).trigger('click');
-        
+
         $filter = null;
     },
 

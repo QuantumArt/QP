@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.FieldSearchBlock
+//#region class BackendArticleSearchBlock.FieldSearchBlock
 // === Класс "Блок поиска по полям блока поиска статей" ===
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock = function (fieldSearchBlockElement, parentEntityId) {
 	this._fieldSearchBlockElement = fieldSearchBlockElement;
@@ -13,17 +13,17 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock = function (fieldSearc
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBlock.prototype = {
-	_fieldSearchBlockElement: null, // dom-элемент контейнер для блока поиска по полям    
+	_fieldSearchBlockElement: null, // dom-элемент контейнер для блока поиска по полям
 	_fieldSearchListElement: null, // dom-элемент контейнер для списка блоков поиска по конкретным полям
 	_fieldsComboElement: null, // dom-элемент комбо со списком полей
 	_addFieldSearchButtonElement: null, // dom-элемент "кнопки" для добавления поиска по выбранному в комбо полю
 
 	_parentEntityId: 0, // идентификатор родительской сущности;
-	_elementIdPrefix: "", //префикс идентификаторов dom-элементов    
+	_elementIdPrefix: "", //префикс идентификаторов dom-элементов
 
 	_fieldSearchContainerList: null, // коллекция разделов поиска по конкретному полю
 
-	_onAddFieldClickHandler: null, // обработчик события клика на кнопке добавления поля    
+	_onAddFieldClickHandler: null, // обработчик события клика на кнопке добавления поля
 	_onFieldSearchContainerCloseHandler: null, // обработчик события закрытия раздела поиска по полю
 
 	// инициализация

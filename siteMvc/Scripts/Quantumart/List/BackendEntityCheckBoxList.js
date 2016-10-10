@@ -1,4 +1,4 @@
-﻿//#region class BackendEntityCheckBoxList
+//#region class BackendEntityCheckBoxList
 // === Класс "Cписок сущностей в виде чекбоксов" ===
 Quantumart.QP8.BackendEntityCheckBoxList = function (listGroupCode, listElementId, entityTypeCode, parentEntityId, entityId, listType, options) {
 	Quantumart.QP8.BackendEntityCheckBoxList.initializeBase(this,
@@ -29,14 +29,14 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
 	initialize: function () {
 		Quantumart.QP8.BackendEntityCheckBoxList.callBaseMethod(this, "initialize");
-	
+
 		this._fixListOverflow();
-	
+
 		this._addGroupCheckbox(this.getListItemCount() <= 1);
 		this._syncGroupCheckbox();
-	
+
 		this._addNewButtonToToolbar();
-	
+
 		this._attachListItemEventHandlers();
 	},
 
@@ -58,13 +58,13 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
 	getListItems: function () {
 		var $listItems = jQuery(this._listElement).find("LI");
-	
+
 		return $listItems;
 	},
 
 	getSelectedListItems: function () {
 		var $selectedListItems = jQuery(this._listElement).find("LI:has(INPUT:checkbox:checked)");
-	
+
 		return $selectedListItems;
 	},
 
@@ -82,7 +82,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 			if (isChanged) {
 				this._setAsChanged();
 			}
-		}		
+		}
 	},
 
 	_setAsChanged: function (refreshOnly) {
@@ -97,20 +97,20 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 	getSelectedEntities: function () {
 		var entities = [];
 		var $selectedListItems = this.getSelectedListItems();
-	
+
 		$selectedListItems.each(
 			function (i, listItemElem) {
 				var $listItem = jQuery(listItemElem);
 				var $checkbox = $listItem.find("INPUT:checkbox");
 				var $label = $listItem.find("LABEL");
-	
+
 				var entityId = $q.toInt($checkbox.val(), 0);
 				var entityName = $q.toString($label.text());
-	
+
 				Array.add(entities, { "Id": entityId, "Name": entityName });
 			}
 		);
-	
+
 		return entities;
 	},
 
@@ -129,29 +129,29 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 		//#endregion
 
 		var $list = jQuery(this._listElement);
-						
+
 		var $ul = $list.find("UL:first");
-	
+
 		var listItemHtml = new $.telerik.stringBuilder();
-	
+
 		for (var dataItemIndex = 0; dataItemIndex < dataItems.length; dataItemIndex++) {
 			var dataItem = dataItems[dataItemIndex];
-	
+
 			this._getCheckBoxListItemHtml(listItemHtml, dataItem, dataItemIndex);
 		}
-	
+
 		$ul.empty()
 			.html(listItemHtml.string());
-	
+
 		this._refreshGroupCheckbox(dataItems.length);
 		this._syncCountSpan(dataItems.length);
-		
+
 		if (selectedItemsIsChanged === true) {
 		    this._setAsChanged(refreshOnly);
 		}
 
 		listItemHtml = null;
-	
+
 		$checkboxes = null;
 		$list = null;
 		$toolbar = null;
@@ -161,36 +161,36 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 		this._changeAllListItemsSelection(true);
 	},
 
-	deselectAllListItems: function () {		
-		this._changeAllListItemsSelection(false);		
+	deselectAllListItems: function () {
+		this._changeAllListItemsSelection(false);
 	},
 
 	_changeAllListItemsSelection: function (isSelect) {
 		this.getListItems()
 			.find("INPUT:checkbox")
-			.prop("checked", isSelect);			
+			.prop("checked", isSelect);
 		this._setAsChanged();
 	},
 
 	enableList: function () {
 		jQuery(this._listElement).removeClass(this.LIST_DISABLED_CLASS_NAME);
-	
+
 		this.getListItems().find("INPUT:checkbox").prop("disabled", false);
 		this._getGroupCheckbox().prop("disabled", false);
-	
+
 		this._enableAllToolbarButtons();
 	},
 
 	disableList: function () {
 		jQuery(this._listElement).addClass(this.LIST_DISABLED_CLASS_NAME);
-			
+
 		this.getListItems().find("INPUT:checkbox").prop("disabled", true);
 		this._getGroupCheckbox().prop("disabled", true);
-	
+
 		this._disableAllToolbarButtons();
 	},
 
-	makeReadonly: function () {		
+	makeReadonly: function () {
 		this.disableList();
 		var $checked = this.getListItems().find("INPUT:checkbox:checked");
 		$checked.each(function (i, cb) {
@@ -233,7 +233,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 		return (this._addNewActionCode != ACTION_CODE_NONE);
 	},
 
-	_onSelectedItemChangeHandler: function () {		
+	_onSelectedItemChangeHandler: function () {
 	    this._syncGroupCheckbox();
 	    this._syncCountSpan();
 		this._setAsChanged();
@@ -241,9 +241,9 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
 
 	dispose: function () {
 		this._stopDeferredOperations = true;
-	
+
 		this._detachListItemEventHandlers();
-	
+
 		Quantumart.QP8.BackendEntityCheckBoxList.callBaseMethod(this, "dispose");
 	}
 };

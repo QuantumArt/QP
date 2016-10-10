@@ -1,4 +1,4 @@
-﻿//#region class BackendContextBlock
+//#region class BackendContextBlock
 // === Класс "Блок переключения контекста статей" ===
 Quantumart.QP8.BackendContextBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
     Quantumart.QP8.BackendContextBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
@@ -9,7 +9,7 @@ Quantumart.QP8.BackendContextBlock.prototype =
 {
     _minSearchBlockHeight: 80, // минимальная высота блока поиска
     _maxSearchBlockHeight: 80, // максимальная высота блока поиска
-    _contendGroupListElement: null, // dom-элемент списка групп	
+    _contendGroupListElement: null, // dom-элемент списка групп
     _siteListElement: null,
     _contentNameElement: null,
     _searchBlockState: null,

@@ -1,4 +1,4 @@
-﻿//#region class BackendPopupWindowManager
+//#region class BackendPopupWindowManager
 // === Класс "Менеджер всплывающих окон" ===
 Quantumart.QP8.BackendPopupWindowManager = function (options) {
     Quantumart.QP8.BackendPopupWindowManager.initializeBase(this);

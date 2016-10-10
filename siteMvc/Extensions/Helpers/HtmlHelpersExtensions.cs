@@ -1365,18 +1365,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             });
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
-        public static string GetCurrentTheme(this HtmlHelper source)
-        {
-            var themeName = "default";
-            if (source.ViewContext.HttpContext.Session["theme"] != null)
-            {
-                themeName = source.ViewContext.HttpContext.Session["theme"].ToString();
-            }
-
-            return themeName;
-        }
-
         public static string FormatAsTime(this HtmlHelper source, object value, DateTime? defaultValue = null)
         {
             return DateTimePart(value, "T", defaultValue);

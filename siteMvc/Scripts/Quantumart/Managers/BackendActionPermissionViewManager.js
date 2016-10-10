@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.BackendActionPermissionViewManager = function () {
+Quantumart.QP8.BackendActionPermissionViewManager = function () {
 	Quantumart.QP8.BackendActionPermissionViewManager.initializeBase(this);
 };
 
