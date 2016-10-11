@@ -196,7 +196,7 @@ namespace Quantumart.QPublishing.Database
                 (
                     select content_item_id, content_item_version_id,
                     row_number() over(partition by civ.content_item_id order by civ.content_item_version_id desc) as num
-                    from content_item_version civ
+                    from content_item_version civ 
                     where content_item_id in (select id from @ids)
                     ) c
                     where c.num >= @maxNumber")
@@ -390,7 +390,7 @@ namespace Quantumart.QPublishing.Database
             }
 
             sb.AppendLine("FROM @xmlParameter.nodes('/ITEMS/ITEM') doc(col))");
-            sb.AppendLine($" SELECT c.CONTENT_ITEM_ID FROM dbo.CONTENT_{contentId}_UNITED c INNER JOIN X ON c.CONTENT_ITEM_ID NOT IN (select id from @validatedIds)");
+            sb.AppendLine($" SELECT c.CONTENT_ITEM_ID FROM dbo.CONTENT_{contentId}_UNITED c with(nolock) INNER JOIN X ON c.CONTENT_ITEM_ID NOT IN (select id from @validatedIds)");
             foreach (var attr in attrs)
             {
                 if (attr.IsNumeric)
@@ -538,7 +538,7 @@ namespace Quantumart.QPublishing.Database
                 FROM @Articles a WHERE a.CONTENT_ITEM_ID = 0
 
                 INSERT INTO @OldIds
-                SELECT a.CONTENT_ITEM_ID from @Articles a INNER JOIN content_item ci on a.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+                SELECT a.CONTENT_ITEM_ID from @Articles a INNER JOIN content_item ci with(rowlock, updlock) on a.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
 
                 {createVersionsString}
 
