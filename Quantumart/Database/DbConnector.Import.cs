@@ -258,7 +258,7 @@ namespace Quantumart.QPublishing.Database
                 SELECT @contentId, VISIBLE, ARCHIVE, STATUS_TYPE_ID, @lastModifiedBy, @notForReplication
                 FROM @Articles a WHERE a.CONTENT_ITEM_ID = 0
 
-                UPDATE CONTENT_ITEM SET 
+                UPDATE CONTENT_ITEM with(rowlock) SET 
                     VISIBLE = COALESCE(a.visible, ci.visible), 
                     ARCHIVE = COALESCE(a.archive, ci.archive), 
                     STATUS_TYPE_ID = COALESCE(a.STATUS_TYPE_ID, ci.STATUS_TYPE_ID),
