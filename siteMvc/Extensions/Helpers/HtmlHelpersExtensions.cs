@@ -358,7 +358,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 .Value(Converter.ToNullableDouble(value))
                 .DecimalDigits(decimalDigits)
                 .Spinners(true)
-                .EmptyMessage("")
+                .EmptyMessage(string.Empty)
                 .ToHtmlString());
         }
 
