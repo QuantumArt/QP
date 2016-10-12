@@ -18,12 +18,12 @@ namespace Quantumart.Test
     {
         public static DBConnector Cnn { get; private set; }
 
-        public const string BaseContent = "Test_BatchUpdate_Base";
-        public const string ExContent11 = "Test_BatchUpdate_Ex1_1";
-        public const string ExContent12 = "Test_BatchUpdate_Ex1_2";
-        public const string ExContent21 = "Test_BatchUpdate_Ex2_1";
-        public const string ExContent22 = "Test_BatchUpdate_Ex2_2";
-        public const string DictionaryContent = "Test_BatchUpdate_Dictionary";
+        public const string BaseContent = "Test_BatchUpdate2_Base";
+        public const string ExContent11 = "Test_BatchUpdate2_Ex1_1";
+        public const string ExContent12 = "Test_BatchUpdate2_Ex1_2";
+        public const string ExContent21 = "Test_BatchUpdate2_Ex2_1";
+        public const string ExContent22 = "Test_BatchUpdate2_Ex2_2";
+        public const string DictionaryContent = "Test_BatchUpdate2_Dictionary";
 
         public const string Classifier1 = "Field_Ex1";
         public const string Classifier2 = "Field_Ex2";
@@ -52,13 +52,6 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
-            var dbLogService = new Mock<IXmlDbUpdateLogService>();
-            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
-            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
-
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
-            service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
 
             Cnn = new DBConnector(Global.ConnectionString)
             {
@@ -67,15 +60,39 @@ namespace Quantumart.Test
                 ForceLocalCache = true
             };
 
+            Clear();
+
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
+
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
+            service.Process(Global.GetXml(@"xmls\batchupdate2.xml"));
+
+
             BaseContentId = Global.GetContentId(Cnn, BaseContent);
+            InitBase();
+            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
+
+        }
+
+        private static void InitBase()
+        {
+
             Ext11ContentId = Global.GetContentId(Cnn, ExContent11);
             Ext12ContentId = Global.GetContentId(Cnn, ExContent12);
             Ext21ContentId = Global.GetContentId(Cnn, ExContent21);
             Ext22ContentId = Global.GetContentId(Cnn, ExContent22);
-            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
             BaseArticlesIds = Global.GetIds(Cnn, BaseContentId);
-            ExtArticlesIds1 = Global.GetIds(Cnn, Ext11ContentId);
-            ExtArticlesIds2 = Global.GetIds(Cnn, Ext21ContentId);
+            if (Ext11ContentId != 0)
+            {
+                ExtArticlesIds1 = Global.GetIds(Cnn, Ext11ContentId);
+            }
+            if (Ext21ContentId != 0)
+            {
+                ExtArticlesIds2 = Global.GetIds(Cnn, Ext21ContentId);
+            }
         }
 
         [Test]
@@ -134,22 +151,49 @@ namespace Quantumart.Test
         [OneTimeTearDown]
         public static void TearDown()
         {
+            Clear();
+        }
+
+        private static void Clear()
+        {
             var contentService = new ContentService(Global.ConnectionString, 1);
             var fieldService = new FieldService(Global.ConnectionString, 1);
 
             var articleService = new ArticleService(Global.ConnectionString, 1);
-            articleService.Delete(BaseContentId, BaseArticlesIds);
+            BaseContentId = Global.GetContentId(Cnn, BaseContent);
+            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
 
-            contentService.Delete(Ext11ContentId);
-            contentService.Delete(Ext12ContentId);
-            contentService.Delete(Ext21ContentId);
-            contentService.Delete(Ext22ContentId);
+            if (contentService.Exists(BaseContentId))
+            {
+                InitBase();
 
-            fieldService.Delete(Global.GetFieldId(Cnn, BaseContent, M2M));
-            fieldService.Delete(Global.GetFieldId(Cnn, BaseContent, O2M));
+                articleService.Delete(BaseContentId, BaseArticlesIds);
 
-            contentService.Delete(DictionaryContentId);
-            contentService.Delete(BaseContentId);
+                if (contentService.Exists(Ext11ContentId))
+                {
+                    contentService.Delete(Ext11ContentId);
+                }
+                if (contentService.Exists(Ext12ContentId))
+                {
+                    contentService.Delete(Ext12ContentId);
+                }
+                if (contentService.Exists(Ext21ContentId))
+                {
+                    contentService.Delete(Ext21ContentId);
+                }
+                if (contentService.Exists(Ext22ContentId))
+                {
+                    contentService.Delete(Ext22ContentId);
+                }
+
+                fieldService.Delete(Global.GetFieldId(Cnn, BaseContent, M2M));
+                fieldService.Delete(Global.GetFieldId(Cnn, BaseContent, O2M));
+                if (contentService.Exists(DictionaryContentId))
+                {
+                    contentService.Delete(DictionaryContentId);
+                }
+                contentService.Delete(BaseContentId);
+            }
         }
     }
 }

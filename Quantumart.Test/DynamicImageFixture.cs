@@ -70,13 +70,6 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
-            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
-            var dbLogService = new Mock<IXmlDbUpdateLogService>();
-            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
-            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
-
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
-            service.Process(Global.GetXml(@"xmls\files.xml"));
             Cnn = new DBConnector(Global.ConnectionString)
             {
                 DynamicImageCreator = new FakeDynamicImage(),
@@ -84,6 +77,15 @@ namespace Quantumart.Test
                 ForceLocalCache = true
             };
             ContentName = "Test files";
+            Clear();
+
+            LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
+            var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
+            dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
+
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
+            service.Process(Global.GetXml(@"xmls\files.xml"));
             ContentId = Global.GetContentId(Cnn, ContentName);
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
             NoneId = Cnn.GetStatusTypeId(Global.SiteId, "None");
@@ -726,8 +728,17 @@ namespace Quantumart.Test
         [OneTimeTearDown]
         public static void TearDown()
         {
+            Clear();
+        }
+
+        private static void Clear()
+        {
+            ContentId = Global.GetContentId(Cnn, ContentName);
             var srv = new ContentService(Global.ConnectionString, 1);
-            srv.Delete(ContentId);
+            if (srv.Exists(ContentId))
+            {
+                srv.Delete(ContentId);
+            }
         }
     }
 }

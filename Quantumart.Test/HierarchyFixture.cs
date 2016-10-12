@@ -33,6 +33,17 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
+            Cnn = new DBConnector(Global.ConnectionString)
+            {
+                DynamicImageCreator = new FakeDynamicImage(),
+                FileSystem = new FakeFileSystem(),
+                ForceLocalCache = true
+            };
+
+            RegionContentName = "test regions";
+            ProductContentName = "test products";
+            Clear();
+
             LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
@@ -40,15 +51,7 @@ namespace Quantumart.Test
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\hierarchy.xml"));
-            RegionContentName = "test regions";
-            ProductContentName = "test products";
 
-            Cnn = new DBConnector(Global.ConnectionString)
-            {
-                DynamicImageCreator = new FakeDynamicImage(),
-                FileSystem = new FakeFileSystem(),
-                ForceLocalCache = true
-            };
 
             RegionContentId = Global.GetContentId(Cnn, RegionContentName);
             ProductContentId = Global.GetContentId(Cnn, ProductContentName);
@@ -146,9 +149,23 @@ namespace Quantumart.Test
         [OneTimeTearDown]
         public static void TearDown()
         {
+            Clear();
+        }
+
+        private static void Clear()
+        {
             var srv = new ContentService(Global.ConnectionString, 1);
-            srv.Delete(ProductContentId);
-            srv.Delete(RegionContentId);
+            RegionContentId = Global.GetContentId(Cnn, RegionContentName);
+            ProductContentId = Global.GetContentId(Cnn, ProductContentName);
+            if (srv.Exists(ProductContentId))
+            {
+                srv.Delete(ProductContentId);
+            }
+
+            if (srv.Exists(RegionContentId))
+            {
+                srv.Delete(RegionContentId);
+            }
         }
     }
 }

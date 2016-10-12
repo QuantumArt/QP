@@ -28,6 +28,10 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
+            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            ContentName = "Test unique";
+            Clear();
+
             LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
@@ -35,8 +39,6 @@ namespace Quantumart.Test
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\unique.xml"));
-            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
-            ContentName = "Test unique";
             ContentId = Global.GetContentId(Cnn, ContentName);
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
         }
@@ -406,8 +408,15 @@ namespace Quantumart.Test
         [OneTimeTearDown]
         public static void TearDown()
         {
+            Clear();
+        }
+
+        private static void Clear()
+        {
+            ContentId = Global.GetContentId(Cnn, ContentName);
             var srv = new ContentService(Global.ConnectionString, 1);
-            srv.Delete(ContentId);
+            if (srv.Exists(ContentId))
+                srv.Delete(ContentId);
         }
     }
 }
