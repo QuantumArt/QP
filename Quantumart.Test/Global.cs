@@ -11,7 +11,7 @@ namespace Quantumart.Test
 {
     internal class Global
     {
-        public static string ConnectionString = @"Initial Catalog=mts_catalog;Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
+        public static string ConnectionString => $"Initial Catalog=qp8_test_{Environment.MachineName.ToLowerInvariant()};Data Source=mscsql01;Integrated Security=True;Application Name=UnitTest";
 
         public static string GetXml(string fileName)
         {

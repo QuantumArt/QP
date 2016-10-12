@@ -12,7 +12,7 @@
     <field name="Data.UseForContext">false</field>
     <field name="Data.FriendlySingularName"></field>
     <field name="Data.FriendlyPluralName"></field>
-    <field name="Data.WorkflowBinding.WorkflowId">5</field>
+    <field name="Data.WorkflowBinding.WorkflowId">4</field>
     <field name="Data.WorkflowBinding.IsAsync">false</field>
     <field name="Data.UseVersionControl">false</field>
     <field name="Data.MapAsClass">false</field>
@@ -95,7 +95,7 @@
     <field name="Data.UseForContext">false</field>
     <field name="Data.FriendlySingularName"></field>
     <field name="Data.FriendlyPluralName"></field>
-    <field name="Data.WorkflowBinding.WorkflowId">5</field>
+    <field name="Data.WorkflowBinding.WorkflowId">4</field>
     <field name="Data.WorkflowBinding.IsAsync">true</field>
     <field name="Data.WorkflowBinding.IsAsync">false</field>
     <field name="Data.UseVersionControl">true</field>
