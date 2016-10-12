@@ -38,7 +38,7 @@ namespace Quantumart.QP8.BLL.Mappers
             Mapper.CreateMap<bool, decimal>().ConvertUsing(src => Converter.ToDecimal(src));
             Mapper.CreateMap<int, decimal>().ConvertUsing(src => src);
             Mapper.CreateMap<decimal, int>().ConvertUsing(src => Converter.ToInt32(src));
-            Mapper.CreateMap<int?, decimal?>().ConvertUsing(Converter.ToNullableDecimal);
+            Mapper.CreateMap<int?, decimal?>().ConvertUsing(src => src);
 
             Mapper.CreateMap<IDataReader, IEnumerable<SearchInArticlesResultItem>>();
             Mapper.CreateMap<IDataReader, IEnumerable<VisualEditFieldParams>>();
