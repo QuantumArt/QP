@@ -18,12 +18,12 @@ namespace Quantumart.Test
     {
         public static DBConnector Cnn { get; private set; }
 
-        public const string BaseContent = "Test_BatchUpdate_Base";
-        public const string ExContent11 = "Test_BatchUpdate_Ex1_1";
-        public const string ExContent12 = "Test_BatchUpdate_Ex1_2";
-        public const string ExContent21 = "Test_BatchUpdate_Ex2_1";
-        public const string ExContent22 = "Test_BatchUpdate_Ex2_2";
-        public const string DictionaryContent = "Test_BatchUpdate_Dictionary";
+        public const string BaseContent = "Test_BatchUpdate2_Base";
+        public const string ExContent11 = "Test_BatchUpdate2_Ex1_1";
+        public const string ExContent12 = "Test_BatchUpdate2_Ex1_2";
+        public const string ExContent21 = "Test_BatchUpdate2_Ex2_1";
+        public const string ExContent22 = "Test_BatchUpdate2_Ex2_2";
+        public const string DictionaryContent = "Test_BatchUpdate2_Dictionary";
 
         public const string Classifier1 = "Field_Ex1";
         public const string Classifier2 = "Field_Ex2";
@@ -68,7 +68,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
-            service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
+            service.Process(Global.GetXml(@"xmls\batchupdate2.xml"));
 
 
             BaseContentId = Global.GetContentId(Cnn, BaseContent);
@@ -188,16 +188,12 @@ namespace Quantumart.Test
 
                 fieldService.Delete(Global.GetFieldId(Cnn, BaseContent, M2M));
                 fieldService.Delete(Global.GetFieldId(Cnn, BaseContent, O2M));
+                if (contentService.Exists(DictionaryContentId))
+                {
+                    contentService.Delete(DictionaryContentId);
+                }
                 contentService.Delete(BaseContentId);
             }
-
-
-
-            if (contentService.Exists(DictionaryContentId))
-            {
-                contentService.Delete(DictionaryContentId);
-            }
-
         }
     }
 }
