@@ -48,6 +48,10 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
+            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            ContentName = "Test M2M";
+            Clear();
+
             LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
@@ -55,8 +59,8 @@ namespace Quantumart.Test
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\m2m.xml"));
-            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
-            ContentName = "Test M2M";
+
+
             ContentId = Global.GetContentId(Cnn, ContentName);
             EFLinksExists = Global.EFLinksExists(Cnn, ContentId);
             TitleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
@@ -1270,9 +1274,24 @@ namespace Quantumart.Test
         [OneTimeTearDown]
         public static void TearDown()
         {
+            Clear();
+        }
+
+        private static void Clear()
+        {
+            ContentId = Global.GetContentId(Cnn, "Test M2M");
+            DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
             var srv = new ContentService(Global.ConnectionString, 1);
-            srv.Delete(ContentId);
-            srv.Delete(DictionaryContentId);
+
+            if (srv.Exists(ContentId))
+            {
+                srv.Delete(ContentId);
+            }
+
+            if (srv.Exists(DictionaryContentId))
+            {
+                srv.Delete(DictionaryContentId);
+            }
         }
     }
 }

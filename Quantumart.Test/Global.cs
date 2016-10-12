@@ -176,7 +176,7 @@ namespace Quantumart.Test
                 $"select content_id from content where site_id = { SiteId } and content_name = '{contentName}'")
                 .AsEnumerable()
                 .Select(n => (int)n.Field<decimal>("content_id"))
-                .Single();
+                .SingleOrDefault();
         }
 
         public static int GetFieldId(DBConnector cnn, string contentName, string fieldName)

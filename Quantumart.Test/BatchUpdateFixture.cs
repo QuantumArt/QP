@@ -140,6 +140,13 @@ namespace Quantumart.Test
         [OneTimeSetUp]
         public static void Init()
         {
+
+            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
+            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
+            BaseContentId = Global.GetContentId(Cnn, BaseContent);
+            ArticleService = new ArticleService(Global.ConnectionString, 1);
+            Clear();
+
             LogProvider.LogFactory = new DiagnosticsDebugLogFactory();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
@@ -147,12 +154,46 @@ namespace Quantumart.Test
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, false);
             service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
-            Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
-            ArticleService = new ArticleService(Global.ConnectionString, 1);
+
             Random = new Random();
 
             BaseContentId = Global.GetContentId(Cnn, BaseContent);
+            InitBaseContentFields();
+            InitExtensions();
 
+            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
+            InitDictionaryContentFields();
+
+        }
+
+        private static void InitExtensions()
+        {
+            Ex11ContentId = Global.GetContentId(Cnn, Ex11Content);
+            Ex11ParentId = Global.GetFieldId(Cnn, Ex11Content, Ex11Parent);
+            Ex11Field1Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field1);
+            Ex11Field2Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field2);
+
+            Ex12ContentId = Global.GetContentId(Cnn, Ex12Content);
+            Ex12ParentId = Global.GetFieldId(Cnn, Ex12Content, Ex12Parent);
+            Ex12Field1Id = Global.GetFieldId(Cnn, Ex12Content, Ex12Field1);
+
+            Ex21ContentId = Global.GetContentId(Cnn, Ex21Content);
+            Ex21ParentId = Global.GetFieldId(Cnn, Ex21Content, Ex21Parent);
+
+            Ex22ContentId = Global.GetContentId(Cnn, Ex22Content);
+            Ex22ParentId = Global.GetFieldId(Cnn, Ex22Content, Ex22Parent);
+        }
+
+        private static void InitDictionaryContentFields()
+        {
+            DictionaryKeyId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryKey);
+            DictionaryValueId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryValue);
+            DictionaryFieldMtMBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtMBackward);
+            DictionaryFieldMtOBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtOBackward);
+        }
+
+        private static void InitBaseContentFields()
+        {
             BaseFieldEx1Id = Global.GetFieldId(Cnn, BaseContent, BaseFieldEx1);
             BaseFieldEx2Id = Global.GetFieldId(Cnn, BaseContent, BaseFieldEx2);
             BaseFieldStringId = Global.GetFieldId(Cnn, BaseContent, BaseFieldString);
@@ -169,54 +210,61 @@ namespace Quantumart.Test
             BaseFieldVisualEditId = Global.GetFieldId(Cnn, BaseContent, BaseFieldVisualEdit);
             BaseFieldDynamicImageId = Global.GetFieldId(Cnn, BaseContent, BaseFieldDynamicImage);
             BaseFieldEnumId = Global.GetFieldId(Cnn, BaseContent, BaseFieldEnum);
-
-            DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
-
-            DictionaryKeyId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryKey);
-            DictionaryValueId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryValue);
-            DictionaryFieldMtMBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtMBackward);
-            DictionaryFieldMtOBackwardId = Global.GetFieldId(Cnn, DictionaryContent, DictionaryFieldMtOBackward);
-
-            Ex11ContentId = Global.GetContentId(Cnn, Ex11Content);
-
-            Ex11ParentId = Global.GetFieldId(Cnn, Ex11Content, Ex11Parent);
-            Ex11Field1Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field1);
-            Ex11Field2Id = Global.GetFieldId(Cnn, Ex11Content, Ex11Field2);
-
-            Ex12ContentId = Global.GetContentId(Cnn, Ex12Content);
-            Ex12ParentId = Global.GetFieldId(Cnn, Ex12Content, Ex12Parent);
-            Ex12Field1Id = Global.GetFieldId(Cnn, Ex12Content, Ex12Field1);
-
-            Ex21ContentId = Global.GetContentId(Cnn, Ex21Content);
-            Ex21ParentId = Global.GetFieldId(Cnn, Ex21Content, Ex21Parent);
-
-            Ex22ContentId = Global.GetContentId(Cnn, Ex22Content);
-            Ex22ParentId = Global.GetFieldId(Cnn, Ex22Content, Ex22Parent);
         }
 
         [OneTimeTearDown]
         public static void TearDown()
         {
+            Clear();
+        }
+
+        private static void Clear()
+        {
             var contentService = new ContentService(Global.ConnectionString, 1);
+            var baseContentExists = contentService.Exists(BaseContentId);
+            var dictionaryContentExists = contentService.Exists(DictionaryContentId);
             var fieldService = new FieldService(Global.ConnectionString, 1);
-            var dictionaryIds = Global.GetIds(Cnn, DictionaryContentId);
-            var baseIds = Global.GetIds(Cnn, BaseContentId);
 
-            ArticleService.Delete(DictionaryContentId, dictionaryIds);
-            ArticleService.Delete(BaseContentId, baseIds);
+            if (dictionaryContentExists)
+            {
+                InitDictionaryContentFields();
+                var dictionaryIds = Global.GetIds(Cnn, DictionaryContentId);
+                ArticleService.Delete(DictionaryContentId, dictionaryIds);
+            }
 
-            contentService.Delete(Ex11ContentId);
-            contentService.Delete(Ex12ContentId);
-            contentService.Delete(Ex21ContentId);
-            contentService.Delete(Ex22ContentId);
+            if (baseContentExists)
+            {
+                InitBaseContentFields();
+                InitExtensions();
+                var baseIds = Global.GetIds(Cnn, BaseContentId);
+                ArticleService.Delete(BaseContentId, baseIds);
+                contentService.Delete(Ex11ContentId);
+                contentService.Delete(Ex12ContentId);
+                contentService.Delete(Ex21ContentId);
+                contentService.Delete(Ex22ContentId);
+            }
 
-            fieldService.Delete(DictionaryFieldMtMBackwardId);
-            fieldService.Delete(DictionaryFieldMtOBackwardId);
-            fieldService.Delete(BaseFieldMtMId);
-            fieldService.Delete(BaseFieldOtMId);
+            if (dictionaryContentExists)
+            {
+                fieldService.Delete(DictionaryFieldMtMBackwardId);
+                fieldService.Delete(DictionaryFieldMtOBackwardId);
+            }
 
-            contentService.Delete(DictionaryContentId);
-            contentService.Delete(BaseContentId);
+            if (baseContentExists)
+            {
+                fieldService.Delete(BaseFieldMtMId);
+                fieldService.Delete(BaseFieldOtMId);
+            }
+
+            if (dictionaryContentExists)
+            {
+                contentService.Delete(DictionaryContentId);
+            }
+
+            if (baseContentExists)
+            {
+                contentService.Delete(BaseContentId);
+            }
         }
 
         [Test]
