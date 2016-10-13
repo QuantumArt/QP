@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using AutoMapper;
+using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Mappers.EntityPermissions;
 using Quantumart.QP8.BLL.Mappers.VisualEditor;
 using Quantumart.QP8.BLL.Mappers.XmlDbUpdate;
@@ -10,9 +11,9 @@ using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Utils;
 
-namespace Quantumart.QP8.BLL.Mappers
+namespace Quantumart.QP8.BLL.Facades
 {
-    public class MappersRepository
+    public static class MapperFacade
     {
         internal static T Create<T>() where T : GenericMapper, new()
         {
@@ -31,7 +32,7 @@ namespace Quantumart.QP8.BLL.Mappers
             return item;
         }
 
-        static MappersRepository()
+        static MapperFacade()
         {
             Mapper.CreateMap<decimal, bool>().ConvertUsing(src => Converter.ToBoolean(src));
             Mapper.CreateMap<decimal?, int?>().ConvertUsing(Converter.ToNullableInt32);

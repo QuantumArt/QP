@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -12,7 +13,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<ExternalNotification> GetPendingNotifications()
         {
             var notifications = QPContext.EFContext.ExternalNotificationSet.Where(n => !n.Sent).ToList();
-            return MappersRepository.ExternalNotificationMapper.GetBizList(notifications);
+            return MapperFacade.ExternalNotificationMapper.GetBizList(notifications);
         }
 
         internal static void DeleteSentNotifications()
@@ -45,7 +46,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             foreach (var notification in notifications)
             {
-                var entity = MappersRepository.ExternalNotificationMapper.GetDalObject(notification);
+                var entity = MapperFacade.ExternalNotificationMapper.GetDalObject(notification);
                 entities.ExternalNotificationSet.Attach(entity);
                 entities.ObjectStateManager.ChangeObjectState(entity, EntityState.Modified);
             }

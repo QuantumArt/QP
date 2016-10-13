@@ -11,18 +11,20 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 {
     public class ArticleSchedulerService : IArticleSchedulerService, IArticleOnetimeSchedulerService, IArticlePublishingSchedulerService, IArticleRecurringSchedulerService
     {
-        readonly string _connectionString;
+        private readonly string _connectionString;
 
         public ArticleSchedulerService(string connectionString)
         {
             if (string.IsNullOrEmpty(connectionString))
+            {
                 throw new ArgumentNullException(nameof(connectionString));
+            }
 
             _connectionString = connectionString;
-        }		
+        }
 
         public IEnumerable<ArticleScheduleTask> GetScheduleTaskList()
-        {			
+        {
             using (new QPConnectionScope(_connectionString))
             {
                 return ScheduleRepository.GetScheduleTaskList();
@@ -30,15 +32,15 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
         }
 
         public DateTime GetCurrentDBDateTime()
-        {						
+        {
             using (var scope = new QPConnectionScope(_connectionString))
             {
                 return Common.GetSqlDate(scope.DbConnection);
-            }		
+            }
         }
 
         public Article ShowArticle(int articleId)
-        {			
+        {
             using (new QPConnectionScope(_connectionString))
             {
                 var article = ArticleRepository.GetById(articleId);
@@ -46,14 +48,13 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                 {
                     article.LoadFieldValues();
                     var repo = new NotificationPushRepository();
-                    repo.PrepareNotifications(article, new [] { NotificationCode.Update });
+                    repo.PrepareNotifications(article, new[] { NotificationCode.Update });
                     QPContext.EFContext.SetContentItemVisible(articleId, true, article.LastModifiedBy);
                     repo.SendNotifications();
                 }
 
-                ;
                 return article;
-            }		
+            }
         }
 
         public Article HideArticle(int articleId)
@@ -76,8 +77,8 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public Article ShowAndCloseSchedule(int scheduleId)
         {
-            Article article = null; 
-            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {IsolationLevel = IsolationLevel.ReadCommitted}))
+            Article article = null;
+            using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
                 using (new QPConnectionScope(_connectionString))
                 {
@@ -97,7 +98,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public Article HideAndCloseSchedule(int scheduleId)
         {
-            Article article = null; 
+            Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
                 using (new QPConnectionScope(_connectionString))
@@ -118,7 +119,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 
         public Article PublishAndCloseSchedule(int scheduleId)
         {
-            Article article = null; 
+            Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
 

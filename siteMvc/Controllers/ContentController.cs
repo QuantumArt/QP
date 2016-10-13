@@ -97,7 +97,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
         {
-            var content = ContentService.NewForSave(parentId);
+            var content = ContentService.New(parentId, null);
             var model = ContentViewModel.Create(content, tabId, parentId);
 
             TryUpdateModel(model);

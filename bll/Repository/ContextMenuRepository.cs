@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using Quantumart.QP8;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
@@ -22,7 +23,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				int userId = QPContext.CurrentUserId;
-				ContextMenu menu = MappersRepository.ContextMenuRowMapper.GetBizObject(
+				ContextMenu menu = MapperFacade.ContextMenuRowMapper.GetBizObject(
 					Common.GetContextMenuById(scope.DbConnection, userId, menuId, loadItems));
 
 				return menu;
@@ -39,7 +40,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				int userId = QPContext.CurrentUserId;
-				ContextMenu menu = MappersRepository.ContextMenuRowMapper.GetBizObject(
+				ContextMenu menu = MapperFacade.ContextMenuRowMapper.GetBizObject(
 					Common.GetContextMenuByCode(scope.DbConnection, userId, menuCode, loadItems));
 
 				return menu;
@@ -55,7 +56,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				int userId = QPContext.CurrentUserId;
-				List<ContextMenu> menusList = MappersRepository.ContextMenuRowMapper.GetBizList(
+				List<ContextMenu> menusList = MapperFacade.ContextMenuRowMapper.GetBizList(
 					Common.GetContextMenusList(scope.DbConnection, userId).ToList());
 
 				return menusList;
@@ -73,7 +74,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				int userId = QPContext.CurrentUserId;
-				List<BackendActionStatus> statusesList = MappersRepository.BackendActionStatusMapper.GetBizList(
+				List<BackendActionStatus> statusesList = MapperFacade.BackendActionStatusMapper.GetBizList(
 					Common.GetMenuStatusList(scope.DbConnection, userId, menuCode, entityId).ToList());
 
 				return statusesList;
@@ -82,7 +83,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 		internal static EntityType GetEntityType(int menuId)
 		{						
-			return MappersRepository.EntityTypeMapper.GetBizObject(QPContext.EFContext.EntityTypeSet.SingleOrDefault(t => t.ContextMenuId == menuId));			
+			return MapperFacade.EntityTypeMapper.GetBizObject(QPContext.EFContext.EntityTypeSet.SingleOrDefault(t => t.ContextMenuId == menuId));
 		}
 	}
 }

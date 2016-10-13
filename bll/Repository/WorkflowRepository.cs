@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
@@ -21,7 +22,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static ContentWorkflowBind GetContentWorkflow(int contentId)
         {
-            return MappersRepository.ContentWorkflowBindMapper.GetBizObject(GetContentWorkflowDAL(contentId));
+            return MapperFacade.ContentWorkflowBindMapper.GetBizObject(GetContentWorkflowDAL(contentId));
         }
 
         internal static ContentWorkflowBind GetContentWorkflow(Content content)
@@ -41,7 +42,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static ArticleWorkflowBind GetArticleWorkflow(int articleId)
         {
-            return MappersRepository.ArticleWorkflowBindMapper.GetBizObject(GetArticleWorkflowDAL(articleId));
+            return MapperFacade.ArticleWorkflowBindMapper.GetBizObject(GetArticleWorkflowDAL(articleId));
         }
 
         internal static ArticleWorkflowBind GetArticleWorkflow(Article article)
@@ -57,7 +58,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static List<StatusType> GetStatuses(int workflowId)
         {
             List<StatusType> result = new List<StatusType>();
-            List<StatusType> workflowResults = MappersRepository.StatusTypeMapper.GetBizList(QPContext.EFContext.WorkflowRulesSet.Where(s => s.WorkflowId == (decimal)workflowId).Select(s => s.StatusType).OrderBy(n => n.Weight).ToList());
+            List<StatusType> workflowResults = MapperFacade.StatusTypeMapper.GetBizList(QPContext.EFContext.WorkflowRulesSet.Where(s => s.WorkflowId == (decimal)workflowId).Select(s => s.StatusType).OrderBy(n => n.Weight).ToList());
             result.Add(StatusTypeRepository.GetByName("None", workflowResults[0].SiteId));
             result.AddRange(workflowResults);
             return result;
@@ -65,7 +66,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static StatusType GetMaxStatus(int workflowId)
         {
-            return MappersRepository.StatusTypeMapper.GetBizObject(QPContext.EFContext.WorkflowRulesSet.Where(s => s.WorkflowId == (decimal)workflowId).Select(s => s.StatusType).OrderByDescending(n => n.Weight).First());
+            return MapperFacade.StatusTypeMapper.GetBizObject(QPContext.EFContext.WorkflowRulesSet.Where(s => s.WorkflowId == (decimal)workflowId).Select(s => s.StatusType).OrderByDescending(n => n.Weight).First());
         }
 
         internal static bool DoesWorkflowUseStatus(int workflowId, int statusTypeId)
@@ -80,7 +81,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static StatusType GetClosestStatus(int workflowId, int statusWeight)
         {
             return
-                MappersRepository.StatusTypeMapper.GetBizObject(
+                MapperFacade.StatusTypeMapper.GetBizObject(
                     QPContext.EFContext.WorkflowRulesSet
                     .Where(s => s.WorkflowId == (decimal)workflowId)
                     .Select(s => s.StatusType)
@@ -102,7 +103,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<Workflow> GetSiteWorkflows(int siteId)
         {
-            return MappersRepository.WorkflowMapper.GetBizList(QPContext.EFContext.WorkflowSet.Where(s => s.SiteId == siteId).OrderBy(n => n.Id).ToList());
+            return MapperFacade.WorkflowMapper.GetBizList(QPContext.EFContext.WorkflowSet.Where(s => s.SiteId == siteId).OrderBy(n => n.Id).ToList());
         }
 
         internal static IEnumerable<WorkflowListItem> GetSiteWorkflowsPage(ListCommand cmd, int siteId, out int totalRecords)
@@ -110,7 +111,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 IEnumerable<DataRow> rows = Common.GetWorkflowsPage(scope.DbConnection, siteId, null, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                return MappersRepository.WorkflowListItemRowMapper.GetBizList(rows.ToList());
+                return MapperFacade.WorkflowListItemRowMapper.GetBizList(rows.ToList());
             }
         }
 
@@ -121,7 +122,7 @@ namespace Quantumart.QP8.BLL.Repository
                      join r in efc.WorkflowRulesSet on w.Id equals r.Workflow.Id
                      where r.User.Id == userId
                      select w).Distinct();
-            return MappersRepository.WorkflowMapper.GetBizList(q.ToList());
+            return MapperFacade.WorkflowMapper.GetBizList(q.ToList());
         }
 
         internal static IEnumerable<Workflow> GetUserGroupWorkflows(int groupId)
@@ -131,7 +132,7 @@ namespace Quantumart.QP8.BLL.Repository
                      join r in efc.WorkflowRulesSet on w.Id equals r.Workflow.Id
                      where r.UserGroup.Id == groupId
                      select w).Distinct();
-            return MappersRepository.WorkflowMapper.GetBizList(q.ToList());
+            return MapperFacade.WorkflowMapper.GetBizList(q.ToList());
         }
 
         /// <summary>
@@ -141,7 +142,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<Workflow> GetList(IEnumerable<int> IDs)
         {
             IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
-            return MappersRepository.WorkflowMapper
+            return MapperFacade.WorkflowMapper
                 .GetBizList(QPContext.EFContext.WorkflowSet
                     .Where(f => decIDs.Contains(f.Id))
                     .ToList()
@@ -154,7 +155,7 @@ namespace Quantumart.QP8.BLL.Repository
             bool persisted = oldDal != null;
             bool needToPersist = binding.WorkflowId != WorkflowBind.UnassignedId;
             bool changed = persisted && needToPersist && (oldDal.WorkflowId != binding.WorkflowId || oldDal.IsAsync != binding.IsAsync);
-            var newDal = (!needToPersist) ? null : MappersRepository.ContentWorkflowBindMapper.GetDalObject(binding);
+            var newDal = (!needToPersist) ? null : MapperFacade.ContentWorkflowBindMapper.GetDalObject(binding);
 
             if (persisted && changed || persisted && !needToPersist)
             {
@@ -170,7 +171,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static Workflow GetById(int id)
         {
             QP8Entities entities = QPContext.EFContext;
-            return MappersRepository.WorkflowMapper.GetBizObject(entities.WorkflowSet.Include("LastModifiedByUser").Include("WorkflowRules.StatusType").SingleOrDefault(n => (int)n.Id == id));
+            return MapperFacade.WorkflowMapper.GetBizObject(entities.WorkflowSet.Include("LastModifiedByUser").Include("WorkflowRules.StatusType").SingleOrDefault(n => (int)n.Id == id));
         }
 
         internal static Workflow UpdateProperties(Workflow workflow)
@@ -183,7 +184,7 @@ namespace Quantumart.QP8.BLL.Repository
             var newWorkflowRules = workflow.WorkflowRules.Where(x => x.Id == 0).ToArray();
             workflow.WorkflowRules.RemoveAll(x => x.Id == 0);
 
-            WorkflowDAL dal = MappersRepository.WorkflowMapper.GetDalObject(workflow);
+            WorkflowDAL dal = MapperFacade.WorkflowMapper.GetDalObject(workflow);
             dal.LastModifiedBy = QPContext.CurrentUserId;
             using (new QPConnectionScope())
             {
@@ -199,7 +200,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             foreach (var rule in newWorkflowRules)
             {
-                WorkflowRulesDAL dalRule = MappersRepository.WorkFlowRuleMapper.GetDalObject(rule);
+                WorkflowRulesDAL dalRule = MapperFacade.WorkFlowRuleMapper.GetDalObject(rule);
                 dalRule.WorkflowId = workflow.Id;
                 dalRule.Description = rule.Description;
                 dalRule.RuleOrder = rule.RuleOrder;
@@ -233,7 +234,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             entities.SaveChanges();
 
-            return MappersRepository.WorkflowMapper.GetBizObject(dal);
+            return MapperFacade.WorkflowMapper.GetBizObject(dal);
         }
 
         private static void UpdateRuleOrder(Workflow workflow)
@@ -278,7 +279,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             Queue<int> forceIds = (workflow.ForceRulesIds == null) ? null : new Queue<int>(workflow.ForceRulesIds);
 
-            WorkflowDAL dal = MappersRepository.WorkflowMapper.GetDalObject(workflow);
+            WorkflowDAL dal = MapperFacade.WorkflowMapper.GetDalObject(workflow);
             dal.LastModifiedBy = QPContext.CurrentUserId;
             using (new QPConnectionScope())
             {
@@ -297,7 +298,7 @@ namespace Quantumart.QP8.BLL.Repository
             foreach (var rule in workflow.WorkflowRules)
             {
 
-                WorkflowRulesDAL dalRule = MappersRepository.WorkFlowRuleMapper.GetDalObject(rule);
+                WorkflowRulesDAL dalRule = MapperFacade.WorkFlowRuleMapper.GetDalObject(rule);
                 if (forceIds != null)
                     dalRule.Id = forceIds.Dequeue();
                 dalRule.WorkflowId = dal.Id;
@@ -308,7 +309,7 @@ namespace Quantumart.QP8.BLL.Repository
             entities.SaveChanges();
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.WorkflowRule);
 
-            return MappersRepository.WorkflowMapper.GetBizObject(dal);
+            return MapperFacade.WorkflowMapper.GetBizObject(dal);
         }
 
         internal static void DeleteVeStyle(int id)

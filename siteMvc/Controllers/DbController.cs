@@ -115,7 +115,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             try
             {
                 new XmlDbUpdateReplayService(
-                    QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode),
+                    QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
                     CommonHelpers.GetDbIdentityInsertOptions(disableFieldIdentity, disableContentIdentity),
                     QPContext.CurrentUserId,
                     _xmlDbUpdateLogService,

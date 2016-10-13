@@ -59,7 +59,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
         {
-            var content = FieldService.NewForSave(parentId);
+            var content = FieldService.New(parentId, null);
             var model = FieldViewModel.Create(content, tabId, parentId);
             var oldLinkId = model.Data.LinkId;
             var oldBackward = model.Data.BackwardField;

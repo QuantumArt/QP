@@ -22,7 +22,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 
             _settings = settings;
             _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(
-                QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode),
+                QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
                 CommonHelpers.GetDbIdentityInsertOptions(settings.DisableFieldIdentity,
                 settings.DisableContentIdentity),
                 _settings.UserId,

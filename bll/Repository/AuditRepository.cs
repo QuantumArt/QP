@@ -3,6 +3,7 @@ using System.Linq;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.BLL.Mappers;
 using System.Data;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -88,9 +89,9 @@ namespace Quantumart.QP8.BLL.Repository
         #region IBackendActionLogRepository
         public IEnumerable<BackendActionLog> Save(IEnumerable<BackendActionLog> logs)
         {
-            IEnumerable<BackendActionLogDAL> toSave = MappersRepository.BackendActionLogMapper.GetDalList(logs.ToList());
+            IEnumerable<BackendActionLogDAL> toSave = MapperFacade.BackendActionLogMapper.GetDalList(logs.ToList());
             var saved = DefaultRepository.SimpleSave(toSave);
-            return MappersRepository.BackendActionLogMapper.GetBizList(saved.ToList());
+            return MapperFacade.BackendActionLogMapper.GetBizList(saved.ToList());
         }
 
         public IEnumerable<ListItem> GetEntityTitles(string entityTypeCode, int? parentEntityId, IEnumerable<int> entitiesIDs)
@@ -126,7 +127,7 @@ namespace Quantumart.QP8.BLL.Repository
                     filter.from, filter.to,
                     filter.userIDs ?? Enumerable.Empty<int>(),
                     out totalRecords, cmd.StartRecord, cmd.PageSize);
-                var result = MappersRepository.BackendActionLogRowMapper.GetBizList(rows.ToList());
+                var result = MapperFacade.BackendActionLogRowMapper.GetBizList(rows.ToList());
                 return result;
             }
         }
@@ -156,7 +157,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetButtonTracePage(scope.DbConnection, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                IEnumerable<ButtonTrace> result = MappersRepository.ButtonTraceRowMapper.GetBizList(rows.ToList());
+                IEnumerable<ButtonTrace> result = MapperFacade.ButtonTraceRowMapper.GetBizList(rows.ToList());
                 return result;
             }
         }
@@ -170,7 +171,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetRemovedEntitiesPage(scope.DbConnection, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                IEnumerable<RemovedEntity> result = MappersRepository.RemovedEntitiesRowMapper.GetBizList(rows.ToList());
+                IEnumerable<RemovedEntity> result = MapperFacade.RemovedEntitiesRowMapper.GetBizList(rows.ToList());
                 return result;
             }
         }
@@ -184,7 +185,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetSessionsPage(scope.DbConnection, false, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                IEnumerable<SessionsLog> result = MappersRepository.SessionsLogRowMapper.GetBizList(rows.ToList());
+                IEnumerable<SessionsLog> result = MapperFacade.SessionsLogRowMapper.GetBizList(rows.ToList());
                 return result;
             }
         }		
@@ -194,16 +195,16 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetSessionsPage(scope.DbConnection, true, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                IEnumerable<SessionsLog> result = MappersRepository.SessionsLogRowMapper.GetBizList(rows.ToList());
+                IEnumerable<SessionsLog> result = MapperFacade.SessionsLogRowMapper.GetBizList(rows.ToList());
                 return result;
             }
         }
 
         public SessionsLog Save(SessionsLog session)
         {			
-            var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(session);			
+            var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(session);
             sessionsLogDal = DefaultRepository.SimpleSave(sessionsLogDal);
-            return MappersRepository.SessionsLogMapper.GetBizObject(sessionsLogDal);
+            return MapperFacade.SessionsLogMapper.GetBizObject(sessionsLogDal);
         }
 
         public SessionsLog GetCurrent()
@@ -214,14 +215,14 @@ namespace Quantumart.QP8.BLL.Repository
                 .Where(s => !s.IsQP7 && (s.UserId == uid))
                 .OrderByDescending(s => s.StartTime)
                 .FirstOrDefault();
-            return MappersRepository.SessionsLogMapper.GetBizObject(slDal);
+            return MapperFacade.SessionsLogMapper.GetBizObject(slDal);
         }
 
         public SessionsLog Update(SessionsLog session)
         {
-            var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(session);
+            var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(session);
             sessionsLogDal = DefaultRepository.SimpleUpdate(sessionsLogDal);
-            return MappersRepository.SessionsLogMapper.GetBizObject(sessionsLogDal);
+            return MapperFacade.SessionsLogMapper.GetBizObject(sessionsLogDal);
         }		
 
         #endregion

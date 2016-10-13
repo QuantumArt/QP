@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
-    public class ContentService : ServiceBase 
+    public class ContentService : ServiceBase
     {
-        public ContentService(string connectionString, int userId) : base(connectionString, userId)
+        public ContentService(string connectionString, int userId)
+            : base(connectionString, userId)
         {
-
         }
 
         public ContentService(int userId) : base(userId)
         {
-
         }
 
         public IEnumerable<Content> List(int siteId)
@@ -40,7 +35,7 @@ namespace Quantumart.QP8.BLL.Services.API
             using (new QPConnectionScope(ConnectionString))
             {
                 QPContext.CurrentUserId = TestedUserId;
-                Content result = content.Persist();
+                var result = content.Persist();
                 QPContext.CurrentUserId = 0;
                 return result;
             }
@@ -50,14 +45,14 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                Content content = ContentRepository.GetById(contentId);
+                var content = ContentRepository.GetById(contentId);
                 if (content != null)
                 {
                     QPContext.CurrentUserId = TestedUserId;
                     content.Die();
                     QPContext.CurrentUserId = 0;
                 }
-                    
+
             }
         }
 

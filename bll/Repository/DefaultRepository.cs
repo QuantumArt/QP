@@ -13,7 +13,9 @@ namespace Quantumart.QP8.BLL.Repository
     public interface ISavable
     {
         decimal Id { get; set; }
+
         DateTime Created { get; set; }
+
         DateTime Modified { get; set; }
     }
 

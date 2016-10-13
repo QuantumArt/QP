@@ -65,7 +65,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                     };
 
                     Program.Logger.Debug($"Old version (Windows) compatability enabled for {ofp}. Check hash {logEntry.Hash} in database.");
-                    using (new QPConnectionScope(QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode), CommonHelpers.GetDbIdentityInsertOptions(settingsTemp.DisableFieldIdentity, settingsTemp.DisableContentIdentity)))
+                    using (new QPConnectionScope(QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode), CommonHelpers.GetDbIdentityInsertOptions(settingsTemp.DisableFieldIdentity, settingsTemp.DisableContentIdentity)))
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {

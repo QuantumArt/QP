@@ -36,10 +36,7 @@ namespace Quantumart.QP8.Configuration
             return elem?.Value ?? string.Empty;
         }
 
-        /// <summary>
-        /// Получение строки подключения к БД из QP конфига
-        /// </summary>
-        public static string ConfigConnectionString(string customerCode, string appName = "QP8Backend")
+        public static string GetConnectionString(string customerCode, string appName = "QP8Backend")
         {
             if (!string.IsNullOrWhiteSpace(customerCode))
             {
@@ -59,10 +56,7 @@ namespace Quantumart.QP8.Configuration
             return null;
         }
 
-        /// <summary>
-        /// Получение всех строк подключения к БД из QP конфига
-        /// </summary>
-        public static IEnumerable<string> ConfigConnectionStrings(string appName = null, IEnumerable<string> exceptCustomerCodes = null)
+        public static IEnumerable<string> GetConnectionStrings(string appName = null, IEnumerable<string> exceptCustomerCodes = null)
         {
             exceptCustomerCodes = exceptCustomerCodes ?? new string[0];
             var result = XmlConfig.Descendants("customer")
@@ -83,7 +77,7 @@ namespace Quantumart.QP8.Configuration
 
         private static string TuneConnectionString(string connectionString, string appName = null)
         {
-            var builder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", ""));
+            var builder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
             if (!string.IsNullOrWhiteSpace(appName))
             {
                 builder.ApplicationName = appName;

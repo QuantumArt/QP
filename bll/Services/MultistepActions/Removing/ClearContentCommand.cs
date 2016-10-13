@@ -6,9 +6,6 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {
-    /// <summary>
-    /// Команда этапа очистки контента
-    /// </summary>
     internal class ClearContentCommand : IMultistepActionStageCommand
     {
         private const int ItemsPerStep = 100;
@@ -47,7 +44,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
             {
                 ItemCount = ItemCount,
                 StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
-                Name = string.Format(ContentStrings.ClearContentStageName, (ContentName ?? ""))
+                Name = string.Format(ContentStrings.ClearContentStageName, ContentName ?? string.Empty)
             };
         }
 

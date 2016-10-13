@@ -22,10 +22,7 @@ namespace Quantumart.QP8.BLL
 
         public object ObjectValue { get; set; }
 
-        public string ValueToMerge
-        {
-            get; set;
-        }
+        public string ValueToMerge { get; set; }
 
         public Article Article { get; set; }
 

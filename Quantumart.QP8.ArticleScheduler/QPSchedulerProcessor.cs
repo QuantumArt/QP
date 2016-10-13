@@ -10,7 +10,7 @@ using Microsoft.Practices.Unity;
 namespace Quantumart.QP8.ArticleScheduler
 {
 	/// <summary>
-	/// Запускает QPScheduler в отдельном потоке 
+	/// Запускает QPScheduler в отдельном потоке
 	/// </summary>
 	public class QPSchedulerProcessor
 	{
@@ -20,7 +20,7 @@ namespace Quantumart.QP8.ArticleScheduler
 		private readonly TimeSpan recurrentTimeout;
 		private readonly IEnumerable<string> exceptCustomerCodes;
 
-		private static readonly string APP_NAME = "QP8ArticleSchedulerService";		
+		private static readonly string APP_NAME = "QP8ArticleSchedulerService";
 
 		public QPSchedulerProcessor(TimeSpan recurrentTimeout, IEnumerable<string> exceptCustomerCodes)
 		{
@@ -38,7 +38,7 @@ namespace Quantumart.QP8.ArticleScheduler
 				{
 					try
 					{
-						new QPScheduler(QPConfiguration.ConfigConnectionStrings(APP_NAME, exceptCustomerCodes), UnityContainerCustomizer.UnityContainer).ParallelRun();
+						new QPScheduler(QPConfiguration.GetConnectionStrings(APP_NAME, exceptCustomerCodes), UnityContainerCustomizer.UnityContainer).ParallelRun();
 					}
 					catch (Exception exp)
 					{

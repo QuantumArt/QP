@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
@@ -43,7 +44,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var userId = QPContext.CurrentUserId;
-                var statusesList = MappersRepository.BackendActionStatusMapper.GetBizList(Common.GetActionStatusList(scope.DbConnection, userId, actionCode, entityId).ToList());
+                var statusesList = MapperFacade.BackendActionStatusMapper.GetBizList(Common.GetActionStatusList(scope.DbConnection, userId, actionCode, entityId).ToList());
                 return statusesList;
             }
         }

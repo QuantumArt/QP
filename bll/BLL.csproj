@@ -154,6 +154,8 @@
     <Compile Include="Helpers\ReplayHelper.cs" />
     <Compile Include="Helpers\SiteUrlHelper.cs" />
     <Compile Include="Helpers\SortingItemHelper.cs" />
+    <Compile Include="Interfaces\Db\IContentRepository.cs" />
+    <Compile Include="Interfaces\Db\IFieldRepository.cs" />
     <Compile Include="Interfaces\Logging\ILog.cs" />
     <Compile Include="Interfaces\Logging\ILogFactory.cs" />
     <Compile Include="Factories\Logging\LogProvider.cs" />
@@ -390,6 +392,7 @@
     <Compile Include="Services\API\DbService.cs" />
     <Compile Include="Services\API\FieldService.cs" />
     <Compile Include="Services\API\IArticleMatchService.cs" />
+    <Compile Include="Services\API\IArticleService.cs" />
     <Compile Include="Services\API\Models\ArticleData.cs" />
     <Compile Include="Services\API\Models\FieldData.cs" />
     <Compile Include="Services\API\Models\InsertData.cs" />
@@ -593,7 +596,7 @@
     <Compile Include="Mappers\ContentMapper.cs" />
     <Compile Include="Mappers\DefaultMapper.cs" />
     <Compile Include="Mappers\FieldMapper.cs" />
-    <Compile Include="Mappers\MappersRepository.cs" />
+    <Compile Include="Facades\MapperFacade.cs" />
     <Compile Include="Mappers\SimpleMappers.cs" />
     <Compile Include="Mappers\SiteMapper.cs" />
     <Compile Include="Mappers\UserMapper.cs" />

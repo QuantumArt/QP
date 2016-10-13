@@ -10,30 +10,29 @@ namespace Quantumart.QP8.BLL.Mappers
 {
     internal class FieldMapper : GenericMapper<Field, FieldDAL>
     {
-        #region Biz Mapper
         public override void CreateBizMapper()
         {
             Mapper.CreateMap<FieldDAL, Field>()
-              .ForMember(biz => biz.Indexed, opt => opt.MapFrom(src => Converter.ToBoolean(src.IndexFlag)))
-              .ForMember(biz => biz.OnScreen, opt => opt.MapFrom(src => Converter.ToBoolean(src.AllowStageEdit)))
-              .ForMember(biz => biz.JoinId, opt => opt.MapFrom(src => Converter.ToNullableInt32(src.JoinId)))
-              .ForMember(biz => biz.ReadOnly, opt => opt.MapFrom(src => src.ReadonlyFlag))
-              .ForMember(biz => biz.LinqPropertyName, opt => opt.MapFrom(src => src.NetName))
-              .ForMember(biz => biz.LinqBackPropertyName, opt => opt.MapFrom(src => src.NetBackName))
-              .ForMember(biz => biz.StoredName, opt => opt.MapFrom(src => src.Name))
-              .ForMember(biz => biz.Constraint, opt => opt.Ignore())
-              .ForMember(biz => biz.ContentLink, opt => opt.Ignore())
-              .ForMember(biz => biz.DynamicImage, opt => opt.Ignore())
-              .ForMember(biz => biz.RelateToContentId, opt => opt.Ignore())
-              .ForMember(biz => biz.Size, opt => opt.Ignore())
-              .ForMember(biz => biz.PEnterMode, opt => opt.Ignore())
-              .ForMember(biz => biz.UseEnglishQuotes, opt => opt.Ignore())
-              .ForMember(biz => biz.ExternalCss, opt => opt.Ignore())
-              .ForMember(biz => biz.RootElementClass, opt => opt.Ignore())
-              .ForMember(biz => biz.ParentField, opt => opt.Ignore())
-              .ForMember(biz => biz.ChildFields, opt => opt.Ignore())
-              .ForMember(biz => biz.ClassifierId, opt => opt.MapFrom(src => Converter.ToNullableInt32(src.ClassifierId)))
-              .AfterMap(SetBizProperties);
+                .ForMember(biz => biz.Indexed, opt => opt.MapFrom(src => Converter.ToBoolean(src.IndexFlag)))
+                .ForMember(biz => biz.OnScreen, opt => opt.MapFrom(src => Converter.ToBoolean(src.AllowStageEdit)))
+                .ForMember(biz => biz.JoinId, opt => opt.MapFrom(src => Converter.ToNullableInt32(src.JoinId)))
+                .ForMember(biz => biz.ReadOnly, opt => opt.MapFrom(src => src.ReadonlyFlag))
+                .ForMember(biz => biz.LinqPropertyName, opt => opt.MapFrom(src => src.NetName))
+                .ForMember(biz => biz.LinqBackPropertyName, opt => opt.MapFrom(src => src.NetBackName))
+                .ForMember(biz => biz.StoredName, opt => opt.MapFrom(src => src.Name))
+                .ForMember(biz => biz.Constraint, opt => opt.Ignore())
+                .ForMember(biz => biz.ContentLink, opt => opt.Ignore())
+                .ForMember(biz => biz.DynamicImage, opt => opt.Ignore())
+                .ForMember(biz => biz.RelateToContentId, opt => opt.Ignore())
+                .ForMember(biz => biz.Size, opt => opt.Ignore())
+                .ForMember(biz => biz.PEnterMode, opt => opt.Ignore())
+                .ForMember(biz => biz.UseEnglishQuotes, opt => opt.Ignore())
+                .ForMember(biz => biz.ExternalCss, opt => opt.Ignore())
+                .ForMember(biz => biz.RootElementClass, opt => opt.Ignore())
+                .ForMember(biz => biz.ParentField, opt => opt.Ignore())
+                .ForMember(biz => biz.ChildFields, opt => opt.Ignore())
+                .ForMember(biz => biz.ClassifierId, opt => opt.MapFrom(src => Converter.ToNullableInt32(src.ClassifierId)))
+                .AfterMap(SetBizProperties);
         }
 
         private static void SetBizProperties(FieldDAL dataObject, Field bizObject)
@@ -75,9 +74,7 @@ namespace Quantumart.QP8.BLL.Mappers
             bizObject.ParseStringEnumJson(dataObject.EnumValues);
             bizObject.Init();
         }
-        #endregion
 
-        #region DAL Mapper
         public override void CreateDalMapper()
         {
             Mapper.CreateMap<Field, FieldDAL>()
@@ -87,7 +84,6 @@ namespace Quantumart.QP8.BLL.Mappers
               .ForMember(data => data.NetBackName, opt => opt.MapFrom(src => src.LinqBackPropertyName))
               .ForMember(data => data.JoinId, opt => opt.MapFrom(src => src.JoinId))
               .ForMember(data => data.ReadonlyFlag, opt => opt.MapFrom(src => src.ReadOnly))
-
               .ForMember(data => data.BaseImage, opt => opt.Ignore())
               .ForMember(data => data.ConstraintRule, opt => opt.Ignore())
               .ForMember(data => data.Content, opt => opt.Ignore())
@@ -199,8 +195,5 @@ namespace Quantumart.QP8.BLL.Mappers
                 dataObject.EnumValues = null;
             }
         }
-
-
-        #endregion
     }
 }

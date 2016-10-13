@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using AutoMapper;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -15,7 +16,7 @@ namespace Quantumart.QP8.BLL.Mappers
 				.ForMember(biz => biz.Id, opt => opt.MapFrom(row => row.Field<int>("ID")))
 				.ForMember(biz => biz.Code, opt => opt.MapFrom(row => row.Field<string>("CODE")))
 				.ForMember(biz => biz.Items, opt => opt.MapFrom(row => 
-					MappersRepository.ContextMenuItemRowMapper.GetBizList(row.GetChildRows("Menu2Item").ToList())
+					MapperFacade.ContextMenuItemRowMapper.GetBizList(row.GetChildRows("Menu2Item").ToList())
 				)
 			);
 		}

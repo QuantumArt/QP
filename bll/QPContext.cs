@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
@@ -6,6 +6,7 @@ using System.Linq;
 using System.Transactions;
 using System.Web;
 using Microsoft.Practices.Unity;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
@@ -472,7 +473,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return _currentDbConnectionString ?? QPConfiguration.ConfigConnectionString(CurrentCustomerCode);
+                return _currentDbConnectionString ?? QPConfiguration.GetConnectionString(CurrentCustomerCode);
             }
             set
             {
@@ -504,13 +505,12 @@ namespace Quantumart.QP8.BLL
             QPUser resultUser = null;
             message = string.Empty;
 
-            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.ConfigConnectionString(data.CustomerCode))))
+            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.GetConnectionString(data.CustomerCode))))
             {
                 try
                 {
                     var dbUser = dbContext.Authenticate(data.UserName, data.Password, data.UseAutoLogin, false);
-                    var user = MappersRepository.UserMapper.GetBizObject(dbUser);
-
+                    var user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     if (user != null)
                     {
                         resultUser = new QPUser
@@ -523,7 +523,6 @@ namespace Quantumart.QP8.BLL
                         };
 
                         CreateSuccessfulSession(user, dbContext);
-
                         var context = HttpContext.Current;
                         if (context != null)
                         {
@@ -568,8 +567,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создать сессию при успешном логине
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="dbContext"></param>
         private static void CreateSuccessfulSession(User user, QP8Entities dbContext)
         {
             // сбросить sid и установить EndTime для всех сессий пользователя
@@ -591,7 +588,7 @@ namespace Quantumart.QP8.BLL
                 ServerName = Environment.MachineName.Left(255)
             };
 
-            var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(sessionsLog);
+            var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
         }
@@ -599,17 +596,9 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// закрыть открытые сессии пользователя
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="dbContext"></param>
-        /// <param name="currentDt"></param>
         private static void CloseUserSessions(decimal userId, QP8Entities dbContext, DateTime currentDt)
         {
-            var userSessions =
-                         dbContext.SessionsLogSet
-                         .Where(s => s.UserId == userId &&
-                                     !s.EndTime.HasValue &&
-                                     !s.IsQP7)
-                         .ToArray();
+            var userSessions = dbContext.SessionsLogSet.Where(s => s.UserId == userId && !s.EndTime.HasValue && !s.IsQP7).ToArray();
             foreach (var us in userSessions)
             {
                 us.EndTime = currentDt;
@@ -620,8 +609,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создать сессию при неудачном логине
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="dbContext"></param>
         private static void CreateFaildSession(LogOnCredentials data, QP8Entities dbContext)
         {
             var sessionsLog = new SessionsLog
@@ -636,7 +623,7 @@ namespace Quantumart.QP8.BLL
                 ServerName = Environment.MachineName.Left(255)
             };
 
-            var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(sessionsLog);
+            var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
         }

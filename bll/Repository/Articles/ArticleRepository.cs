@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -7,8 +7,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Xml.Linq;
+using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -26,7 +27,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
     {
         internal static Article GetById(int id)
         {
-            var article = MappersRepository.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
+            var article = MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
                 .Include("Status")
                 .Include("Content")
                 .Include("LastModifiedByUser")
@@ -39,7 +40,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         internal static Article GetByGuid(Guid guid)
         {
-            var article = MappersRepository.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
+            var article = MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
                 .Include("Status")
                 .Include("Content")
                 .Include("LastModifiedByUser")
@@ -63,7 +64,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             using (new QPConnectionScope())
             {
                 var item = Common.GetStatusHistoryItem(QPConnectionScope.Current.DbConnection, id).FirstOrDefault();
-                return item == null ? null : MappersRepository.StatusHistoryItemMapper.GetBizObject(item);
+                return item == null ? null : MapperFacade.StatusHistoryItemMapper.GetBizObject(item);
             }
         }
 
@@ -71,7 +72,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                var result = MappersRepository.ArticleRowMapper.GetBizObject(GetData(id, contentId));
+                var result = MapperFacade.ArticleRowMapper.GetBizObject(GetData(id, contentId));
                 if (result != null)
                 {
                     result.ContentId = contentId;
@@ -274,7 +275,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (var scope = new QPConnectionScope())
             {
-                return MappersRepository.ArticleListItemRowMapper.GetBizList(Common.GetLockedArticlesList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
+                return MapperFacade.ArticleListItemRowMapper.GetBizList(Common.GetLockedArticlesList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
             }
         }
 
@@ -290,7 +291,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (var scope = new QPConnectionScope())
             {
-                return MappersRepository.ArticleListItemRowMapper.GetBizList(Common.GetArticlesWaitingForApproval(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
+                return MapperFacade.ArticleListItemRowMapper.GetBizList(Common.GetArticlesWaitingForApproval(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
             }
         }
 
@@ -514,7 +515,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                                     $"where [{treeField.Name}] = c.content_item_id and {extraFilter}" +
                                   ") > 0 then 1 else 0 end as bit) as has_children ";
 
-                var fields = treeField.TreeFieldTitleCount <= 1 ? null : ContentRepository.GetDisplayFieldIds(treeField.ContentId, treeField.IncludeRelationsInTitle, treeField.Id)
+                var fields = treeField.TreeFieldTitleCount <= 1 ? null : ((IContentRepository)new ContentRepository()).GetDisplayFieldIds(treeField.ContentId, treeField.IncludeRelationsInTitle, treeField.Id)
                     .Take(treeField.TreeFieldTitleCount)
                     .Select(FieldRepository.GetById).ToList();
 
@@ -861,9 +862,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Устанавливает значение архивного флага для статей
-        /// </summary>
         internal static void SetArchiveFlag(IList<int> ids, bool flag, bool withAggregated = false)
         {
             using (new QPConnectionScope())
@@ -924,7 +922,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var sqlSortExpression = new StringBuilder();
             var sortInfoList = SqlSorting.GetSortingInformations(sortExpression);
             var sortInfoCount = sortInfoList.Count;
-
             if (sortInfoCount > 0)
             {
                 for (var sortInfoIndex = 0; sortInfoIndex < sortInfoCount; sortInfoIndex++)
@@ -1000,7 +997,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var aggregatedArticlesId = Common.GetAggregatedArticlesIDs(scope.DbConnection, article.Id, classifierFields, types).ToList();
                 if (aggregatedArticlesId.Any())
                 {
-                    return MappersRepository.ArticleMapper.GetBizList(
+                    return MapperFacade.ArticleMapper.GetBizList(
                         QPContext.EFContext.ArticleSet
                             .Include("Status")
                             .Include("Content")
@@ -1025,7 +1022,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var variationArticlesId = Common.GetVariationArticlesIDs(scope.DbConnection, article.Id, article.ContentId, article.Content.VariationField.Name).ToList();
                 if (variationArticlesId.Any())
                 {
-                    return MappersRepository.ArticleMapper.GetBizList(
+                    return MapperFacade.ArticleMapper.GetBizList(
                         QPContext.EFContext.ArticleSet
                             .Include("Status")
                             .Include("Content")
@@ -1046,7 +1043,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 a.Content.Fields.Any(f => f.Aggregated));
         }
 
-                internal static bool CheckRelationSecurity(Article article, bool isDeletable)
+        internal static bool CheckRelationSecurity(Article article, bool isDeletable)
         {
             var result = true;
             if (!QPContext.IsAdmin)
@@ -1055,7 +1052,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 {
                     foreach (var item in article.GetRelationSecurityFields().Where(n => !string.IsNullOrEmpty(n.Value) && !n.Field.IsClassifier))
                     {
-                        var testValues = new Dictionary<int, int[]> {{article.Id, Converter.ToInt32Collection(item.Value, ',')}};
+                        var testValues = new Dictionary<int, int[]> { { article.Id, Converter.ToInt32Collection(item.Value, ',') } };
                         var checkResult = CheckRelationSecurity(item.Field.RelateToContentId.Value, testValues, isDeletable);
                         if (!checkResult[article.Id])
                         {
@@ -1082,7 +1079,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private static Dictionary<int, bool> CheckRelationSecurity(int contentId, Dictionary<int, int[]> testValues, bool isDeletable)
         {
-
             using (var scope = new QPConnectionScope())
             {
                 var testIds = testValues.SelectMany(n => n.Value).Distinct().ToArray();
@@ -1158,7 +1154,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         internal static Dictionary<int, int> GetHierarchy(int contentId)
         {
-            var treeName = ContentRepository.GetTreeFieldName(contentId);
+            var treeName = ((IContentRepository)new ContentRepository()).GetTreeFieldName(contentId, 0);
             if (string.IsNullOrEmpty(treeName))
             {
                 return null;
@@ -1173,7 +1169,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (var scope = new QPConnectionScope())
             {
-                return MappersRepository.StatusHistoryItemMapper.GetBizList(
+                return MapperFacade.StatusHistoryItemMapper.GetBizList(
                    Common.GetAllHistoryStatusesForArticle(scope.DbConnection, articleId, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords)
                 );
             }
@@ -1316,13 +1312,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     }
 
                     var rows = Common.GetRelations(scope.DbConnection, GetBatchDataTable(articles));
-                    var relations = MappersRepository.DataRowMapper.Map<RelationData>(rows);
+                    var relations = MapperFacade.DataRowMapper.Map<RelationData>(rows);
 
                     var links = GetArticleLinks(articles, relations);
                     articles = UpdateArticleRelations(articles, relations);
 
                     rows = Common.BatchInsert(scope.DbConnection, GetBatchDataTable(articles), true, QPContext.CurrentUserId);
-                    var insertData = MappersRepository.DataRowMapper.Map<InsertData>(rows);
+                    var insertData = MapperFacade.DataRowMapper.Map<InsertData>(rows);
 
                     links = UpdateLinkIds(links, insertData);
                     articles = UpdateArticleIds(articles, insertData);
@@ -1379,7 +1375,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return dt;
         }
 
-                private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations)
+        private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations)
         {
             return (from a in articles
                     from f in a.Fields
@@ -1395,15 +1391,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                    .ToArray();
         }
 
-        private static LinkData[] UpdateLinkIds(LinkData[] links, InsertData[] insertData)
+        private static LinkData[] UpdateLinkIds(LinkData[] links, IEnumerable<InsertData> insertData)
         {
             var map = insertData.ToDictionary(d => d.OriginalArticleId, d => d.CreatedArticleId);
-
             foreach (var link in links)
             {
                 int newItemId;
                 int newLinkedItemId;
-
                 if (map.TryGetValue(link.ItemId, out newItemId))
                 {
                     link.ItemId = newItemId;
@@ -1418,7 +1412,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return links;
         }
 
-        private static ArticleData[] UpdateArticleRelations(ArticleData[] articles, RelationData[] relations)
+        private static ArticleData[] UpdateArticleRelations(ArticleData[] articles, IEnumerable<RelationData> relations)
         {
             var items = (from article in articles
                          from field in article.Fields
@@ -1479,10 +1473,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return articles;
         }
 
-        private static ArticleData[] UpdateArticleIds(ArticleData[] articles, InsertData[] insertData)
+        private static ArticleData[] UpdateArticleIds(ArticleData[] articles, IEnumerable<InsertData> insertData)
         {
             var map = insertData.ToDictionary(d => d.OriginalArticleId, d => d.CreatedArticleId);
-
             foreach (var article in articles)
             {
                 int newId;

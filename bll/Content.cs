@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Validators;
 using Quantumart.QP8.Constants;
@@ -306,35 +307,19 @@ namespace Quantumart.QP8.BLL
         [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(ContentStrings))]
         [LocalizedDisplayName("Name", NameResourceType = typeof(ContentStrings))]
-        public override string Name
-        {
-            get;
-            set;
-        }
+        public override string Name { get; set; }
 
         [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [LocalizedDisplayName("Description", NameResourceType = typeof(ContentStrings))]
-        public override string Description
-        {
-            get;
-            set;
-        }
+        public override string Description { get; set; }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "FriendlyPluralMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [LocalizedDisplayName("Plural", NameResourceType = typeof(ContentStrings))]
-        public string FriendlyPluralName
-        {
-            get;
-            set;
-        }
+        public string FriendlyPluralName { get; set; }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "FriendlySingularMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [LocalizedDisplayName("Singular", NameResourceType = typeof(ContentStrings))]
-        public string FriendlySingularName
-        {
-            get;
-            set;
-        }
+        public string FriendlySingularName { get; set; }
 
         [LocalizedDisplayName("EnableArticlesPermissions", NameResourceType = typeof(ContentStrings))]
         public bool AllowItemsPermission
@@ -819,15 +804,9 @@ namespace Quantumart.QP8.BLL
         public void ValidateForRemove(IList<string> violationMessages)
         {
             // нельзя удалять если контент агрегированный и есть хотя бы одна статья
-            if (HasAggregatedFields && ContentRepository.IsAnyArticle(Id))
+            if (HasAggregatedFields && ((IContentRepository)new ContentRepository()).IsAnyArticle(Id))
             {
-                violationMessages.Add(string.Format(ContentStrings.ContentIsAggregated,
-                    Environment.NewLine + string.Join(Environment.NewLine,
-                        Fields.Where(f => f.Aggregated)
-                            .Select(c => c.Name)
-                            .ToArray()
-                    )
-                ));
+                violationMessages.Add(string.Format(ContentStrings.ContentIsAggregated, Environment.NewLine + string.Join(Environment.NewLine, Fields.Where(f => f.Aggregated).Select(c => c.Name).ToArray())));
             }
 
             var contentIdComparer = new LambdaEqualityComparer<Content>((c1, c2) => c1.Id == c2.Id, c => c.Id);
@@ -838,14 +817,7 @@ namespace Quantumart.QP8.BLL
             var relatedContents = relatedM2MContents.Union(relatedO2MContents);
             if (relatedContents.Any())
             {
-                violationMessages.Add(string.Format(ContentStrings.RelatedContentsExist,
-                    Environment.NewLine + string.Join(Environment.NewLine,
-                        relatedContents
-                            .Distinct(contentIdComparer)
-                            .Select(c => c.Name)
-                            .ToArray()
-                    )
-                ));
+                violationMessages.Add(string.Format(ContentStrings.RelatedContentsExist, Environment.NewLine + string.Join(Environment.NewLine, relatedContents.Distinct(contentIdComparer).Select(c => c.Name).ToArray())));
             }
 
             // ---------------------
@@ -860,14 +832,7 @@ namespace Quantumart.QP8.BLL
 
             if (inheritedContents.Any())
             {
-                violationMessages.Add(string.Format(ContentStrings.VirtualSubContentsExist,
-                    Environment.NewLine + string.Join(Environment.NewLine,
-                        inheritedContents
-                            .Distinct(contentIdComparer)
-                            .Select(c => c.Name)
-                            .ToArray()
-                    )
-                ));
+                violationMessages.Add(string.Format(ContentStrings.VirtualSubContentsExist, Environment.NewLine + string.Join(Environment.NewLine, inheritedContents.Distinct(contentIdComparer).Select(c => c.Name).ToArray())));
             }
 
             if (!IsContentChangingActionsAllowed)
@@ -1040,7 +1005,7 @@ namespace Quantumart.QP8.BLL
         {
             foreach (var field in Fields)
             {
-                FieldRepository.Delete(field.Id);
+                ((IFieldRepository)new FieldRepository()).Delete(field.Id);
             }
         }
 

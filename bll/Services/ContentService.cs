@@ -13,11 +13,8 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public static class ContentService
+    public class ContentService
     {
-        /// <summary>
-        /// Возвращает контент для добавления
-        /// </summary>
         public static Content New(int siteId, int? groupId)
         {
             return InternalNew(siteId, groupId);
@@ -40,16 +37,6 @@ namespace Quantumart.QP8.BLL.Services
             return content;
         }
 
-        public static Content NewForSave(int siteId)
-        {
-            return New(siteId, null);
-        }
-
-        /// <summary>
-        /// Возвращает контент для редактирования или просмотра
-        /// </summary>
-        /// <param name="id">идентификатор контента</param>
-        /// <returns>контент</returns>
         public static Content Read(int id)
         {
             return InternalRead(id);
@@ -82,9 +69,7 @@ namespace Quantumart.QP8.BLL.Services
                 throw new ArgumentNullException(nameof(item));
             }
 
-            item = item.Persist();
-
-            return item;
+            return item.Persist();
         }
 
         public static Content Update(Content item)
@@ -93,17 +78,18 @@ namespace Quantumart.QP8.BLL.Services
             {
                 throw new ArgumentNullException(nameof(item));
             }
+
             if (!ContentRepository.Exists(item.Id))
             {
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, item.Id));
             }
+
             if (!item.IsContentChangingActionsAllowed)
             {
                 throw new ActionNotAllowedException(ContentStrings.ContentChangingIsProhibited);
             }
 
-            item = item.Persist();
-            return item;
+            return item.Persist();
         }
 
         public static MessageResult SimpleRemove(int id)
@@ -115,12 +101,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var violationMessages = item.Die().ToList();
-            if (violationMessages.Any())
-            {
-                return MessageResult.Error(string.Join(Environment.NewLine, violationMessages), new[] { id });
-            }
-
-            return null;
+            return violationMessages.Any() ? MessageResult.Error(string.Join(Environment.NewLine, violationMessages), new[] { id }) : null;
         }
 
         public static ContentGroup ReadGroup(int id, int siteId)
@@ -200,6 +181,7 @@ namespace Quantumart.QP8.BLL.Services
                 result.LinkIds = ContentRepository.GetContentLinks(content.Id).Select(n => n.LinkId).ToArray();
                 result.Id = content.Id;
             }
+
             return result;
         }
 
@@ -222,6 +204,7 @@ namespace Quantumart.QP8.BLL.Services
                     IsAddNewAccessable = isActionAccessable && isSiteAccessable
                 };
             }
+
             return new ContentInitListResult
             {
                 IsVirtual = isVirtual,
@@ -231,8 +214,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static ContentInitListResult InitListForObject()
         {
-            var result = new ContentInitListResult { IsAddNewAccessable = false };
-            return result;
+            return new ContentInitListResult { IsAddNewAccessable = false };
         }
 
         public static ContentInitListResult InitList(string parentName)

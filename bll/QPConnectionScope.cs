@@ -9,6 +9,7 @@ using System.Linq;
 using System.Transactions;
 using System.Xml;
 using System.Xml.Linq;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 
@@ -20,7 +21,9 @@ namespace Quantumart.QP8.BLL
         [ThreadStatic]
         private static QPConnectionScope _currentScope;
 
-        private string ConnectionString { get; }
+        private EntityConnection _efConnection;
+
+        private int _scopeCount;
 
         public static QPConnectionScope Current
         {
@@ -30,23 +33,16 @@ namespace Quantumart.QP8.BLL
 
         public static string SetIsolationLevelCommandText => "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED";
 
-        private EntityConnection _efConnection;
+        private string ConnectionString { get; }
 
-        /// <summary>
-        /// Количество scope вложенных друг в друга
-        /// </summary>
-        private int _scopeCount;
+        public QPConnectionScope()
+            : this(QPContext.CurrentDbConnectionString) { }
 
         public QPConnectionScope(string connectionString)
         {
-            // Если scope для потока не существует, то делаем создаваемый текущим для потока
             if (Current == null)
             {
-                if (string.IsNullOrWhiteSpace(connectionString))
-                {
-                    throw new ArgumentNullException(nameof(connectionString));
-                }
-
+                Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should not be null or empty");
                 Current = this;
                 ConnectionString = connectionString;
             }
@@ -55,11 +51,8 @@ namespace Quantumart.QP8.BLL
                 throw new ArgumentException("Attempt to create connection in the existing scope with different connection string.");
             }
 
-            // увеличиваем счетчик вложенных scope
             Current._scopeCount++;
         }
-
-        public QPConnectionScope() : this(QPContext.CurrentDbConnectionString) { }
 
         public QPConnectionScope(string connectionString, HashSet<string> identityInsertOptions) : this(connectionString)
         {
@@ -95,14 +88,8 @@ namespace Quantumart.QP8.BLL
             Current = null;
         }
 
-        /// <summary>
-        /// Получить SqlConnection
-        /// </summary>
         public SqlConnection DbConnection => (SqlConnection)EfConnection.StoreConnection;
 
-        /// <summary>
-        /// Получить EntityConnection
-        /// </summary>
         public EntityConnection EfConnection
         {
             get

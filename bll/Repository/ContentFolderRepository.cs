@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Objects;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
@@ -13,7 +14,7 @@ namespace Quantumart.QP8.BLL.Repository
     {
         internal ObjectSet<ContentFolderDAL> CurrentSet => QPContext.EFContext.ContentFolderSet;
 
-        internal ContentFolderMapper CurrentMapper => MappersRepository.ContentFolderMapper;
+        internal ContentFolderMapper CurrentMapper => MapperFacade.ContentFolderMapper;
 
         public override Folder GetById(int id)
         {

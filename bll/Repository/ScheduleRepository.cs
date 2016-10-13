@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.DAL;
@@ -21,7 +22,7 @@ namespace Quantumart.QP8.BLL.Repository
 				return ArticleSchedule.CreateSchedule(item);
             else
             {
-                return MappersRepository.ArticleScheduleMapper.GetBizObject(dal, item);
+                return MapperFacade.ArticleScheduleMapper.GetBizObject(dal, item);
             }
         }
 
@@ -31,7 +32,7 @@ namespace Quantumart.QP8.BLL.Repository
 			if (dal == null)
 				return null;
 			else
-				return MappersRepository.ArticleScheduleMapper.GetBizObject(dal);
+				return MapperFacade.ArticleScheduleMapper.GetBizObject(dal);
 		}
 
         internal static void UpdateSchedule(Article article)
@@ -45,7 +46,7 @@ namespace Quantumart.QP8.BLL.Repository
 
                 int originalId = item.Id;
                 item.Id = 0;
-                ArticleScheduleDAL dalItem = MappersRepository.ArticleScheduleMapper.GetDalObject(item);
+                ArticleScheduleDAL dalItem = MapperFacade.ArticleScheduleMapper.GetDalObject(item);
 
                 bool itemPersisted = (originalId != 0);
                 bool hasChanges = !itemPersisted;
@@ -130,7 +131,7 @@ namespace Quantumart.QP8.BLL.Repository
 		public static IEnumerable<ArticleScheduleTask> GetScheduleTaskList()
 		{
 			// TODO: добавить условие по USE_SERVICE == true
-			return MappersRepository.ArticleScheduleTaskMapper.GetBizList(QPContext.EFContext.ArticleScheduleSet
+			return MapperFacade.ArticleScheduleTaskMapper.GetBizList(QPContext.EFContext.ArticleScheduleSet
 				.Where(t => !t.Deactivate && t.UseService)
 				.ToList());
 		}

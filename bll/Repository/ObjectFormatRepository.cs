@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
@@ -113,12 +114,12 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static NotificationObjectFormat ReadNotificationTemplateFormat(int id)
         {
-            return MappersRepository.NotificationTemplateFormatMapper.GetBizObject(QPContext.EFContext.ObjectFormatSet.SingleOrDefault(g => g.Id == id));
+            return MapperFacade.NotificationTemplateFormatMapper.GetBizObject(QPContext.EFContext.ObjectFormatSet.SingleOrDefault(g => g.Id == id));
         }
 
         internal static ObjectFormat ReadObjectFormat(int id, bool pageOrTemplate)
         {
-            return MappersRepository.ObjectFormatMapper.GetBizObject(QPContext.EFContext.ObjectFormatSet.Include("LastModifiedByUser").SingleOrDefault(g => g.Id == id));
+            return MapperFacade.ObjectFormatMapper.GetBizObject(QPContext.EFContext.ObjectFormatSet.Include("LastModifiedByUser").SingleOrDefault(g => g.Id == id));
         }
 
         internal static NotificationObjectFormat UpdateNotificationTemplateFormat(NotificationObjectFormat item)
@@ -128,7 +129,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<ObjectFormat> GetFormatsByObjectId(int objectId)
         {
-            return MappersRepository.ObjectFormatMapper.GetBizList(QPContext.EFContext.ObjectFormatSet.Where(f => f.ObjectId == objectId).ToList());
+            return MapperFacade.ObjectFormatMapper.GetBizList(QPContext.EFContext.ObjectFormatSet.Where(f => f.ObjectId == objectId).ToList());
         }
 
         internal static void CopySiteTemplateObjectFormats(string relationsBetweenObjects, out string result)

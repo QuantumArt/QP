@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.BLL.Helpers;
@@ -10,14 +11,14 @@ namespace Quantumart.QP8.BLL.Repository
     {
         public static Db Get()
         {
-            var result = MappersRepository.DbMapper.GetBizObject(QPContext.EFContext.DbSet.Include("LastModifiedByUser").FirstOrDefault());
+            var result = MapperFacade.DbMapper.GetBizObject(QPContext.EFContext.DbSet.Include("LastModifiedByUser").FirstOrDefault());
             result.AppSettings = GetAppSettings();
             return result;
         }
 
         public static Db GetForUpdate()
         {
-            var result = MappersRepository.DbMapper.GetBizObject(QPContext.EFContext.DbSet.FirstOrDefault());
+            var result = MapperFacade.DbMapper.GetBizObject(QPContext.EFContext.DbSet.FirstOrDefault());
             result.AppSettings = GetAppSettings();
             return result;
         }

@@ -110,21 +110,20 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             var controller = filterContext.Controller as QPController;
-            if (controller == null || !filterContext.HttpContext.IsXmlDbUpdateReplayAction())
+            try
             {
-                try
+                if ((controller == null || !filterContext.HttpContext.IsXmlDbUpdateReplayAction())
+                    && filterContext.Exception == null
+                    && TransactionScope != null
+                    && filterContext.Controller.ViewData.ModelState.IsValid
+                    && Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active)
                 {
-                    if (filterContext.Exception == null && TransactionScope != null
-                        && filterContext.Controller.ViewData.ModelState.IsValid
-                        && Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active)
-                    {
-                        TransactionScope.Complete();
-                    }
+                    TransactionScope.Complete();
                 }
-                finally
-                {
-                    DisposeScopes();
-                }
+            }
+            finally
+            {
+                DisposeScopes();
             }
 
             base.OnActionExecuted(filterContext);
