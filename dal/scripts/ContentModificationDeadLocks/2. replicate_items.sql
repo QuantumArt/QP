@@ -1,14 +1,27 @@
 ﻿ALTER PROCEDURE [dbo].[qp_replicate_items] 
 @ids nvarchar(max),
-@attr_ids nvarchar(max) = ''
+@attr_ids nvarchar(max) = '',
+@modification_update_interval numeric = -1
+-- <0   throttling with default value (setting or constant)
+-- 0    no throttling
+-- >0   throttling with specified value 
+
 AS
 BEGIN
     set nocount on
+    declare @setting_name nvarchar(255) = 'CONTENT_MODIFICATION_UPDATE_INTERVAL'
+    declare @setting_value nvarchar(255)
+    declare @default_modification_update_interval numeric = 30
+    select @setting_value = VALUE from APP_SETTINGS where [KEY] = @setting_name
+    set @default_modification_update_interval = case when @setting_value is not null and ISNUMERIC(@setting_value) = 1 then convert(numeric, @setting_value) else @default_modification_update_interval end
+    set @modification_update_interval = case when @modification_update_interval < 0 then @default_modification_update_interval else @modification_update_interval end
     
     declare @sql nvarchar(max), @async_ids_list nvarchar(max), @sync_ids_list nvarchar(max)
     declare @table_name nvarchar(50), @async_table_name nvarchar(50)
 
     declare @content_id numeric, @published_id numeric
+    declare @live_modified datetime, @stage_modified datetime
+    declare @live_expired bit, @stage_expired bit
 
     declare @articles table
     (
@@ -44,6 +57,18 @@ BEGIN
     while exists (select id from @contents)
     begin
         select @content_id = id, @noneId = none_id from @contents
+
+        if @modification_update_interval <= 0
+        begin
+            set @live_expired = 1
+            set @stage_expired = 1
+        end
+        else
+        begin
+            select @live_modified = live_modified, @stage_modified = stage_modified from CONTENT_MODIFICATION with(nolock) where CONTENT_ID = @content_id
+            set @live_expired = case when datediff(s, @live_modified, GETDATE()) >= @modification_update_interval then 1 else 0 end
+            set @stage_expired = case when datediff(s, @stage_modified, GETDATE()) >= @modification_update_interval then 1 else 0 end
+        end
 
         insert into @syncIds select id from @articles where content_id = @content_id and splitted = 0
         insert into @asyncIds select id from @articles where content_id = @content_id and splitted = 1
@@ -85,9 +110,15 @@ BEGIN
         
         select @published_id = status_type_id from STATUS_TYPE where status_type_name = 'Published' and SITE_ID in (select SITE_ID from content where CONTENT_ID = @content_id)
         if exists (select * from @articles where content_id = @content_id and (cancel_split = 1 or (splitted = 0 and status_type_id = @published_id)))
-            update content_modification with(rowlock) set live_modified = GETDATE(), stage_modified = GETDATE() where content_id = @content_id
+        begin
+            if (@live_expired = 1 or @stage_expired = 1)
+                update content_modification with(rowlock) set live_modified = GETDATE(), stage_modified = GETDATE() where content_id = @content_id
+        end
         else
-            update content_modification with(rowlock) set stage_modified = GETDATE() where content_id = @content_id	
+        begin
+            if (@stage_expired = 1) 
+                update content_modification with(rowlock) set stage_modified = GETDATE() where content_id = @content_id 
+        end
 
         
         delete from @contents where id = @content_id
@@ -99,3 +130,5 @@ BEGIN
     
     update content_item set not_for_replication = 0, CANCEL_SPLIT = 0 where content_item_id in (select id from @articleIds)
 END
+GO
+
