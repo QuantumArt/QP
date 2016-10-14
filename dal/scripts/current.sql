@@ -903,6 +903,7 @@ BEGIN
     end
 
 END
+GO
 exec qp_drop_existing 'qp_update_values', 'IsProcedure'
 GO
 
@@ -933,6 +934,7 @@ BEGIN
     end
 
 END
+GO
 exec qp_drop_existing 'qp_fast_delete', 'IsProcedure'
 GO
 
