@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Xml.Linq;
 
@@ -6506,16 +6507,18 @@ namespace Quantumart.QP8.DAL
         {
             var sb = new StringBuilder();
             var sql = new List<SqlParameter>();
-
-            if (liveIds != null && liveIds.Any())
+            
+            var v2bLiveIds = liveIds as int[] ?? liveIds.ToArray();
+            if (v2bLiveIds.Any())
             {
                 sb.AppendLine("update content_modification with(rowlock) set live_modified = GETDATE() where content_id in (select id from @liveIds)");
-                sql.Add(new SqlParameter("@liveIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(liveIds) });
+                sql.Add(new SqlParameter("@liveIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(v2bLiveIds) });
             }
-            if (stageIds != null && stageIds.Any())
+            var v2bStageIds = stageIds as int[] ?? stageIds.ToArray();
+            if (v2bStageIds.Any())
             {
                 sb.AppendLine("update content_modification with(rowlock) set stage_modified = GETDATE() where content_id in (select id from @stageIds)");
-                sql.Add(new SqlParameter("@stageIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(stageIds) });
+                sql.Add(new SqlParameter("@stageIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(v2bStageIds) });
             }
 
             if (sql.Any())
@@ -6527,34 +6530,40 @@ namespace Quantumart.QP8.DAL
                     cmd.ExecuteNonQuery();
                 }
             }
-
         }
 
 
-        public static void GetContentModification(SqlConnection sqlConnection, IEnumerable<int> articleIds, bool withAggregated, ref IEnumerable<int> liveIds, ref IEnumerable<int> stageIds)
+        public static void GetContentModification(SqlConnection sqlConnection, IEnumerable<int> articleIds, bool withAggregated, bool returnPublishedForLive, ref IEnumerable<int> liveIds, ref IEnumerable<int> stageIds)
         {
             var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
+            var aggFunc = returnPublishedForLive ? "max" : "min";
             var sb = new StringBuilder();
-            if (articleIds != null && articleIds.Any())
+            var ids = articleIds as int[] ?? articleIds.ToArray();
+            if (!ids.Any())
             {
-                sb.AppendLine("declare @fullIds table (id numeric primary key, content_id numeric, is_published bit)");
-                sb.AppendLine("insert into @fullIds select ci.content_item_id, ci.content_id, ");
-                sb.AppendLine("  case when st.status_type_name = 'Published' and ci.splitted = 0 then 1 else 0 end as is_published ");
-                sb.AppendLine(string.Format("  from {0} i inner join content_item ci with(nolock) on i.id = ci.content_item_id ", source));
-                sb.AppendLine("  inner join status_type st on ci.status_type_id = st.status_type_id ");
-                sb.AppendLine("select cast(content_id as int) as id, cast(max(cast(is_published as int)) as bit) as live from @fullIds group by content_id");
+                return;
+            }
+
+            sb.AppendLine("declare @fullIds table (id numeric primary key, content_id numeric, is_published bit)");
+            sb.AppendLine("insert into @fullIds select ci.content_item_id, ci.content_id, ");
+            sb.AppendLine("  case when st.status_type_name = 'Published' and ci.splitted = 0 then 1 else 0 end as is_published ");
+            sb.AppendLine($"  from {source} i inner join content_item ci with(nolock) on i.id = ci.content_item_id ");
+            sb.AppendLine("  inner join status_type st on ci.status_type_id = st.status_type_id ");
+            sb.AppendLine($"select cast(content_id as int) as id, cast({aggFunc}(cast(is_published as int)) as bit) as is_published from @fullIds group by content_id");
 
 
-                using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
-                {
-                    cmd.CommandType = CommandType.Text;
-                    cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(articleIds) });
-                    var dt = new DataTable();
-                    new SqlDataAdapter(cmd).Fill(dt);
-                    var rows = dt.AsEnumerable().ToArray();
-                    stageIds = rows.Select(n => n.Field<int>("id")).ToList();
-                    liveIds = rows.Where(n => n.Field<bool>("live")).Select(n => n.Field<int>("id")).ToList();
-                }
+            using (var cmd = SqlCommandFactory.Create(sb.ToString(), sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(ids) });
+                var dt = new DataTable();
+                new SqlDataAdapter(cmd).Fill(dt);
+                var rows = dt.AsEnumerable().ToArray();
+                stageIds = rows.Select(n => n.Field<int>("id")).ToList();
+                Func<DataRow, bool> predicate1 = n => n.Field<bool>("is_published");
+                Func<DataRow, bool> predicate2 = n => !n.Field<bool>("is_published");
+
+                liveIds = rows.Where((returnPublishedForLive ? predicate1 : predicate2)).Select(n => n.Field<int>("id")).ToList();
             }
         }
 
