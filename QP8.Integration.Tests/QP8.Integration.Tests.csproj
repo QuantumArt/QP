@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{89D19F8D-069F-47CA-9655-5B4D6618F875}</ProjectGuid>
+    <ProjectGuid>{6C5DB44E-F279-4C31-8ADC-22075B1DD9C0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QP8.Integration.Tests</RootNamespace>
