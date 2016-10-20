@@ -23,9 +23,9 @@ using Quantumart.QP8.Utils.Sorting;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
 {
-    internal class ArticleRepository
+    public class ArticleRepository
     {
-        internal static Article GetById(int id)
+        public static Article GetById(int id)
         {
             var article = MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
                 .Include("Status")

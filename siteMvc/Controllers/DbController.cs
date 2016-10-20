@@ -15,6 +15,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -110,7 +111,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.DbSettings)]
         [BackendActionContext(ActionCode.DbSettings)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool disableFieldIdentity, bool disableContentIdentity)
+        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool disableFieldIdentity, bool disableContentIdentity, bool useGuidSubstitution)
         {
             try
             {
@@ -118,6 +119,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
                     CommonHelpers.GetDbIdentityInsertOptions(disableFieldIdentity, disableContentIdentity),
                     QPContext.CurrentUserId,
+                    useGuidSubstitution,
                     _xmlDbUpdateLogService,
                     _xmlDbUpdateActionService).Process(xmlString);
             }

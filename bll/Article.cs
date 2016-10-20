@@ -571,11 +571,6 @@ namespace Quantumart.QP8.BLL
             AggregatedArticles = newAggregatedArticlesCollection;
         }
 
-        /// <summary>
-        /// Возвращает существующую или новую агрегированную статью
-        /// </summary>
-        /// <param name="classifierValue"></param>
-        /// <returns></returns>
         public Article GetAggregatedArticleByClassifier(int classifierValue)
         {
             if (classifierValue > 0)
@@ -590,11 +585,6 @@ namespace Quantumart.QP8.BLL
             return null;
         }
 
-        /// <summary>
-        /// Генерирует пустую статью для показа
-        /// </summary>
-        /// <param name="contentId">идентификатор контента</param>
-        /// <returns>пустая статья</returns>
         public static Article CreateNew(int contentId)
         {
             return CreateNew(contentId, null, null, null);
@@ -609,7 +599,9 @@ namespace Quantumart.QP8.BLL
             }
 
             var article = content.CreateArticle(GetPredefinedValues(fieldId, articleId, isChild));
+            article.UniqueId = Guid.NewGuid();
             article.DefineViewType();
+
             return article;
         }
 
@@ -652,11 +644,6 @@ namespace Quantumart.QP8.BLL
             return predefinedValues;
         }
 
-        /// <summary>
-        /// Генерирует пустую статью для сохранения
-        /// </summary>
-        /// <param name="contentId">идентификатор контента</param>
-        /// <returns>пустая статья</returns>
         public static Article CreateNewForSave(int contentId)
         {
             var content = ContentRepository.GetById(contentId);
@@ -923,13 +910,14 @@ namespace Quantumart.QP8.BLL
                 var fieldValuesToResolve = constraint.Filter(FieldValues);
                 List<FieldValue> currentFieldValues;
                 var step = 0;
+
                 do
                 {
                     step++;
                     currentFieldValues = MutateHelper.MutateFieldValues(fieldValuesToResolve, step);
                 }
-
                 while (!ArticleRepository.ValidateUnique(currentFieldValues));
+
                 MergeWithFieldValues(currentFieldValues);
             }
         }

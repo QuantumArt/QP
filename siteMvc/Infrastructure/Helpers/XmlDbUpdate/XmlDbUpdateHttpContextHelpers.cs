@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -36,6 +36,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                     ? new[] { httpContext.Items["FROM_ID"].ToString() }
                     : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
                 ResultId = GetContextData<int>(httpContext, "RESULT_ID"),
+                UniqueId = GetContextData<Guid>(httpContext, "FROM_GUID"),
+                ResultUniqueId = GetContextData<Guid>(httpContext, "RESULT_GUID"),
                 VirtualFieldIds = GetContextData<string>(httpContext, "NEW_VIRTUAL_FIELD_IDS"),
                 FieldIds = GetContextData<string>(httpContext, "FIELD_IDS"),
                 LinkIds = GetContextData<string>(httpContext, "LINK_IDS"),
@@ -54,14 +56,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return action;
         }
 
-        internal static HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId)
+        internal static HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId, bool useGuidSubstitution)
         {
             Ensure.NotNull(QPConnectionScope.Current.DbConnection, "QPConnection scope should be initialized to use fake mvc context");
             var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && n != "~").ToArray();
             var controllerName = urlParts[0];
             var controllerAction = urlParts[1];
             var requestContext = new RequestContext(
-                BuildHttpContextBase(recordedAction, backendUrl, userId),
+                BuildHttpContextBase(recordedAction, backendUrl, userId, useGuidSubstitution),
                 GetRouteData(recordedAction, controllerName, controllerAction)
             );
 
@@ -70,7 +72,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return requestContext.HttpContext;
         }
 
-        private static HttpContextBase BuildHttpContextBase(XmlDbUpdateRecordedAction action, string backendUrl, int userId)
+        private static HttpContextBase BuildHttpContextBase(XmlDbUpdateRecordedAction action, string backendUrl, int userId, bool useGuidSubstitution)
         {
             HttpContext.Current = new HttpContext(
                 new HttpRequest(string.Empty, backendUrl, string.Empty),
@@ -87,10 +89,30 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             httpContext.Setup(c => c.User).Returns(principal);
             HttpContext.Current.User = principal;
 
-            var result = httpContext.Object;
-            AppendItems(result, backendUrl);
+            if (useGuidSubstitution)
+            {
+                return AddGlobalHttpContextVariables(httpContext.Object, backendUrl, action.ResultUniqueId);
+            }
 
-            return result;
+            return AddGlobalHttpContextVariables(httpContext.Object, backendUrl);
+        }
+
+        private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl)
+        {
+            httpContext.Items.Add(XmlDbUpdateCommonConstants.IsReplayingXmlContext, true);
+            if (!string.IsNullOrWhiteSpace(backendUrl))
+            {
+                httpContext.Items.Add(XmlDbUpdateCommonConstants.BackendUrlContext, backendUrl);
+            }
+
+            return httpContext;
+        }
+
+        private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl, Guid resultUniqueId)
+        {
+            httpContext = AddGlobalHttpContextVariables(httpContext, backendUrl);
+            httpContext.Items.Add(XmlDbUpdateCommonConstants.XmlContextGuidSubstitution, resultUniqueId);
+            return httpContext;
         }
 
         private static HttpRequestMock GetHttpRequestMock(XmlDbUpdateRecordedAction action)
@@ -252,15 +274,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             var user = new UserService().ReadProfile(userId);
             var identity = new QPIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false);
             return new QPPrincipal(identity, new string[] { });
-        }
-
-        private static void AppendItems(HttpContextBase result, string backendUrl)
-        {
-            result.Items.Add(XmlDbUpdateCommonConstants.IsReplayingXmlContext, true);
-            if (!string.IsNullOrWhiteSpace(backendUrl))
-            {
-                result.Items.Add(XmlDbUpdateCommonConstants.BackendUrlContext, backendUrl);
-            }
         }
 
         private static RouteData GetRouteData(XmlDbUpdateRecordedAction action, string controllerName, string controllerAction)

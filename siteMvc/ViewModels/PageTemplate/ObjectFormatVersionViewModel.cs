@@ -1,5 +1,6 @@
 ﻿using System.Dynamic;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate

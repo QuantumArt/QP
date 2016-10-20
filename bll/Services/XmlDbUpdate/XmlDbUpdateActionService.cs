@@ -18,13 +18,18 @@ namespace Quantumart.QP8.BLL.Services.XmlDbUpdate
 
         public int GetArticleIdByGuid(Guid guid)
         {
-            var article = ArticleRepository.GetByGuid(guid);
-            if (article == null)
+            var articleId = GetArticleIdByGuidOrDefault(guid);
+            if (!articleId.HasValue)
             {
                 throw new Exception($"Не найдена статья с заданным GUID: {guid}");
             }
 
-            return article.Id;
+            return articleId.Value;
+        }
+
+        public int? GetArticleIdByGuidOrDefault(Guid guid)
+        {
+            return ArticleRepository.GetByGuid(guid)?.Id;
         }
     }
 }

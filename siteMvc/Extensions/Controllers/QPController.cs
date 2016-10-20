@@ -90,15 +90,27 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             return new JsonNetResult<object>(new { success = false, message = msg });
         }
 
+        public void PersistFromId(int id)
+        {
+            ControllerContext.HttpContext.Items["FROM_ID"] = id;
+        }
+
+        public void PersistFromId(int id, Guid guid)
+        {
+            PersistFromId(id);
+            ControllerContext.HttpContext.Items["FROM_GUID"] = guid;
+        }
+
         public void PersistResultId(int id)
         {
             BackendActionContext.Current.ResetEntityId(id);
             ControllerContext.HttpContext.Items["RESULT_ID"] = id;
         }
 
-        public void PersistFromId(int id)
+        public void PersistResultId(int id, Guid guid)
         {
-            ControllerContext.HttpContext.Items["FROM_ID"] = id;
+            PersistResultId(id);
+            ControllerContext.HttpContext.Items["RESULT_GUID"] = guid;
         }
 
         public void PersistActionCode(string name)

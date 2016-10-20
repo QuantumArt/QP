@@ -365,23 +365,6 @@ namespace Quantumart.QP8.Utils
         }
 
         /// <summary>
-        /// Преобразует массив значений типа Int32 в строковый массив
-        /// </summary>
-        /// <param name="value">массив значений типа Int32</param>
-        /// <returns>строковый массив</returns>
-        public static string[] ToStringCollection(int[] value)
-        {
-            var result = new string[value.Length];
-
-            for (var i = 0; i < value.Length; i++)
-            {
-                result[i] = value[i].ToString();
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Преобразует строку в строковый массив
         /// </summary>
         /// <param name="value">строковое значение</param>
@@ -416,12 +399,10 @@ namespace Quantumart.QP8.Utils
         {
             var result = new string[0];
             var rawString = ToString(value).Trim();
-
             if (rawString.Length > 0)
             {
                 var rawCollection = rawString.Split(separator); // коллекция необработанных элементов
                 var rawCount = rawCollection.Length; // количество элементов
-
                 if (rawCount > 0)
                 {
                     var processedCollection = new string[rawCount]; // коллекция обработанных элементов
@@ -451,7 +432,6 @@ namespace Quantumart.QP8.Utils
                     else
                     {
                         result = new string[rawCount];
-
                         for (var processedIndex = 0; processedIndex < rawCount; processedIndex++)
                         {
                             if (processedCollection[processedIndex].Length > 0)
@@ -478,7 +458,6 @@ namespace Quantumart.QP8.Utils
         public static int[] ToInt32Collection(string[] value)
         {
             var result = new int[value.Length];
-
             if (value.Length > 0)
             {
                 for (var i = 0; i < value.Length; i++)
@@ -524,14 +503,12 @@ namespace Quantumart.QP8.Utils
         public static int[] ToInt32Collection(string value, char separator, bool removeEmptyEntries, int defaultValue)
         {
             var result = new int[0];
-
             var processedCollection = ToStringCollection(value, separator, removeEmptyEntries);
             var processedCount = processedCollection.Length;
 
             if (processedCount > 0)
             {
                 result = new int[processedCount];
-
                 for (var processedIndex = 0; processedIndex < processedCount; processedIndex++)
                 {
                     result[processedIndex] = ToInt32(processedCollection[processedIndex], defaultValue);
@@ -585,14 +562,12 @@ namespace Quantumart.QP8.Utils
         public static long[] ToInt64Collection(string value, char separator, bool removeEmptyEntries, long defaultValue)
         {
             var result = new long[0];
-
             var processedCollection = ToStringCollection(value, separator, removeEmptyEntries);
             var processedCount = processedCollection.Length;
 
             if (processedCount > 0)
             {
                 result = new long[processedCount];
-
                 for (var processedIndex = 0; processedIndex < processedCount; processedIndex++)
                 {
                     result[processedIndex] = ToInt64(processedCollection[processedIndex], defaultValue);
@@ -636,14 +611,12 @@ namespace Quantumart.QP8.Utils
         public static decimal[] ToDecimalCollection(string value, char separator, bool removeEmptyEntries, decimal defaultValue)
         {
             var result = new decimal[0];
-
             var processedCollection = ToStringCollection(value, separator, removeEmptyEntries);
             var processedCount = processedCollection.Length;
 
             if (processedCount > 0)
             {
                 result = new decimal[processedCount];
-
                 for (var processedIndex = 0; processedIndex < processedCount; processedIndex++)
                 {
                     result[processedIndex] = ToDecimal(processedCollection[processedIndex], defaultValue);
@@ -660,14 +633,6 @@ namespace Quantumart.QP8.Utils
         /// <returns>массив значений типа Decimal</returns>
         public static IEnumerable<decimal> ToDecimalCollection(IEnumerable<int> values)
         {
-            //List<decimal> result = new List<decimal>();
-
-            //foreach (int value in values)
-            //{
-            //    result.Add((decimal)value);
-            //}
-
-            //return result.ToArray();
             return values.Select(v => ToDecimal(v)).ToArray();
         }
 
@@ -705,14 +670,12 @@ namespace Quantumart.QP8.Utils
         public static double[] ToDoubleCollection(string value, char separator, bool removeEmptyEntries, double defaultValue)
         {
             var result = new double[0];
-
             var processedCollection = ToStringCollection(value, separator, removeEmptyEntries);
             var processedCount = processedCollection.Length;
 
             if (processedCount > 0)
             {
                 result = new double[processedCount];
-
                 for (var processedIndex = 0; processedIndex < processedCount; processedIndex++)
                 {
                     result[processedIndex] = ToDouble(processedCollection[processedIndex], defaultValue);

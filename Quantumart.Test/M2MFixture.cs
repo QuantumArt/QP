@@ -29,7 +29,7 @@ namespace Quantumart.Test
 
         public static string ContentName { get; private set; }
 
-        public static bool EFLinksExists { get; private set; }        
+        public static bool EFLinksExists { get; private set; }
 
         public static string TitleName { get; private set; }
 
@@ -59,7 +59,7 @@ namespace Quantumart.Test
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, dbLogService.Object, dbActionService.Object, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, dbActionService.Object, false);
             service.Process(Global.GetXml(@"xmls\m2m.xml"));
 
 
@@ -522,7 +522,7 @@ namespace Quantumart.Test
             }, "Update");
 
             var intsUpdated1 = Global.GetLinks(Cnn, ids);
-        
+
             Assert.That(intsNew1, Is.EqualTo(intsUpdated1), "Article M2M updated");
 
             if (EFLinksExists)
@@ -1263,7 +1263,7 @@ namespace Quantumart.Test
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
             }, "Update");
 
-            var cntLinksAfter = Global.CountLinks(Cnn, ids);            
+            var cntLinksAfter = Global.CountLinks(Cnn, ids);
             Assert.That(cntLinksAfter, Is.EqualTo(0), "Links nullified");
 
             if (EFLinksExists)

@@ -114,12 +114,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             TryUpdateModel(model);
             model.Validate(ModelState);
+
             if (ModelState.IsValid)
             {
                 model.Data = _workflowService.SaveWorkflowProperties(model.Data);
                 PersistResultId(model.Data.Id);
                 PersistRulesIds(null, model.Data.WorkflowRules.Select(n => n.Id).ToArray());
-
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveWorkflow });
             }
 
@@ -135,8 +135,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [Record]
         public ActionResult Remove(int id)
         {
-            var result = _workflowService.Remove(id);
-            return JsonMessageResult(result);
+            return JsonMessageResult(_workflowService.Remove(id));
         }
 
         [HttpGet]

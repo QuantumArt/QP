@@ -1,0 +1,192 @@
+* text=auto
+
+# Custom for Visual Studio (Convert crlf => lf)
+*.cs        text diff=csharp
+*.tt        text
+*.xaml      text
+*.sln       text merge=union eol=crlf
+*.csproj    text merge=union eol=crlf
+*.vbproj    text merge=union eol=crlf
+*.fsproj    text merge=union eol=crlf
+*.dbproj    text merge=union eol=crlf
+*.vcxproj   text eol=crlf
+*.vcxitems  text eol=crlf
+*.props     text eol=crlf
+*.filters   text eol=crlf
+
+
+# Documents
+*.doc       diff=astextplain
+*.DOC       diff=astextplain
+*.docx      diff=astextplain
+*.DOCX      diff=astextplain
+*.dot       diff=astextplain
+*.DOT       diff=astextplain
+*.pdf       diff=astextplain
+*.PDF       diff=astextplain
+*.rtf       diff=astextplain
+*.RTF       diff=astextplain
+
+
+## SOURCE CODE
+*.msbuild   text
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+*.sh        text eol=lf
+*.ps1       text
+*.coffee    text
+*.css       text
+*.htm       text diff=html
+*.html      text diff=html
+*.inc       text
+*.ini       text
+*.js        text
+*.jsx       text
+*.json      text
+*.less      text
+*.php       text
+*.pl        text diff=perl
+*.pm        text diff=perl
+*.py        text diff=python
+*.java      text diff=java
+*.rb        text
+*.sass      text
+*.scm       text
+*.scss      text
+*.sql       text
+*.styl      text
+*.ts        text
+*.xml       text
+*.xhtml     text
+
+## DOCUMENTATION
+*.markdown   text
+*.md         text
+*.mdwn       text
+*.mdown      text
+*.mkd        text
+*.mkdn       text
+*.mdtxt      text
+*.mdtext     text
+*.txt        text
+AUTHORS      text
+CHANGELOG    text
+CHANGES      text
+CONTRIBUTING text
+COPYING      text
+INSTALL      text
+license      text
+LICENSE      text
+NEWS         text
+readme       text
+*README*     text
+TODO         text
+
+## TEMPLATES
+*.dot        text
+*.ejs        text
+*.haml       text
+*.handlebars text
+*.hbs        text
+*.hbt        text
+*.jade       text
+*.latte      text
+*.mustache   text
+*.phtml      text
+*.tmpl       text
+
+## LINTERS
+.csslintrc    text
+.eslintrc     text
+.jscsrc       text
+.jshintrc     text
+.jshintignore text
+.stylelintrc  text
+
+## CONFIGS
+*.bowerrc      text
+*.cnf          text
+*.conf         text
+*.config       text
+.editorconfig  text
+.gitattributes text
+.gitconfig     text
+.gitignore     text
+.htaccess      text
+*.npmignore    text
+*.yaml         text
+*.yml          text
+Makefile       text
+makefile       text
+
+## HEROKU
+Procfile       text
+.slugignore    text
+
+## GRAPHICS
+*.ai    binary
+*.bmp   binary
+*.eps   binary
+*.gif   binary
+*.ico   binary
+*.jng   binary
+*.jp2   binary
+*.jpg   binary
+*.jpeg  binary
+*.jpx   binary
+*.jxr   binary
+*.pdf   binary
+*.png   binary
+*.psb   binary
+*.psd   binary
+*.svgz  binary
+*.tif   binary
+*.tiff  binary
+*.wbmp  binary
+*.webp  binary
+*.svg   text
+
+## AUDIO
+*.kar   binary
+*.m4a   binary
+*.mid   binary
+*.midi  binary
+*.mp3   binary
+*.ogg   binary
+*.ra    binary
+
+## VIDEO
+*.3gpp  binary
+*.3gp   binary
+*.as    binary
+*.asf   binary
+*.asx   binary
+*.fla   binary
+*.flv   binary
+*.m4v   binary
+*.mng   binary
+*.mov   binary
+*.mp4   binary
+*.mpeg  binary
+*.mpg   binary
+*.swc   binary
+*.swf   binary
+*.webm  binary
+
+## ARCHIVES
+*.7z    binary
+*.gz    binary
+*.rar   binary
+*.tar   binary
+*.zip   binary
+
+## FONTS
+*.ttf   binary
+*.eot   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+
+## EXECUTABLES
+*.exe   binary
+*.pyc   binary

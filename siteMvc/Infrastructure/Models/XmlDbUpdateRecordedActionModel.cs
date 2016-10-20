@@ -21,6 +21,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Models
 
         public int ResultId { get; set; }
 
+        public Guid UniqueId { get; set; }
+
+        public Guid ResultUniqueId { get; set; }
+
         public int ChildId { get; set; }
 
         public string ChildIds { get; set; }

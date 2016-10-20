@@ -1,6 +1,4 @@
-﻿using System.Xml.Linq;
-
-namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
+﻿namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
 {
     internal class XmlDbUpdateXDocumentConstants
     {
@@ -16,9 +14,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
 
         internal const string ActionIdsAttribute = "ids";
 
-        internal const string ActionParentIdAttribute = "parentId";
+        internal const string ActionResultIdAttribute = "resultId";
 
         internal const string ActionUniqueIdAttribute = "uniqueId";
+
+        internal const string ActionResultUniqueIdAttribute = "resultUniqueId";
+
+        internal const string ActionParentIdAttribute = "parentId";
 
         internal const string ActionLcidAttribute = "lcid";
 
@@ -47,8 +49,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
         internal const string ActionNewChildLinkIdsAttribute = "newChildLinkIds";
 
         internal const string ActionNewBackwardIdAttribute = "newBackwardId";
-
-        internal const string ActionResultIdAttribute = "resultId";
 
         internal const string ActionNewVirtualFieldIdsAttribute = "newVirtualFieldIds";
 

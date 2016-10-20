@@ -2,7 +2,7 @@
 {
     /// <summary>
     /// Коды типов действий
-    /// TODO: Почистить
+    /// TODO: Почистить и переименовать в ArticleTypeCode
     /// </summary>
     public static class ActionTypeCode
     {

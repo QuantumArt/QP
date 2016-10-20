@@ -29,12 +29,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         protected readonly string ConnectionString;
 
-        public XmlDbUpdateReplayService(string connectionString, int userId, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
-            : this(connectionString, null, userId, dbLogService, dbActionService)
+        private readonly bool _useGuidSubstitution;
+
+        public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
+            : this(connectionString, null, userId, useGuidSubstitution, dbLogService, dbActionService)
         {
         }
 
-        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
+        public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IXmlDbUpdateActionService dbActionService)
         {
             Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
 
@@ -44,6 +46,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             _dbLogService = dbLogService;
+            _useGuidSubstitution = useGuidSubstitution;
             _actionsCorrecterService = new XmlDbUpdateActionCorrecterService(dbActionService);
         }
 
@@ -129,8 +132,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
             try
             {
-                var correctedAction = _actionsCorrecterService.CorrectAction(xmlAction);
-                var httpContext = XmlDbUpdateHttpContextHelpers.PostAction(correctedAction, backendUrl, _userId);
+                var correctedAction = _actionsCorrecterService.CorrectAction(xmlAction, _useGuidSubstitution);
+                var httpContext = XmlDbUpdateHttpContextHelpers.PostAction(correctedAction, backendUrl, _userId, _useGuidSubstitution);
                 return _actionsCorrecterService.CorrectReplaces(correctedAction, httpContext);
             }
             catch (Exception ex)

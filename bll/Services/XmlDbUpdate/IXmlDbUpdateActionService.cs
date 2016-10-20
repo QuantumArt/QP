@@ -7,5 +7,7 @@ namespace Quantumart.QP8.BLL.Services.XmlDbUpdate
         int GetArticleIdByGuid(string guid);
 
         int GetArticleIdByGuid(Guid guid);
+
+        int? GetArticleIdByGuidOrDefault(Guid guid);
     }
 }

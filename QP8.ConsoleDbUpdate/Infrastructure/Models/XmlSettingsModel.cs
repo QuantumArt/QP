@@ -11,11 +11,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models
         [JsonProperty]
         internal readonly bool DisableContentIdentity;
 
-        public XmlSettingsModel(IList<string> filePathes, string customerCode, string configPath, bool disableFieldIdentity, bool disableContentIdentity)
+        [JsonProperty]
+        internal readonly bool UseGuidSubstitution;
+
+        public XmlSettingsModel(IList<string> filePathes, string customerCode, string configPath, bool disableFieldIdentity, bool disableContentIdentity, bool useGuidSubstitution)
             : base(filePathes, customerCode, configPath)
         {
             DisableFieldIdentity = disableFieldIdentity;
             DisableContentIdentity = disableContentIdentity;
+            UseGuidSubstitution = useGuidSubstitution;
         }
     }
 }

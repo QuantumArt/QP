@@ -11,10 +11,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         public XmlDbUpdateNonMvcReplayService(string connectionString,
             int userId,
+            bool useGuidSubstitution,
             IXmlDbUpdateLogService dbLogService,
             IXmlDbUpdateActionService dbActionService,
             bool isQpInstalled = true)
-            : base(connectionString, userId, dbLogService, dbActionService)
+            : base(connectionString, userId, useGuidSubstitution, dbLogService, dbActionService)
         {
             _isQpInstalled = isQpInstalled;
         }
@@ -23,10 +24,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             string connectionString,
             HashSet<string> identityInsertOptions,
             int userId,
+            bool useGuidSubstitution,
             IXmlDbUpdateLogService dbLogService,
             IXmlDbUpdateActionService dbActionService,
             bool isQpInstalled = true)
-            : base(connectionString, identityInsertOptions, userId, dbLogService, dbActionService)
+            : base(connectionString, identityInsertOptions, userId, useGuidSubstitution, dbLogService, dbActionService)
         {
             _isQpInstalled = isQpInstalled;
         }

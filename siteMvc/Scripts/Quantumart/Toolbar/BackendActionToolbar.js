@@ -1,15 +1,6 @@
-// ****************************************************************************
-// *** Компонент "Панель инструментов"                    ***
-// ****************************************************************************
+var EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKING = 'OnActionToolbarButtonClicking';
+var EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED = 'OnActionToolbarButtonClicked';
 
-//#region event types of action toolbar
-// === Типы событий панели инструментов ===
-var EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKING = "OnActionToolbarButtonClicking";
-var EVENT_TYPE_ACTION_TOOLBAR_BUTTON_CLICKED = "OnActionToolbarButtonClicked";
-//#endregion
-
-//#region class BackendActionToolbar
-// === Класс "Панель инструментов" ===
 Quantumart.QP8.BackendActionToolbar = function (toolbarElementId, actionCode, parentEntityId, options) {
   Quantumart.QP8.BackendActionToolbar.initializeBase(this, [toolbarElementId, options]);
 
@@ -19,6 +10,7 @@ Quantumart.QP8.BackendActionToolbar = function (toolbarElementId, actionCode, pa
     if (options.alwaysEnabledRefreshButton) {
       this._alwaysEnabledRefreshButton = options.alwaysEnabledRefreshButton;
     }
+
     if (options.disabledActionCodes) {
       this._disabledActionCodes = options.disabledActionCodes;
     }
@@ -26,10 +18,10 @@ Quantumart.QP8.BackendActionToolbar = function (toolbarElementId, actionCode, pa
 };
 
 Quantumart.QP8.BackendActionToolbar.prototype = {
-  _actionCode: "", // код действия, для которого создается панель инструментов
+  _actionCode: '', // код действия, для которого создается панель инструментов
   _entityId: 0, // ID сущности, для которой создается тулбар
   _parentEntityId: 0, // ID родительской сущности
-  _alwaysEnabledRefreshButton: true, // признак, разрешающий всегда оставлять активной кнопку "Обновить"
+  _alwaysEnabledRefreshButton: true, // признак, разрешающий всегда оставлять активной кнопку 'Обновить'
   _stopDeferredOperations: false, // признак, отвечающий за остановку все отложенных операций
   _disabledActionCodes: null, // список запрещенных операций
 
@@ -44,20 +36,21 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   addToolbarItemsToToolbar: function (count) {
     var self = this;
     var queryParams = {
-      "actionCode": this._actionCode,
-      "entityId": this._entityId,
-      "parentEntityId": this._parentEntityId
+      'actionCode': this._actionCode,
+      'entityId': this._entityId,
+      'parentEntityId': this._parentEntityId
     };
+
     if (this.get_isBindToExternal() === true) {
-      queryParams = jQuery.extend(queryParams, { "boundToExternal": true });
+      queryParams = jQuery.extend(queryParams, { 'boundToExternal': true });
     }
-    $q.getJsonFromUrl("GET", CONTROLLER_URL_TOOLBAR + "GetToolbarButtonListByActionCode", queryParams, false, false, function (data, textStatus, jqXHR) {
+
+    $q.getJsonFromUrl('GET', CONTROLLER_URL_TOOLBAR + 'GetToolbarButtonListByActionCode', queryParams, false, false, function (data, textStatus, jqXHR) {
         if (self._stopDeferredOperations) {
           return;
         }
 
         var actionToolbarItems = data;
-        // Убрать запрещенные действия
         if (!$q.isNullOrEmpty(self.getDisabledActionCodes())) {
           actionToolbarItems = jQuery.grep(actionToolbarItems, function(itm){
             return (self.getDisabledActionCodes().indexOf(itm.ActionCode) == -1);
@@ -86,19 +79,13 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   tuneToolbarItems: function (entityId, parentEntityId) {
     var self = this;
 
-    var queryParams = { "actionCode": this._actionCode, "entityId": entityId, "parentEntityId": parentEntityId };
+    var queryParams = { 'actionCode': this._actionCode, 'entityId': entityId, 'parentEntityId': parentEntityId };
     if (this.get_isBindToExternal() === true) {
-      queryParams = jQuery.extend(queryParams, { "boundToExternal": true });
+      queryParams = jQuery.extend(queryParams, { 'boundToExternal': true });
     }
 
     if (entityId != 0) {
-      $q.getJsonFromUrl(
-        "GET",
-        CONTROLLER_URL_BACKEND_ACTION + "GetStatusesList",
-        queryParams,
-        true,
-        false
-      ).done(function (data) {
+      $q.getJsonFromUrl('GET', CONTROLLER_URL_BACKEND_ACTION + 'GetStatusesList', queryParams, true, false).done(function (data) {
         if (self._stopDeferredOperations) {
           return;
         }
@@ -117,6 +104,7 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
         if (self._stopDeferredOperations) {
           return;
         }
+
         $q.processGenericAjaxError(jqXHR);
       });
     }
@@ -136,23 +124,21 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
   _getToolbarItemsFromResult: function (items) {
     var self = this;
     var dataItems = [];
-    jQuery.each(items,
-      function (index, item) {
-        var dataItem = new Object();
-        dataItem.Type = TOOLBAR_ITEM_TYPE_BUTTON;
-        dataItem.Value = item.ActionCode;
-        dataItem.Text = item.Name;
-        dataItem.Tooltip = item.Name;
-        dataItem.ItemsAffected = item.ItemsAffected;
-        dataItem.Icon = item.Icon;
-        dataItem.AlwaysEnabled = item.ItemsAffected == 0;
-        dataItem.CheckOnClick = false;
-        dataItem.Checked = false;
-        dataItem.IconChecked = null;
+    jQuery.each(items, function (index, item) {
+      var dataItem = new Object();
+      dataItem.Type = TOOLBAR_ITEM_TYPE_BUTTON;
+      dataItem.Value = item.ActionCode;
+      dataItem.Text = item.Name;
+      dataItem.Tooltip = item.Name;
+      dataItem.ItemsAffected = item.ItemsAffected;
+      dataItem.Icon = item.Icon;
+      dataItem.AlwaysEnabled = item.ItemsAffected == 0;
+      dataItem.CheckOnClick = false;
+      dataItem.Checked = false;
+      dataItem.IconChecked = null;
 
-        Array.add(dataItems, dataItem);
-      }
-  );
+      Array.add(dataItems, dataItem);
+    });
 
     return dataItems;
   },
@@ -160,12 +146,9 @@ Quantumart.QP8.BackendActionToolbar.prototype = {
 
   dispose: function () {
     this._stopDeferredOperations = true;
-
-    Quantumart.QP8.BackendActionToolbar.callBaseMethod(this, "dispose");
-
+    Quantumart.QP8.BackendActionToolbar.callBaseMethod(this, 'dispose');
     $q.collectGarbageInIE();
   }
 };
 
-Quantumart.QP8.BackendActionToolbar.registerClass("Quantumart.QP8.BackendActionToolbar", Quantumart.QP8.BackendToolbar);
-//#endregion
+Quantumart.QP8.BackendActionToolbar.registerClass('Quantumart.QP8.BackendActionToolbar', Quantumart.QP8.BackendToolbar);

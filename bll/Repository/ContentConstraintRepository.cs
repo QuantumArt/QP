@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
@@ -11,12 +10,7 @@ namespace Quantumart.QP8.BLL.Repository
     {
         internal static IEnumerable<ContentConstraint> GetConstraintsByContentId(int id)
         {
-            return MapperFacade.ContentConstraintMapper.GetBizList(
-                QPContext.EFContext.ContentConstraintSet
-                    .Include("Rules")
-                    .Where(s => s.ContentId == (decimal)id)
-                    .ToList()
-            );
+            return MapperFacade.ContentConstraintMapper.GetBizList(QPContext.EFContext.ContentConstraintSet.Include("Rules").Where(s => s.ContentId == (decimal)id).ToList());
         }
 
         internal static ContentConstraint GetConstraintByFieldId(int id)
@@ -25,11 +19,7 @@ namespace Quantumart.QP8.BLL.Repository
             var constraintId = QPContext.EFContext.ContentConstraintRuleSet.Where(s => s.FieldId == (decimal)id).Select(s => s.ConstraintId).SingleOrDefault();
             if (constraintId > 0)
             {
-                result = MapperFacade.ContentConstraintMapper.GetBizObject(
-                    QPContext.EFContext.ContentConstraintSet
-                        .Include("Rules")
-                        .SingleOrDefault(s => s.Id == constraintId)
-                );
+                result = MapperFacade.ContentConstraintMapper.GetBizObject(QPContext.EFContext.ContentConstraintSet.Include("Rules").SingleOrDefault(s => s.Id == constraintId));
             }
             return result;
 
@@ -53,7 +43,6 @@ namespace Quantumart.QP8.BLL.Repository
                 var ccDal = MapperFacade.ContentConstraintMapper.GetDalObject(constraint);
                 ccDal = DefaultRepository.SimpleSave(ccDal);
                 var newContraint = MapperFacade.ContentConstraintMapper.GetBizObject(ccDal);
-
                 return newContraint;
             }
 
@@ -66,6 +55,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 throw new ArgumentNullException(nameof(constraint));
             }
+
             if (constraint.IsNew)
             {
                 throw new ArgumentException("Метод вызван для несуществующего в БД ContentConstraint");
@@ -90,6 +80,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 rule.ConstraintId = constraint.Id;
             }
+
             var newDalList = MapperFacade.ContentConstraintRuleMapper.GetDalList(constraint.Rules.ToList());
             DefaultRepository.SimpleSave(newDalList.AsEnumerable());
 
@@ -102,6 +93,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 throw new ArgumentNullException(nameof(constraint));
             }
+
             if (constraint.IsNew)
             {
                 throw new ArgumentException("Метод вызван для несуществующего в БД ContentConstraint");
@@ -109,6 +101,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             DefaultRepository.Delete<ContentConstraintDAL>(constraint.Id);
         }
+
         internal static void CopyContentConstrainRules(string relationsBetweenConstraintsXml, string relationsBetweenAttributesXml)
         {
             using (new QPConnectionScope())

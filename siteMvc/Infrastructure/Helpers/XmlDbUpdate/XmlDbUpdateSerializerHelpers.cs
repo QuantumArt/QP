@@ -40,6 +40,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             {
                 Code = GetCode(action),
                 Ids = GetIds(action),
+                ResultId = GetResultIdByCode(action),
+                UniqueId = GetUniqueIdByCode(action),
+                ResultUniqueId = GetResultUniqueIdByCode(action),
                 ParentId = GetParentId(action),
                 Lcid = lcid,
                 BackwardId = GetBackwardId(action),
@@ -47,7 +50,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 ChildId = GetChildIdByCode(action),
                 ChildIds = GetChildIdsByCode(action),
                 ChildLinkIds = GetChildLinkIdsByCode(action),
-                ResultId = GetResultIdByCode(action),
                 CustomActionCode = GetCustomActionCodeByCode(action),
                 Form = GetActionFields(action),
                 Executed = GetExecuted(action, lcid),
@@ -119,6 +121,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.AddNewPageObject:
                 case ActionCode.AddNewTemplateObject:
                     result.Add(XmlDbUpdateXDocumentConstants.ActionFormatIdAttribute, action.DefaultFormatId);
+                    break;
+                case ActionCode.CreateLikeArticle:
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute, action.UniqueId);
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute, action.ResultUniqueId);
                     break;
             }
 
@@ -254,6 +260,33 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                     return action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute).GetValueOrDefault<int>();
                 default:
                     return default(int);
+            }
+        }
+
+        private static Guid GetUniqueIdByCode(XElement action)
+        {
+            Guid result;
+            switch (GetCode(action))
+            {
+                case ActionCode.CreateLikeArticle:
+                    Guid.TryParse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute).Value, out result);
+                    return result;
+                default:
+                    Guid.TryParse(action.Elements().Single(e => e.Attribute("name").Value == "Data.UniqueId").Value, out result);
+                    return result;
+            }
+        }
+
+        private static Guid GetResultUniqueIdByCode(XElement action)
+        {
+            var result = default(Guid);
+            switch (GetCode(action))
+            {
+                case ActionCode.CreateLikeArticle:
+                    Guid.TryParse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute).Value, out result);
+                    return result;
+                default:
+                    return result;
             }
         }
 

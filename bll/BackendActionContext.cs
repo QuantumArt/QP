@@ -21,6 +21,33 @@ namespace Quantumart.QP8.BLL
             private set { _current = value; }
         }
 
+        public string ActionTypeCode { get; private set; }
+
+        public string ActionCode { get; }
+
+        public string EntityTypeCode { get; private set; }
+
+        public int FromEntityId { get; set; }
+
+        public bool IsChanged { get; private set; }
+
+        public int? ParentEntityId { get; private set; }
+
+        public Entity[] Entities { get; private set; }
+
+        public void ResetEntityId(int id)
+        {
+            IsChanged = true;
+            Entities = new[]
+            {
+                new Entity
+                {
+                    Id = id,
+                    StringId = id.ToString()
+                }
+            };
+        }
+
         #region Creating Thread Singelton
         [ThreadStatic]
         private static BackendActionContext _current;
@@ -70,32 +97,5 @@ namespace Quantumart.QP8.BLL
             }).ToArray();
         }
         #endregion
-
-        public string ActionTypeCode { get; private set; }
-
-        public string ActionCode { get; }
-
-        public string EntityTypeCode { get; private set; }
-
-        public int FromEntityId { get; set; }
-
-        public bool IsChanged { get; private set; }
-
-        public int? ParentEntityId { get; private set; }
-
-        public Entity[] Entities { get; private set; }
-
-        public void ResetEntityId(int id)
-        {
-            IsChanged = true;
-            Entities = new[]
-            {
-                new Entity
-                {
-                    Id = id,
-                    StringId = id.ToString()
-                }
-            };
-        }
     }
 }
