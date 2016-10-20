@@ -66,8 +66,9 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 
             var adGroupsToBeProcessed = (from adRelation in adGroupRelations
                                          join qpg in qpGroups on adRelation.Group.Name equals qpg.NtGroup
-                                         where qpg.ParentGroup == null || adRelation.Members.Any(m => qpg.ParentGroup.NtGroup == m)
-                                         select adRelation.Group).ToArray();
+                                         where qpg.ParentGroup == null || !qpGroups.Any(g => g.Id == qpg.ParentGroup.Id) || adRelation.Members.Any(m => qpg.ParentGroup.NtGroup == m)
+                                         select adRelation.Group)
+                                         .ToArray();
 
             var adUsers = _activeDirectory.GetUsers(adGroupsToBeProcessed);
 
@@ -93,7 +94,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                     MapUser(adUser, ref qpUser);
                     MapGroups(adUser, ref qpUser, adGroupsToBeProcessed, qpGroups);
                     UserRepository.SaveProperties(qpUser);
-                    _logger.TraceEvent(TraceEventType.Verbose, 0, "user {0} is added", qpUser.DisplayName);
+                    _logger.TraceEvent(TraceEventType.Verbose, 0, "user {0} in groups {1} is added", qpUser.DisplayName, string.Join(",", GetGroupNames(qpUser)));
                 }
                 catch (Exception ex)
                 {
@@ -115,7 +116,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                     MapUser(user.AD, ref qpUser);
                     MapGroups(user.AD, ref qpUser, adGroupsToBeProcessed, qpGroups);
                     UserRepository.UpdateProperties(qpUser);
-                    _logger.TraceEvent(TraceEventType.Verbose, 0, "user {0} is updated", qpUser.DisplayName);
+                    _logger.TraceEvent(TraceEventType.Verbose, 0, "user {0} in groups {1} is updated", qpUser.DisplayName, string.Join(",", GetGroupNames(qpUser)));
                 }
                 catch (Exception ex)
                 {
@@ -176,6 +177,18 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             var nativeGroups = qpUser.Groups.Except(qpGroups);
 
             qpUser.Groups = importedGroups.Concat(nativeGroups);
+        }
+
+        private string[] GetGroupNames(User qpUser)
+        {
+            if (qpUser.Groups == null)
+            {
+                return new string[0];
+            }
+            else
+            {
+                return qpUser.Groups.Select(g => g.Name).ToArray();
+            }
         }
         #endregion
     }
