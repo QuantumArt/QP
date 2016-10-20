@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -251,10 +251,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
             CorrectFormValue(EntityTypeCode.StatusType, form, "ActiveStatuses", true);
             CorrectFormValue(EntityTypeCode.Content, form, "ActiveContentIds", true);
-            CorrectFormValue(EntityTypeCode.WorkflowRule, form, "Workflows_WorkflowRulesDisplay", "Id");
-            CorrectFormValue(EntityTypeCode.StatusType, form, "Workflows_WorkflowRulesDisplay", "StId");
-            CorrectFormValue(EntityTypeCode.User, form, "Workflows_WorkflowRulesDisplay", "UserId");
-            CorrectFormValue(EntityTypeCode.UserGroup, form, "Workflows_WorkflowRulesDisplay", "GroupId");
+            CorrectFormValue(EntityTypeCode.WorkflowRule, form, "WorkflowsWorkflowRulesDisplay", "Id");
+            CorrectFormValue(EntityTypeCode.StatusType, form, "WorkflowsWorkflowRulesDisplay", "StId");
+            CorrectFormValue(EntityTypeCode.User, form, "WorkflowsWorkflowRulesDisplay", "UserId");
+            CorrectFormValue(EntityTypeCode.UserGroup, form, "WorkflowsWorkflowRulesDisplay", "GroupId");
         }
 
         private void CorrectNotificationForm(NameValueCollection form)
