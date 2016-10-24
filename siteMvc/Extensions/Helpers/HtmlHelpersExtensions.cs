@@ -8,6 +8,7 @@ using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Factories;
 using Quantumart.QP8.BLL.Helpers;
@@ -1008,8 +1009,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var div = new TagBuilder("div");
             div.MergeAttribute("id", source.UniqueId(name + "_aggregationlist"));
             div.AddCssClass(AGGREGATION_LIST_CLASS_NAME);
-            div.InnerHtml = $@"<div class =""{AGGREGATION_LIST_CONTAINER_CLASS_NAME}""></div>" + $@"<input type=""hidden"" name=""AggregationListItems_{name.Replace('.', '_')}"" class=""{AGGREGATION_LIST_RESULT_CLASS_NAME}"">";
-            div.MergeDataAttribute("aggregation_list_data", new JavaScriptSerializer().Serialize(list));
+            div.InnerHtml = $@"<div class =""{AGGREGATION_LIST_CONTAINER_CLASS_NAME}""></div>" + $@"<input type=""hidden"" name=""AggregationListItems{name.Replace(".", string.Empty)}"" class=""{AGGREGATION_LIST_RESULT_CLASS_NAME}"">";
+            div.MergeDataAttribute("aggregation_list_data", JsonConvert.SerializeObject(list));
             div.MergeDataAttribute("aggregation_list_item_fields", bindings);
             if (additionalData != null)
             {
@@ -1039,7 +1040,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var div = new TagBuilder("div");
             div.MergeAttribute("id", source.UniqueId(name + "_workflow_control"));
             div.AddCssClass(WORKFLOW_CONTROL_CLASS_NAME);
-            div.MergeDataAttribute("workflow_list_data", new JavaScriptSerializer().Serialize(list));
+            div.MergeDataAttribute("workflow_list_data", JsonConvert.SerializeObject(list));
             div.InnerHtml = $@"<div class =""{WORKFLOW_CONTAINER_CLASS_NAME}""></div>";
             return MvcHtmlString.Create(div.ToString());
         }

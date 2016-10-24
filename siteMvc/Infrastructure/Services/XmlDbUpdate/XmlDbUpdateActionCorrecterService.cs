@@ -244,7 +244,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void CorrectVePluginForm(NameValueCollection form)
         {
-            CorrectFormValue(EntityTypeCode.VisualEditorCommand, form, "AggregationListItems_VeCommandsDisplay", "Id");
+            CorrectFormValue(EntityTypeCode.VisualEditorCommand, form, "AggregationListItemsVeCommandsDisplay", "Id");
         }
 
         private void CorrectWorkflowForm(NameValueCollection form)

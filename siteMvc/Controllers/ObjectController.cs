@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -184,7 +185,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (ModelState.IsValid)
             {
                 model.Data.DefaultValues = model.Data.UseDefaultValues
-                    ? new JavaScriptSerializer().Deserialize<List<DefaultValue>>(model.AggregationListItemsDataDefaultValues)
+                    ? JsonConvert.DeserializeObject<List<DefaultValue>>(model.AggregationListItemsDataDefaultValues)
                     : Enumerable.Empty<DefaultValue>();
 
                 model.Data = _objectService.UpdateObjectProperties(model.Data, model.ActiveStatusTypeIds);
@@ -225,7 +226,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (ModelState.IsValid)
             {
                 model.Data.DefaultValues = model.Data.UseDefaultValues
-                    ? new JavaScriptSerializer().Deserialize<List<DefaultValue>>(model.AggregationListItemsDataDefaultValues)
+                    ? JsonConvert.DeserializeObject<List<DefaultValue>>(model.AggregationListItemsDataDefaultValues)
                     : Enumerable.Empty<DefaultValue>();
 
                 model.Data = _objectService.UpdateObjectProperties(model.Data, model.ActiveStatusTypeIds);
