@@ -1863,7 +1863,6 @@ div.fieldSearchContainerContent
 .searchBottomHandle
 {
 	position: relative;
-	z-index: 5555;
 	left: 0;
 	bottom: 0;
 	height: 9px;

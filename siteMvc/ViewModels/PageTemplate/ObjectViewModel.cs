@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
@@ -135,13 +135,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
             if (Data.IsObjectContainerType)
             {
                 Data.Container.DoCustomBinding(SelectionIsStarting, SelectionIncludes);
-                SortingItems = new JavaScriptSerializer().Deserialize<List<SortingItem>>(AggregationListItemsSortingItems);
+                SortingItems = JsonConvert.DeserializeObject<List<SortingItem>>(AggregationListItemsSortingItems);
                 Data.Container.OrderStatic = SortingItemHelper.Serialize(SortingItems);
             }
 
             if (Data.UseDefaultValues)
             {
-                Data.DefaultValues = new JavaScriptSerializer().Deserialize<List<DefaultValue>>(AggregationListItemsDataDefaultValues);
+                Data.DefaultValues = JsonConvert.DeserializeObject<List<DefaultValue>>(AggregationListItemsDataDefaultValues);
             }
         }
 
@@ -278,7 +278,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
         {
             get
             {
-                return new JavaScriptSerializer().Serialize(ParentTemplateObjects.Select(x => new { x.Name, x.NetName, x.Id }));
+                return JsonConvert.SerializeObject(ParentTemplateObjects.Select(x => new { x.Name, x.NetName, x.Id }));
             }
         }
 

@@ -1108,7 +1108,7 @@
     <field name="ActiveVeCommands[50]">46</field>
     <field name="ActiveVeCommands[50]">false</field>
     <field name="Data.RootElementClass"></field>
-    <field name="AggregationListItems_Data_ExternalCssItems">[{"Url":"/plugins/common/tags/plugins.css","Invalid":false}]</field>
+    <field name="AggregationListItemsDataExternalCssItems">[{"Url":"/plugins/common/tags/plugins.css","Invalid":false}]</field>
     <field name="group_ActiveVeStyles">1</field>
     <field name="ActiveVeStyles[0]">2</field>
     <field name="ActiveVeStyles[0]">false</field>
@@ -1232,7 +1232,7 @@
     <field name="Data.ListO2MFieldTitleCount">1</field>
     <field name="Data.ListO2MIncludeRelationsInTitle">false</field>
     <field name="Data.ShowAsRadioButtons">false</field>
-    <field name="AggregationListItems_Data_StringEnumItems">[{"Value":"Key1","Alias":"Val1","IsDefault":"","Invalid":false},{"Value":"Key2","Alias":"Val2","IsDefault":"","Invalid":false}]</field>
+    <field name="AggregationListItemsDataStringEnumItems">[{"Value":"Key1","Alias":"Val1","IsDefault":"","Invalid":false},{"Value":"Key2","Alias":"Val2","IsDefault":"","Invalid":false}]</field>
     <field name="backendActionCode">save_field_and_up</field>
   </action>
   <action code="new_article" ids="1989545" parentId="1652" lcid="1049" executed="11/07/2016 15:26:05" executedBy="KoryakinS">

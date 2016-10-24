@@ -1,4 +1,6 @@
-﻿namespace Quantumart.QP8.WebMvc.ViewModels.StatusType
+﻿using Quantumart.QP8.WebMvc.ViewModels.Abstract;
+
+namespace Quantumart.QP8.WebMvc.ViewModels.StatusType
 {
     public class StatusTypeViewModel : EntityViewModel
     {

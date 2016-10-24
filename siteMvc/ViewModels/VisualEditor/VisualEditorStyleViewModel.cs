@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers.VisualEditor;
 using Quantumart.QP8.BLL.Services.VisualEditor;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 {
@@ -24,10 +25,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public string AggregationListItems_Data_AttributeItems { get; set; }
+        public string AggregationListItemsDataAttributeItems { get; set; }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public string AggregationListItems_Data_StylesItems { get; set; }
+        public string AggregationListItemsDataStylesItems { get; set; }
 
         public static VisualEditorStyleViewModel Create(VisualEditorStyle style, string tabId, int parentId)
         {
@@ -36,9 +37,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         internal void DoCustomBinding()
         {
-            var serializer = new JavaScriptSerializer();
-            _jsonStyles = serializer.Deserialize<List<VeStyleAggregationListItem>>(AggregationListItems_Data_StylesItems);
-            _jsonAttributes = serializer.Deserialize<List<VeStyleAggregationListItem>>(AggregationListItems_Data_AttributeItems);
+            _jsonStyles = JsonConvert.DeserializeObject<List<VeStyleAggregationListItem>>(AggregationListItemsDataStylesItems);
+            _jsonAttributes = JsonConvert.DeserializeObject<List<VeStyleAggregationListItem>>(AggregationListItemsDataAttributeItems);
             Data.DoCustomBinding(_jsonStyles, _jsonAttributes);
         }
 
