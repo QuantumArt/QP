@@ -36,8 +36,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                     ? new[] { httpContext.Items["FROM_ID"].ToString() }
                     : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
                 ResultId = GetContextData<int>(httpContext, "RESULT_ID"),
-                UniqueId = GetContextData<Guid>(httpContext, "FROM_GUID"),
-                ResultUniqueId = GetContextData<Guid>(httpContext, "RESULT_GUID"),
+                UniqueId = GetGuidsContextData(httpContext, "FROM_GUID"),
+                ResultUniqueId = GetGuidContextData(httpContext, "RESULT_GUID"),
                 VirtualFieldIds = GetContextData<string>(httpContext, "NEW_VIRTUAL_FIELD_IDS"),
                 FieldIds = GetContextData<string>(httpContext, "FIELD_IDS"),
                 LinkIds = GetContextData<string>(httpContext, "LINK_IDS"),
@@ -127,15 +127,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
             var actionTypeCode = action.BackendAction.ActionType.Code;
             httpRequest.SetForm(action.Form);
-
-            if (action.Ids.Length > 1)
-            {
-                httpRequest.Form.Add("IDs", string.Join(",", action.Ids));
-            }
+            httpRequest.Form.Add("IDs", string.Join(",", action.Ids));
 
             if (actionTypeCode == ActionTypeCode.AddNew && options.Contains(entityTypeCode))
             {
-                httpRequest.Form.Add("Data.ForceId", action.Ids[0]);
+                httpRequest.Form.Add("Data.ForceId", action.Ids.First());
             }
 
             switch (action.Code)
@@ -283,18 +279,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             data.Values["action"] = controllerAction;
             data.Values["tabId"] = "tab_virtual";
             data.Values["parentId"] = action.ParentId;
-            if (action.Ids.Length > 0 && !string.IsNullOrEmpty(action.Ids[0]))
-            {
-                if (action.Ids.Length == 1)
-                {
-                    data.Values["id"] = int.Parse(action.Ids[0]);
-                }
-                else
-                {
-                    data.Values["IDs"] = action.Ids.Select(int.Parse).ToArray();
-                }
-            }
-
+            data.Values["id"] = int.Parse(action.Ids.First());
+            data.Values["IDs"] = action.Ids.Select(int.Parse).ToArray();
             return data;
         }
 
@@ -321,6 +307,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static T GetContextData<T>(HttpContextBase httpContext, string key)
         {
             return httpContext.Items.Contains(key) ? (T)httpContext.Items[key] : default(T);
+        }
+
+        private static Guid GetGuidContextData(HttpContextBase httpContext, string key)
+        {
+            return httpContext.Items.Contains(key) ? Guid.Parse(httpContext.Items[key].ToString()) : Guid.Empty;
+        }
+
+        private static Guid[] GetGuidsContextData(HttpContextBase httpContext, string key)
+        {
+            return httpContext.Items.Contains(key) ? httpContext.Items[key].ToString().Split(",".ToCharArray()).Select(Guid.Parse).ToArray() : new Guid[] { };
         }
     }
 }

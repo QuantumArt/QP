@@ -27,28 +27,36 @@ namespace Quantumart.QP8.BLL.Repository.Articles
     {
         public static Article GetById(int id)
         {
-            var article = MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
+            return MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
                 .Include("Status")
                 .Include("Content")
                 .Include("LastModifiedByUser")
                 .Include("LockedByUser")
                 .SingleOrDefault(n => n.Id == id)
             );
-
-            return article;
         }
 
         internal static Article GetByGuid(Guid guid)
         {
-            var article = MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
+            return MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
                 .Include("Status")
                 .Include("Content")
                 .Include("LastModifiedByUser")
                 .Include("LockedByUser")
                 .SingleOrDefault(n => n.UniqueId == guid)
             );
+        }
 
-            return article;
+        public static List<Article> GetByIds(int[] ids)
+        {
+            return MapperFacade.ArticleMapper.GetBizList(QPContext.EFContext.ArticleSet
+                .Include("Status")
+                .Include("Content")
+                .Include("LastModifiedByUser")
+                .Include("LockedByUser")
+                .Where(n => ids.Contains((int)n.Id))
+                .ToList()
+            );
         }
 
         internal static void LockForUpdate(int id)

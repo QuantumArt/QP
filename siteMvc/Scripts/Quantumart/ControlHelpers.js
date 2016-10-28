@@ -1716,12 +1716,7 @@ Quantumart.QP8.ControlHelpers.crop = function Quantumart$QP8$ControlHelpers$crop
 Quantumart.QP8.ControlHelpers.openPreviewWindow = function Quantumart$QP8$ControlHelpers$openPreviewWindow(url, width, height) {
   url = url + "?t=" + new Date().getTime();
   var html = new $.telerik.stringBuilder();
-    html
-    .cat('<div class="previewImage">')
-    .cat('<img src="' + url + '\" width="' + width + '" height="' + height + '" />')
-    .cat('</div>')
-    ;
-
+    html.cat('<div class="previewImage">').cat('<img src="' + url + '\" width="' + width + '" height="' + height + '" />').cat('</div>');
     var win = $.telerik.window.create({
         title: $l.FileField.previewWindowTitle,
         html: html.string(),

@@ -1,9 +1,5 @@
 ﻿namespace Quantumart.QP8.Constants
 {
-    /// <summary>
-    /// Коды типов действий
-    /// TODO: Почистить и переименовать в ArticleTypeCode
-    /// </summary>
     public static class ActionTypeCode
     {
         public const string None = "";

@@ -3440,7 +3440,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _CancelSplit;
         partial void OnCancelSplitChanging(global::System.Boolean value);
         partial void OnCancelSplitChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>

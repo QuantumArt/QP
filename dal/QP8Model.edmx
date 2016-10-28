@@ -11957,7 +11957,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="74">
+      <Diagram Name="QP8Model" ZoomLevel="75">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -12000,7 +12000,7 @@
         <EntityTypeShape EntityType="QP8Model.PermissionLevel" Width="1.5" PointX="0.5" PointY="4.25" Height="1.7879850260416665" />
         <EntityTypeShape EntityType="QP8Model.BackendActionTypeDAL" Width="1.5" PointX="2.75" PointY="8.125" Height="2.172587890624996" />
         <EntityTypeShape EntityType="QP8Model.BackendActionDAL" Width="1.875" PointX="0.5" PointY="8.75" Height="7.5570279947916674" />
-        <EntityTypeShape EntityType="QP8Model.EntityTypeDAL" Width="2.5" PointX="8.125" PointY="8.875" Height="2.9417936197916656" />
+        <EntityTypeShape EntityType="QP8Model.EntityTypeDAL" Width="2.5" PointX="9" PointY="7.875" Height="2.9417936197916656" />
         <AssociationConnector Association="QP8Model.FK_ACTION_TYPE_PERMISSION_LEVEL">
           <ConnectorPoint PointX="2.01562125" PointY="290" />
           <ConnectorPoint PointX="2.01562125" PointY="35.307444661458334" />
@@ -12062,7 +12062,7 @@
           <ConnectorPoint PointX="8.88076923076923" PointY="12.316793619791667" />
           <ConnectorPoint PointX="8.88076923076923" PointY="12.066793619791666" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="QP8Model.FieldDAL" Width="1.5" PointX="10.25" PointY="13.625" Height="13.133769531250003" />
+        <EntityTypeShape EntityType="QP8Model.FieldDAL" Width="1.5" PointX="11.75" PointY="10" Height="13.133769531250003" />
         <EntityTypeShape EntityType="QP8Model.ContentDAL" Width="1.5" PointX="7.5" PointY="13.625" Height="5.2079475911458353" />
         <AssociationConnector Association="QP8Model.ContentDALSiteDAL">
           <ConnectorPoint PointX="7.5" PointY="16.228973795572919" />
@@ -14749,7 +14749,7 @@
           <ConnectorPoint PointX="11.207692307692309" PointY="27.777975260416667" />
           <ConnectorPoint PointX="11.207692307692309" PointY="27.527975260416664" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="QP8Model.CustomActionDAL" Width="2" PointX="12.875" PointY="22.125" Height="3.9033007812499818" />
+        <EntityTypeShape EntityType="QP8Model.CustomActionDAL" Width="2" PointX="14.375" PointY="21.875" Height="3.9033007812499818" />
         <AssociationConnector Association="QP8Model.FK_CUSTOM_ACTION_BACKEND_ACTION">
           <ConnectorPoint PointX="1.3099183971557618" PointY="16.883932291666667" />
           <ConnectorPoint PointX="1.3099183971557618" PointY="27.601298828125" />
@@ -15202,7 +15202,7 @@
           <ConnectorPoint PointX="18.945310499999998" PointY="143.40625" />
           <ConnectorPoint PointX="18.945310499999998" PointY="143.5" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="QP8Model.BackendActionPermissionDAL" Width="1.5" PointX="17.25" PointY="3.5" Height="3.3263964843749818" />
+        <EntityTypeShape EntityType="QP8Model.BackendActionPermissionDAL" Width="1.5" PointX="8.375" PointY="4.25" Height="3.3263964843749818" />
         <AssociationConnector Association="QP8Model.FK_ACT_ACC_ACC_GROUP">
           <ConnectorPoint PointX="5.5" PointY="19.225530098958338" />
           <ConnectorPoint PointX="5.4290625000000006" PointY="1.4100000000000001" />
@@ -15434,7 +15434,7 @@
           <ConnectorPoint PointX="5.875" PointY="32.105499674479169" />
         </AssociationConnector>
         <AssociationConnector Association="QP8Model.FK_CONTENT_ATTRIBUTE_CLASSIFIER_ATTRIBUTE_ID" />
-        <EntityTypeShape EntityType="QP8Model.UserDefaultFilterItemDAL" Width="1.5" PointX="10.782030075221337" PointY="28.177489264019528" />
+        <EntityTypeShape EntityType="QP8Model.UserDefaultFilterItemDAL" Width="1.5" PointX="16.375" PointY="29.125" />
         <AssociationConnector Association="QP8Model.FK_USER_DEFAULT_FILTER_CONTENT" />
         <AssociationConnector Association="QP8Model.FK_USER_DEFAULT_FILTER_CONTENT_ITEM" />
         <AssociationConnector Association="QP8Model.FK_USER_DEFAULT_FILTER_USERS" />
@@ -15453,8 +15453,8 @@
         <AssociationConnector Association="QP8Model.ACTION_EXCLUSIONS" />
         <EntityTypeShape EntityType="QP8Model.AppSettingsDAL" Width="1.5" PointX="13.75" PointY="14.375" />
         <EntityTypeShape EntityType="QP8Model.ExternalNotificationDAL" Width="1.5" PointX="8.375" PointY="0.75" />
-        <EntityTypeShape EntityType="QP8Model.XmlDbUpdateLogEntity" Width="1.5" PointX="9.125" PointY="2.375" />
-        <EntityTypeShape EntityType="QP8Model.XmlDbUpdateActionsLogEntity" Width="3" PointX="12.25" PointY="2.25" />
+        <EntityTypeShape EntityType="QP8Model.XmlDbUpdateLogEntity" Width="1.5" PointX="15.25" PointY="1" />
+        <EntityTypeShape EntityType="QP8Model.XmlDbUpdateActionsLogEntity" Width="3" PointX="12.125" PointY="1" />
         <AssociationConnector Association="QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1" />
 		</Diagram>
     </Diagrams>

@@ -132,9 +132,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
             try
             {
-                var correctedAction = _actionsCorrecterService.CorrectAction(xmlAction, _useGuidSubstitution);
+                var correctedAction = _actionsCorrecterService.PreActionCorrections(xmlAction, _useGuidSubstitution);
                 var httpContext = XmlDbUpdateHttpContextHelpers.PostAction(correctedAction, backendUrl, _userId, _useGuidSubstitution);
-                return _actionsCorrecterService.CorrectReplaces(correctedAction, httpContext);
+                return _actionsCorrecterService.PostActionCorrections(correctedAction, httpContext);
             }
             catch (Exception ex)
             {

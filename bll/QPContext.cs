@@ -7,7 +7,6 @@ using System.Transactions;
 using System.Web;
 using Microsoft.Practices.Unity;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;

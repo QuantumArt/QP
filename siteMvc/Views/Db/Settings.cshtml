@@ -120,13 +120,15 @@
     });
 
     $editingForm.on('click', '.replayRecords', function() {
+      $q.showLoader();
       $q.postAjax("@Url.Action("ReplayRecordedUserActions")", {
         xmlString: $editingForm.find('.recordedRecordsXmlArea').data('codeMirror').getValue(),
         disableFieldIdentity: $editingForm.find('.disableFieldIdentity').prop('checked'),
         disableContentIdentity: $editingForm.find('.disableContentIdentity').prop('checked'),
         useGuidSubstitution: $editingForm.find('.useGuidSubstitution').prop('checked')
       }, function(data, response) {
-          $q.alertSuccess(response.message);
+        $q.hideLoader();
+        $q.alertSuccess(response.message);
       });
     });
   });

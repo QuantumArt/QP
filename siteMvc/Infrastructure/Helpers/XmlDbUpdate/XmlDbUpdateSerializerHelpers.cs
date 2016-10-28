@@ -76,9 +76,18 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static IEnumerable<XAttribute> GetEntitySpecificAttributesForPersisting(XmlDbUpdateRecordedAction action)
         {
             var result = new Dictionary<string, object>();
-            if (action.BackendAction.ActionType.Code == ActionTypeCode.Copy)
+            if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
+            {
+                result.Add(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute, string.Join(",", action.UniqueId));
+            }
+
+            if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
             {
                 result.Add(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute, action.ResultId);
+                if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
+                {
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute, action.ResultUniqueId);
+                }
             }
 
             switch (action.Code)
@@ -121,10 +130,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.AddNewPageObject:
                 case ActionCode.AddNewTemplateObject:
                     result.Add(XmlDbUpdateXDocumentConstants.ActionFormatIdAttribute, action.DefaultFormatId);
-                    break;
-                case ActionCode.CreateLikeArticle:
-                    result.Add(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute, action.UniqueId);
-                    result.Add(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute, action.ResultUniqueId);
                     break;
             }
 
@@ -252,42 +257,26 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         private static int GetResultIdByCode(XElement action)
         {
-            switch (GetCode(action))
-            {
-                case ActionCode.CreateLikeContent:
-                case ActionCode.CreateLikeField:
-                case ActionCode.CreateLikeArticle:
-                    return action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute).GetValueOrDefault<int>();
-                default:
-                    return default(int);
-            }
+            return XmlDbUpdateQpActionHelpers.IsActionHasResultId(GetCode(action))
+                ? action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute).GetValueOrDefault<int>()
+                : default(int);
         }
 
-        private static Guid GetUniqueIdByCode(XElement action)
+        private static Guid[] GetUniqueIdByCode(XElement action)
         {
-            Guid result;
-            switch (GetCode(action))
-            {
-                case ActionCode.CreateLikeArticle:
-                    Guid.TryParse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute).Value, out result);
-                    return result;
-                default:
-                    Guid.TryParse(action.Elements().Single(e => e.Attribute("name").Value == "Data.UniqueId").Value, out result);
-                    return result;
-            }
+            var actionCode = GetCode(action);
+            var uniqueIdValue = XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(actionCode)
+                ? action.Attribute(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute).Value
+                : Guid.Empty.ToString();
+
+            return uniqueIdValue.Split(",".ToCharArray()).Select(Guid.Parse).ToArray();
         }
 
         private static Guid GetResultUniqueIdByCode(XElement action)
         {
-            var result = default(Guid);
-            switch (GetCode(action))
-            {
-                case ActionCode.CreateLikeArticle:
-                    Guid.TryParse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute).Value, out result);
-                    return result;
-                default:
-                    return result;
-            }
+            return XmlDbUpdateQpActionHelpers.IsArticleAndHasResultUniqueId(GetCode(action))
+                ? Guid.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute).Value)
+                : Guid.Empty;
         }
 
         private static string GetCustomActionCodeByCode(XElement action)

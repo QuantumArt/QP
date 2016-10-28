@@ -16,6 +16,9 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public string Name { get; set; }
 
+        /// <summary>
+        /// Не переведенное имя
+        /// </summary>
         public string NotTranslatedName { get; set; }
 
         /// <summary>
@@ -63,8 +66,14 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         public string ContextName { get; set; }
 
+        /// <summary>
+        /// Id вкладки
+        /// </summary>
         public int? TabId { get; set; }
 
+        /// <summary>
+        /// Контекстное меню
+        /// </summary>
         public ContextMenu ContextMenu { get; set; }
 
         /// <summary>
@@ -81,6 +90,14 @@ namespace Quantumart.QP8.BLL
         /// Имя поля-идентификатора родителя в таблице сущности
         /// </summary>
         public string ParentIdField { get; set; }
+
+        /// <summary>
+        /// Проверка на автосохранение
+        /// </summary>
+        public static bool CheckToAutosave(string code)
+        {
+            return AllowedToAutosaveCodes.Contains(code);
+        }
 
         private static readonly HashSet<string> AllowedToAutosaveCodes = new HashSet<string>(new[]
         {
@@ -102,10 +119,5 @@ namespace Quantumart.QP8.BLL
             EntityTypeCode.VirtualContent,
             EntityTypeCode.Page
         }, StringComparer.InvariantCultureIgnoreCase);
-
-        public static bool CheckToAutosave(string code)
-        {
-            return AllowedToAutosaveCodes.Contains(code);
         }
-    }
 }

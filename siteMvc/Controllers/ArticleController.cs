@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
@@ -245,6 +246,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 try
                 {
                     model.Data = ArticleService.Create(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
+                    PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     return Redirect("Properties", new
                     {
@@ -287,6 +289,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var data = ArticleService.ReadForUpdate(id, parentId);
             var model = ArticleViewModel.Create(data, tabId, parentId, boundToExternal);
+            PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
 
             TryUpdateModel(model);
             model.Validate(ModelState);
@@ -295,6 +298,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 try
                 {
                     model.Data = ArticleService.Update(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
+                    PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
                     return Redirect("Properties", new
                     {
                         tabId,
@@ -359,8 +363,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemove(int parentId, int[] IDs, bool? boundToExternal)
         {
-            // TODO:
-            //PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
+            var articlesToRemove = ArticleRepository.GetByIds(IDs);
+            var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
+            var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
+            PersistFromIds(idsToRemove, guidsToRemove);
             return JsonMessageResult(ArticleService.Remove(parentId, IDs, false, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
@@ -393,10 +399,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemoveFromArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
-            // TODO:
-            //PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
-            var result = ArticleService.Remove(parentId, IDs, true, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
-            return JsonMessageResult(result);
+            var articlesToRemove = ArticleRepository.GetByIds(IDs);
+            var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
+            var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
+            PersistFromIds(idsToRemove, guidsToRemove);
+            return JsonMessageResult(ArticleService.Remove(parentId, IDs, true, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
         [HttpPost, Record]
@@ -427,8 +434,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var articleToRestore = ArticleRepository.GetById(id);
             PersistFromId(articleToRestore.Id, articleToRestore.UniqueId.Value);
-            var result = ArticleService.RestoreFromArchive(articleToRestore, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
-            return JsonMessageResult(result);
+            return JsonMessageResult(ArticleService.RestoreFromArchive(articleToRestore, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
         [HttpPost, Record]
@@ -440,8 +446,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultiplePublish(int parentId, int[] IDs, bool? boundToExternal)
         {
-            // TODO:
-            //PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
+            var articlesToRemove = ArticleRepository.GetByIds(IDs);
+            var idsToRemove = articlesToRemove.Select(atr => atr.Id).ToArray();
+            var guidsToRemove = articlesToRemove.Select(atr => atr.UniqueId.Value).ToArray();
+            PersistFromIds(idsToRemove, guidsToRemove);
             return JsonMessageResult(ArticleService.Publish(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
@@ -460,8 +468,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleMoveToArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
-            // TODO:
-            //PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
+            var articlesToArchive = ArticleRepository.GetByIds(IDs);
+            var idsToRemove = articlesToArchive.Select(atr => atr.Id).ToArray();
+            var guidsToRemove = articlesToArchive.Select(atr => atr.UniqueId.Value).ToArray();
+            PersistFromIds(idsToRemove, guidsToRemove);
             return JsonMessageResult(ArticleService.MoveToArchive(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
@@ -480,10 +490,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRestoreFromArchive(int parentId, int[] IDs, bool? boundToExternal)
         {
-            // TODO:
-            //PersistFromId(articleToRemove.Id, articleToRemove.UniqueId.Value);
-            var result = ArticleService.RestoreFromArchive(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
-            return JsonMessageResult(result);
+            var articlesToRestore = ArticleRepository.GetByIds(IDs);
+            var idsToRemove = articlesToRestore.Select(atr => atr.Id).ToArray();
+            var guidsToRemove = articlesToRestore.Select(atr => atr.UniqueId.Value).ToArray();
+            PersistFromIds(idsToRemove, guidsToRemove);
+            return JsonMessageResult(ArticleService.RestoreFromArchive(parentId, IDs, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
         [HttpPost]

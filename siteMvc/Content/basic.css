@@ -1,83 +1,83 @@
 html, body
 {
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
 
 body
 {
-	background-color: #fff;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 0.7em;
-	min-width: 600px;
+  background-color: #fff;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-size: 0.7em;
+  min-width: 600px;
 }
 
 /*#region Content elements*/
 .content h1, .content h2,
 .content h3, .content h4
 {
-	margin-bottom: 0.5em;
-	font: 1.7em Verdana, Arial, Helvetica, sans-serif;
+  margin-bottom: 0.5em;
+  font: 1.7em Verdana, Arial, Helvetica, sans-serif;
 }
 .content h2
 {
-	margin-top: 0;
-	font-size: 1.5em;
+  margin-top: 0;
+  font-size: 1.5em;
 }
 .content h3
 {
-	font-size: 1.3em;
-	font-weight: bold;
+  font-size: 1.3em;
+  font-weight: bold;
 }
 .content h4
 {
-	font-size: 1.1em;
-	font-weight: bold;
+  font-size: 1.1em;
+  font-weight: bold;
 }
 
 blockquote
 {
-	margin-left: 10.0em;
-	padding-left: 1.0em;
-	border-left: 2px solid #ccc;
+  margin-left: 10.0em;
+  padding-left: 1.0em;
+  border-left: 2px solid #ccc;
 }
 
 code, pre
 {
-	padding: 1px 2px;
-	background: #eee;
-	font: 1.2em/1 "Courier New", Courier, monospace;
+  padding: 1px 2px;
+  background: #eee;
+  font: 1.2em/1 "Courier New", Courier, monospace;
 }
 pre
 {
-	margin: 0;
-	padding: 5px;
-	border: 1px dashed #aaa;
-	background: #eee;
-	font-size: .9em;
-	line-height: 1.5em;
+  margin: 0;
+  padding: 5px;
+  border: 1px dashed #aaa;
+  background: #eee;
+  font-size: .9em;
+  line-height: 1.5em;
 }
 
 sup, sub
 {
-	position: relative;
-	vertical-align: baseline;
+  position: relative;
+  vertical-align: baseline;
 }
 sup
 {
-	top: -0.4em;
+  top: -0.4em;
 }
 sub
 {
-	bottom: -0.3em;
+  bottom: -0.3em;
 }
 
 hr
 {
-	height: 1px;
-	border-width: 0;
-	background-color: #ccc;
-	color: #ccc;
+  height: 1px;
+  border-width: 0;
+  background-color: #ccc;
+  color: #ccc;
 }
 
 .content ul, .content ol
@@ -94,12 +94,12 @@ hr
 }
 .content dl dt
 {
-	margin-bottom: 0.2em;
+  margin-bottom: 0.2em;
 }
 .content dl dd
 {
-	margin-bottom: 0.4em;
-	padding-left: 5em;
+  margin-bottom: 0.4em;
+  padding-left: 5em;
 }
 
 .content p, .content ul,
@@ -120,16 +120,16 @@ a.js:link,
 a.js:visited,
 a.js:active
 {
-	text-decoration: none;
-	color: #0066d5;
-	border-bottom: 1px dotted #0066d5;
+  text-decoration: none;
+  color: #0066d5;
+  border-bottom: 1px dotted #0066d5;
 }
 
 a.js:hover
 {
-	text-decoration: none;
-	color: #3399ff;
-	border-bottom: 1px dotted #3399ff;
+  text-decoration: none;
+  color: #3399ff;
+  border-bottom: 1px dotted #3399ff;
 }
 
 a.html,
@@ -137,56 +137,56 @@ a.html:link,
 a.html:visited,
 a.html:active
 {
-	color: #0066d5;
+  color: #0066d5;
 }
 
 a.html:hover
 {
-	color: #3399ff;
+  color: #3399ff;
 }
 
 .busy a.js, .busy a.html
 {
-	cursor: wait;
+  cursor: wait;
 }
 /*#endregion*/
 
 /*#region Self-clear Floats*/
 .group:after
 {
-	content: ".";
-	display: block;
-	height: 0;
-	clear: both;
-	visibility: hidden;
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
 }
 
 /*#region Horizontal align by center*/
 .alignCenter
 {
-	position: relative;
-	width: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .alignCenter:after
 {
-	content: '';
-	display: block;
-	clear: both;
+  content: '';
+  display: block;
+  clear: both;
 }
 
 .alignCenterToLeft
 {
-	position: relative;
-	right: 50%;
-	float: right;
+  position: relative;
+  right: 50%;
+  float: right;
 }
 
 .alignCenterToRight
 {
-	position: relative;
-	z-index: 1;
-	right: -50%;
+  position: relative;
+  z-index: 1;
+  right: -50%;
 }
 /*#endregion*/
 
@@ -199,7 +199,7 @@ a.html:hover
 .editingForm .formLayout textarea.textbox,
 .editingForm .formLayout .versionText
 {
-	width: 350px !important;
+  width: 350px !important;
 }
 
 .editingForm .formLayout input.textbox.article,
@@ -208,486 +208,486 @@ a.html:hover
 .editingForm .formLayout textarea.textbox.codeBehind,
 .editingForm .formLayout input.textbox.directLink
 {
-	width: 100% !important;
+  width: 100% !important;
 }
 
 
 
 .editingForm .formLayout select.dropDownList
 {
-	width: 352px !important;
+  width: 352px !important;
 }
 
 .editingForm .formLayout select.listBox
 {
-	width: 352px !important;
-	height: 100px !important;
+  width: 352px !important;
+  height: 100px !important;
 }
 
 .formLayout
 {
 }
 
-	.formLayout fieldset
-	{
-		margin: 0 0 0.5em 0;
-		padding: 15px;
-		border: 1px solid #909090;
-		-moz-border-radius: 5px;
-		-webkit-border-radius: 5px;
-		border-radius: 5px;
-	}
+  .formLayout fieldset
+  {
+    margin: 0 0 0.5em 0;
+    padding: 15px;
+    border: 1px solid #909090;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+  }
 
-	.formLayout fieldset legend
-	{
-		margin: 0 0 0.5em 0;
-		padding: 0 3px 0 5px;
-		font-weight: bold;
-	}
+  .formLayout fieldset legend
+  {
+    margin: 0 0 0.5em 0;
+    padding: 0 3px 0 5px;
+    font-weight: bold;
+  }
 
-	.formLayout dl.row
-	{
-		clear: both;
-		padding: 0;
-		margin: 0;
-		min-height: 1.0em;
-	}
-	.formLayout dl.row dl.row
-	{
-		clear: none;
-		margin-left: 20px;
-		padding: 0;
-	}
-	.formLayout dl.row dl.row dd.field
-	{
-		margin: 0;
-		padding: 0;
-	}
+  .formLayout dl.row
+  {
+    clear: both;
+    padding: 0;
+    margin: 0;
+    min-height: 1.0em;
+  }
+  .formLayout dl.row dl.row
+  {
+    clear: none;
+    margin-left: 20px;
+    padding: 0;
+  }
+  .formLayout dl.row dl.row dd.field
+  {
+    margin: 0;
+    padding: 0;
+  }
 
-	.formLayout dt.label
-	{
-		display: block;
-		float: left;
-		margin: 0;
-		padding: 0;
-		width: 16.0em;
-		font-style: normal;
-	}
-	.formLayout .forCheckboxGroup,
-	.formLayout .forRadioGroup,
-	.formLayout .forTextarea
-	{
-		padding-top: 0;
-	}
+  .formLayout dt.label
+  {
+    display: block;
+    float: left;
+    margin: 0;
+    padding: 0;
+    width: 16.0em;
+    font-style: normal;
+  }
+  .formLayout .forCheckboxGroup,
+  .formLayout .forRadioGroup,
+  .formLayout .forTextarea
+  {
+    padding-top: 0;
+  }
 
-	.formLayout dd.field
-	{
-		margin: 0 0 0 17.0em;
-		padding: 0;
-	}
+  .formLayout dd.field
+  {
+    margin: 0 0 0 17.0em;
+    padding: 0;
+  }
 
-	.formLayout dt.label,
-	.formLayout dd.field
-	{
-		padding-bottom: 0.5em;
-	}
+  .formLayout dt.label,
+  .formLayout dd.field
+  {
+    padding-bottom: 0.5em;
+  }
 
-	.formLayout .wide
-	{
-		margin-top: 0.5em;
-	}
-	.formLayout .wide dt.label
-	{
-		float: none;
-		width: auto;
-	}
-	.formLayout .wide .forCheckboxGroup,
-	.formLayout .wide .forRadioGroup,
-	.formLayout .wide .forDropdownListGroup,
-	.formLayout .wide .forDropdownList,
-	.formLayout .wide .forTextarea
-	{
-		padding-bottom: 0;
-	}
-	.formLayout .wide dd.field
-	{
-		margin-left: 0;
-		margin-bottom: 0.5em;
-		padding-left: 0;
-	}
+  .formLayout .wide
+  {
+    margin-top: 0.5em;
+  }
+  .formLayout .wide dt.label
+  {
+    float: none;
+    width: auto;
+  }
+  .formLayout .wide .forCheckboxGroup,
+  .formLayout .wide .forRadioGroup,
+  .formLayout .wide .forDropdownListGroup,
+  .formLayout .wide .forDropdownList,
+  .formLayout .wide .forTextarea
+  {
+    padding-bottom: 0;
+  }
+  .formLayout .wide dd.field
+  {
+    margin-left: 0;
+    margin-bottom: 0.5em;
+    padding-left: 0;
+  }
 
-	.formLayout label[disabled="true"]
-	{
-		opacity: 0.4;
-		color: black;
-	}
+  .formLayout label[disabled="true"]
+  {
+    opacity: 0.4;
+    color: black;
+  }
 
-	.formLayout input.textbox,
-	.formLayout textarea.textbox,
-	.formLayout select.dropDownList,
-	.formLayout select.listBox
-	{
-		width: 100%;
-		font-family: Verdana, Arial, Helvetica, sans-serif;
-	}
+  .formLayout input.textbox,
+  .formLayout textarea.textbox,
+  .formLayout select.dropDownList,
+  .formLayout select.listBox
+  {
+    width: 100%;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+  }
 
-	.formLayout textarea.textbox
-	{
-		font-size: 1.2em;
-	}
+  .formLayout textarea.textbox
+  {
+    font-size: 1.2em;
+  }
 
-	.formLayout .originalSize
-	{
-		width: auto;
-	}
+  .formLayout .originalSize
+  {
+    width: auto;
+  }
 
-	.formLayout input,
-	.formLayout textarea,
-	.formLayout select,
-	.formLayout .versionText,
-	.formLayout .versionArea
+  .formLayout input,
+  .formLayout textarea,
+  .formLayout select,
+  .formLayout .versionText,
+  .formLayout .versionArea
 
-	{
-		border: 1px solid #909090;
-	}
+  {
+    border: 1px solid #909090;
+  }
 
-	.formLayout input.error,
-	.formLayout textarea.error,
-	.formLayout select.error,
-	.formLayout input.input-validation-error,
-	.formLayout textarea.input-validation-error,
-	.formLayout select.input-validation-error
-	{
-		background-color: #fee;
-	}
+  .formLayout input.error,
+  .formLayout textarea.error,
+  .formLayout select.error,
+  .formLayout input.input-validation-error,
+  .formLayout textarea.input-validation-error,
+  .formLayout select.input-validation-error
+  {
+    background-color: #fee;
+  }
 
-	.formLayout input.checkbox,
-	.formLayout span.checkbox input,
-	.formLayout div.checkboxsList ul input,
-	.formLayout input.radioButton,
-	.formLayout span.radioButton input,
-	.formLayout div.radioButtonsList ul input
-	{
-		margin: 0;
-		padding-left: 0;
-		padding-right: 0;
-		border: none;
-		outline: none;
-		vertical-align: middle;
-	}
-
-	.formLayout span.checkbox label,
-	.formLayout span.radioButton label
-	{
-		margin: 0;
-		padding-right: 0;
-		vertical-align: middle;
-	}
-
-	.formLayout div.checkboxsList ul label,
-	.formLayout div.radioButtonsList ul label,
-	.formLayout div.checkboxsList ul .idLink,
-	.formLayout div.radioButtonsList ul .idLink
-	{
-		margin: 0;
-		padding-right: 0.5em;
-		vertical-align: middle;
-	}
-
-	.formLayout div.checkboxsList ul,
-	.formLayout div.radioButtonsList ul
-	{
-		margin: 0;
-		padding: 0;
-		list-style: none;
-		vertical-align: middle;
-	}
-
-	.formLayout div.checkboxsList ul li,
-	.formLayout div.radioButtonsList ul li
-	{
-		margin: 0;
-		padding: 0 0 0.5em 0;
-	}
-
-	.formLayout div.horizontalDirection ul li
-	{
-		display:inline-block;
-	}
-
-	.formLayout div.verticalDirection ul li
-	{
-		float: none;
-	}
-
-	.formLayout div.dateTimeWrapper
-	{
-	    float: none;
-	}
-
-	div.dateTimeWrapper .dateTimeCheckboxWrapper
-	{
-
-	}
-
-	.formLayout input.dateTimePicker
-	{
-		width: 175px;
-		float: left;
-		margin-right: 5px;
-	}
-
-	.formLayout input.date,
-	.formLayout input.time,
-	.formLayout input.datetime
-	{
-		font-family: Verdana,Arial,Helvetica,sans-serif;
-		font-size: 1.11em;
-	}
-
-	.formLayout .t-datetimepicker
-	{
-		width:17em;
-	}
-
-	.formLayout .t-datepicker
-	{
-		width:11em;
-	}
-
-	.formLayout .t-timepicker
-	{
-		width:10em;
-	}
-
-
-
-	.formLayout input.button
-	{
-		margin-top: 0.3em;
-		margin-bottom: 0.3em;
-		width: auto;
-	}
-
-	.formLayout .description
-	{
-		display: block;
-		margin: 0;
-		padding: 0.2em 0;
-		color: #666;
-		font-size: 0.89em;
-		font-style: normal;
-	}
-
-	.formLayout .validators
-	{
-		display: block;
-		font-style: normal;
-	}
-
-	.formLayout .validator,
-	.formLayout .field-validation-error
-	{
-		color: #f00;
-		font-size: 0.95em;
-		line-height: 1.2em;
-	}
-
-	.formLayout .validationSummary,
-	.formLayout .validation-summary-errors
-	{
-		color: #f00;
-		font-size: 0.95em;
-		font-weight: bold;
-		line-height: 1.2em;
-	}
-
-	.formLayout textarea.visualEditor
-	{
-		width:100%;
-	}
-
-	.visualEditorComponent .visualEditorContainer
-	{
-		display:none;
-	}
-
-	.formLayout div.fieldWrapper
-	{
-		float: none;
-	}
-	.formLayout div.fieldWrapper input.textbox,
-	.formLayout div.fieldWrapper .versionText,
-	.formLayout div.fieldWrapper .downloadButton,
-	.formLayout div.fieldWrapper .previewButton,
-	.formLayout div.fieldWrapper .libraryButton,
-	.formLayout div.fieldWrapper .customButton,
-	.formLayout div.fieldWrapper .browseButton
-	{
-		float: left;
-		margin-right: 5px;
-	}
-	.formLayout div.fieldWrapper .downloadButton img,
-	.formLayout div.fieldWrapper .previewButton img,
-	.formLayout div.fieldWrapper .libraryButton img,
-	.formLayout div.fieldWrapper .customButton img
-	{
-		width: 16px;
-		height: 16px;
+  .formLayout input.checkbox,
+  .formLayout span.checkbox input,
+  .formLayout div.checkboxsList ul input,
+  .formLayout input.radioButton,
+  .formLayout span.radioButton input,
+  .formLayout div.radioButtonsList ul input
+  {
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
     border: none;
-	}
-	.formLayout div.fieldWrapper .downloadButton,
-	.formLayout div.fieldWrapper .previewButton,
-	.formLayout div.fieldWrapper .libraryButton,
-	.formLayout div.fieldWrapper .customButton
-	{
-		cursor: pointer;
-	}
-	.formLayout div.fieldWrapper .downloadButton
-	{
-		background: transparent url('QP8/icons/16x16/download.gif');
-	}
-	.formLayout div.fieldWrapper .previewButton
-	{
-		background: transparent url('QP8/icons/16x16/preview.gif');
-	}
-	.formLayout div.fieldWrapper .libraryButton,
-	.formLayout div.fieldWrapper .customButton
-	{
-		background: transparent url('QP8/icons/16x16/content_folder.gif');
-	}
+    outline: none;
+    vertical-align: middle;
+  }
 
-	.formLayout .versionText,
-	.formLayout .versionArea
-	{
+  .formLayout span.checkbox label,
+  .formLayout span.radioButton label
+  {
+    margin: 0;
+    padding-right: 0;
+    vertical-align: middle;
+  }
+
+  .formLayout div.checkboxsList ul label,
+  .formLayout div.radioButtonsList ul label,
+  .formLayout div.checkboxsList ul .idLink,
+  .formLayout div.radioButtonsList ul .idLink
+  {
+    margin: 0;
+    padding-right: 0.5em;
+    vertical-align: middle;
+  }
+
+  .formLayout div.checkboxsList ul,
+  .formLayout div.radioButtonsList ul
+  {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    vertical-align: middle;
+  }
+
+  .formLayout div.checkboxsList ul li,
+  .formLayout div.radioButtonsList ul li
+  {
+    margin: 0;
+    padding: 0 0 0.5em 0;
+  }
+
+  .formLayout div.horizontalDirection ul li
+  {
+    display:inline-block;
+  }
+
+  .formLayout div.verticalDirection ul li
+  {
+    float: none;
+  }
+
+  .formLayout div.dateTimeWrapper
+  {
+      float: none;
+  }
+
+  div.dateTimeWrapper .dateTimeCheckboxWrapper
+  {
+
+  }
+
+  .formLayout input.dateTimePicker
+  {
+    width: 175px;
+    float: left;
+    margin-right: 5px;
+  }
+
+  .formLayout input.date,
+  .formLayout input.time,
+  .formLayout input.datetime
+  {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 1.11em;
+  }
+
+  .formLayout .t-datetimepicker
+  {
+    width:17em;
+  }
+
+  .formLayout .t-datepicker
+  {
+    width:11em;
+  }
+
+  .formLayout .t-timepicker
+  {
+    width:10em;
+  }
+
+
+
+  .formLayout input.button
+  {
+    margin-top: 0.3em;
+    margin-bottom: 0.3em;
+    width: auto;
+  }
+
+  .formLayout .description
+  {
+    display: block;
+    margin: 0;
+    padding: 0.2em 0;
+    color: #666;
+    font-size: 0.89em;
+    font-style: normal;
+  }
+
+  .formLayout .validators
+  {
+    display: block;
+    font-style: normal;
+  }
+
+  .formLayout .validator,
+  .formLayout .field-validation-error
+  {
+    color: #f00;
+    font-size: 0.95em;
+    line-height: 1.2em;
+  }
+
+  .formLayout .validationSummary,
+  .formLayout .validation-summary-errors
+  {
+    color: #f00;
+    font-size: 0.95em;
+    font-weight: bold;
+    line-height: 1.2em;
+  }
+
+  .formLayout textarea.visualEditor
+  {
+    width:100%;
+  }
+
+  .visualEditorComponent .visualEditorContainer
+  {
+    display:none;
+  }
+
+  .formLayout div.fieldWrapper
+  {
+    float: none;
+  }
+  .formLayout div.fieldWrapper input.textbox,
+  .formLayout div.fieldWrapper .versionText,
+  .formLayout div.fieldWrapper .downloadButton,
+  .formLayout div.fieldWrapper .previewButton,
+  .formLayout div.fieldWrapper .libraryButton,
+  .formLayout div.fieldWrapper .customButton,
+  .formLayout div.fieldWrapper .browseButton
+  {
+    float: left;
+    margin-right: 5px;
+  }
+  .formLayout div.fieldWrapper .downloadButton img,
+  .formLayout div.fieldWrapper .previewButton img,
+  .formLayout div.fieldWrapper .libraryButton img,
+  .formLayout div.fieldWrapper .customButton img
+  {
+    width: 16px;
+    height: 16px;
+    border: none;
+  }
+  .formLayout div.fieldWrapper .downloadButton,
+  .formLayout div.fieldWrapper .previewButton,
+  .formLayout div.fieldWrapper .libraryButton,
+  .formLayout div.fieldWrapper .customButton
+  {
+    cursor: pointer;
+  }
+  .formLayout div.fieldWrapper .downloadButton
+  {
+    background: transparent url('QP8/icons/16x16/download.gif');
+  }
+  .formLayout div.fieldWrapper .previewButton
+  {
+    background: transparent url('QP8/icons/16x16/preview.gif');
+  }
+  .formLayout div.fieldWrapper .libraryButton,
+  .formLayout div.fieldWrapper .customButton
+  {
+    background: transparent url('QP8/icons/16x16/content_folder.gif');
+  }
+
+  .formLayout .versionText,
+  .formLayout .versionArea
+  {
         margin-bottom: 5px;
         padding: 2px;
-	}
+  }
 
-	.formLayout .versionText
-	{
+  .formLayout .versionText
+  {
         float: left;
-	}
+  }
 
-	.formLayout .versionArea
-	{
-	    height: 180px;
-	    width: 100%;
-	    overflow: hidden;
-	}
+  .formLayout .versionArea
+  {
+      height: 180px;
+      width: 100%;
+      overflow: hidden;
+  }
 
-	.formLayout ul.linkButtons, .documentWrapper ul.linkButtons
-	{
-		margin: 0 0 0.4em 0;
-		padding: 0 0 0.3em 0;
-		list-style: none;
-	}
-	.formLayout ul.linkButtons li, .documentWrapper ul.linkButtons li
-	{
-		float: left;
-		margin: 0;
+  .formLayout ul.linkButtons, .documentWrapper ul.linkButtons
+  {
+    margin: 0 0 0.4em 0;
+    padding: 0 0 0.3em 0;
+    list-style: none;
+  }
+  .formLayout ul.linkButtons li, .documentWrapper ul.linkButtons li
+  {
+    float: left;
+    margin: 0;
     /* line-height: 1.5; */
-		padding: 0 0.8em 0 0;
-	}
-	.formLayout div.dataListWrapper div.checkboxsList,
-	.formLayout div.dataListWrapper div.multipleItemPicker
-	{
-		overflow: auto;
-	}
-	.formLayout div.dataListWrapper div.overflow
-	{
-		padding: 4px 5px;
-		overflow: auto;
-		border: 1px dashed #909090;
-	}
+    padding: 0 0.8em 0 0;
+  }
+  .formLayout div.dataListWrapper div.checkboxsList,
+  .formLayout div.dataListWrapper div.multipleItemPicker
+  {
+    overflow: auto;
+  }
+  .formLayout div.dataListWrapper div.overflow
+  {
+    padding: 4px 5px;
+    overflow: auto;
+    border: 1px dashed #909090;
+  }
 
-	.formLayout div.singleItemPicker
-	{
-	}
-	.formLayout div.singleItemPicker input.textbox
-	{
-		float: left;
-		margin: 0 5px 0 0;
-	}
-	.formLayout div.singleItemPicker .pickButton
-	{
-		float: left;
-	}
-	.formLayout div.singleItemPicker .pickButton
-	{
-		position: relative;
-		top: 2px;
-		cursor: hand;
-		cursor: pointer;
-		background: transparent url('QP8/icons/16x16/pick.gif') no-repeat;
-	}
-	.formLayout div.singleItemPicker .pickButton img
-	{
-		width: 16px;
-		height: 16px;
+  .formLayout div.singleItemPicker
+  {
+  }
+  .formLayout div.singleItemPicker input.textbox
+  {
+    float: left;
+    margin: 0 5px 0 0;
+  }
+  .formLayout div.singleItemPicker .pickButton
+  {
+    float: left;
+  }
+  .formLayout div.singleItemPicker .pickButton
+  {
+    position: relative;
+    top: 2px;
+    cursor: hand;
+    cursor: pointer;
+    background: transparent url('QP8/icons/16x16/pick.gif') no-repeat;
+  }
+  .formLayout div.singleItemPicker .pickButton img
+  {
+    width: 16px;
+    height: 16px;
         border: none;
-	}
+  }
 
-	.formLayout div.singleItemPicker .idLink
-	{
-		padding-right: 0.5em;
-	}
+  .formLayout div.singleItemPicker .idLink
+  {
+    padding-right: 0.5em;
+  }
 
-	.formLayout div.disabled .pickButton
-	{
-		cursor: default;
-		background: transparent url('QP8/icons/16x16/pick_disabled.gif') no-repeat;
-	}
+  .formLayout div.disabled .pickButton
+  {
+    cursor: default;
+    background: transparent url('QP8/icons/16x16/pick_disabled.gif') no-repeat;
+  }
 
-	.formLayout div.multipleItemPicker
-	{
-		float: none;
-	}
-	.formLayout div.multipleItemPicker ul
-	{
-		margin: 0;
-		padding: 0;
-		list-style: none;
-		vertical-align: middle;
-	}
-	.formLayout div.multipleItemPicker ul li
-	{
-		float: none;
-		margin: 0;
-		padding: 0 0 0.5em 0;
-	}
-	.formLayout div.multipleItemPicker ul label,
-	.formLayout div.multipleItemPicker ul .idLink
-	{
-		margin: 0;
-		vertical-align: middle;
-		padding-right: 0.5em;
-	}
+  .formLayout div.multipleItemPicker
+  {
+    float: none;
+  }
+  .formLayout div.multipleItemPicker ul
+  {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    vertical-align: middle;
+  }
+  .formLayout div.multipleItemPicker ul li
+  {
+    float: none;
+    margin: 0;
+    padding: 0 0 0.5em 0;
+  }
+  .formLayout div.multipleItemPicker ul label,
+  .formLayout div.multipleItemPicker ul .idLink
+  {
+    margin: 0;
+    vertical-align: middle;
+    padding-right: 0.5em;
+  }
 
-	.formLayout .star
-	{
-	    color: red;
-	}
+  .formLayout .star
+  {
+      color: red;
+  }
 
-	.formLayout .t-numerictextbox .t-formatted-value.textbox
-	{
-		border:0;
-		padding-top: 3px;
-	}
+  .formLayout .t-numerictextbox .t-formatted-value.textbox
+  {
+    border:0;
+    padding-top: 3px;
+  }
 
-	.formLayout .groupCheckbox
-	{
-		padding-bottom: 1.2em;
-	}
+  .formLayout .groupCheckbox
+  {
+    padding-bottom: 1.2em;
+  }
     .formLayout .countItemsBlock
-	{
-		padding-bottom: 0.4em;
-	}
+  {
+    padding-bottom: 0.4em;
+  }
 
 input[type="text"].readonly, textarea.readonly
 {
-	color: #999;
-	background-color: #EBEBE4;
+  color: #999;
+  background-color: #EBEBE4;
 }
 /*#endregion*/
 
@@ -709,25 +709,25 @@ input[type="text"].readonly, textarea.readonly
 /*#region Links*/
 .linkButton a
 {
-	text-decoration: none;
-	outline: none;
-	cursor: hand;
-	cursor: pointer;
+  text-decoration: none;
+  outline: none;
+  cursor: hand;
+  cursor: pointer;
 }
 .linkButton span.icon
 {
-	position: relative;
-	top: 0;
-	padding: 0 2px 3px 0;
-	width: 18px;
-	height: 19px;
-	background: transparent url('QP8/icons/16x16/0.gif') no-repeat;
+  position: relative;
+  top: 0;
+  padding: 0 2px 3px 0;
+  width: 18px;
+  height: 19px;
+  background: transparent url('QP8/icons/16x16/0.gif') no-repeat;
 }
 .linkButton span.icon img
 {
-	width: 16px;
-	height: 16px;
-	border: none;
+  width: 16px;
+  height: 16px;
+  border: none;
 }
 
 .linkButton a span.text,
@@ -736,27 +736,27 @@ input[type="text"].readonly, textarea.readonly
 .linkButton a:hover span.text,
 .linkButton a:active span.text
 {
-	color: #0066d5;
-	border-bottom: 1px dotted #0066d5;
+  color: #0066d5;
+  border-bottom: 1px dotted #0066d5;
 }
 .linkButton a:hover span.text
 {
-	color: #3399ff;
-	border-bottom: 1px dotted #3399ff;
+  color: #3399ff;
+  border-bottom: 1px dotted #3399ff;
 }
 
 .linkButton a.busy
 {
-	cursor: wait;
+  cursor: wait;
 }
 .linkButton a.disabled
 {
-	cursor: default;
+  cursor: default;
 }
 .linkButton a.disabled span.icon
 {
-	opacity: 0.5;
-	filter: alpha(opacity=50);
+  opacity: 0.5;
+  filter: alpha(opacity=50);
 }
 .linkButton a.disabled span.text,
 .linkButton a.disabled:link span.text,
@@ -764,25 +764,25 @@ input[type="text"].readonly, textarea.readonly
 .linkButton a.disabled:hover span.text,
 .linkButton a.disabled:active span.text
 {
-	color: #95809e;
-	border-bottom: 1px dotted #95809e;
+  color: #95809e;
+  border-bottom: 1px dotted #95809e;
 }
 
 .linkButton span.add
 {
-	background-image: url('QP8/icons/16x16/add.gif');
+  background-image: url('QP8/icons/16x16/add.gif');
 }
 .linkButton span.edit
 {
-	background-image: url('QP8/icons/16x16/properties.gif');
+  background-image: url('QP8/icons/16x16/properties.gif');
 }
 .linkButton span.pick
 {
-	background-image: url('QP8/icons/16x16/multiple_pick.gif');
+  background-image: url('QP8/icons/16x16/multiple_pick.gif');
 }
 .linkButton span.selectAll
 {
-	background-image: url('QP8/icons/16x16/select_all.gif');
+  background-image: url('QP8/icons/16x16/select_all.gif');
 }
 .linkButton span.deselectAll
 {
@@ -794,55 +794,55 @@ input[type="text"].readonly, textarea.readonly
 }
 .linkButton span.expandChilds
 {
-	background-image: url('QP8/icons/16x16/green_arrow_down.png');
+  background-image: url('QP8/icons/16x16/green_arrow_down.png');
 }
 .linkButton span.download
 {
-	background-image: url('QP8/icons/16x16/download.gif');
+  background-image: url('QP8/icons/16x16/download.gif');
 }
 .linkButton span.parentPermissions
 {
-	background-image: url('QP8/icons/16x16/child_permissions.gif');
+  background-image: url('QP8/icons/16x16/child_permissions.gif');
 }
 .linkButton span.unlock
 {
-	background-image: url('QP8/icons/16x16/unlock.gif');
+  background-image: url('QP8/icons/16x16/unlock.gif');
 }
 .linkButton span.expand
 {
-	background-image: url('QP8/icons/16x16/expand.gif');
+  background-image: url('QP8/icons/16x16/expand.gif');
 }
 .linkButton span.collapse
 {
-	background-image: url('QP8/icons/16x16/collapse.gif');
+  background-image: url('QP8/icons/16x16/collapse.gif');
 }
 .linkButton span.library
 {
-	background-image: url('QP8/icons/16x16/content_folder.gif');
+  background-image: url('QP8/icons/16x16/content_folder.gif');
 }
 .linkButton span.copy
 {
-	background-image: url('QP8/icons/16x16/copy.gif');
+  background-image: url('QP8/icons/16x16/copy.gif');
 }
 .linkButton span.paste
 {
-	background-image: url('QP8/icons/16x16/paste.gif');
+  background-image: url('QP8/icons/16x16/paste.gif');
 }
 .linkButton span.restore
 {
-	background-image: url('QP8/icons/16x16/restore.gif');
+  background-image: url('QP8/icons/16x16/restore.gif');
 }
 .linkButton span.texteditor
 {
-	background-image: url('QP8/icons/16x16/textbox.gif');
+  background-image: url('QP8/icons/16x16/textbox.gif');
 }
 .linkButton span.visualeditor
 {
-	background-image: url('QP8/icons/16x16/vedit.gif');
+  background-image: url('QP8/icons/16x16/vedit.gif');
 }
 .linkButton span.insert-call
 {
-	background-image: url('QP8/icons/16x16/insert_call.gif')!important;
+  background-image: url('QP8/icons/16x16/insert_call.gif')!important;
 }
 .toolbar .insertButton
 {
@@ -857,14 +857,14 @@ input[type="text"].readonly, textarea.readonly
   padding: 0;
   height: 24px;
   border: none;
-	color: #fff;
-	font: 12px/24px "Segoe UI", Arial, sans-serif;
+  color: #fff;
+  font: 12px/24px "Segoe UI", Arial, sans-serif;
 }
 
 .tabStrip div.scrollable
 {
   float: left;
-	position: relative;
+  position: relative;
   margin: 0;
   padding: 0;
   width: 100%;
@@ -891,9 +891,9 @@ input[type="text"].readonly, textarea.readonly
   *display: inline;
   zoom: 1;
   list-style-type: none;
-	color: #fff;
-	font: 12px/24px "Segoe UI", Arial, sans-serif;
-	vertical-align: top;
+  color: #fff;
+  font: 12px/24px "Segoe UI", Arial, sans-serif;
+  vertical-align: top;
 }
 
 .tabStrip a.tabLink,
@@ -912,16 +912,16 @@ input[type="text"].readonly, textarea.readonly
     outline: 0;
     background-image: url('QP8/tab_strip/sprite.png');
     background-position: 0 0;
-	color: #fff;
-	font: 12px/24px "Segoe UI", Arial, sans-serif;
-	text-decoration: none;
-	cursor: pointer;
-	cursor: hand;
+  color: #fff;
+  font: 12px/24px "Segoe UI", Arial, sans-serif;
+  text-decoration: none;
+  cursor: pointer;
+  cursor: hand;
 }
 
 .tabStrip ul.busy a.tabLink
 {
-	cursor: wait;
+  cursor: wait;
 }
 
 .tabStrip span.wrapper
@@ -957,7 +957,7 @@ input[type="text"].readonly, textarea.readonly
 /* IE8 */
 .ie8 .tabStrip span.text
 {
-	top: -1px;
+  top: -1px;
 }
 .ie8 .tabStrip span.closeButton
 {
@@ -967,14 +967,14 @@ input[type="text"].readonly, textarea.readonly
 /* WebKit */
 @media screen and (-webkit-min-device-pixel-ratio:0)
 {
-	.tabStrip span.text
-	{
-		top: -1px;
-	}
-	.tabStrip span.closeButton
-	{
-		top: 3px;
-	}
+  .tabStrip span.text
+  {
+    top: -1px;
+  }
+  .tabStrip span.closeButton
+  {
+    top: 3px;
+  }
 }
 
 .tabStrip span.closeButton img
@@ -1033,20 +1033,20 @@ input[type="text"].readonly, textarea.readonly
 /*#region Tab Menu*/
 .tabMenu
 {
-	position: fixed;
-	z-index: 9996;
-	margin: 0;
-	padding: 2px 0;
-	width: 259px;
-	display: none;
-	border: solid 1px #9ba7b7;
-	background: #e0e5ea url('QP8/tab_strip/background.png') repeat-y;
+  position: fixed;
+  z-index: 9996;
+  margin: 0;
+  padding: 2px 0;
+  width: 259px;
+  display: none;
+  border: solid 1px #9ba7b7;
+  background: #e0e5ea url('QP8/tab_strip/background.png') repeat-y;
 }
 
 .tabMenu div.scrollable
 {
-	position: relative;
-	z-index: 9997;
+  position: relative;
+  z-index: 9997;
     margin: 0;
     padding: 0;
 }
@@ -1056,44 +1056,44 @@ input[type="text"].readonly, textarea.readonly
 .tabMenu div.upArrowHovered,
 .tabMenu div.downArrowHovered
 {
-	position: absolute;
-	z-index: 9998;
-	width: 100%;
-	height: 6px;
+  position: absolute;
+  z-index: 9998;
+  width: 100%;
+  height: 6px;
 }
 
 .tabMenu div.upArrow,
 .tabMenu div.upArrowHovered
 {
-	top: 0;
-	left: 0;
-	padding-top: 2px;
-	background: #e9ecee url('QP8/tab_strip/arrow_up.png') no-repeat center 2px;
+  top: 0;
+  left: 0;
+  padding-top: 2px;
+  background: #e9ecee url('QP8/tab_strip/arrow_up.png') no-repeat center 2px;
 }
 .tabMenu div.upArrow
 {
-	border-bottom: 1px solid #e9ecee;
+  border-bottom: 1px solid #e9ecee;
 }
 .tabMenu div.upArrowHovered
 {
-	border-bottom: 1px solid #fff;
+  border-bottom: 1px solid #fff;
 }
 
 .tabMenu div.downArrow,
 .tabMenu div.downArrowHovered
 {
-	bottom: 0;
-	left: 0;
-	padding-bottom: 2px;
-	background: #e9ecee url('QP8/tab_strip/arrow_down.png') no-repeat center 2px;
+  bottom: 0;
+  left: 0;
+  padding-bottom: 2px;
+  background: #e9ecee url('QP8/tab_strip/arrow_down.png') no-repeat center 2px;
 }
 .tabMenu div.downArrow
 {
-	border-top: 1px solid #e9ecee;
+  border-top: 1px solid #e9ecee;
 }
 .tabMenu div.downArrowHovered
 {
-	border-top: 1px solid #696969;
+  border-top: 1px solid #696969;
 }
 
 .tabMenu ul
@@ -1105,187 +1105,187 @@ input[type="text"].readonly, textarea.readonly
 
 .tabMenu ul > li.item
 {
-	margin: 0;
-	padding: 0;
-	height: 22px;
-	vertical-align: top;
-	list-style: none none outside;
-	line-height: normal;
-	font: normal 12px/23px "Segoe UI", Arial, sans-serif;
-	color: #000;
-	text-decoration: none;
-	cursor: default;
+  margin: 0;
+  padding: 0;
+  height: 22px;
+  vertical-align: top;
+  list-style: none none outside;
+  line-height: normal;
+  font: normal 12px/23px "Segoe UI", Arial, sans-serif;
+  color: #000;
+  text-decoration: none;
+  cursor: default;
 }
 
 .tabMenu ul > li.separator
 {
-	margin: 0;
-	padding: 0;
-	height: 3px;
-	background: transparent url('QP8/context_menu/separator.png') no-repeat 0 0;
-	list-style: none none outside;
-	line-height: 0px;
-	font-size: 0px;
+  margin: 0;
+  padding: 0;
+  height: 3px;
+  background: transparent url('QP8/context_menu/separator.png') no-repeat 0 0;
+  list-style: none none outside;
+  line-height: 0px;
+  font-size: 0px;
 }
 
 /* IE8 */
 .ie8 .tabMenu ul > li.item
 {
-	margin-top: -1px;
+  margin-top: -1px;
 }
 
 .tabMenu ul > li.item .outerWrapper
 {
-	margin: 0 2px;
-	padding: 0;
-	height: 22px;
-	background: none;
+  margin: 0 2px;
+  padding: 0;
+  height: 22px;
+  background: none;
 }
 .tabMenu ul > li.item .innerWrapper
 {
-	margin: 0;
-	padding: 0;
-	height: 22px;
-	background: none;
+  margin: 0;
+  padding: 0;
+  height: 22px;
+  background: none;
 }
 .tabMenu span.icon
 {
-	float: left;
-	margin: 3px 4px 0 5px;
-	padding: 0;
-	width: 16px;
-	height: 16px;
-	background-repeat: no-repeat;
+  float: left;
+  margin: 3px 4px 0 5px;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  background-repeat: no-repeat;
 }
 .tabMenu span.text
 {
-	position: relative;
-	top: 0;
-	margin: 0 0 0 10px;
-	padding: 0;
+  position: relative;
+  top: 0;
+  margin: 0 0 0 10px;
+  padding: 0;
 }
 
 
 .tabMenu ul > li.item:hover .outerWrapper
 {
-	background: transparent url('QP8/tab_strip/outer_content_hover.png') no-repeat left;
+  background: transparent url('QP8/tab_strip/outer_content_hover.png') no-repeat left;
 }
 .tabMenu ul > li.item:hover .innerWrapper
 {
-	background: transparent url('QP8/tab_strip/inner_content_hover.png') no-repeat right;
+  background: transparent url('QP8/tab_strip/inner_content_hover.png') no-repeat right;
 }
 
 .tabMenu ul > li.disabled
 {
-	color: #999;
+  color: #999;
 }
 .tabMenu ul.busy > li.item
 {
-	cursor: wait;
+  cursor: wait;
 }
 
 .tabMenuButton,
 .tabOverflowMenuButton
 {
-	float: right;
-	margin: 0;
-	padding: 0;
-	width: 32px;
-	border: none;
+  float: right;
+  margin: 0;
+  padding: 0;
+  width: 32px;
+  border: none;
 }
 .tabMenuButton span,
 .tabOverflowMenuButton span
 {
   margin: 3px 0 0 15px;
-	padding: 0;
+  padding: 0;
   display: inline-block;
   *display: inline;
   zoom: 1;
   outline: 0;
-	background-color: transparent;
+  background-color: transparent;
   background-image: url('QP8/tab_strip/sprite.png');
-	background-repeat: no-repeat;
-	border: none;
+  background-repeat: no-repeat;
+  border: none;
   width: 14px;
   height: 14px;
 }
 .tabMenuButton span img,
 .tabOverflowMenuButton span img
 {
-	width: 14px;
-	height: 14px;
-	border: none;
+  width: 14px;
+  height: 14px;
+  border: none;
   display: block;
 }
 
 
 .tabMenuButton span
 {
-	background-position: 0 -266px;
+  background-position: 0 -266px;
 }
 .tabMenuButton span.hover
 {
-	background-position: -14px -266px;
+  background-position: -14px -266px;
 }
 .tabMenuButton span.clicked
 {
-	background-position: -28px -266px;
+  background-position: -28px -266px;
 }
 
 .tabOverflowMenuButton span
 {
-	background-position: 0 -282px;
+  background-position: 0 -282px;
 }
 .tabOverflowMenuButton span.hover
 {
-	background-position: -14px -282px;
+  background-position: -14px -282px;
 }
 .tabOverflowMenuButton span.clicked
 {
-	background-position: -28px -282px;
+  background-position: -28px -282px;
 }
 /*#endregion*/
 
 /*#region BreadCrumbs*/
 .breadCrumbs
 {
-	float: left;
-	margin: 0;
-	padding: 2px 0;
-	width: 100%;
-	height: 22px;
-	background-color: #ebf5fb;
+  float: left;
+  margin: 0;
+  padding: 2px 0;
+  width: 100%;
+  height: 22px;
+  background-color: #ebf5fb;
 }
 
 .breadCrumbs ul
 {
-	float: left;
-	margin: 0;
-	padding: 0;
-	height: 22px;
-	list-style: none;
+  float: left;
+  margin: 0;
+  padding: 0;
+  height: 22px;
+  list-style: none;
 }
 
 .breadCrumbs li.item
 {
-	float: left;
-	margin: 0;
-	padding: 0 0 0 23px;
-	height: 100%;
-	background: transparent url('QP8/bread_crumbs/arrow.gif') no-repeat 9px 50%;
-	color: #000;
-	font: normal 12px/20px "Segoe UI", Arial, sans-serif;
+  float: left;
+  margin: 0;
+  padding: 0 0 0 23px;
+  height: 100%;
+  background: transparent url('QP8/bread_crumbs/arrow.gif') no-repeat 9px 50%;
+  color: #000;
+  font: normal 12px/20px "Segoe UI", Arial, sans-serif;
 }
 
 .breadCrumbs li.item > a,
 .breadCrumbs li.item > span
 {
-	top: 0;
-	margin: 0;
-	padding: 0 0 0 0;
+  top: 0;
+  margin: 0;
+  padding: 0 0 0 0;
     display: inline-block;
     *display: inline;
-	zoom: 1;
+  zoom: 1;
 }
 
 .breadCrumbs li.item a,
@@ -1294,54 +1294,54 @@ input[type="text"].readonly, textarea.readonly
 .breadCrumbs li.item a:hover,
 .breadCrumbs li.item a:active
 {
-	color: #0066d5;
-	text-decoration: underline;
-	cursor: pointer;
-	cursor: hand;
+  color: #0066d5;
+  text-decoration: underline;
+  cursor: pointer;
+  cursor: hand;
 }
 .breadCrumbs li.item a:hover
 {
-	color: #3399ff;
+  color: #3399ff;
 }
 
 .breadCrumbs ul.busy li.item a
 {
-	cursor: wait;
+  cursor: wait;
 }
 /*#endregion*/
 
 /*#region Toolbar*/
 .toolbar
 {
-	float: left;
-	margin: 0;
-	padding: 2px 4px;
-/*	width: 100%;*/
-	background-color: #bcc7d8;
+  float: left;
+  margin: 0;
+  padding: 2px 4px;
+/*  width: 100%;*/
+  background-color: #bcc7d8;
 }
 
 .toolbar ul
 {
-	float: left;
-	margin: 0;
-	padding: 0;
+  float: left;
+  margin: 0;
+  padding: 0;
 }
 
 .toolbar li.item,
 .toolbar a.link
 {
-	color: #000;
-	font: normal 12px/20px "Segoe UI", Arial, sans-serif;
+  color: #000;
+  font: normal 12px/20px "Segoe UI", Arial, sans-serif;
 }
 
 .toolbar li.item
 {
-	float: left;
+  float: left;
     position: relative;
     top: 0;
     margin: 0;
     padding: 0;
-	height: 22px;
+  height: 22px;
     display: inline-block;
     *display: inline;
     zoom: 1;
@@ -1350,7 +1350,7 @@ input[type="text"].readonly, textarea.readonly
 
 .toolbar li.item a
 {
-	cursor: default;
+  cursor: default;
 }
 
 .toolbar a.link,
@@ -1359,63 +1359,63 @@ input[type="text"].readonly, textarea.readonly
 .toolbar a.link:hover,
 .toolbar a.link:active
 {
-	margin: 0;
+  margin: 0;
     padding: 0;
-	height: 100%;
+  height: 100%;
     display: inline-block;
     *display: inline;
     zoom: 1;
     outline: 0;
-	text-decoration: none;
+  text-decoration: none;
 }
 
 .toolbar a.link span.outerWrapper,
 .toolbar a.link span.innerWrapper
 {
-	margin: 0;
+  margin: 0;
     padding: 0;
-	height: 100%;
+  height: 100%;
     display: inline-block;
     *display: inline;
     zoom: 1;
     outline: 0;
-	background: transparent url('QP8/toolbar/sprite.png') no-repeat 0 0;
+  background: transparent url('QP8/toolbar/sprite.png') no-repeat 0 0;
 }
 
 .toolbar span.icon
 {
-	position: relative;
-	top: 3px;
-	margin: 0;
-	padding: 0;
-	width: 16px;
-	height: 16px;
+  position: relative;
+  top: 3px;
+  margin: 0;
+  padding: 0;
+  width: 16px;
+  height: 16px;
     display: inline-block;
     *display: inline;
     zoom: 1;
     outline: 0;
-	background: transparent url('Common/0.gif') no-repeat center;
+  background: transparent url('Common/0.gif') no-repeat center;
 }
 .toolbar li.disabled span.icon
 {
-	opacity: 0.5;
-	filter: alpha(opacity=50);
+  opacity: 0.5;
+  filter: alpha(opacity=50);
 }
 .toolbar span.icon img
 {
-	margin: 0;
-	padding: 0;
-	width: 16px;
-	height: 16px;
-	border: none;
+  margin: 0;
+  padding: 0;
+  width: 16px;
+  height: 16px;
+  border: none;
 }
 
 .toolbar span.text
 {
-	position: relative;
-	top: -1px;
-	margin: 0;
-	padding: 0 0 0 4px;
+  position: relative;
+  top: -1px;
+  margin: 0;
+  padding: 0 0 0 4px;
     display: inline-block;
     *display: inline;
     zoom: 1;
@@ -1423,19 +1423,19 @@ input[type="text"].readonly, textarea.readonly
 }
 .toolbar li.disabled span.text
 {
-	color: #808080;
+  color: #808080;
 }
 .toolbar span.textOnly
 {
     position: static;
     margin: 0;
-	padding: 0;
+  padding: 0;
 }
 
 /* IE8 */
 .ie8 .toolbar span.textOnly
 {
-	margin-top: 1px;
+  margin-top: 1px;
 }
 
 .toolbar li.button a.link span.outerWrapper
@@ -1449,38 +1449,38 @@ input[type="text"].readonly, textarea.readonly
 
 .toolbar li.button a.link:hover span.outerWrapper
 {
-	background-position: 100% -26px;
+  background-position: 100% -26px;
 }
 .toolbar li.button a.link:hover span.innerWrapper
 {
-	background-position: 0 -26px;
+  background-position: 0 -26px;
 }
 
 .toolbar li.button a.clicked:hover span.outerWrapper
 {
-	background-position: 100% -50px;
+  background-position: 100% -50px;
 }
 .toolbar li.button a.clicked:hover span.innerWrapper
 {
-	background-position: 0 -50px;
+  background-position: 0 -50px;
 }
 
 .toolbar li.button a.checked span.outerWrapper
 {
-	background-position: 100% -74px;
+  background-position: 100% -74px;
 }
 .toolbar li.button a.checked span.innerWrapper
 {
-	background-position: 0 -74px;
+  background-position: 0 -74px;
 }
 
 .toolbar li.button a.checked:hover span.outerWrapper
 {
-	background-position: 100% -98px;
+  background-position: 100% -98px;
 }
 .toolbar li.button a.checked:hover span.innerWrapper
 {
-	background-position: 0 -98px;
+  background-position: 0 -98px;
 }
 
 .toolbar li.dropDown
@@ -1489,30 +1489,30 @@ input[type="text"].readonly, textarea.readonly
 
 .toolbar li.dropDown span.button
 {
-	position: relative;
-	top: -1px;
-	margin: 0 3px 0 3px;
-	padding: 0;
+  position: relative;
+  top: -1px;
+  margin: 0 3px 0 3px;
+  padding: 0;
 }
 .toolbar li.dropDown span.button > span.icon
 {
-	position: relative;
-	top: 0;
+  position: relative;
+  top: 0;
 }
 .toolbar li.dropDown span.button > span.text
 {
-	position: relative;
-	top: -4px;
+  position: relative;
+  top: -4px;
 }
 
 .toolbar li.dropDown span.arrow
 {
-	margin: 0;
-	padding: 0;
-	width: 11px;
-	height: 100%;
-	border-left: 1px solid transparent;
-	background: transparent url('QP8/toolbar/sprite.png') no-repeat -1px -146px;
+  margin: 0;
+  padding: 0;
+  width: 11px;
+  height: 100%;
+  border-left: 1px solid transparent;
+  background: transparent url('QP8/toolbar/sprite.png') no-repeat -1px -146px;
     display: inline-block;
     *display: inline;
     zoom: 1;
@@ -1520,142 +1520,142 @@ input[type="text"].readonly, textarea.readonly
 }
 .toolbar li.dropDown span.arrow img
 {
-	width: 10px;
-	height: 20px;
-	border: none;
+  width: 10px;
+  height: 20px;
+  border: none;
 }
 
 .toolbar li.dropDown a.link:hover span.outerWrapper
 {
-	background-position: 100% -26px;
+  background-position: 100% -26px;
 }
 .toolbar li.dropDown a.link:hover span.innerWrapper
 {
-	background-position: 0 -26px;
+  background-position: 0 -26px;
 }
 .toolbar li.dropDown a.link:hover span.arrow
 {
-	border-left-color: #e5c365;
-	background-position: -12px -146px;
+  border-left-color: #e5c365;
+  background-position: -12px -146px;
 }
 
 .toolbar li.dropDown a.arrowClicked span.outerWrapper,
 .toolbar li.dropDown a.arrowClicked:hover span.outerWrapper
 {
-	background-position: 100% -50px;
+  background-position: 100% -50px;
 }
 .toolbar li.dropDown a.arrowClicked span.innerWrapper,
 .toolbar li.dropDown a.arrowClicked:hover span.innerWrapper
 {
-	background-position: 0 -50px;
+  background-position: 0 -50px;
 }
 .toolbar li.dropDown a.arrowClicked span.arrow,
 .toolbar li.dropDown a.arrowClicked:hover span.arrow
 {
-	border-left-color: transparent;
-	background-position: -23px -146px;
+  border-left-color: transparent;
+  background-position: -23px -146px;
 }
 
 .toolbar li.dropDown a.buttonClicked:hover span.outerWrapper
 {
-	background-position: 100% -50px;
+  background-position: 100% -50px;
 }
 .toolbar li.dropDown a.buttonClicked:hover span.innerWrapper
 {
-	background-position: 0 -50px;
+  background-position: 0 -50px;
 }
 .toolbar li.dropDown a.buttonClicked:hover span.arrow
 {
-	border-left-color: #e5c365;
-	background-position: -12px -146px;
+  border-left-color: #e5c365;
+  background-position: -12px -146px;
 }
 
 .toolbar li.dropDown .list
 {
-	position: fixed;
-	z-index: 9999999;
-	margin: 0;
-	padding: 2px 0;
-	width: 185px;
-	display: none;
-	border: solid 1px #9ba7b7;
-	background: #e0e5ea url('QP8/toolbar/background.png') repeat-y;
+  position: fixed;
+  z-index: 9999999;
+  margin: 0;
+  padding: 2px 0;
+  width: 185px;
+  display: none;
+  border: solid 1px #9ba7b7;
+  background: #e0e5ea url('QP8/toolbar/background.png') repeat-y;
 }
 .toolbar li.dropDown .list ul
 {
-	float: none;
-	height: auto;
+  float: none;
+  height: auto;
 }
 .toolbar li.dropDown .list > ul > li.item
 {
-	float: none;
-	display: block;
-	margin: 0;
-	padding: 0;
-	height: 22px;
-	vertical-align: top;
-	list-style: none none outside;
-	line-height: normal;
-	font: normal 12px/23px "Segoe UI", Arial, sans-serif;
-	color: #000;
-	text-decoration: none;
-	cursor: default;
+  float: none;
+  display: block;
+  margin: 0;
+  padding: 0;
+  height: 22px;
+  vertical-align: top;
+  list-style: none none outside;
+  line-height: normal;
+  font: normal 12px/23px "Segoe UI", Arial, sans-serif;
+  color: #000;
+  text-decoration: none;
+  cursor: default;
 }
 .toolbar li.dropDown .list ul > li.item .outerWrapper
 {
-	margin: 0 2px;
-	padding: 0;
-	height: 22px;
-	background: none;
+  margin: 0 2px;
+  padding: 0;
+  height: 22px;
+  background: none;
 }
 .toolbar li.dropDown .list ul > li.item .innerWrapper
 {
-	margin: 0;
-	padding: 0;
-	height: 22px;
-	background: none;
+  margin: 0;
+  padding: 0;
+  height: 22px;
+  background: none;
 }
 .toolbar li.dropDown .list ul > li.item span.icon
 {
-	float: left;
-	position: relative;
-	top: 1px;
-	margin: 0 3px 0 3px;
-	padding: 1px;
-	width: 16px;
-	height: 16px;
-	border: 1px solid transparent;
-	background-repeat: no-repeat;
+  float: left;
+  position: relative;
+  top: 1px;
+  margin: 0 3px 0 3px;
+  padding: 1px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid transparent;
+  background-repeat: no-repeat;
 }
 .toolbar li.dropDown .list span.text
 {
-	position: relative;
-	top: 0;
-	margin: 0 0 0 8px;
-	padding: 0;
+  position: relative;
+  top: 0;
+  margin: 0 0 0 8px;
+  padding: 0;
 }
 .toolbar li.dropDown .list ul > li.selected span.icon
 {
-	background-color: #ffefbb;
-	border-color: #e5c365;
+  background-color: #ffefbb;
+  border-color: #e5c365;
 }
 
 .toolbar li.dropDown .list > ul > li.item:hover .outerWrapper
 {
-	background: transparent url('QP8/toolbar/outer_content_hover.png') no-repeat left;
+  background: transparent url('QP8/toolbar/outer_content_hover.png') no-repeat left;
 }
 .toolbar li.dropDown .list > ul > li.item:hover .innerWrapper
 {
-	background: transparent url('QP8/toolbar/inner_content_hover.png') no-repeat right;
+  background: transparent url('QP8/toolbar/inner_content_hover.png') no-repeat right;
 }
 .toolbar li.dropDown .list > ul > li.disabled
 {
-	color: #999;
+  color: #999;
 }
 /* IE8 */
 .ie8 .toolbar li.dropDown .list > ul > li.item
 {
-	margin-top: -1px;
+  margin-top: -1px;
 }
 
 .toolbar li.disabled a.link:hover span.outerWrapper,
@@ -1667,7 +1667,7 @@ input[type="text"].readonly, textarea.readonly
 .toolbar li.disabled a.checked:hover span.outerWrapper,
 .toolbar li.disabled a.checked:hover span.innerWrapper
 {
-	background-position: 0 0;
+  background-position: 0 0;
 }
 .toolbar li.disabled a.link span.arrow,
 .toolbar li.disabled a.link:hover span.arrow,
@@ -1675,18 +1675,18 @@ input[type="text"].readonly, textarea.readonly
 .toolbar li.disabled a.arrowClicked:hover span.arrow,
 .toolbar li.disabled a.buttonClicked:hover span.arrow
 {
-	background-position: -34px -146px;
-	border-color: transparent;
+  background-position: -34px -146px;
+  border-color: transparent;
 }
 
 .toolbar li.separator
 {
-	float: left;
+  float: left;
     position: relative;
     margin: 0 2px;
     padding: 0;
     width: 3px;
-	height: 100%;
+  height: 100%;
     display: inline-block;
     *display: inline;
     zoom: 1;
@@ -1696,60 +1696,60 @@ input[type="text"].readonly, textarea.readonly
 
 .toolbar ul.busy li.item a
 {
-	cursor: wait;
+  cursor: wait;
 }
 /*#endregion*/
 
 /*#region Search Block*/
 .searchBlock
 {
-	padding: .3em .5em;
-	height: 0;
-	overflow: auto;
+  padding: .3em .5em;
+  height: 0;
+  overflow: auto;
 }
 
 .fieldNameBlock
 {
-	font-weight:bolder;
-	padding: 0 0.5em;
+  font-weight:bolder;
+  padding: 0 0.5em;
 }
 
 div.fieldSearchContainerContent
 {
-	margin: 0;
-	padding: 0.3em 0.5em;
+  margin: 0;
+  padding: 0.3em 0.5em;
 }
-		.fieldSearchContainerContent fieldset
-		{
-			padding: 0 0.8em 0.8em 0.8em;
-		}
+    .fieldSearchContainerContent fieldset
+    {
+      padding: 0 0.8em 0.8em 0.8em;
+    }
 
- 		.fieldSearchContainerContent div.row
-		{
-			overflow: hidden;
-		}
- 		.fieldSearchContainerContent dt.label
-		{
-			width: 6em;
-		}
+    .fieldSearchContainerContent div.row
+    {
+      overflow: hidden;
+    }
+    .fieldSearchContainerContent dt.label
+    {
+      width: 6em;
+    }
 
-		.fieldSearchContainerContent dd.field
-		{
-			margin-left: 5.0em;
-		}
+    .fieldSearchContainerContent dd.field
+    {
+      margin-left: 5.0em;
+    }
         .fieldSearchContainerContent input.textbox,
         .fieldSearchContainerContent .t-numerictextbox .t-input,
         .fieldSearchContainerContent select.dropDownList
         {
-			width: 250px;
-			vertical-align: middle;
+      width: 250px;
+      vertical-align: middle;
         }
 
         .fieldSearchContainerContent input.identifier,
         .fieldSearchContainerContent textarea.identifier-list
         {
             width: 265px !important;
-			vertical-align: middle;
+      vertical-align: middle;
         }
 
         .fieldSearchContainerContent textarea.identifier-list
@@ -1762,38 +1762,38 @@ div.fieldSearchContainerContent
             width: 98%;
             height: 60px;
         }
-		.formLayout input.button.closeFilter, .formLayout input.button.closeAndApplyFilter
-		{
-			margin: 0.3em 0.5em;
-		}
+    .formLayout input.button.closeFilter, .formLayout input.button.closeAndApplyFilter
+    {
+      margin: 0.3em 0.5em;
+    }
 
     .searchBlock div.articleSearchRegion
     {
     }
-		.searchBlock div.articleSearchRegion fieldset
-		{
-			padding: 0 0.8em 0.8em 0.8em;
-		}
+    .searchBlock div.articleSearchRegion fieldset
+    {
+      padding: 0 0.8em 0.8em 0.8em;
+    }
 
- 		.searchBlock div.articleSearchRegion div.row
-		{
-			overflow: hidden;
-		}
- 		.searchBlock div.articleSearchRegion dt.label
-		{
-			width: 4.0em;
-		}
+    .searchBlock div.articleSearchRegion div.row
+    {
+      overflow: hidden;
+    }
+    .searchBlock div.articleSearchRegion dt.label
+    {
+      width: 4.0em;
+    }
 
-		.searchBlock div.articleSearchRegion dd.field
-		{
-			margin-left: 5.0em;
-		}
+    .searchBlock div.articleSearchRegion dd.field
+    {
+      margin-left: 5.0em;
+    }
         .searchBlock div.articleSearchRegion input.textbox,
         .searchBlock div.articleSearchRegion .t-numerictextbox .t-input,
         .searchBlock div.articleSearchRegion select.dropDownList
         {
-			width: 250px;
-			vertical-align: middle;
+      width: 250px;
+      vertical-align: middle;
         }
 
         .searchBlock div.articleSearchRegion div.fullTextBlock
@@ -1805,14 +1805,14 @@ div.fieldSearchContainerContent
         }
         .searchBlock div.articleSearchRegion div.fieldSearchSelector div.fieldList
         {
-        	float: left;
+          float: left;
         }
         .searchBlock div.articleSearchRegion div.fieldSearchSelector div.addFieldButtonContainer
         {
-        	position: relative;
-        	float: left;
-        	top: -2px;
-        	margin: 0 0 0 0.4em;
+          position: relative;
+          float: left;
+          top: -2px;
+          margin: 0 0 0 0.4em;
         }
 
 
@@ -1824,64 +1824,63 @@ div.fieldSearchContainerContent
 
         .searchBlock div.articleSearchRegion div.fieldSearchList
         {
-        	position: relative;
+          position: relative;
             overflow: hidden;
         }
 
 
         .searchBlock div.articleSearchRegion div.fieldSearchContainer
         {
-        	margin-top: 0.5em;
-        	margin-right: 0.7em;
-        	padding: 0;
-			border: 1px solid #a5b3c5;
-			display: inline-block;
-			*display: inline;
-			zoom: 1;
+          margin-top: 0.5em;
+          margin-right: 0.7em;
+          padding: 0;
+      border: 1px solid #a5b3c5;
+      display: inline-block;
+      *display: inline;
+      zoom: 1;
         }
         .searchBlock div.articleSearchRegion div.fieldSearchContainerHeader
-		{
-			margin: 0;
-			padding: 0.3em 0.3em 0.3em 0.5em;
-			background-color: #bcc7d8;
-		}
-		.searchBlock div.articleSearchRegion div.fieldSearchContainerHeader .title
-		{
-			float: left;
-			padding-right: 0.7em;
-		}
-		.searchBlock div.articleSearchRegion div.fieldSearchContainerHeader .closeButton
-		{
-			float: right;
-			height: 16px;
-			width: 16px;
-			background: transparent url("QP8/search_block/close.gif") no-repeat 3px 3px;
-			cursor: hand;
-			cursor: pointer;
-		}
+    {
+      margin: 0;
+      padding: 0.3em 0.3em 0.3em 0.5em;
+      background-color: #bcc7d8;
+    }
+    .searchBlock div.articleSearchRegion div.fieldSearchContainerHeader .title
+    {
+      float: left;
+      padding-right: 0.7em;
+    }
+    .searchBlock div.articleSearchRegion div.fieldSearchContainerHeader .closeButton
+    {
+      float: right;
+      height: 16px;
+      width: 16px;
+      background: transparent url("QP8/search_block/close.gif") no-repeat 3px 3px;
+      cursor: hand;
+      cursor: pointer;
+    }
 
 .searchBottomHandle
 {
-	position: relative;
-	z-index: 5555;
-	left: 0;
-	bottom: 0;
-	height: 9px;
-	border: 1px solid #a5b3c5;
-	overflow: hidden;
-	background: #ebf5fb url('QP8/search_block/bottom_handle.png') no-repeat scroll center 2px;
-	cursor: s-resize;
+  position: relative;
+  left: 0;
+  bottom: 0;
+  height: 9px;
+  border: 1px solid #a5b3c5;
+  overflow: hidden;
+  background: #ebf5fb url('QP8/search_block/bottom_handle.png') no-repeat scroll center 2px;
+  cursor: s-resize;
 }
 .searchBottomHandle.active
 {
-	background-color: #fff3cf;
+  background-color: #fff3cf;
 }
 /*#endregion*/
 
 /*#region Preview Image Window*/
 .previewImage
 {
-	text-align: center;
+  text-align: center;
 }
 /*#endregion*/
 
@@ -1891,14 +1890,14 @@ div.fieldSearchContainerContent
 }
 .popupWindow .t-window-content
 {
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .ie9 .popupWindow .t-window-content
 {
-	overflow:inherit;
+  overflow:inherit;
 }
 
 .popupWindow .t-resize-n { width: 100%; }
@@ -1923,21 +1922,21 @@ div.fieldSearchContainerContent
 {
     margin: 0;
     padding: 0;
-	height: 26px;
+  height: 26px;
     background-color: #bcc7d8;
 }
 .popupWindow .actionToolbarWrapper
 {
-	float: left;
+  float: left;
 }
 .popupWindow .viewToolbarWrapper
 {
-	float: right;
+  float: right;
 }
 
 .popupWindow .searchWrapper
 {
-	background-color: #ebf5fb;
+  background-color: #ebf5fb;
 }
 
 .popupWindow .area
@@ -1969,11 +1968,11 @@ div.fieldSearchContainerContent
 }
 
 .popupWindow .area .documentWrapper.libraryWrapper
-	{
-		padding-top: 0;
-		overflow:hidden;
-		height: 100%;
-	}
+  {
+    padding-top: 0;
+    overflow:hidden;
+    height: 100%;
+  }
     .popupWindow .area .documentWrapper.ImportWrapper .relatedFieldsArray
     {
         padding-left:25px;
@@ -1988,68 +1987,68 @@ div.fieldSearchContainerContent
 /*#region Trace Window*/
 .traceWindow .area
 {
-	position: relative;
-	margin: 0;
-	padding: 0;
-	border: 1px solid #ccc;
-	overflow: scroll;
-	overflow-x: hidden;
-	overflow-y: scroll;
-	background-color: #fff;
-	color: #333;
-	font: normal 11px Consolas, Monaco, "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
-	text-align: left;
+  position: relative;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+  overflow: scroll;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: #fff;
+  color: #333;
+  font: normal 11px Consolas, Monaco, "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
+  text-align: left;
 }
 .traceWindow .area div
 {
-	margin-top: -24px;
-	padding: 5px 5px 5px 5px;
-	border-bottom: 1px solid #ddd;
-	background-color: #ffffd0;
+  margin-top: -24px;
+  padding: 5px 5px 5px 5px;
+  border-bottom: 1px solid #ddd;
+  background-color: #ffffd0;
 }
 /*#endregion*/
 
 /*#region Search  */
 .formLayout div.simpleSeachBlock
 {
-	background-color: #EBF5FB;
-	border-style: solid;
-	border-color: #A5B3C5;
-	border-width: 1px 1px 0 1px;
-	padding: 0.3em 0.5em;
+  background-color: #EBF5FB;
+  border-style: solid;
+  border-color: #A5B3C5;
+  border-width: 1px 1px 0 1px;
+  padding: 0.3em 0.5em;
 }
 
 .actionPermission .formLayout div.simpleSeachBlock
 {
-	border: 1px solid #A5B3C5;
-	margin-bottom: 0.5em;
+  border: 1px solid #A5B3C5;
+  margin-bottom: 0.5em;
 }
 /*#endregion*/
 
 /*#region Search In All Articles */
 span.seachResultHighlight
 {
-	font-weight:bold;
-	background-color: #ff9900;
+  font-weight:bold;
+  background-color: #ff9900;
 }
 
 .formLayout div.simpleSeachBlock input.textbox
 {
-	width: 30em;
+  width: 30em;
 }
 /*#endregion*/
 
 /*#region Audit  */
 .alMainContaner div.simpleSeachBlock select.alFilterCombo
 {
-	width: 15em;
-	margin-right: 4px;
+  width: 15em;
+  margin-right: 4px;
 }
 
 .alTilesContainer
 {
-	padding-bottom: 4px;
-	padding-left: 2px;
+  padding-bottom: 4px;
+  padding-left: 2px;
 }
 
 .alTilesContainer .filterTile
@@ -2057,38 +2056,38 @@ span.seachResultHighlight
     margin-top: 0.5em;
     margin-right: 0.7em;
     padding: 0;
-	border: 1px solid #a5b3c5;
-	display: inline-block;
-	*display: inline;
-	zoom: 1;
+  border: 1px solid #a5b3c5;
+  display: inline-block;
+  *display: inline;
+  zoom: 1;
 }
 
 .alTilesContainer .filterTile .filterTileContent
 {
-	margin: 0;
-	padding: 0.3em 0.3em 0.3em 0.5em;
-	background-color: #bcc7d8;
+  margin: 0;
+  padding: 0.3em 0.3em 0.3em 0.5em;
+  background-color: #bcc7d8;
 }
 .alTilesContainer .filterTile .filterTileContent .title
 {
-	float: left;
-	padding-right: 0.7em;
+  float: left;
+  padding-right: 0.7em;
 }
 
 .alTilesContainer .filterTile .filterTileContent .closeButton
 {
-	float: right;
-	height: 16px;
-	width: 16px;
-	background: transparent url("QP8/search_block/close.gif") no-repeat 3px 3px;
-	cursor: hand;
-	cursor: pointer;
+  float: right;
+  height: 16px;
+  width: 16px;
+  background: transparent url("QP8/search_block/close.gif") no-repeat 3px 3px;
+  cursor: hand;
+  cursor: pointer;
 }
 
 .alFilter .filterContainer
 {
-	margin: 0;
-	padding: 0.3em 0.5em;
+  margin: 0;
+  padding: 0.3em 0.5em;
 }
 /*#endregion*/
 
@@ -2120,8 +2119,8 @@ span.seachResultHighlight
 .formLayout .contextBlock fieldset {
     padding: 0 0.8em 0.8em;
     width: 30em;
-	height: 6em;
-	vertical-align: middle;
+  height: 6em;
+  vertical-align: middle;
     display: inline;
 }
 
@@ -2134,14 +2133,14 @@ span.seachResultHighlight
 /*#region Library */
 .library
 {
-	height: 100%;
+  height: 100%;
 }
 
 .library .l-splitter
 {
-	height: 100%;
-	border: none;
-	background-color:White;
+  height: 100%;
+  border: none;
+  background-color:White;
 }
 
 .library .vsplitbar
@@ -2167,17 +2166,17 @@ span.seachResultHighlight
 
 .library .l-grid, .library .l-list, .library .l-thumb
 {
-	display: none;
+  display: none;
 }
 
 .library .l-rightPanel
 {
-	margin-right: 11px;
+  margin-right: 11px;
 }
 
 .l-searchBlock, .l-infoBlock
 {
-	background-color: #EBF5FB;
+  background-color: #EBF5FB;
     border-color: #A5B3C5 #A5B3C5;
     border-style: solid solid none;
     border-width: 1px 1px 0;
@@ -2185,237 +2184,237 @@ span.seachResultHighlight
 }
 
 .l-searchBlock label {
-	margin: 0 0 0.5em 0;
-	padding: 0 3px 0 3px;
-	text-align:center;
+  margin: 0 0 0.5em 0;
+  padding: 0 3px 0 3px;
+  text-align:center;
 }
 
 .l-searchBlock select, .l-searchBlock input[type='text']
 {
-	width: 12em;
+  width: 12em;
 }
 
 .l-searchBlock input[type='button']
 {
-	border: 1px solid #909090;
-	margin-bottom: 0.3em;
+  border: 1px solid #909090;
+  margin-bottom: 0.3em;
     margin-top: 0.3em;
     width: auto;
 }
 
  .l-searchBlock .l-pl-uploader-container
  {
-	margin-bottom: 0.3em;
+  margin-bottom: 0.3em;
     margin-top: 0.3em;
     width: auto;
 }
 
 .l-infoBlock .l-info
 {
-	margin-top: 0.3em;
-	margin-bottom: 0.3em;
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
 }
 
 .l-html-uploader
 {
-	overflow-x: hidden;
+  overflow-x: hidden;
     overflow-y: auto;
     max-height: 150px;
 }
 
 .l-html-uploader .t-dropzone
 {
-	padding: 0 0 0 0.3em;
+  padding: 0 0 0 0.3em;
 }
 
 .fileList
 {
-	border-color: #AEC5D1;
-	border-style: solid;
-	border-width: 1px 1px 0;
+  border-color: #AEC5D1;
+  border-style: solid;
+  border-width: 1px 1px 0;
 }
 
-	.fileList .fileListArea
-	{
+  .fileList .fileListArea
+  {
 
-	}
+  }
 
-		.fileList .fileListArea .fileListHeader
-		{
-			background-color: #F1F5FB;
-			border-color: #AEC5D1;
-			border-style: solid;
-			border-width: 0 0 1px;
-			padding: 0.2em 0.7em;
-		}
+    .fileList .fileListArea .fileListHeader
+    {
+      background-color: #F1F5FB;
+      border-color: #AEC5D1;
+      border-style: solid;
+      border-width: 0 0 1px;
+      padding: 0.2em 0.7em;
+    }
 
-			.fileList .fileListArea .fileListHeader .fileListAllSelector
-			{
-			}
+      .fileList .fileListArea .fileListHeader .fileListAllSelector
+      {
+      }
 
-		.fileList .fileListArea .fileListContent
-		{
-			border-color: #AEC5D1;
-			border-style: solid;
-			border-width: 0 0 1px;
-		}
+    .fileList .fileListArea .fileListContent
+    {
+      border-color: #AEC5D1;
+      border-style: solid;
+      border-width: 0 0 1px;
+    }
 
-	.fileList .fileListPager
-	{
-		border-width: 0;
-	}
+  .fileList .fileListPager
+  {
+    border-width: 0;
+  }
 
 
 .fileListNameContainer
 {
-	padding:0.5em;
-	overflow:hidden;
+  padding:0.5em;
+  overflow:hidden;
 }
-	.fileListNameContainer ul
-	{
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
+  .fileListNameContainer ul
+  {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 
-	.fileListNameContainer .column
-	{
-		float:left;
-		width:31%;
-	}
+  .fileListNameContainer .column
+  {
+    float:left;
+    width:31%;
+  }
 
-	.fileListNameContainer .fileItem
-	{
-		width:20em;
-		padding-left:0.4em;
-		padding-top:0.1em;
-		padding-bottom:0.1em;
-		margin:0.2em;
-	}
-	.fileListNameContainer .fileItem:hover
-	{
-		background: none repeat scroll 0 0 #FFF3CF;
-	}
+  .fileListNameContainer .fileItem
+  {
+    width:20em;
+    padding-left:0.4em;
+    padding-top:0.1em;
+    padding-bottom:0.1em;
+    margin:0.2em;
+  }
+  .fileListNameContainer .fileItem:hover
+  {
+    background: none repeat scroll 0 0 #FFF3CF;
+  }
 
-	.fileListNameContainer .fileItem-selected
-	{
-		background: none repeat scroll 0 0 #FFE8A6 !important;
-	}
-		.fileListNameContainer .fileItem input[type='checkbox']
-		{
-			margin:0;
-			padding-left: 0;
-			padding-right: 0;
-			vertical-align: middle;
-		}
-		.fileListNameContainer .fileItem label
-		{
-			vertical-align:middle;
-			padding-left: 0.5em;
-		}
+  .fileListNameContainer .fileItem-selected
+  {
+    background: none repeat scroll 0 0 #FFE8A6 !important;
+  }
+    .fileListNameContainer .fileItem input[type='checkbox']
+    {
+      margin:0;
+      padding-left: 0;
+      padding-right: 0;
+      vertical-align: middle;
+    }
+    .fileListNameContainer .fileItem label
+    {
+      vertical-align:middle;
+      padding-left: 0.5em;
+    }
 
-		.fileListNameContainer .fileItem img
-		{
-			margin:0;
-			padding-left: 0;
-			padding-right: 0;
-			vertical-align: middle;
-			padding-left: 0.5em;
-		}
+    .fileListNameContainer .fileItem img
+    {
+      margin:0;
+      padding-left: 0;
+      padding-right: 0;
+      vertical-align: middle;
+      padding-left: 0.5em;
+    }
 
 .fileListPreviewContainer
 {
-	padding:0.5em;
-	overflow-x: hidden;
+  padding:0.5em;
+  overflow-x: hidden;
     overflow-y: auto;
 
     max-height: 550px;
 }
-	.fileListPreviewContainer .fileItem
-	{
-		border: 1px solid;
-		border-color: #D3D3D3;
-		float: left;
-		margin: 0.4em;
-		overflow: hidden;
-		padding: 0.3em;
-		padding-top: 0.4em;
-		text-align: center;
-		width: 110px;
-		background: none repeat scroll 0 0 white;
-	}
+  .fileListPreviewContainer .fileItem
+  {
+    border: 1px solid;
+    border-color: #D3D3D3;
+    float: left;
+    margin: 0.4em;
+    overflow: hidden;
+    padding: 0.3em;
+    padding-top: 0.4em;
+    text-align: center;
+    width: 110px;
+    background: none repeat scroll 0 0 white;
+  }
 
-	.fileListPreviewContainer .fileItem:hover
-	{
-		background: none repeat scroll 0 0 #FFF3CF;
-	}
+  .fileListPreviewContainer .fileItem:hover
+  {
+    background: none repeat scroll 0 0 #FFF3CF;
+  }
 
-	.fileListPreviewContainer .fileItem-selected
-	{
-		background: none repeat scroll 0 0 #FFE8A6 !important;
-	}
+  .fileListPreviewContainer .fileItem-selected
+  {
+    background: none repeat scroll 0 0 #FFE8A6 !important;
+  }
 
-	.fileListPreviewContainer .fileItem .preview
-	{
-		width: 100px;
-		height: 100px;
-		margin: auto;
-		background: none no-repeat scroll 50% 50% transparent;
-		overflow: hidden;
-	}
+  .fileListPreviewContainer .fileItem .preview
+  {
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    background: none no-repeat scroll 50% 50% transparent;
+    overflow: hidden;
+  }
 
 
-	.fileListPreviewContainer .fileItem h5
-	{
-		display: block;
-		font-weight: normal;
-		overflow: hidden;
-		white-space: nowrap;
-		margin:0;
-		padding-bottom: 0.3em;
-	}
+  .fileListPreviewContainer .fileItem h5
+  {
+    display: block;
+    font-weight: normal;
+    overflow: hidden;
+    white-space: nowrap;
+    margin:0;
+    padding-bottom: 0.3em;
+  }
 
-	.fileListPreviewContainer .fileItem span
-	{
-		display: block;
-		font-weight: normal;
-		overflow: hidden;
-		white-space: nowrap;
-		margin:0;
-	}
+  .fileListPreviewContainer .fileItem span
+  {
+    display: block;
+    font-weight: normal;
+    overflow: hidden;
+    white-space: nowrap;
+    margin:0;
+  }
 
-	.fileListPreviewContainer .fileItem input[type='checkbox']
-	{
-		margin-top:0;
-		padding-left: 0;
-		padding-right: 0;
-		display:block;
-	}
+  .fileListPreviewContainer .fileItem input[type='checkbox']
+  {
+    margin-top:0;
+    padding-left: 0;
+    padding-right: 0;
+    display:block;
+  }
 
-	.fileListPreviewContainer .fileItem ul
-	{
-		margin:0;
-		padding:0;
-		list-style: none outside none;
-	}
+  .fileListPreviewContainer .fileItem ul
+  {
+    margin:0;
+    padding:0;
+    list-style: none outside none;
+  }
 /*#endregion */
 
 /*#region Warning */
 
 .warning
 {
-	padding: 3px;
+  padding: 3px;
 }
 
 .warning .w-item
 {
-	display: inline-block;
-	vertical-align: middle;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .warning span.w-item
 {
-	padding: 0 0.4em 0 0;
+  padding: 0 0.4em 0 0;
 }
 
 
@@ -2429,14 +2428,14 @@ span.seachResultHighlight
 
 .t-treeview.checkboxTree .t-in.t-state-selected
 {
-	background-color: inherit;
-	border-color: transparent;
+  background-color: inherit;
+  border-color: transparent;
 }
 
 .t-treeview.checkboxTree .t-in.t-state-selected:hover
 {
-	background-color: #D1E4FC;
-	border-color: #8DAED5;
+  background-color: #D1E4FC;
+  border-color: #8DAED5;
 }
 /*#endregion*/
 
@@ -2477,8 +2476,8 @@ span.seachResultHighlight
 
 .progressbar-value
 {
-	background: green;
-	width: 0px;
+  background: green;
+  width: 0px;
 }
 
 
@@ -2497,12 +2496,12 @@ span.seachResultHighlight
 /*#region Long Operation Window */
 .lop-main
 {
-	margin: 0 10px
+  margin: 0 10px
 }
 
 .lop-action-name
 {
-	font-size: 1.5em;
+  font-size: 1.5em;
 }
 
 .lop-info
@@ -2511,42 +2510,42 @@ span.seachResultHighlight
 
 .lop-info dt
 {
-	float: left;
-	width: 15em;
-	display: block;
+  float: left;
+  width: 15em;
+  display: block;
 }
 
 .lop-info dd
 {
-	display: block;
-	height: 1em;
+  display: block;
+  height: 1em;
 }
 
 .lop-pbar-container
 {
-	border: 1px solid #A5B3C5;
-	margin-top: 20px;
+  border: 1px solid #A5B3C5;
+  margin-top: 20px;
 }
 
 .lop-cancel-container
 {
-	float: right;
-	margin-top: 20px;
+  float: right;
+  margin-top: 20px;
 }
 /*#endregion*/
 
 /*#region Long Operation Window */
 .aggregationListContainer table
 {
-	padding-top: 0.7em;
+  padding-top: 0.7em;
 }
 
 .aggregationListContainer th
 {
-	text-align: left;
-	vertical-align: bottom;
-	white-space: normal;
-	font-weight: normal;
+  text-align: left;
+  vertical-align: bottom;
+  white-space: normal;
+  font-weight: normal;
 }
 /*#endregion*/
 

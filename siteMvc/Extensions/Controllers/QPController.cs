@@ -90,52 +90,86 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             return new JsonNetResult<object>(new { success = false, message = msg });
         }
 
+        private void PersistToHttpContext(string key, int item)
+        {
+            ControllerContext.HttpContext.Items[key] = item;
+        }
+
+        private void PersistToHttpContext(string key, Guid item)
+        {
+            ControllerContext.HttpContext.Items[key] = item.ToString();
+        }
+
+        private void PersistToHttpContext(string key, string item)
+        {
+            ControllerContext.HttpContext.Items[key] = item;
+        }
+
+        private void PersistToHttpContext<T>(string key, IReadOnlyCollection<T> items)
+        {
+            if (items != null && items.Count > 0)
+            {
+                PersistToHttpContext(key, string.Join(",", items));
+            }
+        }
+
         public void PersistFromId(int id)
         {
-            ControllerContext.HttpContext.Items["FROM_ID"] = id;
+            PersistToHttpContext("FROM_ID", id);
         }
 
         public void PersistFromId(int id, Guid guid)
         {
-            PersistFromId(id);
-            ControllerContext.HttpContext.Items["FROM_GUID"] = guid;
+            PersistToHttpContext("FROM_ID", id);
+            PersistToHttpContext("FROM_GUID", guid.ToString());
+        }
+
+        public void PersistFromIds(int[] ids)
+        {
+            PersistToHttpContext("FROM_ID", ids);
+        }
+
+        public void PersistFromIds(int[] ids, Guid[] guids)
+        {
+            PersistToHttpContext("FROM_ID", ids);
+            PersistToHttpContext("FROM_GUID", guids);
         }
 
         public void PersistResultId(int id)
         {
             BackendActionContext.Current.ResetEntityId(id);
-            ControllerContext.HttpContext.Items["RESULT_ID"] = id;
+            PersistToHttpContext("RESULT_ID", id);
         }
 
         public void PersistResultId(int id, Guid guid)
         {
             PersistResultId(id);
-            ControllerContext.HttpContext.Items["RESULT_GUID"] = guid;
+            PersistToHttpContext("RESULT_GUID", guid.ToString());
         }
 
         public void PersistActionCode(string name)
         {
-            ControllerContext.HttpContext.Items["ACTION_CODE"] = name;
+            PersistToHttpContext("ACTION_CODE", name);
         }
 
         public void PersistLinkId(int? oldLinkId, int? newLinkId)
         {
             if (newLinkId.HasValue && newLinkId.Value > 0 && (!oldLinkId.HasValue || oldLinkId.Value != newLinkId.Value))
             {
-                ControllerContext.HttpContext.Items["NEW_LINK_ID"] = newLinkId.Value;
+                PersistToHttpContext("NEW_LINK_ID", newLinkId.Value);
             }
         }
 
         public void PersistActionId(int id)
         {
-            ControllerContext.HttpContext.Items["ACTION_ID"] = id;
+            PersistToHttpContext("ACTION_ID", id);
         }
 
         public void PersistDefaultFormatId(int? defaultFormatId)
         {
             if (defaultFormatId.HasValue)
             {
-                ControllerContext.HttpContext.Items["DEFAULT_FORMAT_ID"] = defaultFormatId.Value;
+                PersistToHttpContext("DEFAULT_FORMAT_ID", defaultFormatId.Value);
             }
         }
 
@@ -143,66 +177,50 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         {
             if (newBackward != null && newBackward.Id > 0 && (oldBackward == null || oldBackward.Id == 0))
             {
-                ControllerContext.HttpContext.Items["NEW_BACKWARD_ID"] = newBackward.Id;
-            }
-        }
-
-        private void PersistIds(string key, IReadOnlyCollection<int> ids)
-        {
-            if (ids != null && ids.Count > 0)
-            {
-                ControllerContext.HttpContext.Items[key] = string.Join(",", ids);
-            }
-        }
-
-        private void PersistIds(string key, int[] oldIds, IReadOnlyCollection<int> ids)
-        {
-            if (ids != null && ids.Count > 0)
-            {
-                ControllerContext.HttpContext.Items[key] = string.Join(",", oldIds != null ? ids.Except(oldIds) : ids);
+                PersistToHttpContext("NEW_BACKWARD_ID", newBackward.Id);
             }
         }
 
         public void PersistFieldIds(int[] ids)
         {
-            PersistIds("FIELD_IDS", ids);
+            PersistToHttpContext("FIELD_IDS", ids);
         }
 
         public void PersistLinkIds(int[] ids)
         {
-            PersistIds("LINK_IDS", ids);
+            PersistToHttpContext("LINK_IDS", ids);
         }
 
         public void PersistVirtualFieldIds(int[] ids)
         {
-            PersistIds("NEW_VIRTUAL_FIELD_IDS", ids);
+            PersistToHttpContext("NEW_VIRTUAL_FIELD_IDS", ids);
         }
 
         public void PersistChildFieldIds(int[] ids)
         {
-            PersistIds("NEW_CHILD_FIELD_IDS", ids);
+            PersistToHttpContext("NEW_CHILD_FIELD_IDS", ids);
         }
 
         public void PersistChildLinkIds(int[] ids)
         {
-            PersistIds("NEW_CHILD_LINK_IDS", ids);
+            PersistToHttpContext("NEW_CHILD_LINK_IDS", ids);
         }
 
         public void PersistCommandIds(int[] oldIds, int[] ids)
         {
-            PersistIds("NEW_COMMAND_IDS", oldIds, ids);
+            PersistToHttpContext("NEW_COMMAND_IDS", (oldIds != null ? ids.Except(oldIds) : ids).ToList());
         }
 
         public void PersistRulesIds(int[] oldIds, int[] ids)
         {
-            PersistIds("NEW_RULES_IDS", oldIds, ids);
+            PersistToHttpContext("NEW_RULES_IDS", (oldIds != null ? ids.Except(oldIds) : ids).ToList());
         }
 
         public void PersistNotificationFormatId(int? formatId)
         {
             if (formatId.HasValue)
             {
-                ControllerContext.HttpContext.Items["NOTIFICATION_FORMAT_ID"] = formatId.Value;
+                PersistToHttpContext("NOTIFICATION_FORMAT_ID", formatId.Value);
             }
         }
     }

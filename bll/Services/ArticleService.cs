@@ -234,6 +234,7 @@ namespace Quantumart.QP8.BLL.Services
                 article = ArticleRepository.Copy(article);
                 result.Id = article.Id;
                 article.CopyAggregates(previousAggregatedArticles);
+
                 var repo = new NotificationPushRepository();
                 repo.PrepareNotifications(article, new[] { NotificationCode.Create }, disableNotifications);
                 repo.SendNotifications();
@@ -365,7 +366,6 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var content = ContentRepository.GetById(contentId);
-
             if (!content.IsArticleChangingActionsAllowed(boundToExternal))
             {
                 return MessageResult.Error(ContentStrings.ArticleChangingIsProhibited);
@@ -401,14 +401,16 @@ namespace Quantumart.QP8.BLL.Services
             else
             {
                 repo.SendNonServiceNotifications(true);
-                foreach (var o in result.ValidItems)
+                foreach (var entry in result.ValidItems)
                 {
-                    var item = (Article)o;
-                    item.RemoveAllVersionFolders();
+                    var article = (Article)entry;
+                    article.RemoveAllVersionFolders();
                 }
+
                 ArticleRepository.MultipleDelete(idsToProceed);
                 repo.SendServiceNotifications();
             }
+
             return result.GetServiceResult();
         }
 
