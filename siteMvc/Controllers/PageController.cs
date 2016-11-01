@@ -53,13 +53,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewPage)]
         [BackendActionContext(ActionCode.AddNewPage)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewPage(string tabId, int parentId, FormCollection collection)
         {
             var page = _pageService.NewPagePropertiesForUpdate(parentId);
@@ -76,7 +75,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Page, "id")]
@@ -218,13 +216,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(null);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikePage)]
         [BackendActionContext(ActionCode.CreateLikePage)]
         [BackendActionLog]
-        [Record]
         public ActionResult Copy(int id)
         {
             var result = _pageService.Copy(id);

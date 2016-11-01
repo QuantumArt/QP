@@ -80,13 +80,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewPageObject)]
         [BackendActionContext(ActionCode.AddNewPageObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewPageObject(string tabId, int parentId, FormCollection collection)
         {
             var obj = _objectService.NewObjectPropertiesForUpdate(parentId, true);
@@ -117,13 +116,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewTemplateObject)]
         [BackendActionContext(ActionCode.AddNewTemplateObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewTemplateObject(string tabId, int parentId, FormCollection collection)
         {
             var obj = _objectService.NewObjectPropertiesForUpdate(parentId, false);

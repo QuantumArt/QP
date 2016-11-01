@@ -94,7 +94,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             return sqlResult;
         }
 
-                private StringBuilder СollectSqlForManyToMany(StringBuilder sqlResult, Field field, string value)
+        private StringBuilder СollectSqlForManyToMany(StringBuilder sqlResult, Field field, string value)
         {
             var linkParamName = $"@link{Counter}";
             var linkValueParamName = $"@linkValue{Counter}";
@@ -104,7 +104,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             return sqlResult;
         }
 
-                private StringBuilder СollectSqlForManyToOne(StringBuilder sqlResult, Field field, string value)
+        private StringBuilder СollectSqlForManyToOne(StringBuilder sqlResult, Field field, string value)
         {
             var backFieldParamName = $"@backField{Counter}";
             var backFieldValueParamName = $"@backFieldValue{Counter}";
@@ -144,7 +144,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             Parameters.Add(new SqlParameter(lastModifiedParamName, SqlDbType.Int) { Value = QPContext.CurrentUserId });
             Parameters.Add(new SqlParameter(delayedParamName, SqlDbType.Bit) { Value = Article.Delayed });
             Parameters.Add(new SqlParameter(permanentLockParamName, SqlDbType.Bit) { Value = Article.PermanentLock });
-            Parameters.Add(new SqlParameter(uniqueIdParamName, SqlDbType.UniqueIdentifier) { Value = Article.UniqueId });
+            Parameters.Add(new SqlParameter(uniqueIdParamName, SqlDbType.UniqueIdentifier) { Value = Article.UniqueId ?? Guid.NewGuid() });
             Parameters.Add(new SqlParameter(cancelSplitParamName, SqlDbType.Bit) { Value = Article.CancelSplit });
             return sqlResult;
         }

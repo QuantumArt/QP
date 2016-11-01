@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(SolutionDir)packages\xunit.runner.visualstudio.2.1.0\build\net20\xunit.runner.visualstudio.props" Condition="Exists('$(SolutionDir)packages\xunit.runner.visualstudio.2.1.0\build\net20\xunit.runner.visualstudio.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -37,16 +37,16 @@
       <HintPath>$(SolutionDir)packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FluentAssertions, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.dll</HintPath>
+    <Reference Include="FluentAssertions, Version=4.16.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentAssertions.4.16.0\lib\net45\FluentAssertions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FluentAssertions.Core, Version=4.14.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\FluentAssertions.4.14.0\lib\net45\FluentAssertions.Core.dll</HintPath>
+    <Reference Include="FluentAssertions.Core, Version=4.16.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentAssertions.4.16.0\lib\net45\FluentAssertions.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Moq, Version=4.5.22.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Moq.4.5.22\lib\net45\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.5.23.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Moq.4.5.23\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Ploeh.AutoFixture, Version=3.50.2.0, Culture=neutral, PublicKeyToken=b24654c590009d4f, processorArchitecture=MSIL">
@@ -90,21 +90,44 @@
     <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateClassifierArticleTests.cs" />
     <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateSimpleArticleTests.cs" />
     <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateRelationArticleTests.cs" />
-    <Compile Include="Helpers\CsvDbUpdateTestHelpers.cs" />
+    <Compile Include="DbUpdate\XmlDbUpdate\XmlDbUpdateTests.cs" />
+    <Compile Include="Infrastructure\Attributes\XmlDbUpdateDataReader.cs" />
+    <Compile Include="Infrastructure\Helpers\CsvDbUpdateTestHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Specimens\FieldExactTypeBuilder.cs" />
-    <Compile Include="Utils\GreedyConstructorEngineParts.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_CR_endings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_LF_endings.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="app.config" />
     <None Include="packages.config" />
-    <None Include="TestData\mts_catalog2\content_2576_2016_10_7_13_24_43_ex1.csv" />
-    <None Include="TestData\mts_catalog2\content_2577_2016_10_7_13_25_8_ex2.csv" />
-    <None Include="TestData\mts_catalog2\content_2578_2016_10_7_13_23_42_base.csv" />
-    <None Include="TestData\qa_beeline_kz_copy\content_10771_2016_9_27_13_31_10.csv" />
-    <None Include="TestData\qa_beeline_kz_copy\content_10772_2016_9_27_13_31_20.csv" />
-    <None Include="TestData\qa_beeline_kz_copy\content_10773_2016_9_27_13_31_2.csv" />
-    <None Include="TestData\qa_beeline_kz_copy\content_289_2016_9_27_13_30_50.csv" />
+    <Content Include="TestData\ConsoleDbUpdate\CsvData\mts_catalog2\content_2576_2016_10_7_13_24_43_ex1.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\CsvData\mts_catalog2\content_2577_2016_10_7_13_25_8_ex2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\CsvData\mts_catalog2\content_2578_2016_10_7_13_23_42_base.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_10771_2016_9_27_13_31_10.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_10772_2016_9_27_13_31_20.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_10773_2016_9_27_13_31_2.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\CsvData\qa_beeline_kz_copy\content_289_2016_9_27_13_30_50.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)bll\BLL.csproj">
@@ -119,12 +142,19 @@
       <Project>{8be1bb60-1938-45e8-bafb-1d008d62059c}</Project>
       <Name>WebMvc</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QP8.Tests.Infrastucture\QP8.Tests.Infrastucture.csproj">
+      <Project>{7b6f3fd0-d890-44d1-b18b-9833772a7fb0}</Project>
+      <Name>QP8.Tests.Infrastucture</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="DbUpdate\XmlDbUpdate\" />
+    <Content Include="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash_with_duplicates.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
@@ -135,5 +165,3 @@
   </Target>
   -->
 </Project>
-
-

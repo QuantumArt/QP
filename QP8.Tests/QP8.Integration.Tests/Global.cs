@@ -96,7 +96,7 @@ namespace QP8.Integration.Tests
                 .ToArray();
         }
 
-        public static bool EFLinksExists(DBConnector cnn, int contentId)
+        public static bool EfLinksExists(DBConnector cnn, int contentId)
         {
             var cmd = new SqlCommand($"select cast(count(null) as bit) cnt from sysobjects where xtype='u' and name='item_link_{contentId}'");
             return (bool)cnn.GetRealScalarData(cmd);

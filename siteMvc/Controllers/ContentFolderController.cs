@@ -60,13 +60,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("FolderProperties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.ContentFolderProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateContentFolder)]
         [BackendActionContext(ActionCode.UpdateContentFolder)]
         [BackendActionLog]
-        [Record(ActionCode.ContentFolderProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var folder = ContentFolderService.ReadForUpdate(id);

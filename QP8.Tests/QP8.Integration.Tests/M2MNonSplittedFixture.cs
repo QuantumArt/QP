@@ -40,10 +40,10 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, dbActionService.Object, false);
-            service.Process(Global.GetXml(@"xmls\quantumart\m2m_nonsplitted.xml"));
+            service.Process(Global.GetXml(@"xmls\m2m_nonsplitted.xml"));
 
             ContentId = Global.GetContentId(Cnn, "Test M2M");
-            EfLinksExists = Global.EFLinksExists(Cnn, ContentId);
+            EfLinksExists = Global.EfLinksExists(Cnn, ContentId);
             DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
             CategoryIds = Global.GetIds(Cnn, DictionaryContentId);

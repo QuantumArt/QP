@@ -119,13 +119,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewUser)]
         [BackendActionContext(ActionCode.AddNewUser)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var user = _service.NewProperties();
@@ -143,7 +142,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserProperties)]
         [BackendActionContext(ActionCode.UserProperties)]
@@ -191,13 +189,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikeUser)]
         [BackendActionContext(ActionCode.CreateLikeUser)]
         [BackendActionLog]
-        [Record]
         public ActionResult Copy(int id)
         {
             var result = _service.Copy(id);
@@ -207,7 +204,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword
-        [HttpGet]
         public ActionResult Profile(string tabId, int parentId, string successfulActionCode)
         {
             var user = _service.ReadProfile(QPContext.CurrentUserId);

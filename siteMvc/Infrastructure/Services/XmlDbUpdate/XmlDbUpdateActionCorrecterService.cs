@@ -171,7 +171,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private string CorrectIdValue(string entityTypeCode, string value)
         {
-            // TODO: REMOVE UNUSED CODE
             int result;
             return int.TryParse(value, out result) ? CorrectIdValue(entityTypeCode, result).ToString() : value;
         }
@@ -189,7 +188,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private XmlDbUpdateRecordedAction CorrectFormUniqueId(XmlDbUpdateRecordedAction action)
         {
             var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
-            action.Form[uniqueIdFieldName] = CorrectAttributeUniqueId(EntityTypeCode.Article, Guid.Parse(action.Form[uniqueIdFieldName])).ToString();
+            var formUniqueId = action.Form[uniqueIdFieldName];
+            if (!string.IsNullOrWhiteSpace(formUniqueId))
+            {
+                action.Form[uniqueIdFieldName] = CorrectAttributeUniqueId(EntityTypeCode.Article, Guid.Parse(formUniqueId)).ToString();
+            }
+
             return action;
         }
 

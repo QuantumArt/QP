@@ -266,7 +266,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         {
             var actionCode = GetCode(action);
             var uniqueIdValue = XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(actionCode)
-                ? action.Attribute(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute).Value
+                ? action.Attribute(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute)?.Value ?? Guid.Empty.ToString()
                 : Guid.Empty.ToString();
 
             return uniqueIdValue.Split(",".ToCharArray()).Select(Guid.Parse).ToArray();
@@ -275,7 +275,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static Guid GetResultUniqueIdByCode(XElement action)
         {
             return XmlDbUpdateQpActionHelpers.IsArticleAndHasResultUniqueId(GetCode(action))
-                ? Guid.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute).Value)
+                ? Guid.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute)?.Value ?? Guid.Empty.ToString())
                 : Guid.Empty;
         }
 

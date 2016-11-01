@@ -43,14 +43,84 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         internal static bool IsActionHasResultId(string actionCode)
         {
-            // TODO: С Пашей надо проверить
             return new[]
             {
-                ActionCode.CreateLikeField,
-                ActionCode.CreateLikeContent,
-                ActionCode.CreateLikeArticle,
+                // ArticleController
                 ActionCode.AddNewArticle,
-                ActionCode.EditArticle
+                ActionCode.EditArticle,
+                ActionCode.CreateLikeArticle,
+
+                // PermissionControllerBase
+                ActionCode.AddNewActionPermission,
+                ActionCode.AddNewArticlePermission,
+                ActionCode.AddNewContentPermission,
+                ActionCode.AddNewEntityTypePermission,
+                ActionCode.AddNewSiteFolderPermission,
+                ActionCode.AddNewWorkflowPermission,
+
+                // ContentController
+                ActionCode.AddNewContent,
+                ActionCode.CreateLikeContent,
+                ActionCode.AddNewContentGroup,
+
+                // ContentFolderController
+                ActionCode.AddNewContentFolder,
+                ActionCode.ContentFolderProperties,
+
+                // CustomActionController
+                ActionCode.AddNewCustomAction,
+
+                // FieldController
+                ActionCode.AddNewField,
+                ActionCode.CreateLikeField,
+
+                // FormatController
+                ActionCode.AddNewPageObjectFormat,
+                ActionCode.AddNewTemplateObjectFormat,
+
+                // NotificationController
+                ActionCode.AddNewNotification,
+
+                // ObjectController
+                ActionCode.AddNewPageObject,
+                ActionCode.AddNewTemplateObject,
+
+                // PageController
+                ActionCode.AddNewPage,
+                ActionCode.CreateLikePage,
+
+                // PageTemplateController
+                ActionCode.AddNewPageTemplate,
+
+                // SiteController
+                ActionCode.AddNewSite,
+
+                // SiteFolderController
+                ActionCode.AddNewSiteFolder,
+
+                //StatusTypeController
+                ActionCode.AddNewStatusType,
+
+                // UserController
+                ActionCode.AddNewUser,
+                ActionCode.CreateLikeUser,
+
+                // UserGroupController
+                ActionCode.AddNewUserGroup,
+                ActionCode.CreateLikeUserGroup,
+
+                // VirtualContentController
+                ActionCode.AddNewVirtualContents,
+
+                // VisualEdtiorPluginController
+                ActionCode.VisualEditorPluginProperties,
+                ActionCode.AddNewVisualEditorPlugin,
+
+                // VisualEdtiorStyleController
+                ActionCode.AddNewVisualEditorStyle,
+
+                // WorkflowController
+                ActionCode.AddNewWorkflow
             }.Contains(actionCode);
         }
 

@@ -150,7 +150,7 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, dbActionService.Object, false);
-            service.Process(Global.GetXml(@"xmls\quantumart\batchupdate.xml"));
+            service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
 
             Random = new Random();
             BaseContentId = Global.GetContentId(Cnn, BaseContent);
@@ -159,7 +159,6 @@ namespace QP8.Integration.Tests
 
             DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
             InitDictionaryContentFields();
-
         }
 
         private static void InitExtensions()
@@ -583,11 +582,9 @@ namespace QP8.Integration.Tests
             };
 
             var result = ArticleService.BatchUpdate(data);
-
             Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
 
             var newValue = GetFieldValue<T>(contentId, fieldName, articleId);
-
             Assert.That(value, Is.EqualTo(newValue));
         }
 

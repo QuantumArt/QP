@@ -5,19 +5,17 @@ using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using Ploeh.AutoFixture.Dsl;
 using Ploeh.AutoFixture.Xunit2;
+using QP8.WebMvc.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
-using Quantumart.QP8.BLL.Interfaces.Logging;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate;
-using WebMvc.Tests.Helpers;
 using Xunit;
 
-namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
+namespace QP8.WebMvc.Tests.DbUpdate.CsvDbUpdate
 {
     public class CsvDbUpdateRelationArticleTests
     {
@@ -31,7 +29,6 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             _fixture.Customize<Field>(composer => _postProcessFieldComposer);
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();
-            Logger.Log = _fixture.Create<ILog>();
         }
 
         [Theory, AutoData, Trait("CsvDbUpdate", "RelatedArticle")]
@@ -42,7 +39,6 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             Generator<FieldExactTypes> fetGenerator)
         {
             // Fixture setup
-            var logger = Mock.Get(Logger.Log);
             var articleRepository = _fixture.Freeze<Mock<IArticleRepository>>();
             var fieldRepository = _fixture.Freeze<Mock<IFieldRepository>>();
             var articleService = _fixture.Freeze<Mock<IArticleService>>();
@@ -98,7 +94,6 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             fieldRepository.Verify();
             articleRepository.Verify();
             articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult))));
-            logger.Verify(m => m.Warn(It.IsAny<string>()), Times.Never());
         }
 
         [Theory, AutoData, Trait("CsvDbUpdate", "RelatedArticle")]
@@ -109,7 +104,6 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             Generator<FieldExactTypes> fetGenerator)
         {
             // Fixture setup
-            var logger = Mock.Get(Logger.Log);
             var articleRepository = _fixture.Freeze<Mock<IArticleRepository>>();
             var fieldRepository = _fixture.Freeze<Mock<IFieldRepository>>();
             var articleService = _fixture.Freeze<Mock<IArticleService>>();
@@ -167,7 +161,6 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             fieldRepository.Verify();
             articleRepository.Verify(m => m.IsExist(relatedArticleId), Times.Once);
             articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult))));
-            logger.Verify(m => m.Warn(It.IsAny<string>()), Times.Once);
         }
 
         [Theory, AutoData, Trait("CsvDbUpdate", "RelatedArticle")]
@@ -178,7 +171,6 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             Generator<FieldExactTypes> fetGenerator)
         {
             // Fixture setup
-            var logger = Mock.Get(Logger.Log);
             var articleRepository = _fixture.Freeze<Mock<IArticleRepository>>();
             var fieldRepository = _fixture.Freeze<Mock<IFieldRepository>>();
             var articleService = _fixture.Freeze<Mock<IArticleService>>();
@@ -252,7 +244,6 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             fieldRepository.Verify();
             articleRepository.Verify(m => m.IsExist(It.IsAny<int>()), Times.Never);
             articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult))));
-            logger.Verify(m => m.Warn(It.IsAny<string>()), Times.Never());
         }
     }
 }

@@ -57,10 +57,10 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, dbActionService.Object, false);
-            service.Process(Global.GetXml(@"xmls\quantumart\m2m.xml"));
+            service.Process(Global.GetXml(@"xmls\m2m.xml"));
 
             ContentId = Global.GetContentId(Cnn, ContentName);
-            EfLinksExists = Global.EFLinksExists(Cnn, ContentId);
+            EfLinksExists = Global.EfLinksExists(Cnn, ContentId);
             TitleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             MainCategoryName = Cnn.FieldName(Global.SiteId, ContentName, "MainCategory");
             NumberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Moq;
@@ -49,7 +48,7 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, dbActionService.Object, false);
-            service.Process(Global.GetXml(@"xmls\quantumart\hierarchy.xml"));
+            service.Process(Global.GetXml(@"xmls\hierarchy.xml"));
 
             RegionContentId = Global.GetContentId(Cnn, RegionContentName);
             ProductContentId = Global.GetContentId(Cnn, ProductContentName);
@@ -67,7 +66,7 @@ namespace QP8.Integration.Tests
                 var articleService = new ArticleService(1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
-                article.FieldValues.Single(n => n.Field.Name == "Regions").Value = String.Join(",", ids);
+                article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
 
                 Assert.DoesNotThrow(() => article = articleService.Save(article), "Create article");
 
@@ -89,7 +88,7 @@ namespace QP8.Integration.Tests
                 var articleService = new ArticleService(1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
-                article.FieldValues.Single(n => n.Field.Name == "Regions").Value = String.Join(",", ids);
+                article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
 
                 Assert.DoesNotThrow(() => article = articleService.Save(article), "Create article");
 
@@ -111,7 +110,7 @@ namespace QP8.Integration.Tests
                 var articleService = new ArticleService(1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
-                article.FieldValues.Single(n => n.Field.Name == "Regions").Value = String.Join(",", ids);
+                article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
 
                 Assert.DoesNotThrow(() => article = articleService.Save(article), "Create article");
 
@@ -129,11 +128,10 @@ namespace QP8.Integration.Tests
             var ids2 = new[] { BaseArticlesIds["macro1"] };
             using (new QPConnectionScope(Global.ConnectionString))
             {
-
                 var articleService = new ArticleService(1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
-                article.FieldValues.Single(n => n.Field.Name == "Regions").Value = String.Join(",", ids);
+                article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
 
                 Assert.DoesNotThrow(() => article = articleService.Save(article), "Create article");
 

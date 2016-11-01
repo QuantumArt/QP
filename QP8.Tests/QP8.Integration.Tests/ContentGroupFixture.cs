@@ -25,7 +25,7 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, new HashSet<string>(new[] { EntityTypeCode.ContentGroup }), 1, false, dbLogService.Object, dbActionService.Object, false);
-            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"xmls\quantumart\group.xml")), "Create content group");
+            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"xmls\group.xml")), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             var id = (decimal)cnn.GetRealScalarData(new SqlCommand($"SELECT content_group_id FROM content_group WHERE name = '{GroupName}'"));
             Assert.That(id, Is.EqualTo(SpecificGroupId), "Specific id created");
@@ -41,7 +41,7 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, dbActionService.Object, false);
-            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"xmls\quantumart\group.xml").Replace(GroupName, NewGroupName)), "Create content group");
+            Assert.DoesNotThrow(() => service.Process(Global.GetXml(@"xmls\group.xml").Replace(GroupName, NewGroupName)), "Create content group");
             var cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             var id = (decimal)cnn.GetRealScalarData(new SqlCommand($"SELECT content_group_id FROM content_group WHERE name = '{NewGroupName}'"));
             Assert.That(id, Is.Not.EqualTo(SpecificGroupId), "Generated id created");

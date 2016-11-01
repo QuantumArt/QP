@@ -4,17 +4,15 @@ using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using Ploeh.AutoFixture.Xunit2;
+using QP8.WebMvc.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
-using Quantumart.QP8.BLL.Interfaces.Logging;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate;
-using WebMvc.Tests.Helpers;
 using Xunit;
 
-namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
+namespace QP8.WebMvc.Tests.DbUpdate.CsvDbUpdate
 {
     public class CsvDbUpdateSimpleArticleTests
     {
@@ -26,14 +24,12 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             _fixture.Customize<Field>(composer => composer.FromFactory(CsvDbUpdateTestHelpers.GenerateField(_fixture)).OmitAutoProperties());
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();
-            Logger.Log = _fixture.Create<ILog>();
         }
 
         [Theory, AutoData, Trait("CsvDbUpdate", "SimpleArticle")]
         public void GivenCsvRowDataCollection_WhenWithoutExtensionsAndRelations_ShouldCallServicesWithCorrectlyFormattedData(int contentId, int articleId)
         {
             // Fixture setup
-            var logger = Mock.Get(Logger.Log);
             var contentRepository = _fixture.Freeze<Mock<IContentRepository>>();
             var fieldRepository = _fixture.Freeze<Mock<IFieldRepository>>();
             var articleService = _fixture.Freeze<Mock<IArticleService>>();
@@ -68,7 +64,6 @@ namespace WebMvc.Tests.DbUpdate.CsvDbUpdate
             fieldRepository.Verify();
             contentRepository.Verify(m => m.GetById(It.IsAny<int>()), Times.Never);
             articleService.Verify(m => m.BatchUpdate(It.Is(CsvDbUpdateTestHelpers.CompareArticleDataCollections(expectedResult))));
-            logger.Verify(m => m.Warn(It.IsAny<string>()), Times.Never());
         }
     }
 }

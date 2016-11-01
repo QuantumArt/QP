@@ -82,17 +82,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewUserGroup)]
         [BackendActionContext(ActionCode.AddNewUserGroup)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var group = _service.NewProperties();
             var model = UserGroupViewModel.Create(group, tabId, parentId, _service);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
@@ -105,13 +105,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikeUserGroup)]
         [BackendActionContext(ActionCode.CreateLikeUserGroup)]
         [BackendActionLog]
-        [Record]
         public ActionResult Copy(int id)
         {
             var result = _service.Copy(id);

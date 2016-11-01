@@ -94,13 +94,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewNotification)]
         [BackendActionContext(ActionCode.AddNewNotification)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var notification = _notificationService.NewNotificationPropertiesForUpdate(parentId);

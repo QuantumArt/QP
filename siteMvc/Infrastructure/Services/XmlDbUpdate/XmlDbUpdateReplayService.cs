@@ -83,6 +83,19 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
+        internal static XDocument FilterFromSubRootNodeDuplicates(string xmlString)
+        {
+            var document = XDocument.Parse(xmlString);
+            var comparer = new XNodeEqualityComparer();
+            var distinctElements = document.Root.Elements().Distinct(comparer);
+            foreach (var element in distinctElements)
+            {
+                document.Root.Elements().Where(n => comparer.Equals(n, element)).Skip(1).Remove();
+            }
+
+            return document;
+        }
+
         private void ReplayActionsFromXml(IEnumerable<XElement> actionElements, string backendUrl, int updateId)
         {
             foreach (var xmlAction in actionElements)
@@ -142,19 +155,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 throwEx.Data.Add("ActionToReplay", xmlAction.ToJsonLog());
                 throw throwEx;
             }
-        }
-
-        private static XDocument FilterFromSubRootNodeDuplicates(string xmlString)
-        {
-            var document = XDocument.Parse(xmlString);
-            var comparer = new XNodeEqualityComparer();
-            var distinctElements = document.Root.Elements().Distinct(comparer);
-            foreach (var element in distinctElements)
-            {
-                document.Root.Elements().Where(n => comparer.Equals(n, element)).Skip(1).Remove();
-            }
-
-            return document;
         }
 
         private void ValidateReplayInput(XContainer xmlDocument)

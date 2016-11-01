@@ -37,7 +37,7 @@ namespace QP8.Integration.Tests
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
             var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, dbActionService.Object, false);
-            service.Process(Global.GetXml(@"xmls\quantumart\unique.xml"));
+            service.Process(Global.GetXml(@"xmls\unique.xml"));
             ContentId = Global.GetContentId(Cnn, ContentName);
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
         }

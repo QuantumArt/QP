@@ -56,13 +56,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewPageTemplate)]
         [BackendActionContext(ActionCode.AddNewPageTemplate)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewPageTemplate(string tabId, int parentId, FormCollection collection)
         {
             var template = _pageTemplateService.NewPageTemplatePropertiesForUpdate(parentId);
@@ -80,7 +79,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageTemplateProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageTemplate, "id")]

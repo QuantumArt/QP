@@ -81,7 +81,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
                             continue;
                         }
 
-                        Logger.Log.Warn($"Ignore article id:{-relatedId}, because cann't find it related article at csv data or db.");
+                        Logger.Log.Warn($"Ignore related article CIID:{-relatedId}. Cann't find any related article at csv data or db. FID: {articleField.Id}, CID: {article.ContentId}, CIID: {-article.Id}");
                     }
 
                     articleField.ArticleIds = result.ToArray();

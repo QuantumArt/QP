@@ -92,7 +92,7 @@
   <script src="/Backend/Scripts/Quantumart/JsLanguage.ashx"></script>
   <script src="/Backend/signalr/hubs"></script>
   <script src="@Url.Content("~/Scripts/build/app2.min.js?rel=0.1.4")"></script>
-  @(Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false)).Globalization(true));
+  @(Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false)).Globalization(true))
 
   <script>
     CKEDITOR.timestamp = '@DateTime.Now.Ticks';

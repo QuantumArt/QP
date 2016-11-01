@@ -19,7 +19,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _visualEditorService = visualEditorService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VisualEditorStyles)]
         [BackendActionContext(ActionCode.VisualEditorStyles)]
@@ -40,7 +39,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VisualEditorStyleProperties)]
         [BackendActionContext(ActionCode.VisualEditorStyleProperties)]
@@ -53,17 +51,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.VisualEditorStyleProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateVisualEditorStyle)]
         [BackendActionContext(ActionCode.UpdateVisualEditorStyle)]
         [BackendActionLog]
-        [Record(ActionCode.VisualEditorStyleProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var style = _visualEditorService.ReadVisualEditorStylePropertiesForUpdate(id);
             var model = VisualEditorStyleViewModel.Create(style, tabId, parentId);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
@@ -75,19 +73,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveVisualEditorStyle)]
         [BackendActionContext(ActionCode.RemoveVisualEditorStyle)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
             return JsonMessageResult(_visualEditorService.RemoveVisualEditorStyle(id));
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionContext(ActionCode.AddNewVisualEditorStyle)]
@@ -98,17 +94,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionContext(ActionCode.AddNewVisualEditorStyle)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var style = _visualEditorService.NewVisualEditorStylePropertiesForUpdate(parentId);
             var model = VisualEditorStyleViewModel.Create(style, tabId, parentId);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)

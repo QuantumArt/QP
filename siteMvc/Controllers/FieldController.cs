@@ -49,14 +49,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ValidateInput(false)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewField)]
         [BackendActionContext(ActionCode.AddNewField)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
         {
             var content = FieldService.New(parentId, null);
@@ -334,13 +333,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikeField)]
         [BackendActionContext(ActionCode.CreateLikeField)]
         [BackendActionLog]
-        [Record]
         public ActionResult Copy(int id, int? forceId, int? forceLinkId, string forceVirtualFieldIds, string forceChildFieldIds, string forceChildLinkIds)
         {
             FieldService.Read(id); // TODO: unused
