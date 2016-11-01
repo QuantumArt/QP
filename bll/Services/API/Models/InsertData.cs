@@ -15,7 +15,6 @@
                 OriginalArticleId,
                 CreatedArticleId,
                 ContentId
-
             }.ToString();
         }
     }

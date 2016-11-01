@@ -5,6 +5,7 @@ using System.Transactions;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.Constants;
@@ -17,11 +18,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
 
         private readonly IContentRepository _contentRepository;
         private readonly IFieldRepository _fieldRepository;
+        private readonly IArticleRepository _articleRepository;
         private readonly IArticleService _articleService;
 
-        public CsvDbUpdateService(IArticleService articleService, IFieldRepository fieldRepository, IContentRepository contentRepository)
+        public CsvDbUpdateService(IArticleService articleService, IFieldRepository fieldRepository, IContentRepository contentRepository, IArticleRepository articleRepository)
         {
             _contentRepository = contentRepository;
+            _articleRepository = articleRepository;
             _fieldRepository = fieldRepository;
             _articleService = articleService;
         }
@@ -50,9 +53,42 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
                     }
                 }
 
+                articlesData = FilterNotExistedReferences(articlesData);
                 _articleService.BatchUpdate(articlesData);
                 ts.Complete();
             }
+        }
+
+        private List<ArticleData> FilterNotExistedReferences(List<ArticleData> articlesData)
+        {
+            var listOfIds = articlesData.Select(ad => ad.Id).ToList();
+            foreach (var article in articlesData)
+            {
+                foreach (var articleField in article.Fields)
+                {
+                    var result = new List<int>();
+                    foreach (var relatedId in articleField.ArticleIds)
+                    {
+                        if (listOfIds.Contains(relatedId))
+                        {
+                            result.Add(relatedId);
+                            continue;
+                        }
+
+                        if (_articleRepository.IsExist(-relatedId))
+                        {
+                            result.Add(-relatedId);
+                            continue;
+                        }
+
+                        Logger.Log.Warn($"Ignore article id:{-relatedId}, because cann't find it related article at csv data or db.");
+                    }
+
+                    articleField.ArticleIds = result.ToArray();
+                }
+            }
+
+            return articlesData;
         }
 
         private IList<ArticleData> CreateArticleDatas(int contentId, IList<CsvDbUpdateFieldModel> csvRowFields, IEnumerable<Field> dbFields)
@@ -101,7 +137,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
             return -Convert.ToInt32(csvRowFields.Single(StringFilter(FieldName.CONTENT_ITEM_ID)).Value);
         }
 
-        private static IList<ArticleData> InsertFields(int contentId, IList<ArticleData> dataToAdd, IList<Field> dbFields, IList<CsvDbUpdateFieldModel> csvRowFields, string contentNameFieldPrefix = "")
+        private static IList<ArticleData> InsertFields(int contentId, IList<ArticleData> dataToAdd, IEnumerable<Field> dbFields, IList<CsvDbUpdateFieldModel> csvRowFields, string contentNameFieldPrefix = "")
         {
             foreach (var dbf in dbFields)
             {

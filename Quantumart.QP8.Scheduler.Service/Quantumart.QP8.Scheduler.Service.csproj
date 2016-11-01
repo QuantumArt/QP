@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -82,23 +82,23 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\configuration\Configuration.csproj">
+    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
       <Project>{eb18df82-a593-40ca-aa31-ef430a9e7f24}</Project>
       <Name>Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj">
+    <ProjectReference Include="$(SolutionDir)Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj">
       <Project>{b35feb42-4052-493f-b4eb-328a50453208}</Project>
       <Name>Quantumart.QP8.Scheduler.API</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Quantumart.QP8.Scheduler.Core\Quantumart.QP8.Scheduler.Core.csproj">
+    <ProjectReference Include="$(SolutionDir)Quantumart.QP8.Scheduler.Core\Quantumart.QP8.Scheduler.Core.csproj">
       <Project>{4e3c069f-0648-4989-81fb-a026b03562e8}</Project>
       <Name>Quantumart.QP8.Scheduler.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj">
+    <ProjectReference Include="$(SolutionDir)Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj">
       <Project>{4751a066-0f3b-400c-8303-30c1606ec34d}</Project>
       <Name>Quantumart.QP8.Scheduler.Notification</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Quantumart.QP8.Scheduler.Users\Quantumart.QP8.Scheduler.Users.csproj">
+    <ProjectReference Include="$(SolutionDir)Quantumart.QP8.Scheduler.Users\Quantumart.QP8.Scheduler.Users.csproj">
       <Project>{bd000ade-0b97-464d-9376-73bb679a21fc}</Project>
       <Name>Quantumart.QP8.Scheduler.Users</Name>
     </ProjectReference>

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -67,17 +67,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\bll\BLL.csproj">
+    <ProjectReference Include="$(SolutionDir)bll\BLL.csproj">
       <Project>{2fd6e504-0845-4c89-ae58-bdb467d8c487}</Project>
       <Name>BLL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj">
+    <ProjectReference Include="$(SolutionDir)Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj">
       <Project>{b35feb42-4052-493f-b4eb-328a50453208}</Project>
       <Name>Quantumart.QP8.Scheduler.API</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

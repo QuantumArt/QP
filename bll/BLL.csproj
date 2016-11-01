@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -46,7 +46,7 @@
     </Reference>
     <Reference Include="EFExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\binaries\EFExtensions.dll</HintPath>
+      <HintPath>$(SolutionDir)binaries\EFExtensions.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=10.1.5.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\JetBrains.Annotations.10.1.5\lib\net\JetBrains.Annotations.dll</HintPath>
@@ -154,6 +154,7 @@
     <Compile Include="Helpers\ReplayHelper.cs" />
     <Compile Include="Helpers\SiteUrlHelper.cs" />
     <Compile Include="Helpers\SortingItemHelper.cs" />
+    <Compile Include="Interfaces\Db\IArticleRepository.cs" />
     <Compile Include="Interfaces\Db\IContentRepository.cs" />
     <Compile Include="Interfaces\Db\IFieldRepository.cs" />
     <Compile Include="Interfaces\Logging\ILog.cs" />
@@ -701,47 +702,47 @@
     <Compile Include="Models\XmlDbUpdate\XmlDbUpdateLogModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Assembling\Assembling.csproj">
+    <ProjectReference Include="$(SolutionDir)Assembling\Assembling.csproj">
       <Project>{aba32eeb-7b9a-4bd8-973b-cd483f076237}</Project>
       <Name>Assembling</Name>
     </ProjectReference>
-    <ProjectReference Include="..\configuration\Configuration.csproj">
+    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\constants\Constants.csproj">
+    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj">
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dal\DAL.csproj">
+    <ProjectReference Include="$(SolutionDir)dal\DAL.csproj">
       <Project>{3FF8834B-FB47-4855-B1E2-3B88C0DB1A94}</Project>
       <Name>DAL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging\Logging.csproj">
+    <ProjectReference Include="$(SolutionDir)Logging\Logging.csproj">
       <Project>{2376f4db-61df-4440-bab7-5740e06cd945}</Project>
       <Name>Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Merger\Merger.csproj">
+    <ProjectReference Include="$(SolutionDir)Merger\Merger.csproj">
       <Project>{cc2a4eab-777f-4b3c-8898-6fa1d00b2f7c}</Project>
       <Name>Merger</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Quantumart\Quantumart.csproj">
+    <ProjectReference Include="$(SolutionDir)Quantumart\Quantumart.csproj">
       <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
       <Name>Quantumart</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Resources\Resources.csproj">
+    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj">
       <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>
       <Name>Resources</Name>
     </ProjectReference>
-    <ProjectReference Include="..\security\Security.csproj">
+    <ProjectReference Include="$(SolutionDir)security\Security.csproj">
       <Project>{CC32A8B5-24B7-4EF1-B68E-DE755A136F70}</Project>
       <Name>Security</Name>
     </ProjectReference>
-    <ProjectReference Include="..\utils\Utils.csproj">
+    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj">
       <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\validators\Validators.csproj">
+    <ProjectReference Include="$(SolutionDir)validators\Validators.csproj">
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>
@@ -755,7 +756,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

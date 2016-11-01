@@ -1,5 +1,6 @@
 ﻿using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
@@ -17,7 +18,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
             QPContext.CurrentCustomerCode = settings.CustomerCode;
 
             _settings = settings;
-            _csvDbUpdateService = new CsvDbUpdateService(new ArticleService(_settings.UserId), new FieldRepository(), new ContentRepository());
+            _csvDbUpdateService = new CsvDbUpdateService(new ArticleService(_settings.UserId), new FieldRepository(), new ContentRepository(), new ArticleRepository());
         }
 
         public void Process()

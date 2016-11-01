@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1B992EFD-F6DC-45C2-948C-AF4027D05F65}</ProjectGuid>
+    <ProjectGuid>{8B3838DD-98BA-4BE6-868E-CFB624914831}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WebMvc.Tests</RootNamespace>
@@ -87,9 +87,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CsvDbUpdateTests.cs" />
-    <Compile Include="Helpers\CsvDbUpdateHelpers.cs" />
+    <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateClassifierArticleTests.cs" />
+    <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateSimpleArticleTests.cs" />
+    <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateRelationArticleTests.cs" />
+    <Compile Include="Helpers\CsvDbUpdateTestHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Specimens\FieldExactTypeBuilder.cs" />
     <Compile Include="Utils\GreedyConstructorEngineParts.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +122,9 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DbUpdate\XmlDbUpdate\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

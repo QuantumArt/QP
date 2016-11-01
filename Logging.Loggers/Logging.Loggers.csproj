@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -95,15 +95,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\bll\BLL.csproj">
+    <ProjectReference Include="$(SolutionDir)bll\BLL.csproj">
       <Project>{2fd6e504-0845-4c89-ae58-bdb467d8c487}</Project>
       <Name>BLL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging\Logging.csproj">
+    <ProjectReference Include="$(SolutionDir)Logging\Logging.csproj">
       <Project>{2376f4db-61df-4440-bab7-5740e06cd945}</Project>
       <Name>Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\security\Security.csproj">
+    <ProjectReference Include="$(SolutionDir)security\Security.csproj">
       <Project>{cc32a8b5-24b7-4ef1-b68e-de755a136f70}</Project>
       <Name>Security</Name>
     </ProjectReference>
@@ -113,7 +113,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

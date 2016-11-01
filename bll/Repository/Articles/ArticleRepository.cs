@@ -23,8 +23,28 @@ using Quantumart.QP8.Utils.Sorting;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
 {
-    public class ArticleRepository
+    public class ArticleRepository : IArticleRepository
     {
+        Article IArticleRepository.GetByGuid(Guid guid)
+        {
+            return GetByGuid(guid);
+        }
+
+        List<Article> IArticleRepository.GetByIds(int[] ids)
+        {
+            return GetByIds(ids);
+        }
+
+        Article IArticleRepository.GetById(int id)
+        {
+            return GetById(id);
+        }
+
+        bool IArticleRepository.IsExist(int id)
+        {
+            return QPContext.EFContext.ArticleSet.Any(a => a.Id == id);
+        }
+
         public static Article GetById(int id)
         {
             return MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
