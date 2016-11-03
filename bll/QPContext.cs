@@ -497,9 +497,9 @@ namespace Quantumart.QP8.BLL
         /// <param name="errorCode">код ошибки</param>
         /// <param name="message">сообщение</param>
         /// <returns>информация о пользователе</returns>
-        public static QPUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
+        public static QpUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
         {
-            QPUser resultUser = null;
+            QpUser resultUser = null;
             message = string.Empty;
 
             using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.ConfigConnectionString(data.CustomerCode))))
@@ -511,7 +511,7 @@ namespace Quantumart.QP8.BLL
 
                     if (user != null)
                     {
-                        resultUser = new QPUser
+                        resultUser = new QpUser
                         {
                             Id = user.Id,
                             Name = user.LogOn,
@@ -566,8 +566,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создать сессию при успешном логине
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="dbContext"></param>
         private static void CreateSuccessfulSession(User user, QP8Entities dbContext)
         {
             // сбросить sid и установить EndTime для всех сессий пользователя
@@ -595,19 +593,11 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-        /// закрыть открытые сессии пользователя
+        /// Закрыть открытые сессии пользователя
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="dbContext"></param>
-        /// <param name="currentDt"></param>
         private static void CloseUserSessions(decimal userId, QP8Entities dbContext, DateTime currentDt)
         {
-            var userSessions =
-                         dbContext.SessionsLogSet
-                         .Where(s => s.UserId == userId &&
-                                     !s.EndTime.HasValue &&
-                                     !s.IsQP7)
-                         .ToArray();
+            var userSessions = dbContext.SessionsLogSet.Where(s => s.UserId == userId && !s.EndTime.HasValue && !s.IsQP7).ToArray();
             foreach (var us in userSessions)
             {
                 us.EndTime = currentDt;
@@ -618,8 +608,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создать сессию при неудачном логине
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="dbContext"></param>
         private static void CreateFaildSession(LogOnCredentials data, QP8Entities dbContext)
         {
             var sessionsLog = new SessionsLog

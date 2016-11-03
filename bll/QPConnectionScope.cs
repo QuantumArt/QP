@@ -59,9 +59,11 @@ namespace Quantumart.QP8.BLL
             Current._scopeCount++;
         }
 
-        public QPConnectionScope() : this(QPContext.CurrentDbConnectionString) { }
+        public QPConnectionScope()
+            : this(QPContext.CurrentDbConnectionString) { }
 
-        public QPConnectionScope(string connectionString, HashSet<string> identityInsertOptions) : this(connectionString)
+        public QPConnectionScope(string connectionString, HashSet<string> identityInsertOptions)
+            : this(connectionString)
         {
             IdentityInsertOptions = identityInsertOptions;
         }

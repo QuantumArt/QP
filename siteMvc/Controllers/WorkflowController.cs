@@ -153,11 +153,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 if (userId != null && !_workflowService.IsContentAccessibleForUser(contentId, userId.Value))
                 {
-                    contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForUser + "<br>", _workflowService.getContentNameById(contentId));
+                    contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForUser + "<br>", _workflowService.GetContentNameById(contentId));
                 }
                 else if (groupId != null && !_workflowService.IsContentAccessibleForUserGroup(contentId, groupId.Value))
                 {
-                    contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForGroup + "<br>", _workflowService.getContentNameById(contentId));
+                    contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForGroup + "<br>", _workflowService.GetContentNameById(contentId));
                 }
             }
 
@@ -178,11 +178,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     if (stage.UserId.HasValue && !_workflowService.IsContentAccessibleForUser(contentId, stage.UserId.Value))
                     {
-                        contentAccessSummary.Add(new { stage.StName, Message = string.Format(WorkflowStrings.InAccessibleForUser, _workflowService.getContentNameById(contentId)) });
+                        contentAccessSummary.Add(new { stage.StName, Message = string.Format(WorkflowStrings.InAccessibleForUser, _workflowService.GetContentNameById(contentId)) });
                     }
                     else if (stage.GroupId.HasValue && !_workflowService.IsContentAccessibleForUserGroup(contentId, stage.GroupId.Value))
                     {
-                        contentAccessSummary.Add(new { stage.StName, Message = string.Format(WorkflowStrings.InAccessibleForGroup, _workflowService.getContentNameById(contentId)) });
+                        contentAccessSummary.Add(new { stage.StName, Message = string.Format(WorkflowStrings.InAccessibleForGroup, _workflowService.GetContentNameById(contentId)) });
                     }
                 }
             }
