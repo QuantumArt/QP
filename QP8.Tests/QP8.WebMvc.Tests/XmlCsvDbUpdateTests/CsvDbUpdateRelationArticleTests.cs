@@ -15,7 +15,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate;
 using Xunit;
 
-namespace QP8.WebMvc.Tests.DbUpdate.CsvDbUpdate
+namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 {
     public class CsvDbUpdateRelationArticleTests
     {

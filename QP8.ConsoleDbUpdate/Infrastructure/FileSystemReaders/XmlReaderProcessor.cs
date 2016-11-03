@@ -41,7 +41,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                 }
             }
 
-            Program.Logger.Debug($"Documents will be processed in next order: {orderedFilePathes.ToJsonLog()}");
+            Program.Logger.Info($"Total files readed from disk: {orderedFilePathes.Count}.");
+            Program.Logger.Debug($"Documents will be processed in next order: { orderedFilePathes.ToJsonLog()}.");
+
             var filteredOrderedFilePathes = new List<string>();
             //TODO: DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! And remove unusing references then.
             #region DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!!
@@ -69,7 +71,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                     {
                         if (logService.IsFileAlreadyReplayed(logEntry.Hash))
                         {
-                            Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied and exist at database. Entry: {logEntry.ToJsonLog()}");
+                            Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied, exist at database and will be skipped. Entry: {logEntry.ToJsonLog()}");
                             continue;
                         }
                     }
@@ -79,6 +81,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             }
             #endregion DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!!
 
+            Program.Logger.Info($"Skipped files count: {orderedFilePathes.Count - filteredOrderedFilePathes.Count}.");
+            Program.Logger.Info($"Total files will be processed: {filteredOrderedFilePathes.Count}.");
             Program.Logger.Debug($"Documents will be processed in next order: {filteredOrderedFilePathes.ToJsonLog()}");
             return CombineMultipleDocumentsWithSameRoot(filteredOrderedFilePathes.Select(XDocument.Load).ToList()).ToStringWithDeclaration(SaveOptions.DisableFormatting);
         }

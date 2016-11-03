@@ -35,6 +35,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                 }
             }
 
+            Program.Logger.Info($"Total files will be processed: {orderedFilePathes.Count}.");
             Program.Logger.Debug($"Documents will be processed in next order: {orderedFilePathes.ToJsonLog()}");
             return ParseDocuments(orderedFilePathes, csvConfiguration);
         }

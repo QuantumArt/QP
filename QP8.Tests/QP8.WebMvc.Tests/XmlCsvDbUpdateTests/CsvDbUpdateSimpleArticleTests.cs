@@ -12,7 +12,7 @@ using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate;
 using Xunit;
 
-namespace QP8.WebMvc.Tests.DbUpdate.CsvDbUpdate
+namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 {
     public class CsvDbUpdateSimpleArticleTests
     {

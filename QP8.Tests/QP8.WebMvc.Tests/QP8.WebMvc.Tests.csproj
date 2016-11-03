@@ -87,15 +87,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateClassifierArticleTests.cs" />
-    <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateSimpleArticleTests.cs" />
-    <Compile Include="DbUpdate\CsvDbUpdate\CsvDbUpdateRelationArticleTests.cs" />
-    <Compile Include="DbUpdate\XmlDbUpdate\XmlDbUpdateTests.cs" />
+    <Compile Include="XmlCsvDbUpdateTests\CsvDbUpdateClassifierArticleTests.cs" />
+    <Compile Include="XmlCsvDbUpdateTests\CsvDbUpdateSimpleArticleTests.cs" />
+    <Compile Include="XmlCsvDbUpdateTests\CsvDbUpdateRelationArticleTests.cs" />
+    <Compile Include="XmlCsvDbUpdateTests\XmlDbUpdateTests.cs" />
     <Compile Include="Infrastructure\Attributes\XmlDbUpdateDataReader.cs" />
     <Compile Include="Infrastructure\Helpers\CsvDbUpdateTestHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_14-59-29.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

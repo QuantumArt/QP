@@ -57,7 +57,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var filteredXmlDocument = FilterFromSubRootNodeDuplicates(xmlString);
             ValidateReplayInput(filteredXmlDocument);
 
-            var filteredXmlString = filteredXmlDocument.ToStringWithDeclaration();
+            var filteredXmlString = filteredXmlDocument.ToStringWithDeclaration(SaveOptions.DisableFormatting);
             var dbLogEntry = new XmlDbUpdateLogModel
             {
                 UserId = _userId,
