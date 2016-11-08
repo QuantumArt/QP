@@ -7,6 +7,7 @@ using Ploeh.AutoFixture.Dsl;
 using Ploeh.AutoFixture.Xunit2;
 using QP8.WebMvc.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
 using Quantumart.QP8.BLL.Services.API;
@@ -28,6 +29,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             _fixture.Customize<Field>(composer => _postProcessFieldComposer);
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();
+            LogProvider.LogFactory = new NullLogFactory();
         }
 
         [Theory, AutoData, Trait("CsvDbUpdate", "ExtensionArticle")]

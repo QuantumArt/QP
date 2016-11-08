@@ -33,7 +33,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         public static void Main(string[] args)
         {
             Logger = new QpUpdateLoggingWrapper();
-            Logger.Info($"Console db updater is started. Version: {CommonHelpers.GetAssemblyVersion()}. Args: {args.ToJsonLog()}");
+            Logger.Info($"QuantumArt DbUpdate for QP8 version 6.0. Version: {CommonHelpers.GetAssemblyVersion()}. Args: {args.ToJsonLog()}");
 
             try
             {
@@ -48,7 +48,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
                 var dataProcessor = DataProcessorFactory.Create(settings);
                 dataProcessor.Process();
 
-                Logger.Info("Processing successfuly finished...");
+                Logger.Debug("Processing successfuly finished...");
                 ConsoleHelpers.ExitProgram(ExitCode.Success);
             }
             catch (OptionException ex)

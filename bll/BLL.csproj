@@ -139,6 +139,7 @@
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
+    <Compile Include="Factories\Logging\NullLogFactory.cs" />
     <Compile Include="Factories\Logging\NLogFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
@@ -157,7 +158,7 @@
     <Compile Include="Interfaces\Logging\ILogFactory.cs" />
     <Compile Include="Factories\Logging\LogProvider.cs" />
     <Compile Include="Adapters\Logging\DiagnosticsDebugLogger.cs" />
-    <Compile Include="Factories\Logging\DiagnosticsDebugLogFactory.cs" />
+    <Compile Include="Factories\Logging\DiagnosticsLogFactory.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />

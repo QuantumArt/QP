@@ -11,7 +11,6 @@ using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 using Telerik.Web.Mvc;
-using StringExtensions = Quantumart.QP8.WebMvc.Infrastructure.Extensions.StringExtensions;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

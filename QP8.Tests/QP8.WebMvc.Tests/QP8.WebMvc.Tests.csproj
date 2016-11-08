@@ -100,7 +100,7 @@
     <Content Include="TestData\ConsoleDbUpdate\XmlData\mts_catalog_with_five_actions.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_14-59-29.xml">
+    <Content Include="TestData\ConsoleDbUpdate\XmlData\mts_catalog2_guid_rename.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="TestData\ConsoleDbUpdate\XmlData\mts_catalog2_2016-10-27_17-00-16.xml">

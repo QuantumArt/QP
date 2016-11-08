@@ -7,6 +7,7 @@ using System.Web;
 using Moq;
 using NUnit.Framework;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
@@ -52,14 +53,11 @@ namespace QP8.Integration.Tests
             ContentName = "Test M2M";
             Clear();
 
-            var appInfoRepository = new Mock<IApplicationInfoRepository>();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
-            var actionsCorrecterService = new Mock<IXmlDbUpdateActionCorrecterService>();
-            var httpContextProcessor = new Mock<IXmlDbUpdateHttpContextProcessor>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, appInfoRepository.Object, actionsCorrecterService.Object, httpContextProcessor.Object, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new XmlDbUpdateActionService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
             service.Process(Global.GetXml(@"xmls\m2m.xml"));
 
             ContentId = Global.GetContentId(Cnn, ContentName);

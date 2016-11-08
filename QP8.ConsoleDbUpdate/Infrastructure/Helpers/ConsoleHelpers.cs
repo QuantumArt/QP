@@ -10,7 +10,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
         internal static void PrintHelloMessage()
         {
             WriteLineDebug();
-            Console.WriteLine("QuantumArt DBUpdate for QP8 version 6.0.");
+
+            Console.WriteLine("QuantumArt DbUpdate for QP8 version 6.0.");
             Console.WriteLine($"Assembly version {CommonHelpers.GetAssemblyVersion()}.");
         }
 
@@ -93,9 +94,18 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 
         internal static void ExitProgram(ExitCode exitCode)
         {
-            Console.WriteLine(exitCode == ExitCode.Success
-                ? "Processing successfuly finished."
-                : ">>> There was an exception in xml db updater <<<");
+            if (exitCode == ExitCode.Success)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Processing successfuly finished...");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("There was an exception in xml db updater...");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
 
             Program.Logger.Flush();
             Environment.Exit((int)exitCode);

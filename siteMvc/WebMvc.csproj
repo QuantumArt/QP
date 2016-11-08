@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(SolutionDir)packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('$(SolutionDir)packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -794,11 +794,9 @@
     <Content Include="Content\codemirror\addon\comment\continuecomment.js" />
     <Content Include="Content\codemirror\addon\dialog\dialog.css" />
     <Content Include="Content\codemirror\addon\dialog\dialog.js" />
-    <Content Include="Content\codemirror\addon\dialog\dialog.min.css" />
     <Content Include="Content\codemirror\addon\display\autorefresh.js" />
     <Content Include="Content\codemirror\addon\display\fullscreen.css" />
     <Content Include="Content\codemirror\addon\display\fullscreen.js" />
-    <Content Include="Content\codemirror\addon\display\fullscreen.min.css" />
     <Content Include="Content\codemirror\addon\display\panel.js" />
     <Content Include="Content\codemirror\addon\display\placeholder.js" />
     <Content Include="Content\codemirror\addon\display\rulers.js" />
@@ -813,7 +811,6 @@
     <Content Include="Content\codemirror\addon\fold\foldcode.js" />
     <Content Include="Content\codemirror\addon\fold\foldgutter.css" />
     <Content Include="Content\codemirror\addon\fold\foldgutter.js" />
-    <Content Include="Content\codemirror\addon\fold\foldgutter.min.css" />
     <Content Include="Content\codemirror\addon\fold\indent-fold.js" />
     <Content Include="Content\codemirror\addon\fold\markdown-fold.js" />
     <Content Include="Content\codemirror\addon\fold\xml-fold.js" />
@@ -823,7 +820,6 @@
     <Content Include="Content\codemirror\addon\hint\javascript-hint.js" />
     <Content Include="Content\codemirror\addon\hint\show-hint.css" />
     <Content Include="Content\codemirror\addon\hint\show-hint.js" />
-    <Content Include="Content\codemirror\addon\hint\show-hint.min.css" />
     <Content Include="Content\codemirror\addon\hint\sql-hint.js" />
     <Content Include="Content\codemirror\addon\hint\xml-hint.js" />
     <Content Include="Content\codemirror\addon\lint\coffeescript-lint.js" />
@@ -833,11 +829,9 @@
     <Content Include="Content\codemirror\addon\lint\json-lint.js" />
     <Content Include="Content\codemirror\addon\lint\lint.css" />
     <Content Include="Content\codemirror\addon\lint\lint.js" />
-    <Content Include="Content\codemirror\addon\lint\lint.min.css" />
     <Content Include="Content\codemirror\addon\lint\yaml-lint.js" />
     <Content Include="Content\codemirror\addon\merge\merge.css" />
     <Content Include="Content\codemirror\addon\merge\merge.js" />
-    <Content Include="Content\codemirror\addon\merge\merge.min.css" />
     <Content Include="Content\codemirror\addon\mode\loadmode.js" />
     <Content Include="Content\codemirror\addon\mode\multiplex.js" />
     <Content Include="Content\codemirror\addon\mode\multiplex_test.js" />
@@ -851,12 +845,10 @@
     <Content Include="Content\codemirror\addon\scroll\scrollpastend.js" />
     <Content Include="Content\codemirror\addon\scroll\simplescrollbars.css" />
     <Content Include="Content\codemirror\addon\scroll\simplescrollbars.js" />
-    <Content Include="Content\codemirror\addon\scroll\simplescrollbars.min.css" />
     <Content Include="Content\codemirror\addon\search\jump-to-line.js" />
     <Content Include="Content\codemirror\addon\search\match-highlighter.js" />
     <Content Include="Content\codemirror\addon\search\matchesonscrollbar.css" />
     <Content Include="Content\codemirror\addon\search\matchesonscrollbar.js" />
-    <Content Include="Content\codemirror\addon\search\matchesonscrollbar.min.css" />
     <Content Include="Content\codemirror\addon\search\search.js" />
     <Content Include="Content\codemirror\addon\search\searchcursor.js" />
     <Content Include="Content\codemirror\addon\selection\active-line.js" />
@@ -864,7 +856,6 @@
     <Content Include="Content\codemirror\addon\selection\selection-pointer.js" />
     <Content Include="Content\codemirror\addon\tern\tern.css" />
     <Content Include="Content\codemirror\addon\tern\tern.js" />
-    <Content Include="Content\codemirror\addon\tern\tern.min.css" />
     <Content Include="Content\codemirror\addon\tern\worker.js" />
     <Content Include="Content\codemirror\addon\wrap\hardwrap.js" />
     <Content Include="Content\codemirror\demo\activeline.html" />
@@ -914,7 +905,6 @@
     <Content Include="Content\codemirror\doc\activebookmark.js" />
     <Content Include="Content\codemirror\doc\compress.html" />
     <Content Include="Content\codemirror\doc\docs.css" />
-    <Content Include="Content\codemirror\doc\docs.min.css" />
     <Content Include="Content\codemirror\doc\internals.html" />
     <Content Include="Content\codemirror\doc\logo.png" />
     <Content Include="Content\codemirror\doc\logo.svg" />
@@ -932,7 +922,6 @@
     <Content Include="Content\codemirror\keymap\vim.js" />
     <Content Include="Content\codemirror\lib\codemirror.css" />
     <Content Include="Content\codemirror\lib\codemirror.js" />
-    <Content Include="Content\codemirror\lib\codemirror.min.css" />
     <Content Include="Content\codemirror\mode\apl\apl.js" />
     <Content Include="Content\codemirror\mode\apl\index.html" />
     <Content Include="Content\codemirror\mode\asciiarmor\asciiarmor.js" />
@@ -1156,11 +1145,9 @@
     <Content Include="Content\codemirror\mode\tiddlywiki\index.html" />
     <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.css" />
     <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.js" />
-    <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.min.css" />
     <Content Include="Content\codemirror\mode\tiki\index.html" />
     <Content Include="Content\codemirror\mode\tiki\tiki.css" />
     <Content Include="Content\codemirror\mode\tiki\tiki.js" />
-    <Content Include="Content\codemirror\mode\tiki\tiki.min.css" />
     <Content Include="Content\codemirror\mode\toml\index.html" />
     <Content Include="Content\codemirror\mode\toml\toml.js" />
     <Content Include="Content\codemirror\mode\tornado\index.html" />
@@ -1208,7 +1195,6 @@
     <Content Include="Content\codemirror\test\lint.js" />
     <Content Include="Content\codemirror\test\mode_test.css" />
     <Content Include="Content\codemirror\test\mode_test.js" />
-    <Content Include="Content\codemirror\test\mode_test.min.css" />
     <Content Include="Content\codemirror\test\multi_test.js" />
     <Content Include="Content\codemirror\test\phantom_driver.js" />
     <Content Include="Content\codemirror\test\run.js" />
@@ -1219,95 +1205,50 @@
     <Content Include="Content\codemirror\test\test.js" />
     <Content Include="Content\codemirror\test\vim_test.js" />
     <Content Include="Content\codemirror\theme\3024-day.css" />
-    <Content Include="Content\codemirror\theme\3024-day.min.css" />
     <Content Include="Content\codemirror\theme\3024-night.css" />
-    <Content Include="Content\codemirror\theme\3024-night.min.css" />
     <Content Include="Content\codemirror\theme\abcdef.css" />
-    <Content Include="Content\codemirror\theme\abcdef.min.css" />
     <Content Include="Content\codemirror\theme\ambiance-mobile.css" />
-    <Content Include="Content\codemirror\theme\ambiance-mobile.min.css" />
     <Content Include="Content\codemirror\theme\ambiance.css" />
-    <Content Include="Content\codemirror\theme\ambiance.min.css" />
     <Content Include="Content\codemirror\theme\base16-dark.css" />
-    <Content Include="Content\codemirror\theme\base16-dark.min.css" />
     <Content Include="Content\codemirror\theme\base16-light.css" />
-    <Content Include="Content\codemirror\theme\base16-light.min.css" />
     <Content Include="Content\codemirror\theme\bespin.css" />
-    <Content Include="Content\codemirror\theme\bespin.min.css" />
     <Content Include="Content\codemirror\theme\blackboard.css" />
-    <Content Include="Content\codemirror\theme\blackboard.min.css" />
     <Content Include="Content\codemirror\theme\cobalt.css" />
-    <Content Include="Content\codemirror\theme\cobalt.min.css" />
     <Content Include="Content\codemirror\theme\colorforth.css" />
-    <Content Include="Content\codemirror\theme\colorforth.min.css" />
     <Content Include="Content\codemirror\theme\dracula.css" />
-    <Content Include="Content\codemirror\theme\dracula.min.css" />
     <Content Include="Content\codemirror\theme\eclipse.css" />
-    <Content Include="Content\codemirror\theme\eclipse.min.css" />
     <Content Include="Content\codemirror\theme\elegant.css" />
-    <Content Include="Content\codemirror\theme\elegant.min.css" />
     <Content Include="Content\codemirror\theme\erlang-dark.css" />
-    <Content Include="Content\codemirror\theme\erlang-dark.min.css" />
     <Content Include="Content\codemirror\theme\hopscotch.css" />
-    <Content Include="Content\codemirror\theme\hopscotch.min.css" />
     <Content Include="Content\codemirror\theme\icecoder.css" />
-    <Content Include="Content\codemirror\theme\icecoder.min.css" />
     <Content Include="Content\codemirror\theme\isotope.css" />
-    <Content Include="Content\codemirror\theme\isotope.min.css" />
     <Content Include="Content\codemirror\theme\lesser-dark.css" />
-    <Content Include="Content\codemirror\theme\lesser-dark.min.css" />
     <Content Include="Content\codemirror\theme\liquibyte.css" />
-    <Content Include="Content\codemirror\theme\liquibyte.min.css" />
     <Content Include="Content\codemirror\theme\material.css" />
-    <Content Include="Content\codemirror\theme\material.min.css" />
     <Content Include="Content\codemirror\theme\mbo.css" />
-    <Content Include="Content\codemirror\theme\mbo.min.css" />
     <Content Include="Content\codemirror\theme\mdn-like.css" />
-    <Content Include="Content\codemirror\theme\mdn-like.min.css" />
     <Content Include="Content\codemirror\theme\midnight.css" />
-    <Content Include="Content\codemirror\theme\midnight.min.css" />
     <Content Include="Content\codemirror\theme\monokai.css" />
-    <Content Include="Content\codemirror\theme\monokai.min.css" />
     <Content Include="Content\codemirror\theme\neat.css" />
-    <Content Include="Content\codemirror\theme\neat.min.css" />
     <Content Include="Content\codemirror\theme\neo.css" />
-    <Content Include="Content\codemirror\theme\neo.min.css" />
     <Content Include="Content\codemirror\theme\night.css" />
-    <Content Include="Content\codemirror\theme\night.min.css" />
     <Content Include="Content\codemirror\theme\paraiso-dark.css" />
-    <Content Include="Content\codemirror\theme\paraiso-dark.min.css" />
     <Content Include="Content\codemirror\theme\paraiso-light.css" />
-    <Content Include="Content\codemirror\theme\paraiso-light.min.css" />
     <Content Include="Content\codemirror\theme\pastel-on-dark.css" />
-    <Content Include="Content\codemirror\theme\pastel-on-dark.min.css" />
     <Content Include="Content\codemirror\theme\railscasts.css" />
-    <Content Include="Content\codemirror\theme\railscasts.min.css" />
     <Content Include="Content\codemirror\theme\rubyblue.css" />
-    <Content Include="Content\codemirror\theme\rubyblue.min.css" />
     <Content Include="Content\codemirror\theme\seti.css" />
-    <Content Include="Content\codemirror\theme\seti.min.css" />
     <Content Include="Content\codemirror\theme\solarized.css" />
-    <Content Include="Content\codemirror\theme\solarized.min.css" />
     <Content Include="Content\codemirror\theme\the-matrix.css" />
-    <Content Include="Content\codemirror\theme\the-matrix.min.css" />
     <Content Include="Content\codemirror\theme\tomorrow-night-bright.css" />
-    <Content Include="Content\codemirror\theme\tomorrow-night-bright.min.css" />
     <Content Include="Content\codemirror\theme\tomorrow-night-eighties.css" />
-    <Content Include="Content\codemirror\theme\tomorrow-night-eighties.min.css" />
     <Content Include="Content\codemirror\theme\ttcn.css" />
-    <Content Include="Content\codemirror\theme\ttcn.min.css" />
     <Content Include="Content\codemirror\theme\twilight.css" />
-    <Content Include="Content\codemirror\theme\twilight.min.css" />
     <Content Include="Content\codemirror\theme\vibrant-ink.css" />
-    <Content Include="Content\codemirror\theme\vibrant-ink.min.css" />
     <Content Include="Content\codemirror\theme\xq-dark.css" />
-    <Content Include="Content\codemirror\theme\xq-dark.min.css" />
     <Content Include="Content\codemirror\theme\xq-light.css" />
-    <Content Include="Content\codemirror\theme\xq-light.min.css" />
     <Content Include="Content\codemirror\theme\yeti.css" />
-    <Content Include="Content\codemirror\theme\yeti.min.css" />
     <Content Include="Content\codemirror\theme\zenburn.css" />
-    <Content Include="Content\codemirror\theme\zenburn.min.css" />
     <Content Include="Content\jquery.qtip.css" />
     <Content Include="Content\QP8\icons\16x16\crop.gif" />
     <Content Include="Content\QP8\icons\16x16\green_arrow_down.png" />
@@ -2366,7 +2307,6 @@
       start /MIN xcopy /s /y /R "$(OutDir)roslyn\*.*" "$(WebProjectOutputDir)\bin\Roslyn"
     </PostBuildEvent>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('$(SolutionDir)packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
