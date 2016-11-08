@@ -307,6 +307,9 @@
     <Compile Include="Infrastructure\Factories\JsonCamelCaseResultFabric.cs" />
     <Compile Include="Infrastructure\Helpers\GuidHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateQpActionHelpers.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateActionCorrecterService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateHttpContextProcessor.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateHttpContextProcessor.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
     <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateCommonConstants.cs" />
     <Compile Include="Infrastructure\Enums\ExceptionResultMode.cs" />

@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Globalization;
 using Moq;
 using NUnit.Framework;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
@@ -31,12 +32,14 @@ namespace QP8.Integration.Tests
             ContentName = "Test unique";
             Clear();
 
-            var dbActionService = new Mock<IXmlDbUpdateActionService>();
+            var appInfoRepository = new Mock<IApplicationInfoRepository>();
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
+            var actionsCorrecterService = new Mock<IXmlDbUpdateActionCorrecterService>();
+            var httpContextProcessor = new Mock<IXmlDbUpdateHttpContextProcessor>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, dbActionService.Object, false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, appInfoRepository.Object, actionsCorrecterService.Object, httpContextProcessor.Object, false);
             service.Process(Global.GetXml(@"xmls\unique.xml"));
             ContentId = Global.GetContentId(Cnn, ContentName);
             BaseArticlesIds = Global.GetIds(Cnn, ContentId);
@@ -51,14 +54,15 @@ namespace QP8.Integration.Tests
                 [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
                 ["abc"] = "Name3"
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
                 ["abc"] = "Name3"
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Non-existing fields shouldn't violate rules");
         }
 
@@ -71,14 +75,15 @@ namespace QP8.Integration.Tests
                 [SystemColumnNames.Id] = "0",
                 ["Title"] = "Name3"
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0",
                 ["Title"] = "Name3"
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.That(
                 () => Cnn.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("between articles being added/updated"),
@@ -185,7 +190,6 @@ namespace QP8.Integration.Tests
                 Assert.That(() => { localCnn.MassUpdate(ContentId, values2, 1); }, Throws.Exception);
 
                 tr.Rollback();
-
                 var titles = Global.GetTitles(localCnn, ContentId);
                 Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the external transaction should be rolled back");
             }
@@ -196,6 +200,7 @@ namespace QP8.Integration.Tests
         {
             var titlesBefore = Global.GetTitles(Cnn, ContentId);
             Assert.That(titlesBefore, Does.Not.Contain("Name5"), "correct state");
+
             var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             var numberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
             var article1 = new Hashtable
@@ -223,14 +228,10 @@ namespace QP8.Integration.Tests
                 Assert.That(() =>
                 {
                     localCnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article3, 0);
-                },
-                Throws.Exception, "Invalid data"
-                );
+                }, Throws.Exception, "Invalid data");
 
                 tr.Rollback();
-
                 var titles = Global.GetTitles(localCnn, ContentId);
-
                 Assert.That(titles, Does.Not.Contain("Name5"), "In case of any error the external transaction should be rolled back");
             }
         }
@@ -275,7 +276,6 @@ namespace QP8.Integration.Tests
             var first = ContentItem.Read(BaseArticlesIds[0], Cnn);
             var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
             var numberName = Cnn.FieldName(Global.SiteId, ContentName, "Number");
-
             var article1 = new Hashtable
             {
                 [titleName] = first.FieldValues["Title"].Data,
@@ -283,7 +283,6 @@ namespace QP8.Integration.Tests
             };
 
             var modified = Global.GetModified(Cnn, ContentId);
-
             Assert.DoesNotThrow(() =>
             {
                 Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
@@ -303,13 +302,13 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var first = ContentItem.Read(BaseArticlesIds[0], Cnn);
             var second = ContentItem.Read(BaseArticlesIds[1], Cnn);
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
                 ["Title"] = second.FieldValues["Title"].Data,
                 ["Number"] = second.FieldValues["Number"].Data
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
@@ -318,10 +317,9 @@ namespace QP8.Integration.Tests
                 ["Number"] = first.FieldValues["Number"].Data
 
             };
+
             values.Add(article2);
-
             var modified = Global.GetModified(Cnn, ContentId);
-
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Swap existing data");
 
             var modified2 = Global.GetModified(Cnn, ContentId);
@@ -342,8 +340,8 @@ namespace QP8.Integration.Tests
             {
                 [SystemColumnNames.Id] = "0"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.That(
                 () => Cnn.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("is required"),
@@ -360,12 +358,11 @@ namespace QP8.Integration.Tests
             };
 
             Assert.That(() =>
-                {
-                    Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
-                },
-                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("is required"),
-                "Validate required fields"
-            );
+            {
+                Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
+            },
+            Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("is required"),
+            "Validate required fields");
         }
 
         [Test]
@@ -377,8 +374,8 @@ namespace QP8.Integration.Tests
                 [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
                 ["Title"] = new string('*', 1000)
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.That(
                 () => Cnn.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("too long"),

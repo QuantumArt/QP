@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -16,9 +15,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
     internal static class XmlDbUpdateSerializerHelpers
     {
-        internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string backendUrl)
+        internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl)
         {
-            var root = GetOrCreateRoot(backendUrl);
+            var root = GetOrCreateRoot(backendUrl, currentDbVersion);
             root.Add(new XElement(XmlDbUpdateXDocumentConstants.ActionElement,
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute, action.Code),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute, string.Join(",", action.Ids)),
@@ -57,16 +56,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             };
         }
 
-        internal static void ErasePreviouslyRecordedActions(string backendUrl)
+        internal static void ErasePreviouslyRecordedActions(string backendUrl, string currentDbVersion)
         {
-            var root = GetOrCreateRoot(backendUrl);
+            var root = GetOrCreateRoot(backendUrl, currentDbVersion);
             var doc = root.Document;
             if (doc != null)
             {
                 if (root.HasElements)
                 {
                     root.Remove();
-                    doc.Add(CreateActionsRoot(backendUrl));
+                    doc.Add(CreateActionsRoot(backendUrl, currentDbVersion));
                 }
 
                 doc.Save(QPContext.GetRecordXmlFilePath());
@@ -146,13 +145,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }) ?? Enumerable.Empty<XElement>();
         }
 
-        private static XElement CreateActionsRoot(string backendUrl)
+        private static XElement CreateActionsRoot(string backendUrl, string currentDbVersion)
         {
             return new XElement(
                 XmlDbUpdateXDocumentConstants.RootElement,
                 GetBackendUrlAttribute(backendUrl),
                 new XAttribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute,
-                new ApplicationInfoHelper().GetCurrentDbVersion())
+                currentDbVersion)
             );
         }
 
@@ -161,9 +160,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return new XAttribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute, backendUrl);
         }
 
-        private static XElement GetOrCreateRoot(string backendUrl)
+        private static XElement GetOrCreateRoot(string backendUrl, string currentDbVersion)
         {
-            var doc = File.Exists(QPContext.GetRecordXmlFilePath()) ? XDocument.Load(QPContext.GetRecordXmlFilePath()) : new XDocument(CreateActionsRoot(backendUrl));
+            var doc = File.Exists(QPContext.GetRecordXmlFilePath()) ? XDocument.Load(QPContext.GetRecordXmlFilePath()) : new XDocument(CreateActionsRoot(backendUrl, currentDbVersion));
             return doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
         }
 

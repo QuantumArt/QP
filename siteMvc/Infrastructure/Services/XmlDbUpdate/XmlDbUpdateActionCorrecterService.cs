@@ -13,7 +13,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
-    public class XmlDbUpdateActionCorrecterService
+    public class XmlDbUpdateActionCorrecterService : IXmlDbUpdateActionCorrecterService
     {
         private readonly Dictionary<string, Dictionary<int, int>> _idsToReplace = new Dictionary<string, Dictionary<int, int>>();
         private readonly Dictionary<string, Dictionary<Guid, Guid>> _uniqueIdsToReplace = new Dictionary<string, Dictionary<Guid, Guid>>();
@@ -24,7 +24,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _dbActionService = dbActionService;
         }
 
-        internal XmlDbUpdateRecordedAction PreActionCorrections(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
+        public XmlDbUpdateRecordedAction PreActionCorrections(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
         {
             action = CorrectActionIds(action, useGuidSubstitution);
             switch (action.BackendAction.EntityType.Code)
@@ -73,7 +73,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             return action;
         }
 
-        internal XmlDbUpdateRecordedAction PostActionCorrections(XmlDbUpdateRecordedAction action, HttpContextBase httpContext)
+        public XmlDbUpdateRecordedAction PostActionCorrections(XmlDbUpdateRecordedAction action, HttpContextBase httpContext)
         {
             AddResultIds(action, httpContext);
             switch (action.BackendAction.Code)

@@ -10,6 +10,7 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
@@ -173,10 +174,11 @@ namespace Quantumart.QP8.WebMvc
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            var exp = Server.GetLastError();
-            if (exp != null)
+            var ex = Server.GetLastError();
+            if (ex != null)
             {
-                EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(exp, "Policy");
+                Logger.Log.Error(ex);
+                EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, "Policy");
             }
         }
 

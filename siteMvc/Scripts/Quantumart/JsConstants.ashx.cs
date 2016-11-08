@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.SessionState;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -28,7 +29,7 @@ namespace Quantumart.QP8.WebMvc.Backend
 
             //Версия приложения
             constants.AppendLine("// Версия приложения");
-            constants.AppendLine(GenerateStringConstant("BACKEND_VERSION", new ApplicationInfoHelper().GetCurrentDbVersion()));
+            constants.AppendLine(GenerateStringConstant("BACKEND_VERSION", new ApplicationInfoRepository().GetCurrentDbVersion()));
 
             // Константы кодов типов узлов
             constants.AppendLine("// Константы кодов типов узлов");

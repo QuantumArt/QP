@@ -1,11 +1,10 @@
 ﻿using System.Linq;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 
 namespace Quantumart.QP8.BLL.Repository.XmlDbUpdate
 {
-    public class XmlDbUpdateActionsLogRepository
+    public class XmlDbUpdateActionsLogRepository : IXmlDbUpdateActionsLogRepository
     {
         public bool IsExist(string hash)
         {

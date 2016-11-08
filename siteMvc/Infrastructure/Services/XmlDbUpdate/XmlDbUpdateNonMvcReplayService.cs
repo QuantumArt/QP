@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Quantumart.QP8.BLL.Adapters;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 
@@ -13,9 +14,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             int userId,
             bool useGuidSubstitution,
             IXmlDbUpdateLogService dbLogService,
-            IXmlDbUpdateActionService dbActionService,
+            IApplicationInfoRepository appInfoRepository,
+            IXmlDbUpdateActionCorrecterService actionsCorrecterService,
+            IXmlDbUpdateHttpContextProcessor httpContextProcessor,
             bool isQpInstalled = true)
-            : base(connectionString, userId, useGuidSubstitution, dbLogService, dbActionService)
+            : base(connectionString, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
         {
             _isQpInstalled = isQpInstalled;
         }
@@ -26,9 +29,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             int userId,
             bool useGuidSubstitution,
             IXmlDbUpdateLogService dbLogService,
-            IXmlDbUpdateActionService dbActionService,
+            IApplicationInfoRepository appInfoRepository,
+            IXmlDbUpdateActionCorrecterService actionsCorrecterService,
+            IXmlDbUpdateHttpContextProcessor httpContextProcessor,
             bool isQpInstalled = true)
-            : base(connectionString, identityInsertOptions, userId, useGuidSubstitution, dbLogService, dbActionService)
+            : base(connectionString, identityInsertOptions, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
         {
             _isQpInstalled = isQpInstalled;
         }

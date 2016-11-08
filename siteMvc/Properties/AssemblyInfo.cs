@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("QP8 Backend Web MVC Project")]
-[assembly: AssemblyDescription("Local builded at 2016-11-02")]
+[assembly: AssemblyDescription("Local builded at 2016-11-08")]
 
 [assembly: AssemblyVersion("0.1.4")]
 [assembly: AssemblyFileVersion("0.1.4.0")]

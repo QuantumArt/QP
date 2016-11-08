@@ -54,9 +54,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
                 var isValid = filterContext.Exception == null && filterContext.Controller.ViewData.ModelState.IsValid && !QPController.IsError(filterContext.HttpContext);
                 if (isValid && DbRepository.Get().RecordActions)
                 {
+                    var currentDbVersion = new ApplicationInfoRepository().GetCurrentDbVersion();
                     var actionToSerialize = XmlDbUpdateHttpContextHelpers.CreateXmlDbUpdateActionFromHttpContext(filterContext.HttpContext, _code ?? BackendActionContext.Current.ActionCode, _ignoreForm);
                     XmlDbUpdateSerializerHelpers
-                        .SerializeAction(actionToSerialize, CommonHelpers.GetBackendUrl(filterContext.HttpContext))
+                        .SerializeAction(actionToSerialize, currentDbVersion, CommonHelpers.GetBackendUrl(filterContext.HttpContext))
                         .Save(QPContext.GetRecordXmlFilePath(), SaveOptions.None);
                 }
             }

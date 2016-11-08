@@ -10,7 +10,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Moq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Security;
@@ -56,23 +55,39 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return action;
         }
 
-        internal static HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId, bool useGuidSubstitution)
+        internal static RouteData GetRouteData(XmlDbUpdateRecordedAction action, string controllerName, string controllerAction)
         {
-            Ensure.NotNull(QPConnectionScope.Current.DbConnection, "QPConnection scope should be initialized to use fake mvc context");
-            var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && n != "~").ToArray();
-            var controllerName = urlParts[0];
-            var controllerAction = urlParts[1];
-            var requestContext = new RequestContext(
-                BuildHttpContextBase(recordedAction, backendUrl, userId, useGuidSubstitution),
-                GetRouteData(recordedAction, controllerName, controllerAction)
-            );
-
-            BackendActionContext.ResetCurrent();
-            BuildController(requestContext, controllerName, CultureHelpers.GetCultureInfoByLcid(recordedAction.Lcid)).Execute(requestContext);
-            return requestContext.HttpContext;
+            var data = new RouteData();
+            data.Values["controller"] = controllerName;
+            data.Values["action"] = controllerAction;
+            data.Values["tabId"] = "tab_virtual";
+            data.Values["parentId"] = action.ParentId;
+            data.Values["id"] = int.Parse(action.Ids.First());
+            data.Values["IDs"] = action.Ids.Select(int.Parse).ToArray();
+            return data;
         }
 
-        private static HttpContextBase BuildHttpContextBase(XmlDbUpdateRecordedAction action, string backendUrl, int userId, bool useGuidSubstitution)
+        internal static IController BuildController(RequestContext requestContext, string controllerName, CultureInfo cultureInfo)
+        {
+            var controller = new DefaultControllerFactory().CreateController(requestContext, controllerName) as ControllerBase;
+            if (controller == null)
+            {
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Controller '{0}' is not found ", controllerName));
+            }
+
+            controller.ControllerContext = new ControllerContext(requestContext.HttpContext, requestContext.RouteData, controller);
+            controller.ValueProvider = new ValueProviderCollection(new[]
+            {
+                new DictionaryValueProvider<object>(requestContext.RouteData.Values, cultureInfo),
+                new FormCollection(requestContext.HttpContext.Request.Form).ToValueProvider(),
+                new NameValueCollectionValueProvider(requestContext.HttpContext.Request.QueryString, cultureInfo)
+            });
+
+            Thread.CurrentThread.CurrentCulture = cultureInfo;
+            return controller;
+        }
+
+        internal static HttpContextBase BuildHttpContextBase(XmlDbUpdateRecordedAction action, string backendUrl, int userId, bool useGuidSubstitution)
         {
             HttpContext.Current = new HttpContext(
                 new HttpRequest(string.Empty, backendUrl, string.Empty),
@@ -270,38 +285,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             var user = new UserService().ReadProfile(userId);
             var identity = new QPIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false);
             return new QPPrincipal(identity, new string[] { });
-        }
-
-        private static RouteData GetRouteData(XmlDbUpdateRecordedAction action, string controllerName, string controllerAction)
-        {
-            var data = new RouteData();
-            data.Values["controller"] = controllerName;
-            data.Values["action"] = controllerAction;
-            data.Values["tabId"] = "tab_virtual";
-            data.Values["parentId"] = action.ParentId;
-            data.Values["id"] = int.Parse(action.Ids.First());
-            data.Values["IDs"] = action.Ids.Select(int.Parse).ToArray();
-            return data;
-        }
-
-        private static IController BuildController(RequestContext requestContext, string controllerName, CultureInfo cultureInfo)
-        {
-            var controller = new DefaultControllerFactory().CreateController(requestContext, controllerName) as ControllerBase;
-            if (controller == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Controller '{0}' is not found ", controllerName));
-            }
-
-            controller.ControllerContext = new ControllerContext(requestContext.HttpContext, requestContext.RouteData, controller);
-            controller.ValueProvider = new ValueProviderCollection(new[]
-            {
-                new DictionaryValueProvider<object>(requestContext.RouteData.Values, cultureInfo),
-                new FormCollection(requestContext.HttpContext.Request.Form).ToValueProvider(),
-                new NameValueCollectionValueProvider(requestContext.HttpContext.Request.QueryString, cultureInfo)
-            });
-
-            Thread.CurrentThread.CurrentCulture = cultureInfo;
-            return controller;
         }
 
         private static T GetContextData<T>(HttpContextBase httpContext, string key)

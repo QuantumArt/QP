@@ -1,6 +1,7 @@
 using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Configuration;
@@ -23,13 +24,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly ICommunicationService _communicationService;
         private readonly IXmlDbUpdateLogService _xmlDbUpdateLogService;
-        private readonly IXmlDbUpdateActionService _xmlDbUpdateActionService;
+        private readonly IApplicationInfoRepository _appInfoRepository;
+        private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
+        private readonly IXmlDbUpdateActionCorrecterService _actionsCorrecterService;
 
-        public DbController(ICommunicationService communicationService, IXmlDbUpdateLogService xmlDbUpdateServce, IXmlDbUpdateActionService xmlDbUpdateActionService)
+        public DbController(
+            ICommunicationService communicationService,
+            IXmlDbUpdateLogService xmlDbUpdateServce,
+            IApplicationInfoRepository appInfoRepository,
+            IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            IXmlDbUpdateActionCorrecterService actionsCorrecterService)
         {
             _communicationService = communicationService;
             _xmlDbUpdateLogService = xmlDbUpdateServce;
-            _xmlDbUpdateActionService = xmlDbUpdateActionService;
+            _appInfoRepository = appInfoRepository;
+            _actionsCorrecterService = actionsCorrecterService;
+            _httpContextProcessor = httpContextProcessor;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -66,7 +76,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     if (model.OverrideRecordsFile)
                     {
-                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext));
+                        var currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
+                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext), currentDbVersion);
                     }
 
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)
@@ -121,7 +132,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     QPContext.CurrentUserId,
                     useGuidSubstitution,
                     _xmlDbUpdateLogService,
-                    _xmlDbUpdateActionService).Process(xmlString);
+                    _appInfoRepository,
+                    _actionsCorrecterService,
+                    _httpContextProcessor
+                ).Process(xmlString);
             }
             catch (XmlDbUpdateLoggingException ex)
             {

@@ -1,10 +1,17 @@
 ﻿using System;
-using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Interfaces.Db;
 
 namespace Quantumart.QP8.BLL.Services.XmlDbUpdate
 {
     public class XmlDbUpdateActionService : IXmlDbUpdateActionService
     {
+        private readonly IArticleRepository _articleRepository;
+
+        public XmlDbUpdateActionService(IArticleRepository articleRepository)
+        {
+            _articleRepository = articleRepository;
+        }
+
         public int GetArticleIdByGuid(string rawGuid)
         {
             Guid guid;
@@ -29,7 +36,7 @@ namespace Quantumart.QP8.BLL.Services.XmlDbUpdate
 
         public int? GetArticleIdByGuidOrDefault(Guid guid)
         {
-            return ArticleRepository.GetByGuid(guid)?.Id;
+            return _articleRepository.GetByGuid(guid)?.Id;
         }
     }
 }

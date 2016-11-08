@@ -5,10 +5,10 @@ namespace Quantumart.QP8.BLL.Services.XmlDbUpdate
 {
     public class XmlDbUpdateLogService : IXmlDbUpdateLogService
     {
-        private readonly XmlDbUpdateLogRepository _dbUpdateLogRepository;
-        private readonly XmlDbUpdateActionsLogRepository _dbUpdateActionsLogRepository;
+        private readonly IXmlDbUpdateLogRepository _dbUpdateLogRepository;
+        private readonly IXmlDbUpdateActionsLogRepository _dbUpdateActionsLogRepository;
 
-        public XmlDbUpdateLogService(XmlDbUpdateLogRepository dbUpdateLogRepository, XmlDbUpdateActionsLogRepository dbUpdateActionsLogRepository)
+        public XmlDbUpdateLogService(IXmlDbUpdateLogRepository dbUpdateLogRepository, IXmlDbUpdateActionsLogRepository dbUpdateActionsLogRepository)
         {
             _dbUpdateLogRepository = dbUpdateLogRepository;
             _dbUpdateActionsLogRepository = dbUpdateActionsLogRepository;

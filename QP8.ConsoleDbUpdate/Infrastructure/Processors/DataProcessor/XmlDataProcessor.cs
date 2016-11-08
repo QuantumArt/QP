@@ -1,4 +1,5 @@
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
@@ -13,7 +14,12 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         private readonly BaseSettingsModel _settings;
         private readonly IXmlDbUpdateReplayService _xmlDbUpdateReplayService;
 
-        public XmlDataProcessor(XmlSettingsModel settings, IXmlDbUpdateLogService xmlDbUpdateLogService, IXmlDbUpdateActionService xmlDbUpdateActionService)
+        public XmlDataProcessor(
+            XmlSettingsModel settings,
+            IXmlDbUpdateLogService xmlDbUpdateLogService,
+            IApplicationInfoRepository appInfoRepository,
+            IXmlDbUpdateActionCorrecterService actionCorrecterService,
+            IXmlDbUpdateHttpContextProcessor httpContextProcessor)
         {
             QPContext.CurrentCustomerCode = settings.CustomerCode;
 
@@ -24,7 +30,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
                 settings.UserId,
                 settings.UseGuidSubstitution,
                 xmlDbUpdateLogService,
-                xmlDbUpdateActionService);
+                appInfoRepository,
+                actionCorrecterService,
+                httpContextProcessor);
         }
 
         public void Process()

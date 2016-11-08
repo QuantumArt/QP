@@ -3,6 +3,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL
 {
@@ -94,11 +95,9 @@ namespace Quantumart.QP8.BLL
 				QPContext.CurrentCustomerCode = CustomerCode;
 				using (var scope = new QPConnectionScope())
 				{
-
-					ApplicationInfoHelper appSrv = new ApplicationInfoHelper();
-					string dbVer = appSrv.GetCurrentDbVersion();
-					string appVer = appSrv.GetCurrentBackendVersion();
-					if (!appSrv.VersionsEqual(dbVer, appVer))
+				    string dbVer = new ApplicationInfoRepository().GetCurrentDbVersion();
+					string appVer = ApplicationInfoHelpers.GetCurrentBackendVersion();
+					if (!ApplicationInfoHelpers.VersionsEqual(dbVer, appVer))
 					{
 						errors.ErrorForModel(String.Format(LogOnStrings.VersionsAreDifferent, dbVer, appVer));
 					}
