@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
@@ -21,7 +21,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
         public override string ActionCode => IsNew ? Constants.ActionCode.AddNewVisualEditorPlugin : Constants.ActionCode.VisualEditorPluginProperties;
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public string AggregationListItems_VeCommandsDisplay { get; set; }
+        public string AggregationListItemsVeCommandsDisplay { get; set; }
 
         public new VisualEditorPlugin Data
         {
@@ -50,7 +50,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         internal void DoCustomBinding()
         {
-            _jsonCommands = new JavaScriptSerializer().Deserialize<List<VisualEditorCommand>>(AggregationListItems_VeCommandsDisplay);
+            _jsonCommands = JsonConvert.DeserializeObject<List<VisualEditorCommand>>(AggregationListItemsVeCommandsDisplay);
             Data.DoCustomBinding(_jsonCommands);
         }
 

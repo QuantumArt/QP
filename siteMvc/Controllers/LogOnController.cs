@@ -1,11 +1,13 @@
 using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -13,19 +15,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
     [ValidateInput(false)]
     public class LogOnController : QPController
     {
-        [HttpGet]
         [DisableBrowserCache]
         [ResponseHeader("QP-Not-Authenticated", "True")]
         public ActionResult Index(DirectLinkOptions directLinkOptions)
         {
             if (!Request.IsAuthenticated && AuthenticationHelper.ShouldUseWindowsAuthentication(Request.UserHostAddress))
             {
-                // Если IP-адрес пользователя входит в диапазон IP-адресов
-                // внутренней сети, то перенаправляем его на страницу Windows-аутентификации
-                return Redirect(directLinkOptions != null ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl) : AuthenticationHelper.WindowsAuthenticationUrl);
+                return Redirect(GetAuthorizationUrl(directLinkOptions));
             }
 
-            InitViewBag();
+            FillViewBagData();
             return LogOnView();
         }
 
@@ -45,6 +44,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (ModelState.IsValid && data.User != null)
             {
                 AuthenticationHelper.CompleteAuthentication(data.User);
+                Logger.Log.Debug($"User successfully authenticated: {data.User.ToJsonLog()}");
                 if (Request.IsAjaxRequest())
                 {
                     return Json(new
@@ -63,11 +63,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 return RedirectToAction("Index", "Home");
             }
 
-            InitViewBag();
+            FillViewBagData();
             return LogOnView();
         }
 
-        [HttpGet]
         [DisableBrowserCache]
         public ActionResult LogOut(DirectLinkOptions directLinkOptions)
         {
@@ -80,10 +79,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Redirect(loginUrl);
         }
 
-        private void InitViewBag()
+        private static string GetAuthorizationUrl(DirectLinkOptions directLinkOptions)
+        {
+            // Если IP-адрес пользователя входит в диапазон IP-адресов
+            // внутренней сети, то перенаправляем его на страницу Windows-аутентификации
+            return directLinkOptions != null ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl) : AuthenticationHelper.WindowsAuthenticationUrl;
+        }
+
+        private void FillViewBagData()
         {
             ViewBag.AllowSelectCustomerCode = QPConfiguration.AllowSelectCustomerCode;
-            ViewBag.CustomerCodes = QPConfiguration.CustomerCodes.Select(c => new QPSelectListItem { Text = c, Value = c }).OrderBy(n => n.Text);
+            ViewBag.CustomerCodes = QPConfiguration.CustomerCodes.Select(cc => new QPSelectListItem { Text = cc, Value = cc }).OrderBy(cc => cc.Text);
         }
 
         private ActionResult LogOnView()

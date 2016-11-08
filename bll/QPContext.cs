@@ -499,9 +499,9 @@ namespace Quantumart.QP8.BLL
         /// <param name="errorCode">код ошибки</param>
         /// <param name="message">сообщение</param>
         /// <returns>информация о пользователе</returns>
-        public static QPUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
+        public static QpUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
         {
-            QPUser resultUser = null;
+            QpUser resultUser = null;
             message = string.Empty;
 
             using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.GetConnectionString(data.CustomerCode))))
@@ -512,7 +512,7 @@ namespace Quantumart.QP8.BLL
                     var user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     if (user != null)
                     {
-                        resultUser = new QPUser
+                        resultUser = new QpUser
                         {
                             Id = user.Id,
                             Name = user.LogOn,
@@ -593,7 +593,7 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-        /// закрыть открытые сессии пользователя
+        /// Закрыть открытые сессии пользователя
         /// </summary>
         private static void CloseUserSessions(decimal userId, QP8Entities dbContext, DateTime currentDt)
         {

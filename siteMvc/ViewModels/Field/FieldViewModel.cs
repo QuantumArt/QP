@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
@@ -62,13 +62,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         private string _actionCode = Constants.ActionCode.FieldProperties;
 
-        public override string ActionCode
-        {
-            get
-            {
-                return IsNew ? Constants.ActionCode.AddNewField : _actionCode;
-            }
-        }
+        public override string ActionCode => IsNew ? Constants.ActionCode.AddNewField : _actionCode;
 
         public override ExpandoObject MainComponentOptions
         {
@@ -150,9 +144,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
         [LocalizedDisplayName("Formats", NameResourceType = typeof(VisualEditorStrings))]
         public IList<QPCheckedItem> ActiveVeFormats { get; set; }
 
-        public string AggregationListItems_Data_ExternalCssItems { get; set; }
+        public string AggregationListItemsDataExternalCssItems { get; set; }
 
-        public string AggregationListItems_Data_StringEnumItems { get; set; }
+        public string AggregationListItemsDataStringEnumItems { get; set; }
 
         private void Init()
         {
@@ -553,10 +547,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         public QPSelectListItem M2MDefaultValueListItem => Data.M2MDefaultValue != null ? new QPSelectListItem { Value = Data.M2MDefaultValue, Text = Data.O2MDefaultValueName, Selected = true } : null;
 
-        /// <summary>
-        /// Возвращает список контентов для классификатора
-        /// </summary>
-        /// <returns></returns>
         public IEnumerable<ListItem> GetAggregetableContentsForClassifier()
         {
             return FieldService.GetAggregetableContentsForClassifier(Data);
@@ -577,13 +567,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
 
         internal void DoCustomBinding()
         {
-            if (!string.IsNullOrWhiteSpace(AggregationListItems_Data_ExternalCssItems))
+            if (!string.IsNullOrWhiteSpace(AggregationListItemsDataExternalCssItems))
             {
-                Data.ExternalCssItems = new JavaScriptSerializer().Deserialize<List<ExternalCss>>(AggregationListItems_Data_ExternalCssItems);
+                Data.ExternalCssItems = JsonConvert.DeserializeObject<List<ExternalCss>>(AggregationListItemsDataExternalCssItems);
                 Data.ExternalCss = ExternalCssHelper.ConvertToString(Data.ExternalCssItems);
             }
 
-            Data.ParseStringEnumJson(AggregationListItems_Data_StringEnumItems);
+            Data.ParseStringEnumJson(AggregationListItemsDataStringEnumItems);
             Data.DefaultArticleIds = DefaultArticleIds.ToArray();
             Data.ActiveVeStyleIds = ActiveVeStyleIds;
             Data.ActiveVeCommandIds = ActiveVeCommandsIds;

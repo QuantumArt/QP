@@ -30,7 +30,7 @@ namespace Quantumart.QP8.Security
 				string userName = context.User.Identity.Name; // логин пользователя
 				string[] roles = new string[0]; // роли, доступные пользоватею
 
-				QPUser userInformation; // информация о пользователе
+				QpUser userInformation; // информация о пользователе
 				if (QPConfiguration.WebConfigSection.Authentication.AllowSaveUserInformationInCookie)
 				{
 					userInformation = AuthenticationHelper.GetUserInformationFromAuthenticationCookie(userName);

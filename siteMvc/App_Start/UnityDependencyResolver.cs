@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.Practices.Unity;
@@ -65,8 +65,7 @@ namespace Quantumart.QP8.WebMvc
 
                 .RegisterType<IXmlDbUpdateLogRepository, XmlDbUpdateLogRepository>()
                 .RegisterType<IXmlDbUpdateActionsLogRepository, XmlDbUpdateActionsLogRepository>()
-                //.RegisterType<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
-                .RegisterType<IXmlDbUpdateLogService, XmlDbUpdateLogService>(new InjectionConstructor(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository()))
+                .RegisterType<IXmlDbUpdateLogService, XmlDbUpdateLogService>()
                 .RegisterType<IXmlDbUpdateActionService, XmlDbUpdateActionService>()
                 .RegisterType<IXmlDbUpdateHttpContextProcessor, XmlDbUpdateHttpContextProcessor>()
                 .RegisterType<IXmlDbUpdateActionCorrecterService, XmlDbUpdateActionCorrecterService>()

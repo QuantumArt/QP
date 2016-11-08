@@ -874,6 +874,93 @@ BEGIN
 	exec qp_replicate_items @list, '', 0
 END
 GO
+exec qp_drop_existing 'qp_update_links', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_update_links]
+    @ids Ids READONLY, 
+    @id numeric,
+    @link_id numeric
+
+AS
+BEGIN
+
+    declare @ids2 Ids
+    declare @ids3 Ids
+
+    insert into @ids2 
+    select * from @ids
+
+    while exists(select * from @ids2)
+    begin
+        delete from @ids3
+        delete top(100) from @ids2 output DELETED.* into @ids3
+
+        insert into item_to_item (l_item_id, r_item_id, link_id) 
+        select id, @id, @link_id
+        from @ids3 i where not exists(
+            select * from item_link il where il.item_id = i.id and link_id = @link_id and il.linked_item_id = @id
+        )
+    end
+
+END
+GO
+exec qp_drop_existing 'qp_update_values', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_update_values] 
+    @values [Values] READONLY
+AS
+BEGIN
+
+    declare @values2 [Values]
+    declare @values3 [Values]
+
+    insert into @values2 
+    select * from @values
+
+    while exists(select * from @values2)
+    begin
+        delete from @values3
+
+        delete top(100) from @values2 output DELETED.* into @values3
+        
+        update content_data set
+        data = case when ca.attribute_type_id in (9,10) then null else v.Value end,
+        blob_data = case when ca.attribute_type_id in (9,10) then v.Value else null end
+        from content_data cd 
+        inner join @values3 v on v.ArticleId = cd.content_item_id and v.FieldId = cd.attribute_id
+        inner join content_attribute ca on cd.attribute_id = ca.attribute_id
+
+    end
+
+END
+GO
+exec qp_drop_existing 'qp_fast_delete', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_fast_delete] 
+    @ids Ids READONLY
+AS
+BEGIN
+    select 1 as A into #disable_td_delete_item_o2m_nullify
+
+    declare @ids2 table (id numeric primary key)
+    declare @ids3 table (id numeric primary key)
+
+    insert into @ids2 
+    select id from @ids
+
+    while exists(select * from @ids2)
+    begin
+        delete from @ids3
+        delete top(100) from @ids2 output DELETED.* into @ids3
+        delete content_item from content_item ci inner join @ids3 i on ci.content_item_id = i.id
+    end
+
+    drop table  #disable_td_delete_item_o2m_nullify
+END
+GO
 
 GO
 
