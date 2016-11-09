@@ -1,7 +1,4 @@
-// Install Steps:
-// 1. Install external node js and npm from official site
-// 2. Install global packages for npm runner: gulp, cross-env
-// 3. Set priority for VS: https://blogs.msdn.microsoft.com/webdev/2015/03/19/customize-external-web-tools-in-visual-studio-2015/
+/// <binding AfterBuild='default' Clean='clean' />
 
 var fs = require('fs');
 var del = require('del');
@@ -86,3 +83,8 @@ gulp.task('default', function() {
   $.notify({ title: welcomeMsg, message: 'gulp is running' }); // TODO: ne pashet
   gulp.start('assets:revisions');
 });
+
+// Install Steps:
+// 1. Install external node js and npm from official site
+// 2. Install global packages for npm runner: gulp, cross-env
+// 3. Set priority for VS: https://blogs.msdn.microsoft.com/webdev/2015/03/19/customize-external-web-tools-in-visual-studio-2015/
