@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assembling;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -115,9 +116,9 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (ids == null)
                 throw new ArgumentNullException(nameof(ids));
-                        
+
             NotificationRepository.MultipleDelete(ids);
-            
+
             return null;
         }
 
@@ -163,7 +164,7 @@ namespace Quantumart.QP8.BLL.Services
                 throw new ApplicationException(string.Format(NotificationStrings.NotificationNotFound, id));
             NotificationRepository.Delete(id);
             return null;
-        }		
+        }
 
         public IEnumerable<ListItem> GetStringFieldsAsListItemsByContentId(int contentId)
         {
@@ -189,7 +190,7 @@ namespace Quantumart.QP8.BLL.Services
         {
             if (createDefaultFormat  && !notification.FormatId.HasValue && !notification.IsExternal)
             {
-                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);				
+                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);
             }
             return NotificationRepository.UpdateProperties(notification);
         }
@@ -201,7 +202,7 @@ namespace Quantumart.QP8.BLL.Services
 
             if (createDefaultFormat && !notification.IsExternal)
             {
-                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);				
+                notification.FormatId = CreateDefaultFormat(notification.ContentId, backendUrl, QPContext.CurrentCustomerCode);
             }
             var result = NotificationRepository.SaveProperties(notification);
             return result;
@@ -241,7 +242,7 @@ namespace Quantumart.QP8.BLL.Services
                     throw new ArgumentException(string.Format(ArticleStrings.ArticleNotFound, id));
                 site = article.Content.Site;
             }
-            
+
             var repository = new NotificationRepository();
             var codes = code.Split(';');
             foreach (var currentCode in codes)
@@ -253,7 +254,7 @@ namespace Quantumart.QP8.BLL.Services
             var notification = ReadNotificationProperties(notificationId);
             notification.WorkFlowId = null;
             NotificationRepository.UpdateProperties(notification);
-            return MessageResult.Info(NotificationStrings.UnbindedMessage);			
+            return MessageResult.Info(NotificationStrings.UnbindedMessage);
         }
 
         public bool IsSiteDotNetByObjectFormatId(int objectFormatId)

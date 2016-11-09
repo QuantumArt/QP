@@ -1852,8 +1852,6 @@
     <Content Include="Scripts\Quantumart\languages\BackendFileField.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendPopupWindow.Lang.js" />
     <Content Include="Scripts\Quantumart\languages\BackendSearchBlock.Lang.js" />
-    <Content Include="Scripts\Quantumart\languages\BackendTraceWindow.Lang.js" />
-    <Content Include="Scripts\Quantumart\languages\BackendTraceWindow.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendEntityDataList.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendPopupWindow.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendSearchBlock.Lang.ru-ru.js" />
@@ -1890,10 +1888,8 @@
     <Content Include="Scripts\Quantumart\Editor\BackendVirtualFieldTree.js" />
     <Content Include="Scripts\Quantumart\Cache.js" />
     <Content Include="Scripts\Quantumart\Managers\BackendEntityTreeManager.js" />
-    <Content Include="Scripts\Quantumart\MicrosoftAjaxTraceExtensions.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendEntityTree.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendFileField.js" />
-    <Content Include="Scripts\Quantumart\BackendTraceWindow.js" />
     <Content Include="Scripts\Quantumart\Tree\BackendTreeBase.js" />
     <Content Include="Scripts\jquery\jquery.cookie.js" />
     <Content Include="Scripts\jquery\jquery.form.js" />

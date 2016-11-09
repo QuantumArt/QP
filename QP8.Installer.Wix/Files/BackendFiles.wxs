@@ -1620,18 +1620,6 @@
                     <Component Id="cmpAF8EDD2554F51DE9650D8B9BD0A5B274" Guid="*">
                         <File Id="fil7FC0735DDB5B5FAF55BB842B3AAF0428" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendToolbar.Lang.ru-ru.min.js" />
                     </Component>
-                    <Component Id="cmpF84B0D7FB0979C93A5EDE132314ACB46" Guid="*">
-                        <File Id="filAEF48906C07DBE551AA213BC4CE21EE7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTraceWindow.Lang.js" />
-                    </Component>
-                    <Component Id="cmp9FDDF6330E42F087BA719B2465B92261" Guid="*">
-                        <File Id="fil90A3323FFDD72D92D64BDF220F06235B" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTraceWindow.Lang.min.js" />
-                    </Component>
-                    <Component Id="cmpBD87C4977A501BFF4FFDF0D27D245D8C" Guid="*">
-                        <File Id="fil4FA4E1B2B7051E666EFE7E102A403E96" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTraceWindow.Lang.ru-ru.js" />
-                    </Component>
-                    <Component Id="cmp5DE79DF9A682EE668E59157EB78FEFD5" Guid="*">
-                        <File Id="fil235E3CDA66DC9C82B7FD19B033798DE8" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\languages\BackendTraceWindow.Lang.ru-ru.min.js" />
-                    </Component>
                 </Directory>
                 <Directory Id="dir198C6CDFA49A681BFC9A118A7E582BBA" Name="PlUpload">
                     <Component Id="cmpB4476897A06B1D4A32728677897AB841" Guid="*">
@@ -1738,12 +1726,6 @@
                     <Component Id="cmp80E8A6CF935ABE28058A1CA822465E58" Guid="*">
                         <File Id="fil44362ED9DC777FEF28AFB9C92E12B7D2" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\BackendTabStrip.min.js" />
                     </Component>
-                    <Component Id="cmp2812531018719D56D11B8F4BF7A017FC" Guid="*">
-                        <File Id="fil3958E3DBC7E6CB6D5B02C44D7941DE4E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\BackendTraceWindow.js" />
-                    </Component>
-                    <Component Id="cmpA5641831930EF301C38BC2ACA393A095" Guid="*">
-                        <File Id="filEC3C704584519D758D0369DA8C78EF82" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\BackendTraceWindow.min.js" />
-                    </Component>
                     <Component Id="cmpC16D63BA6FB92AB5818CE5E9FA5D4BD2" Guid="*">
                         <File Id="fil0B49BD35C0EFF481BBAFCC3AD55A08B7" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\Cache.js" />
                     </Component>
@@ -1773,12 +1755,6 @@
                     </Component>
                     <Component Id="cmpD9C99DCC9A47113F95BCF7525FD02C7C" Guid="*">
                         <File Id="fil6F1576524CAC993D280F99F17E87F160" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\JsLanguage.ashx" />
-                    </Component>
-                    <Component Id="cmp85FFC94EE250A7A008CC3DB159D22AE0" Guid="*">
-                        <File Id="fil0DDAD4676F51901857C3797865D56EBE" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\MicrosoftAjaxTraceExtensions.js" />
-                    </Component>
-                    <Component Id="cmpFE54EDF911BE0A18623AEFDBBE428863" Guid="*">
-                        <File Id="fil7DEE3B86F2C451C435BFB3D6A475D3EA" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\MicrosoftAjaxTraceExtensions.min.js" />
                     </Component>
                     <Component Id="cmp99DE9CBFB149CE6C16AA02FBD4783A31" Guid="*">
                         <File Id="fil5F0F4C3073EBCA44FB756F77E70DA35E" KeyPath="yes" Source="$(var.BackendDirPath)\Scripts\Quantumart\SearchInCodeComponent.js" />

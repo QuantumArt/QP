@@ -39,32 +39,6 @@ HTML, BODY
   background-color: #bcc7d8;
 }
 
-.twoColumnLayout #serviceActions
-{
-  float: left;
-  margin: 0 20px 0 0 ;
-  padding: 0;
-  line-height: normal;
-}
-
-.twoColumnLayout #serviceActions A.js,
-.twoColumnLayout #serviceActions A.js:link,
-.twoColumnLayout #serviceActions A.js:visited,
-.twoColumnLayout #serviceActions A.js:hover,
-.twoColumnLayout #serviceActions A.js:active
-{
-  color: #f1f5fb;
-  font-weight: bold;
-  text-decoration: none;
-  border-bottom: 1px dotted #f1f5fb;
-}
-
-.twoColumnLayout #serviceActions A.js:hover
-{
-  color: #ffefbb;
-  border-bottom: 1px dotted #ffefbb;
-}
-
 .twoColumnLayout #communicationMessage
 {
   float: left;

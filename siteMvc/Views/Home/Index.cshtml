@@ -1,4 +1,4 @@
-@using Quantumart.QP8.Utils
+﻿@using Quantumart.QP8.Utils
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.BLL
 @using Quantumart.QP8.WebMvc.ViewModels.HomePage;
@@ -26,13 +26,6 @@
 <body data-dbhash="@Model.DbHash">
   <div id="page" class="twoColumnLayout">
     <div id="header">
-      <div id="serviceActions">
-        @if (HttpContext.Current.IsDebuggingEnabled)
-        {
-          <a href="javascript:void(0);" id="traceWindowLink" class="js">@GlobalStrings.ServiceActions_Link_TraceConsole</a>
-        }
-      </div>
-
       <div id="communicationMessage">
         <span class="singleusermode"></span>
       </div>

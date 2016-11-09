@@ -8,7 +8,6 @@ using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QPublishing.Helpers
 {
-
     public class QpTrace
     {
         public string TraceString { get; set; }
@@ -34,7 +33,6 @@ namespace Quantumart.QPublishing.Helpers
             }
             else
             {
-                //conn.ProcessData(traceSQL)
                 traceSql = "update page_trace set query_string = '" + query + "', page_id = " + pageId + ", traced = '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "' where page_id = " + pageId;
                 conn.ProcessData(traceSql);
 
@@ -42,6 +40,7 @@ namespace Quantumart.QPublishing.Helpers
                 dt = conn.GetRealData(traceSql);
                 functionReturnValue = dt.Rows.Count != 0 ? DBConnector.GetNumInt(dt.Rows[0]["trace_id"]) : 0;
             }
+
             return functionReturnValue;
         }
 
@@ -62,10 +61,7 @@ namespace Quantumart.QPublishing.Helpers
         public void SaveTraceToDb(string trace, int traceId)
         {
             var conn = new DBConnector();
-            //trace = "Page started <br>1-1108Def:Undef:28511ms<br>1-1045Def:Value(p_pagealias)=;Undef:Value(""p_PageAlias"", ""Home"");27139ms<br>1-1183Def:Undef:25837ms<br>1-1015Def:Undef:24595ms<br>1-1016Def:Undef:23374ms<br>1-1017Def:Undef:22122ms<br>1-1018Def:Undef:20219ms<br>4-1121Def:Undef:13009ms<br>3-1120Def:Undef:started<br>5-1087Def:Value(set_p_aliasid)=0;Value(path_header_picture)=;Undef:8893ms<br>3-1120-14361ms<br>4-1129Def:Value(set_p_aliasid)=0;Value(path_header_picture)=;Undef:Value(""set_p_AliasID"", this.Data.Rows[0][""ParentItem""]);started<br>4-1129-10525ms<br>3-1086Def:Undef:started<br>3-1086-11917ms<br>2-1022Def:Undef:started<br>2-1022-15913ms<br>0-1101Def:Value(set_p_aliasid)=0;Undef:531ms<br>3-1101Def:Value(set_p_aliasid)=0;Undef:6089ms<br>2-1099Def:Value(m_breadcrumbfontcolorhigh)=;Value(m_breadcrumbfontcolorlow)=;Undef:started<br>2-1099-7431ms<br>2-1055Def:Value(p_aliasid)=0;Value(firstdefvar)=test;Undef:17315ms<br>2-1095Def:Value(p_pagealias)=Home;Undef:4857ms<br>2-1024Def:Undef:started<br>2-1024-3615ms<br>2-1054Def:Value(m_menufonthighcolor)=;Value(m_menufontlowcolor)=;Value(m_itemcount)=;Value(m_itemindex)=;Value(m_menuhighbgcolor)=;Value(m_menulowbgcolor)=;Undef:Value(""m_ItemIndex"", e.Item.ItemIndex + 1);Value(""m_MainMenuParent"", Field(((DataRow);Value(""m_ItemCount"", 0);Value(""MenuLevel2Width"", m_arrayLevel2[e.Item.ItemIndex]);671ms<br>1-1190Def:Undef:started<br>1-1190-19097ms<br>3-1052Def:Undef:2273ms<br>Page - 32507ms<br>"
             conn.ProcessData("delete from page_trace_format where trace_id = " + TraceId);
-            //conn.ProcessData("update page_trace set query_string ='" && trace && "' where trace_id =" && Me.TraceId)
-            SaveTraceLines(trace, traceId, 0);
         }
 
         public void ExtractFirstLine(ref string traceString, ref string trace)
@@ -92,6 +88,7 @@ namespace Quantumart.QPublishing.Helpers
             {
                 firstMatch = match;
             }
+
             return functionReturnValue;
         }
 
@@ -101,6 +98,7 @@ namespace Quantumart.QPublishing.Helpers
             var matches  = regEx.Matches(line);
             var functionReturnValue = matches.Count > 0;
             firstMatch = matches;
+
             return functionReturnValue;
         }
 
@@ -136,8 +134,8 @@ namespace Quantumart.QPublishing.Helpers
                     var formatId = firstMatch.Groups["fid"].ToString();
                     var defValuesString = firstMatch.Groups["def"].ToString();
                     var undefValuesString = firstMatch.Groups["undef"].ToString();
-
                     string traced;
+
                     if (MatchLine(traceString, "started<br>", ref firstMatch))
                     {
                         while (!found)
@@ -160,14 +158,8 @@ namespace Quantumart.QPublishing.Helpers
                     {
                         MatchLine(traceString, "(?<dur>[\\d]+)ms", ref firstMatch);
                         traced = firstMatch.Groups["dur"].ToString();
-
-                        //Dim conn As DbConnector = New DbConnector
-                        //conn.ProcessData("update page_trace set query_string ='" && traced && "' where trace_id =" && Me.TraceId)
-
-                        //SaveLine(Integer.Parse(traceId), Integer.Parse(format_id), parent, order, Integer.Parse(traced), def_values_string, undef_values_string)
                         SaveLine(traceId, int.Parse(formatId), parent, order, int.Parse(traced), defValuesString, undefValuesString);
                     }
-                    //SaveLine(308, 1108, parent, order, 1000, "", "")
                 }
                 order = order + 1;
             }
@@ -207,6 +199,5 @@ namespace Quantumart.QPublishing.Helpers
                 }
             }
         }
-
     }
 }
