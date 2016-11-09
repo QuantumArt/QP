@@ -24,7 +24,7 @@ HTML, BODY
   margin-left: 8.5em;
 }
 
-.loginFormLayout .validationSummary {
+.loginFormLayout .validationSummary, .loginFormLayout .validation-summary-errors {
   margin-top: 0.5em;
 }
 /*#endregion*/
