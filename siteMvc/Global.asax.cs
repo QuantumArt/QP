@@ -28,6 +28,8 @@ using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 using Quantumart.QP8.WebMvc.ViewModels.Notification;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
+using Quantumart.QP8.WebMvc.ViewModels.User;
+using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;

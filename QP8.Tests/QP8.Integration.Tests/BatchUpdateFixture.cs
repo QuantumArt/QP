@@ -6,11 +6,14 @@ using NUnit.Framework;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.BLL.Services.API;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.API.Models;
-using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
+using ArticleApiService = Quantumart.QP8.BLL.Services.API.ArticleService;
+using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
+using FieldService = Quantumart.QP8.BLL.Services.API.FieldService;
 
 namespace QP8.Integration.Tests
 {
@@ -67,7 +70,7 @@ namespace QP8.Integration.Tests
 
         public static DBConnector Cnn { get; private set; }
 
-        public static ArticleService ArticleService { get; private set; }
+        public static ArticleApiService ArticleService { get; private set; }
 
         public static Random Random { get; private set; }
 
@@ -143,14 +146,14 @@ namespace QP8.Integration.Tests
             Cnn = new DBConnector(Global.ConnectionString) { ForceLocalCache = true };
             DictionaryContentId = Global.GetContentId(Cnn, DictionaryContent);
             BaseContentId = Global.GetContentId(Cnn, BaseContent);
-            ArticleService = new ArticleService(Global.ConnectionString, 1);
+            ArticleService = new ArticleApiService(Global.ConnectionString, 1);
             Clear();
 
             var dbLogService = new Mock<IXmlDbUpdateLogService>();
             dbLogService.Setup(m => m.IsFileAlreadyReplayed(It.IsAny<string>())).Returns(false);
             dbLogService.Setup(m => m.IsActionAlreadyReplayed(It.IsAny<string>())).Returns(false);
 
-            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new XmlDbUpdateActionService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
+            var service = new XmlDbUpdateNonMvcReplayService(Global.ConnectionString, 1, false, dbLogService.Object, new ApplicationInfoRepository(), new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())), new XmlDbUpdateHttpContextProcessor(), false);
             service.Process(Global.GetXml(@"xmls\batchupdate.xml"));
 
             Random = new Random();

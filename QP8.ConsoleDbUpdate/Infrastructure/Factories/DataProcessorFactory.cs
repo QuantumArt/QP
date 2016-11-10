@@ -2,7 +2,7 @@
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
-using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
@@ -20,7 +20,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                     xmlSettings,
                     new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository()),
                     new ApplicationInfoRepository(),
-                    new XmlDbUpdateActionCorrecterService(new XmlDbUpdateActionService(new ArticleRepository())),
+                    new XmlDbUpdateActionCorrecterService(new ArticleService(new ArticleRepository())),
                     new XmlDbUpdateHttpContextProcessor()
                 );
             }

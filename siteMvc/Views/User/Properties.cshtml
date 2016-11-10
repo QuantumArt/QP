@@ -1,6 +1,4 @@
-﻿@model UserViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels
+﻿@model Quantumart.QP8.WebMvc.ViewModels.User.UserViewModel
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 
@@ -40,7 +38,7 @@
             new Dictionary<string, object> { { "id", Model.UniqueId("SelectedGroups") } }
         )
     }
-    
+
     @Html.Partial("ContentDefaultFilters", Model)
 
     using (Html.BeginFieldGroup(UserStrings.ViewSettings))
@@ -62,20 +60,20 @@
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
-    @(Model.ContextObjectName).set_initializedCallback(function() {	
-        this.contentDefaultFiltersMediator = new Quantumart.QP8.ContentDefaultFiltersMediator("@Model.ContentFilterElementId");
+    @(Model.ContextObjectName).set_initializedCallback(function() {
+      this.contentDefaultFiltersMediator = new Quantumart.QP8.ContentDefaultFiltersMediator("@Model.ContentFilterElementId");
     });
 
-    @(Model.ContextObjectName).set_hostLoadedCallback(function() {	
-        if(this.contentDefaultFiltersMediator){
-            this.contentDefaultFiltersMediator.initialize();
-        }
-    });
+  @(Model.ContextObjectName).set_hostLoadedCallback(function() {
+    if(this.contentDefaultFiltersMediator){
+      this.contentDefaultFiltersMediator.initialize();
+    }
+  });
 
-    @(Model.ContextObjectName).set_terminatingCallback(function() { 
-        if(this.contentDefaultFiltersMediator){
-            this.contentDefaultFiltersMediator.dispose();
-        }
-    });
+  @(Model.ContextObjectName).set_terminatingCallback(function() {
+    if(this.contentDefaultFiltersMediator){
+      this.contentDefaultFiltersMediator.dispose();
+    }
+  });
 </script>
 @Html.RunInitScript(Model)

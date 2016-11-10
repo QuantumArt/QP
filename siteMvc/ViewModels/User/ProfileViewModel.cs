@@ -6,7 +6,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.User
 {
     public class ProfileViewModel : UserViewModelBase
     {
@@ -23,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             }
         }
 
-        public static ProfileViewModel Create(User user, string tabId, int parentId, IUserService service)
+        public static ProfileViewModel Create(BLL.User user, string tabId, int parentId, IUserService service)
         {
             var model = Create<ProfileViewModel>(user, tabId, parentId);
             model.Service = service;

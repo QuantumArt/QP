@@ -1,7 +1,8 @@
 ﻿using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
-namespace Quantumart.QP8.BLL.Services.XmlDbUpdate
+namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
     public class XmlDbUpdateLogService : IXmlDbUpdateLogService
     {

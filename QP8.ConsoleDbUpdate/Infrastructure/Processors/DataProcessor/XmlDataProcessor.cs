@@ -1,11 +1,11 @@
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services.XmlDbUpdate;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 {

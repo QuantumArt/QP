@@ -1,6 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
@@ -16,7 +19,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class FieldController : QPController
     {
-        [HttpGet]
+        private readonly IArticleService _dbArticleService;
+
+        public FieldController(IArticleService dbArticleService)
+        {
+            _dbArticleService = dbArticleService;
+        }
+
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Fields)]
         public ActionResult Index(string tabId, int parentId)
@@ -35,7 +44,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewField)]
@@ -61,6 +69,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var model = FieldViewModel.Create(content, tabId, parentId);
             var oldLinkId = model.Data.LinkId;
             var oldBackward = model.Data.BackwardField;
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
@@ -74,6 +83,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     PersistVirtualFieldIds(model.Data.NewVirtualFieldIds);
                     PersistChildFieldIds(model.Data.ResultChildFieldIds);
                     PersistChildLinkIds(model.Data.ResultChildLinkIds);
+                    AppendFormGuidsFromIds("DefaultArticleIds", "DefaultArticleUniqueIds");
+                    AppendFormGuidsFromIds("Data.O2MDefaultValue", "Data.O2MUniqueIdDefaultValue");
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
@@ -99,7 +110,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.FieldProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Field, "id")]
@@ -114,14 +124,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.FieldProperties)]
         [ValidateInput(false)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateField)]
         [BackendActionContext(ActionCode.UpdateField)]
         [BackendActionLog]
-        [Record(ActionCode.FieldProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
         {
             var field = FieldService.ReadForUpdate(id);
@@ -141,25 +150,27 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     PersistLinkId(oldLinkId, model.Data.LinkId);
                     PersistBackwardId(oldBackward, model.Data.BackwardField);
                     PersistVirtualFieldIds(model.Data.NewVirtualFieldIds);
+                    AppendFormGuidsFromIds("DefaultArticleIds", "DefaultArticleUniqueIds");
+                    AppendFormGuidsFromIds("Data.O2MDefaultValue", "Data.O2MUniqueIdDefaultValue");
                 }
-                catch (UserQueryContentCreateViewException uqe)
+                catch (UserQueryContentCreateViewException uqEx)
                 {
                     if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
 
-                    ModelState.AddModelError("UserQueryContentCreateViewException", uqe.Message);
+                    ModelState.AddModelError("UserQueryContentCreateViewException", uqEx.Message);
                     return JsonHtml("Properties", model);
                 }
-                catch (VirtualContentProcessingException vcpe)
+                catch (VirtualContentProcessingException vcpEx)
                 {
                     if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
 
-                    ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
+                    ModelState.AddModelError("VirtualContentProcessingException", vcpEx.Message);
                     return JsonHtml("Properties", model);
                 }
 
@@ -179,7 +190,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VirtualFieldProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.VirtualField, "id")]
@@ -194,14 +204,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("VirtualProperties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.VirtualFieldProperties)]
         [ValidateInput(false)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateVirtualField)]
         [BackendActionContext(ActionCode.UpdateVirtualField)]
         [BackendActionLog]
-        [Record(ActionCode.VirtualFieldProperties)]
         public ActionResult VirtualProperties(string tabId, int parentId, int id, FormCollection collection)
         {
             var field = FieldService.ReadForUpdate(id);
@@ -340,7 +349,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Copy(int id, int? forceId, int? forceLinkId, string forceVirtualFieldIds, string forceChildFieldIds, string forceChildLinkIds)
         {
-            FieldService.Read(id); // TODO: unused
             var result = FieldService.Copy(
                 id,
                 forceId,
@@ -357,6 +365,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
             PersistChildFieldIds(result.ChildFieldIds);
             PersistChildLinkIds(result.ChildLinkIds);
             return JsonMessageResult(result.Message);
+        }
+
+        private void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
+        {
+            var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
+            if (formIds != null)
+            {
+                var substitutedGuids = formIds
+                    .Where(f => f.IsInt())
+                    .Select(_dbArticleService.GetArticleGuidById)
+                    .Select(g => g.ToString())
+                    .ToArray();
+
+                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
+            }
         }
     }
 }

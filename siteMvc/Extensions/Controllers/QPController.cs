@@ -95,11 +95,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             ControllerContext.HttpContext.Items[key] = item;
         }
 
-        private void PersistToHttpContext(string key, Guid item)
-        {
-            ControllerContext.HttpContext.Items[key] = item.ToString();
-        }
-
         private void PersistToHttpContext(string key, string item)
         {
             ControllerContext.HttpContext.Items[key] = item;

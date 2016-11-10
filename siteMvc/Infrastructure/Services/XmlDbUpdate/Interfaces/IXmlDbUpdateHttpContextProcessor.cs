@@ -1,7 +1,7 @@
 ﻿using System.Web;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
+namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces
 {
     public interface IXmlDbUpdateHttpContextProcessor
     {

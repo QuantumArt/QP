@@ -30,7 +30,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 Lcid = CultureInfo.CurrentCulture.LCID,
                 Executed = DateTime.Now,
                 ExecutedBy = (httpContext.User.Identity as QPIdentity)?.Name,
-                Form = ignoreForm ? null : httpContext.Request.Form,
                 Ids = httpContext.Items.Contains("FROM_ID")
                     ? new[] { httpContext.Items["FROM_ID"].ToString() }
                     : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
@@ -51,6 +50,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 NotificationFormatId = GetContextData<int>(httpContext, "NOTIFICATION_FORMAT_ID"),
                 DefaultFormatId = GetContextData<int>(httpContext, "DEFAULT_FORMAT_ID"),
             };
+
+            if (!ignoreForm)
+            {
+                action.Form = new NameValueCollection
+                {
+                    httpContext.Request.Form,
+                    GetStringValuesFromHttpContext(httpContext, "DefaultArticleUniqueIds"),
+                    GetStringValuesFromHttpContext(httpContext, "Data.O2MUniqueIdDefaultValue"),
+                    GetStringValuesFromHttpContext(httpContext, "ContentDefaultFilter.ArticleUniqueIDs")
+                };
+            }
 
             return action;
         }
@@ -300,6 +310,20 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static Guid[] GetGuidsContextData(HttpContextBase httpContext, string key)
         {
             return httpContext.Items.Contains(key) ? httpContext.Items[key].ToString().Split(",".ToCharArray()).Select(Guid.Parse).ToArray() : new Guid[] { };
+        }
+
+        private static NameValueCollection GetStringValuesFromHttpContext(HttpContextBase httpContext, string key)
+        {
+            var result = new NameValueCollection();
+            if (httpContext.Items.Contains(key))
+            {
+                foreach (var guid in (string[])httpContext.Items[key])
+                {
+                    result.Add(key, guid);
+                }
+            }
+
+            return result;
         }
     }
 }

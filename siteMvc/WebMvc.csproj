@@ -307,11 +307,9 @@
     <Compile Include="Infrastructure\Factories\JsonCamelCaseResultFabric.cs" />
     <Compile Include="Infrastructure\Helpers\GuidHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateQpActionHelpers.cs" />
-    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateActionCorrecterService.cs" />
-    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateActionService.cs" />
-    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateHttpContextProcessor.cs" />
-    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateLogService.cs" />
-    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateActionCorrecterService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateHttpContextProcessor.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateLogService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateHttpContextProcessor.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
@@ -327,7 +325,7 @@
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionCorrecterService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\CsvDbUpdateService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\ICsvDbUpdateService.cs" />
-    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateReplayService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateReplayService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateReplayService.cs" />
     <Compile Include="Infrastructure\Exceptions\XmlDbUpdateReplayActionException.cs" />
     <Compile Include="Extensions\Helpers\ControlOptions.cs" />

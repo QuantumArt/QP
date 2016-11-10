@@ -5,11 +5,12 @@ using System.Linq;
 using System.Web;
 using System.Web.Script.Serialization;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 {
@@ -17,9 +18,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
     {
         private readonly Dictionary<string, Dictionary<int, int>> _idsToReplace = new Dictionary<string, Dictionary<int, int>>();
         private readonly Dictionary<string, Dictionary<Guid, Guid>> _uniqueIdsToReplace = new Dictionary<string, Dictionary<Guid, Guid>>();
-        private readonly IXmlDbUpdateActionService _dbActionService;
+        private readonly IArticleService _dbActionService;
 
-        public XmlDbUpdateActionCorrecterService(IXmlDbUpdateActionService dbActionService)
+        public XmlDbUpdateActionCorrecterService(IArticleService dbActionService)
         {
             _dbActionService = dbActionService;
         }
@@ -36,37 +37,37 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     CorrectVirtualContentForm(action);
                     break;
                 case EntityTypeCode.Field:
-                    CorrectFieldForm(action.Form);
+                    CorrectFieldForm(action, useGuidSubstitution);
                     break;
                 case EntityTypeCode.Article:
-                    CorrectArticleForm(action.Form, action.ParentId);
+                    CorrectArticleForm(action);
                     break;
                 case EntityTypeCode.User:
-                    CorrectUserForm(action);
+                    CorrectUserForm(action, useGuidSubstitution);
                     break;
                 case EntityTypeCode.UserGroup:
                     CorrectUserGroupForm(action);
                     break;
                 case EntityTypeCode.Site:
-                    CorrectSiteForm(action.Form);
+                    CorrectSiteForm(action);
                     break;
                 case EntityTypeCode.CustomAction:
-                    CorrectCustomActionForm(action.Form);
+                    CorrectCustomActionForm(action);
                     break;
                 case EntityTypeCode.VisualEditorPlugin:
-                    CorrectVePluginForm(action.Form);
+                    CorrectVePluginForm(action);
                     break;
                 case EntityTypeCode.Workflow:
-                    CorrectWorkflowForm(action.Form);
+                    CorrectWorkflowForm(action);
                     break;
                 case EntityTypeCode.PageObject:
-                    CorrectObjectForm(action.Form, true);
+                    CorrectObjectForm(action, true);
                     break;
                 case EntityTypeCode.TemplateObject:
-                    CorrectObjectForm(action.Form, false);
+                    CorrectObjectForm(action, false);
                     break;
                 case EntityTypeCode.Notification:
-                    CorrectNotificationForm(action.Form);
+                    CorrectNotificationForm(action);
                     break;
             }
 
@@ -125,6 +126,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private XmlDbUpdateRecordedAction CorrectActionIds(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
         {
+            // Guid substitution step-by-step:
+            // 1. UniqueId Form Correction
+            // 2. UniqueId Attribute Correction
+            // 3. Result Guid -> Id Substitution
+            // 4. Main Guids -> Ids Substitution
+            // 5. Main Ids Correction
+            // 6. Parent Id Correction
+
             if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
             {
                 action = CorrectEntryUniqueIdsValue(action);
@@ -188,12 +197,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private XmlDbUpdateRecordedAction CorrectFormUniqueId(XmlDbUpdateRecordedAction action)
         {
             var uniqueIdFieldName = XmlDbUpdateQpActionHelpers.GetFieldName(vm => vm.Data.UniqueId);
-            var formUniqueId = action.Form[uniqueIdFieldName];
-            if (!string.IsNullOrWhiteSpace(formUniqueId))
-            {
-                action.Form[uniqueIdFieldName] = CorrectAttributeUniqueId(EntityTypeCode.Article, Guid.Parse(formUniqueId)).ToString();
-            }
-
+            CorrectUniqueIdFormValues(action.Form, uniqueIdFieldName);
             return action;
         }
 
@@ -228,87 +232,94 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             CorrectFormValue(EntityTypeCode.UserGroup, action.Form, "ParentGroupId");
         }
 
-        private void CorrectUserForm(XmlDbUpdateRecordedAction action)
+        private void CorrectUserForm(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
         {
             CorrectFormValue(EntityTypeCode.UserGroup, action.Form, "SelectedGroups", true);
             CorrectFormValue(EntityTypeCode.Site, action.Form, "ContentDefaultFilter.SiteId");
             CorrectFormValue(EntityTypeCode.Content, action.Form, "ContentDefaultFilter.ContentId");
+
+            CorrectAndSubstituteArticleIdFormValues(action.Form, "ContentDefaultFilter.ArticleIDs", "ContentDefaultFilter.ArticleUniqueIDs", useGuidSubstitution);
             CorrectFormValue(EntityTypeCode.Article, action.Form, "ContentDefaultFilter.ArticleIDs");
         }
 
-        private void CorrectFieldForm(NameValueCollection form)
+        private void CorrectFieldForm(XmlDbUpdateRecordedAction action, bool useGuidSubstitution)
         {
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.Id");
-            CorrectFormValue(EntityTypeCode.Field, form, "InCombinationWith", true);
-            CorrectFormValue(EntityTypeCode.Content, form, "Data.RelateToContentId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.RelationId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.BackRelationId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.ClassifierId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.BaseImageId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.ListOrderFieldId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.TreeOrderFieldId");
-            CorrectFormValue(EntityTypeCode.ContentLink, form, "Data.ContentLink.LinkId");
-            CorrectFormValue(EntityTypeCode.Article, form, "Data.O2MDefaultValue");
-            CorrectFormValue(EntityTypeCode.Article, form, "DefaultArticleIds", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorCommand, form, "ActiveVeCommands", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorStyle, form, "ActiveVeStyles", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorStyle, form, "ActiveVeFormats", true);
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "Data.Id");
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "InCombinationWith", true);
+            CorrectFormValue(EntityTypeCode.Content, action.Form, "Data.RelateToContentId");
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "Data.RelationId");
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "Data.BackRelationId");
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "Data.ClassifierId");
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "Data.BaseImageId");
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "Data.ListOrderFieldId");
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "Data.TreeOrderFieldId");
+            CorrectFormValue(EntityTypeCode.ContentLink, action.Form, "Data.ContentLink.LinkId");
+
+            CorrectAndSubstituteArticleIdFormValues(action.Form, "Data.O2MDefaultValue", "Data.O2MUniqueIdDefaultValue", useGuidSubstitution);
+            CorrectFormValue(EntityTypeCode.Article, action.Form, "Data.O2MDefaultValue");
+
+            CorrectAndSubstituteArticleIdFormValues(action.Form, "DefaultArticleIds", "DefaultArticleUniqueIds", useGuidSubstitution);
+            CorrectFormValue(EntityTypeCode.Article, action.Form, "DefaultArticleIds", true);
+
+            CorrectFormValue(EntityTypeCode.VisualEditorCommand, action.Form, "ActiveVeCommands", true);
+            CorrectFormValue(EntityTypeCode.VisualEditorStyle, action.Form, "ActiveVeStyles", true);
+            CorrectFormValue(EntityTypeCode.VisualEditorStyle, action.Form, "ActiveVeFormats", true);
         }
 
-        private void CorrectSiteForm(NameValueCollection form)
+        private void CorrectSiteForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.VisualEditorCommand, form, "ActiveVeCommands", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorStyle, form, "ActiveVeStyles", true);
-            CorrectFormValue(EntityTypeCode.VisualEditorStyle, form, "ActiveVeFormats", true);
+            CorrectFormValue(EntityTypeCode.VisualEditorCommand, action.Form, "ActiveVeCommands", true);
+            CorrectFormValue(EntityTypeCode.VisualEditorStyle, action.Form, "ActiveVeStyles", true);
+            CorrectFormValue(EntityTypeCode.VisualEditorStyle, action.Form, "ActiveVeFormats", true);
         }
 
-        private void CorrectObjectForm(NameValueCollection form, bool isPageObject)
+        private void CorrectObjectForm(XmlDbUpdateRecordedAction action, bool isPageObject)
         {
-            CorrectFormValue(EntityTypeCode.TemplateObject, form, "Data.ParentObjectId");
-            CorrectFormValue(isPageObject ? EntityTypeCode.PageObjectFormat : EntityTypeCode.TemplateObjectFormat, form, "Data.DefaultFormatId");
-            CorrectFormValue(EntityTypeCode.Content, form, "Data.Container.ContentId");
-            CorrectFormValue(EntityTypeCode.Content, form, "Data.ContentForm.ContentId");
-            CorrectFormValue(EntityTypeCode.Page, form, "Data.ContentForm.ThankYouPageId");
-            CorrectFormValue(EntityTypeCode.StatusType, form, "ActiveStatusTypeIds", true);
+            CorrectFormValue(EntityTypeCode.TemplateObject, action.Form, "Data.ParentObjectId");
+            CorrectFormValue(isPageObject ? EntityTypeCode.PageObjectFormat : EntityTypeCode.TemplateObjectFormat, action.Form, "Data.DefaultFormatId");
+            CorrectFormValue(EntityTypeCode.Content, action.Form, "Data.Container.ContentId");
+            CorrectFormValue(EntityTypeCode.Content, action.Form, "Data.ContentForm.ContentId");
+            CorrectFormValue(EntityTypeCode.Page, action.Form, "Data.ContentForm.ThankYouPageId");
+            CorrectFormValue(EntityTypeCode.StatusType, action.Form, "ActiveStatusTypeIds", true);
         }
 
-        private void CorrectCustomActionForm(NameValueCollection form)
+        private void CorrectCustomActionForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.Site, form, "SelectedSiteIDs", true);
-            CorrectFormValue(EntityTypeCode.Content, form, "SelectedContentIDs", true);
-            CorrectFormValue(EntityTypeCode.BackendAction, form, "SelectedActions", true);
+            CorrectFormValue(EntityTypeCode.Site, action.Form, "SelectedSiteIDs", true);
+            CorrectFormValue(EntityTypeCode.Content, action.Form, "SelectedContentIDs", true);
+            CorrectFormValue(EntityTypeCode.BackendAction, action.Form, "SelectedActions", true);
         }
 
-        private void CorrectVePluginForm(NameValueCollection form)
+        private void CorrectVePluginForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.VisualEditorCommand, form, "AggregationListItemsVeCommandsDisplay", "Id");
+            CorrectFormValue(EntityTypeCode.VisualEditorCommand, action.Form, "AggregationListItemsVeCommandsDisplay", "Id");
         }
 
-        private void CorrectWorkflowForm(NameValueCollection form)
+        private void CorrectWorkflowForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.StatusType, form, "ActiveStatuses", true);
-            CorrectFormValue(EntityTypeCode.Content, form, "ActiveContentIds", true);
-            CorrectFormValue(EntityTypeCode.WorkflowRule, form, "WorkflowsWorkflowRulesDisplay", "Id");
-            CorrectFormValue(EntityTypeCode.StatusType, form, "WorkflowsWorkflowRulesDisplay", "StId");
-            CorrectFormValue(EntityTypeCode.User, form, "WorkflowsWorkflowRulesDisplay", "UserId");
-            CorrectFormValue(EntityTypeCode.UserGroup, form, "WorkflowsWorkflowRulesDisplay", "GroupId");
+            CorrectFormValue(EntityTypeCode.StatusType, action.Form, "ActiveStatuses", true);
+            CorrectFormValue(EntityTypeCode.Content, action.Form, "ActiveContentIds", true);
+            CorrectFormValue(EntityTypeCode.WorkflowRule, action.Form, "WorkflowsWorkflowRulesDisplay", "Id");
+            CorrectFormValue(EntityTypeCode.StatusType, action.Form, "WorkflowsWorkflowRulesDisplay", "StId");
+            CorrectFormValue(EntityTypeCode.User, action.Form, "WorkflowsWorkflowRulesDisplay", "UserId");
+            CorrectFormValue(EntityTypeCode.UserGroup, action.Form, "WorkflowsWorkflowRulesDisplay", "GroupId");
         }
 
-        private void CorrectNotificationForm(NameValueCollection form)
+        private void CorrectNotificationForm(XmlDbUpdateRecordedAction action)
         {
-            CorrectFormValue(EntityTypeCode.TemplateObjectFormat, form, "Data.FormatId");
-            CorrectFormValue(EntityTypeCode.User, form, "Data.UserId");
-            CorrectFormValue(EntityTypeCode.UserGroup, form, "Data.GroupId");
-            CorrectFormValue(EntityTypeCode.Field, form, "Data.EmailFieldId");
-            CorrectFormValue(EntityTypeCode.User, form, "Data.FromBackenduserId");
-            CorrectFormValue(EntityTypeCode.StatusType, form, "Data.NotifyOnStatusTypeId");
+            CorrectFormValue(EntityTypeCode.TemplateObjectFormat, action.Form, "Data.FormatId");
+            CorrectFormValue(EntityTypeCode.User, action.Form, "Data.UserId");
+            CorrectFormValue(EntityTypeCode.UserGroup, action.Form, "Data.GroupId");
+            CorrectFormValue(EntityTypeCode.Field, action.Form, "Data.EmailFieldId");
+            CorrectFormValue(EntityTypeCode.User, action.Form, "Data.FromBackenduserId");
+            CorrectFormValue(EntityTypeCode.StatusType, action.Form, "Data.NotifyOnStatusTypeId");
         }
 
-        private void CorrectArticleForm(NameValueCollection form, int contentId)
+        private void CorrectArticleForm(XmlDbUpdateRecordedAction action)
         {
-            var relations = ReplayHelper.GetRelations(contentId);
-            var classifiers = ReplayHelper.GetClasifiers(contentId);
-            foreach (var key in form.AllKeys.Where(n => n.StartsWith("field_")))
+            var relations = ReplayHelper.GetRelations(action.ParentId);
+            var classifiers = ReplayHelper.GetClasifiers(action.ParentId);
+            foreach (var key in action.Form.AllKeys.Where(n => n.StartsWith("field_")))
             {
                 int result;
                 var parsed = int.TryParse(key.Replace("field_", string.Empty), out result);
@@ -318,7 +329,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     if (newFieldId != result)
                     {
                         var newKey = "field_" + newFieldId;
-                        var enumerable = form.GetValues(key);
+                        var enumerable = action.Form.GetValues(key);
                         if (enumerable != null)
                         {
                             foreach (var value in enumerable)
@@ -330,25 +341,25 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                                     newValue = CorrectCommaListValue(entityTypeCode, value);
                                 }
 
-                                form.Add(newKey, newValue);
+                                action.Form.Add(newKey, newValue);
                             }
                         }
 
-                        form.Remove(key);
+                        action.Form.Remove(key);
                     }
                     else
                     {
                         if (relations.ContainsKey(newFieldId) || classifiers.ContainsKey(newFieldId))
                         {
-                            var values = form.GetValues(key);
-                            form.Remove(key);
+                            var values = action.Form.GetValues(key);
+                            action.Form.Remove(key);
 
                             if (values != null)
                             {
                                 foreach (var value in values)
                                 {
                                     var entityTypeCode = relations.ContainsKey(newFieldId) ? EntityTypeCode.Article : EntityTypeCode.Content;
-                                    form.Add(key, CorrectCommaListValue(entityTypeCode, value));
+                                    action.Form.Add(key, CorrectCommaListValue(entityTypeCode, value));
                                 }
                             }
                         }
@@ -415,9 +426,37 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
         }
 
-        private string CorrectCommaListValue(string entityTypeCode, string value)
+        private void CorrectAndSubstituteArticleIdFormValues(NameValueCollection form, string formIdsKey, string formUniqueIdsKey, bool useGuidSusbstitution)
         {
-            return string.Join(",", CorrectIdsValue(entityTypeCode, value.Split(",".ToCharArray())));
+            CorrectUniqueIdFormValues(form, formUniqueIdsKey);
+            if (useGuidSusbstitution)
+            {
+                SubstituteArticleIdFormValuesFromGuids(form, formIdsKey, formUniqueIdsKey);
+            }
+        }
+
+        private void CorrectUniqueIdFormValues(NameValueCollection form, string formUniqueIdsKey)
+        {
+            var formUniqueIds = form[formUniqueIdsKey]?.Split(',');
+            if (formUniqueIds != null)
+            {
+                var correctedUniqueIds = formUniqueIds.Select(g => CorrectAttributeUniqueId(EntityTypeCode.Article, Guid.Parse(g)));
+                form[formUniqueIdsKey] = string.Join(",", correctedUniqueIds);
+            }
+        }
+
+        private void SubstituteArticleIdFormValuesFromGuids(NameValueCollection form, string formIdKey, string formUniqueIdKey)
+        {
+            var formUniqueIds = form[formUniqueIdKey]?.Split(',');
+            if (formUniqueIds != null)
+            {
+                var substitutedIds = formUniqueIds
+                    .Select(_dbActionService.GetArticleIdByGuid)
+                    .Select(g => g.ToString())
+                    .ToArray();
+
+                form[formIdKey] = string.Join(",", substitutedIds);
+            }
         }
 
         private XmlDbUpdateRecordedAction SubstituteArticleIdsFromGuids(XmlDbUpdateRecordedAction action)
@@ -437,6 +476,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             }
 
             return action;
+        }
+
+        private string CorrectCommaListValue(string entityTypeCode, string value)
+        {
+            return string.Join(",", CorrectIdsValue(entityTypeCode, value.Split(",".ToCharArray())));
         }
 
         private void AddIdsToReplace(string oldIdsCommaString, HttpContextBase context, string key)

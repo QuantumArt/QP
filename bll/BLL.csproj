@@ -453,6 +453,7 @@
     <Compile Include="Services\ExternalNotificationService.cs" />
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
+    <Compile Include="Interfaces\Services\IArticleService.cs" />
     <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesCommand.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesService.cs" />

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Interfaces.Db;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -13,8 +15,69 @@ using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Services
 {
-    public class ArticleService
+    public class ArticleService : IArticleService
     {
+        private readonly IArticleRepository _articleRepository;
+
+        public ArticleService(IArticleRepository articleRepository)
+        {
+            _articleRepository = articleRepository;
+        }
+
+        public int GetArticleIdByGuid(string rawGuid)
+        {
+            Guid guid;
+            if (!Guid.TryParse(rawGuid, out guid))
+            {
+                throw new Exception($"Неверный формат GUID: {rawGuid}");
+            }
+
+            return GetArticleIdByGuid(guid);
+        }
+
+        public int GetArticleIdByGuid(Guid guid)
+        {
+            var articleId = GetArticleIdByGuidOrDefault(guid);
+            if (!articleId.HasValue)
+            {
+                throw new Exception($"Не найдена статья с заданным Id: {guid}");
+            }
+
+            return articleId.Value;
+        }
+
+        public int? GetArticleIdByGuidOrDefault(Guid guid)
+        {
+            return _articleRepository.GetByGuid(guid)?.Id;
+        }
+
+        public Guid GetArticleGuidById(string rawId)
+        {
+            int id;
+            if (!int.TryParse(rawId, out id))
+            {
+                throw new Exception($"Неверный формат Id: {rawId}");
+            }
+
+            return GetArticleGuidById(id);
+        }
+
+        public Guid GetArticleGuidById(int id)
+        {
+            var articleGuid = GetArticleGuidByIdOrDefault(id);
+            if (!articleGuid.HasValue)
+            {
+                throw new Exception($"Не найдена статья с заданным Id: {id}");
+            }
+
+            return articleGuid.Value;
+        }
+
+        public Guid? GetArticleGuidByIdOrDefault(int id)
+        {
+            return _articleRepository.GetById(id)?.UniqueId;
+        }
+
         private static Article Read(int id, int contentId, bool withAutoLock)
         {
             var article = ArticleRepository.GetById(id);

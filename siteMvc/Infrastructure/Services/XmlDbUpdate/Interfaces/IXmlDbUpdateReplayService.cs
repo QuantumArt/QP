@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
+namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces
 {
     /// <summary>
     /// Service for replaying xml data with recorded actions

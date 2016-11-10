@@ -10,11 +10,11 @@ using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.User
 {
     public class UserViewModel : UserViewModelBase
     {
-        public static UserViewModel Create(User user, string tabId, int parentId, IUserService service)
+        public static UserViewModel Create(BLL.User user, string tabId, int parentId, IUserService service)
         {
             var model = Create<UserViewModel>(user, tabId, parentId);
             model.Service = service;
@@ -25,10 +25,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public override void Validate(ModelStateDictionary modelState)
         {
             base.Validate(modelState);
-
-            // проверка на то, что удалять builtin пользователей из builtin групп запрещено
             if (!Data.IsNew && Data.BuiltIn)
             {
+                // проверка на то, что удалять builtin пользователей из builtin групп запрещено
                 var dbUser = Service.ReadProperties(Data.Id);
                 var builtinGroups = dbUser.Groups
                     .Where(g => g.BuiltIn && !g.IsReadOnly)
@@ -39,7 +38,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
                 {
                     IsValid = false;
                     var message = string.Format(UserStrings.UnbindBuitInGroup, string.Join(",", Service.GetUserGroups(builtinGroups).Select(g => "\"" + g.Name + "\"")));
-                    Expression<Func<object>> f = (() => SelectedGroups);
+                    Expression<Func<object>> f = () => SelectedGroups;
                     modelState.AddModelError(f.GetPropertyName(), message);
                 }
             }
@@ -68,7 +67,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         {
             get
             {
-                return Service.GetBindableUserGroups().Select(g => new ListItem{Value = g.Id.ToString(),Text = g.Name}).ToArray();
+                return Service.GetBindableUserGroups().Select(g => new ListItem { Value = g.Id.ToString(), Text = g.Name }).ToArray();
             }
         }
 
@@ -86,7 +85,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         internal override void DoCustomBinding()
         {
             Data.DoCustomBinding();
-            Data.Groups = SelectedGroups.Any() ? Service.GetUserGroups(Converter.ToInt32Collection(SelectedGroups.Select(g => g.Value).ToArray())) : Enumerable.Empty<UserGroup>();
+            Data.Groups = SelectedGroups.Any() ? Service.GetUserGroups(Converter.ToInt32Collection(SelectedGroups.Select(g => g.Value).ToArray())) : Enumerable.Empty<BLL.UserGroup>();
         }
     }
 }
