@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 
 namespace Quantumart.QP8.Scheduler.Notification.Providers
 {
@@ -9,7 +8,9 @@ namespace Quantumart.QP8.Scheduler.Notification.Providers
         private const string XmlTemplate = "<?xml version=\"1.0\" encoding=\"utf-8\"?><articles>{0}</articles>";
 
         public string Url { get; set; }
+
         public IEnumerable<string> OldXmlNodes { get; set; }
+
         public IEnumerable<string> NewXmlNodes { get; set; }
 
         public string OldXml => GetXml(OldXmlNodes);
