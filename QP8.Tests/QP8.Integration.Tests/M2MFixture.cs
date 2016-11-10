@@ -82,16 +82,16 @@ namespace QP8.Integration.Tests
                 [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
                 ["STATUS_TYPE_ID"] = NoneId.ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
                 ["STATUS_TYPE_ID"] = NoneId.ToString()
             };
+
             values.Add(article2);
-
             var ints = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
-
             var cntAsyncBefore = Global.CountLinks(Cnn, ints, true);
             var cntBefore = Global.CountLinks(Cnn, ints);
             var titlesBefore = Global.GetTitles(Cnn, ContentId, ints);
