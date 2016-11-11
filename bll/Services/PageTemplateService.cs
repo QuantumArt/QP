@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Assembling;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
