@@ -336,7 +336,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var required = pair.Field.Required && !pair.Article.IsReadOnly;
-            var fieldDescription = string.IsNullOrWhiteSpace(HttpUtility.HtmlDecode(pair.Field.Description ?? "").Replace("\u00A0", "")) ? null : pair.Field.Description;
+            var fieldDescription = string.IsNullOrWhiteSpace(HttpUtility.HtmlDecode(pair.Field.Description ?? string.Empty).Replace("\u00A0", string.Empty)) ? null : pair.Field.Description;
 
             if (!string.IsNullOrEmpty(fieldDescription))
             {

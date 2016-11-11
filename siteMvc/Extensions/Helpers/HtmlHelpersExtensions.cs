@@ -7,7 +7,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Factories;
@@ -182,7 +181,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             if (readOnly && (field.Type.Name != FieldTypeName.Relation || field.Type.Name != FieldTypeName.M2ORelation))
             {
-                htmlProperties.Add("disabled", "");
+                htmlProperties.Add("readonly", "readonly");
             }
 
             return htmlProperties;
@@ -342,7 +341,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             object newHtmlAttributes;
             if (CheckReadOnly(htmlAttributes))
             {
-                newHtmlAttributes = new { id = htmlAttributes["id"], @class = htmlAttributes["class"], disabled = "" };
+                newHtmlAttributes = new { id = htmlAttributes["id"], @class = htmlAttributes["class"], @readonly = "readonly" };
             }
             else
             {
@@ -833,7 +832,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static bool CheckReadOnly(IReadOnlyDictionary<string, object> htmlAttributes)
         {
-            return htmlAttributes != null && htmlAttributes.ContainsKey("disabled");
+            return htmlAttributes != null && (htmlAttributes.ContainsKey("readonly") || htmlAttributes.ContainsKey("disabled"));
         }
 
         public static MvcHtmlString DateTime(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, bool isNullable = false, bool readOnly = false)
@@ -895,7 +894,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 fieldId = htmlAttributes["id"].ToString();
             }
-            TagBuilder tb = source.FileWrapper(id, fieldId, field, entityId, version, readOnly, shouldAllowUpload);
+
+            var tb = source.FileWrapper(id, fieldId, field, entityId, version, readOnly, shouldAllowUpload);
             tb.InnerHtml = source.FileContents(id, value, htmlAttributes, field, allowLibrary, shouldAllowUpload, allowPreview, allowDownload);
 
             return MvcHtmlString.Create(tb.ToString());
