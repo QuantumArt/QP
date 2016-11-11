@@ -26,13 +26,6 @@
 <body data-dbhash="@Model.DbHash">
   <div id="page" class="twoColumnLayout">
     <div id="header">
-      <div id="serviceActions">
-        @if (HttpContext.Current.IsDebuggingEnabled)
-        {
-          <a href="javascript:void(0);" id="traceWindowLink" class="js">@GlobalStrings.ServiceActions_Link_TraceConsole</a>
-        }
-      </div>
-
       <div id="communicationMessage">
         <span class="singleusermode"></span>
       </div>

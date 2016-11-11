@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assembling;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;

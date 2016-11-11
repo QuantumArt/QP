@@ -1,7 +1,4 @@
-// Install Steps:
-// 1. Install external node js and npm from official site
-// 2. Install global packages for npm runner: gulp, cross-env
-// 3. Set priority for VS: https://blogs.msdn.microsoft.com/webdev/2015/03/19/customize-external-web-tools-in-visual-studio-2015/
+/// <binding AfterBuild='default' Clean='clean' />
 
 var fs = require('fs');
 var del = require('del');
@@ -60,7 +57,6 @@ var paths = {
     'Scripts/polyfills/console.fns.polyfill.js',
     'Scripts/Quantumart/jQueryExtensions.js',
     'Scripts/microsoft/MicrosoftAjax.js',
-    'Scripts/Quantumart/MicrosoftAjaxTraceExtensions.js',
     'Scripts/json2.js',
     'Scripts/Silverlight.js',
     'Scripts/pmrpc.js',
@@ -172,7 +168,6 @@ var paths = {
     'Scripts/Quantumart/List/BackendSelectPopupWindow.js',
     'Scripts/Quantumart/List/BackendSettingsPopupWindow.js',
     'Scripts/Quantumart/BackendActionLink.js',
-    'Scripts/Quantumart/BackendTraceWindow.js',
     'Scripts/Quantumart/BackendLogOnWindow.js',
     'Scripts/Quantumart/Library/BackendLibrary.js',
     'Scripts/Quantumart/Library/BackendPager.js',
@@ -437,3 +432,8 @@ gulp.task('default', ['clean'], function() {
 
   gulp.start('assets:js', 'assets:css', 'assets:img');
 });
+
+// Install Steps:
+// 1. Install external node js and npm from official site
+// 2. Install global packages for npm runner: gulp, cross-env
+// 3. Set priority for VS: https://blogs.msdn.microsoft.com/webdev/2015/03/19/customize-external-web-tools-in-visual-studio-2015/

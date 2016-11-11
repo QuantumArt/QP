@@ -27,29 +27,18 @@ namespace Quantumart.QP8.Security
         /// </summary>
         /// <param name="userName">логин пользователя</param>
         /// <param name="userData">серилизованная информация о пользователе</param>
-        /// <returns></returns>
         public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, string userData)
         {
-            var context = HttpContext.Current;
-            var config = (AuthenticationSection)context.GetSection("system.web/authentication");
-            var timeout = (int)config.Forms.Timeout.TotalMinutes;
-
-            if (string.IsNullOrEmpty(userData))
-            {
-                userData = string.Empty;
-            }
-
-            // Создаем билет вручную и задаем его свойства
-            var ticket = new FormsAuthenticationTicket(
+            var config = (AuthenticationSection)HttpContext.Current.GetSection("system.web/authentication");
+            var expireAt = (int)config.Forms.Timeout.TotalMinutes;
+            return new FormsAuthenticationTicket(
                 1,                                    // версия
                 userName,                             // логин пользователя
                 DateTime.Now,                         // время создания
-                DateTime.Now.AddMinutes(timeout),     // время истечения срока
+                DateTime.Now.AddMinutes(expireAt),    // время истечения срока
                 false,                                // признак постоянного Cookie
-                userData,                             // пользовательские данны
+                userData ?? string.Empty,             // пользовательские данные
                 FormsAuthentication.FormsCookiePath); // путь действия Cookie
-
-            return ticket;
         }
 
         /// <summary>
@@ -57,7 +46,6 @@ namespace Quantumart.QP8.Security
         /// </summary>
         /// <param name="userName">логин пользователя</param>
         /// <param name="userInformation">серилизованная информация о пользователе</param>
-        /// <returns></returns>
         public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, QpUser userInformation)
         {
             return CreateAuthenticationTicket(userName, SerializeUserInformation(userInformation));
@@ -70,21 +58,19 @@ namespace Quantumart.QP8.Security
         public static void SetAuthenticationCookie(FormsAuthenticationTicket ticket)
         {
             var ctx = HttpContext.Current;
-            var authCookie = FormsAuthentication.Encrypt(ticket);
-            var cookie = new HttpCookie(FormsAuthentication.FormsCookieName)
-            {
-                Value = authCookie,
-                Secure = FormsAuthentication.RequireSSL,
-                Domain = FormsAuthentication.CookieDomain,
-                HttpOnly = true // запрет чтения Cookie из клиентских скриптов
-            };
-
             if (FormsAuthentication.RequireSSL && !ctx.Request.IsSecureConnection)
             {
                 throw new HttpException("Аутентификационный билет требует использование SSL!");
             }
 
-            ctx.Response.Cookies.Add(cookie);
+            ctx.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            ctx.Response.SetCookie(new HttpCookie(FormsAuthentication.FormsCookieName)
+            {
+                Value = FormsAuthentication.Encrypt(ticket),
+                Secure = FormsAuthentication.RequireSSL,
+                Domain = FormsAuthentication.CookieDomain,
+                HttpOnly = true // запрет чтения Cookie из клиентских скриптов
+            });
         }
 
         /// <summary>
@@ -158,7 +144,6 @@ namespace Quantumart.QP8.Security
         /// <summary>
         /// Возвращает информацию о пользователе из атентификационного Cookie
         /// </summary>
-        /// <returns></returns>
         public static QpUser GetUserInformationFromAuthenticationCookie(string userName)
         {
             var context = HttpContext.Current;

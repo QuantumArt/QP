@@ -1984,30 +1984,6 @@ div.fieldSearchContainerContent
     }
 /*#endregion*/
 
-/*#region Trace Window*/
-.traceWindow .area
-{
-  position: relative;
-  margin: 0;
-  padding: 0;
-  border: 1px solid #ccc;
-  overflow: scroll;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  background-color: #fff;
-  color: #333;
-  font: normal 11px Consolas, Monaco, "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
-  text-align: left;
-}
-.traceWindow .area div
-{
-  margin-top: -24px;
-  padding: 5px 5px 5px 5px;
-  border-bottom: 1px solid #ddd;
-  background-color: #ffffd0;
-}
-/*#endregion*/
-
 /*#region Search  */
 .formLayout div.simpleSeachBlock
 {
