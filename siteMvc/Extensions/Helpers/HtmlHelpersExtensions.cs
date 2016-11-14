@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Web.Mvc;
 using System.Web.Mvc.Html;
-using System.Web.Script.Serialization;
 using Newtonsoft.Json;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Factories;
@@ -1239,12 +1238,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         /// <summary>
         /// Генерирует код списка чекбоксов
         /// </summary>
-        /// <param name="source">HTML-хелпер</param>
-        /// <param name="expression">выражение</param>
-        /// <param name="list">список элементов списка</param>
-        /// <param name="repeatDirection">направление списка</param>
-        /// <param name="entityDataListArgs">свойства списка сущностей</param>
-        /// <returns>код списка чекбоксов</returns>
         public static MvcHtmlString QpCheckBoxListFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IList<QPCheckedItem>>> expression, IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes, RepeatDirection repeatDirection = RepeatDirection.Vertical)
         {
             var name = ExpressionHelper.GetExpressionText(expression);

@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("QP8.Tests.Infrastucture")]
@@ -12,5 +12,8 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisible(false)]
 [assembly: Guid("7b6f3fd0-d890-44d1-b18b-9833772a7fb0")]
-[assembly: AssemblyVersion("1.0.*")]
+[assembly: AssemblyVersion("0.1.0.0")]
 
+
+[assembly: AssemblyInformationalVersion("0.1.0-69980-qp8dbupdate-multiparse.508+Branch.69980_qp8dbupdate_multiparse.Sha.a8f5b110c898b45bfea4e9a2147f6bebb9fb4a40")]
+[assembly: AssemblyFileVersion("0.1.0.0")]
