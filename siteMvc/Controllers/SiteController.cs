@@ -110,14 +110,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewSite)]
         [BackendActionContext(ActionCode.AddNewSite)]
         [BackendActionLog]
         [ValidateInput(false)]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var site = SiteService.NewForSave();
@@ -135,7 +134,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Site, "id")]

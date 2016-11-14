@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
@@ -33,7 +34,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 
         private static IEnumerable<BackendAction> LoadActions()
         {
-            return MappersRepository.BackendActionMapper.GetBizList(
+            return MapperFacade.BackendActionMapper.GetBizList(
                 QPContext.EFContext.BackendActionSet
                     .Include("EntityType")
                     .Include("EntityType.Parent")
@@ -50,7 +51,7 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
 
         private static IEnumerable<CustomAction> LoadCustomActions()
         {
-            return MappersRepository.CustomActionMapper.GetBizList(
+            return MapperFacade.CustomActionMapper.GetBizList(
                 QPContext.EFContext.CustomActionSet
                     .Include("Action.EntityType.ContextMenu")
                     .Include("Action.ToolbarButtons")

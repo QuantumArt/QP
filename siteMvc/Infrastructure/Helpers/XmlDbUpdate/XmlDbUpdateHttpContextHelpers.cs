@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -10,7 +10,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Moq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Security;
@@ -31,11 +30,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 Lcid = CultureInfo.CurrentCulture.LCID,
                 Executed = DateTime.Now,
                 ExecutedBy = (httpContext.User.Identity as QPIdentity)?.Name,
-                Form = ignoreForm ? null : httpContext.Request.Form,
                 Ids = httpContext.Items.Contains("FROM_ID")
                     ? new[] { httpContext.Items["FROM_ID"].ToString() }
                     : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
                 ResultId = GetContextData<int>(httpContext, "RESULT_ID"),
+                UniqueId = GetGuidsContextData(httpContext, "FROM_GUID"),
+                ResultUniqueId = GetGuidContextData(httpContext, "RESULT_GUID"),
                 VirtualFieldIds = GetContextData<string>(httpContext, "NEW_VIRTUAL_FIELD_IDS"),
                 FieldIds = GetContextData<string>(httpContext, "FIELD_IDS"),
                 LinkIds = GetContextData<string>(httpContext, "LINK_IDS"),
@@ -51,26 +51,53 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 DefaultFormatId = GetContextData<int>(httpContext, "DEFAULT_FORMAT_ID"),
             };
 
+            if (!ignoreForm)
+            {
+                action.Form = new NameValueCollection
+                {
+                    httpContext.Request.Form,
+                    GetStringValuesFromHttpContext(httpContext, "DefaultArticleUniqueIds"),
+                    GetStringValuesFromHttpContext(httpContext, "Data.O2MUniqueIdDefaultValue"),
+                    GetStringValuesFromHttpContext(httpContext, "ContentDefaultFilter.ArticleUniqueIDs")
+                };
+            }
+
             return action;
         }
 
-        internal static HttpContextBase PostAction(XmlDbUpdateRecordedAction recordedAction, string backendUrl, int userId)
+        internal static RouteData GetRouteData(XmlDbUpdateRecordedAction action, string controllerName, string controllerAction)
         {
-            Ensure.NotNull(QPConnectionScope.Current.DbConnection, "QPConnection scope should be initialized to use fake mvc context");
-            var urlParts = recordedAction.BackendAction.ControllerActionUrl.Split(@"/".ToCharArray()).Where(n => !string.IsNullOrEmpty(n) && (n != "~")).ToArray();
-            var controllerName = urlParts[0];
-            var controllerAction = urlParts[1];
-            var requestContext = new RequestContext(
-                BuildHttpContextBase(recordedAction, backendUrl, userId),
-                GetRouteData(recordedAction, controllerName, controllerAction)
-            );
-
-            BackendActionContext.ResetCurrent();
-            BuildController(requestContext, controllerName, CultureHelpers.GetCultureInfoByLcid(recordedAction.Lcid)).Execute(requestContext);
-            return requestContext.HttpContext;
+            var data = new RouteData();
+            data.Values["controller"] = controllerName;
+            data.Values["action"] = controllerAction;
+            data.Values["tabId"] = "tab_virtual";
+            data.Values["parentId"] = action.ParentId;
+            data.Values["id"] = int.Parse(action.Ids.First());
+            data.Values["IDs"] = action.Ids.Select(int.Parse).ToArray();
+            return data;
         }
 
-        private static HttpContextBase BuildHttpContextBase(XmlDbUpdateRecordedAction action, string backendUrl, int userId)
+        internal static IController BuildController(RequestContext requestContext, string controllerName, CultureInfo cultureInfo)
+        {
+            var controller = new DefaultControllerFactory().CreateController(requestContext, controllerName) as ControllerBase;
+            if (controller == null)
+            {
+                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Controller '{0}' is not found ", controllerName));
+            }
+
+            controller.ControllerContext = new ControllerContext(requestContext.HttpContext, requestContext.RouteData, controller);
+            controller.ValueProvider = new ValueProviderCollection(new[]
+            {
+                new DictionaryValueProvider<object>(requestContext.RouteData.Values, cultureInfo),
+                new FormCollection(requestContext.HttpContext.Request.Form).ToValueProvider(),
+                new NameValueCollectionValueProvider(requestContext.HttpContext.Request.QueryString, cultureInfo)
+            });
+
+            Thread.CurrentThread.CurrentCulture = cultureInfo;
+            return controller;
+        }
+
+        internal static HttpContextBase BuildHttpContextBase(XmlDbUpdateRecordedAction action, string backendUrl, int userId, bool useGuidSubstitution)
         {
             HttpContext.Current = new HttpContext(
                 new HttpRequest(string.Empty, backendUrl, string.Empty),
@@ -87,10 +114,30 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             httpContext.Setup(c => c.User).Returns(principal);
             HttpContext.Current.User = principal;
 
-            var result = httpContext.Object;
-            AppendItems(result, backendUrl);
+            if (useGuidSubstitution)
+            {
+                return AddGlobalHttpContextVariables(httpContext.Object, backendUrl, action.ResultUniqueId);
+            }
 
-            return result;
+            return AddGlobalHttpContextVariables(httpContext.Object, backendUrl);
+        }
+
+        private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl)
+        {
+            httpContext.Items.Add(XmlDbUpdateCommonConstants.IsReplayingXmlContext, true);
+            if (!string.IsNullOrWhiteSpace(backendUrl))
+            {
+                httpContext.Items.Add(XmlDbUpdateCommonConstants.BackendUrlContext, backendUrl);
+            }
+
+            return httpContext;
+        }
+
+        private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl, Guid resultUniqueId)
+        {
+            httpContext = AddGlobalHttpContextVariables(httpContext, backendUrl);
+            httpContext.Items.Add(XmlDbUpdateCommonConstants.XmlContextGuidSubstitution, resultUniqueId);
+            return httpContext;
         }
 
         private static HttpRequestMock GetHttpRequestMock(XmlDbUpdateRecordedAction action)
@@ -105,15 +152,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
             var actionTypeCode = action.BackendAction.ActionType.Code;
             httpRequest.SetForm(action.Form);
+            httpRequest.Form.Add("IDs", string.Join(",", action.Ids));
 
-            if (action.Ids.Length > 1)
+            if (actionTypeCode == ActionTypeCode.AddNew && options.Contains(entityTypeCode))
             {
-                httpRequest.Form.Add("IDs", string.Join(",", action.Ids));
-            }
-
-            if ((actionTypeCode == ActionTypeCode.AddNew) && options.Contains(entityTypeCode))
-            {
-                httpRequest.Form.Add("Data.ForceId", action.Ids[0]);
+                httpRequest.Form.Add("Data.ForceId", action.Ids.First());
             }
 
             switch (action.Code)
@@ -254,60 +297,33 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return new QPPrincipal(identity, new string[] { });
         }
 
-        private static void AppendItems(HttpContextBase result, string backendUrl)
-        {
-            result.Items.Add(XmlDbUpdateCommonConstants.IsReplayingXmlContext, true);
-            if (!string.IsNullOrWhiteSpace(backendUrl))
-            {
-                result.Items.Add(XmlDbUpdateCommonConstants.BackendUrlContext, backendUrl);
-            }
-        }
-
-        private static RouteData GetRouteData(XmlDbUpdateRecordedAction action, string controllerName, string controllerAction)
-        {
-            var data = new RouteData();
-            data.Values["controller"] = controllerName;
-            data.Values["action"] = controllerAction;
-            data.Values["tabId"] = "tab_virtual";
-            data.Values["parentId"] = action.ParentId;
-            if ((action.Ids.Length > 0) && !string.IsNullOrEmpty(action.Ids[0]))
-            {
-                if (action.Ids.Length == 1)
-                {
-                    data.Values["id"] = int.Parse(action.Ids[0]);
-                }
-                else
-                {
-                    data.Values["IDs"] = action.Ids.Select(int.Parse).ToArray();
-                }
-            }
-
-            return data;
-        }
-
-        private static IController BuildController(RequestContext requestContext, string controllerName, CultureInfo cultureInfo)
-        {
-            var controller = new DefaultControllerFactory().CreateController(requestContext, controllerName) as ControllerBase;
-            if (controller == null)
-            {
-                throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, "Controller '{0}' is not found ", controllerName));
-            }
-
-            controller.ControllerContext = new ControllerContext(requestContext.HttpContext, requestContext.RouteData, controller);
-            controller.ValueProvider = new ValueProviderCollection(new[]
-            {
-                new DictionaryValueProvider<object>(requestContext.RouteData.Values, cultureInfo),
-                new FormCollection(requestContext.HttpContext.Request.Form).ToValueProvider(),
-                new NameValueCollectionValueProvider(requestContext.HttpContext.Request.QueryString, cultureInfo)
-            });
-
-            Thread.CurrentThread.CurrentCulture = cultureInfo;
-            return controller;
-        }
-
         private static T GetContextData<T>(HttpContextBase httpContext, string key)
         {
             return httpContext.Items.Contains(key) ? (T)httpContext.Items[key] : default(T);
+        }
+
+        private static Guid GetGuidContextData(HttpContextBase httpContext, string key)
+        {
+            return httpContext.Items.Contains(key) ? Guid.Parse(httpContext.Items[key].ToString()) : Guid.Empty;
+        }
+
+        private static Guid[] GetGuidsContextData(HttpContextBase httpContext, string key)
+        {
+            return httpContext.Items.Contains(key) ? httpContext.Items[key].ToString().Split(",".ToCharArray()).Select(Guid.Parse).ToArray() : new Guid[] { };
+        }
+
+        private static NameValueCollection GetStringValuesFromHttpContext(HttpContextBase httpContext, string key)
+        {
+            var result = new NameValueCollection();
+            if (httpContext.Items.Contains(key))
+            {
+                foreach (var guid in (string[])httpContext.Items[key])
+                {
+                    result.Add(key, guid);
+                }
+            }
+
+            return result;
         }
     }
 }

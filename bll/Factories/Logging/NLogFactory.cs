@@ -6,7 +6,7 @@ using Quantumart.QP8.BLL.Interfaces.Logging;
 namespace Quantumart.QP8.BLL.Factories.Logging
 {
     /// <summary>
-    /// Creates a NLog Logger
+    /// Creates a NLog logger, that logs all messages to nlog targets
     /// </summary>
     public class NLogFactory : ILogFactory
     {

@@ -1,46 +1,43 @@
-﻿@model ProfileViewModel
-		   
-@using Quantumart.QP8.Constants
+﻿@model Quantumart.QP8.WebMvc.ViewModels.User.ProfileViewModel
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
 
 @using (Html.BeginTabForm(Model))
 {
-	using (Html.BeginFieldGroup(UserStrings.ProfileData))
-	{
-		@Html.TextBoxFieldFor(n => n.Data.FirstName)
-		@Html.TextBoxFieldFor(n => n.Data.LastName)
-		@Html.TextBoxFieldFor(n => n.Data.Email)
-		@Html.SelectFieldFor(n => n.Data.LanguageId, Html.List(Model.AvailableLanguages))
-		@Html.PasswordFieldFor(n => n.Data.OldPassword)
-		@Html.PasswordFieldFor(n => n.Data.NewPassword)
-		@Html.PasswordFieldFor(n => n.Data.NewPasswordCopy)
-	}
-	
-	@Html.Partial("ContentDefaultFilters", Model)
+    using (Html.BeginFieldGroup(UserStrings.ProfileData))
+    {
+        @Html.TextBoxFieldFor(n => n.Data.FirstName)
+        @Html.TextBoxFieldFor(n => n.Data.LastName)
+        @Html.TextBoxFieldFor(n => n.Data.Email)
+        @Html.SelectFieldFor(n => n.Data.LanguageId, Html.List(Model.AvailableLanguages))
+        @Html.PasswordFieldFor(n => n.Data.OldPassword)
+        @Html.PasswordFieldFor(n => n.Data.NewPassword)
+        @Html.PasswordFieldFor(n => n.Data.NewPasswordCopy)
+    }
+
+    @Html.Partial("ContentDefaultFilters", Model)
 
     using (Html.BeginFieldGroup(UserStrings.ViewSettings))
-	{
-		@Html.CheckBoxFieldFor(n => n.Data.EnableContentGroupingInTree)
-	}
+    {
+        @Html.CheckBoxFieldFor(n => n.Data.EnableContentGroupingInTree)
+    }
 }
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
-	@(Model.ContextObjectName).set_initializedCallback(function() {	
-		this.contentDefaultFiltersMediator = new Quantumart.QP8.ContentDefaultFiltersMediator("@Model.ContentFilterElementId");
+	@(Model.ContextObjectName).set_initializedCallback(function() {
+	  this.contentDefaultFiltersMediator = new Quantumart.QP8.ContentDefaultFiltersMediator("@Model.ContentFilterElementId");
 	});
 
-	@(Model.ContextObjectName).set_hostLoadedCallback(function() {	
-		if(this.contentDefaultFiltersMediator){
-			this.contentDefaultFiltersMediator.initialize();
-		}
-	});
+  @(Model.ContextObjectName).set_hostLoadedCallback(function() {
+    if(this.contentDefaultFiltersMediator){
+      this.contentDefaultFiltersMediator.initialize();
+    }
+  });
 
-	@(Model.ContextObjectName).set_terminatingCallback(function() { 
-		if(this.contentDefaultFiltersMediator){
-			this.contentDefaultFiltersMediator.dispose();
-		}
-	});
+  @(Model.ContextObjectName).set_terminatingCallback(function() {
+    if(this.contentDefaultFiltersMediator){
+      this.contentDefaultFiltersMediator.dispose();
+    }
+  });
 </script>
 @Html.RunInitScript(Model)

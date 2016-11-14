@@ -18,7 +18,7 @@ namespace Quantumart.QP8.BLL.Factories.Logging
         {
             get
             {
-                return _logFactory ?? new DiagnosticsDebugLogFactory();
+                return _logFactory ?? new DiagnosticsLogFactory();
             }
             set
             {

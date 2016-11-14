@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
@@ -101,14 +101,12 @@ namespace Quantumart.QP8.WebMvc.Controllers.Base
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public virtual ActionResult MultipleRemove(int parentId, int[] IDs)
         {
-            var result = Service.MultipleRemove(parentId, IDs);
-            return JsonMessageResult(result);
+            return JsonMessageResult(Service.MultipleRemove(parentId, IDs));
         }
 
         public virtual ActionResult Remove(int parentId, int id)
         {
-            var result = Service.Remove(parentId, id);
-            return JsonMessageResult(result);
+            return JsonMessageResult(Service.Remove(parentId, id));
         }
     }
 }

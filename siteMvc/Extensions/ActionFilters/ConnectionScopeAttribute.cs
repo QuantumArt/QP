@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
@@ -75,7 +76,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             var controller = filterContext.Controller as QPController;
-            if ((controller == null) || !controller.IsReplayAction())
+            if (controller == null || !filterContext.HttpContext.IsXmlDbUpdateReplayAction())
             {
                 if (Mode == ConnectionScopeMode.TransactionOn)
                 {
@@ -109,21 +110,20 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
             var controller = filterContext.Controller as QPController;
-            if ((controller == null) || !controller.IsReplayAction())
+            try
             {
-                try
+                if ((controller == null || !filterContext.HttpContext.IsXmlDbUpdateReplayAction())
+                    && filterContext.Exception == null
+                    && TransactionScope != null
+                    && filterContext.Controller.ViewData.ModelState.IsValid
+                    && Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active)
                 {
-                    if ((filterContext.Exception == null) && (TransactionScope != null)
-                        && filterContext.Controller.ViewData.ModelState.IsValid
-                        && (Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active))
-                    {
-                        TransactionScope.Complete();
-                    }
+                    TransactionScope.Complete();
                 }
-                finally
-                {
-                    DisposeScopes();
-                }
+            }
+            finally
+            {
+                DisposeScopes();
             }
 
             base.OnActionExecuted(filterContext);

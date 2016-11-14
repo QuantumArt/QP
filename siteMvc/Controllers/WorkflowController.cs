@@ -26,7 +26,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             _workflowService = workflowService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Workflows)]
         [BackendActionContext(ActionCode.Workflows)]
@@ -47,7 +46,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.WorkflowProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Workflow, "id")]
@@ -60,14 +58,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.WorkflowProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateWorkflow)]
         [BackendActionContext(ActionCode.UpdateWorkflow)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Workflow, "id")]
         [BackendActionLog]
-        [Record(ActionCode.WorkflowProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var workflow = _workflowService.ReadPropertiesForUpdate(id);
@@ -87,7 +84,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewWorkflow)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
@@ -99,14 +95,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewWorkflow)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewWorkflow)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var workflow = _workflowService.NewWorkflowPropertiesForUpdate(parentId);
@@ -114,32 +109,29 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             TryUpdateModel(model);
             model.Validate(ModelState);
+
             if (ModelState.IsValid)
             {
                 model.Data = _workflowService.SaveWorkflowProperties(model.Data);
                 PersistResultId(model.Data.Id);
                 PersistRulesIds(null, model.Data.WorkflowRules.Select(n => n.Id).ToArray());
-
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveWorkflow });
             }
 
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveWorkflow)]
         [BackendActionContext(ActionCode.RemoveWorkflow)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
-            var result = _workflowService.Remove(id);
-            return JsonMessageResult(result);
+            return JsonMessageResult(_workflowService.Remove(id));
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult CheckUserOrGroupAccessOnContents(string statusName, string userIdString, string groupIdString, string contentIdsString)
         {
@@ -164,7 +156,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(contentAccessSummary.ToString(), JsonRequestBehavior.AllowGet);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult CheckAllAccessOnContents(string modelString, string contentIdsString)
         {

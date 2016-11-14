@@ -68,7 +68,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
                 throw;
             }
 
-            Console.WriteLine("Parsing is started. Selected options: ");
+            Console.WriteLine();
             PrintEnteredData();
 
             return CreateSettingsFromArguments();

@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Transactions;
 using System.Xml.Linq;
+using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -23,19 +23,60 @@ using Quantumart.QP8.Utils.Sorting;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
 {
-    internal class ArticleRepository
+    public class ArticleRepository : IArticleRepository
     {
-        internal static Article GetById(int id)
+        Article IArticleRepository.GetByGuid(Guid guid)
         {
-            var article = MappersRepository.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
+            return GetByGuid(guid);
+        }
+
+        List<Article> IArticleRepository.GetByIds(int[] ids)
+        {
+            return GetByIds(ids);
+        }
+
+        Article IArticleRepository.GetById(int id)
+        {
+            return GetById(id);
+        }
+
+        bool IArticleRepository.IsExist(int id)
+        {
+            return QPContext.EFContext.ArticleSet.Any(a => a.Id == id);
+        }
+
+        public static Article GetById(int id)
+        {
+            return MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
                 .Include("Status")
                 .Include("Content")
                 .Include("LastModifiedByUser")
                 .Include("LockedByUser")
                 .SingleOrDefault(n => n.Id == id)
             );
+        }
 
-            return article;
+        internal static Article GetByGuid(Guid guid)
+        {
+            return MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
+                .Include("Status")
+                .Include("Content")
+                .Include("LastModifiedByUser")
+                .Include("LockedByUser")
+                .SingleOrDefault(n => n.UniqueId == guid)
+            );
+        }
+
+        public static List<Article> GetByIds(int[] ids)
+        {
+            return MapperFacade.ArticleMapper.GetBizList(QPContext.EFContext.ArticleSet
+                .Include("Status")
+                .Include("Content")
+                .Include("LastModifiedByUser")
+                .Include("LockedByUser")
+                .Where(n => ids.Contains((int)n.Id))
+                .ToList()
+            );
         }
 
         internal static void LockForUpdate(int id)
@@ -51,7 +92,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             using (new QPConnectionScope())
             {
                 var item = Common.GetStatusHistoryItem(QPConnectionScope.Current.DbConnection, id).FirstOrDefault();
-                return item == null ? null : MappersRepository.StatusHistoryItemMapper.GetBizObject(item);
+                return item == null ? null : MapperFacade.StatusHistoryItemMapper.GetBizObject(item);
             }
         }
 
@@ -59,7 +100,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                var result = MappersRepository.ArticleRowMapper.GetBizObject(GetData(id, contentId));
+                var result = MapperFacade.ArticleRowMapper.GetBizObject(GetData(id, contentId));
                 if (result != null)
                 {
                     result.ContentId = contentId;
@@ -76,7 +117,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             ftsOptions = GetFtsSearchParameter(ftsParser, searchQueryParams, ArticleFullTextSearchSettings.SearchResultLimit);
             var availableForList = QPContext.IsAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
-            if (!availableForList || (ftsOptions.HasError.HasValue && ftsOptions.HasError.Value))
+            if (!availableForList || ftsOptions.HasError.HasValue && ftsOptions.HasError.Value)
             {
                 filter = SqlFilterComposer.Compose(filter, "1 = 0");
             }
@@ -125,11 +166,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return result;
         }
 
-        /// <summary>
-        /// Возвращает количество статей в контенте
-        /// </summary>
-        /// <param name="contentId">идентификатор контента</param>
-        /// <returns>количество статей</returns>
         internal static int GetCount(int contentId)
         {
             using (new QPConnectionScope())
@@ -146,10 +182,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Возвращает список статей
-        /// </summary>
-        /// <returns>список статей</returns>
         internal static IEnumerable<DataRow> GetList(int contentId, int[] selectedArticleIDs, ListCommand cmd, IList<ArticleSearchQueryParam> searchQueryParams, IList<ArticleContextQueryParam> contextQueryParams, string filter, ArticleFullTextSearchQueryParser ftsParser, bool? onlyIds, int[] filterIds, out int totalRecords)
         {
             using (new QPConnectionScope())
@@ -193,10 +225,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Возвращает список по ids
-        /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<Article> GetList(IList<int> ids, bool loadFieldValues = false)
         {
             using (new QPConnectionScope())
@@ -217,10 +245,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         }
 
-        /// <summary>
-        /// Возвращает список по ids
-        /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<Article> GetList(int contentId)
         {
             var data = GetData(null, contentId);
@@ -275,17 +299,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return result;
         }
 
-        /// <summary>
-        /// Возвращает список заблокированных пользователем статей
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <param name="totalRecords"></param>
-        /// <returns></returns>
         internal static List<ArticleListItem> GetLockedList(ListCommand cmd, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
             {
-                return MappersRepository.ArticleListItemRowMapper.GetBizList(Common.GetLockedArticlesList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
+                return MapperFacade.ArticleListItemRowMapper.GetBizList(Common.GetLockedArticlesList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
             }
         }
 
@@ -301,7 +319,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (var scope = new QPConnectionScope())
             {
-                return MappersRepository.ArticleListItemRowMapper.GetBizList(Common.GetArticlesWaitingForApproval(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
+                return MapperFacade.ArticleListItemRowMapper.GetBizList(Common.GetArticlesWaitingForApproval(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, QPContext.CurrentUserId, out totalRecords));
             }
         }
 
@@ -312,7 +330,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return Common.GetArticlesWaitingForApprovalCount(scope.DbConnection, QPContext.CurrentUserId);
             }
         }
-
 
         private static IEnumerable<ArticleRelationSecurityParameter> GetRelationSecurityFilters(IEnumerable<Field> fields)
         {
@@ -526,7 +543,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                                     $"where [{treeField.Name}] = c.content_item_id and {extraFilter}" +
                                   ") > 0 then 1 else 0 end as bit) as has_children ";
 
-                var fields = treeField.TreeFieldTitleCount <= 1 ? null : ContentRepository.GetDisplayFieldIds(treeField.ContentId, treeField.IncludeRelationsInTitle, treeField.Id)
+                var fields = treeField.TreeFieldTitleCount <= 1 ? null : ((IContentRepository)new ContentRepository()).GetDisplayFieldIds(treeField.ContentId, treeField.IncludeRelationsInTitle, treeField.Id)
                     .Take(treeField.TreeFieldTitleCount)
                     .Select(FieldRepository.GetById).ToList();
 
@@ -655,12 +672,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return orderExpression;
         }
 
-        /// <summary>
-        /// Получает данные полей для статьи
-        /// </summary>
-        /// <param name="id">ID статьи</param>
-        /// <param name="contentId">ID контента</param>
-        /// <returns>DataRow с данными</returns>
         internal static DataRow GetData(int id, int contentId)
         {
             using (new QPConnectionScope())
@@ -715,15 +726,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Копирует статью
-        /// </summary>
-        /// <param name="article">статья</param>
         internal static Article Copy(Article article)
         {
             var id = article.Id;
             article.PrepareForCopy(false, true);
-            var result = Save(article);
+            var result = CreateOrUpdate(article);
             using (new QPConnectionScope())
             {
                 Common.AdjustManyToMany(QPConnectionScope.Current.DbConnection, id, result.Id);
@@ -732,39 +739,17 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return result;
         }
 
-        /// <summary>
-        /// Добавляет новую статью
-        /// </summary>
-        /// <param name="article">информация о статье</param>
-        /// <returns>информация о статье</returns>
-        internal static Article Save(Article article)
+        internal static Article CreateOrUpdate(Article article)
         {
-            return InternalUpdate(article);
+            var articleUpdater = new ArticleUpdateService(article);
+            var schedule = article.Schedule;
+            article = articleUpdater.Update();
+            article.Schedule = schedule;
+            ScheduleRepository.UpdateSchedule(article);
+            ScheduleRepository.CopyScheduleToChildDelays(article);
+            return article;
         }
 
-        /// <summary>
-        /// Обновляет информацию о статье
-        /// </summary>
-        /// <param name="article">информация о статье</param>
-        /// <returns>информация о статье</returns>
-        internal static Article Update(Article article)
-        {
-            return InternalUpdate(article);
-        }
-
-
-        /// <summary>
-        /// Удаляет статью
-        /// </summary>
-        /// <param name="id">идентификатор статьи</param>
-        internal static void Delete(int id)
-        {
-            DefaultRepository.Delete<ArticleDAL>(id);
-        }
-
-        /// <summary>
-        /// Удаляет статьи
-        /// </summary>
         internal static void MultipleDelete(IList<int> ids, bool withAggregated = false, bool withAutoArchive = false)
         {
             using (new QPConnectionScope())
@@ -790,24 +775,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Проверяет уникальность списка значений
-        /// </summary>
-        /// <param name="fieldValuesToTest">список значений</param>
-        /// <returns>результат проверки</returns>
         internal static bool ValidateUnique(List<FieldValue> fieldValuesToTest)
         {
             string constraintToDisplay, conflictingIds;
             return ValidateUnique(fieldValuesToTest, out constraintToDisplay, out conflictingIds);
         }
 
-        /// <summary>
-        /// Проверяет уникальность списка значений
-        /// </summary>
-        /// <param name="fieldValuesToTest">список значений</param>
-        /// <param name="constraintToDisplay">нарушенное ограничение уникальности </param>
-        /// <param name="conflictingIds">список конфликтующих ID через запятую</param>
-        /// <returns>результат проверки</returns>
         internal static bool ValidateUnique(List<FieldValue> fieldValuesToTest, out string constraintToDisplay, out string conflictingIds)
         {
             if (fieldValuesToTest.Any())
@@ -917,9 +890,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Устанавливает значение архивного флага для статей
-        /// </summary>
         internal static void SetArchiveFlag(IList<int> ids, bool flag, bool withAggregated = false)
         {
             using (new QPConnectionScope())
@@ -963,8 +933,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        #region Private Members
-
         private static readonly Regex DynamicColumnNamePattern = new Regex($@"^{Field.Prefix}(\d+)$", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         private static string GetDisplayExpression(FieldValue item)
@@ -972,39 +940,16 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return $"[{item.Field.Name}]";
         }
 
-        private static Article InternalUpdate(Article item)
-        {
-            var helper = new ArticleUpdateHelper(item);
-            var schedule = item.Schedule;
-            item = helper.Update();
-            item.Schedule = schedule;
-            ScheduleRepository.UpdateSchedule(item);
-            ScheduleRepository.CopyScheduleToChildDelays(item);
-            return item;
-        }
-
         private static string GetSqlExpression(FieldValue item)
         {
-            if (string.IsNullOrEmpty(item.Value))
-            {
-                return $"([{item.Field.Name}] IS NULL)";
-            }
-
-            return $"([{item.Field.Name}] = {item.Field.ParamName})";
+            return string.IsNullOrEmpty(item.Value) ? $"([{item.Field.Name}] IS NULL)" : $"([{item.Field.Name}] = {item.Field.ParamName})";
         }
 
-        /// <summary>
-        /// Заменяет автоматически-сгенирированные названия динамических столбцов на их физические названия
-        /// </summary>
-        /// <param name="sortExpression">настройки сортировки, содержащие автоматически-сгенирированные названия динамических столбцов</param>
-        /// <param name="fieldList">cписок объектов типа Field</param>
-        /// <returns>настройки сортировки, содержащие физические названия динамических столбцов</returns>
         private static string ReplaceDynamicColumnsNamesInSortExpressions(string sortExpression, IList<Field> fieldList)
         {
             var sqlSortExpression = new StringBuilder();
             var sortInfoList = SqlSorting.GetSortingInformations(sortExpression);
             var sortInfoCount = sortInfoList.Count;
-
             if (sortInfoCount > 0)
             {
                 for (var sortInfoIndex = 0; sortInfoIndex < sortInfoCount; sortInfoIndex++)
@@ -1043,7 +988,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             return sqlSortExpression.ToString();
         }
-        #endregion
 
         internal static bool CheckRelationCondition(int id, int contentId, string relCondition)
         {
@@ -1061,10 +1005,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Возвращает список агрегированных статей для статьи
-        /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<Article> LoadAggregatedArticles(Article article)
         {
             using (var scope = new QPConnectionScope())
@@ -1085,7 +1025,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var aggregatedArticlesId = Common.GetAggregatedArticlesIDs(scope.DbConnection, article.Id, classifierFields, types).ToList();
                 if (aggregatedArticlesId.Any())
                 {
-                    return MappersRepository.ArticleMapper.GetBizList(
+                    return MapperFacade.ArticleMapper.GetBizList(
                         QPContext.EFContext.ArticleSet
                             .Include("Status")
                             .Include("Content")
@@ -1098,10 +1038,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Возвращает список агрегированных статей для статьи
-        /// </summary>
-        /// <returns></returns>
         internal static List<Article> LoadVariationArticles(Article article)
         {
             using (var scope = new QPConnectionScope())
@@ -1114,7 +1050,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var variationArticlesId = Common.GetVariationArticlesIDs(scope.DbConnection, article.Id, article.ContentId, article.Content.VariationField.Name).ToList();
                 if (variationArticlesId.Any())
                 {
-                    return MappersRepository.ArticleMapper.GetBizList(
+                    return MapperFacade.ArticleMapper.GetBizList(
                         QPContext.EFContext.ArticleSet
                             .Include("Status")
                             .Include("Content")
@@ -1128,11 +1064,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        /// <summary>
-        /// Есть ли у статьи агрегированные поля
-        /// </summary>
-        /// <param name="articleId"></param>
-        /// <returns></returns>
         internal static bool IsAnyAggregatedFields(int articleId)
         {
             return QPContext.EFContext.ArticleSet.Any(a =>
@@ -1140,25 +1071,22 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 a.Content.Fields.Any(f => f.Aggregated));
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         internal static bool CheckRelationSecurity(Article article, bool isDeletable)
         {
             var result = true;
-            if (QPContext.IsAdmin)
+            if (!QPContext.IsAdmin)
             {
-                return true;
-            }
-
-            using (new QPConnectionScope())
-            {
-                foreach (var item in article.GetRelationSecurityFields().Where(n => !string.IsNullOrEmpty(n.Value) && !n.Field.IsClassifier))
+                using (new QPConnectionScope())
                 {
-                    var testValues = new Dictionary<int, int[]> { { article.Id, Converter.ToInt32Collection(item.Value, ',') } };
-                    var checkResult = CheckRelationSecurity(item.Field.RelateToContentId.Value, testValues, isDeletable);
-                    if (!checkResult[article.Id])
+                    foreach (var item in article.GetRelationSecurityFields().Where(n => !string.IsNullOrEmpty(n.Value) && !n.Field.IsClassifier))
                     {
-                        result = false;
-                        break;
+                        var testValues = new Dictionary<int, int[]> { { article.Id, Converter.ToInt32Collection(item.Value, ',') } };
+                        var checkResult = CheckRelationSecurity(item.Field.RelateToContentId.Value, testValues, isDeletable);
+                        if (!checkResult[article.Id])
+                        {
+                            result = false;
+                            break;
+                        }
                     }
                 }
             }
@@ -1179,7 +1107,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private static Dictionary<int, bool> CheckRelationSecurity(int contentId, Dictionary<int, int[]> testValues, bool isDeletable)
         {
-
             using (var scope = new QPConnectionScope())
             {
                 var testIds = testValues.SelectMany(n => n.Value).Distinct().ToArray();
@@ -1252,9 +1179,10 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 Common.CopyArticleAccess(scope.DbConnection, fromId, toId, QPContext.CurrentUserId);
             }
         }
+
         internal static Dictionary<int, int> GetHierarchy(int contentId)
         {
-            var treeName = ContentRepository.GetTreeFieldName(contentId);
+            var treeName = ((IContentRepository)new ContentRepository()).GetTreeFieldName(contentId, 0);
             if (string.IsNullOrEmpty(treeName))
             {
                 return null;
@@ -1269,7 +1197,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (var scope = new QPConnectionScope())
             {
-                return MappersRepository.StatusHistoryItemMapper.GetBizList(
+                return MapperFacade.StatusHistoryItemMapper.GetBizList(
                    Common.GetAllHistoryStatusesForArticle(scope.DbConnection, articleId, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords)
                 );
             }
@@ -1412,13 +1340,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     }
 
                     var rows = Common.GetRelations(scope.DbConnection, GetBatchDataTable(articles));
-                    var relations = MappersRepository.DataRowMapper.Map<RelationData>(rows);
+                    var relations = MapperFacade.DataRowMapper.Map<RelationData>(rows);
 
                     var links = GetArticleLinks(articles, relations);
                     articles = UpdateArticleRelations(articles, relations);
 
                     rows = Common.BatchInsert(scope.DbConnection, GetBatchDataTable(articles), true, QPContext.CurrentUserId);
-                    var insertData = MappersRepository.DataRowMapper.Map<InsertData>(rows);
+                    var insertData = MapperFacade.DataRowMapper.Map<InsertData>(rows);
 
                     links = UpdateLinkIds(links, insertData);
                     articles = UpdateArticleIds(articles, insertData);
@@ -1475,7 +1403,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return dt;
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private static LinkData[] GetArticleLinks(IEnumerable<ArticleData> articles, IEnumerable<RelationData> relations)
         {
             return (from a in articles
@@ -1492,15 +1419,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                    .ToArray();
         }
 
-        private static LinkData[] UpdateLinkIds(LinkData[] links, InsertData[] insertData)
+        private static LinkData[] UpdateLinkIds(LinkData[] links, IEnumerable<InsertData> insertData)
         {
             var map = insertData.ToDictionary(d => d.OriginalArticleId, d => d.CreatedArticleId);
-
             foreach (var link in links)
             {
                 int newItemId;
                 int newLinkedItemId;
-
                 if (map.TryGetValue(link.ItemId, out newItemId))
                 {
                     link.ItemId = newItemId;
@@ -1515,7 +1440,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return links;
         }
 
-        private static ArticleData[] UpdateArticleRelations(ArticleData[] articles, RelationData[] relations)
+        private static ArticleData[] UpdateArticleRelations(ArticleData[] articles, IEnumerable<RelationData> relations)
         {
             var items = (from article in articles
                          from field in article.Fields
@@ -1576,10 +1501,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return articles;
         }
 
-        private static ArticleData[] UpdateArticleIds(ArticleData[] articles, InsertData[] insertData)
+        private static ArticleData[] UpdateArticleIds(ArticleData[] articles, IEnumerable<InsertData> insertData)
         {
             var map = insertData.ToDictionary(d => d.OriginalArticleId, d => d.CreatedArticleId);
-
             foreach (var article in articles)
             {
                 int newId;
@@ -1625,7 +1549,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             return articles.SelectMany(a => a.Fields.Select(f => f.Id)).Distinct().ToArray();
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string GetLinksXml(IEnumerable<LinkData> links)
         {
             var doc = new XDocument();

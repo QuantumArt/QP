@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
-  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="$(SolutionDir)packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('$(SolutionDir)packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -60,11 +60,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=1.1.0.188, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -93,55 +93,55 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Common, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\EnterpriseLibrary.ExceptionHandling.Logging.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.ExceptionHandling.Logging.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\EnterpriseLibrary.Logging.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Logging.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>$(SolutionDir)packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Moq, Version=4.5.21.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.5.21\lib\net45\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.5.23.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.5.23\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -149,7 +149,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="RazorGenerator.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
-      <HintPath>..\packages\RazorGenerator.Mvc.2.4.7\lib\net40\RazorGenerator.Mvc.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\RazorGenerator.Mvc.2.4.7\lib\net40\RazorGenerator.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -157,6 +157,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Linq.Expressions" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceModel.Activation" />
@@ -203,7 +204,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Telerik.Web.Mvc, Version=2010.2.930.235, Culture=neutral, PublicKeyToken=121fae78165ba3d4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\binaries\Telerik.Web.Mvc.dll</HintPath>
+      <HintPath>$(SolutionDir)binaries\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\WebActivatorEx.2.1.0\lib\net40\WebActivatorEx.dll</HintPath>
@@ -211,7 +212,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
+    <Compile Include="$(SolutionDir)SharedAssemblyInfo.cs">
       <Link>References\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
@@ -300,8 +301,17 @@
     <Compile Include="Extensions\Controllers\QPController.cs" />
     <Compile Include="Extensions\Controllers\RulesViolationExceptionExtensions.cs" />
     <Compile Include="Extensions\Helpers\AggregationListTemplateField.cs" />
+    <Compile Include="Infrastructure\Extensions\HttpContextBaseExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\UnityContainerExtensions.cs" />
+    <Compile Include="Infrastructure\Extensions\XElementExtensions.cs" />
     <Compile Include="Infrastructure\Factories\JsonCamelCaseResultFabric.cs" />
+    <Compile Include="Infrastructure\Helpers\GuidHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateQpActionHelpers.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateActionCorrecterService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateHttpContextProcessor.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateLogService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateHttpContextProcessor.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
     <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateCommonConstants.cs" />
     <Compile Include="Infrastructure\Enums\ExceptionResultMode.cs" />
@@ -315,7 +325,7 @@
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateActionCorrecterService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\CsvDbUpdateService.cs" />
     <Compile Include="Infrastructure\Services\CsvDbUpdate\ICsvDbUpdateService.cs" />
-    <Compile Include="Infrastructure\Services\XmlDbUpdate\IXmlDbUpdateReplayService.cs" />
+    <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateReplayService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateReplayService.cs" />
     <Compile Include="Infrastructure\Exceptions\XmlDbUpdateReplayActionException.cs" />
     <Compile Include="Extensions\Helpers\ControlOptions.cs" />
@@ -786,11 +796,9 @@
     <Content Include="Content\codemirror\addon\comment\continuecomment.js" />
     <Content Include="Content\codemirror\addon\dialog\dialog.css" />
     <Content Include="Content\codemirror\addon\dialog\dialog.js" />
-    <Content Include="Content\codemirror\addon\dialog\dialog.min.css" />
     <Content Include="Content\codemirror\addon\display\autorefresh.js" />
     <Content Include="Content\codemirror\addon\display\fullscreen.css" />
     <Content Include="Content\codemirror\addon\display\fullscreen.js" />
-    <Content Include="Content\codemirror\addon\display\fullscreen.min.css" />
     <Content Include="Content\codemirror\addon\display\panel.js" />
     <Content Include="Content\codemirror\addon\display\placeholder.js" />
     <Content Include="Content\codemirror\addon\display\rulers.js" />
@@ -805,7 +813,6 @@
     <Content Include="Content\codemirror\addon\fold\foldcode.js" />
     <Content Include="Content\codemirror\addon\fold\foldgutter.css" />
     <Content Include="Content\codemirror\addon\fold\foldgutter.js" />
-    <Content Include="Content\codemirror\addon\fold\foldgutter.min.css" />
     <Content Include="Content\codemirror\addon\fold\indent-fold.js" />
     <Content Include="Content\codemirror\addon\fold\markdown-fold.js" />
     <Content Include="Content\codemirror\addon\fold\xml-fold.js" />
@@ -815,7 +822,6 @@
     <Content Include="Content\codemirror\addon\hint\javascript-hint.js" />
     <Content Include="Content\codemirror\addon\hint\show-hint.css" />
     <Content Include="Content\codemirror\addon\hint\show-hint.js" />
-    <Content Include="Content\codemirror\addon\hint\show-hint.min.css" />
     <Content Include="Content\codemirror\addon\hint\sql-hint.js" />
     <Content Include="Content\codemirror\addon\hint\xml-hint.js" />
     <Content Include="Content\codemirror\addon\lint\coffeescript-lint.js" />
@@ -825,11 +831,9 @@
     <Content Include="Content\codemirror\addon\lint\json-lint.js" />
     <Content Include="Content\codemirror\addon\lint\lint.css" />
     <Content Include="Content\codemirror\addon\lint\lint.js" />
-    <Content Include="Content\codemirror\addon\lint\lint.min.css" />
     <Content Include="Content\codemirror\addon\lint\yaml-lint.js" />
     <Content Include="Content\codemirror\addon\merge\merge.css" />
     <Content Include="Content\codemirror\addon\merge\merge.js" />
-    <Content Include="Content\codemirror\addon\merge\merge.min.css" />
     <Content Include="Content\codemirror\addon\mode\loadmode.js" />
     <Content Include="Content\codemirror\addon\mode\multiplex.js" />
     <Content Include="Content\codemirror\addon\mode\multiplex_test.js" />
@@ -843,12 +847,10 @@
     <Content Include="Content\codemirror\addon\scroll\scrollpastend.js" />
     <Content Include="Content\codemirror\addon\scroll\simplescrollbars.css" />
     <Content Include="Content\codemirror\addon\scroll\simplescrollbars.js" />
-    <Content Include="Content\codemirror\addon\scroll\simplescrollbars.min.css" />
     <Content Include="Content\codemirror\addon\search\jump-to-line.js" />
     <Content Include="Content\codemirror\addon\search\match-highlighter.js" />
     <Content Include="Content\codemirror\addon\search\matchesonscrollbar.css" />
     <Content Include="Content\codemirror\addon\search\matchesonscrollbar.js" />
-    <Content Include="Content\codemirror\addon\search\matchesonscrollbar.min.css" />
     <Content Include="Content\codemirror\addon\search\search.js" />
     <Content Include="Content\codemirror\addon\search\searchcursor.js" />
     <Content Include="Content\codemirror\addon\selection\active-line.js" />
@@ -856,7 +858,6 @@
     <Content Include="Content\codemirror\addon\selection\selection-pointer.js" />
     <Content Include="Content\codemirror\addon\tern\tern.css" />
     <Content Include="Content\codemirror\addon\tern\tern.js" />
-    <Content Include="Content\codemirror\addon\tern\tern.min.css" />
     <Content Include="Content\codemirror\addon\tern\worker.js" />
     <Content Include="Content\codemirror\addon\wrap\hardwrap.js" />
     <Content Include="Content\codemirror\demo\activeline.html" />
@@ -906,7 +907,6 @@
     <Content Include="Content\codemirror\doc\activebookmark.js" />
     <Content Include="Content\codemirror\doc\compress.html" />
     <Content Include="Content\codemirror\doc\docs.css" />
-    <Content Include="Content\codemirror\doc\docs.min.css" />
     <Content Include="Content\codemirror\doc\internals.html" />
     <Content Include="Content\codemirror\doc\logo.png" />
     <Content Include="Content\codemirror\doc\logo.svg" />
@@ -924,7 +924,6 @@
     <Content Include="Content\codemirror\keymap\vim.js" />
     <Content Include="Content\codemirror\lib\codemirror.css" />
     <Content Include="Content\codemirror\lib\codemirror.js" />
-    <Content Include="Content\codemirror\lib\codemirror.min.css" />
     <Content Include="Content\codemirror\mode\apl\apl.js" />
     <Content Include="Content\codemirror\mode\apl\index.html" />
     <Content Include="Content\codemirror\mode\asciiarmor\asciiarmor.js" />
@@ -1148,11 +1147,9 @@
     <Content Include="Content\codemirror\mode\tiddlywiki\index.html" />
     <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.css" />
     <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.js" />
-    <Content Include="Content\codemirror\mode\tiddlywiki\tiddlywiki.min.css" />
     <Content Include="Content\codemirror\mode\tiki\index.html" />
     <Content Include="Content\codemirror\mode\tiki\tiki.css" />
     <Content Include="Content\codemirror\mode\tiki\tiki.js" />
-    <Content Include="Content\codemirror\mode\tiki\tiki.min.css" />
     <Content Include="Content\codemirror\mode\toml\index.html" />
     <Content Include="Content\codemirror\mode\toml\toml.js" />
     <Content Include="Content\codemirror\mode\tornado\index.html" />
@@ -1200,7 +1197,6 @@
     <Content Include="Content\codemirror\test\lint.js" />
     <Content Include="Content\codemirror\test\mode_test.css" />
     <Content Include="Content\codemirror\test\mode_test.js" />
-    <Content Include="Content\codemirror\test\mode_test.min.css" />
     <Content Include="Content\codemirror\test\multi_test.js" />
     <Content Include="Content\codemirror\test\phantom_driver.js" />
     <Content Include="Content\codemirror\test\run.js" />
@@ -1211,95 +1207,50 @@
     <Content Include="Content\codemirror\test\test.js" />
     <Content Include="Content\codemirror\test\vim_test.js" />
     <Content Include="Content\codemirror\theme\3024-day.css" />
-    <Content Include="Content\codemirror\theme\3024-day.min.css" />
     <Content Include="Content\codemirror\theme\3024-night.css" />
-    <Content Include="Content\codemirror\theme\3024-night.min.css" />
     <Content Include="Content\codemirror\theme\abcdef.css" />
-    <Content Include="Content\codemirror\theme\abcdef.min.css" />
     <Content Include="Content\codemirror\theme\ambiance-mobile.css" />
-    <Content Include="Content\codemirror\theme\ambiance-mobile.min.css" />
     <Content Include="Content\codemirror\theme\ambiance.css" />
-    <Content Include="Content\codemirror\theme\ambiance.min.css" />
     <Content Include="Content\codemirror\theme\base16-dark.css" />
-    <Content Include="Content\codemirror\theme\base16-dark.min.css" />
     <Content Include="Content\codemirror\theme\base16-light.css" />
-    <Content Include="Content\codemirror\theme\base16-light.min.css" />
     <Content Include="Content\codemirror\theme\bespin.css" />
-    <Content Include="Content\codemirror\theme\bespin.min.css" />
     <Content Include="Content\codemirror\theme\blackboard.css" />
-    <Content Include="Content\codemirror\theme\blackboard.min.css" />
     <Content Include="Content\codemirror\theme\cobalt.css" />
-    <Content Include="Content\codemirror\theme\cobalt.min.css" />
     <Content Include="Content\codemirror\theme\colorforth.css" />
-    <Content Include="Content\codemirror\theme\colorforth.min.css" />
     <Content Include="Content\codemirror\theme\dracula.css" />
-    <Content Include="Content\codemirror\theme\dracula.min.css" />
     <Content Include="Content\codemirror\theme\eclipse.css" />
-    <Content Include="Content\codemirror\theme\eclipse.min.css" />
     <Content Include="Content\codemirror\theme\elegant.css" />
-    <Content Include="Content\codemirror\theme\elegant.min.css" />
     <Content Include="Content\codemirror\theme\erlang-dark.css" />
-    <Content Include="Content\codemirror\theme\erlang-dark.min.css" />
     <Content Include="Content\codemirror\theme\hopscotch.css" />
-    <Content Include="Content\codemirror\theme\hopscotch.min.css" />
     <Content Include="Content\codemirror\theme\icecoder.css" />
-    <Content Include="Content\codemirror\theme\icecoder.min.css" />
     <Content Include="Content\codemirror\theme\isotope.css" />
-    <Content Include="Content\codemirror\theme\isotope.min.css" />
     <Content Include="Content\codemirror\theme\lesser-dark.css" />
-    <Content Include="Content\codemirror\theme\lesser-dark.min.css" />
     <Content Include="Content\codemirror\theme\liquibyte.css" />
-    <Content Include="Content\codemirror\theme\liquibyte.min.css" />
     <Content Include="Content\codemirror\theme\material.css" />
-    <Content Include="Content\codemirror\theme\material.min.css" />
     <Content Include="Content\codemirror\theme\mbo.css" />
-    <Content Include="Content\codemirror\theme\mbo.min.css" />
     <Content Include="Content\codemirror\theme\mdn-like.css" />
-    <Content Include="Content\codemirror\theme\mdn-like.min.css" />
     <Content Include="Content\codemirror\theme\midnight.css" />
-    <Content Include="Content\codemirror\theme\midnight.min.css" />
     <Content Include="Content\codemirror\theme\monokai.css" />
-    <Content Include="Content\codemirror\theme\monokai.min.css" />
     <Content Include="Content\codemirror\theme\neat.css" />
-    <Content Include="Content\codemirror\theme\neat.min.css" />
     <Content Include="Content\codemirror\theme\neo.css" />
-    <Content Include="Content\codemirror\theme\neo.min.css" />
     <Content Include="Content\codemirror\theme\night.css" />
-    <Content Include="Content\codemirror\theme\night.min.css" />
     <Content Include="Content\codemirror\theme\paraiso-dark.css" />
-    <Content Include="Content\codemirror\theme\paraiso-dark.min.css" />
     <Content Include="Content\codemirror\theme\paraiso-light.css" />
-    <Content Include="Content\codemirror\theme\paraiso-light.min.css" />
     <Content Include="Content\codemirror\theme\pastel-on-dark.css" />
-    <Content Include="Content\codemirror\theme\pastel-on-dark.min.css" />
     <Content Include="Content\codemirror\theme\railscasts.css" />
-    <Content Include="Content\codemirror\theme\railscasts.min.css" />
     <Content Include="Content\codemirror\theme\rubyblue.css" />
-    <Content Include="Content\codemirror\theme\rubyblue.min.css" />
     <Content Include="Content\codemirror\theme\seti.css" />
-    <Content Include="Content\codemirror\theme\seti.min.css" />
     <Content Include="Content\codemirror\theme\solarized.css" />
-    <Content Include="Content\codemirror\theme\solarized.min.css" />
     <Content Include="Content\codemirror\theme\the-matrix.css" />
-    <Content Include="Content\codemirror\theme\the-matrix.min.css" />
     <Content Include="Content\codemirror\theme\tomorrow-night-bright.css" />
-    <Content Include="Content\codemirror\theme\tomorrow-night-bright.min.css" />
     <Content Include="Content\codemirror\theme\tomorrow-night-eighties.css" />
-    <Content Include="Content\codemirror\theme\tomorrow-night-eighties.min.css" />
     <Content Include="Content\codemirror\theme\ttcn.css" />
-    <Content Include="Content\codemirror\theme\ttcn.min.css" />
     <Content Include="Content\codemirror\theme\twilight.css" />
-    <Content Include="Content\codemirror\theme\twilight.min.css" />
     <Content Include="Content\codemirror\theme\vibrant-ink.css" />
-    <Content Include="Content\codemirror\theme\vibrant-ink.min.css" />
     <Content Include="Content\codemirror\theme\xq-dark.css" />
-    <Content Include="Content\codemirror\theme\xq-dark.min.css" />
     <Content Include="Content\codemirror\theme\xq-light.css" />
-    <Content Include="Content\codemirror\theme\xq-light.min.css" />
     <Content Include="Content\codemirror\theme\yeti.css" />
-    <Content Include="Content\codemirror\theme\yeti.min.css" />
     <Content Include="Content\codemirror\theme\zenburn.css" />
-    <Content Include="Content\codemirror\theme\zenburn.min.css" />
     <Content Include="Content\jquery.qtip.css" />
     <Content Include="Content\QP8\icons\16x16\crop.gif" />
     <Content Include="Content\QP8\icons\16x16\green_arrow_down.png" />
@@ -1385,9 +1336,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
-    <None Include="NLog.xsd">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="Content\codemirror\.npmignore" />
     <Content Include="Content\codemirror\.travis.yml" />
     <Content Include="Content\codemirror\AUTHORS" />
@@ -1398,6 +1346,9 @@
     <Content Include="Content\codemirror\package.json" />
     <Content Include="Content\codemirror\README.md" />
     <Content Include="Content\ckeditor\skins\moonocolor\readme.md" />
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include=".jscsrc" />
     <None Include=".jshintrc" />
@@ -2247,59 +2198,59 @@
     <Content Include="Scripts\Quantumart\JsLanguage.ashx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Assembling\Assembling.csproj">
+    <ProjectReference Include="$(SolutionDir)Assembling\Assembling.csproj">
       <Project>{aba32eeb-7b9a-4bd8-973b-cd483f076237}</Project>
       <Name>Assembling</Name>
     </ProjectReference>
-    <ProjectReference Include="..\bll\BLL.csproj">
+    <ProjectReference Include="$(SolutionDir)bll\BLL.csproj">
       <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
       <Name>BLL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\configuration\Configuration.csproj">
+    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
     </ProjectReference>
-    <ProjectReference Include="..\constants\Constants.csproj">
+    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj">
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging.Loggers\Logging.Loggers.csproj">
+    <ProjectReference Include="$(SolutionDir)Logging.Loggers\Logging.Loggers.csproj">
       <Project>{16422a3a-e435-4d6b-b0e0-f47ec0cfc705}</Project>
       <Name>Logging.Loggers</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging.Templates\Logging.Templates.csproj">
+    <ProjectReference Include="$(SolutionDir)Logging.Templates\Logging.Templates.csproj">
       <Project>{8933767b-4925-469c-92bc-1c6c37ed7ea8}</Project>
       <Name>Logging.Templates</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging.Web\Logging.Web.csproj">
+    <ProjectReference Include="$(SolutionDir)Logging.Web\Logging.Web.csproj">
       <Project>{bca701fb-1883-4831-8e11-ec55e67e3d31}</Project>
       <Name>Logging.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging\Logging.csproj">
+    <ProjectReference Include="$(SolutionDir)Logging\Logging.csproj">
       <Project>{2376f4db-61df-4440-bab7-5740e06cd945}</Project>
       <Name>Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Merger\Merger.csproj">
+    <ProjectReference Include="$(SolutionDir)Merger\Merger.csproj">
       <Project>{cc2a4eab-777f-4b3c-8898-6fa1d00b2f7c}</Project>
       <Name>Merger</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Quantumart\Quantumart.csproj">
+    <ProjectReference Include="$(SolutionDir)Quantumart\Quantumart.csproj">
       <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
       <Name>Quantumart</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Resources\Resources.csproj">
+    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj">
       <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>
       <Name>Resources</Name>
     </ProjectReference>
-    <ProjectReference Include="..\security\Security.csproj">
+    <ProjectReference Include="$(SolutionDir)security\Security.csproj">
       <Project>{CC32A8B5-24B7-4EF1-B68E-DE755A136F70}</Project>
       <Name>Security</Name>
     </ProjectReference>
-    <ProjectReference Include="..\utils\Utils.csproj">
+    <ProjectReference Include="$(SolutionDir)utils\Utils.csproj">
       <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-    <ProjectReference Include="..\validators\Validators.csproj">
+    <ProjectReference Include="$(SolutionDir)validators\Validators.csproj">
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>

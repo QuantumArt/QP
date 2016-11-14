@@ -1,11 +1,11 @@
 {
-	"folders":
-	[
-		{
-			"path": "..\\siteMvc"
-		},
-		{
-			"path": "..\\plugins"
-		}
-	]
+  "folders":
+  [
+    {
+      "path": "..\\siteMvc"
+    },
+    {
+      "path": "..\\plugins"
+    }
+  ]
 }

@@ -130,14 +130,14 @@ namespace Quantumart.QP8.BLL.Helpers
             // сохранить поля
             foreach (var bf in baseFields)
             {
-                var vField = bf.GetVirtualClone(newContent);
+                var field = bf.GetVirtualClone(newContent);
                 if (_forceNewFieldIds != null)
                 {
-                    vField.ForceId = _forceNewFieldIds.Dequeue();
+                    field.ForceId = _forceNewFieldIds.Dequeue();
                 }
 
-                vField = VirtualFieldRepository.Save(vField);
-                _newFieldIds.Add(vField.Id);
+                field = VirtualFieldRepository.Save(field);
+                _newFieldIds.Add(field.Id);
             }
 
             VirtualFieldRepository.RebuildUnionAttrs(newContent);
@@ -207,7 +207,7 @@ namespace Quantumart.QP8.BLL.Helpers
                 }
                 else
                 {
-                    var vField = new Field(dbContent).Init();
+                    var vField = new Field(dbContent, new FieldRepository(), new ContentRepository()).Init();
                     vField.Name = column.Name;
                     var stringSize = column.CharMaxLength ?? Field.StringSizeDefaultValue;
                     switch (column.DbType.ToLowerInvariant())

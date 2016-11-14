@@ -7,18 +7,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
     public class HttpRequestMock : HttpRequestBase
     {
         private NameValueCollection _form;
-        private HttpCookieCollection _cookies;
-        private NameValueCollection _serverVariables;
-        private NameValueCollection _queryString;
         private readonly Mock<HttpFileCollectionBase> _files;
         private readonly Mock<HttpBrowserCapabilitiesBase> _browser;
 
         public HttpRequestMock()
         {
             _form = new NameValueCollection();
-            _cookies = new HttpCookieCollection();
-            _serverVariables = new NameValueCollection();
-            _queryString = new NameValueCollection();
+            Cookies = new HttpCookieCollection();
+            ServerVariables = new NameValueCollection();
+            QueryString = new NameValueCollection();
             Headers = new NameValueCollection();
             Unvalidated = new UnvalidatedRequestValuesMock(this);
             _files = new Mock<HttpFileCollectionBase>();
@@ -26,34 +23,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             _browser.SetupAllProperties();
         }
 
-
-        private string _httpMethod = "POST";
         private const string FormContentType = "application/x-www-form-urlencoded; charset=UTF-8";
         private string _path = string.Empty;
-
-        public void SetHttpMethod(string value)
-        {
-            _httpMethod = value;
-        }
 
         public void SetForm(NameValueCollection value)
         {
             _form = value;
-        }
-
-        public void SetCookies(HttpCookieCollection value)
-        {
-            _cookies = value;
-        }
-
-        public void SetServerVariables(NameValueCollection value)
-        {
-            _serverVariables = value;
-        }
-
-        public void SetQueryString(NameValueCollection value)
-        {
-            _queryString = value;
         }
 
         public void SetPath(string value)
@@ -63,17 +38,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public override NameValueCollection Form => _form;
 
-        public override HttpCookieCollection Cookies => _cookies;
+        public override HttpCookieCollection Cookies { get; }
 
-        public override NameValueCollection ServerVariables => _serverVariables;
+        public override NameValueCollection ServerVariables { get; }
 
-        public override NameValueCollection QueryString => _queryString;
+        public override NameValueCollection QueryString { get; }
 
         public override NameValueCollection Headers { get; }
 
         public override HttpFileCollectionBase Files => _files.Object;
 
-        public override string HttpMethod => _httpMethod;
+        public override string HttpMethod { get; } = "POST";
 
         public override string ContentType
         {
@@ -97,6 +72,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public override void ValidateInput()
         {
+            // Should not be deleted
         }
 
         public override string this[string key]
@@ -121,8 +97,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     return cookie.Value;
                 }
 
-                str = ServerVariables[key];
-                return str;
+                return ServerVariables[key];
             }
         }
     }

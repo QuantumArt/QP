@@ -54,13 +54,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.VisualEditorPluginProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateVisualEditorPlugin)]
         [BackendActionContext(ActionCode.UpdateVisualEditorPlugin)]
         [BackendActionLog]
-        [Record(ActionCode.VisualEditorPluginProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var plugin = _visualEditorService.ReadVisualEditorPluginPropertiesForUpdate(id);
@@ -68,7 +67,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             TryUpdateModel(model);
             model.Validate(ModelState);
-
             if (ModelState.IsValid)
             {
                 var oldIds = model.Data.VeCommands.Select(n => n.Id).ToArray();
@@ -82,19 +80,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveVisualEditorPlugin)]
         [BackendActionContext(ActionCode.RemoveVisualEditorPlugin)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
             return JsonMessageResult(_visualEditorService.Remove(id));
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewVisualEditorPlugin)]
         [BackendActionContext(ActionCode.AddNewVisualEditorPlugin)]
@@ -105,13 +101,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewVisualEditorPlugin)]
         [BackendActionContext(ActionCode.AddNewVisualEditorPlugin)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var plugin = _visualEditorService.NewVisualEditorPluginPropertiesForUpdate(parentId);

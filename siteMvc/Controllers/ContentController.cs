@@ -28,7 +28,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ContentController : QPController
     {
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Contents)]
         [BackendActionContext(ActionCode.Contents)]
@@ -51,7 +50,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.VirtualContents)]
         [BackendActionContext(ActionCode.VirtualContents)]
@@ -74,7 +72,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewContent)]
@@ -87,17 +84,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewContent)]
         [BackendActionContext(ActionCode.AddNewContent)]
         [BackendActionLog]
         [ValidateInput(false)]
-        [Record]
         public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
         {
-            var content = ContentService.NewForSave(parentId);
+            var content = ContentService.New(parentId, null);
             var model = ContentViewModel.Create(content, tabId, parentId);
 
             TryUpdateModel(model);
@@ -113,7 +109,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -128,7 +124,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.ContentProperties)]
@@ -143,14 +138,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.ContentProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateContent)]
         [BackendActionContext(ActionCode.UpdateContent)]
         [BackendActionLog]
         [ValidateInput(false)]
-        [Record(ActionCode.ContentProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
         {
             var content = ContentService.ReadForUpdate(id);
@@ -166,7 +160,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -181,7 +175,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewContentGroup)]
@@ -194,13 +187,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("GroupProperties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewContentGroup)]
         [BackendActionContext(ActionCode.AddNewContentGroup)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewGroup(string tabId, int parentId, FormCollection collection)
         {
             var group = ContentService.NewGroupForSave(parentId);
@@ -217,7 +209,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("GroupProperties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.ContentGroupProperties)]
@@ -230,13 +221,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("GroupProperties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.ContentGroupProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateContentGroup)]
         [BackendActionContext(ActionCode.UpdateContentGroup)]
         [BackendActionLog]
-        [Record(ActionCode.ContentGroupProperties)]
         public ActionResult GroupProperties(string tabId, int parentId, int id, FormCollection collection)
         {
             var group = ContentService.ReadGroupForUpdate(id, parentId);
@@ -253,13 +243,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("GroupProperties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikeContent)]
         [BackendActionContext(ActionCode.CreateLikeContent)]
         [BackendActionLog]
-        [Record]
         public ActionResult Copy(int id, int? forceId, string forceFieldIds, string forceLinkIds)
         {
             var result = ContentService.Copy(id, forceId, forceFieldIds.ToIntArray(), forceLinkIds.ToIntArray());
@@ -270,14 +259,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result.Message);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "Id")]
         [ActionAuthorize(ActionCode.EnableArticlesPermissions)]
         [BackendActionContext(ActionCode.EnableArticlesPermissions)]
         [BackendActionLog]
-        [Record]
         public ActionResult EnableArticlePermissions(int id)
         {
             var result = ContentService.EnableArticlePermissions(id);
@@ -297,7 +285,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(result);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult SearchBlock(int id, string actionCode, string hostId)
         {
@@ -305,7 +292,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("SearchBlock", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ContentLibrary)]
         [BackendActionContext(ActionCode.ContentLibrary)]
@@ -324,7 +310,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.List, EntityTypeCode.ContentFolder, "folderId")]
         public JsonResult _FileList(int folderId, int? fileTypeId, string fileNameFilter, int pageSize, int pageNumber, int fileShortNameLength = 15)
@@ -358,7 +343,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.ContentFolder, "folderId")]
         public JsonResult _FolderPath(int folderId)
@@ -377,7 +361,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Content, "contentId")]
         public ActionResult _RelateableFields(int? contentId, int? fieldId)
@@ -417,7 +400,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Content, "contentId")]
         public ActionResult _ClassifierFields(int contentId)
@@ -442,7 +424,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContent)]
         [BackendActionContext(ActionCode.SelectContent)]
@@ -471,7 +452,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForObjectContainer)]
         [BackendActionContext(ActionCode.SelectContentForObjectContainer)]
@@ -499,7 +479,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForObjectForm)]
         [BackendActionContext(ActionCode.SelectContentForObjectForm)]
@@ -527,7 +506,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForJoin)]
         [BackendActionContext(ActionCode.SelectContentForJoin)]
@@ -555,7 +533,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectContentForField)]
         [BackendActionContext(ActionCode.SelectContentForField)]

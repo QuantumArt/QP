@@ -140,13 +140,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewPageObjectFormat)]
         [BackendActionContext(ActionCode.AddNewPageObjectFormat)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewPageObjectFormat(string tabId, int parentId, FormCollection collection)
         {
             var format = _formatService.NewPageObjectFormatPropertiesForUpdate(parentId, _formatService.IsSiteDotNetByObjectId(parentId));
@@ -163,7 +162,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewTemplateObjectFormat)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.TemplateObjectFormat, "parentId")]
@@ -175,13 +173,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewTemplateObjectFormat)]
         [BackendActionContext(ActionCode.AddNewTemplateObjectFormat)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewTemplateObjectFormat(string tabId, int parentId, FormCollection collection)
         {
             var format = _formatService.NewTemplateObjectFormatPropertiesForUpdate(parentId, _formatService.IsSiteDotNetByObjectId(parentId));
@@ -198,7 +195,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageObjectFormatProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObjectFormat, "id")]

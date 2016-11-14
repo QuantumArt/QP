@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Constants;
@@ -24,7 +25,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 		private static StatusType GetRealById(int id )
 		{
-			return MappersRepository.StatusTypeMapper.GetBizObject(QPContext.EFContext.StatusTypeSet.Include("LastModifiedByUser").SingleOrDefault(n => (int)n.Id == id));
+			return MapperFacade.StatusTypeMapper.GetBizObject(QPContext.EFContext.StatusTypeSet.Include("LastModifiedByUser").SingleOrDefault(n => (int)n.Id == id));
 		}
 
 		internal static StatusType GetByIdFromCache(int id)
@@ -40,22 +41,22 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static StatusType GetByName(string name, int siteId)
         {
-			return MappersRepository.StatusTypeMapper.GetBizObject(QPContext.EFContext.StatusTypeSet.SingleOrDefault(n => n.Name == name && (int)n.SiteId == siteId));
+			return MapperFacade.StatusTypeMapper.GetBizObject(QPContext.EFContext.StatusTypeSet.SingleOrDefault(n => n.Name == name && (int)n.SiteId == siteId));
         }
 
         internal static IEnumerable<StatusType> GetStatusList(int siteId)
         {
-            return MappersRepository.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.Where(s => (int)s.SiteId == siteId).OrderBy(n => n.Weight).ToList());
+            return MapperFacade.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.Where(s => (int)s.SiteId == siteId).OrderBy(n => n.Weight).ToList());
         }
 
 		internal static IEnumerable<StatusType> GetAll()
 		{
-			return MappersRepository.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.ToList());
+			return MapperFacade.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.ToList());
 		}
 
 		internal static IEnumerable<StatusType> GetColouredStatuses()
 		{
-			return MappersRepository.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.Where(s => s.Color != null && s.AltColor != null).ToList());
+			return MapperFacade.StatusTypeMapper.GetBizList(QPContext.EFContext.StatusTypeSet.Where(s => s.Color != null && s.AltColor != null).ToList());
 		}
 
 		/// <summary>
@@ -81,7 +82,7 @@ namespace Quantumart.QP8.BLL.Repository
 			else
 			{
 				IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
-				result = MappersRepository.StatusTypeMapper
+				result = MapperFacade.StatusTypeMapper
 					.GetBizList(QPContext.EFContext.StatusTypeSet
 						.Where(f => decIDs.Contains(f.Id))
 						.ToList()
@@ -95,7 +96,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetStatusTypePage(scope.DbConnection, siteId, "[WEIGHT]", out totalRecords, cmd.StartRecord, cmd.PageSize);
-				return MappersRepository.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
@@ -175,7 +176,7 @@ namespace Quantumart.QP8.BLL.Repository
 			{
 				int totalRecords = -1;
 				IEnumerable<DataRow> rows = Common.GetStatusPageForWorkflow(scope.DbConnection, workflowId, listCommand.SortExpression, out totalRecords, listCommand.StartRecord, listCommand.PageSize);
-				return new ListResult<StatusTypeListItem> { Data = MappersRepository.StatusTypeListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
+				return new ListResult<StatusTypeListItem> { Data = MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
 			}
 		}
 
@@ -184,7 +185,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{				
 				IEnumerable<DataRow> rows = Common.GetAllStatusesForWorkflow(scope.DbConnection, workflowId);
-				return MappersRepository.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
 			}
 		}
 

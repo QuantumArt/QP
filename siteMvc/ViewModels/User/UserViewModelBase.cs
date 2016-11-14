@@ -5,7 +5,7 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.User
 {
     public abstract class UserViewModelBase : EntityViewModel
     {
@@ -15,11 +15,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         {
         }
 
-        public new User Data
+        public new BLL.User Data
         {
             get
             {
-                return (User)EntityData;
+                return (BLL.User)EntityData;
             }
             set
             {

@@ -1,6 +1,7 @@
 using System;
 using Mono.Options;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 {
@@ -9,8 +10,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
         internal static void PrintHelloMessage()
         {
             WriteLineDebug();
-            Console.WriteLine("QuantumArt DBUpdate for QP8 version 6.0.");
-            Console.WriteLine($"Assembly version {typeof(Program).Assembly.GetName().Version}.");
+
+            Console.WriteLine("QuantumArt DbUpdate for QP8 version 6.0.");
+            Console.WriteLine($"Assembly version {CommonHelpers.GetAssemblyVersion()}.");
         }
 
         internal static void WriteLineDebug(string message = null)
@@ -38,12 +40,22 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
         internal static void MakeSureUserWantToContinue()
         {
             Console.Write("Continue processing (y/n): ");
-            if (Console.ReadKey().Key != ConsoleKey.Y)
-            {
-                ExitProgram(ExitCode.Success);
-            }
+            var enteredKey = Console.ReadKey().Key;
+            Console.WriteLine();
 
-            Console.WriteLine(Environment.NewLine);
+            switch (enteredKey)
+            {
+                case ConsoleKey.Y:
+                    Console.WriteLine();
+                    break;
+                case ConsoleKey.Escape:
+                case ConsoleKey.N:
+                    ExitProgram(ExitCode.Success);
+                    break;
+                default:
+                    MakeSureUserWantToContinue();
+                    break;
+            }
         }
 
         internal static ConsoleKey AskUserToSelectUtilityMode()
@@ -82,9 +94,18 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 
         internal static void ExitProgram(ExitCode exitCode)
         {
-            Console.WriteLine(exitCode == ExitCode.Success
-                ? "Processing successfuly finished."
-                : ">>> There was an exception in xml db updater <<<");
+            if (exitCode == ExitCode.Success)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Processing successfuly finished...");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("There was an exception in xml db updater...");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
 
             Program.Logger.Flush();
             Environment.Exit((int)exitCode);

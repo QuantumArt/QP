@@ -8,47 +8,39 @@ using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
-	public class UserDefaultFilter
-	{
-		public UserDefaultFilter()
-		{
-			ArticleIDs = Enumerable.Empty<int>().ToList();
-		}
+    public class UserDefaultFilter
+    {
+        public UserDefaultFilter()
+        {
+            ArticleIDs = Enumerable.Empty<int>().ToList();
+        }
 
-		public int UserId { get; set; }
+        public int UserId { get; set; }
 
-		[LocalizedDisplayName("DefaultFilterSite", NameResourceType = typeof(UserStrings))]
-		public int? SiteId
-		{
-			get
-			{
-				if (ContentId.HasValue)
-					return GetContent().SiteId;
-			    var site = GetAllSites().FirstOrDefault();
-			    return site?.Id;
-			}
-		}
+        [LocalizedDisplayName("DefaultFilterSite", NameResourceType = typeof(UserStrings))]
+        public int? SiteId => ContentId.HasValue ? GetContent().SiteId : GetAllSites().FirstOrDefault()?.Id;
 
-		[LocalizedDisplayName("DefaultFilterContent", NameResourceType = typeof(UserStrings))]
-		public int? ContentId { get; set; }
-		public Content GetContent()
-		{
-		    if (ContentId.HasValue)
-				return ContentRepository.GetById(ContentId.Value);
-		    return null;
-		}
+        [LocalizedDisplayName("DefaultFilterContent", NameResourceType = typeof(UserStrings))]
+        public int? ContentId { get; set; }
 
-	    [LocalizedDisplayName("DefaultFilterArticles", NameResourceType = typeof(UserStrings))]
-		public IList<int> ArticleIDs { get; set; }
-		public IEnumerable<Article> GetArticles()
-		{
-			return ArticleRepository.GetList(ArticleIDs);
-		}
+        public Content GetContent()
+        {
+            return ContentId.HasValue ? ContentRepository.GetById(ContentId.Value) : null;
+        }
 
-		private readonly Lazy<IEnumerable<Site>> _allSites = new Lazy<IEnumerable<Site>>(SiteRepository.GetAll);
-		public IEnumerable<Site> GetAllSites()
-		{
-			return _allSites.Value;
-		}
-	}
+        [LocalizedDisplayName("DefaultFilterArticles", NameResourceType = typeof(UserStrings))]
+        public IList<int> ArticleIDs { get; set; }
+
+        public IEnumerable<Article> GetArticles()
+        {
+            return ArticleRepository.GetList(ArticleIDs);
+        }
+
+        private readonly Lazy<IEnumerable<Site>> _allSites = new Lazy<IEnumerable<Site>>(SiteRepository.GetAll);
+
+        public IEnumerable<Site> GetAllSites()
+        {
+            return _allSites.Value;
+        }
+    }
 }

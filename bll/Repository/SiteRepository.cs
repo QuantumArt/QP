@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using Quantumart.QP8;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
@@ -27,7 +28,7 @@ namespace Quantumart.QP8.BLL.Repository
 			if (result != null)
 				return result;
 
-            return MappersRepository.SiteMapper.GetBizObject(
+            return MapperFacade.SiteMapper.GetBizObject(
                 QPContext.EFContext.SiteSet
                     .Include("LastModifiedByUser")
                     .Include("LockedByUser")
@@ -82,13 +83,13 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 IEnumerable<DataRow> rows = Common.GetSitesPage(scope.DbConnection, options, out totalRecords);
-                return new ListResult<SiteListItem> { Data = MappersRepository.SiteListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
+                return new ListResult<SiteListItem> { Data = MapperFacade.SiteListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }
 
         internal static IEnumerable<Site> GetAll()
         {
-            return MappersRepository.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.OrderBy(S => S.Name).ToList());
+            return MapperFacade.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.OrderBy(S => S.Name).ToList());
         }
 
         /// <summary>
@@ -153,7 +154,7 @@ namespace Quantumart.QP8.BLL.Repository
             if (siteIDs != null && siteIDs.Any())
             {
                 IEnumerable<decimal> decSeteIDs = Converter.ToDecimalCollection(siteIDs);
-                return MappersRepository.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.Where(n => decSeteIDs.Contains(n.Id)).ToList());
+                return MapperFacade.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.Where(n => decSeteIDs.Contains(n.Id)).ToList());
             }
             else
                 return Enumerable.Empty<Site>();

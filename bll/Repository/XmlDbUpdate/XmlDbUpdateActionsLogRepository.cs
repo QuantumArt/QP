@@ -1,10 +1,10 @@
 ﻿using System.Linq;
-using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 
 namespace Quantumart.QP8.BLL.Repository.XmlDbUpdate
 {
-    public class XmlDbUpdateActionsLogRepository
+    public class XmlDbUpdateActionsLogRepository : IXmlDbUpdateActionsLogRepository
     {
         public bool IsExist(string hash)
         {
@@ -14,7 +14,7 @@ namespace Quantumart.QP8.BLL.Repository.XmlDbUpdate
         public int Insert(XmlDbUpdateActionsLogModel entry)
         {
             var context = QPContext.EFContext;
-            var entity = MappersRepository.XmlDbUpdateActionsLogMapper.GetDalObject(entry);
+            var entity = MapperFacade.XmlDbUpdateActionsLogMapper.GetDalObject(entry);
             context.XML_DB_UPDATE_ACTIONS.AddObject(entity);
             context.SaveChanges();
 

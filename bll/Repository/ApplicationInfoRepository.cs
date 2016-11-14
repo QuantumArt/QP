@@ -2,17 +2,17 @@
 
 namespace Quantumart.QP8.BLL.Repository
 {
-    internal static class ApplicationInfoRepository
+    public class ApplicationInfoRepository : IApplicationInfoRepository
     {
-        public static string GetCurrentDbVersion()
+        public string GetCurrentDbVersion()
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.GetCurrentDBVersion(scope.DbConnection);
+                return Common.GetCurrentDbVersion(scope.DbConnection);
             }
         }
 
-        public static bool RecordActions()
+        public bool RecordActions()
         {
             using (new QPConnectionScope())
             {

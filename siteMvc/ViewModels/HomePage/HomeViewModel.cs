@@ -35,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 
         public IEnumerable<ListItem> Sites { get; set; }
 
-        public User CurrentUser { get; set; }
+        public BLL.User CurrentUser { get; set; }
 
         public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;
 

@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -17,9 +15,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 {
     internal static class XmlDbUpdateSerializerHelpers
     {
-        internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string backendUrl)
+        internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl)
         {
-            var root = GetOrCreateRoot(backendUrl);
+            var root = GetOrCreateRoot(backendUrl, currentDbVersion);
             root.Add(new XElement(XmlDbUpdateXDocumentConstants.ActionElement,
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute, action.Code),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute, string.Join(",", action.Ids)),
@@ -41,6 +39,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             {
                 Code = GetCode(action),
                 Ids = GetIds(action),
+                ResultId = GetResultIdByCode(action),
+                UniqueId = GetUniqueIdByCode(action),
+                ResultUniqueId = GetResultUniqueIdByCode(action),
                 ParentId = GetParentId(action),
                 Lcid = lcid,
                 BackwardId = GetBackwardId(action),
@@ -48,7 +49,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 ChildId = GetChildIdByCode(action),
                 ChildIds = GetChildIdsByCode(action),
                 ChildLinkIds = GetChildLinkIdsByCode(action),
-                ResultId = GetResultIdByCode(action),
                 CustomActionCode = GetCustomActionCodeByCode(action),
                 Form = GetActionFields(action),
                 Executed = GetExecuted(action, lcid),
@@ -56,16 +56,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             };
         }
 
-        internal static void ErasePreviouslyRecordedActions(string backendUrl)
+        internal static void ErasePreviouslyRecordedActions(string backendUrl, string currentDbVersion)
         {
-            var root = GetOrCreateRoot(backendUrl);
+            var root = GetOrCreateRoot(backendUrl, currentDbVersion);
             var doc = root.Document;
             if (doc != null)
             {
                 if (root.HasElements)
                 {
                     root.Remove();
-                    doc.Add(CreateActionsRoot(backendUrl));
+                    doc.Add(CreateActionsRoot(backendUrl, currentDbVersion));
                 }
 
                 doc.Save(QPContext.GetRecordXmlFilePath());
@@ -75,9 +75,18 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static IEnumerable<XAttribute> GetEntitySpecificAttributesForPersisting(XmlDbUpdateRecordedAction action)
         {
             var result = new Dictionary<string, object>();
-            if (action.BackendAction.ActionType.Code == ActionTypeCode.Copy)
+            if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
+            {
+                result.Add(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute, string.Join(",", action.UniqueId));
+            }
+
+            if (XmlDbUpdateQpActionHelpers.IsActionHasResultId(action.Code))
             {
                 result.Add(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute, action.ResultId);
+                if (XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(action.Code))
+                {
+                    result.Add(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute, action.ResultUniqueId);
+                }
             }
 
             switch (action.Code)
@@ -136,13 +145,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }) ?? Enumerable.Empty<XElement>();
         }
 
-        private static XElement CreateActionsRoot(string backendUrl)
+        private static XElement CreateActionsRoot(string backendUrl, string currentDbVersion)
         {
             return new XElement(
                 XmlDbUpdateXDocumentConstants.RootElement,
                 GetBackendUrlAttribute(backendUrl),
                 new XAttribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute,
-                new ApplicationInfoHelper().GetCurrentDbVersion())
+                currentDbVersion)
             );
         }
 
@@ -151,30 +160,24 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return new XAttribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute, backendUrl);
         }
 
-        private static XElement GetOrCreateRoot(string backendUrl)
+        private static XElement GetOrCreateRoot(string backendUrl, string currentDbVersion)
         {
-            var doc = File.Exists(QPContext.GetRecordXmlFilePath()) ? XDocument.Load(QPContext.GetRecordXmlFilePath()) : new XDocument(CreateActionsRoot(backendUrl));
+            var doc = File.Exists(QPContext.GetRecordXmlFilePath()) ? XDocument.Load(QPContext.GetRecordXmlFilePath()) : new XDocument(CreateActionsRoot(backendUrl, currentDbVersion));
             return doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string GetCode(XElement action)
         {
-            // ReSharper disable once PossibleNullReferenceException
             return action.Attribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute).Value;
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static string[] GetIds(XElement action)
         {
-            // ReSharper disable once PossibleNullReferenceException
             return action.Attribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute).Value.Split(",".ToCharArray());
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static int GetParentId(XElement action)
         {
-            // ReSharper disable once PossibleNullReferenceException
             return int.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionParentIdAttribute).Value);
         }
 
@@ -253,15 +256,26 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         private static int GetResultIdByCode(XElement action)
         {
-            switch (GetCode(action))
-            {
-                case ActionCode.CreateLikeContent:
-                case ActionCode.CreateLikeField:
-                case ActionCode.CreateLikeArticle:
-                    return action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute).GetValueOrDefault<int>();
-                default:
-                    return default(int);
-            }
+            return XmlDbUpdateQpActionHelpers.IsActionHasResultId(GetCode(action))
+                ? action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultIdAttribute).GetValueOrDefault<int>()
+                : default(int);
+        }
+
+        private static Guid[] GetUniqueIdByCode(XElement action)
+        {
+            var actionCode = GetCode(action);
+            var uniqueIdValue = XmlDbUpdateQpActionHelpers.IsArticleAndHasUniqueId(actionCode)
+                ? action.Attribute(XmlDbUpdateXDocumentConstants.ActionUniqueIdAttribute)?.Value ?? Guid.Empty.ToString()
+                : Guid.Empty.ToString();
+
+            return uniqueIdValue.Split(",".ToCharArray()).Select(Guid.Parse).ToArray();
+        }
+
+        private static Guid GetResultUniqueIdByCode(XElement action)
+        {
+            return XmlDbUpdateQpActionHelpers.IsArticleAndHasResultUniqueId(GetCode(action))
+                ? Guid.Parse(action.Attribute(XmlDbUpdateXDocumentConstants.ActionResultUniqueIdAttribute)?.Value ?? Guid.Empty.ToString())
+                : Guid.Empty;
         }
 
         private static string GetCustomActionCodeByCode(XElement action)
@@ -275,18 +289,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static NameValueCollection GetActionFields(XContainer root)
         {
             return root.Elements().Aggregate(new NameValueCollection(), (seed, curr) =>
             {
-                // ReSharper disable once PossibleNullReferenceException
                 seed.Add(curr.Attribute(XmlDbUpdateXDocumentConstants.FieldNameAttribute).Value, curr.Value);
                 return seed;
             });
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static DateTime GetExecuted(XElement action, int lcid)
         {
             try

@@ -1,26 +1,19 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
 using Quantumart.QP8.Utils;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public abstract class LockableEntityObject : EntityObject
     {
-        /// <summary>
-        /// информация о пользователе, который заблокировал сущность
-        /// </summary>
         public virtual User LockedByUser
         {
             get;
             set;
         }
 
-        /// <summary>
-        /// дата блокировки сущности пользователем
-        /// </summary>
         public DateTime Locked
         {
             get;
@@ -30,10 +23,6 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("Locked", NameResourceType = typeof(GlobalStrings))]
         public string LockedToDisplay => Locked.ValueToDisplay();
 
-
-        /// <summary>
-        /// идентификатор пользователя, который заблокировал сущность
-        /// </summary>
         public int LockedBy
         {
             get;
@@ -49,9 +38,6 @@ namespace Quantumart.QP8.BLL
 
         public bool LockedByAnyoneElse => LockedByAnyone && !LockedByYou;
 
-        /// <summary>
-        /// является ли блокировка постоянной
-        /// </summary>
         [LocalizedDisplayName("PermanentLock", NameResourceType = typeof(GlobalStrings))]
         public bool PermanentLock
         {
@@ -59,12 +45,7 @@ namespace Quantumart.QP8.BLL
             set;
         }
 
-        /// <summary>
-        /// Пытается заблокировать сущность от имени текущего пользователя
-        /// </summary>
-        /// <returns>false, если сущность заблокирована кем-то еще</returns>
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        public void AutoLock()
+                public void AutoLock()
         {
             if (!LockedByAnyone)
             {
@@ -119,13 +100,15 @@ namespace Quantumart.QP8.BLL
 
         public abstract string LockedByAnyoneElseMessage { get; }
 
-        protected override void Validate(RulesException errors)
+        protected override RulesException Validate(RulesException errors)
         {
             base.Validate(errors);
             if (LockedByAnyoneElse)
             {
                 errors.CriticalErrorForModel(string.Format(LockedByAnyoneElseMessage, LockedByDisplayName));
             }
+
+            return errors;
         }
 
         public void LoadLockedByUser()

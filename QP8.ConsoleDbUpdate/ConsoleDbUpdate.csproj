@@ -61,7 +61,7 @@
     <ApplicationIcon>favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
+    <Compile Include="$(SolutionDir)SharedAssemblyInfo.cs">
       <Link>References\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="Infrastructure\Enums\ConsoleLogLevel.cs" />
@@ -93,9 +93,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="..\packages\NLog.4.3.6\lib\net45\NLog.dll">
-      <Link>References\NLog.dll</Link>
-    </EmbeddedResource>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -148,9 +145,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Practices.Unity.Interception.dll">
       <Link>References\Microsoft.Practices.Unity.Interception.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Moq.dll">
-      <Link>References\Moq.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\QA.Configuration.dll">
       <Link>References\QA.Configuration.dll</Link>
@@ -270,6 +264,12 @@
     <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
       <Link>References\CsvHelper.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Moq.4.5.23\lib\net45\Moq.dll">
+      <Link>References\Moq.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\NLog.4.3.10\lib\net45\NLog.dll">
+      <Link>References\NLog.dll</Link>
+    </EmbeddedResource>
     <Content Include="gulpfile.js" />
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
       <Link>References\Quantumart.QP8.Merger.dll</Link>
@@ -286,22 +286,22 @@
     <Content Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\bll\BLL.csproj">
+    <ProjectReference Include="$(SolutionDir)bll\BLL.csproj">
       <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
       <Name>BLL</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\configuration\Configuration.csproj">
+    <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\constants\Constants.csproj">
+    <ProjectReference Include="$(SolutionDir)constants\Constants.csproj">
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\siteMvc\WebMvc.csproj">
+    <ProjectReference Include="$(SolutionDir)siteMvc\WebMvc.csproj">
       <Project>{8be1bb60-1938-45e8-bafb-1d008d62059c}</Project>
       <Name>WebMvc</Name>
       <Private>False</Private>
@@ -309,14 +309,19 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Mono.Options">
-      <HintPath>..\packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>

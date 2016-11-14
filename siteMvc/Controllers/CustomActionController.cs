@@ -144,7 +144,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewCustomAction)]
         [BackendActionContext(ActionCode.AddNewCustomAction)]
@@ -155,13 +154,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewCustomAction)]
         [BackendActionContext(ActionCode.AddNewCustomAction)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, int id, FormCollection collection)
         {
             var action = _service.NewForSave();
@@ -176,10 +174,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 PersistActionCode(model.Data.Action.Code);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveCustomAction });
             }
+
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CustomActionsProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.CustomAction, "id")]
@@ -192,13 +190,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.CustomActionsProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateCustomAction)]
         [BackendActionContext(ActionCode.UpdateCustomAction)]
         [BackendActionLog]
-        [Record(ActionCode.CustomActionsProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var action = _service.ReadForUpdate(id);
@@ -210,21 +207,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.Data = _service.Update(model.Data, model.SelectedActionsIds);
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateCustomAction });
             }
+
             return JsonHtml("Properties", model);
         }
 
-
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveCustomAction)]
         [BackendActionContext(ActionCode.RemoveCustomAction)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
-            var result = _service.Remove(id);
-            return JsonMessageResult(result);
+            return JsonMessageResult(_service.Remove(id));
         }
     }
 }

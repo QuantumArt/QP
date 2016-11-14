@@ -1,5 +1,6 @@
 ﻿namespace Quantumart.QP8.Constants
 {
+    // TODO: check
     public enum FieldExactTypes
     {
         Undefined = FieldTypeCodes.Undefined,

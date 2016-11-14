@@ -10,6 +10,7 @@ using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Telerik.Web.Mvc;
 
@@ -79,13 +80,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewPageObject)]
         [BackendActionContext(ActionCode.AddNewPageObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewPageObject(string tabId, int parentId, FormCollection collection)
         {
             var obj = _objectService.NewObjectPropertiesForUpdate(parentId, true);
@@ -95,7 +95,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, IsReplayAction());
+                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, HttpContext.IsXmlDbUpdateReplayAction());
                 PersistResultId(model.Data.Id);
                 PersistDefaultFormatId(model.Data.DefaultFormatId);
                 return Redirect("PageObjectProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SavePageObject });
@@ -116,13 +116,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewTemplateObject)]
         [BackendActionContext(ActionCode.AddNewTemplateObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewTemplateObject(string tabId, int parentId, FormCollection collection)
         {
             var obj = _objectService.NewObjectPropertiesForUpdate(parentId, false);
@@ -132,7 +131,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, IsReplayAction());
+                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, HttpContext.IsXmlDbUpdateReplayAction());
                 PersistResultId(model.Data.Id);
                 PersistDefaultFormatId(model.Data.DefaultFormatId);
                 return Redirect("TemplateObjectProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveTemplateObject });
@@ -235,52 +234,48 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemovePageObject)]
         [BackendActionContext(ActionCode.RemovePageObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult RemovePageObject(int id)
         {
             var result = _objectService.RemoveObject(id);
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveTemplateObject)]
         [BackendActionContext(ActionCode.RemoveTemplateObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult RemoveTemplateObject(int id)
         {
             var result = _objectService.RemoveObject(id);
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemovePageObject)]
         [BackendActionContext(ActionCode.MultipleRemovePageObject)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemovePageObject(int parentId, int[] IDs)
         {
             return JsonMessageResult(_objectService.MultipleRemovePageObject(IDs));
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveTemplateObject)]
         [BackendActionContext(ActionCode.MultipleRemoveTemplateObject)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemoveTemplateObject(int parentId, int[] IDs)
         {

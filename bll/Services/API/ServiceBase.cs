@@ -1,4 +1,5 @@
 using System;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 
@@ -8,30 +9,21 @@ namespace Quantumart.QP8.BLL.Services.API
     {
         private bool _userTested;
 
+        protected ServiceBase(int userId)
+            : this(QPContext.CurrentDbConnectionString, userId)
+        {
+        }
+
         protected ServiceBase(string connectionString, int userId)
         {
-            Setup(connectionString, userId);
-        }
-        private void Setup(string connectionString, int userId)
-        {
-            if (string.IsNullOrEmpty(connectionString))
-                throw new ArgumentNullException(nameof(connectionString));
-
+            Ensure.NotNull(connectionString, "Connection string should not be empty");
             ConnectionString = connectionString;
             UserId = userId;
         }
 
-        protected ServiceBase(int userId)
-        {
-            if (QPConnectionScope.Current == null)
-                throw new ApplicationException("Attempt to create service instance without external QPConnectionScope object");
+        public string ConnectionString { get; }
 
-            Setup(QPConnectionScope.Current.DbConnection.ConnectionString, userId);
-        }
-
-        public string ConnectionString { get; private set; }
-
-        public int UserId { get; private set; }
+        public int UserId { get; }
 
         public int TestedUserId
         {

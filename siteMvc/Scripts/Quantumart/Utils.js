@@ -86,6 +86,8 @@ $q.sendAjax = function(opts) {
         $q.alertError(response.message || 'Unknown server error');
       }
     }
+  }).done(function() {
+    $q.hideLoader();
   });
 };
 
@@ -109,6 +111,18 @@ $q.postAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
     jsendError: jsendError
   });
 };
+
+$q.showLoader = function() {
+  if ($ctx) {
+    $ctx.getArea().showAjaxLoadingLayer();
+  }
+}
+
+$q.hideLoader = function() {
+  if ($ctx) {
+    $ctx.getArea().hideAjaxLoadingLayer();
+  }
+}
 
 //#region Преобразование и проверка типов
 Quantumart.QP8.Utils.isNull = function Quantumart$QP8$Utils$isNull(value) {

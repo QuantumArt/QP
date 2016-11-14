@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
@@ -11,7 +10,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
     public class ContentModelBinder : QpModelBinder
     {
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public override object BindModel(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             var content = base.BindModel(controllerContext, bindingContext) as Content;
@@ -23,7 +21,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             return content;
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         protected override void BindProperty(ControllerContext controllerContext, ModelBindingContext bindingContext, PropertyDescriptor propertyDescriptor)
         {
             var model = bindingContext.Model as Content;
@@ -39,7 +36,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
         {
             var content = bindingContext.Model as Content;

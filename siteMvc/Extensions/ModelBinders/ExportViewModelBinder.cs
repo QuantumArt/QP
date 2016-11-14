@@ -1,7 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Web.Mvc;
 using Quantumart.QP8.Utils;
@@ -11,7 +10,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
     public class ExportViewModelBinder : QpModelBinder
     {
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         protected override void BindProperty(ControllerContext controllerContext, ModelBindingContext bindingContext, PropertyDescriptor propertyDescriptor)
         {
             var model = bindingContext.Model as ExportViewModel;

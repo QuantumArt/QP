@@ -1,4 +1,5 @@
 ﻿using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
@@ -71,10 +72,9 @@ namespace Quantumart.QP8.BLL
                 QPContext.CurrentCustomerCode = CustomerCode;
                 using (new QPConnectionScope())
                 {
-                    var appSrv = new ApplicationInfoHelper();
-                    var dbVer = appSrv.GetCurrentDbVersion();
-                    var appVer = appSrv.GetCurrentBackendVersion();
-                    if (!appSrv.VersionsEqual(dbVer, appVer))
+                    var dbVer = new ApplicationInfoRepository().GetCurrentDbVersion();
+                    var appVer = ApplicationInfoHelpers.GetCurrentBackendVersion();
+                    if (!ApplicationInfoHelpers.VersionsEqual(dbVer, appVer))
                     {
                         errors.ErrorForModel(string.Format(LogOnStrings.VersionsAreDifferent, dbVer, appVer));
                     }
@@ -85,15 +85,14 @@ namespace Quantumart.QP8.BLL
 
             if (errors.IsEmpty)
             {
-                var errorCode = QpAuthenticationErrorNumber.NoErrors;
                 string message;
-
+                var errorCode = QpAuthenticationErrorNumber.NoErrors;
                 User = QPContext.Authenticate(this, ref errorCode, out message);
+
                 if (User != null)
                 {
                     User.IsSilverlightInstalled = IsSilverlightInstalled.HasValue && IsSilverlightInstalled.Value;
                 }
-
                 else if (errorCode == QpAuthenticationErrorNumber.AccountNotExist)
                 {
                     errors.ErrorFor(n => n.UserName, LogOnStrings.ErrorMessage_AccountNotExist);

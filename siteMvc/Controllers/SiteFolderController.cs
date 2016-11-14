@@ -23,14 +23,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("FolderProperties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.SiteFolder, "id")]
         [ActionAuthorize(ActionCode.AddNewSiteFolder)]
         [BackendActionContext(ActionCode.AddNewSiteFolder)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, int id, FormCollection collection)
         {
             var folder = SiteFolderService.NewForSave(parentId, id);
@@ -48,7 +47,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("FolderProperties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SiteFolderProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.SiteFolder, "id")]

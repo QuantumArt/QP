@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
@@ -37,14 +36,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
             }
             else
             {
-                // для multiply
                 if (filterContext.ActionParameters.ContainsKey(_entityMultiIdParamName))
                 {
                     var ids = filterContext.ActionParameters[_entityMultiIdParamName] as IEnumerable<int>;
                     var strIds = filterContext.ActionParameters[_entityMultiIdParamName] as IEnumerable<string>;
                     if (ids != null)
                     {
-                        stringEntityIDs.AddRange(Converter.ToStringCollection(ids.ToArray()));
+                        stringEntityIDs.AddRange(ids.Select(id => id.ToString()));
                     }
                     else if (strIds != null)
                     {

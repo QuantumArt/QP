@@ -1,6 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
@@ -11,6 +14,7 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.WebMvc.ViewModels.User;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -19,12 +23,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly IUserService _service;
 
-        public UserController(IUserService service)
+        private readonly IArticleService _dbArticleService;
+
+        public UserController(IUserService service, IArticleService dbArticleService)
         {
             _service = service;
+            _dbArticleService = dbArticleService;
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Users)]
         [BackendActionContext(ActionCode.Users)]
@@ -49,7 +55,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult SearchBlock(string hostId)
         {
@@ -84,7 +89,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.SelectUser)]
         [BackendActionContext(ActionCode.SelectUser)]
@@ -108,7 +112,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewUser)]
         [BackendActionContext(ActionCode.AddNewUser)]
@@ -119,13 +122,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewUser)]
         [BackendActionContext(ActionCode.AddNewUser)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var user = _service.NewProperties();
@@ -137,13 +139,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 model.Data = _service.SaveProperties(model.Data);
                 PersistResultId(model.Data.Id);
+                AppendFormGuidsFromIds("ContentDefaultFilter.ArticleIDs", "ContentDefaultFilter.ArticleUniqueIDs");
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveUser });
             }
 
             return JsonHtml("Properties", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.UserProperties)]
         [BackendActionContext(ActionCode.UserProperties)]
@@ -155,13 +157,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.UserProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateUser)]
         [BackendActionContext(ActionCode.UpdateUser)]
         [BackendActionLog]
-        [Record(ActionCode.UserProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
         {
             var user = _service.ReadProperties(id);
@@ -172,32 +173,31 @@ namespace Quantumart.QP8.WebMvc.Controllers
             if (ModelState.IsValid)
             {
                 model.Data = _service.UpdateProperties(model.Data);
+                AppendFormGuidsFromIds("ContentDefaultFilter.ArticleIDs", "ContentDefaultFilter.ArticleUniqueIDs");
                 return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateUser });
             }
 
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveUser)]
         [BackendActionContext(ActionCode.RemoveUser)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
             var result = _service.Remove(id);
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.CreateLikeUser)]
         [BackendActionContext(ActionCode.CreateLikeUser)]
         [BackendActionLog]
-        [Record]
         public ActionResult Copy(int id)
         {
             var result = _service.Copy(id);
@@ -207,7 +207,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword
-        [HttpGet]
+        // TODO: RENAME
         public ActionResult Profile(string tabId, int parentId, string successfulActionCode)
         {
             var user = _service.ReadProfile(QPContext.CurrentUserId);
@@ -232,5 +232,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Profile", model);
         }
 #pragma warning restore CS0108 // Member hides inherited member; missing new keyword
+
+        private void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
+        {
+            var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
+            if (formIds != null)
+            {
+                var substitutedGuids = formIds
+                    .Where(f => f.IsInt())
+                    .Select(_dbArticleService.GetArticleGuidById)
+                    .Select(g => g.ToString())
+                    .ToArray();
+
+                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
+            }
+        }
     }
 }

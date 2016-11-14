@@ -6,9 +6,6 @@ namespace Quantumart.QP8.Utils
 {
     public static class ExpressionExtensions
     {
-        /// <summary>
-        /// Получить имя свойства объекта
-        /// </summary>
         public static string GetPropertyName<T>(this Expression<Func<T>> propertyLambda)
         {
             var member = propertyLambda.Body as MemberExpression;

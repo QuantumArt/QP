@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.Constants;
@@ -43,7 +44,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var dt = Common.GetVirtualFieldData(scope.DbConnection, contentId).AsEnumerable().ToList();
-                return MappersRepository.VirtualFieldDataMapper.GetBizList(dt);
+                return MapperFacade.VirtualFieldDataMapper.GetBizList(dt);
             }
         }
 
@@ -122,7 +123,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<Field> GetFieldsOfContents(IEnumerable<int> contentIds)
         {
             var dContentIDs = Converter.ToDecimalCollection(contentIds);
-            return MappersRepository.FieldMapper.GetBizList(FieldRepository.DefaultFieldQuery
+            return MapperFacade.FieldMapper.GetBizList(FieldRepository.DefaultFieldQuery
                     .Where(f => dContentIDs.Contains(f.ContentId))
                     .OrderBy(f => f.ContentId)
                     .ToList()
@@ -305,7 +306,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<EntityObject> GetList(IEnumerable<int> ids)
         {
             var decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-            return MappersRepository.ContentMapper.GetBizList(QPContext.EFContext.ContentSet.Where(f => decIDs.Contains(f.Id)).ToList());
+            return MapperFacade.ContentMapper.GetBizList(QPContext.EFContext.ContentSet.Where(f => decIDs.Contains(f.Id)).ToList());
         }
     }
 }

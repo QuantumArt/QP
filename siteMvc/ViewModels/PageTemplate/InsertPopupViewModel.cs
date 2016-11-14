@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -75,8 +74,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public bool IsPage => _pageId.HasValue;
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
-        private void InitDdls()
+                private void InitDdls()
         {
             BllTemplateObjects = _service.GetAllTemplateObjects(_templateId).OrderBy(x => x.Name);
             BllRestTemplateObjects = _service.GetRestTemplateObjects(_templateId);

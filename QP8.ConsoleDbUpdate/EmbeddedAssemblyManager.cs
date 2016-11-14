@@ -89,7 +89,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
         public static Assembly Get(string assemblyFullName)
         {
             ConsoleHelpers.WriteDebug($"Resolving assembly: {assemblyFullName}");
-            if ((_mapFullnameToAssembly == null) || (_mapFullnameToAssembly.Count == 0))
+            if (_mapFullnameToAssembly == null || _mapFullnameToAssembly.Count == 0)
             {
                 return null;
             }

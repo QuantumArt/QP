@@ -19,7 +19,7 @@ namespace Quantumart.QP8.Scheduler.API
         public IEnumerator<string> GetEnumerator()
         {
             var exceptCodes = GetexceptCustomerCodes();
-            return QPConfiguration.ConfigConnectionStrings(_descriptor.Name, exceptCodes).GetEnumerator();
+            return QPConfiguration.GetConnectionStrings(_descriptor.Name, exceptCodes).GetEnumerator();
         }
 
         private static IEnumerable<string> GetexceptCustomerCodes()

@@ -5,6 +5,7 @@ using System.Text;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
 using System.Data;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 
 namespace Quantumart.QP8.BLL.Repository.ActionPermissions
@@ -29,7 +30,7 @@ namespace Quantumart.QP8.BLL.Repository.ActionPermissions
 				else
 					throw new ArgumentNullException("groupId, siteId");
 
-				List<ActionPermissionTreeNode> result = MappersRepository.ActionPermissionTreeNodeRowMapper.GetBizList(rows.ToList());
+				List<ActionPermissionTreeNode> result = MapperFacade.ActionPermissionTreeNodeRowMapper.GetBizList(rows.ToList());
 				result.ForEach(n =>
 				{
 					n.NodeType = ActionPermissionTreeNode.ENTITY_TYPE_NODE;
@@ -59,7 +60,7 @@ namespace Quantumart.QP8.BLL.Repository.ActionPermissions
 				else
 					throw new ArgumentNullException("groupId, siteId");
 
-				List<ActionPermissionTreeNode> result = MappersRepository.ActionPermissionTreeNodeRowMapper.GetBizList(rows.ToList());
+				List<ActionPermissionTreeNode> result = MapperFacade.ActionPermissionTreeNodeRowMapper.GetBizList(rows.ToList());
 				result.ForEach(n =>
 				{
 					n.NodeType = ActionPermissionTreeNode.ACTION_NODE;

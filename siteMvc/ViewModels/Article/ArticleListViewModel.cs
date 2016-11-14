@@ -185,7 +185,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
                 var result = new Dictionary<string, object>();
                 if (AllowMultipleEntitySelection)
                 {
-                    result.AddCssClass(HtmlHelpersExtensions.CHECK_BOX_TREE_CLASS_NAME);
+                    result.AddCssClass(HtmlHelpersExtensions.CheckBoxTreeClassName);
                 }
 
                 return result;

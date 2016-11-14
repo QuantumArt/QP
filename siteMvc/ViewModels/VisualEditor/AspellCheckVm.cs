@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -21,7 +20,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public MvcHtmlString CheckerResults => MvcHtmlString.Create(_checkerResults.ToString());
 
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         public AspellCheckVm(string inputs)
         {
             _textInputs = inputs;
@@ -71,7 +69,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
             _checkerResults.AppendFormat("suggs[0][{0}] = [{1}];\n", index, string.Join(", ", suggs.Select(x => $"'{x}'")));
         }
 
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         private static string SendRequest(string text)
         {
             var message = Encoding.UTF8.GetBytes(text);

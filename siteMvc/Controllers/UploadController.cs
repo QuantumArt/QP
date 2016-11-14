@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.IO;
 using System.Web;
 using System.Web.Mvc;
@@ -22,8 +21,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public ActionResult UploadChunk(int? chunk, int? chunks, string name, string destinationUrl)
         {
             destinationUrl = HttpUtility.UrlDecode(destinationUrl);

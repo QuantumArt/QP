@@ -6,7 +6,7 @@ using System.Linq;
 using System.Transactions;
 using System.Web;
 using Microsoft.Practices.Unity;
-using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;
@@ -20,8 +20,11 @@ namespace Quantumart.QP8.BLL
     public interface IContextStorage
     {
         T GetValue<T>(string key);
+
         void SetValue<T>(T value, string key);
+
         void ResetValue(string key);
+
         IEnumerable<string> Keys { get; }
     }
 
@@ -469,7 +472,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return _currentDbConnectionString ?? QPConfiguration.ConfigConnectionString(CurrentCustomerCode);
+                return _currentDbConnectionString ?? QPConfiguration.GetConnectionString(CurrentCustomerCode);
             }
             set
             {
@@ -484,7 +487,6 @@ namespace Quantumart.QP8.BLL
             return $"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public static bool CheckCustomerCode(string customerCode)
         {
             return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name").Value).Contains(customerCode);
@@ -502,13 +504,12 @@ namespace Quantumart.QP8.BLL
             QpUser resultUser = null;
             message = string.Empty;
 
-            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.ConfigConnectionString(data.CustomerCode))))
+            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.GetConnectionString(data.CustomerCode))))
             {
                 try
                 {
                     var dbUser = dbContext.Authenticate(data.UserName, data.Password, data.UseAutoLogin, false);
-                    var user = MappersRepository.UserMapper.GetBizObject(dbUser);
-
+                    var user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     if (user != null)
                     {
                         resultUser = new QpUser
@@ -521,7 +522,6 @@ namespace Quantumart.QP8.BLL
                         };
 
                         CreateSuccessfulSession(user, dbContext);
-
                         var context = HttpContext.Current;
                         if (context != null)
                         {
@@ -587,7 +587,7 @@ namespace Quantumart.QP8.BLL
                 ServerName = Environment.MachineName.Left(255)
             };
 
-            var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(sessionsLog);
+            var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
         }
@@ -622,7 +622,7 @@ namespace Quantumart.QP8.BLL
                 ServerName = Environment.MachineName.Left(255)
             };
 
-            var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(sessionsLog);
+            var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
         }

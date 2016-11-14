@@ -58,6 +58,14 @@
     </dl>
 
     <dl class="row">
+        <dt class="label"></dt>
+        <dd class="field">
+            <input class="useGuidSubstitution checkbox simple-checkbox" type="checkbox" value="true">
+            <label>Use guid substitution</label>
+        </dd>
+    </dl>
+
+    <dl class="row">
       <dt class="label"></dt>
       <dd class="field">
         <span class="replayRecords linkButton actionLink">
@@ -112,10 +120,15 @@
     });
 
     $editingForm.on('click', '.replayRecords', function() {
+      $q.showLoader();
       $q.postAjax("@Url.Action("ReplayRecordedUserActions")", {
         xmlString: $editingForm.find('.recordedRecordsXmlArea').data('codeMirror').getValue(),
         disableFieldIdentity: $editingForm.find('.disableFieldIdentity').prop('checked'),
-        disableContentIdentity: $editingForm.find('.disableContentIdentity').prop('checked')
+        disableContentIdentity: $editingForm.find('.disableContentIdentity').prop('checked'),
+        useGuidSubstitution: $editingForm.find('.useGuidSubstitution').prop('checked')
+      }, function(data, response) {
+        $q.hideLoader();
+        $q.alertSuccess(response.message);
       });
     });
   });

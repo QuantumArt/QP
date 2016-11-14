@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web;
 using System.Web.Caching;
@@ -23,8 +23,7 @@ namespace Quantumart.QP8.Security
         }
 
         /// <summary>
-        /// Создает пользовательский билет аутентификации на основе
-        /// сериализованной информации о пользователе
+        /// Создает пользовательский билет аутентификации на основе сериализованной информации о пользователе
         /// </summary>
         /// <param name="userName">логин пользователя</param>
         /// <param name="userData">серилизованная информация о пользователе</param>
@@ -43,8 +42,7 @@ namespace Quantumart.QP8.Security
         }
 
         /// <summary>
-        /// Создает пользовательский билет аутентификации на основе
-        /// несериализованной информации о пользователе
+        /// Создает пользовательский билет аутентификации на основе несериализованной информации о пользователе
         /// </summary>
         /// <param name="userName">логин пользователя</param>
         /// <param name="userInformation">серилизованная информация о пользователе</param>
@@ -56,7 +54,7 @@ namespace Quantumart.QP8.Security
         /// <summary>
         /// Сохраняет аутентификационный билет в Cookie
         /// </summary>
-        /// <param name="ticket">атентификационный билет</param>
+        /// <param name="ticket">аутентификационный билет</param>
         public static void SetAuthenticationCookie(FormsAuthenticationTicket ticket)
         {
             var ctx = HttpContext.Current;

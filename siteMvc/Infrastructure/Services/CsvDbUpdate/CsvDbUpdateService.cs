@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
-using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
@@ -16,51 +15,129 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
     public class CsvDbUpdateService : ICsvDbUpdateService
     {
         private const char CsvRelationSeparator = ';';
-        private readonly string _connectionString;
-        private readonly ArticleService _articleService;
 
-        public CsvDbUpdateService(int userId)
-            : this(userId, QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode))
+        private readonly IContentRepository _contentRepository;
+        private readonly IFieldRepository _fieldRepository;
+        private readonly IArticleRepository _articleRepository;
+        private readonly IArticleService _articleService;
+
+        public CsvDbUpdateService(IArticleService articleService, IFieldRepository fieldRepository, IContentRepository contentRepository, IArticleRepository articleRepository)
         {
-        }
-
-        public CsvDbUpdateService(int userId, string connectionString)
-        {
-            Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should be initialized");
-
-            _connectionString = connectionString;
-            _articleService = new ArticleService(connectionString, userId);
+            _contentRepository = contentRepository;
+            _articleRepository = articleRepository;
+            _fieldRepository = fieldRepository;
+            _articleService = articleService;
         }
 
         public void Process(IEnumerable<CsvDbUpdateModel> data)
         {
-            var articlesData = new List<ArticleData>();
-            using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
-            using (new QPConnectionScope(_connectionString))
+            using (var ts = new TransactionScope())
+            using (new QPConnectionScope())
             {
+                var articlesData = new List<ArticleData>();
                 foreach (var csvFileData in data)
                 {
                     foreach (var csvRowFields in csvFileData.Fields.Values)
                     {
-                        var dbFields = FieldRepository.GetByNames(csvFileData.ContentId, csvRowFields.Select(f => f.Name).ToList());
-                        var dataToAdd = CreateArticleDatas(csvFileData, csvRowFields, dbFields).ToList();
-                        dataToAdd = AddFieldsToArticleDataEntry(dataToAdd, dbFields, csvRowFields, csvFileData.ContentId);
+                        var dbFields = GetFieldsByNames(csvFileData.ContentId, csvRowFields);
+                        var dataToAdd = CreateArticleDatas(csvFileData.ContentId, csvRowFields, dbFields);
+                        dataToAdd = InsertFields(csvFileData.ContentId, dataToAdd, dbFields, csvRowFields);
                         foreach (var extensionContentId in dataToAdd.Where(ad => ad.ContentId != csvFileData.ContentId).Select(ad => ad.ContentId))
                         {
-                            dataToAdd = AddExtensionFieldsToArticleDataEntry(dataToAdd, csvRowFields, extensionContentId);
+                            var contentNamePrefix = $"{_contentRepository.GetById(extensionContentId).Name}.";
+                            var extensionDbFields = GetFieldsByNames(extensionContentId, csvRowFields, contentNamePrefix);
+                            dataToAdd = InsertFields(extensionContentId, dataToAdd, extensionDbFields, csvRowFields, contentNamePrefix);
                         }
 
                         articlesData.AddRange(dataToAdd);
                     }
                 }
 
+                articlesData = FilterNotExistedReferences(articlesData);
+                _articleService.BatchUpdate(articlesData);
                 ts.Complete();
             }
-
-            _articleService.BatchUpdate(articlesData);
         }
 
-        private static List<ArticleData> AddFieldsToArticleDataEntry(List<ArticleData> dataToAdd, IEnumerable<Field> dbFields, IList<CsvDbUpdateFieldModel> csvRowFields, int contentId, string contentNameFieldPrefix = "")
+        private List<ArticleData> FilterNotExistedReferences(List<ArticleData> articlesData)
+        {
+            var listOfIds = articlesData.Select(ad => ad.Id).ToList();
+            foreach (var article in articlesData)
+            {
+                foreach (var articleField in article.Fields)
+                {
+                    var result = new List<int>();
+                    foreach (var relatedId in articleField.ArticleIds)
+                    {
+                        if (listOfIds.Contains(relatedId))
+                        {
+                            result.Add(relatedId);
+                            continue;
+                        }
+
+                        if (_articleRepository.IsExist(-relatedId))
+                        {
+                            result.Add(-relatedId);
+                            continue;
+                        }
+
+                        Logger.Log.Warn($"Ignore related article CIID:{-relatedId}. Cann't find any related article at csv data or db. FID: {articleField.Id}, CID: {article.ContentId}, CIID: {-article.Id}");
+                    }
+
+                    articleField.ArticleIds = result.ToArray();
+                }
+            }
+
+            return articlesData;
+        }
+
+        private IList<ArticleData> CreateArticleDatas(int contentId, IList<CsvDbUpdateFieldModel> csvRowFields, IEnumerable<Field> dbFields)
+        {
+            var result = new List<ArticleData>
+            {
+                new ArticleData
+                {
+                    Id = CreateSimpleArticleId(csvRowFields),
+                    ContentId = contentId
+                }
+            };
+
+            foreach (var dbf in dbFields.Where(dbf => dbf.IsClassifier))
+            {
+                var fieldValue = csvRowFields.Single(StringFilter(dbf.Name)).Value;
+                if (!string.IsNullOrWhiteSpace(fieldValue))
+                {
+                    var extensionContentId = Convert.ToInt32(fieldValue);
+                    result.Add(new ArticleData
+                    {
+                        Id = CreateExtensionArticleId(extensionContentId, csvRowFields),
+                        ContentId = extensionContentId
+                    });
+                }
+            }
+
+            return result;
+        }
+
+        private IList<Field> GetFieldsByNames(int contentId, IEnumerable<CsvDbUpdateFieldModel> csvRowFields, string contentNameFieldPrefix = "")
+        {
+            var fieldNames = csvRowFields.Where(FilterByPrefix(contentNameFieldPrefix)).Select(f => f.Name).ToList();
+            return _fieldRepository.GetByNames(contentId, fieldNames);
+        }
+
+        private int CreateExtensionArticleId(int extensionContentId, IEnumerable<CsvDbUpdateFieldModel> csvRowFields)
+        {
+            var contentName = _contentRepository.GetById(extensionContentId).Name;
+            var getExtensionContentId = StringFilter($"{contentName}.{FieldName.CONTENT_ITEM_ID}");
+            return -Convert.ToInt32(csvRowFields.Single(getExtensionContentId).Value);
+        }
+
+        private static int CreateSimpleArticleId(IEnumerable<CsvDbUpdateFieldModel> csvRowFields)
+        {
+            return -Convert.ToInt32(csvRowFields.Single(StringFilter(FieldName.CONTENT_ITEM_ID)).Value);
+        }
+
+        private static IList<ArticleData> InsertFields(int contentId, IList<ArticleData> dataToAdd, IEnumerable<Field> dbFields, IList<CsvDbUpdateFieldModel> csvRowFields, string contentNameFieldPrefix = "")
         {
             foreach (var dbf in dbFields)
             {
@@ -85,78 +162,14 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
             return dataToAdd;
         }
 
-        private static List<ArticleData> AddExtensionFieldsToArticleDataEntry(List<ArticleData> dataToAdd, IList<CsvDbUpdateFieldModel> csvRowFields, int contentId)
+        private static Func<CsvDbUpdateFieldModel, bool> StringFilter(string fieldName)
         {
-            var contentNamePrefix = $"{GetContentNameById(contentId)}.";
-            var dbFields = GetFieldsByNames(csvRowFields, contentId, contentNamePrefix);
-            return AddFieldsToArticleDataEntry(dataToAdd, dbFields, csvRowFields, contentId, contentNamePrefix);
+            return field => string.Equals(field.Name, fieldName, StringComparison.OrdinalIgnoreCase);
         }
 
-        private static IEnumerable<Field> GetFieldsByNames(IEnumerable<CsvDbUpdateFieldModel> csvRowFields, int contentId, string contentNameFieldPrefix = "")
+        private static Func<CsvDbUpdateFieldModel, bool> FilterByPrefix(string contentNameFieldPrefix)
         {
-            var fieldNames = csvRowFields.Select(fn => FilterFromPrefix(fn.Name, contentNameFieldPrefix)).ToList();
-            return FieldRepository.GetByNames(contentId, fieldNames);
-        }
-
-        private static string FilterFromPrefix(string entry, string contentNameFieldPrefix = "")
-        {
-            if (!string.IsNullOrWhiteSpace(contentNameFieldPrefix))
-            {
-                if (entry.StartsWith(contentNameFieldPrefix))
-                {
-                    return entry.Substring(contentNameFieldPrefix.Length);
-                }
-            }
-
-            return entry;
-        }
-
-        private static IEnumerable<ArticleData> CreateArticleDatas(CsvDbUpdateModel csvFileData, IList<CsvDbUpdateFieldModel> csvRowFields, IEnumerable<Field> dbFields)
-        {
-            var result = new List<ArticleData>
-            {
-                new ArticleData
-                {
-                    Id = CreateSimpleArticleId(csvRowFields),
-                    ContentId = csvFileData.ContentId,
-                }
-            };
-
-            foreach (var dbf in dbFields.Where(dbf => dbf.IsClassifier))
-            {
-                var fieldValue = GetFieldValueByName(csvRowFields, dbf.Name);
-                if (!string.IsNullOrWhiteSpace(fieldValue))
-                {
-                    var extensionContentId = Convert.ToInt32(fieldValue);
-                    result.Add(new ArticleData
-                    {
-                        Id = CreateExtensionArticleId(extensionContentId, csvRowFields),
-                        ContentId = extensionContentId
-                    });
-                }
-            }
-
-            return result;
-        }
-
-        private static int CreateSimpleArticleId(IEnumerable<CsvDbUpdateFieldModel> csvRowFields)
-        {
-            return -Convert.ToInt32(GetFieldValueByName(csvRowFields, FieldName.CONTENT_ITEM_ID));
-        }
-
-        private static int CreateExtensionArticleId(int extensionContentId, IEnumerable<CsvDbUpdateFieldModel> csvRowFields)
-        {
-            return -Convert.ToInt32(GetFieldValueByName(csvRowFields, $"{GetContentNameById(extensionContentId)}.{FieldName.CONTENT_ITEM_ID}"));
-        }
-
-        private static string GetContentNameById(int contentId)
-        {
-            return ContentRepository.GetById(contentId).Name;
-        }
-
-        private static string GetFieldValueByName(IEnumerable<CsvDbUpdateFieldModel> csvRowFields, string csvFieldName)
-        {
-            return csvRowFields.Single(f => string.Equals(f.Name, csvFieldName, StringComparison.OrdinalIgnoreCase)).Value;
+            return field => field.Name.StartsWith(contentNameFieldPrefix);
         }
     }
 }

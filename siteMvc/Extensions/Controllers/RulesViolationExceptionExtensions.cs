@@ -33,10 +33,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         private static void CopyError(ModelStateDictionary modelState, string prefix, RuleViolation propertyError)
         {
             var key = !string.IsNullOrEmpty(propertyError.PropertyName) ? propertyError.PropertyName : ExpressionHelper.GetExpressionText(propertyError.Property);
-
-            // динамические поля - без префикса, но надо установить Value для Telerik
             if (key.StartsWith(Field.Prefix))
             {
+                // динамические поля - без префикса, но надо установить Value для Telerik
                 modelState.SetModelValue(key, new ValueProviderResult(propertyError.PropertyValue, propertyError.PropertyValue, CultureInfo.InvariantCulture));
             }
             else

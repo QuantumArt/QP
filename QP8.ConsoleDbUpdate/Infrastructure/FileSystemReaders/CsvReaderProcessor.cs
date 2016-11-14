@@ -35,7 +35,8 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                 }
             }
 
-            Program.Logger.Debug($"Documents will be processed in next order: {filePathes.ToJsonLog()}");
+            Program.Logger.Info($"Total files will be processed: {orderedFilePathes.Count}.");
+            Program.Logger.Debug($"Documents will be processed in next order: {orderedFilePathes.ToJsonLog()}");
             return ParseDocuments(orderedFilePathes, csvConfiguration);
         }
 
@@ -72,7 +73,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
 
         private static int GetContentIdFromFileName(string path)
         {
-            return Convert.ToInt32(path.Split('/').Last().Split('_').Skip(1).First());
+            return Convert.ToInt32(Path.GetFileName(path).Split('_').Skip(1).First());
         }
     }
 }

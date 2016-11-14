@@ -5,6 +5,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 
@@ -32,14 +33,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewVirtualContents)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
         [BackendActionContext(ActionCode.AddNewVirtualContents)]
         [BackendActionLog]
-        [Record]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
             var content = VirtualContentService.NewForSave(parentId);
@@ -57,7 +57,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (UserQueryContentCreateViewException uqe)
                 {
-                    if (IsReplayAction())
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -67,7 +67,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -77,7 +77,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (CycleInContentGraphException)
                 {
-                    if (IsReplayAction())
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -105,13 +105,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record(ActionCode.VirtualContentProperties)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateVirtualContent)]
         [BackendActionContext(ActionCode.UpdateVirtualContent)]
         [BackendActionLog]
-        [Record(ActionCode.VirtualContentProperties)]
         public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
         {
             var content = VirtualContentService.ReadForUpdate(id);
@@ -128,7 +127,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (UserQueryContentCreateViewException uqe)
                 {
-                    if (IsReplayAction())
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -138,7 +137,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (VirtualContentProcessingException vcpe)
                 {
-                    if (IsReplayAction())
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -148,7 +147,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 }
                 catch (CycleInContentGraphException)
                 {
-                    if (IsReplayAction())
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
                     {
                         throw;
                     }
@@ -163,13 +162,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveVirtualContent)]
         [BackendActionContext(ActionCode.RemoveVirtualContent)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id)
         {
             return JsonMessageResult(VirtualContentService.Remove(id));

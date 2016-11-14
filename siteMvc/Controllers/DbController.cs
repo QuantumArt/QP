@@ -1,8 +1,9 @@
 using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
@@ -13,6 +14,7 @@ using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
@@ -22,11 +24,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly ICommunicationService _communicationService;
         private readonly IXmlDbUpdateLogService _xmlDbUpdateLogService;
+        private readonly IApplicationInfoRepository _appInfoRepository;
+        private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
+        private readonly IXmlDbUpdateActionCorrecterService _actionsCorrecterService;
 
-        public DbController(ICommunicationService communicationService, IXmlDbUpdateLogService xmlDbUpdateServce)
+        public DbController(
+            ICommunicationService communicationService,
+            IXmlDbUpdateLogService xmlDbUpdateServce,
+            IApplicationInfoRepository appInfoRepository,
+            IXmlDbUpdateHttpContextProcessor httpContextProcessor,
+            IXmlDbUpdateActionCorrecterService actionsCorrecterService)
         {
             _communicationService = communicationService;
             _xmlDbUpdateLogService = xmlDbUpdateServce;
+            _appInfoRepository = appInfoRepository;
+            _actionsCorrecterService = actionsCorrecterService;
+            _httpContextProcessor = httpContextProcessor;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -63,7 +76,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     if (model.OverrideRecordsFile)
                     {
-                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext));
+                        var currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
+                        XmlDbUpdateSerializerHelpers.ErasePreviouslyRecordedActions(CommonHelpers.GetBackendUrl(HttpContext), currentDbVersion);
                     }
 
                     if (model.OverrideRecordsUser || model.Data.SingleUserId == null)
@@ -108,11 +122,20 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ActionAuthorize(ActionCode.DbSettings)]
         [BackendActionContext(ActionCode.DbSettings)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool disableFieldIdentity, bool disableContentIdentity)
+        public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool disableFieldIdentity, bool disableContentIdentity, bool useGuidSubstitution)
         {
             try
             {
-                new XmlDbUpdateReplayService(disableFieldIdentity, disableContentIdentity, QPContext.CurrentUserId, _xmlDbUpdateLogService).Process(xmlString);
+                new XmlDbUpdateReplayService(
+                    QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
+                    CommonHelpers.GetDbIdentityInsertOptions(disableFieldIdentity, disableContentIdentity),
+                    QPContext.CurrentUserId,
+                    useGuidSubstitution,
+                    _xmlDbUpdateLogService,
+                    _appInfoRepository,
+                    _actionsCorrecterService,
+                    _httpContextProcessor
+                ).Process(xmlString);
             }
             catch (XmlDbUpdateLoggingException ex)
             {

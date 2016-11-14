@@ -46,7 +46,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (fieldId != 0)
             {
-                var field = FieldService.ReadForVisualEditor(fieldId);
+                var field = FieldService.Read(fieldId);
                 model.Language = field.VisualEditor.Language;
                 model.DocType = field.VisualEditor.DocType;
                 model.FullPage = field.VisualEditor.FullPage;

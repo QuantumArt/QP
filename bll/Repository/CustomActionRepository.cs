@@ -9,6 +9,7 @@ using Quantumart.QP8.BLL.ListItems;
 using System.Data;
 using System.Data.Objects;
 using System.Web;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
 
@@ -32,9 +33,9 @@ namespace Quantumart.QP8.BLL.Repository
 		{
 			using (var scope = new QPConnectionScope())
 			{
-                cmd.SortExpression = MappersRepository.CustomActionListItemRowMapper.TranslateSortExpression(cmd.SortExpression);
+                cmd.SortExpression = MapperFacade.CustomActionListItemRowMapper.TranslateSortExpression(cmd.SortExpression);
 				IEnumerable<DataRow> rows = Common.GetCustomActionList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
-				var result = MappersRepository.CustomActionListItemRowMapper.GetBizList(rows.ToList());
+				var result = MapperFacade.CustomActionListItemRowMapper.GetBizList(rows.ToList());
 				return result;
 			}
 		} 
@@ -62,7 +63,7 @@ namespace Quantumart.QP8.BLL.Repository
 			var oldCustomAction = GetById(customAction.Id);
 
 			QP8Entities entities = QPContext.EFContext;
-			CustomActionDAL dal = MappersRepository.CustomActionMapper.GetDalObject(customAction);													
+			CustomActionDAL dal = MapperFacade.CustomActionMapper.GetDalObject(customAction);
 			dal.LastModifiedBy = QPContext.CurrentUserId;
 			using (new QPConnectionScope())
 			{
@@ -72,7 +73,7 @@ namespace Quantumart.QP8.BLL.Repository
 			entities.CustomActionSet.Attach(dal);
 			entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
 
-			BackendActionDAL dal2 = MappersRepository.BackendActionMapper.GetDalObject(customAction.Action);
+			BackendActionDAL dal2 = MapperFacade.BackendActionMapper.GetDalObject(customAction.Action);
 			entities.BackendActionSet.Attach(dal2);
 			entities.ObjectStateManager.ChangeObjectState(dal2, EntityState.Modified);
 						
@@ -81,7 +82,7 @@ namespace Quantumart.QP8.BLL.Repository
 			{
 				entities.ToolbarButtonSet.DeleteObject(t);
 			}
-			foreach (var t in MappersRepository.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
+			foreach (var t in MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
 			{				
 				entities.ToolbarButtonSet.AddObject(t);
 			}
@@ -109,7 +110,7 @@ namespace Quantumart.QP8.BLL.Repository
 				oldContextMenuId = c.ContextMenuId;
 				entities.ContextMenuItemSet.DeleteObject(c);
 			}
-			foreach (var c in MappersRepository.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
+			foreach (var c in MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
 			{
 				entities.ContextMenuItemSet.AddObject(c);
 			}
@@ -130,7 +131,7 @@ namespace Quantumart.QP8.BLL.Repository
 					dalDB.Sites.Remove(s);
 				}
 			}
-			foreach (var s in MappersRepository.SiteMapper.GetDalList(customAction.Sites.ToList()))
+			foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
 			{
 				if (!indbSiteIDs.Contains(s.Id))
 				{
@@ -150,7 +151,7 @@ namespace Quantumart.QP8.BLL.Repository
 					dalDB.Contents.Remove(s);
 				}
 			}
-			foreach (var s in MappersRepository.ContentMapper.GetDalList(customAction.Contents.ToList()))
+			foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
 			{
 				if (!indbContentIDs.Contains(s.Id))
 				{
@@ -165,7 +166,7 @@ namespace Quantumart.QP8.BLL.Repository
 				SetBottomSeparator(oldContextMenuId);
 			SetBottomSeparator(customAction.Action.EntityType.ContextMenu.Id);
 
-			CustomAction updated = MappersRepository.CustomActionMapper.GetBizObject(dal);
+			CustomAction updated = MapperFacade.CustomActionMapper.GetBizObject(dal);
 			BackendActionCache.Reset();
 			return updated;				
 		}
@@ -174,7 +175,7 @@ namespace Quantumart.QP8.BLL.Repository
 		{
 			QP8Entities entities = QPContext.EFContext;
 
-			BackendActionDAL actionDal = MappersRepository.BackendActionMapper.GetDalObject(customAction.Action);
+			BackendActionDAL actionDal = MapperFacade.BackendActionMapper.GetDalObject(customAction.Action);
 			entities.BackendActionSet.AddObject(actionDal);
 
 			EntityObject.VerifyIdentityInserting(EntityTypeCode.BackendAction, actionDal.Id, customAction.ForceActionId);
@@ -186,7 +187,7 @@ namespace Quantumart.QP8.BLL.Repository
 			entities.SaveChanges();
 			DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.BackendAction);
 
-			CustomActionDAL customActionDal = MappersRepository.CustomActionMapper.GetDalObject(customAction);
+			CustomActionDAL customActionDal = MapperFacade.CustomActionMapper.GetDalObject(customAction);
 			customActionDal.LastModifiedBy = QPContext.CurrentUserId;
 			customActionDal.Action = actionDal;
 			using (new QPConnectionScope())
@@ -202,25 +203,25 @@ namespace Quantumart.QP8.BLL.Repository
 			DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.CustomAction);
 
 			// Toolbar Button
-			foreach (var t in MappersRepository.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
+			foreach (var t in MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
 			{
 				t.ActionId = customActionDal.Action.Id;
 				entities.ToolbarButtonSet.AddObject(t);
 			}
 			// Context Menu Items			
-			foreach (var c in MappersRepository.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
+			foreach (var c in MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
 			{
 				c.ActionId = customActionDal.Action.Id;
 				entities.ContextMenuItemSet.AddObject(c);
 			}
 			// Binded Sites
-			foreach (var s in MappersRepository.SiteMapper.GetDalList(customAction.Sites.ToList()))
+			foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
 			{				
 				entities.SiteSet.Attach(s);
 				customActionDal.Sites.Add(s);				
 			}
 			// Binded Contents
-			foreach (var s in MappersRepository.ContentMapper.GetDalList(customAction.Contents.ToList()))
+			foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
 			{				
 				entities.ContentSet.Attach(s);
 				customActionDal.Contents.Add(s);				
@@ -239,7 +240,7 @@ namespace Quantumart.QP8.BLL.Repository
 			int? contextMenuId = entities.EntityTypeSet.Single(t => t.Id == customAction.Action.EntityTypeId).ContextMenuId;
 			SetBottomSeparator(contextMenuId);			
 
-			CustomAction updated = MappersRepository.CustomActionMapper.GetBizObject(customActionDal);
+			CustomAction updated = MapperFacade.CustomActionMapper.GetBizObject(customActionDal);
 			BackendActionCache.Reset();
 			return updated;				
 		}		

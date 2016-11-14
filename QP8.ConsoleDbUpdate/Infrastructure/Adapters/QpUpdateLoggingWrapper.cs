@@ -15,7 +15,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         public QpUpdateLoggingWrapper(ConsoleLogLevel consoleLogLevel = ConsoleLogLevel.Fatal)
         {
             LogProvider.LogFactory = new NLogFactory();
-            _logger = LogProvider.GetLogger("QP8Update");
+            _logger = LogProvider.GetLogger();
             _consoleLogLevel = consoleLogLevel;
         }
 
@@ -48,7 +48,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
             {
-                Console.WriteLine($"Error: {message}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
 
             _logger.Error(message);
@@ -58,7 +60,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
             {
-                Console.WriteLine($"Error: {message}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine($"Exceptions: {exception.Dump()}");
             }
 
@@ -69,7 +73,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
             {
-                Console.WriteLine($"Error: {format}", args);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(format, args);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
 
             _logger.ErrorFormat(format, args);
@@ -79,7 +85,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
             {
-                Console.WriteLine($"Fatal: {message}");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
 
             _logger.Fatal(message);
@@ -89,7 +97,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
             {
-                Console.WriteLine($"Fatal: {message}");
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine($"Exceptions: {exception.Dump()}");
             }
 
@@ -100,7 +110,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
             {
-                Console.WriteLine($"Fatal: {format}", args);
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(format, args);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
 
             _logger.FatalFormat(format, args);
@@ -110,7 +122,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Info))
             {
-                Console.WriteLine($"Info: {message}");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
 
             _logger.Info(message);
@@ -120,7 +134,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Info))
             {
-                Console.WriteLine($"Info: {message}");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine($"Exceptions: {exception.Dump()}");
             }
 
@@ -131,7 +147,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Info))
             {
-                Console.WriteLine($"Info: {format}", args);
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(format, args);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
 
             _logger.InfoFormat(format, args);
@@ -141,7 +159,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Warn))
             {
-                Console.WriteLine($"Warning: {message}");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
 
             _logger.Warn(message);
@@ -151,7 +171,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Warn))
             {
-                Console.WriteLine($"Warning: {message}");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(message);
+                Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine($"Exceptions: {exception.Dump()}");
             }
 
@@ -162,7 +184,9 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         {
             if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Warn))
             {
-                Console.WriteLine($"Warning: {format}", args);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(format, args);
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
 
             _logger.WarnFormat(format, args);

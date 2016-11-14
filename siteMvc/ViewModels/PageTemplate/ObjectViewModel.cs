@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
 using Newtonsoft.Json;
@@ -27,7 +26,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public override string EntityTypeCode => Data.PageOrTemplate ? Constants.EntityTypeCode.PageObject : Constants.EntityTypeCode.TemplateObject;
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         internal static ObjectViewModel Create(BllObject obj, string tabId, int parentId, IObjectService objectService)
         {
             var model = Create<ObjectViewModel>(obj, tabId, parentId);
@@ -117,7 +115,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 
         public List<ListItem> Types => _types ?? (_types = _service.GetTypes().ToList());
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         internal void DoCustomBinding()
         {
             if (Data.IsSiteDotNet && string.IsNullOrWhiteSpace(Data.NetName))

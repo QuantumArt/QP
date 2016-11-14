@@ -603,17 +603,13 @@ Quantumart.QP8.BackendEditingArea.prototype = {
     this._customVars[key] = value;
   },
 
-  getCustomScriptState: function(key)
-  {
+  getCustomScriptState: function(key)  {
     return this._customScripts[key];
   },
 
-  setCustomScriptState: function(key, state)
-  {
+  setCustomScriptState: function(key, state) {
     this._customScripts[key] = state;
   },
-
-
 
   dispose: function () {
     Quantumart.QP8.BackendEditingArea.callBaseMethod(this, "dispose");

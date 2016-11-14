@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
@@ -34,14 +34,13 @@ namespace Quantumart.QP8.BLL.Repository
                 }
 
                 var rows = Common.GetUserPage(scope.DbConnection, options, out totalRecords);
-                return MappersRepository.UserListItemRowMapper.GetBizList(rows.ToList());
+                return MapperFacade.UserListItemRowMapper.GetBizList(rows.ToList());
             }
         }
 
         /// <summary>
         /// Возвращает список по ids
         /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<User> GetList(IEnumerable<int> ids)
         {
             var result = new List<User>();
@@ -53,7 +52,7 @@ namespace Quantumart.QP8.BLL.Repository
             else
             {
                 IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-                result = MappersRepository.UserMapper.GetBizList(QPContext.EFContext.UserSet.Where(f => decIDs.Contains(f.Id)).ToList());
+                result = MapperFacade.UserMapper.GetBizList(QPContext.EFContext.UserSet.Where(f => decIDs.Contains(f.Id)).ToList());
             }
 
             return result;
@@ -62,7 +61,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static List<User> GetNtUsers()
         {
             var users = QPContext.EFContext.UserSet.Include("Groups").Where(u => u.NTLogOn != null).ToList();
-            return MappersRepository.UserMapper.GetBizList(users);
+            return MapperFacade.UserMapper.GetBizList(users);
         }
 
         internal static bool CheckAuthenticate(string login, string password)
@@ -95,9 +94,11 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static User GetRealById(int id, bool stopRecursion = false)
         {
-            var user = MappersRepository.UserMapper.GetBizObject(QPContext.EFContext.UserSet.SingleOrDefault(u => u.Id == id));
+            var user = MapperFacade.UserMapper.GetBizObject(QPContext.EFContext.UserSet.SingleOrDefault(u => u.Id == id));
             if (!stopRecursion && user != null)
+            {
                 user.LastModifiedByUser = GetById(user.LastModifiedBy, true);
+            }
 
             return user;
         }
@@ -108,7 +109,7 @@ namespace Quantumart.QP8.BLL.Repository
                 .Include("Groups")
                 .Include("LastModifiedByUser")
                 .SingleOrDefault(u => u.Id == id);
-            var user = MappersRepository.UserMapper.GetBizObject(dal);
+            var user = MapperFacade.UserMapper.GetBizObject(dal);
             return user;
         }
 
@@ -125,7 +126,7 @@ namespace Quantumart.QP8.BLL.Repository
         private static User UpdateUser(User user, bool profileOnly = false)
         {
             var entities = QPContext.EFContext;
-            var dal = MappersRepository.UserMapper.GetDalObject(user);
+            var dal = MapperFacade.UserMapper.GetDalObject(user);
             dal.LastModifiedBy = QPContext.CurrentUserId;
             using (new QPConnectionScope())
             {
@@ -148,7 +149,7 @@ namespace Quantumart.QP8.BLL.Repository
                         dalDb.Groups.Remove(g);
                     }
                 }
-                foreach (var g in MappersRepository.UserGroupMapper.GetDalList(user.Groups.ToList()))
+                foreach (var g in MapperFacade.UserGroupMapper.GetDalList(user.Groups.ToList()))
                 {
                     if (!indbGroupIDs.Contains(g.Id))
                     {
@@ -173,25 +174,27 @@ namespace Quantumart.QP8.BLL.Repository
             entities.SaveChanges();
 
             if (!string.IsNullOrEmpty(user.Password))
+            {
                 UpdatePassword(user.Id, user.Password);
+            }
 
-            var updated = MappersRepository.UserMapper.GetBizObject(dal);
+            var updated = MapperFacade.UserMapper.GetBizObject(dal);
             return updated;
         }
 
         /// <summary>
         /// Возвращает список всех пользователей
         /// </summary>
-        /// <returns></returns>
         internal static IEnumerable<User> GetAllUsersList()
         {
-            return MappersRepository.UserMapper.GetBizList(QPContext.EFContext.UserSet.OrderBy(u => u.LogOn).ToList());
+            return MapperFacade.UserMapper.GetBizList(QPContext.EFContext.UserSet.OrderBy(u => u.LogOn).ToList());
         }
 
         internal static string GeneratePassword()
         {
             return "aA1!" + Guid.NewGuid().ToString("N").Substring(0, 16);
         }
+
         internal static void UpdatePassword(int userId, string password)
         {
             using (new QPConnectionScope())
@@ -203,7 +206,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static User SaveProperties(User user)
         {
             var entities = QPContext.EFContext;
-            var dal = MappersRepository.UserMapper.GetDalObject(user);
+            var dal = MapperFacade.UserMapper.GetDalObject(user);
             dal.LastModifiedBy = QPContext.CurrentUserId;
             using (new QPConnectionScope())
             {
@@ -211,11 +214,12 @@ namespace Quantumart.QP8.BLL.Repository
                 dal.Modified = dal.Created;
                 dal.PasswordModified = dal.Created;
             }
+
             entities.UserSet.AddObject(dal);
             entities.SaveChanges();
 
             // Save Groups
-            foreach (var s in MappersRepository.UserGroupMapper.GetDalList(user.Groups.ToList()))
+            foreach (var s in MapperFacade.UserGroupMapper.GetDalList(user.Groups.ToList()))
             {
                 entities.UserGroupSet.Attach(s);
                 dal.Groups.Add(s);
@@ -230,11 +234,12 @@ namespace Quantumart.QP8.BLL.Repository
             //----------------
 
             entities.SaveChanges();
-
-            if (!String.IsNullOrEmpty(user.Password))
+            if (!string.IsNullOrEmpty(user.Password))
+            {
                 UpdatePassword(user.Id, user.Password);
+            }
 
-            var updated = MappersRepository.UserMapper.GetBizObject(dal);
+            var updated = MapperFacade.UserMapper.GetBizObject(dal);
             return updated;
         }
 
@@ -280,7 +285,6 @@ namespace Quantumart.QP8.BLL.Repository
                 }).ToArray();
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private static IEnumerable<UserDefaultFilterItemDAL> MapUserDefaultFilter(User biz, IQPEntityObject dal)
         {
             return biz.ContentDefaultFilters

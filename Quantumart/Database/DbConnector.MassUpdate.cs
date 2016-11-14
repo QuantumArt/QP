@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -124,8 +123,6 @@ namespace Quantumart.QPublishing.Database
             return resultAttrs;
         }
 
-        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private static IEnumerable<string> GetDynamicImageExtraNames(Dictionary<string, string>[] arrValues, ContentAttribute[] fullAttrs)
         {
             var baseImages = fullAttrs.Where(n => n.Type == AttributeType.Image).
@@ -292,7 +289,6 @@ namespace Quantumart.QPublishing.Database
 
         }
 
-        [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
         private void ValidateConstraints(IList<Dictionary<string, string>> values, IEnumerable<ContentAttribute> attrs, Content content, bool replaceUrls)
         {
             var validatedAttrs = attrs.Where(n => n.ConstraintId.HasValue).ToArray();
@@ -313,7 +309,6 @@ namespace Quantumart.QPublishing.Database
             }
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private static void SelfValidate(XDocument validatedDataDoc)
         {
             if (validatedDataDoc.Root != null)
@@ -370,7 +365,6 @@ namespace Quantumart.QPublishing.Database
             return result;
         }
 
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private void ValidateConstraint(XContainer validatedDataDoc, IReadOnlyList<ContentAttribute> attrs)
         {
             var sb = new StringBuilder();

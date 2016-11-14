@@ -10,6 +10,7 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
@@ -27,6 +28,8 @@ using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
 using Quantumart.QP8.WebMvc.ViewModels.Notification;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
+using Quantumart.QP8.WebMvc.ViewModels.User;
+using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
@@ -173,10 +176,11 @@ namespace Quantumart.QP8.WebMvc
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            var exp = Server.GetLastError();
-            if (exp != null)
+            var ex = Server.GetLastError();
+            if (ex != null)
             {
-                EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(exp, "Policy");
+                Logger.Log.Error(ex);
+                EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, "Policy");
             }
         }
 

@@ -10,14 +10,16 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
-    public class ArticleService : ServiceBase
+    public class ArticleService : ServiceBase, IArticleService
     {
-        public ArticleService(string connectionString, int userId)
-            : base(connectionString, userId) { }
-
-        public ArticleService(int userId) : base(userId)
+        public ArticleService(int userId)
+            : base(userId)
         {
+        }
 
+        public ArticleService(string connectionString, int userId)
+            : base(connectionString, userId)
+        {
         }
 
         public Article New(int contentId)
@@ -53,12 +55,7 @@ namespace Quantumart.QP8.BLL.Services.API
                     return null;
                 }
 
-                if (content.VirtualType == 3)
-                {
-                    return ArticleRepository.GetVirtualById(id, contentId);
-                }
-
-                return Read(id, forceLoadFieldValues);
+                return content.VirtualType == 3 ? ArticleRepository.GetVirtualById(id, contentId) : Read(id, forceLoadFieldValues);
             }
         }
 
@@ -66,12 +63,7 @@ namespace Quantumart.QP8.BLL.Services.API
         {
             using (new QPConnectionScope(ConnectionString))
             {
-                if (ids == null)
-                {
-                    return ArticleRepository.GetList(contentId);
-                }
-
-                return ArticleRepository.GetList(ids, true);
+                return ids == null ? ArticleRepository.GetList(contentId) : ArticleRepository.GetList(ids, true);
             }
         }
 
@@ -254,7 +246,6 @@ namespace Quantumart.QP8.BLL.Services.API
             }
         }
 
-        #region BatchUpdate
         public InsertData[] BatchUpdate(IEnumerable<Article> articles)
         {
             var articlesData = articles.Select(article => new ArticleData
@@ -287,7 +278,6 @@ namespace Quantumart.QP8.BLL.Services.API
                 return result;
             }
         }
-        #endregion
 
         public IList<int> GetParentIds(int id, int fieldId)
         {

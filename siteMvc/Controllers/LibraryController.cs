@@ -1,6 +1,5 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -350,7 +349,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public ActionResult UploadFile(string folderPath, bool resolveFileName)
         {
             if (string.IsNullOrEmpty(folderPath))

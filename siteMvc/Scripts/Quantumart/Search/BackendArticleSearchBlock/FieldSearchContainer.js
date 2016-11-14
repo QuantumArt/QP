@@ -131,7 +131,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
       height: wndSize.h,
       modal: true,
       resizable: false,
-      draggable: false,
+      draggable: true,
       visible: isOpened
     }).data("tWindow").center();
     wndSize = null;

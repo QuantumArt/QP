@@ -14,6 +14,12 @@
 
         internal const string ActionIdsAttribute = "ids";
 
+        internal const string ActionResultIdAttribute = "resultId";
+
+        internal const string ActionUniqueIdAttribute = "uniqueId";
+
+        internal const string ActionResultUniqueIdAttribute = "resultUniqueId";
+
         internal const string ActionParentIdAttribute = "parentId";
 
         internal const string ActionLcidAttribute = "lcid";
@@ -43,8 +49,6 @@
         internal const string ActionNewChildLinkIdsAttribute = "newChildLinkIds";
 
         internal const string ActionNewBackwardIdAttribute = "newBackwardId";
-
-        internal const string ActionResultIdAttribute = "resultId";
 
         internal const string ActionNewVirtualFieldIdsAttribute = "newVirtualFieldIds";
 

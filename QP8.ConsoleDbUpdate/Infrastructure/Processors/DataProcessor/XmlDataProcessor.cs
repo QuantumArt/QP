@@ -1,9 +1,11 @@
-﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Repository.XmlDbUpdate;
-using Quantumart.QP8.BLL.Services.XmlDbUpdate;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
 {
@@ -12,18 +14,31 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.DataProcessor
         private readonly BaseSettingsModel _settings;
         private readonly IXmlDbUpdateReplayService _xmlDbUpdateReplayService;
 
-        public XmlDataProcessor(XmlSettingsModel settings)
+        public XmlDataProcessor(
+            XmlSettingsModel settings,
+            IXmlDbUpdateLogService xmlDbUpdateLogService,
+            IApplicationInfoRepository appInfoRepository,
+            IXmlDbUpdateActionCorrecterService actionCorrecterService,
+            IXmlDbUpdateHttpContextProcessor httpContextProcessor)
         {
             QPContext.CurrentCustomerCode = settings.CustomerCode;
-            var dbLogService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
 
             _settings = settings;
-            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(settings.DisableFieldIdentity, settings.DisableContentIdentity, _settings.UserId, dbLogService);
+            _xmlDbUpdateReplayService = new XmlDbUpdateNonMvcReplayService(
+                QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
+                CommonHelpers.GetDbIdentityInsertOptions(settings.DisableFieldIdentity, settings.DisableContentIdentity),
+                settings.UserId,
+                settings.UseGuidSubstitution,
+                xmlDbUpdateLogService,
+                appInfoRepository,
+                actionCorrecterService,
+                httpContextProcessor);
         }
 
         public void Process()
         {
-            _xmlDbUpdateReplayService.Process(XmlReaderProcessor.Process(_settings.FilePathes, _settings.ConfigPath, (XmlSettingsModel)_settings), _settings.FilePathes);
+            var xmlActionsString = XmlReaderProcessor.Process(_settings.FilePathes, _settings.ConfigPath, (XmlSettingsModel)_settings);
+            _xmlDbUpdateReplayService.Process(xmlActionsString, _settings.FilePathes);
         }
     }
 }
