@@ -13,9 +13,14 @@ var $ = require('gulp-load-plugins')();
 var argv = require('yargs').argv;
 var project = JSON.parse(fs.readFileSync('../package.json'));
 
+
+var assemblyInfoFileContent = fs.readFileSync('./properties/AssemblyInfo.cs');
+var assembly = $.dotnetAssemblyInfo.getAssemblyMetadata(assemblyInfoFileContent);
+
 var config = {
   name: project.name,
   version: project.version,
+  assemblyVersion: assembly.AssemblyVersion,
   environment: 'development',
   commit: process.env.BUILD_SOURCEVERSION || '0',
   branchName: process.env.BUILD_SOURCEBRANCHNAME || '',
@@ -312,39 +317,16 @@ gulp.task('lint-jscs-fix', function() {
 
 
 gulp.task('assets:revisions', function() {
-  var views = gulp.src('Views/Home/Index.base.cshtml')
+  return gulp.src('Views/Home/Index.base.cshtml')
     .pipe($.plumber({ errorHandler: reportError }))
     .pipe($.replaceTask({
       patterns: [{
         match: 'version',
-        replacement: config.version
+        replacement: config.assemblyVersion
       }]
     }))
     .pipe($.rename('Index.cshtml'))
     .pipe(gulp.dest('Views/Home/'));
-
-    var assemblyFileVersion = config.version + '.' + 0;
-    var assemblyDescription = 'Local builded at ' + new Date().toLocaleDateString();
-    if (config.commit && config.buildNumber) {
-      var splitted = config.buildNumber.split('.');
-      assemblyFileVersion = config.version + '.' + splitted[splitted.length - 1];
-      assemblyDescription = 'Server builded at ' +  config.buildNumber + ', Sha: ' + config.commit;
-    }
-
-    // TODO: Add local build tag from gulp-git
-    var assemblyInfo = assemblyFileVersion + '+' + config.branchName + '.Sha.' + config.commit;
-
-    var assemblies = gulp.src('Properties/AssemblyInfo.cs')
-      .pipe($.plumber({ errorHandler: reportError }))
-      .pipe($.dotnetAssemblyInfo({
-        version: config.version,
-        fileVersion: assemblyFileVersion,
-        informationalVersion: assemblyInfo,
-        description: assemblyDescription
-      }))
-      .pipe(gulp.dest('Properties/'));
-
-  return merge(views, assemblies);
 });
 
 gulp.task('assets:js', ['assets:js1', 'assets:js2']);
@@ -366,7 +348,6 @@ gulp.task('assets:js2', ['assets:revisions'], function() {
   return gulp.src(paths.scripts2, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, debug: true }))
-    //.pipe($.rename({ suffix: '.min' }))
     .pipe($.uglify())
     .pipe($.concat('app2.min.js'))
     .pipe($.sourcemaps.write('maps'))
@@ -426,7 +407,7 @@ gulp.task('serve', ['watch', 'browserSync']);
 
 
 gulp.task('default', ['clean'], function() {
-  var welcomeMsg = '\nGulp tasks were started in ' + chalk.blue.underline.yellow(config.environment) + ' mode. Version: ' + config.version + '.';
+  var welcomeMsg = '\nGulp tasks were started in ' + chalk.blue.underline.yellow(config.environment) + ' mode. Version: ' + config.assemblyVersion + '.';
   console.log(welcomeMsg);
   $.notify({ title: welcomeMsg, message: 'gulp is running' }); // TODO: ne pashet
 
