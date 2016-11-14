@@ -1003,7 +1003,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var div = new TagBuilder("div");
             div.MergeAttribute("id", source.UniqueId(name + "_aggregationlist"));
             div.AddCssClass(AggregationListClassName);
-            div.InnerHtml = $@"<div class =""{AggregationListContainerClassName}""></div>" + $@"<input type=""hidden"" name=""AggregationListItems_{name.Replace('.', '_')}"" class=""{AggregationListResultClassName}"">";
+            div.InnerHtml = $@"<div class =""{AggregationListContainerClassName}""></div>" + $@"<input type=""hidden"" name=""AggregationListItems{name.Replace(".", string.Empty)}"" class=""{AggregationListResultClassName}"">";
             div.MergeDataAttribute("aggregation_list_data", JsonConvert.SerializeObject(list));
             div.MergeDataAttribute("aggregation_list_item_fields", bindings);
             if (additionalData != null)
