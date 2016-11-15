@@ -372,7 +372,7 @@ gulp.task('assets:css', ['assets:revisions'], function() {
     .pipe($.sass().on('error', bs.notify))
     .pipe($.replace(/url\(\'/g, 'url(\'images/'))
     .pipe($.autoprefixer({ browsers: AUTOPREFIXER_BROWSERS }))
-    .pipe($.cssnano())
+    .pipe($.cssnano({ zindex: false }))
     .pipe($.concat('app.min.css'))
     .pipe($.sourcemaps.write('maps'))
     .pipe(gulp.dest(destPaths.styles))
