@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId) {
+Quantumart.QP8.BackendTemplateObjectPropertiesMediator = function (rootElementId) {
 
     var $componentElem = jQuery('#' + rootElementId);
     var CONTENT_CHANGE_TRACK_SELECTORS = ".containerContentSelector .singleItemPicker";
@@ -12,12 +12,12 @@
     var $selectionIsStarting = $componentElem.find('.selection-is-starting .radioButtonsList');
     var $selectionIncludes = $componentElem.find('.selection-includes .radioButtonsList');
 
-    $componentElem.on(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);    
+    $componentElem.on(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, CONTENT_CHANGE_TRACK_SELECTORS, onContentValueChanged);
     $parentObjectSelector.change(jQuery.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
     $overrideChkbx.click(jQuery.proxy(onParentTemplateObjectChanged, $parentObjectSelector));
     $typeSelector.change(manageGlobalVisibility);
-    
-    checkPublished();    
+
+    checkPublished();
     if ($statusSelector.data('has-workflow') == "False") {
         $statusSelector.data('entity_data_list_component').disableList();
     }
@@ -60,7 +60,7 @@
         }
     }
 
-    function checkPublished() {                             
+    function checkPublished() {
         $statusSelector.find('.multi-picker-item[value="' + $statusSelector.data('published-id') + '"]').attr('checked', true);
     }
 
@@ -90,14 +90,14 @@
     function dispose() {
         $componentElem.unbind();
         $parentObjectSelector.unbind();
-        
+
         $componentElem = null;
         CONTENT_CHANGE_TRACK_SELECTORS = null;
         $parentObjectSelector = null;
         $statusSelector = null;
         $selectionIsStarting = null;
         $selectionIncludes = null;
-    }    
+    }
 
     return {
         dispose: dispose

@@ -1,67 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Specialized;
 using System.Web;
-using System.Collections.Specialized;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
-	public class UnvalidatedRequestValuesMock : UnvalidatedRequestValuesBase
-	{
-		private HttpRequestBase _request;
-		
-		public UnvalidatedRequestValuesMock(HttpRequestBase request)
-		{
-			_request = request;
-		}
-		
-		public override HttpCookieCollection Cookies
-		{
-			get
-			{
-				return _request.Cookies;
-			}
-		}
+    public class UnvalidatedRequestValuesMock : UnvalidatedRequestValuesBase
+    {
+        private readonly HttpRequestBase _request;
 
-		public override HttpFileCollectionBase Files
-		{
-			get
-			{
-				return _request.Files;
-			}
-		}
+        public UnvalidatedRequestValuesMock(HttpRequestBase request)
+        {
+            _request = request;
+        }
 
-		public override NameValueCollection Headers
-		{
-			get
-			{
-				return _request.Headers;
-			}
-		}
+        public override HttpCookieCollection Cookies => _request.Cookies;
 
-		public override NameValueCollection QueryString
-		{
-			get 
-			{
-				return _request.QueryString;
-			}	
-		}
+        public override HttpFileCollectionBase Files => _request.Files;
 
-		public override NameValueCollection Form
-		{
-			get
-			{
-				return _request.Form;
-			}
-		}
+        public override NameValueCollection Headers => _request.Headers;
 
-		public override string this[string field]
-		{
-			get
-			{
-				return _request[field];
-			}
-		}
+        public override NameValueCollection QueryString => _request.QueryString;
 
-	}
+        public override NameValueCollection Form => _request.Form;
+
+        public override string this[string field] => _request[field];
+    }
 }

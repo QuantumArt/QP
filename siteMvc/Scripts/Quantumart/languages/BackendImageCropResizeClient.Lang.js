@@ -1,4 +1,4 @@
-﻿Backend.Lang.Crop = {
+Backend.Lang.Crop = {
 	overwrite: "Overwrite current file",
 	changeSize: "Change size",
 	save: "Save",

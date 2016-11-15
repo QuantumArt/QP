@@ -1,4 +1,4 @@
-﻿Backend.Lang.MultistepAction = {
+Backend.Lang.MultistepAction = {
 	progressWindowTitle: "Многошаговая операция",
 	stageRemainingLabel: "Осталось этапов:",
 	stageRemainingTemplate: "{0} из {1}",

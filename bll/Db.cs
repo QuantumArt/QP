@@ -1,52 +1,45 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Xml.Linq;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
-using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.BLL
 {
-	public class Db : EntityObject
-	{
-		public override string Name => QPContext.CurrentCustomerCode;
+    public class Db : EntityObject
+    {
+        public override string Name => QPContext.CurrentCustomerCode;
 
-	    public int? SingleUserId { get; set; }
+        public int? SingleUserId { get; set; }
 
-		[LocalizedDisplayName("RecordActions", NameResourceType = typeof(DBStrings))]
-		public bool RecordActions { get; set; }
+        [LocalizedDisplayName("RecordActions", NameResourceType = typeof(DBStrings))]
+        public bool RecordActions { get; set; }
 
-		[LocalizedDisplayName("FpSettings", NameResourceType = typeof(DBStrings))]
-		public string FpSettings { get; set; }
+        [LocalizedDisplayName("UseAdSyncService", NameResourceType = typeof(DBStrings))]
+        public bool UseAdSyncService { get; set; }
 
-		[LocalizedDisplayName("UseADSyncService", NameResourceType = typeof(DBStrings))]
-		public bool UseADSyncService { get; set; }
+        [LocalizedDisplayName("AutoLoadHome", NameResourceType = typeof(DBStrings))]
+        public bool AutoOpenHome { get; set; }
 
-		[LocalizedDisplayName("AutoLoadHome", NameResourceType = typeof(DBStrings))]
-		public bool AutoOpenHome { get; set; }
+        [LocalizedDisplayName("AppSettings", NameResourceType = typeof(DBStrings))]
+        public IEnumerable<AppSettingsItem> AppSettings { get; set; }
 
-		public XDocument FpSettingsXml => FpSettings == null ? null : XDocument.Load(new StringReader(FpSettings));
+        public override void Validate()
+        {
+            var errors = new RulesException<Db>();
+            base.Validate(errors);
 
-	    [LocalizedDisplayName("AppSettings", NameResourceType = typeof(DBStrings))]
-		public IEnumerable<AppSettingsItem> AppSettings { get; set; }
+            var duplicateNames = AppSettings.GroupBy(c => c.Key).Where(g => g.Count() > 1).Select(x => x.Key).ToArray();
+            var setts = AppSettings.ToArray();
+            for (var i = 0; i < setts.Length; i++)
+            {
+                setts[i].Validate(errors, i + 1, duplicateNames);
+            }
 
-		public override void Validate()
-		{
-			var errors = new RulesException<Db>();
-			base.Validate(errors);
-
-			var duplicateNames = AppSettings.GroupBy(c => c.Key).Where(g => g.Count() > 1).Select(x => x.Key).ToArray();
-			var setts = AppSettings.ToArray();
-		    for (var i = 0; i < setts.Length; i++)
-		    {
-		        setts[i].Validate(errors, i + 1, duplicateNames);
-		    }
-
-		    if (!errors.IsEmpty)
-		    {
-		        throw errors;
-		    }
-		}
-	}
+            if (!errors.IsEmpty)
+            {
+                throw errors;
+            }
+        }
+    }
 }

@@ -302,7 +302,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
   getSelectedEntityIDs: function () {
     return $.grep($.map(this.getSelectedEntities(), function (item) {
-      return $q.toInt(item.Id)
+      return $q.toInt(item.Id);
     }), function (item) {
       return item;
     });
@@ -321,7 +321,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     }
   },
 
-  _refreshListInner: function (dataItems, refreshOnly) {
+  _refreshListInner: function () {
     throw new Error($l.Common.methodNotImplemented);
   },
 
@@ -376,7 +376,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _isToolbarButtonDisabled: function (buttonElem) {
-    var isDisabled = false;
+    var isDisabled;
     var $linkButton = $q.toJQuery(buttonElem);
     var actionLink = $linkButton.data("action_link_component");
 
@@ -548,7 +548,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
 
     for (var linkButtonIndex = 0; linkButtonIndex < linkButtonCount; linkButtonIndex++) {
       var $linkButton = $linkButtons.eq(linkButtonIndex);
-      if ($linkButton.data("action_code") != this._readActionCode)
+      if ($linkButton.data("action_code") !== this._readActionCode)
         this._changeToolbarButtonState($linkButton, false);
     }
 
@@ -588,11 +588,12 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _loadSelectedItems: function(entities) {
+    var dataItems;
     if (($o.checkEntitiesForPresenceEmptyNames(entities) || this._readDataOnInsert) && entities.length <= this._countLimit) {
       var selectedEntitiesIDs = _.pluck(entities, 'Id');
       dataItems = $o.getSimpleEntityList(this._entityTypeCode, this._parentEntityId, this._entityId, this._listId, this._selectionMode, selectedEntitiesIDs, this._filter, 0);
     } else {
-      dataItems = Quantumart.QP8.ControlHelpers.getListItemCollectionFromEntities(entities);
+      dataItems = $c.getListItemCollectionFromEntities(entities);
     }
 
     if (dataItems) {
@@ -604,7 +605,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     this.notify(window.EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, new Quantumart.QP8.BackendEventArgs());
   },
 
-  _popupWindowClosedHandler: function (eventType, sender, args) {
+  _popupWindowClosedHandler: function () {
     this._destroyPopupWindow();
   },
 
@@ -754,7 +755,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
   },
 
   _getIdLinkCode: function (value) {
-    return (!this._showIds) ? "" : "<span class=\"idLink\">(<a class=\"js\" href=\"javascript:void(0)\">" + $q.htmlEncode(value) + "</a>)</span>"
+    return (!this._showIds) ? "" : "<span class=\"idLink\">(<a class=\"js\" href=\"javascript:void(0)\">" + $q.htmlEncode(value) + "</a>)</span>";
   },
 
   _getValueStorage: function () {
@@ -800,7 +801,7 @@ Quantumart.QP8.BackendEntityDataListBase.prototype = {
     if (result != this._filter) {
       this._filter = result;
       if (this.getListItemCount() > 0) {
-        this.refreshList()
+        this.refreshList();
       }
     }
   },

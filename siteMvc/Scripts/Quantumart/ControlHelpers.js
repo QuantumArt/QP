@@ -1115,28 +1115,19 @@ Quantumart.QP8.ControlHelpers.destroyDateTimePicker = function Quantumart$QP8$Co
 };
 //#endregion
 
-//#region Работа с полями для ввода чисел
 Quantumart.QP8.ControlHelpers.getAllNumericTextBoxes = function Quantumart$QP8$ControlHelpers$getAllNumericTextBoxes(parentElement) {
-    /// <summary>
-    /// Возвращает поля для ввода чисел
-    /// </summary>
-    /// <param name="parentElement" type="Object" domElement="true">родительский DOM-элемент</param>
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
-
+debugger;
     return $q.toJQuery(parentElement).find(".t-numerictextbox INPUT.t-input");
 };
 
 Quantumart.QP8.ControlHelpers.initAllNumericTextBoxes = function Quantumart$QP8$ControlHelpers$initAllNumericTextBoxes(parentElement) {
-    /// <summary>
-    /// Инициализирует поля для ввода чисел
-    /// </summary>
-    /// <param name="parentElement" type="Object" domElement="true">родительский DOM-элемент</param>
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
-
+    debugger;
     var $textBoxes = Quantumart.QP8.ControlHelpers.getAllNumericTextBoxes(parentElement);
     $textBoxes.each(
     function (index) {
@@ -1148,10 +1139,7 @@ Quantumart.QP8.ControlHelpers.initAllNumericTextBoxes = function Quantumart$QP8$
 };
 
 Quantumart.QP8.ControlHelpers.initNumericTextBox = function Quantumart$QP8$ControlHelpers$initNumericTextBox(textBoxElement) {
-    /// <summary>
-    /// Инициализирует поле для ввода чисел
-    /// </summary>
-    /// <param name="textBoxElement" type="Object" domElement="true">DOM-элемент, образующий поле для ввода чисел</param>
+    debugger;
     var $textBox = $q.toJQuery(textBoxElement);
     $textBox
     .bind("valueChange", function () {
@@ -1176,10 +1164,6 @@ Quantumart.QP8.ControlHelpers.initNumericTextBox = function Quantumart$QP8$Contr
 };
 
 Quantumart.QP8.ControlHelpers.destroyAllNumericTextBoxes = function Quantumart$QP8$ControlHelpers$destroyAllNumericTextBoxes(parentElement) {
-    /// <summary>
-    /// Уничтожает поля для ввода чисел
-    /// </summary>
-    /// <param name="parentElement" type="Object" domElement="true">родительский DOM-элемент</param>
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
@@ -1195,10 +1179,6 @@ Quantumart.QP8.ControlHelpers.destroyAllNumericTextBoxes = function Quantumart$Q
 };
 
 Quantumart.QP8.ControlHelpers.destroyNumericTextBox = function Quantumart$QP8$ControlHelpers$destroyNumericTextBox(textBoxElement) {
-    /// <summary>
-    /// Инициализирует поле для ввода чисел
-    /// </summary>
-    /// <param name="textBoxElement" type="Object" domElement="true">DOM-элемент, образующий поле для ввода чисел</param>
     var $textBox = $q.toJQuery(textBoxElement);
     $textBox
     .unbind()
@@ -1206,7 +1186,6 @@ Quantumart.QP8.ControlHelpers.destroyNumericTextBox = function Quantumart$QP8$Co
 
     $textBox = null;
 };
-//#endregion
 
 //#region Работа с файловыми полями
 Quantumart.QP8.ControlHelpers.getAllFileFields = function Quantumart$QP8$ControlHelpers$getAllFileFields(parentElement) {
@@ -1737,12 +1716,7 @@ Quantumart.QP8.ControlHelpers.crop = function Quantumart$QP8$ControlHelpers$crop
 Quantumart.QP8.ControlHelpers.openPreviewWindow = function Quantumart$QP8$ControlHelpers$openPreviewWindow(url, width, height) {
   url = url + "?t=" + new Date().getTime();
   var html = new $.telerik.stringBuilder();
-    html
-    .cat('<div class="previewImage">')
-    .cat('<img src="' + url + '\" width="' + width + '" height="' + height + '" />')
-    .cat('</div>')
-    ;
-
+    html.cat('<div class="previewImage">').cat('<img src="' + url + '\" width="' + width + '" height="' + height + '" />').cat('</div>');
     var win = $.telerik.window.create({
         title: $l.FileField.previewWindowTitle,
         html: html.string(),

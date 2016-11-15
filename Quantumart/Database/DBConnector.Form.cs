@@ -19,8 +19,6 @@ namespace Quantumart.QPublishing.Database
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
-        #region Form functions
-
         #region FieldName, FieldID
 
         private int FieldId(int contentId, string fieldName)
@@ -84,7 +82,7 @@ namespace Quantumart.QPublishing.Database
             return AddFormToContent(siteId, contentName, statusName, ref values, ref files, contentItemId);
         }
 
-        // base version with one-field/many-field update option 
+        // base version with one-field/many-field update option
         public int AddFormToContent(int actualSiteId, int contentId, string statusName, ref Hashtable values, ref HttpFileCollection files, int contentItemId, bool updateEmpty, int attributeId)
         {
             var modified = DateTime.MinValue;
@@ -223,7 +221,7 @@ namespace Quantumart.QPublishing.Database
             string filter = null;
             sqlStringBuilder.AppendLine(attributeId > 0
                 ? GetSqlUpdateAttributes(command, contentItemId,
-                    new List<ContentAttribute>() {GetContentAttributeObject(attributeId)}, values, true,
+                    new List<ContentAttribute>() { GetContentAttributeObject(attributeId) }, values, true,
                     dynamicImagesList, contentId, actualSiteId)
                 : GetSqlUpdateAttributes(command, contentItemId, GetContentAttributeObjects(contentId), values,
                     updateEmpty, dynamicImagesList, contentId, actualSiteId));
@@ -433,7 +431,7 @@ namespace Quantumart.QPublishing.Database
             var contentId = 0;
             if (dv2.Count > 0) contentId = GetNumInt(dv2[0]["CONTENT_ID"]);
 
-            var cmd = new SqlCommand {CommandType = CommandType.Text};
+            var cmd = new SqlCommand { CommandType = CommandType.Text };
             cmd.Parameters.Add("@itemId", SqlDbType.Decimal).Value = id;
 
             var sqls = new List<string>();
@@ -475,9 +473,9 @@ namespace Quantumart.QPublishing.Database
             }
             else
             {
-                var conflictIds = new List<string> {id.ToString()};
+                var conflictIds = new List<string> { id.ToString() };
                 conflictIds.AddRange(from DataRow row in dt.Rows select row["CONTENT_ITEM_ID"].ToString());
-                throw new QPInvalidAttributeException(
+                throw new QpInvalidAttributeException(
                     $"Unique constraint violation: {string.Join(", ", msgs.ToArray())}. Article IDs: {string.Join(", ", conflictIds.ToArray())}");
 
             }
@@ -501,7 +499,7 @@ namespace Quantumart.QPublishing.Database
 
         private void HandleInvalidAttributeValue(string attributeName, string comment)
         {
-            throw new QPInvalidAttributeException($"Error updating attribute '{attributeName}': {comment}");
+            throw new QpInvalidAttributeException($"Error updating attribute '{attributeName}': {comment}");
         }
 
         private SqlParameter GetSqlParameter(string name, ContentAttribute attr, string value)
@@ -591,7 +589,7 @@ namespace Quantumart.QPublishing.Database
                 {
                     if (!File.Exists(fileDir + "\\" + fileName))
                     {
-                        break; 
+                        break;
                     }
 
                     index = index + 1;
@@ -870,8 +868,5 @@ namespace Quantumart.QPublishing.Database
         }
 
         #endregion
-
-        #endregion
-
     }
 }

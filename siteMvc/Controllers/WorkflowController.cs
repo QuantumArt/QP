@@ -1,197 +1,184 @@
-﻿using System.Collections.Generic;
-using System.Web.Mvc;
+using System.Collections.Generic;
 using System.Linq;
-using Quantumart.QP8.BLL;
+using System.Text;
+using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
 using Telerik.Web.Mvc;
-using System;
-using Quantumart.QP8.Resources;
-using System.Text;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class WorkflowController : QPController
     {
-		IWorkflowService _workflowService;
+        private readonly IWorkflowService _workflowService;
 
-		public WorkflowController(IWorkflowService workflowService)
-		{
-			this._workflowService = workflowService;
-		}
+        public WorkflowController(IWorkflowService workflowService)
+        {
+            _workflowService = workflowService;
+        }
 
-		#region	list actions
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UiAction)]
-		[ActionAuthorize(ActionCode.Workflows)]
-		[BackendActionContext(ActionCode.Workflows)]
-		public ActionResult Index(string tabId, int parentId)
-		{
-			WorkflowInitListResult result = _workflowService.InitList(parentId);
-			WorkflowListViewModel model = WorkflowListViewModel.Create(result, tabId, parentId);
-			return this.JsonHtml("Index", model);
-		}
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.Workflows)]
+        [BackendActionContext(ActionCode.Workflows)]
+        public ActionResult Index(string tabId, int parentId)
+        {
+            var result = _workflowService.InitList(parentId);
+            var model = WorkflowListViewModel.Create(result, tabId, parentId);
+            return JsonHtml("Index", model);
+        }
 
-		[HttpPost]
-		[GridAction(EnableCustomBinding = true)]
-		[ActionAuthorize(ActionCode.Workflows)]
-		[BackendActionContext(ActionCode.Workflows)]
-		public ActionResult _Index(string tabId, int parentId, GridCommand command)
-		{
-			ListResult<WorkflowListItem> serviceResult = _workflowService.GetWorkflowsBySiteId(command.GetListCommand(), parentId);
-			return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
-		}
-		#endregion
+        [HttpPost]
+        [GridAction(EnableCustomBinding = true)]
+        [ActionAuthorize(ActionCode.Workflows)]
+        [BackendActionContext(ActionCode.Workflows)]
+        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        {
+            var serviceResult = _workflowService.GetWorkflowsBySiteId(command.GetListCommand(), parentId);
+            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+        }
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UiAction)]
-		[ActionAuthorize(ActionCode.WorkflowProperties)]
-		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Workflow, "id")]
-		[BackendActionContext(ActionCode.WorkflowProperties)]
-		public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
-		{
-			Workflow workflow = _workflowService.ReadProperties(id);
-			WorkflowViewModel model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
-			model.SuccesfulActionCode = successfulActionCode;
-			return this.JsonHtml("Properties", model);
-		}
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.WorkflowProperties)]
+        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Workflow, "id")]
+        [BackendActionContext(ActionCode.WorkflowProperties)]
+        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode)
+        {
+            var workflow = _workflowService.ReadProperties(id);
+            var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
+            model.SuccesfulActionCode = successfulActionCode;
+            return JsonHtml("Properties", model);
+        }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UiAction)]
-		[ConnectionScope()]
-		[ActionAuthorize(ActionCode.UpdateWorkflow)]
-		[BackendActionContext(ActionCode.UpdateWorkflow)]
-		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Workflow, "id")]
-		[BackendActionLog]
-		[Record(ActionCode.WorkflowProperties)]
-		public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
-		{
-			Workflow workflow = _workflowService.ReadPropertiesForUpdate(id);
-			WorkflowViewModel model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
-			TryUpdateModel(model);
-			model.Validate(ModelState);
-			if (ModelState.IsValid)
-			{
-				int[] oldIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
-				model.Data = _workflowService.UpdateProperties(model.Data, model.ActiveContentsIds);
-				int[] newIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
-				this.PersistRulesIds(oldIds, newIds);
+        [HttpPost, Record(ActionCode.WorkflowProperties)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.UpdateWorkflow)]
+        [BackendActionContext(ActionCode.UpdateWorkflow)]
+        [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Workflow, "id")]
+        [BackendActionLog]
+        public ActionResult Properties(string tabId, int parentId, int id, FormCollection collection)
+        {
+            var workflow = _workflowService.ReadPropertiesForUpdate(id);
+            var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 
-				return Redirect("Properties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.UpdateWorkflow });
-			}
-			else
-			{
-				return JsonHtml("Properties", model);
-			}
-		}
+            TryUpdateModel(model);
+            model.Validate(ModelState);
+            if (ModelState.IsValid)
+            {
+                var oldIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
+                model.Data = _workflowService.UpdateProperties(model.Data, model.ActiveContentsIds);
+                var newIds = model.Data.WorkflowRules.Select(n => n.Id).ToArray();
+                PersistRulesIds(oldIds, newIds);
+                return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateWorkflow });
+            }
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UiAction)]
-		[ActionAuthorize(ActionCode.AddNewWorkflow)]
-		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
-		[BackendActionContext(ActionCode.AddNewWorkflow)]
-		public ActionResult New(string tabId, int parentId)
-		{
-			Workflow workflow = _workflowService.NewWorkflowProperties(parentId);
-			WorkflowViewModel model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
-			return this.JsonHtml("Properties", model);
-		}
+            return JsonHtml("Properties", model);
+        }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UiAction)]
-		[ConnectionScope()]
-		[ActionAuthorize(ActionCode.AddNewWorkflow)]
-		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
-		[BackendActionContext(ActionCode.AddNewWorkflow)]
-		[BackendActionLog]
-		[Record]
-		public ActionResult New(string tabId, int parentId, FormCollection collection)
-		{
-			Workflow workflow = _workflowService.NewWorkflowPropertiesForUpdate(parentId);
-			WorkflowViewModel model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
-			TryUpdateModel(model);
-			model.Validate(ModelState);
-			if (ModelState.IsValid)
-			{
-				model.Data = _workflowService.SaveWorkflowProperties(model.Data);
-				this.PersistResultId(model.Data.Id);
-				this.PersistRulesIds(null, model.Data.WorkflowRules.Select(n => n.Id).ToArray());
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.AddNewWorkflow)]
+        [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
+        [BackendActionContext(ActionCode.AddNewWorkflow)]
+        public ActionResult New(string tabId, int parentId)
+        {
+            var workflow = _workflowService.NewWorkflowProperties(parentId);
+            var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
+            return JsonHtml("Properties", model);
+        }
 
-				return Redirect("Properties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.SaveWorkflow });
-			}
-			else
-				return JsonHtml("Properties", model);
-		}
+        [HttpPost, Record]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.AddNewWorkflow)]
+        [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Site, "parentId")]
+        [BackendActionContext(ActionCode.AddNewWorkflow)]
+        [BackendActionLog]
+        public ActionResult New(string tabId, int parentId, FormCollection collection)
+        {
+            var workflow = _workflowService.NewWorkflowPropertiesForUpdate(parentId);
+            var model = WorkflowViewModel.Create(workflow, tabId, parentId, _workflowService);
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope()]
-		[ActionAuthorize(ActionCode.RemoveWorkflow)]
-		[BackendActionContext(ActionCode.RemoveWorkflow)]
-		[BackendActionLog]
-		[Record]
-		public ActionResult Remove(int id)
-		{
-			MessageResult result = _workflowService.Remove(id);
-			return JsonMessageResult(result);
-		}
+            TryUpdateModel(model);
+            model.Validate(ModelState);
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UiAction)]
-		public ActionResult CheckUserOrGroupAccessOnContents(string statusName, string userIdString, string groupIdString, string contentIdsString)
-		{
-			var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(new char[] { ',' }).Select(x => int.Parse(x)).ToList();
-			int tempVal;
-			int? userId = Int32.TryParse(userIdString, out tempVal) ? tempVal : (int?)null;
-			int? groupId = Int32.TryParse(groupIdString, out tempVal) ? tempVal : (int?)null;
+            if (ModelState.IsValid)
+            {
+                model.Data = _workflowService.SaveWorkflowProperties(model.Data);
+                PersistResultId(model.Data.Id);
+                PersistRulesIds(null, model.Data.WorkflowRules.Select(n => n.Id).ToArray());
+                return Redirect("Properties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveWorkflow });
+            }
 
+            return JsonHtml("Properties", model);
+        }
 
-			var contentAccessSummary = new StringBuilder();
+        [HttpPost, Record]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.RemoveWorkflow)]
+        [BackendActionContext(ActionCode.RemoveWorkflow)]
+        [BackendActionLog]
+        public ActionResult Remove(int id)
+        {
+            return JsonMessageResult(_workflowService.Remove(id));
+        }
 
-			foreach (var contentId in contentIds)
-			{
-				if (userId != null && !_workflowService.IsContentAccessibleForUser(contentId, userId.Value))
-				{
-					contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForUser + "<br>", _workflowService.getContentNameById(contentId));
-				}
-				else if (groupId != null && !_workflowService.IsContentAccessibleForUserGroup(contentId, groupId.Value))
-				{
-					contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForGroup + "<br>", _workflowService.getContentNameById(contentId));
-				}
-			}
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        public ActionResult CheckUserOrGroupAccessOnContents(string statusName, string userIdString, string groupIdString, string contentIdsString)
+        {
+            var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(',').Select(x => int.Parse(x)).ToList();
+            int tempVal;
+            var userId = int.TryParse(userIdString, out tempVal) ? tempVal : (int?)null;
+            var groupId = int.TryParse(groupIdString, out tempVal) ? tempVal : (int?)null;
+            var contentAccessSummary = new StringBuilder();
 
-			return this.Json(contentAccessSummary.ToString(), JsonRequestBehavior.AllowGet);
-		}
+            foreach (var contentId in contentIds)
+            {
+                if (userId != null && !_workflowService.IsContentAccessibleForUser(contentId, userId.Value))
+                {
+                    contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForUser + "<br>", _workflowService.GetContentNameById(contentId));
+                }
+                else if (groupId != null && !_workflowService.IsContentAccessibleForUserGroup(contentId, groupId.Value))
+                {
+                    contentAccessSummary.AppendFormatLine(WorkflowStrings.InAccessibleForGroup + "<br>", _workflowService.GetContentNameById(contentId));
+                }
+            }
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UiAction)]
-		public ActionResult CheckAllAccessOnContents(string modelString, string contentIdsString)
-		{
-			var contentAccessSummary = new List<object>();
-			var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(new char[] { ',' }).Select(x => int.Parse(x)).ToList();
-			var model = new System.Web.Script.Serialization.JavaScriptSerializer().Deserialize<List<WorkflowRuleSimpleItem>>(modelString);
+            return Json(contentAccessSummary.ToString(), JsonRequestBehavior.AllowGet);
+        }
 
-			foreach (var wfStage in model)
-			{
-				foreach (int contentId in contentIds)
-				{
-					if (wfStage.UserId.HasValue && !_workflowService.IsContentAccessibleForUser(contentId, wfStage.UserId.Value))
-						contentAccessSummary.Add(new { StName = wfStage.StName, Message = String.Format(WorkflowStrings.InAccessibleForUser, _workflowService.getContentNameById(contentId)) });
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        public ActionResult CheckAllAccessOnContents(string modelString, string contentIdsString)
+        {
+            var contentAccessSummary = new List<object>();
+            var contentIds = string.IsNullOrEmpty(contentIdsString) ? new List<int>() : contentIdsString.Split(',').Select(int.Parse).ToList();
+            var model = new JavaScriptSerializer().Deserialize<List<WorkflowRuleSimpleItem>>(modelString);
 
-					else if(wfStage.GroupId.HasValue && !_workflowService.IsContentAccessibleForUserGroup(contentId, wfStage.GroupId.Value))
-						contentAccessSummary.Add(new { StName = wfStage.StName, Message = String.Format(WorkflowStrings.InAccessibleForGroup, _workflowService.getContentNameById(contentId)) });
-				}
-			}
+            foreach (var stage in model)
+            {
+                foreach (var contentId in contentIds)
+                {
+                    if (stage.UserId.HasValue && !_workflowService.IsContentAccessibleForUser(contentId, stage.UserId.Value))
+                    {
+                        contentAccessSummary.Add(new { stage.StName, Message = string.Format(WorkflowStrings.InAccessibleForUser, _workflowService.GetContentNameById(contentId)) });
+                    }
+                    else if (stage.GroupId.HasValue && !_workflowService.IsContentAccessibleForUserGroup(contentId, stage.GroupId.Value))
+                    {
+                        contentAccessSummary.Add(new { stage.StName, Message = string.Format(WorkflowStrings.InAccessibleForGroup, _workflowService.GetContentNameById(contentId)) });
+                    }
+                }
+            }
 
-			return this.Json(contentAccessSummary, JsonRequestBehavior.AllowGet);
-		}
+            return Json(contentAccessSummary, JsonRequestBehavior.AllowGet);
+        }
     }
 }

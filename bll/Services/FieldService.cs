@@ -1,12 +1,12 @@
-﻿using Quantumart.QP8.BLL.ListItems;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -20,18 +20,13 @@ namespace Quantumart.QP8.BLL.Services
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, contentId));
             }
 
-            var field = new Field(content).Init();
+            var field = new Field(content, new FieldRepository(), new ContentRepository()).Init();
             if (fieldId.HasValue)
             {
                 field.Order = FieldRepository.GetById(fieldId.Value).Order;
             }
 
             return field;
-        }
-
-        public static Field NewForSave(int contentId)
-        {
-            return New(contentId, null);
         }
 
         public static Field VirtualRead(int id)
@@ -56,11 +51,6 @@ namespace Quantumart.QP8.BLL.Services
         }
 
         public static Field ReadForUpdate(int id)
-        {
-            return Read(id);
-        }
-
-        public static Field ReadForVisualEditor(int id)
         {
             return Read(id);
         }
@@ -146,9 +136,6 @@ namespace Quantumart.QP8.BLL.Services
             return result.GetServiceResult();
         }
 
-        /// <summary>
-        /// Инициализация списка полей
-        /// </summary>
         public static FieldInitListResult InitList(int contentId)
         {
             var content = ContentRepository.GetById(contentId);
@@ -164,10 +151,6 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-
-        /// <summary>
-        /// Загрузка данных в список полей
-        /// </summary>
         public static ListResult<FieldListItem> List(int contentId, ListCommand cmd)
         {
             return FieldRepository.GetList(cmd, contentId);
@@ -187,7 +170,6 @@ namespace Quantumart.QP8.BLL.Services
         {
             return FieldRepository.GetList(ids);
         }
-
 
         /// <summary>
         /// Получение информации о библиотеке поля для просмотра/скачки файла
@@ -241,10 +223,6 @@ namespace Quantumart.QP8.BLL.Services
                 : FieldTypeConversionRules[fieldType];
         }
 
-        /// <summary>
-        /// Получить список типов полей
-        /// </summary>
-        /// <returns></returns>
         public static IEnumerable<FieldType> GetAllFieldTypes()
         {
             return FieldRepository.GetAllFieldTypes();
@@ -301,50 +279,50 @@ namespace Quantumart.QP8.BLL.Services
             if (!field.Content.Site.IsUpdatable || !field.IsAccessible(ActionTypeCode.Read))
             {
                 result.Message = MessageResult.Error(ContentStrings.CannotCopyBecauseOfSecurity);
+                return result;
             }
-            else if (field.ExactType == FieldExactTypes.M2ORelation)
-            {
-                result.Message = MessageResult.Error(FieldStrings.UnableToCopyM2O);
-            }
-            else if (field.ExactType == FieldExactTypes.Classifier)
-            {
-                result.Message = MessageResult.Error(FieldStrings.UnableToCopyClassifier);
-            }
-            else if (field.ExactType == FieldExactTypes.O2MRelation && field.Aggregated)
-            {
-                result.Message = MessageResult.Error(FieldStrings.UnableToCopyAggregator);
-            }
-            else
-            {
-                if (forceId.HasValue)
-                {
-                    field.ForceId = forceId.Value;
-                }
 
-                field.ForceVirtualFieldIds = forceVirtualFieldIds;
-                if (field.ContentLink != null && forceLinkId.HasValue)
-                {
-                    field.ContentLink.ForceLinkId = forceLinkId.Value;
-                }
+            switch (field.ExactType)
+            {
+                case FieldExactTypes.M2ORelation:
+                    result.Message = MessageResult.Error(FieldStrings.UnableToCopyM2O);
+                    break;
+                case FieldExactTypes.Classifier:
+                    result.Message = MessageResult.Error(FieldStrings.UnableToCopyClassifier);
+                    break;
+                default:
+                    if (field.ExactType == FieldExactTypes.O2MRelation && field.Aggregated)
+                    {
+                        result.Message = MessageResult.Error(FieldStrings.UnableToCopyAggregator);
+                    }
+                    else
+                    {
+                        if (forceId.HasValue)
+                        {
+                            field.ForceId = forceId.Value;
+                        }
 
-                field.ForceChildFieldIds = forceChildFieldIds;
-                field.ForceChildLinkIds = forceChildLinkIds;
-                field.LoadVeBindings();
+                        field.ForceVirtualFieldIds = forceVirtualFieldIds;
+                        if (field.ContentLink != null && forceLinkId.HasValue)
+                        {
+                            field.ContentLink.ForceLinkId = forceLinkId.Value;
+                        }
 
-                var resultField = FieldRepository.Copy(field);
-                result.Id = resultField.Id;
-                result.LinkId = resultField.LinkId;
-                result.VirtualFieldIds = resultField.NewVirtualFieldIds;
-                result.ChildFieldIds = resultField.ResultChildFieldIds;
-                result.ChildLinkIds = resultField.ResultChildLinkIds;
+                        field.ForceChildFieldIds = forceChildFieldIds;
+                        field.ForceChildLinkIds = forceChildLinkIds;
+                        field.LoadVeBindings();
+
+                        var resultField = FieldRepository.Copy(field);
+                        result.Id = resultField.Id;
+                        result.LinkId = resultField.LinkId;
+                        result.VirtualFieldIds = resultField.NewVirtualFieldIds;
+                        result.ChildFieldIds = resultField.ResultChildFieldIds;
+                        result.ChildLinkIds = resultField.ResultChildLinkIds;
+                    }
+                    break;
             }
 
             return result;
-        }
-
-        public static Field GetById(int fieldId)
-        {
-            return FieldRepository.GetById(fieldId);
         }
     }
 }

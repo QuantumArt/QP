@@ -1,4 +1,4 @@
-﻿//#region class Quantumart.QP8.BackendClassifierField 
+//#region class Quantumart.QP8.BackendClassifierField
 var EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_LOADED = "OnClassifierFieldArticleLoaded";
 var EVENT_TYPE_CLASSIFIER_FIELD_ARTICLE_UNLOADING = "OnClassifierFieldArticleUnloading";
 
@@ -39,7 +39,7 @@ Quantumart.QP8.BackendClassifierField = function (componentElem, editorExecuting
 
 
 
-	}	
+	}
 
 	this._$componentElem = jQuery(componentElem);
 	this._$componentElem.data(Quantumart.QP8.BackendClassifierField.componentRefDataKey, this);
@@ -58,7 +58,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
 	_hostIsWindow: false,
 
 	_initFieldValues: null, // значения для инициализации полей
-	_disabledFields: null, // идентификаторы полей которые должны быть disable (массив имен полей)	
+	_disabledFields: null, // идентификаторы полей которые должны быть disable (массив имен полей)
 	_hideFields: null,	// идентификаторы полей которые должны быть скрыты (массив имен полей)
 	_disableChangeTracking: false,
 	_parentEditor: null,
@@ -122,7 +122,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
 			else {
 				this._$contentList.after('<input type="hidden" name="' + this._$contentList.prop("name") + '" value="' + selectedVal + '" />');
 			}
-		}		
+		}
 		this._$contentList
 			.addClass(this.LIST_DISABLED_CLASS_NAME)
 			.prop("disabled", true);
@@ -188,7 +188,7 @@ Quantumart.QP8.BackendClassifierField.prototype = {
 		$c.setAllVisualEditorValues($form, this._initFieldValues);
 		$c.makeReadonlyVisualEditors($form, this._disabledFields);
 
-				
+
 		$c.initAllDateTimePickers($form);
 		$c.initAllVisualEditors($form);
 		$c.initAllNumericTextBoxes($form);

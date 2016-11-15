@@ -24,7 +24,6 @@ namespace Quantumart.QP8.WebMvc.Backend
 			"BackendToolbar.Lang.js",
 			"BackendFileField.Lang.js",
 			"BackendActionLink.Lang.js",
-			"BackendTraceWindow.Lang.js",
 			"BackendEntityDataList.Lang.js",
 			"BackendSearchBlock.Lang.js",
 			"BackendBreadCrumbs.Lang.js",

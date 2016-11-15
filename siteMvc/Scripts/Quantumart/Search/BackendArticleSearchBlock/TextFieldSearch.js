@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.TextFieldSearch
+//#region class BackendArticleSearchBlock.TextFieldSearch
 // === Класс блока текстового поиска по полю
 Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.TextFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);

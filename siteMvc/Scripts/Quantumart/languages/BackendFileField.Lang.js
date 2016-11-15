@@ -1,3 +1,3 @@
-﻿Backend.Lang.FileField = {
+Backend.Lang.FileField = {
 	previewWindowTitle: "Preview"
 };

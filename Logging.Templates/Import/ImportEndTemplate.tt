@@ -2,10 +2,13 @@
 <#@ import namespace="Quantumart.QP8.Logging.Transformers" #>
 <#@ import namespace="Quantumart.QP8.Logging.Templates.Default" #>
 <#@ import namespace="Quantumart.QP8.BLL.Services.MultistepActions.Import" #>
+<#@ import namespace="Quantumart.QP8.BLL.Enums" #>
+
 <#@ parameter name="Model" type="Quantumart.QP8.BLL.Services.MultistepActions.Import.ImportSettings" #>
 <#@ parameter name="Context" type="Quantumart.QP8.Logging.Loggers.LoggerContext" #>
 <#@ parameter name="LogEntry" type="Microsoft.Practices.EnterpriseLibrary.Logging.LogEntry" #>
 <#@ parameter name="TraceOptions" type="System.Diagnostics.TraceOptions" #>
+
 <#= TemplateTransformer.Transform<DefaultTextTemplate>(LogEntry, TraceOptions) #>ImportSettings:
   Id: <#= Model.Id #>
   ImportAction: <#= (ImportActions)Model.ImportAction #>

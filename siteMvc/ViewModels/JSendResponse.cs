@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
@@ -15,12 +16,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public string Message { get; set; }
 
         public int Code { get; set; }
-    }
-
-    public enum JSendStatus
-    {
-        Success,
-        Fail,
-        Error
     }
 }

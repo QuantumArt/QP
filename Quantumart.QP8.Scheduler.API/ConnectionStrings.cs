@@ -1,49 +1,36 @@
-﻿using Quantumart.QP8.Configuration;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.Scheduler.API
 {
-	public class ConnectionStrings : IConnectionStrings
-	{
-		private const string ExceptCustomerCodesKey = "ExceptCustomerCodes";
-		private readonly ServiceDescriptor _descriptor;
+    public class ConnectionStrings : IConnectionStrings
+    {
+        private const string ExceptCustomerCodesKey = "ExceptCustomerCodes";
+        private readonly ServiceDescriptor _descriptor;
 
-		public ConnectionStrings(ServiceDescriptor descriptor)
-		{
-			_descriptor = descriptor;
-		}
+        public ConnectionStrings(ServiceDescriptor descriptor)
+        {
+            _descriptor = descriptor;
+        }
 
-		#region IConnectionStrings implementation
-		public IEnumerator<string> GetEnumerator()
-		{
-			var exceptCodes = GetexceptCustomerCodes();
-			return QPConfiguration.ConfigConnectionStrings(_descriptor.Name, exceptCodes).GetEnumerator();
-		}
+        public IEnumerator<string> GetEnumerator()
+        {
+            var exceptCodes = GetexceptCustomerCodes();
+            return QPConfiguration.GetConnectionStrings(_descriptor.Name, exceptCodes).GetEnumerator();
+        }
 
-		private static string[] GetexceptCustomerCodes()
-		{
-			string codes = ConfigurationManager.AppSettings[ExceptCustomerCodesKey];
+        private static IEnumerable<string> GetexceptCustomerCodes()
+        {
+            var codes = ConfigurationManager.AppSettings[ExceptCustomerCodesKey];
+            return codes?.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries) ?? new string[0];
+        }
 
-			if (codes == null)
-			{
-				return new string[0];
-			}
-			else
-			{
-				return codes.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-			}
-		}
-
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
-		#endregion
-	}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+    }
 }

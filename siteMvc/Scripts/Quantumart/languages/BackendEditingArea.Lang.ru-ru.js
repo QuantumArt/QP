@@ -1,4 +1,4 @@
-﻿Backend.Lang.EditingArea = {
+Backend.Lang.EditingArea = {
 	documentsContainerElementIdNotSpecified: "Вы не задали клиентский идентификатор контейнера для документов!",
 	breadCrumbsContainerElementIdNotSpecified: "Вы не задали клиентский идентификатор контейнера, в котором располагаются хлебные крошки!",
 	actionToolbarContainerElementIdNotSpecified: "Вы не задали клиентский идентификатор контейнера, в котором располагается панель инструментов для действий!",

@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using Quantumart.QP8.BLL.Helpers;
@@ -11,262 +12,137 @@ using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
-    /// <summary>
-    /// Супертип слоя. Содержит общие свойства для сущностей QP8
-    /// </summary>
     [HasSelfValidation]
     public abstract class EntityObject : BizObject
     {
+        [LocalizedDisplayName("ID", NameResourceType = typeof(EntityObjectStrings))]
+        public int Id { get; set; }
 
-        #region private fields
+        public int ForceId { get; set; }
 
-        #endregion
+        [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
+        [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        public virtual string Name { get; set; }
 
-        #region properties
+        [LocalizedDisplayName("Description", NameResourceType = typeof(EntityObjectStrings))]
+        [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
+        public virtual string Description { get; set; }
 
-        #region simple read-write
-            
-            /// <summary>
-            /// идентификатор сущности
-            /// </summary>
-            [LocalizedDisplayName("ID", NameResourceType = typeof(EntityObjectStrings))]
-            public int Id { get; set; }
+        [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
+        public DateTime Created { get; set; }
 
-            public int ForceId { get; set; }
+        [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
+        public virtual DateTime Modified { get; set; }
 
-            /// <summary>
-            /// название сущности
-            /// </summary>			
-            [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
-            [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-            [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-            [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-            public virtual string Name
+        public int LastModifiedBy { get; set; }
+
+        public virtual bool IsReadOnly { get; set; }
+
+        [SuppressMessage("ReSharper", "ValueParameterNotUsed")]
+        public virtual int ParentEntityId
+        {
+            get
             {
-                get;
-                set;
+                return 0;
             }
-
-            /// <summary>
-            /// описание сущности
-            /// </summary>
-            [LocalizedDisplayName("Description", NameResourceType = typeof(EntityObjectStrings))]
-            [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(EntityObjectStrings))]
-            public virtual string Description
+            set
             {
-                get;
-                set;
             }
+        }
 
-            /// <summary>
-            /// дата создания сущности
-            /// </summary>
-            [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
-            public DateTime Created
-            {
-                get;
-                set;
-            }
+        [LocalizedDisplayName("LastModifiedBy", NameResourceType = typeof(EntityObjectStrings))]
+        public string LastModifiedByUserToDisplay => LastModifiedByUser == null ? string.Empty : LastModifiedByUser.DisplayName;
 
-            /// <summary>
-            /// дата последнего изменения сущности
-            /// </summary>
-            [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
-            public virtual DateTime Modified
-            {
-                get;
-                set;
-            }
+        [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
+        public string CreatedToDisplay => Created.ValueToDisplay();
 
-            /// <summary>
-            /// идентификатор пользователя, который последним редактировал сущность
-            /// </summary>
-            public int LastModifiedBy
-            {
-                get;
-                set;
-            }
+        [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
+        public string ModifiedToDisplay => Modified.ValueToDisplay();
 
-            /// <summary>
-            /// является ли сущность только для чтения
-            /// </summary>
-            public virtual bool IsReadOnly
-            {
-                get;
-                set;
-            }
+        public bool IsNew => Id == 0;
 
+        public virtual string EntityTypeCode => Constants.EntityTypeCode.None;
 
-            /// <summary>
-            /// Родительский Id для проверки уникальности
-            /// </summary>
-            public virtual int ParentEntityId
-            {
-                get
-                {
-                    return 0;
-                }
-                set { }
-            }
-        #endregion
+        public virtual int? RecurringId => null;
 
-        #region simple read-only
+        public bool IsUpdatable => IsAccessible(ActionTypeCode.Update);
 
-            /// <summary>
-            /// идентификатор пользователя, который последним редактировал сущность
-            /// </summary>
-            [LocalizedDisplayName("LastModifiedBy", NameResourceType = typeof(EntityObjectStrings))]
-            public string LastModifiedByUserToDisplay
-            {
-                get
-                {
-                    return (LastModifiedByUser == null) ? String.Empty : LastModifiedByUser.DisplayName;
-                }
-            }
+        public virtual string CannotAddBecauseOfSecurityMessage => EntityObjectStrings.CannotAddBecauseOfSecurity;
 
-            /// <summary>
-            /// Дата создания сущности для отображения в форме
-            /// </summary>
-            [LocalizedDisplayName("Created", NameResourceType = typeof(EntityObjectStrings))]
-            public string CreatedToDisplay
-            {
-                get
-                {
-                    return Created.ValueToDisplay();
-                }
-            }
+        public virtual string CannotUpdateBecauseOfSecurityMessage => EntityObjectStrings.CannotUpdateBecauseOfSecurity;
 
-            /// <summary>
-            /// Дата последнего изменения сущности для отображения в форме
-            /// </summary>
-            [LocalizedDisplayName("Modified", NameResourceType = typeof(EntityObjectStrings))]
-            public string ModifiedToDisplay
-            {
-                get
-                {
-                    return Modified.ValueToDisplay();
-                }
-            }
+        public virtual string PropertyIsNotUniqueMessage => EntityObjectStrings.NameNonUnique;
 
-            /// <summary>
-            /// Признак, сохранена ли сущность в БД
-            /// </summary>
-            public bool IsNew => (Id == 0);
+        public virtual string UniquePropertyName => "Name";
 
-            /// <summary>
-            /// Код сущности (например для проверки уникальности)
-            /// </summary>
-            public virtual string EntityTypeCode => Constants.EntityTypeCode.None;
+        public virtual User LastModifiedByUser { get; set; }
 
-            /// <summary>
-            /// Родительский Id в иерархических сущностях для проверки уникальности
-            /// </summary>
-            public virtual int? RecurringId => null;
+        public virtual PathInfo PathInfo => new PathInfo
+        {
+            Path = string.Empty,
+            Url = string.Empty
+        };
 
-            /// <summary>
-            /// Доступна ли сущность для обновления (по Security)
-            /// </summary>
-            public bool IsUpdatable => IsAccessible(ActionTypeCode.Update);
+        public virtual IEnumerable<EntityObject> Children { get; set; }
 
-            public virtual string CannotAddBecauseOfSecurityMessage => EntityObjectStrings.CannotAddBecauseOfSecurity;
+        public virtual bool HasChildren { get; set; }
 
-            public virtual string CannotUpdateBecauseOfSecurityMessage => EntityObjectStrings.CannotUpdateBecauseOfSecurity;
-
-            public virtual string PropertyIsNotUniqueMessage => EntityObjectStrings.NameNonUnique;
-
-            public virtual string UniquePropertyName => "Name";
-
-        #endregion
-
-        #region references
-
-            /// <summary>
-            /// информация о пользователе, который последним редактировал сущность
-            /// </summary>		
-            public virtual User LastModifiedByUser
-            {
-                get;
-                set;
-            }	
-        
-            /// <summary>
-            /// Виртуальный и физический пути, связанные с сущностью
-            /// </summary>		
-            public virtual PathInfo PathInfo => new PathInfo { Path = String.Empty, Url = String.Empty };
-
-            public virtual IEnumerable<EntityObject> Children { get; set; }
-
-            public virtual bool HasChildren { get; set; }
-        
-            public virtual EntityObject Parent => null;
-
-        #endregion
-
-        #endregion
-
-        #region methods
-
+        public virtual EntityObject Parent => null;
 
         public virtual void Validate()
         {
-            RulesException errors = new RulesException<EntityObject>();
-
+            var errors = new RulesException<EntityObject>();
             Validate(errors);
-
             if (!errors.IsEmpty)
-                throw errors;
-        }
-
-        protected virtual void Validate(RulesException errors)
-        {
-            EntLibValidate(errors, this);
-            ValidateSecurity(errors);
-            ValidateUnique(errors);
-        }
-
-        protected virtual void ValidateUnique(RulesException errors)
-        {
-            if (!String.IsNullOrEmpty(Name))
             {
-                if (EntityObjectRepository.CheckNameUniqueness(this))
-                    errors.Error(UniquePropertyName, Name, PropertyIsNotUniqueMessage);
+                throw errors;
             }
         }
 
-        /// <summary>
-        /// Доступно ли для сущности выполнение заданного типа действия (по Security)
-        /// </summary>
+        protected virtual RulesException Validate(RulesException errors)
+        {
+            SaveResults(errors, ValidationFactory.CreateValidator(GetType()).Validate(this));
+            ValidateSecurity(errors);
+            ValidateUnique(errors);
+            return errors;
+        }
+
+        protected virtual RulesException ValidateUnique(RulesException errors)
+        {
+            if (!string.IsNullOrEmpty(Name))
+            {
+                if (EntityObjectRepository.CheckNameUniqueness(this))
+                {
+                    errors.Error(UniquePropertyName, Name, PropertyIsNotUniqueMessage);
+                }
+            }
+
+            return errors;
+        }
+
         public bool IsAccessible(string code)
         {
             return SecurityRepository.IsEntityAccessible(EntityTypeCode, Id, code);
         }
 
-       
-        /// <summary>
-        /// Action для операции "Save and Close"
-        /// Если IsNew то Action с типом 'save' для типа сущности
-        /// Если NotNew то Action с типом 'update' для типа сущности
-        /// Если пользователь не имеет доступа к Action вернет null
-        /// </summary>
         public BackendAction SaveAndCloseAction
         {
             get
             {
-                BackendAction action;
-                if (IsNew)
-                    action = BackendActionRepository.GetAction(EntityTypeCode, ActionTypeCode.Save);
-                else
-                    action = BackendActionRepository.GetAction(EntityTypeCode, ActionTypeCode.Update);
-                return (action != null && SecurityRepository.IsActionAccessible(action.Code)) ? action : null;
+                var action = BackendActionRepository.SaveOrUpdate(EntityTypeCode, IsNew ? ActionTypeCode.Save : ActionTypeCode.Update);
+                return action != null && SecurityRepository.IsActionAccessible(action.Code) ? action : null;
             }
         }
 
         internal static string TranslateSortExpression(string sortExpression)
         {
-            Dictionary<string, string> replaces = new Dictionary<string, string>
-            { 
-                {"ByUser", "ByUser.LogOn"} 
+            var replaces = new Dictionary<string, string>
+            {
+                {"ByUser", "ByUser.LogOn"}
             };
+
             return TranslateHelper.TranslateSortExpression(sortExpression, replaces);
         }
 
@@ -274,8 +150,10 @@ namespace Quantumart.QP8.BLL
         {
             if (QPConnectionScope.Current.IdentityInsertOptions.Contains(entityTypeCode))
             {
-            if (id == 0 && forceId == 0)
-                throw new InvalidOperationException($"Attempt to insert entity (key = '{entityTypeCode}', ID = 0)");
+                if (id == 0 && forceId == 0)
+                {
+                    throw new InvalidOperationException($"Attempt to insert entity (key = '{entityTypeCode}', ID = 0)");
+                }
             }
         }
 
@@ -284,7 +162,6 @@ namespace Quantumart.QP8.BLL
             VerifyIdentityInserting(entityTypeCode, Id, ForceId);
         }
 
-        #region override
         public override bool Equals(object obj)
         {
             if (obj == null || GetType() != obj.GetType())
@@ -295,56 +172,47 @@ namespace Quantumart.QP8.BLL
             return Id != 0 && Id == ((EntityObject)obj).Id;
         }
 
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
+        [SuppressMessage("ReSharper", "BaseObjectGetHashCodeCallInGetHashCode")]
         public override int GetHashCode()
         {
             return Id == 0 ? base.GetHashCode() : Id;
         }
 
-        #endregion
-
-        #region private
-
-        protected virtual void ValidateSecurity(RulesException errors)
+        protected virtual RulesException ValidateSecurity(RulesException errors)
         {
             if (IsNew)
             {
                 if (Parent != null && !Parent.IsUpdatable)
+                {
                     errors.CriticalErrorForModel(CannotAddBecauseOfSecurityMessage);
+                }
             }
             else
             {
                 if (!IsUpdatable)
+                {
                     errors.CriticalErrorForModel(CannotUpdateBecauseOfSecurityMessage);
+                }
             }
 
-        }
-
-        private static void EntLibValidate(RulesException ex, object obj)
-        {
-            Validator validator = ValidationFactory.CreateValidator(obj.GetType());
-            ValidationResults results = validator.Validate(obj);
-            SaveResults(ex, results);
+            return errors;
         }
 
         private static void SaveResults(RulesException ex, IEnumerable<ValidationResult> validationResults)
         {
             if (validationResults != null)
             {
-                foreach (ValidationResult validationResult in validationResults)
+                foreach (var validationResult in validationResults)
                 {
                     if (validationResult.NestedValidationResults != null)
                     {
                         SaveResults(ex, validationResult.NestedValidationResults);
                     }
-                    ex.Error(validationResult.Key, String.Empty, validationResult.Message);
+
+                    ex.Error(validationResult.Key, string.Empty, validationResult.Message);
                 }
             }
         }
-
-
-        #endregion
-
-        #endregion
-
     }
 }

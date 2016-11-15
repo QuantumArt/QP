@@ -1,4 +1,4 @@
-﻿Backend.Lang.TabStrip = {
+Backend.Lang.TabStrip = {
 	tabNotSpecified: "You do not specify tab!",
 	tabIdGenerationErrorMessage: "An error occurred while generating tab id!",
 	closeAllTabs: "Close All Tabs",

@@ -88,20 +88,11 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Download record.
+        ///   Looks up a localized string similar to Download records.
         /// </summary>
-        public static string DownloadRecord {
+        public static string DownloadRecords {
             get {
-                return ResourceManager.GetString("DownloadRecord", resourceCulture);
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized string similar to DB fingerprint computing configuration.
-        /// </summary>
-        public static string FpSettings {
-            get {
-                return ResourceManager.GetString("FpSettings", resourceCulture);
+                return ResourceManager.GetString("DownloadRecords", resourceCulture);
             }
         }
         
@@ -169,6 +160,24 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Replay records.
+        /// </summary>
+        public static string ReplayRecords {
+            get {
+                return ResourceManager.GetString("ReplayRecords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Проигрывание записанных действий.
+        /// </summary>
+        public static string ReplayRecordsLabel {
+            get {
+                return ResourceManager.GetString("ReplayRecordsLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Action is not allowed because of single editor mode.
         /// </summary>
         public static string SingeUserModeMessage {
@@ -180,9 +189,9 @@ namespace Quantumart.QP8.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Turn on users synchronization with Active Directory.
         /// </summary>
-        public static string UseADSyncService {
+        public static string UseAdSyncService {
             get {
-                return ResourceManager.GetString("UseADSyncService", resourceCulture);
+                return ResourceManager.GetString("UseAdSyncService", resourceCulture);
             }
         }
         

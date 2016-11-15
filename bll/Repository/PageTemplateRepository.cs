@@ -10,8 +10,7 @@ using Quantumart.QP8.Utils;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 using System;
-
-
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -22,7 +21,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 IEnumerable<DataRow> rows = Common.GetPageTemplatesBySiteId(scope.DbConnection, siteId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                return MappersRepository.PageTemplateRowMapper.GetBizList(rows.ToList());
+                return MapperFacade.PageTemplateRowMapper.GetBizList(rows.ToList());
             }
         }
 
@@ -48,24 +47,24 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<NetLanguage> GetNetLanguagesList()
         {
             QP8Entities entities = QPContext.EFContext;
-            return MappersRepository.NetLanguageMapper.GetBizList(entities.NetLanguagesSet.ToList());
+            return MapperFacade.NetLanguageMapper.GetBizList(entities.NetLanguagesSet.ToList());
         }
 
         internal static IEnumerable<Locale> GetLocalesList()
         {
             QP8Entities entities = QPContext.EFContext;
-            return MappersRepository.LocaleMapper.GetBizList(entities.LocaleSet.ToList());
+            return MapperFacade.LocaleMapper.GetBizList(entities.LocaleSet.ToList());
         }
 
         internal static IEnumerable<Charset> GetCharsetsList()
         {
             QP8Entities entities = QPContext.EFContext;
-            return MappersRepository.CharsetMapper.GetBizList(entities.CharsetSet.ToList());
+            return MapperFacade.CharsetMapper.GetBizList(entities.CharsetSet.ToList());
         }
 
         internal static PageTemplate GetPageTemplatePropertiesById(int id)
         {
-			return MappersRepository.PageTemplateMappper.GetBizObject(QPContext.EFContext.PageTemplateSet.Include("Site").Include("LastModifiedByUser")
+			return MapperFacade.PageTemplateMappper.GetBizObject(QPContext.EFContext.PageTemplateSet.Include("Site").Include("LastModifiedByUser")
                 .SingleOrDefault(g => g.Id == id)
             );
         }
@@ -83,15 +82,15 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<BllObject> GetFreeTemplateObjects(int pageId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			var templateId = MappersRepository.PageMapper.GetBizObject(entities.PageSet.ToList().SingleOrDefault(x => x.Id == pageId)).TemplateId;
-			return MappersRepository.ObjectMapper.GetBizList(entities.ObjectSet.Include("InheritedObjects")
+			var templateId = MapperFacade.PageMapper.GetBizObject(entities.PageSet.ToList().SingleOrDefault(x => x.Id == pageId)).TemplateId;
+			return MapperFacade.ObjectMapper.GetBizList(entities.ObjectSet.Include("InheritedObjects")
 				.Where(x => x.PageId == null && x.PageTemplateId.Value == templateId && (!x.InheritedObjects.Where(y => y.PageId == pageId).Any()) ).ToList());
 		}
 
 		internal static IEnumerable<ObjectType> GetTypesList()
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ObjectTypeMapper.GetBizList(entities.ObjectTypeSet.ToList());
+			return MapperFacade.ObjectTypeMapper.GetBizList(entities.ObjectTypeSet.ToList());
 		}
 
 
@@ -106,32 +105,32 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetObjectFormatsByObjectId(scope.DbConnection, parentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize, pageOrTemplate);
-				return MappersRepository.ObjectFormatRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.ObjectFormatRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
 		internal static IEnumerable<EntityPermissionLevel> GetPermissionLevels()
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.EntityPermissionLevelMapper.GetBizList(entities.PermissionLevelSet.ToList());
+			return MapperFacade.EntityPermissionLevelMapper.GetBizList(entities.PermissionLevelSet.ToList());
 		}
 
 		internal static EntityPermissionLevel GetPermissionLevelByName(string name)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.EntityPermissionLevelMapper.GetBizObject(entities.PermissionLevelSet.Single(x => x.Name == name));
+			return MapperFacade.EntityPermissionLevelMapper.GetBizObject(entities.PermissionLevelSet.Single(x => x.Name == name));
 		}
 
 		internal static Charset GetCharsetByName(string name)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.CharsetMapper.GetBizObject(entities.CharsetSet.SingleOrDefault(x => x.Subj == name));
+			return MapperFacade.CharsetMapper.GetBizObject(entities.CharsetSet.SingleOrDefault(x => x.Subj == name));
 		}
 
 		internal static Locale GetLocaleByName(string name)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.LocaleMapper.GetBizObject(entities.LocaleSet.SingleOrDefault(x => x.Name == name));
+			return MapperFacade.LocaleMapper.GetBizObject(entities.LocaleSet.SingleOrDefault(x => x.Name == name));
 		}
 
 		internal static void MultipleDeletePage(int[] IDs)
@@ -149,19 +148,19 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static ContentForm GetContentFormByObjectId(int objectId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ContentFormMapper.GetBizObject(entities.ContentFormSet.Include("Content").Include("Page").SingleOrDefault(x => x.ObjectId == objectId));
+			return MapperFacade.ContentFormMapper.GetBizObject(entities.ContentFormSet.Include("Content").Include("Page").SingleOrDefault(x => x.ObjectId == objectId));
 		}
 
 		internal static Container GetContainerByObjectId(int objectId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ContainerMapper.GetBizObject(entities.ContainerSet.Include("Content").SingleOrDefault(x => x.ObjectId == objectId));
+			return MapperFacade.ContainerMapper.GetBizObject(entities.ContainerSet.Include("Content").SingleOrDefault(x => x.ObjectId == objectId));
 		}
 
 		internal static bool PageTemplateNetNameUnique(string netName, int parentId, int templateId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.PageTemplateMappper.GetBizObject(entities.PageTemplateSet.SingleOrDefault(x => x.SiteId == parentId && x.NetTemplateName == netName && x.Id != templateId)) == null;
+			return MapperFacade.PageTemplateMappper.GetBizObject(entities.PageTemplateSet.SingleOrDefault(x => x.SiteId == parentId && x.NetTemplateName == netName && x.Id != templateId)) == null;
 		}
 
 		internal static IEnumerable<ListItem> GetPageSimpleList(int[] selectedEntitiesIDs)
@@ -180,7 +179,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static bool ObjectFormatNetNameUnique(string NetFormatName, int ObjectId, int Id)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ObjectFormatMapper.GetBizObject(entities.ObjectFormatSet.SingleOrDefault(x => x.ObjectId == ObjectId && x.NetFormatName == NetFormatName && x.Id != Id)) == null;
+			return MapperFacade.ObjectFormatMapper.GetBizObject(entities.ObjectFormatSet.SingleOrDefault(x => x.ObjectId == ObjectId && x.NetFormatName == NetFormatName && x.Id != Id)) == null;
 		}
 
 		internal static IEnumerable<StatusType> GetActiveStatusesByObjectId(int objectId)
@@ -188,7 +187,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetActiveStatusesByObjectId(scope.DbConnection, objectId);
-				return MappersRepository.StatusTypeRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.StatusTypeRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
@@ -212,7 +211,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static bool PageFileNameUnique(string fileName, int parentId, int pageId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.PageMapper.GetBizObject(entities.PageSet.SingleOrDefault(x => x.PageTemplate.Id == parentId && x.Filename == fileName && x.Id != pageId)) == null;
+			return MapperFacade.PageMapper.GetBizObject(entities.PageSet.SingleOrDefault(x => x.PageTemplate.Id == parentId && x.Filename == fileName && x.Id != pageId)) == null;
 		}
 
 		internal static NetLanguage GetNetLanguageByName(string name)
@@ -230,7 +229,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<int> GetTemplatePagesId(int templateId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.PageMapper.GetBizList(entities.PageSet.Where(x => x.TemplateId == templateId).ToList()).Select(y => y.Id);
+			return MapperFacade.PageMapper.GetBizList(entities.PageSet.Where(x => x.TemplateId == templateId).ToList()).Select(y => y.Id);
 		}
 
 		internal static IEnumerable<int> GetFormatIdsByTemplateId(int TemplateId)
@@ -263,7 +262,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<PageTemplate> GetSiteTemplates(int siteId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.PageTemplateMappper.GetBizList(entities.PageTemplateSet.Include("Site").Where(x => x.SiteId == siteId).ToList());
+			return MapperFacade.PageTemplateMappper.GetBizList(entities.PageTemplateSet.Include("Site").Where(x => x.SiteId == siteId).ToList());
 		}
 
 		internal static IEnumerable<ObjectFormatSearchResultListItem> GetSearchFormatPage(ListCommand listCommand, int siteId, int? templateId, int? pageId, string filter, out int totalRecords)
@@ -271,7 +270,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetSearchFormatPage(scope.DbConnection, listCommand.SortExpression, siteId, templateId, pageId, filter, out totalRecords, listCommand.StartPage, listCommand.PageSize);
-				var result = MappersRepository.ObjectFormatSearchResultRowMapper.GetBizList(rows.ToList());
+				var result = MapperFacade.ObjectFormatSearchResultRowMapper.GetBizList(rows.ToList());
 				return result;
 			}
 		}
@@ -283,7 +282,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetSearchTemplatePage(scope.DbConnection, listCommand.SortExpression, siteId, filter, out totalRecords, listCommand.StartRecord, listCommand.PageSize);
-				var result = MappersRepository.PageTemplateSearchResultRowMapper.GetBizList(rows.ToList());
+				var result = MapperFacade.PageTemplateSearchResultRowMapper.GetBizList(rows.ToList());
 				return result;
 			}
 		}
@@ -293,7 +292,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetSearchObjectPage(scope.DbConnection, listCommand.SortExpression, siteId, templateId, pageId, filter, out totalRecords, listCommand.StartRecord, listCommand.PageSize);
-				var result = MappersRepository.ObjectSearchResultRowMapper.GetBizList(rows.ToList());
+				var result = MapperFacade.ObjectSearchResultRowMapper.GetBizList(rows.ToList());
 				return result;
 			}
 		}
@@ -303,14 +302,14 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetFormatVersionsByFormatId(scope.DbConnection, formatId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize, pageOrTemplate);
-				return MappersRepository.ObjectFormatVersionRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.ObjectFormatVersionRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
 		internal static ObjectFormatVersion ReadFormatVersion(int id)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ObjectFormatVersionMapper.GetBizObject(entities.ObjectFormatVersionSet.Include("NetLanguage").Include("ObjectFormat")
+			return MapperFacade.ObjectFormatVersionMapper.GetBizObject(entities.ObjectFormatVersionSet.Include("NetLanguage").Include("ObjectFormat")
 				.Include("LastModifiedByUser").SingleOrDefault(x => x.Id == id));
 		}
 

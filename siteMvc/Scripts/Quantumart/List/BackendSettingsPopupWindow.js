@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.BackendSettingsPopupWindow = function (eventArgs, options, callback) {
+Quantumart.QP8.BackendSettingsPopupWindow = function (eventArgs, options, callback) {
     this._eventsArgs = eventArgs;
     this._actionCode = eventArgs.get_actionCode();
     this._settingsActionUrl = eventArgs.settingsActionUrl;

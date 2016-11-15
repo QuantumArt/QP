@@ -1,4 +1,4 @@
-﻿Backend.Lang.EditingArea = {
+Backend.Lang.EditingArea = {
 	documentsContainerElementIdNotSpecified: "Documents container element id not specified!",
 	breadCrumbsContainerElementIdNotSpecified: "Bread crumbs container element id not specified!",
 	actionToolbarContainerElementIdNotSpecified: "Action toolbar container element id not specified!",

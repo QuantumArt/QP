@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Quantumart.QP8.DAL;
 using AutoMapper;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Mappers.EntityPermissions
 {
@@ -12,7 +13,7 @@ namespace Quantumart.QP8.BLL.Mappers.EntityPermissions
 		public override void CreateBizMapper()
 		{
 			Mapper.CreateMap<BackendActionPermissionDAL, EntityPermission>()
-				.ForMember(biz => biz.Parent, opt => opt.MapFrom(data => MappersRepository.BackendActionMapper.GetBizObject(data.Action)))
+				.ForMember(biz => biz.Parent, opt => opt.MapFrom(data => MapperFacade.BackendActionMapper.GetBizObject(data.Action)))
 				.ForMember(biz => biz.ParentEntityId, opt => opt.MapFrom(data => data.ActionId));
 		}
 

@@ -1,14 +1,15 @@
-﻿using Quantumart.QP8.BLL.Extensions;
+﻿using System;
+using System.Linq;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
-using System;
-using System.Linq;
-using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -22,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 Name = entry.Name,
                 Element = entry.Tag,
-                Overrides = entry.OverridesTag, // TODO: проверить
+                Overrides = entry.OverridesTag,
                 Styles = entry.StylesItems.Any() ? entry.StylesItems.ToDictionary(k => k.Name.Replace(' ', '_'), v => v.ItemValue) : null,
                 Attributes = entry.AttributeItems.Any() ? entry.AttributeItems.ToDictionary(k => k.Name, v => v.ItemValue) : null
             };
@@ -45,7 +46,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             if (fieldId != 0)
             {
-                var field = FieldService.ReadForVisualEditor(fieldId);
+                var field = FieldService.Read(fieldId);
                 model.Language = field.VisualEditor.Language;
                 model.DocType = field.VisualEditor.DocType;
                 model.FullPage = field.VisualEditor.FullPage;

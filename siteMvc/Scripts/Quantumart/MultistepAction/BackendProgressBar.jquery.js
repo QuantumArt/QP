@@ -1,4 +1,4 @@
-﻿// based on: http://benogle.com/2009/06/16/simple-css-shiny-progress-bar-technique.html
+// based on: http://benogle.com/2009/06/16/simple-css-shiny-progress-bar-technique.html
 (function ($) {
 
 	function backendProgressBarComponent($we, options) {

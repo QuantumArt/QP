@@ -1,144 +1,101 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Collections;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.DAL;
 using Quantumart.QP8.Utils;
-using System.Data;
 
 namespace Quantumart.QP8.BLL
 {
-	/// <summary>
-	/// Контекст текущего BackendAction
-	/// </summary>
-	public class BackendActionContext
-	{
-		public class Entity
-		{						
-			public int? Id { get; set; }
-			public string StringId { get; set; }			
-		}
+    public class BackendActionContext
+    {
+        public class Entity
+        {
+            public int? Id { get; set; }
 
-		public static BackendActionContext Current
-		{
-			get { return current; }
-			private set { current = value; }
-		}
+            public string StringId { get; set; }
+        }
 
+        public static BackendActionContext Current
+        {
+            get { return _current; }
+            private set { _current = value; }
+        }
 
-		#region Creating Thread Singelton
-		[ThreadStatic]
-		private static BackendActionContext current = null;
+        public string ActionTypeCode { get; private set; }
 
-		public static void SetCurrent(string actionCode, IEnumerable<string> stringEntiryIDs, int? parentEntityId)
-		{
-			if (Current == null)
-				Current = new BackendActionContext(actionCode, stringEntiryIDs, parentEntityId);
-			else
-			{
-				if (!Current.ActionCode.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase))
-					throw new ArgumentException("Attempt to create BackendAction Context with different Action Code.");
-			}			
-		}
+        public string ActionCode { get; }
 
-		public static void ResetCurrent()
-		{
-			Current = null;
-		}
+        public string EntityTypeCode { get; private set; }
 
-		private BackendActionContext(string actionCode, IEnumerable<string> stringEntiryIDs, int? parentEntityId)
-		{
-			IsChanged = false;
-			if (String.IsNullOrWhiteSpace(actionCode))
-				throw new ArgumentException("Action Code is empty", "actionCode");
+        public int FromEntityId { get; set; }
 
-			BackendActionCacheRecord cacheRow = BackendActionRepository.GetActionContextCacheData()
-					.SingleOrDefault(a => a.ActionCode.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase));
-			if (cacheRow == null)
-				throw new ApplicationException("Backend action was not found by code: " + actionCode);
+        public bool IsChanged { get; private set; }
 
-			ActionCode = actionCode;
-			ActionTypeCode = cacheRow.ActionTypeCode;
-			EntityTypeCode = cacheRow.EntityTypeCode;
-			ParentEntityId = parentEntityId;
+        public int? ParentEntityId { get; private set; }
 
-			Entities = stringEntiryIDs
-						.Select(sid => new Entity
-						{
-							StringId = sid,
-							Id = Converter.ToNullableInt32(sid),		
-						})
-						.ToArray();
-		}		
-		#endregion		
+        public Entity[] Entities { get; private set; }
 
-		#region Properties
-		/// <summary>
-		/// Код типа действия
-		/// </summary>
-		public string ActionTypeCode
-		{
-			get;
-			private set;
-		}
+        public void ResetEntityId(int id)
+        {
+            IsChanged = true;
+            Entities = new[]
+            {
+                new Entity
+                {
+                    Id = id,
+                    StringId = id.ToString()
+                }
+            };
+        }
 
-		/// <summary>
-		/// Код действия
-		/// </summary>
-		public string ActionCode
-		{
-			get;
-			private set;
-		}
+        #region Creating Thread Singelton
+        [ThreadStatic]
+        private static BackendActionContext _current;
 
-		/// <summary>
-		/// Код типа сущности
-		/// </summary>
-		public string EntityTypeCode
-		{
-			get;
-			private set;
-		}
-		
-		public Entity[] Entities 
-		{ 
-			get; 
-			private set; 
-		}
+        public static void SetCurrent(string actionCode, IEnumerable<string> stringEntiryIDs, int? parentEntityId)
+        {
+            if (Current == null)
+            {
+                Current = new BackendActionContext(actionCode, stringEntiryIDs, parentEntityId);
+            }
+            else
+            {
+                if (!Current.ActionCode.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    throw new ArgumentException("Attempt to create BackendAction Context with different Action Code.");
+                }
+            }
+        }
 
-		public int FromEntityId
-		{
-			get;
-			set;
-		}
+        public static void ResetCurrent()
+        {
+            Current = null;
+        }
 
-		public void ResetEntityId(int id)
-		{
-			IsChanged = true;
-			Entities = new[] 
-			{
-				new Entity
-				{
-					Id = id,
-					StringId = id.ToString()
-				}
-			};
-		}
+        private BackendActionContext(string actionCode, IEnumerable<string> stringEntiryIDs, int? parentEntityId)
+        {
+            IsChanged = false;
+            if (string.IsNullOrWhiteSpace(actionCode))
+            {
+                throw new ArgumentException(@"Action Code is empty", nameof(actionCode));
+            }
 
-		public bool IsChanged { get; private set; }
+            var cacheRow = BackendActionRepository.GetActionContextCacheData().SingleOrDefault(a => a.ActionCode.Equals(actionCode, StringComparison.InvariantCultureIgnoreCase));
+            if (cacheRow == null)
+            {
+                throw new ApplicationException("Backend action was not found by code: " + actionCode);
+            }
 
-		/// <summary>
-		/// Идентификатор сущности
-		/// </summary>
-		public int? ParentEntityId
-		{
-			get;
-			private set;
-		}
-
-		
-		#endregion		
-	}
+            ActionCode = actionCode;
+            ParentEntityId = parentEntityId;
+            ActionTypeCode = cacheRow.ActionTypeCode;
+            EntityTypeCode = cacheRow.EntityTypeCode;
+            Entities = stringEntiryIDs.Select(sid => new Entity
+            {
+                StringId = sid,
+                Id = Converter.ToNullableInt32(sid)
+            }).ToArray();
+        }
+        #endregion
+    }
 }

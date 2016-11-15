@@ -1,37 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
 using System.Data.Objects;
 using System.Data;
-using Quantumart.QP8.BLL.Repository.Articles;
-
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
 {
     internal class ArticleVersionRepository
     {
-		/// <summary>
-		/// Возвращает список версий статей
-		/// </summary>
-		/// <param name="articleId">ID статьи</param>
-		/// <param name="sortExpression">строка сортировки</param>
-		/// <returns>список версий статей</returns>
+        /// <summary>
+        /// Возвращает список версий статей
+        /// </summary>
+        /// <param name="articleId">ID статьи</param>
+        /// <param name="command"></param>
+        /// <returns>список версий статей</returns>
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
-            string eQuery = String.Format(@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{0}", command.SortExpression);
-            List<ArticleVersion> versionList = MappersRepository.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(eQuery, new ObjectParameter("id", articleId)).Include("CreatedByUser").ToList());
+            string eQuery = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
+            var versionList = MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(eQuery, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
            
-			return versionList;
+            return versionList;
         }
 
 
-		/// <summary>
-		/// Создает версию
-		/// </summary>
-		/// <param name="articleId">идентификатор статьи</param>
+        /// <summary>
+        /// Создает версию
+        /// </summary>
+        /// <param name="articleId">идентификатор статьи</param>
         internal static void Create(int articleId)
         {
             using (new QPConnectionScope())
@@ -41,39 +39,37 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         }
 
 
-		/// <summary>
-		/// Возвращает версию статьи
-		/// </summary>
-		/// <param name="id">ID версии</param>
+        /// <summary>
+        /// Возвращает версию статьи
+        /// </summary>
+        /// <param name="id">ID версии</param>
         /// <param name="articleId">ID статьи (параметр необязательный, необходимо передавать только, если версия - текущая</param>
-		/// <returns>информация о версии статьи</returns>
+        /// <returns>информация о версии статьи</returns>
         internal static ArticleVersion GetById(int id, int articleId = 0)
         {
-            ArticleVersion articleVersion = null;
+            ArticleVersion articleVersion;
 
             if (id == ArticleVersion.CurrentVersionId)
             {
-				if (articleId == 0)
-				{
-					throw(new Exception("Article id is not specified!"));
-				}
+                if (articleId == 0)
+                {
+                    throw(new Exception("Article id is not specified!"));
+                }
 
-				Article article = ArticleRepository.GetById(articleId);
+                var article = ArticleRepository.GetById(articleId);
                 articleVersion = new ArticleVersion { ArticleId = articleId, Id = id, Modified = article.Modified, LastModifiedBy = article.LastModifiedBy, LastModifiedByUser = article.LastModifiedByUser, Article = article };
             }
             else
             {
-                ArticleVersionDAL articleVersionDal = DefaultRepository.GetById<ArticleVersionDAL>(id);
-				if (articleVersionDal != null)
-				{
-					articleVersionDal.LastModifiedByUserReference.Load();
+                var articleVersionDal = DefaultRepository.GetById<ArticleVersionDAL>(id);
+                if (articleVersionDal == null) return null;
+                articleVersionDal.LastModifiedByUserReference.Load();
 
-					articleVersion = MappersRepository.ArticleVersionMapper.GetBizObject(articleVersionDal);
-					if (articleVersion != null)
-					{
-						articleVersion.Article = ArticleRepository.GetById(articleVersion.ArticleId);
-					}
-				}
+                articleVersion = MapperFacade.ArticleVersionMapper.GetBizObject(articleVersionDal);
+                if (articleVersion != null)
+                {
+                    articleVersion.Article = ArticleRepository.GetById(articleVersion.ArticleId);
+                }
             }
 
             return articleVersion;
@@ -95,22 +91,22 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         }
 
 
-		/// <summary>
-		/// Удаляет версию статьи
-		/// </summary>
-		/// <param name="id">ID версии</param>
+        /// <summary>
+        /// Удаляет версию статьи
+        /// </summary>
+        /// <param name="id">ID версии</param>
         internal static void Delete(int id)
         {
             DefaultRepository.Delete<ArticleVersionDAL>(id);
         }
 
-		/// <summary>
-		/// Удаляет версии статьи
-		/// </summary>
-		/// <param name="IDs">массив ID версий</param>
-        internal static void MultipleDelete(int[] IDs)
+        /// <summary>
+        /// Удаляет версии статьи
+        /// </summary>
+        /// <param name="ids">массив ID версий</param>
+        internal static void MultipleDelete(int[] ids)
         {
-            DefaultRepository.Delete<ArticleVersionDAL>(IDs);
+            DefaultRepository.Delete<ArticleVersionDAL>(ids);
         }
 
 
@@ -187,7 +183,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <summary>
         /// Получение связанных статей (для поля типа M2O)
         /// </summary>
-        /// <param name="id">ID версии</param>
+        /// <param name="versionId"></param>
         /// <param name="fieldId">ID поля</param>
         /// <returns>строка связанных ID через запятую</returns>
         internal static string GetRelatedItems(int versionId, int fieldId)

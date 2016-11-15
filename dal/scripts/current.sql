@@ -570,6 +570,43 @@ exec qp_update_translations 'Unselect Child Articles', 'Отменить выб�
 
 GO
 
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+  CREATE TABLE dbo.XML_DB_UPDATE (
+    Id int IDENTITY,
+    Applied datetime NOT NULL,
+    Hash nvarchar(100) NOT NULL,
+    FileName nvarchar(300) NULL,
+    USER_ID int NOT NULL,
+    Body nvarchar(max) NULL,
+    Version nvarchar(10) NULL,
+    CONSTRAINT PK_XML_DB_UPDATE PRIMARY KEY CLUSTERED (Id)
+  )
+  ON [PRIMARY]
+  TEXTIMAGE_ON [PRIMARY]
+END
+
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE id = object_id(N'[dbo].[XML_DB_UPDATE_ACTIONS]') AND OBJECTPROPERTY(id, N'IsUserTable') = 1)
+BEGIN
+  CREATE TABLE dbo.XML_DB_UPDATE_ACTIONS (
+    Id int IDENTITY,
+    UpdateId int NULL,
+    Ids nvarchar(max) NOT NULL,
+    ParentId int NOT NULL,
+    Hash nvarchar(100) NOT NULL,
+    Applied datetime NOT NULL,
+    UserId int NOT NULL,
+    SourceXml nvarchar(max) NOT NULL,
+    ResultXml nvarchar(max) NOT NULL,
+    CONSTRAINT PK_XML_DB_UPDATE_ACTIONS_Id PRIMARY KEY CLUSTERED (Id),
+    CONSTRAINT FK_XML_DB_UPDATE_ACTIONS_UpdateId FOREIGN KEY (UpdateId) REFERENCES dbo.XML_DB_UPDATE (Id)
+  )
+  ON [PRIMARY]
+  TEXTIMAGE_ON [PRIMARY]
+END
+
+GO
+
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'MODIFIED' and TABLE_NAME = 'EXTERNAL_NOTIFICATION_QUEUE')
 	ALTER TABLE dbo.EXTERNAL_NOTIFICATION_QUEUE ADD
@@ -585,6 +622,361 @@ if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'SITE
     alter table [EXTERNAL_NOTIFICATION_QUEUE] 
     add [SITE_ID] numeric NULL
 GO
+
+GO
+
+ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+INSTEAD OF DELETE
+AS
+BEGIN
+	
+	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
+	DELETE USER_DEFAULT_FILTER FROM USER_DEFAULT_FILTER f inner join deleted d on f.user_id = d.user_id
+		 
+	UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id  
+	UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id  
+	UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id  
+	UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id  
+	UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id  
+	UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id  
+	UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id  
+	UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id 
+	
+	UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id  
+
+	UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE CONTENT_ITEM_SCHEDULE SET last_modified_by = 1 FROM CONTENT_ITEM_SCHEDULE c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE CONTENT_ITEM_VERSION SET created_by = 1 FROM CONTENT_ITEM_VERSION c inner join deleted d on c.created_by = d.user_id
+	UPDATE CONTENT_ITEM_VERSION SET last_modified_by = 1 FROM CONTENT_ITEM_VERSION c inner join deleted d on c.last_modified_by = d.user_id
+	
+	UPDATE CONTENT_ATTRIBUTE SET last_modified_by = 1 FROM CONTENT_ATTRIBUTE c inner join deleted d on c.last_modified_by = d.user_id
+
+	UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+	UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE OBJECT_FORMAT_VERSION SET last_modified_by = 1 FROM OBJECT_FORMAT_VERSION c inner join deleted d on c.last_modified_by = d.user_id
+
+	UPDATE FOLDER SET last_modified_by = 1 FROM FOLDER c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE FOLDER_ACCESS SET last_modified_by = 1 FROM FOLDER_ACCESS c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE CONTENT_FOLDER SET last_modified_by = 1 FROM CONTENT_FOLDER c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE CONTENT_FOLDER_ACCESS SET last_modified_by = 1 FROM CONTENT_FOLDER_ACCESS c inner join deleted d on c.last_modified_by = d.user_id
+
+	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
+	
+	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
+	
+	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE_ACCESS c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM CONTENT_ACCESS c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM CONTENT_ITEM_ACCESS c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE WORKFLOW_ACCESS SET last_modified_by = 1 FROM WORKFLOW_ACCESS c inner join deleted d on c.last_modified_by = d.user_id
+
+	UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
+	
+	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
+
+	UPDATE CUSTOM_ACTION SET LAST_MODIFIED_BY = 1 FROM CUSTOM_ACTION c INNER JOIN deleted d on c.LAST_MODIFIED_BY = d.[USER_ID]
+	
+	UPDATE NOTIFICATIONS SET FROM_BACKENDUSER_ID = 1 FROM NOTIFICATIONS c inner join deleted d on c.FROM_BACKENDUSER_ID = d.user_id
+	
+	UPDATE ENTITY_TYPE_ACCESS SET last_modified_by = 1 FROM ENTITY_TYPE_ACCESS c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE ACTION_ACCESS SET last_modified_by = 1 FROM ACTION_ACCESS c inner join deleted d on c.last_modified_by = d.user_id
+
+	UPDATE DB SET last_modified_by = 1 FROM DB c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE DB SET single_user_id = NULL FROM DB c inner join deleted d on c.single_user_id = d.user_id
+	UPDATE VE_PLUGIN SET last_modified_by = 1 FROM VE_PLUGIN c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE VE_STYLE SET last_modified_by = 1 FROM VE_STYLE c inner join deleted d on c.last_modified_by = d.user_id
+	UPDATE VE_COMMAND SET last_modified_by = 1 FROM VE_COMMAND c inner join deleted d on c.last_modified_by = d.user_id
+	
+	delete users from users c inner join deleted d on c.user_id = d.user_id
+END
+
+GO
+
+ALTER TRIGGER [dbo].[td_content_to_content] ON [dbo].[content_to_content] AFTER DELETE
+AS 
+BEGIN
+
+	declare @link_id numeric, @i numeric, @count numeric
+	
+	declare @cc table (
+		id numeric identity(1,1) primary key,
+		link_id numeric
+	)
+	
+	insert into @cc (link_id) select d.link_id from deleted d 
+
+	set @i = 1
+	select @count = count(id) from @cc
+
+	while @i < @count + 1
+	begin
+		select @link_id = link_id from @cc where id = @i
+		exec qp_drop_link_view @link_id
+		set @i = @i + 1
+	end
+
+
+END
+
+GO
+
+if not exists (select * from APP_SETTINGS where [key] = 'CONTENT_MODIFICATION_UPDATE_INTERVAL')
+	insert into APP_SETTINGS
+	values ('CONTENT_MODIFICATION_UPDATE_INTERVAL', '30') 
+GO
+ALTER PROCEDURE [dbo].[qp_replicate_items] 
+@ids nvarchar(max),
+@attr_ids nvarchar(max) = '',
+@modification_update_interval numeric = -1
+-- <0   throttling with default value (setting or constant)
+-- 0    no throttling
+-- >0   throttling with specified value 
+
+AS
+BEGIN
+    set nocount on
+    declare @setting_name nvarchar(255) = 'CONTENT_MODIFICATION_UPDATE_INTERVAL'
+    declare @setting_value nvarchar(255)
+    declare @default_modification_update_interval numeric = 30
+    select @setting_value = VALUE from APP_SETTINGS where [KEY] = @setting_name
+    set @default_modification_update_interval = case when @setting_value is not null and ISNUMERIC(@setting_value) = 1 then convert(numeric, @setting_value) else @default_modification_update_interval end
+    set @modification_update_interval = case when @modification_update_interval < 0 then @default_modification_update_interval else @modification_update_interval end
+    
+    declare @sql nvarchar(max), @async_ids_list nvarchar(max), @sync_ids_list nvarchar(max)
+    declare @table_name nvarchar(50), @async_table_name nvarchar(50)
+
+    declare @content_id numeric, @published_id numeric
+    declare @live_modified datetime, @stage_modified datetime
+    declare @live_expired bit, @stage_expired bit
+
+    declare @articles table
+    (
+        id numeric primary key,
+        splitted bit,
+        cancel_split bit,
+        delayed bit,
+        status_type_id numeric,
+        content_id numeric
+    )
+    
+    insert into @articles(id) SELECT convert(numeric, nstr) from dbo.splitNew(@ids, ',')
+    
+    update base set base.content_id = ci.content_id, base.splitted = ci.SPLITTED, base.cancel_split = ci.cancel_split, base.delayed = ci.schedule_new_version_publication, base.status_type_id = ci.STATUS_TYPE_ID from @articles base inner join content_item ci on base.id = ci.CONTENT_ITEM_ID 
+
+    declare @contents table
+    (
+        id numeric primary key,
+        none_id numeric
+    )
+    
+    insert into @contents
+    select distinct a.content_id, st.STATUS_TYPE_ID from @articles a
+    inner join content c on a.CONTENT_ID = c.CONTENT_ID and c.virtual_type = 0
+    inner join STATUS_TYPE st on st.STATUS_TYPE_NAME = 'None' and st.SITE_ID = c.SITE_ID
+
+
+    declare @articleIds [Ids], @syncIds [Ids], @syncIds2 [Ids], @asyncIds [Ids], @asyncIds2 [Ids]
+    declare @noneId numeric
+
+    insert into @articleIds select id from @articles
+    
+    while exists (select id from @contents)
+    begin
+        select @content_id = id, @noneId = none_id from @contents
+
+        if @modification_update_interval <= 0
+        begin
+            set @live_expired = 1
+            set @stage_expired = 1
+        end
+        else
+        begin
+            select @live_modified = live_modified, @stage_modified = stage_modified from CONTENT_MODIFICATION with(nolock) where CONTENT_ID = @content_id
+            set @live_expired = case when datediff(s, @live_modified, GETDATE()) >= @modification_update_interval then 1 else 0 end
+            set @stage_expired = case when datediff(s, @stage_modified, GETDATE()) >= @modification_update_interval then 1 else 0 end
+        end
+
+        insert into @syncIds select id from @articles where content_id = @content_id and splitted = 0
+        insert into @asyncIds select id from @articles where content_id = @content_id and splitted = 1
+        insert into @syncIds2 select id from @articles where content_id = @content_id and splitted = 0 and delayed = 1
+
+        set @sync_ids_list = null
+        select @sync_ids_list = coalesce(@sync_ids_list + ',', '') + convert(nvarchar, id) from @syncIds
+        set @async_ids_list = null
+        select @async_ids_list = coalesce(@async_ids_list + ',', '') + convert(nvarchar, id) from @asyncIds
+        
+        set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
+        set @async_table_name = @table_name + '_async'
+        
+        if @sync_ids_list <> ''
+        begin
+            exec qp_get_upsert_items_sql_new @table_name, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql, N'@ids [Ids] READONLY, @ids2 [Ids] READONLY, @noneId numeric', @ids = @syncIds, @ids2 = @syncIds2, @noneId = @noneId
+            
+            exec qp_get_delete_items_sql @content_id, @sync_ids_list, 1, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql
+            
+            exec qp_update_items_with_content_data_pivot @content_id, @sync_ids_list, 0, @attr_ids
+        end
+
+        if @async_ids_list <> ''
+        begin
+            exec qp_get_upsert_items_sql_new @async_table_name, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql, N'@ids [Ids] READONLY, @ids2 [Ids] READONLY, @noneId numeric', @ids = @asyncIds, @ids2 = @asyncIds2, @noneId = @noneId
+            
+            exec qp_get_update_items_flags_sql @table_name, @async_ids_list, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql
+            
+            exec qp_update_items_with_content_data_pivot @content_id, @async_ids_list, 1, @attr_ids
+        end
+        
+        select @published_id = status_type_id from STATUS_TYPE where status_type_name = 'Published' and SITE_ID in (select SITE_ID from content where CONTENT_ID = @content_id)
+        if exists (select * from @articles where content_id = @content_id and (cancel_split = 1 or (splitted = 0 and status_type_id = @published_id)))
+        begin
+            if (@live_expired = 1 or @stage_expired = 1)
+                update content_modification with(rowlock) set live_modified = GETDATE(), stage_modified = GETDATE() where content_id = @content_id
+        end
+        else
+        begin
+            if (@stage_expired = 1) 
+                update content_modification with(rowlock) set stage_modified = GETDATE() where content_id = @content_id 
+        end
+
+        
+        delete from @contents where id = @content_id
+
+        delete from @syncIds
+        delete from @syncIds2
+        delete from @asyncIds
+    end
+    
+    update content_item set not_for_replication = 0, CANCEL_SPLIT = 0 where content_item_id in (select id from @articleIds)
+END
+GO
+
+ALTER PROCEDURE [dbo].[qp_replicate] 
+@content_item_id numeric
+AS
+BEGIN
+	declare @list nvarchar(30)
+	set @list = convert(nvarchar, @content_item_id)
+	exec qp_replicate_items @list, '', 0
+END
+GO
+exec qp_drop_existing 'qp_update_links', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_update_links]
+    @ids Ids READONLY, 
+    @id numeric,
+    @link_id numeric
+
+AS
+BEGIN
+
+    declare @ids2 Ids
+    declare @ids3 Ids
+
+    insert into @ids2 
+    select * from @ids
+
+    while exists(select * from @ids2)
+    begin
+        delete from @ids3
+        delete top(100) from @ids2 output DELETED.* into @ids3
+
+        insert into item_to_item (l_item_id, r_item_id, link_id) 
+        select id, @id, @link_id
+        from @ids3 i where not exists(
+            select * from item_link il where il.item_id = i.id and link_id = @link_id and il.linked_item_id = @id
+        )
+    end
+
+END
+GO
+exec qp_drop_existing 'qp_update_values', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_update_values] 
+    @values [Values] READONLY
+AS
+BEGIN
+
+    declare @values2 [Values]
+    declare @values3 [Values]
+
+    insert into @values2 
+    select * from @values
+
+    while exists(select * from @values2)
+    begin
+        delete from @values3
+
+        delete top(100) from @values2 output DELETED.* into @values3
+        
+        update content_data set
+        data = case when ca.attribute_type_id in (9,10) then null else v.Value end,
+        blob_data = case when ca.attribute_type_id in (9,10) then v.Value else null end
+        from content_data cd 
+        inner join @values3 v on v.ArticleId = cd.content_item_id and v.FieldId = cd.attribute_id
+        inner join content_attribute ca on cd.attribute_id = ca.attribute_id
+
+    end
+
+END
+GO
+exec qp_drop_existing 'qp_fast_delete', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_fast_delete] 
+    @ids Ids READONLY
+AS
+BEGIN
+    select 1 as A into #disable_td_delete_item_o2m_nullify
+
+    declare @ids2 table (id numeric primary key)
+    declare @ids3 table (id numeric primary key)
+
+    insert into @ids2 
+    select id from @ids
+
+    while exists(select * from @ids2)
+    begin
+        delete from @ids3
+        delete top(100) from @ids2 output DELETED.* into @ids3
+        delete content_item from content_item ci inner join @ids3 i on ci.content_item_id = i.id
+    end
+
+    drop table  #disable_td_delete_item_o2m_nullify
+END
+GO
+
+GO
+
+IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'CONTENT_ITEM' AND COLUMN_NAME = 'UNIQUE_ID')
+BEGIN
+	ALTER TABLE dbo.CONTENT_ITEM ADD UNIQUE_ID uniqueidentifier NOT NULL CONSTRAINT DF_CONTENT_ITEM_UNIQUE_ID DEFAULT newid()
+END
+
+if not exists(select * from sys.indexes where name = 'IX_UNIQUE_ID' and [object_id] = object_id('CONTENT_ITEM'))
+begin
+	CREATE UNIQUE NONCLUSTERED INDEX [IX_UNIQUE_ID] ON dbo.CONTENT_ITEM ( UNIQUE_ID )
+end
+
+
+
+
 
 GO
 

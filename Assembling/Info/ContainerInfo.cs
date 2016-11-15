@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Globalization;
 using System.Text;
+using Quantumart.QP8.Assembling;
 
 namespace Assembling.Info
 {
@@ -15,7 +16,7 @@ namespace Assembling.Info
                 Statuses = GetStatuses();
                 Workflow = GetWorkflow();
                 MaxStatusId = GetMaxStatus();
-                
+
             }
         }
 
@@ -96,7 +97,7 @@ namespace Assembling.Info
                     return value;
             }
         }
-        
+
         private string MainFilter
         {
             get
@@ -148,7 +149,7 @@ namespace Assembling.Info
             {
                 if (IsRandom)
                 {
-                    
+
                     return IsNewAssembling ? "\"\"" : "\"NewId()\"";
                 }
                 else

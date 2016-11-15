@@ -19,26 +19,64 @@
       @Html.CheckBoxFieldFor(s => s.OverrideRecordsFile)
     }
 
+    @Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome)
+    @Html.CheckBoxFieldFor(s => s.Data.UseAdSyncService)
+
     <dl class="row">
       <dt class="label"></dt>
       <dd class="field">
-        <span class="downloadRecords linkButton actionLink">
+        <span class="downloadRecords linkButton actionLink actionlink">
           <a href="javascript: void(0)" class="@(ViewBag.IsRecordAvailableForDownload ? string.Empty : "disabled")">
             <span class="icon download"><img src="/Backend/Content/Common/0.gif" alt="download record"></span>
-            <span class="text">@DBStrings.DownloadRecord</span>
+            <span class="text">@DBStrings.DownloadRecords</span>
           </a>
         </span>
       </dd>
     </dl>
 
-    @Html.HtmlFieldFor(s => s.Data.FpSettings,
-      @<div class="qp-expandedContent">
-        @Html.QpTextAreaFor(s => s.Data.FpSettings, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
-      </div>
-    )
+    <dl class="row">
+      <dt class="label">@DBStrings.ReplayRecordsLabel</dt>
+      <dd class="field">
+        <textarea class="recordedRecordsXmlArea textbox hta-XmlTextArea highlightedTextarea dropzone"></textarea>
+      </dd>
+    </dl>
 
-    @Html.CheckBoxFieldFor(s => s.Data.UseADSyncService)
-	  @Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome)
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <input class="disableFieldIdentity checkbox simple-checkbox" type="checkbox" value="true">
+        <label>Disable field identity</label>
+      </dd>
+    </dl>
+
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <input class="disableContentIdentity checkbox simple-checkbox" type="checkbox" value="true">
+        <label>Disable content identity</label>
+      </dd>
+    </dl>
+
+    <dl class="row">
+        <dt class="label"></dt>
+        <dd class="field">
+            <input class="useGuidSubstitution checkbox simple-checkbox" type="checkbox" value="true">
+            <label>Use guid substitution</label>
+        </dd>
+    </dl>
+
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <span class="replayRecords linkButton actionLink">
+          <a href="javascript: void(0)">
+            <span class="icon restore"><img src="/Backend/Content/Common/0.gif" alt="replay record"></span>
+            <span class="text">@DBStrings.ReplayRecords</span>
+          </a>
+        </span>
+      </dd>
+    </dl>
+
 	  @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
   }
 
@@ -71,18 +109,32 @@
 
 @Html.PrepareInitScript(Model)
 <script>
+  var $editingForm = $("#@Model.UniqueId("editingForm")");
   @(Model.ContextObjectName).set_initializedCallback(function() {
-    $(@Model.UniqueId("editingForm")).on('click', '.downloadRecords', function(e) {
+    $editingForm.on('click', '.downloadRecords', function() {
       $c.downloadFile("@Url.Action("GetRecordedUserActions")");
     });
 
-    $(@Model.UniqueId("editingForm")).on('click', '.downloadRecords .disabled', function(e) {
+    $editingForm.on('click', '.downloadRecords .disabled', function(e) {
       e.preventDefault();
+    });
+
+    $editingForm.on('click', '.replayRecords', function() {
+      $q.showLoader();
+      $q.postAjax("@Url.Action("ReplayRecordedUserActions")", {
+        xmlString: $editingForm.find('.recordedRecordsXmlArea').data('codeMirror').getValue(),
+        disableFieldIdentity: $editingForm.find('.disableFieldIdentity').prop('checked'),
+        disableContentIdentity: $editingForm.find('.disableContentIdentity').prop('checked'),
+        useGuidSubstitution: $editingForm.find('.useGuidSubstitution').prop('checked')
+      }, function(data, response) {
+        $q.hideLoader();
+        $q.alertSuccess(response.message);
+      });
     });
   });
 
   @(Model.ContextObjectName).set_terminatingCallback(function() {
-    $(@Model.UniqueId("editingForm")).off('click');
+    $editingForm.off('click');
   });
 </script>
 @Html.RunInitScript(Model)

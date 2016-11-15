@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.FieldPropertiesMediator = function (tabId)
+Quantumart.QP8.FieldPropertiesMediator = function (tabId)
 {
 	var $root = jQuery("#" + tabId + "_editingForm");
 	$root.find("input[name='Data.IsInteger']").on("click", onIntegerClick);
@@ -94,9 +94,9 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
         $classifierSelectElement = jQuery("#" + classifierSelectElementId),
         $aggregatedElement = jQuery("#" + aggregatedElementId),
 		classifierFieldsUrl = CONTROLLER_URL_CONTENT + '_ClassifierFields';
-    
-    function onRelatedToChanged() {        
-	    var selectedContentId = jQuery(contentPicker.getStateFieldElement()).val();	    
+
+    function onRelatedToChanged() {
+	    var selectedContentId = jQuery(contentPicker.getStateFieldElement()).val();
 		if (!$q.isNullOrEmpty(selectedContentId)) {
 			$q.getJsonFromUrl(
                 "GET",
@@ -123,7 +123,7 @@ Quantumart.QP8.RelateToAndClassifierFieldMediator = function (relateToSelectElem
 				}
 				else {
 					alert(data.message);
-				}								
+				}
 			})
 			.fail(function (jqXHR, textStatus, errorThrown) {
 				$q.processGenericAjaxError(jqXHR);
@@ -159,7 +159,7 @@ Quantumart.QP8.RelateToAndO2MDefaultMediator = function (relateToSelectElementId
 	    multipleItemPickerComponent.removeAllListItems();
 	    multipleItemPickerComponent.set_parentEntityId(selectedContentId);
         singleItemPickerComponent.set_parentEntityId(selectedContentId);
-        singleItemPickerComponent.deselectAllListItems();        
+        singleItemPickerComponent.deselectAllListItems();
 	}
 
 

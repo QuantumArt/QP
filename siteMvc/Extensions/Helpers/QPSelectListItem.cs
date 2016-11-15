@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -10,7 +10,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public string[] DependentItemIDs { get; set; }
 
-        public static string GetPanelHash(string id, IEnumerable<QPSelectListItem> list)
+        public static string GetPanelHash(string id, IList<QPSelectListItem> list)
         {
             var dependentList = list
                 .Where(n => n.HasDependentItems && n.DependentItemIDs != null && n.DependentItemIDs.Length > 0)
@@ -25,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static string GetDependentPanelId(string id, string value)
         {
-            return string.Format("{0}_{1}_Panel", id, value);
+            return $"{id}_{value}_Panel";
         }
 
         private static string GetDependentPanelHtmlId(string id, string value)
@@ -41,13 +41,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static string GetHashItem(string id, string value)
         {
-            return string.Format(@"""{0}"" : ""{1}""", id, value);
+            return $@"""{id}"" : ""{value}""";
         }
 
-        public string TextWithId
-        {
-            get { return string.Format("(#{0}) - {1}", Value, Text); }
-        }
+        public string TextWithId => $"(#{Value}) - {Text}";
 
         public QPSelectListItem CopyWithIdInText()
         {

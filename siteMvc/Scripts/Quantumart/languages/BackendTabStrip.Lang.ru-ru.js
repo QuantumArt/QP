@@ -1,4 +1,4 @@
-﻿Backend.Lang.TabStrip = {
+Backend.Lang.TabStrip = {
 	tabNotSpecified: "Вы не задали таб!",
 	tabIdGenerationErrorMessage: "Произошла ошибка при генерации идентификатора таба!",
 	closeAllTabs: "Закрыть все вкладки",

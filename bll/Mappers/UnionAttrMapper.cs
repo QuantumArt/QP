@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Quantumart.QP8.DAL;
 using AutoMapper;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers
@@ -15,8 +16,8 @@ namespace Quantumart.QP8.BLL.Mappers
 			Mapper.CreateMap<UnionAttrDAL, UnionAttr>()
 				.ForMember(biz => biz.BaseFieldId, opt => opt.MapFrom(r => Converter.ToInt32(r.UnionFieldId)))
 				.ForMember(biz => biz.VirtualFieldId, opt => opt.MapFrom(r => Converter.ToInt32(r.VirtualFieldId)))
-				.ForMember(biz => biz.VirtualField, opt => opt.MapFrom(r => MappersRepository.FieldMapper.GetBizObject(r.VirtualField)))
-				.ForMember(biz => biz.BaseField, opt => opt.MapFrom(r => MappersRepository.FieldMapper.GetBizObject(r.UnionField)));
+				.ForMember(biz => biz.VirtualField, opt => opt.MapFrom(r => MapperFacade.FieldMapper.GetBizObject(r.VirtualField)))
+				.ForMember(biz => biz.BaseField, opt => opt.MapFrom(r => MapperFacade.FieldMapper.GetBizObject(r.UnionField)));
 		}
 
 		public override void CreateDalMapper()

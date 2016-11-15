@@ -1,5 +1,11 @@
-﻿using Quantumart.QP8.Assembling;
-using Quantumart.QP8.BLL.Helpers;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Web;
+using Assembling;
+using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -7,13 +13,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils.FullTextSearch;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Data;
-using Assembling;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -84,8 +83,6 @@ namespace Quantumart.QP8.BLL.Services
 
         MessageResult AssemblePageFromPageObjectFormat(int parentId);
 
-        //IEnumerable<BackendActionType> GetActionTypeList();
-
         IEnumerable<PageTemplate> GetAllSiteTemplates(int siteId);
 
         IEnumerable<BllObject> GetAllTemplateObjects(int templateId);
@@ -112,7 +109,7 @@ namespace Quantumart.QP8.BLL.Services
         public ListResult<PageTemplateListItem> GetPageTemplatesBySiteId(ListCommand cmd, int siteId)
         {
             int totalRecords;
-            IEnumerable<PageTemplateListItem> list = PageTemplateRepository.ListTemplates(cmd, siteId, out totalRecords);
+            var list = PageTemplateRepository.ListTemplates(cmd, siteId, out totalRecords);
             return new ListResult<PageTemplateListItem>
             {
                 Data = list.ToList(),
@@ -134,7 +131,6 @@ namespace Quantumart.QP8.BLL.Services
             return PageTemplate.Create(parentId, site);
         }
 
-
         public PageTemplate NewPageTemplatePropertiesForUpdate(int parentId)
         {
             return NewPageTemplateProperties(parentId);
@@ -149,55 +145,77 @@ namespace Quantumart.QP8.BLL.Services
 
         private void ManagePageTemplateFolders(PageTemplate template, FolderManagingType type)
         {
-            string stageDirectory = template.Site.StageDirectory + "\\" + template.TemplateFolder;
-            string liveDirectory = template.Site.LiveDirectory + "\\" + template.TemplateFolder;
+            var stageDirectory = template.Site.StageDirectory + "\\" + template.TemplateFolder;
+            var liveDirectory = template.Site.LiveDirectory + "\\" + template.TemplateFolder;
 
-            if (type == FolderManagingType.CreateFolder)
+            switch (type)
             {
-                if (!Directory.Exists(stageDirectory))
-                    Directory.CreateDirectory(stageDirectory);
-                if (!Directory.Exists(liveDirectory))
-                    Directory.CreateDirectory(liveDirectory);
-            }
-
-            else if (type == FolderManagingType.DeleteFolder)
-            {
-                if (!string.IsNullOrWhiteSpace(template.TemplateFolder))
-                {
-                    if (Directory.Exists(stageDirectory))
-                        Directory.Delete(stageDirectory, true);
-                    if (Directory.Exists(liveDirectory))
-                        Directory.Delete(liveDirectory, true);
-                }
-            }
-
-            else if (type == FolderManagingType.ChangeFolder)
-            {
-                var oldTemplate = ReadPageTemplateProperties(template.Id, false);
-                if (oldTemplate == null)
-                    throw new ApplicationException(String.Format(TemplateStrings.TemplateNotFound, template.Id));
-                string oldFolder = oldTemplate.TemplateFolder;
-                if (!string.IsNullOrWhiteSpace(oldTemplate.TemplateFolder))
-                {
-                    if (string.IsNullOrWhiteSpace(template.TemplateFolder))
+                case FolderManagingType.CreateFolder:
+                    if (!Directory.Exists(stageDirectory))
                     {
-                        ManagePageTemplateFolders(oldTemplate, FolderManagingType.DeleteFolder);
-                        return;
+                        Directory.CreateDirectory(stageDirectory);
                     }
-                    if (template.TemplateFolder == oldFolder)
-                        return;
-                    string oldStageDirectory = oldTemplate.Site.StageDirectory + "\\" + oldFolder;
-                    string oldLiveDirectory = oldTemplate.Site.LiveDirectory + "\\" + oldFolder;
-                    if (Directory.Exists(oldStageDirectory))
-                        Directory.Move(oldStageDirectory, stageDirectory);
-                    if (Directory.Exists(oldLiveDirectory))
-                        Directory.Move(oldLiveDirectory, liveDirectory);
-                }
 
-                else if (!string.IsNullOrWhiteSpace(template.TemplateFolder))
-                {
-                    ManagePageTemplateFolders(template, FolderManagingType.CreateFolder);
-                }
+                    if (!Directory.Exists(liveDirectory))
+                    {
+                        Directory.CreateDirectory(liveDirectory);
+                    }
+
+                    break;
+                case FolderManagingType.DeleteFolder:
+                    if (!string.IsNullOrWhiteSpace(template.TemplateFolder))
+                    {
+                        if (Directory.Exists(stageDirectory))
+                        {
+                            Directory.Delete(stageDirectory, true);
+                        }
+
+                        if (Directory.Exists(liveDirectory))
+                        {
+                            Directory.Delete(liveDirectory, true);
+                        }
+                    }
+
+                    break;
+                case FolderManagingType.ChangeFolder:
+                    var oldTemplate = ReadPageTemplateProperties(template.Id, false);
+                    if (oldTemplate == null)
+                    {
+                        throw new ApplicationException(string.Format(TemplateStrings.TemplateNotFound, template.Id));
+                    }
+
+                    var oldFolder = oldTemplate.TemplateFolder;
+                    if (!string.IsNullOrWhiteSpace(oldTemplate.TemplateFolder))
+                    {
+                        if (string.IsNullOrWhiteSpace(template.TemplateFolder))
+                        {
+                            ManagePageTemplateFolders(oldTemplate, FolderManagingType.DeleteFolder);
+                            return;
+                        }
+
+                        if (template.TemplateFolder == oldFolder)
+                        {
+                            return;
+                        }
+
+                        var oldStageDirectory = oldTemplate.Site.StageDirectory + "\\" + oldFolder;
+                        var oldLiveDirectory = oldTemplate.Site.LiveDirectory + "\\" + oldFolder;
+                        if (Directory.Exists(oldStageDirectory))
+                        {
+                            Directory.Move(oldStageDirectory, stageDirectory);
+                        }
+
+                        if (Directory.Exists(oldLiveDirectory))
+                        {
+                            Directory.Move(oldLiveDirectory, liveDirectory);
+                        }
+                    }
+                    else if (!string.IsNullOrWhiteSpace(template.TemplateFolder))
+                    {
+                        ManagePageTemplateFolders(template, FolderManagingType.CreateFolder);
+                    }
+
+                    break;
             }
         }
 
@@ -219,24 +237,26 @@ namespace Quantumart.QP8.BLL.Services
 
         public PageTemplate ReadPageTemplateProperties(int id, bool withAutoLock = true)
         {
-            PageTemplate template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
+            var template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
             if (template == null)
-                throw new ApplicationException(String.Format(TemplateStrings.TemplateNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.TemplateNotFound, id));
+            }
 
             if (withAutoLock)
+            {
                 template.AutoLock();
+            }
 
             template.LoadLockedByUser();
             template.ReplacePlaceHoldersToUrls();
             return template;
         }
 
-
         public PageTemplate ReadPageTemplatePropertiesForUpdate(int id)
         {
             return ReadPageTemplateProperties(id, false);
         }
-
 
         public PageTemplate UpdatePageTemplateProperties(PageTemplate pageTemplate)
         {
@@ -246,14 +266,19 @@ namespace Quantumart.QP8.BLL.Services
             return PageTemplateRepository.UpdatePageTemplateProperties(pageTemplate);
         }
 
-
         public MessageResult RemovePageTemplate(int id)
         {
-            PageTemplate template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
+            var template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
             if (template == null)
-                throw new ApplicationException(String.Format(TemplateStrings.TemplateNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.TemplateNotFound, id));
+            }
+
             if (template.LockedByAnyoneElse)
-                return MessageResult.Error(String.Format(TemplateStrings.LockedByAnyoneElse, template.LockedByDisplayName));
+            {
+                return MessageResult.Error(string.Format(TemplateStrings.LockedByAnyoneElse, template.LockedByDisplayName));
+            }
+
             ManagePageTemplateFolders(template, FolderManagingType.DeleteFolder);
             PageTemplateRepository.DeletePageTemplate(id);
 
@@ -262,12 +287,16 @@ namespace Quantumart.QP8.BLL.Services
 
         public Page ReadPageProperties(int id, bool withAutoLock = true)
         {
-            Page page = PageRepository.GetPagePropertiesById(id);
+            var page = PageRepository.GetPagePropertiesById(id);
             if (page == null)
-                throw new ApplicationException(String.Format(TemplateStrings.PageNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.PageNotFound, id));
+            }
 
             if (withAutoLock)
+            {
                 page.AutoLock();
+            }
 
             page.LoadLockedByUser();
             return page;
@@ -275,80 +304,66 @@ namespace Quantumart.QP8.BLL.Services
 
         public void CancelTemplate(int id)
         {
-            PageTemplate template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
+            var template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
             if (template == null)
-                throw new Exception(String.Format(TemplateStrings.TemplateNotFound, id));
+            {
+                throw new Exception(string.Format(TemplateStrings.TemplateNotFound, id));
+            }
+
             template.AutoUnlock();
         }
 
-
-
         public string ReadDefaultCode(int formatId)
         {
-            string netLanguagePrefix;
             var format = ObjectFormatRepository.ReadObjectFormat(formatId, true);
             var obj = ObjectRepository.GetObjectPropertiesById(format.ParentEntityId);
-            netLanguagePrefix = GetLangPrefix(format.NetLanguageId);
-            string pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + "\\default\\";
-            if (obj.IsObjectContainerType)
-            {
-                return ReadFileAsString(String.Format("{0}container_code_{1}.txt", pathToCopy, netLanguagePrefix));
-            }
-            else
-                return ReadFileAsString(String.Format("{0}generic_code_{1}.txt", pathToCopy, netLanguagePrefix));
+            var netLanguagePrefix = GetLangPrefix(format.NetLanguageId);
+            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + "\\default\\";
+            return ReadFileAsString(obj.IsObjectContainerType ? $"{pathToCopy}container_code_{netLanguagePrefix}.txt" : $"{pathToCopy}generic_code_{netLanguagePrefix}.txt");
         }
 
         public string ReadDefaultPresentation(int formatId)
         {
-            string netLanguagePrefix;
             var format = ObjectFormatRepository.ReadObjectFormat(formatId, true);
             var obj = ObjectRepository.GetObjectPropertiesById(format.ParentEntityId);
-            netLanguagePrefix = GetLangPrefix(format.NetLanguageId);
-            string pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + "\\default\\";
-            if (obj.IsObjectContainerType)
-            {
-                return ReadFileAsString(String.Format("{0}container_presentation.txt", pathToCopy));
-            }
-            else
-                return string.Empty;
+            var pathToCopy = SitePathRepository.GetDirectoryPathToCopy() + "\\default\\";
+            return obj.IsObjectContainerType ? ReadFileAsString($"{pathToCopy}container_presentation.txt") : string.Empty;
         }
 
-
-        private string ReadFileAsString(string path)
+        private static string ReadFileAsString(string path)
         {
             var sb = new StringBuilder();
-
-            StreamReader objReader = new StreamReader(path);
-            string sLine = "";
-
+            var objReader = new StreamReader(path);
+            var sLine = string.Empty;
             while (sLine != null)
             {
                 sLine = objReader.ReadLine();
                 if (sLine != null)
+                {
                     sb.AppendLine(sLine);
+                }
             }
-            objReader.Close();
 
+            objReader.Close();
             return sb.ToString();
         }
 
         private static string GetLangPrefix(int? langId)
         {
-            string netLanguagePrefix = "";
-
+            var netLanguagePrefix = string.Empty;
             if (langId == NetLanguage.GetcSharp().Id)
             {
                 netLanguagePrefix = "cs";
             }
-
             else if (langId == NetLanguage.GetVbNet().Id)
             {
                 netLanguagePrefix = "vb";
             }
+
             return netLanguagePrefix;
         }
 
-        private void SetPagesAndObjectsEnableViewState(int pageTemplateId, bool enableViewState)
+        private static void SetPagesAndObjectsEnableViewState(int pageTemplateId, bool enableViewState)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -356,7 +371,7 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        private void SetObjectsDisableDataBinding(int pageTemplateId, bool disableDataBinding)
+        private static void SetObjectsDisableDataBinding(int pageTemplateId, bool disableDataBinding)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -364,7 +379,7 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        private void SetCustomClassForPages(int pageTemplateId, string customClass)
+        private static void SetCustomClassForPages(int pageTemplateId, string customClass)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -372,7 +387,7 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        private void SetCustomClassForObjects(int pageTemplateId, string customClassForGenerics, string customClassForContainers, string customClassForForms)
+        private static void SetCustomClassForObjects(int pageTemplateId, string customClassForGenerics, string customClassForContainers, string customClassForForms)
         {
             using (var scope = new QPConnectionScope())
             {
@@ -380,16 +395,27 @@ namespace Quantumart.QP8.BLL.Services
             }
         }
 
-        private void ManageTemplateInheritance(PageTemplate pageTemplate)
+        private static void ManageTemplateInheritance(PageTemplate pageTemplate)
         {
             if (pageTemplate.ApplyToExistingPagesAndObjects)
+            {
                 SetPagesAndObjectsEnableViewState(pageTemplate.Id, pageTemplate.EnableViewstate);
+            }
+
             if (pageTemplate.ApplyToExistingObjects)
+            {
                 SetObjectsDisableDataBinding(pageTemplate.Id, pageTemplate.DisableDatabind);
+            }
+
             if (pageTemplate.OverridePageSettings)
+            {
                 SetCustomClassForPages(pageTemplate.Id, pageTemplate.CustomClassForPages);
+            }
+
             if (pageTemplate.OverrideObjectSettings)
+            {
                 SetCustomClassForObjects(pageTemplate.Id, pageTemplate.CustomClassForGenerics, pageTemplate.CustomClassForContainers, pageTemplate.CustomClassForForms);
+            }
         }
 
         public Content GetContentById(int contentId)
@@ -406,13 +432,15 @@ namespace Quantumart.QP8.BLL.Services
         {
             var template = PageTemplateRepository.GetPageTemplatePropertiesById(id);
             if (template == null)
-                throw new Exception(String.Format(TemplateStrings.TemplateNotFound, id));
+            {
+                throw new Exception(string.Format(TemplateStrings.TemplateNotFound, id));
+            }
+
             if (template.CanBeUnlocked)
             {
                 EntityObjectRepository.CaptureLock(template);
             }
         }
-
 
         public MessageResult AssemblePageFromPageObject(int pageId)
         {
@@ -432,12 +460,16 @@ namespace Quantumart.QP8.BLL.Services
 
         public BllObject ReadObjectProperties(int id, bool withAutoLock = true)
         {
-            BllObject obj = ObjectRepository.GetObjectPropertiesById(id);
+            var obj = ObjectRepository.GetObjectPropertiesById(id);
             if (obj == null)
-                throw new ApplicationException(String.Format(TemplateStrings.ObjectNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.ObjectNotFound, id));
+            }
 
             if (withAutoLock)
+            {
                 obj.AutoLock();
+            }
 
             obj.LoadLockedByUser();
             return obj;
@@ -463,7 +495,6 @@ namespace Quantumart.QP8.BLL.Services
             return AssembleObjectPreAction(parentId);
         }
 
-
         public MessageResult AssembleObjectFromTemplateObjectFormatPreAction(int parentId)
         {
             return AssembleObjectPreAction(parentId);
@@ -477,8 +508,8 @@ namespace Quantumart.QP8.BLL.Services
         public MessageResult AssembleObjectPreAction(int id)
         {
             var site = ObjectRepository.GetObjectPropertiesById(id).PageTemplate.Site;
-            string message = (!site.IsLive) ? null : String.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
-            return (String.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+            var message = !site.IsLive ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
+            return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
 
         public MessageResult AssembleObject(int id)
@@ -506,7 +537,7 @@ namespace Quantumart.QP8.BLL.Services
         public ListResult<ObjectFormatSearchResultListItem> FormatSearch(ListCommand listCommand, int siteId, int? templateId, int? pageId, string filter)
         {
             int totalRecords;
-            List<ObjectFormatSearchResultListItem> data = PageTemplateRepository.GetSearchFormatPage(listCommand, siteId, templateId, pageId, filter, out totalRecords).ToList();
+            var data = PageTemplateRepository.GetSearchFormatPage(listCommand, siteId, templateId, pageId, filter, out totalRecords).ToList();
             ManageFormatSearchItemsDescription(data, filter);
             return new ListResult<ObjectFormatSearchResultListItem>
             {
@@ -515,32 +546,33 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        private void ManageFormatSearchItemsDescription(List<ObjectFormatSearchResultListItem> data, string filter)
+        private static void ManageFormatSearchItemsDescription(IEnumerable<ObjectFormatSearchResultListItem> data, string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))
+            {
                 return;
+            }
+
             foreach (var item in data)
             {
                 var format = ObjectFormatRepository.ReadObjectFormat(item.Id, true);
                 if (!string.IsNullOrWhiteSpace(format.CodeBehind) && format.CodeBehind.Contains(filter))
                 {
-                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(System.Web.HttpUtility.HtmlEncode(format.CodeBehind), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(format.CodeBehind), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                     continue;
                 }
 
                 if (!string.IsNullOrWhiteSpace(format.FormatBody) && format.FormatBody.Contains(filter))
                 {
-                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(System.Web.HttpUtility.HtmlEncode(format.FormatBody), filter, 20, "<span class='seachResultHighlight'>", "</span>");
-                    continue;
+                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(format.FormatBody), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                 }
             }
         }
 
-
         public ListResult<PageTemplateSearchListItem> TemplateSearch(ListCommand listCommand, int siteId, string filter)
         {
             int totalRecords;
-            List<PageTemplateSearchListItem> data = PageTemplateRepository.GetSearchTemplatePage(listCommand, siteId, filter, out totalRecords).ToList();
+            var data = PageTemplateRepository.GetSearchTemplatePage(listCommand, siteId, filter, out totalRecords).ToList();
             ManageTemplateSearchItemsDescription(data, filter);
             return new ListResult<PageTemplateSearchListItem>
             {
@@ -549,23 +581,25 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        private void ManageTemplateSearchItemsDescription(List<PageTemplateSearchListItem> data, string filter)
+        private static void ManageTemplateSearchItemsDescription(IEnumerable<PageTemplateSearchListItem> data, string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))
+            {
                 return;
+            }
+
             foreach (var item in data)
             {
                 var template = PageTemplateRepository.GetPageTemplatePropertiesById(item.Id);
                 if (!string.IsNullOrWhiteSpace(template.CodeBehind) && template.CodeBehind.Contains(filter))
                 {
-                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(System.Web.HttpUtility.HtmlEncode(template.CodeBehind), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(template.CodeBehind), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                     continue;
                 }
 
                 if (!string.IsNullOrWhiteSpace(template.TemplateBody) && template.TemplateBody.Contains(filter))
                 {
-                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(System.Web.HttpUtility.HtmlEncode(template.TemplateBody), filter, 20, "<span class='seachResultHighlight'>", "</span>");
-                    continue;
+                    item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(template.TemplateBody), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                 }
             }
         }
@@ -573,7 +607,7 @@ namespace Quantumart.QP8.BLL.Services
         public ListResult<ObjectSearchListItem> ObjectSearch(ListCommand listCommand, int siteId, int? templateId, int? pageId, string filter)
         {
             int totalRecords;
-            List<ObjectSearchListItem> data = PageTemplateRepository.GetSearchObjectPage(listCommand, siteId, templateId, pageId, filter, out totalRecords).ToList();
+            var data = PageTemplateRepository.GetSearchObjectPage(listCommand, siteId, templateId, pageId, filter, out totalRecords).ToList();
             ManageObjectSearchItemsDescription(data, filter);
             return new ListResult<ObjectSearchListItem>
             {
@@ -582,29 +616,32 @@ namespace Quantumart.QP8.BLL.Services
             };
         }
 
-        private void ManageObjectSearchItemsDescription(List<ObjectSearchListItem> data, string filter)
+        private static void ManageObjectSearchItemsDescription(IEnumerable<ObjectSearchListItem> data, string filter)
         {
             if (string.IsNullOrWhiteSpace(filter))
+            {
                 return;
+            }
+
             foreach (var item in data)
             {
                 var obj = ObjectRepository.GetObjectPropertiesById(item.Id);
                 var defVals = obj.DefaultValues;
-                if (defVals != null && defVals.Count() > 0)
+                if (defVals != null && defVals.Any())
                 {
                     var names = defVals.Where(x => x.VariableName.Contains(filter));
-                    var dName = names.Count() > 0 ? names.First() : null;
+                    var dName = names.Any() ? names.First() : null;
                     if (dName != null)
                     {
-                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(System.Web.HttpUtility.HtmlEncode(dName.VariableName), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(dName.VariableName), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                         continue;
                     }
 
                     var vals = defVals.Where(x => x.VariableValue.Contains(filter));
-                    var dVal = vals.Count() > 0 ? vals.First() : null;
+                    var dVal = vals.Any() ? vals.First() : null;
                     if (dVal != null)
                     {
-                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(System.Web.HttpUtility.HtmlEncode(dVal.VariableValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(dVal.VariableValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                         continue;
                     }
                 }
@@ -612,13 +649,13 @@ namespace Quantumart.QP8.BLL.Services
                 {
                     if (!string.IsNullOrWhiteSpace(obj.Container.FilterValue) && obj.Container.FilterValue.Contains(filter))
                     {
-                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(System.Web.HttpUtility.HtmlEncode(obj.Container.FilterValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(obj.Container.FilterValue), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                         continue;
                     }
 
                     if (!string.IsNullOrWhiteSpace(obj.Container.OrderDynamic) && obj.Container.OrderDynamic.Contains(filter))
                     {
-                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(System.Web.HttpUtility.HtmlEncode(obj.Container.OrderDynamic), filter, 20, "<span class='seachResultHighlight'>", "</span>");
+                        item.Description = FoundTextMarker.GetSimpleRelevantMarkedText(HttpUtility.HtmlEncode(obj.Container.OrderDynamic), filter, 20, "<span class='seachResultHighlight'>", "</span>");
                         continue;
                     }
 
@@ -631,15 +668,9 @@ namespace Quantumart.QP8.BLL.Services
                     if (obj.Container.SelectTotal == filter)
                     {
                         item.Description = "<span class='seachResultHighlight'>" + obj.Container.SelectTotal + "</span>";
-                        continue;
                     }
                 }
             }
-        }
-
-        private ObjectFormatVersion ReadFormatVersion(int id)
-        {
-            return PageTemplateRepository.ReadFormatVersion(id);
         }
 
         public IEnumerable<BllObject> GetAllTemplateObjects(int templateId)
@@ -662,14 +693,18 @@ namespace Quantumart.QP8.BLL.Services
             return ObjectRepository.GetRestTemplateObjects(templateId);
         }
 
-
         public ObjectFormat ReadFormatProperties(int id, bool pageOrTemplate, bool withAutoLock = true)
         {
-            ObjectFormat format = ObjectFormatRepository.ReadObjectFormat(id, pageOrTemplate);
+            var format = ObjectFormatRepository.ReadObjectFormat(id, pageOrTemplate);
             if (format == null)
-                throw new ApplicationException(String.Format(TemplateStrings.FormatNotFound, id));
+            {
+                throw new ApplicationException(string.Format(TemplateStrings.FormatNotFound, id));
+            }
+
             if (withAutoLock)
+            {
                 format.AutoLock();
+            }
             format.LoadLockedByUser();
             format.PageOrTemplate = pageOrTemplate;
             format.ReplacePlaceHoldersToUrls();
@@ -679,47 +714,44 @@ namespace Quantumart.QP8.BLL.Services
         public MessageResult AssemblePage(int id)
         {
             var page = PageRepository.GetPagePropertiesById(id);
-            var site = page.PageTemplate.Site;
             if (page.PageTemplate.SiteIsDotNet)
             {
                 new AssemblePageController(id, QPContext.CurrentCustomerCode).Assemble();
                 AssembleRepository.UpdatePageStatus(id, QPContext.CurrentUserId);
                 return null;
             }
+
             return MessageResult.Error(SiteStrings.ShouldBeDotNet);
         }
 
         public MessageResult AssemblePagePreAction(int id)
         {
             var site = PageRepository.GetPagePropertiesById(id).PageTemplate.Site;
-            string message = (!site.IsLive) ? null : String.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
-            return (String.IsNullOrEmpty(message)) ? null : MessageResult.Confirm(message);
+            var message = !site.IsLive ? null : string.Format(SiteStrings.SiteInLiveWarning, site.ModifiedToDisplay, site.LastModifiedByUserToDisplay);
+            return string.IsNullOrEmpty(message) ? null : MessageResult.Confirm(message);
         }
 
         public static int CopySiteTemplates(int sourceSiteId, int destinationSiteId, int templateNumber)
         {
-            int templateIdNew = PageTemplateRepository.CopySiteTemplates(sourceSiteId, destinationSiteId, templateNumber);
-
-            string relBetweenTemplates = PageTemplateRepository.GetRelationsBetweenTemplates(sourceSiteId, destinationSiteId, templateIdNew);
-            string relBetweenContents = ContentRepository.GetRelationsBetweenContentsXML(sourceSiteId, destinationSiteId, String.Empty);
-
+            var templateIdNew = PageTemplateRepository.CopySiteTemplates(sourceSiteId, destinationSiteId, templateNumber);
+            var relBetweenTemplates = PageTemplateRepository.GetRelationsBetweenTemplates(sourceSiteId, destinationSiteId, templateIdNew);
+            var relBetweenContents = ContentRepository.GetRelationsBetweenContentsXml(sourceSiteId, destinationSiteId, string.Empty);
             PageRepository.CopySiteTemplatePages(sourceSiteId, destinationSiteId, relBetweenTemplates);
 
-            string relBetweenPages = PageRepository.GetRelationsBetweenPages(relBetweenTemplates);
-
-            string relBetweenObjects = String.Empty;
+            var relBetweenPages = PageRepository.GetRelationsBetweenPages(relBetweenTemplates);
+            var relBetweenObjects = string.Empty;
             ObjectRepository.CopySiteTemplateObjects(relBetweenTemplates, relBetweenPages, ref relBetweenObjects);
 
-            string relBetweenObjectFormats = String.Empty;
-            ObjectFormatRepository.CopySiteTemplateObjectFormats(relBetweenObjects, ref relBetweenObjectFormats);
+            string relBetweenObjectFormats;
+            ObjectFormatRepository.CopySiteTemplateObjectFormats(relBetweenObjects, out relBetweenObjectFormats);
 
             ObjectRepository.CopySiteUpdateObjects(relBetweenObjectFormats, relBetweenObjects);
             ObjectRepository.CopySiteObjectValues(relBetweenObjects);
             ObjectRepository.CopySiteContainers(relBetweenObjects, relBetweenContents);
 
-            string relBetweenStatuses = ContentRepository.GetRelationsBetweenStatuses(sourceSiteId, destinationSiteId);
+            var relBetweenStatuses = ContentRepository.GetRelationsBetweenStatuses(sourceSiteId, destinationSiteId);
             ObjectRepository.CopyContainerStatuses(relBetweenStatuses, relBetweenObjects);
-            
+
             NotificationRepository.CopySiteUpdateNotifications(relBetweenObjectFormats, relBetweenContents);
 
             return templateIdNew != 0 ? 1 : 0;

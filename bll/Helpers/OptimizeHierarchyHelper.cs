@@ -20,10 +20,22 @@ namespace Quantumart.QP8.BLL.Helpers
         public void Process()
         {
             var m = FieldValue.RelatedItems;
-            if (m.Length <= 1) return;
-            if (FieldValue.Field.RelateToContentId == null) return;
+            if (m.Length <= 1)
+            {
+                return;
+            }
+
+            if (FieldValue.Field.RelateToContentId == null)
+            {
+                return;
+            }
+
             var data = ArticleRepository.GetHierarchy(FieldValue.Field.RelateToContentId.Value);
-            if (data == null) return;
+            if (data == null)
+            {
+                return;
+            }
+
             BuildHierarchy(data);
             OptimizeHierarchyFor(FieldValue.RelatedItems);
             FieldValue.Value = string.Join(",", GetOptimizedValue());
@@ -61,23 +73,22 @@ namespace Quantumart.QP8.BLL.Helpers
             foreach (var n in _hierarchyItems.Values)
             {
                 if (n.IsChecked)
+                {
                     n.UncheckChildren();
+                }
             }
         }
 
         private void BuildHierarchy(Dictionary<int, int> hierarchy)
         {
-
-            _hierarchyItems = hierarchy.AsEnumerable()
-                .Select(n => new HierarchyItem() {Id = n.Key, ParentId = n.Value})
-                .ToDictionary(n => n.Id, m => m);
-
-
+            _hierarchyItems = hierarchy.AsEnumerable().Select(n => new HierarchyItem { Id = n.Key, ParentId = n.Value }).ToDictionary(n => n.Id, m => m);
             foreach (var n in _hierarchyItems.Values)
             {
                 n.Parent = n.ParentId != 0 ? _hierarchyItems[n.ParentId] : null;
                 if (n.ParentId == 0)
+                {
                     _roots.Add(n);
+                }
             }
 
             foreach (var n in _hierarchyItems.Values)
@@ -86,12 +97,10 @@ namespace Quantumart.QP8.BLL.Helpers
             }
 
             _levelItems = new Dictionary<int, List<HierarchyItem>>();
-
             _roots.ForEach(n => n.SetLevel(1, _levelItems));
-
         }
 
-        private void ApplyCheckedItems(int[] relatedItems)
+        private void ApplyCheckedItems(IEnumerable<int> relatedItems)
         {
             var s = new HashSet<int>(relatedItems);
             foreach (var item in _hierarchyItems.Values)
@@ -102,7 +111,6 @@ namespace Quantumart.QP8.BLL.Helpers
 
         private class HierarchyItem
         {
-
             public HierarchyItem()
             {
                 Children = new List<HierarchyItem>();
@@ -120,7 +128,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
             public List<HierarchyItem> Children { get; }
 
-            public void SetLevel(int level, Dictionary<int, List<HierarchyItem>> levelItems)
+            public void SetLevel(int level, IDictionary<int, List<HierarchyItem>> levelItems)
             {
                 List<HierarchyItem> list;
                 if (!levelItems.TryGetValue(level, out list))
@@ -128,8 +136,8 @@ namespace Quantumart.QP8.BLL.Helpers
                     list = new List<HierarchyItem>();
                     levelItems.Add(level, list);
                 }
-                list.Add(this);
 
+                list.Add(this);
                 Level = level;
                 Children.ForEach(n => n.SetLevel(Level + 1, levelItems));
             }
@@ -142,8 +150,6 @@ namespace Quantumart.QP8.BLL.Helpers
                     n.UncheckChildren();
                 });
             }
-
         }
-
     }
 }

@@ -1,3 +1,3 @@
-﻿Backend.Lang.DocumentHost = {
+Backend.Lang.DocumentHost = {
     noEntitiesToExecuteActionErrorMessage: "Entities are missed for this action!"
 };

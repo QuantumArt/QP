@@ -22,25 +22,25 @@ Quantumart.QP8.Backend = function(isDebugMode, options) {
     }
   }
 
-  this._loadHandler = jQuery.proxy(this._initialize, this);
-  this._unloadHandler = jQuery.proxy(this._dispose, this);
-  this._errorHandler = jQuery.proxy(this._error, this);
-  this._onResizeSplitterHandler = jQuery.proxy(this._onResizeSplitter, this);
-  this._onDragStartSplitterHandler = jQuery.proxy(this._onDragStartSplitter, this);
-  this._onDropSplitterHandler = jQuery.proxy(this._onDropSplitter, this);
-  this._onEditingAreaEventHandler = jQuery.proxy(this._onEditingAreaEvent, this);
-  this._onActionExecutingHandler = jQuery.proxy(this._onActionExecuting, this);
-  this._onActionExecutedHandler = jQuery.proxy(this._onActionExecuted, this);
-  this._onEntityReadedHandler = jQuery.proxy(this._onEntityReaded, this);
-  this._onHostExternalCallerContextsUnbindedHandler = jQuery.proxy(this._onHostExternalCallerContextsUnbinded, this);
+  this._loadHandler = $.proxy(this._initialize, this);
+  this._unloadHandler = $.proxy(this._dispose, this);
+  this._errorHandler = $.proxy(this._error, this);
+  this._onResizeSplitterHandler = $.proxy(this._onResizeSplitter, this);
+  this._onDragStartSplitterHandler = $.proxy(this._onDragStartSplitter, this);
+  this._onDropSplitterHandler = $.proxy(this._onDropSplitter, this);
+  this._onEditingAreaEventHandler = $.proxy(this._onEditingAreaEvent, this);
+  this._onActionExecutingHandler = $.proxy(this._onActionExecuting, this);
+  this._onActionExecutedHandler = $.proxy(this._onActionExecuted, this);
+  this._onEntityReadedHandler = $.proxy(this._onEntityReaded, this);
+  this._onHostExternalCallerContextsUnbindedHandler = $.proxy(this._onHostExternalCallerContextsUnbinded, this);
 
-  jQuery(document).bind('click', function(e) {
+  $(document).bind('click', function(e) {
     if (e.which == 2) e.preventDefault();
   });
 
-  jQuery(window).bind('load', this._loadHandler);
+  $(window).bind('load', this._loadHandler);
   if (window.attachEvent) {
-    jQuery(window).bind('unload', this._unloadHandler);
+    $(window).bind('unload', this._unloadHandler);
   } else {
     window.onbeforeunload = this._unloadHandler;
   }
@@ -185,10 +185,6 @@ Quantumart.QP8.Backend.prototype = {
         this._entityEditorAutoSaver.restore();
       }
 
-      if (isDebugMode) {
-        this._initializeTraceWindowLink();
-      }
-
       this._initializeSignOut();
     }, this));
 
@@ -205,14 +201,6 @@ Quantumart.QP8.Backend.prototype = {
 
   _terminateSignOut: function() {
     $('.signOut').unbind('click');
-  },
-
-  _initializeTraceWindowLink: function() {
-    $('#traceWindowLink').bind('click', this._onTraceWindowLinkClickHandler);
-  },
-
-  _terminateTraceWindowLink: function() {
-    $('#traceWindowLink').unbind('click', this._onTraceWindowLinkClickHandler);
   },
 
   _initializeSignalrHubs: function() {
@@ -278,10 +266,6 @@ Quantumart.QP8.Backend.prototype = {
     if (this._backendEditingArea) {
       this._backendEditingArea.unmarkAsBusy();
     }
-  },
-
-  _onTraceWindowLinkClickHandler: function Quantumart$QP8$Backend$_onTraceWindowLinkClickHandler() {
-    Quantumart.QP8.BackendTraceWindow.getInstance().toggleWindow();
   },
 
   _onResizeSplitter: function(eventType, sender, eventArgs) {
@@ -571,24 +555,17 @@ Quantumart.QP8.Backend.prototype = {
         this._backendActionExecutor = null;
       }
 
-      Quantumart.QP8.BackendTraceWindow.destroyInstance();
-
-      if (this._isDebugMode) {
-        this._terminateTraceWindowLink();
-      }
-
       this._terminateSignOut();
-      jQuery(document).unbind('click');
-      jQuery(window).unbind('load', this._loadHandler);
+      $(document).unbind('click');
+      $(window).unbind('load', this._loadHandler);
 
       if (window.attachEvent) {
-        jQuery(window).unbind('unload', this._unloadHandler);
+        $(window).unbind('unload', this._unloadHandler);
       } else {
         window.onbeforeunload = null;
       }
 
       $cache.dispose();
-
       this._loadHandler = null;
       this._unloadHandler = null;
       this._errorHandler = null;

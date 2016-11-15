@@ -1,6 +1,6 @@
-﻿//#region class Quantumart.QP8.LibraryPopupWindow
+//#region class Quantumart.QP8.LibraryPopupWindow
 Quantumart.QP8.LibraryPopupWindow = function (eventArgs, options) {
-    jQuery.extend(this._options, options);    
+    jQuery.extend(this._options, options);
 	this._eventArgs = eventArgs;
 	this._selectPopupWindowComponent = new Quantumart.QP8.BackendSelectPopupWindow(this._eventArgs, this._options);
 	this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this));
@@ -20,7 +20,7 @@ Quantumart.QP8.LibraryPopupWindow.prototype =
 	_eventArgs: null,
 
 	_selectPopupWindowComponent: null,
-    
+
 	setContentId: function (_contentId) {
 	    this._options.contentId = _contentId;
 	},

@@ -1,25 +1,16 @@
-﻿using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Objects;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class EntityTypeRepository
     {
-        private static ObjectQuery<EntityTypeDAL> DefaultEntityTypeQuery
-        {
-            get
-            {
-                return QPContext.EFContext.EntityTypeSet
-                .Include("Parent")
-                .Include("CancelAction")
-                .Include("ContextMenu");
-            }
-        }
+        private static ObjectQuery<EntityTypeDAL> DefaultEntityTypeQuery => QPContext.EFContext.EntityTypeSet.Include("Parent").Include("CancelAction").Include("ContextMenu");
 
         /// <summary>
         /// Возвращает тип сущности по ее идентификатору
@@ -28,8 +19,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>информация о типе сущности</returns>
         internal static EntityType GetById(int entityTypeId)
         {
-            EntityType entityType = MappersRepository.EntityTypeMapper.GetBizObject(DefaultEntityTypeQuery.Single(et => et.Id == entityTypeId));
-            return entityType;
+            return MapperFacade.EntityTypeMapper.GetBizObject(DefaultEntityTypeQuery.Single(et => et.Id == entityTypeId));
         }
 
         /// <summary>
@@ -39,15 +29,15 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>информация о типе сущности</returns>
         internal static EntityType GetByCode(string entityTypeCode)
         {
-            var entityType = MappersRepository.EntityTypeMapper.GetBizObject(DefaultEntityTypeQuery.Single(et => et.Code == entityTypeCode));
+            var entityType = MapperFacade.EntityTypeMapper.GetBizObject(DefaultEntityTypeQuery.Single(et => et.Code == entityTypeCode));
             return entityType;
         }
 
-        private static Lazy<IEnumerable<EntityType>> entityTypesCache = new Lazy<IEnumerable<EntityType>>(() => LoadEntityTypes());
+        private static readonly Lazy<IEnumerable<EntityType>> EntityTypesCache = new Lazy<IEnumerable<EntityType>>(LoadEntityTypes);
 
         private static IEnumerable<EntityType> LoadEntityTypes()
         {
-            var mapper = MappersRepository.EntityTypeMapper;
+            var mapper = MapperFacade.EntityTypeMapper;
             mapper.DisableTranslations = true;
 
             var result = mapper.GetBizList(DefaultEntityTypeQuery.ToList());
@@ -58,7 +48,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<EntityType> GetList()
         {
-            return entityTypesCache.Value;
+            return EntityTypesCache.Value;
         }
 
         internal static IEnumerable<EntityType> GetListByCodes(IEnumerable<string> entityCodes)
@@ -73,8 +63,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>код типа родительской сущности</returns>
         internal static string GetParentCodeByCode(string entityTypeCode)
         {
-            var entityType = QPContext.EFContext.EntityTypeSet.Include("Parent").SingleOrDefault(et => et.Code == entityTypeCode);
-            return entityType.Parent != null ? entityType.Parent.Code : null;
+            return QPContext.EFContext.EntityTypeSet.Include("Parent").SingleOrDefault(et => et.Code == entityTypeCode).Parent?.Code;
         }
 
         /// <summary>
@@ -84,8 +73,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>код действия по умолчанию</returns>
         internal static string GetDefaultActionCodeByEntityTypeCode(string entityTypeCode)
         {
-            var entityType = QPContext.EFContext.EntityTypeSet.Include("DefaultAction").SingleOrDefault(et => et.Code == entityTypeCode);
-            return entityType.DefaultAction != null ? entityType.DefaultAction.Code : null;
+            return QPContext.EFContext.EntityTypeSet.Include("DefaultAction").SingleOrDefault(et => et.Code == entityTypeCode).DefaultAction?.Code;
         }
     }
 }

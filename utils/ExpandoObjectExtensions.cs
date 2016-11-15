@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Web.Script.Serialization;
 
@@ -9,14 +9,9 @@ namespace Quantumart.QP8.Utils
         /// <summary>
         /// Сериализует ExpandoObject в JSON
         /// </summary>
-        /// <param name="obj">динамический объект</param>
-        /// <returns>JSON-представление объекта</returns>
-        public static string ToJson(this ExpandoObject obj)
+        public static string ToJson(this ExpandoObject value)
         {
-            var serializer = new JavaScriptSerializer();
-            var dictionary = new Dictionary<string, object>(obj);
-
-            return serializer.Serialize(dictionary);
+            return new JavaScriptSerializer().Serialize(new Dictionary<string, object>(value));
         }
     }
 }

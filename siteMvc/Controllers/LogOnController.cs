@@ -1,112 +1,100 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
+using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     [ValidateInput(false)]
     public class LogOnController : QPController
     {
-        /// <summary>
-        /// Выводит форму ввода логина и пароля
-        /// </summary>
-        [HttpGet]
         [DisableBrowserCache]
         [ResponseHeader("QP-Not-Authenticated", "True")]
         public ActionResult Index(DirectLinkOptions directLinkOptions)
         {
             if (!Request.IsAuthenticated && AuthenticationHelper.ShouldUseWindowsAuthentication(Request.UserHostAddress))
-            {				
-                // Если IP-адрес пользователя входит в диапазон IP-адресов 
-                // внутренней сети, то перенаправляем его на страницу Windows-аутентификации
-                if (directLinkOptions != null)
-                    return Redirect(directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl));
-                else
-                    return Redirect(AuthenticationHelper.WindowsAuthenticationUrl);
-            }
-            else
             {
-                InitViewBag();
-                return LogOnView();
+                return Redirect(GetAuthorizationUrl(directLinkOptions));
             }
+
+            FillViewBagData();
+            return LogOnView();
         }
 
-        /// <summary>
-        /// Аутентифицирует пользователя
-        /// </summary>
-        /// <param name="directLinkOptions"></param>
-        /// <param name="data">данные формы</param>
         [HttpPost]
         [DisableBrowserCache]
         public ActionResult Index(DirectLinkOptions directLinkOptions, LogOnCredentials data)
         {
-            // Проверяем правильность введенных значений
-            try { data.Validate(); } catch (RulesException ex) { ex.CopyTo(ModelState); }
+            try
+            {
+                data.Validate();
+            }
+            catch (RulesException ex)
+            {
+                ex.CopyTo(ModelState);
+            }
 
             if (ModelState.IsValid && data.User != null)
             {
                 AuthenticationHelper.CompleteAuthentication(data.User);
-
+                Logger.Log.Debug($"User successfully authenticated: {data.User.ToJsonLog()}");
                 if (Request.IsAjaxRequest())
                 {
-                    return Json( new
+                    return Json(new
                     {
                         success = true,
                         isAuthenticated = true,
                         userName = data.User.Name
                     });
                 }
-                else
-                {					
-                    if (directLinkOptions != null && directLinkOptions.IsDefined())
-                        return RedirectToAction("Index", "Home", directLinkOptions);
-                    else
-                        return RedirectToAction("Index", "Home");
-                }
-            }
-            else
-            {
-                // Отображаем форму ввода логина и пароля с сообщениями об ошибках
-                InitViewBag();
-                return LogOnView();
-            }
-        }	
 
-        /// <summary>
-        /// Производит завершение аутентификационной сессии пользователя
-        /// </summary>
-        [HttpGet]
-        [DisableBrowserCache]
-        public ActionResult LogOut(DirectLinkOptions directLinkOptions)
-        {			
-            string loginUrl = QPContext.LogOut();
-            if (directLinkOptions != null)
-                loginUrl = directLinkOptions.AddToUrl(loginUrl);
-            return Redirect(loginUrl);			
+                if (directLinkOptions != null && directLinkOptions.IsDefined())
+                {
+                    return RedirectToAction("Index", "Home", directLinkOptions);
+                }
+
+                return RedirectToAction("Index", "Home");
+            }
+
+            FillViewBagData();
+            return LogOnView();
         }
 
-        private void InitViewBag()
+        [DisableBrowserCache]
+        public ActionResult LogOut(DirectLinkOptions directLinkOptions)
+        {
+            var loginUrl = QPContext.LogOut();
+            if (directLinkOptions != null)
+            {
+                loginUrl = directLinkOptions.AddToUrl(loginUrl);
+            }
+
+            return Redirect(loginUrl);
+        }
+
+        private static string GetAuthorizationUrl(DirectLinkOptions directLinkOptions)
+        {
+            // Если IP-адрес пользователя входит в диапазон IP-адресов
+            // внутренней сети, то перенаправляем его на страницу Windows-аутентификации
+            return directLinkOptions != null ? directLinkOptions.AddToUrl(AuthenticationHelper.WindowsAuthenticationUrl) : AuthenticationHelper.WindowsAuthenticationUrl;
+        }
+
+        private void FillViewBagData()
         {
             ViewBag.AllowSelectCustomerCode = QPConfiguration.AllowSelectCustomerCode;
-            ViewBag.CustomerCodes = QPConfiguration.CustomerCodes.Select(c => new QPSelectListItem { Text = c, Value = c }).OrderBy(n => n.Text);
+            ViewBag.CustomerCodes = QPConfiguration.CustomerCodes.Select(cc => new QPSelectListItem { Text = cc, Value = cc }).OrderBy(cc => cc.Text);
         }
 
         private ActionResult LogOnView()
         {
-            if (Request.IsAjaxRequest())
-            {
-                return JsonHtml("Popup", null);
-            }
-            else
-            {
-                return View();
-            }
+            return Request.IsAjaxRequest() ? JsonHtml("Popup", null) : View();
         }
     }
 }

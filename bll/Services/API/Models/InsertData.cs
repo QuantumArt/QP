@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Quantumart.QP8.BLL.Services.API.Models
+﻿namespace Quantumart.QP8.BLL.Services.API.Models
 {
-	public class InsertData
-	{
-		public int OriginalArticleId { get; set; }
-		public int CreatedArticleId { get; set; }
-		public int ContentId { get; set; }
+    public class InsertData
+    {
+        public int OriginalArticleId { get; set; }
 
-		public override string ToString()
-		{
-			return new
-			{
-				OriginalArticleId,
-				CreatedArticleId,
-				ContentId
+        public int CreatedArticleId { get; set; }
 
-			}.ToString();
-		}
-	}
+        public int ContentId { get; set; }
+
+        public override string ToString()
+        {
+            return new
+            {
+                OriginalArticleId,
+                CreatedArticleId,
+                ContentId
+            }.ToString();
+        }
+    }
 }

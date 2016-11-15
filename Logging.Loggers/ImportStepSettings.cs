@@ -2,15 +2,16 @@
 
 namespace Quantumart.QP8.Logging.Loggers
 {
-	public class ImportStepSettings
-	{
-		public int Step { get; private set; }
-		public ImportSettings Settings { get; private set; }
+    public class ImportStepSettings
+    {
+        public int Step { get; private set; }
 
-		public ImportStepSettings(int step, ImportSettings settings)
-		{
-			Step = step;
-			Settings = settings;
-		}
-	}
+        public ImportSettings Settings { get; private set; }
+
+        public ImportStepSettings(int step, ImportSettings settings)
+        {
+            Step = step;
+            Settings = settings;
+        }
+    }
 }

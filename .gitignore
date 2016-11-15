@@ -242,6 +242,7 @@ _Pvt_Extensions
 # JetBrains Rider
 .idea/
 *.sln.iml
+worktree/
 
 
 
@@ -259,6 +260,7 @@ siteMvc/Scripts/Quantumart/**/*.min.js
 *.orig
 *.sublime-workspace
 **/*.generated.cs
+npm-debug.log.*
 
 siteMvc/Scripts/build
 siteMvc/Content/build

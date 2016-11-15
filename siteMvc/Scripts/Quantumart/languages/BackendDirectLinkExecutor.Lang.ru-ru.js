@@ -1,4 +1,4 @@
-﻿Backend.Lang.BackendDirectLinkExecutor = {
+Backend.Lang.BackendDirectLinkExecutor = {
 	GetDirectLink: "Получить прямую ссылку",
 	OpenDirectLinkConfirmation: "Получен запрос на открытие прямой ссылки. Продолжить?",
 	ReloginRequestConfirmation: "Получен запрос на открытие прямой ссылки. Требуется повторный вход в систему. Продолжить?",

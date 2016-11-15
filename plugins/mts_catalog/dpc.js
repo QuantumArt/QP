@@ -2,18 +2,22 @@ Quantumart.QP8.BackendDocumentContext.setGlobal("typeIds", {
     "tariff": $o.getArticleIdByFieldValue(349, "Title", "Тариф"),
     "service": $o.getArticleIdByFieldValue(349, "Title", "Услуга"),
     "action": $o.getArticleIdByFieldValue(349, "Title", "Акция"),
+    "roamingScale": $o.getArticleIdByFieldValue(349, "Title", "Роуминговая сетка"),
     "serviceOnTariff": $o.getArticleIdByFieldValue(368, "Title", "Услуги на тарифе"),
     "mutualGroup": $o.getArticleIdByFieldValue(368, "Title", "Группы несовместимости услуг"),
-    "optionPackage": $o.getArticleIdByFieldValue(368, "Title", "Пакеты опций на тарифах")
+    "optionPackage": $o.getArticleIdByFieldValue(368, "Title", "Пакеты опций на тарифах"),
+    "roamingScaleOnTariff": $o.getArticleIdByFieldValue(368, "Title", "Роуминговые сетки для тарифа")
 });
 
 Quantumart.QP8.BackendDocumentContext.setGlobal("typesByProduct", {
     "343": $ctx.getGlobal("typeIds")["tariff"], "385": $ctx.getGlobal("typeIds")["tariff"],
     "403": $ctx.getGlobal("typeIds")["service"], "402": $ctx.getGlobal("typeIds")["service"],
     "419": $ctx.getGlobal("typeIds")["action"], "420": $ctx.getGlobal("typeIds")["action"],
+    "434": $ctx.getGlobal("typeIds")["roamingScale"], "435": $ctx.getGlobal("typeIds")["roamingScale"],
     "404": $ctx.getGlobal("typeIds")["serviceOnTariff"],
     "407": $ctx.getGlobal("typeIds")["optionPackage"],
-    "365": $ctx.getGlobal("typeIds")["mutualGroup"]
+    "365": $ctx.getGlobal("typeIds")["mutualGroup"],
+    "438": $ctx.getGlobal("typeIds")["roamingScaleOnTariff"],
 });
 
 Quantumart.QP8.BackendDocumentContext.setGlobal("regionalLibraryFolders", [
@@ -41,7 +45,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.getResolverNames = function () {
 
 Quantumart.QP8.BackendDocumentContext.prototype.initHandler = function (editor, $elem) {
 
-    editor._hideFields = jQuery.isArray(editor._hideFields) ? Array.concat(editor._hideFields, this.fieldsToHide) : this.fieldsToHide;
+    editor._hideFields = jQuery.isArray(editor._hideFields) ? editor._hideFields.concat(this.fieldsToHide) : this.fieldsToHide;    
 
     if (this.changeFilters) {
         var resolverNames = this.getResolverNames();
@@ -283,6 +287,12 @@ Quantumart.QP8.BackendDocumentContext.prototype.addGenerateMatrixTitleButton = f
 					firstField: "field_1761",
 					secondField: "field_1762"
 				},
+                "438":
+                {
+                    template: "Роуминговая сетка '{0}' на тарифе '{1}' в регионе '{2}'",
+                    firstField: "field_1970",
+                    secondField: "field_1969"
+                }
 			}
 
 			var matrixType = self.getValue(evt.data.$form, "field_1417");

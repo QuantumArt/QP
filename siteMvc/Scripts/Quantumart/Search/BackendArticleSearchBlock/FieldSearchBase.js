@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.FieldSearchBase
+//#region class BackendArticleSearchBlock.FieldSearchBase
 // === Базовый класс блока поиска по полю
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
 	Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.initializeBase(this);
@@ -11,12 +11,12 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase = function (containerEl
 	this._fieldName = fieldName;
 	this._fieldGroup = fieldGroup;
 	this._referenceFieldID = referenceFieldID;
-	
+
 	this._elementIdPrefix = Quantumart.QP8.BackendSearchBlockBase.generateElementPrefix();
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
-	_containerElement: null, // dom-элемент контейнера 
+	_containerElement: null, // dom-элемент контейнера
 	_parentEntityId: 0, // идентификатор родительской сущности;
 	_fieldID: null,
 	_contentID: null,
@@ -25,7 +25,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 	_fieldGroup: null,
     _referenceFieldID: null,
 
-	_elementIdPrefix: "", //префикс идентификаторов dom-элементов   
+	_elementIdPrefix: "", //префикс идентификаторов dom-элементов
 
 	initialize: function () {
 		jQuery(this._containerElement).append("Не реализовано");
@@ -39,7 +39,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase.prototype = {
 		return null;
 	},
 
-	set_blockState: function (state) {		
+	set_blockState: function (state) {
 	},
 
 	restore_blockState: function (state) {
