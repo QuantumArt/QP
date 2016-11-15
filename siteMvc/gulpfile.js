@@ -258,13 +258,16 @@ var paths = {
   ],
   images: [
     'Content/**/*.{jpg,jpeg,png,gif}',
+    '!Content/ckeditor/**/*.{jpg,jpeg,png,gif}',
+    '!Content/codemirror/**/*.{jpg,jpeg,png,gif}',
     '!Content/build/**/*.{jpg,jpeg,png,gif}'
   ],
   clean: [
     'Scripts/Quantumart/**/*.{min.js, map}',
     'Content/Quantumart/**/*.{min.css, map}',
+    destPaths.scripts,
     destPaths.styles,
-    destPaths.scripts
+    destPaths.images
   ]
 };
 
@@ -330,7 +333,6 @@ gulp.task('assets:revisions', function() {
 });
 
 gulp.task('assets:js', ['assets:js1', 'assets:js2']);
-
 gulp.task('assets:js1', ['assets:revisions'], function() {
   return gulp.src(paths.scripts1, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
@@ -380,7 +382,6 @@ gulp.task('assets:css', ['assets:revisions'], function() {
     .pipe($.size({ title: 'assets:css', showFiles: true }))
     .pipe($.notify({ title: 'Task was completed', message: 'assets:css task complete', onLast: true }));
 });
-
 
 
 
