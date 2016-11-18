@@ -517,7 +517,7 @@ namespace Quantumart.QP8.BLL.Services
             var obj = ObjectRepository.GetObjectPropertiesById(id);
             if (obj.PageTemplate.SiteIsDotNet)
             {
-                new AssembleSelectedObjectsController(id.ToString(), QPContext.CurrentCustomerCode).Assemble();
+                new AssembleSelectedObjectsController(id.ToString(), QPContext.CurrentDbConnectionString).Assemble();
                 return null;
             }
             return MessageResult.Error(SiteStrings.ShouldBeDotNet);
@@ -716,7 +716,7 @@ namespace Quantumart.QP8.BLL.Services
             var page = PageRepository.GetPagePropertiesById(id);
             if (page.PageTemplate.SiteIsDotNet)
             {
-                new AssemblePageController(id, QPContext.CurrentCustomerCode).Assemble();
+                new AssemblePageController(id, QPContext.CurrentDbConnectionString).Assemble();
                 AssembleRepository.UpdatePageStatus(id, QPContext.CurrentUserId);
                 return null;
             }

@@ -9,8 +9,8 @@ namespace Assembling
     {
         public string Ids { get; }
 
-        public AssembleSelectedObjectsController(string ids, string customerCode)
-            : base(customerCode)
+        public AssembleSelectedObjectsController(string ids, string connectionParameter)
+            : base(connectionParameter)
         {
             Ids = ids;
             CurrentAssembleMode = AssembleMode.SelectedObjects;

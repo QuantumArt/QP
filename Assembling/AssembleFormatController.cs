@@ -24,8 +24,8 @@ namespace Assembling
             FillController(formatId, mode);
         }
 
-        public AssembleFormatController(int formatId, AssembleMode mode, string customerCode)
-            : base(customerCode)
+        public AssembleFormatController(int formatId, AssembleMode mode, string connectionParameter)
+            : base(connectionParameter)
         {
             FillController(formatId, mode);
         }

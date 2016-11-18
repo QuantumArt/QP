@@ -321,7 +321,7 @@ namespace Quantumart.QP8.BLL.Services
 			var obj = ObjectRepository.GetObjectPropertiesById(id);
 			if (obj.PageTemplate.SiteIsDotNet)
 			{
-				new AssembleSelectedObjectsController(id.ToString(), QPContext.CurrentCustomerCode);
+				new AssembleSelectedObjectsController(id.ToString(), QPContext.CurrentDbConnectionString);
 				return null;
 			}
 			return MessageResult.Error(SiteStrings.ShouldBeDotNet);
@@ -334,7 +334,7 @@ namespace Quantumart.QP8.BLL.Services
 				var obj = ObjectRepository.GetObjectPropertiesById(id);
 				if (obj.PageTemplate.SiteIsDotNet)
 				{
-					new AssembleSelectedObjectsController(id.ToString(), QPContext.CurrentCustomerCode).Assemble();
+					new AssembleSelectedObjectsController(id.ToString(), QPContext.CurrentDbConnectionString).Assemble();
 				}
 				else
 					return MessageResult.Error(SiteStrings.ShouldBeDotNet);
