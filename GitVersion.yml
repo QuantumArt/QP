@@ -1,5 +1,7 @@
+# mode: Mainline
+# mode: ContinuousDelivery # default on all except "develop" branch
+mode: ContinuousDeployment # default on "develop" branch
 assembly-versioning-scheme: MajorMinorPatch
-mode: ContinuousDeployment
 tag-prefix: '[vV]'
 continuous-delivery-fallback-tag: ci
 next-version: 0.1.0
