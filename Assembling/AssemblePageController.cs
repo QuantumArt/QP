@@ -29,15 +29,15 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-        public AssemblePageController(int pageId, string customerCode, bool firstInBatch)
-            : base(customerCode, true)
+        public AssemblePageController(int pageId, string connectionParameter, bool firstInBatch)
+            : base(connectionParameter)
         {
             FillController(pageId, null, firstInBatch);
         }
 
 
-        public AssemblePageController(int pageId, string customerCode)
-            : base(customerCode, true)
+        public AssemblePageController(int pageId, string connectionParameter)
+            : base(connectionParameter)
         {
             FillController(pageId, null, true);
         }

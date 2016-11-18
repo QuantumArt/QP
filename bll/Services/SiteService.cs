@@ -136,7 +136,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             site.CreateLinqDirectories();
-            var cnt = new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentCustomerCode);
+            var cnt = new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString);
             cnt.Assemble();
 
             return null;
