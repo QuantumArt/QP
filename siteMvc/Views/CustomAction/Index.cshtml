@@ -1,6 +1,6 @@
 ﻿@model CustomActionListViewModel
 
-@using Quantumart.QP8.WebMvc.ViewModels.CustomAction		   
+@using Quantumart.QP8.WebMvc.ViewModels.CustomAction
 @using Quantumart.QP8.BLL.ListItems
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
@@ -51,6 +51,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

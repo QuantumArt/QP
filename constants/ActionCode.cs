@@ -5,7 +5,6 @@ namespace Quantumart.QP8.Constants
     /// <summary>
     /// Коды типов действий
     /// </summary>
-    // TODO: Fix for record xml logs
     public static class ActionCode
     {
         public const string None = "";
@@ -412,8 +411,6 @@ namespace Quantumart.QP8.Constants
         public const string ActionPermissionTree = "action_permission_tree";
 
         public const string NotificationObjectFormatProperties = "edit_notification_template_format";
-
-
 
         public const string EntityTypePermissions = "list_entity_type_permission";
         public const string AddNewEntityTypePermission = "new_entity_type_permission";

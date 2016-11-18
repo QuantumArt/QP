@@ -45,7 +45,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static IDisposable BeginFieldGroup(this HtmlHelper html, string title)
         {
             html.ViewContext.Writer.WriteLine("<fieldset><legend>{0}</legend>", title);
-
             return new FieldGroup(html);
         }
 

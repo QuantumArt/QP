@@ -67,6 +67,9 @@
 @Html.PrepareInitScript(Model)
 @Html.CustomScript(Model.Data.Content.Site.ContentFormScript, Model.ContextObjectName)
 @Html.CustomScript(Model.Data.Content.FormScript, Model.ContextObjectName)
-@Html.RunInitScript(Model)
+@foreach (var aggrArticle in Model.Data.AggregatedArticles)
+{
+    @Html.CustomScript(aggrArticle.Content.FormScript, Model.ContextObjectName)
+}
 
-@Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))
+@Html.RunInitScript(Model)

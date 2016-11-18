@@ -21,12 +21,6 @@ namespace Quantumart.QP8.BLL
 {
     public class Field : EntityObject
     {
-        public Field()
-            :this(new FieldRepository(), new ContentRepository())
-        {
-            // TODO: REMOVE AND FIX AUTOMAPPER
-        }
-
         private readonly IFieldRepository _fieldRepository;
         private readonly IContentRepository _contentRepository;
 
@@ -68,6 +62,12 @@ namespace Quantumart.QP8.BLL
             ValidFieldColumnDbTypes.TinyInt,
             ValidFieldColumnDbTypes.Bit
         });
+
+        public Field()
+            : this(new FieldRepository(), new ContentRepository())
+        {
+            // TODO: REMOVE AND FIX AUTOMAPPER
+        }
 
         public Field(IFieldRepository fieldRepository, IContentRepository contentRepository)
         {

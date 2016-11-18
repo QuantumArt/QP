@@ -52,6 +52,7 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<ISessionLogRepository, AuditRepository>()
                 .RegisterType<IApplicationInfoRepository, ApplicationInfoRepository>()
                 .RegisterType<IArticleRepository, ArticleRepository>()
+                .RegisterType<IContentRepository, ContentRepository>()
 
                 .RegisterType<IArticleSearchService, ArticleSearchService>()
                 .RegisterType<IBackendActionLogService, BackendActionLogService>()

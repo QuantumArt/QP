@@ -1,5 +1,3 @@
-/// <binding AfterBuild='default' Clean='clean' />
-
 var fs = require('fs');
 var del = require('del');
 var gulp = require('gulp');
@@ -100,6 +98,8 @@ var paths = {
     'Scripts/telerik/telerik.splitter.js'
   ],
   scripts2: [
+    'Scripts/Quantumart/Helpers/vanilla.helpers.js',
+
     'Content/codemirror/lib/codemirror.js',
     'Content/codemirror/mode/clike/clike.js',
     'Content/codemirror/mode/sql/sql.js',
@@ -320,7 +320,7 @@ gulp.task('lint-jscs-fix', function() {
 
 
 gulp.task('assets:revisions', function() {
-  return gulp.src('Views/Home/Index.base.cshtml')
+  return gulp.src('Views/Home/Index.Template.cshtml')
     .pipe($.plumber({ errorHandler: reportError }))
     .pipe($.replaceTask({
       patterns: [{

@@ -31,7 +31,7 @@
 
             c.Bound(s => s.Login).Title(UserStrings.Login)
                 .HtmlAttributes(new { @class = "title" });
-            
+
             c.Bound(s => s.FirstName).Title(UserStrings.FirstName);
             c.Bound(s => s.LastName).Title(UserStrings.LastName);
             c.Bound(s => s.Email).Title(UserStrings.Email);
@@ -57,6 +57,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

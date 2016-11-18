@@ -72,7 +72,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var data = source.GetMetaData(expression);
             var name = ExpressionHelper.GetExpressionText(expression);
-            var maxlength = source.GetMaxLength(data.ContainerType, data.PropertyName);
+            var maxlength = GetMaxLength(data.ContainerType, data.PropertyName);
 
             return source.QpHtmlProperties(name, maxlength, type, index);
         }
@@ -182,19 +182,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return htmlProperties;
         }
 
-        private static int GetMaxLength<TModel>(this HtmlHelper<TModel> source, Type sourceType, string propertyName)
+        private static int GetMaxLength(Type sourceType, string propertyName)
         {
-            var attr = source.GetCustomAttribute(sourceType, propertyName, typeof(MaxLengthValidatorAttribute));
+            var attr = GetCustomAttribute(sourceType, propertyName, typeof(MaxLengthValidatorAttribute));
             return ((MaxLengthValidatorAttribute)attr)?.UpperBound ?? 0;
         }
 
-        internal static string GetExampleText<TModel>(this HtmlHelper<TModel> source, Type sourceType, string propertyName)
+        internal static string GetExampleText(Type sourceType, string propertyName)
         {
-            var attr = source.GetCustomAttribute(sourceType, propertyName, typeof(ExampleAttribute));
+            var attr = GetCustomAttribute(sourceType, propertyName, typeof(ExampleAttribute));
             return ((ExampleAttribute)attr)?.Text;
         }
 
-        private static object GetCustomAttribute<TModel>(this HtmlHelper<TModel> source, Type sourceType, string propertyName, Type type)
+        private static object GetCustomAttribute(Type sourceType, string propertyName, Type type)
         {
             var result = sourceType.GetProperty(propertyName);
             var attrs = result.GetCustomAttributes(type, true);
@@ -248,7 +248,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return tb.ToString();
         }
 
-        private static string ImgButton(this HtmlHelper source, string id, string title, string cssClassName)
+        private static string ImgButton(string id, string title, string cssClassName)
         {
             var img = new TagBuilder("img");
             img.MergeAttribute("src", PathUtility.Combine(SitePathHelper.GetCommonRootImageFolderUrl(), "0.gif"));
@@ -264,17 +264,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         internal static string FileDownload(this HtmlHelper source, string id)
         {
-            return source.ImgButton(source.UniqueId(id + "_download"), GlobalStrings.ViewDownload, DownloadButtonClassName);
+            return ImgButton(source.UniqueId(id + "_download"), GlobalStrings.ViewDownload, DownloadButtonClassName);
         }
 
         internal static string ImagePreview(this HtmlHelper source, string id)
         {
-            return source.ImgButton(source.UniqueId(id + "_preview"), GlobalStrings.Preview, PreviewButtonClassName);
+            return ImgButton(source.UniqueId(id + "_preview"), GlobalStrings.Preview, PreviewButtonClassName);
         }
 
         public static string ImageLibrary(this HtmlHelper source, string id)
         {
-            return source.ImgButton(source.UniqueId(id + "_library"), GlobalStrings.Library, LibraryButtonClassName);
+            return ImgButton(source.UniqueId(id + "_library"), GlobalStrings.Library, LibraryButtonClassName);
         }
 
         private static string DateTimePart(object value, string formatString, DateTime? defaultValue)
@@ -300,9 +300,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString VersionText(this HtmlHelper source, string id, string value)
         {
-            var properties = new Dictionary<string, object>();
-            properties.Add("class", VersionTextClassName);
-            properties.Add("name", id);
+            var properties = new Dictionary<string, object> { { "class", VersionTextClassName }, { "name", id } };
             if (string.IsNullOrEmpty(value))
             {
                 value = "&nbsp;";

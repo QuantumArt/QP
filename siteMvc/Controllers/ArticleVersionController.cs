@@ -18,7 +18,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
     [ValidateInput(false)]
     public class ArticleVersionController : QPController
     {
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.ArticleVersions)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
@@ -38,18 +37,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var serviceResult = ArticleVersionService.List(parentId, command.GetListCommand());
             var result = Mapper.Map<List<ArticleVersion>, List<ArticleVersionListItem>>(serviceResult);
             return View(new GridModel { Data = result, Total = result.Count });
-        }
-
-        [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UiAction)]
-        [ActionAuthorize(ActionCode.PreviewArticleVersion)]
-        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
-        [BackendActionContext(ActionCode.PreviewArticleVersion)]
-        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? boundToExternal)
-        {
-            var version = ArticleVersionService.Read(id, parentId);
-            var model = ArticleVersionViewModel.Create(version, tabId, parentId, successfulActionCode, boundToExternal);
-            return JsonHtml("Properties", model);
         }
 
         [HttpGet]
@@ -79,13 +66,23 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.PreviewArticleVersion)]
+        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "parentId")]
+        [BackendActionContext(ActionCode.PreviewArticleVersion)]
+        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? boundToExternal)
+        {
+            var version = ArticleVersionService.Read(id, parentId);
+            var model = ArticleVersionViewModel.Create(version, tabId, parentId, successfulActionCode, boundToExternal);
+            return JsonHtml("Properties", model);
+        }
+
+        [HttpPost, Record(ActionCode.PreviewArticleVersion)]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RestoreArticleVersion)]
         [BackendActionContext(ActionCode.RestoreArticleVersion)]
         [BackendActionLog]
-        [Record(ActionCode.PreviewArticleVersion)]
         public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, bool? boundToExternal, FormCollection collection)
         {
             var version = ArticleVersionService.Read(id);
@@ -109,26 +106,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveArticleVersion)]
         [BackendActionContext(ActionCode.RemoveArticleVersion)]
         [BackendActionLog]
-        [Record]
         public ActionResult Remove(int id, bool? boundToExternal)
         {
             var result = ArticleVersionService.Remove(id, boundToExternal);
             return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveArticleVersion)]
         [BackendActionContext(ActionCode.MultipleRemoveArticleVersion)]
         [BackendActionLog]
-        [Record]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemove(int[] IDs, bool? boundToExternal)
         {

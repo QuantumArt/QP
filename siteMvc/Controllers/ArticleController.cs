@@ -521,12 +521,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [ConnectionScope]
-        [ExceptionResult(ExceptionResultMode.UiAction)]
-        public ActionResult AggregatedArticle(string tabId, int parentId, int id, int aggregatedContentId)
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
+        public JsonCamelCaseResult<JSendResponse> GetAggregatedArticle(int id, int parentId, int aggregatedContentId)
         {
-            var aggregatedArticle = ArticleService.GetAggregatedArticle(id, parentId, aggregatedContentId);
-            ViewBag.AggregatedArticle = aggregatedArticle;
-            return JsonHtml("AggregatedArticle", null);
+            ViewBag.AggregatedArticle = ArticleService.GetAggregatedArticle(id, parentId, aggregatedContentId);
+            return JsonCamelCaseHtml("_AggregatedArticle");
         }
 
         [ConnectionScope]

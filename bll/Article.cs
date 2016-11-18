@@ -575,7 +575,6 @@ namespace Quantumart.QP8.BLL
         {
             if (classifierValue > 0)
             {
-                // так как у статьи не может быть более одной агрегированной статьи из агрегированного контента, то достаточно условия a.ContentId == classifierValue
                 var aggregated = AggregatedArticles.FirstOrDefault(a => a.ContentId == classifierValue) ?? CreateNew(classifierValue);
                 aggregated.Archived = Archived;
                 aggregated.ViewType = ViewType;
@@ -607,8 +606,8 @@ namespace Quantumart.QP8.BLL
 
         private static Dictionary<string, string> GetPredefinedValues(int? fieldId, int? articleId, bool? isChild)
         {
-            var predefinedValues = new Dictionary<string, string>();
             var currentId = 0;
+            var predefinedValues = new Dictionary<string, string>();
             if (fieldId.HasValue && articleId.HasValue && fieldId.Value != 0 && articleId.Value != 0)
             {
                 var field = FieldRepository.GetById(fieldId.Value);

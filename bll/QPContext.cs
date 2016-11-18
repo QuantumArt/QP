@@ -531,14 +531,14 @@ namespace Quantumart.QP8.BLL
                     }
                     else
                     {
-                        CreateFaildSession(data, dbContext);
+                        CreateFailedSession(data, dbContext);
                     }
                 }
                 catch (SqlException ex)
                 {
                     message = ex.Message;
                     errorCode = ex.State;
-                    CreateFaildSession(data, dbContext);
+                    CreateFailedSession(data, dbContext);
                 }
             }
 
@@ -608,7 +608,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создать сессию при неудачном логине
         /// </summary>
-        private static void CreateFaildSession(LogOnCredentials data, QP8Entities dbContext)
+        private static void CreateFailedSession(LogOnCredentials data, QP8Entities dbContext)
         {
             var sessionsLog = new SessionsLog
             {

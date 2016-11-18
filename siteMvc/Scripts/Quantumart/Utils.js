@@ -49,7 +49,7 @@ $q.sendAjax = function(opts) {
     dataType: 'json',
     contentType: 'application/json; charset=utf-8',
     async: true,
-    cache: true,
+    cache: false,
     traditional: true
   };
 
@@ -59,7 +59,7 @@ $q.sendAjax = function(opts) {
   }
 
   var maxLogDataLengthToLog = 300;
-  var logData = JSON.stringify(options.data);
+  var logData = JSON.stringify(options.data || {});
   var logDataLength = logData.length;
   var cuttedLogData = logDataLength > maxLogDataLengthToLog
     ? logData.slice(0, maxLogDataLengthToLog) + '..'
@@ -104,8 +104,8 @@ $q.getAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
 $q.postAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
     url: url,
-    data: JSON.stringify(data),
     type: 'POST',
+    data: JSON.stringify(data),
     jsendSuccess: jsendSuccess,
     jsendFail: jsendFail,
     jsendError: jsendError
@@ -124,7 +124,22 @@ $q.hideLoader = function() {
   }
 }
 
-//#region Преобразование и проверка типов
+$q.isBoolean = function Quantumart$QP8$Utils$isBoolean(value) {
+  return typeof value === 'boolean' || value && ['true', 'false'].includes(value.toString().toLowerCase().trim());
+};
+
+$q.toBoolean = function Quantumart$QP8$Utils$toBoolean(value, defaultValue) {
+  if ($q.isBoolean(value)) {
+    return value.toString().toLowerCase().trim() === 'true';
+  }
+
+  if ($q.isBoolean(defaultValue)) {
+    return defaultValue.toString().toLowerCase().trim() === 'true';
+  }
+
+  return false;
+};
+
 Quantumart.QP8.Utils.isNull = function Quantumart$QP8$Utils$isNull(value) {
   /// <summary>
   /// Проверяет переменную на Null-значения
@@ -349,66 +364,6 @@ Quantumart.QP8.Utils.isFloat = function Quantumart$QP8$Utils$isFloat(value) {
   return result;
 };
 
-Quantumart.QP8.Utils.toBoolean = function Quantumart$QP8$Utils$toBoolean(value, defaultValue) {
-  /// <summary>
-  /// Преобразует значение в булевый тип
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="defaultValue" type="Boolean">значение по умолчанию</param>
-  var bool = null;
-
-  if (Quantumart.QP8.Utils.isNullOrEmpty(defaultValue)) {
-    defaultValue = null;
-  }
-
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(value)) {
-    if (typeof (value.valueOf()) == 'boolean') {
-      return value;
-    }
-
-    bool = value.toString().toLowerCase().trim();
-    if (bool.length > 0) {
-      if (bool == 'true') {
-        bool = true;
-      } else if (bool == 'false') {
-        bool = false;
-      } else {
-        bool = null;
-      }
-    } else {
-      bool = null;
-    }
-  }
-
-  if (bool == null) {
-    bool = defaultValue;
-  }
-
-  return bool;
-};
-
-Quantumart.QP8.Utils.isBoolean = function Quantumart$QP8$Utils$isBoolean(value) {
-  /// <summary>
-  /// Проверяет является ли значение булевым типом
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  var result = false;
-
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(value)) {
-    if (typeof (value.valueOf()) == 'boolean') {
-      result = true;
-    } else {
-      var processedValue = value.toString().toLowerCase().trim();
-
-      if (processedValue == 'true' || processedValue == 'false') {
-        result = true;
-      }
-    }
-  }
-
-  return result;
-};
-
 Quantumart.QP8.Utils.toDate = function Quantumart$QP8$Utils$toDate(value, defaultValue) {
   /// <summary>
   /// Проверяет значение в дату
@@ -548,9 +503,6 @@ Quantumart.QP8.Utils.changeType = function Quantumart$QP8$Utils$changeType(value
   return convertedValue;
 };
 
-//#endregion
-
-//#region Сравнение значений
 Quantumart.QP8.Utils.isInRange = function Quantumart$QP8$Utils$isInRange(value, lowerBound, lowerBoundType, upperBound, upperBoundType) {
   /// <summary>
   /// Проверяет попадание значения в диапазон
@@ -610,9 +562,6 @@ Quantumart.QP8.Utils.compareValues = function Quantumart$QP8$Utils$compareValues
   return result;
 };
 
-//#endregion
-
-//#region AJAX
 Quantumart.QP8.Utils.getJsonFromUrl = function Quantumart$QP8$Utils$getJsonFromUrl(method, url, params, async, allowCaching, callbackSuccess, callbackError) {
   /// <summary>
   /// Получает JSON-контент, который расположен по указанному URL
@@ -858,7 +807,6 @@ Quantumart.QP8.Utils.generateErrorMessageText = function Quantumart$QP8$Utils$ge
   return html.string();
 };
 
-//#region auth decorators
 Quantumart.QP8.Utils.ajaxCallbackDecorator = function Quantumart$QP8$Utils$ajaxCallbackDecorator(callback, settings) {
   if (callback) {
     return function(data, textStatus, jqXHR) {
@@ -884,10 +832,6 @@ Quantumart.QP8.Utils.decorateDeferred = function Quantumart$QP8$Utils$decorateDe
   return deferred;
 };
 
-//#endregion
-//#endregion
-
-//#region Работа с числами
 /*Возвращает строковое представление числа без использования экспоненциальной записи, и ровно с digits цифр после запятой.
 Число округляется при необходимости, и дробная часть добивается нулями до нужной длины.
 Если число целое, то дробная часть отбрасывается*/
@@ -896,9 +840,6 @@ Quantumart.QP8.Utils.toFixed = function(n, digits) {
   return n.toFixed(digits).replace(new RegExp('\\.0{' + digits + '}'), '');
 };
 
-//#endregion
-
-//#region Работа со строками
 if (typeof String.prototype.left !== 'function') {
   String.prototype.left = function(length) {
   /// <summary>
@@ -1029,9 +970,6 @@ Quantumart.QP8.Utils.middleCutShort = function Quantumart$QP8$Utils$middleCutSho
   return result;
 };
 
-//#endregion
-
-//#region Работа с Object
 Quantumart.QP8.Utils.setPropertyValue = function Quantumart$QP8$Utils$setPropertyValue(object, propertyName, value) {
   /// <summary>
   /// Задает значение свойству объекта
@@ -1104,9 +1042,6 @@ Quantumart.QP8.Utils.getHashKeysCount = function Quantumart$QP8$Utils$getHashKey
   return keysCount;
 };
 
-//#endregion
-
-//#region Работа с Array
 Array.distinct = function Array$distinct(array) {
   /// <summary>
   /// Возвращает массив, состоящий из уникальных элементов
@@ -1136,10 +1071,6 @@ Quantumart.QP8.Utils.clearArray = function(array) {
   array = null;
 };
 
-//#endregion
-
-//#region Работа с Function
-
 Quantumart.QP8.Utils.callFunction = function Quantumart$QP8$Utils$callFunction(callback, context) {
   /// <summary>
   /// Вызывает функцию
@@ -1162,9 +1093,6 @@ Quantumart.QP8.Utils.preventDefaultFunction = function Quantumart$QP8$Utils$prev
   e.preventDefault();
 };
 
-//#endregion
-
-//#region Преобразование в QueryString
 Quantumart.QP8.Utils.hashToQueryString = function Quantumart$QP8$Utils$hashToQueryString(hash) {
   /// <summary>
   /// Возвращает строку запроса
@@ -1225,7 +1153,6 @@ Quantumart.QP8.Utils.updateQueryStringParameter = function Quantumart$QP8$Utils$
     return uri + separator + key + '=' + value;
   }
 };
-//#endregion
 
 Quantumart.QP8.Utils.collectGarbageInIE = function Quantumart$QP8$Utils$collectGarbageInIE() {
   if (jQuery.browser.msie) {
