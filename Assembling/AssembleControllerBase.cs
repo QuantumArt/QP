@@ -55,7 +55,7 @@ namespace Quantumart.QP8.Assembling
 
         protected AssembleControllerBase(string connectionParameter)
         {
-            FillController(connectionParameter, true);
+            FillController(connectionParameter, false);
         }
 
         protected AssembleControllerBase(string connectionParameter, bool isCustomerCode)

@@ -79,7 +79,7 @@ namespace Quantumart.QP8.BLL.Services
 
             if (notification.FormatId != null)
             {
-                var cnt = new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification, QPContext.CurrentCustomerCode);
+                var cnt = new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification, QPContext.CurrentDbConnectionString);
                 cnt.Assemble();
             }
             return null;
@@ -94,7 +94,7 @@ namespace Quantumart.QP8.BLL.Services
                 if (notification.FormatId != null)
                 {
                     return new AssembleFormatController(notification.FormatId.Value, AssembleMode.Notification,
-                        QPContext.CurrentCustomerCode);
+                        QPContext.CurrentDbConnectionString);
                 }
 
                 return null;

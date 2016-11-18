@@ -34,8 +34,8 @@ namespace Assembling
             }
         }
 
-        public AssemblePageObjectsController(int pageId, string customerCode)
-            : base(customerCode)
+        public AssemblePageObjectsController(int pageId, string connectionParameter)
+            : base(connectionParameter)
         {
             FillController(pageId);
         }

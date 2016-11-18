@@ -120,7 +120,7 @@ namespace Quantumart.QP8.Assembling
                                                               SiteId)));
 
         #region constructors and initializers
-        public AssembleContentsController(int siteId, string sqlMetalPath, string customerCode) : base(customerCode)
+        public AssembleContentsController(int siteId, string sqlMetalPath, string connectionParameter) : base(connectionParameter)
         {
             FillController(siteId, sqlMetalPath);
         }
