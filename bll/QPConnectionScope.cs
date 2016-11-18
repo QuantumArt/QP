@@ -18,8 +18,6 @@ namespace Quantumart.QP8.BLL
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class QPConnectionScope : IDisposable
     {
-        [ThreadStatic]
-        private static QPConnectionScope _currentScope;
 
         private EntityConnection _efConnection;
 
@@ -27,8 +25,8 @@ namespace Quantumart.QP8.BLL
 
         public static QPConnectionScope Current
         {
-            get { return _currentScope; }
-            private set { _currentScope = value; }
+            get { return QPContext.CurrentConnectionScope; }
+            private set { QPContext.CurrentConnectionScope = value; }
         }
 
         public static string SetIsolationLevelCommandText => "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED";

@@ -35,6 +35,10 @@ namespace Quantumart.QP8.BLL
         private const string CurrentGroupIdsKey = "CurrentGroupIds";
         private const string CurrentCustomerCodeKey = "CurrentCustomerCode";
         private const string CurrentSqlVersionKey = "CurrentSqlVersion";
+        private const string CurrentConnectionScopeKey = "CurrentConnectionScope";
+        private const string BackendActionContextKey = "BackendActionContext";
+
+
         private const string IsAdminKey = "IsAdmin";
         private const string CanUnlockItemsKey = "CanUnlockItems";
         private const string IsLiveKey = "IsLive";
@@ -65,8 +69,13 @@ namespace Quantumart.QP8.BLL
             return $"{QPConfiguration.TempDirectory}{CurrentCustomerCode}.xml";
         }
 
-        private static T GetValueFromStorage<T>(T threadStorage, string key)
+        private static T GetValueFromStorage<T>(T threadStorage, string key, bool useThreadStorage = false)
         {
+            if (useThreadStorage)
+            {
+                return threadStorage;
+            }
+
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
             {
                 return _externalContextStorage.GetValue<T>(key);
@@ -80,8 +89,13 @@ namespace Quantumart.QP8.BLL
             return (T)HttpContext.Current.Items[key];
         }
 
-        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key)
+        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key, bool useThreadStorage = false)
         {
+            if (useThreadStorage)
+            {
+                threadStorage = value;
+            }
+
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
             {
                 _externalContextStorage.SetValue(value, key);
@@ -275,6 +289,15 @@ namespace Quantumart.QP8.BLL
         [ThreadStatic]
         private static Version _currentSqlVersion;
 
+        [ThreadStatic]
+        private static QPConnectionScope _currentConnectionScope;
+
+        [ThreadStatic]
+        private static BackendActionContext _backendActionContext;
+
+        [ThreadStatic]
+        private static bool _useThreadStorageForConnectionScope;
+
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
             SetValueToStorage(ref _currentUserId, value, CurrentUserIdKey);
@@ -442,6 +465,30 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        internal static QPConnectionScope CurrentConnectionScope
+        {
+            get
+            {
+                return GetValueFromStorage(_currentConnectionScope, CurrentConnectionScopeKey, UseThreadStorageForConnectionScope);
+            }
+            set
+            {
+                SetValueToStorage(ref _currentConnectionScope, value, CurrentConnectionScopeKey, UseThreadStorageForConnectionScope);
+            }
+        }
+
+        internal static BackendActionContext BackendActionContext
+        {
+            get
+            {
+                return GetValueFromStorage(_backendActionContext, BackendActionContextKey);
+            }
+            set
+            {
+                SetValueToStorage(ref _backendActionContext, value, BackendActionContextKey);
+            }
+        }
+
         public static Version CurrentSqlVersion
         {
             get
@@ -489,7 +536,7 @@ namespace Quantumart.QP8.BLL
 
         public static bool CheckCustomerCode(string customerCode)
         {
-            return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name").Value).Contains(customerCode);
+            return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name")?.Value).Contains(customerCode);
         }
 
         /// <summary>
@@ -637,6 +684,13 @@ namespace Quantumart.QP8.BLL
         private static IContextStorage _externalContextStorage;
 
         private static HashSet<string> _externalContextStorageKeys;
+
+        public static bool UseThreadStorageForConnectionScope
+
+        {
+            get { return _useThreadStorageForConnectionScope; }
+            set { _useThreadStorageForConnectionScope = value; }
+        }
 
         public static IContextStorage ExternalContextStorage
         {
