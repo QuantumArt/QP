@@ -108,15 +108,7 @@ namespace Quantumart.QP8.Utils
         /// <returns>преобразованное значение</returns>
         public static int ToInt32(object value, int defaultValue)
         {
-            var result = defaultValue;
-            var rawResult = ToNullableInt32(value);
-
-            if (rawResult != null)
-            {
-                result = (int)rawResult;
-            }
-
-            return result;
+            return ToNullableInt32(value) ?? defaultValue;
         }
 
         /// <summary>

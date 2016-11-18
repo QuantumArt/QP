@@ -4,12 +4,14 @@ using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
@@ -28,6 +30,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ContentController : QPController
     {
+        private readonly IContentRepository _contentRepository;
+
+        public ContentController(IContentRepository contentRepository)
+        {
+            _contentRepository = contentRepository;
+        }
+
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Contents)]
         [BackendActionContext(ActionCode.Contents)]
@@ -686,6 +695,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
             filter.SiteId = parentId;
             var serviceResult = ContentService.ListForUnion(filter, command.GetListCommand(), Converter.ToInt32Collection(IDs, ','));
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+        }
+
+        [ConnectionScope]
+        [ExceptionResult(ExceptionResultMode.JSendResponse)]
+        public JsonCamelCaseResult<JSendResponse> GetContentFormScript(int contentId)
+        {
+            return new JSendResponse
+            {
+                Status = JSendStatus.Success,
+                Data = _contentRepository.GetById(contentId).FormScript
+            };
         }
     }
 }

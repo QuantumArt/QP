@@ -45,6 +45,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             labelCell.AddCssClass(LabelClassName);
             labelCell.InnerHtml = forCheckbox ? string.Empty : label;
 
+
             var validatorWrapper = new TagBuilder("em");
             validatorWrapper.AddCssClass(ValidatorsClassName);
 
@@ -54,27 +55,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 validatorWrapper.InnerHtml = validator.ToString().ProtectCurlyBrackets();
             }
 
-            var exampleCode = string.IsNullOrEmpty(example) ? string.Empty : RenderDescription(example);
+            var exampleCode = string.IsNullOrEmpty(example)
+                ? string.Empty
+                : $"<em class=\"{DescriptionClassName}\">{example}</em>";
+
             var fieldCell = new TagBuilder("dd");
             fieldCell.AddCssClass(FieldClassName);
+            fieldCell.InnerHtml = "{0}" + (forCheckbox ? " " + label : exampleCode) + validatorWrapper;
 
-            var cellHtml = "{0}" + (forCheckbox ? " " + label : exampleCode);
-            fieldCell.InnerHtml = cellHtml + validatorWrapper;
-
-            var row = new TagBuilder("dl");
-            row.AddCssClass(RowClassName);
-            row.MergeDataAttribute("field_form_name", id);
-            row.InnerHtml = labelCell + fieldCell.ToString();
-
-            return row.ToString();
-        }
-
-        private static string RenderDescription(string example)
-        {
-            var description = new TagBuilder("em");
-            description.AddCssClass(DescriptionClassName);
-            description.InnerHtml = example;
-            return description.ToString();
+            return $"<dl class=\"{RowClassName}\" data-field_form_name=\"{id}\">{labelCell}{fieldCell}</dl>";
         }
 
         private static MvcHtmlString Editor(this HtmlHelper html, FieldValue pair, bool articleIsAgregated = false, bool forceReadonly = false)
@@ -135,32 +124,21 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 case FieldExactTypes.Numeric:
                     return html.NumericTextBox(id, value, htmlAttributes, field);
                 case FieldExactTypes.Classifier:
+                    if (pair.Version != null)
                     {
-                        if (pair.Version != null)
-                        {
-                            return html.VersionClassifierField(id, value, field, pair.Article, pair.Version, readOnly);
-                        }
-
-                        return html.ClassifierField(id, value, field, pair.Article, readOnly);
+                        return html.VersionClassifierField(id, value, field, pair.Article, pair.Version, readOnly);
                     }
+
+                    return html.ClassifierField(id, value, field, pair.Article, readOnly);
                 case FieldExactTypes.O2MRelation:
                 case FieldExactTypes.M2MRelation:
                 case FieldExactTypes.M2ORelation:
+                    var result = ArticleViewModel.GetListForRelation(field, value, pair.Article.Id);
+                    return html.Relation(id, html.List(result.Items), new ControlOptions
                     {
-                        var result = ArticleViewModel.GetListForRelation(field, value, pair.Article.Id);
-                        return html.Relation(
-                            id,
-                            html.List(result.Items),
-                            new ControlOptions
-                            {
-                                Enabled = !readOnly,
-                                HtmlAttributes = htmlAttributes
-                            },
-                            field,
-                            pair.Article.Id,
-                            result.IsListOverflow
-                        );
-                    }
+                        Enabled = !readOnly,
+                        HtmlAttributes = htmlAttributes
+                    }, field, pair.Article.Id, result.IsListOverflow);
                 case FieldExactTypes.StringEnum:
                     return html.StringEnumEditor(id, value, field, readOnly, pair.Article.IsNew);
                 default:
@@ -337,15 +315,58 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var required = pair.Field.Required && !pair.Article.IsReadOnly;
             var fieldDescription = string.IsNullOrWhiteSpace(HttpUtility.HtmlDecode(pair.Field.Description ?? string.Empty).Replace("\u00A0", string.Empty)) ? null : pair.Field.Description;
-
             if (!string.IsNullOrEmpty(fieldDescription))
             {
                 fieldDescription = fieldDescription.Replace("{", "{{").Replace("}", "}}");
             }
 
-            return MvcHtmlString.Create(
-                string.Format(html.FieldTemplate(pair.Field.FormName, pair.Field.DisplayName, required: required, description: fieldDescription), html.Editor(pair, articleIsAgregated, forceReadonly))
-            );
+            var fieldTemplate = html.FieldTemplate(pair.Field.FormName, pair.Field.DisplayName, required: required, description: fieldDescription);
+            var fieldHtmlString = string.Format(fieldTemplate, html.Editor(pair, articleIsAgregated, forceReadonly));
+            if (pair.Field.IsClassifier && pair.Article.ViewType != ArticleViewType.Virtual)
+            {
+                fieldHtmlString = fieldHtmlString + GetExtensionArticleFields(html, pair);
+            }
+
+            return MvcHtmlString.Create(fieldHtmlString);
+        }
+
+        private static string GetExtensionArticleFields(HtmlHelper html, FieldValue pair)
+        {
+            var extensionContentId = Converter.ToInt32(pair.Value, 0);
+            if (extensionContentId == 0)
+            {
+                return string.Empty;
+            }
+
+            Article aggregatedArticle = null;
+            if (pair.Article.ViewType == ArticleViewType.CompareVersions || pair.Article.ViewType == ArticleViewType.PreviewVersion)
+            {
+                if (pair.Article.ViewType == ArticleViewType.CompareVersions)
+                {
+                    if (pair.Version == null || !StringComparer.InvariantCultureIgnoreCase.Equals(pair.Value, pair.ValueToMerge))
+                    {
+                        return string.Empty;
+                    }
+
+                    aggregatedArticle = pair.Version.AggregatedArticles.SingleOrDefault(n => n.ContentId == extensionContentId);
+                }
+
+                if (pair.Article.ViewType == ArticleViewType.PreviewVersion)
+                {
+                    if (pair.Version == null)
+                    {
+                        return string.Empty;
+                    }
+
+                    aggregatedArticle = pair.Version.AggregatedArticles.SingleOrDefault(n => n.ContentId == extensionContentId);
+                }
+            }
+            else
+            {
+                aggregatedArticle = pair.Article.GetAggregatedArticleByClassifier(extensionContentId);
+            }
+
+            return $"<div class=\"articleWrapper_{extensionContentId}\">{html.AggregatedFieldValues(aggregatedArticle?.FieldValues.Where(n => !n.Field.Aggregated))}</div>"; // check;
         }
 
         public static MvcHtmlString DisplayField(this HtmlHelper html, string id, string title, object value)
@@ -378,7 +399,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     html.FieldTemplate(fieldName,
                     data.DisplayName,
                     false,
-                    html.GetExampleText(data.ContainerType, data.PropertyName)),
+                    HtmlHelpersExtensions.GetExampleText(data.ContainerType, data.PropertyName)),
                     html.QpTextBox(fieldName, defaultValue, htmlAttributes).ToHtmlString()
                 )
             );
@@ -392,7 +413,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     html.FieldTemplate(ExpressionHelper.GetExpressionText(expression),
                     data.DisplayName,
                     false,
-                    html.GetExampleText(data.ContainerType, data.PropertyName)),
+                    HtmlHelpersExtensions.GetExampleText(data.ContainerType, data.PropertyName)),
                     html.QpTextBoxFor(expression, htmlAttributes).ToHtmlString()
                 )
             );
@@ -683,9 +704,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             ));
         }
 
-        /// <summary>
-        /// Поле-классификатор
-        /// </summary>
         private static MvcHtmlString ClassifierField(this HtmlHelper source, string name, string value, Field field, Article article, bool forceReadOnly)
         {
             // Получить агрегированную статью
@@ -712,14 +730,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 sb.Append(source.DropDownList(name, source.List(ArticleViewModel.GetAggregatableContentsForClassifier(field, value)), FieldStrings.SelectContent, contentListHtmlAttrs).ToHtmlString());
             }
 
-            // Содержимое агрегированной статьи (если она есть)
-            sb.Append(BeginAggregatedArticleData(acticleHtmlElemId));
-            if (aggregatedArticle != null)
-            {
-                sb.Append(HttpUtility.HtmlEncode(source.AggregatedArticle(aggregatedArticle).ToHtmlString()));
-            }
-
-            sb.Append(EndAggregatedArticleData());
             sb.Append(EndClassifierFieldComponent());
             return MvcHtmlString.Create(sb.ToString());
         }
@@ -742,7 +752,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var classifierValue = Converter.ToInt32(value, 0);
             if (article.ViewType != ArticleViewType.Virtual)
             {
-                aggregatedArticle = version?.GetAggregatedArticle(classifierValue);
+                aggregatedArticle = version?.AggregatedArticles.SingleOrDefault(n => n.ContentId == classifierValue);
             }
 
             string acticleHtmlElemId;
@@ -750,36 +760,24 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             if (forceReadOnly)
             {
-                // Агрегированный контент
                 sb.Append(source.VersionText(name, name1));
             }
             else
             {
                 var contentListHtmlAttrs = new Dictionary<string, object> { { "class", "dropDownList classifierContentList" } };
-                sb.Append(
-                    source.DropDownList(name,
-                        source.List(ArticleViewModel.GetAggregatableContentsForClassifier(field, value)),
-                        FieldStrings.SelectContent,
-                        contentListHtmlAttrs
-                        ).ToHtmlString()
-                    );
+                sb.Append(source.DropDownList(name, source.List(ArticleViewModel.GetAggregatableContentsForClassifier(field, value)), FieldStrings.SelectContent, contentListHtmlAttrs).ToHtmlString());
             }
 
-            // Содержимое агрегированной статьи (если она есть)
-            sb.Append(BeginAggregatedArticleData(acticleHtmlElemId));
-            var html = source.AggregatedFieldValues(aggregatedArticle?.FieldValues).ToHtmlString();
-            sb.Append(HttpUtility.HtmlEncode(html));
-            sb.Append(EndAggregatedArticleData());
             sb.Append(EndClassifierFieldComponent());
             return MvcHtmlString.Create(sb.ToString());
         }
 
-        private static string BeginClassifierFieldComponent(this HtmlHelper source, string name, string value, Field field, Article article, Article aggregatedArticle, out string acticleHtmlElemId)
+        private static string BeginClassifierFieldComponent(this HtmlHelper html, string name, string value, Field field, Article article, EntityObject aggregatedArticle, out string acticleHtmlElemId)
         {
-            var componentElemId = source.UniqueId(name);
+            var componentElemId = html.UniqueId(name);
             acticleHtmlElemId = componentElemId + "_articleHtml";
             var aggregatedArticleId = aggregatedArticle?.Id.ToString() ?? string.Empty;
-            return $"<div id={componentElemId} data-host_id=\"{source.TabId()}\" data-field_name=\"{name}\" data-aggregated_content_id=\"{value}\" data-aggregated_article_id=\"{aggregatedArticleId}\" data-root_content_id=\"{article.ContentId}\" data-classifier_id=\"{field.Id}\" data-root_article_id=\"{article.Id}\" data-acticle_html_id=\"{acticleHtmlElemId}\" data-is_not_changeable=\"{!article.IsNew && !field.Changeable}\" class=\"classifierComponent\">";
+            return $"<div id={componentElemId} data-host_id=\"{html.TabId()}\" data-field_name=\"{name}\" data-aggregated_content_id=\"{value}\" data-aggregated_article_id=\"{aggregatedArticleId}\" data-root_content_id=\"{article.ContentId}\" data-classifier_id=\"{field.Id}\" data-root_article_id=\"{article.Id}\" data-acticle_html_id=\"{acticleHtmlElemId}\" data-is_not_changeable=\"{!article.IsNew && !field.Changeable}\" class=\"classifierComponent\">";
         }
 
         private static string EndClassifierFieldComponent()
@@ -787,31 +785,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return "</div>";
         }
 
-        private static string BeginAggregatedArticleData(string acticleHtmlElemId)
-        {
-            return $"<script type=\"text/plain\" id=\"{acticleHtmlElemId}\">";
-        }
-
-        private static string EndAggregatedArticleData()
-        {
-            return "</script>";
-        }
-
-        /// <summary>
-        /// Возвращает разметку формы агрегируемой статьи
-        /// </summary>
-        public static MvcHtmlString AggregatedArticle(this HtmlHelper source, Article article)
-        {
-            return source.AggregatedFieldValues(article.FieldValues.Where(n => !n.Field.Aggregated));
-        }
-
-        private static MvcHtmlString AggregatedFieldValues(this HtmlHelper source, IEnumerable<FieldValue> values)
+        public static MvcHtmlString AggregatedFieldValues(this HtmlHelper html, IEnumerable<FieldValue> values)
         {
             var sb = new StringBuilder();
-
             values?.Aggregate(sb, (b, pair) =>
             {
-                b.Append(source.Field(pair, true).ToHtmlString());
+                b.Append(html.Field(pair, true).ToHtmlString());
                 return b;
             });
 

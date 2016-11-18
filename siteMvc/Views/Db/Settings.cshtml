@@ -127,7 +127,6 @@
         disableContentIdentity: $editingForm.find('.disableContentIdentity').prop('checked'),
         useGuidSubstitution: $editingForm.find('.useGuidSubstitution').prop('checked')
       }, function(data, response) {
-        $q.hideLoader();
         $q.alertSuccess(response.message);
       });
     });

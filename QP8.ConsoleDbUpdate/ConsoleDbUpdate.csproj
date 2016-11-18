@@ -270,7 +270,6 @@
     <EmbeddedResource Include="..\packages\NLog.4.3.10\lib\net45\NLog.dll">
       <Link>References\NLog.dll</Link>
     </EmbeddedResource>
-    <Content Include="gulpfile.js" />
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
       <Link>References\Quantumart.QP8.Merger.dll</Link>
     </EmbeddedResource>

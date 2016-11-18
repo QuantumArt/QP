@@ -35,17 +35,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
                 return;
             }
 
-            var controller = (QPController)filterContext.Controller;
-            if (controller == null || filterContext.HttpContext.IsXmlDbUpdateReplayAction())
+            if ((QPController)filterContext.Controller != null && !filterContext.HttpContext.IsXmlDbUpdateReplayAction())
             {
-                return;
+                filterContext.Result = ActionResultHelpers.GererateJsonError(_mode, filterContext.Exception);
+                EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(filterContext.Exception, PolicyName);
+
+                filterContext.ExceptionHandled = true;
+                filterContext.HttpContext.Response.Clear();
             }
-
-            filterContext.Result = ActionResultHelpers.GererateJsonError(_mode, filterContext.Exception);
-            EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(filterContext.Exception, PolicyName);
-
-            filterContext.ExceptionHandled = true;
-            filterContext.HttpContext.Response.Clear();
         }
     }
 }

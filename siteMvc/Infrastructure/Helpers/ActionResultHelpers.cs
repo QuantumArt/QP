@@ -13,7 +13,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
         internal static ActionResult GererateJsonError(ExceptionResultMode responseType, Exception ex)
         {
             Ensure.NotNull(ex);
-
             switch (responseType)
             {
                 case ExceptionResultMode.UiAction:
@@ -22,7 +21,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
                     return new JsonResult { Data = MessageResult.Error(ex.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
                 case ExceptionResultMode.JSendResponse:
                     return JsonCamelCaseResultErrorHandlerFabric.Create(ex);
-
                 default:
                     throw new NotImplementedException();
             }

@@ -1512,6 +1512,7 @@
     <Content Include="Scripts\Quantumart\ckeditor\globalSettings.js" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\images\typographer.gif" />
     <Content Include="Scripts\Quantumart\ckeditor\typographer\plugin.js" />
+    <Content Include="Scripts\Quantumart\Helpers\vanilla.helpers.js" />
     <Content Include="Scripts\Quantumart\version.6.32.js" />
     <None Include="Scripts\jquery\jquery-1.7.1.intellisense.js" />
     <Content Include="Settings.StyleCop" />
@@ -2124,7 +2125,7 @@
     <Content Include="Views\ArticleVersion\Properties.cshtml">
       <LastGenOutput>Properties.generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Views\Article\AggregatedArticle.cshtml">
+    <Content Include="Views\Article\_AggregatedArticle.cshtml">
     </Content>
     <None Include="Views\Article\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
@@ -2192,9 +2193,12 @@
     <None Include="Views\Article\Properties.cshtml">
       <LastGenOutput>Properties.generated.cs</LastGenOutput>
     </None>
-    <None Include="Views\Home\Index.cshtml">
+    <Content Include="Views\Home\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
-    </None>
+    </Content>
+    <Content Include="Views\Home\Index.Template.cshtml">
+      <LastGenOutput>Index.generated.cs</LastGenOutput>
+    </Content>
     <None Include="Views\LogOn\Index.cshtml">
       <LastGenOutput>Index.generated.cs</LastGenOutput>
     </None>
@@ -2410,7 +2414,6 @@
   <ItemGroup>
     <Folder Include="Content\imgareaselectcss\" />
     <Folder Include="Content\Temp\" />
-    <Folder Include="Views\ContentFolder\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
   </ItemGroup>
   <ItemGroup>

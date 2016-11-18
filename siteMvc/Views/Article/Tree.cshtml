@@ -18,4 +18,4 @@
     @Html.Telerik().TreeView().Name(Model.MainComponentId).HtmlAttributes(Model.TreeHthmlAttributes);
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

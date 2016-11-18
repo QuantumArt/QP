@@ -6,24 +6,24 @@
 
 
 @using (Html.BeginTabForm(Model))
-{        
+{
 	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
 	{
 		@Html.TextBoxFieldFor(s => s.Data.Name)
-        
+
         @Html.TextBoxFieldFor(s => s.Data.NetFormatName)
-        
+
         @Html.TextAreaFieldFor(s => s.Data.Description)
 
         @Html.TextBoxFieldFor(s => s.Data.NetLanguage.Name)
-        
+
         @Html.TextAreaFieldFor(s => s.Data.FormatBody, htmlAttributes: new Dictionary<string, object> { { "class", "textbox codeBehind hta-htmlTextArea highlightedTextarea" } })
-                
+
         @Html.TextAreaFieldFor(s => s.Data.CodeBehind, htmlAttributes: new Dictionary<string, object> { { "class", "textbox codeBehind highlightedTextarea " + HighlightModeSelectHelper.SelectMode(Model.Data.NetLanguageId) } })
 	}
-	
+
     @Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

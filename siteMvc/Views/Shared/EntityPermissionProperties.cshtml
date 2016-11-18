@@ -7,13 +7,13 @@
 @using (Html.BeginTabForm(Model))
 {
 	using (Html.BeginFieldGroup(EntityPermissionStrings.BasicParams))
-	{ 
+	{
 		@Html.RadioFieldFor(s => s.Data.MemberType, Html.List(Model.GetMemberTypes()), options: new ControlOptions {Enabled = Model.IsNew })
-		
+
 		using (Html.BeginPanel("UserMemberPanel"))
-		{ 
-			@Html.SingleItemPickerFieldFor(s => s.Data.UserId, 
-				Model.UserListItem, 
+		{
+			@Html.SingleItemPickerFieldFor(s => s.Data.UserId,
+				Model.UserListItem,
 				new EntityDataListArgs
 				{
 					EntityTypeCode = EntityTypeCode.User,
@@ -23,7 +23,7 @@
 					ListId = -1 * System.DateTime.Now.Millisecond,
 					MaxListHeight = 200,
 					MaxListWidth = 350,
-					ShowIds = true,					
+					ShowIds = true,
 				},
 				new ControlOptions
 				{
@@ -46,16 +46,16 @@
 					MaxListWidth = 350,
 					ShowIds = true
 				},
-				new ControlOptions 
-				{ 
+				new ControlOptions
+				{
 					Enabled = Model.IsNew
 				}
 			)
 		}
-		
+
 		@Html.RadioFieldFor(s => s.Data.PermissionLevelId, Html.List(Model.GetPermissionLevels()))
 		if (Model.IsPropagateable)
-		{ 
+		{
 			@Html.CheckBoxFieldFor(s => s.Data.PropagateToItems)
         }
 
@@ -69,10 +69,10 @@
 			@Html.CheckBoxFieldFor(s => s.Data.ExplicitPermissionToRelatedContents)
 		}
 	}
-	
+
 	@Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
 
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

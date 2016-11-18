@@ -37,17 +37,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
         {
             _variationModel = new InitPropertyValue<string>(() => new JavaScriptSerializer().Serialize(Data.VariationListItems));
             _contextModel = new InitPropertyValue<string>(() => new JavaScriptSerializer().Serialize(Data.ContextListItems));
-            _errorModel = new InitPropertyValue<string>(() => new JavaScriptSerializer().Serialize(
-                Data.VariationsErrorModel.Select(n => new
+            _errorModel = new InitPropertyValue<string>(() => new JavaScriptSerializer().Serialize(Data.VariationsErrorModel.Select(n => new
+            {
+                Context = n.Key,
+                Errors = n.Value.Errors.Select(m => new
                 {
-                    Context = n.Key,
-                    Errors = n.Value.Errors.Select(m => new
-                    {
-                        Name = m.PropertyName,
-                        m.Message
-                    })
+                    Name = m.PropertyName,
+                    m.Message
                 })
-            ));
+            })));
         }
 
         public static ArticleViewModel Create(BLL.Article data, string tabId, int parentEntityId, bool? boundToExternal)

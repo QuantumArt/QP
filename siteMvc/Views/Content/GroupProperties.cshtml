@@ -13,9 +13,9 @@
 	{
 		@Html.TextBoxFieldFor(s => s.Data.Name)
 		if (!Model.IsNew)
-		{ 
+		{
 			@Html.DisplayFieldFor(s => s.Data.Id)
 		}
 	}
 }
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

@@ -8,24 +8,26 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 {
     // ReSharper disable once InconsistentNaming
     public class QPController : Controller
     {
-        public string RenderPartialView(string viewName, object model)
+        public string RenderPartialView(string partialViewName, object model)
         {
-            if (string.IsNullOrEmpty(viewName))
+            if (string.IsNullOrEmpty(partialViewName))
             {
-                viewName = ControllerContext.RouteData.GetRequiredString("action");
+                partialViewName = ControllerContext.RouteData.GetRequiredString("action");
             }
 
             ViewData.Model = model;
             using (var sw = new StringWriter())
             {
-                var viewResult = ViewEngines.Engines.FindPartialView(ControllerContext, viewName);
+                var viewResult = ViewEngines.Engines.FindPartialView(ControllerContext, partialViewName);
                 var viewContext = new ViewContext(ControllerContext, viewResult.View, ViewData, TempData, sw);
                 viewResult.View.Render(viewContext, sw);
 
@@ -37,20 +39,38 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         {
             if (HttpContext.IsXmlDbUpdateReplayAction())
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    return null;
+                    throw new AggregateException(ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage)));
                 }
 
-                var exceptions = ModelState.Values
-                    .SelectMany(x => x.Errors)
-                    .Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage))
-                    .ToArray();
-
-                throw new AggregateException(exceptions);
+                return null;
             }
 
             return new JsonNetResult<object>(new { success = true, view = RenderPartialView(viewName, model) });
+        }
+
+        public JsonCamelCaseResult<JSendResponse> JsonCamelCaseHtml(string viewName, object model = null)
+        {
+            if (HttpContext.IsXmlDbUpdateReplayAction())
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new AggregateException(ModelState.Values
+                        .SelectMany(x => x.Errors)
+                        .Select(x => x.Exception ?? new ArgumentException(x.ErrorMessage)));
+                }
+
+                return null;
+            }
+
+            return new JSendResponse
+            {
+                Status = JSendStatus.Success,
+                Data = RenderPartialView(viewName, model)
+            };
         }
 
         public static bool IsError(HttpContextBase context)

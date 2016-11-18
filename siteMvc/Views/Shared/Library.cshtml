@@ -9,8 +9,8 @@
 <div class="library" id="@Model.MainComponentId">
 	@{Html.Telerik().Splitter()
 		.Name(Model.SplitterId)
-		.HtmlAttributes(new 
-		{ 
+		.HtmlAttributes(new
+		{
 			@class = "l-splitter",
 			//style = "height: 100%;"
 		})
@@ -31,43 +31,43 @@
 			;
 
 			panes.Add().Content(
-				@<div class="l-rightPanel">	
+				@<div class="l-rightPanel">
 					<div class="l-infoBlock">
                         <div class="l-info"><label>@LibraryStrings.PhysicalPath:</label> <span class="l-physical-path"></span></div>
                         <div class="l-info"><label>@LibraryStrings.VirtualPath:</label> <span class="l-virtual-path"></span></div>
                     </div>
-                    <form class="l-filterForm">	
+                    <form class="l-filterForm">
 						<div class="l-searchBlock ">
 						@Html.QpLabel(Html.UniqueId("fileTypeDropDownList"), LibraryStrings.FileType)
 						@Html.QpDropDownList("fileTypeDropDownList",
-						Model.FileTypes,				
+						Model.FileTypes,
 						LibraryStrings.AllFileTypes,
 						new ControlOptions
 						{
-							HtmlAttributes = new Dictionary<string, object> 
-							{ 
-								{ "class", "l-fileTypeList " }, 				
-								{ "id", Html.UniqueId("fileTypeDropDownList") },				
+							HtmlAttributes = new Dictionary<string, object>
+							{
+								{ "class", "l-fileTypeList " },
+								{ "id", Html.UniqueId("fileTypeDropDownList") },
 							},
 							Enabled = !Model.FilterFileTypeId.HasValue
-						})		
+						})
 						@Html.QpLabel(Html.UniqueId("fileNameSearch"), LibraryStrings.FileName)
-						@Html.QpTextBox("fileNameSearch", "",  
-										new Dictionary<string, object> 
-										{ 
-											{ "class", "l-fileNameSearch" }, 				
-											{ "id", Html.UniqueId("fileNameSearch") } 
+						@Html.QpTextBox("fileNameSearch", "",
+										new Dictionary<string, object>
+										{
+											{ "class", "l-fileNameSearch" },
+											{ "id", Html.UniqueId("fileNameSearch") }
 										})
-		
+
 						<input id="@Html.UniqueId("findFileButton")" type="button" class="l-filterButton button" value="@LibraryStrings.Find" />
 						<input id="@Html.UniqueId("resetFilterButton")" type="button" class="l-resetFilterButton button" value="@LibraryStrings.ResetFilter" />
 
 						@if (Model.UploaderType == UploaderType.Silverlight && Model.AllowUpload)
-						{	
+						{
 							<div id="@Html.UniqueId("silverlightUploader")" class='l-sl-uploader'></div>
 						}
 						else if (Model.UploaderType == UploaderType.Html && Model.AllowUpload)
-						{ 
+						{
 							<div class="l-html-uploader">
 								@(Html.Telerik().Upload()
 										.Name(Html.UniqueId("mvcUploader"))
@@ -99,7 +99,7 @@
 						.DataKeys(k => k.Add(s => s.Name))
 						.Columns(c =>
 						{
-		
+
 							c.Bound("")
 									.Title(@"<input type='checkbox' />")
 									.Width(30)
@@ -107,7 +107,7 @@
 									.ClientTemplate(@"<input type='checkbox' name='SelectedFileNames' value='<#= Name #>' />")
 									.HtmlAttributes(new { @class = "t-select-cell" })
 									.Sortable(false);
-		
+
 							c.Bound(s => s.Name).Title(EntityObjectStrings.Name);
 							c.Bound(s => s.Extension).Title(LibraryStrings.Extension);
 							c.Bound(s => s.FileTypeName).Title(LibraryStrings.FileType);
@@ -138,4 +138,4 @@
 	}
 </div>
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
