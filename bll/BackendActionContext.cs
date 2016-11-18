@@ -17,8 +17,8 @@ namespace Quantumart.QP8.BLL
 
         public static BackendActionContext Current
         {
-            get { return _current; }
-            private set { _current = value; }
+            get { return QPContext.BackendActionContext; }
+            private set { QPContext.BackendActionContext = value; }
         }
 
         public string ActionTypeCode { get; private set; }
@@ -49,8 +49,6 @@ namespace Quantumart.QP8.BLL
         }
 
         #region Creating Thread Singelton
-        [ThreadStatic]
-        private static BackendActionContext _current;
 
         public static void SetCurrent(string actionCode, IEnumerable<string> stringEntiryIDs, int? parentEntityId)
         {
