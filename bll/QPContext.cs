@@ -35,6 +35,10 @@ namespace Quantumart.QP8.BLL
         private const string CurrentGroupIdsKey = "CurrentGroupIds";
         private const string CurrentCustomerCodeKey = "CurrentCustomerCode";
         private const string CurrentSqlVersionKey = "CurrentSqlVersion";
+        private const string CurrentConnectionScopeKey = "CurrentConnectionScope";
+        private const string BackendActionContextKey = "BackendActionContext";
+
+
         private const string IsAdminKey = "IsAdmin";
         private const string CanUnlockItemsKey = "CanUnlockItems";
         private const string IsLiveKey = "IsLive";
@@ -275,6 +279,12 @@ namespace Quantumart.QP8.BLL
         [ThreadStatic]
         private static Version _currentSqlVersion;
 
+        [ThreadStatic]
+        private static QPConnectionScope _currentConnectionScope;
+
+        [ThreadStatic]
+        private static BackendActionContext _backendActionContext;
+
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
             SetValueToStorage(ref _currentUserId, value, CurrentUserIdKey);
@@ -442,6 +452,30 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        internal static QPConnectionScope CurrentConnectionScope
+        {
+            get
+            {
+                return GetValueFromStorage(_currentConnectionScope, CurrentConnectionScopeKey);
+            }
+            set
+            {
+                SetValueToStorage(ref _currentConnectionScope, value, CurrentConnectionScopeKey);
+            }
+        }
+
+        internal static BackendActionContext BackendActionContext
+        {
+            get
+            {
+                return GetValueFromStorage(_backendActionContext, BackendActionContextKey);
+            }
+            set
+            {
+                SetValueToStorage(ref _backendActionContext, value, BackendActionContextKey);
+            }
+        }
+
         public static Version CurrentSqlVersion
         {
             get
@@ -489,7 +523,7 @@ namespace Quantumart.QP8.BLL
 
         public static bool CheckCustomerCode(string customerCode)
         {
-            return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name").Value).Contains(customerCode);
+            return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name")?.Value).Contains(customerCode);
         }
 
         /// <summary>
