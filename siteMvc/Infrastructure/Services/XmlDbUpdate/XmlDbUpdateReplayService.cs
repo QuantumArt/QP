@@ -37,9 +37,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
 
         public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
-            : this(connectionString, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
-        {
-        }
+            : this(connectionString, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor) {}
 
         public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
         {
@@ -76,19 +74,27 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 Hash = HashHelpers.CalculateMd5Hash(filteredXmlString)
             };
 
-            using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
-            using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
+            try
             {
-                if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
+                QPContext.UseThreadStorageForConnectionScope = true;
+                using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions {IsolationLevel = IsolationLevel.ReadCommitted}))
+                using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
                 {
-                    var throwEx = new XmlDbUpdateLoggingException("XmlDbUpdate conflict: current xml document(s) already applied and exist at database.");
-                    throwEx.Data.Add("LogEntry", dbLogEntry.ToJsonLog());
-                    throw throwEx;
-                }
+                    if (_dbLogService.IsFileAlreadyReplayed(dbLogEntry.Hash))
+                    {
+                        var throwEx = new XmlDbUpdateLoggingException("XmlDbUpdate conflict: current xml document(s) already applied and exist at database.");
+                        throwEx.Data.Add("LogEntry", dbLogEntry.ToJsonLog());
+                        throw throwEx;
+                    }
 
-                var updateId = _dbLogService.InsertFileLogEntry(dbLogEntry);
-                ReplayActionsFromXml(filteredXmlDocument.Root.Elements(), currentDbVersion, filteredXmlDocument.Root.Attribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute).Value, updateId);
-                ts.Complete();
+                    var updateId = _dbLogService.InsertFileLogEntry(dbLogEntry);
+                    ReplayActionsFromXml(filteredXmlDocument.Root.Elements(), currentDbVersion, filteredXmlDocument.Root.Attribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute).Value, updateId);
+                    ts.Complete();
+                }
+            }
+            finally
+            {
+                QPContext.UseThreadStorageForConnectionScope = false;
             }
         }
 

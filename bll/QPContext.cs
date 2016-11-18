@@ -69,8 +69,13 @@ namespace Quantumart.QP8.BLL
             return $"{QPConfiguration.TempDirectory}{CurrentCustomerCode}.xml";
         }
 
-        private static T GetValueFromStorage<T>(T threadStorage, string key)
+        private static T GetValueFromStorage<T>(T threadStorage, string key, bool useThreadStorage = false)
         {
+            if (useThreadStorage)
+            {
+                return threadStorage;
+            }
+
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
             {
                 return _externalContextStorage.GetValue<T>(key);
@@ -84,8 +89,13 @@ namespace Quantumart.QP8.BLL
             return (T)HttpContext.Current.Items[key];
         }
 
-        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key)
+        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key, bool useThreadStorage = false)
         {
+            if (useThreadStorage)
+            {
+                threadStorage = value;
+            }
+
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
             {
                 _externalContextStorage.SetValue(value, key);
@@ -285,6 +295,9 @@ namespace Quantumart.QP8.BLL
         [ThreadStatic]
         private static BackendActionContext _backendActionContext;
 
+        [ThreadStatic]
+        private static bool _useThreadStorageForConnectionScope;
+
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
             SetValueToStorage(ref _currentUserId, value, CurrentUserIdKey);
@@ -456,11 +469,11 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return GetValueFromStorage(_currentConnectionScope, CurrentConnectionScopeKey);
+                return GetValueFromStorage(_currentConnectionScope, CurrentConnectionScopeKey, UseThreadStorageForConnectionScope);
             }
             set
             {
-                SetValueToStorage(ref _currentConnectionScope, value, CurrentConnectionScopeKey);
+                SetValueToStorage(ref _currentConnectionScope, value, CurrentConnectionScopeKey, UseThreadStorageForConnectionScope);
             }
         }
 
@@ -671,6 +684,13 @@ namespace Quantumart.QP8.BLL
         private static IContextStorage _externalContextStorage;
 
         private static HashSet<string> _externalContextStorageKeys;
+
+        public static bool UseThreadStorageForConnectionScope
+
+        {
+            get { return _useThreadStorageForConnectionScope; }
+            set { _useThreadStorageForConnectionScope = value; }
+        }
 
         public static IContextStorage ExternalContextStorage
         {
