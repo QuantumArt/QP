@@ -15,5 +15,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
         public override string ActionCode => Constants.ActionCode.ArticleStatus;
 
         public override string EntityTypeCode => Constants.EntityTypeCode.Article;
+
+        public override string ContextMenuCode => null;
     }
 }
