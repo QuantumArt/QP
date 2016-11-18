@@ -2,7 +2,7 @@
 # mode: ContinuousDelivery # default on all except "develop" branch
 # mode: ContinuousDeployment # default on "develop" branch
 assembly-versioning-scheme: MajorMinorPatch
-tag-prefix: '[vV](?:ersion)?[\.\-\_\s]?'
+tag-prefix: '[vV](?:ersion)?[-_.\s]?'
 continuous-delivery-fallback-tag: ci
 major-version-bump-message: '\+semver:\s?(breaking|major)'
 minor-version-bump-message: '\+semver:\s?(feature|minor)'
