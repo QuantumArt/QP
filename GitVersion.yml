@@ -1,14 +1,11 @@
-# mode: Mainline
+#mode: Mainline # will be available on 4.0 version
 # mode: ContinuousDelivery # default on all except "develop" branch
-mode: ContinuousDeployment # default on "develop" branch
-assembly-versioning-scheme: MajorMinorPatch
-tag-prefix: '[vV]'
-continuous-delivery-fallback-tag: ci
-next-version: 0.1.0
-major-version-bump-message: '\+semver:\s?(breaking|major)'
-minor-version-bump-message: '\+semver:\s?(feature|minor)'
-patch-version-bump-message: '\+semver:\s?(fix|patch)'
-legacy-semver-padding: 4
-build-metadata-padding: 4
-commits-since-version-source-padding: 4
-commit-message-incrementing: Enabled
+# mode: ContinuousDeployment # default on "develop" branch
+# assembly-versioning-scheme: MajorMinorPatch
+# tag-prefix: '[vV]'
+# continuous-delivery-fallback-tag: ci
+# major-version-bump-message: '\+semver:\s?(breaking|major)'
+# minor-version-bump-message: '\+semver:\s?(feature|minor)'
+# patch-version-bump-message: '\+semver:\s?(fix|patch)'
+
+# gitversion /showconfig -- to show current configuration
