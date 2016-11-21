@@ -53,7 +53,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private void QpInstalledProcess(string xmlString, IList<string> filePathes)
         {
             using (new FakeMvcApplicationContext())
-            using (new ThreadStorageScopeContext())
             {
                 base.Process(xmlString, filePathes);
             }
@@ -63,7 +62,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
             using (new NonQpEnvironmentContext())
             using (new FakeMvcApplicationContext())
-            using (new ThreadStorageScopeContext())
             {
                 base.Process(xmlString, filePathes);
             }

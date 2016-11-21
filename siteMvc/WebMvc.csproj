@@ -1438,7 +1438,6 @@
     <Content Include="Content\QP8\icons\16x16\visual_editor_plugins.gif" />
     <Content Include="Content\QP8\icons\16x16\visual_editor_style.gif" />
     <Content Include="Content\QP8\icons\16x16\visual_editor_styles.gif" />
-    <Content Include="Content\version.6.5.css" />
     <Content Include="gulpfile.js" />
     <Content Include="Content\codemirror\.gitattributes" />
     <Content Include="Content\codemirror\.gitignore" />
@@ -2414,7 +2413,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Content\imgareaselectcss\" />
-    <Folder Include="Content\Temp\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,7 @@ using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -74,6 +75,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 Hash = HashHelpers.CalculateMd5Hash(filteredXmlString)
             };
 
+            using (new ThreadStorageScopeContext())
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(ConnectionString, _identityInsertOptions))
             {
