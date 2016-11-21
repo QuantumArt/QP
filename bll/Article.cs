@@ -1280,38 +1280,26 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Связывает статью как агрегированную с корневой статьей
         /// </summary>
-        /// <param name="rootArticle"></param>
         internal void AggregateTo(Article rootArticle)
         {
-            if (rootArticle.IsNew)
-            {
-                throw new ApplicationException("Root article has to be saved.");
-            }
+            Ensure.Not(rootArticle.IsNew, "Root article has to be saved.");
 
             var aggregatorValue = FieldValues.FirstOrDefault(f => f.Field.Aggregated);
-            if (aggregatorValue == null)
-            {
-                throw new ApplicationException("There is no aggregated field in article.");
-            }
-
+            Ensure.NotNull(aggregatorValue, "There is no aggregated field in article.");
             aggregatorValue.Value = rootArticle.Id.ToString();
+
+            UniqueId = Guid.NewGuid();
             CopyServiceFields(rootArticle);
         }
 
         internal void VariateTo(Article rootArticle)
         {
-            if (rootArticle.IsNew)
-            {
-                throw new ApplicationException("Root article has to be saved.");
-            }
+            Ensure.Not(rootArticle.IsNew, "Root article has to be saved.");
 
             var variationValue = FieldValues.FirstOrDefault(f => f.Field.UseForVariations);
-            if (variationValue == null)
-            {
-                throw new ApplicationException("There is no variation field in article.");
-            }
-
+            Ensure.NotNull(variationValue, "There is no variation field in article.");
             variationValue.Value = rootArticle.Id.ToString();
+
             CopyServiceFields(rootArticle);
         }
 
