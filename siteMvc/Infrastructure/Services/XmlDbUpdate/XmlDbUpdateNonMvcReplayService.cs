@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Adapters;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
@@ -60,7 +61,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void QpNotInstalledProcess(string xmlString, IList<string> filePathes)
         {
-            using (new NonQpEnvironmentContext())
+            using (new NonQpEnvironmentContext(ConnectionString))
             using (new FakeMvcApplicationContext())
             {
                 base.Process(xmlString, filePathes);
