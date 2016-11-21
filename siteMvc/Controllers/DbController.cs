@@ -10,7 +10,6 @@ using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
@@ -124,27 +123,16 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
         public JsonCamelCaseResult<JSendResponse> ReplayRecordedUserActions(string xmlString, bool disableFieldIdentity, bool disableContentIdentity, bool useGuidSubstitution)
         {
-            try
-            {
-                new XmlDbUpdateReplayService(
-                    QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
-                    CommonHelpers.GetDbIdentityInsertOptions(disableFieldIdentity, disableContentIdentity),
-                    QPContext.CurrentUserId,
-                    useGuidSubstitution,
-                    _xmlDbUpdateLogService,
-                    _appInfoRepository,
-                    _actionsCorrecterService,
-                    _httpContextProcessor
-                ).Process(xmlString);
-            }
-            catch (XmlDbUpdateLoggingException ex)
-            {
-                return new JSendResponse
-                {
-                    Status = JSendStatus.Fail,
-                    Message = ex.Message
-                };
-            }
+            new XmlDbUpdateReplayService(
+                QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode),
+                CommonHelpers.GetDbIdentityInsertOptions(disableFieldIdentity, disableContentIdentity),
+                QPContext.CurrentUserId,
+                useGuidSubstitution,
+                _xmlDbUpdateLogService,
+                _appInfoRepository,
+                _actionsCorrecterService,
+                _httpContextProcessor
+            ).Process(xmlString);
 
             return new JSendResponse
             {
