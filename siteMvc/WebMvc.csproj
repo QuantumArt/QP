@@ -286,6 +286,7 @@
     <Compile Include="Extensions\ActionFilters\BackendActionLogAttribute.cs" />
     <Compile Include="Extensions\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
+    <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
     <Compile Include="Extensions\ActionFilters\DisableBrowserCache.cs" />
     <Compile Include="Extensions\ActionFilters\EntityAuthorizeAttribute.cs" />

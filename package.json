@@ -45,12 +45,16 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp",
-    "build-dev": "cross-env NODE_ENV=development gulp",
+    "build": "gulp --gulpfile siteMvc/gulpfile.js",
+    "build-dev": "cross-env NODE_ENV=development gulp --gulpfile siteMvc/gulpfile.js",
     "postrestore": "echo something like npm install shoud here",
     "prepare": "echo something like bower install should be here",
     "predeploy": "echo im about to deploy",
     "postdeploy": "echo ive deployed"
   },
-  "private": true
+  "private": true,
+  "-vs-binding": {
+    "AfterBuild":["build-dev"],
+    "ProjectOpened":["install"]
+  }
 }
