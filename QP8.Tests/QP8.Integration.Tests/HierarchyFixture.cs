@@ -65,7 +65,7 @@ namespace QP8.Integration.Tests
             using (new QPConnectionScope(Global.ConnectionString))
             {
 
-                var articleService = new ArticleApiService(1);
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -87,7 +87,7 @@ namespace QP8.Integration.Tests
             using (new QPConnectionScope(Global.ConnectionString))
             {
 
-                var articleService = new ArticleApiService(1);
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -109,7 +109,7 @@ namespace QP8.Integration.Tests
             using (new QPConnectionScope(Global.ConnectionString))
             {
 
-                var articleService = new ArticleApiService(1);
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
@@ -130,7 +130,7 @@ namespace QP8.Integration.Tests
             var ids2 = new[] { BaseArticlesIds["macro1"] };
             using (new QPConnectionScope(Global.ConnectionString))
             {
-                var articleService = new ArticleApiService(1);
+                var articleService = new ArticleApiService(Global.ConnectionString, 1);
                 var article = articleService.New(ProductContentId);
                 article.FieldValues.Single(n => n.Field.Name == "Title").Value = "test";
                 article.FieldValues.Single(n => n.Field.Name == "Regions").Value = string.Join(",", ids);
