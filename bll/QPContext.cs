@@ -37,6 +37,7 @@ namespace Quantumart.QP8.BLL
         private const string CurrentSqlVersionKey = "CurrentSqlVersion";
         private const string CurrentConnectionScopeKey = "CurrentConnectionScope";
         private const string BackendActionContextKey = "BackendActionContext";
+        private const string CurrentDbConnectionStringKey = "CurrentDbConnectionString";
 
 
         private const string IsAdminKey = "IsAdmin";
@@ -293,6 +294,9 @@ namespace Quantumart.QP8.BLL
         private static QPConnectionScope _currentConnectionScope;
 
         [ThreadStatic]
+        private static string _currentDbConnectionString;
+
+        [ThreadStatic]
         private static BackendActionContext _backendActionContext;
 
         [ThreadStatic]
@@ -513,17 +517,22 @@ namespace Quantumart.QP8.BLL
 
         public static QPIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QPIdentity : null;
 
-        private static string _currentDbConnectionString;
 
         public static string CurrentDbConnectionString
         {
             get
             {
-                return _currentDbConnectionString ?? QPConfiguration.GetConnectionString(CurrentCustomerCode);
+                var result = GetValueFromStorage(_currentDbConnectionString, CurrentDbConnectionStringKey);
+                if (result == null)
+                {
+                    result = QPConfiguration.GetConnectionString(CurrentCustomerCode);
+                    SetValueToStorage(ref _currentDbConnectionString, result, CurrentDbConnectionStringKey);
+                }
+                return result;
             }
             set
             {
-                _currentDbConnectionString = value;
+                SetValueToStorage(ref _currentDbConnectionString, value, CurrentDbConnectionStringKey);
             }
         }
 

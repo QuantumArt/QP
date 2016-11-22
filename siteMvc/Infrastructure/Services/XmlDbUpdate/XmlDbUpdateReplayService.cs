@@ -49,7 +49,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             _identityInsertOptions = identityInsertOptions ?? new HashSet<string>();
 
             ConnectionString = connectionString;
-            QPContext.CurrentDbConnectionString = connectionString;
 
             _dbLogService = dbLogService;
             _appInfoRepository = appInfoRepository;
