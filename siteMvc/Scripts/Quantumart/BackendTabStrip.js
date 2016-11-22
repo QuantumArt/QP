@@ -49,13 +49,13 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _tabGroups: {}, // список групп табов
   _tabTypeCounters: {}, // счетчики табов
 
-  _tabStripElementId: "", // клиентский идентификатор группы табов
-  _tabStripElement: null, // DOM-элемент "Группа табов"
+  _tabStripElementId: '', // клиентский идентификатор группы табов
+  _tabStripElement: null, // DOM-элемент 'Группа табов'
   _tabStripScrollableElement: null,
-  _tabListElement: "", // DOM-элемент, в котором находится список табов
+  _tabListElement: '', // DOM-элемент, в котором находится список табов
   _partialRemovedTabsContainerElement: null, // DOM-элемент, в котором хранятся удаленные табы
-  _selectedTabId: "", // идентификатор выбранного таба
-  _previousSelectedTabId: "", // идентификатор предыдущего выбранного таба
+  _selectedTabId: '', // идентификатор выбранного таба
+  _previousSelectedTabId: '', // идентификатор предыдущего выбранного таба
   _leftSplitterPaneWidth: 0, // ширина левой панели разделителя
   _maxTabTextLength: 35, // максимальная длина текста таба
   _tabMenuElement: null, // DOM-элемент, образующий меню табов
@@ -69,20 +69,20 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _maxTabMenuItemTextLength: 35, // максимальная длина текста элемента меню табов
   _tabContextMenuComponent: null,
 
-  TAB_STRIP_BUSY_CLASS_NAME: "busy",
-  TAB_SELECTED_CLASS_NAME: "selected",
-  TAB_DISABLED_CLASS_NAME: "disabled",
-  TAB_CLICKABLE_SELECTORS: "DIV.scrollable UL.tabList > LI.tab",
-  CLOSE_BUTTON_CLICKABLE_SELECTORS: "UL.tabList > LI.tab SPAN.closeButton",
+  TAB_STRIP_BUSY_CLASS_NAME: 'busy',
+  TAB_SELECTED_CLASS_NAME: 'selected',
+  TAB_DISABLED_CLASS_NAME: 'disabled',
+  TAB_CLICKABLE_SELECTORS: 'DIV.scrollable UL.tabList > LI.tab',
+  CLOSE_BUTTON_CLICKABLE_SELECTORS: 'UL.tabList > LI.tab SPAN.closeButton',
 
-  TAB_MENU_BUSY_CLASS_NAME: "busy",
-  TAB_MENU_TIMER_ID: "tabMenuTimer",
-  TAB_MENU_UP_ARROW_CLASS_NAME: "upArrow",
-  TAB_MENU_UP_ARROW_HOVER_CLASS_NAME: "upArrowHovered",
-  TAB_MENU_DOWN_ARROW_CLASS_NAME: "downArrow",
-  TAB_MENU_DOWN_ARROW_HOVER_CLASS_NAME: "downArrowHovered",
-  TAB_MENU_CLOSE_ALL_ITEM_CODE: "CloseAll",
-  TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE: "SaveAndCloseAll",
+  TAB_MENU_BUSY_CLASS_NAME: 'busy',
+  TAB_MENU_TIMER_ID: 'tabMenuTimer',
+  TAB_MENU_UP_ARROW_CLASS_NAME: 'upArrow',
+  TAB_MENU_UP_ARROW_HOVER_CLASS_NAME: 'upArrowHovered',
+  TAB_MENU_DOWN_ARROW_CLASS_NAME: 'downArrow',
+  TAB_MENU_DOWN_ARROW_HOVER_CLASS_NAME: 'downArrowHovered',
+  TAB_MENU_CLOSE_ALL_ITEM_CODE: 'CloseAll',
+  TAB_MENU_SAVE_CLOSE_ALL_ITEM_CODE: 'SaveAndCloseAll',
 
   _onDocumentBodyClickHandler: null,
   _onTabClickingHandler: null,
@@ -1010,7 +1010,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _showTabMenu: function() {
-    debugger;
     this._tabContextMenuComponent.hide();
     var $menu = $(this._tabMenuElement);
     $menu.css('height', 'auto');
@@ -1487,7 +1486,6 @@ Quantumart.QP8.BackendTabStrip.prototype = {
     $menu.html(menuItemsHtml.string());
     $('body:first').append($menu);
 
-    debugger;
     this._tabContextMenuComponent = $(this._tabStripElement).jeegoocontext({
       menuElementId: tabContextMenuElementId,
       menuClass: 'contextMenu',

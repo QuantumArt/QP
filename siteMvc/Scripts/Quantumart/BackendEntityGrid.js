@@ -476,7 +476,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   getRowByEntityId: function(entityId) {
     return [].find.call(this.getRows(), function(rowEl) {
-      return this.getEntityId(rowEl) === entityId;
+      return this.getEntityId(rowEl) === +entityId;
     }, this);
   },
 
@@ -750,7 +750,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (!$q.isNullOrEmpty($row)) {
       var action = $a.getBackendActionByCode(actionCode);
       if (!action) {
-        window.alert($l.Common.ajaxDataReceivingErrorMessage);
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
         var entityId = this.getEntityId($row);
         var context = { ctrlKey: ctrlKey };

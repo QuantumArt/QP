@@ -1,8 +1,5 @@
 ﻿@model DbViewModel
 
-@using Quantumart.QP8
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
 @using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.WebMvc.ViewModels
@@ -11,35 +8,85 @@
 {
 	using (Html.BeginFieldGroup(ContentStrings.Legend_BasicParameters))
 	{
-        @Html.CheckBoxFieldFor(s => s.Data.RecordActions, "OverridePanel");
+    @Html.CheckBoxFieldFor(s => s.Data.RecordActions, "OverridePanel")
 		using (Html.BeginPanel("OverridePanel"))
 		{
 			if (Model.Data.SingleUserId != null && Model.Data.SingleUserId != QPContext.CurrentUserId)
 			{
 				@Html.CheckBoxFieldFor(s => s.OverrideRecordsUser)
 			}
-            @Html.CheckBoxFieldFor(s => s.OverrideRecordsFile)
-        }
-        
-        @Html.HtmlFieldFor(s => s.Data.FpSettings,
-			@<div class="qp-expandedContent">
-				@Html.QpTextAreaFor(s => s.Data.FpSettings, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
-			</div>
-		)
-        @Html.CheckBoxFieldFor(s => s.Data.UseADSyncService);
-		@Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome);
-	    @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
+
+      @Html.CheckBoxFieldFor(s => s.OverrideRecordsFile)
     }
-    
+
+    @Html.CheckBoxFieldFor(s => s.Data.AutoOpenHome)
+    @Html.CheckBoxFieldFor(s => s.Data.UseAdSyncService)
+
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <span class="downloadRecords linkButton actionLink actionlink">
+          <a href="javascript: void(0)" class="@(ViewBag.IsRecordAvailableForDownload ? string.Empty : "disabled")">
+            <span class="icon download"><img src="/Backend/Content/Common/0.gif" alt="download record"></span>
+            <span class="text">@DBStrings.DownloadRecords</span>
+          </a>
+        </span>
+      </dd>
+    </dl>
+
+    <dl class="row">
+      <dt class="label">@DBStrings.ReplayRecordsLabel</dt>
+      <dd class="field">
+        <textarea class="recordedRecordsXmlArea textbox hta-XmlTextArea highlightedTextarea dropzone"></textarea>
+      </dd>
+    </dl>
+
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <input class="disableFieldIdentity checkbox simple-checkbox" type="checkbox" value="true">
+        <label>Disable field identity</label>
+      </dd>
+    </dl>
+
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <input class="disableContentIdentity checkbox simple-checkbox" type="checkbox" value="true">
+        <label>Disable content identity</label>
+      </dd>
+    </dl>
+
+    <dl class="row">
+        <dt class="label"></dt>
+        <dd class="field">
+            <input class="useGuidSubstitution checkbox simple-checkbox" type="checkbox" value="true">
+            <label>Use guid substitution</label>
+        </dd>
+    </dl>
+
+    <dl class="row">
+      <dt class="label"></dt>
+      <dd class="field">
+        <span class="replayRecords linkButton actionLink">
+          <a href="javascript: void(0)">
+            <span class="icon restore"><img src="/Backend/Content/Common/0.gif" alt="replay record"></span>
+            <span class="text">@DBStrings.ReplayRecords</span>
+          </a>
+        </span>
+      </dd>
+    </dl>
+
+	  @Html.AggregationListFieldFor(s => s.Data.AppSettings, Model.Data.AppSettings, "Key,Value")
+  }
 
 	@Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
-
 }
 
 <script type="text/html" id="@Html.UniqueId("Data_AppSettings_template")">
 	<span data-bind="click: addItem">
-        @Html.SimpleAddActionLink(DBStrings.AddAppSetting)
+    @Html.SimpleAddActionLink(DBStrings.AddAppSetting)
 	</span>
 	<table>
 		<thead>
@@ -54,10 +101,39 @@
 				<td data-bind="text: $index() + 1"></td>
 				<td><input class="textbox" data-bind="value: Key, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
 				<td><input class="textbox" data-bind="value: Value, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
-                <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
+        <td><img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" alt="delete" data-bind="click: $root.removeItem"/></td>
 			</tr>
 		</tbody>
 	</table>
 </script>
 
-@Html.InitScript(Model)
+@Html.PrepareInitScript(Model)
+<script>
+  var $editingForm = $("#@Model.UniqueId("editingForm")");
+  @(Model.ContextObjectName).set_initializedCallback(function() {
+    $editingForm.on('click', '.downloadRecords', function() {
+      $c.downloadFile("@Url.Action("GetRecordedUserActions")");
+    });
+
+    $editingForm.on('click', '.downloadRecords .disabled', function(e) {
+      e.preventDefault();
+    });
+
+    $editingForm.on('click', '.replayRecords', function() {
+      $q.showLoader();
+      $q.postAjax("@Url.Action("ReplayRecordedUserActions")", {
+        xmlString: $editingForm.find('.recordedRecordsXmlArea').data('codeMirror').getValue(),
+        disableFieldIdentity: $editingForm.find('.disableFieldIdentity').prop('checked'),
+        disableContentIdentity: $editingForm.find('.disableContentIdentity').prop('checked'),
+        useGuidSubstitution: $editingForm.find('.useGuidSubstitution').prop('checked')
+      }, function(data, response) {
+        $q.alertSuccess(response.message);
+      });
+    });
+  });
+
+  @(Model.ContextObjectName).set_terminatingCallback(function() {
+    $editingForm.off('click');
+  });
+</script>
+@Html.RunInitScript(Model)

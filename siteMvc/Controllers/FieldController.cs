@@ -1,345 +1,385 @@
-﻿using System.Web.Mvc;
-using Quantumart.QP8.BLL;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Web.Mvc;
+using System.Web.WebPages;
+using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Telerik.Web.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
-using Quantumart.QP8.BLL.Exceptions;
-using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.Utils;
+using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class FieldController : QPController
     {
+        private readonly IArticleService _dbArticleService;
 
-		#region list actions
+        public FieldController(IArticleService dbArticleService)
+        {
+            _dbArticleService = dbArticleService;
+        }
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.Fields)]
-		public ActionResult Index(string tabId, int parentId)
-		{
-			FieldInitListResult result = FieldService.InitList(parentId);
-			FieldListViewModel model = FieldListViewModel.Create(result, tabId, parentId);
-			return this.JsonHtml("Index", model);
-		}
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.Fields)]
+        public ActionResult Index(string tabId, int parentId)
+        {
+            var result = FieldService.InitList(parentId);
+            var model = FieldListViewModel.Create(result, tabId, parentId);
+            return JsonHtml("Index", model);
+        }
 
-		[HttpPost]
-		[GridAction(EnableCustomBinding = true)]
-		[ActionAuthorize(ActionCode.Fields)]
-		public ActionResult _Index(string tabId, int parentId, GridCommand command)
-		{
-			ListResult<FieldListItem> serviceResult = FieldService.List(parentId, command.GetListCommand());
-			return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
-		}
+        [HttpPost]
+        [GridAction(EnableCustomBinding = true)]
+        [ActionAuthorize(ActionCode.Fields)]
+        public ActionResult _Index(string tabId, int parentId, GridCommand command)
+        {
+            var serviceResult = FieldService.List(parentId, command.GetListCommand());
+            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+        }
 
-		#endregion
-		
-		#region form actions
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.AddNewField)]
+        [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
+        [BackendActionContext(ActionCode.AddNewField)]
+        public ActionResult New(string tabId, int parentId, int? fieldId)
+        {
+            var field = FieldService.New(parentId, fieldId);
+            var model = FieldViewModel.Create(field, tabId, parentId);
+            return JsonHtml("Properties", model);
+        }
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ActionAuthorize(ActionCode.AddNewField)]
-		[EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.Content, "parentId")]
-		[BackendActionContext(ActionCode.AddNewField)]
-		public ActionResult New(string tabId, int parentId, int? fieldId)
-		{
-			Field field = FieldService.New(parentId, fieldId);
-			FieldViewModel model = FieldViewModel.Create(field, tabId, parentId);
-			return this.JsonHtml("Properties", model);
-		}
+        [HttpPost, Record]
+        [ValidateInput(false)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.AddNewField)]
+        [BackendActionContext(ActionCode.AddNewField)]
+        [BackendActionLog]
+        public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
+        {
+            var content = FieldService.New(parentId, null);
+            var model = FieldViewModel.Create(content, tabId, parentId);
+            var oldLinkId = model.Data.LinkId;
+            var oldBackward = model.Data.BackwardField;
 
-		[HttpPost]
-		[ValidateInput(false)]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ActionAuthorize(ActionCode.AddNewField)]
-		[BackendActionContext(ActionCode.AddNewField)]
-		[BackendActionLog]
-		[Record]
-		public ActionResult New(string tabId, int parentId, string backendActionCode, FormCollection collection)
-		{
-			Field content = FieldService.NewForSave(parentId);
-			FieldViewModel model = FieldViewModel.Create(content, tabId, parentId);
-			int? oldLinkId = model.Data.LinkId;
-			Field oldBackward = model.Data.BackwardField;
-			TryUpdateModel(model);
-			model.Validate(ModelState);
-			if (ModelState.IsValid)
-			{
-				try
-				{
-					model.Data = FieldService.Save(model.Data);
-					this.PersistResultId(model.Data.Id);
-					this.PersistLinkId(oldLinkId, model.Data.LinkId);
-					this.PersistBackwardId(oldBackward, model.Data.BackwardField);
-					this.PersistVirtualFieldIds(model.Data.NewVirtualFieldIds);
-					this.PersistChildFieldIds(model.Data.ResultChildFieldIds);
-					this.PersistChildLinkIds(model.Data.ResultChildLinkIds);
-				}
-				catch (VirtualContentProcessingException vcpe)
-				{
-					if (IsReplayAction())
-						throw;
-					ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-					return this.JsonHtml("Properties", model);
-				}
-				return this.Redirect("Properties", new { 
-					tabId = tabId, 
-					parentId = parentId, 
-					id = model.Data.Id, 
-					successfulActionCode = backendActionCode,
-					viewInListAffected = model.Data.ViewInList
-				});
-			}
-			else
-				return this.JsonHtml("Properties", model);
-		}
+            TryUpdateModel(model);
+            model.Validate(ModelState);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    model.Data = FieldService.Save(model.Data);
+                    PersistResultId(model.Data.Id);
+                    PersistLinkId(oldLinkId, model.Data.LinkId);
+                    PersistBackwardId(oldBackward, model.Data.BackwardField);
+                    PersistVirtualFieldIds(model.Data.NewVirtualFieldIds);
+                    PersistChildFieldIds(model.Data.ResultChildFieldIds);
+                    PersistChildLinkIds(model.Data.ResultChildLinkIds);
+                    AppendFormGuidsFromIds("DefaultArticleIds", "DefaultArticleUniqueIds");
+                    AppendFormGuidsFromIds("Data.O2MDefaultValue", "Data.O2MUniqueIdDefaultValue");
+                }
+                catch (VirtualContentProcessingException vcpe)
+                {
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
+                    {
+                        throw;
+                    }
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.FieldProperties)]
-		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Field, "id")]
-		[BackendActionContext(ActionCode.FieldProperties)]
-		public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? orderChanged, bool? viewInListAffected)
-		{
-			Field content = FieldService.Read(id);
-			FieldViewModel model = FieldViewModel.Create(content, tabId, parentId);
-			model.SuccesfulActionCode = successfulActionCode;
-			model.OrderChanged = orderChanged ?? false;
-			model.ViewInListAffected = viewInListAffected ?? false;
-			return this.JsonHtml("Properties", model);
-		}
+                    ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
+                    return JsonHtml("Properties", model);
+                }
 
-		[HttpPost]
-		[ValidateInput(false)]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ActionAuthorize(ActionCode.UpdateField)]
-		[BackendActionContext(ActionCode.UpdateField)]
-		[BackendActionLog]
-		[Record(ActionCode.FieldProperties)]
-		public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
-		{
-			Field field = FieldService.ReadForUpdate(id);
-			FieldViewModel model = FieldViewModel.Create(field, tabId, parentId);
-            int oldOrder = model.Data.Order;
-			bool oldViewInList = model.Data.ViewInList;
-			int? oldLinkId = model.Data.LinkId;
-			Field oldBackward = model.Data.BackwardField;
-			TryUpdateModel(model);
-			model.Validate(ModelState);
-			if (ModelState.IsValid)
-			{
-				try
-				{
-					model.Data = FieldService.Update(model.Data);
-					this.PersistLinkId(oldLinkId, model.Data.LinkId);
-					this.PersistBackwardId(oldBackward, model.Data.BackwardField);
-					this.PersistVirtualFieldIds(model.Data.NewVirtualFieldIds);
-				}
-				catch (UserQueryContentCreateViewException uqe)
-				{
-					if (IsReplayAction())
-						throw;
-					ModelState.AddModelError("UserQueryContentCreateViewException", uqe.Message);
-					return this.JsonHtml("Properties", model);
-				}
-				catch (VirtualContentProcessingException vcpe)
-				{
-					if (IsReplayAction())
-						throw;
-					ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-					return this.JsonHtml("Properties", model);
-				}
-                int newOrder = model.Data.Order;
-				bool newViewInList = model.Data.ViewInList;
-				return this.Redirect("Properties", new { 
-					tabId = tabId, 
-					parentId = parentId, 
-					id = model.Data.Id, 
-					successfulActionCode = backendActionCode, 
-					orderChanged = (newOrder != oldOrder),
-					viewInListAffected = (newViewInList != oldViewInList)
-				});
-			}
-			else
-				return this.JsonHtml("Properties", model);
-		}
+                return Redirect("Properties", new
+                {
+                    tabId,
+                    parentId,
+                    id = model.Data.Id,
+                    successfulActionCode = backendActionCode,
+                    viewInListAffected = model.Data.ViewInList
+                });
+            }
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.VirtualFieldProperties)]
-		[EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.VirtualField, "id")]
-		[BackendActionContext(ActionCode.VirtualFieldProperties)]
-		public ActionResult VirtualProperties(string tabId, int parentId, int id, string successfulActionCode, bool? orderChanged, bool? viewInListAffected)
-		{
-			Field content = FieldService.VirtualRead(id);
-			FieldViewModel model = FieldViewModel.Create(content, tabId, parentId);
-			model.SuccesfulActionCode = successfulActionCode;
-			model.OrderChanged = orderChanged ?? false;
-			model.ViewInListAffected = viewInListAffected ?? false;
-			return this.JsonHtml("VirtualProperties", model);
-		}
+            return JsonHtml("Properties", model);
+        }
 
-		[HttpPost]
-		[ValidateInput(false)]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ActionAuthorize(ActionCode.UpdateVirtualField)]
-		[BackendActionContext(ActionCode.UpdateVirtualField)]
-		[BackendActionLog]
-		[Record(ActionCode.VirtualFieldProperties)]
-		public ActionResult VirtualProperties(string tabId, int parentId, int id, FormCollection collection)
-		{
-			Field field = FieldService.ReadForUpdate(id);
-			FieldViewModel model = FieldViewModel.Create(field, tabId, parentId);
-            int oldOrder = model.Data.Order;
-			bool oldViewInList = model.Data.ViewInList;
-			TryUpdateModel(model);
-			model.Validate(ModelState);
-			if (ModelState.IsValid)
-			{
-				try
-				{
-					model.Data = VirtualFieldService.Update(model.Data);
-					this.PersistVirtualFieldIds(model.Data.NewVirtualFieldIds);
-				}
-				catch (UserQueryContentCreateViewException uqe)
-				{
-					if (IsReplayAction())
-						throw;
-					ModelState.AddModelError("UserQueryContentCreateViewException", uqe.Message);
-					return JsonHtml("VirtualProperties", model);
-				}
-				catch (VirtualContentProcessingException vcpe)
-				{
-					if (IsReplayAction())
-						throw;
-					ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
-					return JsonHtml("Properties", model);
-				}
-				bool newViewInList = model.Data.ViewInList;
-                return Redirect("VirtualProperties", new { 
-					tabId = tabId, 
-					parentId = parentId, 
-					id = model.Data.Id, 
-					successfulActionCode = Constants.ActionCode.UpdateField, 
-					orderChanged = (oldOrder != model.Data.Order),
-					viewInListAffected = (newViewInList != oldViewInList)
-				});
-			}
-			else
-				return JsonHtml("VirtualProperties", model);
-		}
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.FieldProperties)]
+        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Field, "id")]
+        [BackendActionContext(ActionCode.FieldProperties)]
+        public ActionResult Properties(string tabId, int parentId, int id, string successfulActionCode, bool? orderChanged, bool? viewInListAffected)
+        {
+            var content = FieldService.Read(id);
+            var model = FieldViewModel.Create(content, tabId, parentId);
+            model.SuccesfulActionCode = successfulActionCode;
+            model.OrderChanged = orderChanged ?? false;
+            model.ViewInListAffected = viewInListAffected ?? false;
+            return JsonHtml("Properties", model);
+        }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ActionAuthorize(ActionCode.RemoveField)]
-		[BackendActionContext(ActionCode.RemoveField)]
-		[BackendActionLog]
-		[Record]
-		public ActionResult Remove(int id)
-		{
-			MessageResult result = FieldService.Remove(id);
-			return this.JsonMessageResult(result);
-		}
+        [HttpPost, Record(ActionCode.FieldProperties)]
+        [ValidateInput(false)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.UpdateField)]
+        [BackendActionContext(ActionCode.UpdateField)]
+        [BackendActionLog]
+        public ActionResult Properties(string tabId, int parentId, int id, string backendActionCode, FormCollection collection)
+        {
+            var field = FieldService.ReadForUpdate(id);
+            var model = FieldViewModel.Create(field, tabId, parentId);
+            var oldOrder = model.Data.Order;
+            var oldViewInList = model.Data.ViewInList;
+            var oldLinkId = model.Data.LinkId;
+            var oldBackward = model.Data.BackwardField;
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ActionAuthorize(ActionCode.MultipleRemoveField)]
-		[BackendActionContext(ActionCode.MultipleRemoveField)]
-		[BackendActionLog]
-		[Record]
-		public ActionResult MultipleRemove(int[] IDs)
-		{
-			MessageResult result = FieldService.MultipleRemove(IDs);
-			return this.JsonMessageResult(result);
-		}
+            TryUpdateModel(model);
+            model.Validate(ModelState);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    model.Data = FieldService.Update(model.Data);
+                    PersistLinkId(oldLinkId, model.Data.LinkId);
+                    PersistBackwardId(oldBackward, model.Data.BackwardField);
+                    PersistVirtualFieldIds(model.Data.NewVirtualFieldIds);
+                    AppendFormGuidsFromIds("DefaultArticleIds", "DefaultArticleUniqueIds");
+                    AppendFormGuidsFromIds("Data.O2MDefaultValue", "Data.O2MUniqueIdDefaultValue");
+                }
+                catch (UserQueryContentCreateViewException uqEx)
+                {
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
+                    {
+                        throw;
+                    }
 
-		#endregion
+                    ModelState.AddModelError("UserQueryContentCreateViewException", uqEx.Message);
+                    return JsonHtml("Properties", model);
+                }
+                catch (VirtualContentProcessingException vcpEx)
+                {
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
+                    {
+                        throw;
+                    }
 
-		#region select actions
+                    ModelState.AddModelError("VirtualContentProcessingException", vcpEx.Message);
+                    return JsonHtml("Properties", model);
+                }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
-		[BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
-		public ActionResult MultipleSelectForExport(string tabId, int parentId, int[] IDs)
-		{
-			FieldInitListResult result = FieldService.InitList(parentId);
+                var newOrder = model.Data.Order;
+                var newViewInList = model.Data.ViewInList;
+                return Redirect("Properties", new
+                {
+                    tabId,
+                    parentId,
+                    id = model.Data.Id,
+                    successfulActionCode = backendActionCode,
+                    orderChanged = newOrder != oldOrder,
+                    viewInListAffected = newViewInList != oldViewInList
+                });
+            }
 
+            return JsonHtml("Properties", model);
+        }
 
-			FieldSelectableListViewModel model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExport);
-			
-            model.IsMultiple = true;
-			return this.JsonHtml("MultiSelectIndex", model);
-		}
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.VirtualFieldProperties)]
+        [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.VirtualField, "id")]
+        [BackendActionContext(ActionCode.VirtualFieldProperties)]
+        public ActionResult VirtualProperties(string tabId, int parentId, int id, string successfulActionCode, bool? orderChanged, bool? viewInListAffected)
+        {
+            var content = FieldService.VirtualRead(id);
+            var model = FieldViewModel.Create(content, tabId, parentId);
+            model.SuccesfulActionCode = successfulActionCode;
+            model.OrderChanged = orderChanged ?? false;
+            model.ViewInListAffected = viewInListAffected ?? false;
+            return JsonHtml("VirtualProperties", model);
+        }
 
-		[HttpPost]
-		[GridAction(EnableCustomBinding = true)]
-		[ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
-		[BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
-		public ActionResult _MultipleSelectForExport(string tabId, int parentId, string IDs, GridCommand command)
-		{
-			ListResult<FieldListItem> serviceResult = FieldService.ListForExport(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
-			return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
-		}
+        [HttpPost, Record(ActionCode.VirtualFieldProperties)]
+        [ValidateInput(false)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.UpdateVirtualField)]
+        [BackendActionContext(ActionCode.UpdateVirtualField)]
+        [BackendActionLog]
+        public ActionResult VirtualProperties(string tabId, int parentId, int id, FormCollection collection)
+        {
+            var field = FieldService.ReadForUpdate(id);
+            var model = FieldViewModel.Create(field, tabId, parentId);
+            var oldOrder = model.Data.Order;
+            var oldViewInList = model.Data.ViewInList;
+            TryUpdateModel(model);
+            model.Validate(ModelState);
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    model.Data = VirtualFieldService.Update(model.Data);
+                    PersistVirtualFieldIds(model.Data.NewVirtualFieldIds);
+                }
+                catch (UserQueryContentCreateViewException uqe)
+                {
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
+                    {
+                        throw;
+                    }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.UIAction)]
-		[ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
-		[BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
-		public ActionResult MultipleSelectForExportExpanded(string tabId, int parentId, int[] IDs)
-		{
-			FieldInitListResult result = FieldService.InitList(parentId);
-			FieldSelectableListViewModel model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExportExpanded);
-			model.IsMultiple = true;
-			return this.JsonHtml("MultiSelectIndex", model);
-		}
+                    ModelState.AddModelError("UserQueryContentCreateViewException", uqe.Message);
+                    return JsonHtml("VirtualProperties", model);
+                }
+                catch (VirtualContentProcessingException vcpe)
+                {
+                    if (HttpContext.IsXmlDbUpdateReplayAction())
+                    {
+                        throw;
+                    }
 
-		[HttpPost]
-		[GridAction(EnableCustomBinding = true)]
-		[ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
-		[BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
-		public ActionResult _MultipleSelectForExportExpanded(string tabId, int parentId, string IDs, GridCommand command)
-		{
-            ListResult<FieldListItem> serviceResult = FieldService.ListForExportExpanded(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
-			return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
-		}
+                    ModelState.AddModelError("VirtualContentProcessingException", vcpe.Message);
+                    return JsonHtml("Properties", model);
+                }
 
-		#endregion
+                var newViewInList = model.Data.ViewInList;
+                return Redirect("VirtualProperties", new
+                {
+                    tabId,
+                    parentId,
+                    id = model.Data.Id,
+                    successfulActionCode = ActionCode.UpdateField,
+                    orderChanged = oldOrder != model.Data.Order,
+                    viewInListAffected = newViewInList != oldViewInList
+                });
+            }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ConnectionScope(ConnectionScopeMode.TransactionOn)]
-		[ActionAuthorize(ActionCode.CreateLikeField)]
-		[BackendActionContext(ActionCode.CreateLikeField)]
-		[BackendActionLog]
-		[Record]
-		public ActionResult Copy(int id, int? forceId, int? forceLinkId, string forceVirtualFieldIds, string forceChildFieldIds, string forceChildLinkIds)
-		{
-			var fieldToCopy = FieldService.Read(id);
-			FieldCopyResult result = FieldService.Copy(id, forceId, forceLinkId,
-				RecordReplayHelper.ToIntArray(forceVirtualFieldIds),
-				RecordReplayHelper.ToIntArray(forceChildFieldIds),
-				RecordReplayHelper.ToIntArray(forceChildLinkIds)
-			);
-			this.PersistResultId(result.Id);
-			this.PersistFromId(id);
-			this.PersistLinkId(null, result.LinkId);
-			this.PersistVirtualFieldIds(result.VirtualFieldIds);
-			this.PersistChildFieldIds(result.ChildFieldIds);
-			this.PersistChildLinkIds(result.ChildLinkIds);
-			return this.JsonMessageResult(result.Message);
-		}
+            return JsonHtml("VirtualProperties", model);
+        }
+
+        [HttpPost, Record]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.RemoveField)]
+        [BackendActionContext(ActionCode.RemoveField)]
+        [BackendActionLog]
+        public ActionResult Remove(int id)
+        {
+            var result = FieldService.Remove(id);
+            return JsonMessageResult(result);
+        }
+
+        [HttpPost, Record]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.MultipleRemoveField)]
+        [BackendActionContext(ActionCode.MultipleRemoveField)]
+        [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public ActionResult MultipleRemove(int[] IDs)
+        {
+            var result = FieldService.MultipleRemove(IDs);
+            return JsonMessageResult(result);
+        }
+
+        [HttpPost]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
+        [BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public ActionResult MultipleSelectForExport(string tabId, int parentId, int[] IDs)
+        {
+            var result = FieldService.InitList(parentId);
+            var model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExport)
+            {
+                IsMultiple = true
+            };
+
+            return JsonHtml("MultiSelectIndex", model);
+        }
+
+        [HttpPost]
+        [GridAction(EnableCustomBinding = true)]
+        [ActionAuthorize(ActionCode.MultipleSelectFieldForExport)]
+        [BackendActionContext(ActionCode.MultipleSelectFieldForExport)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public ActionResult _MultipleSelectForExport(string tabId, int parentId, string IDs, GridCommand command)
+        {
+            var serviceResult = FieldService.ListForExport(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
+            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+        }
+
+        [HttpPost]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
+        [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public ActionResult MultipleSelectForExportExpanded(string tabId, int parentId, int[] IDs)
+        {
+            var result = FieldService.InitList(parentId);
+            var model = new FieldSelectableListViewModel(result, tabId, parentId, IDs, ActionCode.MultipleSelectFieldForExportExpanded)
+            {
+                IsMultiple = true
+            };
+
+            return JsonHtml("MultiSelectIndex", model);
+        }
+
+        [HttpPost]
+        [GridAction(EnableCustomBinding = true)]
+        [ActionAuthorize(ActionCode.MultipleSelectFieldForExportExpanded)]
+        [BackendActionContext(ActionCode.MultipleSelectFieldForExportExpanded)]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public ActionResult _MultipleSelectForExportExpanded(string tabId, int parentId, string IDs, GridCommand command)
+        {
+            var serviceResult = FieldService.ListForExportExpanded(command.GetListCommand(), parentId, Converter.ToInt32Collection(IDs, ','));
+            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+        }
+
+        [HttpPost, Record]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ConnectionScope]
+        [ActionAuthorize(ActionCode.CreateLikeField)]
+        [BackendActionContext(ActionCode.CreateLikeField)]
+        [BackendActionLog]
+        public ActionResult Copy(int id, int? forceId, int? forceLinkId, string forceVirtualFieldIds, string forceChildFieldIds, string forceChildLinkIds)
+        {
+            var result = FieldService.Copy(
+                id,
+                forceId,
+                forceLinkId,
+                forceVirtualFieldIds.ToIntArray(),
+                forceChildFieldIds.ToIntArray(),
+                forceChildLinkIds.ToIntArray()
+            );
+
+            PersistResultId(result.Id);
+            PersistFromId(id);
+            PersistLinkId(null, result.LinkId);
+            PersistVirtualFieldIds(result.VirtualFieldIds);
+            PersistChildFieldIds(result.ChildFieldIds);
+            PersistChildLinkIds(result.ChildLinkIds);
+            return JsonMessageResult(result.Message);
+        }
+
+        private void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
+        {
+            var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
+            if (formIds != null)
+            {
+                var substitutedGuids = formIds
+                    .Where(f => f.IsInt())
+                    .Select(_dbArticleService.GetArticleGuidById)
+                    .Select(g => g.ToString())
+                    .ToArray();
+
+                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
+            }
+        }
     }
 }

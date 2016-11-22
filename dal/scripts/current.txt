@@ -2,5 +2,9 @@ MultipleUpdate
 OptimizeHierarchy
 VeButtons
 HierarchyContextMenu
-
-
+ConsoleDbUpdate
+ExternalNotifications
+DeleteUser
+UID
+FixEfClean
+ContentModificationDeadLocks

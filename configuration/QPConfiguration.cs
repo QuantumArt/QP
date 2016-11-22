@@ -1,18 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
-using System.Web.Configuration;
-using Quantumart.QP8.Constants;
 using System.Collections.Specialized;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Web.Configuration;
+using System.Xml.Linq;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Configuration
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class QPConfiguration
     {
-        private static string _configPath;
+        internal static string _configPath;
 
+        internal static string _tempDirectory;
 
         /// <summary>
         /// Проверка, запущен ли пул в 64-битном режиме
@@ -27,43 +30,41 @@ namespace Quantumart.QP8.Configuration
         /// <summary>
         /// Получение переменной приложения из QP конфига
         /// </summary>
-        /// <param name="name">имя переменной</param>
-        /// <returns>значение переменной</returns>
         public static string ConfigVariable(string name)
         {
             var elem = XmlConfig.Descendants("app_var").SingleOrDefault(n => n.Attribute("app_var_name").Value == name);
             return elem?.Value ?? string.Empty;
         }
 
-
-        /// <summary>
-        /// Получение строки подключения к БД из QP конфига 
-        /// </summary>
-        /// <param name="customerCode">код клиента</param>
-        /// <returns>строка подключения</returns>
-        public static string ConfigConnectionString(string customerCode, string appName = "QP8Backend")
+        public static string GetConnectionString(string customerCode, string appName = "QP8Backend")
         {
-            if (string.IsNullOrWhiteSpace(customerCode))
-                return null;
-            string result;
-            result = XmlConfig.Descendants("customer").Single(n => n.Attribute("customer_name").Value == customerCode).Element("db").Value;
-            return TuneConnectionString(result, appName);
+            if (!string.IsNullOrWhiteSpace(customerCode))
+            {
+                var customerElement = XmlConfig.Descendants("customer").SingleOrDefault(n => n.Attribute("customer_name").Value == customerCode);
+                if (customerElement == null)
+                {
+                    throw new Exception($"Данный customer code: {customerCode}, - отсутствует в конфиге");
+                }
+
+                var dbConnectionString = customerElement.Element("db");
+                if (dbConnectionString != null)
+                {
+                    return TuneConnectionString(dbConnectionString.Value, appName);
+                }
+            }
+
+            return null;
         }
 
-        /// <summary>
-        /// Получение всех строк подключения к БД из QP конфига
-        /// </summary>
-        /// <param name="customerCode">код клиента</param>
-        /// <returns>строка подключения</returns>
-        public static IEnumerable<string> ConfigConnectionStrings(string appName = null, IEnumerable<string> exceptCustomerCodes = null)
+        public static IEnumerable<string> GetConnectionStrings(string appName = null, IEnumerable<string> exceptCustomerCodes = null)
         {
             exceptCustomerCodes = exceptCustomerCodes ?? new string[0];
             var result = XmlConfig.Descendants("customer")
                 .Where(n => !exceptCustomerCodes.Contains(n.Attribute("customer_name").Value, StringComparer.InvariantCultureIgnoreCase))
                 .Select(n => TuneConnectionString(n.Element("db").Value, appName));
+
             return result.ToArray();
         }
-
 
         public static string[] CustomerCodes
         {
@@ -76,16 +77,36 @@ namespace Quantumart.QP8.Configuration
 
         private static string TuneConnectionString(string connectionString, string appName = null)
         {
-            var builder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", ""));
+            var builder = new SqlConnectionStringBuilder(connectionString.Replace("Provider=SQLOLEDB;", string.Empty));
             if (!string.IsNullOrWhiteSpace(appName))
+            {
                 builder.ApplicationName = appName;
+            }
+
             if (builder.ConnectTimeout < 120)
+            {
                 builder.ConnectTimeout = 120;
+            }
+
             return builder.ToString();
         }
 
-        public static string TempDirectory => ConfigVariable(Config.TempKey).ToLowerInvariant();
+        public static string TempDirectory
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(_tempDirectory))
+                {
+                    _tempDirectory = ConfigVariable(Config.TempKey).ToLowerInvariant();
+                }
 
+                return _tempDirectory;
+            }
+            set
+            {
+                _tempDirectory = value;
+            }
+        }
 
         public static bool UseScheduleService => ConfigVariable(Config.UseScheduleService).ToLowerInvariant() == "yes";
 
@@ -93,15 +114,19 @@ namespace Quantumart.QP8.Configuration
 
         public static bool AllowSelectCustomerCode => ConfigVariable(Config.AllowSelectCustomerCode).ToLowerInvariant() == "yes";
 
-        /// <summary>
-        /// Конфигурационный файл QP
-        /// </summary>
+        public static string ADsConnectionString => ConfigVariable(Config.ADsConnectionStringKey).ToLowerInvariant();
+
+        public static string ADsConnectionUsername => ConfigVariable(Config.ADsConnectionUsernameKey);
+
+        public static string ADsConnectionPassword => ConfigVariable(Config.ADsConnectionPasswordKey);
+
+        public static string ADsPath => ConfigVariable(Config.ADsPathKey);
+
+        public static string ADsFieldName => ConfigVariable(Config.ADsFieldNameKey).ToLowerInvariant();
+
         public static XDocument XmlConfig => XDocument.Load(XmlConfigPath);
-    
-        /// <summary>
-        /// Путь к конфигурационному файлу в реестре
-        /// </summary>
-        private static string XmlConfigPath
+
+        public static string XmlConfigPath
         {
             get
             {
@@ -115,11 +140,16 @@ namespace Quantumart.QP8.Configuration
                     {
                         var qKey = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(QpKeyRegistryPath);
                         if (qKey != null)
+                        {
                             _configPath = qKey.GetValue(Registry.XmlConfigValue).ToString();
+                        }
                         else
+                        {
                             throw new Exception("QP is not installed");
+                        }
                     }
                 }
+
                 return _configPath;
             }
         }
@@ -127,7 +157,6 @@ namespace Quantumart.QP8.Configuration
         /// <summary>
         /// Возвращает кастомную конфигурационную секцию в файле web.config
         /// </summary>
-        /// <returns></returns>
         public static QPublishingSection WebConfigSection => WebConfigurationManager.GetSection("qpublishing") as QPublishingSection;
 
         public static void SetAppSettings(NameValueCollection settings)
@@ -135,7 +164,7 @@ namespace Quantumart.QP8.Configuration
             settings[Config.MailHostKey] = ConfigVariable(Config.MailHostKey);
             settings[Config.MailLoginKey] = ConfigVariable(Config.MailLoginKey);
             settings[Config.MailPasswordKey] = ConfigVariable(Config.MailPasswordKey);
-            settings[Config.MailAssembleKey] = (ConfigVariable(Config.MailAssembleKey) != "no") ? "yes" : ""; // inverting backend and frontend default logic
+            settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : string.Empty;
             settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
         }
     }

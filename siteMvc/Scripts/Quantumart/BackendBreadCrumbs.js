@@ -27,12 +27,12 @@ Quantumart.QP8.BackendBreadCrumbs = function (breadCrumbsElementId, options) {
 };
 
 Quantumart.QP8.BackendBreadCrumbs.prototype = {
-  _breadCrumbsElementId: '', // клиентский идентификатор хлебных крошек
-  _breadCrumbsElement: null, // DOM-элемент, образующий хлебные крошки
-  _breadCrumbsItemListElement: null, // DOM-элемент, образующий список элементов хлебных крошек
-  _breadCrumbsContainerElementId: '', // клиентский идентификатор контейнера, в котором располагаются хлебные крошки
-  _documentHost: null, // документ, для которого создаются хлебные крошки
-  _stopDeferredOperations: false, // признак, отвечающий за остановку всех отложенных операций
+  _breadCrumbsElementId: '',
+  _breadCrumbsElement: null,
+  _breadCrumbsItemListElement: null,
+  _breadCrumbsContainerElementId: '',
+  _documentHost: null,
+  _stopDeferredOperations: false,
   _addItemsCallback: null,
   _maxTitleLength: 60,
   _contextMenuComponent: null,
@@ -74,7 +74,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
         $('body:first').append($breadCrumbs);
       }
 
-      setTimeout(this._attachBreadCrumbsEventHandlers.bind(this), 0);
+      this._attachBreadCrumbsEventHandlers();
     }
 
     this._breadCrumbsElement = $breadCrumbs.get(0);
@@ -83,7 +83,60 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   },
 
   _createContextMenu: function() {
-    console.log('xxx');
+    var CLOSE_CODE = 'close';
+    var CLOSE_BUT_THIS_CODE = 'close_but_this';
+    var CLOSE_ALL_CODE = 'close_all';
+    var FIND_IN_TREE_CODE = 'find_in_tree';
+
+    var breadCrumbsContextMenuElementId = this._breadCrumbsElementId + '_tabContextMenu';
+    var $menu = $('<ul />', { 'id': breadCrumbsContextMenuElementId, 'class': 'contextMenu' });
+    var menuItemsHtml = new $.telerik.stringBuilder();
+    this._getTabMenuItemHtml(menuItemsHtml, {
+      'TabId': CLOSE_CODE,
+      'TabText': $l.TabStrip.closeTab,
+      'Icon': ''
+    });
+
+    this._getTabMenuItemHtml(menuItemsHtml, {
+      'TabId': CLOSE_BUT_THIS_CODE,
+      'TabText': $l.TabStrip.closeAllButThis,
+      'Icon': ''
+    });
+
+    this._getTabMenuItemHtml(menuItemsHtml, {
+      'TabId': CLOSE_ALL_CODE,
+      'TabText': $l.TabStrip.closeAllTabs,
+      'Icon': ''
+    });
+
+    menuItemsHtml.cat('<li class="separator"></li>');
+    this._getTabMenuItemHtml(menuItemsHtml, {
+      'TabId': FIND_IN_TREE_CODE,
+      'TabText': $l.TabStrip.findInTree,
+      'Icon': ''
+    });
+
+    $menu.html(menuItemsHtml.string());
+    $('body:first').append($menu);
+
+    this._contextMenuComponent = $(this._breadCrumbsElement).jeegoocontext({
+      menuElementId: breadCrumbsContextMenuElementId,
+      menuClass: 'contextMenu',
+      allowManualShowing: true,
+      onSelect: $.proxy(function (e, context) {
+        var code = $(e.currentTarget).attr('code');
+        var $tab = $(context);
+        if (code === CLOSE_CODE) {
+          this._closeTabRequest($tab);
+        } else if (code === CLOSE_ALL_CODE) {
+          this._closeAllTabRequest();
+        } else if (code === CLOSE_BUT_THIS_CODE) {
+          this._closeButThisTabRequest($tab);
+        } else if (code === FIND_IN_TREE_CODE) {
+          this._findInTreeRequest($tab);
+        }
+      }, this)
+    }).data('jeegoocontext_' + breadCrumbsContextMenuElementId);
   },
 
   _attachBreadCrumbsEventHandlers: function() {
@@ -124,12 +177,12 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
 
   getItemValue: function (itemElem) {
     var $item = this.getItem(itemElem);
-    var itemValue = "";
+    var itemValue = '';
 
     if (!$q.isNullOrEmpty($item)) {
       itemValue = $item.attr('code');
     } else {
-      window.alert('Ошибка!');
+      window.alert('Ошибка. Отсутствует значение.');
       return;
     }
 
@@ -220,7 +273,6 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   _extendItemElement: function (itemElem, dataItem, isSelectedItem) {
     var $item = this.getItem(itemElem);
     if (!$q.isNullOrEmpty($item)) {
-
       var html = new $.telerik.stringBuilder();
       html
       .catIf('  <a href="javascript:void(0);">', !isSelectedItem)
@@ -236,9 +288,9 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
       .cat(" \"")
       .cat($q.middleCutShort($q.htmlEncode(dataItem.Title), this._maxTitleLength))
       .cat('\"</span>')
-      .catIf('</a>', !isSelectedItem)
-      $item.html(html.string());
+      .catIf('</a>', !isSelectedItem);
 
+      $item.html(html.string());
       $item.data('entity_type_code', dataItem.Code);
       $item.data('entity_id', dataItem.Id);
       $item.data('entity_name', dataItem.Title);
@@ -297,7 +349,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     if (!$q.isNullOrWhiteSpace(actionCode)) {
       var action = $a.getBackendActionByCode(actionCode);
       if (action == null) {
-        alert($l.Common.ajaxDataReceivingErrorMessage);
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
         var host = this._documentHost;
         if (host) {

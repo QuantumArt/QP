@@ -5,11 +5,11 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Assembling;
 using Assembling.Info;
 
-namespace Assembling
+namespace Quantumart.QP8.Assembling
 {
-
     public enum AssembleMode
     {
         Page,
@@ -30,16 +30,9 @@ namespace Assembling
         Stage
     }
 
-
-
-
     public class AssembleControllerBase
     {
-
-        #region Service properties and methods
-
-
-        private readonly string _spacer = " ";
+        private const string Spacer = " ";
 
         public static string Renames { get; protected set; } = ", p.charset as page_charset, pt.charset as template_charset, p.enable_viewstate as page_enable_viewstate, pt.enable_viewstate as template_enable_viewstate ";
 
@@ -47,7 +40,11 @@ namespace Assembling
 
         internal virtual string GetFilter()
         {
-            return "";
+            return string.Empty;
+        }
+
+        protected AssembleControllerBase()
+        {
         }
 
         protected AssembleControllerBase(DbConnector cnn)
@@ -58,7 +55,7 @@ namespace Assembling
 
         protected AssembleControllerBase(string connectionParameter)
         {
-            FillController(connectionParameter, true);
+            FillController(connectionParameter, false);
         }
 
         protected AssembleControllerBase(string connectionParameter, bool isCustomerCode)
@@ -70,11 +67,6 @@ namespace Assembling
         {
             Cnn = new DbConnector(connectionParameter, isCustomerCode);
             IsDbConnected = true;
-        }
-
-        protected AssembleControllerBase()
-        {
-            //m_isDbConnected = false;
         }
 
         public AssembleMode CurrentAssembleMode { get; protected set; }
@@ -90,23 +82,6 @@ namespace Assembling
         public bool UseFixedLocation { get; protected set; }
 
         public AssembleLocation FixedLocation { get; protected set; } = AssembleLocation.Live;
-
-        /*internal static string BackendUrl
-        {
-            get
-            {
-                return ConfigurationManager.AppSettings["BackendUrl"];
-            }
-        }
-        */
-
-        /*private AssembleLocation m_assembleLocation;
-        internal AssembleLocation CurrentAssembleLocation
-        {
-            get { return m_assembleLocation; }
-            set { m_assembleLocation = value; }
-        }*/
-
 
         protected static void CreateFolder(string path)
         {
@@ -131,8 +106,7 @@ namespace Assembling
 
         protected StreamWriter CreateFile(string path)
         {
-            var sw = new StreamWriter(path, false, Info.Encoding);
-            return sw;
+            return new StreamWriter(path, false, Info.Encoding);
         }
 
         protected static void DeleteFile(string path)
@@ -142,20 +116,18 @@ namespace Assembling
                 File.SetAttributes(path, FileAttributes.Normal);
                 File.Delete(path);
             }
-
         }
 
-        #endregion
-
-        #region Code Generation
         protected string EnableSessionString
         {
             get
             {
                 if (Info.GetNumericBoolean("ALLOW_USER_SESSIONS") || !IsLive)
-                { return "EnableSessionState=\"True\""; }
-                else
-                { return "EnableSessionState=\"False\""; }
+                {
+                    return "EnableSessionState=\"True\"";
+                }
+
+                return "EnableSessionState=\"False\"";
             }
         }
 
@@ -164,23 +136,15 @@ namespace Assembling
             get
             {
                 var enableViewState = Info.Mode == AssembleMode.Page ? Info.GetBoolean("PAGE_ENABLE_VIEWSTATE") : Info.GetBoolean("TEMPLATE_ENABLE_VIEWSTATE");
-                if (enableViewState)
-                {
-                    return "EnableViewState=\"True\"";
-                }
-                else
-                {
-                    return "EnableViewState=\"False\"";
-                }
+                return enableViewState ? "EnableViewState=\"True\"" : "EnableViewState=\"False\"";
             }
         }
+
         protected static string GetControlEnableViewStateString(ControlInfo control)
         {
-            if (control.EnableViewState)
-            { return "EnableViewState=\"True\""; }
-            else
-            { return "EnableViewState=\"False\""; }
+            return control.EnableViewState ? "EnableViewState=\"True\"" : "EnableViewState=\"False\"";
         }
+
         protected string PageSourceString
         {
             get
@@ -189,6 +153,7 @@ namespace Assembling
                 return string.Format(CultureInfo.InvariantCulture, "{0}=\"{1}\"", codeName, Info.PageCodeFileName);
             }
         }
+
         protected static string GetControlSourceString(ControlInfo control)
         {
             var codeName = AssembleInfo.UsePartialClasses ? "CodeFile" : "Src";
@@ -212,7 +177,6 @@ namespace Assembling
             }
         }
 
-
         protected string ClassName => string.Format(CultureInfo.InvariantCulture, "Default_{0}", Info.PageFileName.Replace(".", "_"));
 
         protected string FullClassName => string.Format(CultureInfo.InvariantCulture, "{0}.{1}", NamespaceName, ClassName);
@@ -227,14 +191,15 @@ namespace Assembling
             get
             {
                 var sb = new StringBuilder("Public");
-                sb.Append(_spacer);
+                sb.Append(Spacer);
                 if (AssembleInfo.UsePartialClasses)
                 {
                     sb.Append("Partial");
-                    sb.Append(_spacer);
+                    sb.Append(Spacer);
                 }
+
                 sb.Append("Class");
-                sb.Append(_spacer);
+                sb.Append(Spacer);
                 sb.Append(ClassName);
                 return sb.ToString();
             }
@@ -266,74 +231,71 @@ namespace Assembling
         {
             get
             {
-
                 var sb = new StringBuilder();
                 sb.Append("<%@ Page");
-                sb.Append(_spacer);
+                sb.Append(Spacer);
 
                 sb.Append("Language=\"");
                 sb.Append(AssembleInfo.PageLanguage);
                 sb.Append("\"");
-                sb.Append(_spacer);
+                sb.Append(Spacer);
 
                 sb.Append("Strict=\"True\" AutoEventWireup=\"false\"");
-                sb.Append(_spacer);
+                sb.Append(Spacer);
 
                 sb.Append(EnableSessionString);
-                sb.Append(_spacer);
+                sb.Append(Spacer);
                 sb.Append(EnableViewStateString);
-                sb.Append(_spacer);
+                sb.Append(Spacer);
 
                 sb.Append("Inherits=");
                 sb.Append(FullClassName);
-                sb.Append(_spacer);
+                sb.Append(Spacer);
 
                 sb.Append(PageSourceString);
-                sb.Append(_spacer);
+                sb.Append(Spacer);
                 sb.Append("%>");
 
                 return sb.ToString();
             }
-
         }
 
         protected string GetControlDirective(ControlInfo control)
         {
             var sb = new StringBuilder();
             sb.Append("<%@ Control");
-            sb.Append(_spacer);
+            sb.Append(Spacer);
 
             sb.Append("Language=\"");
             sb.Append(control.Language);
             sb.Append("\"");
-            sb.Append(_spacer);
+            sb.Append(Spacer);
 
             sb.Append("Inherits=\"");
             sb.Append(GetControlFullClassName(control));
             sb.Append("\"");
-            sb.Append(_spacer);
+            sb.Append(Spacer);
 
             sb.Append("ClassName=\"");
             sb.Append(control.ClassName);
             sb.Append("_Presentation");
             sb.Append("\"");
-            sb.Append(_spacer);
+            sb.Append(Spacer);
 
             sb.Append(GetControlEnableViewStateString(control));
-            sb.Append(_spacer);
+            sb.Append(Spacer);
 
             if (AssembleInfo.UsePartialClasses)
             {
                 sb.Append(GetControlCompilerOptions(control));
-                sb.Append(_spacer);
+                sb.Append(Spacer);
             }
 
             sb.Append(GetControlSourceString(control));
-            sb.Append(_spacer);
+            sb.Append(Spacer);
             sb.Append("%>");
 
             return sb.ToString();
-
         }
 
         private static string GetControlCompilerOptions(ControlInfo control)
@@ -353,19 +315,19 @@ namespace Assembling
             sb.AppendLine("<%@ import NameSpace=\"System.IO\" %>");
             sb.AppendLine("<%@ import NameSpace=\"System.Data\" %>");
             sb.Append("<%@ Register TagPrefix=\"qp\" NameSpace=\"Quantumart.QPublishing\" Assembly=\"Quantumart\" %>");
-            if (IsLocalAssembling) sb.AppendLine("");
+            if (IsLocalAssembling)
+            {
+                sb.AppendLine(string.Empty);
+            }
         }
 
         protected void GeneratePageInit(StringBuilder sb, int pageLevel)
         {
             sb.Append(Padding(pageLevel)).AppendLine("protected Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init");
-
             WriteCommonInitialization(sb, checked(pageLevel + 1));
             WritePageSpecificInitialization(sb, checked(pageLevel + 1));
-
             sb.Append(Padding(pageLevel)).AppendLine("End Sub");
         }
-
 
         public bool IsLive
         {
@@ -375,10 +337,8 @@ namespace Assembling
                 {
                     return FixedLocation == AssembleLocation.Live;
                 }
-                else
-                {
-                    return Info.IsLive;
-                }
+
+                return Info.IsLive;
             }
         }
 
@@ -391,10 +351,16 @@ namespace Assembling
             {
                 sb.Append(Padding(pageLevel)).AppendLine(string.Format(CultureInfo.InvariantCulture, "Me.PageAssembleMode = {0}", Info.PageAssembleMode));
             }
-            if (Info.ForceTestDirectory) { sb.Append(Padding(pageLevel)).AppendLine("Me.IsTest = True"); }
+
+            if (Info.ForceTestDirectory)
+            {
+                sb.Append(Padding(pageLevel)).AppendLine("Me.IsTest = True");
+            }
+
             sb.Append(Padding(pageLevel)).AppendLine(string.Format(CultureInfo.InvariantCulture, "Me.IsStage = {0}", !IsLive && !Info.ForceLive));
             sb.Append(Padding(pageLevel)).AppendLine("Me.LastModified = New DateTime(" + DateTime.Now.Ticks + ")");
         }
+
         protected void WritePageSpecificInitialization(StringBuilder sb, int pageLevel)
         {
             sb.Append(Padding(pageLevel)).AppendLine("Me.page_id = " + Info.PageIdWithDefault);
@@ -412,6 +378,7 @@ namespace Assembling
                     sb.Append(Padding(pageLevel)).AppendLine("Me.UploadURLPrefix = \"" + Info.Paths.UploadUrlPrefix + "\"");
                 }
             }
+
             sb.Append(Padding(pageLevel)).AppendLine("Initialize()");
         }
 
@@ -424,6 +391,7 @@ namespace Assembling
             {
                 sb.Append(Padding(padLevel)).AppendFormat("    AddObjectValue ({0}, {1}){2}", key, values[key], LineEnd(control.IsCSharp));
             }
+
             return sb.ToString();
         }
 
@@ -451,6 +419,7 @@ namespace Assembling
             sb.AppendLine("-->");
             sb.AppendLine("</script>");
             sb.AppendLine("<link rel='stylesheet' type='text/css' href='/rs/onscreen.css' />");
+
             return sb.ToString();
         }
 
@@ -462,6 +431,7 @@ namespace Assembling
             {
                 sb.Append(Padding(padLevel)).AppendFormat("DisableDataBind = {0}{1}", BoolStr(control.IsCSharp, control.DisableDataBind), LineEnd(control.IsCSharp)).AppendLine("");
             }
+
             return sb.ToString();
         }
 
@@ -472,15 +442,14 @@ namespace Assembling
             var undefValues = new Hashtable();
 
             FindFormatValues(control, defValues, undefValues);
-
             if (defValues.Keys.Count > 0 || undefValues.Keys.Count > 0)
             {
-
                 sb.Append(Padding(padLevel)).AppendFormat("{0}", GetIf(control.IsCSharp, "Not QPTrace Is Nothing", "QPTrace != null")).AppendLine("");
                 foreach (string key in defValues.Keys)
                 {
                     sb.Append(Padding(checked(padLevel + 1))).AppendFormat("AddQpDefValue({0}, {1}){2}", key, defValues[key], LineEnd(control.IsCSharp)).AppendLine("");
                 }
+
                 if (undefValues.Keys.Count > 0)
                 {
                     sb.Append(Padding(checked(padLevel + 1))).AppendFormat("{0}", GetObjectVariableDeclaration(control.IsCSharp, "traceBuilder", "StringBuilder")).AppendLine("");
@@ -492,8 +461,10 @@ namespace Assembling
                     }
                     sb.Append(Padding(checked(padLevel + 1))).AppendFormat("{0}.UndefTraceString = traceBuilder.ToString(){1}", Self(control.IsCSharp), LineEnd(control.IsCSharp)).AppendLine("");
                 }
+
                 sb.Append(Padding(padLevel)).AppendFormat("{0}", GetEndIf(control.IsCSharp)).AppendLine("");
             }
+
             return sb.ToString();
         }
 
@@ -506,13 +477,14 @@ namespace Assembling
 
         protected void GetDefaultObjectValues(ControlInfo control, Hashtable defined)
         {
-            var dv = new DataView(Info.ObjectValues) {RowFilter = "OBJECT_ID = " + control.GetInt32("OBJECT_ID")};
+            var dv = new DataView(Info.ObjectValues) { RowFilter = "OBJECT_ID = " + control.GetInt32("OBJECT_ID") };
             for (var i = 0; i < dv.Count; i++)
             {
                 var variableName = "\"" + dv[i]["VARIABLE_NAME"] + "\"";
                 var variableValue = "\"" + dv[i]["VARIABLE_VALUE"] + "\"";
                 defined[variableName] = variableValue;
             }
+
             dv.Dispose();
         }
 
@@ -524,7 +496,7 @@ namespace Assembling
                 if (!string.IsNullOrEmpty(elem))
                 {
                     var matches = valueRegex.Matches(elem);
-                    foreach(Match m in matches)
+                    foreach (Match m in matches)
                     {
                         var value = m.Groups["key"].Value;
                         var trimValue = value.Length > 2 ? value.Substring(1, value.Length - 2) : value;
@@ -543,7 +515,7 @@ namespace Assembling
                                 defined.Add(key, "\"\"");
                             }
                         }
-                     }
+                    }
                 }
             }
         }
@@ -560,25 +532,13 @@ namespace Assembling
                 var allowDynamicOrder = control.GetObject("ALLOW_ORDER_DYNAMIC") != DBNull.Value && control.GetNumericBoolean("ALLOW_ORDER_DYNAMIC");
                 arr[4] = allowDynamicOrder ? control.Row["ORDER_DYNAMIC"].ToString() : "";
             }
+
             return arr;
         }
 
-        #endregion
-
         public virtual void Assemble()
         {
-
         }
-
-
-        public Code GetControlCode(DataRow dr)
-        {
-
-            var control = new ControlInfo(dr, Info);
-            return new Code(GetControlPresentationCodeFile(control), GetControlCodeBehindCodeFile(control, false), GetControlCodeBehindCodeFile(control, true), Info.Paths.BaseAssemblePath, control.TargetFolder);
-        }
-
-        public Code PageCode => new Code(PagePresentationCodeFile, PageCodeBehindCodeFile, null, Info.Paths.BaseAssemblePath, Info.Paths.PageFolderPath);
 
         internal CodeFile GetControlPresentationCodeFile(ControlInfo control)
         {
@@ -589,6 +549,7 @@ namespace Assembling
             sb.Append(Environment.NewLine);
             return new CodeFile(sb.ToString(), control.CommonFileName);
         }
+
         internal string GetControlPresentation(ControlInfo control)
         {
             return GetControlPresentationCodeFile(control).Code;
@@ -605,10 +566,12 @@ namespace Assembling
             {
                 sb.Append(GetTypeSpecificCode(control, 2));
             }
+
             if (!isSystem)
             {
                 sb.Append(CodeTransformer.GetProcessedCodeBehind(control));
             }
+
             sb.AppendLine("");
             sb.Append(Padding(1)).AppendLine(GetEndClass(control));
             sb.AppendLine(GetEndNamespace(control.IsCSharp));
@@ -650,6 +613,7 @@ namespace Assembling
                 return new CodeFile(sb.ToString(), Info.PageCodeFileName);
             }
         }
+
         public string PageCodeBehind => PageCodeBehindCodeFile.Code;
 
         protected void AssemblePageFiles()
@@ -657,9 +621,7 @@ namespace Assembling
             if (NeedToAssemblePage())
             {
                 CreateFolder(Info.Paths.PageFolderPath);
-
                 DeleteOldPageFiles();
-
                 using (var sw = CreateFile(Info.Paths.FullPagePath))
                 {
                     sw.Write(PagePresentation);
@@ -680,12 +642,8 @@ namespace Assembling
                     CreateMyFlyFile();
                 }
 
-                //if (Info.IsLive && Info.Mode == AssembleMode.Page)
-                //GenerateControlOutputPage();
-
                 MarkPageAssembledInDatabase();
             }
-
         }
 
         private void CreateMyFlyFile()
@@ -702,10 +660,7 @@ namespace Assembling
             }
         }
 
-        public Code MyFlyCode => new Code(MyFlyPresentationCodeFile, null, null, Info.Paths.BaseAssemblePath, Info.Paths.BaseAssemblePath);
-
         private static CodeFile MyFlyPresentationCodeFile => new CodeFile("<%@ Page language=\"vb\" AutoEventWireup=\"false\" Inherits=\"Quantumart.QPublishing.OnFlyPage\" %>", "MyFly.aspx");
-
 
         protected static void GeneratePageUnload(StringBuilder sb, int pageLevel)
         {
@@ -724,9 +679,7 @@ namespace Assembling
         protected void AssembleControlFiles(ControlInfo control)
         {
             CreateFolder(control.TargetFolder);
-
             DeleteOldControlFiles(control);
-
             using (var sw = CreateFile(control.TargetFolder + control.CommonFileName))
             {
                 sw.Write(GetControlPresentation(control));
@@ -744,6 +697,7 @@ namespace Assembling
                     sw.Close();
                 }
             }
+
             using (var sw = CreateFile(control.TargetFolder + control.CommonCodeFileName))
             {
                 sw.Write(GetControlCodeBehind(control, false));
@@ -751,21 +705,19 @@ namespace Assembling
                 sw.Write(GetCodeTimeStamp(control));
                 sw.Close();
             }
-
         }
 
-        private string GetPresentationTimeStamp()
+        private static string GetPresentationTimeStamp()
         {
-            return $"{"<%--"}Generated at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}{"--%>"}";
+            return $"<%--Generated at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}--%>";
         }
 
-        private string GetCodeTimeStamp(ControlInfo control)
+        private static string GetCodeTimeStamp(ControlInfo control)
         {
-            return
-                $"{GetSingleLineComment(control)}Generated at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}"; 
+            return $"{GetSingleLineComment(control)}Generated at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
         }
 
-        private string GetPageCodeTimeStamp()
+        private static string GetPageCodeTimeStamp()
         {
             return $"'Generated at {DateTime.Now.ToShortDateString()} {DateTime.Now.ToLongTimeString()}";
         }
@@ -791,14 +743,15 @@ namespace Assembling
         {
             var sb = new StringBuilder(Padding(padLevel));
             sb.Append(control.IsCSharp ? "public" : "Public");
-            sb.Append(_spacer);
+            sb.Append(Spacer);
             if (AssembleInfo.UsePartialClasses)
             {
                 sb.Append(control.IsCSharp ? "partial" : "Partial");
-                sb.Append(_spacer);
+                sb.Append(Spacer);
             }
+
             sb.Append(control.IsCSharp ? "class" : "Class");
-            sb.Append(_spacer);
+            sb.Append(Spacer);
             sb.Append(control.ClassName);
             if (control.IsCSharp)
             {
@@ -808,9 +761,10 @@ namespace Assembling
             }
             else
             {
-                sb.AppendLine("");
+                sb.AppendLine(string.Empty);
                 sb.Append(GetControlInheritsDefinition(control));
             }
+
             return sb.ToString();
         }
 
@@ -820,46 +774,23 @@ namespace Assembling
             {
                 return "namespace " + name + Environment.NewLine + "{";
             }
-            else
-            {
-                return "Namespace " + name;
-            }
+
+            return "Namespace " + name;
         }
 
         protected static string GetEndNamespace(bool isCSharp)
         {
-            if (isCSharp)
-            {
-                return "}";
-            }
-            else
-            {
-                return "End Namespace";
-            }
+            return isCSharp ? "}" : "End Namespace";
         }
 
         protected static string GetEndClass(ControlInfo control)
         {
-            if (control.IsCSharp)
-            {
-                return "}";
-            }
-            else
-            {
-                return "End Class";
-            }
+            return control.IsCSharp ? "}" : "End Class";
         }
 
         protected static string GetSingleLineComment(ControlInfo control)
         {
-            if (control.IsCSharp)
-            {
-                return "//";
-            }
-            else
-            {
-                return "'";
-            }
+            return control.IsCSharp ? "//" : "'";
         }
 
         protected static string GetObjectVariableDeclaration(bool isCSharp, string name, string type, string value)
@@ -877,38 +808,14 @@ namespace Assembling
             return GetVariableDeclarationLeft(isCSharp, name, vbType, csType) + " = " + value + LineEnd(isCSharp);
         }
 
-        protected static string GetArrayDeclarationLeft(bool isCSharp, string name, string vbType, string csType)
-        {
-            return GetVariableDeclarationLeft(isCSharp, name + BeginItemChar(isCSharp) + EndItemChar(isCSharp), vbType, csType);
-        }
-
-        protected static string GetVariableDeclaration(bool isCSharp, string name, string vbType, string csType)
-        {
-            return GetVariableDeclarationLeft(isCSharp, name, vbType, csType) + LineEnd(isCSharp);
-        }
-
         protected static string GetVariableDeclarationLeft(bool isCSharp, string name, string vbType, string csType)
         {
             if (isCSharp)
             {
                 return csType + " " + name;
             }
-            else
-            {
-                return "Dim " + name + " As " + vbType;
-            }
-        }
 
-        protected static string GetForEach(bool isCSharp, string key, string array)
-        {
-            if (isCSharp)
-            {
-                return string.Format(CultureInfo.InvariantCulture, "foreach (string {0} in {1}) {{", key, array);
-            }
-            else
-            {
-                return string.Format(CultureInfo.InvariantCulture, "For Each {0} In {1}", key, array);
-            }
+            return "Dim " + name + " As " + vbType;
         }
 
         protected static string GetIf(bool isCSharp, string vbCondition, string csCondition)
@@ -917,20 +824,13 @@ namespace Assembling
             {
                 return "if (" + csCondition + ") {";
             }
-            else
-            {
-                return "If " + vbCondition + " Then";
-            }
+
+            return "If " + vbCondition + " Then";
         }
 
         protected static string GetIf(bool isCSharp, string condition)
         {
             return GetIf(isCSharp, condition, condition);
-        }
-
-        protected static string GetElse(bool isCSharp)
-        {
-            return isCSharp ? "} else {" : "Else";
         }
 
         protected static string GetEndIf(bool isCSharp)
@@ -943,12 +843,6 @@ namespace Assembling
             return isCSharp ? "}" : "End Sub";
         }
 
-        protected static string GetNext(bool isCSharp)
-        {
-            return isCSharp ? "}" : "Next";
-        }
-
-
         protected static string Padding(int size)
         {
             var sb = new StringBuilder();
@@ -956,6 +850,7 @@ namespace Assembling
             {
                 sb.Append("\t");
             }
+
             return sb.ToString();
         }
 
@@ -980,12 +875,9 @@ namespace Assembling
             {
                 return isCSharp ? "true" : "True";
             }
-            else
-            {
-                return isCSharp ? "false" : "False";
-            }
-        }
 
+            return isCSharp ? "false" : "False";
+        }
 
         internal static string ConcatChar(bool isCSharp)
         {
@@ -1007,38 +899,15 @@ namespace Assembling
             return isCSharp ? "ref" : "";
         }
 
-        /*internal static string Equal(bool isCSharp)
-        {
-            return (isCSharp) ? "==" : "="; 
-        }*/
-
         internal static string InEqual(bool isCSharp)
         {
-            return isCSharp ? "!=" : "<>"; 
+            return isCSharp ? "!=" : "<>";
         }
-
-        /*internal string And(bool isCSharp)
-        {
-            return (isCSharp) ? "&&" : "And"; 
-        }
-
-        internal static string Or(bool isCSharp)
-        {
-            return (isCSharp) ? "||" : "Or"; 
-        }
-
-        internal static string Not(bool isCSharp)
-        {
-            return (isCSharp) ? "!" : "Not";
-        }
-        */
 
         internal static string Imports(bool isCSharp)
         {
             return isCSharp ? "using" : "Imports";
         }
-
-
 
         protected string GetUsingNamespaces(ControlInfo control)
         {
@@ -1060,15 +929,12 @@ namespace Assembling
                 sb.Append(LineEnd(isCSharp));
                 sb.AppendLine("");
             }
+
             return sb.ToString();
-
         }
-
-
 
         protected void AssembleControlSet()
         {
-
             while (Info.Controls.RowIndex < Info.Controls.Count)
             {
                 Info.Controls.FillRowSpecificInfo();
@@ -1083,46 +949,43 @@ namespace Assembling
                         Info.AssembleMainFormat = NeedToAssembleControl(checkFormat);
                     }
                 }
+
                 if (NeedToAssembleControl(control))
                 {
                     MarkControlAssembledInDatabase(control);
                     AssembleControlFiles(control);
                 }
+
                 Info.Controls.RowIndex++;
             }
-
         }
-
 
         private string GetTypeSpecificCode(ControlInfo control, int padLevel)
         {
             if (control.IsRoot)
             {
-                return "";
+                return string.Empty;
+            }
+
+            var sb = new StringBuilder();
+            BeginLoadControlDataSub(control, sb, padLevel);
+            if (control.CurrentType == ControlType.Generic || control.ContentSelected)
+            {
+                WriteControlInitCode(control, sb, checked(padLevel + 1));
+                WriteControlGetDataCode(control, sb, checked(padLevel + 1));
             }
             else
             {
-
-                var sb = new StringBuilder();
-                BeginLoadControlDataSub(control, sb, padLevel);
-                if (control.CurrentType == ControlType.Generic || control.ContentSelected)
-                {
-                    WriteControlInitCode(control, sb, checked(padLevel + 1));
-                    WriteControlGetDataCode(control, sb, checked(padLevel + 1));
-                }
-                else
-                {
-                    sb.Append(Padding(checked(padLevel + 1))).AppendLine(string.Format(CultureInfo.InvariantCulture, "throw new Exception(\"{0}\"){1}", control.MissedContentExceptionString, LineEnd(control.IsCSharp)));
-                }
-
-                sb.Append(Padding(padLevel)).AppendLine(GetEndSub(control.IsCSharp));
-
-                if (control.CurrentType == ControlType.PublishingContainer && !control.Container.IsNewAssembling)
-                {
-                    WriteTotalRecordsSub(control, sb, padLevel);
-                }
-                return sb.ToString();
+                sb.Append(Padding(checked(padLevel + 1))).AppendLine(string.Format(CultureInfo.InvariantCulture, "throw new Exception(\"{0}\"){1}", control.MissedContentExceptionString, LineEnd(control.IsCSharp)));
             }
+
+            sb.Append(Padding(padLevel)).AppendLine(GetEndSub(control.IsCSharp));
+            if (control.CurrentType == ControlType.PublishingContainer && !control.Container.IsNewAssembling)
+            {
+                WriteTotalRecordsSub(control, sb, padLevel);
+            }
+
+            return sb.ToString();
         }
 
         protected static void WriteTotalRecordsSub(ControlInfo control, StringBuilder sb, int padLevel)
@@ -1146,11 +1009,12 @@ namespace Assembling
 
         protected void WriteControlGetDataCode(ControlInfo control, StringBuilder sb, int padLevel)
         {
-            if (control.CurrentType == ControlType.PublishingForm || (control.CurrentType == ControlType.PublishingContainer && !control.Container.IsNewAssembling))
+            if (control.CurrentType == ControlType.PublishingForm || control.CurrentType == ControlType.PublishingContainer && !control.Container.IsNewAssembling)
             {
                 sb.Append(Padding(padLevel)).AppendLine("ContentName = \"" + control.GetString("CONTENT_NAME") + "\"" + LineEnd(control.IsCSharp));
                 sb.Append(Padding(padLevel)).AppendLine(string.Format(CultureInfo.InvariantCulture, "ContentUploadURL = \"{0}\"{1}", Info.Paths.GetContentUploadUrl(control.GetInt32("CONTENT_ID")), LineEnd(control.IsCSharp)));
             }
+
             if (control.CurrentType == ControlType.PublishingForm)
             {
                 sb.Append(Padding(padLevel)).AppendLine(GetVariableDeclaration(control.IsCSharp, "itemId", "Int32", "int", "0"));
@@ -1159,57 +1023,95 @@ namespace Assembling
                 {
                     sb.Append(Padding(checked(padLevel + 1))).AppendLine("itemId = CType(Value(\"get_content_item_id\"), Int32)" + LineEnd(control.IsCSharp));
                 }
+
                 sb.Append(Padding(padLevel)).AppendLine(GetEndIf(control.IsCSharp));
                 sb.Append(Padding(padLevel)).AppendLine(string.Format(CultureInfo.InvariantCulture, "{0}.ThankYouPage = site_url {3} \"{1}\"{2}", Self(control.IsCSharp), control.GetThankYouPage(), LineEnd(control.IsCSharp), ConcatChar(control.IsCSharp)));
                 sb.Append(Padding(padLevel)).AppendLine("DataTable dt = Cnn.GetData(\"SELECT * FROM content_" + control.GetString("CONTENT_ID") + " WHERE content_item_id = \" + itemId.ToString())" + LineEnd(control.IsCSharp));
             }
             else if (control.CurrentType == ControlType.PublishingContainer)
             {
-
                 if (control.Container.IsNewAssembling)
                 {
-                    sb.Append(Padding(padLevel)).AppendLine(
-                        $"ContentID = {control.GetString("CONTENT_ID")}{LineEnd(control.IsCSharp)}");
-                    if(!string.IsNullOrEmpty(control.GetString("DYNAMIC_CONTENT_VARIABLE")))
-                        sb.Append(Padding(padLevel)).AppendLine(
-                            $"DynamicVariable = \"{control.GetString("DYNAMIC_CONTENT_VARIABLE")}\"{LineEnd(control.IsCSharp)}");
-                    if (control.Container.Duration != 0) sb.Append(Padding(padLevel)).AppendLine("Duration = " + control.Container.Duration + LineEnd(control.IsCSharp));
-                    if (control.Container.EnableCacheInvalidation) sb.Append(Padding(padLevel)).AppendLine("EnableCacheInvalidation = " + control.GetBoolean("ENABLE_CACHE_INVALIDATION").ToString().ToLower() + LineEnd(control.IsCSharp));
-                    if (control.Container.IsRandom) sb.Append(Padding(padLevel)).AppendLine("RotateContent = true" + LineEnd(control.IsCSharp));
-                    if (control.Container.ForceUnited) sb.Append(Padding(padLevel)).AppendLine("ForceUnited = true" + LineEnd(control.IsCSharp));
-                    if (!control.Container.UseSchedule) sb.Append(Padding(padLevel)).AppendLine("UseSchedule = false" + LineEnd(control.IsCSharp));
-                    if (control.Container.ShowArchive) sb.Append(Padding(padLevel)).AppendLine("ShowArchive = true" + LineEnd(control.IsCSharp));
-                    sb.Append(Padding(padLevel)).AppendLine(
-                        $"Statuses = \"{control.Container.StatusString}\"{LineEnd(control.IsCSharp)}");
-                    if (!string.IsNullOrEmpty(control.Container.CustomFilter)) sb.Append(Padding(padLevel)).AppendLine(
-                        $"CustomFilter = {control.Container.CustomFilter}{LineEnd(control.IsCSharp)}");
-                    if (!string.IsNullOrEmpty(control.Container.StaticOrder)) sb.Append(Padding(padLevel)).AppendLine(
-                        $"StaticOrder = \"{control.Container.StaticOrder}\"{LineEnd(control.IsCSharp)}");
-                    if (control.Container.DynamicOrder != "\"\"") sb.Append(Padding(padLevel)).AppendLine(
-                        $"DynamicOrder = {control.Container.DynamicOrder}{LineEnd(control.IsCSharp)}");
-                    if (!string.IsNullOrEmpty(control.GetString("SELECT_START"))) sb.Append(Padding(padLevel)).AppendLine(
-                        $"StartRow = ({control.GetString("SELECT_START")}).ToString(){LineEnd(control.IsCSharp)}");
-                    if (!string.IsNullOrEmpty(control.GetString("SELECT_TOTAL"))) sb.Append(Padding(padLevel)).AppendLine(
-                        $"PageSize = ({control.GetString("SELECT_TOTAL")}).ToString(){LineEnd(control.IsCSharp)}");
+                    sb.Append(Padding(padLevel)).AppendLine($"ContentID = {control.GetString("CONTENT_ID")}{LineEnd(control.IsCSharp)}");
+                    if (!string.IsNullOrEmpty(control.GetString("DYNAMIC_CONTENT_VARIABLE")))
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine($"DynamicVariable = \"{control.GetString("DYNAMIC_CONTENT_VARIABLE")}\"{LineEnd(control.IsCSharp)}");
+                    }
+
+                    if (control.Container.Duration != 0)
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine("Duration = " + control.Container.Duration + LineEnd(control.IsCSharp));
+                    }
+
+                    if (control.Container.EnableCacheInvalidation)
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine("EnableCacheInvalidation = " + control.GetBoolean("ENABLE_CACHE_INVALIDATION").ToString().ToLower() + LineEnd(control.IsCSharp));
+                    }
+
+                    if (control.Container.IsRandom)
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine("RotateContent = true" + LineEnd(control.IsCSharp));
+                    }
+
+                    if (control.Container.ForceUnited)
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine("ForceUnited = true" + LineEnd(control.IsCSharp));
+                    }
+
+                    if (!control.Container.UseSchedule)
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine("UseSchedule = false" + LineEnd(control.IsCSharp));
+                    }
+
+                    if (control.Container.ShowArchive)
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine("ShowArchive = true" + LineEnd(control.IsCSharp));
+                    }
+
+                    sb.Append(Padding(padLevel)).AppendLine($"Statuses = \"{control.Container.StatusString}\"{LineEnd(control.IsCSharp)}");
+                    if (!string.IsNullOrEmpty(control.Container.CustomFilter))
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine($"CustomFilter = {control.Container.CustomFilter}{LineEnd(control.IsCSharp)}");
+                    }
+
+                    if (!string.IsNullOrEmpty(control.Container.StaticOrder))
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine($"StaticOrder = \"{control.Container.StaticOrder}\"{LineEnd(control.IsCSharp)}");
+                    }
+
+                    if (control.Container.DynamicOrder != "\"\"")
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine($"DynamicOrder = {control.Container.DynamicOrder}{LineEnd(control.IsCSharp)}");
+                    }
+
+                    if (!string.IsNullOrEmpty(control.GetString("SELECT_START")))
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine($"StartRow = ({control.GetString("SELECT_START")}).ToString(){LineEnd(control.IsCSharp)}");
+                    }
+
+                    if (!string.IsNullOrEmpty(control.GetString("SELECT_TOTAL")))
+                    {
+                        sb.Append(Padding(padLevel)).AppendLine($"PageSize = ({control.GetString("SELECT_TOTAL")}).ToString(){LineEnd(control.IsCSharp)}");
+                    }
+
                     if (control.Container.ApplySecurity)
                     {
                         sb.Append(Padding(padLevel)).AppendLine("UseSecurity = true" + LineEnd(control.IsCSharp));
                         if (control.Container.UseLevelFiltration)
                         {
                             sb.Append(Padding(padLevel)).AppendLine("UseLevelFiltration = true" + LineEnd(control.IsCSharp));
-                            sb.Append(Padding(padLevel)).AppendLine(
-                                $"StartLevel = \"{control.Container.StartLevel}\"{LineEnd(control.IsCSharp)}");
-                            sb.Append(Padding(padLevel)).AppendLine(
-                                $"EndLevel = \"{control.Container.EndLevel}\"{LineEnd(control.IsCSharp)}");
+                            sb.Append(Padding(padLevel)).AppendLine($"StartLevel = \"{control.Container.StartLevel}\"{LineEnd(control.IsCSharp)}");
+                            sb.Append(Padding(padLevel)).AppendLine($"EndLevel = \"{control.Container.EndLevel}\"{LineEnd(control.IsCSharp)}");
                         }
-
                     }
-                    if (Info.IsAssembleFormatMode && control.Container.AssembleRootObject) 
+
+                    if (Info.IsAssembleFormatMode && control.Container.AssembleRootObject)
+                    {
                         sb.Append(Padding(padLevel)).AppendLine("IsRoot = true" + LineEnd(control.IsCSharp));
+                    }
+
                     sb.Append(Padding(padLevel)).AppendLine("FillData()" + LineEnd(control.IsCSharp));
                 }
-
-
                 else
                 {
                     if (string.IsNullOrEmpty(control.GetString("DYNAMIC_CONTENT_VARIABLE")))
@@ -1219,27 +1121,20 @@ namespace Assembling
                     }
                     else
                     {
-                            sb.Append(Padding(padLevel)).AppendLine(GetVariableDeclaration(control.IsCSharp, "extSiteId", "Integer", "int", "0"));
-                            sb.Append(Padding(padLevel)).AppendLine(
-                                $"ContentID = Cnn.GetDynamicContentId(InternalStrValue(\"{control.GetString("DYNAMIC_CONTENT_VARIABLE")}\") , {control.GetString("CONTENT_ID")}, {Info.SiteId}, {Ref(control.IsCSharp)} extSiteId){LineEnd(control.IsCSharp)}");
-                            sb.Append(Padding(padLevel)).AppendLine(GetIf(control.IsCSharp,
-                                $"ContentID {InEqual(control.IsCSharp)} {control.GetString("CONTENT_ID")}"));
-                            sb.Append(Padding(padLevel + 1)).AppendLine(
-                                $"ContentUploadURL = Cnn.GetContentUploadUrlByID(extSiteId, ContentID){LineEnd(control.IsCSharp)}");
-                            sb.Append(Padding(padLevel + 1)).AppendLine(
-                                $"ContentName = Cnn.GetContentName({Cast(control.IsCSharp, "ContentID", "Int32")}){LineEnd(control.IsCSharp)}");
-                            sb.Append(Padding(padLevel)).AppendLine(GetEndIf(control.IsCSharp));
-
+                        sb.Append(Padding(padLevel)).AppendLine(GetVariableDeclaration(control.IsCSharp, "extSiteId", "Integer", "int", "0"));
+                        sb.Append(Padding(padLevel)).AppendLine($"ContentID = Cnn.GetDynamicContentId(InternalStrValue(\"{control.GetString("DYNAMIC_CONTENT_VARIABLE")}\") , {control.GetString("CONTENT_ID")}, {Info.SiteId}, {Ref(control.IsCSharp)} extSiteId){LineEnd(control.IsCSharp)}");
+                        sb.Append(Padding(padLevel)).AppendLine(GetIf(control.IsCSharp, $"ContentID {InEqual(control.IsCSharp)} {control.GetString("CONTENT_ID")}"));
+                        sb.Append(Padding(padLevel + 1)).AppendLine($"ContentUploadURL = Cnn.GetContentUploadUrlByID(extSiteId, ContentID){LineEnd(control.IsCSharp)}");
+                        sb.Append(Padding(padLevel + 1)).AppendLine($"ContentName = Cnn.GetContentName({Cast(control.IsCSharp, "ContentID", "Int32")}){LineEnd(control.IsCSharp)}");
+                        sb.Append(Padding(padLevel)).AppendLine(GetEndIf(control.IsCSharp));
                     }
-                    
+
                     var united = control.Container.FromClause.IndexOf("UNITED", StringComparison.OrdinalIgnoreCase) > 0 ? "\"_UNITED\"" : "String.Empty";
                     sb.Append(Padding(padLevel)).AppendLine(GetVariableDeclaration(control.IsCSharp, "united", "String", "string", united));
                     sb.Append(Padding(padLevel)).AppendLine(GetVariableDeclaration(control.IsCSharp, "table", "String", "string", "String.Format(\"content_{0}{1}\", ContentID, united)"));
                     sb.Append(Padding(padLevel)).AppendLine(GetVariableDeclaration(control.IsCSharp, "from", "String", "string", "String.Format(\" {0} AS c WITH (NOLOCK)\", table)"));
                     sb.Append(Padding(padLevel)).AppendLine(GetVariableDeclaration(control.IsCSharp, "where", "String", "string", control.Container.WhereClause(control.IsCSharp)));
                     sb.Append(Padding(padLevel)).AppendLine(GetVariableDeclaration(control.IsCSharp, "orderBy", "String", "string", control.Container.OrderClause));
-
-
 
                     sb.Append(Padding(padLevel)).AppendLine(GetObjectVariableDeclaration(control.IsCSharp, "src", "SqlDataSource"));
                     sb.Append(Padding(padLevel)).AppendLine("src.ConnectionString = ConfigurationManager.ConnectionStrings" + BeginItemChar(control.IsCSharp) + "\"qp_database\"" + EndItemChar(control.IsCSharp) + ".ConnectionString" + LineEnd(control.IsCSharp));
@@ -1266,7 +1161,6 @@ namespace Assembling
                     }
                     else
                     {
-
                         if (control.Container.UseLevelFiltration)
                         {
                             sb.Append(Padding(padLevel)).AppendLine("src.SelectParameters.Add(\"Select\", TypeCode.String, " + ContainerInfo.SelectClause + ")" + LineEnd(control.IsCSharp));
@@ -1279,7 +1173,6 @@ namespace Assembling
                         }
 
                         sb.Append(Padding(padLevel)).AppendLine("src.SelectParameters.Add(\"use_security\", TypeCode.Int32, \"1\")" + LineEnd(control.IsCSharp));
-
                         if (!control.IsCSharp)
                         {
                             sb.Append(Padding(padLevel)).AppendLine("Dim qpUid, qpGid as String");
@@ -1328,7 +1221,6 @@ namespace Assembling
                     sb.Append(Padding(padLevel)).AppendLine("src.SelectParameters.Add(\"PageSize\", TypeCode.Int32, (" + control.Container.PageSize + ").ToString())" + LineEnd(control.IsCSharp));
                     sb.Append(Padding(padLevel)).AppendLine("src.SelectParameters.Add(\"GetCount\", TypeCode.Int32, \"" + control.Container.GetCountWithoutPaging + "\")" + LineEnd(control.IsCSharp));
                     sb.Append(Padding(padLevel)).AppendLine(GetObjectVariableDeclaration(control.IsCSharp, "totalRecords", "Parameter", "\"TotalRecords\""));
-
 
                     sb.Append(Padding(padLevel)).AppendLine("totalRecords.Type = TypeCode.Int32" + LineEnd(control.IsCSharp));
                     sb.Append(Padding(padLevel)).AppendLine("totalRecords.Direction = ParameterDirection.Output" + LineEnd(control.IsCSharp));
@@ -1381,16 +1273,16 @@ namespace Assembling
                     {
                         sb.Append(Padding(padLevel)).AppendLine("AbsoluteTotalRecords = Data.Rows.Count" + LineEnd(control.IsCSharp));
                     }
-                    sb.Append(Padding(padLevel)).AppendLine("RecordsPerPage = " + control.Container.PageSize + LineEnd(control.IsCSharp));
 
+                    sb.Append(Padding(padLevel)).AppendLine("RecordsPerPage = " + control.Container.PageSize + LineEnd(control.IsCSharp));
                 }
-                
+
                 if (control.GetBoolean("RETURN_LAST_MODIFIED"))
                 {
                     sb.Append(Padding(padLevel)).AppendLine("QPage.SetLastModified(Data)" + LineEnd(control.IsCSharp));
                 }
-
             }
+
             if (control.CurrentType == ControlType.PublishingForm)
             {
                 sb.Append(Padding(padLevel)).AppendLine(Self(control.IsCSharp) + ".Data = dt" + LineEnd(control.IsCSharp));
@@ -1404,7 +1296,6 @@ namespace Assembling
         {
             sb.Append(GetInitCode(control, padLevel));
             sb.Append(GetTraceCode(control, padLevel));
-
             if (control.CurrentType == ControlType.PublishingForm || control.CurrentType == ControlType.PublishingContainer)
             {
                 if (string.IsNullOrEmpty(control.GetString("CONTENT_ID")))
@@ -1413,8 +1304,7 @@ namespace Assembling
                 }
 
                 sb.Append(GetObjectValuesCode(control, padLevel));
-                sb.AppendLine("");
-
+                sb.AppendLine(string.Empty);
             }
         }
 
@@ -1429,22 +1319,6 @@ namespace Assembling
                 sb.Append(Padding(padLevel)).AppendLine("override public void LoadControlData(System.Object sender, System.EventArgs e)");
                 sb.Append(Padding(padLevel)).AppendLine("{");
             }
-        }
-
-        protected static void WrapTemplateCodeBehind(string codeBehind, ControlInfo control, StringBuilder sb)
-        {
-            if (!control.IsCSharp)
-            {
-                sb.AppendLine("Overrides Public Sub InitUserHandlers(e as System.EventArgs)");
-            }
-            else
-            {
-                sb.AppendLine("override public void InitUserHandlers(System.EventArgs e)");
-                sb.AppendLine("{");
-            }
-            sb.Append(codeBehind);
-            sb.AppendLine("");
-            sb.AppendLine(GetEndSub(control.IsCSharp));
         }
 
         protected void InvalidateStructureCache()
@@ -1493,15 +1367,11 @@ namespace Assembling
                 {
                     return Info.AssembleMainFormat;
                 }
-                else
-                {
-                    return control.GetBoolean(Info.AssembleAllowanceFieldName);
-                }
-            }
-            else
-            {
+
                 return control.GetBoolean(Info.AssembleAllowanceFieldName);
             }
+
+            return control.GetBoolean(Info.AssembleAllowanceFieldName);
         }
 
         protected bool AssemblePageBecauseOfProperties
@@ -1512,14 +1382,8 @@ namespace Assembling
                 {
                     return Info.GetBoolean(Info.AssembleAllowanceFieldName);
                 }
-                else if (Info.IsAssembleFormatMode)
-                {
-                    return Info.AssembleMainFormat;
-                }
-                else
-                {
-                    return true;
-                }
+
+                return !Info.IsAssembleFormatMode || Info.AssembleMainFormat;
             }
         }
 
@@ -1553,22 +1417,15 @@ namespace Assembling
                         Cnn.ExecuteSql(string.Format(CultureInfo.InvariantCulture, "update object_format set {0} = 0 where object_format_id = {1}", Info.AssembleAllowanceFieldName, control.GetString("CURRENT_FORMAT_ID")));
                         control.Row[Info.AssembleAllowanceFieldName] = 0;
                     }
-
                 }
                 else
                 {
                     Cnn.ExecuteSql(control.IsRoot
-                        ? string.Format(CultureInfo.InvariantCulture,
-                            "update page_template set {0} = 0 where page_template_id = {1}",
-                            Info.AssembleAllowanceFieldName, Info.GetString("PAGE_TEMPLATE_ID"))
-                        : string.Format(CultureInfo.InvariantCulture,
-                            "update object_format set {0} = 0 where object_format_id = {1}",
-                            Info.AssembleAllowanceFieldName, control.GetString("CURRENT_FORMAT_ID")));
+                        ? string.Format(CultureInfo.InvariantCulture, "update page_template set {0} = 0 where page_template_id = {1}", Info.AssembleAllowanceFieldName, Info.GetString("PAGE_TEMPLATE_ID"))
+                        : string.Format(CultureInfo.InvariantCulture, "update object_format set {0} = 0 where object_format_id = {1}", Info.AssembleAllowanceFieldName, control.GetString("CURRENT_FORMAT_ID")));
                     control.Row[Info.AssembleAllowanceFieldName] = 0;
                 }
             }
-
-
         }
 
         protected void ParseFormat(ControlInfo control)
@@ -1588,10 +1445,9 @@ namespace Assembling
                 {
                     Info.Controls.Load(call);
                 }
+
                 match = match.NextMatch();
             }
-
-
         }
 
         protected static DataTable ConvertToDataTable(DataRow row)
@@ -1600,24 +1456,10 @@ namespace Assembling
             {
                 throw new ArgumentException("row or row.Table mustn't be null");
             }
+
             var dt = row.Table.Clone();
             dt.ImportRow(row);
             return dt;
-        }
-
-        private static string GetInitialPresentation(string presentation)
-        {
-            return CodeTransformer.GetInitialPresentation(presentation);
-        }
-
-        private static string GetInitialCodeBehind(string codeBehind)
-        {
-            return CodeTransformer.GetInitialCodeBehind(codeBehind);
-        }
-
-        public static InitialCode GetInitialCode(Code controlCode)
-        {
-            return new InitialCode(GetInitialPresentation(controlCode.Presentation.Code), GetInitialCodeBehind(controlCode.CodeBehind.Code));
         }
     }
 }

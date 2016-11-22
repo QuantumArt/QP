@@ -1,34 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.Constants;
-using System.Web.Mvc;
-using System.Globalization;
-using Quantumart.QP8.WebMvc.ViewModels;
+﻿using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {
     public class ArticleVersionViewModelBinder : QpModelBinder
     {
         protected override void OnModelUpdated(ControllerContext controllerContext, ModelBindingContext bindingContext)
-        {            
-			ArticleVersionViewModel model = (bindingContext.Model as ArticleVersionViewModel);
-			ArticleVersion version = model.Data;
-			Article article = model.Data.Article;
-			article.FieldValues = version.GetFieldValues(true);
-			ArticleViewModelBinder.UpdateFieldValues(bindingContext, article.FieldValues, false);
-			article.UpdateAggregatedCollection();
+        {
+            var model = bindingContext.Model as ArticleVersionViewModel;
+            if (model != null)
+            {
+                var version = model.Data;
+                var article = model.Data.Article;
+                article.FieldValues = version.LoadFieldValues(true);
+                ArticleViewModelBinder.UpdateFieldValues(bindingContext, article.FieldValues, false);
+                article.UpdateAggregatedCollection();
 
-			foreach (var aggArticle in article.AggregatedArticles)
-			{
-				aggArticle.FieldValues = version.GetAggregatedFieldValues(aggArticle, true).ToList();
-				ArticleViewModelBinder.UpdateFieldValues(bindingContext, aggArticle.FieldValues, true);
-			}
-           
+                foreach (var aggArticle in article.AggregatedArticles)
+                {
+                    aggArticle.FieldValues = version.GetAggregatedArticle(aggArticle.ContentId).FieldValues;
+                    ArticleViewModelBinder.UpdateFieldValues(bindingContext, aggArticle.FieldValues, true);
+                }
+            }
+
             base.OnModelUpdated(controllerContext, bindingContext);
         }
-	}
-
+    }
 }

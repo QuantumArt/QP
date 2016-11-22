@@ -1,35 +1,40 @@
+using System;
+using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.WebPages;
+using Quantumart.QP8.WebMvc.WinLogOn;
 using RazorGenerator.Mvc;
-using System.Text;
-using System;
 
-[assembly: WebActivatorEx.PostApplicationStartMethod(typeof(Quantumart.QP8.WebMvc.WinLogOn.App_Start.RazorGeneratorMvcStart), "Start")]
+[assembly: WebActivatorEx.PostApplicationStartMethod(typeof(RazorGeneratorMvcStart), "Start")]
 
-namespace Quantumart.QP8.WebMvc.WinLogOn.App_Start {
-    public static class RazorGeneratorMvcStart {
-        public static void Start() {
-			PrecompiledMvcEngine engine = null;
-			try
-			{
-				engine = new PrecompiledMvcEngine(typeof(RazorGeneratorMvcStart).Assembly)
-				{
-					UsePhysicalViewsIfNewer = HttpContext.Current.Request.IsLocal
-				};
-			}
-			catch (System.Reflection.ReflectionTypeLoadException e)
-			{
-				StringBuilder exceptions = new StringBuilder("The following DLL load exceptions occurred:");
-				foreach (var x in e.LoaderExceptions)
-					exceptions.AppendFormat("{0},\n\n", x.Message);
-				throw new Exception(string.Format("Error loading Razor Generator Stuff:\n{0}", exceptions));
-			}
+namespace Quantumart.QP8.WebMvc.WinLogOn
+{
+    public static class RazorGeneratorMvcStart
+    {
+        public static void Start()
+        {
+            try
+            {
+                var engine = new PrecompiledMvcEngine(typeof(RazorGeneratorMvcStart).Assembly)
+                {
+                    UsePhysicalViewsIfNewer = HttpContext.Current.Request.IsLocal
+                };
 
-            ViewEngines.Engines.Insert(0, engine);
+                ViewEngines.Engines.Insert(0, engine);
+                VirtualPathFactoryManager.RegisterVirtualPathFactory(engine);
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                var exceptions = new StringBuilder("The following DLL load exceptions occurred:");
+                foreach (var x in e.LoaderExceptions)
+                {
+                    exceptions.AppendFormat("{0},\n\n", x.Message);
+                }
 
-            // StartPage lookups are done by WebPages. 
-            VirtualPathFactoryManager.RegisterVirtualPathFactory(engine);
+                throw new Exception($"Error loading Razor Generator Stuff:\n{exceptions}");
+            }
         }
     }
 }

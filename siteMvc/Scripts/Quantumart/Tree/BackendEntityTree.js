@@ -573,7 +573,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     } else {
       this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
       $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', true);
-      if (!this._allowMultipleNodeSelection && this._allowGlobalSelection) {
+      if (!this._allowMultipleNodeSelection) {
         this._resetNodeSelectionState();
       }
     }
@@ -689,21 +689,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   },
 
   getSelectedEntities: function() {
-    var selectedEntities = [];
-
-    if (this._allowGlobalSelection) {
-      var selectedEntitiesIDs = this._selectedEntitiesIDs;
-
-      $.each(selectedEntitiesIDs, function(index, entityId) {
-        var entity = { Id: entityId, Name: '' };
-        Array.add(selectedEntities, entity);
-      });
-
-    } else {
-      selectedEntities = this.getEntitiesFromNodes(this.getSelectedNodes());
-    }
-
-    return selectedEntities;
+    return this.getEntitiesFromNodes(this.getSelectedNodes());
   },
 
   checkExistEntityInCurrentPage: function(entityId) {
@@ -949,7 +935,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       var action = $a.getBackendActionByCode(actionCode);
 
       if (!action) {
-        window.alert($l.Common.ajaxDataReceivingErrorMessage);
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
         return;
       }
 

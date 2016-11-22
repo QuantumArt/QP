@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Assembling.Info;
+using Quantumart.QP8.Assembling;
 
 namespace Assembling
 {
@@ -23,8 +24,8 @@ namespace Assembling
             FillController(formatId, mode);
         }
 
-        public AssembleFormatController(int formatId, AssembleMode mode, string customerCode)
-            : base(customerCode)
+        public AssembleFormatController(int formatId, AssembleMode mode, string connectionParameter)
+            : base(connectionParameter)
         {
             FillController(formatId, mode);
         }

@@ -1,60 +1,63 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.Services.ArticleScheduler;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Services.ArticleScheduler;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler.Onetime
 {
-	/// <summary>
-	/// Выполняет onetime-задачу
-	/// </summary>
-	internal class OnetimeTaskScheduler
-	{
-		private IArticleOnetimeSchedulerService bllService;
-		private IOperationsLogWriter operationsLogWriter;
+    /// <summary>
+    /// Выполняет onetime-задачу
+    /// </summary>
+    internal class OnetimeTaskScheduler
+    {
+        private readonly IArticleOnetimeSchedulerService _bllService;
+        private readonly IOperationsLogWriter _operationsLogWriter;
 
-		public OnetimeTaskScheduler(IArticleOnetimeSchedulerService bllService, IOperationsLogWriter operationsLogWriter)
-		{
-			if (bllService == null)
-				throw new ArgumentNullException("bllService");
-			if (operationsLogWriter == null)
-				throw new ArgumentNullException("operationsLogWriter");
+        public OnetimeTaskScheduler(IArticleOnetimeSchedulerService bllService, IOperationsLogWriter operationsLogWriter)
+        {
+            if (bllService == null)
+            {
+                throw new ArgumentNullException(nameof(bllService));
+            }
 
-			this.bllService = bllService;
-			this.operationsLogWriter = operationsLogWriter;
-		}
+            if (operationsLogWriter == null)
+            {
+                throw new ArgumentNullException(nameof(operationsLogWriter));
+            }
 
-		/// <summary>
-		/// Выполнить задачу
-		/// </summary>
-		/// <param name="task"></param>
-		public void Run(OnetimeTask task)
-		{
-			var range = Tuple.Create(task.StartDateTime, task.EndDateTime);
-			var currentTime = bllService.GetCurrentDBDateTime();
-			var pos = range.Position(currentTime);
-			Article article = null;
-			if (pos < 0) // до диапазона задачи
-				return;
-			else if (pos > 0) // после диапазона задачи
-			{
-				article = bllService.HideAndCloseSchedule(task.Id);
-				if (article != null && article.Visible)
-					operationsLogWriter.HideArticle(article);
-			}
-			else if (pos == 0) // в диапазоне
-			{
-				if (task.EndDateTime.Year == ArticleScheduleConstants.Infinity.Year) // конец диапазона в "бесконечности"
-					article = bllService.ShowAndCloseSchedule(task.Id);
-				else
-					article = bllService.ShowArticle(task.ArticleId);
-				if (article != null && !article.Visible)
-					operationsLogWriter.ShowArticle(article);
-			}
+            _bllService = bllService;
+            _operationsLogWriter = operationsLogWriter;
+        }
 
-		}
-	}
+        /// <summary>
+        /// Выполнить задачу
+        /// </summary>
+        /// <param name="task"></param>
+        public void Run(OnetimeTask task)
+        {
+            var range = Tuple.Create(task.StartDateTime, task.EndDateTime);
+            var currentTime = _bllService.GetCurrentDBDateTime();
+            var pos = range.Position(currentTime);
+            Article article;
+            if (pos < 0) // до диапазона задачи
+            {
+            }
+            else if (pos > 0) // после диапазона задачи
+            {
+                article = _bllService.HideAndCloseSchedule(task.Id);
+                if (article != null && article.Visible)
+                {
+                    _operationsLogWriter.HideArticle(article);
+                }
+            }
+            else if (pos == 0) // в диапазоне
+            {
+                article = task.EndDateTime.Year == ArticleScheduleConstants.Infinity.Year ? _bllService.ShowAndCloseSchedule(task.Id) : _bllService.ShowArticle(task.ArticleId);
+                if (article != null && !article.Visible)
+                {
+                    _operationsLogWriter.ShowArticle(article);
+                }
+            }
+        }
+    }
 }

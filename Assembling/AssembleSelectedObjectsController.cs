@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Assembling.Info;
+using Quantumart.QP8.Assembling;
 
 namespace Assembling
 {
@@ -8,8 +9,8 @@ namespace Assembling
     {
         public string Ids { get; }
 
-        public AssembleSelectedObjectsController(string ids, string customerCode)
-            : base(customerCode)
+        public AssembleSelectedObjectsController(string ids, string connectionParameter)
+            : base(connectionParameter)
         {
             Ids = ids;
             CurrentAssembleMode = AssembleMode.SelectedObjects;

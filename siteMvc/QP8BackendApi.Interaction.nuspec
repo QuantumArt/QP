@@ -4,7 +4,7 @@
     <id>QP8BackendApi.Interaction</id>
     <version>1.0.0</version>
     <title>QP8BackendApi.Interaction</title>
-    <authors>Pavel Celut,Maxim Tertyshnyy</authors>
+    <authors>Pavel Celut,Maxim Tertyshnyy,Alex Kostyukov</authors>
     <owners>Quantum Art</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Implements basic scenarios of the interaction between QP8 and a custom application</description>
@@ -12,13 +12,11 @@
     <copyright>Copyright 2016</copyright>
     <tags>QP8 Backend API JS Integration</tags>
     <dependencies>
-        <dependency id="Json2" version="1.0.2" />      
+        <dependency id="Json2" version="1.0.2" />
     </dependencies>
   </metadata>
   <files>
     <file src="Scripts\pmrpc.js" target="Content\Scripts" />
     <file src="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.js" target="Content\Scripts" />
-    <file src="Scripts\pmrpc.min.js" target="Content\Scripts" />
-    <file src="Scripts\Quantumart\CustomAction\QP8BackendApi.Interaction.min.js" target="Content\Scripts" />
   </files>
 </package>

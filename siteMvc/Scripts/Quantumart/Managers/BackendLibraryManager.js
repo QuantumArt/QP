@@ -1,4 +1,4 @@
-﻿//#region class BackendLibraryManager
+//#region class BackendLibraryManager
 // === Класс "Менеджер библиотек" ===
 Quantumart.QP8.BackendLibraryManager = function () {
 	Quantumart.QP8.BackendLibraryManager.initializeBase(this);
@@ -32,7 +32,7 @@ Quantumart.QP8.BackendLibraryManager.prototype = {
 	createLibraryGroup: function (libraryGroupCode) {
 		var libraryGroup = this.getLibraryGroup(libraryGroupCode);
 		if (!libraryGroup) {
-			libraryGroup = {}; 
+			libraryGroup = {};
 			this._libraryGroups[libraryGroupCode] = libraryGroup;
 		}
 

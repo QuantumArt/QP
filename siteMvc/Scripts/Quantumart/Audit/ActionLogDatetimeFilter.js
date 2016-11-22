@@ -1,4 +1,4 @@
-﻿//#region class ActionLogDatetimeFilter
+//#region class ActionLogDatetimeFilter
 Quantumart.QP8.ActionLogDatetimeFilter = function (filterContainer) {
 	Quantumart.QP8.ActionLogDatetimeFilter.initializeBase(this, [filterContainer]);
 };
@@ -28,7 +28,7 @@ Quantumart.QP8.ActionLogDatetimeFilter.prototype = {
 			}
 		}
 	},
-	
+
 
 	dispose: function () {
 		this.dtFieldSearch.dispose();

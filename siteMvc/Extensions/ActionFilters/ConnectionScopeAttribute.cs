@@ -1,142 +1,132 @@
-﻿using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using System;
+﻿using System;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {
-    public enum ConnectionScopeMode
-    {
-        TransactionOff,
-        TransactionOn
-    }
-
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
-    public class ConnectionScopeAttribute : ActionFilterAttribute, IActionFilter
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
+    public class ConnectionScopeAttribute : ActionFilterAttribute
     {
         public static readonly int FilterOrder = 0;
 
-        private static readonly string TRANSACTION_SCOPE_KEY = "ConnectionScopeAttribute.TransactionScope";
-        private TransactionScope _TransactionScope
+        private const string TransactionScopeKey = "ConnectionScopeAttribute.TransactionScope";
+
+        private static TransactionScope TransactionScope
         {
             get
             {
-                if (HttpContext.Current.Items.Contains(TRANSACTION_SCOPE_KEY))
+                if (HttpContext.Current.Items.Contains(TransactionScopeKey))
                 {
-                    return (TransactionScope)HttpContext.Current.Items[TRANSACTION_SCOPE_KEY];
+                    return (TransactionScope)HttpContext.Current.Items[TransactionScopeKey];
                 }
 
                 return null;
             }
-
             set
             {
                 if (value != null)
                 {
-                    HttpContext.Current.Items[TRANSACTION_SCOPE_KEY] = value;
+                    HttpContext.Current.Items[TransactionScopeKey] = value;
                 }
                 else
                 {
-                    HttpContext.Current.Items.Remove(TRANSACTION_SCOPE_KEY);
+                    HttpContext.Current.Items.Remove(TransactionScopeKey);
                 }
             }
         }
 
-        private static readonly string CONNECTION_SCOPE_KEY = "ConnectionScopeAttribute.ConnectionScope";
-        private QPConnectionScope _ConnectionScope
+        private const string ConnectionScopeKey = "ConnectionScopeAttribute.ConnectionScope";
+
+        private static QPConnectionScope ConnectionScope
         {
             get
             {
-                if (HttpContext.Current.Items.Contains(CONNECTION_SCOPE_KEY))
+                if (HttpContext.Current.Items.Contains(ConnectionScopeKey))
                 {
-                    return (QPConnectionScope)HttpContext.Current.Items[CONNECTION_SCOPE_KEY];
+                    return (QPConnectionScope)HttpContext.Current.Items[ConnectionScopeKey];
                 }
 
                 return null;
             }
-
             set
             {
                 if (value != null)
                 {
-                    HttpContext.Current.Items[CONNECTION_SCOPE_KEY] = value;
+                    HttpContext.Current.Items[ConnectionScopeKey] = value;
                 }
                 else
                 {
-                    HttpContext.Current.Items.Remove(CONNECTION_SCOPE_KEY);
+                    HttpContext.Current.Items.Remove(ConnectionScopeKey);
                 }
             }
         }
 
-        protected virtual ConnectionScopeMode _Mode
-        {
-            get
-            {
-                return ConnectionScopeMode.TransactionOn;
-            }
-        }
+        protected virtual ConnectionScopeMode Mode => ConnectionScopeMode.TransactionOn;
 
-        public ConnectionScopeAttribute() : this(ConnectionScopeMode.TransactionOff) { }
-
-        public ConnectionScopeAttribute(ConnectionScopeMode mode)
+        public ConnectionScopeAttribute()
         {
             Order = FilterOrder;
         }
 
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
-            QPController controller = (QPController)filterContext.Controller;
-            if (controller == null || !controller.IsReplayAction())
+            var controller = filterContext.Controller as QPController;
+            if (controller == null || !filterContext.HttpContext.IsXmlDbUpdateReplayAction())
             {
-                base.OnActionExecuting(filterContext);
-                if (_Mode == ConnectionScopeMode.TransactionOn)
+                if (Mode == ConnectionScopeMode.TransactionOn)
                 {
-                    _TransactionScope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
+                    TransactionScope = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions
                     {
                         IsolationLevel = IsolationLevel.ReadUncommitted
                     });
                 }
 
-                _ConnectionScope = new QPConnectionScope();
+                ConnectionScope = new QPConnectionScope();
+            }
+
+            base.OnActionExecuting(filterContext);
+        }
+
+        public static void DisposeScopes()
+        {
+            if (ConnectionScope != null)
+            {
+                ConnectionScope.ForcedDispose();
+                ConnectionScope = null;
+            }
+
+            if (TransactionScope != null)
+            {
+                TransactionScope.Dispose();
+                TransactionScope = null;
             }
         }
 
         public override void OnActionExecuted(ActionExecutedContext filterContext)
         {
-            QPController controller = (QPController)filterContext.Controller;
-            if (controller == null || !controller.IsReplayAction())
+            var controller = filterContext.Controller as QPController;
+            try
             {
-
-                try
+                if ((controller == null || !filterContext.HttpContext.IsXmlDbUpdateReplayAction())
+                    && filterContext.Exception == null
+                    && TransactionScope != null
+                    && filterContext.Controller.ViewData.ModelState.IsValid
+                    && Transaction.Current?.TransactionInformation.Status == TransactionStatus.Active)
                 {
-                    TransactionScope transactionScope = _TransactionScope;
-                    base.OnActionExecuted(filterContext);
-                    if (filterContext.Exception == null
-                        && transactionScope != null
-                        && filterContext.Controller.ViewData.ModelState.IsValid
-                        && Transaction.Current != null
-                        && Transaction.Current.TransactionInformation.Status == TransactionStatus.Active)
-                    {
-                        transactionScope.Complete();
-                    }
-                }
-                finally
-                {
-                    if (_ConnectionScope != null)
-                    {
-                        _ConnectionScope.ForcedDispose();
-                        _ConnectionScope = null;
-                    }
-
-                    if (_TransactionScope != null)
-                    {
-                        _TransactionScope.Dispose();
-                        _TransactionScope = null;
-                    }
+                    TransactionScope.Complete();
                 }
             }
+            finally
+            {
+                DisposeScopes();
+            }
+
+            base.OnActionExecuted(filterContext);
         }
     }
 }

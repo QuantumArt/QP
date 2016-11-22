@@ -1,4 +1,4 @@
-﻿var EVENT_TYPE_CUSTOM_ACTION_CHANGED = "OnCustomActionChanged";
+var EVENT_TYPE_CUSTOM_ACTION_CHANGED = "OnCustomActionChanged";
 
 Quantumart.QP8.BackendContextMenuManager = function () {
 	Quantumart.QP8.BackendContextMenuManager.initializeBase(this);

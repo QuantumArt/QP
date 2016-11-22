@@ -1,27 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.DAL;
+﻿using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
-{	
-	internal static class ApplicationInfoRepository
-	{		
-		public static string GetCurrentDBVersion()
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				return Common.GetCurrentDBVersion(scope.DbConnection);
-			}
-		}
-	
-		public static bool RecordActions()
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				return DbRepository.Get().RecordActions;
-			}
-		}
-	}
+{
+    public class ApplicationInfoRepository : IApplicationInfoRepository
+    {
+        public string GetCurrentDbVersion()
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetCurrentDbVersion(scope.DbConnection);
+            }
+        }
+
+        public bool RecordActions()
+        {
+            using (new QPConnectionScope())
+            {
+                return DbRepository.Get().RecordActions;
+            }
+        }
+    }
 }

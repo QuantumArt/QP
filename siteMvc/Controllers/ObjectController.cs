@@ -1,17 +1,17 @@
-﻿using Quantumart.QP8.BLL;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Web.Mvc;
+using Newtonsoft.Json;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -19,22 +19,22 @@ namespace Quantumart.QP8.WebMvc.Controllers
     [ValidateInput(false)]
     public class ObjectController : QPController
     {
-        IObjectService _objectService;
+        private readonly IObjectService _objectService;
 
         public ObjectController(IObjectService objectService)
         {
-            this._objectService = objectService;
+            _objectService = objectService;
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.TemplateObjects)]
         [BackendActionContext(ActionCode.TemplateObjects)]
         public ActionResult IndexTemplateObjects(string tabId, int parentId)
         {
-            ObjectInitListResult result = _objectService.InitObjectList(parentId, true);
-            ObjectListViewModel model = ObjectListViewModel.Create(result, tabId, parentId, true);
-            return this.JsonHtml("Index", model);
+            var result = _objectService.InitObjectList(parentId, true);
+            var model = ObjectListViewModel.Create(result, tabId, parentId, true);
+            return JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -43,19 +43,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.TemplateObjects)]
         public ActionResult _IndexTemplateObjects(string tabId, int parentId, GridCommand command)
         {
-            ListResult<ObjectListItem> serviceResult = _objectService.GetTemplateObjectsByTemplateId(command.GetListCommand(), parentId);
-            return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            var serviceResult = _objectService.GetTemplateObjectsByTemplateId(command.GetListCommand(), parentId);
+            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageObjects)]
         [BackendActionContext(ActionCode.PageObjects)]
         public ActionResult IndexPageObjects(string tabId, int parentId)
         {
-            ObjectInitListResult result = _objectService.InitObjectList(parentId, false);
-            ObjectListViewModel model = ObjectListViewModel.Create(result, tabId, parentId, false);
-            return this.JsonHtml("Index", model);
+            var result = _objectService.InitObjectList(parentId, false);
+            var model = ObjectListViewModel.Create(result, tabId, parentId, false);
+            return JsonHtml("Index", model);
         }
 
         [HttpPost]
@@ -64,85 +64,85 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.PageObjects)]
         public ActionResult _IndexPageObjects(string tabId, int parentId, GridCommand command)
         {
-            ListResult<ObjectListItem> serviceResult = _objectService.GetPageObjectsByPageId(command.GetListCommand(), parentId);
-            return View(new GridModel() { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
+            var serviceResult = _objectService.GetPageObjectsByPageId(command.GetListCommand(), parentId);
+            return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewPageObject)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.PageObject, "parentId")]
         [BackendActionContext(ActionCode.AddNewPageObject)]
         public ActionResult NewPageObject(string tabId, int parentId)
         {
-            BllObject obj = _objectService.NewObjectProperties(parentId, true);
-            ObjectViewModel model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
-            return this.JsonHtml("Properties", model);
+            var obj = _objectService.NewObjectProperties(parentId, true);
+            var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+            return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [HttpPost, Record]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewPageObject)]
         [BackendActionContext(ActionCode.AddNewPageObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewPageObject(string tabId, int parentId, FormCollection collection)
         {
-            BllObject obj = _objectService.NewObjectPropertiesForUpdate(parentId, true);
-            ObjectViewModel model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+            var obj = _objectService.NewObjectPropertiesForUpdate(parentId, true);
+            var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, IsReplayAction());
-                this.PersistResultId(model.Data.Id);
-                this.PersistDefaultFormatId(model.Data.DefaultFormatId);
-                return Redirect("PageObjectProperties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.SavePageObject });
+                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, HttpContext.IsXmlDbUpdateReplayAction());
+                PersistResultId(model.Data.Id);
+                PersistDefaultFormatId(model.Data.DefaultFormatId);
+                return Redirect("PageObjectProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SavePageObject });
             }
-            else
-                return this.JsonHtml("Properties", model);
+
+            return JsonHtml("Properties", model);
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.AddNewTemplateObject)]
         [EntityAuthorize(ActionTypeCode.Update, EntityTypeCode.TemplateObject, "parentId")]
         [BackendActionContext(ActionCode.AddNewTemplateObject)]
         public ActionResult NewTemplateObject(string tabId, int parentId)
         {
-            BllObject obj = _objectService.NewObjectProperties(parentId, false);
-            ObjectViewModel model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
-            return this.JsonHtml("Properties", model);
+            var obj = _objectService.NewObjectProperties(parentId, false);
+            var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+            return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [HttpPost, Record]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.AddNewTemplateObject)]
         [BackendActionContext(ActionCode.AddNewTemplateObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult NewTemplateObject(string tabId, int parentId, FormCollection collection)
         {
-            BllObject obj = _objectService.NewObjectPropertiesForUpdate(parentId, false);
-            ObjectViewModel model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+            var obj = _objectService.NewObjectPropertiesForUpdate(parentId, false);
+            var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, IsReplayAction());
-                this.PersistResultId(model.Data.Id);
-                this.PersistDefaultFormatId(model.Data.DefaultFormatId);
-                return Redirect("TemplateObjectProperties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.SaveTemplateObject });
+                model.Data = _objectService.SaveObjectProperties(model.Data, model.ActiveStatusTypeIds, HttpContext.IsXmlDbUpdateReplayAction());
+                PersistResultId(model.Data.Id);
+                PersistDefaultFormatId(model.Data.DefaultFormatId);
+                return Redirect("TemplateObjectProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.SaveTemplateObject });
             }
-            else
-                return this.JsonHtml("Properties", model);
+
+            return JsonHtml("Properties", model);
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.PromotePageObject)]
         [BackendActionContext(ActionCode.PromotePageObject)]
         [BackendActionLog]
@@ -153,165 +153,155 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.PageObjectProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.PageObject, "id")]
         [BackendActionContext(ActionCode.PageObjectProperties)]
         public ActionResult PageObjectProperties(string tabId, int parentId, int id, string successfulActionCode)
         {
-            BllObject obj = _objectService.ReadObjectProperties(id);
+            var obj = _objectService.ReadObjectProperties(id);
             ViewData[SpecialKeys.IsEntityReadOnly] = obj.LockedByAnyoneElse;
-            ObjectViewModel model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+            var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
             model.SuccesfulActionCode = successfulActionCode;
-            return this.JsonHtml("Properties", model);
+            return JsonHtml("Properties", model);
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdatePageObject)]
         [BackendActionContext(ActionCode.UpdatePageObject)]
         [Record(ActionCode.PageObjectProperties)]
         [BackendActionLog]
         public ActionResult PageObjectProperties(string tabId, int parentId, int id, FormCollection collection)
         {
-            BllObject obj = _objectService.ReadObjectPropertiesForUpdate(id);
+            var obj = _objectService.ReadObjectPropertiesForUpdate(id);
+            var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
 
-            ObjectViewModel model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                if (model.Data.UseDefaultValues)
-                {
-                    model.Data.DefaultValues = new JavaScriptSerializer().Deserialize<List<DefaultValue>>(model.AggregationListItems_Data_DefaultValues);
-                }
-                else
-                {
-                    model.Data.DefaultValues = Enumerable.Empty<DefaultValue>();
-                }
+                model.Data.DefaultValues = model.Data.UseDefaultValues
+                    ? JsonConvert.DeserializeObject<List<DefaultValue>>(model.AggregationListItemsDataDefaultValues)
+                    : Enumerable.Empty<DefaultValue>();
+
                 model.Data = _objectService.UpdateObjectProperties(model.Data, model.ActiveStatusTypeIds);
-                return Redirect("PageObjectProperties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.UpdatePageTemplate });
+                return Redirect("PageObjectProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdatePageTemplate });
             }
-            else
-                return this.JsonHtml("Properties", model);
+
+            return JsonHtml("Properties", model);
         }
 
         [HttpGet]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.TemplateObjectProperties)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.TemplateObject, "id")]
         [BackendActionContext(ActionCode.TemplateObjectProperties)]
         public ActionResult TemplateObjectProperties(string tabId, int parentId, int id, string successfulActionCode)
         {
-            BllObject obj = _objectService.ReadObjectProperties(id);
+            var obj = _objectService.ReadObjectProperties(id);
             ViewData[SpecialKeys.IsEntityReadOnly] = obj.LockedByAnyoneElse;
-            ObjectViewModel model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+            var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
             model.SuccesfulActionCode = successfulActionCode;
-            return this.JsonHtml("Properties", model);
+            return JsonHtml("Properties", model);
         }
 
         [HttpPost]
-        [ExceptionResult(ExceptionResultMode.UIAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.UpdateTemplateObject)]
         [BackendActionContext(ActionCode.UpdateTemplateObject)]
         [Record(ActionCode.TemplateObjectProperties)]
         [BackendActionLog]
         public ActionResult TemplateObjectProperties(string tabId, int parentId, int id, FormCollection collection)
         {
-            BllObject obj = _objectService.ReadObjectPropertiesForUpdate(id);
-            ObjectViewModel model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+            var obj = _objectService.ReadObjectPropertiesForUpdate(id);
+            var model = ObjectViewModel.Create(obj, tabId, parentId, _objectService);
+
             TryUpdateModel(model);
             model.Validate(ModelState);
             if (ModelState.IsValid)
             {
-                if (model.Data.UseDefaultValues)
-                {
-                    model.Data.DefaultValues = new JavaScriptSerializer().Deserialize<List<DefaultValue>>(model.AggregationListItems_Data_DefaultValues);
-                }
+                model.Data.DefaultValues = model.Data.UseDefaultValues
+                    ? JsonConvert.DeserializeObject<List<DefaultValue>>(model.AggregationListItemsDataDefaultValues)
+                    : Enumerable.Empty<DefaultValue>();
 
-                else
-                {
-                    model.Data.DefaultValues = Enumerable.Empty<DefaultValue>();
-                }
                 model.Data = _objectService.UpdateObjectProperties(model.Data, model.ActiveStatusTypeIds);
-                return Redirect("TemplateObjectProperties", new { tabId = tabId, parentId = parentId, id = model.Data.Id, successfulActionCode = Constants.ActionCode.UpdateTemplateObject });
+                return Redirect("TemplateObjectProperties", new { tabId, parentId, id = model.Data.Id, successfulActionCode = ActionCode.UpdateTemplateObject });
             }
-            else
-                return this.JsonHtml("Properties", model);
+
+            return JsonHtml("Properties", model);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemovePageObject)]
         [BackendActionContext(ActionCode.RemovePageObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult RemovePageObject(int id)
         {
-            MessageResult result = _objectService.RemoveObject(id);
-            return this.JsonMessageResult(result);
+            var result = _objectService.RemoveObject(id);
+            return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.RemoveTemplateObject)]
         [BackendActionContext(ActionCode.RemoveTemplateObject)]
         [BackendActionLog]
-        [Record]
         public ActionResult RemoveTemplateObject(int id)
         {
-            MessageResult result = _objectService.RemoveObject(id);
-            return this.JsonMessageResult(result);
+            var result = _objectService.RemoveObject(id);
+            return JsonMessageResult(result);
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemovePageObject)]
         [BackendActionContext(ActionCode.MultipleRemovePageObject)]
         [BackendActionLog]
-        [Record]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemovePageObject(int parentId, int[] IDs)
         {
-            return this.JsonMessageResult(_objectService.MultipleRemovePageObject(IDs));
+            return JsonMessageResult(_objectService.MultipleRemovePageObject(IDs));
         }
 
-        [HttpPost]
+        [HttpPost, Record]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.MultipleRemoveTemplateObject)]
         [BackendActionContext(ActionCode.MultipleRemoveTemplateObject)]
         [BackendActionLog]
-        [Record]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleRemoveTemplateObject(int parentId, int[] IDs)
         {
-            return this.JsonMessageResult(_objectService.MultipleRemoveTemplateObject(IDs));
+            return JsonMessageResult(_objectService.MultipleRemoveTemplateObject(IDs));
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CancelTemplateObject)]
         [BackendActionContext(ActionCode.CancelTemplateObject)]
         public ActionResult CancelTemplateObject(int id)
         {
             _objectService.CancelObject(id);
-            return this.JsonMessageResult(null);
+            return JsonMessageResult(null);
         }
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CancelPageObject)]
         [BackendActionContext(ActionCode.CancelPageObject)]
         public ActionResult CancelPageObject(int id)
         {
             _objectService.CancelObject(id);
-            return this.JsonMessageResult(null);
+            return JsonMessageResult(null);
         }
 
         [HttpPost]
@@ -327,12 +317,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleAssemblePageObjectPreAction(int[] IDs)
         {
             return Json(_objectService.MultipleAssembleObjectPreAction(IDs));
         }
 
         [HttpPost]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleAssembleTemplateObjectPreAction(int[] IDs)
         {
             return Json(_objectService.MultipleAssembleObjectPreAction(IDs));
@@ -340,7 +332,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [NoTransactionConnectionScopeAttribute]
+        [NoTransactionConnectionScope]
         [ActionAuthorize(ActionCode.AssemblePageObject)]
         [BackendActionContext(ActionCode.AssemblePageObject)]
         [BackendActionLog]
@@ -351,7 +343,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [NoTransactionConnectionScopeAttribute]
+        [NoTransactionConnectionScope]
         [ActionAuthorize(ActionCode.AssembleTemplateObject)]
         [BackendActionContext(ActionCode.AssembleTemplateObject)]
         [BackendActionLog]
@@ -362,10 +354,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [NoTransactionConnectionScopeAttribute]
+        [NoTransactionConnectionScope]
         [ActionAuthorize(ActionCode.MultipleAssembleTemplateObject)]
         [BackendActionContext(ActionCode.MultipleAssembleTemplateObject)]
         [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleAssembleTemplateObject(int[] IDs)
         {
             return Json(_objectService.MultipleAssembleObject(IDs));
@@ -373,10 +366,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [NoTransactionConnectionScopeAttribute]
+        [NoTransactionConnectionScope]
         [ActionAuthorize(ActionCode.MultipleAssemblePageObject)]
         [BackendActionContext(ActionCode.MultipleAssemblePageObject)]
         [BackendActionLog]
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult MultipleAssemblePageObject(int[] IDs)
         {
             return Json(_objectService.MultipleAssembleObject(IDs));
@@ -384,7 +378,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CaptureLockPageObject)]
         [BackendActionContext(ActionCode.CaptureLockPageObject)]
         [BackendActionLog]
@@ -396,7 +390,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [HttpPost]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        [ConnectionScope(ConnectionScopeMode.TransactionOn)]
+        [ConnectionScope]
         [ActionAuthorize(ActionCode.CaptureLockTemplateObject)]
         [BackendActionContext(ActionCode.CaptureLockTemplateObject)]
         [BackendActionLog]

@@ -1,4 +1,4 @@
-﻿//#region class ActionLogFilterBase
+//#region class ActionLogFilterBase
 Quantumart.QP8.ActionLogFilterBase = function (filterContainer) {
 	this.$container = jQuery(filterContainer);
 };

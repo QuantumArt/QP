@@ -90,13 +90,11 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   initialize: function() {
     var $tree = $('#' + this._treeElementId);
-
     var treeComponent = $tree.data('tTreeView'); // древовидное меню
     treeComponent.isAjax = this.isAjax;
     treeComponent.ajaxRequest = this._onDataBindingHandler;
 
     var self = this;
-
     this._initNodeCheck(treeComponent);
     this._initNewToggle(treeComponent);
 

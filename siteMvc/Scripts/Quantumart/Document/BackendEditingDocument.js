@@ -102,14 +102,14 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 	generateDocumentUrl: function (options) {
 		var entityIDs = (this._isMultipleEntities) ? $o.getEntityIDsFromEntities(this._entities) : [this._entityId];
 
-		var extraOptions = {			
+		var extraOptions = {
 			additionalUrlParameters: this._additionalUrlParameters,
 			controllerActionUrl: this.getCurrentViewActionUrl()
 		};
 		if (this.get_isBindToExternal() === true) {
 			extraOptions.additionalUrlParameters = jQuery.extend(extraOptions.additionalUrlParameters, { boundToExternal: true });
 		}
-		
+
 		options = (!$q.isObject(options)) ? extraOptions : jQuery.extend(options, extraOptions);
 
 		var url = $a.generateActionUrl(this._isMultipleEntities, entityIDs, this._parentEntityId, this._tabId, this.getCurrentAction(), options);
@@ -242,7 +242,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 					"tabId": this._tabId,
 					"actionCode": this._actionCode,
 					"searchBlockState": this.getHostStateProp("searchBlockState")
-				});		
+				});
 
 		searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_FIND_START, this._onSearchHandler);
 		searchBlockComponent.attachObserver(EVENT_TYPE_SEARCH_BLOCK_RESET_START, this._onSearchHandler);
@@ -366,11 +366,11 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
 	onChangeContent: function (eventType, sender, eventArgs) {
 		var tabId = this._editingArea.getExistingTabId(eventArgs);
-		if (tabId != 0) {		    
+		if (tabId != 0) {
 		    var selectedDocument = this._editingArea.selectDocument(tabId);
 		    if (selectedDocument) {
 		        selectedDocument.onSelectedThroughExecution(eventArgs);
-		    }		    
+		    }
 		}
 		else {
 			this.changeContent(eventArgs);
@@ -429,7 +429,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 
 	saveAndCloseRequest: function (eventArgs) {
 		Sys.Debug.trace("saveAndCloseRequest: " + eventArgs._tabId);
-	    
+
 	    var context = this.get_documentContext();
 	    if (context && context._options.saveAndCloseActionCode) {
 	        var main = this.get_mainComponent();
@@ -480,7 +480,7 @@ Quantumart.QP8.BackendEditingDocument.prototype = {
 	},
 
 	_isWindow: function() { return false; },
-	
+
 	dispose: function () {
 		Quantumart.QP8.BackendEditingDocument.callBaseMethod(this, "dispose");
 

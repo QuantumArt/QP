@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using Assembling.Info;
+using Quantumart.QP8.Assembling;
 
 namespace Assembling
 {
@@ -42,11 +43,12 @@ namespace Assembling
             FillController(templateId, "", ConvertToDataTable(row));
         }
 
-        public AssembleTemplateObjectsController(int templateId, string customerCode)
-            : base(customerCode)
+        public AssembleTemplateObjectsController(int templateId, string connectionParameter)
+            : base(connectionParameter)
         {
             FillController(templateId);
         }
+
 
         public AssembleTemplateObjectsController(int templateId, DbConnector cnn)
             : base(cnn)

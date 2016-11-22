@@ -1,4 +1,4 @@
-﻿var EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING = "OnMultistepActionWindowCanceling";
+var EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING = "OnMultistepActionWindowCanceling";
 var EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED = "OnMultistepActionWindowCanceled";
 var EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED = "OnMultistepActionWindowClosed";
 
@@ -173,14 +173,14 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
 
 		this._refreshView();
 	},
-	_createDownloadLink: function () {        
-	    if (!$q.isNullOrWhiteSpace(this._additionalInfo)) {
-	        var urlParams = { id: this._parentId, fileName: encodeURIComponent(this._additionalInfo) };
-	            var url = Quantumart.QP8.BackendLibrary.generateActionUrl("ExportFileDownload", urlParams);
-	            $c.downloadFileWithChecking(url, this._additionalInfo);
-	            return false;
-	        }
-	        return false;
+	_createDownloadLink: function () {
+    if (!$q.isNullOrWhiteSpace(this._additionalInfo)) {
+      var urlParams = { id: this._parentId, fileName: encodeURIComponent(this._additionalInfo) };
+      var url = Quantumart.QP8.BackendLibrary.generateActionUrl("ExportFileDownload", urlParams);
+      $c.downloadFileWithChecking(url, this._additionalInfo);
+    }
+
+    return false;
 	},
 	// Закончить шаг этапа
 	completeStep: function (processedItemsCount, additionalInfo, parentId) {
@@ -239,7 +239,7 @@ Quantumart.QP8.BackendMultistepActionWindow.prototype = {
 	_createWindow: function () {
 		var windowContentHtml = new $.telerik.stringBuilder();
 
-	    windowContentHtml        
+	    windowContentHtml
 		.cat('<div class="lop-main">')
 
 			.cat('<div class="lop-action-name"></div>')

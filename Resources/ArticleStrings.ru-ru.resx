@@ -597,4 +597,16 @@
   <data name="ExpandParents" xml:space="preserve">
     <value>Расширить вверх</value>
   </data>
+  <data name="TotalSelectedArticles" xml:space="preserve">
+    <value>Всего выбрано статей</value>
+  </data>
+  <data name="UniqueId" xml:space="preserve">
+    <value>Уникальный идентификатор</value>
+  </data>
+  <data name="GuidShouldBeUnique" xml:space="preserve">
+    <value>Введенный уникальный идентификатор уже существует</value>
+  </data>
+  <data name="GuidWrongFormat" xml:space="preserve">
+    <value>Неверный формат уникального идентификатора</value>
+  </data>
 </root>

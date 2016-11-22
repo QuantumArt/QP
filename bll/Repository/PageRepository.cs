@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -18,13 +19,13 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetPagesByTemplateId(scope.DbConnection, templateId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-				return MappersRepository.PageRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.PageRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
 		internal static Page GetPagePropertiesById(int id)
 		{
-			return MappersRepository.PageMapper.GetBizObject(QPContext.EFContext.PageSet.Include("PageTemplate.Site").Include("LastModifiedByUser")
+			return MapperFacade.PageMapper.GetBizObject(QPContext.EFContext.PageSet.Include("PageTemplate.Site").Include("LastModifiedByUser")
 				.SingleOrDefault(g => g.Id == id)
 			);
 		}
@@ -49,7 +50,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetPagesBySiteId(scope.DbConnection, parentId, listCommand.SortExpression, out totalRecords, listCommand.StartRecord, listCommand.PageSize);
-				return MappersRepository.PageRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.PageRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
@@ -93,7 +94,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<Page> GetList(IEnumerable<int> IDs)
 		{
 			IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
-			return MappersRepository.PageMapper
+			return MapperFacade.PageMapper
 				.GetBizList(QPContext.EFContext.PageSet
 					.Where(f => decIDs.Contains(f.Id))
 					.ToList()

@@ -1,20 +1,16 @@
-﻿using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Quantumart.QP8.BLL.Interfaces.Db;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal static class EntityObjectRepository
     {
-        /// <summary>
-        /// Проверяет уникальность имени сущности
-        /// </summary>
-        /// <param name="entity">сущность</param>
-        /// <returns>результат проверки</returns>
         internal static bool CheckNameUniqueness(EntityObject entity)
         {
             using (new QPConnectionScope())
@@ -47,83 +43,122 @@ namespace Quantumart.QP8.BLL.Repository
             return Lock(item);
         }
 
-
         internal static EntityObject GetById<T>(int id) where T : EntityObject
         {
             if (typeof(T) == typeof(Article))
+            {
                 return ArticleRepository.GetById(id);
+            }
+
             if (typeof(T) == typeof(Site))
+            {
                 return SiteRepository.GetById(id);
+            }
+
             if (typeof(T) == typeof(Content))
+            {
                 return ContentRepository.GetById(id);
+            }
+
             if (typeof(T) == typeof(Field))
+            {
                 return FieldRepository.GetById(id);
+            }
 
             throw new Exception("Unsupported entity object type");
         }
 
         private class CustomerObject : EntityObject
         {
-            public override string EntityTypeCode { get { return Constants.EntityTypeCode.CustomerCode; } }
+            public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;
         }
-        internal static IEnumerable<EntityObject> GetList(string entityTypeCode, IEnumerable<int> IDs)
+
+        internal static IEnumerable<EntityObject> GetList(string entityTypeCode, IList<int> ids)
         {
-            if (entityTypeCode.Equals(EntityTypeCode.CustomerCode, StringComparison.InvariantCultureIgnoreCase) && IDs.Any())
-                return new EntityObject[]
-                {
-                    new CustomerObject
-                    {
-                        Id = IDs.First(),
-                        Modified = DateTime.MinValue,
-                        IsReadOnly = true
-                    }
-                };
+            if (entityTypeCode.Equals(EntityTypeCode.CustomerCode, StringComparison.InvariantCultureIgnoreCase) && ids.Any())
+            {
+                return new EntityObject[] { new CustomerObject { Id = ids.First(), Modified = DateTime.MinValue, IsReadOnly = true } };
+            }
             if (entityTypeCode.Equals(EntityTypeCode.Site, StringComparison.InvariantCultureIgnoreCase))
-                return SiteRepository.GetList(IDs);
+            {
+                return SiteRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.Content, StringComparison.InvariantCultureIgnoreCase))
-                return ContentRepository.GetList(IDs);
+            {
+                return ContentRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.Field, StringComparison.InvariantCultureIgnoreCase))
-                return FieldRepository.GetList(IDs);
+            {
+                return FieldRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.Article, StringComparison.InvariantCultureIgnoreCase))
-                return ArticleRepository.GetList(IDs);
+            {
+                return ArticleRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.Notification, StringComparison.InvariantCultureIgnoreCase))
-                return NotificationRepository.GetList(IDs);
+            {
+                return NotificationRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.VisualEditorPlugin, StringComparison.InvariantCultureIgnoreCase))
-                return VisualEditorRepository.GetPluginList(IDs);
+            {
+                return VisualEditorRepository.GetPluginList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.VisualEditorCommand, StringComparison.InvariantCultureIgnoreCase))
-                return VisualEditorRepository.GetCommandList(IDs);
+            {
+                return VisualEditorRepository.GetCommandList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.VisualEditorStyle, StringComparison.InvariantCultureIgnoreCase))
-                return VisualEditorRepository.GetStyleList(IDs);
+            {
+                return VisualEditorRepository.GetStyleList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.StatusType, StringComparison.InvariantCultureIgnoreCase))
-                return StatusTypeRepository.GetList(IDs);
+            {
+                return StatusTypeRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.Workflow, StringComparison.InvariantCultureIgnoreCase))
-                return WorkflowRepository.GetList(IDs);
+            {
+                return WorkflowRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.PageTemplate, StringComparison.InvariantCultureIgnoreCase))
-                return PageTemplateRepository.GetPageTemplateList(IDs);
+            {
+                return PageTemplateRepository.GetPageTemplateList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.User, StringComparison.InvariantCultureIgnoreCase))
-                return UserRepository.GetList(IDs);
+            {
+                return UserRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.UserGroup, StringComparison.InvariantCultureIgnoreCase))
-                return UserGroupRepository.GetList(IDs);
+            {
+                return UserGroupRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.TemplateObjectFormat, StringComparison.InvariantCultureIgnoreCase))
-                return
-                    FormatRepository.GetList(IDs, false);
+            {
+                return FormatRepository.GetList(ids, false);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.PageObjectFormat, StringComparison.InvariantCultureIgnoreCase))
-                return
-                    FormatRepository.GetList(IDs, true);
+            {
+                return FormatRepository.GetList(ids, true);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.PageObject, StringComparison.InvariantCultureIgnoreCase) || entityTypeCode.Equals(EntityTypeCode.TemplateObject, StringComparison.InvariantCultureIgnoreCase))
-                return
-                    ObjectRepository.GetList(IDs);
+            {
+                return ObjectRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.VirtualContent, StringComparison.InvariantCultureIgnoreCase))
-                return
-                    VirtualContentRepository.GetList(IDs);
+            {
+                return VirtualContentRepository.GetList(ids);
+            }
             if (entityTypeCode.Equals(EntityTypeCode.Page, StringComparison.InvariantCultureIgnoreCase))
-                return PageRepository.GetList(IDs);
+            {
+                return PageRepository.GetList(ids);
+            }
+
             return Enumerable.Empty<EntityObject>();
         }
 
         internal sealed class VariousTypeEntityQueryParam
         {
             public string EntityTypeCode { get; set; }
+
             public IEnumerable<int> EntityIDs { get; set; }
         }
 
@@ -132,7 +167,7 @@ namespace Quantumart.QP8.BLL.Repository
             var result = new List<EntityObject>();
             foreach (var p in param)
             {
-                result.AddRange(GetList(p.EntityTypeCode, p.EntityIDs));
+                result.AddRange(GetList(p.EntityTypeCode, p.EntityIDs.ToList()));
             }
 
             return result;
@@ -185,6 +220,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// </summary>
         /// <param name="entityTypeCode">код типа сущности</param>
         /// <param name="entityId">идентификатор сущности</param>
+        /// <param name="parentEntityId"></param>
         /// <returns>название сущности</returns>
         internal static string GetName(string entityTypeCode, int entityId, int parentEntityId = 0)
         {
@@ -234,16 +270,17 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>цепочка сущностей</returns>
         internal static IEnumerable<EntityInfo> GetParentsChain(string entityTypeCode, long entityId, long? parentEntityId = null, bool oneLevel = false)
         {
-            IEnumerable<EntityInfo> result = null;
+            IList<EntityInfo> result = null;
             using (new QPConnectionScope())
             {
                 var dt = Common.GetBreadCrumbsList(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, entityTypeCode, entityId, parentEntityId, oneLevel);
                 if (dt != null)
                 {
-                    result = dt.AsEnumerable().Select(EntityInfo.Create).ToArray();
+                    result = dt.AsEnumerable().Select(EntityInfo.Create).ToList();
                 }
             }
-            var customerCodeInfo = result.SingleOrDefault(n => n.Code == EntityTypeCode.CustomerCode);
+
+            var customerCodeInfo = result?.SingleOrDefault(n => n.Code == EntityTypeCode.CustomerCode);
             if (customerCodeInfo != null)
             {
                 customerCodeInfo.Title = QPContext.CurrentCustomerCode;
@@ -268,7 +305,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.VirtualArticle)
                 {
-                    return Common.GetTreeIdsToLoad(scope.DbConnection, string.Format("CONTENT_{0}_UNITED", parentEntityId), ContentRepository.GetTreeFieldName(parentEntityId), "CONTENT_ITEM_ID", selectItemIds);
+                    return Common.GetTreeIdsToLoad(scope.DbConnection, $"CONTENT_{parentEntityId}_UNITED", ((IContentRepository)new ContentRepository()).GetTreeFieldName(parentEntityId, 0), FieldName.CONTENT_ITEM_ID, selectItemIds);
                 }
 
                 return Common.GetTreeIdsToLoad(scope.DbConnection, entityTypeCode, selectItemIds);

@@ -1,24 +1,24 @@
 ﻿using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.ViewModels;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.ViewModels;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-	public class CssController : QPController
-	{
-		IStatusTypeService _statusTypeService;
-		
-		public CssController(IStatusTypeService statusTypeService)
-		{
-			this._statusTypeService = statusTypeService;
-		}
+    public class CssController : QPController
+    {
+        private readonly IStatusTypeService _statusTypeService;
 
-		[HttpGet]
-		public ActionResult CustomCss()
-		{
-			HttpContext.Response.ContentType = "text/css";
-			return Content(this.RenderPartialView("CustomCss", new CustomCssViewModel(_statusTypeService.GetColouredStatuses())));
-		}
-	}
+        public CssController(IStatusTypeService statusTypeService)
+        {
+            _statusTypeService = statusTypeService;
+        }
+
+        [HttpGet]
+        public ActionResult CustomCss()
+        {
+            HttpContext.Response.ContentType = "text/css";
+            return Content(RenderPartialView("CustomCss", new CustomCssViewModel(_statusTypeService.GetColouredStatuses())));
+        }
+    }
 }

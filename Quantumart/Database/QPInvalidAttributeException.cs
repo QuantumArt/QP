@@ -2,24 +2,23 @@ using System;
 
 namespace Quantumart.QPublishing.Database
 {
-    // ReSharper disable once InconsistentNaming
-    public class QPInvalidAttributeException : ApplicationException
+    public class QpInvalidAttributeException : ApplicationException
     {
-        public QPInvalidAttributeException()
+        public QpInvalidAttributeException()
         {
         }
 
-        public QPInvalidAttributeException(string message)
+        public QpInvalidAttributeException(string message)
             : base(message)
         {
         }
 
-        public QPInvalidAttributeException(string message, Exception inner)
+        public QpInvalidAttributeException(string message, Exception inner)
             : base(message, inner)
         {
         }
 
-        public QPInvalidAttributeException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        public QpInvalidAttributeException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
             : base(info, context)
         {
         }

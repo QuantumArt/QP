@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId, actionsElementId, contentsElementId) {
+Quantumart.QP8.CustomActionEntityTypesObserver = function (entityTypesElementId, actionsElementId, contentsElementId) {
 
 	function onEntityTypeChanged() {
 		updateActionList();
@@ -29,13 +29,13 @@
 		var $list = jQuery('ul', $actionsElement);
 		$list.empty();
 		var actions = (selectedActions) ? selectedActions.split(",") : null;
-		
+
 		var html = new $.telerik.stringBuilder();
 		var entityTypeId = jQuery("option:selected", $entityTypesElement).val();
 		var dictionary = Quantumart.QP8.BackendEntityType.getEntityTypeIdToActionListItemDictionary();
 		var pair = jQuery.grep(dictionary, function (item) { return (item.EntityTypeId == entityTypeId); });
 		if (pair && pair[0]) {
-			var listItems = pair[0].ActionItems;			
+			var listItems = pair[0].ActionItems;
 			jQuery.each(listItems, function (i, item) {
 				html.cat(String.format('<li><input id="SelectedActions[{0}]" class="checkbox chb-list-item qp-notChangeTrack" type="checkbox" value="{1}" name="SelectedActions[{0}]" ', i, item.Value))
 					.catIf(' checked="checked" ', actions && actions.indexOf(item.Value) != -1)
@@ -48,7 +48,7 @@
 
 		$list.html(html.string());
 		$list.show();
-		
+
 	}
 
 	var $entityTypesElement = jQuery("#" + entityTypesElementId),

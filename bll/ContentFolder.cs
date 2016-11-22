@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Factories;
-using System.IO;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
@@ -21,7 +18,7 @@ namespace Quantumart.QP8.BLL
 			get { return ContentId; }
 			set { ContentId = value; }
 		}
-		
+
 		protected override EntityObject GetParent()
         {
             return ContentRepository.GetById(ContentId);

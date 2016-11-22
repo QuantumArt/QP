@@ -320,10 +320,11 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
                     false,
                     false,
                     function(data) {
-                      if (data.success)
-                          filterStates = data.filterStates;
-                      else
-                          alert(data.message);
+                      if (data.success) {
+                        filterStates = data.filterStates;
+                      } else {
+                        $q.alertFail(data.message);
+                      }
                     },
                     function(jqXHR) {
                       filterStates = null;
@@ -392,7 +393,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     var action = $a.getBackendActionByCode(actionCode);
 
     if (action == null) {
-      alert($l.Common.ajaxDataReceivingErrorMessage);
+      $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
     } else {
       var entityId = this._entityId;
       var entityName = this._entityName;
@@ -414,7 +415,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
         filteredEntities = null;
 
         if (entities.length == 0) {
-          alert($l.DocumentHost.noEntitiesToExecuteActionErrorMessage);
+          $q.alertError($l.DocumentHost.noEntitiesToExecuteActionErrorMessage);
           this.refresh();
           return;
         }
@@ -776,16 +777,14 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   _fixDocumentWrapperHeight: function(searchBlockHeight) {
     var $documentWrapper = jQuery(this._documentWrapperElement);
-
     var oldDocumentWrapperHeight = parseInt($documentWrapper.height(), 10);
     var oldSearchBlockHeight = this._oldSearchBlockHeight;
     var newSearchBlockHeight = oldSearchBlockHeight;
+    var newDocumentWrapperHeight = 0;
 
     if (!$q.isNull(searchBlockHeight)) {
       newSearchBlockHeight = searchBlockHeight;
     }
-
-    var newDocumentWrapperHeight = 0;
 
     if (newSearchBlockHeight > oldSearchBlockHeight) {
       newDocumentWrapperHeight = oldDocumentWrapperHeight - (newSearchBlockHeight - oldSearchBlockHeight);
@@ -794,10 +793,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     }
 
     $documentWrapper.height(newDocumentWrapperHeight);
-
     this._oldSearchBlockHeight = newSearchBlockHeight;
-
-    $documentWrapper = null;
   },
 
   loadReadyHtmlContent: function(data) {
@@ -822,14 +818,12 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       this.onDocumentLoaded();
     } else {
       window.alert(data.message);
-
       this.onDocumentError();
     }
   },
 
   onLoadMainComponent: function() {
     var main = this.get_mainComponent();
-
     if (main) {
       if (Quantumart.QP8.BackendEntityEditor.isInstanceOfType(main)) {
         main.onLoad();
@@ -860,13 +854,14 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
   onSelectedThroughExecution: function(eventArgs) {
     this.bindExternalCallerContext(eventArgs);
     this.renderPanels();
-    if (this._documentContext)
-    this._documentContext.execSelect(eventArgs);
+
+    if (this._documentContext) {
+      this._documentContext.execSelect(eventArgs);
+    }
   },
 
   unmarkMainComponentAsBusy: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.unmarkGridAsBusy();
     }
@@ -874,7 +869,6 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   markMainComponentAsBusy: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.markGridAsBusy();
     }
@@ -886,7 +880,6 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   onContextSwitching: function(eventType, sender, args) {
     var main = this.get_mainComponent();
-
     if (main) {
       if (Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
         main.resetGrid({ contextQuery: args.get_searchQuery() });
@@ -1197,21 +1190,19 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
   selectAllEntities: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.selectAllRows();
     } else {
-      alert($l.Toolbar.selectAllIsNotAllowed);
+      window.alert($l.Toolbar.selectAllIsNotAllowed);
     }
   },
 
   deselectAllEntities: function() {
     var main = this.get_mainComponent();
-
     if (main && Quantumart.QP8.BackendEntityGrid.isInstanceOfType(main)) {
       main.deselectAllRows();
     } else {
-      alert($l.Toolbar.selectAllIsNotAllowed);
+      window.alert($l.Toolbar.selectAllIsNotAllowed);
     }
   },
 

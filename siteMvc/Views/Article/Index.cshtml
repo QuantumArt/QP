@@ -1,5 +1,6 @@
-﻿@model ArticleListViewModel
+﻿@model Quantumart.QP8.WebMvc.ViewModels.Article.ArticleListViewModel
 
+@using Quantumart.QP8.Resources
 @using Quantumart.QP8.WebMvc.ViewModels
 
 @using (Html.BeginDocumentPadding())
@@ -13,11 +14,11 @@
 
         @Html.SelectAllLink(Model)
         @Html.UnselectLink(Model)
-        <li class="doctab-title__element doctab-title__articles-count-label">Total selected articles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
+        <li class="doctab-title__element doctab-title__articles-count-label">@ArticleStrings.TotalSelectedArticles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
     }
 
     @Html.ArticleGrid(Model)
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

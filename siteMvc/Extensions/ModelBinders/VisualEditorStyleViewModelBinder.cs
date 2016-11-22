@@ -1,5 +1,5 @@
-﻿using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using System.Web.Mvc;
+using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
 {

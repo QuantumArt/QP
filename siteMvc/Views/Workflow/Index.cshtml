@@ -26,7 +26,7 @@
                    .HtmlAttributes(new { @class = "id" });
 
             c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
-                .HtmlAttributes(new { @class = "title" }); 
+                .HtmlAttributes(new { @class = "title" });
             c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
 			c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
             c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
@@ -46,4 +46,4 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

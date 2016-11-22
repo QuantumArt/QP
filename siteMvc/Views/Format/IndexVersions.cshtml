@@ -31,7 +31,7 @@
                    .HtmlAttributes(new { @class = "id" });
             c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
             c.Bound(s => s.Modified).Title(NotificationStrings.ForModify);
-            c.Bound(s => s.ModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);            
+            c.Bound(s => s.ModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
         })
         .DataBinding(db => db.Ajax()
                 .Select(Model.GettingDataActionName, "Format")
@@ -47,6 +47,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

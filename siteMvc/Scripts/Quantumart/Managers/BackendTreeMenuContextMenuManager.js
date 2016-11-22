@@ -1,4 +1,4 @@
-﻿//#region class BackendTreeMenuContextMenuManager
+//#region class BackendTreeMenuContextMenuManager
 // === Класс "Менеджер контекстных меню" ===
 Quantumart.QP8.BackendTreeMenuContextMenuManager = function () {
 	Quantumart.QP8.BackendTreeMenuContextMenuManager.initializeBase(this);
@@ -39,7 +39,7 @@ Quantumart.QP8.BackendTreeMenuContextMenuManager.prototype = {
 			}
 			contextMenu = null;
 		}
-	},	
+	},
 
 	getContextMenuEventType: function () {
 		return jQuery.fn["jeegoocontext"].getContextMenuEventType();

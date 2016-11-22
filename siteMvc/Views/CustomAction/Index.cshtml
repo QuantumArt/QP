@@ -1,19 +1,19 @@
 ﻿@model CustomActionListViewModel
 
-@using Quantumart.QP8.WebMvc.ViewModels.CustomAction		   
+@using Quantumart.QP8.WebMvc.ViewModels.CustomAction
 @using Quantumart.QP8.BLL.ListItems
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 
 @using (Html.BeginDocumentPadding())
 {
-	if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
-	{
-		using (Html.BeginLinkButtonsList())
-		{
-			@Html.AddNewItemLink(Model)
-		}
-	}
+    if (!Model.IsReadOnly && Model.ShowAddNewItemButton)
+    {
+        using (Html.BeginLinkButtonsList())
+        {
+            @Html.AddNewItemLink(Model)
+        }
+    }
 
 
     @(Html.Telerik().Grid<CustomActionListItem>().Name(Model.MainComponentId)
@@ -51,6 +51,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

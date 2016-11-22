@@ -12,13 +12,14 @@ namespace Quantumart.QP8.Logging.Templates.Import
     using Quantumart.QP8.Logging.Transformers;
     using Quantumart.QP8.Logging.Templates.Default;
     using Quantumart.QP8.BLL.Services.MultistepActions.Import;
+    using Quantumart.QP8.BLL.Enums;
     using System;
     
     /// <summary>
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+    #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
     public partial class ImportStepLogTemplate : ImportStepLogTemplateBase
     {
@@ -28,66 +29,61 @@ namespace Quantumart.QP8.Logging.Templates.Import
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
+            this.Write("\r\n");
+            this.Write("\r\n");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+            #line 12 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateTransformer.Transform<DefaultTextTemplate>(LogEntry, TraceOptions)));
             
             #line default
             #line hidden
-            this.Write("ImportSettings:\n    Id: ");
+            this.Write("ImportSettings:\r\n    Id: ");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+            #line 13 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Model.Settings.Id));
             
             #line default
             #line hidden
-            this.Write("\n    ImportAction: ");
+            this.Write("\r\n    ImportAction: ");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+            #line 14 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture((ImportActions)Model.Settings.ImportAction));
             
             #line default
             #line hidden
-            this.Write("\n    Step: ");
+            this.Write("\r\n    Step: ");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+            #line 15 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Model.Step));
             
             #line default
             #line hidden
-            this.Write("\n    Inserted: ");
+            this.Write("\r\n    Inserted: ");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+            #line 16 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Model.Settings.InsertedArticleIds.Count));
             
             #line default
             #line hidden
-            this.Write("\n    Updated: ");
+            this.Write("\r\n    Updated: ");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+            #line 17 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Model.Settings.UpdatedArticleIds.Count));
             
             #line default
             #line hidden
-            this.Write("\n");
+            this.Write("\r\n");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+            #line 18 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateTransformer.Transform<ContextTextTemplate>(Model, Context)));
             
             #line default
             #line hidden
+            this.Write("\r\n");
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
+        #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
 
 private global::Quantumart.QP8.Logging.Loggers.ImportStepSettings _ModelField;
 

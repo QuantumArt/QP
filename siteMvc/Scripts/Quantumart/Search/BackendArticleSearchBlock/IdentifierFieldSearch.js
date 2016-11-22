@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.IdentifierFieldSearch
+//#region class BackendArticleSearchBlock.IdentifierFieldSearch
 // === Класс блока поиска по числовому полю
 Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
@@ -92,7 +92,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 	get_filterDetails: function () {
 	    var stateData = this.get_blockState().data;
 	    var result;
-	 
+
 		if (stateData.isByText) {
 		    var ids = this._getIds(stateData.text);
 		    result = ids.length == 0 ? "?" : this._getText(ids);
@@ -128,7 +128,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 			jQuery(this._numberToElement).data("tTextBox").value(state.to);
 			jQuery(this._textAreaElement).val(state.text);
 		}
-	},	
+	},
 
 	_onByValueSelectorChanged: function (e) {
 	    this._isByValue = jQuery(e.currentTarget).val() == 0;
@@ -173,7 +173,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 		$c.initAllNumericTextBoxes(this._containerElement);
 	},
 
-	dispose: function () {	
+	dispose: function () {
 		if (this._numberFromElement)
 			jQuery(this._numberFromElement).unbind("focus", this._onNumericInputFocusHandler);
 		if (this._numberToElement)
@@ -209,7 +209,7 @@ Quantumart.QP8.BackendArticleSearchBlock.IdentifierFieldSearch.prototype = {
 	_isByValue: true,
     _isByText: false,
 
-	_onNumericInputFocusHandler: null, // обработчик потери фокуса 
+	_onNumericInputFocusHandler: null, // обработчик потери фокуса
 
 	_inverseCheckBoxElement: null, // dom-элемент чекбокса inverse
 	_numberFromElement: null, // dom-элемент поля "От"

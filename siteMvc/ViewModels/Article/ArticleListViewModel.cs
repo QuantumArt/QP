@@ -1,15 +1,14 @@
-﻿using Quantumart.QP8.BLL.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Dynamic;
-using C = Quantumart.QP8.Constants;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
     public class ArticleListViewModel : ListViewModel
     {
@@ -103,13 +102,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         }
 
         #region overrides
-        public override bool IsReadOnly
-        {
-            get
-            {
-                return base.IsReadOnly || ShowArchive;
-            }
-        }
+        public override bool IsReadOnly => base.IsReadOnly || ShowArchive;
 
         public override string EntityTypeCode
         {
@@ -117,15 +110,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             {
                 if (ShowArchive)
                 {
-                    return C.EntityTypeCode.ArchiveArticle;
+                    return Constants.EntityTypeCode.ArchiveArticle;
                 }
 
                 if (IsVirtual)
                 {
-                    return C.EntityTypeCode.VirtualArticle;
+                    return Constants.EntityTypeCode.VirtualArticle;
                 }
 
-                return C.EntityTypeCode.Article;
+                return Constants.EntityTypeCode.Article;
             }
         }
 
@@ -135,55 +128,31 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             {
                 if (ShowArchive)
                 {
-                    return C.ActionCode.ArchiveArticles;
+                    return Constants.ActionCode.ArchiveArticles;
                 }
 
                 if (IsVirtual)
                 {
-                    return C.ActionCode.VirtualArticles;
+                    return Constants.ActionCode.VirtualArticles;
                 }
 
-                return C.ActionCode.Articles;
+                return Constants.ActionCode.Articles;
             }
         }
 
-        public override string AddNewItemText
-        {
-            get
-            {
-                return ArticleStrings.Link_AddNewArticle;
-            }
-        }
+        public override string AddNewItemText => ArticleStrings.Link_AddNewArticle;
 
-        public override string AddNewItemActionCode
-        {
-            get
-            {
-                return C.ActionCode.AddNewArticle;
-            }
-        }
+        public override string AddNewItemActionCode => Constants.ActionCode.AddNewArticle;
 
-        public override bool IsListDynamic
-        {
-            get
-            {
-                return true;
-            }
-        }
+        public override bool IsListDynamic => true;
 
-        public override string KeyColumnName
-        {
-            get
-            {
-                return C.FieldName.CONTENT_ITEM_ID;
-            }
-        }
+        public override string KeyColumnName => Constants.FieldName.CONTENT_ITEM_ID;
 
         public override string Filter
         {
             get
             {
-                var filter = string.Format("c.archive = {0}", Convert.ToInt32(ShowArchive));
+                var filter = $"c.archive = {Convert.ToInt32(ShowArchive)}";
                 return CustomFilter.Contains(filter) ? CustomFilter : SqlFilterComposer.Compose(CustomFilter, filter);
             }
         }
@@ -216,14 +185,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels
                 var result = new Dictionary<string, object>();
                 if (AllowMultipleEntitySelection)
                 {
-                    result.AddCssClass(HtmlHelpersExtensions.CHECK_BOX_TREE_CLASS_NAME);
+                    result.AddCssClass(HtmlHelpersExtensions.CheckBoxTreeClassName);
                 }
 
                 return result;
             }
         }
 
-        public override bool AllowFilterSelectedEntities { get { return true; } }
+        public override bool AllowFilterSelectedEntities => true;
+
         #endregion
     }
 }

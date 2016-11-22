@@ -29,7 +29,7 @@
                 .HtmlAttributes(new { @class = "title" });
             c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
             c.Bound(s => s.Weight).Title(StatusTypeStrings.Weight);
-			c.Bound(s => s.Created).Title(EntityObjectStrings.Created);            
+			c.Bound(s => s.Created).Title(EntityObjectStrings.Created);
             c.Bound(s => s.Modified).Title(EntityObjectStrings.Modified);
             c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
         })
@@ -47,4 +47,4 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

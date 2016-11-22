@@ -1,7 +1,8 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
-using System;
-using System.Dynamic;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
@@ -11,26 +12,17 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public bool ShowAddNewItemButton { get; set; }
 
-        /// <summary>
-        /// признак, разрешающий автоматическую генерацию ссылок
-        /// </summary>
         public bool AutoGenerateLink { get; set; }
 
-        /// <summary>
-        /// признак, определяющий, где генерировать ссылку: в title или в id
-        /// </summary>
         public bool GenerateLinkOnTitle { get; set; }
 
         public bool IsTree { get; set; }
 
         public virtual bool AllowMultipleEntitySelection { get; set; }
 
-        /// <summary>
-        /// Если true - то по клику на Link в гриде открывать новый таб
-        /// </summary>
-        public virtual bool LinkOpenNewTab { get { return false; } }
+        public virtual bool LinkOpenNewTab => false;
 
-        public virtual bool AllowFilterSelectedEntities { get { return false; } }
+        public virtual bool AllowFilterSelectedEntities => false;
 
         public bool AllowGlobalSelection { get; set; }
 
@@ -46,48 +38,28 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public bool AutoLoad { get; set; }
 
-        #region creation
-        public ListViewModel()
+        [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
+        protected ListViewModel()
         {
-            this.TitleFieldName = "Name";
-            this.IsTree = false;
-            this.ShowAddNewItemButton = false;
-            this.IsSelect = false;
-            this.AllowMultipleEntitySelection = true;
-            this.AllowGlobalSelection = true;
-            this.SelectedIDs = new int[0];
-            this.AutoGenerateLink = true;
-            this.GenerateLinkOnTitle = true;
-            this.Filter = String.Empty;
-            this.ShowIds = true;
-            this.AutoLoad = true;
-        }
-        #endregion
-
-        #region read-only members
-        public string SelectAllId
-        {
-            get
-            {
-                return UniqueId("select_all");
-            }
+            TitleFieldName = "Name";
+            IsTree = false;
+            ShowAddNewItemButton = false;
+            IsSelect = false;
+            AllowMultipleEntitySelection = true;
+            AllowGlobalSelection = true;
+            SelectedIDs = new int[0];
+            AutoGenerateLink = true;
+            GenerateLinkOnTitle = true;
+            Filter = string.Empty;
+            ShowIds = true;
+            AutoLoad = true;
         }
 
-        public string UnselectId
-        {
-            get
-            {
-                return UniqueId("unselect");
-            }
-        }
+        public string SelectAllId => UniqueId("select_all");
 
-        public string ArticlesCountId
-        {
-            get
-            {
-                return UniqueId("articlesCount");
-            }
-        }
+        public string UnselectId => UniqueId("unselect");
+
+        public string ArticlesCountId => UniqueId("articlesCount");
 
         public virtual string AddNewItemActionCode
         {
@@ -99,67 +71,21 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             get { throw new NotImplementedException(); }
         }
 
-        public virtual string ContextMenuCode
-        {
-            get
-            {
-                return EntityTypeCode;
-            }
-        }
+        public virtual string ContextMenuCode => EntityTypeCode;
 
-        public virtual bool IsListDynamic
-        {
-            get
-            {
-                return false;
-            }
-        }
+        public virtual bool IsListDynamic => false;
 
-        public virtual string KeyColumnName
-        {
-            get
-            {
-                return string.Empty;
-            }
-        }
+        public virtual string KeyColumnName => string.Empty;
 
-        public virtual string ParentKeyColumnName
-        {
-            get
-            {
-                return string.Empty;
-            }
-        }
+        public virtual string ParentKeyColumnName => string.Empty;
 
-        public virtual bool IsReadOnly
-        {
-            get
-            {
-                return IsVirtual || IsSelect;
-            }
-        }
+        public virtual bool IsReadOnly => IsVirtual || IsSelect;
 
-        /// <summary>
-        /// код действия, которое запускается при щелчке на гиперссылке
-        /// в ячейке с заголовком сущности
-        /// </summary>
-        public virtual string ActionCodeForLink
-        {
-            get
-            {
-                return EntityTypeService.GetDefaultActionCodeByEntityTypeCode(EntityTypeCode);
-            }
-        }
+        public virtual string ActionCodeForLink => EntityTypeService.GetDefaultActionCodeByEntityTypeCode(EntityTypeCode);
 
-        public override MainComponentType MainComponentType
-        {
-            get { return (IsTree) ? MainComponentType.Tree : MainComponentType.Grid; }
-        }
+        public override MainComponentType MainComponentType => IsTree ? MainComponentType.Tree : MainComponentType.Grid;
 
-        public override string MainComponentId
-        {
-            get { return IsTree ? UniqueId("Tree") : UniqueId("Grid"); }
-        }
+        public override string MainComponentId => IsTree ? UniqueId("Tree") : UniqueId("Grid");
 
         public override ExpandoObject MainComponentOptions
         {
@@ -167,7 +93,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             {
                 dynamic result = base.MainComponentOptions;
                 result.selectedEntitiesIDs = SelectedIDs;
-
                 if (IsTree)
                 {
                     result.allowMultipleNodeSelection = AllowMultipleEntitySelection;
@@ -209,14 +134,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             }
         }
 
-        public string IconFormat
-        {
-            get
-            {
-                return @"<img src=""{0}/{1}"" title=""{2}"" class=""smallIcon"" />";
-            }
-        }
-
-        #endregion
+        public string IconFormat => @"<img src=""{0}/{1}"" title=""{2}"" class=""smallIcon"" />";
     }
 }

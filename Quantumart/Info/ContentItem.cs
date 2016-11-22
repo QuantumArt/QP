@@ -66,6 +66,8 @@ namespace Quantumart.QPublishing.Info
 
         public Dictionary<string, ContentItemValue> FieldValues { get; } = new Dictionary<string, ContentItemValue>();
 
+        private Dictionary<string, ContentItemValue> RestrictedFieldValues { get; } = new Dictionary<string, ContentItemValue>();
+
         public List<ContentItem> AggregatedItems { get; } = new List<ContentItem>();
 
         public bool IsNew => Id == 0;
@@ -221,10 +223,15 @@ namespace Quantumart.QPublishing.Info
         }
 
         private void InitFieldValues() {
-            var attrs = Cnn.GetContentAttributeObjects(ContentId);
+            var attrs = Cnn.GetContentAttributeObjects(ContentId).ToArray();
             foreach (var attr in attrs)
             {
                 FieldValues.Add(attr.Name, new ContentItemValue());
+            }
+
+            foreach (var attr in attrs.Where(n => n.Aggregated || n.IsClassifier))
+            {
+                RestrictedFieldValues.Add(attr.Name, new ContentItemValue());
             }
         }
 
@@ -235,7 +242,6 @@ namespace Quantumart.QPublishing.Info
 
             InitFieldValues();
 
-            int siteId = Cnn.GetSiteIdByContentId(ContentId);
             List<int> classifierIds = new List<int>();
             List<int> typeIds = new List<int>();
 
@@ -244,17 +250,23 @@ namespace Quantumart.QPublishing.Info
                 $"sp_executesql N'select cd.attribute_id, case when ca.attribute_type_id in (9, 10) then cd.blob_data else cd.data end as data from content_data cd inner join content_attribute ca on cd.attribute_id = ca.attribute_id where content_item_id = @id', N'@id NUMERIC', @id = {Id}");
             foreach (DataRow dr in dt.Rows)
             {
-                ContentAttribute attr = Cnn.GetContentAttributeObject((int)(decimal)dr["ATTRIBUTE_ID"]);
+                var attr = Cnn.GetContentAttributeObject((int)(decimal)dr["ATTRIBUTE_ID"]);
                 if (FieldValues.ContainsKey(attr.Name))
                 {
-                    ContentItemValue value = FieldValues[attr.Name];
+                    var value = FieldValues[attr.Name];
                     value.Data = dr["DATA"].ToString();
+
+                    if (RestrictedFieldValues.ContainsKey(attr.Name))
+                    {
+                        var restValue = RestrictedFieldValues[attr.Name];
+                        restValue.Data = dr["DATA"].ToString();
+                    }
 
                     if (attr.Type == AttributeType.String || attr.Type == AttributeType.VisualEdit || attr.Type == AttributeType.Textbox)
                     {
                         value.Data = value.Data
-                            .Replace(Cnn.UploadPlaceHolder, Cnn.GetImagesUploadUrl(siteId))
-                            .Replace(Cnn.SitePlaceHolder, Cnn.GetSiteUrl(siteId, true))
+                            .Replace(Cnn.UploadPlaceHolder, Cnn.GetImagesUploadUrl(SiteId))
+                            .Replace(Cnn.SitePlaceHolder, Cnn.GetSiteUrl(SiteId, true))
                         ;
                     }
 
@@ -307,16 +319,25 @@ namespace Quantumart.QPublishing.Info
 
 
         }
+        public int SiteId => Cnn.GetSiteIdByContentId(ContentId);
 
         public void Save()
         {
-            int siteId = Cnn.GetSiteIdByContentId(ContentId);
             var attrs = Cnn.GetContentAttributeObjects(ContentId).ToDictionary(n => n.Name.ToLowerInvariant(), n => n);
             Hashtable values = new Hashtable();
-            if (attrs.Values.Any(n => n.IsClassifier || n.Aggregated))
+            var restAttrs = attrs.Values.Where(n => n.IsClassifier || n.Aggregated).ToDictionary(n => n.Name.ToLowerInvariant(), n => n); ;
+            foreach (var fieldValue in FieldValues)
             {
-                throw new Exception("Aggregated contents are not supported");		
+                var attrKey = fieldValue.Key.ToLowerInvariant();
+                if (restAttrs.ContainsKey(attrKey))
+                {
+                    var key = restAttrs[attrKey].Name;
+                    if (RestrictedFieldValues[key].Data != fieldValue.Value.Data)
+                        throw new Exception("Change of Aggregated or Classifier fields are not supported");
+
+                }
             }
+
             foreach (var fieldValue in FieldValues)
             {
                 var attrKey = fieldValue.Key.ToLowerInvariant();
@@ -337,7 +358,7 @@ namespace Quantumart.QPublishing.Info
             DateTime modified = DateTime.MinValue;
 
             string notificationEvent = IsNew ? NotificationEvent.Create : NotificationEvent.Modify;
-            Id = Cnn.AddFormToContent(siteId, ContentId, StatusName, ref values, ref files, Id, true, 0, Visible, Archive, LastModifiedBy, DelayedSchedule,
+            Id = Cnn.AddFormToContent(SiteId, ContentId, StatusName, ref values, ref files, Id, true, 0, Visible, Archive, LastModifiedBy, DelayedSchedule,
             false, ref modified, true, true);
             Cnn.SendNotification(Id, notificationEvent);
             if (!IsNew && StatusChanged)
@@ -360,7 +381,7 @@ namespace Quantumart.QPublishing.Info
                 newDoc.Root.Add(new XElement("created", Created.ToString(CultureInfo.InvariantCulture)));
                 newDoc.Root.Add(new XElement("modified", Modified.ToString(CultureInfo.InvariantCulture)));
                 newDoc.Root.Add(new XElement("contentId", ContentId));
-                newDoc.Root.Add(new XElement("siteId", Cnn.GetSiteIdByContentId(ContentId)));
+                newDoc.Root.Add(new XElement("siteId", SiteId));
                 newDoc.Root.Add(new XElement("visible", Visible));
                 newDoc.Root.Add(new XElement("archive", Archive));
                 newDoc.Root.Add(new XElement("splitted", Splitted));

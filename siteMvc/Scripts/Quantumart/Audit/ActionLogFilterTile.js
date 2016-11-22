@@ -1,4 +1,4 @@
-﻿//#region class ActionLogFilterTile
+//#region class ActionLogFilterTile
 var EVENT_TYPE_FILTER_TILE_CLOSE = "Quantumart.QP8.ActionLogFilterTile.onFilterTileClose";
 
 Quantumart.QP8.ActionLogFilterTile = function (containerElement, options) {
@@ -18,7 +18,7 @@ Quantumart.QP8.ActionLogFilterTile = function (containerElement, options) {
 Quantumart.QP8.ActionLogFilterTile.prototype = {
 	_containerElement: null,
 	_options: null,
-	
+
 	$tile: null,
 	$closeButton : null,
 	$windowOpenLink: null,
@@ -39,7 +39,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 						.cat(this._options.title)
 						.cat('<span class="filter-details"></span>')
 					.cat('</a></div>')
-					.cat('<div ')				
+					.cat('<div ')
 						.cat(' class="closeButton"')
 						.cat(' title="' + $q.htmlEncode($l.SearchBlock.closeFieldSearchContainerButtonText) + '"')
 					.cat('>')
@@ -95,7 +95,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 		jQuery(".closeAndApplyFilter", this._popupWindowComponent.element).click(jQuery.proxy(this._onCloseAndApplyFilterWndClick, this));
 		jQuery("form", this._popupWindowComponent.element).submit(jQuery.proxy(this._onFilterFormSubmitted, this));
 
-		
+
 		this._filterComponent = this._options.createFilter(jQuery(".filterContainer", this._popupWindowComponent.element));
 		this._filterComponent.initialize();
 	},
@@ -103,7 +103,7 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	_onCloseTileClick: function () {
 		this.notify(EVENT_TYPE_FILTER_TILE_CLOSE, { "type": this._options.type })
 	},
-	
+
 	_onOpenFilterWndClick: function () {
 		if (this._popupWindowComponent) {
 			this._popupWindowComponent.open();
@@ -131,10 +131,10 @@ Quantumart.QP8.ActionLogFilterTile.prototype = {
 	    return false;
 	},
 
-	
+
 	dispose: function () {
 		Quantumart.QP8.ActionLogFilterTile.callBaseMethod(this, "dispose");
-		
+
 		if(this.$closeButton){
 			this.$closeButton.off("click")
 			this.$closeButton = null;
