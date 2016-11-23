@@ -4,7 +4,7 @@ Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch = function (contain
   Quantumart.QP8.BackendArticleSearchBlock.RelationFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
 
   this._searchType = searchType;
-  Quantumart.QP8.Utils.bindProxies.call(this, [
+  $q.bindProxies.call(this, [
     '_onLoad',
     '_onIsNullCheckBoxChange',
     '_onSelectorChange',

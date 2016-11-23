@@ -1179,7 +1179,9 @@ Quantumart.QP8.Utils.bindProxies = function Quantumart$QP8$Utils$bindProxies(lis
 Quantumart.QP8.Utils.dispose = function Quantumart$QP8$Utils$dispose(listOfObjs) {
   [].forEach.call(listOfObjs, function(obj) {
     try {
-      this[obj] = null;
+      if(this[obj]) {
+        this[obj] = null;
+      }
     } catch(e) {
       console.error('Failed to dispose: ' + obj, e);
     }

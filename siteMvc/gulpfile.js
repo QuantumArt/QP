@@ -3,7 +3,6 @@ var del = require('del');
 var gulp = require('gulp');
 var chalk = require('chalk');
 var bs = require('browser-sync');
-var merge = require('merge-stream');
 var es6Promise = require('es6-promise');
 es6Promise.polyfill();
 
@@ -216,6 +215,7 @@ var paths = {
     'Scripts/Quantumart/Managers/BackendEntityTreeManager.js',
     'Scripts/Quantumart/Managers/BackendEntityEditorManager.js',
     'Scripts/Quantumart/Managers/BackendTreeMenuContextMenuManager.js',
+    'Scripts/Quantumart/Managers/BackendBreadMenuContextMenuManager.js',
     'Scripts/Quantumart/Managers/BackendContextMenuManager.js',
     'Scripts/Quantumart/Managers/BackendEntityDataListManager.js',
     'Scripts/Quantumart/Managers/BackendPopupWindowManager.js',
@@ -332,7 +332,11 @@ gulp.task('assets:revisions', function() {
     .pipe(gulp.dest('Views/Home/'));
 });
 
-gulp.task('assets:js', ['assets:js1', 'assets:js2']);
+gulp.task('assets:js', ['assets:js1', 'assets:js2'], function() {
+  return gulp.src(destPaths.scripts)
+    .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true }));
+});
+
 gulp.task('assets:js1', ['assets:revisions'], function() {
   return gulp.src(paths.scripts1, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
@@ -343,7 +347,7 @@ gulp.task('assets:js1', ['assets:revisions'], function() {
     .pipe($.sourcemaps.write('maps'))
     .pipe(gulp.dest(destPaths.scripts))
     .pipe($.size({ title: 'assets:js', showFiles: true }))
-    .pipe($.notify({ title: 'Task was completed', message: 'assets:js1 task complete', onLast: true }));
+    .pipe($.notify({ title: 'Part task was completed', message: 'assets:js1 task complete', onLast: true }));
 });
 
 gulp.task('assets:js2', ['assets:revisions'], function() {
@@ -355,7 +359,7 @@ gulp.task('assets:js2', ['assets:revisions'], function() {
     .pipe($.sourcemaps.write('maps'))
     .pipe(gulp.dest(destPaths.scripts))
     .pipe($.size({ title: 'assets:js', showFiles: true }))
-    .pipe($.notify({ title: 'Task was completed', message: 'assets:js2 task complete', onLast: true }));
+    .pipe($.notify({ title: 'Part task was completed', message: 'assets:js2 task complete', onLast: true }));
 });
 
 gulp.task('assets:img', function() {

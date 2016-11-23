@@ -1111,7 +1111,7 @@ Quantumart.QP8.ControlHelpers.getAllNumericTextBoxes = function Quantumart$QP8$C
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
-debugger;
+
     return $q.toJQuery(parentElement).find(".t-numerictextbox INPUT.t-input");
 };
 
@@ -1119,7 +1119,7 @@ Quantumart.QP8.ControlHelpers.initAllNumericTextBoxes = function Quantumart$QP8$
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
-    debugger;
+
     var $textBoxes = Quantumart.QP8.ControlHelpers.getAllNumericTextBoxes(parentElement);
     $textBoxes.each(
     function (index) {
@@ -1131,7 +1131,7 @@ Quantumart.QP8.ControlHelpers.initAllNumericTextBoxes = function Quantumart$QP8$
 };
 
 Quantumart.QP8.ControlHelpers.initNumericTextBox = function Quantumart$QP8$ControlHelpers$initNumericTextBox(textBoxElement) {
-    debugger;
+
     var $textBox = $q.toJQuery(textBoxElement);
     $textBox
     .bind("valueChange", function () {

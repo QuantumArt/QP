@@ -66,7 +66,7 @@ Quantumart.QP8.BackendEntityTree = function(treeGroupCode, treeElementId, entity
     }
   }
 
-  Quantumart.QP8.Utils.bindProxies.call(this, [
+  $q.bindProxies.call(this, [
     '_onDataBinding',
     '_onNodeClicking',
     '_onContextMenu',
@@ -499,17 +499,14 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         }
 
         var entity = data;
-
         if (entity) {
           var dataItem = self.getTreeViewItemFromEntityObject(entity);
-
           self._renderNode($node, dataItem, isRootNode);
           self._extendNodeElement($node, entity);
           dataItem = null;
 
           var childEntities = entity.Children;
           var dataItems = self.getTreeViewItemCollectionFromEntityObjects(childEntities);
-
           if (dataItems.length == 0) {
             self._hideAjaxLoadingIndicatorForNode($node);
             dataItems = null;
@@ -1120,7 +1117,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       this._contextMenuComponent = null;
     }
 
-    Quantumart.QP8.Utils.dispose.call(this, [
+    $q.dispose.call(this, [
       '_onDataBindingHandler',
       '_onDataBoundHandler',
       '_onNodeClickingHandler',

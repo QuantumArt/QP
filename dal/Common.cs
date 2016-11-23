@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text;
 using System.Xml.Linq;
 using Quantumart.QP8.Constants;
@@ -6452,14 +6451,14 @@ namespace Quantumart.QP8.DAL
         {
             var sb = new StringBuilder();
             var sql = new List<SqlParameter>();
-            
+
             var v2bLiveIds = liveIds as int[] ?? liveIds.ToArray();
             if (v2bLiveIds.Any())
             {
                 sb.AppendLine("update content_modification with(rowlock) set live_modified = GETDATE() where content_id in (select id from @liveIds)");
                 sql.Add(new SqlParameter("@liveIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(v2bLiveIds) });
             }
-            
+
             var v2bStageIds = stageIds as int[] ?? stageIds.ToArray();
             if (v2bStageIds.Any())
             {
@@ -6507,7 +6506,7 @@ namespace Quantumart.QP8.DAL
                 Func<DataRow, bool> predicate1 = n => n.Field<bool>("is_published");
                 Func<DataRow, bool> predicate2 = n => !n.Field<bool>("is_published");
 
-                liveIds = rows.Where((returnPublishedForLive ? predicate1 : predicate2)).Select(n => n.Field<int>("id")).ToList();
+                liveIds = rows.Where(returnPublishedForLive ? predicate1 : predicate2).Select(n => n.Field<int>("id")).ToList();
             }
         }
 

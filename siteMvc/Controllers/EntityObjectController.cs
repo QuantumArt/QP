@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -113,8 +114,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpGet]
         public JsonNetResult<IEnumerable<EntityInfo>> GetBreadCrumbsList(string entityTypeCode, long entityId, long? parentEntityId, string actionCode)
         {
-            var data = EntityObjectService.GetBreadCrumbsList(entityTypeCode, entityId, parentEntityId, actionCode);
-            return new JsonNetResult<IEnumerable<EntityInfo>>(data);
+            return EntityObjectService.GetBreadCrumbsList(entityTypeCode, entityId, parentEntityId, actionCode).ToList();
         }
 
         [HttpGet]
