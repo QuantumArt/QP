@@ -499,17 +499,14 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         }
 
         var entity = data;
-
         if (entity) {
           var dataItem = self.getTreeViewItemFromEntityObject(entity);
-
           self._renderNode($node, dataItem, isRootNode);
           self._extendNodeElement($node, entity);
           dataItem = null;
 
           var childEntities = entity.Children;
           var dataItems = self.getTreeViewItemCollectionFromEntityObjects(childEntities);
-
           if (dataItems.length == 0) {
             self._hideAjaxLoadingIndicatorForNode($node);
             dataItems = null;

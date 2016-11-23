@@ -1,5 +1,6 @@
 var EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK = "OnBreadCrumbsItemClick";
 var EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK = "OnBreadCrumbsItemCtrlClick";
+var EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK = "OnBreadCrumbsContextMenuItemClick";
 
 Quantumart.QP8.BackendBreadCrumbs = function (breadCrumbsElementId, options) {
   Quantumart.QP8.BackendBreadCrumbs.initializeBase(this);
@@ -16,13 +17,21 @@ Quantumart.QP8.BackendBreadCrumbs = function (breadCrumbsElementId, options) {
     if (options.manager) {
       this._manager = options.manager;
     }
+
+    if (options.contextMenuManager) {
+      this._contextMenuManagerComponent = options.contextMenuManager;
+    }
   }
 
   $q.bindProxies.call(this, [
     '_onBreadCrumbsItemClick',
-    '_onContextMenuShow',
     '_onGetBreadCrumbsListSuccess',
-    '_onGetBreadCrumbsListError'
+    '_onGetBreadCrumbsListError',
+
+    '_onContextMenu',
+    '_onContextMenuShowing',
+    '_onContextMenuItemClicking',
+    '_onContextMenuHidden'
   ]);
 };
 
@@ -34,8 +43,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   _documentHost: null,
   _stopDeferredOperations: false,
   _addItemsCallback: null,
-  _maxTitleLength: 60,
-  _contextMenuComponent: null,
+  _manager: null,
 
   ITEM_CLASS_NAME: 'item',
   ITEM_BUSY_CLASS_NAME: 'busy',
@@ -45,11 +53,17 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   ITEM_LAST_WITH_LINK_SELECTORS: 'li.item:has(a):last',
 
   _onBreadCrumbsItemClickHandler: null,
-  _onContextMenuShowHandler: null,
   _onGetBreadCrumbsListSuccessHandler: null,
   _onGetBreadCrumbsListErrorHandler: null,
 
-  _manager: null,
+  _contextMenuManagerComponent: null,
+  _onContextMenuHandler: null,
+  _onContextMenuShowingHandler: null,
+  _onContextMenuItemClickingHandler: null,
+  _onContextMenuHiddenHandler: null,
+
+  get_contextMenuManager: function() { return this._contextMenuManager; },
+  set_contextMenuManager: function(value) { this._contextMenuManager = value; },
   get_manager: function () { return this._manager; },
   set_manager: function (value) { this._manager = value; },
   get_breadCrumbsElementId: function () { return this._breadCrumbsElementId; },
@@ -61,12 +75,9 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
   initialize: function () {
     var $breadCrumbs = $('#' + this._breadCrumbsElementId);
     var $breadCrumbsItemList = $breadCrumbs.find('ul:first');
-    if (!$breadCrumbsItemList.length) {
-      $breadCrumbsItemList = $('<ul />');
-    }
-
     if (!$breadCrumbs.length) {
-      $breadCrumbs = $('<div />', { 'id': this._breadCrumbsElementId, 'class': 'breadCrumbs', 'css': { 'display': 'none'} });
+      $breadCrumbs = $('<div />', { 'id': this._breadCrumbsElementId, 'class': 'breadCrumbs', 'css': { 'display': 'none' } });
+      $breadCrumbsItemList = $('<ul />');
       $breadCrumbs.append($breadCrumbsItemList);
       if (!$q.isNullOrWhiteSpace(this._breadCrumbsContainerElementId)) {
         $('#' + this._breadCrumbsContainerElementId).append($breadCrumbs);
@@ -74,83 +85,39 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
         $('body:first').append($breadCrumbs);
       }
 
+      this._breadCrumbsElement = $breadCrumbs.get(0);
+      this._breadCrumbsItemListElement = $breadCrumbsItemList.get(0);
       this._attachBreadCrumbsEventHandlers();
+    } else {
+      this._breadCrumbsElement = $breadCrumbs.get(0);
+      this._breadCrumbsItemListElement = $breadCrumbsItemList.get(0);
     }
-
-    this._breadCrumbsElement = $breadCrumbs.get(0);
-    this._breadCrumbsItemListElement = $breadCrumbsItemList.get(0);
-    this._createContextMenu();
-  },
-
-  _createContextMenu: function() {
-    var CLOSE_CODE = 'close';
-    var CLOSE_BUT_THIS_CODE = 'close_but_this';
-    var CLOSE_ALL_CODE = 'close_all';
-    var FIND_IN_TREE_CODE = 'find_in_tree';
-
-    var breadCrumbsContextMenuElementId = this._breadCrumbsElementId + '_tabContextMenu';
-    var $menu = $('<ul />', { 'id': breadCrumbsContextMenuElementId, 'class': 'contextMenu' });
-    var menuItemsHtml = new $.telerik.stringBuilder();
-    this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': CLOSE_CODE,
-      'TabText': $l.TabStrip.closeTab,
-      'Icon': ''
-    });
-
-    this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': CLOSE_BUT_THIS_CODE,
-      'TabText': $l.TabStrip.closeAllButThis,
-      'Icon': ''
-    });
-
-    this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': CLOSE_ALL_CODE,
-      'TabText': $l.TabStrip.closeAllTabs,
-      'Icon': ''
-    });
-
-    menuItemsHtml.cat('<li class="separator"></li>');
-    this._getTabMenuItemHtml(menuItemsHtml, {
-      'TabId': FIND_IN_TREE_CODE,
-      'TabText': $l.TabStrip.findInTree,
-      'Icon': ''
-    });
-
-    $menu.html(menuItemsHtml.string());
-    $('body:first').append($menu);
-
-    this._contextMenuComponent = $(this._breadCrumbsElement).jeegoocontext({
-      menuElementId: breadCrumbsContextMenuElementId,
-      menuClass: 'contextMenu',
-      allowManualShowing: true,
-      onSelect: $.proxy(function (e, context) {
-        var code = $(e.currentTarget).attr('code');
-        var $tab = $(context);
-        if (code === CLOSE_CODE) {
-          this._closeTabRequest($tab);
-        } else if (code === CLOSE_ALL_CODE) {
-          this._closeAllTabRequest();
-        } else if (code === CLOSE_BUT_THIS_CODE) {
-          this._closeButThisTabRequest($tab);
-        } else if (code === FIND_IN_TREE_CODE) {
-          this._findInTreeRequest($tab);
-        }
-      }, this)
-    }).data('jeegoocontext_' + breadCrumbsContextMenuElementId);
   },
 
   _attachBreadCrumbsEventHandlers: function() {
+    if (this._contextMenuManagerComponent != null) {
+      this._contextMenuManagerComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onContextMenuShowingHandler);
+      this._contextMenuManagerComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onContextMenuItemClickingHandler);
+      this._contextMenuManagerComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onContextMenuHiddenHandler);
+    }
+
     $(this._breadCrumbsItemListElement)
       .on('click', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
       .on('mouseup', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
-      .on($.fn['jeegoocontext'].getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShow);
+      .on(this._contextMenuManagerComponent.getContextMenuEventType(), this.ITEM_SELECTORS, this._onContextMenuHandler);
   },
 
   _detachBreadCrumbsHandlers: function () {
+    if (this._contextMenuManagerComponent != null) {
+      this._contextMenuManagerComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onContextMenuShowingHandler);
+      this._contextMenuManagerComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onContextMenuItemClickingHandler);
+      this._contextMenuManagerComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onContextMenuHiddenHandler);
+    }
+
     $(this._breadCrumbsItemListElement)
       .off('click', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
       .off('mouseup', this.ITEM_WITH_LINK_SELECTORS, this._onBreadCrumbsItemClickHandler)
-      .off($.fn['jeegoocontext'].getContextMenuEventType(), this.TAB_CLICKABLE_SELECTORS, this._onContextMenuShow);
+      .off(this._contextMenuManagerComponent.getContextMenuEventType(), this.ITEM_SELECTORS, this._onContextMenuHandler);
   },
 
   getItems: function () {
@@ -166,7 +133,7 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     if ($q.isObject(item)) {
       return $q.toJQuery(item);
     } else if ($q.isString(item)) {
-      $item = $("LI[code='" + item + "']", this._breadCrumbsItemListElement);
+      $item = $("li[code='" + item + "']", this._breadCrumbsItemListElement);
       if ($item.length === 0) {
         $item = null;
       }
@@ -216,12 +183,20 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
     $(this._breadCrumbsItemListElement).removeClass(this.ITEM_BUSY_CLASS_NAME);
   },
 
+  _isBusy: function() {
+    $(this._breadCrumbsItemListElement).hasClass(this.ITEM_BUSY_CLASS_NAME);
+  },
+
   addItemsToBreadCrumbs: function (callback) {
     var host = this._documentHost;
     this._addItemsCallback = callback;
     Quantumart.QP8.BackendBreadCrumbs.getBreadCrumbsList(
-      host.get_entityTypeCode(), host.get_entityId(), host.get_parentEntityId(), host.get_actionCode(),
-      this._onGetBreadCrumbsListSuccessHandler, this._onGetBreadCrumbsListErrorHandler
+      host.get_entityTypeCode(),
+      host.get_entityId(),
+      host.get_parentEntityId(),
+      host.get_actionCode(),
+      this._onGetBreadCrumbsListSuccessHandler,
+      this._onGetBreadCrumbsListErrorHandler
     );
   },
 
@@ -296,7 +271,19 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
       $item.data('entity_name', dataItem.Title);
       $item.data('parent_entity_id', dataItem.ParentId);
       $item.data('action_code', dataItem.ActionCode);
-      $item.data('action_code', dataItem.ActionCode);
+
+      var contextMenuCode = dataItem.Code;
+      if (!$q.isNullOrWhiteSpace(contextMenuCode) && this._contextMenuManagerComponent) {
+        var contextMenu = this._contextMenuManagerComponent.getContextMenu(contextMenuCode);
+        if ($q.isNullOrEmpty(contextMenu)) {
+          contextMenu = this._contextMenuManagerComponent.createContextMenu(contextMenuCode, String.format('breadContextMenu_{0}', contextMenuCode), {
+            targetElements: this._breadCrumbsElement,
+            allowManualShowing: true
+          });
+
+          contextMenu.addMenuItemsToMenu(true);
+        }
+      }
     }
   },
 
@@ -311,16 +298,14 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
       var itemCode = breadCrumbsManager.generateItemCode(entityTypeCode, parentEntityId, entityId);
       var $item = this.getItem(itemCode);
 
-      this._extendItemElement($item, dataItem, index == 0);
+      this._extendItemElement($item, dataItem, index === 0);
     }
   },
 
   _onBreadCrumbsItemClick: function (e) {
-    this._contextMenuComponent.hide(e);
     e.preventDefault();
-
-    var isLeftClick = e.type === 'click' && (e.which == 1 || e.which == 0);
-    var isMiddleClick = e.type === 'mouseup' && e.which == 2;
+    var isLeftClick = e.type === 'click' && (e.which === 1 || e.which === 0);
+    var isMiddleClick = e.type === 'mouseup' && e.which === 2;
     if (!(isLeftClick || isMiddleClick)) {
       return false;
     }
@@ -331,24 +316,19 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
         eventArgs.set_context($.extend({
           'ctrlKey': e.ctrlKey || isMiddleClick
         }, eventArgs.get_context()));
-        this.notify(EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, eventArgs);
+        this.notify(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CTRL_CLICK, eventArgs);
       } else {
-        this.notify(EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, eventArgs);
+        this.notify(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CLICK, eventArgs);
       }
     }
   },
 
-  _onContextMenuShow: function(e) {
-    this._contextMenuComponent.show(e, e.currentTarget);
-    e.preventDefault();
-  },
-
-  getItemActionEventArgs: function (item) {
+  getItemActionEventArgs: function(item, selectedCode) {
     var $item = this.getItem(item);
-    var actionCode = $item.data('action_code');
+    var actionCode = selectedCode || $item.data('action_code');
     if (!$q.isNullOrWhiteSpace(actionCode)) {
       var action = $a.getBackendActionByCode(actionCode);
-      if (action == null) {
+      if (action === null) {
         $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
         var host = this._documentHost;
@@ -361,10 +341,48 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
           });
 
           params.correct(action);
-          var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
-          return eventArgs;
+          return $a.getEventArgsFromActionWithParams(action, params);
         }
       }
+    }
+  },
+
+  _onContextMenu: function(e) {
+    var $element = $(e.currentTarget);
+    var contextMenuCode = $element.data('entity_type_code');
+    if (!this._isBusy()) {
+      if (contextMenuCode && this._contextMenuManagerComponent) {
+        var contextMenuComponent = this._contextMenuManagerComponent.getContextMenu(contextMenuCode);
+        if (!$q.isNullOrEmpty(contextMenuComponent)) {
+          contextMenuComponent.showMenu(e, $element.get(0));
+        }
+      }
+    }
+
+    e.preventDefault();
+  },
+
+  _onContextMenuShowing: function(eventType, sender, args) {
+    var menuComponent = args.get_menu();
+    var $item = $(args.get_targetElement());
+    if (menuComponent && $item.length) {
+      menuComponent.tuneMenuItems($item.data('entity_id'));
+    }
+  },
+
+  _onContextMenuItemClicking: function(eventType, sender, args) {
+    var $menuItem = $(args.get_menuItem());
+    if ($menuItem.length) {
+      this._contextMenuActionCode = $menuItem.data('action_code');
+    }
+  },
+
+  _onContextMenuHidden: function(eventType, sender, args) {
+    var $item = $(args.get_targetElement());
+    if (this._contextMenuActionCode) {
+      var eventArgs = this.getItemActionEventArgs($item.get(0), this._contextMenuActionCode);
+      this.notify(window.EVENT_TYPE_BREAD_CRUMBS_ITEM_CONTEXT_CLICK, eventArgs);
+      this._contextMenuActionCode = '';
     }
   },
 
@@ -391,12 +409,16 @@ Quantumart.QP8.BackendBreadCrumbs.prototype = {
       '_manager',
       '_documentHost',
       '_breadCrumbsElement',
-      '_contextMenuComponent',
-      '_onContextMenuShowHandler',
       '_breadCrumbsItemListElement',
       '_onBreadCrumbsItemClickHandler',
       '_onGetBreadCrumbsListErrorHandler',
-      '_onGetBreadCrumbsListSuccessHandler'
+      '_onGetBreadCrumbsListSuccessHandler',
+
+      '_contextMenuManagerComponent',
+      '_onContextMenuHandler',
+      '_onContextMenuShowingHandler',
+      '_onContextMenuItemClickingHandler',
+      '_onContextMenuHiddenHandler'
     ]);
   }
 };

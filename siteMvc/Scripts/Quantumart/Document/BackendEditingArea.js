@@ -214,14 +214,14 @@ Quantumart.QP8.BackendEditingArea.prototype = {
         throw new Error($l.EditingArea.contextBlockContainerElementIdNotSpecified);
     }
 
-    var $editingArea = jQuery("#" + this._editingAreaElementId);
-    var $documentsContainer = jQuery("#" + this._documentsContainerElementId);
-    var $loadingLayer = jQuery("<div />", { "class": "loadingLayer", "css": { "display": "none"} });
-    var $breadCrumbsContainer = jQuery(this._breadCrumbsContainerElementId);
-    var $actionToolbarContainer = jQuery("#" + this._actionToolbarContainerElementId);
-    var $viewToolbarContainer = jQuery("#" + this._viewToolbarContainerElementId);
-    var $searchBlockContainer = jQuery("#" + this._searchBlockContainerElementId);
-    var $contextBlockContainer = jQuery("#" + this._contextBlockContainerElementId);
+    var $editingArea = $("#" + this._editingAreaElementId);
+    var $documentsContainer = $("#" + this._documentsContainerElementId);
+    var $loadingLayer = $("<div />", { "class": "loadingLayer", "css": { "display": "none"} });
+    var $breadCrumbsContainer = $(this._breadCrumbsContainerElementId);
+    var $actionToolbarContainer = $("#" + this._actionToolbarContainerElementId);
+    var $viewToolbarContainer = $("#" + this._viewToolbarContainerElementId);
+    var $searchBlockContainer = $("#" + this._searchBlockContainerElementId);
+    var $contextBlockContainer = $("#" + this._contextBlockContainerElementId);
 
     $documentsContainer.prepend($loadingLayer);
 
@@ -234,7 +234,7 @@ Quantumart.QP8.BackendEditingArea.prototype = {
     this._contextBlockContainerElement = $contextBlockContainer.get(0);
     this._loadingLayerElement = $loadingLayer.get(0);
 
-    jQuery(window).resize(this._onWindowResizedHandler);
+    $(window).resize(this._onWindowResizedHandler);
   },
 
   fixDocumentsContainerHeight: function (options) {
@@ -469,13 +469,9 @@ Quantumart.QP8.BackendEditingArea.prototype = {
   },
 
   onActionExecuted: function (eventArgs) {
-
-    if (eventArgs.get_entityTypeCode() == ENTITY_TYPE_CODE_FIELD)
-    {
+    if (eventArgs.get_entityTypeCode() == ENTITY_TYPE_CODE_FIELD) {
       var viewInListAffected = (eventArgs.get_context() && eventArgs.get_context().viewInListAffected);
-
-      if (eventArgs.get_isRemoving() || (viewInListAffected && (eventArgs.get_isUpdated() || eventArgs.get_isSaved())))
-      {
+      if (eventArgs.get_isRemoving() || (viewInListAffected && (eventArgs.get_isUpdated() || eventArgs.get_isSaved()))) {
         for (var docId in this._documents) {
           var doc = this._documents[docId];
           if (
@@ -487,9 +483,7 @@ Quantumart.QP8.BackendEditingArea.prototype = {
           }
         }
       }
-
     }
-
 
     if (eventArgs.get_isRemoving() || eventArgs.get_isArchiving() || eventArgs.get_isRestoring()) {
       this.closeNonExistentDocuments();
@@ -554,29 +548,25 @@ Quantumart.QP8.BackendEditingArea.prototype = {
       this.onDocumentClosing(docId);
       var $tabToSelect = this._tabStrip.getAnotherTabToSelect($tab);
       var wasSelected = doc.isSelected();
-
       doc.markMainComponentAsBusy();
+
       if (!isSaveAndUp) {
         doc.cancel();
       }
-      doc.onDocumentUnloaded();
 
+      doc.onDocumentUnloaded();
       this._tabStrip.closeTab(tabId);
       if (this._tabStrip.getAllTabsCount() == 0) {
         this.closeArea();
       }
 
       doc.unbindExternalCallerContexts("closed");
-
       this.onDocumentClosed(docId);
       this.destroyDocument(docId);
-
       if (wasSelected && !$q.isNullOrEmpty($tabToSelect)) {
         this.selectDocument(this._tabStrip.getTabId($tabToSelect));
       }
-
     }
-    $tab = null;
   },
 
   onCloseHostMessageReceived: function (message) {
@@ -648,21 +638,17 @@ Quantumart.QP8.BackendEditingArea.prototype = {
       this._tabStrip.detachObserver(EVENT_TYPE_TAB_STRIP_TAB_SELECT_REQUEST);
       this._tabStrip.detachObserver(EVENT_TYPE_TAB_STRIP_TAB_SAVE_CLOSE_REQUEST);
       this._tabStrip.detachObserver(EVENT_TYPE_TAB_STRIP_FIND_IN_TREE_REQUEST);
-
     }
+
     this._tabStrip = null;
-
-    jQuery(window).unbind("resize", this._onWindowResizedHandler);
-
+    $(window).unbind("resize", this._onWindowResizedHandler);
     this._onWindowResizedHandler = null;
-
     if (this._hostStateStorage) {
       this._hostStateStorage.dispose();
       this._hostStateStorage = null;
     }
 
     Quantumart.QP8.BackendEditingArea._instance = null;
-
     $q.collectGarbageInIE();
   }
 };
@@ -674,7 +660,6 @@ Quantumart.QP8.BackendEditingArea.getInstance = function Quantumart$QP8$BackendE
   if (Quantumart.QP8.BackendEditingArea._instance == null) {
     var instance = new Quantumart.QP8.BackendEditingArea(editingAreaElementId, options);
     instance.initialize();
-
     Quantumart.QP8.BackendEditingArea._instance = instance;
   }
 
@@ -698,7 +683,7 @@ Quantumart.QP8.BackendEditingAreaEventArgs = function () {
 };
 
 Quantumart.QP8.BackendEditingAreaEventArgs.prototype = {
-  _documentId: null, // идентификатор редактируемого документа
+  _documentId: null,
   _isSelected: false,
 
   get_documentId: function () { return _documentId; },
