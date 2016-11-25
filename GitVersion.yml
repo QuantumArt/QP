@@ -8,5 +8,12 @@ major-version-bump-message: '\+semver:\s?(breaking|major)'
 minor-version-bump-message: '\+semver:\s?(feature|minor)'
 patch-version-bump-message: '\+semver:\s?(fix|patch|bugfix)'
 commit-message-incrementing: Enabled
+branches:
+  master:
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: true
 
 # gitversion /showconfig -- to show current configuration
