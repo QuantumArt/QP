@@ -1,29 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.DAL;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 {
     internal class ExportArticlesCommand : IMultistepActionStageCommand
     {
-        private static readonly int ITEMS_PER_STEP = 20;
+        private const int ItemsPerStep = 20;
 
-        public int ContentId { get; private set; }
-        public int SiteId { get; private set; }
-        public int ItemCount { get; private set; }
-        public int[] Ids { get; private set; }
+        public int ContentId { get; }
+
+        public int SiteId { get; }
+
+        public int ItemCount { get; }
+
+        public int[] Ids { get; }
 
         public ExportArticlesCommand(MultistepActionStageCommandState state) : this(state.ParentId, state.Id, 0, state.Ids) { }
 
@@ -50,30 +44,32 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             return new MultistepStageSettings
             {
                 ItemCount = ItemCount,
-                StepCount = MultistepActionHelper.GetStepCount(ItemCount, ITEMS_PER_STEP),
+                StepCount = MultistepActionHelper.GetStepCount(ItemCount, ItemsPerStep),
                 Name = ContentStrings.ExportArticles
             };
         }
 
         public MultistepActionStepResult Step(int step)
         {
-            Content content = ContentRepository.GetById(ContentId);
+            var content = ContentRepository.GetById(ContentId);
             if (content == null)
-                throw new Exception(String.Format(ContentStrings.ContentNotFound, ContentId));
+            {
+                throw new Exception(string.Format(ContentStrings.ContentNotFound, ContentId));
+            }
 
-            if (HttpContext.Current.Session["ExportArticlesService.Settings"] == null) {
+            if (HttpContext.Current.Session["ExportArticlesService.Settings"] == null)
+            {
                 throw new ArgumentException("There is no specified settings");
             }
-            ExportSettings setts = HttpContext.Current.Session["ExportArticlesService.Settings"] as ExportSettings;
 
-            CsvWriter csv = new CsvWriter(SiteId, ContentId, Ids, setts);
-            MultistepActionStepResult result = new MultistepActionStepResult();
-            result.ProcessedItemsCount = csv.Write(step, ITEMS_PER_STEP);
-
+            var setts = HttpContext.Current.Session["ExportArticlesService.Settings"] as ExportSettings;
+            var csv = new CsvWriter(SiteId, ContentId, Ids, setts);
+            var result = new MultistepActionStepResult { ProcessedItemsCount = csv.Write(step, ItemsPerStep) };
             if (csv.CsvReady)
             {
                 result.AdditionalInfo = csv.CopyFileToTempSiteLiveDirectory();
             }
+
             return result;
         }
     }
