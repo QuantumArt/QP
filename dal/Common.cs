@@ -182,7 +182,7 @@ namespace Quantumart.QP8.DAL
             int permissionLevel,
             string filter,
             bool useSecurity,
-            IList<int> selectedArticleIDs,
+            IList<int> selectedArticleIds,
             IList<int> idsToFilter,
             string extraSelect = "",
             string extraFrom = "",
@@ -208,7 +208,7 @@ namespace Quantumart.QP8.DAL
             orderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id asc" : orderBy;
             queryBuilder.AppendLine($" order by {orderBy}");
 
-            return GetDatatableResult(cn, queryBuilder, GetIdsDatatableParam("@ids", idsToFilter), GetIdsDatatableParam("@myData", selectedArticleIDs));
+            return GetDatatableResult(cn, queryBuilder, GetIdsDatatableParam("@ids", idsToFilter), GetIdsDatatableParam("@myData", selectedArticleIds));
         }
 
         public static void ExecuteSql(SqlConnection connection, string sqlString, List<SqlParameter> parameters, string returnIdParamName, out int id)
@@ -4753,7 +4753,7 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// Возвращает id агрегированных статей для статьи контента
         /// </summary>
-        public static IEnumerable<decimal> GetAggregatedArticlesIDs(SqlConnection connection, int articleId, int[] classfierFields, int[] types)
+        public static IEnumerable<decimal> GetAggregatedArticlesIDs(SqlConnection connection, int articleId, int[] classifierFields, int[] types)
         {
             const string query = @"
             declare @attrIds table (attribute_id numeric primary key, content_id numeric, attribute_name nvarchar(255))
@@ -4779,8 +4779,8 @@ namespace Quantumart.QP8.DAL
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@article_id", articleId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", classfierFields));
-                cmd.Parameters.Add(new SqlParameter("@cids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(types) });
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", classifierFields));
+                cmd.Parameters.Add(GetIdsDatatableParam("@cids", types));
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
@@ -5305,17 +5305,17 @@ namespace Quantumart.QP8.DAL
                         'SELECT DISTINCT ' + @queryWithoutLastComma + ' FROM CONTENT_' + LTRIM(STR(@contentId))  +
                         ' WHERE ARCHIVE = 0 AND ' + REPLACE(@queryWithoutLastComma, ',', ' IS NOT NULL AND ') + ' IS NOT NULL'
 
-                    IF EXISTS (SELECT NULL FROM @ids)
-                        SET @query = @query + ' AND CONTENT_ITEM_ID IN (SELECT Id FROM @ids)'
+                    IF EXISTS (SELECT NULL FROM @articleIds)
+                        SET @query = @query + ' AND CONTENT_ITEM_ID IN (SELECT Id FROM @articleIds)'
 
-                    EXEC sp_executesql @query, N'@ids Ids READONLY', @ids
+                    EXEC sp_executesql @query, N'@articleIds Ids READONLY', @articleIds
                 END";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.Parameters.AddWithValue("@contentId", contentId);
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds));
+                cmd.Parameters.Add(GetIdsDatatableParam("@articleIds", articleIds));
                 using (var reader = cmd.ExecuteReader())
                 {
                     var result = new List<int>();
@@ -5443,12 +5443,12 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static Dictionary<int, string> GetFieldNames(SqlConnection sqlConnection, int[] referencefieldIds)
+        public static Dictionary<int, string> GetFieldNames(SqlConnection sqlConnection, int[] referenceFieldIds)
         {
             using (var cmd = SqlCommandFactory.Create("SELECT f.ATTRIBUTE_ID, f.ATTRIBUTE_NAME FROM CONTENT_ATTRIBUTE f JOIN @ids ids ON f.ATTRIBUTE_ID = ids.ID", sqlConnection))
             {
                 cmd.CommandType = CommandType.Text;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", referencefieldIds));
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", referenceFieldIds));
                 using (var reader = cmd.ExecuteReader())
                 {
                     var result = new Dictionary<int, string>();
@@ -6441,7 +6441,6 @@ namespace Quantumart.QP8.DAL
         {
             var sb = new StringBuilder();
             var sql = new List<SqlParameter>();
-
             var v2bLiveIds = liveIds as int[] ?? liveIds.ToArray();
             if (v2bLiveIds.Any())
             {
@@ -9932,7 +9931,7 @@ namespace Quantumart.QP8.DAL
             using (var cmd = SqlCommandFactory.Create("qp_replicate_items", sqlConnection))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.Add(GetIdsDatatableParam("@ids", articleIds));
+                cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", articleIds) });
                 cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = string.Join(",", fieldIds) });
                 cmd.ExecuteNonQuery();
             }

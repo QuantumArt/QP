@@ -531,7 +531,7 @@ namespace Quantumart.QP8.BLL
 
         public override string CannotUpdateBecauseOfSecurityMessage => ContentStrings.CannotUpdateBecauseOfSecurity;
 
-        public override string PropertyIsNotUniqueMessage => ContentStrings.NameNonUnique;
+        public override string PropertyIsNotUniqueMessage => $"{ContentStrings.NameNonUnique}: {Name}({Id})";
 
         public bool HasTreeField => ContentRepository.HasContentTreeField(Id);
 
