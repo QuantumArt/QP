@@ -4868,7 +4868,6 @@ namespace Quantumart.QP8.DAL
                     cmd.ExecuteNonQuery();
                 }
             }
-
         }
 
         public static void BatchInsertUserQueryAttrs(SqlConnection connection, IEnumerable<UserQueryAttrsDAL> records)
@@ -4933,7 +4932,6 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetWorkflowContentBindedIds(SqlConnection connection, int workflowId)
         {
             var query = $"SELECT CONTENT_ID FROM [content_workflow_bind] where WORKFLOW_ID = {workflowId};";
-
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -4947,7 +4945,6 @@ namespace Quantumart.QP8.DAL
         {
             var result = new List<int>();
             const string query = "select content_item_id FROM @ids i inner join content_item ci on i.id = ci.content_item_id inner join content c on c.content_id = ci.content_id where c.auto_archive = 1";
-
             using (var cmd = SqlCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
