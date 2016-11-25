@@ -28,22 +28,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         #region Constructor
         public CsvWriter(int siteId, int contentId, int[] ids, ExportSettings setts)
         {
-            this.siteId = siteId;
-            this.contentId = contentId;
-            this.setts = setts;
-            this.ids = ids;
+            _siteId = siteId;
+            _contentId = contentId;
+            _setts = setts;
+            _ids = ids;
         }
         #endregion
 
         #region Public properties and methods
-        public bool CsvReady => itemsPerStep * (step + 1) >= ids.Length;
+        public bool CsvReady => _itemsPerStep * (_step + 1) >= _ids.Length;
 
         public string CopyFileToTempSiteLiveDirectory()
         {
-            var fileInfo = new FileInfo(setts.UploadFilePath);
+            var fileInfo = new FileInfo(_setts.UploadFilePath);
             if (fileInfo.Exists)
             {
-                var currentSite = SiteRepository.GetById(siteId);
+                var currentSite = SiteRepository.GetById(_siteId);
                 var uploadDir = $@"{currentSite.LiveDirectory}\{FolderForUpload}";
                 if (!Directory.Exists(uploadDir))
                 {
@@ -51,8 +51,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
 
                 var newFileUploadPath = $@"{uploadDir}\{fileInfo.Name}";
-                File.Copy(setts.UploadFilePath, newFileUploadPath, true);
-                File.Delete(setts.UploadFilePath);
+                File.Copy(_setts.UploadFilePath, newFileUploadPath, true);
+                File.Delete(_setts.UploadFilePath);
 
                 return $"{fileInfo.Name}";
             }
@@ -61,46 +61,46 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         public int Write(int step, int itemsPerStep)
         {
-            sb = new StringBuilder();
-            this.step = step;
-            this.itemsPerStep = itemsPerStep;
+            _sb = new StringBuilder();
+            _step = step;
+            _itemsPerStep = itemsPerStep;
 
-            if (this.step == 0)
+            if (_step == 0)
             {
                 UpdateExportSettings();
                 WriteFieldNames();
             }
 
             WriteFieldValues();
-            return processedItemsCount;
+            return _processedItemsCount;
         }
         #endregion
 
         #region Private fields
-        private readonly int siteId;
-        private readonly int contentId;
-        private readonly ExportSettings setts;
-        private readonly int[] ids;
-        private int processedItemsCount;
-        private int step;
-        private StringBuilder sb;
-        private int itemsPerStep;
-        private int startFrom => step * itemsPerStep + 1;
-        private Content[] exstensionContents;
+        private readonly int _siteId;
+        private readonly int _contentId;
+        private readonly ExportSettings _setts;
+        private readonly int[] _ids;
+        private int _processedItemsCount;
+        private int _step;
+        private StringBuilder _sb;
+        private int _itemsPerStep;
+        private int StartFrom => _step * _itemsPerStep + 1;
+        private Content[] _exstensionContents;
         #endregion
 
         #region Private properties
-        private Content[] ExstensionContents
+        private IEnumerable<Content> ExstensionContents
         {
             get
             {
-                if (exstensionContents == null)
+                if (_exstensionContents == null)
                 {
-                    var exstensionContentIds = ContentRepository.GetReferencedAggregatedContentIds(setts.ContentId, ids ?? new int[0]);
-                    exstensionContents = ContentRepository.GetList(exstensionContentIds).ToArray();
+                    var exstensionContentIds = ContentRepository.GetReferencedAggregatedContentIds(_setts.ContentId, _ids ?? new int[0]);
+                    _exstensionContents = ContentRepository.GetList(exstensionContentIds).ToArray();
                 }
 
-                return exstensionContents;
+                return _exstensionContents;
             }
         }
         #endregion
@@ -109,104 +109,99 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private void WriteFieldNames()
         {
             //Add parameter to file, so Excel can understand field delimiter
-            if (setts.Delimiter != '\t')
+            if (_setts.Delimiter != '\t')
             {
-                sb.AppendFormat("sep={0}", setts.Delimiter);
-                sb.Append(setts.LineSeparator);
+                _sb.AppendFormat("sep={0}", _setts.Delimiter);
+                _sb.Append(_setts.LineSeparator);
             }
 
             //Write field content_item_id
-            sb.Append(ArticleStrings.CONTENT_ITEM_ID);
+            _sb.Append(ArticleStrings.CONTENT_ITEM_ID);
 
             //Add field names
-            if (setts.HeaderNames.Any())
+            if (_setts.HeaderNames.Any())
             {
-                sb.AppendFormat("{0}{1}", setts.Delimiter, string.Join(setts.Delimiter.ToString(), setts.HeaderNames));
+                _sb.AppendFormat("{0}{1}", _setts.Delimiter, string.Join(_setts.Delimiter.ToString(), _setts.HeaderNames));
             }
 
-            foreach (var field in setts.FieldsToExpandSettings)
+            foreach (var field in _setts.FieldsToExpandSettings)
             {
-                sb.AppendFormat("{0}{1}", setts.Delimiter, field.CsvColumnName);
+                _sb.AppendFormat("{0}{1}", _setts.Delimiter, field.CsvColumnName);
             }
 
-            if (!setts.ExcludeSystemFields)
+            if (!_setts.ExcludeSystemFields)
             {
-                sb.AppendFormat("{0}{1}", setts.Delimiter, "CREATED");
-                sb.AppendFormat("{0}{1}", setts.Delimiter, "MODIFIED");
-                sb.AppendFormat("{0}{1}", setts.Delimiter, ArticleStrings.IsChanged);
+                _sb.AppendFormat("{0}{1}", _setts.Delimiter, "CREATED");
+                _sb.AppendFormat("{0}{1}", _setts.Delimiter, "MODIFIED");
+                _sb.AppendFormat("{0}{1}", _setts.Delimiter, ArticleStrings.IsChanged);
             }
-            sb.Append(setts.LineSeparator);
+
+            _sb.Append(_setts.LineSeparator);
         }
 
         private void WriteFieldValues()
         {
-            var articles = GetArticlesForExport(setts.FieldsToExpandSettings);
-            var aliases = setts.FieldsToExpandSettings.Select(n => n.Alias).ToArray();
-            using (var sw = new StreamWriter(setts.UploadFilePath, true, Encoding.GetEncoding(setts.Encoding)))
+            var articles = GetArticlesForExport(_setts.FieldsToExpandSettings);
+            var aliases = _setts.FieldsToExpandSettings.Select(n => n.Alias).ToArray();
+            using (var sw = new StreamWriter(_setts.UploadFilePath, true, Encoding.GetEncoding(_setts.Encoding)))
             {
                 var fields = (from c in ExstensionContents
                               from f in c.Fields
                               select f)
-                      .Concat(FieldRepository.GetFullList(contentId))
+                      .Concat(FieldRepository.GetFullList(_contentId))
                       .ToList();
 
                 var ids = articles.AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_id")).ToArray();
-
-                var exstensionIdsMap = ExstensionContents.ToDictionary(
-                    c => c.Id,
-                    c => articles
-                        .AsEnumerable()
-                        .Select(n => n.Field<decimal?>(string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName)))
-                        .Where(n => n.HasValue)
-                        .Select(n => (int)n.Value)
-                        .ToArray()
-                    );
+                var exstensionIdsMap = ExstensionContents.ToDictionary(c => c.Id, c => articles
+                    .AsEnumerable()
+                    .Select(n => n.Field<decimal?>(string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName)))
+                    .Where(n => n.HasValue)
+                    .Select(n => (int)n.Value)
+                    .ToArray()
+                );
 
                 if (articles.Any())
                 {
                     var dict = fields
-                    .Where(n =>
-                        n.ExactType == FieldExactTypes.M2MRelation &&
-                        articles[0].Table.Columns.Contains(n.ContentId == contentId ? n.Name : string.Format(FieldNameHeaderTemplate, n.Content.Name, n.Name))
-                    )
+                    .Where(n => n.ExactType == FieldExactTypes.M2MRelation && articles[0].Table.Columns.Contains(n.ContentId == _contentId ? n.Name : string.Format(FieldNameHeaderTemplate, n.Content.Name, n.Name)))
                     .Select(n => new { LinkId = n.LinkId.Value, n.ContentId })
-                    .ToDictionary(n => n.LinkId, m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == contentId ? ids : exstensionIdsMap[m.ContentId]));
+                    .ToDictionary(n => n.LinkId, m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : exstensionIdsMap[m.ContentId]));
 
                     foreach (var article in articles)
                     {
-                        sb.AppendFormat("{0}{1}", article["content_item_id"], setts.Delimiter);
+                        _sb.AppendFormat("{0}{1}", article["content_item_id"], _setts.Delimiter);
                         foreach (DataColumn column in article.Table.Columns)
                         {
                             var value = article[column.ColumnName].ToString();
-                            var field = fields.FirstOrDefault(f => f.ContentId == contentId ? f.Name == column.ColumnName : string.Format(FieldNameHeaderTemplate, f.Content.Name, f.Name) == column.ColumnName);
+                            var field = fields.FirstOrDefault(f => f.ContentId == _contentId ? f.Name == column.ColumnName : string.Format(FieldNameHeaderTemplate, f.Content.Name, f.Name) == column.ColumnName);
                             var alias = aliases.FirstOrDefault(n => aliases.Contains(column.ColumnName));
                             if (!string.IsNullOrEmpty(alias))
                             {
-                                sb.AppendFormat("{0}{1}", FormatFieldValue(value), setts.Delimiter);
+                                _sb.AppendFormat("{0}{1}", FormatFieldValue(value), _setts.Delimiter);
                             }
                             else if (field != null)
                             {
-                                sb.AppendFormat("{0}{1}", FormatFieldValue(article, value, field, dict), setts.Delimiter);
+                                _sb.AppendFormat("{0}{1}", FormatFieldValue(article, value, field, dict), _setts.Delimiter);
                             }
                             else if (ExstensionContents.Any(c => string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName) == column.ColumnName))
                             {
-                                sb.AppendFormat("{0}{1}", string.IsNullOrEmpty(value) ? "NULL" : value, setts.Delimiter);
+                                _sb.AppendFormat("{0}{1}", string.IsNullOrEmpty(value) ? "NULL" : value, _setts.Delimiter);
                             }
                         }
 
                         //Set flag for IsChanged column
-                        if (!setts.ExcludeSystemFields)
+                        if (!_setts.ExcludeSystemFields)
                         {
-                            sb.AppendFormat("{0}{1}", MultistepActionHelper.DateCultureFormat(article["created"].ToString(), CultureInfo.CurrentCulture.Name, setts.Culture), setts.Delimiter);
-                            sb.AppendFormat("{0}{1}", MultistepActionHelper.DateCultureFormat(article["modified"].ToString(), CultureInfo.CurrentCulture.Name, setts.Culture), setts.Delimiter);
-                            sb.AppendFormat("{0}{1}", 0, setts.Delimiter);
+                            _sb.AppendFormat("{0}{1}", MultistepActionHelper.DateCultureFormat(article["created"].ToString(), CultureInfo.CurrentCulture.Name, _setts.Culture), _setts.Delimiter);
+                            _sb.AppendFormat("{0}{1}", MultistepActionHelper.DateCultureFormat(article["modified"].ToString(), CultureInfo.CurrentCulture.Name, _setts.Culture), _setts.Delimiter);
+                            _sb.AppendFormat("{0}{1}", 0, _setts.Delimiter);
                         }
 
-                        sb.Append(setts.LineSeparator);
+                        _sb.Append(_setts.LineSeparator);
                     }
                 }
-                sw.Write(sb.ToString());
-                processedItemsCount = articles.Count();
+                sw.Write(_sb.ToString());
+                _processedItemsCount = articles.Count;
             }
         }
 
@@ -214,7 +209,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             //Формируем список полей для запроса
             var sb = new StringBuilder();
-            foreach (var s in setts.FieldNames)
+            foreach (var s in _setts.FieldNames)
             {
                 sb.AppendFormat(", {0}", s);
             }
@@ -232,16 +227,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
 
             var columnsForSql = sb.ToString();
-            var exstensions = setts.Exstensions;
+            var exstensions = _setts.Exstensions;
             int itemsCount;
-            var stepLength = Math.Min(itemsPerStep, ids.Length - startFrom + 1);
+            var stepLength = Math.Min(_itemsPerStep, _ids.Length - StartFrom + 1);
             var stepIds = new int[stepLength];
-            Array.Copy(ids, startFrom - 1, stepIds, 0, stepLength);
+            Array.Copy(_ids, StartFrom - 1, stepIds, 0, stepLength);
 
-            var orderBy = string.IsNullOrEmpty(setts.OrderByField) ? IdentifierFieldName : setts.OrderByField;
+            var orderBy = string.IsNullOrEmpty(_setts.OrderByField) ? IdentifierFieldName : _setts.OrderByField;
             var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and base.archive = 0";
 
-            return ArticleRepository.GetArticlesForExport(contentId, exstensions, columnsForSql, filter, 1, itemsPerStep, orderBy, fieldsToExpand, out itemsCount);
+            return ArticleRepository.GetArticlesForExport(_contentId, exstensions, columnsForSql, filter, 1, _itemsPerStep, orderBy, fieldsToExpand, out itemsCount);
         }
 
         private static IEnumerable<string> GetParts(ExportSettings.FieldSetting field)
@@ -255,7 +250,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             {
                 foreach (var f in field.Related)
                 {
-                    switch (f.ExactType) {
+                    switch (f.ExactType)
+                    {
                         case FieldExactTypes.M2MRelation:
                             parts.Add(string.Format("dbo.qp_link_titles({0}, {2}.content_item_id, {1}, 255)", f.LinkId.Value, f.RelatedAttributeId, field.TableAlias));
                             break;
@@ -280,7 +276,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return parts;
         }
 
-        private string FormatFieldValue(string value)
+        private static string FormatFieldValue(string value)
         {
             if (value.Contains("\""))
             {
@@ -299,6 +295,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             return value;
         }
+
         private string FormatFieldValue(DataRow article, string value, Field field, Dictionary<int, Dictionary<int, string>> m2mValues)
         {
             if (value.Contains("\""))
@@ -318,13 +315,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
                 else if (field.Type.DbType == DbType.Date || field.Type.DbType == DbType.DateTime || field.Type.DbType == DbType.DateTime2)
                 {
-                    value = MultistepActionHelper.DateCultureFormat(value, CultureInfo.CurrentCulture.Name, setts.Culture);
+                    value = MultistepActionHelper.DateCultureFormat(value, CultureInfo.CurrentCulture.Name, _setts.Culture);
                 }
                 else if ((field.Type.DbType == DbType.Double || field.Type.DbType == DbType.Decimal) && field.RelationType != RelationType.ManyToMany)
                 {
-                    value = MultistepActionHelper.NumericCultureFormat(value, CultureInfo.CurrentCulture.Name, setts.Culture);
-
-                    if (value.Contains(setts.Delimiter))
+                    value = MultistepActionHelper.NumericCultureFormat(value, CultureInfo.CurrentCulture.Name, _setts.Culture);
+                    if (value.Contains(_setts.Delimiter))
                     {
                         value = $"\"{value}\"";
                     }
@@ -337,7 +333,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 Dictionary<int, string> mappings;
                 if (m2mValues.TryGetValue(field.LinkId.Value, out mappings) && mappings.Any())
                 {
-                    var key = field.ContentId == contentId ? IdentifierFieldName : string.Format(FieldNameHeaderTemplate, field.Content.Name, IdentifierFieldName);
+                    var key = field.ContentId == _contentId ? IdentifierFieldName : string.Format(FieldNameHeaderTemplate, field.Content.Name, IdentifierFieldName);
                     int id;
                     if (int.TryParse(article[key].ToString(), out id))
                     {
@@ -348,6 +344,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         }
                     }
                 }
+
                 value = $"\"{value}\"";
             }
 
@@ -356,16 +353,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             {
                 value = "NULL";
             }
+
             return value;
         }
 
-        private string[] GetHeaderNames(Content[] exstensionContents)
+        private string[] GetHeaderNames(IEnumerable<Content> exstensionContents)
         {
             var result = new List<string>();
             var fields = GetBaseFields().Select(s => s.Name);
 
             result.AddRange(fields);
-
             foreach (var content in exstensionContents)
             {
                 fields = GetExstensionFields(content, FieldNameHeaderTemplate);
@@ -375,13 +372,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return result.ToArray();
         }
 
-        private string[] GetFieldNames(Content[] exstensionContents)
+        private string[] GetFieldNames(IEnumerable<Content> exstensionContents)
         {
             var result = new List<string>();
             var fields = GetBaseFields().Select(s => string.Format(BaseFieldNameQueryTemplate, s.Name));
 
             result.AddRange(fields);
-
             foreach (var content in exstensionContents)
             {
                 fields = GetExstensionFields(content, FieldNameQueryTemplate);
@@ -393,23 +389,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private IEnumerable<Field> GetBaseFields()
         {
-            return from f in FieldRepository.GetList(setts.ContentId, false)
-                   where f.ExactType != FieldExactTypes.M2ORelation && (setts.AllFields || setts.CustomFieldIds.Contains(f.Id))
+            return from f in FieldRepository.GetList(_setts.ContentId, false)
+                   where f.ExactType != FieldExactTypes.M2ORelation && (_setts.AllFields || _setts.CustomFieldIds.Contains(f.Id))
                    select f;
         }
 
         private IEnumerable<string> GetExstensionFields(Content content, string template)
         {
             return (from f in content.Fields
-                    where f.ExactType != FieldExactTypes.M2ORelation & !f.Aggregated && (setts.AllFields || setts.CustomFieldIds.Contains(f.Id))
+                    where f.ExactType != FieldExactTypes.M2ORelation & !f.Aggregated && (_setts.AllFields || _setts.CustomFieldIds.Contains(f.Id))
                     select string.Format(template, content.Name, f.Name))
                    .Concat(new[] { string.Format(template, content.Name, IdentifierFieldName) });
         }
 
-        private string GetExstensions(Content[] exstensionContents)
+        private static string GetExstensions(IEnumerable<Content> exstensionContents)
         {
             var sb = new StringBuilder();
-
             foreach (var content in exstensionContents)
             {
                 var name = content.Fields.Single(f => f.Aggregated).Name;
@@ -421,9 +416,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private void UpdateExportSettings()
         {
-            setts.FieldNames = GetFieldNames(ExstensionContents);
-            setts.HeaderNames = GetHeaderNames(ExstensionContents);
-            setts.Exstensions = GetExstensions(ExstensionContents);
+            _setts.FieldNames = GetFieldNames(ExstensionContents);
+            _setts.HeaderNames = GetHeaderNames(ExstensionContents);
+            _setts.Exstensions = GetExstensions(ExstensionContents);
         }
         #endregion
     }
