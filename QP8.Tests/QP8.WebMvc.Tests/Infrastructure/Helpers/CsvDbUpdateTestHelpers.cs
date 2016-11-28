@@ -61,9 +61,10 @@ namespace QP8.WebMvc.Tests.Infrastructure.Helpers
             return csvRowFields;
         }
 
-        public static string FilterFromPrefix(string entry)
+        public static string FilterFromPrefix(string entry, string externalPrefix)
         {
-            return new string(entry.SkipWhile(ch => ch == '.').ToArray());
+            externalPrefix = string.IsNullOrWhiteSpace(externalPrefix) ? externalPrefix : $"{externalPrefix}.";
+            return new string(entry.Substring(externalPrefix.Length).ToArray());
         }
 
         public static Expression<Func<IList<string>, bool>> CompareStringCollections(IEnumerable<string> expectedFields)
