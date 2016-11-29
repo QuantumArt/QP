@@ -65,7 +65,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
                 .Verifiable();
 
             fieldRepository
-                .Setup(m => m.GetByNames(externalContentId, It.Is(CsvDbUpdateTestHelpers.CompareStringCollections(externalRowFields.Select(csvf => CsvDbUpdateTestHelpers.FilterFromPrefix(csvf.Name))))))
+                .Setup(m => m.GetByNames(externalContentId, It.Is(CsvDbUpdateTestHelpers.CompareStringCollections(externalRowFields.Select(csvf => CsvDbUpdateTestHelpers.FilterFromPrefix(csvf.Name, externalContentName))))))
                 .Returns(externalDbFields)
                 .Verifiable();
 

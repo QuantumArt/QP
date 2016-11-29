@@ -137,14 +137,16 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     context = context.Include("Site");
                 }
+
                 if (loadFields)
                 {
                     context = context.Include("Fields");
                 }
 
-                IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-                return MapperFacade.ContentMapper.GetBizList(context.Where(c => decIDs.Contains(c.Id)).ToList());
+                var decIds = Converter.ToDecimalCollection(ids).Distinct().ToArray();
+                return MapperFacade.ContentMapper.GetBizList(context.Where(c => decIds.Contains(c.Id)).ToList());
             }
+
             return Enumerable.Empty<Content>();
         }
 
@@ -155,8 +157,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<Content> GetListBySiteId(int siteId)
         {
-            var context = QPContext.EFContext.ContentSet;
-            return MapperFacade.ContentMapper.GetBizList(context.Include("WorkflowBinding").Where(c => c.SiteId == siteId).ToList());
+            return MapperFacade.ContentMapper.GetBizList(QPContext.EFContext.ContentSet.Include("WorkflowBinding").Where(c => c.SiteId == siteId).ToList());
         }
 
         /// <summary>
@@ -167,8 +168,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns></returns>
         internal static IEnumerable<ListItem> GetSimpleList(int currentSiteId, int id)
         {
-            var contents = GetListBySiteId(currentSiteId);
-            return contents.Select(c => new ListItem(c.Id.ToString(), c.Name));
+            return GetListBySiteId(currentSiteId).Select(c => new ListItem(c.Id.ToString(), c.Name));
         }
 
         /// <summary>
@@ -178,8 +178,7 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="ids">список выбранных ID</param>
         internal static IEnumerable<ListItem> GetSimpleList(int currentSiteId, IEnumerable<int> ids)
         {
-            var contents = GetList(ids, true);
-            return contents.Select(c => new ListItem(c.Id.ToString(), c.SiteId == currentSiteId ? c.Name : $"{c.Site.Name}.{c.Name}"));
+            return GetList(ids, true).Select(c => new ListItem(c.Id.ToString(), c.SiteId == currentSiteId ? c.Name : $"{c.Site.Name}.{c.Name}"));
         }
 
         /// <summary>
@@ -230,6 +229,7 @@ namespace Quantumart.QP8.BLL.Repository
 
             FieldRepository.ChangeCreateFieldsTriggerState(false);
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.Content, content);
+
             var newContent = DefaultRepository.Save<Content, ContentDAL>(content);
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.Content);
             FieldRepository.ChangeCreateFieldsTriggerState(true);
@@ -398,23 +398,17 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static bool NameExists(Content content)
         {
-            return QPContext.EFContext.ContentSet
-                .Any(n => n.Name == content.Name && n.Id != content.Id && n.SiteId == content.SiteId);
+            return QPContext.EFContext.ContentSet.Any(n => n.Name == content.Name && n.Id != content.Id && n.SiteId == content.SiteId);
         }
 
         private static bool ContentNetNameExists(Content content)
         {
-            return QPContext.EFContext.ContentSet
-                .Where(n => n.NetName == content.NetName && n.Id != content.Id)
-                .Any(GetScopeExpression(content));
+            return QPContext.EFContext.ContentSet.Where(n => n.NetName == content.NetName && n.Id != content.Id).Any(GetScopeExpression(content));
         }
 
         private static bool LinkNetNameExists(Content content)
         {
-            return QPContext.EFContext.ContentToContentSet
-                .Include("Content")
-                .Where(n => n.NetLinkName == content.NetName)
-                .Any(GetLinkScopeExpression(content));
+            return QPContext.EFContext.ContentToContentSet.Include("Content").Where(n => n.NetLinkName == content.NetName).Any(GetLinkScopeExpression(content));
         }
 
         internal static bool NetNameExists(Content content)
@@ -429,17 +423,12 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static bool ContentNetPluralNameExists(Content content)
         {
-            return QPContext.EFContext.ContentSet
-                .Where(n => n.NetPluralName == content.NetPluralName && n.Id != content.Id)
-                .Any(GetScopeExpression(content));
+            return QPContext.EFContext.ContentSet.Where(n => n.NetPluralName == content.NetPluralName && n.Id != content.Id).Any(GetScopeExpression(content));
         }
 
         private static bool LinkNetPluralNameExists(Content content)
         {
-            return QPContext.EFContext.ContentToContentSet
-                .Include("Content")
-                .Where(n => n.NetPluralLinkName == content.NetPluralName)
-                .Any(GetLinkScopeExpression(content));
+            return QPContext.EFContext.ContentToContentSet.Include("Content").Where(n => n.NetPluralLinkName == content.NetPluralName).Any(GetLinkScopeExpression(content));
         }
 
         internal static bool ContextClassNameExists(Content content)

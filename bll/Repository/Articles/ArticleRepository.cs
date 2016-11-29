@@ -896,8 +896,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 if (ids != null && ids.Any())
                 {
-                    var stageIds = Enumerable.Empty<int>();
-                    var liveIds = Enumerable.Empty<int>();
+                    var stageIds = Enumerable.Empty<int>().ToList();
+                    var liveIds = Enumerable.Empty<int>().ToList();
                     Common.GetContentModification(QPConnectionScope.Current.DbConnection, ids, withAggregated, true, ref liveIds, ref stageIds);
                     Common.SetArchiveFlag(QPConnectionScope.Current.DbConnection, ids, QPContext.CurrentUserId, flag, withAggregated);
                     Common.UpdateContentModification(QPConnectionScope.Current.DbConnection, liveIds, stageIds);
@@ -911,8 +911,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 if (ids != null && ids.Any())
                 {
-                    var stageIds = Enumerable.Empty<int>();
-                    var liveIds = Enumerable.Empty<int>();
+                    var stageIds = Enumerable.Empty<int>().ToList();
+                    var liveIds = Enumerable.Empty<int>().ToList();
                     Common.GetContentModification(QPConnectionScope.Current.DbConnection, ids, withAggregated, false, ref liveIds, ref stageIds);
                     Common.Publish(QPConnectionScope.Current.DbConnection, ids, QPContext.CurrentUserId, withAggregated);
                     Common.UpdateContentModification(QPConnectionScope.Current.DbConnection, liveIds, stageIds);

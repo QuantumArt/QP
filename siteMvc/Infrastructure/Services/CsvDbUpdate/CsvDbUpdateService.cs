@@ -121,7 +121,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
 
         private IList<Field> GetFieldsByNames(int contentId, IEnumerable<CsvDbUpdateFieldModel> csvRowFields, string contentNameFieldPrefix = "")
         {
-            var fieldNames = csvRowFields.Where(FilterByPrefix(contentNameFieldPrefix)).Select(f => f.Name).ToList();
+            var fieldNames = csvRowFields.Where(FilterByPrefix(contentNameFieldPrefix)).Select(f => f.Name.Substring(contentNameFieldPrefix.Length)).ToList();
             return _fieldRepository.GetByNames(contentId, fieldNames);
         }
 

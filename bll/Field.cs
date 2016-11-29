@@ -787,6 +787,7 @@ namespace Quantumart.QP8.BLL
         /// не меняеться на основе данных формы
         /// </summary>
         public string StoredName { get; set; }
+
         /// <summary>
         /// Изменил ли пользователь имя поля
         /// </summary>
@@ -2959,6 +2960,7 @@ namespace Quantumart.QP8.BLL
 
             return result;
         }
+
         /// <summary>
         /// Траслирует SortExpression из Presentation в BLL
         /// </summary>
@@ -3015,6 +3017,11 @@ namespace Quantumart.QP8.BLL
         public static int GetNameHashCode(string name)
         {
             return name?.ToLowerInvariant().GetHashCode() ?? 0;
+        }
+
+        public override string ToString()
+        {
+            return $"{Id,6}: {Name}";
         }
     }
 }
