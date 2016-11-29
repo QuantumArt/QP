@@ -5300,7 +5300,7 @@ namespace Quantumart.QP8.DAL
                     DECLARE @queryWithoutLastComma NVARCHAR(1000) = SUBSTRING(@query, 0, LEN(@query));
                     SET @query =
                         'SELECT DISTINCT ' + @queryWithoutLastComma + ' FROM CONTENT_' + LTRIM(STR(@contentId))  +
-                        ' WHERE ARCHIVE = 0 AND ' + REPLACE(@queryWithoutLastComma, ',', ' IS NOT NULL AND ') + ' IS NOT NULL'
+                        ' WHERE ARCHIVE = 0'
 
                     IF EXISTS (SELECT NULL FROM @articleIds)
                         SET @query = @query + ' AND CONTENT_ITEM_ID IN (SELECT Id FROM @articleIds)'
@@ -5320,7 +5320,10 @@ namespace Quantumart.QP8.DAL
                     {
                         for (var i = 0; i < reader.FieldCount; i++)
                         {
-                            result.Add((int)reader.GetDecimal(i));
+                            if (!reader.IsDBNull(i))
+                            {
+                                result.Add((int)reader.GetDecimal(i));
+                            }
                         }
                     }
 
@@ -6434,22 +6437,20 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void UpdateContentModification(SqlConnection sqlConnection, IEnumerable<int> liveIds, IEnumerable<int> stageIds)
+        public static void UpdateContentModification(SqlConnection sqlConnection, List<int> liveIds, List<int> stageIds)
         {
             var sb = new StringBuilder();
             var sql = new List<SqlParameter>();
-            var v2bLiveIds = liveIds as int[] ?? liveIds.ToArray();
-            if (v2bLiveIds.Any())
+            if (liveIds.Any())
             {
                 sb.AppendLine("update content_modification with(rowlock) set live_modified = GETDATE() where content_id in (select id from @liveIds)");
-                sql.Add(new SqlParameter("@liveIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(v2bLiveIds) });
+                sql.Add(new SqlParameter("@liveIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(liveIds) });
             }
 
-            var v2bStageIds = stageIds as int[] ?? stageIds.ToArray();
-            if (v2bStageIds.Any())
+            if (stageIds.Any())
             {
                 sb.AppendLine("update content_modification with(rowlock) set stage_modified = GETDATE() where content_id in (select id from @stageIds)");
-                sql.Add(new SqlParameter("@stageIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(v2bStageIds) });
+                sql.Add(new SqlParameter("@stageIds", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(stageIds) });
             }
 
             if (sql.Any())
@@ -6463,7 +6464,7 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static void GetContentModification(SqlConnection sqlConnection, IEnumerable<int> articleIds, bool withAggregated, bool returnPublishedForLive, ref IEnumerable<int> liveIds, ref IEnumerable<int> stageIds)
+        public static void GetContentModification(SqlConnection sqlConnection, IEnumerable<int> articleIds, bool withAggregated, bool returnPublishedForLive, ref List<int> liveIds, ref List<int> stageIds)
         {
             var source = withAggregated ? "dbo.qp_aggregated_and_self(@ids)" : "@ids";
             var aggFunc = returnPublishedForLive ? "max" : "min";
