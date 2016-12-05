@@ -15,7 +15,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             return new OptionSet
             {
                 { "d|disable=", "disable identity options: [field|content]", ParseDisableOption },
-                { "useGuid", "disable identity options: [field|content]", ug => _useGuidSubstitution = ug != null },
+                { "useGuid", "enable guid substitution mode", ug => _useGuidSubstitution = ug != null },
             };
         }
 
