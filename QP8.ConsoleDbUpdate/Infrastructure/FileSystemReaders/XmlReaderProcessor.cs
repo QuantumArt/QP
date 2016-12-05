@@ -53,30 +53,37 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             }
             else
             {
+                var logEntries = new List<XmlDbUpdateLogModel>();
+                var logService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
                 foreach (var ofp in orderedFilePathes)
                 {
-                    var logService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
                     var xmlString = XDocument.Parse(File.ReadAllText(ofp, Encoding.UTF8)).ToStringWithDeclaration(SaveOptions.DisableFormatting);
-                    var logEntry = new XmlDbUpdateLogModel
+                    logEntries.Add(new XmlDbUpdateLogModel
                     {
                         Body = xmlString,
                         FileName = ofp,
                         Applied = DateTime.Now,
                         UserId = 1,
                         Hash = HashHelpers.CalculateMd5Hash(xmlString)
-                    };
+                    });
+                }
 
-                    Program.Logger.Debug($"Old version (Windows) compatability enabled for {ofp}. Check hash {logEntry.Hash} in database.");
-                    using (new QPConnectionScope(QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode), CommonHelpers.GetDbIdentityInsertOptions(settingsTemp.DisableFieldIdentity, settingsTemp.DisableContentIdentity)))
+                List<string> existedHashes;
+                using (new QPConnectionScope(QPConfiguration.GetConnectionString(QPContext.CurrentCustomerCode), CommonHelpers.GetDbIdentityInsertOptions(settingsTemp.DisableFieldIdentity, settingsTemp.DisableContentIdentity)))
+                {
+                    existedHashes = logService.GetExistedHashes(logEntries.Select(entry => entry.Hash).ToList());
+                }
+
+                foreach (var logEntry in logEntries)
+                {
+                    if (existedHashes.Contains(logEntry.Hash))
                     {
-                        if (logService.IsFileAlreadyReplayed(logEntry.Hash))
-                        {
-                            Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied, exist at database and will be skipped. Entry: {logEntry.ToJsonLog()}");
-                            continue;
-                        }
+                        Program.Logger.Warn($"XmlDbUpdate (old) conflict: current xml document(s) already applied, exist at database and will be skipped. Entry: {logEntry.ToJsonLog()}");
                     }
-
-                    filteredOrderedFilePathes.Add(ofp);
+                    else
+                    {
+                        filteredOrderedFilePathes.Add(logEntry.FileName);
+                    }
                 }
             }
             #endregion DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!! DELETE THIS!!! TEMP!!!
