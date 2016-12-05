@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 
@@ -19,6 +20,11 @@ namespace Quantumart.QP8.BLL.Repository.XmlDbUpdate
             context.SaveChanges();
 
             return entity.Id;
+        }
+
+        public List<string> GetExistedHashes(List<string> hashes)
+        {
+            return QPContext.EFContext.XML_DB_UPDATE.Where(entry => hashes.Contains(entry.Hash)).Select(entry => entry.Hash).ToList();
         }
     }
 }

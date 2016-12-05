@@ -1,4 +1,5 @@
-﻿using Quantumart.QP8.BLL.Models.XmlDbUpdate;
+﻿using System.Collections.Generic;
+using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces
 {
@@ -11,5 +12,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces
         bool IsActionAlreadyReplayed(string logEntryHash);
 
         bool IsFileAlreadyReplayed(string hash);
+
+        List<string> GetExistedHashes(List<string> hashes);
     }
 }
