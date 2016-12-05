@@ -5,7 +5,7 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
     /// <summary>
     /// Logs a message in a running application
     /// </summary>
-    public interface ILog
+    public interface ILog : IDisposable
     {
         /// <summary>
         /// Gets or sets a value indicating whether this instance is debug enabled.
@@ -151,5 +151,10 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         /// Flush log data
         /// </summary>
         void Flush();
+
+        /// <summary>
+        /// Close logger and dispose all targets
+        /// </summary>
+        void Shutdown();
     }
 }

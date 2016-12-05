@@ -107,7 +107,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
                 Console.ForegroundColor = ConsoleColor.White;
             }
 
-            Program.Logger.Flush();
+            Program.Logger.Dispose();
             Environment.Exit((int)exitCode);
         }
     }

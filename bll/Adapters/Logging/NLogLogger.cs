@@ -180,7 +180,17 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
         public void Flush()
         {
             LogManager.Flush();
+        }
+
+        public void Shutdown()
+        {
             LogManager.Shutdown();
+        }
+
+        public void Dispose()
+        {
+            Flush();
+            Shutdown();
         }
     }
 }

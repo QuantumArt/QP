@@ -6,7 +6,7 @@ using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
 {
-    internal class QpUpdateLoggingWrapper
+    internal class QpUpdateLoggingWrapper : IDisposable
     {
         private readonly ILog _logger;
 
@@ -192,11 +192,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
             _logger.WarnFormat(format, args);
         }
 
-        public void Flush()
-        {
-            _logger.Flush();
-        }
-
         public void SetLogLevel(int verboseLevel)
         {
             switch (verboseLevel)
@@ -214,6 +209,22 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
                     _consoleLogLevel = ConsoleLogLevel.Fatal;
                     break;
             }
+        }
+
+        public void Flush()
+        {
+            _logger.Flush();
+        }
+
+        public void Shutdown()
+        {
+            _logger.Shutdown();
+        }
+
+        public void Dispose()
+        {
+            Flush();
+            Shutdown();
         }
     }
 }

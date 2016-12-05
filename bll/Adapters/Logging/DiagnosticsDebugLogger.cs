@@ -154,5 +154,16 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
         {
             System.Diagnostics.Debug.Flush();
         }
+
+        public void Shutdown()
+        {
+            System.Diagnostics.Debug.Close();
+        }
+
+        public void Dispose()
+        {
+            Flush();
+            Shutdown();
+        }
     }
 }
