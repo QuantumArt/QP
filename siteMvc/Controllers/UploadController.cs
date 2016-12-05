@@ -1,13 +1,13 @@
-﻿using Quantumart.QP8.BLL;
+using System;
+using System.IO;
+using System.Web;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using System;
-using System.IO;
-using System.Web;
-using System.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -24,13 +24,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public ActionResult UploadChunk(int? chunk, int? chunks, string name, string destinationUrl)
         {
             destinationUrl = HttpUtility.UrlDecode(destinationUrl);
-            var fileUpload = Request.Files[0];
-            chunk = chunk ?? 0;
-            chunks = chunks ?? 1;
-            var tempPath = Path.Combine(QPConfiguration.TempDirectory, name);
-            var destPath = Path.Combine(destinationUrl, name);
-            PathSecurityResult securityResult;
-
             if (string.IsNullOrEmpty(destinationUrl))
             {
                 throw new ArgumentException("Folder Path is empty");
@@ -40,6 +33,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             {
                 Directory.CreateDirectory(destinationUrl);
             }
+
+            chunk = chunk ?? 0;
+            chunks = chunks ?? 1;
+            PathSecurityResult securityResult;
+
+            var fileUpload = Request.Files[0];
+            var tempPath = Path.Combine(QPConfiguration.TempDirectory, name);
+            var destPath = Path.Combine(destinationUrl, name);
 
             if (chunk == 0 && chunks == 1)
             {
@@ -107,11 +108,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
                         }
 
                         System.IO.File.Move(tempPath, destPath);
-                        BackendActionContext.SetCurrent(actionCode, new[] { name }, securityResult.FolderId);
 
+                        BackendActionContext.SetCurrent(actionCode, new[] { name }, securityResult.FolderId);
                         var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, _logger);
                         _logger.Save(logs);
-
                         BackendActionContext.ResetCurrent();
                     }
                 }

@@ -1,29 +1,13 @@
-﻿using System;
-using System.Dynamic;
+﻿using System.Dynamic;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using C = Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
 {
-
-    public enum ArticleVersionViewType
-    {
-        Preview,
-        CompareWithCurrent,
-        CompareVersions
-    }
-
-    public class ClientEntity
-    {
-        public string Id { get; set;  }
-        public string Name { get; set; }
-    }
-
     public class ArticleVersionViewModel : EntityViewModel
     {
-
         public ArticleVersionViewType ViewType { get; set; }
 
         public new BLL.ArticleVersion Data
@@ -32,14 +16,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
             {
                 return (BLL.ArticleVersion)EntityData;
             }
-
             set
             {
                 EntityData = value;
             }
         }
-
-        #region creation
 
         public ArticleVersionViewModel()
         {
@@ -48,40 +29,39 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
 
         public static ArticleVersionViewModel Create(BLL.ArticleVersion version, string tabId, int parentId, bool? boundToExternal)
         {
-            return Create(version, tabId, parentId, String.Empty, boundToExternal);
+            return Create(version, tabId, parentId, string.Empty, boundToExternal);
         }
-
 
         public static ArticleVersionViewModel Create(BLL.ArticleVersion version, string tabId, int parentId, string succesfulActionCode, bool? boundToExternal)
         {
-            
-            ArticleVersionViewModel model = EntityViewModel.Create<ArticleVersionViewModel>(version, tabId, parentId);
+
+            var model = Create<ArticleVersionViewModel>(version, tabId, parentId);
             model.SuccesfulActionCode = succesfulActionCode;
             model.BoundToExternal = boundToExternal;
             return model;
         }
-        #endregion
 
         public bool? BoundToExternal { get; set; }
 
         public bool IsChangingActionsProhibited => !Data.Article.IsArticleChangingActionsAllowed(BoundToExternal);
 
-        #region read-only members
+        public override string Id => IsComparison ? "0" : base.Id;
 
-        public override string Id => (IsComparison) ? "0" : base.Id;
-
-        public override string EntityTypeCode => C.EntityTypeCode.ArticleVersion;
+        public override string EntityTypeCode => Constants.EntityTypeCode.ArticleVersion;
 
         public override string ActionCode
         {
             get
             {
-                if (ViewType == ArticleVersionViewType.CompareWithCurrent)
-                    return C.ActionCode.CompareArticleVersionWithCurrent;
-                else if (ViewType == ArticleVersionViewType.CompareVersions)
-                    return C.ActionCode.CompareArticleVersions;
-                else
-                    return C.ActionCode.PreviewArticleVersion;
+                switch (ViewType)
+                {
+                    case ArticleVersionViewType.CompareWithCurrent:
+                        return Constants.ActionCode.CompareArticleVersionWithCurrent;
+                    case ArticleVersionViewType.CompareVersions:
+                        return Constants.ActionCode.CompareArticleVersions;
+                }
+
+                return Constants.ActionCode.PreviewArticleVersion;
             }
         }
 
@@ -94,16 +74,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
                 dynamic result = base.MainComponentParameters;
                 if (IsComparison)
                 {
-                    string firstId = Id;
-                    string secondId = Data.VersionToMerge.Id.ToString();
+                    var firstId = Id;
+                    var secondId = Data.VersionToMerge.Id.ToString();
                     result.entities = new[] { new ClientEntity { Id = firstId, Name = firstId }, new ClientEntity { Id = secondId, Name = secondId } };
                 }
+
                 return result;
             }
         }
-        #endregion
 
-        #region methods
         public override void Validate(ModelStateDictionary modelState)
         {
             try
@@ -121,7 +100,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels.ArticleVersion
         {
             Data.Article.FieldValues = Data.FieldValues;
         }
-
-        #endregion
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
 {

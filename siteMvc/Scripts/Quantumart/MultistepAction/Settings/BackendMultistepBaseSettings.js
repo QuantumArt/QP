@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.MultistepActionBaseSettings = {
+Quantumart.QP8.MultistepActionBaseSettings = {
 }
 Quantumart.QP8.MultistepActionBaseSettings.prototype = {
     AddButtons: function (dataItems) {

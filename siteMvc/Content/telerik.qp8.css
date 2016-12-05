@@ -1,4 +1,4 @@
-﻿/* QP8 theme*/
+/* QP8 theme*/
 
 .t-widget
 {
@@ -17,7 +17,7 @@
     white-space: normal;
     min-height: 18px;
     height: auto;
-    
+
 }
 
 .t-grid-header .t-image-header IMG.t-image
@@ -40,7 +40,7 @@
 .t-grid-header .t-header .t-link
 {
     min-height: 18px;
-    height: auto;    
+    height: auto;
 }
 
 .t-grid-header .t-header,
@@ -260,7 +260,7 @@ a.t-button.t-state-disabled:hover,
 .t-widget .t-status
 {
     border-color: #aec5d1;
-    background-color: #f1f5fb;    
+    background-color: #f1f5fb;
 }
 
 .t-panelbar .t-link
@@ -273,7 +273,7 @@ a.t-button.t-state-disabled:hover,
     border-bottom-color: #426682;
 }
 
-.t-grid td.t-select-header, 
+.t-grid td.t-select-header,
 .t-grid td.t-select-cell
 {
 	text-align: center;
@@ -288,13 +288,13 @@ a.t-button.t-state-disabled:hover,
 
 .ie9 .t-grid td
 {
-	padding-left:0.43em;	
+	padding-left:0.43em;
 }
 
 .ie8 .t-grid td
 {
 	padding-right: 0;
-	padding-left:0.43em;	
+	padding-left:0.43em;
 }
 
 .t-grid .t-state-hover
@@ -489,7 +489,7 @@ a.t-button.t-state-disabled:hover,
 .t-dropzone-hovered,
 .t-upload-files
 {
-    background-color: #f1f5fb;    
+    background-color: #f1f5fb;
 }
 
 .t-dropzone em
@@ -519,7 +519,7 @@ a.t-button.t-state-disabled:hover,
 
 .t-imagebrowser .t-content
 {
-    background: #f1f5fb;  
+    background: #f1f5fb;
 }
 
 .t-breadcrumbs .t-link,

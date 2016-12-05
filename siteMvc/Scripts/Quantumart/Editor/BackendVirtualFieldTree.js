@@ -1,12 +1,12 @@
-﻿//#region class BackendEntityTree
+//#region class BackendEntityTree
 // === Класс "Дерево виртуальных полей виртуального контента" ===
 Quantumart.QP8.BackendVirtualFieldTree = function (treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options) {
 	Quantumart.QP8.BackendVirtualFieldTree.initializeBase(this, [treeGroupCode, treeElementId, entityTypeCode, parentEntityId, actionCode, options]);
 
     if ($q.isObject(options)) {
-		if (!$q.isNullOrEmpty(options.virtualContentId)) {
-            this._virtualContentId = options.virtualContentId;
-		}
+		  if (!$q.isNullOrEmpty(options.virtualContentId)) {
+        this._virtualContentId = options.virtualContentId;
+		  }
     }
 };
 

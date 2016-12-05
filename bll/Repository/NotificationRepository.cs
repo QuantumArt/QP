@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.Configuration;
@@ -41,7 +42,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         public IEnumerable<Notification> GetUserNotifications(int userId)
         {
-            return MappersRepository.NotificationMapper.GetBizList(QPContext.EFContext
+            return MapperFacade.NotificationMapper.GetBizList(QPContext.EFContext
                 .NotificationsSet
                 .Where(n => n.ToUser.Id == userId)
                 .ToList()
@@ -50,7 +51,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         public IEnumerable<Notification> GetUserGroupNotifications(int groupId)
         {
-            return MappersRepository.NotificationMapper.GetBizList(QPContext.EFContext
+            return MapperFacade.NotificationMapper.GetBizList(QPContext.EFContext
                 .NotificationsSet
                 .Where(n => n.ToUserGroup.Id == groupId)
                 .ToList()
@@ -64,7 +65,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<Notification> GetList(IEnumerable<int> ids)
         {
             IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-            return MappersRepository.NotificationMapper
+            return MapperFacade.NotificationMapper
                 .GetBizList(QPContext.EFContext.NotificationsSet
                     .Where(f => decIDs.Contains(f.Id))
                     .ToList()
@@ -76,13 +77,13 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 IEnumerable<DataRow> rows = Common.GetNotificationsPage(scope.DbConnection, contentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                return MappersRepository.NotificationListItemRowMapper.GetBizList(rows.ToList());                     
+                return MapperFacade.NotificationListItemRowMapper.GetBizList(rows.ToList());
             }
         }
 
         internal static Notification GetPropertiesById(int id)
         {
-            return MappersRepository.NotificationMapper.GetBizObject(QPContext.EFContext.NotificationsSet
+            return MapperFacade.NotificationMapper.GetBizObject(QPContext.EFContext.NotificationsSet
                 .Include("LastModifiedByUser")
                 .Include("WorkFlow")
                 .Include("FromUser")
@@ -129,7 +130,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<Notification> GetContentNotifications(int contentId, IEnumerable<string> codes)
         {
-            return MappersRepository.NotificationMapper.GetBizList(
+            return MapperFacade.NotificationMapper.GetBizList(
                 QPContext.EFContext.NotificationsSet
                 .Where(g => g.ContentId == contentId)
                 .FilterByCode(codes)

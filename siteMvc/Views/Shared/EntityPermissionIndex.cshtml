@@ -9,10 +9,10 @@
 @using (Html.BeginDocumentPadding())
 {
 	if (Model.ShowDisableArticlePermissionForContentWarning)
-	{ 
-		@Html.Warning(new[] 
+	{
+		@Html.Warning(new[]
 		{
-			new MvcHtmlString(EntityPermissionStrings.ContentArticlePermissionIsDisabled), 			
+			new MvcHtmlString(EntityPermissionStrings.ContentArticlePermissionIsDisabled),
 			@Html.BackendActionLink(Model.UniqueId("eapActionLink"), EntityPermissionStrings.EnableContentArticlePermissionAction, Model.ParentArticle.ContentId, String.Empty, 0, ActionTypeCode.SimpleUpdate, ActionCode.EnableArticlesPermissions)
 		})
 	}
@@ -20,8 +20,8 @@
 	if (Model.ShowAddNewItemButton)
 	{
 		using (Html.BeginLinkButtonsList())
-		{				
-			@Html.AddNewItemLink(Model)			
+		{
+			@Html.AddNewItemLink(Model)
 		}
 	}
 
@@ -77,6 +77,6 @@
 	)
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

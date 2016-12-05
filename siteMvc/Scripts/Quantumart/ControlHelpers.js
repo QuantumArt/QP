@@ -514,6 +514,7 @@ Quantumart.QP8.ControlHelpers.setAllEntityDataListValues = function (parentEleme
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
+
     if (!$q.isNullOrEmpty(fieldValues)) {
         var $lists = Quantumart.QP8.ControlHelpers.getAllEntityDataLists(parentElement);
         var $l = null;
@@ -539,49 +540,51 @@ Quantumart.QP8.ControlHelpers.setAllEntityDataListValues = function (parentEleme
 
 // Устанавливает значение всех классификаторов
 Quantumart.QP8.ControlHelpers.setAllClassifierFieldValues = function (parentElement, fieldValues, disableChangeTracking) {
-    if (!parentElement) {
-        throw new Error($l.Common.parentDomElementNotSpecified);
-    }
+  if (!parentElement) {
+    throw new Error($l.Common.parentDomElementNotSpecified);
+  }
 
-    if (!$q.isNullOrEmpty(fieldValues)) {
-        var $classifiers = Quantumart.QP8.ControlHelpers.getAllClassifierFields(parentElement);
-        var $cl = null;
-        var component = null;
+  if (!$q.isNullOrEmpty(fieldValues)) {
+    var $classifiers = Quantumart.QP8.ControlHelpers.getAllClassifierFields(parentElement);
+    var $cl = null;
+    var component = null;
 
-        jQuery(fieldValues).each(function (i, v) {
-            $cl = $classifiers.filter('[data-field_name="' + v.fieldName + '"]').first();
-            if ($cl.length > 0) {
-                component = Quantumart.QP8.BackendClassifierField.getComponent($cl);
-                if (component) {
-                    component.set_initFieldValues(fieldValues);
-                    component.set_disableChangeTracking(disableChangeTracking)
-                    component.selectContent(v.value);
-                }
-            }
-            $c.setValidator($cl, v.errors);
-        });
+    $(fieldValues).each(function (i, v) {
+      $cl = $classifiers.filter('[data-field_name="' + v.fieldName + '"]').first();
+      if ($cl.length > 0) {
+        component = Quantumart.QP8.BackendClassifierField.getComponent($cl);
+        if (component) {
+          component.set_initFieldValues(fieldValues);
+          component.set_disableChangeTracking(disableChangeTracking)
+          component.selectContent(v.value);
+        }
+      }
 
-        $classifiers = null;
-        $cl = null;
-        component = null;
-    }
+      $c.setValidator($cl, v.errors);
+    });
+
+    $classifiers = null;
+    $cl = null;
+    component = null;
+  }
 };
 
 // Устанавливает значение всех AggregationLists
 Quantumart.QP8.ControlHelpers.setAllAggregationListValues = function (parentElement, fieldValues) {
-    if (!parentElement) {
-        throw new Error($l.Common.parentDomElementNotSpecified);
-    }
-    if (!$q.isNullOrEmpty(fieldValues)) {
-        var $lists = Quantumart.QP8.ControlHelpers.getAllAggregationLists(parentElement);
-        jQuery(fieldValues).each(function (i, v) {
-            var $l = $lists.filter('[data-field_name="' + v.fieldName + '"]:first');
-            var component = Quantumart.QP8.BackendAggregationList.getComponent($l);
-            if (component) {
-                component.set_items(v.value);
-            }
-        });
-    }
+  if (!parentElement) {
+    throw new Error($l.Common.parentDomElementNotSpecified);
+  }
+
+  if (!$q.isNullOrEmpty(fieldValues)) {
+    var $lists = Quantumart.QP8.ControlHelpers.getAllAggregationLists(parentElement);
+    $(fieldValues).each(function (i, v) {
+      var $l = $lists.filter('[data-field_name="' + v.fieldName + '"]:first');
+      var component = Quantumart.QP8.BackendAggregationList.getComponent($l);
+      if (component) {
+        component.set_items(v.value);
+      }
+    });
+  }
 }
 
 // Устанавливает значение всех Highlighted TextAreas
@@ -722,74 +725,63 @@ Quantumart.QP8.ControlHelpers.getAllVisualEditorValues = function (parentElement
 };
 
 //Возвращает значения всех списков
-Quantumart.QP8.ControlHelpers.getAllEntityDataListValues = function (parentElement) {
-    return jQuery.grep(Quantumart.QP8.ControlHelpers.getAllEntityDataLists(parentElement)
-    .filter("[data-list_item_name]")
-    .map(function () {
-        var $l = jQuery(this);
-        var listComponent = $l.data("entity_data_list_component");
-        if (listComponent) {
-            return {
-                fieldName: $l.data("list_item_name"),
-                value: listComponent.getSelectedEntityIDs()
-            };
-        }
-    }),
-    function (v) {
-        return v;
+Quantumart.QP8.ControlHelpers.getAllEntityDataListValues = function(parentElement) {
+  return $.grep(Quantumart.QP8.ControlHelpers.getAllEntityDataLists(parentElement).filter("[data-list_item_name]").map(function() {
+    var $l = $(this);
+    var listComponent = $l.data("entity_data_list_component");
+    if (listComponent) {
+      return {
+        fieldName: $l.data("list_item_name"),
+        value: listComponent.getSelectedEntityIDs()
+      };
     }
-  );
+  }), function(v) {
+    return v;
+  });
 };
 
 // Возвращает значение всех классификаторов
 Quantumart.QP8.ControlHelpers.getAllClassifierFieldValues = function (parentElement) {
-    return Quantumart.QP8.ControlHelpers.getAllClassifierFields(parentElement)
-    .filter("[data-field_name]")
-    .map(function () {
-        var $c = jQuery(this);
-        var component = Quantumart.QP8.BackendClassifierField.getComponent($c);
-        if (component) {
-            return {
-                fieldName: $c.data("field_name"),
-                value: component.getSelectedContent()
-            };
-        }
-    });
+  return Quantumart.QP8.ControlHelpers.getAllClassifierFields(parentElement).filter("[data-field_name]").map(function() {
+    var $c = $(this);
+    var component = Quantumart.QP8.BackendClassifierField.getComponent($c);
+    if (component) {
+      return {
+        fieldName: $c.data("field_name"),
+        value: component.getSelectedContent()
+      };
+    }
+  });
 };
 
 
 // Возвращает значение всех AggregationList
 Quantumart.QP8.ControlHelpers.getAllAggregationListValues = function (parentElement) {
-    return Quantumart.QP8.ControlHelpers.getAllAggregationLists(parentElement)
-    .filter("[data-field_name]")
-    .map(function () {
-        var $l = jQuery(this);
-        var component = Quantumart.QP8.BackendAggregationList.getComponent($l);
-        if (component) {
-            return {
-                fieldName: $l.data("field_name"),
-                value: component.get_items()
-            };
-        }
-    });
+  return Quantumart.QP8.ControlHelpers.getAllAggregationLists(parentElement).filter("[data-field_name]").map(function() {
+    var $l = $(this);
+    var component = Quantumart.QP8.BackendAggregationList.getComponent($l);
+    if (component) {
+      return {
+        fieldName: $l.data("field_name"),
+        value: component.get_items()
+      };
+    }
+  });
 };
 
 // Возвращает значение всех HighlightedTextAreas
 Quantumart.QP8.ControlHelpers.getAllHighlightedTextAreaValues = function (parentElement) {
-    return Quantumart.QP8.ControlHelpers.getAllHighlightedTextAreas(parentElement)
-    .filter("[name]")
-    .map(function () {
-        var $a = jQuery(this);
-        var component = $a.data('codeMirror');;
-        if (component) {
-            return {
-                fieldName: $a.prop("name"),
-                value: component.getValue()
-            };
-        }
-    });
+  return Quantumart.QP8.ControlHelpers.getAllHighlightedTextAreas(parentElement).filter("[name]").map(function() {
+    var $a = $(this);
+    var component = $a.data('codeMirror');;
+    if (component) {
+      return {
+        fieldName: $a.prop("name"),
+        value: component.getValue()
+      };
+    }
+  });
 };
-
 
 // Возвращает значение всех полей
 Quantumart.QP8.ControlHelpers.getAllFieldValues = function (parentElement) {
@@ -1115,12 +1107,7 @@ Quantumart.QP8.ControlHelpers.destroyDateTimePicker = function Quantumart$QP8$Co
 };
 //#endregion
 
-//#region Работа с полями для ввода чисел
 Quantumart.QP8.ControlHelpers.getAllNumericTextBoxes = function Quantumart$QP8$ControlHelpers$getAllNumericTextBoxes(parentElement) {
-    /// <summary>
-    /// Возвращает поля для ввода чисел
-    /// </summary>
-    /// <param name="parentElement" type="Object" domElement="true">родительский DOM-элемент</param>
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
@@ -1129,10 +1116,6 @@ Quantumart.QP8.ControlHelpers.getAllNumericTextBoxes = function Quantumart$QP8$C
 };
 
 Quantumart.QP8.ControlHelpers.initAllNumericTextBoxes = function Quantumart$QP8$ControlHelpers$initAllNumericTextBoxes(parentElement) {
-    /// <summary>
-    /// Инициализирует поля для ввода чисел
-    /// </summary>
-    /// <param name="parentElement" type="Object" domElement="true">родительский DOM-элемент</param>
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
@@ -1148,10 +1131,7 @@ Quantumart.QP8.ControlHelpers.initAllNumericTextBoxes = function Quantumart$QP8$
 };
 
 Quantumart.QP8.ControlHelpers.initNumericTextBox = function Quantumart$QP8$ControlHelpers$initNumericTextBox(textBoxElement) {
-    /// <summary>
-    /// Инициализирует поле для ввода чисел
-    /// </summary>
-    /// <param name="textBoxElement" type="Object" domElement="true">DOM-элемент, образующий поле для ввода чисел</param>
+
     var $textBox = $q.toJQuery(textBoxElement);
     $textBox
     .bind("valueChange", function () {
@@ -1176,10 +1156,6 @@ Quantumart.QP8.ControlHelpers.initNumericTextBox = function Quantumart$QP8$Contr
 };
 
 Quantumart.QP8.ControlHelpers.destroyAllNumericTextBoxes = function Quantumart$QP8$ControlHelpers$destroyAllNumericTextBoxes(parentElement) {
-    /// <summary>
-    /// Уничтожает поля для ввода чисел
-    /// </summary>
-    /// <param name="parentElement" type="Object" domElement="true">родительский DOM-элемент</param>
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
@@ -1195,10 +1171,6 @@ Quantumart.QP8.ControlHelpers.destroyAllNumericTextBoxes = function Quantumart$Q
 };
 
 Quantumart.QP8.ControlHelpers.destroyNumericTextBox = function Quantumart$QP8$ControlHelpers$destroyNumericTextBox(textBoxElement) {
-    /// <summary>
-    /// Инициализирует поле для ввода чисел
-    /// </summary>
-    /// <param name="textBoxElement" type="Object" domElement="true">DOM-элемент, образующий поле для ввода чисел</param>
     var $textBox = $q.toJQuery(textBoxElement);
     $textBox
     .unbind()
@@ -1206,7 +1178,6 @@ Quantumart.QP8.ControlHelpers.destroyNumericTextBox = function Quantumart$QP8$Co
 
     $textBox = null;
 };
-//#endregion
 
 //#region Работа с файловыми полями
 Quantumart.QP8.ControlHelpers.getAllFileFields = function Quantumart$QP8$ControlHelpers$getAllFileFields(parentElement) {
@@ -1737,12 +1708,7 @@ Quantumart.QP8.ControlHelpers.crop = function Quantumart$QP8$ControlHelpers$crop
 Quantumart.QP8.ControlHelpers.openPreviewWindow = function Quantumart$QP8$ControlHelpers$openPreviewWindow(url, width, height) {
   url = url + "?t=" + new Date().getTime();
   var html = new $.telerik.stringBuilder();
-    html
-    .cat('<div class="previewImage">')
-    .cat('<img src="' + url + '\" width="' + width + '" height="' + height + '" />')
-    .cat('</div>')
-    ;
-
+    html.cat('<div class="previewImage">').cat('<img src="' + url + '\" width="' + width + '" height="' + height + '" />').cat('</div>');
     var win = $.telerik.window.create({
         title: $l.FileField.previewWindowTitle,
         html: html.string(),

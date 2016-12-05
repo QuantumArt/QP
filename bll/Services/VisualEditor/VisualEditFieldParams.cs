@@ -1,6 +1,6 @@
 ﻿namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
-    internal class VisualEditFieldParams
+    public class VisualEditFieldParams
     {
         public bool PEnterMode { get; set; }
 

@@ -2,18 +2,25 @@ Quantumart.QP8.BackendDocumentContext.setGlobal("typeIds", {
     "tariff": $o.getArticleIdByFieldValue(349, "Title", "Тариф"),
     "service": $o.getArticleIdByFieldValue(349, "Title", "Услуга"),
     "action": $o.getArticleIdByFieldValue(349, "Title", "Акция"),
+    "roamingScale": $o.getArticleIdByFieldValue(349, "Title", "Роуминговая сетка"),
     "serviceOnTariff": $o.getArticleIdByFieldValue(368, "Title", "Услуги на тарифе"),
     "mutualGroup": $o.getArticleIdByFieldValue(368, "Title", "Группы несовместимости услуг"),
-    "optionPackage": $o.getArticleIdByFieldValue(368, "Title", "Пакеты опций на тарифах")
+    "optionPackage": $o.getArticleIdByFieldValue(368, "Title", "Пакеты опций на тарифах"),
+    "roamingScaleOnTariff": $o.getArticleIdByFieldValue(368, "Title", "Роуминговые сетки для тарифа"),
+    "serviceOnRoamingScale": $o.getArticleIdByFieldValue(368, "Title", "Услуги на роуминговой сетке")
+    
 });
 
 Quantumart.QP8.BackendDocumentContext.setGlobal("typesByProduct", {
     "343": $ctx.getGlobal("typeIds")["tariff"], "385": $ctx.getGlobal("typeIds")["tariff"],
     "403": $ctx.getGlobal("typeIds")["service"], "402": $ctx.getGlobal("typeIds")["service"],
     "419": $ctx.getGlobal("typeIds")["action"], "420": $ctx.getGlobal("typeIds")["action"],
+    "434": $ctx.getGlobal("typeIds")["roamingScale"], "435": $ctx.getGlobal("typeIds")["roamingScale"],
     "404": $ctx.getGlobal("typeIds")["serviceOnTariff"],
     "407": $ctx.getGlobal("typeIds")["optionPackage"],
-    "365": $ctx.getGlobal("typeIds")["mutualGroup"]
+    "365": $ctx.getGlobal("typeIds")["mutualGroup"],
+    "438": $ctx.getGlobal("typeIds")["roamingScaleOnTariff"],
+    "444": $ctx.getGlobal("typeIds")["serviceOnRoamingScale"], 
 });
 
 Quantumart.QP8.BackendDocumentContext.setGlobal("regionalLibraryFolders", [
@@ -183,11 +190,11 @@ Quantumart.QP8.BackendDocumentContext.prototype.toggleField = function (editor, 
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getValue = function (editor, inputName) {
-	return this.getInput(editor, inputName).val();
+    return this.getInput(editor, inputName).val();
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.setValue = function (editor, inputName, value) {
-	this.getInput(editor, inputName).val(value);
+    this.getInput(editor, inputName).val(value).trigger("change");
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getText = function (editor, inputName, value) {
@@ -195,7 +202,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.getText = function (editor, inpu
 };
 
 Quantumart.QP8.BackendDocumentContext.prototype.getInput = function (editor, inputName) {
-	var $form = (editor instanceof jQuery) ? editor : jQuery(editor._formElement);
+    var $form = (editor instanceof jQuery) ? editor : jQuery(editor._formElement);
     return $form.find("[name='" + inputName + "']");
 };
 
@@ -248,63 +255,76 @@ Quantumart.QP8.BackendDocumentContext.prototype.setFileFieldsSubFolder = functio
 
 Quantumart.QP8.BackendDocumentContext.prototype.addGenerateMatrixTitleButton = function (inputName)
 {
-	var self = this;
-	this.addCustomLinkButton({
-		name: inputName,
-		title: "Generate",
-		suffix: "generate",
-		"class": "customLinkButton",
-		url: "/Backend/Content/QP8/icons/16x16/insert_call.gif",
-		onClick: function (evt) {
-			var resultInput = evt.data.$input;
-			var strTemplates = {
-				"404":
-				{
-					template: "Услуга '{0}' для тарифа '{1}' в регионе '{2}'",
-					firstField: "field_1690",
-					secondField: "field_1691"
-				},
-				"407":
-				{
-					template: "Пакет '{0}' для тарифа '{1}' в регионе '{2}'",
-					firstField: "field_1706",
-					secondField: "field_1703",
-					useSecondFieldForRegion: true
-				},
-				"365":
-				{
-					template: "Группа '{0}' для региона '{2}'",
-					firstField: "field_1443",
-					isFirstFieldM2M: true,
-				},
-				"413":
-				{
-					template: "Связь между услугами '{0}' и '{1}' в регионе '{2}'",
-					firstField: "field_1761",
-					secondField: "field_1762"
-				},
-			}
+    var self = this;
+    this.addCustomLinkButton({
+        name: inputName,
+        title: "Generate",
+        suffix: "generate",
+        "class": "customLinkButton",
+        url: "/Backend/Content/QP8/icons/16x16/insert_call.gif",
+        onClick: function (evt) {
+            var resultInput = evt.data.$input;
+            var strTemplates = {
+                "404":
+                {
+                    template: "Услуга '{0}' для тарифа '{1}' в регионе '{2}'",
+                    firstField: "field_1690",
+                    secondField: "field_1691"
+                },
+                "407":
+                {
+                    template: "Пакет '{0}' для тарифа '{1}' в регионе '{2}'",
+                    firstField: "field_1706",
+                    secondField: "field_1703",
+                    useSecondFieldForRegion: true
+                },
+                "365":
+                {
+                    template: "Группа '{0}' для региона '{2}'",
+                    firstField: "field_1443",
+                    isFirstFieldM2M: true,
+                },
+                "413":
+                {
+                    template: "Связь между услугами '{0}' и '{1}' в регионе '{2}'",
+                    firstField: "field_1761",
+                    secondField: "field_1762"
+                },
+                "438":
+                {
+                    template: "Роуминговая сетка '{0}' на тарифе '{1}' в регионе '{2}'",
+                    firstField: "field_1970",
+                    secondField: "field_1969"
+                },
+                "444":
+                {
+                    template: "Услуга '{0}' на роуминговой сетке '{1}' в регионе '{2}'",
+                    firstField: "field_2009",
+                    secondField: "field_2008",
+                    useSecondFieldForRegion: true
+                }
+            }
 
-			var matrixType = self.getValue(evt.data.$form, "field_1417");
-			var config = strTemplates[matrixType];
-			if (config)
-			{
-				var firstText = (config.isFirstFieldM2M) ?
-					self.getInput(evt.data.$form, config.firstField).first().closest("li").find("label").text() :
-					self.getText(evt.data.$form, config.firstField);
-				var firstElems = firstText.split(';', 2);
+            var matrixType = self.getValue(evt.data.$form, "field_1417");
+            var config = strTemplates[matrixType];
+            if (config)
+            {
+                var firstText = (config.isFirstFieldM2M) ?
+                    self.getInput(evt.data.$form, config.firstField).first().closest("li").find("label").text() :
+                    self.getText(evt.data.$form, config.firstField);
+                var firstElems = firstText.split(';', 2);
 
-				var secondText = (config.secondField) ? self.getText(evt.data.$form, config.secondField) : undefined;
-				var secondElems = (secondText) ? secondText.split(';', 2) : ["", ""];
+                var secondText = (config.secondField) ? self.getText(evt.data.$form, config.secondField) : undefined;
+                var secondElems = (secondText) ? secondText.split(';', 2) : ["", ""];
 
-				var region = (((config.useSecondFieldForRegion) ? secondElems[1] : firstElems[1]) || "").trim().substr(0, 127);
+                var region = (((config.useSecondFieldForRegion) ? secondElems[1] : firstElems[1]) || "").trim().substr(0, 127);
 
-				var title = String.format(config.template, firstElems[0], secondElems[0], region);
+                var title = String.format(config.template, firstElems[0], secondElems[0], region);
 
-				self.setValue(evt.data.$form, inputName, title);
-			}
-		}
-	});
+                self.setValue(evt.data.$form, inputName, title);
+            }
+        }
+    });
 }
 
 Quantumart.QP8.BackendDocumentContext.setGlobal("regionalLibraryFolders", [

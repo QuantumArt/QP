@@ -10,15 +10,15 @@
     using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
 	{
 		@Html.VersionTextFieldFor(s => s.Data.NameToMerge, Model.Data.NameToMerge)
-        
+
         @Html.VersionTextFieldFor(s => s.Data.NetFormatNameToMerge, Model.Data.NetFormatNameToMerge)
 
         @Html.VersionAreaFieldFor(s => s.Data.DescriptionToMerge, Model.Data.DescriptionToMerge)
-    
+
         @Html.VersionTextFieldFor(s => s.Data.NetLanguageNameToMerge, Model.Data.NetLanguageNameToMerge)
-    
+
         @Html.VersionAreaFieldFor(s => s.Data.PresentationToMerge, Model.Data.PresentationToMerge)
-                
+
         @Html.VersionAreaFieldFor(s => s.Data.CodeBehindToMerge, Model.Data.CodeBehindToMerge)
     }
     using (Html.BeginFieldGroup(EntityObjectStrings.VersionTitle))
@@ -37,7 +37,7 @@
             @Html.DisplayFieldFor(e => e.Data.VersionToMerge.LastModifiedByUserToDisplay)
         }
     }
-	
+
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

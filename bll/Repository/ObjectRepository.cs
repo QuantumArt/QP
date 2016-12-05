@@ -7,6 +7,7 @@ using Quantumart.QP8.Utils;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -17,7 +18,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetTemplateObjectsByTemplateId(scope.DbConnection, templateId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-				return MappersRepository.ObjectRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.ObjectRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
@@ -26,7 +27,7 @@ namespace Quantumart.QP8.BLL.Repository
 			using (var scope = new QPConnectionScope())
 			{
 				IEnumerable<DataRow> rows = Common.GetPageObjectsByPageId(scope.DbConnection, parentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-				return MappersRepository.ObjectRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.ObjectRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
@@ -74,7 +75,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<ObjectValue> GetDefaultValuesByObjectId(int objectId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ObjectValueMapper.GetBizList(entities.ObjectValuesSet.Where(x => x.ObjectId == objectId).ToList());
+			return MapperFacade.ObjectValueMapper.GetBizList(entities.ObjectValuesSet.Where(x => x.ObjectId == objectId).ToList());
 		}
 
 		internal static BllObject UpdateObjectProperties(BllObject bllObject)
@@ -132,7 +133,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 		internal static BllObject GetObjectPropertiesById(int id)
 		{
-			var result = MappersRepository.ObjectMapper.GetBizObject(QPContext.EFContext.ObjectSet.Include("ChildObjectFormats.Notifications").Include("InheritedObjects")
+			var result = MapperFacade.ObjectMapper.GetBizObject(QPContext.EFContext.ObjectSet.Include("ChildObjectFormats.Notifications").Include("InheritedObjects")
 				.Include("PageTemplate.Site").Include("ObjectType").Include("LastModifiedByUser")
 				.SingleOrDefault(g => g.Id == id));
 			result.DefaultValues = GetDefaultValuesByObjectId(id).Select(x => new DefaultValue { VariableName = x.VariableName, VariableValue = x.VariableValue });
@@ -165,8 +166,8 @@ namespace Quantumart.QP8.BLL.Repository
 			QP8Entities entities = QPContext.EFContext;
 
 			return PageOrTemplate ?
-				MappersRepository.ObjectMapper.GetBizList(entities.ObjectSet.Where(x => x.PageId == pageId && x.NetName == netName && x.Id != id).ToList()).Count() == 0 :
-				MappersRepository.ObjectMapper.GetBizList(entities.ObjectSet.Where(x => x.PageId == null && x.PageTemplateId == pageTemplateId && x.NetName == netName && x.Id != id).ToList()).Count == 0;
+				MapperFacade.ObjectMapper.GetBizList(entities.ObjectSet.Where(x => x.PageId == pageId && x.NetName == netName && x.Id != id).ToList()).Count() == 0 :
+				MapperFacade.ObjectMapper.GetBizList(entities.ObjectSet.Where(x => x.PageId == null && x.PageTemplateId == pageTemplateId && x.NetName == netName && x.Id != id).ToList()).Count == 0;
 		}
 
 		internal static Container SaveContainer(Container container)
@@ -174,38 +175,38 @@ namespace Quantumart.QP8.BLL.Repository
 			QP8Entities entities = QPContext.EFContext;
 			container.CursorType = "adOpenForwardOnly";
 			container.CursorLocation = "adUseClient";
-			ContainerDAL dal = MappersRepository.ContainerMapper.GetDalObject(container);
+			ContainerDAL dal = MapperFacade.ContainerMapper.GetDalObject(container);
 			dal.CursorType = "adOpenForwardOnly";
 			dal.CursorLocation = "adUseClient";
 			dal.LockType = "adLockReadOnly";
 			dal.Locked = null;
 			entities.ContainerSet.AddObject(dal);
 			entities.SaveChanges();
-			return MappersRepository.ContainerMapper.GetBizObject(dal);
+			return MapperFacade.ContainerMapper.GetBizObject(dal);
 		}
 
 
 		internal static Container UpdateContainer(Container container)
 		{
-			var dal = MappersRepository.ContainerMapper.GetDalObject(container);
+			var dal = MapperFacade.ContainerMapper.GetDalObject(container);
 			dal = DefaultRepository.SimpleUpdate(dal);
-			return MappersRepository.ContainerMapper.GetBizObject(dal);
+			return MapperFacade.ContainerMapper.GetBizObject(dal);
 		}
 
 		internal static ContentForm UpdateForm(ContentForm form)
 		{
-			var dal = MappersRepository.ContentFormMapper.GetDalObject(form);
+			var dal = MapperFacade.ContentFormMapper.GetDalObject(form);
 			dal = DefaultRepository.SimpleUpdate(dal);
-			return MappersRepository.ContentFormMapper.GetBizObject(dal);
+			return MapperFacade.ContentFormMapper.GetBizObject(dal);
 		}
 
 		internal static ContentForm SaveContentForm(ContentForm contentForm)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			ContentFormDAL dal = MappersRepository.ContentFormMapper.GetDalObject(contentForm);
+			ContentFormDAL dal = MapperFacade.ContentFormMapper.GetDalObject(contentForm);
 			entities.ContentFormSet.AddObject(dal);
 			entities.SaveChanges();
-			return MappersRepository.ContentFormMapper.GetBizObject(dal);
+			return MapperFacade.ContentFormMapper.GetBizObject(dal);
 		}
 
 		internal static void DeleteContainer(int objectId)
@@ -245,13 +246,13 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<BllObject> GetTemplateObjects(int templateId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ObjectMapper.GetBizList(entities.ObjectSet.Include("ChildObjectFormats").Include("PageTemplate").Where(x => x.PageTemplateId == templateId && x.PageId == null).ToList());
+			return MapperFacade.ObjectMapper.GetBizList(entities.ObjectSet.Include("ChildObjectFormats").Include("PageTemplate").Where(x => x.PageTemplateId == templateId && x.PageId == null).ToList());
 		}
 
 		internal static IEnumerable<BllObject> GetPageObjects(int pageId)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ObjectMapper.GetBizList(entities.ObjectSet.Include("ChildObjectFormats").Include("PageTemplate").Where(x => x.PageId == pageId).ToList());
+			return MapperFacade.ObjectMapper.GetBizList(entities.ObjectSet.Include("ChildObjectFormats").Include("PageTemplate").Where(x => x.PageId == pageId).ToList());
 		}
 
 		internal static IEnumerable<TemplateObjectFormatDto> GetRestTemplateObjects(int templateId)
@@ -260,14 +261,14 @@ namespace Quantumart.QP8.BLL.Repository
 			var siteId = PageTemplateRepository.GetPageTemplatePropertiesById(templateId).SiteId;
 			using (var scope = new QPConnectionScope())
 			{
-				return MappersRepository.TemplateObjectFormatDtoRowMapper.GetBizList(Common.GetRestTemplateObjects(scope.DbConnection, templateId, siteId).ToList());
+				return MapperFacade.TemplateObjectFormatDtoRowMapper.GetBizList(Common.GetRestTemplateObjects(scope.DbConnection, templateId, siteId).ToList());
 			}
 		}
 
 		internal static IEnumerable<EntityObject> GetList(IEnumerable<int> IDs)
 		{
 			IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
-			return MappersRepository.ObjectMapper
+			return MapperFacade.ObjectMapper
 				.GetBizList(QPContext.EFContext.ObjectSet
 					.Where(f => decIDs.Contains(f.Id))
 					.ToList()

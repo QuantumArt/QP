@@ -78,7 +78,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 			{
 				foreach(int id in templateIds)
 				{
-					new AssembleTemplateObjectsController(id, QPContext.CurrentCustomerCode).Assemble();
+					new AssembleTemplateObjectsController(id, QPContext.CurrentDbConnectionString).Assemble();
 				}
 			}
 			return new MultistepActionStepResult { ProcessedItemsCount = ITEMS_PER_STEP };

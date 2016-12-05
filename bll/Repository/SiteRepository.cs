@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Data;
-using Quantumart.QP8;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.ListItems;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
-using Quantumart.QP8.BLL.ListItems;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.Constants;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -23,17 +19,13 @@ namespace Quantumart.QP8.BLL.Repository
         /// <returns>информация о сайте</returns>
         internal static Site GetById(int id)
         {
-			Site result = GetByIdFromCache(id);
-			if (result != null)
-				return result;
+            var result = GetByIdFromCache(id);
+            if (result != null)
+            {
+                return result;
+            }
 
-            return MappersRepository.SiteMapper.GetBizObject(
-                QPContext.EFContext.SiteSet
-                    .Include("LastModifiedByUser")
-                    .Include("LockedByUser")
-                    .Where(n => n.Id == (decimal)id)
-                    .SingleOrDefault()
-            );
+            return MapperFacade.SiteMapper.GetBizObject(QPContext.EFContext.SiteSet.Include("LastModifiedByUser").Include("LockedByUser").SingleOrDefault(n => n.Id == id));
         }
 
         internal static Site GetByTemplateId(int templateId)
@@ -47,28 +39,24 @@ namespace Quantumart.QP8.BLL.Repository
         }
 
         private static Site GetByIdFromCache(int id)
-		{
-			Site result = null;
-			var cache = QPContext.GetSiteCache();
-			if (cache != null && cache.ContainsKey(id))
-			{
-				result = cache[id];
-			}
-			return result;
-		}
+        {
+            Site result = null;
+            var cache = QPContext.GetSiteCache();
+            if (cache != null && cache.ContainsKey(id))
+            {
+                result = cache[id];
+            }
+
+            return result;
+        }
 
 
         /// <summary>
         /// Возвращает список сайтов
         /// </summary>
-        /// <param name="sortExpression">настройки сортировки</param>
-        /// <param name="beginRowIndex">индекс начальной записи</param>
-        /// <param name="pageSize">максимальное количество записей на одной странице</param>
-        /// <param name="totalRecords">общее количество записей</param>
-        /// <returns>список сайтов</returns>
         internal static ListResult<SiteListItem> GetList(ListCommand cmd, IEnumerable<int> selectedIDs)
         {
-            SitePageOptions options = new SitePageOptions()
+            var options = new SitePageOptions
             {
                 SelectedIDs = selectedIDs,
                 SortExpression = cmd.SortExpression,
@@ -78,17 +66,17 @@ namespace Quantumart.QP8.BLL.Repository
                 UseSecurity = !QPContext.IsAdmin
             };
 
-            int totalRecords = -1;
             using (var scope = new QPConnectionScope())
             {
-                IEnumerable<DataRow> rows = Common.GetSitesPage(scope.DbConnection, options, out totalRecords);
-                return new ListResult<SiteListItem> { Data = MappersRepository.SiteListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
+                int totalRecords;
+                var rows = Common.GetSitesPage(scope.DbConnection, options, out totalRecords);
+                return new ListResult<SiteListItem> { Data = MapperFacade.SiteListItemRowMapper.GetBizList(rows.ToList()), TotalRecords = totalRecords };
             }
         }
 
         internal static IEnumerable<Site> GetAll()
         {
-            return MappersRepository.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.OrderBy(S => S.Name).ToList());
+            return MapperFacade.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.OrderBy(ss => ss.Name).ToList());
         }
 
         /// <summary>
@@ -125,22 +113,17 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static List<PathSecurityInfo> GetPaths()
         {
-            return QPContext.EFContext.SiteSet
-                .Select(n => new PathSecurityInfo { Id = (int)n.Id, Path = n.UploadDir })
-                .ToList();
+            return QPContext.EFContext.SiteSet.Select(n => new PathSecurityInfo { Id = (int)n.Id, Path = n.UploadDir }).ToList();
         }
 
-		internal static List<PathInfo> GetPathInfoList()
-		{
-			return QPContext.EFContext.SiteSet
-				.Select(n => new PathInfo { Url = ((n.UseAbsoluteUploadUrl == 1) ? n.UploadUrlPrefix : "http://" + n.Dns) + n.UploadUrl, Path = n.UploadDir })
-				.ToList();
-		}
+        internal static List<PathInfo> GetPathInfoList()
+        {
+            return QPContext.EFContext.SiteSet.Select(n => new PathInfo { Url = (n.UseAbsoluteUploadUrl == 1 ? n.UploadUrlPrefix : "http://" + n.Dns) + n.UploadUrl, Path = n.UploadDir }).ToList();
+        }
 
         internal static bool ContextClassNameExists(Site site)
         {
-            return QPContext.EFContext.ContentSet
-                .Any(n => n.AdditionalContextClassName == site.FullyQualifiedContextClassName && n.SiteId == site.Id);
+            return QPContext.EFContext.ContentSet.Any(n => n.AdditionalContextClassName == site.FullyQualifiedContextClassName && n.SiteId == site.Id);
         }
 
         internal static bool Exists(int id)
@@ -152,11 +135,11 @@ namespace Quantumart.QP8.BLL.Repository
         {
             if (siteIDs != null && siteIDs.Any())
             {
-                IEnumerable<decimal> decSeteIDs = Converter.ToDecimalCollection(siteIDs);
-                return MappersRepository.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.Where(n => decSeteIDs.Contains(n.Id)).ToList());
+                var decSeteIDs = Converter.ToDecimalCollection(siteIDs);
+                return MapperFacade.SiteMapper.GetBizList(QPContext.EFContext.SiteSet.Where(n => decSeteIDs.Contains(n.Id)).ToList());
             }
-            else
-                return Enumerable.Empty<Site>();
+
+            return Enumerable.Empty<Site>();
         }
 
         /// <summary>
@@ -208,19 +191,19 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-		internal static int GetSiteContentLinkCount(int siteId)
-		{
-			using (var scope = new QPConnectionScope())
-			{
-				return Common.GetSiteContentLinkCount(siteId, scope.DbConnection);
-			}
-		}
+        internal static int GetSiteContentLinkCount(int siteId)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetSiteContentLinkCount(siteId, scope.DbConnection);
+            }
+        }
 
         internal static string CopyFolders(int sourceSiteId, int destinationSiteId)
         {
             using (var scope = new QPConnectionScope())
             {
-                IEnumerable<DataRow> rows = Common.CopyFolders(sourceSiteId, destinationSiteId, scope.DbConnection);
+                var rows = Common.CopyFolders(sourceSiteId, destinationSiteId, scope.DbConnection);
                 return MultistepActionHelper.GetXmlFromDataRows(rows, "folder");
             }
         }
@@ -240,7 +223,6 @@ namespace Quantumart.QP8.BLL.Repository
                 Common.CopySiteAccessRules(sourceSiteId, destinationSiteId, scope.DbConnection);
                 Common.CopyActionSiteBind(sourceSiteId, destinationSiteId, scope.DbConnection);
                 Common.CopyWorkflowRules(sourceSiteId, destinationSiteId, scope.DbConnection);
-                //Common.CopyWorkflowAccess(sourceSiteId, destinationSiteId, scope.DbConnection);
                 Common.CopyCommandSiteBind(sourceSiteId, destinationSiteId, scope.DbConnection);
                 Common.CopyStyleSiteBind(sourceSiteId, destinationSiteId, scope.DbConnection);
             }

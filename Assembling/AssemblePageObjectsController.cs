@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Data;
 using Quantumart.QP8.Assembling.Info;
+using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling
 {
@@ -33,8 +34,8 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-        public AssemblePageObjectsController(int pageId, string customerCode)
-            : base(customerCode)
+        public AssemblePageObjectsController(int pageId, string connectionParameter)
+            : base(connectionParameter)
         {
             FillController(pageId);
         }

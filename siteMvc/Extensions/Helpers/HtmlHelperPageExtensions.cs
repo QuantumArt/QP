@@ -23,24 +23,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         }
 
         /// <summary>
+        /// Генерирует и выполняет JS-код инициализации страницы
+        /// </summary>
+        public static MvcHtmlString PrepareAndRunInitScript(this HtmlHelper html, ViewModel model)
+        {
+            return MvcHtmlString.Create(html.PrepareInitScript(model) + html.RunInitScript(model).ToString());
+        }
+
+        /// <summary>
         /// Подменяет контекст у скрипта
         /// </summary>
         public static MvcHtmlString CustomScript(this HtmlHelper html, string script, string contextObjectName)
         {
-            if (string.IsNullOrEmpty(script))
-            {
-                return MvcHtmlString.Create(string.Empty);
-            }
-
-            return MvcHtmlString.Create($"<script>{script.Replace("QP_CURRENT_CONTEXT", contextObjectName)}</script>");
-        }
-
-        /// <summary>
-        /// Генерирует и выполняет JS-код инициализации страницы
-        /// </summary>
-        public static MvcHtmlString InitScript(this HtmlHelper html, ViewModel model)
-        {
-            return MvcHtmlString.Create(html.PrepareInitScript(model) + html.RunInitScript(model).ToString());
+            return MvcHtmlString.Create(string.IsNullOrWhiteSpace(script) ? string.Empty : $"<script>{script.Replace("QP_CURRENT_CONTEXT", contextObjectName)}</script>");
         }
     }
 }

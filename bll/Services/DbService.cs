@@ -1,59 +1,55 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Security.Cryptography;
 using System.Text;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Repository.Articles;
-using System.Security.Cryptography;
+using Quantumart.QP8.BLL.Services.DTO;
 
 namespace Quantumart.QP8.BLL.Services
 {
-	public class DbService
-	{
-		public static Db ReadSettings()
-		{
-			return DbRepository.Get();
-		}
+    public class DbService
+    {
+        public static Db ReadSettings()
+        {
+            return DbRepository.Get();
+        }
 
-		public static Db ReadSettingsForUpdate()
-		{
-			return DbRepository.GetForUpdate();
-		}
+        public static Db ReadSettingsForUpdate()
+        {
+            return DbRepository.GetForUpdate();
+        }
 
-		public static Db UpdateSettings(Db db)
-		{
-			Db result = DbRepository.Update(db);
-			return result;
-		}
+        public static Db UpdateSettings(Db db)
+        {
+            var result = DbRepository.Update(db);
+            return result;
+        }
 
-		public static string GetDbHash()
-		{
-			return GehHash(GehHash(DbRepository.GetDbServerName()) + GehHash(DbRepository.GetDbName()));
-		}
+        public static string GetDbHash()
+        {
+            return GehHash(GehHash(DbRepository.GetDbServerName()) + GehHash(DbRepository.GetDbName()));
+        }
 
-		private static string GehHash(string value)
-		{
-			byte[] data = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(value));
-			StringBuilder sBuilder = new StringBuilder();
+        private static string GehHash(string value)
+        {
+            var data = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(value));
+            var sBuilder = new StringBuilder();
+            foreach (var v2bT in data)
+            {
+                sBuilder.Append(v2bT.ToString("x2"));
+            }
 
-			for (int i = 0; i < data.Length; i++)
-			{
-				sBuilder.Append(data[i].ToString("x2"));
-			}
+            return sBuilder.ToString();
+        }
 
-			return sBuilder.ToString();
-		}
-
-		public static HomeResult Home()
-		{
-			return new HomeResult()
-			{
-				Sites = SiteService.GetSites(),
-				CurrentUser = new UserService().ReadProperties(QPContext.CurrentUserId),
-				LockedCount = ArticleRepository.GetLockedCount(),
-				ApprovalCount = ArticleRepository.GetForApprovalCount()
-			};
-		}
-	}
+        public static HomeResult Home()
+        {
+            return new HomeResult()
+            {
+                Sites = SiteService.GetSites(),
+                CurrentUser = new UserService().ReadProperties(QPContext.CurrentUserId),
+                LockedCount = ArticleRepository.GetLockedCount(),
+                ApprovalCount = ArticleRepository.GetForApprovalCount()
+            };
+        }
+    }
 }

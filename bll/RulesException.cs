@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
@@ -15,9 +15,13 @@ namespace Quantumart.QP8.BLL
         }
 
         public LambdaExpression Property { get; set; }
+
         public string Message { get; set; }
+
         public string PropertyName { get; set; }
+
         public string PropertyValue { get; set; }
+
         public bool Critical { get; set; }
     }
 
@@ -56,6 +60,7 @@ namespace Quantumart.QP8.BLL
                 sb.Append(" ");
                 sb.Append(ex.Message);
             }
+
             newEx.ErrorForModel(sb.ToString());
             throw newEx;
         }

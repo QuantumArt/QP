@@ -8,6 +8,7 @@ using Quantumart.QP8.Utils;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
 using System.Data.Objects;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -26,7 +27,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 		private static IEnumerable<BackendActionType> LoadActionTypes()
 		{
-			var mapper = MappersRepository.BackendActionTypeMapper;
+			var mapper = MapperFacade.BackendActionTypeMapper;
 			mapper.DisableTranslations = true;
 			var result = mapper.GetBizList(DefaultActionTypeQuery.ToList());
 			mapper.DisableTranslations = false;
@@ -45,7 +46,7 @@ namespace Quantumart.QP8.BLL.Repository
 		/// <returns>тип действия</returns>
 		internal static BackendActionType GetById(int id)
 		{
-			BackendActionType actionType = MappersRepository.BackendActionTypeMapper.GetBizObject(DefaultActionTypeQuery.Single(r => r.Id == id));
+			BackendActionType actionType = MapperFacade.BackendActionTypeMapper.GetBizObject(DefaultActionTypeQuery.Single(r => r.Id == id));
 			return actionType;
 		}		
 
@@ -56,7 +57,7 @@ namespace Quantumart.QP8.BLL.Repository
 		/// <returns>тип действия</returns>
 		internal static BackendActionType GetByCode(string code)
 		{
-			BackendActionType actionType = MappersRepository.BackendActionTypeMapper.GetBizObject(DefaultActionTypeQuery.Single(r => r.Code == code));
+			BackendActionType actionType = MapperFacade.BackendActionTypeMapper.GetBizObject(DefaultActionTypeQuery.Single(r => r.Code == code));
 			return actionType;
 		}
 

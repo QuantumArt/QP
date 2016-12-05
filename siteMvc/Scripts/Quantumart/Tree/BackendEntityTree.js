@@ -66,7 +66,7 @@ Quantumart.QP8.BackendEntityTree = function(treeGroupCode, treeElementId, entity
     }
   }
 
-  Quantumart.QP8.Utils.bindProxies.call(this, [
+  $q.bindProxies.call(this, [
     '_onDataBinding',
     '_onNodeClicking',
     '_onContextMenu',
@@ -499,17 +499,14 @@ Quantumart.QP8.BackendEntityTree.prototype = {
         }
 
         var entity = data;
-
         if (entity) {
           var dataItem = self.getTreeViewItemFromEntityObject(entity);
-
           self._renderNode($node, dataItem, isRootNode);
           self._extendNodeElement($node, entity);
           dataItem = null;
 
           var childEntities = entity.Children;
           var dataItems = self.getTreeViewItemCollectionFromEntityObjects(childEntities);
-
           if (dataItems.length == 0) {
             self._hideAjaxLoadingIndicatorForNode($node);
             dataItems = null;
@@ -573,7 +570,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     } else {
       this.getAllNodes().find(this.NODE_WRAPPER_SELECTOR).removeClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', false);
       $node.find(this.NODE_WRAPPER_SELECTOR).addClass(this.NODE_SELECTED_CLASS_NAME).end().find(this.NODE_CHECKBOX_SELECTORS).prop('checked', true);
-      if (!this._allowMultipleNodeSelection && this._allowGlobalSelection) {
+      if (!this._allowMultipleNodeSelection) {
         this._resetNodeSelectionState();
       }
     }
@@ -689,21 +686,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   },
 
   getSelectedEntities: function() {
-    var selectedEntities = [];
-
-    if (this._allowGlobalSelection) {
-      var selectedEntitiesIDs = this._selectedEntitiesIDs;
-
-      $.each(selectedEntitiesIDs, function(index, entityId) {
-        var entity = { Id: entityId, Name: '' };
-        Array.add(selectedEntities, entity);
-      });
-
-    } else {
-      selectedEntities = this.getEntitiesFromNodes(this.getSelectedNodes());
-    }
-
-    return selectedEntities;
+    return this.getEntitiesFromNodes(this.getSelectedNodes());
   },
 
   checkExistEntityInCurrentPage: function(entityId) {
@@ -949,7 +932,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       var action = $a.getBackendActionByCode(actionCode);
 
       if (!action) {
-        window.alert($l.Common.ajaxDataReceivingErrorMessage);
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
         return;
       }
 
@@ -1134,7 +1117,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       this._contextMenuComponent = null;
     }
 
-    Quantumart.QP8.Utils.dispose.call(this, [
+    $q.dispose.call(this, [
       '_onDataBindingHandler',
       '_onDataBoundHandler',
       '_onNodeClickingHandler',

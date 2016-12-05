@@ -118,7 +118,7 @@ namespace Quantumart.QP8.Assembling
                                                           $"select cc.* from content_to_content cc inner join CONTENT c on l_content_id = c.CONTENT_ID INNER JOIN CONTENT c2 on r_content_id = c2.CONTENT_ID WHERE c.SITE_ID = {SiteId} and c2.SITE_ID = {SiteId} and cc.link_id in (select link_id from content_attribute ca)"));
 
         #region constructors and initializers
-        public AssembleContentsController(int siteId, string sqlMetalPath, string customerCode) : base(customerCode)
+        public AssembleContentsController(int siteId, string sqlMetalPath, string connectionParameter) : base(connectionParameter)
         {
             FillController(siteId, sqlMetalPath);
         }

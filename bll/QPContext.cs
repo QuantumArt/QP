@@ -1,49 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Data.SqlClient;
-using System.Web;
-using Quantumart.QP8.Security;
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.Repository;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Transactions;
+using System.Web;
 using Microsoft.Practices.Unity;
+using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
+using Quantumart.QP8.Security;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL
 {
     public interface IContextStorage
     {
         T GetValue<T>(string key);
+
         void SetValue<T>(T value, string key);
+
         void ResetValue(string key);
+
         IEnumerable<string> Keys { get; }
     }
 
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class QPContext
     {
         private const string CurrentUserIdKey = "CurrentUserId";
         private const string CurrentGroupIdsKey = "CurrentGroupIds";
         private const string CurrentCustomerCodeKey = "CurrentCustomerCode";
         private const string CurrentSqlVersionKey = "CurrentSqlVersion";
+        private const string CurrentConnectionScopeKey = "CurrentConnectionScope";
+        private const string BackendActionContextKey = "BackendActionContext";
+        private const string CurrentDbConnectionStringKey = "CurrentDbConnectionString";
+
+
         private const string IsAdminKey = "IsAdmin";
         private const string CanUnlockItemsKey = "CanUnlockItems";
         private const string IsLiveKey = "IsLive";
-        private const string UseConnectionStringKey = "UseConnectionString";
 
-
-        /// <summary>
-        /// текущий объект ObjectContext для работы с ADO.Net Entity Framework
-        /// </summary>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         public static QP8Entities EFContext
         {
             get
             {
-
                 QP8Entities dbContext;
                 if (QPConnectionScope.Current == null)
                 {
@@ -52,164 +57,199 @@ namespace Quantumart.QP8.BLL
                 }
                 else
                 {
-                    dbContext = new QP8Entities(QPConnectionScope.Current.EFConnection);
+                    dbContext = new QP8Entities(QPConnectionScope.Current.EfConnection);
                 }
+
                 dbContext.ContextOptions.LazyLoadingEnabled = false;
                 return dbContext;
             }
         }
 
-        private static T GetValueFromStorage<T>(T threadStorage, string key)
+        public static string GetRecordXmlFilePath()
         {
-            if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
-                return _externalContextStorage.GetValue<T>(key);
-            else if (HttpContext.Current == null)
+            return $"{QPConfiguration.TempDirectory}{CurrentCustomerCode}.xml";
+        }
+
+        private static T GetValueFromStorage<T>(T threadStorage, string key, bool useThreadStorage = false)
+        {
+            if (useThreadStorage)
+            {
                 return threadStorage;
-            else
-                return (T)HttpContext.Current.Items[key];
-        }
+            }
 
-
-        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key)
-        {
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
-                _externalContextStorage.SetValue(value, key);
+            {
+                return _externalContextStorage.GetValue<T>(key);
+            }
+
             if (HttpContext.Current == null)
-                threadStorage = value;
-            else
-                HttpContext.Current.Items[key] = value;
+            {
+                return threadStorage;
+            }
+
+            return (T)HttpContext.Current.Items[key];
         }
 
-        #region Cache
-
-            internal static Dictionary<int, Field> GetFieldCache()
+        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key, bool useThreadStorage = false)
+        {
+            if (useThreadStorage)
             {
-                return GetValueFromStorage(_fieldCache, "_FieldCache");
+                threadStorage = value;
             }
 
-            internal static void SetFieldCache(Dictionary<int, Field> value)
+            if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
             {
-                SetValueToStorage(ref _fieldCache, value, "_FieldCache");
+                _externalContextStorage.SetValue(value, key);
             }
 
-            internal static Dictionary<int, StatusType> GetStatusTypeCache()
+            if (HttpContext.Current == null)
             {
-                return GetValueFromStorage(_statusTypeCache, "_StatusType");
+                threadStorage = value;
             }
-
-            internal static Dictionary<int, User> GetUserCache()
+            else
             {
-                return GetValueFromStorage(_userCache, "_User");
+                HttpContext.Current.Items[key] = value;
             }
+        }
 
-            internal static void SetStatusTypeCache(Dictionary<int, StatusType> value)
-            {
-                SetValueToStorage(ref _statusTypeCache, value, "_StatusType");
-            }
+        internal static Dictionary<int, Field> GetFieldCache()
+        {
+            return GetValueFromStorage(_fieldCache, "_FieldCache");
+        }
 
-            internal static void SetUserCache(Dictionary<int, User> value)
-            {
-                SetValueToStorage(ref _userCache, value, "_User");
-            }
+        internal static void SetFieldCache(Dictionary<int, Field> value)
+        {
+            SetValueToStorage(ref _fieldCache, value, "_FieldCache");
+        }
 
-            internal static Dictionary<int, Content> GetContentCache()
-            {
-                return GetValueFromStorage(_contentCache, "_ContentCache");
-            }
+        internal static Dictionary<int, StatusType> GetStatusTypeCache()
+        {
+            return GetValueFromStorage(_statusTypeCache, "_StatusType");
+        }
 
-            internal static void SetContentCache(Dictionary<int, Content> value)
-            {
-                SetValueToStorage(ref _contentCache, value, "_ContentCache");
-            }
+        internal static Dictionary<int, User> GetUserCache()
+        {
+            return GetValueFromStorage(_userCache, "_User");
+        }
 
-            internal static Dictionary<int, Site> GetSiteCache()
-            {
-                return GetValueFromStorage(_siteCache, "_SiteCache");
-            }
+        internal static void SetStatusTypeCache(Dictionary<int, StatusType> value)
+        {
+            SetValueToStorage(ref _statusTypeCache, value, "_StatusType");
+        }
 
-            internal static void SetSiteCache(Dictionary<int, Site> value)
-            {
-                SetValueToStorage(ref _siteCache, value, "_SiteCache");
-            }
+        internal static void SetUserCache(Dictionary<int, User> value)
+        {
+            SetValueToStorage(ref _userCache, value, "_User");
+        }
 
-            internal static Dictionary<int, List<int>> GetContentFieldCache()
-            {
-                return GetValueFromStorage(_contentFieldCache, "_ContentFieldCache");
-            }
+        internal static Dictionary<int, Content> GetContentCache()
+        {
+            return GetValueFromStorage(_contentCache, "_ContentCache");
+        }
 
-            internal static void SetContentFieldCache(Dictionary<int, List<int>> value)
-            {
-                SetValueToStorage(ref _contentFieldCache, value, "_ContentFieldCache");
-            }
+        internal static void SetContentCache(Dictionary<int, Content> value)
+        {
+            SetValueToStorage(ref _contentCache, value, "_ContentCache");
+        }
 
-            internal static void ClearInternalStructureCache()
-            {
-                _siteCache = null;
-                _contentCache = null;
-                _contentFieldCache = null;
-                _fieldCache = null;
-                _statusTypeCache = null;
-                _userCache = null;
-            }
+        internal static Dictionary<int, Site> GetSiteCache()
+        {
+            return GetValueFromStorage(_siteCache, "_SiteCache");
+        }
 
-            internal static void ClearExternalStructureCache()
+        internal static void SetSiteCache(Dictionary<int, Site> value)
+        {
+            SetValueToStorage(ref _siteCache, value, "_SiteCache");
+        }
+
+        internal static Dictionary<int, List<int>> GetContentFieldCache()
+        {
+            return GetValueFromStorage(_contentFieldCache, "_ContentFieldCache");
+        }
+
+        internal static void SetContentFieldCache(Dictionary<int, List<int>> value)
+        {
+            SetValueToStorage(ref _contentFieldCache, value, "_ContentFieldCache");
+        }
+
+        internal static void ClearInternalStructureCache()
+        {
+            _siteCache = null;
+            _contentCache = null;
+            _contentFieldCache = null;
+            _fieldCache = null;
+            _statusTypeCache = null;
+            _userCache = null;
+        }
+
+        internal static void ClearExternalStructureCache()
+        {
+            if (_externalContextStorage?.Keys != null)
             {
-                if (_externalContextStorage?.Keys != null)
+                foreach (var key in _externalContextStorage.Keys)
                 {
-                    foreach (var key in _externalContextStorage.Keys)
+                    _externalContextStorage.ResetValue(key);
+                }
+            }
+        }
+
+        internal static void LoadStructureCache(bool clearExternal)
+        {
+            ClearInternalStructureCache();
+            if (clearExternal)
+            {
+                ClearExternalStructureCache();
+            }
+
+            if (GetSiteCache() == null)
+            {
+                SetSiteCache(SiteRepository.GetAll().ToDictionary(n => n.Id));
+            }
+
+            if (GetContentCache() == null)
+            {
+                SetContentCache(ContentRepository.GetAll().ToDictionary(n => n.Id));
+            }
+
+            IEnumerable<Field> fields = new Field[0];
+            if (GetFieldCache() == null || GetContentFieldCache() == null)
+            {
+                fields = FieldRepository.GetAll();
+            }
+
+            if (GetFieldCache() == null)
+            {
+                SetFieldCache(fields.ToDictionary(n => n.Id));
+            }
+
+            if (GetStatusTypeCache() == null)
+            {
+                SetStatusTypeCache(StatusTypeRepository.GetAll().ToDictionary(n => n.Id));
+            }
+
+            if (GetUserCache() == null)
+            {
+                SetUserCache(UserRepository.GetAllUsersList().ToDictionary(n => n.Id));
+            }
+
+            if (GetContentFieldCache() == null)
+            {
+                var dict = new Dictionary<int, List<int>>();
+                foreach (var item in fields)
+                {
+                    if (dict.ContainsKey(item.ContentId))
                     {
-                        _externalContextStorage.ResetValue(key);
+                        dict[item.ContentId].Add(item.Id);
+                    }
+                    else
+                    {
+                        dict.Add(item.ContentId, new List<int> { item.Id });
                     }
                 }
+
+                SetContentFieldCache(dict);
             }
-
-            internal static void LoadStructureCache(bool clearExternal)
-            {
-                ClearInternalStructureCache();
-                if (clearExternal)
-                    ClearExternalStructureCache();
-
-                if (GetSiteCache() == null)
-                    SetSiteCache(SiteRepository.GetAll().ToDictionary(n => n.Id));
-
-                if (GetContentCache() == null)
-                    SetContentCache(ContentRepository.GetAll().ToDictionary(n => n.Id));
-
-                IEnumerable<Field> fields = new Field[0];
-                if (GetFieldCache() == null || GetContentFieldCache() == null)
-                    fields = FieldRepository.GetAll();
-
-                if (GetFieldCache() == null)
-                {
-                    SetFieldCache(fields.ToDictionary(n => n.Id));
-                }
-
-                if (GetStatusTypeCache() == null)
-                {
-                    SetStatusTypeCache(StatusTypeRepository.GetAll().ToDictionary(n => n.Id));
-                }
-
-                if (GetUserCache() == null)
-                {
-                    SetUserCache(UserRepository.GetAllUsersList().ToDictionary(n => n.Id));
-                }
-
-                if (GetContentFieldCache() == null)
-                {
-                    var dict = new Dictionary<int, List<int>>();
-                    foreach (var item in fields)
-                    {
-                        if (dict.ContainsKey(item.ContentId))
-                            dict[item.ContentId].Add(item.Id);
-                        else
-                            dict.Add(item.ContentId, new List<int> { item.Id });
-                    }
-                    SetContentFieldCache(dict);
-                }
-
-            }
-
-        #endregion
+        }
 
         [ThreadStatic]
         private static int? _currentUserId;
@@ -251,7 +291,16 @@ namespace Quantumart.QP8.BLL
         private static Version _currentSqlVersion;
 
         [ThreadStatic]
-        private static bool _useConnectionString;
+        private static QPConnectionScope _currentConnectionScope;
+
+        [ThreadStatic]
+        private static string _currentDbConnectionString;
+
+        [ThreadStatic]
+        private static BackendActionContext _backendActionContext;
+
+        [ThreadStatic]
+        private static bool _useThreadStorageForConnectionScope;
 
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
@@ -293,6 +342,7 @@ namespace Quantumart.QP8.BLL
                     result = (HttpContext.Current.User.Identity as QPIdentity)?.Id;
                     SetCurrentUserIdValueToStorage(result);
                 }
+
                 return result ?? 0;
             }
             set
@@ -315,7 +365,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-
         public static bool IsAdmin
         {
             get
@@ -325,22 +374,18 @@ namespace Quantumart.QP8.BLL
                 {
                     using (new QPConnectionScope())
                     {
-                    result = Common.IsAdmin(QPConnectionScope.Current.DbConnection, CurrentUserId);
+                        result = Common.IsAdmin(QPConnectionScope.Current.DbConnection, CurrentUserId);
                     }
+
                     SetIsAdminValueToStorage(result);
                 }
+
                 return (bool)result;
             }
             set
             {
                 SetIsAdminValueToStorage(value);
             }
-        }
-
-        public static bool UseConnectionString
-        {
-            get { return _useConnectionString; }
-            set { _useConnectionString = value; }
         }
 
         public static int[] CurrentGroupIds
@@ -354,8 +399,10 @@ namespace Quantumart.QP8.BLL
                     {
                         result = Common.GetGroupIds(QPConnectionScope.Current.DbConnection, CurrentUserId);
                     }
+
                     SetCurrentGroupIdsValueToStorage(result);
                 }
+
                 return result;
             }
             set
@@ -390,7 +437,7 @@ namespace Quantumart.QP8.BLL
             get
             {
                 var value = GetValueFromStorage(_isLive, IsLiveKey);
-                return (value.HasValue) && value.Value ;
+                return value.HasValue && value.Value;
             }
             set
             {
@@ -398,14 +445,8 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// имя текущего пользователя
-        /// </summary>
         public static string CurrentUserName => (HttpContext.Current.User.Identity as QPIdentity)?.Name;
 
-        /// <summary>
-        /// текущий код клиента
-        /// </summary>
         public static string CurrentCustomerCode
         {
             get
@@ -425,6 +466,30 @@ namespace Quantumart.QP8.BLL
             set
             {
                 SetCurrentCustomerCodeValueToStorage(value);
+            }
+        }
+
+        internal static QPConnectionScope CurrentConnectionScope
+        {
+            get
+            {
+                return GetValueFromStorage(_currentConnectionScope, CurrentConnectionScopeKey, UseThreadStorageForConnectionScope);
+            }
+            set
+            {
+                SetValueToStorage(ref _currentConnectionScope, value, CurrentConnectionScopeKey, UseThreadStorageForConnectionScope);
+            }
+        }
+
+        internal static BackendActionContext BackendActionContext
+        {
+            get
+            {
+                return GetValueFromStorage(_backendActionContext, BackendActionContextKey);
+            }
+            set
+            {
+                SetValueToStorage(ref _backendActionContext, value, BackendActionContextKey);
             }
         }
 
@@ -450,40 +515,38 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public static QPIdentity CurrentUserIdentity => (HttpContext.Current != null && HttpContext.Current.User != null) ? HttpContext.Current.User.Identity as QPIdentity : null;
+        public static QPIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QPIdentity : null;
 
-        /// <summary>
-        /// текущая строка подключения к БД
-        /// </summary>
-        public static string CurrentDBConnectionString => UseConnectionString ? QPContext.CurrentCustomerCode : QPConfiguration.ConfigConnectionString(QPContext.CurrentCustomerCode);
 
-        /// <summary>
-        /// текущая строка подключения к БД для ADO.Net Entity Framework
-        /// </summary>
-        private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDBConnectionString);
+        public static string CurrentDbConnectionString
+        {
+            get
+            {
+                var result = GetValueFromStorage(_currentDbConnectionString, CurrentDbConnectionStringKey);
+                if (result == null)
+                {
+                    result = QPConfiguration.GetConnectionString(CurrentCustomerCode);
+                    SetValueToStorage(ref _currentDbConnectionString, result, CurrentDbConnectionStringKey);
+                }
+                return result;
+            }
+            set
+            {
+                SetValueToStorage(ref _currentDbConnectionString, value, CurrentDbConnectionStringKey);
+            }
+        }
 
-        /// <summary>
-        /// Подготавливает строку подключения к БД для использования в Entity Framework
-        /// </summary>
-        /// <param name="connectionString">строка подключения к БД</param>
-        /// <returns>строка подключения к БД для Entity Framework</returns>
+        private static string CurrentDbConnectionStringForEntities => PreparingDbConnectionStringForEntities(CurrentDbConnectionString);
+
         private static string PreparingDbConnectionStringForEntities(string connectionString)
         {
-            return
-                $"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
+            return $"metadata=res://*/QP8Model.csdl|res://*/QP8Model.ssdl|res://*/QP8Model.msl;provider=System.Data.SqlClient;provider connection string=\"{connectionString}\"";
         }
 
-        /// <summary>
-        /// Проверяет существование кода клиента
-        /// </summary>
-        /// <param name="customerCode">код клиента</param>
-        /// <returns>результат проверки (true - существует; false - не существует)</returns>
         public static bool CheckCustomerCode(string customerCode)
         {
-            return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name").Value).Contains(customerCode);
+            return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name")?.Value).Contains(customerCode);
         }
-
-        #region Log In/Out
 
         /// <summary>
         /// Возвращает информацию о пользователя по его логину и паролю
@@ -492,21 +555,20 @@ namespace Quantumart.QP8.BLL
         /// <param name="errorCode">код ошибки</param>
         /// <param name="message">сообщение</param>
         /// <returns>информация о пользователе</returns>
-        public static QPUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
+        public static QpUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
         {
-            QPUser resultUser = null;
+            QpUser resultUser = null;
             message = string.Empty;
 
-            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.ConfigConnectionString(data.CustomerCode))))
+            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.GetConnectionString(data.CustomerCode))))
             {
                 try
                 {
                     var dbUser = dbContext.Authenticate(data.UserName, data.Password, data.UseAutoLogin, false);
-                    var user = MappersRepository.UserMapper.GetBizObject(dbUser);
-
+                    var user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     if (user != null)
                     {
-                        resultUser = new QPUser
+                        resultUser = new QpUser
                         {
                             Id = user.Id,
                             Name = user.LogOn,
@@ -516,32 +578,32 @@ namespace Quantumart.QP8.BLL
                         };
 
                         CreateSuccessfulSession(user, dbContext);
-
                         var context = HttpContext.Current;
                         if (context != null)
                         {
-                            context.Items[Constants.ApplicationConfigurationKeys.DBContext] = dbContext;
+                            context.Items[ApplicationConfigurationKeys.DBContext] = dbContext;
                             QP7Service.SetPassword(data.Password);
                         }
                     }
                     else
-                        CreateFaildSession(data, dbContext);
+                    {
+                        CreateFailedSession(data, dbContext);
+                    }
                 }
                 catch (SqlException ex)
                 {
                     message = ex.Message;
                     errorCode = ex.State;
-                    CreateFaildSession(data, dbContext);
+                    CreateFailedSession(data, dbContext);
                 }
             }
-
 
             return resultUser;
         }
 
         public static string LogOut()
         {
-            using (var transaction = new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions {IsolationLevel = IsolationLevel.ReadCommitted}))
+            using (var transaction = new TransactionScope(TransactionScopeOption.Suppress, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
                 using (new QPConnectionScope())
                 {
@@ -551,23 +613,15 @@ namespace Quantumart.QP8.BLL
                 }
 
                 var loginUrl = AuthenticationHelper.LogOut();
-
                 transaction.Complete();
-
                 HttpContext.Current.Session.Abandon();
-
-
                 return loginUrl;
             }
         }
-        #endregion
 
-        #region User Session Log
         /// <summary>
         /// Создать сессию при успешном логине
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="dbContext"></param>
         private static void CreateSuccessfulSession(User user, QP8Entities dbContext)
         {
             // сбросить sid и установить EndTime для всех сессий пользователя
@@ -588,26 +642,18 @@ namespace Quantumart.QP8.BLL
                 IP = HttpContext.Current.Request.UserHostAddress,
                 ServerName = Environment.MachineName.Left(255)
             };
-            var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(sessionsLog);
+
+            var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
-
         }
 
         /// <summary>
-        /// закрыть открытые сессии пользователя
+        /// Закрыть открытые сессии пользователя
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="dbContext"></param>
-        /// <param name="currentDt"></param>
         private static void CloseUserSessions(decimal userId, QP8Entities dbContext, DateTime currentDt)
         {
-            var userSessions =
-                         dbContext.SessionsLogSet
-                         .Where(s => s.UserId == userId &&
-                                     !s.EndTime.HasValue &&
-                                     !s.IsQP7)
-                         .ToArray();
+            var userSessions = dbContext.SessionsLogSet.Where(s => s.UserId == userId && !s.EndTime.HasValue && !s.IsQP7).ToArray();
             foreach (var us in userSessions)
             {
                 us.EndTime = currentDt;
@@ -618,9 +664,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создать сессию при неудачном логине
         /// </summary>
-        /// <param name="data"></param>
-        /// <param name="dbContext"></param>
-        private static void CreateFaildSession(LogOnCredentials data, QP8Entities dbContext)
+        private static void CreateFailedSession(LogOnCredentials data, QP8Entities dbContext)
         {
             var sessionsLog = new SessionsLog
             {
@@ -633,30 +677,42 @@ namespace Quantumart.QP8.BLL
                 IP = HttpContext.Current.Request.UserHostAddress,
                 ServerName = Environment.MachineName.Left(255)
             };
-            var sessionsLogDal = MappersRepository.SessionsLogMapper.GetDalObject(sessionsLog);
+
+            var sessionsLogDal = MapperFacade.SessionsLogMapper.GetDalObject(sessionsLog);
             dbContext.AddToSessionsLogSet(sessionsLogDal);
             dbContext.SaveChanges();
         }
-        #endregion
 
-        public static IUnityContainer CurrentUnityContainer { get;  private set; }
+        public static IUnityContainer CurrentUnityContainer { get; private set; }
+
         public static void SetUnityContainer(IUnityContainer container)
         {
             CurrentUnityContainer = container;
         }
 
         private static IContextStorage _externalContextStorage;
+
         private static HashSet<string> _externalContextStorageKeys;
-        public static IContextStorage ExternalContextStorage {
+
+        public static bool UseThreadStorageForConnectionScope
+
+        {
+            get { return _useThreadStorageForConnectionScope; }
+            set { _useThreadStorageForConnectionScope = value; }
+        }
+
+        public static IContextStorage ExternalContextStorage
+        {
             set
             {
                 if (value.Keys == null || !value.Keys.Any())
+                {
                     throw new ArgumentException("Keys collection is empty");
+                }
 
                 _externalContextStorage = value;
                 _externalContextStorageKeys = new HashSet<string>(value.Keys);
             }
         }
-
     }
 }

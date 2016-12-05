@@ -1,46 +1,48 @@
-﻿using System.Web.Mvc;
+using System.Web.Mvc;
+using Quantumart.QP8.BLL.Services.ActionPermissions;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.ActionPermissions;
-using Quantumart.QP8.BLL.Services.ActionPermissions;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class ActionPermissionTreeController : QPController
     {
-		private readonly IActionPermissionTreeService service;
-		public ActionPermissionTreeController(IActionPermissionTreeService service)
-		{
-			this.service = service;
-		}
+        private readonly IActionPermissionTreeService _service;
 
-		[HttpGet]
-		[ExceptionResult(ExceptionResultMode.UiAction)]
-		[ActionAuthorize(ActionCode.ActionPermissionTree)]
-		[BackendActionContext(ActionCode.ActionPermissionTree)]
-		public ActionResult TreeView(string tabId)
+        public ActionPermissionTreeController(IActionPermissionTreeService service)
         {
-			ActionPermissionsTreeViewModel model = ActionPermissionsTreeViewModel.Create(tabId);
-			return this.JsonHtml("Index", model);
+            _service = service;
         }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ActionAuthorize(ActionCode.ActionPermissionTree)]
-		[BackendActionContext(ActionCode.ActionPermissionTree)]
-		public ActionResult GetTreeNodes(int? entityTypeId, int? userId, int? groupId)
-		{
-			return Json(service.GetTreeNodes(entityTypeId, userId, groupId));
-		}
+        [HttpGet]
+        [ExceptionResult(ExceptionResultMode.UiAction)]
+        [ActionAuthorize(ActionCode.ActionPermissionTree)]
+        [BackendActionContext(ActionCode.ActionPermissionTree)]
+        public ActionResult TreeView(string tabId)
+        {
+            var model = ActionPermissionsTreeViewModel.Create(tabId);
+            return JsonHtml("Index", model);
+        }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ActionAuthorize(ActionCode.ActionPermissionTree)]
-		[BackendActionContext(ActionCode.ActionPermissionTree)]
-		public ActionResult GetTreeNode(int? entityTypeId, int? actionId, int? userId, int? groupId)
-		{
-			return Json(service.GetTreeNode(entityTypeId, actionId, userId, groupId));
-		}
+        [HttpPost]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ActionAuthorize(ActionCode.ActionPermissionTree)]
+        [BackendActionContext(ActionCode.ActionPermissionTree)]
+        public ActionResult GetTreeNodes(int? entityTypeId, int? userId, int? groupId)
+        {
+            return Json(_service.GetTreeNodes(entityTypeId, userId, groupId));
+        }
+
+        [HttpPost]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ActionAuthorize(ActionCode.ActionPermissionTree)]
+        [BackendActionContext(ActionCode.ActionPermissionTree)]
+        public ActionResult GetTreeNode(int? entityTypeId, int? actionId, int? userId, int? groupId)
+        {
+            return Json(_service.GetTreeNode(entityTypeId, actionId, userId, groupId));
+        }
     }
 }

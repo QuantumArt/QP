@@ -1,15 +1,15 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Quantumart.QP8.Configuration;
 using C = Quantumart.QP8.Constants;
 
@@ -18,16 +18,9 @@ namespace Quantumart.QP8.BLL
     [HasSelfValidation]
     public class Site : LockableEntityObject
     {
-
-        #region constants
-
         public static readonly string DefaultContextClassName = "QPDataContext";
 
         public static readonly string DefaultConnectionStringName = "qp_database";
-
-        #endregion
-
-        #region creation
 
         internal Site()
         {
@@ -42,12 +35,6 @@ namespace Quantumart.QP8.BLL
             ConnectionStringName = DefaultConnectionStringName;
             _externalCssItems = new InitPropertyValue<IEnumerable<ExternalCss>>(() => ExternalCssHelper.GenerateExternalCss(ExternalCss));
         }
-
-        #endregion
-
-        #region properties
-
-        #region simple read-write
 
         /// <summary>
         /// название сущности
@@ -448,11 +435,6 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("ExternalDevelopment", NameResourceType = typeof(SiteStrings))]
         public bool ExternalDevelopment { get; set; }
-        #endregion
-
-
-        #region simple read-only
-
         public override string EntityTypeCode => C.EntityTypeCode.Site;
 
         public override string LockedByAnyoneElseMessage => SiteStrings.LockedByAnyoneElse;
@@ -470,59 +452,38 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                var prefix = (UseAbsoluteUploadUrl) ? UploadUrlPrefix : "http://" + Dns;
+                var prefix = UseAbsoluteUploadUrl ? UploadUrlPrefix : "http://" + Dns;
                 return prefix + UploadUrl;
             }
         }
 
         public string ImagesLongUploadUrl => LongUploadUrl + "images";
-
         public string LiveUrl => "http://" + Dns + LiveVirtualRoot;
-
         public string StageUrl => "http://" + ((SeparateDns) ? StageDns : Dns) + StageVirtualRoot;
-
-
         public string CurrentUrl => (IsLive) ? LiveUrl : StageUrl;
-
         public string TestBinDirectory => PathUtility.Combine(TestDirectory, SitePathRepository.RELATIVE_BIN_PATH);
-
         public string AppDataDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
-
         public string AppCodeDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
-
         public string AppDataStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
-
         public string AppCodeStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
     
         public bool IsDotNet => AssemblingType == C.AssemblingType.AspDotNet;
-
-        public string FullyQualifiedContextClassName => GetFullyQualifiedName(Namespace, ContextClassName);
 
         public string TempDirectoryForClasses => $@"{QPConfiguration.TempDirectory}\{QPContext.CurrentCustomerCode}\{Id}";
 
         public string TempArchiveForClasses => TempDirectoryForClasses + ".zip";
 
-        #endregion
-
-
-        #region references
-
-        public IEnumerable<ContentGroup> ContentGroups => ContentRepository.GetSiteContentGroups(Id);
-
-        public IEnumerable<Workflow> Workflows => WorkflowRepository.GetSiteWorkflows(Id);
 
         public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl };
 
         public override PathInfo PathInfo => BasePathInfo.GetSubPathInfo("images");
 
-        #endregion
+        public string FullyQualifiedContextClassName => GetFullyQualifiedName(Namespace, ContextClassName);
 
+        public IEnumerable<ContentGroup> ContentGroups => ContentRepository.GetSiteContentGroups(Id);
 
-        #endregion
+        public IEnumerable<Workflow> Workflows => WorkflowRepository.GetSiteWorkflows(Id);
 
-        #region methods
-
-        #region public
 
         public override void Validate()
         {
@@ -656,7 +617,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Генерирует XAML словарь по умолчанию
         /// </summary>
-        /// <returns></returns>
         private string GenerateDefaultXamlDictionary()
         {
             var container = new DynamicResourceDictionaryContainer();
@@ -692,8 +652,6 @@ namespace Quantumart.QP8.BLL
 
             VisualEditorRepository.SetSiteCommands(Id, changedCommands, defaultCommandsDictionary);
         }
-
-        #endregion
 
         /// <summary>
         /// Создает директории внутри сайта
@@ -799,13 +757,11 @@ namespace Quantumart.QP8.BLL
                 errors.ErrorFor(s => s.ExternalUrl, SiteStrings.ExternalUrlNotValid);
             }
         }
-        #endregion
 
         internal void CreateLinqDirectories()
         {
             var dataDir = (IsLive) ? AppDataDirectory : AppDataStageDirectory;
             var codeDir = (IsLive) ? AppCodeDirectory : AppCodeStageDirectory;
-
             Directory.CreateDirectory(dataDir);
             SitePathRepository.CopySiteDirectory(dataDir, SitePathRepository.RELATIVE_APP_DATA_PATH);
             if (!DownloadEfSource)

@@ -1,22 +1,16 @@
 ﻿@model Quantumart.QP8.WebMvc.ViewModels.ArticleVersion.ArticleVersionViewModel
-           
-@using Quantumart.QP8
-@using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
-@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
 
 @using (Html.BeginTabForm(Model))
 {
     using (Html.BeginFieldGroup(ArticleStrings.CustomFieldsGroup))
     {
-        foreach (FieldValue pair in Model.Data.FieldValues)
+        foreach (var pair in Model.Data.FieldValues)
         {
             @Html.Field(pair, forceReadonly: Model.IsChangingActionsProhibited)
         }
     }
-    
+
     using (Html.BeginFieldGroup(EntityObjectStrings.VersionTitle))
     {
         @Html.DisplayFieldFor(e => e.Data.ExpandedName)
@@ -28,11 +22,11 @@
     {
         using (Html.BeginFieldGroup(EntityObjectStrings.ComparedVersionTitle))
         {
-		    @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ExpandedName)
-		    @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ModifiedToDisplay)
+            @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ExpandedName)
+            @Html.DisplayFieldFor(e => e.Data.VersionToMerge.ModifiedToDisplay)
             @Html.DisplayFieldFor(e => e.Data.VersionToMerge.LastModifiedByUserToDisplay)
         }
     }
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

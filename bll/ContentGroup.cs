@@ -1,180 +1,126 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Validators;
+﻿using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public class ContentGroup : EntityObject
-	{
-		#region private fields
+    {
+        #region private fields
 
-		private Site _Site;
+        private Site _Site;
 
-		#endregion
+        #endregion
 
-		#region constants
+        #region constants
 
-		public static readonly int MaxNameLength = 255;
+        public static readonly int MaxNameLength = 255;
 
-		public static readonly string DefaultName = "Default Group";
-		
-		private static string _TranslatedDefaultName;
+        public static readonly string DefaultName = "Default Group";
 
-		public static string TranslatedDefaultName
-		{
-			get
-			{
-				if (_TranslatedDefaultName == null)
-					_TranslatedDefaultName = Translator.Translate(DefaultName);
-				return _TranslatedDefaultName;
-			}
-		}
+        private static string _TranslatedDefaultName;
 
-		
-	
-		#endregion
+        public static string TranslatedDefaultName
+        {
+            get
+            {
+                if (_TranslatedDefaultName == null)
+                    _TranslatedDefaultName = Translator.Translate(DefaultName);
+                return _TranslatedDefaultName;
+            }
+        }
 
-		#region creation
 
-		public ContentGroup()
-		{
 
-		}
+        #endregion
 
-		public ContentGroup(int siteId)
-		{
-			SiteId = siteId;
-		}
+        #region creation
 
-		public static ContentGroup GetDefaultGroup(int siteId)
-		{
-			return ContentRepository.GetGroupById(ContentRepository.GetDefaultGroupId(siteId));
-		}
+        public ContentGroup()
+        {
 
-		#endregion
+        }
 
-		#region properties
+        public ContentGroup(int siteId)
+        {
+            SiteId = siteId;
+        }
 
-		#region simple read-write
+        public static ContentGroup GetDefaultGroup(int siteId)
+        {
+            return ContentRepository.GetGroupById(ContentRepository.GetDefaultGroupId(siteId));
+        }
 
-		[RequiredValidator(MessageTemplateResourceName = "GroupNameNotEntered", MessageTemplateResourceType = typeof(ContentStrings))]
-		[MaxLengthValidator(255, MessageTemplateResourceName = "GroupNameMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-		[FormatValidator(Constants.RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "GroupNameInvalidFormat", MessageTemplateResourceType = typeof(ContentStrings))]
-		[LocalizedDisplayName("GroupName", NameResourceType = typeof(ContentStrings))]
-		public override string Name { get; set; }
+        #endregion
 
-		public int SiteId { get; set; }
+        #region properties
 
-		#endregion
+        #region simple read-write
 
-		#region simple read-only
+        [RequiredValidator(MessageTemplateResourceName = "GroupNameNotEntered", MessageTemplateResourceType = typeof(ContentStrings))]
+        [MaxLengthValidator(255, MessageTemplateResourceName = "GroupNameMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
+        [FormatValidator(Constants.RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "GroupNameInvalidFormat", MessageTemplateResourceType = typeof(ContentStrings))]
+        [LocalizedDisplayName("GroupName", NameResourceType = typeof(ContentStrings))]
+        public override string Name { get; set; }
 
-		public override int ParentEntityId
-		{
-			get
-			{
-				return SiteId;
-			}
-		}
+        public int SiteId { get; set; }
 
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return Constants.EntityTypeCode.ContentGroup;
-			}
-		}
+        #endregion
 
-		public override string CannotAddBecauseOfSecurityMessage
-		{
-			get
-			{
-				return ContentStrings.CannotAddGroupBecauseOfSecurity;
-			}
-		}
+        #region simple read-only
 
-		public override string CannotUpdateBecauseOfSecurityMessage
-		{
-			get
-			{
-				return ContentStrings.CannotUpdateGroupBecauseOfSecurity;
-			}
-		}
+        public override int ParentEntityId => SiteId;
 
-		public override string PropertyIsNotUniqueMessage
-		{
-			get
-			{
-				return ContentStrings.GroupNameNonUnique;
-			}
-		}
+        public override string EntityTypeCode => Constants.EntityTypeCode.ContentGroup;
 
-		public bool IsDefault
-		{
-			get
-			{
-				return Id == ContentRepository.GetDefaultGroupId(SiteId);
-			}
-		}
+        public override string CannotAddBecauseOfSecurityMessage => ContentStrings.CannotAddGroupBecauseOfSecurity;
 
-		public string OutputName
-		{
-			get
-			{
-				return (!IsDefault) ? Name : Translator.Translate(Name);
-			}
-		}
+        public override string CannotUpdateBecauseOfSecurityMessage => ContentStrings.CannotUpdateGroupBecauseOfSecurity;
 
-		#endregion
+        public override string PropertyIsNotUniqueMessage => ContentStrings.GroupNameNonUnique;
 
-		#region references
+        public bool IsDefault => Id == ContentRepository.GetDefaultGroupId(SiteId);
 
-		public Site Site 
-		{ 
-			get
-			{
-				if (_Site == null)
-				{
-					_Site = SiteRepository.GetById(SiteId);
-				}
-				return _Site;
-			}
-		}
+        public string OutputName => (!IsDefault) ? Name : Translator.Translate(Name);
+        #endregion
 
-		public override EntityObject Parent
-		{
-			get
-			{
-				return Site;
-			}
-		}
+        #region references
 
-		#endregion
+        public Site Site
+        {
+            get
+            {
+                if (_Site == null)
+                {
+                    _Site = SiteRepository.GetById(SiteId);
+                }
+                return _Site;
+            }
+        }
 
-		#endregion
+        public override EntityObject Parent => Site;
+        #endregion
 
-		#region methods
+        #endregion
 
-		public override void Validate()
-		{
-			RulesException<ContentGroup> errors = new RulesException<ContentGroup>();
+        #region methods
 
-			if (IsDefault)
-			{
-				errors.ErrorForModel(ContentStrings.CannotUpdateDefaultGroup);
-			}
-			else
-			{
-				base.Validate(errors);
-			}
-			if (!errors.IsEmpty)
-				throw errors;
-		}
+        public override void Validate()
+        {
+            RulesException<ContentGroup> errors = new RulesException<ContentGroup>();
 
-		#endregion
+            if (IsDefault)
+            {
+                errors.ErrorForModel(ContentStrings.CannotUpdateDefaultGroup);
+            }
+            else
+            {
+                base.Validate(errors);
+            }
+            if (!errors.IsEmpty)
+                throw errors;
+        }
+
+        #endregion
     }
 }

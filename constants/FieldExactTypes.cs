@@ -1,8 +1,6 @@
 ﻿namespace Quantumart.QP8.Constants
 {
-    /// <summary>
-    /// Все типы поля контента с разделением Relation на M2M и O2M
-    /// </summary>
+    // TODO: check
     public enum FieldExactTypes
     {
         Undefined = FieldTypeCodes.Undefined,

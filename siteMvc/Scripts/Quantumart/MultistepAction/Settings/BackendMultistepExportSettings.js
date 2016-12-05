@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.MultistepActionExportSettings = function (options) {
+Quantumart.QP8.MultistepActionExportSettings = function (options) {
 	this.options = options;
 };
 Quantumart.QP8.MultistepActionExportSettings.prototype = {

@@ -1,49 +1,46 @@
-﻿using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.Constants;
+using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services.MultistepActions;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class RemoveContentController : QPController
     {
-		private readonly IMultistepActionService service;
+        private readonly IMultistepActionService _service;
 
-		public RemoveContentController(IMultistepActionService service)
-		{
-			this.service = service;
-		}
+        public RemoveContentController(IMultistepActionService service)
+        {
+            _service = service;
+        }
 
-		[HttpPost]
-		[ExceptionResult(ExceptionResultMode.OperationAction)]
-		[ActionAuthorize(ActionCode.RemoveContent)]
-		[BackendActionContext(ActionCode.RemoveContent)]
-		[BackendActionLog]
-		public ActionResult Setup(int parentId, int id, bool? boundToExternal)
-		{
-			MultistepActionSettings settings = service.Setup(parentId, id, boundToExternal);
-			return Json(settings);
-		}
+        [HttpPost]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
+        [ActionAuthorize(ActionCode.RemoveContent)]
+        [BackendActionContext(ActionCode.RemoveContent)]
+        [BackendActionLog]
+        public ActionResult Setup(int parentId, int id, bool? boundToExternal)
+        {
+            return Json(_service.Setup(parentId, id, boundToExternal));
+        }
 
-		[HttpPost]
-		[ConnectionScope()]
-		[ExceptionResult(ExceptionResultMode.OperationAction)]
+        [HttpPost]
+        [ConnectionScope]
+        [ExceptionResult(ExceptionResultMode.OperationAction)]
 
-		public ActionResult Step(int stage, int step)
-		{
-			MultistepActionStepResult stepResult = service.Step(stage, step);
-			return Json(stepResult);
-		}
+        public ActionResult Step(int stage, int step)
+        {
+            return Json(_service.Step(stage, step));
+        }
 
-		[HttpPost]
-		[BackendActionContext(ActionCode.RemoveContent)]
-		[Record(ActionCode.SimpleRemoveContent, true)]
-		public ActionResult TearDown(bool isError)
-		{
-			service.TearDown();
-			return null;
-		}
+        [HttpPost]
+        [BackendActionContext(ActionCode.RemoveContent)]
+        [Record(ActionCode.SimpleRemoveContent, true)]
+        public void TearDown(bool isError)
+        {
+            _service.TearDown();
+        }
     }
 }

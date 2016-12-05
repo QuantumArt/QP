@@ -369,8 +369,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         }
       }
 
-      $headerCheckbox = null;
-
       gridComponent.$tbody
         .undelegate(this.ROW_CLICKABLE_SELECTORS, 'click')
         .delegate(this.ROW_CLICKABLE_SELECTORS + ' td', 'click', this._onRowCellClickHandler)
@@ -388,9 +386,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
       contextMenuComponent.initialize();
       contextMenuComponent.addMenuItemsToMenu(true);
 
-      var contextMenuEventType = contextMenuComponent.getContextMenuEventType();
-      $grid.delegate(this.ROW_CLICKABLE_SELECTORS, contextMenuEventType, this._onContextMenuHandler);
-
+      $grid.delegate(this.ROW_CLICKABLE_SELECTORS, contextMenuComponent.getContextMenuEventType(), this._onContextMenuHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onRowContextMenuShowingHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onRowContextMenuItemClickingHandler);
       contextMenuComponent.attachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onRowContextMenuHiddenHandler);
@@ -480,7 +476,7 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   getRowByEntityId: function(entityId) {
     return [].find.call(this.getRows(), function(rowEl) {
-      return this.getEntityId(rowEl) === entityId;
+      return this.getEntityId(rowEl) === +entityId;
     }, this);
   },
 
@@ -754,11 +750,10 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     if (!$q.isNullOrEmpty($row)) {
       var action = $a.getBackendActionByCode(actionCode);
       if (!action) {
-        window.alert($l.Common.ajaxDataReceivingErrorMessage);
+        $q.alertError($l.Common.ajaxDataReceivingErrorMessage);
       } else {
         var entityId = this.getEntityId($row);
         var context = { ctrlKey: ctrlKey };
-
         if (actionCode == ACTION_CODE_ADD_NEW_CHILD_ARTICLE) {
           context.additionalUrlParameters = {
             fieldId: this._treeFieldId,
@@ -786,7 +781,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         });
 
         params.correct(action);
-
         var eventArgs = $a.getEventArgsFromActionWithParams(action, params);
         eventArgs.set_startedByExternal(this._isBindToExternal);
 
@@ -958,14 +952,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   _onDataBinding: function(e) {
     var params = this._createDataQueryParams();
-
     e.data = $.extend(e.data, params);
     if (this._isDataLoaded) {
       var action = this._getCurrentAction();
-
       if (action) {
         var eventArgs = $a.getEventArgsFromAction(action);
-
         eventArgs.set_isMultipleEntities(true);
         eventArgs.set_entityTypeCode(this._entityTypeCode);
         eventArgs.set_entities(this.getSelectedEntities());
@@ -1041,13 +1032,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     var isMiddleClick = e.type == 'mouseup' && e.which == 2;
     var isLeftClick = e.type == 'click' && (e.which == 1 || e.which == 0);
     var isRightClick = !isLeftClick && !isMiddleClick;
-
     if (this.isGridBusy() || isRightClick) {
       return false;
     }
 
     var $row = $(e.currentTarget).parent().parent();
-
     this.set_actionCodeFromRow($row);
     this.set_entityTypeFromRow($row);
 
@@ -1090,8 +1079,9 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
   },
 
   _onRowContextMenuShowing: function(eventType, sender, args) {
+    var $element = $(args.get_targetElement());
     var menuComponent = args.get_menu();
-    if (!$q.isNullOrEmpty($(args.get_targetElement())) && !$q.isNullOrEmpty(menuComponent)) {
+    if (menuComponent && $element.length) {
       var entityTypeCode = this._entityTypeCode;
       var entityId = this._currentRowId;
       var parentEntityId = this._parentEntityId;
@@ -1101,15 +1091,15 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   _onRowContextMenuItemClicking: function(eventType, sender, args) {
     var $menuItem = $(args.get_menuItem());
-    if (!$q.isNullOrEmpty($menuItem)) {
+    if ($menuItem.length) {
       this._contextMenuActionCode = $menuItem.data('action_code');
     }
   },
 
   _onRowContextMenuHidden: function(eventType, sender, args) {
-    if (!$q.isNullOrEmpty(this._contextMenuActionCode)) {
+    if (this._contextMenuActionCode) {
       this.executeAction($(args.get_targetElement()), this._contextMenuActionCode, false, false);
-      this._contextMenuActionCode = null;
+      this._contextMenuActionCode = '';
     }
   },
 
@@ -1123,7 +1113,6 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
 
   _applyStatusColor: function(row, item) {
     var id = item['STATUS_TYPE_COLOR'];
-
     if (id) {
       var $row = $(row);
       var isAlt = $row.hasClass('t-alt');
@@ -1183,13 +1172,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
             .undelegate(this.ROW_CLICKABLE_SELECTORS + ' ' + this.CHECKBOX_CELL_SELECTORS, 'click', this._onRowCheckboxCellClickHandler);
         }
 
-        var contextMenuEventType = this._contextMenuComponent.getContextMenuEventType();
-
         $grid
           .unbind('dataBinding')
           .unbind('dataBound')
           .unbind('rowDataBound')
-          .undelegate(this.ROW_CLICKABLE_SELECTORS, contextMenuEventType, this._onContextMenuHandler);
+          .undelegate(this.ROW_CLICKABLE_SELECTORS, this._contextMenuComponent.getContextMenuEventType(), this._onContextMenuHandler);
 
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onRowContextMenuShowingHandler);
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onRowContextMenuItemClickingHandler);

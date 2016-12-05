@@ -7,28 +7,27 @@ using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Article
 {
-	public class ContextBlockViewModel
-	{
-		public ContextBlockViewModel(int id, string actionCode, string hostId)
-		{
-			_id = id;
-		    IsArchive = actionCode == ActionCode.ArchiveArticles;
-			_hostId = hostId;
-			_relatedContents = new Lazy<IEnumerable<ArticleContextSearchBlockItem>>(() => ContentService.GetContentsForContextSwitching(_id));
-		}
+    public class ContextBlockViewModel
+    {
+        public ContextBlockViewModel(int id, string actionCode, string hostId)
+        {
+            _id = id;
+            IsArchive = actionCode == ActionCode.ArchiveArticles;
+            _hostId = hostId;
+            _relatedContents = new Lazy<IEnumerable<ArticleContextSearchBlockItem>>(() => ContentService.GetContentsForContextSwitching(_id));
+        }
 
-		private readonly int _id;
-	    private readonly string _hostId;
-		private readonly Lazy<IEnumerable<ArticleContextSearchBlockItem>> _relatedContents;
+        private readonly int _id;
+        private readonly string _hostId;
+        private readonly Lazy<IEnumerable<ArticleContextSearchBlockItem>> _relatedContents;
 
+        public IEnumerable<ArticleContextSearchBlockItem> RelatedContents => _relatedContents.Value;
 
-	    public IEnumerable<ArticleContextSearchBlockItem> RelatedContents => _relatedContents.Value;
+        public bool IsArchive { get; }
 
-	    public bool IsArchive { get; }
-
-	    public string UniqueId(string id)
-		{
-			return HtmlHelperFieldExtensions.UniqueId(id, _hostId);
-		}
-	}
+        public string UniqueId(string id)
+        {
+            return HtmlHelperFieldExtensions.UniqueId(id, _hostId);
+        }
+    }
 }

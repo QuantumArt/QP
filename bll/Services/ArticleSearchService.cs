@@ -34,7 +34,7 @@ namespace Quantumart.QP8.BLL.Services
         /// </summary>
         /// <param name="fieldID"></param>
         /// <returns></returns>
-        Field GetFieldByID(int fieldID); 
+        Field GetFieldByID(int fieldID);
         /// <summary>
         /// Возвращает список всех пользователей
         /// </summary>
@@ -50,13 +50,13 @@ namespace Quantumart.QP8.BLL.Services
 		IEnumerable<ListItem> GetSimpleList(Field field, IEnumerable<int> selectedArticleIDs);
 
 		/// <summary>
-		/// Возвращает список настроек фильтров по умолчанию для списка статей 
+		/// Возвращает список настроек фильтров по умолчанию для списка статей
 		/// </summary>
 		/// <param name="actionCode"></param>
 		/// <param name="entityId"></param>
 		/// <returns></returns>
 		IEnumerable<RelationSearchBlockState> GetDefaultFilterStates(string actionCode, int contentId);
-	}   
+	}
 
     /// <summary>
     /// Реализация сервиса блока поиска по статьям
@@ -101,11 +101,11 @@ namespace Quantumart.QP8.BLL.Services
 			{
 				result = new ArticleSearchableField[]
 				{
-					new ArticleSearchableField() 
-					{ 
-						Name = ArticleStrings.SearchBlock_AllTextFields, 
+					new ArticleSearchableField()
+					{
+						Name = ArticleStrings.SearchBlock_AllTextFields,
 						ID = String.Join(",", ids),
-						ColumnName = null, 
+						ColumnName = null,
 						ArticleFieldSearchType = ArticleFieldSearchType.FullText,
 						IsAll = true
 					}
@@ -115,11 +115,11 @@ namespace Quantumart.QP8.BLL.Services
 
 			result = new ArticleSearchableField[]
 				{
-					new ArticleSearchableField() 
-					{ 
-						Name = ArticleStrings.SearchBlock_AllFields, 
+					new ArticleSearchableField()
+					{
+						Name = ArticleStrings.SearchBlock_AllFields,
 						ID = "",
-						ColumnName = null, 
+						ColumnName = null,
 						ArticleFieldSearchType = ArticleFieldSearchType.FullText,
 						IsAll = true
 					}
@@ -281,7 +281,7 @@ namespace Quantumart.QP8.BLL.Services
 			else
 				return ArticleFieldSearchType.None;
         }
-                
+
 
         public IEnumerable<User> GetAllUsersList()
         {
@@ -303,15 +303,15 @@ namespace Quantumart.QP8.BLL.Services
         }
 
 		/// <summary>
-		/// Возвращает список настроек фильтров по умолчанию для списка статей 
+		/// Возвращает список настроек фильтров по умолчанию для списка статей
 		/// </summary>
 		/// <param name="actionCode"></param>
 		/// <param name="contentId"></param>
 		/// <returns></returns>
 		public IEnumerable<RelationSearchBlockState> GetDefaultFilterStates(string actionCode, int contentId)
 		{
-			BackendAction action = BackendActionRepository.GetByCode(actionCode);
-			string entityCode = action.EntityType.Code;
+			var action = BackendActionRepository.GetByCode(actionCode);
+			var entityCode = action.EntityType.Code;
 			if (
 				(
 					action.ActionType.Code.Equals(ActionTypeCode.List, StringComparison.CurrentCultureIgnoreCase) ||
@@ -320,21 +320,21 @@ namespace Quantumart.QP8.BLL.Services
 				)
 				&&
 				(
-					entityCode.Equals(EntityTypeCode.Article, StringComparison.CurrentCultureIgnoreCase) || 
+					entityCode.Equals(EntityTypeCode.Article, StringComparison.CurrentCultureIgnoreCase) ||
 					entityCode.Equals(EntityTypeCode.VirtualArticle, StringComparison.CurrentCultureIgnoreCase)
 				)
 			)
 			{
-				Dictionary<int, UserDefaultFilter> defFilter = UserRepository.GetById(QPContext.CurrentUserId).ContentDefaultFilters
+				var defFilter = UserRepository.GetById(QPContext.CurrentUserId).ContentDefaultFilters
 					.Where(f => f.ContentId.HasValue && f.ArticleIDs.Any())
 					.ToDictionary(f => f.ContentId.Value);
 				if (defFilter.Any())
 				{
-					Dictionary<int, IEnumerable<EntityListItem>> articles =
-						ArticleRepository.GetList(defFilter.SelectMany(f => f.Value.ArticleIDs))
+					var articles =
+						ArticleRepository.GetList(defFilter.SelectMany(f => f.Value.ArticleIDs).ToList())
 						.GroupBy(a => a.ContentId)
 						.ToDictionary(g => g.Key, g => g.Select(a => new EntityListItem {Id = a.Id, Name = a.Name }));
-											
+
 					return ContentRepository.GetById(contentId).Fields
 						.Where(f =>
 							(f.ExactType == FieldExactTypes.M2MRelation || f.ExactType == FieldExactTypes.O2MRelation)

@@ -1,41 +1,40 @@
-﻿@model  UserGroupViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels
+﻿@model  Quantumart.QP8.WebMvc.ViewModels.UserGroup.UserGroupViewModel
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 
 @using (Html.BeginTabForm(Model))
 {
     using (Html.BeginFieldGroup(UserGroupStrings.BasicParameters))
-    { 
+    {
         @Html.TextBoxFieldFor(s => s.Data.Name)
         @Html.TextAreaFieldFor(s => s.Data.Description)
         @Html.TextBoxFieldFor(s => s.Data.NtGroup)
         @Html.CheckBoxFieldFor(s => s.Data.SharedArticles)
 
-        if (!Model.Data.IsAdministrators){ 
+        if (!Model.Data.IsAdministrators)
+        {
             @Html.CheckBoxFieldFor(s => s.Data.UseParallelWorkflow)
             @Html.CheckBoxFieldFor(s => s.Data.CanUnlockItems)
         }
-        
+
         @Html.MultipleItemPickerFieldFor(model => model.BindedUserIDs, Model.BindedUserListItems, new EntityDataListArgs
-        {
-            EntityTypeCode = EntityTypeCode.User,
-            ParentEntityId = 0,
-            SelectActionCode = ActionCode.MultipleSelectUser,
-            ListId = -1 * System.DateTime.Now.Millisecond,
-            MaxListHeight = 200,
-            MaxListWidth = 350,
-            ShowIds = true,
-            ReadActionCode = ActionCode.UserProperties
-        })
-        
+   {
+       EntityTypeCode = EntityTypeCode.User,
+       ParentEntityId = 0,
+       SelectActionCode = ActionCode.MultipleSelectUser,
+       ListId = -1 * System.DateTime.Now.Millisecond,
+       MaxListHeight = 200,
+       MaxListWidth = 350,
+       ShowIds = true,
+       ReadActionCode = ActionCode.UserProperties
+   })
+
         @Html.SelectFieldFor(model => model.ParentGroupId, Html.List(Model.GetGroupList()))
     }
-    
+
     @Html.Partial("Version", Model.Data)
     @Html.Partial("EntityDirectLink", Model)
 
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

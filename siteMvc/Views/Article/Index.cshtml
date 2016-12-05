@@ -20,5 +20,5 @@
     @Html.ArticleGrid(Model)
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

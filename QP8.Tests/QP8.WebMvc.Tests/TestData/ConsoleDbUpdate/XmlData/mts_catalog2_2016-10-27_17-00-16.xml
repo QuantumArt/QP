@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<actions backendUrl="http://localhost:90/Backend/" dbVersion="7.9.9.0">
+  <action code="new_article" ids="2006185" parentId="2578" lcid="1049" executed="27.10.2016 16:57:04" executedBy="KostyukovA" uniqueId="4e57a966-6921-4697-84f8-0586b869990f" resultId="2006185" resultUniqueId="4e57a966-6921-4697-84f8-0586b869990f">
+    <field name="field_10367">1</field>
+    <field name="field_10368"></field>
+    <field name="Data.UniqueId">4e57a966-6921-4697-84f8-0586b869990f</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">save_article_and_up</field>
+  </action>
+  <action code="new_article" ids="2006186" parentId="2578" lcid="1049" executed="27.10.2016 16:57:08" executedBy="KostyukovA" uniqueId="cbff4f27-75fe-4fd9-a2d4-4480f9a4aa66" resultId="2006186" resultUniqueId="cbff4f27-75fe-4fd9-a2d4-4480f9a4aa66">
+    <field name="field_10367">2</field>
+    <field name="field_10368"></field>
+    <field name="Data.UniqueId">cbff4f27-75fe-4fd9-a2d4-4480f9a4aa66</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">save_article_and_up</field>
+  </action>
+  <action code="new_article" ids="2006187" parentId="2578" lcid="1049" executed="27.10.2016 16:57:12" executedBy="KostyukovA" uniqueId="2ff084ca-7014-44a2-9ebb-6ef188d2c700" resultId="2006187" resultUniqueId="2ff084ca-7014-44a2-9ebb-6ef188d2c700">
+    <field name="field_10367">3</field>
+    <field name="field_10368"></field>
+    <field name="Data.UniqueId">2ff084ca-7014-44a2-9ebb-6ef188d2c700</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">save_article_and_up</field>
+  </action>
+  <action code="edit_article" ids="2006185" parentId="2578" lcid="1049" executed="27.10.2016 16:57:19" executedBy="KostyukovA" uniqueId="4e57a966-6921-4697-84f8-0586b869990f" resultId="2006185" resultUniqueId="4e57a966-6921-4697-84f8-0586b869990f">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">1_e</field>
+    <field name="Data.UniqueId">4e57a966-6921-4697-84f8-0586b869990f</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="edit_article" ids="2006186" parentId="2578" lcid="1049" executed="27.10.2016 16:57:25" executedBy="KostyukovA" uniqueId="cbff4f27-75fe-4fd9-a2d4-4480f9a4aa66" resultId="2006186" resultUniqueId="cbff4f27-75fe-4fd9-a2d4-4480f9a4aa66">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">2_e</field>
+    <field name="Data.UniqueId">cbff4f27-75fe-4fd9-a2d4-4480f9a4aa66</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="edit_article" ids="2006187" parentId="2578" lcid="1049" executed="27.10.2016 16:57:31" executedBy="KostyukovA" uniqueId="2ff084ca-7014-44a2-9ebb-6ef188d2c700" resultId="2006187" resultUniqueId="2ff084ca-7014-44a2-9ebb-6ef188d2c700">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">3_e</field>
+    <field name="Data.UniqueId">2ff084ca-7014-44a2-9ebb-6ef188d2c700</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="copy_article" ids="2006185" parentId="2578" lcid="1049" executed="27.10.2016 16:57:50" executedBy="KostyukovA" uniqueId="4e57a966-6921-4697-84f8-0586b869990f" resultId="2006188" resultUniqueId="d67a7b85-1461-4dfa-8d72-55081cc85c17" />
+  <action code="edit_article" ids="2006188" parentId="2578" lcid="1049" executed="27.10.2016 16:58:02" executedBy="KostyukovA" uniqueId="d67a7b85-1461-4dfa-8d72-55081cc85c17" resultId="2006188" resultUniqueId="d67a7b85-1461-4dfa-8d72-55081cc85c17">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">1_e_e</field>
+    <field name="Data.UniqueId">d67a7b85-1461-4dfa-8d72-55081cc85c17</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="copy_article" ids="2006186" parentId="2578" lcid="1049" executed="27.10.2016 16:58:23" executedBy="KostyukovA" uniqueId="cbff4f27-75fe-4fd9-a2d4-4480f9a4aa66" resultId="2006189" resultUniqueId="38b7532b-26cd-4d1c-a3f7-83f7c0a3f2cd" />
+  <action code="edit_article" ids="2006189" parentId="2578" lcid="1049" executed="27.10.2016 16:58:28" executedBy="KostyukovA" uniqueId="38b7532b-26cd-4d1c-a3f7-83f7c0a3f2cd" resultId="2006189" resultUniqueId="38b7532b-26cd-4d1c-a3f7-83f7c0a3f2cd">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">2_e_e</field>
+    <field name="Data.UniqueId">38b7532b-26cd-4d1c-a3f7-83f7c0a3f2cd</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="copy_article" ids="2006187" parentId="2578" lcid="1049" executed="27.10.2016 16:58:34" executedBy="KostyukovA" uniqueId="2ff084ca-7014-44a2-9ebb-6ef188d2c700" resultId="2006190" resultUniqueId="5181f638-1be2-4580-94f7-f2382bb1ac22" />
+  <action code="edit_article" ids="2006190" parentId="2578" lcid="1049" executed="27.10.2016 16:58:39" executedBy="KostyukovA" uniqueId="5181f638-1be2-4580-94f7-f2382bb1ac22" resultId="2006190" resultUniqueId="5181f638-1be2-4580-94f7-f2382bb1ac22">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">3_e_e</field>
+    <field name="Data.UniqueId">5181f638-1be2-4580-94f7-f2382bb1ac22</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="move_to_archive_article" ids="2006185" parentId="2578" lcid="1049" executed="27.10.2016 16:58:46" executedBy="KostyukovA" uniqueId="4e57a966-6921-4697-84f8-0586b869990f" />
+  <action code="remove_article" ids="2006188" parentId="2578" lcid="1049" executed="27.10.2016 16:58:50" executedBy="KostyukovA" uniqueId="d67a7b85-1461-4dfa-8d72-55081cc85c17" />
+  <action code="multiple_remove_article" ids="2006186,2006187" parentId="2578" lcid="1049" executed="27.10.2016 16:58:58" executedBy="KostyukovA" uniqueId="cbff4f27-75fe-4fd9-a2d4-4480f9a4aa66,2ff084ca-7014-44a2-9ebb-6ef188d2c700" />
+  <action code="multiple_move_to_archive_article" ids="2006189,2006190" parentId="2578" lcid="1049" executed="27.10.2016 16:59:01" executedBy="KostyukovA" uniqueId="38b7532b-26cd-4d1c-a3f7-83f7c0a3f2cd,5181f638-1be2-4580-94f7-f2382bb1ac22" />
+  <action code="remove_article" ids="2006185" parentId="2578" lcid="1049" executed="27.10.2016 16:59:20" executedBy="KostyukovA" uniqueId="4e57a966-6921-4697-84f8-0586b869990f" />
+  <action code="multiple_remove_archive_article" ids="2006189,2006190" parentId="2578" lcid="1049" executed="27.10.2016 16:59:28" executedBy="KostyukovA" uniqueId="38b7532b-26cd-4d1c-a3f7-83f7c0a3f2cd,5181f638-1be2-4580-94f7-f2382bb1ac22" />
+  <action code="new_article" ids="2006191" parentId="2578" lcid="1049" executed="27.10.2016 16:59:33" executedBy="KostyukovA" uniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71" resultId="2006191" resultUniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71">
+    <field name="field_10367">z</field>
+    <field name="field_10368"></field>
+    <field name="Data.UniqueId">6937f683-e5e0-480d-b0aa-cc7831219e71</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">save_article</field>
+  </action>
+  <action code="edit_article" ids="2006191" parentId="2578" lcid="1049" executed="27.10.2016 16:59:38" executedBy="KostyukovA" uniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71" resultId="2006191" resultUniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71">
+    <field name="Data.PermanentLock">false</field>
+    <field name="field_10367">z_1</field>
+    <field name="Data.UniqueId">6937f683-e5e0-480d-b0aa-cc7831219e71</field>
+    <field name="Data.Schedule.ScheduleType">Invisible</field>
+    <field name="backendActionCode">update_article_and_up</field>
+  </action>
+  <action code="multiple_move_to_archive_article" ids="2006191" parentId="2578" lcid="1049" executed="27.10.2016 16:59:45" executedBy="KostyukovA" uniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71" />
+  <action code="multiple_restore_from_archive_article" ids="2006191" parentId="2578" lcid="1049" executed="27.10.2016 16:59:51" executedBy="KostyukovA" uniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71" />
+  <action code="move_to_archive_article" ids="2006191" parentId="2578" lcid="1049" executed="27.10.2016 16:59:56" executedBy="KostyukovA" uniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71" />
+  <action code="restore_from_archive_article" ids="2006191" parentId="2578" lcid="1049" executed="27.10.2016 16:59:59" executedBy="KostyukovA" uniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71" />
+  <action code="multiple_remove_article" ids="2006191" parentId="2578" lcid="1049" executed="27.10.2016 17:00:16" executedBy="KostyukovA" uniqueId="6937f683-e5e0-480d-b0aa-cc7831219e71" />
+</actions>

@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -37,6 +38,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public bool AutoLoad { get; set; }
 
+        [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         protected ListViewModel()
         {
             TitleFieldName = "Name";
@@ -81,7 +83,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public virtual string ActionCodeForLink => EntityTypeService.GetDefaultActionCodeByEntityTypeCode(EntityTypeCode);
 
-        public override MainComponentType MainComponentType => (IsTree) ? MainComponentType.Tree : MainComponentType.Grid;
+        public override MainComponentType MainComponentType => IsTree ? MainComponentType.Tree : MainComponentType.Grid;
 
         public override string MainComponentId => IsTree ? UniqueId("Tree") : UniqueId("Grid");
 

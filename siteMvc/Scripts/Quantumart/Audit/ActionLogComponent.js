@@ -1,4 +1,4 @@
-﻿// -- Компонент Action Log + Filter
+// -- Компонент Action Log + Filter
 Quantumart.QP8.ActionLogComponent = function (filterElementId, gridElementId, actionTypes, entityTypes, actions) {
   this._filterElementId = filterElementId;
   this._gridElementId = gridElementId;
@@ -45,7 +45,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   },
 
 
-  _onApplyFilter: function () {		
+  _onApplyFilter: function () {
     jQuery("#" + this._gridElementId)
       .data("tGrid")
       .ajaxRequest();
@@ -58,7 +58,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
 
     $filter = null;
   },
-  
+
   _onDataBinding: function (e) {
     var filterData = this.get_filterData();
     if (!jQuery.isEmptyObject(filterData)) {
@@ -70,7 +70,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
     var filterData = {};
     for (var tileType in this._tiles) {
       if (tileType && this._tiles.hasOwnProperty(tileType)) {
-        this._tiles[tileType].get_options().deriveFilterData(this._tiles[tileType], filterData);				
+        this._tiles[tileType].get_options().deriveFilterData(this._tiles[tileType], filterData);
       }
     }
     return filterData;
@@ -114,7 +114,7 @@ Quantumart.QP8.ActionLogComponent.prototype = {
                 return { w: 350, h: 125 };
             }
           })(),
-          createFilter: function ($filterContainer) {						
+          createFilter: function ($filterContainer) {
             switch (ft) {
               case $e.ActionLogFilteredColumns.EntityStringId:
               case $e.ActionLogFilteredColumns.EntityTitle:

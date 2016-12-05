@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Globalization;
 using System.Text;
+using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling.Info
 {

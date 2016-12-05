@@ -1,84 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.EntityPermissions
 {
-	public class ChildEntityPermissionViewModel : EntityViewModel
-	{
+    public class ChildEntityPermissionViewModel : EntityViewModel
+    {
+        private IChildEntityPermissionService _service;
+        private IPermissionViewModelSettings _settings;
+        private string _actionCode;
 
-		private IChildEntityPermissionService service;
-		private IPermissionViewModelSettings settings;
-		private string actionCode;		
+        public static ChildEntityPermissionViewModel Create(ChildEntityPermission permission, string tabId, int parentId, string actionCode, string controllerName, string saveActionName, IChildEntityPermissionService service, int? userId = null, int? groupId = null, IEnumerable<int> ids = null, bool isPostBack = false)
+        {
+            var model = Create<ChildEntityPermissionViewModel>(permission, tabId, parentId);
+            model._service = service;
+            model._settings = service?.ViewModelSettings;
+            model._actionCode = actionCode;
+            model.ControllerName = controllerName;
+            model.SaveActionName = saveActionName;
+            model.EntityIDs = ids ?? new int[0];
+            model.IsPostBack = isPostBack;
+            return model;
+        }
 
+        public new ChildEntityPermission Data
+        {
+            get
+            {
+                return (ChildEntityPermission)EntityData;
+            }
+            set
+            {
+                EntityData = value;
+            }
+        }
 
-		public static ChildEntityPermissionViewModel Create(ChildEntityPermission permission, string tabId, int parentId,
-			string actionCode, string controllerName, string saveActionName, IChildEntityPermissionService service, int? userId = null, int? groupId = null, IEnumerable<int> IDs = null, bool isPostBack = false)
-		{
-			ChildEntityPermissionViewModel model = ChildEntityPermissionViewModel.Create<ChildEntityPermissionViewModel>(permission, tabId, parentId);
-			model.service = service;
-			model.settings = service != null ? service.ViewModelSettings : null;
-			model.actionCode = actionCode;
-			model.ControllerName = controllerName;
-			model.SaveActionName = saveActionName;
-			model.EntityIDs = IDs ?? new int[0];
-			model.IsPostBack = isPostBack;
+        public override string EntityTypeCode => _settings.EntityTypeCode;
 
-			return model;
-		}
+        public override string ActionCode => _actionCode;
 
-		public new ChildEntityPermission Data
-		{
-			get
-			{
-				return (ChildEntityPermission)EntityData;
-			}
-			set
-			{
-				EntityData = value;
-			}
-		}
+        public bool IsPropagateable => _settings.IsPropagateable;
 
-		#region override
-		public override string EntityTypeCode
-		{
-			get { return settings.EntityTypeCode; }
-		}
+        public bool CanHide => _settings.CanHide;
 
-		public override string ActionCode
-		{
-			get { return actionCode; }
-		} 
-		#endregion
+        public IEnumerable<int> EntityIDs { get; set; }
 
-		#region props
-		public bool IsPropagateable { get { return settings.IsPropagateable; } }
+        public string ControllerName { get; private set; }
 
-		public bool CanHide { get { return settings.CanHide; } }
-		public IEnumerable<int> EntityIDs { get; set; }
-		public string ControllerName { get; private set; }
-		public bool IsContentPermission { get { return StringComparer.InvariantCultureIgnoreCase.Equals(EntityTypeCode, Constants.EntityTypeCode.ContentPermission); } }
-		#endregion
+        public bool IsContentPermission => StringComparer.InvariantCultureIgnoreCase.Equals(EntityTypeCode, Constants.EntityTypeCode.ContentPermission);
 
-		#region list items		
-		public IEnumerable<ListItem> GetPermissionLevels()
-		{
-			return service.GetPermissionLevels()
-				.Select(l => new ListItem { Value = l.Id.ToString(), Text = Translator.Translate(l.Name) })
-				.ToArray();
+        public IEnumerable<ListItem> GetPermissionLevels()
+        {
+            return _service.GetPermissionLevels().Select(l => new ListItem { Value = l.Id.ToString(), Text = Translator.Translate(l.Name) }).ToArray();
+        }
 
-		}
-		#endregion								
-	
-		public string SaveActionName { get; set; }
-		public bool IsPostBack { get; set; }
-	}
+        public string SaveActionName { get; set; }
+
+        public bool IsPostBack { get; set; }
+    }
 }

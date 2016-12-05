@@ -5,7 +5,7 @@ using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
 using System.Data.Objects;
 using System.Data;
-
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
 {
@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         internal static List<ArticleVersion> GetList(int articleId, ListCommand command)
         {
             string eQuery = $@"select VALUE version from ArticleVersionSet as version where version.ArticleId = @id order by version.{command.SortExpression}";
-            var versionList = MappersRepository.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(eQuery, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
+            var versionList = MapperFacade.ArticleVersionMapper.GetBizList(QPContext.EFContext.CreateQuery<ArticleVersionDAL>(eQuery, new ObjectParameter("id", articleId)).Include("LastModifiedByUser").Include("CreatedByUser").ToList());
            
             return versionList;
         }
@@ -65,7 +65,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 if (articleVersionDal == null) return null;
                 articleVersionDal.LastModifiedByUserReference.Load();
 
-                articleVersion = MappersRepository.ArticleVersionMapper.GetBizObject(articleVersionDal);
+                articleVersion = MapperFacade.ArticleVersionMapper.GetBizObject(articleVersionDal);
                 if (articleVersion != null)
                 {
                     articleVersion.Article = ArticleRepository.GetById(articleVersion.ArticleId);

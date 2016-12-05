@@ -5,6 +5,7 @@ using System.Data;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling.Info
 {

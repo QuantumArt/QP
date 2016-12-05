@@ -15,7 +15,7 @@ namespace Quantumart.QP8.Logging.Templates.Default
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\ErrorTextTemplate.tt"
+    #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\ErrorTextTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
     public partial class ErrorTextTemplate : ErrorTextTemplateBase
     {
@@ -25,10 +25,8 @@ namespace Quantumart.QP8.Logging.Templates.Default
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\ErrorTextTemplate.tt"
+            #line 3 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\ErrorTextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(LogEntry.Message));
             
             #line default
@@ -36,7 +34,7 @@ namespace Quantumart.QP8.Logging.Templates.Default
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\ErrorTextTemplate.tt"
+        #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\ErrorTextTemplate.tt"
 
 private global::Microsoft.Practices.EnterpriseLibrary.Logging.LogEntry _LogEntryField;
 

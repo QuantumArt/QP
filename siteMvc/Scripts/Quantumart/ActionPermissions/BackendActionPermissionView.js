@@ -1,4 +1,4 @@
-﻿//#region event types of Action Permission view
+//#region event types of Action Permission view
 var EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING = "OnActionPermissionsViewExecuting";
 //#endregion
 
@@ -39,13 +39,13 @@ Quantumart.QP8.BackendActionPermissionView.prototype = {
 		if (actionCode == ACTION_CODE_CHANGE_ENTITY_TYPE_PERMISSION_NODE || actionCode == ACTION_CODE_REMOVE_ENTITY_TYPE_PERMISSION_NODE ||
 			actionCode == ACTION_CODE_CHANGE_ACTION_PERMISSION_NODE || actionCode == ACTION_CODE_REMOVE_ACTION_PERMISSION_NODE)
 		{
-			var eventArgsContext = eventArgs.get_context();			
-			eventArgs.set_context(jQuery.extend(eventArgsContext, 
-			{ 
+			var eventArgsContext = eventArgs.get_context();
+			eventArgs.set_context(jQuery.extend(eventArgsContext,
+			{
 				additionalUrlParameters: this._searchBlockComponent.getSearchData()
 			}));
 		}
-		
+
 		var action = $a.getBackendActionByCode(eventArgs.get_actionCode());
 		if (action) {
 			this.notify(EVENT_TYPE_ACTION_PERMISSIONS_VIEW_EXECUTING, eventArgs);

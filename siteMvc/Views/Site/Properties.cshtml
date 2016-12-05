@@ -14,12 +14,12 @@
 				<td/>
 				<td>URL</td>
 				<td></td>
-			</tr>			
+			</tr>
 		</thead>
 		<tbody data-bind ="foreach: items">
 			<tr>
 				<td data-bind="text: $index() + 1"></td>
-				<td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>				
+				<td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}"></td>
 				<td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem"/></td>
 			</tr>
 		</tbody>
@@ -29,7 +29,7 @@
 @using (Html.BeginTabForm(Model))
 {
 	@Html.Partial("Locking", Model)
-								 
+
 	using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
 	{
 		@Html.TextBoxFieldFor(s => s.Data.Name)
@@ -50,20 +50,20 @@
 	}
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_SiteLocation))
-	{ 
+	{
 		@Html.TextBoxFieldFor(s => s.Data.Dns)
 		@Html.CheckBoxFieldFor(s => s.Data.SeparateDns, Model.StageDnsBlock)
 
 		using (Html.BeginPanel(Model.StageDnsBlock))
 		{
-			@Html.TextBoxFieldFor(s => s.Data.StageDns)           
+			@Html.TextBoxFieldFor(s => s.Data.StageDns)
 		}
 	}
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_UploadedFilesLocation))
-	{ 
+	{
 		@Html.TextBoxFieldFor(s => s.Data.UploadUrl)
-		@Html.CheckBoxFieldFor(s => s.Data.UseAbsoluteUploadUrl, Model.UploadUrlPrefixBlock) 
+		@Html.CheckBoxFieldFor(s => s.Data.UseAbsoluteUploadUrl, Model.UploadUrlPrefixBlock)
 
 		using (Html.BeginPanel(Model.UploadUrlPrefixBlock))
 		{
@@ -73,11 +73,11 @@
 	}
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_LivePagesLocation))
-	{ 
+	{
 		@Html.TextBoxFieldFor(s => s.Data.LiveVirtualRoot)
 		@Html.TextBoxFieldFor(s => s.Data.LiveDirectory)
 		using (Html.BeginPanel(Model.TestDirectoryBlock))
-		{ 
+		{
 			@Html.CheckBoxFieldFor(s => s.Data.ForceTestDirectory, Model.TestDirectoryPathBlock)
 			using (Html.BeginPanel(Model.TestDirectoryPathBlock))
 			{
@@ -87,7 +87,7 @@
 	}
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_StagePagesLocation))
-	{ 
+	{
 		@Html.TextBoxFieldFor(s => s.Data.StageVirtualRoot)
 		@Html.TextBoxFieldFor(s => s.Data.StageDirectory)
 	}
@@ -95,14 +95,14 @@
 	using (Html.BeginPanel(Model.BinBlock))
 	{
 		using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblyFilesLocation))
-		{ 
+		{
 			@Html.TextBoxFieldFor(s => s.Data.AssemblyPath)
 			@Html.TextBoxFieldFor(s => s.Data.StageAssemblyPath)
 		}
 	}
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_OnScreenAssemblingParameters))
-	{ 
+	{
 		@Html.CheckBoxFieldFor(s => s.Data.EnableOnScreen, Model.OnScreenBlock)
 		using (Html.BeginPanel(Model.OnScreenBlock))
 		{
@@ -115,7 +115,7 @@
 	}
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_VisualEditor))
-	{ 
+	{
 		@Html.CheckBoxFieldFor(s => s.Data.PEnterMode)
 		@Html.CheckBoxFieldFor(s => s.Data.UseEnglishQuotes)
 
@@ -127,7 +127,7 @@
 		)
 
 		@Html.TextBoxFieldFor(s => s.Data.RootElementClass)
-	
+
 		@Html.AggregationListFieldFor(s => s.Data.ExternalCssItems, Model.Data.ExternalCssItems, "Url")
 
 		@Html.CheckboxListFieldFor(
@@ -148,7 +148,7 @@
 	using (Html.BeginPanel(Model.LinqBlock))
 	{
 		using (Html.BeginFieldGroup(SiteStrings.Legend_LinqAssemblingParameters))
-		{ 
+		{
 			@Html.CheckBoxFieldFor(s => s.Data.ImportMappingToDb)
 			@Html.CheckBoxFieldFor(s => s.Data.ProceedMappingWithDb, Model.MappingWithDbBlock)
 
@@ -180,13 +180,13 @@
 	}
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_CustomValidation))
-	{ 	
+	{
 		@Html.CheckBoxFieldFor(s => s.Data.CreateDefaultXamlDictionary, Model.XamlDictionariesBlock, true)
 		using (Html.BeginPanel(Model.XamlDictionariesBlock))
 		{
 			@Html.HtmlFieldFor(s => s.Data.XamlDictionaries,
 				@<div class="qp-expandedContent">
-					@Html.QpTextAreaFor(s => s.Data.XamlDictionaries, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })		
+					@Html.QpTextAreaFor(s => s.Data.XamlDictionaries, new Dictionary<string, object> { { "class", "textbox hta-XmlTextArea highlightedTextarea" } })
 				</div>
 			);
 
@@ -194,17 +194,17 @@
 	}
 
 	using (Html.BeginFieldGroup(SiteStrings.Legend_Scripts))
-	{ 	
+	{
 		@Html.HtmlFieldFor(s => s.Data.ContentFormScript,
 			@<div class="qp-expandedContent">
-				@Html.QpTextAreaFor(s => s.Data.ContentFormScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })		
+				@Html.QpTextAreaFor(s => s.Data.ContentFormScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })
 			</div>
 		);
 	}
-	
+
 	@Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
 
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

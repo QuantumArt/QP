@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -12,7 +13,7 @@ namespace Quantumart.QP8.BLL.Repository
 		public static ObjectType GetByName(string name)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			return MappersRepository.ObjectTypeMapper.GetBizObject(entities.ObjectTypeSet.SingleOrDefault(x => x.Name == name));
+			return MapperFacade.ObjectTypeMapper.GetBizObject(entities.ObjectTypeSet.SingleOrDefault(x => x.Name == name));
 		}
 	}
 }

@@ -13,8 +13,8 @@
 		{
 			@Html.AddNewItemLink(Model)
 		}
-	}    
-    
+	}
+
     @(Html.Telerik().Grid<PageTemplateListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
@@ -37,7 +37,7 @@
                 .HtmlAttributes(new { @class = "title" });
             c.Bound(s => s.Folder).Title(TemplateStrings.Folder);
 			c.Bound(s => s.Description)
-                .Title(EntityObjectStrings.Description);                        
+                .Title(EntityObjectStrings.Description);
             c.Bound(s => s.Created).Title(NotificationStrings.ForCreate);
             c.Bound(s => s.Modified).Title(NotificationStrings.ForModify);
             c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
@@ -56,6 +56,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

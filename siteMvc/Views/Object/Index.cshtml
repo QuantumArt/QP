@@ -52,16 +52,16 @@
             c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
                 .HtmlAttributes(new { @class = "title" });
 
-            c.Bound(s => s.TypeName).Title(TemplateStrings.Type);            
+            c.Bound(s => s.TypeName).Title(TemplateStrings.Type);
             c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
             c.Bound(s => s.Created).Title(NotificationStrings.ForCreate);
             c.Bound(s => s.Modified).Title(NotificationStrings.ForModify);
-            c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);            
+            c.Bound(s => s.LastModifiedByLogin).Title(EntityObjectStrings.LastModifiedBy);
         })
         .DataBinding(db => db.Ajax()
                 .Select(Model.GettingDataActionName, "Object")
         )
-        .EnableCustomBinding(true)        
+        .EnableCustomBinding(true)
         .Pageable(p => p.Style(GridPagerStyles.NextPreviousAndNumeric).PageSize(Default.GridPageSize))
         .Sortable()
         .Selectable(s => s.Enabled(true))
@@ -72,6 +72,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

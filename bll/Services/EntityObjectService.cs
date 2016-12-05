@@ -113,8 +113,9 @@ namespace Quantumart.QP8.BLL.Services
             }
             else if (entityTypeCode == EntityTypeCode.Field)
             {
-                itemList.AddRange(FieldRepository.GetSimpleList(selectedEntitiesIDs));
+                itemList.AddRange(FieldRepository.GetList(selectedEntitiesIDs).Select(c => new ListItem(c.Id.ToString(), c.Name)));
             }
+
             return itemList;
         }
 

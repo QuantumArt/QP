@@ -22,25 +22,28 @@ Quantumart.QP8.Backend = function(isDebugMode, options) {
     }
   }
 
-  this._loadHandler = jQuery.proxy(this._initialize, this);
-  this._unloadHandler = jQuery.proxy(this._dispose, this);
-  this._errorHandler = jQuery.proxy(this._error, this);
-  this._onResizeSplitterHandler = jQuery.proxy(this._onResizeSplitter, this);
-  this._onDragStartSplitterHandler = jQuery.proxy(this._onDragStartSplitter, this);
-  this._onDropSplitterHandler = jQuery.proxy(this._onDropSplitter, this);
-  this._onEditingAreaEventHandler = jQuery.proxy(this._onEditingAreaEvent, this);
-  this._onActionExecutingHandler = jQuery.proxy(this._onActionExecuting, this);
-  this._onActionExecutedHandler = jQuery.proxy(this._onActionExecuted, this);
-  this._onEntityReadedHandler = jQuery.proxy(this._onEntityReaded, this);
-  this._onHostExternalCallerContextsUnbindedHandler = jQuery.proxy(this._onHostExternalCallerContextsUnbinded, this);
+  this._loadHandler = $.proxy(this._initialize, this);
+  this._unloadHandler = $.proxy(this._dispose, this);
+  this._errorHandler = $.proxy(this._error, this);
 
-  jQuery(document).bind('click', function(e) {
+  $q.bindProxies.call(this, [
+    '_onResizeSplitter',
+    '_onDragStartSplitter',
+    '_onDropSplitter',
+    '_onEditingAreaEvent',
+    '_onActionExecuting',
+    '_onActionExecuted',
+    '_onEntityReaded',
+    '_onHostExternalCallerContextsUnbinded',
+  ]);
+
+  $(document).bind('click', function(e) {
     if (e.which == 2) e.preventDefault();
   });
 
-  jQuery(window).bind('load', this._loadHandler);
+  $(window).bind('load', this._loadHandler);
   if (window.attachEvent) {
-    jQuery(window).bind('unload', this._unloadHandler);
+    $(window).bind('unload', this._unloadHandler);
   } else {
     window.onbeforeunload = this._unloadHandler;
   }
@@ -87,11 +90,9 @@ Quantumart.QP8.Backend.prototype = {
   _initialize: function() {
     this._directLinkExecutor = new Quantumart.QP8.DirectLinkExecutor(this._currentCustomerCode, this._directLinkOptions);
     this._directLinkExecutor.ready(jQuery.proxy(function(openByDirectLink) {
-      this._directLinkExecutor.attachObserver(EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, this._onActionExecutingHandler);
-
+      this._directLinkExecutor.attachObserver(window.EVENT_TYPE_DIRECT_LINK_ACTION_EXECUTING, this._onActionExecutingHandler);
       this._backendActionExecutor = Quantumart.QP8.BackendActionExecutor.getInstance();
-      this._backendActionExecutor.attachObserver(EVENT_TYPE_BACKEND_ACTION_EXECUTED, this._onActionExecutedHandler);
-
+      this._backendActionExecutor.attachObserver(window.EVENT_TYPE_BACKEND_ACTION_EXECUTED, this._onActionExecutedHandler);
       this._backendSplitter = new Quantumart.QP8.BackendSplitter('splitter', {
           firstPaneWidth: 270,
           minFirstPaneWidth: 50,
@@ -109,7 +110,7 @@ Quantumart.QP8.Backend.prototype = {
       });
 
       this._backendTreeMenu.initialize(3);
-      this._backendTreeMenu.attachObserver(EVENT_TYPE_TREE_MENU_ACTION_EXECUTING, this._onActionExecutingHandler);
+      this._backendTreeMenu.attachObserver(window.EVENT_TYPE_TREE_MENU_ACTION_EXECUTING, this._onActionExecutingHandler);
 
       this._backendTabStrip = Quantumart.QP8.BackendTabStrip.getInstance('MainTabStrip', { maxTabTextLength: 35, maxTabMenuItemTextLength: 33 });
       this._backendTabStrip.initialize();
@@ -127,45 +128,42 @@ Quantumart.QP8.Backend.prototype = {
         currentUserId: this._currentUserId
       });
 
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADING, this._onEditingAreaEventHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADED, this._onEditingAreaEventHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSING, this._onEditingAreaEventHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSED, this._onEditingAreaEventHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_DOCUMENT_ERROR, this._onEditingAreaEventHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_FIND_TAB_IN_TREE, this._onEditingAreaEventHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_CLOSED, this._onEditingAreaEventHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_ACTION_EXECUTING, this._onActionExecutingHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_EDITING_AREA_ENTITY_READED, this._onEntityReadedHandler);
-      this._backendEditingArea.attachObserver(EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, this._onHostExternalCallerContextsUnbindedHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADING, this._onEditingAreaEventHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_DOCUMENT_LOADED, this._onEditingAreaEventHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSING, this._onEditingAreaEventHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_DOCUMENT_CLOSED, this._onEditingAreaEventHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_DOCUMENT_ERROR, this._onEditingAreaEventHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_FIND_TAB_IN_TREE, this._onEditingAreaEventHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_CLOSED, this._onEditingAreaEventHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_ACTION_EXECUTING, this._onActionExecutingHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_EDITING_AREA_ENTITY_READED, this._onEntityReadedHandler);
+      this._backendEditingArea.attachObserver(window.EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, this._onHostExternalCallerContextsUnbindedHandler);
 
       this._backendPopupWindowManager = Quantumart.QP8.BackendPopupWindowManager.getInstance();
-      this._backendPopupWindowManager.attachObserver(EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING, this._onActionExecutingHandler);
-      this._backendPopupWindowManager.attachObserver(EVENT_TYPE_POPUP_WINDOW_ENTITY_READED, this._onEntityReadedHandler);
-      this._backendPopupWindowManager.attachObserver(EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, this._onHostExternalCallerContextsUnbindedHandler);
+      this._backendPopupWindowManager.attachObserver(window.EVENT_TYPE_POPUP_WINDOW_ACTION_EXECUTING, this._onActionExecutingHandler);
+      this._backendPopupWindowManager.attachObserver(window.EVENT_TYPE_POPUP_WINDOW_ENTITY_READED, this._onEntityReadedHandler);
+      this._backendPopupWindowManager.attachObserver(window.EVENT_TYPE_HOST_EXTERNAL_CALLER_CONTEXTS_UNBINDED, this._onHostExternalCallerContextsUnbindedHandler);
 
       this._backendEntityGridManager = Quantumart.QP8.BackendEntityGridManager.getInstance();
-
       this._backendEntityTreeManager = Quantumart.QP8.BackendEntityTreeManager.getInstance();
 
       this._backendEntityEditorManager = Quantumart.QP8.BackendEntityEditorManager.getInstance();
-      this._backendEntityEditorManager.attachObserver(EVENT_TYPE_ENTITY_EDITOR_IS_READY, jQuery.proxy(this._onEntityEditorReady, this));
-      this._backendEntityEditorManager.attachObserver(EVENT_TYPE_ENTITY_EDITOR_DISPOSED, jQuery.proxy(this._onEntityEditorDisposed, this));
-      this._backendEntityEditorManager.attachObserver(EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, jQuery.proxy(this._onEntityEditorFieldChanged, this));
-      this._backendEntityEditorManager.attachObserver(EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE, jQuery.proxy(this._onEntityEditorAllFieldInvalidate, this));
+      this._backendEntityEditorManager.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_IS_READY, jQuery.proxy(this._onEntityEditorReady, this));
+      this._backendEntityEditorManager.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_DISPOSED, jQuery.proxy(this._onEntityEditorDisposed, this));
+      this._backendEntityEditorManager.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_FIELD_CHANGED, jQuery.proxy(this._onEntityEditorFieldChanged, this));
+      this._backendEntityEditorManager.attachObserver(window.EVENT_TYPE_ENTITY_EDITOR_ALL_FIELD_INVALIDATE, jQuery.proxy(this._onEntityEditorAllFieldInvalidate, this));
 
       this._backendEntityDataListManager = Quantumart.QP8.BackendEntityDataListManager.getInstance();
-
       this._backendLibraryManager = Quantumart.QP8.BackendLibraryManager.getInstance();
-
       this._backendActionPermissionViewManager = Quantumart.QP8.BackendActionPermissionViewManager.getInstance();
 
       this._backendCustomActionHostManager = Quantumart.QP8.BackendCustomActionHostManager.getInstance();
-      this._backendCustomActionHostManager.attachObserver(EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED, jQuery.proxy(this._onCloseHostMessageReceived, this));
+      this._backendCustomActionHostManager.attachObserver(window.EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED, jQuery.proxy(this._onCloseHostMessageReceived, this));
 
-      this._backendSplitter.attachObserver(EVENT_TYPE_SPLITTER_RESIZED, this._onResizeSplitterHandler);
-      this._backendSplitter.attachObserver(EVENT_TYPE_SPLITTER_INITIALIZED, this._onResizeSplitterHandler);
-      this._backendSplitter.attachObserver(EVENT_TYPE_SPLITTER_DRAG_START, this._onDragStartSplitterHandler);
-      this._backendSplitter.attachObserver(EVENT_TYPE_SPLITTER_DROP, this._onDropSplitterHandler);
+      this._backendSplitter.attachObserver(window.EVENT_TYPE_SPLITTER_RESIZED, this._onResizeSplitterHandler);
+      this._backendSplitter.attachObserver(window.EVENT_TYPE_SPLITTER_INITIALIZED, this._onResizeSplitterHandler);
+      this._backendSplitter.attachObserver(window.EVENT_TYPE_SPLITTER_DRAG_START, this._onDragStartSplitterHandler);
+      this._backendSplitter.attachObserver(window.EVENT_TYPE_SPLITTER_DROP, this._onDropSplitterHandler);
 
       this._backendSplitter.initialize();
 
@@ -178,15 +176,11 @@ Quantumart.QP8.Backend.prototype = {
         currentUserId: this._currentUserId
       });
 
-      this._entityEditorAutoSaver.attachObserver(EVENT_TYPE_AUTO_SAVER_ACTION_EXECUTING, this._onActionExecutingHandler);
+      this._entityEditorAutoSaver.attachObserver(window.EVENT_TYPE_AUTO_SAVER_ACTION_EXECUTING, this._onActionExecutingHandler);
       if (openByDirectLink) {
         this._entityEditorAutoSaver.start();
       } else {
         this._entityEditorAutoSaver.restore();
-      }
-
-      if (isDebugMode) {
-        this._initializeTraceWindowLink();
       }
 
       this._initializeSignOut();
@@ -205,14 +199,6 @@ Quantumart.QP8.Backend.prototype = {
 
   _terminateSignOut: function() {
     $('.signOut').unbind('click');
-  },
-
-  _initializeTraceWindowLink: function() {
-    $('#traceWindowLink').bind('click', this._onTraceWindowLinkClickHandler);
-  },
-
-  _terminateTraceWindowLink: function() {
-    $('#traceWindowLink').unbind('click', this._onTraceWindowLinkClickHandler);
   },
 
   _initializeSignalrHubs: function() {
@@ -280,15 +266,11 @@ Quantumart.QP8.Backend.prototype = {
     }
   },
 
-  _onTraceWindowLinkClickHandler: function Quantumart$QP8$Backend$_onTraceWindowLinkClickHandler() {
-    Quantumart.QP8.BackendTraceWindow.getInstance().toggleWindow();
-  },
-
   _onResizeSplitter: function(eventType, sender, eventArgs) {
     this._backendTreeMenu.fixTreeHeight(eventArgs.get_firstPaneHeight());
     this._backendEditingArea.get_tabStrip().fixTabStripWidth(eventArgs.get_firstPaneWidth());
-    var selDoc = this._backendEditingArea.getSelectedDocument();
 
+    var selDoc = this._backendEditingArea.getSelectedDocument();
     if (selDoc) {
       selDoc.fixActionToolbarWidth();
     }
@@ -331,14 +313,11 @@ Quantumart.QP8.Backend.prototype = {
   _isMultistep: function(action, eventArgs) {
     var entities = eventArgs.get_entities();
     var limit = 1;
-
     if (action.EntityLimit) {
       limit = action.EntityLimit;
     }
 
-    var isMultistep = action.IsMultistep || (action.AdditionalControllerActionUrl && entities.length > limit);
-
-    return isMultistep;
+    return action.IsMultistep || (action.AdditionalControllerActionUrl && entities.length > limit);
   },
 
   _onActionExecuting: function(eventType, sender, eventArgs) {
@@ -571,24 +550,17 @@ Quantumart.QP8.Backend.prototype = {
         this._backendActionExecutor = null;
       }
 
-      Quantumart.QP8.BackendTraceWindow.destroyInstance();
-
-      if (this._isDebugMode) {
-        this._terminateTraceWindowLink();
-      }
-
       this._terminateSignOut();
-      jQuery(document).unbind('click');
-      jQuery(window).unbind('load', this._loadHandler);
+      $(document).unbind('click');
+      $(window).unbind('load', this._loadHandler);
 
       if (window.attachEvent) {
-        jQuery(window).unbind('unload', this._unloadHandler);
+        $(window).unbind('unload', this._unloadHandler);
       } else {
         window.onbeforeunload = null;
       }
 
       $cache.dispose();
-
       this._loadHandler = null;
       this._unloadHandler = null;
       this._errorHandler = null;
