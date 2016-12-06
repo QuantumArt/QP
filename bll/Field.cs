@@ -23,8 +23,77 @@ namespace Quantumart.QP8.BLL
     {
         private readonly IFieldRepository _fieldRepository;
         private readonly IContentRepository _contentRepository;
+        #region Static
+        /// <summary>
+        /// Траслирует SortExpression из Presentation в BLL
+        /// </summary>
+        /// <param name="sortExpression">SortExpression</param>
+        /// <returns>SortExpression</returns>
+        public new static string TranslateSortExpression(string sortExpression)
+        {
+            var result = EntityObject.TranslateSortExpression(sortExpression);
+            var replaces = new Dictionary<string, string>
+            {
+                { "Type", "Type.Name" },
+                { "Indexed", "IndexFlag" }
+            };
+
+            return TranslateHelper.TranslateSortExpression(result, replaces);
+        }
+
+        #region Comparation
+        public static IEqualityComparer<Field> IdComparer
+        {
+            get
+            {
+                return new LambdaEqualityComparer<Field>((f1, f2) => f1.Id == f2.Id, f => f.Id);
+            }
+        }
+
+        public static IEqualityComparer<Field> NameComparer
+        {
+            get
+            {
+                return new LambdaEqualityComparer<Field>(NameComparerPredicate, f => GetNameHashCode(f.Name));
+            }
+        }
+
+
+        public static bool NameComparerPredicate(Field f1, Field f2)
+        {
+            return NameComparerPredicate(f1.Name, f2.Name);
+        }
+
+        public static bool NameComparerPredicate(string n1, string n2)
+        {
+            if ((n1 == null) && (n2 == null))
+            {
+                return true;
+            }
+
+            if ((n1 == null) || (n2 == null))
+            {
+                return false;
+            }
+
+            return NameStringComparer.Equals(n1, n2);
+        }
 
         public static IEqualityComparer<string> NameStringComparer => StringComparer.InvariantCultureIgnoreCase;
+
+        public static int GetNameHashCode(string name)
+        {
+            if (name == null)
+            {
+                return 0;
+            }
+
+            return name.ToLowerInvariant().GetHashCode();
+        }
+
+        #endregion
+
+        #endregion
 
         public const int TextBoxRowsDefaultValue = 5;
         public const int VisualEditorHeightDefaultValue = 450;
@@ -407,11 +476,11 @@ namespace Quantumart.QP8.BLL
 
         public string Default => IsBlob ? DefaultBlobValue : DefaultValue;
 
-        public bool IsBlob => TypeId == FieldTypeCodes.Textbox || TypeId == FieldTypeCodes.VisualEdit;
+        public bool IsBlob => (TypeId == FieldTypeCodes.Textbox) || (TypeId == FieldTypeCodes.VisualEdit);
 
-        public bool IsDateTime => TypeId == FieldTypeCodes.DateTime || TypeId == FieldTypeCodes.Date || TypeId == FieldTypeCodes.Time;
+        public bool IsDateTime => (TypeId == FieldTypeCodes.DateTime) || (TypeId == FieldTypeCodes.Date) || (TypeId == FieldTypeCodes.Time);
 
-        public bool ReplaceUrls => ExactType == FieldExactTypes.String || IsBlob;
+        public bool ReplaceUrls => (ExactType == FieldExactTypes.String) || IsBlob;
 
         public RelationType RelationType
         {
@@ -540,7 +609,7 @@ namespace Quantumart.QP8.BLL
 
         public VisualEditorConfig VisualEditor => _visualEditor.Value;
 
-        public bool UseVersionControl => !DisableVersionControl && Content.MaxNumOfStoredVersions != 0;
+        public bool UseVersionControl => !DisableVersionControl && (Content.MaxNumOfStoredVersions != 0);
 
         public Type ClrType
         {
@@ -588,7 +657,7 @@ namespace Quantumart.QP8.BLL
                 {
                     clrType = typeof(string);
                 }
-                else if (Name == FieldTypeName.Relation || Name == FieldTypeName.M2ORelation)
+                else if ((Name == FieldTypeName.Relation) || (Name == FieldTypeName.M2ORelation))
                 {
                     clrType = Required ? typeof(decimal) : typeof(decimal?);
                 }
@@ -650,7 +719,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Существует ли для данного поля обратное поле ?
         /// </summary>
-        public bool IsBackwardFieldExists => BackwardField != null && !BackwardField.IsNew;
+        public bool IsBackwardFieldExists => (BackwardField != null) && !BackwardField.IsNew;
 
         public Field BackwardField => M2MBackwardField ?? O2MBackwardField;
 
@@ -733,7 +802,7 @@ namespace Quantumart.QP8.BLL
             {
                 var result = string.Empty;
                 int parsedArticleId;
-                if (Relation != null && int.TryParse(O2MDefaultValue, out parsedArticleId))
+                if ((Relation != null) && int.TryParse(O2MDefaultValue, out parsedArticleId))
                 {
                     result = ArticleRepository.GetFieldValue(parsedArticleId, Relation.ContentId, Relation.Name);
                 }
@@ -748,7 +817,7 @@ namespace Quantumart.QP8.BLL
             {
                 var result = string.Empty;
                 int parsedArticleId;
-                if (Relation != null && int.TryParse(M2MDefaultValue, out parsedArticleId))
+                if ((Relation != null) && int.TryParse(M2MDefaultValue, out parsedArticleId))
                 {
                     result = ArticleRepository.GetFieldValue(parsedArticleId, Relation.ContentId, Relation.Name);
                 }
@@ -795,7 +864,7 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                if (Name == null && StoredName == null)
+                if ((Name == null) && (StoredName == null))
                 {
                     return true;
                 }
@@ -813,7 +882,7 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Могут ли поля O2M ссылаться на это поле
         /// </summary>
-        internal bool IsRelateable => ExactType != FieldExactTypes.M2MRelation && ExactType != FieldExactTypes.M2ORelation;
+        internal bool IsRelateable => (ExactType != FieldExactTypes.M2MRelation) && (ExactType != FieldExactTypes.M2ORelation);
 
         /// <summary>
         /// Можно ли изменять поле для существующей статьи
@@ -882,7 +951,7 @@ namespace Quantumart.QP8.BLL
 
         private ContentLink GetContentLinkForInit()
         {
-            if (ExactType != FieldExactTypes.M2MRelation || !LinkId.HasValue)
+            if ((ExactType != FieldExactTypes.M2MRelation) || !LinkId.HasValue)
             {
                 return new ContentLink { LContentId = ContentId };
             }
@@ -897,7 +966,7 @@ namespace Quantumart.QP8.BLL
 
         private DynamicImage GetDynamicImageForInit()
         {
-            return !IsNew && TypeId == FieldTypeCodes.DynamicImage ? DynamicImage.Load(this) : null;
+            return !IsNew && (TypeId == FieldTypeCodes.DynamicImage) ? DynamicImage.Load(this) : null;
         }
 
         private Field GetRelationForInit()
@@ -912,7 +981,7 @@ namespace Quantumart.QP8.BLL
 
         private bool GetIsUniqueForInit()
         {
-            return UniqueFieldTypes.Contains(ExactType) && Constraint != null;
+            return UniqueFieldTypes.Contains(ExactType) && (Constraint != null);
         }
 
         private bool GetIsUniqueForSet(bool value)
@@ -933,11 +1002,11 @@ namespace Quantumart.QP8.BLL
                 {
                     result = BackRelation?.ContentId;
                 }
-                else if (ExactType == FieldExactTypes.M2MRelation && !ContentLink.IsNew)
+                else if ((ExactType == FieldExactTypes.M2MRelation) && !ContentLink.IsNew)
                 {
                     if (IsBackwardFieldExists)
                     {
-                        if (ContentLink.LContentId == ContentId && ContentLink.RContentId == ContentId)
+                        if ((ContentLink.LContentId == ContentId) && (ContentLink.RContentId == ContentId))
                         {
                             throw new ApplicationException("Обратное поле создано для того же контента.");
                         }
@@ -971,12 +1040,12 @@ namespace Quantumart.QP8.BLL
             {
                 var checkedContentId = 0;
 
-                if (IsNew || ContentLink == null || ContentLink.IsNew || LinkId == null)
+                if (IsNew || (ContentLink == null) || ContentLink.IsNew || (LinkId == null))
                 {
                     return null;
                 }
 
-                if (ContentLink.LContentId == ContentLink.RContentId && ContentLink.LContentId == ContentId)
+                if ((ContentLink.LContentId == ContentLink.RContentId) && (ContentLink.LContentId == ContentId))
                 {
                     // поле связано со своим контентом
                     return null;
@@ -992,7 +1061,7 @@ namespace Quantumart.QP8.BLL
                 }
 
                 var rContent = _contentRepository.GetById(checkedContentId);
-                return rContent.Fields.SingleOrDefault(f => f.LinkId == LinkId && f.Id != Id);
+                return rContent.Fields.SingleOrDefault(f => (f.LinkId == LinkId) && (f.Id != Id));
             }
 
             return null;
@@ -1010,11 +1079,11 @@ namespace Quantumart.QP8.BLL
             {
                 result = LinkId.HasValue ? FieldExactTypes.M2MRelation : FieldExactTypes.O2MRelation;
             }
-            else if (TypeId == FieldTypeCodes.Numeric && IsClassifier)
+            else if ((TypeId == FieldTypeCodes.Numeric) && IsClassifier)
             {
                 result = FieldExactTypes.Classifier;
             }
-            else if (TypeId == FieldTypeCodes.String && StringEnumItems.Any())
+            else if ((TypeId == FieldTypeCodes.String) && StringEnumItems.Any())
             {
                 result = FieldExactTypes.StringEnum;
             }
@@ -1029,7 +1098,7 @@ namespace Quantumart.QP8.BLL
 
         private FieldExactTypes GetExactTypeForSet(FieldExactTypes value)
         {
-            if (value == FieldExactTypes.O2MRelation || value == FieldExactTypes.M2MRelation)
+            if ((value == FieldExactTypes.O2MRelation) || (value == FieldExactTypes.M2MRelation))
             {
                 TypeId = FieldTypeCodes.Relation;
             }
@@ -1103,7 +1172,7 @@ namespace Quantumart.QP8.BLL
             if (IsNew)
             {
                 Indexed = ExactType == FieldExactTypes.O2MRelation;
-                OnScreen = ExactType == FieldExactTypes.String || ExactType == FieldExactTypes.Textbox || ExactType == FieldExactTypes.VisualEdit;
+                OnScreen = (ExactType == FieldExactTypes.String) || (ExactType == FieldExactTypes.Textbox) || (ExactType == FieldExactTypes.VisualEdit);
 
                 TextBoxRows = TextBoxRowsDefaultValue;
                 VisualEditorHeight = VisualEditorHeightDefaultValue;
@@ -1114,7 +1183,7 @@ namespace Quantumart.QP8.BLL
 
             InitDefaultValues();
             InitOrderBy();
-            IsInteger = IsNew || ExactType == FieldExactTypes.Numeric && DecimalPlaces == 0;
+            IsInteger = IsNew || ((ExactType == FieldExactTypes.Numeric) && (DecimalPlaces == 0));
             UseRelationCondition = !IsNew && !string.IsNullOrEmpty(RelationCondition);
 
             _dynamicImage = new InitPropertyValue<DynamicImage>(GetDynamicImageForInit);
@@ -1171,12 +1240,12 @@ namespace Quantumart.QP8.BLL
                     TextBoxDefaultValue = StringDefaultValue;
                     VisualEditDefaultValue = StringDefaultValue;
                 }
-                else if (ExactType == FieldExactTypes.Textbox || ExactType == FieldExactTypes.VisualEdit)
+                else if ((ExactType == FieldExactTypes.Textbox) || (ExactType == FieldExactTypes.VisualEdit))
                 {
                     TextBoxDefaultValue = DefaultBlobValue;
                     VisualEditDefaultValue = DefaultBlobValue;
                 }
-                else if (ExactType == FieldExactTypes.Image || ExactType == FieldExactTypes.File)
+                else if ((ExactType == FieldExactTypes.Image) || (ExactType == FieldExactTypes.File))
                 {
                     FileDefaultValue = DefaultValue;
                 }
@@ -1207,7 +1276,7 @@ namespace Quantumart.QP8.BLL
 
         public void UpdateModel()
         {
-            if (ExactType == FieldExactTypes.Numeric && IsInteger)
+            if ((ExactType == FieldExactTypes.Numeric) && IsInteger)
             {
                 DecimalPlaces = 0;
             }
@@ -1224,28 +1293,28 @@ namespace Quantumart.QP8.BLL
                 IsClassifier = false;
             }
 
-            if (ExactType == FieldExactTypes.Boolean || ExactType == FieldExactTypes.DynamicImage)
+            if ((ExactType == FieldExactTypes.Boolean) || (ExactType == FieldExactTypes.DynamicImage))
             {
                 Required = false;
             }
 
-            if (ExactType == FieldExactTypes.Date
-                || ExactType == FieldExactTypes.DateTime
-                || ExactType == FieldExactTypes.Time
-                || ExactType == FieldExactTypes.DynamicImage
-                || ExactType == FieldExactTypes.M2MRelation
-                || ExactType == FieldExactTypes.M2ORelation
-                || ExactType == FieldExactTypes.Textbox
-                || ExactType == FieldExactTypes.VisualEdit)
+            if ((ExactType == FieldExactTypes.Date)
+                || (ExactType == FieldExactTypes.DateTime)
+                || (ExactType == FieldExactTypes.Time)
+                || (ExactType == FieldExactTypes.DynamicImage)
+                || (ExactType == FieldExactTypes.M2MRelation)
+                || (ExactType == FieldExactTypes.M2ORelation)
+                || (ExactType == FieldExactTypes.Textbox)
+                || (ExactType == FieldExactTypes.VisualEdit))
             {
                 IsUnique = false;
             }
 
-            if (ExactType == FieldExactTypes.Boolean
-                || ExactType == FieldExactTypes.Textbox
-                || ExactType == FieldExactTypes.VisualEdit
-                || ExactType == FieldExactTypes.M2MRelation
-                || ExactType == FieldExactTypes.M2ORelation)
+            if ((ExactType == FieldExactTypes.Boolean)
+                || (ExactType == FieldExactTypes.Textbox)
+                || (ExactType == FieldExactTypes.VisualEdit)
+                || (ExactType == FieldExactTypes.M2MRelation)
+                || (ExactType == FieldExactTypes.M2ORelation))
             {
                 Indexed = false;
             }
@@ -1253,7 +1322,7 @@ namespace Quantumart.QP8.BLL
             if (ExactType == FieldExactTypes.O2MRelation)
             {
                 Indexed = true;
-                if (!RelateToContentId.HasValue || RelateToContentId == ContentId)
+                if (!RelateToContentId.HasValue || (RelateToContentId == ContentId))
                 {
                     Aggregated = false;
                 }
@@ -1264,9 +1333,9 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
-            if (ExactType == FieldExactTypes.M2MRelation
-                || ExactType == FieldExactTypes.M2ORelation
-                || ExactType == FieldExactTypes.DynamicImage)
+            if ((ExactType == FieldExactTypes.M2MRelation)
+                || (ExactType == FieldExactTypes.M2ORelation)
+                || (ExactType == FieldExactTypes.DynamicImage))
             {
                 OnScreen = false;
             }
@@ -1372,7 +1441,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         private void UpdateRelationModel()
         {
-            if (ExactType != FieldExactTypes.M2MRelation && ExactType != FieldExactTypes.O2MRelation)
+            if ((ExactType != FieldExactTypes.M2MRelation) && (ExactType != FieldExactTypes.O2MRelation))
             {
                 UseForDefaultFiltration = false;
             }
@@ -1396,7 +1465,7 @@ namespace Quantumart.QP8.BLL
                 BackRelationId = null;
             }
 
-            if (ExactType != FieldExactTypes.O2MRelation && ExactType != FieldExactTypes.M2MRelation)
+            if ((ExactType != FieldExactTypes.O2MRelation) && (ExactType != FieldExactTypes.M2MRelation))
             {
                 UseRelationCondition = false;
                 UseRelationSecurity = false;
@@ -1417,19 +1486,19 @@ namespace Quantumart.QP8.BLL
                         OptimizeForHierarchy = false;
                     }
 
-                    if (ContentLink.LContentId == ContentId && ContentLink.RContentId != RelateToContentId.Value)
+                    if ((ContentLink != null) && ((ContentLink.LContentId == ContentId) && (ContentLink.RContentId != RelateToContentId.Value)))
                     {
                         ContentLink.RContentId = RelateToContentId.Value;
                         ContentLink.LinkId = 0;
                     }
-                    else if (ContentLink.RContentId == ContentId && ContentLink.LContentId != RelateToContentId.Value)
+                    else if ((ContentLink != null) && ((ContentLink.RContentId == ContentId) && (ContentLink.LContentId != RelateToContentId.Value)))
                     {
                         ContentLink.LContentId = RelateToContentId.Value;
                         ContentLink.LinkId = 0;
                     }
 
                     // Создать обратное поле если это необходимо и возможно
-                    if (!string.IsNullOrWhiteSpace(NewM2MBackwardFieldName) && !IsBackwardFieldExists && RelateToContentId != ContentId)
+                    if (!string.IsNullOrWhiteSpace(NewM2MBackwardFieldName) && !IsBackwardFieldExists && (RelateToContentId != ContentId))
                     {
                         // возможно только если Related контент не виртуальный
                         if (relContent.VirtualType == 0)
@@ -1444,7 +1513,7 @@ namespace Quantumart.QP8.BLL
                     }
                 }
 
-                if (!ContentLink.MapAsClass)
+                if ((ContentLink != null) && !ContentLink.MapAsClass)
                 {
                     ContentLink.NetLinkName = null;
                     ContentLink.NetPluralLinkName = null;
@@ -1456,29 +1525,32 @@ namespace Quantumart.QP8.BLL
                 // Создать обратное поле если это необходимо и возможно
                 if (!string.IsNullOrWhiteSpace(NewO2MBackwardFieldName) && !IsBackwardFieldExists)
                 {
-                    var relContent = _contentRepository.GetById(RelateToContentId.Value);
-                    // возможно только если Related контент не виртуальный
-                    if (relContent.VirtualType == 0)
-                    {
-                        var f = new Field(relContent, _fieldRepository, _contentRepository).Init();
-                        f.Name = NewO2MBackwardFieldName;
-                        f.ExactType = FieldExactTypes.M2ORelation;
-                        f.ContentId = relContent.Id;
-                        f.BackRelationId = Id;
-                        f.BackRelation = this;
-                        if (MapAsProperty)
+                    if (RelateToContentId != null)
+                    { 
+                        var relContent = _contentRepository.GetById(RelateToContentId.Value);
+                        // возможно только если Related контент не виртуальный
+                        if (relContent.VirtualType == 0)
                         {
-                            f.MapAsProperty = true;
-                            f.LinqPropertyName = LinqBackPropertyName;
-                            f.LinqBackPropertyName = null;
+                        var f = new Field(relContent, _fieldRepository, _contentRepository).Init();
+                            f.Name = NewO2MBackwardFieldName;
+                            f.ExactType = FieldExactTypes.M2ORelation;
+                            f.ContentId = relContent.Id;
+                            f.BackRelationId = Id;
+                            f.BackRelation = this;
+                            if (MapAsProperty)
+                            {
+                                f.MapAsProperty = true;
+                                f.LinqPropertyName = LinqBackPropertyName;
+                                f.LinqBackPropertyName = null;
+                            }
+                            O2MBackwardField = f;
                         }
-                        O2MBackwardField = f;
                     }
                 }
 
             }
 
-            if (ExactType != FieldExactTypes.O2MRelation || ContentId != RelateToContentId)
+            if ((ExactType != FieldExactTypes.O2MRelation) || (ContentId != RelateToContentId))
             {
                 UseForTree = false;
                 AutoCheckChildren = false;
@@ -1488,21 +1560,21 @@ namespace Quantumart.QP8.BLL
 
         public void UpdateOrderByModel()
         {
-            if (ExactType == FieldExactTypes.M2MRelation || ExactType == FieldExactTypes.M2ORelation)
+            if ((ExactType == FieldExactTypes.M2MRelation) || (ExactType == FieldExactTypes.M2ORelation))
             {
                 FieldTitleCount = ListFieldTitleCount;
                 OrderByTitle = ListOrderByTitle;
                 OrderFieldId = ListOrderFieldId;
                 IncludeRelationsInTitle = ListIncludeRelationsInTitle;
             }
-            else if (ExactType == FieldExactTypes.O2MRelation && ContentId == RelateToContentId)
+            else if ((ExactType == FieldExactTypes.O2MRelation) && (ContentId == RelateToContentId))
             {
                 FieldTitleCount = TreeFieldTitleCount;
                 OrderByTitle = TreeOrderByTitle;
                 OrderFieldId = TreeOrderFieldId;
                 IncludeRelationsInTitle = TreeIncludeRelationsInTitle;
             }
-            else if (ExactType == FieldExactTypes.O2MRelation && ContentId != RelateToContentId)
+            else if ((ExactType == FieldExactTypes.O2MRelation) && (ContentId != RelateToContentId))
             {
                 FieldTitleCount = ListO2MFieldTitleCount;
                 OrderByTitle = false;
@@ -1546,7 +1618,7 @@ namespace Quantumart.QP8.BLL
                 errors.ErrorFor(f => f.ReadOnly, FieldStrings.ReadOnlyAndRequiredBothAreTrue);
             }
 
-            if (ReadOnly && ExactType == FieldExactTypes.Classifier)
+            if (ReadOnly && (ExactType == FieldExactTypes.Classifier))
             {
                 errors.ErrorFor(f => ReadOnly, FieldStrings.ClassiferCannotBeReadonly);
             }
@@ -1578,8 +1650,8 @@ namespace Quantumart.QP8.BLL
 
             // Проверить дли значения по умолчанию
             if (!IsUnique
-                && ExactType != FieldExactTypes.Textbox
-                && ExactType != FieldExactTypes.VisualEdit
+                && (ExactType != FieldExactTypes.Textbox)
+                && (ExactType != FieldExactTypes.VisualEdit)
                 && !string.IsNullOrEmpty(Default)
                 && !DefaultValue.Length.IsInRange(0, 255))
             {
@@ -1614,7 +1686,7 @@ namespace Quantumart.QP8.BLL
                 errors.ErrorFor(f => f.UseForVariations, FieldStrings.VariationAndM2OIncompatible);
             }
 
-            if (ExactType == FieldExactTypes.M2ORelation && Content.Fields.Any(n => n.UseForVariations))
+            if ((ExactType == FieldExactTypes.M2ORelation) && Content.Fields.Any(n => n.UseForVariations))
             {
                 errors.ErrorFor(f => f.ExactType, FieldStrings.VariationAndM2OIncompatible);
             }
@@ -1633,11 +1705,11 @@ namespace Quantumart.QP8.BLL
 
                     var emptyEnumValues =
                         StringEnumItems.Where(
-                            v => string.IsNullOrWhiteSpace(v.Value) || string.IsNullOrWhiteSpace(v.Alias));
+                            v => string.IsNullOrWhiteSpace(v.Value) || string.IsNullOrWhiteSpace(v.Alias)).ToArray();
                     var sameValueItems =
-                        StringEnumItems.GroupBy(v => v.Value).Where(g => g.Count() > 1).SelectMany(g => g);
+                        StringEnumItems.GroupBy(v => v.Value).Where(g => g.Count() > 1).SelectMany(g => g).ToArray();
                     var sameAliasItems =
-                        StringEnumItems.GroupBy(v => v.Alias).Where(g => g.Count() > 1).SelectMany(g => g);
+                        StringEnumItems.GroupBy(v => v.Alias).Where(g => g.Count() > 1).SelectMany(g => g).ToArray();
                     if (emptyEnumValues.Any())
                     {
                         errors.ErrorFor(m => m.StringEnumItems, FieldStrings.EnumValueIsInvalid);
@@ -1706,9 +1778,9 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
-            if (aggregatedChangeType == 0 || aggregatedChangeType == 2) // поле становиться агрегированным (Type: 0) или осталось агрегированным (Type: 2)
+            if ((aggregatedChangeType == 0) || (aggregatedChangeType == 2)) // поле становиться агрегированным (Type: 0) или осталось агрегированным (Type: 2)
             {
-                if (Content.Fields.Any(f => f.Id != Id && f.Aggregated))
+                if (Content.Fields.Any(f => (f.Id != Id) && f.Aggregated))
                 {
                     // Контент не должен содержать других агрегированных связей
                     errors.ErrorFor(f => f.Aggregated, FieldStrings.ThereIsAggregatedInContent);
@@ -1756,12 +1828,12 @@ namespace Quantumart.QP8.BLL
                         }
                         else if (aggregatedChangeType == 2)
                         {
-                            if (dbFieldVersion.ExactType != ExactType) // нельзя сменить тип поля
+                            if ((dbFieldVersion != null) && (dbFieldVersion.ExactType != ExactType)) // нельзя сменить тип поля
                             {
                                 errors.ErrorFor(f => ExactType, FieldStrings.CannotChangeAggregateFieldTypeBecauseOfExisting);
                             }
 
-                            if (dbFieldVersion.ClassifierId != ClassifierId) // нельзя изменить ссылку на классификатор
+                            if ((dbFieldVersion != null) && (dbFieldVersion.ClassifierId != ClassifierId)) // нельзя изменить ссылку на классификатор
                             {
                                 errors.ErrorFor(f => ClassifierId, FieldStrings.CannotChangeClassifierRefBecauseOfExisting);
                             }
@@ -1771,13 +1843,13 @@ namespace Quantumart.QP8.BLL
                     if (aggregatedChangeType == 2 && ClassifierId.HasValue && _fieldRepository.GetById(ClassifierId.Value).ClassifierDefaultValue == ContentId)
                     {
                         // Если ClassifierDefaultValue классификатора равно контенту текущего поля, то
-                        if (dbFieldVersion.ExactType != ExactType)
+                        if ((dbFieldVersion != null) && (dbFieldVersion.ExactType != ExactType))
                         {
                             // нельзя сменить тип поля
                             errors.ErrorFor(f => ExactType, FieldStrings.CannotChangeAggregateFieldTypeBecauseOfClassifierDefaultValue);
                         }
 
-                        if (dbFieldVersion.ClassifierId != ClassifierId)
+                        if ((dbFieldVersion != null) && (dbFieldVersion.ClassifierId != ClassifierId))
                         {
                             // нельзя изменить ссылку на классификатор
                             errors.ErrorFor(f => ClassifierId, FieldStrings.CannotChangeClassifierRefBecauseOfClassifierDefaultValue);
@@ -1850,13 +1922,13 @@ namespace Quantumart.QP8.BLL
                     }
 
                     // Если поле классификатор и на него ссылаються агрегированные поля, то тип менять нельзя
-                    if (dbFieldVersion.ExactType == FieldExactTypes.Classifier && dbFieldVersion.HasAnyAggregators)
+                    if ((dbFieldVersion.ExactType == FieldExactTypes.Classifier) && dbFieldVersion.HasAnyAggregators)
                     {
                         errors.ErrorFor(f => f.ExactType, FieldStrings.CannotChangeClassifierType);
                     }
                 }
                 // String -> File || Image: контент в БД не более 255 символов
-                if (dbFieldVersion.ExactType == FieldExactTypes.String && (ExactType == FieldExactTypes.File || ExactType == FieldExactTypes.Image))
+                if ((dbFieldVersion.ExactType == FieldExactTypes.String) && ((ExactType == FieldExactTypes.File) || (ExactType == FieldExactTypes.Image)))
                 {
                     if (_fieldRepository.GetTextFieldMaxLength(dbFieldVersion) > 255)
                     {
@@ -1864,7 +1936,7 @@ namespace Quantumart.QP8.BLL
                     }
                 }
                 // String -> StringEnum
-                else if (dbFieldVersion.ExactType == FieldExactTypes.String && ExactType == FieldExactTypes.StringEnum)
+                else if ((dbFieldVersion.ExactType == FieldExactTypes.String) && (ExactType == FieldExactTypes.StringEnum))
                 {
                     if (_fieldRepository.IsNonEnumFieldValueExist(this))
                     {
@@ -1872,7 +1944,7 @@ namespace Quantumart.QP8.BLL
                     }
                 }
                 // Textbox || VisualEdit -> String: контент в БД не более 3500 символов
-                else if (dbFieldVersion.IsBlob && ExactType == FieldExactTypes.String)
+                else if (dbFieldVersion.IsBlob && (ExactType == FieldExactTypes.String))
                 {
                     if (_fieldRepository.GetTextFieldMaxLength(dbFieldVersion) > StringSize)
                     {
@@ -1936,7 +2008,7 @@ namespace Quantumart.QP8.BLL
                     }
                 }
 
-                if (DynamicImage.ResizeMode != DynamicImage.ImageResizeMode.ByWidth && !DynamicImage.Height.IsInRange(DynamicImage.MinImageSize, DynamicImage.MaxImageSize))
+                if ((DynamicImage.ResizeMode != DynamicImage.ImageResizeMode.ByWidth) && !DynamicImage.Height.IsInRange(DynamicImage.MinImageSize, DynamicImage.MaxImageSize))
                 {
                     errors.ErrorFor(f => f.DynamicImage.Height, FieldStrings.DynamicImageHeightNotInRange);
                 }
@@ -2008,7 +2080,7 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorFor(f => f.LinqPropertyName, FieldStrings.LinqPropertyNameNonUnique);
                 }
 
-                if (ExactType == FieldExactTypes.O2MRelation && O2MBackwardField == null)
+                if ((ExactType == FieldExactTypes.O2MRelation) && (O2MBackwardField == null))
                 {
                     if (string.IsNullOrWhiteSpace(LinqBackPropertyName))
                     {
@@ -2070,14 +2142,14 @@ namespace Quantumart.QP8.BLL
                 if (!string.IsNullOrWhiteSpace(NewM2MBackwardFieldName))
                 {
                     var relContent = _contentRepository.GetById(RelateToContentId.Value);
-                    // BackwardField возможно создать только если Related контент не виртуальный
-                    if (relContent.VirtualType != 0)
+                        // BackwardField возможно создать только если Related контент не виртуальный
+                        if (relContent.VirtualType != 0)
                     {
-                        errors.ErrorFor(f => f.NewM2MBackwardFieldName, FieldStrings.VirtualBackwardFieldIsNotAllowed);
+                            errors.ErrorFor(f => f.NewM2MBackwardFieldName, FieldStrings.VirtualBackwardFieldIsNotAllowed);
                     }
                 }
 
-                if (M2MBackwardField != null && M2MBackwardField.IsNew && !string.IsNullOrEmpty(M2MBackwardField.Name))
+                if ((M2MBackwardField != null) && M2MBackwardField.IsNew && !string.IsNullOrEmpty(M2MBackwardField.Name))
                 {
                     if (M2MBackwardField.Name.Equals(Name, StringComparison.InvariantCulture))
                     {
@@ -2118,14 +2190,14 @@ namespace Quantumart.QP8.BLL
                 if (!string.IsNullOrWhiteSpace(NewO2MBackwardFieldName))
                 {
                     var relContent = _contentRepository.GetById(RelateToContentId.Value);
-                    // BackwardField возможно создать только если Related контент не виртуальный
-                    if (relContent.VirtualType != 0)
+                        // BackwardField возможно создать только если Related контент не виртуальный
+                        if (relContent.VirtualType != 0)
                     {
-                        errors.ErrorFor(f => f.NewO2MBackwardFieldName, FieldStrings.VirtualBackwardFieldIsNotAllowed);
+                            errors.ErrorFor(f => f.NewO2MBackwardFieldName, FieldStrings.VirtualBackwardFieldIsNotAllowed);
                     }
                 }
 
-                if (O2MBackwardField != null && O2MBackwardField.IsNew && !string.IsNullOrEmpty(O2MBackwardField.Name))
+                if ((O2MBackwardField != null) && O2MBackwardField.IsNew && !string.IsNullOrEmpty(O2MBackwardField.Name))
                 {
                     if (O2MBackwardField.Name.Equals(Name, StringComparison.InvariantCulture))
                     {
@@ -2143,7 +2215,7 @@ namespace Quantumart.QP8.BLL
                             {
                                 var isLinq = false;
                                 var expr = error.Property?.Body as MemberExpression;
-                                if (expr != null && expr.Member.Name == "LinqPropertyName")
+                                if ((expr != null) && (expr.Member.Name == "LinqPropertyName"))
                                 {
                                     errors.ErrorFor(f => f.LinqBackPropertyName, error.Message);
                                     isLinq = true;
@@ -2183,8 +2255,8 @@ namespace Quantumart.QP8.BLL
                     var virtualChildrenFieldsExist = VirtualFieldRepository.JoinVirtualChildrenFieldsExist(this);
                     if (virtualChildrenFieldsExist &&
                         (!dbVersion.Name.Equals(Name, StringComparison.InvariantCultureIgnoreCase) ||
-                         dbVersion.ExactType != ExactType ||
-                         dbVersion.RelateToContentId != RelateToContentId)
+                         (dbVersion.ExactType != ExactType) ||
+                         (dbVersion.RelateToContentId != RelateToContentId))
                         )
                     {
                         errors.ErrorForModel(FieldStrings.VirtualChildrenFieldsExist);
@@ -2224,7 +2296,7 @@ namespace Quantumart.QP8.BLL
             }
 
             // агрегированную связь нельзя удалять если
-            if (ExactType == FieldExactTypes.O2MRelation && Aggregated)
+            if ((ExactType == FieldExactTypes.O2MRelation) && Aggregated)
             {
                 if (_contentRepository.IsAnyArticle(ContentId)) // в контенте есть статьи
                 {
@@ -2238,12 +2310,12 @@ namespace Quantumart.QP8.BLL
             }
 
             // классификатор нельзя удалять если есть агрегеруемые поля которые на него ссылаются
-            if (ExactType == FieldExactTypes.Classifier && HasAnyAggregators)
+            if ((ExactType == FieldExactTypes.Classifier) && HasAnyAggregators)
             {
                 violationMessages.Add(FieldStrings.CannotRemoveClassifier);
             }
 
-            if (ParentField != null && !forceChildDelete)
+            if ((ParentField != null) && !forceChildDelete)
             {
                 violationMessages.Add(FieldStrings.CannotRemoveChildField);
             }
@@ -2381,7 +2453,7 @@ namespace Quantumart.QP8.BLL
                             }
 
                             childField.SaveContentLink();
-                            newChildLinkIds.Add(childField.LinkId.Value);
+                            if (childField.LinkId != null) newChildLinkIds.Add(childField.LinkId.Value);
                         }
 
                         var orderField = _fieldRepository.GetByOrder(ContentId, Order + 1);
@@ -2472,7 +2544,7 @@ namespace Quantumart.QP8.BLL
 
             if (result.ExactType == FieldExactTypes.M2MRelation)
             {
-                if (result.ContentLink.LContentId == childField.ContentLink.LContentId && result.ContentLink.RContentId == childField.ContentLink.RContentId)
+                if ((result.ContentLink.LContentId == childField.ContentLink.LContentId) && (result.ContentLink.RContentId == childField.ContentLink.RContentId))
                 {
                     result.ContentLink = childField.ContentLink;
                 }
@@ -2484,7 +2556,7 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
-            if (childField.Constraint != null && result.Constraint != null)
+            if ((childField.Constraint != null) && (result.Constraint != null))
             {
                 result.Constraint.Id = childField.Constraint.Id;
             }
@@ -2521,14 +2593,14 @@ namespace Quantumart.QP8.BLL
                 result.RelationId = Relation.GetChild(destContent.Id).Id;
                 result.DefaultValue = null;
             }
-            else if (BackRelation != null && BackRelation.ContentId == ContentId)
+            else if ((BackRelation != null) && (BackRelation.ContentId == ContentId))
             {
                 result.BackRelationId = BackRelation.GetChild(destContent.Id).Id;
             }
             else if (ExactType == FieldExactTypes.DynamicImage)
             {
                 result.DynamicImage = DynamicImage.Clone(result);
-                var baseImage = Content.Fields.Single(n => n.Id == BaseImageId.Value);
+                var baseImage = Content.Fields.Single(n => (BaseImageId != null) && (n.Id == BaseImageId.Value));
                 result.BaseImageId = baseImage.GetChild(destContent.Id).Id;
             }
 
@@ -2613,7 +2685,7 @@ namespace Quantumart.QP8.BLL
 
         private void SaveBackwardFields()
         {
-            if (ExactType == FieldExactTypes.O2MRelation && O2MBackwardField != null && O2MBackwardField.IsNew)
+            if ((ExactType == FieldExactTypes.O2MRelation) && (O2MBackwardField != null) && O2MBackwardField.IsNew)
             {
                 O2MBackwardField.BackRelationId = Id;
                 if (ForceBackwardId != 0)
@@ -2623,7 +2695,7 @@ namespace Quantumart.QP8.BLL
                 O2MBackwardField.PersistWithVirtualRebuild();
             }
 
-            if (ExactType == FieldExactTypes.M2MRelation && M2MBackwardField != null && M2MBackwardField.IsNew)
+            if ((ExactType == FieldExactTypes.M2MRelation) && (M2MBackwardField != null) && M2MBackwardField.IsNew)
             {
                 M2MBackwardField.LinkId = LinkId;
                 if (ForceBackwardId != 0)
@@ -2639,16 +2711,16 @@ namespace Quantumart.QP8.BLL
         {
             if (ActiveVeCommandIds != null)
             {
-                var defaultCommands = VisualEditorRepository.GetDefaultCommands();//все возможные команды
+                var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToArray();//все возможные команды
                 var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, ActiveVeCommandIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
-                var oldFieldCommands = VisualEditorRepository.GetResultCommands(Id, Content.SiteId);// с этим нужно сравнивать на предмет измененеий
+                var oldSiteCommandIdsOn = new HashSet<int>(VisualEditorRepository.GetResultCommands(Id).Where(n => n.On).Select(n => n.Id));
                 var siteCommands = VisualEditorRepository.GetSiteCommands(Content.SiteId);
 
                 var defaultCommandsDictionary = defaultCommands.ToDictionary(c => c.Id, c => c.On);
                 var siteCommandsDictionary = siteCommands.ToDictionary(c => c.Id, c => c.On);
-                var changedCommandsDictionary = ActiveVeCommandIds.Where(cId => !oldFieldCommands.SingleOrDefault(c => c.Id == cId).On).ToDictionary(cId => cId, cId => true);
+                var changedCommandsDictionary = ActiveVeCommandIds.Where(cId => !oldSiteCommandIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
 
-                foreach (var cId in offVeCommands.Where(cId => oldFieldCommands.SingleOrDefault(c => c.Id == cId).On))
+                foreach (var cId in offVeCommands.Where(cId => oldSiteCommandIdsOn.Contains(cId)))
                 {
                     changedCommandsDictionary.Add(cId, false);
                 }
@@ -2669,16 +2741,16 @@ namespace Quantumart.QP8.BLL
         {
             if (ActiveVeStyleIds != null)
             {
-                var defaultStyles = VisualEditorRepository.GetAllStyles();//все возможные стили
+                var defaultStyles = VisualEditorRepository.GetAllStyles().ToArray();//все возможные стили
                 var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, ActiveVeStyleIds).Select(c => c.Id).ToArray();//opposite to activeVecommands
-                var oldFieldStyles = VisualEditorRepository.GetResultStyles(Id, Content.SiteId);// с этим нужно сравнивать на предмет измененеий
+                var oldFieldStyleIdsOn = new HashSet<int>(VisualEditorRepository.GetResultStyles(Id).Where(n => n.On).Select(n => n.Id));// с этим нужно сравнивать на предмет измененеий
                 var siteStyles = VisualEditorRepository.GetSiteStyles(Content.SiteId);
 
                 var defaultStylesDictionary = defaultStyles.ToDictionary(c => c.Id, c => c.On);
                 var siteStylesDictionary = siteStyles.ToDictionary(c => c.Id, c => c.On);
-                var changedStylesDictionary = ActiveVeStyleIds.Where(cId => !oldFieldStyles.SingleOrDefault(c => c.Id == cId).On).ToDictionary(cId => cId, cId => true);
+                var changedStylesDictionary = ActiveVeStyleIds.Where(cId => !oldFieldStyleIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
 
-                foreach (var cId in offVeStyles.Where(cId => oldFieldStyles.SingleOrDefault(c => c.Id == cId).On))
+                foreach (var cId in offVeStyles.Where(cId => oldFieldStyleIdsOn.Contains(cId)))
                 {
                     changedStylesDictionary.Add(cId, false);
                 }
@@ -2689,7 +2761,7 @@ namespace Quantumart.QP8.BLL
 
         internal void SaveContentLink()
         {
-            if (ExactType == FieldExactTypes.M2MRelation && ContentLink != null)
+            if ((ExactType == FieldExactTypes.M2MRelation) && (ContentLink != null))
             {
                 var isNew = ContentLink.IsNew;
                 ContentLink = isNew ? _contentRepository.SaveLink(ContentLink) : _contentRepository.UpdateLink(ContentLink);
@@ -2702,7 +2774,7 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         private void CorrectEnumInContentData()
         {
-            if (!IsNew && ExactType == FieldExactTypes.StringEnum)
+            if (!IsNew && (ExactType == FieldExactTypes.StringEnum))
             {
                 _fieldRepository.CorrectEnumInContentData(this);
             }
@@ -2943,80 +3015,22 @@ namespace Quantumart.QP8.BLL
         public static FieldExactTypes CreateExactType(int typeId, int? linkId, bool isClassifier, bool isStringEnum)
         {
             var result = (FieldExactTypes)typeId;
-            if (result == FieldExactTypes.String && isStringEnum)
+            if ((result == FieldExactTypes.String) && isStringEnum)
             {
                 result = FieldExactTypes.StringEnum;
             }
 
-            if (result == FieldExactTypes.Numeric && isClassifier)
+            if ((result == FieldExactTypes.Numeric) && isClassifier)
             {
                 result = FieldExactTypes.Classifier;
             }
 
-            if (result == FieldExactTypes.O2MRelation && linkId.HasValue)
+            if ((result == FieldExactTypes.O2MRelation) && linkId.HasValue)
             {
                 result = FieldExactTypes.M2MRelation;
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Траслирует SortExpression из Presentation в BLL
-        /// </summary>
-        /// <param name="sortExpression">SortExpression</param>
-        /// <returns>SortExpression</returns>
-        public new static string TranslateSortExpression(string sortExpression)
-        {
-            var result = EntityObject.TranslateSortExpression(sortExpression);
-            var replaces = new Dictionary<string, string>
-            {
-                { "Type", "Type.Name" },
-                { "Indexed", "IndexFlag" }
-            };
-
-            return TranslateHelper.TranslateSortExpression(result, replaces);
-        }
-
-        public static IEqualityComparer<Field> IdComparer
-        {
-            get
-            {
-                return new LambdaEqualityComparer<Field>((f1, f2) => f1.Id == f2.Id, f => f.Id);
-            }
-        }
-
-        public static IEqualityComparer<Field> NameComparer
-        {
-            get
-            {
-                return new LambdaEqualityComparer<Field>(NameComparerPredicate, f => GetNameHashCode(f.Name));
-            }
-        }
-
-        public static bool NameComparerPredicate(Field f1, Field f2)
-        {
-            return NameComparerPredicate(f1.Name, f2.Name);
-        }
-
-        public static bool NameComparerPredicate(string n1, string n2)
-        {
-            if (n1 == null && n2 == null)
-            {
-                return true;
-            }
-
-            if (n1 == null || n2 == null)
-            {
-                return false;
-            }
-
-            return NameStringComparer.Equals(n1, n2);
-        }
-
-        public static int GetNameHashCode(string name)
-        {
-            return name?.ToLowerInvariant().GetHashCode() ?? 0;
         }
 
         public override string ToString()

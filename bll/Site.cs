@@ -10,6 +10,7 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
+using Quantumart.QP8.Configuration;
 using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL
@@ -429,6 +430,11 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("CreateDefaultXamlDictionary", NameResourceType = typeof(SiteStrings))]
         public bool CreateDefaultXamlDictionary { get; set; }
 
+        [LocalizedDisplayName("DownloadEfSource", NameResourceType = typeof(SiteStrings))]
+        public bool DownloadEfSource { get; set; }
+
+        [LocalizedDisplayName("ExternalDevelopment", NameResourceType = typeof(SiteStrings))]
+        public bool ExternalDevelopment { get; set; }
         public override string EntityTypeCode => C.EntityTypeCode.Site;
 
         public override string LockedByAnyoneElseMessage => SiteStrings.LockedByAnyoneElse;
@@ -437,9 +443,10 @@ namespace Quantumart.QP8.BLL
 
         public override string PropertyIsNotUniqueMessage => SiteStrings.NameNonUnique;
 
-        public string IsLiveIcon => $"site{(IsLive ? 1 : 0)}.gif";
 
-        public string ActualDnsForPages => !IsLive && SeparateDns ? StageDns : Dns;
+        public string IsLiveIcon => $"site{((IsLive) ? 1 : 0)}.gif";
+
+        public string ActualDnsForPages => (!IsLive && SeparateDns) ? StageDns : Dns;
 
         public string LongUploadUrl
         {
@@ -451,24 +458,25 @@ namespace Quantumart.QP8.BLL
         }
 
         public string ImagesLongUploadUrl => LongUploadUrl + "images";
-
         public string LiveUrl => "http://" + Dns + LiveVirtualRoot;
-
-        public string StageUrl => "http://" + (SeparateDns ? StageDns : Dns) + StageVirtualRoot;
-
-        public string CurrentUrl => IsLive ? LiveUrl : StageUrl;
-
+        public string StageUrl => "http://" + ((SeparateDns) ? StageDns : Dns) + StageVirtualRoot;
+        public string CurrentUrl => (IsLive) ? LiveUrl : StageUrl;
         public string TestBinDirectory => PathUtility.Combine(TestDirectory, SitePathRepository.RELATIVE_BIN_PATH);
-
-        public string AppDataDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, SitePathRepository.RELATIVE_APP_DATA_PATH);
-
-        public string AppCodeDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, SitePathRepository.RELATIVE_APP_CODE_PATH);
-
-        public string AppDataStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, SitePathRepository.RELATIVE_APP_DATA_PATH);
-
-        public string AppCodeStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, SitePathRepository.RELATIVE_APP_CODE_PATH);
-
+        public string AppDataDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
+        public string AppCodeDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
+        public string AppDataStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
+        public string AppCodeStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
+    
         public bool IsDotNet => AssemblingType == C.AssemblingType.AspDotNet;
+
+        public string TempDirectoryForClasses => $@"{QPConfiguration.TempDirectory}\{QPContext.CurrentCustomerCode}\{Id}";
+
+        public string TempArchiveForClasses => TempDirectoryForClasses + ".zip";
+
+
+        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl };
+
+        public override PathInfo PathInfo => BasePathInfo.GetSubPathInfo("images");
 
         public string FullyQualifiedContextClassName => GetFullyQualifiedName(Namespace, ContextClassName);
 
@@ -476,9 +484,6 @@ namespace Quantumart.QP8.BLL
 
         public IEnumerable<Workflow> Workflows => WorkflowRepository.GetSiteWorkflows(Id);
 
-        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl };
-
-        public override PathInfo PathInfo => BasePathInfo.GetSubPathInfo("images");
 
         public override void Validate()
         {
@@ -636,11 +641,11 @@ namespace Quantumart.QP8.BLL
         {
             var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToList();//все возможные команды
             var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, activeVeCommands).Select(c => c.Id).ToArray();//opposite to activeVecommands
-            var oldSiteCommands = VisualEditorRepository.GetResultCommands(Id).ToList();// с этим нужно сравнивать на предмет измененеий
+            var oldSiteCommandIdsOn = new HashSet<int>(VisualEditorRepository.GetResultCommands(Id).Where(n => n.On).Select(n => n.Id)); // с этим нужно сравнивать на предмет измененеий
 
             var defaultCommandsDictionary = defaultCommands.ToDictionary(c => c.Id, c => c.On);
-            var changedCommands = activeVeCommands.Where(cId => !oldSiteCommands.SingleOrDefault(c => c.Id == cId).On).ToDictionary(cId => cId, cId => true);
-            foreach (var cId in offVeCommands.Where(cId => oldSiteCommands.SingleOrDefault(c => c.Id == cId).On))
+            var changedCommands = activeVeCommands.Where(cId => !oldSiteCommandIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
+            foreach (var cId in offVeCommands.Where(cId => oldSiteCommandIdsOn.Contains(cId)))
             {
                 changedCommands.Add(cId, false);
             }
@@ -755,29 +760,24 @@ namespace Quantumart.QP8.BLL
 
         internal void CreateLinqDirectories()
         {
-            if (IsLive)
-            {
-                Directory.CreateDirectory(AppDataDirectory);
-                SitePathRepository.CopySiteDirectory(AppDataDirectory, SitePathRepository.RELATIVE_APP_DATA_PATH);
-                Directory.CreateDirectory(AppCodeDirectory);
-            }
-            else
-            {
-                Directory.CreateDirectory(AppDataStageDirectory);
-                SitePathRepository.CopySiteDirectory(AppDataStageDirectory, SitePathRepository.RELATIVE_APP_DATA_PATH);
-                Directory.CreateDirectory(AppCodeStageDirectory);
-            }
+            var dataDir = (IsLive) ? AppDataDirectory : AppDataStageDirectory;
+            var codeDir = (IsLive) ? AppCodeDirectory : AppCodeStageDirectory;
+            Directory.CreateDirectory(dataDir);
+            SitePathRepository.CopySiteDirectory(dataDir, SitePathRepository.RELATIVE_APP_DATA_PATH);
+            if (!DownloadEfSource)
+                Directory.CreateDirectory(codeDir);
         }
 
         internal void SaveVisualEditorStyles(int[] activeStyleIds)
         {
             var defaultStyles = VisualEditorRepository.GetAllStyles().ToList();
             var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, activeStyleIds).Select(c => c.Id).ToArray();
-            var oldSiteStyles = VisualEditorRepository.GetResultStyles(Id).ToList();
+            var oldSiteStylesIdsOn = new HashSet<int>(VisualEditorRepository.GetResultStyles(Id).Where(n => n.On).Select(n => n.Id));
 
             var defaultStyleDictionary = defaultStyles.ToDictionary(s => s.Id, s => s.On);
-            var changedStyles = activeStyleIds.Where(cId => !oldSiteStyles.SingleOrDefault(s => s.Id == cId).On).ToDictionary(cId => cId, cId => true);
-            foreach (var cId in offVeStyles.Where(cId => oldSiteStyles.SingleOrDefault(c => c.Id == cId).On))
+            var changedStyles = activeStyleIds.Where(cId => !oldSiteStylesIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
+            foreach (var cId in offVeStyles.Where(cId => !oldSiteStylesIdsOn.Contains(cId)))
+       
             {
                 changedStyles.Add(cId, false);
             }

@@ -573,4 +573,10 @@
   <data name="SettingQP7PathIsMissed" xml:space="preserve">
     <value>Настройка "QP7Path" не задана</value>
   </data>
+  <data name="DownloadEfSource" xml:space="preserve">
+    <value>Скачивать только источник данных для EF </value>
+  </data>
+  <data name="ExternalDevelopment" xml:space="preserve">
+    <value>Внешняя разработка</value>
+  </data>
 </root>

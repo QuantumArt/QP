@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net.Mime;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
@@ -293,6 +294,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             SiteService.CaptureLock(id);
             return Json(null);
+        }
+
+        public FileResult GetClassesZip(int id)
+        {
+            var name = SiteService.Read(id).TempArchiveForClasses;
+            return File(name, MediaTypeNames.Application.Octet, $"{id}.zip");
         }
     }
 }

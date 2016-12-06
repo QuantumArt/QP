@@ -268,8 +268,9 @@ Quantumart.QP8.BackendDocumentContext.prototype.addGenerateMatrixTitleButton = f
                 "404":
                 {
                     template: "Услуга '{0}' для тарифа '{1}' в регионе '{2}'",
-                    firstField: "field_1690",
-                    secondField: "field_1691"
+                    firstField: "field_1691",
+                    secondField: "field_1690",
+                    useSecondFieldForRegion: true
                 },
                 "407":
                 {

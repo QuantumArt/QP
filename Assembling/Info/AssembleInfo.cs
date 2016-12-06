@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.Assembling;
 
-namespace Assembling.Info
+namespace Quantumart.QP8.Assembling.Info
 {
     public class AssembleInfo
     {
@@ -303,19 +303,19 @@ namespace Assembling.Info
             }
         }
 
-        public bool IsAssembleObjectsMode => Mode == AssembleMode.AllPageObjects ||
-                                             Mode == AssembleMode.AllTemplateObjects ||
-                                             Mode == AssembleMode.SelectedObjects;
+        public bool IsAssembleObjectsMode => (Mode == AssembleMode.AllPageObjects) ||
+                                             (Mode == AssembleMode.AllTemplateObjects) ||
+                                             (Mode == AssembleMode.SelectedObjects);
 
-        public bool IsAssembleFormatMode => Mode == AssembleMode.GlobalCss ||
-                                            Mode == AssembleMode.Notification ||
-                                            Mode == AssembleMode.Preview ||
-                                            Mode == AssembleMode.PreviewById ||
-                                            Mode == AssembleMode.PreviewAll;
+        public bool IsAssembleFormatMode => (Mode == AssembleMode.GlobalCss) ||
+                                            (Mode == AssembleMode.Notification) ||
+                                            (Mode == AssembleMode.Preview) ||
+                                            (Mode == AssembleMode.PreviewById) ||
+                                            (Mode == AssembleMode.PreviewAll);
 
-        public bool IsPreviewMode => Mode == AssembleMode.PreviewById ||
-                                     Mode == AssembleMode.PreviewAll ||
-                                     Mode == AssembleMode.Preview;
+        public bool IsPreviewMode => (Mode == AssembleMode.PreviewById) ||
+                                     (Mode == AssembleMode.PreviewAll) ||
+                                     (Mode == AssembleMode.Preview);
 
         public bool IsLive => Location == AssembleLocation.Live;
 
@@ -424,7 +424,7 @@ namespace Assembling.Info
 
         }
 
-        internal bool GenerateTrace => Mode == AssembleMode.Page && GetBoolean("GENERATE_TRACE");
+        internal bool GenerateTrace => (Mode == AssembleMode.Page) && GetBoolean("GENERATE_TRACE");
 
         internal bool GenerateOnScreen => !(IsLive || IsAssembleFormatMode) && EnableOnScreen;
     }
