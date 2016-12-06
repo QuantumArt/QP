@@ -295,5 +295,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
             SiteService.CaptureLock(id);
             return Json(null);
         }
+
+        public FileResult GetClassesZip(int id)
+        {
+            var name = SiteService.Read(id).TempArchiveForClasses;
+            return File(name, MediaTypeNames.Application.Octet, $"{id}.zip");
+        }
     }
 }

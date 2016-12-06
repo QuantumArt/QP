@@ -163,8 +163,8 @@ namespace Quantumart.QP8.BLL.Services
                 site.CreateLinqDirectories();
 
 
-                (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentCustomerCode) { SiteRoot = liveTempDirectory, IsLive = true, DisableClassGeneration = site.DownloadEfSource }).Assemble();
-                (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentCustomerCode) { SiteRoot = stageTempDirectory, IsLive = false, DisableClassGeneration = site.DownloadEfSource }).Assemble();
+                (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = liveTempDirectory, IsLive = true, DisableClassGeneration = site.DownloadEfSource }).Assemble();
+                (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = stageTempDirectory, IsLive = false, DisableClassGeneration = site.DownloadEfSource }).Assemble();
 
                 ZipFile.CreateFromDirectory(site.TempDirectoryForClasses, site.TempArchiveForClasses);
                 
@@ -173,7 +173,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             site.CreateLinqDirectories();
-            new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentCustomerCode).Assemble();
+            new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString).Assemble();
             return null;
         }
 
