@@ -565,6 +565,7 @@ namespace Quantumart.QP8.BLL
                 try
                 {
                     var dbUser = dbContext.Authenticate(data.UserName, data.Password, data.UseAutoLogin, false);
+                    dbUser.LastLogOn = DateTime.Now;
                     var user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     if (user != null)
                     {
@@ -629,7 +630,7 @@ namespace Quantumart.QP8.BLL
 
             // закрыть открытые сессии пользователя
             CloseUserSessions(user.Id, dbContext, currentDt);
-
+            
             // Сохранить новую сессию
             var sessionsLog = new SessionsLog
             {
