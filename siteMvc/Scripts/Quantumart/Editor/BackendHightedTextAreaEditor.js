@@ -117,7 +117,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
 
     _generateTag: function(url)
     {
-        if (url.endsWith('.gif') || url.endsWith('.jpg') || url.endsWith('.jpeg') || url.endsWith('.png') || url.endsWith('.bmp')) {
+        if (url.endsWith('.gif') || url.endsWith('.jpg') || url.endsWith('.jpeg') || url.endsWith('.png') || url.endsWith('.bmp') || url.endsWith('.svg')) {
             return $.telerik.formatString('<img src="{0}"/>', url);
         }
 
