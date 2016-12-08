@@ -1,365 +1,350 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.ListItems;
 using System.Data;
-using System.Data.Objects;
-using System.Web;
+using System.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository.Helpers;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Repository
 {
-	internal static class CustomActionRepository
-	{
-		#region List
-		/// <summary>
-		/// Возвращает список Custom Action по коду
-		/// </summary>
-		/// <param name="p"></param>
-		/// <returns></returns>
-		internal static IEnumerable<CustomAction> GetListByCodes(IEnumerable<string> codes)
-		{
-			return BackendActionCache.CustomActions.Where(ca => codes.Contains(ca.Action.Code)).ToArray();
-		}
+    internal static class CustomActionRepository
+    {
+        /// <summary>
+        /// Возвращает список Custom Action по коду
+        /// </summary>
+        internal static IEnumerable<CustomAction> GetListByCodes(IEnumerable<string> codes)
+        {
+            return BackendActionCache.CustomActions.Where(ca => codes.Contains(ca.Action.Code)).ToArray();
+        }
 
 
-		internal static IEnumerable<CustomActionListItem> List(ListCommand cmd, out int totalRecords)
-		{
-			using (var scope = new QPConnectionScope())
-			{
+        internal static IEnumerable<CustomActionListItem> List(ListCommand cmd, out int totalRecords)
+        {
+            using (var scope = new QPConnectionScope())
+            {
                 cmd.SortExpression = MapperFacade.CustomActionListItemRowMapper.TranslateSortExpression(cmd.SortExpression);
-				IEnumerable<DataRow> rows = Common.GetCustomActionList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
-				var result = MapperFacade.CustomActionListItemRowMapper.GetBizList(rows.ToList());
-				return result;
-			}
-		} 
-		#endregion
+                var rows = Common.GetCustomActionList(scope.DbConnection, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
+                var result = MapperFacade.CustomActionListItemRowMapper.GetBizList(rows.ToList());
+                return result;
+            }
+        }
 
-		#region CRUD
+        internal static CustomAction GetById(int id)
+        {
+            return BackendActionCache.CustomActions.SingleOrDefault(a => a.Id == id);
+        }
 
-		internal static CustomAction GetById(int id)
-		{
-			return BackendActionCache.CustomActions.SingleOrDefault(a => a.Id == id);
-		}
+        internal static CustomAction GetByCode(string code)
+        {
+            return BackendActionCache.CustomActions.SingleOrDefault(a => a.Action.Code == code);
+        }
 
-		internal static CustomAction GetByCode(string code)
-		{
-			return BackendActionCache.CustomActions.SingleOrDefault(a => a.Action.Code == code);
-		}
+        internal static bool Exists(int id)
+        {
+            return QPContext.EFContext.CustomActionSet.Any(a => a.Id == id);
+        }
 
-		internal static bool Exists(int id)
-		{
-			return QPContext.EFContext.CustomActionSet.Any(a => a.Id == id);
-		}
+        internal static CustomAction Update(CustomAction customAction)
+        {
+            GetById(customAction.Id);
+            var entities = QPContext.EFContext;
+            var dal = MapperFacade.CustomActionMapper.GetDalObject(customAction);
+            dal.LastModifiedBy = QPContext.CurrentUserId;
+            using (new QPConnectionScope())
+            {
+                dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
+            }
 
-		internal static CustomAction Update(CustomAction customAction)
-		{
-			var oldCustomAction = GetById(customAction.Id);
+            entities.CustomActionSet.Attach(dal);
+            entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
 
-			QP8Entities entities = QPContext.EFContext;
-			CustomActionDAL dal = MapperFacade.CustomActionMapper.GetDalObject(customAction);
-			dal.LastModifiedBy = QPContext.CurrentUserId;
-			using (new QPConnectionScope())
-			{
-				dal.Modified = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
-			}			
+            var dal2 = MapperFacade.BackendActionMapper.GetDalObject(customAction.Action);
+            entities.BackendActionSet.Attach(dal2);
+            entities.ObjectStateManager.ChangeObjectState(dal2, EntityState.Modified);
 
-			entities.CustomActionSet.Attach(dal);
-			entities.ObjectStateManager.ChangeObjectState(dal, EntityState.Modified);
+            // Toolbar Buttons
+            foreach (var t in entities.ToolbarButtonSet.Where(t => t.ActionId == customAction.Action.Id))
+            {
+                entities.ToolbarButtonSet.DeleteObject(t);
+            }
 
-			BackendActionDAL dal2 = MapperFacade.BackendActionMapper.GetDalObject(customAction.Action);
-			entities.BackendActionSet.Attach(dal2);
-			entities.ObjectStateManager.ChangeObjectState(dal2, EntityState.Modified);
-						
-			// Toolbar Buttons
-			foreach (var t in entities.ToolbarButtonSet.Where(t => t.ActionId == customAction.Action.Id))
-			{
-				entities.ToolbarButtonSet.DeleteObject(t);
-			}
-			foreach (var t in MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
-			{				
-				entities.ToolbarButtonSet.AddObject(t);
-			}
+            foreach (var t in MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
+            {
+                entities.ToolbarButtonSet.AddObject(t);
+            }
 
 
-			ToolbarButtonDAL refreshBtnDal = CreateRefreshButton(dal.ActionId);
-			if (!customAction.Action.IsInterface)
-			{
-				foreach (var t in entities.ToolbarButtonSet.Where(b => b.ParentActionId == dal.ActionId && b.ActionId == refreshBtnDal.ActionId))
-				{
-					entities.ToolbarButtonSet.DeleteObject(t);
-				}
-			}
+            var refreshBtnDal = CreateRefreshButton(dal.ActionId);
+            if (!customAction.Action.IsInterface)
+            {
+                foreach (var t in entities.ToolbarButtonSet.Where(b => b.ParentActionId == dal.ActionId && b.ActionId == refreshBtnDal.ActionId))
+                {
+                    entities.ToolbarButtonSet.DeleteObject(t);
+                }
+            }
 
-			// Если действие интерфейсное, то создать для него кнопку Refresh
-			if (customAction.Action.IsInterface && !entities.ToolbarButtonSet.Any(b => b.ParentActionId == dal.ActionId && b.ActionId == refreshBtnDal.ActionId))
-			{
-				entities.ToolbarButtonSet.AddObject(refreshBtnDal);
-			}
-			
-			// Context Menu Items
-			int? oldContextMenuId = null;
-			foreach (var c in entities.ContextMenuItemSet.Where(c => c.ActionId == customAction.Action.Id))
-			{
-				oldContextMenuId = c.ContextMenuId;
-				entities.ContextMenuItemSet.DeleteObject(c);
-			}
-			foreach (var c in MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
-			{
-				entities.ContextMenuItemSet.AddObject(c);
-			}
+            // Если действие интерфейсное, то создать для него кнопку Refresh
+            if (customAction.Action.IsInterface && !entities.ToolbarButtonSet.Any(b => b.ParentActionId == dal.ActionId && b.ActionId == refreshBtnDal.ActionId))
+            {
+                entities.ToolbarButtonSet.AddObject(refreshBtnDal);
+            }
 
-			CustomActionDAL dalDB = entities.CustomActionSet
-				.Include("Contents")
-				.Include("Sites")
-				.Single(a => a.Id == customAction.Id);						
+            // Context Menu Items
+            int? oldContextMenuId = null;
+            foreach (var c in entities.ContextMenuItemSet.Where(c => c.ActionId == customAction.Action.Id))
+            {
+                oldContextMenuId = c.ContextMenuId;
+                entities.ContextMenuItemSet.DeleteObject(c);
+            }
+            foreach (var c in MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
+            {
+                entities.ContextMenuItemSet.AddObject(c);
+            }
 
-			// Binded Sites
-			HashSet<decimal> inmemorySiteIDs = new HashSet<decimal>(customAction.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
-			HashSet<decimal> indbSiteIDs = new HashSet<decimal>(dalDB.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
-			foreach (var s in dalDB.Sites.ToArray())
-			{
-				if (!inmemorySiteIDs.Contains(s.Id))
-				{
-					entities.SiteSet.Attach(s);
-					dalDB.Sites.Remove(s);
-				}
-			}
-			foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
-			{
-				if (!indbSiteIDs.Contains(s.Id))
-				{
-					entities.SiteSet.Attach(s);
-					dal.Sites.Add(s);
-				}
-			}
+            var dalDb = entities.CustomActionSet
+                .Include("Contents")
+                .Include("Sites")
+                .Single(a => a.Id == customAction.Id);
 
-			// Binded Contents
-			HashSet<decimal> inmemoryContentIDs = new HashSet<decimal>(customAction.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
-			HashSet<decimal> indbContentIDs = new HashSet<decimal>(dalDB.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
-			foreach (var s in dalDB.Contents.ToArray())
-			{
-				if (!inmemoryContentIDs.Contains(s.Id))
-				{
-					entities.ContentSet.Attach(s);
-					dalDB.Contents.Remove(s);
-				}
-			}
-			foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
-			{
-				if (!indbContentIDs.Contains(s.Id))
-				{
-					entities.ContentSet.Attach(s);
-					dal.Contents.Add(s);
-				}
-			}			
+            // Binded Sites
+            var inmemorySiteIDs = new HashSet<decimal>(customAction.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
+            var indbSiteIDs = new HashSet<decimal>(dalDb.Sites.Select(bs => Converter.ToDecimal(bs.Id)));
+            foreach (var s in dalDb.Sites.ToArray())
+            {
+                if (!inmemorySiteIDs.Contains(s.Id))
+                {
+                    entities.SiteSet.Attach(s);
+                    dalDb.Sites.Remove(s);
+                }
+            }
+            foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
+            {
+                if (!indbSiteIDs.Contains(s.Id))
+                {
+                    entities.SiteSet.Attach(s);
+                    dal.Sites.Add(s);
+                }
+            }
 
-			entities.SaveChanges();
+            // Binded Contents
+            var inmemoryContentIDs = new HashSet<decimal>(customAction.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
+            var indbContentIDs = new HashSet<decimal>(dalDb.Contents.Select(bs => Converter.ToDecimal(bs.Id)));
+            foreach (var s in dalDb.Contents.ToArray())
+            {
+                if (!inmemoryContentIDs.Contains(s.Id))
+                {
+                    entities.ContentSet.Attach(s);
+                    dalDb.Contents.Remove(s);
+                }
+            }
+            foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
+            {
+                if (!indbContentIDs.Contains(s.Id))
+                {
+                    entities.ContentSet.Attach(s);
+                    dal.Contents.Add(s);
+                }
+            }
 
-			if (oldContextMenuId != customAction.Action.EntityType.ContextMenu.Id)
-				SetBottomSeparator(oldContextMenuId);
-			SetBottomSeparator(customAction.Action.EntityType.ContextMenu.Id);
+            entities.SaveChanges();
+            if (oldContextMenuId != customAction.Action.EntityType.ContextMenu.Id)
+            {
+                SetBottomSeparator(oldContextMenuId);
+            }
 
-			CustomAction updated = MapperFacade.CustomActionMapper.GetBizObject(dal);
-			BackendActionCache.Reset();
-			return updated;				
-		}
+            SetBottomSeparator(customAction.Action.EntityType.ContextMenu.Id);
+            var updated = MapperFacade.CustomActionMapper.GetBizObject(dal);
+            BackendActionCache.Reset();
 
-		internal static CustomAction Save(CustomAction customAction)
-		{
-			QP8Entities entities = QPContext.EFContext;
+            return updated;
+        }
 
-			BackendActionDAL actionDal = MapperFacade.BackendActionMapper.GetDalObject(customAction.Action);
-			entities.BackendActionSet.AddObject(actionDal);
+        internal static CustomAction Save(CustomAction customAction)
+        {
+            var entities = QPContext.EFContext;
+            var actionDal = MapperFacade.BackendActionMapper.GetDalObject(customAction.Action);
+            entities.BackendActionSet.AddObject(actionDal);
 
-			EntityObject.VerifyIdentityInserting(EntityTypeCode.BackendAction, actionDal.Id, customAction.ForceActionId);
+            EntityObject.VerifyIdentityInserting(EntityTypeCode.BackendAction, actionDal.Id, customAction.ForceActionId);
+            if (customAction.ForceActionId != 0)
+            {
+                actionDal.Id = customAction.ForceActionId;
+            }
 
-			if (customAction.ForceActionId != 0)
-				actionDal.Id = customAction.ForceActionId;
+            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.BackendAction);
+            entities.SaveChanges();
+            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.BackendAction);
 
-			DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.BackendAction);
-			entities.SaveChanges();
-			DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.BackendAction);
+            var customActionDal = MapperFacade.CustomActionMapper.GetDalObject(customAction);
+            customActionDal.LastModifiedBy = QPContext.CurrentUserId;
+            customActionDal.Action = actionDal;
+            using (new QPConnectionScope())
+            {
+                customActionDal.Created = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
+                customActionDal.Modified = customActionDal.Created;
+            }
 
-			CustomActionDAL customActionDal = MapperFacade.CustomActionMapper.GetDalObject(customAction);
-			customActionDal.LastModifiedBy = QPContext.CurrentUserId;
-			customActionDal.Action = actionDal;
-			using (new QPConnectionScope())
-			{
-				customActionDal.Created = Common.GetSqlDate(QPConnectionScope.Current.DbConnection);
-				customActionDal.Modified = customActionDal.Created;				 
-			}
+            entities.CustomActionSet.AddObject(customActionDal);
 
-			entities.CustomActionSet.AddObject(customActionDal);
+            DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.CustomAction, customAction);
+            entities.SaveChanges();
+            DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.CustomAction);
 
-			DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.CustomAction, customAction);
-			entities.SaveChanges();
-			DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.CustomAction);
+            // Toolbar Button
+            foreach (var t in MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
+            {
+                t.ActionId = customActionDal.Action.Id;
+                entities.ToolbarButtonSet.AddObject(t);
+            }
 
-			// Toolbar Button
-			foreach (var t in MapperFacade.ToolbarButtonMapper.GetDalList(customAction.Action.ToolbarButtons.ToList()))
-			{
-				t.ActionId = customActionDal.Action.Id;
-				entities.ToolbarButtonSet.AddObject(t);
-			}
-			// Context Menu Items			
-			foreach (var c in MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
-			{
-				c.ActionId = customActionDal.Action.Id;
-				entities.ContextMenuItemSet.AddObject(c);
-			}
-			// Binded Sites
-			foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
-			{				
-				entities.SiteSet.Attach(s);
-				customActionDal.Sites.Add(s);				
-			}
-			// Binded Contents
-			foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
-			{				
-				entities.ContentSet.Attach(s);
-				customActionDal.Contents.Add(s);				
-			}	
-		
-			// Если действие интерфейсное, то создать для него кнопку Refresh
-			if (customAction.Action.IsInterface)
-			{
-				ToolbarButtonDAL refreshBtnDal = CreateRefreshButton(customActionDal.ActionId);
-				entities.ToolbarButtonSet.AddObject(refreshBtnDal);
-			}
+            // Context Menu Items
+            foreach (var c in MapperFacade.ContextMenuItemMapper.GetDalList(customAction.Action.ContextMenuItems.ToList()))
+            {
+                c.ActionId = customActionDal.Action.Id;
+                entities.ContextMenuItemSet.AddObject(c);
+            }
 
+            // Binded Sites
+            foreach (var s in MapperFacade.SiteMapper.GetDalList(customAction.Sites.ToList()))
+            {
+                entities.SiteSet.Attach(s);
+                customActionDal.Sites.Add(s);
+            }
 
-			entities.SaveChanges();
+            // Binded Contents
+            foreach (var s in MapperFacade.ContentMapper.GetDalList(customAction.Contents.ToList()))
+            {
+                entities.ContentSet.Attach(s);
+                customActionDal.Contents.Add(s);
+            }
 
-			int? contextMenuId = entities.EntityTypeSet.Single(t => t.Id == customAction.Action.EntityTypeId).ContextMenuId;
-			SetBottomSeparator(contextMenuId);			
+            // Если действие интерфейсное, то создать для него кнопку Refresh
+            if (customAction.Action.IsInterface)
+            {
+                var refreshBtnDal = CreateRefreshButton(customActionDal.ActionId);
+                entities.ToolbarButtonSet.AddObject(refreshBtnDal);
+            }
 
-			CustomAction updated = MapperFacade.CustomActionMapper.GetBizObject(customActionDal);
-			BackendActionCache.Reset();
-			return updated;				
-		}		
+            entities.SaveChanges();
+            var contextMenuId = entities.EntityTypeSet.Single(t => t.Id == customAction.Action.EntityTypeId).ContextMenuId;
+            SetBottomSeparator(contextMenuId);
 
-		internal static void Delete(int id)
-		{			
+            var updated = MapperFacade.CustomActionMapper.GetBizObject(customActionDal);
+            BackendActionCache.Reset();
 
-			QP8Entities entities = QPContext.EFContext;
+            return updated;
+        }
 
-			CustomActionDAL dalDB = entities.CustomActionSet
-				.Include("Action.ToolbarButtons")
-				.Include("Action.ContextMenuItems")
-				.Include("Action.EntityType")
-				.Single(a => a.Id == id);
+        internal static void Delete(int id)
+        {
+            var entities = QPContext.EFContext;
+            var dalDb = entities.CustomActionSet
+                .Include("Action.ToolbarButtons")
+                .Include("Action.ContextMenuItems")
+                .Include("Action.EntityType")
+                .Single(a => a.Id == id);
 
-			int? contextMenuId = dalDB.Action.EntityType.ContextMenuId;
+            var contextMenuId = dalDb.Action.EntityType.ContextMenuId;
 
-			// Toolbar buttons
-			foreach (var t in dalDB.Action.ToolbarButtons.ToArray())
-			{
-				entities.ToolbarButtonSet.DeleteObject(t);
-			}
-			foreach (var t in entities.ToolbarButtonSet.Where(b => b.ParentActionId == dalDB.ActionId))
-			{
-				entities.ToolbarButtonSet.DeleteObject(t);
-			}
-			// Context Menu Items
-			int? oldContextMenuId = null;
-			foreach (var c in dalDB.Action.ContextMenuItems.ToArray())
-			{
-				oldContextMenuId = c.ContextMenuId;
-				entities.ContextMenuItemSet.DeleteObject(c);
-			}
+            // Toolbar buttons
+            foreach (var t in dalDb.Action.ToolbarButtons.ToArray())
+            {
+                entities.ToolbarButtonSet.DeleteObject(t);
+            }
 
-			entities.BackendActionSet.DeleteObject(dalDB.Action);
-			entities.CustomActionSet.DeleteObject(dalDB);						
+            foreach (var t in entities.ToolbarButtonSet.Where(b => b.ParentActionId == dalDb.ActionId))
+            {
+                entities.ToolbarButtonSet.DeleteObject(t);
+            }
 
-			entities.SaveChanges();
+            // Context Menu Items
+            int? oldContextMenuId = null;
+            foreach (var c in dalDb.Action.ContextMenuItems.ToArray())
+            {
+                oldContextMenuId = c.ContextMenuId;
+                entities.ContextMenuItemSet.DeleteObject(c);
+            }
 
-			if (oldContextMenuId != contextMenuId)
-				SetBottomSeparator(oldContextMenuId);
-			SetBottomSeparator(contextMenuId);
+            entities.BackendActionSet.DeleteObject(dalDb.Action);
+            entities.CustomActionSet.DeleteObject(dalDb);
+            entities.SaveChanges();
+            if (oldContextMenuId != contextMenuId)
+            {
+                SetBottomSeparator(oldContextMenuId);
+            }
 
-			BackendActionCache.Reset();
-		} 
+            SetBottomSeparator(contextMenuId);
+            BackendActionCache.Reset();
+        }
 
-		#endregion
+        /// <summary>
+        /// Получить все используемые значения Order для Custom Acction данного EntityType
+        /// </summary>
+        internal static IEnumerable<int> GetActionOrdersForEntityType(int entityTypeId)
+        {
+            return QPContext.EFContext.CustomActionSet
+                .Include("Action")
+                .Where(c => c.Action.EntityTypeId == entityTypeId)
+                .Select(c => c.Order)
+                .Distinct()
+                .OrderBy(o => o)
+                .ToArray();
+        }
 
-		/// <summary>
-		/// Получить все используемые значения Order для Custom Acction данного EntityType
-		/// </summary>
-		/// <param name="entityTypeId"></param>
-		/// <returns></returns>
-		internal static IEnumerable<int> GetActionOrdersForEntityType(int entityTypeId)
-		{
-			return QPContext.EFContext.CustomActionSet
-				.Include("Action")
-				.Where(c => c.Action.EntityTypeId == entityTypeId)
-				.Select(c => c.Order)
-				.Distinct()
-				.OrderBy(o => o)
-				.ToArray();
-		}
+        /// <summary>
+        /// Получить все используемые значения Order для Custom Acction данного EntityType
+        /// исключая указанный Custom Action
+        /// </summary>
+        internal static bool IsOrderUniq(int exceptActionId, int order, int entityTypeId)
+        {
+            return !QPContext.EFContext.CustomActionSet.Include("Action").Any(c => c.Action.EntityTypeId == entityTypeId && c.Id != exceptActionId && c.Order == order);
+        }
 
-		/// <summary>
-		/// Получить все используемые значения Order для Custom Acction данного EntityType
-		/// исключая указанный Custom Action
-		/// </summary>
-		/// <param name="entityTypeId"></param>
-		/// <returns></returns>
-		internal static bool IsOrderUniq(int exceptActionId, int order, int entityTypeId)
-		{
-			return !(QPContext.EFContext.CustomActionSet
-						.Include("Action")
-						.Where(c => c.Action.EntityTypeId == entityTypeId && c.Id != exceptActionId && c.Order == order)
-						.Any()
-					);
-		}
+        private static void SetBottomSeparator(int? contextMenuId)
+        {
+            if (contextMenuId.HasValue)
+            {
+                var entities = QPContext.EFContext;
+                var maxOrderNotCustomActionMenuItem = entities.ContextMenuItemSet
+                    .Where(i => i.ContextMenu.Id == contextMenuId.Value && !i.Action.IsCustom)
+                    .OrderByDescending(i => i.Order)
+                    .FirstOrDefault();
 
-		private static void SetBottomSeparator(int? contextMenuId)
-		{
-			if(contextMenuId.HasValue)
-			{
-				QP8Entities entities = QPContext.EFContext;
+                if (maxOrderNotCustomActionMenuItem != null)
+                {
+                    var customActionMenuItemExist = entities.ContextMenuItemSet.Any(i => i.ContextMenu.Id == contextMenuId.Value && i.Action.IsCustom);
+                    if (maxOrderNotCustomActionMenuItem.HasBottomSeparator != customActionMenuItemExist)
+                    {
+                        maxOrderNotCustomActionMenuItem.HasBottomSeparator = customActionMenuItemExist;
+                        entities.SaveChanges();
+                    }
+                }
+            }
+        }
 
-				ContextMenuItemDAL maxOrderNotCustomActionMenuItem = entities.ContextMenuItemSet
-					.Where(i => i.ContextMenu.Id == contextMenuId.Value && !i.Action.IsCustom)
-					.OrderByDescending(i => i.Order)
-					.FirstOrDefault();
-				if (maxOrderNotCustomActionMenuItem != null)
-				{
-					bool customActionMenuItemExist = entities.ContextMenuItemSet
-							.Where(i => i.ContextMenu.Id == contextMenuId.Value && i.Action.IsCustom)
-							.Any();
+        private static ToolbarButtonDAL CreateRefreshButton(int actionId)
+        {
+            var refreshAction = BackendActionRepository.GetByCode(ActionCode.RefreshCustomAction);
+            if (refreshAction == null)
+            {
+                throw new ApplicationException($"Action is not found: {ActionCode.RefreshCustomAction}");
+            }
 
-					if (maxOrderNotCustomActionMenuItem.HasBottomSeparator != customActionMenuItemExist)
-					{
-						maxOrderNotCustomActionMenuItem.HasBottomSeparator = customActionMenuItemExist;
-						entities.SaveChanges();
-					}
-				}
-			}
-		}
+            var refreshBtnDal = new ToolbarButtonDAL
+            {
+                ParentActionId = actionId,
+                ActionId = refreshAction.Id,
+                Name = "Refresh",
+                Icon = "refresh.gif",
+                IsCommand = true,
+                Order = 1
+            };
 
-		private static ToolbarButtonDAL CreateRefreshButton(int actionId)
-		{
-			BackendAction refreshAction = BackendActionRepository.GetByCode(ActionCode.RefreshCustomAction);
-			if (refreshAction == null)
-				throw new ApplicationException(String.Format("Action is not found: {0}", ActionCode.RefreshCustomAction));
-			ToolbarButtonDAL refreshBtnDal = new ToolbarButtonDAL
-			{
-				ParentActionId = actionId,
-				ActionId = refreshAction.Id,
-				Name = "Refresh",
-				Icon = "refresh.gif",
-				IsCommand = true,
-				Order = 1
-			};
-			return refreshBtnDal;
-		}
-	}
+            return refreshBtnDal;
+        }
+    }
 }

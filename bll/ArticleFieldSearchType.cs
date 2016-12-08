@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Quantumart.QP8.BLL
+﻿namespace Quantumart.QP8.BLL
 {
     /// <summary>
     /// Тип поиска по полям
     /// </summary>
-    public enum ArticleFieldSearchType : int
+    public enum ArticleFieldSearchType
     {
         None = 0,
         FullText,
@@ -21,8 +16,8 @@ namespace Quantumart.QP8.BLL
         O2MRelation,
         M2ORelation,
         Classifier,
-		DateTimeRange,
-		StringEnum,
-		Identifier
+        DateTimeRange,
+        StringEnum,
+        Identifier
     }
 }

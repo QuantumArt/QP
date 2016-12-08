@@ -1825,7 +1825,7 @@ namespace Quantumart.QP8.DAL
             DataTable result = null;
             if (useSecurity)
             {
-                var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, groupId, startLevel, endLevel,entityTypeCode, parentEntityTypeCode, parentEntityId);
+                var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, groupId, startLevel, endLevel, entityTypeCode, parentEntityTypeCode, parentEntityId);
                 fromBlock = fromBlock.Replace("<$_security_insert_$>", securitySql);
             }
 
@@ -2719,8 +2719,8 @@ namespace Quantumart.QP8.DAL
         public static IEnumerable<DataRow> GetSitesPage(SqlConnection sqlConnection, SitePageOptions options, out int totalRecords)
         {
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
-
             var selectBuilder = new StringBuilder();
+
             selectBuilder.Append("s.SITE_ID as Id, s.SITE_NAME as Name, s.DESCRIPTION as Description, s.CREATED as Created, s.MODIFIED as Modified, U.LOGIN as LastModifiedByUser");
             selectBuilder.Append(", s.DNS as Dns, s.LIVE_VIRTUAL_ROOT as UploadUrl, s.IS_LIVE as IsLive, s.LOCKED_BY as LockedBy, u2.FIRST_NAME + ' ' + u2.LAST_NAME as LockedByFullName ");
             if (useSelection)
