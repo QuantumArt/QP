@@ -565,7 +565,6 @@ namespace Quantumart.QP8.BLL
                 try
                 {
                     var dbUser = dbContext.Authenticate(data.UserName, data.Password, data.UseAutoLogin, false);
-
                     var user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     if (user != null)
                     {
@@ -577,6 +576,7 @@ namespace Quantumart.QP8.BLL
                             LanguageId = user.LanguageId,
                             Roles = new string[0]
                         };
+
                         dbUser.LastLogOn = DateTime.Now;
                         CreateSuccessfulSession(user, dbContext);
                         var context = HttpContext.Current;
