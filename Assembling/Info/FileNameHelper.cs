@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Assembling.Info
+namespace Quantumart.QP8.Assembling.Info
 {
     public class FileNameHelper
     {

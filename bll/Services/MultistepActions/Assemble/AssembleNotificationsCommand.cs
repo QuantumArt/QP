@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assembling;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Assembling;

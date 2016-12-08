@@ -6,8 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml.Xsl;
-using Assembling;
-using Assembling.Info;
+using Quantumart.QP8.Assembling.Info;
 
 namespace Quantumart.QP8.Assembling
 {
@@ -73,8 +72,9 @@ namespace Quantumart.QP8.Assembling
                 if (null == _contentsTable)
                 {
                     var qb = new StringBuilder();
-                    qb.Append("select * from content ");
-                    qb.AppendFormat(" where site_id = {0}", SiteId);
+                    qb.Append("select c.*, cast(isnull(cwb.is_async, 0) as bit) as split_articles from content c ");
+                    qb.Append(" left join content_workflow_bind cwb on c.content_id = cwb.content_id ");
+                    qb.Append($" where site_id = {SiteId}");
                     _contentsTable = Cnn.GetDataTable(qb.ToString());
                 }
                 return _contentsTable;
@@ -98,7 +98,7 @@ namespace Quantumart.QP8.Assembling
                     qb.Append(" left join content_attribute ca2 on ca2.content_id = uqa.real_content_id and ca.attribute_name = ca2.attribute_name");
                     qb.Append(" left join content_attribute ca3 on ca.attribute_id = ca3.back_related_attribute_id");
 
-                    qb.AppendFormat(" where c.site_id = {0} ", SiteId);
+                    qb.Append($" where c.site_id = {SiteId} ");
                     qb.Append(" ) cc where cc.COUNT = 1"); 
                     _fieldsTable = Cnn.GetDataTable(qb.ToString());
                 }
@@ -115,9 +115,7 @@ namespace Quantumart.QP8.Assembling
         public DataTable ContentToContentTable => _contentToContentTable ??
                                                   (_contentToContentTable =
                                                       Cnn.GetDataTable(
-                                                          string.Format(
-                                                              "select cc.* from content_to_content cc inner join CONTENT c on l_content_id = c.CONTENT_ID INNER JOIN CONTENT c2 on r_content_id = c2.CONTENT_ID WHERE c.SITE_ID = {0} and c2.SITE_ID = {0} and cc.link_id in (select link_id from content_attribute ca)",
-                                                              SiteId)));
+                                                          $"select cc.* from content_to_content cc inner join CONTENT c on l_content_id = c.CONTENT_ID INNER JOIN CONTENT c2 on r_content_id = c2.CONTENT_ID WHERE c.SITE_ID = {SiteId} and c2.SITE_ID = {SiteId} and cc.link_id in (select link_id from content_attribute ca)"));
 
         #region constructors and initializers
         public AssembleContentsController(int siteId, string sqlMetalPath, string connectionParameter) : base(connectionParameter)
@@ -144,19 +142,25 @@ namespace Quantumart.QP8.Assembling
         #region paths
 
         private string _siteRoot;
-        private string SiteRoot
+        public string SiteRoot
         {
             get
             {
-                if (null == _siteRoot) {
-                    var resultColumn = SiteRow["is_live"].ToString() == "1" ? "assembly_path" : "stage_assembly_path";
-                    _siteRoot = SiteRow[resultColumn].ToString().Replace(@"\bin", "");
-                }
-                return _siteRoot;
+                var path = SiteRow["is_live"].ToString() == "1" ? "assembly_path" : "stage_assembly_path";
+                return _siteRoot ?? (_siteRoot = SiteRow[path].ToString().Replace(@"\bin", ""));
             }
+            set { _siteRoot = value;  }
         }
 
-        public new bool IsLive => Convert.ToBoolean(int.Parse(SiteRow["is_live"].ToString()));
+        private bool? _isLive;
+
+        public new bool IsLive
+        {
+            get { return _isLive ?? (_isLive = Convert.ToBoolean(int.Parse(SiteRow["is_live"].ToString()))).Value; }
+            set { _isLive = value; }
+        }
+
+        public bool DisableClassGeneration { get; set; }
 
         public bool ProceedMappingWithDb => GetFlag("proceed_mapping_with_db", false);
 
@@ -175,8 +179,8 @@ namespace Quantumart.QP8.Assembling
         {
             get
             {
-                var result = Convert.ToString(SiteRow["context_class_name"]);
-                return string.IsNullOrEmpty(result) ? "QPDataContext" : result;
+                var contextClass = Convert.ToString(SiteRow["context_class_name"]);
+                return string.IsNullOrEmpty(contextClass) ? "QPDataContext" : contextClass;
             }
         }
 
@@ -208,13 +212,17 @@ namespace Quantumart.QP8.Assembling
 
         private void GenerateClasses(FileNameHelper helper)
         {
-            GenerateDbmlFile(helper);
-            ProcessDbmlFile(helper);
-            if (!GenerateMapFileOnly)
+            if (!DisableClassGeneration)
             {
-                GenerateManyToMany(helper);
-                GenerateModifications(helper);
-                GenerateExtensions(helper);
+                GenerateDbmlFile(helper);
+                ProcessDbmlFile(helper);
+                if (!GenerateMapFileOnly)
+                {
+                    GenerateManyToMany(helper);
+                    GenerateModifications(helper);
+                    GenerateExtensions(helper);
+                }
+
             }
         }
 

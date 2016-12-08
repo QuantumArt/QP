@@ -19,6 +19,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private const string ContentDispositionKey = "Content-Disposition";
         private const string ContentDispositionTemplate = "attachment; filename=\"{0}\"; filename*=UTF-8''{0}";
+        private const int DefaultSvgWidth = 800;
+        private const int DefaultSvgHeight = 600;
 
         public class FilePropertiesOptions
         {
@@ -88,6 +90,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private static bool GetImageSize(string path, ref int width, ref int height)
         {
+            if (path.EndsWith(".svg"))
+            {
+                width = DefaultSvgWidth;
+                height = DefaultSvgHeight;
+                return true;
+            }
+
             try
             {
                 using (var img = Image.FromFile(path))

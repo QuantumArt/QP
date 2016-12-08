@@ -21,7 +21,6 @@ namespace Quantumart.QP8.BLL.Repository
             return BackendActionCache.CustomActions.Where(ca => codes.Contains(ca.Action.Code)).ToArray();
         }
 
-
         internal static IEnumerable<CustomActionListItem> List(ListCommand cmd, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
@@ -35,12 +34,16 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static CustomAction GetById(int id)
         {
-            return BackendActionCache.CustomActions.SingleOrDefault(a => a.Id == id);
+            var result = BackendActionCache.CustomActions.SingleOrDefault(a => a.Id == id);
+            result.LastModifiedByUser = UserRepository.GetById(result.LastModifiedBy, true);
+            return result;
         }
 
         internal static CustomAction GetByCode(string code)
         {
-            return BackendActionCache.CustomActions.SingleOrDefault(a => a.Action.Code == code);
+            var result = BackendActionCache.CustomActions.SingleOrDefault(a => a.Action.Code == code);
+            result.LastModifiedByUser = UserRepository.GetById(result.LastModifiedBy, true);
+            return result;
         }
 
         internal static bool Exists(int id)

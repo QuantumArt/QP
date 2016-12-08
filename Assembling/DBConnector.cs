@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using Microsoft.Win32;
 
-namespace Assembling
+namespace Quantumart.QP8.Assembling
 {
 
     public class DbConnector
@@ -148,7 +148,7 @@ namespace Assembling
         {
             DataRow result = null;
             var dt = GetDataTable(sqlQuery);
-            if (dt != null && dt.Rows.Count > 0)
+            if ((dt != null) && (dt.Rows.Count > 0))
             {
                 result = dt.Rows[0];
             }
@@ -158,7 +158,7 @@ namespace Assembling
         public static string GetValue(DataRow row, string columnName, string defaultValue)
         {
             var obj = row[columnName];
-            return obj == null || obj.ToString() == "" ? defaultValue : obj.ToString();
+            return (obj == null) || (obj.ToString() == "") ? defaultValue : obj.ToString();
         }
 
     }

@@ -1,9 +1,8 @@
-using System;
+﻿using System;
 using System.Data;
 using System.IO;
 using System.Text;
-using Assembling;
-using Assembling.Info;
+using Quantumart.QP8.Assembling.Info;
 
 namespace Quantumart.QP8.Assembling
 {

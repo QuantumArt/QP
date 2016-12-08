@@ -16,6 +16,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public readonly string LinqBlock = "linqBlock";
         public readonly string BinBlock = "binBlock";
         public readonly string StageDnsBlock = "stageDnsBlock";
+        public readonly string ExtDevBlock = "extDevBlock";
         public readonly string UploadUrlPrefixBlock = "uploadUrlPrefixBlock";
         public readonly string TestDirectoryPathBlock = "testDirectoryPathBlock";
         public readonly string MappingWithDbBlock = "mappingWithDbBlock";

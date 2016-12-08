@@ -10,6 +10,8 @@ using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
+using System.IO;
+using System.IO.Compression;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -130,15 +132,48 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var sqlMetalPath = QPConfiguration.ConfigVariable(Config.SqlMetalKey);
-            if (string.IsNullOrEmpty(sqlMetalPath))
+            if (string.IsNullOrEmpty(sqlMetalPath) && !site.DownloadEfSource)
             {
                 return MessageResult.Error(string.Format(GlobalStrings.SqlMetalPathEmpty));
             }
 
-            site.CreateLinqDirectories();
-            var cnt = new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString);
-            cnt.Assemble();
+            if (site.ExternalDevelopment)
+            {
 
+
+                var liveTempDirectory = $@"{site.TempDirectoryForClasses}\live";
+                var stageTempDirectory = $@"{site.TempDirectoryForClasses}\stage";
+
+                if (Directory.Exists(liveTempDirectory))
+                    Directory.Delete(liveTempDirectory, true);
+                Directory.CreateDirectory(liveTempDirectory);
+
+                if (Directory.Exists(stageTempDirectory))
+                    Directory.Delete(stageTempDirectory, true);
+                Directory.CreateDirectory(stageTempDirectory);
+
+                if (File.Exists(site.TempArchiveForClasses))
+                    File.Delete(site.TempArchiveForClasses);
+
+                site.AssemblyPath = liveTempDirectory;
+                site.StageAssemblyPath = stageTempDirectory;
+                site.IsLive = true;
+                site.CreateLinqDirectories();
+                site.IsLive = false;
+                site.CreateLinqDirectories();
+
+
+                (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = liveTempDirectory, IsLive = true, DisableClassGeneration = site.DownloadEfSource }).Assemble();
+                (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = stageTempDirectory, IsLive = false, DisableClassGeneration = site.DownloadEfSource }).Assemble();
+
+                ZipFile.CreateFromDirectory(site.TempDirectoryForClasses, site.TempArchiveForClasses);
+                
+                return MessageResult.Download($"/Backend/Site/GetClassesZip/{id}");
+
+            }
+
+            site.CreateLinqDirectories();
+            new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString).Assemble();
             return null;
         }
 
