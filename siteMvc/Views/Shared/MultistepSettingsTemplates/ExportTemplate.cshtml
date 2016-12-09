@@ -1,11 +1,11 @@
-﻿@model Quantumart.QP8.WebMvc.ViewModels.ExportViewModel
+﻿@model Quantumart.QP8.WebMvc.ViewModels.MultistepSettings.ExportViewModel
 
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.WebMvc.ViewModels
 @using Quantumart.QP8.Constants
 
 @using (Html.BeginTabForm(Model))
-{ 
+{
     using (Html.BeginFieldGroup(TemplateStrings.RegionalAndLanguageSettings))
     {
         @Html.SelectFieldFor(model => model.Encoding, Html.List(Model.Charsets))
@@ -44,7 +44,7 @@
                }, new Dictionary<string, object> { { "id", Model.CustomFieldsElementId }}
             )
         }
-       
+
        @Html.MultipleItemPickerFieldFor(model => model.FieldsToExpand, Model.GetList(Model.FieldsToExpand), new EntityDataListArgs
        {
               EntityTypeCode = EntityTypeCode.Field,
@@ -55,7 +55,7 @@
               MaxListWidth = 350,
               EnableCopy = false,
               ShowIds = true
-       }, new Dictionary<string, object> { { "id", Model.FieldsToExpandElementId } })        
+       }, new Dictionary<string, object> { { "id", Model.FieldsToExpandElementId } })
 
     }
 }

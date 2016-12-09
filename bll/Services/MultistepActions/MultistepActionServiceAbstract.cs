@@ -60,9 +60,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
 
             var context = CreateContext(parentId, id, boundToExternal);
             HttpContext.Current.Session[ContextSessionKey] = context;
-
-            var settings = CreateActionSettings(parentId, id);
-            return settings;
+            return CreateActionSettings(parentId, id);
         }
 
         public virtual MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)

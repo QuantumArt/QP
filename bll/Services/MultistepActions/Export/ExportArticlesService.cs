@@ -12,7 +12,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public void SetupWithParams(int parentId, int id, int[] ids, ExportSettings settingsParams)
         {
-            var contentId = (ids == null) ? id : parentId;
+            var contentId = ids == null ? id : parentId;
             var content = ContentRepository.GetById(contentId);
             if (content == null)
             {
@@ -40,7 +40,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
         {
-            var contentId = (ids == null) ? id : parentId;
+            var contentId = ids == null ? id : parentId;
             var content = ContentRepository.GetById(contentId);
             if (content == null)
             {
