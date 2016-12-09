@@ -2142,9 +2142,9 @@ namespace Quantumart.QP8.DAL
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(options.CommonFilter, options.ContextFilter));
 
             Dictionary<int, string> fieldMap = null;
-            if (options.ExstensionContentIds.Any())
+            if (options.ExtensionContentIds.Any())
             {
-                fieldMap = GetAggregatedFieldNames(sqlConnection, options.ExstensionContentIds);
+                fieldMap = GetAggregatedFieldNames(sqlConnection, options.ExtensionContentIds);
             }
 
             Dictionary<int, string> referenceMap = null;
@@ -2158,7 +2158,7 @@ namespace Quantumart.QP8.DAL
             AddSourcesToQuery(options, useSelection, fromBuilder, fieldMap, referenceMap);
             AddDynamicColumnsToQuery(sqlConnection, options, selectBuilder, fromBuilder, Default.MaxViewInListFieldLength + 1);
 
-            var useFullText = AddFullTextFilteringToQuery(sqlConnection, options.FullTextSearch, options.ContentId, options.ExstensionContentIds, fromBuilder);
+            var useFullText = AddFullTextFilteringToQuery(sqlConnection, options.FullTextSearch, options.ContentId, options.ExtensionContentIds, fromBuilder);
             AddLinkFilteringToQuery(options.LinkFilters, whereBuilder, sqlParams);
             AddRelationSecurityFilteringToQuery(sqlConnection, options, fromBuilder, whereBuilder);
             if (options.FilterIds != null && options.FilterIds.Any())
@@ -2204,9 +2204,9 @@ namespace Quantumart.QP8.DAL
             foreach (var linkFilter in linkFilters)
             {
                 var tableAlias = "c";
-                if (linkFilter.ExstensionContentId != 0)
+                if (linkFilter.ExtensionContentId != 0)
                 {
-                    tableAlias += "_" + linkFilter.ExstensionContentId;
+                    tableAlias += "_" + linkFilter.ExtensionContentId;
                     if (linkFilter.ReferenceFieldId != 0)
                     {
                         tableAlias += "_" + linkFilter.ReferenceFieldId;
@@ -2526,7 +2526,7 @@ namespace Quantumart.QP8.DAL
                 fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0}_{1} with(nolock) ON c.[{2}] = c_{0}_{1}.CONTENT_ITEM_ID", reference.TargetContentId, reference.ReferenceFieldID, referenceMap[reference.ReferenceFieldID]);
             }
 
-            foreach (var contentId in options.ExstensionContentIds)
+            foreach (var contentId in options.ExtensionContentIds)
             {
                 if (fieldMap.ContainsKey(contentId))
                 {
@@ -5262,13 +5262,13 @@ namespace Quantumart.QP8.DAL
          ).ToList();
         }
 
-        public static List<DataRow> GetArticlesForExport(SqlConnection sqlConnection, int contentId, string exstensions, string columns, string filter, int startRow, int pageSize, string orderBy, out int totalRecords)
+        public static List<DataRow> GetArticlesForExport(SqlConnection sqlConnection, int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, out int totalRecords)
         {
             return GetSimplePagedList(
                  sqlConnection,
                  EntityTypeCode.Article,
                  $"base.[content_item_id] {columns}, base.created, base.modified",
-                 $"[dbo].[content_{contentId}] base {exstensions}",
+                 $"[dbo].[content_{contentId}] base {extensions}",
                  string.IsNullOrEmpty(orderBy) ? "base.CONTENT_ITEM_ID DESC" : orderBy,
                  filter,
                  startRow,
@@ -5393,7 +5393,7 @@ namespace Quantumart.QP8.DAL
                     SELECT
                         ids.Id [Id],' +
                         CONVERT(NVARCHAR(10), f.ATTRIBUTE_ID) +' [FieldId],
-                        a.CONTENT_ITEM_ID [ExstensionId]
+                        a.CONTENT_ITEM_ID [ExtensionId]
                     FROM
                         @ids ids
                         JOIN CONTENT_' + CONVERT(NVARCHAR(10), ef.CONTENT_ID) + ' a ON a.' + ef.ATTRIBUTE_NAME +' = ids.Id
@@ -5422,7 +5422,7 @@ namespace Quantumart.QP8.DAL
                     {
                         var id = (int)(decimal)reader["Id"];
                         var fieldId = (int)reader["FieldId"];
-                        var exstensionId = (int)(decimal)reader["ExstensionId"];
+                        var extensionId = (int)(decimal)reader["ExtensionId"];
 
                         Dictionary<int, int> articleMap;
                         if (result.ContainsKey(id))
@@ -5435,7 +5435,7 @@ namespace Quantumart.QP8.DAL
                             result[id] = articleMap;
                         }
 
-                        articleMap[fieldId] = exstensionId;
+                        articleMap[fieldId] = extensionId;
                     }
 
                     return result;

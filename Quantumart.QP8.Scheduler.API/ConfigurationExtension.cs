@@ -4,7 +4,7 @@ using Microsoft.Practices.Unity;
 
 namespace Quantumart.QP8.Scheduler.API
 {
-    public static class ConfigurationExstension
+    public static class ConfigurationExtension
     {
         public const string DefaultScheduleName = "NullSchedule";
 
@@ -15,7 +15,7 @@ namespace Quantumart.QP8.Scheduler.API
             container.RegisterType<IProcessor, T>(name, lifetimeManager);
 
             var descriptor = new ProcessorDescriptor(name, service, schedule);
-            container.RegisterInstance<ProcessorDescriptor>(descriptor.Processor, descriptor);
+            container.RegisterInstance(descriptor.Processor, descriptor);
         }
 
         public static void RegisterProcessor<T>(this IUnityContainer container, string service, string schedule)

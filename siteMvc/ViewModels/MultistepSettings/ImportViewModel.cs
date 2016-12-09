@@ -8,9 +8,8 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
     public class ImportViewModel : ExportImportModel
     {
@@ -147,15 +146,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             }
         }
 
-        private static void Update(ImportFieldGroupViewModel groupModel, IList<BLL.Field> fields, bool exstension)
+        private static void Update(ImportFieldGroupViewModel groupModel, IList<BLL.Field> fields, bool extension)
         {
-            if (exstension)
+            if (extension)
             {
                 var content = fields.Select(f => f.Content).FirstOrDefault();
 
                 if (content != null)
                 {
-                    groupModel.Fields.Add(new ExstendedListItem
+                    groupModel.Fields.Add(new ExtendedListItem
                     {
                         Text = content.Name + ".CONTENT_ITEM_ID",
                         Value = "Id_" + content.Id,
@@ -169,15 +168,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
             foreach (var field in fields)
             {
-                var text = exstension ? $"{field.Content.Name}.{field.Name}" : field.Name;
-                var item = new ExstendedListItem
+                var text = extension ? $"{field.Content.Name}.{field.Name}" : field.Name;
+                var item = new ExtendedListItem
                 {
                     Text = text,
                     Value = field.Id.ToString(),
                     Description = field.Name,
                     Required = field.Required,
                     IsIdentifier = false,
-                    IsAggregated = exstension,
+                    IsAggregated = extension,
                     Unique = field.IsUnique,
                     BrokenDataIntegrity = !CheckFieldForDataIntegrity(field)
                 };
@@ -189,8 +188,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
                     foreach (var content in contents)
                     {
                         var contentGroup = new ImportFieldGroupViewModel(content.Name);
-                        var exstensionFields = content.Fields.Where(f => f.ExactType != Constants.FieldExactTypes.M2ORelation).ToList();
-                        Update(contentGroup, exstensionFields, true);
+                        var extensionFields = content.Fields.Where(f => f.ExactType != Constants.FieldExactTypes.M2ORelation).ToList();
+                        Update(contentGroup, extensionFields, true);
                         classifierGroup.Groups.Add(contentGroup);
                     }
 
@@ -224,13 +223,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public ImportFieldGroupViewModel(string name)
         {
             Name = name;
-            Fields = new List<ExstendedListItem>();
+            Fields = new List<ExtendedListItem>();
             Groups = new List<ImportFieldGroupViewModel>();
         }
 
         public string Name { get; private set; }
 
-        public List<ExstendedListItem> Fields { get; }
+        public List<ExtendedListItem> Fields { get; }
 
         public List<ImportFieldGroupViewModel> Groups { get; }
     }

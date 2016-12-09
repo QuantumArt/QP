@@ -3,6 +3,7 @@ using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
@@ -19,7 +20,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public int[] Ids { get; }
 
-        public ExportArticlesCommand(MultistepActionStageCommandState state) : this(state.ParentId, state.Id, 0, state.Ids) { }
+        public ExportArticlesCommand(MultistepActionStageCommandState state)
+            : this(state.ParentId, state.Id, 0, state.Ids) { }
 
         public ExportArticlesCommand(int siteId, int contentId, int itemCount, int[] ids)
         {
@@ -57,12 +59,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, ContentId));
             }
 
-            if (HttpContext.Current.Session["ExportArticlesService.Settings"] == null)
+            if (HttpContext.Current.Session[CsvExport.SettingsSessionKey] == null)
             {
                 throw new ArgumentException("There is no specified settings");
             }
 
-            var setts = HttpContext.Current.Session["ExportArticlesService.Settings"] as ExportSettings;
+            var setts = HttpContext.Current.Session[CsvExport.SettingsSessionKey] as ExportSettings;
             var csv = new CsvWriter(SiteId, ContentId, Ids, setts);
             var result = new MultistepActionStepResult { ProcessedItemsCount = csv.Write(step, ItemsPerStep) };
             if (csv.CsvReady)

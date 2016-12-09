@@ -113,7 +113,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static string FillFullTextSearchParams(int contentId, string filter, IList<ArticleSearchQueryParam> searchQueryParams, ArticleFullTextSearchQueryParser ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] exstensionContentIds, out ContentReference[] contentReferences)
+        internal static string FillFullTextSearchParams(int contentId, string filter, IList<ArticleSearchQueryParam> searchQueryParams, ArticleFullTextSearchQueryParser ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] extensionContentIds, out ContentReference[] contentReferences)
         {
             ftsOptions = GetFtsSearchParameter(ftsParser, searchQueryParams, ArticleFullTextSearchSettings.SearchResultLimit);
             var availableForList = QPContext.IsAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
@@ -124,12 +124,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             if (searchQueryParams == null)
             {
-                exstensionContentIds = new int[0];
+                extensionContentIds = new int[0];
                 contentReferences = new ContentReference[0];
             }
             else
             {
-                exstensionContentIds = searchQueryParams.Select(p => p.ContentID).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
+                extensionContentIds = searchQueryParams.Select(p => p.ContentID).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
                 contentReferences = searchQueryParams
                     .Where(p => !string.IsNullOrEmpty(p.ContentID) && !string.IsNullOrEmpty(p.ReferenceFieldID))
                     .Select(p => new ContentReference { ReferenceFieldID = int.Parse(p.ReferenceFieldID), TargetContentId = int.Parse(p.ContentID) })
@@ -200,7 +200,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var options = new ArticlePageOptions
                 {
                     ContentId = contentId,
-                    ExstensionContentIds = extensionContentIds,
+                    ExtensionContentIds = extensionContentIds,
                     ContentReferences = contentReferences.Distinct().ToArray(),
                     SelectedIDs = selectedArticleIDs,
                     FilterIds = filterIds,
@@ -957,7 +957,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     var sortInfo = sortInfoList[sortInfoIndex];
                     var oldFieldName = sortInfo.FieldName;
                     var newFieldName = oldFieldName;
-
                     if (DynamicColumnNamePattern.IsMatch(oldFieldName))
                     {
                         var field = fieldList.SingleOrDefault(n => n.FormName == oldFieldName);
@@ -1203,12 +1202,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static List<DataRow> GetArticlesForExport(int contentId, string exstensions, string columns, string filter, int startRow, int pageSize, string orderBy, IEnumerable<ExportSettings.FieldSetting> fieldsToExpand, out int totalRecords)
+        internal static List<DataRow> GetArticlesForExport(int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, IEnumerable<ExportSettings.FieldSetting> fieldsToExpand, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
             {
-                var allExstensions = $"{exstensions} {GetExtraFromForRelations(fieldsToExpand)}";
-                return Common.GetArticlesForExport(scope.DbConnection, contentId, allExstensions, columns, filter, startRow, pageSize, orderBy, out totalRecords);
+                var allExtensions = $"{extensions} {GetExtraFromForRelations(fieldsToExpand)}";
+                return Common.GetArticlesForExport(scope.DbConnection, contentId, allExtensions, columns, filter, startRow, pageSize, orderBy, out totalRecords);
             }
         }
 

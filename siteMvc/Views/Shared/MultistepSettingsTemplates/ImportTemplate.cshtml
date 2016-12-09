@@ -1,19 +1,18 @@
-﻿@model Quantumart.QP8.WebMvc.ViewModels.ImportViewModel
+﻿@model Quantumart.QP8.WebMvc.ViewModels.MultistepSettings.ImportViewModel
 
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.WebMvc.ViewModels
-
 
 @using (Html.BeginTabForm(Model))
 {
     using (Html.BeginFieldGroup(MultistepActionStrings.SelectFile))
     {
         if (Model.UploaderType == UploaderType.Silverlight && Model.AllowUpload)
-        {	
+        {
     <div id="@Html.UniqueId("silverlightUploader")" class='l-sl-uploader'></div>
         }
         else if (Model.UploaderType == UploaderType.Html && Model.AllowUpload)
-        { 
+        {
     <div class="l-html-uploader">
         @(Html.Telerik().Upload()
                                         .Name(Html.UniqueId("mvcUploader"))
@@ -37,7 +36,7 @@
     @Html.HiddenFor(model=>model.FileName)
         }
     @Html.CheckBoxFieldFor(model => model.NoHeaders, String.Empty, false, new Dictionary<string, object> { { "class", "noPaddingForCheckbox" } })
-  
+
     }
     using (Html.BeginFieldGroup(TemplateStrings.RegionalAndLanguageSettings))
     {
@@ -52,7 +51,7 @@
     }
 
     using (Html.BeginFieldGroup(MultistepActionStrings.SettingsOnInsert))
-    { 
+    {
         @Html.SelectFieldFor(model=> model.ImportAction, Html.List(Model.ImportActions))
         @Html.SelectFieldFor(model => model.UniqueFieldToUpdate, new List<QPSelectListItem>(), new Dictionary<string, object> { { "class", "dropDownList dataList fields" } }, required: true)
         if (Model.UniqueContentFieldsToUpdate.Count() > 1)
@@ -60,7 +59,7 @@
             @Html.SelectFieldFor(model => model.UniqueContentFieldId, Html.List(Model.UniqueContentFieldsToUpdate), new Dictionary<string, object> { { "class", "dropDownList dataList" } })
         }
     }
-    
+
     <div id="@Html.UniqueId("mapping_fields_selects")" style="display:none;">
         @Html.Partial("~/Views/Shared/MultistepSettingsTemplates/_ImportFieldGroupTemplate.cshtml", Model.FieldGroup)
     </div>

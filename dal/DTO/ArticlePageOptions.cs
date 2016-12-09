@@ -13,7 +13,7 @@ namespace Quantumart.QP8.DAL.DTO
 
 		public int ContentId { get; set; }
 
-		public int[] ExstensionContentIds { get; set; }
+		public int[] ExtensionContentIds { get; set; }
 
 		public ContentReference[] ContentReferences { get; set; }
 
@@ -48,10 +48,16 @@ namespace Quantumart.QP8.DAL.DTO
 
 	    public bool Equals(ContentReference otherRef)
 	    {
-	        if (object.ReferenceEquals(otherRef, null))
-                return false;
-	        if (object.ReferenceEquals(this, otherRef))
+	        if (ReferenceEquals(otherRef, null))
+	        {
+	            return false;
+	        }
+
+	        if (ReferenceEquals(this, otherRef))
+	        {
 	            return true;
+	        }
+
 	        return (otherRef.TargetContentId == TargetContentId && otherRef.ReferenceFieldID == ReferenceFieldID);
 	    }
 

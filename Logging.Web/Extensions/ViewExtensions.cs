@@ -3,7 +3,7 @@ using System.Web.Mvc;
 using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Logging.Web.Services;
 
-namespace Quantumart.QP8.Logging.Web.Exstensions
+namespace Quantumart.QP8.Logging.Web.Extensions
 {
     public static class ViewExtensions
     {

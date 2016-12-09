@@ -59,6 +59,7 @@
     <Compile Include="Charset.cs" />
     <Compile Include="ContentSelectMode.cs" />
     <Compile Include="ContextMenuCodes.cs" />
+    <Compile Include="CsvExport.cs" />
     <Compile Include="FieldSelectMode.cs" />
     <Compile Include="CssClasses.cs" />
     <Compile Include="DocumentContextState.cs" />
