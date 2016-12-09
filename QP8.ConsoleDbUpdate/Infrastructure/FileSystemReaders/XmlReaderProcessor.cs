@@ -57,7 +57,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
                 var logService = new XmlDbUpdateLogService(new XmlDbUpdateLogRepository(), new XmlDbUpdateActionsLogRepository());
                 foreach (var ofp in orderedFilePathes)
                 {
-                    var xmlString = XDocument.Parse(File.ReadAllText(ofp, Encoding.UTF8)).ToStringWithDeclaration(SaveOptions.DisableFormatting);
+                    var xmlString = XDocument.Parse(File.ReadAllText(ofp, Encoding.UTF8)).ToNormalizedString(SaveOptions.DisableFormatting);
                     logEntries.Add(new XmlDbUpdateLogModel
                     {
                         Body = xmlString,
@@ -91,7 +91,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
             Program.Logger.Info($"Skipped files count: {orderedFilePathes.Count - filteredOrderedFilePathes.Count}.");
             Program.Logger.Info($"Total files will be processed: {filteredOrderedFilePathes.Count}.");
             Program.Logger.Debug($"Documents will be processed in next order: {filteredOrderedFilePathes.ToJsonLog()}");
-            return CombineMultipleDocumentsWithSameRoot(filteredOrderedFilePathes.Select(XDocument.Load).ToList()).ToStringWithDeclaration(SaveOptions.DisableFormatting);
+            return CombineMultipleDocumentsWithSameRoot(filteredOrderedFilePathes.Select(XDocument.Load).ToList()).ToNormalizedString(SaveOptions.DisableFormatting);
         }
 
         private static IEnumerable<string> GetOrderedDirectoryFilePathes(string absDirPath, string absOrRelativeConfigPath)
