@@ -10,6 +10,7 @@ using Ploeh.AutoFixture.Xunit2;
 using QP8.WebMvc.Tests.Infrastructure.Attributes;
 using QP8.WebMvc.Tests.Infrastructure.Specimens;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Adapters;
 using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
@@ -26,6 +27,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
     public class XmlDbUpdateTests
     {
         private readonly IFixture _fixture;
+        private readonly NonQpEnvironmentContext _context;
 
         public XmlDbUpdateTests()
         {
@@ -35,6 +37,8 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();
             LogProvider.LogFactory = new NullLogFactory();
+
+            _context = new NonQpEnvironmentContext(null);
         }
 
         [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash.xml", "ACADB78E0CE686C60564A71F1F595993")]
@@ -266,6 +270,11 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 
             // Verify outcome
             Assert.Equal(expectedElementsCount, actualElementsCount);
+        }
+
+        ~XmlDbUpdateTests()
+        {
+            _context.Dispose();
         }
     }
 }
