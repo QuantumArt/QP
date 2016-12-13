@@ -22,7 +22,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         internal static XDocument SerializeAction(XmlDbUpdateRecordedAction action, string currentDbVersion, string backendUrl, bool withoutRoot)
         {
-            var result = new XDocument(new XElement(XmlDbUpdateXDocumentConstants.ActionElement,
+            var actionAlement = new XElement(XmlDbUpdateXDocumentConstants.ActionElement,
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionCodeAttribute, action.Code),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionIdsAttribute, string.Join(",", action.Ids)),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionParentIdAttribute, action.ParentId),
@@ -30,16 +30,16 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionExecutedAttribute, action.Executed.ToString(CultureHelpers.GetCultureInfoByLcid(action.Lcid))),
                 new XAttribute(XmlDbUpdateXDocumentConstants.ActionExecutedByAttribute, action.ExecutedBy),
                 GetEntitySpecificAttributesForPersisting(action),
-                GetActionChildElements(action.Form)));
+                GetActionChildElements(action.Form));
 
             if (!withoutRoot)
             {
                 var root = GetOrCreateRoot(backendUrl, currentDbVersion);
-                root.Add(result);
-                result = new XDocument(root);
+                root.Add(actionAlement);
+                return root.Document;
             }
 
-            return result.Document;
+            return new XDocument(actionAlement).Document;
         }
 
         internal static XmlDbUpdateRecordedAction DeserializeAction(XElement action)

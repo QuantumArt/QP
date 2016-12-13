@@ -9,6 +9,7 @@ using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
@@ -203,6 +204,17 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             // Verify outcome
             dbLogService.Verify(m => m.InsertActionLogEntry(It.IsAny<XmlDbUpdateActionsLogModel>()), Times.Exactly(4));
         }
+
+        //public void GetXmlDbUpdateRecordedAction_WhenSerializingForRecord_ShouldReturnCorrectXml()
+        //{
+        //    // Fixture setup
+        //    XmlDbUpdateRecordedAction
+
+        //    // Exercise system
+        //    XmlDbUpdateSerializerHelpers.SerializeAction()
+
+        //    // Verify outcome
+        //}
     }
 }
 
