@@ -1,6 +1,5 @@
-﻿@using Quantumart.QP8.WebMvc.ViewModels
-@using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
-@model Quantumart.QP8.WebMvc.ViewModels.MultistepSettings.ImportFieldGroupViewModel
+﻿@using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
+@model ImportFieldGroupViewModel
 
 @using (Html.BeginFieldGroup(Model.Name))
 {
@@ -13,13 +12,13 @@
                     data-identifier="@item.IsIdentifier"
                     data-aggregated="@item.IsAggregated"
                     data-broken-integrity="@item.BrokenDataIntegrity"></select>
-            <span style="display:none;">@item.Text</span>
-            <span class="relatedFieldsArray">@item.Description</span>   if (item.Required || item.IsIdentifier)
+                    <span style="display:none;">@item.Text</span>
+                    <span class="relatedFieldsArray">@item.Description</span>   if (item.Required || item.IsIdentifier)
             { <span class="star">*</span> }
         }
         @foreach (var group in Model.Groups)
         {
-            @Html.Partial("~/Views/Shared/MultistepSettingsTemplates/_ImportFieldGroupTemplate.cshtml", group);
+            @Html.Partial("~/Views/Shared/MultistepSettingsTemplates/_ImportFieldGroupTemplate.cshtml", group)
         }
     </div>
 }

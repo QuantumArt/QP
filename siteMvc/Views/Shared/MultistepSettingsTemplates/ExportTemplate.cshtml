@@ -1,8 +1,6 @@
-﻿@model Quantumart.QP8.WebMvc.ViewModels.MultistepSettings.ExportViewModel
-
+﻿@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
-@using Quantumart.QP8.Constants
+@model Quantumart.QP8.WebMvc.ViewModels.MultistepSettings.ExportViewModel
 
 @using (Html.BeginTabForm(Model))
 {
@@ -11,51 +9,55 @@
         @Html.SelectFieldFor(model => model.Encoding, Html.List(Model.Charsets))
         @Html.SelectFieldFor(model => model.Culture, Html.List(Model.Locales))
     }
+
     using (Html.BeginFieldGroup(MultistepActionStrings.FormatSettings))
     {
         @Html.RadioFieldFor(s => s.Delimiter, Html.List(Model.Delimiters))
-        @Html.SelectFieldFor(s=>s.LineSeparator, Html.List(Model.LineSeparators))
-        @Html.SelectFieldFor(s=>s.OrderByField, Html.List(Model.Fields))
+        @Html.SelectFieldFor(s => s.LineSeparator, Html.List(Model.LineSeparators))
+        @Html.SelectFieldFor(s => s.OrderByField, Html.List(Model.Fields))
         if (Model.Ids != null)
         {
             foreach (var id in Model.Ids)
             {
-                @Html.Hidden("IDs", id);
+                @Html.Hidden("IDs", id)
             }
         }
     }
 
-	using (Html.BeginFieldGroup(ImportStrings.SelectFields))
+    using (Html.BeginFieldGroup(ImportStrings.SelectFields))
     {
-		@Html.CheckBoxFieldFor(s => s.AllFields, "SelectFields", true)
+        EntityDataListArgs entityData;
+        @Html.CheckBoxFieldFor(s => s.AllFields, "SelectFields", true)
         using (Html.BeginPanel("SelectFields"))
         {
+            entityData = new EntityDataListArgs
+            {
+                EntityTypeCode = EntityTypeCode.Field,
+                ParentEntityId = Model.ContentId,
+                SelectActionCode = ActionCode.MultipleSelectFieldForExport,
+                ListId = -1 * DateTime.Now.Millisecond,
+                MaxListHeight = 200,
+                MaxListWidth = 350,
+                EnableCopy = false,
+                ShowIds = true
+            };
+
             @Html.CheckBoxFieldFor(s => s.ExcludeSystemFields)
-            @Html.MultipleItemPickerFieldFor(model => model.CustomFields, Model.GetList(Model.CustomFields), new EntityDataListArgs
-               {
-                   EntityTypeCode = EntityTypeCode.Field,
-                   ParentEntityId = Model.ContentId,
-                   SelectActionCode = ActionCode.MultipleSelectFieldForExport,
-                   ListId = -1 * System.DateTime.Now.Millisecond,
-                   MaxListHeight = 200,
-                   MaxListWidth = 350,
-                   EnableCopy = false,
-                   ShowIds = true
-               }, new Dictionary<string, object> { { "id", Model.CustomFieldsElementId }}
-            )
+            @Html.MultipleItemPickerFieldFor(model => model.CustomFields, Model.GetList(Model.CustomFields), entityData, new Dictionary<string, object> { { "id", Model.CustomFieldsElementId } })
         }
 
-       @Html.MultipleItemPickerFieldFor(model => model.FieldsToExpand, Model.GetList(Model.FieldsToExpand), new EntityDataListArgs
-       {
-              EntityTypeCode = EntityTypeCode.Field,
-              ParentEntityId = Model.ContentId,
-              SelectActionCode = ActionCode.MultipleSelectFieldForExportExpanded,
-              ListId = -2 * System.DateTime.Now.Millisecond,
-              MaxListHeight = 200,
-              MaxListWidth = 350,
-              EnableCopy = false,
-              ShowIds = true
-       }, new Dictionary<string, object> { { "id", Model.FieldsToExpandElementId } })
+        entityData = new EntityDataListArgs
+        {
+            EntityTypeCode = EntityTypeCode.Field,
+            ParentEntityId = Model.ContentId,
+            SelectActionCode = ActionCode.MultipleSelectFieldForExportExpanded,
+            ListId = -2 * DateTime.Now.Millisecond,
+            MaxListHeight = 200,
+            MaxListWidth = 350,
+            EnableCopy = false,
+            ShowIds = true
+        };
 
+        @Html.MultipleItemPickerFieldFor(model => model.FieldsToExpand, Model.GetList(Model.FieldsToExpand), entityData, new Dictionary<string, object> { { "id", Model.FieldsToExpandElementId } })
     }
 }

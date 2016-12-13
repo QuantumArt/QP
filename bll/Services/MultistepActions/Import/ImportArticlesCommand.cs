@@ -4,6 +4,7 @@ using System.Web;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Resources;
 
@@ -46,12 +47,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public MultistepActionStepResult Step(int step)
         {
-            if (HttpContext.Current.Session["ImportArticlesService.Settings"] == null)
+            if (HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] == null)
             {
                 throw new ArgumentException("There is no specified settings");
             }
 
-            var setts = HttpContext.Current.Session["ImportArticlesService.Settings"] as ImportSettings;
+            var setts = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
             var reader = new CsvReader(SiteId, ContentId, setts);
             var result = new MultistepActionStepResult();
             using (var tscope = new TransactionScope())
@@ -62,7 +63,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                     {
                         int processedItemsCount;
                         reader.Process(step, ItemsPerStep, out processedItemsCount);
-
                         if (step * ItemsPerStep >= reader.ArticleCount - ItemsPerStep)
                         {
                             reader.PostUpdateM2MRelationAndO2MRelationFields();

@@ -2,7 +2,9 @@
 {
     public class CsvExport
     {
-        public const string SettingsSessionKey = "ExportArticlesService.Settings";
-        public const string ContextSessionKey = "ExportArticlesService.ProcessingContext";
+        public const string ExportSettingsSessionKey = "ExportArticlesService.Settings";
+        public const string ExportContextSessionKey = "ExportArticlesService.ProcessingContext";
+        public const string ImportSettingsSessionKey = "ImportArticlesService.Settings";
+        public const string ImportContextSessionKey = "ImportArticlesService.ProcessingContext";
     }
 }

@@ -1810,17 +1810,29 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        internal static IEnumerable<DataRow> GetSimplePagedList(SqlConnection sqlConnection,
-            string entityTypeCode, string selectBlock, string fromBlock, string orderBy, string filter, int startRow,
-            int pageSize, out int totalRecords,
-            int userId = 0, bool useSecurity = false, bool countOnly = false, int groupId = 0,
-            int startLevel = PermissionLevel.List, int endLevel = PermissionLevel.FullAccess,
-            string parentEntityTypeCode = "", int parentEntityId = 0, IEnumerable<int> selectedIds = null,
-            IList<SqlParameter> sqlParameters = null, bool useSql2012Syntax = false,
+        internal static IEnumerable<DataRow> GetSimplePagedList(
+            SqlConnection sqlConnection,
+            string entityTypeCode,
+            string selectBlock,
+            string fromBlock,
+            string orderBy,
+            string filter,
+            int startRow,
+            int pageSize,
+            out int totalRecords,
+            int userId = 0,
+            bool useSecurity = false,
+            bool countOnly = false,
+            int groupId = 0,
+            int startLevel = PermissionLevel.List,
+            int endLevel = PermissionLevel.FullAccess,
+            string parentEntityTypeCode = "",
+            int parentEntityId = 0,
+            IEnumerable<int> selectedIds = null,
+            IList<SqlParameter> sqlParameters = null,
+            bool useSql2012Syntax = false,
             IEnumerable<int> filterIds = null)
         {
-            var forceCountQuery = entityTypeCode == "content_item" &&
-                                  (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
             totalRecords = 0;
             DataTable result = null;
             if (useSecurity)
@@ -1829,6 +1841,7 @@ namespace Quantumart.QP8.DAL
                 fromBlock = fromBlock.Replace("<$_security_insert_$>", securitySql);
             }
 
+            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
             if (countOnly || forceCountQuery)
             {
                 var countBuilder = new StringBuilder();
@@ -1894,6 +1907,7 @@ namespace Quantumart.QP8.DAL
                     }
 
                     sqlBuilder.AppendLine(" FROM " + fromBlock);
+
                     if (!string.IsNullOrEmpty(filter))
                     {
                         sqlBuilder.AppendLine("  WHERE " + filter);
@@ -5267,8 +5281,8 @@ namespace Quantumart.QP8.DAL
             return GetSimplePagedList(
                  sqlConnection,
                  EntityTypeCode.Article,
-                 $"base.[content_item_id] {columns}, base.created, base.modified",
-                 $"[dbo].[content_{contentId}] base {extensions}",
+                 $"base.[content_item_id] {columns}, ci.unique_id, base.created, base.modified",
+                 $"[dbo].[content_{contentId}] base {extensions} INNER JOIN CONTENT_ITEM ci ON base.content_item_id = ci.content_item_id",
                  string.IsNullOrEmpty(orderBy) ? "base.CONTENT_ITEM_ID DESC" : orderBy,
                  filter,
                  startRow,

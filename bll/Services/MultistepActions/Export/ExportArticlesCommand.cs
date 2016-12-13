@@ -59,13 +59,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, ContentId));
             }
 
-            if (HttpContext.Current.Session[CsvExport.SettingsSessionKey] == null)
+            if (HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] == null)
             {
                 throw new ArgumentException("There is no specified settings");
             }
 
-            var setts = HttpContext.Current.Session[CsvExport.SettingsSessionKey] as ExportSettings;
-            var csv = new CsvWriter(SiteId, ContentId, Ids, setts);
+            var settings = HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] as ExportSettings;
+            var csv = new CsvWriter(SiteId, ContentId, Ids, settings);
             var result = new MultistepActionStepResult { ProcessedItemsCount = csv.Write(step, ItemsPerStep) };
             if (csv.CsvReady)
             {

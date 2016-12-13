@@ -67,13 +67,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public string FileName { get; set; } = MultistepActionStrings.NoFile;
 
         public List<KeyValuePair<string, BLL.Field>> NewFieldsList { get; set; }
+
         public Dictionary<int, string> UniqueAggregatedFieldsToUpdate { get; set; }
 
         public void SetCorrespondingFieldName(FormCollection collection)
         {
             NewFieldsList = new List<KeyValuePair<string, BLL.Field>>();
             UniqueAggregatedFieldsToUpdate = new Dictionary<int, string>();
-
             foreach (var key in collection.AllKeys.Where(s => s.StartsWith(FieldPrefix)))
             {
                 if (key.StartsWith(IdPrefix))
@@ -141,7 +141,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
                 var content = ContentService.Read(ContentId);
                 var fields = content.Fields.Where(f => f.ExactType != Constants.FieldExactTypes.M2ORelation).ToList();
                 Update(rootGroup, fields, false);
-
                 return rootGroup;
             }
         }
@@ -151,7 +150,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             if (extension)
             {
                 var content = fields.Select(f => f.Content).FirstOrDefault();
-
                 if (content != null)
                 {
                     groupModel.Fields.Add(new ExtendedListItem

@@ -198,7 +198,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private List<DataRow> GetArticlesForExport(IEnumerable<ExportSettings.FieldSetting> fieldsToExpand)
         {
-            //Формируем список полей для запроса
             var sb = new StringBuilder();
             foreach (var s in _settings.FieldNames)
             {
@@ -217,17 +216,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
             }
 
-            var columnsForSql = sb.ToString();
-            var extensions = _settings.Extensions;
-            int itemsCount;
             var stepLength = Math.Min(_itemsPerStep, _ids.Length - StartFrom + 1);
             var stepIds = new int[stepLength];
             Array.Copy(_ids, StartFrom - 1, stepIds, 0, stepLength);
 
             var orderBy = string.IsNullOrEmpty(_settings.OrderByField) ? IdentifierFieldName : _settings.OrderByField;
             var filter = $"base.content_item_id in ({string.Join(",", stepIds)}) and base.archive = 0";
-
-            return ArticleRepository.GetArticlesForExport(_contentId, extensions, columnsForSql, filter, 1, _itemsPerStep, orderBy, fieldsToExpand, out itemsCount);
+            return ArticleRepository.GetArticlesForExport(_contentId, _settings.Extensions, sb.ToString(), filter, 1, _itemsPerStep, orderBy, fieldsToExpand);
         }
 
         private static IEnumerable<string> GetParts(ExportSettings.FieldSetting field)
@@ -264,6 +259,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     }
                 }
             }
+
             return parts;
         }
 

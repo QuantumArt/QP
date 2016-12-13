@@ -1202,6 +1202,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
+        internal static List<DataRow> GetArticlesForExport(int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, IEnumerable<ExportSettings.FieldSetting> fieldsToExpand)
+        {
+            int totalRecords;
+            return GetArticlesForExport(contentId, extensions, columns, filter, startRow, pageSize, orderBy, fieldsToExpand, out totalRecords);
+        }
+
         internal static List<DataRow> GetArticlesForExport(int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, IEnumerable<ExportSettings.FieldSetting> fieldsToExpand, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
