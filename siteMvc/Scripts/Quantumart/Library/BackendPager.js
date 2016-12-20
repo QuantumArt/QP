@@ -1,4 +1,4 @@
-﻿//#region event types of pager
+//#region event types of pager
 // === Типы событий пейджера ===
 var EVENT_TYPE_PAGE_NUMBER_CHANGED = "OnPageNumberChanged";
 //#endregion
@@ -36,7 +36,7 @@ Quantumart.QP8.BackendPager = function (pagerElement) {
 };
 
 Quantumart.QP8.BackendPager.prototype = {
-	_pagerElement: null, // корневой dom-элемент компонента	
+	_pagerElement: null, // корневой dom-элемент компонента
 	_arrowFirstElement: null,
 	_arrowPrevElement: null,
 	_arrowLastElement: null,
@@ -60,12 +60,12 @@ Quantumart.QP8.BackendPager.prototype = {
 	_pageFrameRedraw: function () {
 		var $pageFrameElement = jQuery(this._pageFrameElement);
 		$pageFrameElement.children().remove();
-	
+
 		var html = new $.telerik.stringBuilder();
-		
-		// Если текущий фрейм не первый, то вставляем вначале "..."	
+
+		// Если текущий фрейм не первый, то вставляем вначале "..."
 		html.catIf('<a class="t-link qp-link-prev-frame qp-page-link">...</a>', this._currentPageFrameNumber > 0);
-	
+
 		// Генерируем номера страниц
 		if (this._totalCount > 0) {
 			for (var pn = this._currentFrameStartPageNumber; pn <= this._currentFrameEndPageNumber; pn++) {
@@ -74,14 +74,14 @@ Quantumart.QP8.BackendPager.prototype = {
 				else
 					html.cat('<span class="t-state-active">').cat((pn + 1)).cat('</span>');
 			}
-		}	
-	
-		// Если текущий фрейм не последний, то вставляем конце "..."	
+		}
+
+		// Если текущий фрейм не последний, то вставляем конце "..."
 		html.catIf('<a class="t-link qp-link-next-frame qp-page-link">...</a>', this._currentPageFrameNumber < this._pageFrameCount - 1);
-	
+
 		// визуализация
 		$pageFrameElement.html(html.string());
-	
+
 		$pageFrameElement = null;
 		html = null;
 	},
@@ -95,9 +95,9 @@ Quantumart.QP8.BackendPager.prototype = {
 
 	initialize: function () {
 		var $pagerElement = jQuery(this._pagerElement);
-		
+
 		$pagerElement.addClass("t-widget t-grid");
-	
+
 		var innerHtml = '<div class="t-grid-pager t-grid-bottom">' +
 							'<div class="t-pager t-reset">' +
 								'<a href="#" class="t-link qp-link-arrow-first qp-page-link"><span class="t-icon t-arrow-first">first</span></a>' +
@@ -109,34 +109,34 @@ Quantumart.QP8.BackendPager.prototype = {
 							'<div class="t-status-text">' +
 						'</div>';
 		$pagerElement.html(innerHtml);
-	
-		this._arrowFirstElement = $pagerElement.find('span.t-arrow-first').closest('a.t-link').get(0);	
+
+		this._arrowFirstElement = $pagerElement.find('span.t-arrow-first').closest('a.t-link').get(0);
 		this._arrowPrevElement = $pagerElement.find('span.t-arrow-prev').closest('a.t-link').get(0);
 		this._arrowNextElement = $pagerElement.find('span.t-arrow-next').closest('a.t-link').get(0);
 		this._arrowLastElement = $pagerElement.find('span.t-arrow-last').closest('a.t-link').get(0);
-	
+
 		// привязываем события
 		$pagerElement
 			.delegate('a.qp-page-link', 'click', this._onPageClickHandler)
 			.delegate('a.qp-page-link', 'mouseenter', this._onInHoverHandler)
 			.delegate('a.qp-page-link', 'mouseleave', this._onOutHoverHandler);
-	
-		
-		this._pageFrameElement = $pagerElement.find('div.t-numeric').get(0);		
-	
+
+
+		this._pageFrameElement = $pagerElement.find('div.t-numeric').get(0);
+
 		this._statusTextElement = $pagerElement.find('div.t-status-text').get(0);
-	
+
 		this.set();
 		this.redraw();
-	
-		$pagerElement = null;	
+
+		$pagerElement = null;
 	},
  // начальная инициализация
 	set: function (options) {
 		if ($q.isObject(options)) {
 			// установитьновые значения свойств
 			if (!$q.isNull(options.totalCount))
-				this._totalCount = $q.toInt(options.totalCount < 0 ? 0 : options.totalCount);		
+				this._totalCount = $q.toInt(options.totalCount < 0 ? 0 : options.totalCount);
 			if (!$q.isNull(options.pageSize))
 				this._pageSize = $q.toInt(options.pageSize < 1 ? 1 : options.pageSize);
 			if (!$q.isNull(options.pageFrameSize))
@@ -159,12 +159,12 @@ Quantumart.QP8.BackendPager.prototype = {
 		this._currentFrameStartPageNumber = Quantumart.QP8.BackendPager.getFrameStartPageNumber(this._currentPageFrameNumber, this._pageFrameSize);
 		// последняя страница текущего фрейма
 		this._currentFrameEndPageNumber = Quantumart.QP8.BackendPager.getFrameEndPageNumber(this._currentPageFrameNumber, this._pageFrameSize, this._pageCount);
-		
+
 	},
  // устанавливает новое состояние пейджера
 	redraw: function () {
 		// если текущая страница - первая - то дизейблим соответствующие arrow
-		if (this._currentPageNumber == 0) {		
+		if (this._currentPageNumber == 0) {
 			jQuery(this._arrowFirstElement).addClass("t-state-disabled").removeClass('t-state-hover');
 			jQuery(this._arrowPrevElement).addClass("t-state-disabled").removeClass('t-state-hover'); ;
 		}
@@ -172,7 +172,7 @@ Quantumart.QP8.BackendPager.prototype = {
 			jQuery(this._arrowFirstElement).removeClass("t-state-disabled");
 			jQuery(this._arrowPrevElement).removeClass("t-state-disabled");
 		}
-	
+
 		// если текущая страница - последняя - то дизейблим соответствующие arrow
 		if (this._currentPageNumber >= this._pageCount - 1) {
 			jQuery(this._arrowLastElement).addClass("t-state-disabled").removeClass('t-state-hover'); ;
@@ -182,21 +182,21 @@ Quantumart.QP8.BackendPager.prototype = {
 			jQuery(this._arrowLastElement).removeClass("t-state-disabled");
 			jQuery(this._arrowNextElement).removeClass("t-state-disabled");
 		}
-	
+
 		// вывести статус
 		if(this._totalCount > 0)
 			jQuery(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate,
 				this._currentPageNumber * this._pageSize + 1,
 				Math.min(this._currentPageNumber * this._pageSize + this._pageSize, this._totalCount),
-				this._totalCount));	
+				this._totalCount));
 		else
 			jQuery(this._statusTextElement).html(String.format($l.Pager.statusTextTemplate, 0, 0, 0));
-	
+
 		// нарисовать фрейм страниц
 		this._pageFrameRedraw();
 	},
  // перерисовать пейджер
-	get_pageCount: function (){	
+	get_pageCount: function (){
 		return this._pageCount;
 	},
 
@@ -251,8 +251,8 @@ Quantumart.QP8.BackendPager.prototype = {
 
 	dispose: function () {
 		var $pagerElement = jQuery(this._pagerElement);
-		$pagerElement.find("a.qp-page-link").undelegate();	
-	
+		$pagerElement.find("a.qp-page-link").undelegate();
+
 		$pagerElement = null;
 		this._arrowFirstElement = null;
 		this._arrowLastElement = null;
@@ -261,7 +261,7 @@ Quantumart.QP8.BackendPager.prototype = {
 		this._pageFrameElement = null;
 		this._pagerElement = null;
 		this._statusTextElement = null;
-	
+
 		this._onPageClickHandler = null;
 		this._onInHoverHandler = null
 		this._onOutHoverHandler = null;
@@ -273,7 +273,7 @@ Quantumart.QP8.BackendPager.getFrameStartPageNumber = function(pageFrameNumber, 
 };
 
 Quantumart.QP8.BackendPager.getFrameEndPageNumber = function(pageFrameNumber, pageFrameSize, pageCount){
-	return Math.min(pageFrameNumber * pageFrameSize + (pageFrameSize == 0 ? 0 : pageFrameSize - 1), pageCount == 0 ? 0 : pageCount - 1);	
+	return Math.min(pageFrameNumber * pageFrameSize + (pageFrameSize == 0 ? 0 : pageFrameSize - 1), pageCount == 0 ? 0 : pageCount - 1);
 };
 
 Quantumart.QP8.BackendPager.registerClass("Quantumart.QP8.BackendPager", Quantumart.QP8.Observable);

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -23,7 +24,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<EntityObject> GetList(IEnumerable<int> IDs, bool pageOrTemplate)
 		{
 			IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
-			var result = MappersRepository.ObjectFormatMapper
+			var result = MapperFacade.ObjectFormatMapper
 				.GetBizList(QPContext.EFContext.ObjectFormatSet
 					.Where(f => decIDs.Contains(f.Id))
 					.ToList()

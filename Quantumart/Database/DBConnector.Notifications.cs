@@ -8,8 +8,8 @@ using System.Net;
 using System.Net.Mail;
 using System.Text;
 using System.Xml.Linq;
-using Assembling;
 using Microsoft.VisualBasic;
+using Quantumart.QP8.Assembling;
 using Quantumart.QPublishing.Info;
 using VersionNotFoundException = Quantumart.QPublishing.Info.VersionNotFoundException;
 
@@ -20,6 +20,12 @@ namespace Quantumart.QPublishing.Database
     {
         #region Notifications
 
+        public bool DisableServiceNotifications { get; set; }
+
+        public bool DisableInternalNotifications { get; set; }
+
+        public Action<Exception> ExternalExceptionHandler { get; set; }
+
         private void ProceedExternalNotification(int id, string eventName, string externalUrl, ContentItem item, bool useService)
         {
             eventName = eventName.ToLowerInvariant();
@@ -27,8 +33,11 @@ namespace Quantumart.QPublishing.Database
             {
                 if (useService)
                 {
+                    if (!DisableServiceNotifications)
+                    {
+                        EnqueueNotification(id, eventName, externalUrl, item);
+                    }
 
-                    EnqueueNotification(id, eventName, externalUrl, item);
                 }
                 else
                 {
@@ -48,7 +57,12 @@ namespace Quantumart.QPublishing.Database
                 {
                     oldDoc = ContentItem.ReadLastVersion(item.Id, this).GetXDocument();
                 }
-                catch (VersionNotFoundException) { }
+                catch (Exception ex)
+                {
+                    ExternalExceptionHandler?.Invoke(ex);
+                    oldDoc = newDoc;
+                }
+
             }
             else if (eventName == NotificationEvent.Remove)
             {
@@ -60,12 +74,14 @@ namespace Quantumart.QPublishing.Database
             {
                 cmd.CommandType = CommandType.Text;
                 var sb = new StringBuilder();
-                sb.AppendLine("insert into EXTERNAL_NOTIFICATION_QUEUE(ARTICLE_ID, EVENT_NAME, URL, NEW_XML, OLD_XML)");
-                sb.AppendLine("values (@id, @eventName, @url, @newXml, @oldXml)");
+                sb.AppendLine("insert into EXTERNAL_NOTIFICATION_QUEUE(ARTICLE_ID, EVENT_NAME, URL, NEW_XML, OLD_XML, CONTENT_ID, SITE_ID)");
+                sb.AppendLine("values (@id, @eventName, @url, @newXml, @oldXml, @contentId, @siteId)");
                 cmd.CommandText = sb.ToString();
                 cmd.Parameters.AddWithValue("@id", id);
                 cmd.Parameters.Add(new SqlParameter("@eventName", SqlDbType.NVarChar, 50) { Value = eventName });
                 cmd.Parameters.Add(new SqlParameter("@url", SqlDbType.NVarChar, 1024) { Value = externalUrl });
+                cmd.Parameters.Add(new SqlParameter("@contentId", SqlDbType.Decimal) { Value = item.ContentId });
+                cmd.Parameters.Add(new SqlParameter("@siteId", SqlDbType.Decimal) { Value = item.SiteId });
                 cmd.Parameters.Add(new SqlParameter("@newXml", SqlDbType.NVarChar, -1) { Value = newDoc == null ? DBNull.Value : (object)newDoc.ToString() });
                 cmd.Parameters.Add(new SqlParameter("@oldXml", SqlDbType.NVarChar, -1) { Value = oldDoc == null ? DBNull.Value : (object)oldDoc.ToString() });
                 ProcessData(cmd);
@@ -89,9 +105,12 @@ namespace Quantumart.QPublishing.Database
             if (eventName == NotificationEvent.Modify || eventName == NotificationEvent.StatusChanged || eventName == NotificationEvent.StatusPartiallyChanged)
             {
                 var row = GetPreviousStatusHistoryRecord(id);
-                queryParams.Add("oldVisible", (bool)row["visible"]);
-                queryParams.Add("oldArchive", (bool)row["archive"]);
-                queryParams.Add("oldStatusName", row["status_type_name"].ToString());
+                if (row != null)
+                {
+                    queryParams.Add("oldVisible", (bool)row["visible"]);
+                    queryParams.Add("oldArchive", (bool)row["archive"]);
+                    queryParams.Add("oldStatusName", row["status_type_name"].ToString());
+                }
             }
 
             var arr =
@@ -104,24 +123,19 @@ namespace Quantumart.QPublishing.Database
             var delimiter = externalUrl.Contains("?") ? "&" : "?";
             var fullUrl = String.Concat(externalUrl, delimiter, queryString);
             var request = (HttpWebRequest)WebRequest.Create(fullUrl);
-            request.BeginGetResponse(ExternalNotificationCallback, request);
+            var result = request.GetResponseAsync().ContinueWith((t) => { InternalExceptionHandler(t.Exception, "GetResponseAsync", request); });
+            if (ExternalExceptionHandler != null)
+            {
+                result.ContinueWith((t) => { ExternalExceptionHandler(t.Exception); });
+            }
         }
 
-        private void ExternalNotificationCallback(IAsyncResult iar)
+        private void InternalExceptionHandler(Exception ex, string code, WebRequest request)
         {
-            try
-            {
-                var request = (HttpWebRequest)iar.AsyncState;
-                request.EndGetResponse(iar);
-            }
-            catch (Exception ex)
-            {
-                var errorMessage =
-                    $"{"DbConnector.cs, ExternalNotificationCallback(IAsyncResult iar)"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
-                if (ThrowNotificationExceptions)
-                    throw;
-            }
+            var errorMessage = $"DbConnector.Notifications.cs, {code}, URL: {request?.RequestUri}, MESSAGE: {ex.Message}, STACK TRACE: {ex.StackTrace}";
+            System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+            if (ThrowNotificationExceptions)
+                throw new Exception(errorMessage, ex);
 
         }
 
@@ -156,108 +170,108 @@ namespace Quantumart.QPublishing.Database
 
                 }
 
-                var internalNotifications = notifications.Except(dataRows);
-
-                if (Strings.LCase(AppSettings["MailComponent"]) == "qa_mail" || string.IsNullOrEmpty(AppSettings["MailHost"]))
+                if (!DisableInternalNotifications)
                 {
-                    if (internalNotifications.Any())
+                    var internalNotifications = notifications.Except(dataRows);
+                    if (Strings.LCase(AppSettings["MailComponent"]) == "qa_mail" || string.IsNullOrEmpty(AppSettings["MailHost"]))
                     {
-                        LoadUrl(GetAspWrapperUrl(siteId, notificationOn, contentItemId, notificationEmail, isLive));
-                    }
-                }
-                else
-                {
-                    var strSqlRegisterNotifForUsers = "";
-                    var platform = GetSitePlatform(siteId);
-
-                    foreach (var notifyRow in internalNotifications)
-                    {
-                        if (!ReferenceEquals(notifyRow["OBJECT_ID"], DBNull.Value))
+                        if (internalNotifications.Any())
                         {
+                            LoadUrl(GetAspWrapperUrl(siteId, notificationOn, contentItemId, notificationEmail, isLive));
+                        }
+                    }
+                    else
+                    {
+                        var strSqlRegisterNotifForUsers = "";
+                        var platform = GetSitePlatform(siteId);
 
-                            var objectId = GetNumInt(notifyRow["OBJECT_ID"]);
-                            var contentId = GetNumInt(notifyRow["CONTENT_ID"]);
-                            var objectFormatId = GetNumInt(notifyRow["FORMAT_ID"]);
-
-                            if (Strings.LCase(AppSettings["MailAssemble"]) == "yes")
+                        foreach (var notifyRow in internalNotifications)
+                        {
+                            if (!ReferenceEquals(notifyRow["OBJECT_ID"], DBNull.Value))
                             {
-                                switch (platform)
-                                {
-                                    case SitePlatform.Aspnet:
-                                        var fixedLocation = isLive ? AssembleLocation.Live : AssembleLocation.Stage;
 
-                                        var cnt = new AssembleFormatController(objectFormatId, AssembleMode.Notification, InstanceConnectionString, false, fixedLocation);
-                                        cnt.Assemble();
-                                        break;
-                                    case SitePlatform.Asp:
-                                        AssembleFormatToFile(siteId, objectFormatId);
-                                        break;
+                                var objectId = GetNumInt(notifyRow["OBJECT_ID"]);
+                                var contentId = GetNumInt(notifyRow["CONTENT_ID"]);
+                                var objectFormatId = GetNumInt(notifyRow["FORMAT_ID"]);
+
+                                if (Strings.LCase(AppSettings["MailAssemble"]) == "yes")
+                                {
+                                    switch (platform)
+                                    {
+                                        case SitePlatform.Aspnet:
+                                            var fixedLocation = isLive ? AssembleLocation.Live : AssembleLocation.Stage;
+
+                                            var cnt = new AssembleFormatController(objectFormatId, AssembleMode.Notification, InstanceConnectionString, false, fixedLocation);
+                                            cnt.Assemble();
+                                            break;
+                                        case SitePlatform.Asp:
+                                            AssembleFormatToFile(siteId, objectFormatId);
+                                            break;
+                                    }
+                                }
+
+                                var targetUrl = GetNotificationBodyUrl(siteId, objectId, contentItemId, isLive, notificationOn);
+
+                                if (GetNumBool(notifyRow["NO_EMAIL"]))
+                                {
+                                    LoadUrl(targetUrl);
+                                }
+                                else
+                                {
+                                    var mailMess = new MailMessage
+                                    {
+                                        Subject = notifyRow["NOTIFICATION_NAME"].ToString(),
+                                        From = GetFromAddress(notifyRow)
+                                    };
+
+
+                                    //set To
+                                    SetToMail(notifyRow, contentItemId, notificationOn, notificationEmail, mailMess, ref strSqlRegisterNotifForUsers);
+
+                                    mailMess.IsBodyHtml = true;
+                                    mailMess.BodyEncoding = Encoding.GetEncoding(GetFormatCharset(objectFormatId));
+                                    string body;
+
+                                    var doAttachFiles = (bool)notifyRow["SEND_FILES"];
+                                    try
+                                    {
+                                        body = GetUrlContent(targetUrl);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        body =
+                                            $"An error has occurred while getting url data: {targetUrl}. Error message: {ex.Message}";
+                                        var errorMessage =
+                                            $"DbConnector.cs, SendNotification, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
+                                        System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+                                        doAttachFiles = false;
+                                    }
+
+                                    mailMess.Body = body;
+
+                                    if (doAttachFiles)
+                                    {
+                                        AttachFiles(mailMess, siteId, contentId, contentItemId);
+                                    }
+
+                                    SendMail(mailMess);
+
+                                    //register sent notifications
+                                    if (!string.IsNullOrEmpty(strSqlRegisterNotifForUsers + ""))
+                                    {
+                                        ProcessData(strSqlRegisterNotifForUsers);
+                                    }
                                 }
                             }
 
-                            var targetUrl = GetNotificationBodyUrl(siteId, objectId, contentItemId, isLive, notificationOn);
-
-                            if (GetNumBool(notifyRow["NO_EMAIL"]))
-                            {
-                                LoadUrl(targetUrl);
-                            }
-                            else
-                            {
-                                var mailMess = new MailMessage
-                                {
-                                    Subject = notifyRow["NOTIFICATION_NAME"].ToString(),
-                                    From = GetFromAddress(notifyRow)
-                                };
-
-
-                                //set To
-                                SetToMail(notifyRow, contentItemId, notificationOn, notificationEmail, mailMess, ref strSqlRegisterNotifForUsers);
-
-                                mailMess.IsBodyHtml = true;
-                                mailMess.BodyEncoding = Encoding.GetEncoding(GetFormatCharset(objectFormatId));
-                                string body;
-
-                                var doAttachFiles = (bool)notifyRow["SEND_FILES"];
-                                try
-                                {
-                                    body = GetUrlContent(targetUrl);
-                                }
-                                catch (Exception ex)
-                                {
-                                    body =
-                                        $"An error has occurred while getting url data: {targetUrl}. Error message: {ex.Message}";
-                                    var errorMessage =
-                                        $"{"DbConnector.cs, SendNotification"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                                    System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
-                                    doAttachFiles = false;
-                                }
-
-                                mailMess.Body = body;
-
-                                if (doAttachFiles)
-                                {
-                                    AttachFiles(mailMess, siteId, contentId, contentItemId);
-                                }
-
-                                SendMail(mailMess);
-
-                                //register sent notifications
-                                if (!string.IsNullOrEmpty(strSqlRegisterNotifForUsers + ""))
-                                {
-                                    ProcessData(strSqlRegisterNotifForUsers);
-                                }
-                            }
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                var errorMessage =
-                    $"{"DbConnector.cs, SendNotification"}, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
-                if (ThrowNotificationExceptions)
-                    throw;
+                InternalExceptionHandler(ex, "SendNotification", null);
+                ExternalExceptionHandler?.Invoke(ex);
             }
         }
 
@@ -291,26 +305,23 @@ namespace Quantumart.QPublishing.Database
 
         public string GetUrlContent(string url, bool throwException)
         {
-            string functionReturnValue;
-            var response = GetUrlResponse(url);
-            if (response.StatusCode == HttpStatusCode.OK)
+            using (var response = GetUrlResponse(url))
             {
-                var reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding(response.CharacterSet));
-                functionReturnValue = reader.ReadToEnd();
-                response.Close();
-            }
-            else
-            {
-                if (throwException)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    throw new Exception(response.StatusDescription + "(" + response.StatusCode + "): " + url);
+                    var stream = response.GetResponseStream();
+                    var charset = response.CharacterSet ?? "UTF-8";
+                    return stream == null ? null : new StreamReader(stream, Encoding.GetEncoding(charset)).ReadToEnd();
                 }
                 else
                 {
-                    functionReturnValue = url + "<br>" + response.StatusCode + "<br>" + response.StatusDescription;
+                    if (throwException)
+                    {
+                        throw new Exception(response.StatusDescription + "(" + response.StatusCode + "): " + url);
+                    }
+                    return url + "<br>" + response.StatusCode + "<br>" + response.StatusDescription;
                 }
             }
-            return functionReturnValue;
         }
 
         public void LoadUrl(string url)
@@ -336,7 +347,7 @@ namespace Quantumart.QPublishing.Database
         private string GetObjectFolderUrl(int siteId, bool isLive)
         {
             //Return String.Format("{0}/{1}/", GetSiteUrl(siteId, isLive), "temp/notifications")
-            return $"{GetSiteUrl(siteId, isLive)}/{"qp_notifications"}/";
+            return $"{GetSiteUrl(siteId, isLive)}/qp_notifications/";
         }
 
 

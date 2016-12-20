@@ -1,44 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using AutoMapper;
-using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
-
     internal class DefaultMapper
     {
-        public static Biz GetBizObject<Biz, Dal>(Dal dataObject)
-            where Biz : class
-            where Dal : class
+        public static TBiz GetBizObject<TBiz, TDal>(TDal dataObject)
+            where TBiz : class
+            where TDal : class
         {
-            if (dataObject == null)
-                return null;
-            else
-            {
-                return Mapper.Map<Dal, Biz>(dataObject);
-            }
+            return dataObject == null ? null : Mapper.Map<TDal, TBiz>(dataObject);
         }
 
-        public static List<Biz> GetBizList<Biz, Dal>(List<Dal> dataList)
-            where Biz : class
-            where Dal : class
+        public static List<TBiz> GetBizList<TBiz, TDal>(List<TDal> dataList)
+            where TBiz : class
+            where TDal : class
         {
-            return Mapper.Map<List<Dal>, List<Biz>>(dataList);
+            return Mapper.Map<List<TDal>, List<TBiz>>(dataList);
         }
 
-        public static Dal GetDalObject<Dal, Biz>(Biz bizObject)
-            where Biz : class
-            where Dal : class
+        public static TDal GetDalObject<TDal, TBiz>(TBiz bizObject)
+            where TBiz : class
+            where TDal : class
         {
-            return Mapper.Map<Biz, Dal>(bizObject);
+            return Mapper.Map<TBiz, TDal>(bizObject);
         }
 
-        public static List<Dal> GetDalList<Dal, Biz>(List<Biz> bizList)
+        public static List<TDal> GetDalList<TDal, TBiz>(List<TBiz> bizList)
         {
-            return Mapper.Map<List<Biz>, List<Dal>>(bizList);
+            return Mapper.Map<List<TBiz>, List<TDal>>(bizList);
         }
     }
 }

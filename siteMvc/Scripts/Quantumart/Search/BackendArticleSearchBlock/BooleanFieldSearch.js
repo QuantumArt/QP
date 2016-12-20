@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.BooleanFieldSearch
+//#region class BackendArticleSearchBlock.BooleanFieldSearch
 // === Класс блока поиска по числовому полю
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
@@ -149,7 +149,7 @@ Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.prototype = {
 			return false;
 	},
 
-	_isNullCheckBoxElement: null // dom-элемент чекбокса isNull        
+	_isNullCheckBoxElement: null // dom-элемент чекбокса isNull
 };
 
 Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch.registerClass("Quantumart.QP8.BackendArticleSearchBlock.BooleanFieldSearch", Quantumart.QP8.BackendArticleSearchBlock.FieldSearchBase);

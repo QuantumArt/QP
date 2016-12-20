@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.StringEnumFieldSearch
+//#region class BackendArticleSearchBlock.StringEnumFieldSearch
 // === Класс блока текстового поиска по полю
 Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
@@ -11,8 +11,8 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
         var queryDropDownListID = this._elementIdPrefix + '_queryDropDownList';
         var isNullCheckBoxID = this._elementIdPrefix + '_isNullCheckBox';
         var serverContent;
-     
-        // получить разметку с сервера     
+
+        // получить разметку с сервера
         $q.getJsonFromUrl(
             "GET",
             CONTROLLER_URL_ARTICLE_SEARCH_BLOCK + "StringEnum",
@@ -64,7 +64,7 @@ Quantumart.QP8.BackendArticleSearchBlock.StringEnumFieldSearch.prototype = {
     get_blockState: function () {
         return new Quantumart.QP8.BackendArticleSearchBlock.FieldSearchState(Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum, this._fieldID, this._contentID, this._fieldColumn, this._fieldName, this._fieldGroup, this._referenceFieldID,
 		{
-		    isNull: this.get_IsNull(),		    
+		    isNull: this.get_IsNull(),
 		    text: jQuery(this._queryDropDownListElement).val(),
 		    alias: jQuery(this._queryDropDownListElement).find("option:selected").text()
 		});

@@ -1,10 +1,10 @@
-﻿//#region class ActionLogTextFilter
+//#region class ActionLogTextFilter
 Quantumart.QP8.ActionLogTextFilter = function (filterContainer) {
 	Quantumart.QP8.ActionLogTextFilter.initializeBase(this, [filterContainer]);
 };
 
 Quantumart.QP8.ActionLogTextFilter.prototype = {
-	
+
 
 	initialize: function () {
 		this.$container.append('<div class="row"><input type="text" class="textbox" value="" /></div>');

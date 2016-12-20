@@ -1,4 +1,4 @@
-﻿//#region class BackendArticleSearchBlock.NumericRangeFieldSearch
+//#region class BackendArticleSearchBlock.NumericRangeFieldSearch
 // === Класс блока поиска по числовому полю
 Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch = function (containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID) {
     Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.initializeBase(this, [containerElement, parentEntityId, fieldID, contentID, fieldColumn, fieldName, fieldGroup, referenceFieldID]);
@@ -141,12 +141,12 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 			}
 
 			jQuery(this._numberFromElement).data("tTextBox").value(state.from);
-			jQuery(this._numberToElement).data("tTextBox").value(state.to);			
+			jQuery(this._numberToElement).data("tTextBox").value(state.to);
 		}
 	},
 
 	_onIsNullCheckBoxChange: function () {
-		// дизейблим текст бокс если пользователь выбрал IS NULL        
+		// дизейблим текст бокс если пользователь выбрал IS NULL
 		if (this.get_IsNull()) {
 			jQuery(this._numberFromElement).data("tTextBox").disable();
 			jQuery(this._numberToElement).data("tTextBox").disable();
@@ -243,7 +243,7 @@ Quantumart.QP8.BackendArticleSearchBlock.NumericRangeFieldSearch.prototype = {
 	_isByValue: true,
 
 	_onIsNullCheckBoxChangeHandler: null, // обработчик клика на чекбоксе IS NULL
-	_onNumericInputFocusHandler: null, // обработчик потери фокуса 
+	_onNumericInputFocusHandler: null, // обработчик потери фокуса
 
 	_isNullCheckBoxElement: null, // dom-элемент чекбокса isNull
 	_numberFromElement: null, // dom-элемент поля "От"

@@ -1,195 +1,167 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.DAL;
-using System.Data.SqlClient;
 using System.Data.EntityClient;
+using System.Data.Mapping;
 using System.Data.Metadata.Edm;
-using System.Web;
-using System.Reflection;
+using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Transactions;
 using System.Xml;
 using System.Xml.Linq;
-using System.Data.Mapping;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class QPConnectionScope : IDisposable
     {
-        [ThreadStatic]
-        private static QPConnectionScope currentScope = null;
 
-		private string ConnectionString { get; set; }
+        private EntityConnection _efConnection;
 
-		public static QPConnectionScope Current
-		{
-			get { return currentScope; }
-			private set { currentScope = value; }
-		}
+        private int _scopeCount;
 
-        public static string SetIsolationLevelCommandText
+        public static QPConnectionScope Current
         {
-            get
+            get { return QPContext.CurrentConnectionScope; }
+            private set { QPContext.CurrentConnectionScope = value; }
+        }
+
+        public static string SetIsolationLevelCommandText => "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED";
+
+        private string ConnectionString { get; }
+
+        public QPConnectionScope()
+            : this(QPContext.CurrentDbConnectionString) { }
+
+        public QPConnectionScope(string connectionString)
+        {
+            if (Current == null)
             {
-                return "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED";
+                Ensure.NotNullOrWhiteSpace(connectionString, "Connection string should not be null or empty");
+                Current = this;
+                ConnectionString = connectionString;
             }
+            else if (!string.IsNullOrWhiteSpace(connectionString) && !connectionString.Equals(Current.ConnectionString, StringComparison.OrdinalIgnoreCase))
+            {
+                throw new ArgumentException("Attempt to create connection in the existing scope with different connection string.");
+            }
+
+            Current._scopeCount++;
         }
 
-        private EntityConnection efConnection = null;
-
-        /// <summary>
-        /// Количество scope вложенных друг в друга
-        /// </summary>
-        private int scopeCount = 0;
-
-		private HashSet<string> identityInsertOptions = new HashSet<string>();
-
-		public QPConnectionScope(string connectionString)
+        public QPConnectionScope(string connectionString, HashSet<string> identityInsertOptions)
+            : this(connectionString)
         {
-            // Если scope для потока не существует, то делаем создаваемый текущим для потока
-			if (Current == null)
-			{
-				if (string.IsNullOrWhiteSpace(connectionString))
-					throw new ArgumentNullException("connectionString");
-				Current = this;
-				ConnectionString = connectionString;
-			}
-			else if (!string.IsNullOrWhiteSpace(connectionString) && !connectionString.Equals(Current.ConnectionString, StringComparison.OrdinalIgnoreCase))
-				throw new ArgumentException("Attempt to create connection in the existing scope with different connection string.");
-
-            // увеличиваем счетчик вложенных scope
-            Current.scopeCount++;
+            IdentityInsertOptions = identityInsertOptions;
         }
-
-		public QPConnectionScope() : this(QPContext.CurrentDBConnectionString) { }
-
-		public QPConnectionScope(string connectionString, HashSet<string> identityInsertOptions) : this(connectionString)
-		{
-			this.identityInsertOptions = identityInsertOptions;
-		}
 
         public void Dispose()
         {
             if (Current != null)
             {
                 // уменьшаем счетчик вложенных scope
-                Current.scopeCount--;
                 // если это последний, то все очищаем
-				if (Current.scopeCount == 0)
-					ForcedDispose();
+                Current._scopeCount--;
+                if (Current._scopeCount == 0)
+                {
+                    ForcedDispose();
+                }
             }
         }
 
-		public void ForcedDispose()
-		{
-			if (Current.efConnection != null)
-			{
-				Current.efConnection.StoreConnection.Close();
-				Current.efConnection.StoreConnection.Dispose();
-				Current.efConnection.Close();
-				Current.efConnection.Dispose();
-				Current.efConnection = null;
-				Current.scopeCount = 0;
-			}
-			Current = null;
-		}
+        public void ForcedDispose()
+        {
+            if (Current._efConnection != null)
+            {
+                Current._efConnection.StoreConnection.Close();
+                Current._efConnection.StoreConnection.Dispose();
+                Current._efConnection.Close();
+                Current._efConnection.Dispose();
+                Current._efConnection = null;
+                Current._scopeCount = 0;
+            }
 
-        /// <summary>
-        /// Получить SqlConnection
-        /// </summary>
-        public SqlConnection DbConnection
+            Current = null;
+        }
+
+        public SqlConnection DbConnection => (SqlConnection)EfConnection.StoreConnection;
+
+        public EntityConnection EfConnection
         {
             get
             {
-				return (SqlConnection)EFConnection.StoreConnection;
+                Current.CreateEfConnection();
+                return Current._efConnection;
             }
         }
 
-        /// <summary>
-        /// Получить EntityConnection
-        /// </summary>
-        public EntityConnection EFConnection
-        {
-            get
-            {
-                Current.CreateEFConnection();
-                return Current.efConnection;
-            }
-        }
+        public HashSet<string> IdentityInsertOptions { get; } = new HashSet<string>();
 
-		public HashSet<string> IdentityInsertOptions
-		{
-			get
-			{
-				return identityInsertOptions;
-			}
-		}
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities"), System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000",
-		Justification = "Object will dispose in QPConnectionScope.Dispose")]
-        private void CreateEFConnection()
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
+        [SuppressMessage("Microsoft.Reliability", "CA2000", Justification = "Object will dispose in QPConnectionScope.Dispose")]
+        private void CreateEfConnection()
         {
-			if (Current.efConnection == null)
+            if (Current._efConnection == null)
             {
-                SqlConnection sqlConnection = new SqlConnection(this.ConnectionString);
+                var sqlConnection = new SqlConnection(ConnectionString);
                 var efc = new EntityConnection(MetadataWorkspace, sqlConnection);
                 sqlConnection.Open();
                 efc.Open();
-				Current.efConnection = efc;
-				if (Transaction.Current == null)
-				{
-					using (SqlCommand cmd = SqlCommandFactory.Create(SetIsolationLevelCommandText, sqlConnection))
-					{
-						cmd.ExecuteNonQuery();
-					}
-				}
+                Current._efConnection = efc;
+                if (Transaction.Current == null)
+                {
+                    using (var cmd = SqlCommandFactory.Create(SetIsolationLevelCommandText, sqlConnection))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                }
             }
         }
 
-		private static MetadataWorkspace mdw = new MetadataWorkspace(new[]
-                    {
-                        "res://*/QP8Model.csdl",
-                        "res://*/QP8Model.ssdl",
-                        "res://*/QP8Model.msl"
-                    }, new[] { typeof(QP8Entities).Assembly });
-
-		private MetadataWorkspace MetadataWorkspace
-		{
-			get
-			{
-				if (!identityInsertOptions.Any())
-					return mdw;
-				else
-				{
-					Assembly edmAssembly = typeof(QP8Entities).Assembly;
-					XmlReader metaReader = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.ssdl"));
-					XElement ssdl = XElement.Load(metaReader);
-					CorrectSsdl(ssdl);
-
-					List<XmlReader> rdr = new List<XmlReader>();
-					rdr.Add(ssdl.CreateReader());
-					StoreItemCollection sic = new StoreItemCollection(rdr);
-					rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.csdl"));
-					EdmItemCollection eic = new EdmItemCollection(rdr);
-					rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.msl"));
-					StorageMappingItemCollection smic = new StorageMappingItemCollection(eic, sic, rdr);
-
-					MetadataWorkspace workspace = new MetadataWorkspace();
-					workspace.RegisterItemCollection(eic);
-					workspace.RegisterItemCollection(sic);
-					workspace.RegisterItemCollection(smic);
-
-					return workspace;
-				}
-
-			}
-		}
-
-        private void CorrectSsdl(XElement ssdl)
+        private static readonly MetadataWorkspace Mdw = new MetadataWorkspace(new[]
         {
-            XNamespace ns = XNamespace.Get(@"http://schemas.microsoft.com/ado/2009/11/edm/ssdl");
+            "res://*/QP8Model.csdl",
+            "res://*/QP8Model.ssdl",
+            "res://*/QP8Model.msl"
+        }, new[] { typeof(QP8Entities).Assembly });
+
+        private MetadataWorkspace MetadataWorkspace
+        {
+            get
+            {
+                if (IdentityInsertOptions == null || !IdentityInsertOptions.Any())
+                {
+                    return Mdw;
+                }
+
+                var edmAssembly = typeof(QP8Entities).Assembly;
+                var metaReader = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.ssdl"));
+                var ssdl = XElement.Load(metaReader);
+                CorrectSsdl(ssdl);
+
+                var rdr = new List<XmlReader> { ssdl.CreateReader() };
+                var sic = new StoreItemCollection(rdr);
+                rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.csdl"));
+
+                var eic = new EdmItemCollection(rdr);
+                rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.msl"));
+
+                var smic = new StorageMappingItemCollection(eic, sic, rdr);
+                var workspace = new MetadataWorkspace();
+                workspace.RegisterItemCollection(eic);
+                workspace.RegisterItemCollection(sic);
+                workspace.RegisterItemCollection(smic);
+
+                return workspace;
+            }
+        }
+
+        private void CorrectSsdl(XContainer ssdl)
+        {
+            var ns = XNamespace.Get(@"http://schemas.microsoft.com/ado/2009/11/edm/ssdl");
             CorrectEntityType(ssdl, ns, EntityTypeCode.Site, "SITE", "SITE_ID");
             CorrectEntityType(ssdl, ns, EntityTypeCode.Content, "CONTENT", "CONTENT_ID");
             CorrectEntityType(ssdl, ns, EntityTypeCode.ContentGroup, "content_group", "content_group_id");
@@ -207,15 +179,14 @@ namespace Quantumart.QP8.BLL
             CorrectEntityType(ssdl, ns, EntityTypeCode.Notification, "NOTIFICATIONS", "NOTIFICATION_ID");
         }
 
-        private void CorrectEntityType(XElement ssdl, XNamespace ns, string entityTypeCode, string tableName, string keyName )
+        private void CorrectEntityType(XContainer ssdl, XNamespace ns, string entityTypeCode, string tableName, string keyName)
         {
-            if (identityInsertOptions != null && identityInsertOptions.Contains(entityTypeCode))
+            if (IdentityInsertOptions != null && IdentityInsertOptions.Contains(entityTypeCode))
             {
                 XElement table;
                 try
                 {
-                    table = ssdl.Descendants(ns + "EntityType")
-                        .Single(n => n.Attribute("Name").Value == tableName);
+                    table = ssdl.Descendants(ns + "EntityType").Single(n => n.Attribute("Name").Value == tableName);
                 }
                 catch (InvalidOperationException)
                 {
@@ -225,8 +196,7 @@ namespace Quantumart.QP8.BLL
                 XElement column;
                 try
                 {
-                    column = table.Elements(ns + "Property")
-                        .Single(n => n.Attribute("Name").Value == keyName);
+                    column = table.Elements(ns + "Property").Single(n => n.Attribute("Name").Value == keyName);
                 }
                 catch (InvalidOperationException)
                 {

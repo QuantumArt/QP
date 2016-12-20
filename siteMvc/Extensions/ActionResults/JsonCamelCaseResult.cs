@@ -7,11 +7,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.ActionResults
     {
         public JsonCamelCaseResult(T data)
             : base(data)
-        { }
+        {
+        }
 
         public JsonCamelCaseResult(T data, JsonSerializerSettings settings)
             : base(data, settings)
-        { }
+        {
+        }
 
         protected override string SerializeToJson(JsonSerializerSettings settings)
         {

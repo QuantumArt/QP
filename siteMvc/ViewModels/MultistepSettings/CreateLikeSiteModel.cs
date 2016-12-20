@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Web.Mvc;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
-using Con = Quantumart.QP8.Constants;
-using B = Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL;
-using System.Web.Mvc;
-using C = Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
@@ -20,56 +14,40 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public readonly string TestDirectoryPathBlock = "testDirectoryPathBlock";
         public readonly string TestDirectoryBlock = "testDirectoryBlock";
 
-        public override string EntityTypeCode
-        {
-            get { return Con.EntityTypeCode.Site; }
-        }
+        public override string EntityTypeCode => Constants.EntityTypeCode.Site;
 
-        public override string ActionCode
-        {
-            get { return Con.ActionCode.CreateLikeSite; }
-        }
+        public override string ActionCode => Constants.ActionCode.CreateLikeSite;
 
         [LocalizedDisplayName("DoNotCopyFiles", NameResourceType = typeof(SiteStrings))]
-        public bool DoNotCopyFiles
-        {
-            get;
-            set;
-        }
+        public bool DoNotCopyFiles { get; set; }
 
         [LocalizedDisplayName("DoNotCopyArticles", NameResourceType = typeof(SiteStrings))]
-        public int? DoNotCopyArticles
-        {
-            get;
-            set;
-        }
+        public int? DoNotCopyArticles { get; set; }
 
         [LocalizedDisplayName("DoNotCopyTemplates", NameResourceType = typeof(SiteStrings))]
-        public bool DoNotCopyTemplates
-        {
-            get;
-            set;
-        }
+        public bool DoNotCopyTemplates { get; set; }
 
-        public new B.Site Data
+        public new Site Data
         {
             get
             {
-                return (B.Site)EntityData;
+                return (Site)EntityData;
             }
             set
             {
                 EntityData = value;
             }
         }
+
         public override void Validate(ModelStateDictionary modelState)
         {
             modelState.Clear();
             base.Validate(modelState);
         }
+
         public static CreateLikeSiteModel Create(Site site, string tabId, int parentId)
         {
-            var model = EntityViewModel.Create<CreateLikeSiteModel>(site, tabId, parentId);
+            var model = Create<CreateLikeSiteModel>(site, tabId, parentId);
             return model;
         }
     }

@@ -22,18 +22,18 @@
 		@Html.CheckBoxFieldFor(s => s.Data.DisableChangingActions)
         @Html.CheckBoxFieldFor(s => s.Data.UseForContext, Model.ContextBlock)
 	}
-	
+
 	using (Html.BeginFieldGroup(ContentStrings.Legend_FriendlyName))
 	{
 		@Html.TextBoxFieldFor(s => s.Data.FriendlySingularName)
 		@Html.TextBoxFieldFor(s => s.Data.FriendlyPluralName)
 	}
-	
+
 	using (Html.BeginFieldGroup(ContentStrings.Legend_Workflow))
 	{
 		@Html.SelectFieldFor(s => s.Data.WorkflowBinding.WorkflowId, Html.List(Model.Workflows))
 		using (Html.BeginPanel(Model.SplitBlock))
-		{ 
+		{
 			@Html.CheckBoxFieldFor(s => s.Data.WorkflowBinding.IsAsync)
 		}
 	}
@@ -48,12 +48,12 @@
 	}
 
 	if (Model.Data.Site.IsDotNet)
-	{ 
+	{
 		using (Html.BeginFieldGroup(ContentStrings.Legend_LinqParameters))
-		{ 
+		{
 			@Html.CheckBoxFieldFor(s => s.Data.MapAsClass, Model.ClassBlock)
 			using (Html.BeginPanel(Model.ClassBlock))
-			{ 
+			{
 				@Html.TextBoxFieldFor(s => s.Data.NetName)
 				@Html.TextBoxFieldFor(s => s.Data.NetPluralName)
 				@Html.CheckBoxFieldFor(s => s.Data.UseDefaultFiltration)
@@ -69,10 +69,10 @@
 				@Html.QpTextAreaFor(s => s.Data.FormScript, new Dictionary<string, object> { { "class", "textbox hta-JsTextArea highlightedTextarea" } })
 			</div>
 		)
-	} 
+	}
 
 	using (Html.BeginFieldGroup(ContentStrings.Legend_CustomValidation))
-	{ 
+	{
 		@Html.CheckBoxFieldFor(s => s.Data.CreateDefaultXamlValidation, Model.XamlValidationPanel, true)
 		using (Html.BeginPanel(Model.XamlValidationPanel))
 		{
@@ -90,4 +90,4 @@
 
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

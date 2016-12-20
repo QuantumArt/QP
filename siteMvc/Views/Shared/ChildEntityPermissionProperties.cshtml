@@ -64,4 +64,4 @@
 
     @Html.HiddenFor(m => m.SaveActionName, !Model.IsPostBack ? new { @class = CssClasses.NoCheckChange } : null);
 }
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

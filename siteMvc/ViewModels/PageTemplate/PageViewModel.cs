@@ -1,13 +1,6 @@
-﻿using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.Validators;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using B = Quantumart.QP8.BLL;
-using C = Quantumart.QP8.Constants;
+using Quantumart.QP8.BLL.Services;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
 {
@@ -15,39 +8,24 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
     {
         private IPageService _service;
 
-        private int templateId;
-
-        internal static PageViewModel Create(BLL.Page page, string tabId, int parentId, IPageService _pageService)
+        internal static PageViewModel Create(BLL.Page page, string tabId, int parentId, IPageService pageService)
         {
-            var model = EntityViewModel.Create<PageViewModel>(page, tabId, parentId);
-            model._service = _pageService;
-            model.templateId = parentId;
+            var model = Create<PageViewModel>(page, tabId, parentId);
+            model._service = pageService;
             return model;
         }
 
-        public override string EntityTypeCode
-        {
-            get { return C.EntityTypeCode.Page; }
-        }
+        public override string EntityTypeCode => Constants.EntityTypeCode.Page;
 
-        public override string ActionCode
-        {
-            get { return IsNew ? C.ActionCode.AddNewPage : C.ActionCode.PageProperties; }
-        }
+        public override string ActionCode => IsNew ? Constants.ActionCode.AddNewPage : Constants.ActionCode.PageProperties;
 
-		public override string CaptureLockActionCode
-		{
-			get
-			{
-				return C.ActionCode.CaptureLockPage;
-			}
-		}
+        public override string CaptureLockActionCode => Constants.ActionCode.CaptureLockPage;
 
-        public new B.Page Data
+        public new BLL.Page Data
         {
             get
             {
-                return (B.Page)EntityData;
+                return (BLL.Page)EntityData;
             }
             set
             {
@@ -55,35 +33,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.PageTemplate
             }
         }
 
-        private List<B.ListItem> _charsets;
-        public List<B.ListItem> Charsets
-        {
-            get
-            {
-                if (_charsets == null)
-                {
-                    _charsets = _service.GetCharsetsAsListItems().ToList();
-                }
-                return _charsets;
-            }
-        }
+        private List<BLL.ListItem> _charsets;
 
-        private List<B.ListItem> _locales;
-        public List<B.ListItem> Locales
-        {
-            get
-            {
-                if (_locales == null)
-                {
-                    _locales = _service.GetLocalesAsListItems().ToList();
-                }
-                return _locales;
-            }
-        }
-        
-        public override void Validate(ModelStateDictionary modelState)
-        {
-            base.Validate(modelState);
-        }
+        public List<BLL.ListItem> Charsets => _charsets ?? (_charsets = _service.GetCharsetsAsListItems().ToList());
+
+        private List<BLL.ListItem> _locales;
+
+        public List<BLL.ListItem> Locales => _locales ?? (_locales = _service.GetLocalesAsListItems().ToList());
     }
 }

@@ -1,183 +1,160 @@
-﻿//#region class BackendBreadCrumbsManager
-// === Класс "Менеджер хлебных крошек" ===
 Quantumart.QP8.BackendBreadCrumbsManager = function (breadCrumbsContainerElementId, options) {
-	Quantumart.QP8.BackendBreadCrumbsManager.initializeBase(this);
+  Quantumart.QP8.BackendBreadCrumbsManager.initializeBase(this);
 
-	if (!breadCrumbsContainerElementId) {
-		throw new Error($l.BreadCrumbs.breadCrumbsContainerElementIdNotSpecified);
-	}
+  if (!breadCrumbsContainerElementId) {
+    throw new Error($l.BreadCrumbs.breadCrumbsContainerElementIdNotSpecified);
+  }
 
-	this._breadCrumbsContainerElementId = breadCrumbsContainerElementId;
+  this._breadCrumbsContainerElementId = breadCrumbsContainerElementId;
+  if (options && options.contextMenuManager) {
+    this._contextMenuManager = options.contextMenuManager;
+  }
 };
 
 Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
-	_breadCrumbsContainerElementId: "", // клиентский идентификатор контейнера, в котором располагаются хлебные крошки
-	_breadCrumbs: {}, // список хлебных крошек
+  _contextMenuManager: null,
+  _breadCrumbsContainerElementId: '',
+  _breadCrumbs: {},
+  ITEM_CLASS_NAME: 'item',
 
-	ITEM_CLASS_NAME: "item",
+  getBreadCrumbs: function (breadCrumbsElementId) {
+    var breadCrumbs = null;
+    if (this._breadCrumbs[breadCrumbsElementId]) {
+      breadCrumbs = this._breadCrumbs[breadCrumbsElementId];
+    }
 
-	getBreadCrumbs: function (breadCrumbsElementId) {
-		var breadCrumbs = null;
+    return breadCrumbs;
+  },
 
-		if (this._breadCrumbs[breadCrumbsElementId]) {
-			breadCrumbs = this._breadCrumbs[breadCrumbsElementId];
-		}
+  createBreadCrumbs: function (breadCrumbsElementId, options) {
+    var breadCrumbs = new Quantumart.QP8.BackendBreadCrumbs(breadCrumbsElementId, options);
+    breadCrumbs.set_manager(this);
+    breadCrumbs.initialize();
 
-		return breadCrumbs;
-	},
+    this._breadCrumbs[breadCrumbsElementId] = breadCrumbs;
+    return breadCrumbs;
+  },
 
-	createBreadCrumbs: function (breadCrumbsElementId, options) {
-		var breadCrumbs = new Quantumart.QP8.BackendBreadCrumbs(breadCrumbsElementId, options);
-		breadCrumbs.set_manager(this);
-		breadCrumbs.initialize();
+  refreshBreadCrumbs: function (breadCrumbsElementId, callback) {
+    var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    if (breadCrumbs) {
+      breadCrumbs.addItemsToBreadCrumbs(callback);
+    }
+  },
 
-		this._breadCrumbs[breadCrumbsElementId] = breadCrumbs;
+  removeBreadCrumbs: function (breadCrumbsElementId) {
+    var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    if (breadCrumbs) {
+      $q.removeProperty(this._breadCrumbs, breadCrumbsElementId);
+    }
+  },
 
-		return breadCrumbs;
-	},
+  destroyBreadCrumbs: function (breadCrumbsElementId) {
+    var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+    if (breadCrumbs) {
+      this.removeBreadCrumbs(breadCrumbsElementId);
+      if (breadCrumbs.dispose) {
+        breadCrumbs.dispose();
+      }
+    }
+  },
 
-	refreshBreadCrumbs: function (breadCrumbsElementId, callback) {
-		var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
-		if (breadCrumbs) {
-			breadCrumbs.addItemsToBreadCrumbs(callback);
-		}
+  generateItemCode: function (entityTypeCode, parentEntityId, entityId) {
+    return String.format('{0}_{1}_{2}', entityTypeCode, $q.toInt(parentEntityId, 0), entityId);
+  },
 
-		breadCrumbs = null;
-	},
+  _getBreadCrumbsElementIdByItem: function (itemElem) {
+    var breadCrumbsElementId = '';
+    var $breadCrumbs = $q.toJQuery(itemElem).parent().parent();
+    if (!$q.isNullOrEmpty($breadCrumbs)) {
+      breadCrumbsElementId = $breadCrumbs.attr('id');
+    }
 
-	removeBreadCrumbs: function (breadCrumbsElementId) {
-		var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
-		if (breadCrumbs) {
-			$q.removeProperty(this._breadCrumbs, breadCrumbsElementId);
-		}
-	},
+    $breadCrumbs = null;
+    return breadCrumbsElementId;
+  },
 
-	destroyBreadCrumbs: function (breadCrumbsElementId) {
-		var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
-		if (breadCrumbs) {
-			this.removeBreadCrumbs(breadCrumbsElementId);
+  getItems: function (itemCode) {
+    return $('#' + this._breadCrumbsContainerElementId).find("LI[code = '" + itemCode + "']." + this.ITEM_CLASS_NAME);
+  },
 
-			if (breadCrumbs.dispose) {
-				breadCrumbs.dispose();
-			}
-			breadCrumbs = null;
-		}
-	},
+  getBreadCrumbsListByItemCode: function (itemCode) {
+    var breadCrumbsList = [];
+    var $items = this.getItems(itemCode);
 
-	generateItemCode: function (entityTypeCode, parentEntityId, entityId) {
-		var itemCode = String.format("{0}_{1}_{2}", entityTypeCode, $q.toInt(parentEntityId, 0), entityId);
+    for (var itemIndex = 0, itemCount = $items.length; itemIndex < itemCount; itemIndex++) {
+      var breadCrumbsElementId = this._getBreadCrumbsElementIdByItem($items.eq(itemIndex));
+      var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
+      if (breadCrumbs) {
+        Array.add(breadCrumbsList, breadCrumbs);
+      }
+    }
 
-		return itemCode;
-	},
+    return breadCrumbsList;
+  },
 
-	_getBreadCrumbsElementIdByItem: function (itemElem) {
-		var breadCrumbsElementId = "";
+  refreshBreadCrumbsList: function (entityTypeCode, parentEntityId, entityId) {
+    var breadCrumbsList = this.getBreadCrumbsListByItemCode(this.generateItemCode(entityTypeCode, parentEntityId, entityId));
 
-		var $breadCrumbs = $q.toJQuery(itemElem).parent().parent();
-		if (!$q.isNullOrEmpty($breadCrumbs)) {
-			breadCrumbsElementId = $breadCrumbs.attr("id");
-		}
+    for (var breadCrumbsIndex = 0, breadCrumbsCount = breadCrumbsList.length; breadCrumbsIndex < breadCrumbsCount; breadCrumbsIndex++) {
+      var breadCrumbs = breadCrumbsList[breadCrumbsIndex];
+      if (breadCrumbs) {
+        breadCrumbs.addItemsToBreadCrumbs();
+      }
+    }
+  },
 
-		$breadCrumbs = null;
+  onActionExecuted: function (eventArgs) {
+    var entityTypeCode = eventArgs.get_entityTypeCode();
+    var parentEntityId = eventArgs.get_parentEntityId();
+    var actionTypeCode = eventArgs.get_actionTypeCode();
+    var entityId = eventArgs.get_entityId();
+    var entities = eventArgs.get_entities();
 
-		return breadCrumbsElementId;
-	},
+    if (actionTypeCode == ACTION_TYPE_CODE_RESTORE || eventArgs.get_isUpdated()) {
+      this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entityId);
+    } else if (actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_RESTORE) {
+      for (var entityIndex = 0, entityCount = entities.length; entityIndex < entityCount; entityIndex++) {
+        this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entities[entityIndex].Id);
+      }
+    }
 
-	getItems: function (itemCode) {
-		var $items = jQuery("#" + this._breadCrumbsContainerElementId)
-		.find("LI[code = '" + itemCode + "']." + this.ITEM_CLASS_NAME)
-		;
+    if (actionTypeCode == ACTION_TYPE_CODE_RESTORE && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
+      var newEntityTypeCode = ENTITY_TYPE_CODE_ARTICLE;
+      var newParentEntityId = $q.toInt($o.getParentEntityId(newEntityTypeCode, parentEntityId), 0);
+      this.refreshBreadCrumbsList(newEntityTypeCode, newParentEntityId, parentEntityId);
+    }
+  },
 
-		return $items;
-	},
+  dispose: function () {
+    Quantumart.QP8.BackendBreadCrumbsManager.callBaseMethod(this, 'dispose');
 
-	getBreadCrumbsListByItemCode: function (itemCode) {
-		var breadCrumbsList = [];
-		var $items = this.getItems(itemCode);
+    if (this._breadCrumbs) {
+      for (breadCrumbsElementId in this._breadCrumbs) {
+        this.destroyBreadCrumbs(breadCrumbsElementId);
+      }
 
-		for (var itemIndex = 0, itemCount = $items.length; itemIndex < itemCount; itemIndex++) {
-			var breadCrumbsElementId = this._getBreadCrumbsElementIdByItem($items.eq(itemIndex));
-			var breadCrumbs = this.getBreadCrumbs(breadCrumbsElementId);
-			if (breadCrumbs) {
-				Array.add(breadCrumbsList, breadCrumbs);
-			}
+      this._breadCrumbs = null;
+    }
 
-			breadCrumbs = null;
-		}
-
-		$items = null;
-
-		return breadCrumbsList;
-	},
-
-	refreshBreadCrumbsList: function (entityTypeCode, parentEntityId, entityId) {
-		var breadCrumbsList = this.getBreadCrumbsListByItemCode(this.generateItemCode(entityTypeCode, parentEntityId, entityId));
-
-		for (var breadCrumbsIndex = 0, breadCrumbsCount = breadCrumbsList.length; breadCrumbsIndex < breadCrumbsCount; breadCrumbsIndex++) {
-			var breadCrumbs = breadCrumbsList[breadCrumbsIndex];
-			if (breadCrumbs) {
-				breadCrumbs.addItemsToBreadCrumbs();
-			}
-
-			breadCrumbs = null;
-		}
-
-		breadCrumbsList = null;
-	},
-
-	onActionExecuted: function (eventArgs) {
-		var entityTypeCode = eventArgs.get_entityTypeCode();
-		var parentEntityId = eventArgs.get_parentEntityId();
-		var actionTypeCode = eventArgs.get_actionTypeCode();
-		var entityId = eventArgs.get_entityId();
-		var entities = eventArgs.get_entities();
-
-		if (actionTypeCode == ACTION_TYPE_CODE_RESTORE || eventArgs.get_isUpdated()) {
-			this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entityId);
-		}
-		else if (actionTypeCode == ACTION_TYPE_CODE_MULTIPLE_RESTORE) {
-			for (var entityIndex = 0, entityCount = entities.length; entityIndex < entityCount; entityIndex++) {
-				this.refreshBreadCrumbsList(entityTypeCode, parentEntityId, entities[entityIndex].Id);
-			}
-		}
-
-		if (actionTypeCode == ACTION_TYPE_CODE_RESTORE && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-			var newEntityTypeCode = ENTITY_TYPE_CODE_ARTICLE;
-			var newParentEntityId = $q.toInt($o.getParentEntityId(newEntityTypeCode, parentEntityId), 0);
-			this.refreshBreadCrumbsList(newEntityTypeCode, newParentEntityId, parentEntityId);
-		}
-	},
-
-	dispose: function () {
-		Quantumart.QP8.BackendBreadCrumbsManager.callBaseMethod(this, "dispose");
-
-		if (this._breadCrumbs) {
-			for (breadCrumbsElementId in this._breadCrumbs) {
-				this.destroyBreadCrumbs(breadCrumbsElementId);
-			}
-
-			this._breadCrumbs = null;
-		}
-
-		Quantumart.QP8.BackendBreadCrumbsManager._instance = null;
-	}
+    Quantumart.QP8.BackendBreadCrumbsManager._instance = null;
+  }
 };
 
-Quantumart.QP8.BackendBreadCrumbsManager._instance = null; // экземпляр класса
+Quantumart.QP8.BackendBreadCrumbsManager._instance = null;
 
 Quantumart.QP8.BackendBreadCrumbsManager.getInstance = function (breadCrumbsContainerElementId, options) {
-	if (Quantumart.QP8.BackendBreadCrumbsManager._instance == null) {
-		Quantumart.QP8.BackendBreadCrumbsManager._instance = new Quantumart.QP8.BackendBreadCrumbsManager(breadCrumbsContainerElementId, options);
-	}
+  if (Quantumart.QP8.BackendBreadCrumbsManager._instance == null) {
+    Quantumart.QP8.BackendBreadCrumbsManager._instance = new Quantumart.QP8.BackendBreadCrumbsManager(breadCrumbsContainerElementId, options);
+  }
 
-	return Quantumart.QP8.BackendBreadCrumbsManager._instance;
+  return Quantumart.QP8.BackendBreadCrumbsManager._instance;
 };
 
 Quantumart.QP8.BackendBreadCrumbsManager.destroyInstance = function () {
-	if (Quantumart.QP8.BackendBreadCrumbsManager._instance) {
-		Quantumart.QP8.BackendBreadCrumbsManager._instance.dispose();
-	}
+  if (Quantumart.QP8.BackendBreadCrumbsManager._instance) {
+    Quantumart.QP8.BackendBreadCrumbsManager._instance.dispose();
+  }
 };
 
-Quantumart.QP8.BackendBreadCrumbsManager.registerClass("Quantumart.QP8.BackendBreadCrumbsManager", Quantumart.QP8.Observable);
-//#endregion
+Quantumart.QP8.BackendBreadCrumbsManager.registerClass('Quantumart.QP8.BackendBreadCrumbsManager', Quantumart.QP8.Observable);

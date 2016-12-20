@@ -1,22 +1,22 @@
 ﻿.imgCropResizeWindow .t-window-content.t-content {
-    padding:5px;
+  padding:5px;
 }
 .imgCropResize .disabled * {
-    color:#808080;
+  color:#808080;
 }
 .imgCropResize .errorsContainer {
-    color: red;
+  color: red;
 }
 .imgCropResize .errors{
-    list-style-type:disc;
-    padding-left:15px;
+  list-style-type:disc;
+  padding-left:15px;
 }
 .imgCropResize .nouislider {
-    width:250px;
+  width:250px;
 }
 .imgCropResize dl, .imgCropResize dt, .imgCropResize dd {
-    padding:0px;
-    margin:0px;
+  padding:0px;
+  margin:0px;
 }
 .imgCropResize  dl {
  width:100%;
@@ -30,36 +30,36 @@
  clear:left;
 }
 .imgCropResize  ul {
-    padding:0px;
+  padding:0px;
 }
-    .imgCropResize  ul li {
-        width:250px;
-    }
+.imgCropResize  ul li {
+  width:250px;
+}
 .imgCropResize   .formItem   ul {
-    list-style-type: none;
+  list-style-type: none;
 }
 .imgCropResize .content-container
 {
-    width: 100%;
-    height:100%;
+  width: 100%;
+  height:100%;
 }
 .imgCropResize   .image
 {
-    overflow-x:auto;
-    overflow-y:auto;
-    position:relative;
-	padding: 5px;
+  overflow-x:auto;
+  overflow-y:auto;
+  position:relative;
+  padding: 5px;
 }
-    .imgCropResize .image   img {
-        border: 1px solid black;
-    }
+.imgCropResize .image   img {
+  border: 1px solid black;
+}
 .imgCropResize  .aside
 {
-    width:300px;
-    float: left;
+  width:300px;
+  float: left;
 }
-    .imgCropResize  .aside fieldset {
-        border-radius:5px;
-        height:100%;
-        margin-bottom:5px;
-    }
+.imgCropResize  .aside fieldset {
+  border-radius:5px;
+  height:100%;
+  margin-bottom:5px;
+}

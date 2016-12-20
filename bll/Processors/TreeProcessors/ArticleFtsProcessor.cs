@@ -16,13 +16,13 @@ namespace Quantumart.QP8.BLL.Processors.TreeProcessors
         private readonly int _parentEntityId;
         private readonly string _commonFilter;
         private readonly string _filterQuery;
-        private readonly IEnumerable<ArticleLinkSearchParameter> _linkedFilters;
-        private readonly IEnumerable<ArticleContextQueryParam> _contextQuery;
+        private readonly IList<ArticleLinkSearchParameter> _linkedFilters;
+        private readonly IList<ArticleContextQueryParam> _contextQuery;
         private readonly ICollection<SqlParameter> _filterSqlParams;
         private readonly int[] _extensionContentIds;
         private readonly ArticleFullTextSearchParameter _ftsOptions;
 
-        public ArticleFtsProcessor(int parentEntityId, string commonFilter, string filterQuery, IEnumerable<ArticleLinkSearchParameter> linkedFilters, IEnumerable<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
+        public ArticleFtsProcessor(int parentEntityId, string commonFilter, string filterQuery, IList<ArticleLinkSearchParameter> linkedFilters, IList<ArticleContextQueryParam> contextQuery, ICollection<SqlParameter> filterSqlParams, int[] extensionContentIds, ArticleFullTextSearchParameter ftsOptions)
         {
             _parentEntityId = parentEntityId;
             _commonFilter = commonFilter;

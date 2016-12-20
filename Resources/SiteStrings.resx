@@ -579,4 +579,10 @@
   <data name="SettingQP7PathIsMissed" xml:space="preserve">
     <value>Setting "QP7Path" is not defined</value>
   </data>
+  <data name="DownloadEfSource" xml:space="preserve">
+    <value>Download EF data source only</value>
+  </data>
+  <data name="ExternalDevelopment" xml:space="preserve">
+    <value>External Development</value>
+  </data>
 </root>

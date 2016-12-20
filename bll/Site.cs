@@ -1,15 +1,16 @@
-﻿using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
+using Quantumart.QP8.Configuration;
 using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL
@@ -17,16 +18,9 @@ namespace Quantumart.QP8.BLL
     [HasSelfValidation]
     public class Site : LockableEntityObject
     {
-
-        #region constants
-
         public static readonly string DefaultContextClassName = "QPDataContext";
 
         public static readonly string DefaultConnectionStringName = "qp_database";
-
-        #endregion
-
-        #region creation
 
         internal Site()
         {
@@ -39,14 +33,8 @@ namespace Quantumart.QP8.BLL
             ProceedDbIndependentGeneration = true;
             ContextClassName = DefaultContextClassName;
             ConnectionStringName = DefaultConnectionStringName;
-            _ExternalCssItems = new InitPropertyValue<IEnumerable<ExternalCss>>(() => ExternalCssHelper.GenerateExternalCss(ExternalCss));
+            _externalCssItems = new InitPropertyValue<IEnumerable<ExternalCss>>(() => ExternalCssHelper.GenerateExternalCss(ExternalCss));
         }
-
-        #endregion
-
-        #region properties
-
-        #region simple read-write
 
         /// <summary>
         /// название сущности
@@ -421,13 +409,13 @@ namespace Quantumart.QP8.BLL
 
         public string ExternalCss { get; set; }
 
-        private InitPropertyValue<IEnumerable<ExternalCss>> _ExternalCssItems;
+        private readonly InitPropertyValue<IEnumerable<ExternalCss>> _externalCssItems;
 
         [LocalizedDisplayName("ExternalCss", NameResourceType = typeof(VisualEditorStrings))]
         public IEnumerable<ExternalCss> ExternalCssItems
         {
-            get { return _ExternalCssItems.Value; }
-            set { _ExternalCssItems.Value = value; }
+            get { return _externalCssItems.Value; }
+            set { _externalCssItems.Value = value; }
         }
 
         [LocalizedDisplayName("RootElementClass", NameResourceType = typeof(VisualEditorStrings))]
@@ -441,204 +429,61 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("CreateDefaultXamlDictionary", NameResourceType = typeof(SiteStrings))]
         public bool CreateDefaultXamlDictionary { get; set; }
-        #endregion
+
+        [LocalizedDisplayName("DownloadEfSource", NameResourceType = typeof(SiteStrings))]
+        public bool DownloadEfSource { get; set; }
+
+        [LocalizedDisplayName("ExternalDevelopment", NameResourceType = typeof(SiteStrings))]
+        public bool ExternalDevelopment { get; set; }
+        public override string EntityTypeCode => C.EntityTypeCode.Site;
+
+        public override string LockedByAnyoneElseMessage => SiteStrings.LockedByAnyoneElse;
+
+        public override string CannotUpdateBecauseOfSecurityMessage => SiteStrings.CannotUpdateBecauseOfSecurity;
+
+        public override string PropertyIsNotUniqueMessage => SiteStrings.NameNonUnique;
 
 
-        #region simple read-only
+        public string IsLiveIcon => $"site{((IsLive) ? 1 : 0)}.gif";
 
-        public override string EntityTypeCode
-        {
-            get
-            {
-                return C.EntityTypeCode.Site;
-            }
-        }
-
-        public override string LockedByAnyoneElseMessage
-        {
-            get
-            {
-                return SiteStrings.LockedByAnyoneElse;
-            }
-        }
-
-        public override string CannotUpdateBecauseOfSecurityMessage
-        {
-            get
-            {
-                return SiteStrings.CannotUpdateBecauseOfSecurity;
-            }
-        }
-
-        public override string PropertyIsNotUniqueMessage
-        {
-            get
-            {
-                return SiteStrings.NameNonUnique;
-            }
-        }
-
-
-        public string IsLiveIcon
-        {
-            get
-            {
-                return $"site{((IsLive) ? 1 : 0)}.gif";
-            }
-        }
-
-        public string ActualDnsForPages
-        {
-            get
-            {
-                return (!IsLive && SeparateDns) ? StageDns : Dns;
-            }
-        }
+        public string ActualDnsForPages => (!IsLive && SeparateDns) ? StageDns : Dns;
 
         public string LongUploadUrl
         {
             get
             {
-                var prefix = (UseAbsoluteUploadUrl) ? UploadUrlPrefix : "http://" + Dns;
+                var prefix = UseAbsoluteUploadUrl ? UploadUrlPrefix : "http://" + Dns;
                 return prefix + UploadUrl;
             }
         }
 
-        public string ImagesLongUploadUrl
-        {
-            get
-            {
-                return LongUploadUrl + "images";
-            }
-        }
+        public string ImagesLongUploadUrl => LongUploadUrl + "images";
+        public string LiveUrl => "http://" + Dns + LiveVirtualRoot;
+        public string StageUrl => "http://" + ((SeparateDns) ? StageDns : Dns) + StageVirtualRoot;
+        public string CurrentUrl => (IsLive) ? LiveUrl : StageUrl;
+        public string TestBinDirectory => PathUtility.Combine(TestDirectory, SitePathRepository.RELATIVE_BIN_PATH);
+        public string AppDataDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
+        public string AppCodeDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
+        public string AppDataStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
+        public string AppCodeStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
+    
+        public bool IsDotNet => AssemblingType == C.AssemblingType.AspDotNet;
 
-        public string LiveUrl
-        {
-            get
-            {
-                return "http://" + Dns + LiveVirtualRoot;
-            }
-        }
+        public string TempDirectoryForClasses => $@"{QPConfiguration.TempDirectory}\{QPContext.CurrentCustomerCode}\{Id}";
 
-        public string StageUrl
-        {
-            get
-            {
-                return "http://" + ((SeparateDns) ? StageDns : Dns) + StageVirtualRoot;
-            }
-        }
+        public string TempArchiveForClasses => TempDirectoryForClasses + ".zip";
 
 
-        public string CurrentUrl
-        {
-            get
-            {
-                return (IsLive) ? LiveUrl : StageUrl;
-            }
-        }
+        public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl };
 
-        public string TestBinDirectory
-        {
-            get
-            {
-                return PathUtility.Combine(TestDirectory, SitePathRepository.RELATIVE_BIN_PATH);
-            }
-        }
+        public override PathInfo PathInfo => BasePathInfo.GetSubPathInfo("images");
 
-        public string AppDataDirectory
-        {
-            get
-            {
-                return AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, SitePathRepository.RELATIVE_APP_DATA_PATH);
-            }
-        }
+        public string FullyQualifiedContextClassName => GetFullyQualifiedName(Namespace, ContextClassName);
 
-        public string AppCodeDirectory
-        {
-            get
-            {
-                return AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, SitePathRepository.RELATIVE_APP_CODE_PATH);
-            }
-        }
+        public IEnumerable<ContentGroup> ContentGroups => ContentRepository.GetSiteContentGroups(Id);
 
-        public string AppDataStageDirectory
-        {
-            get
-            {
-                return StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, SitePathRepository.RELATIVE_APP_DATA_PATH);
-            }
-        }
+        public IEnumerable<Workflow> Workflows => WorkflowRepository.GetSiteWorkflows(Id);
 
-        public string AppCodeStageDirectory
-        {
-            get
-            {
-                return StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, SitePathRepository.RELATIVE_APP_CODE_PATH);
-            }
-        }
-
-
-        public bool IsDotNet
-        {
-            get
-            {
-                return AssemblingType == C.AssemblingType.AspDotNet;
-            }
-        }
-
-        public string FullyQualifiedContextClassName
-        {
-            get
-            {
-                return GetFullyQualifiedName(Namespace, ContextClassName);
-            }
-        }
-
-        #endregion
-
-
-        #region references
-
-        public IEnumerable<ContentGroup> ContentGroups
-        {
-            get
-            {
-                return ContentRepository.GetSiteContentGroups(Id);
-            }
-        }
-
-        public IEnumerable<Workflow> Workflows
-        {
-            get
-            {
-                return WorkflowRepository.GetSiteWorkflows(Id);
-            }
-        }
-
-        public PathInfo BasePathInfo
-        {
-            get
-            {
-                return new PathInfo { Path = UploadDir, Url = LongUploadUrl };
-            }
-        }
-
-        public override PathInfo PathInfo
-        {
-            get
-            {
-                return BasePathInfo.GetSubPathInfo("images");
-            }
-        }
-
-        #endregion
-
-
-        #endregion
-
-        #region methods
-
-        #region public
 
         public override void Validate()
         {
@@ -772,7 +617,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Генерирует XAML словарь по умолчанию
         /// </summary>
-        /// <returns></returns>
         private string GenerateDefaultXamlDictionary()
         {
             var container = new DynamicResourceDictionaryContainer();
@@ -797,19 +641,17 @@ namespace Quantumart.QP8.BLL
         {
             var defaultCommands = VisualEditorRepository.GetDefaultCommands().ToList();//все возможные команды
             var offVeCommands = VisualEditorHelpers.Subtract(defaultCommands, activeVeCommands).Select(c => c.Id).ToArray();//opposite to activeVecommands
-            var oldSiteCommands = VisualEditorRepository.GetResultCommands(Id).ToList();// с этим нужно сравнивать на предмет измененеий
+            var oldSiteCommandIdsOn = new HashSet<int>(VisualEditorRepository.GetResultCommands(Id).Where(n => n.On).Select(n => n.Id)); // с этим нужно сравнивать на предмет измененеий
 
             var defaultCommandsDictionary = defaultCommands.ToDictionary(c => c.Id, c => c.On);
-            var changedCommands = activeVeCommands.Where(cId => !oldSiteCommands.SingleOrDefault(c => c.Id == cId).On).ToDictionary(cId => cId, cId => true);
-            foreach (var cId in offVeCommands.Where(cId => oldSiteCommands.SingleOrDefault(c => c.Id == cId).On))
+            var changedCommands = activeVeCommands.Where(cId => !oldSiteCommandIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
+            foreach (var cId in offVeCommands.Where(cId => oldSiteCommandIdsOn.Contains(cId)))
             {
                 changedCommands.Add(cId, false);
             }
 
             VisualEditorRepository.SetSiteCommands(Id, changedCommands, defaultCommandsDictionary);
         }
-
-        #endregion
 
         /// <summary>
         /// Создает директории внутри сайта
@@ -915,34 +757,27 @@ namespace Quantumart.QP8.BLL
                 errors.ErrorFor(s => s.ExternalUrl, SiteStrings.ExternalUrlNotValid);
             }
         }
-        #endregion
 
         internal void CreateLinqDirectories()
         {
-            if (IsLive)
-            {
-                Directory.CreateDirectory(AppDataDirectory);
-                SitePathRepository.CopySiteDirectory(AppDataDirectory, SitePathRepository.RELATIVE_APP_DATA_PATH);
-                Directory.CreateDirectory(AppCodeDirectory);
-
-            }
-            else
-            {
-                Directory.CreateDirectory(AppDataStageDirectory);
-                SitePathRepository.CopySiteDirectory(AppDataStageDirectory, SitePathRepository.RELATIVE_APP_DATA_PATH);
-                Directory.CreateDirectory(AppCodeStageDirectory);
-            }
+            var dataDir = (IsLive) ? AppDataDirectory : AppDataStageDirectory;
+            var codeDir = (IsLive) ? AppCodeDirectory : AppCodeStageDirectory;
+            Directory.CreateDirectory(dataDir);
+            SitePathRepository.CopySiteDirectory(dataDir, SitePathRepository.RELATIVE_APP_DATA_PATH);
+            if (!DownloadEfSource)
+                Directory.CreateDirectory(codeDir);
         }
 
         internal void SaveVisualEditorStyles(int[] activeStyleIds)
         {
             var defaultStyles = VisualEditorRepository.GetAllStyles().ToList();
             var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, activeStyleIds).Select(c => c.Id).ToArray();
-            var oldSiteStyles = VisualEditorRepository.GetResultStyles(Id).ToList();
+            var oldSiteStylesIdsOn = new HashSet<int>(VisualEditorRepository.GetResultStyles(Id).Where(n => n.On).Select(n => n.Id));
 
             var defaultStyleDictionary = defaultStyles.ToDictionary(s => s.Id, s => s.On);
-            var changedStyles = activeStyleIds.Where(cId => !oldSiteStyles.SingleOrDefault(s => s.Id == cId).On).ToDictionary(cId => cId, cId => true);
-            foreach (var cId in offVeStyles.Where(cId => oldSiteStyles.SingleOrDefault(c => c.Id == cId).On))
+            var changedStyles = activeStyleIds.Where(cId => !oldSiteStylesIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
+            foreach (var cId in offVeStyles.Where(cId => !oldSiteStylesIdsOn.Contains(cId)))
+       
             {
                 changedStyles.Add(cId, false);
             }

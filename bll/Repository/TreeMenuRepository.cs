@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Data;
 using Quantumart.QP8;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.DAL;
@@ -58,7 +59,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 			using (var scope = new QPConnectionScope())
 			{
-				nodesList = MappersRepository.TreeNodeMapper.GetBizList(
+				nodesList = MapperFacade.TreeNodeMapper.GetBizList(
 						Common.GetChildTreeNodeList(scope.DbConnection, userId, entityTypeCode, parentEntityId, isFolder, isGroup, groupItemCode, entityId).ToList());
 			}
 

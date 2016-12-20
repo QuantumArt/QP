@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -19,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetVisualEditorPluginsPage(scope.DbConnection, contentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                return MappersRepository.VisualEditorPluginListItemRowMapper.GetBizList(rows.ToList());
+                return MapperFacade.VisualEditorPluginListItemRowMapper.GetBizList(rows.ToList());
             }
         }
 
@@ -30,7 +31,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<VisualEditorPlugin> GetPluginList(IEnumerable<int> ids)
         {
             IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-            return MappersRepository.VisualEditorPluginMapper
+            return MapperFacade.VisualEditorPluginMapper
                 .GetBizList(QPContext.EFContext.VePluginSet
                     .Where(f => decIDs.Contains(f.Id))
                     .ToList()
@@ -44,7 +45,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<VisualEditorCommand> GetCommandList(IEnumerable<int> ids)
         {
             IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-            return MappersRepository.VisualEditorCommandMapper
+            return MapperFacade.VisualEditorCommandMapper
                 .GetBizList(QPContext.EFContext.VeCommandSet
                     .Where(f => decIDs.Contains(f.Id))
                     .ToList()
@@ -58,7 +59,7 @@ namespace Quantumart.QP8.BLL.Repository
         internal static IEnumerable<VisualEditorStyle> GetStyleList(IEnumerable<int> ids)
         {
             IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(ids).Distinct().ToArray();
-            return MappersRepository.VisualEditorStyleMapper
+            return MapperFacade.VisualEditorStyleMapper
                 .GetBizList(QPContext.EFContext.VeStyleSet
                     .Where(f => decIDs.Contains(f.Id))
                     .ToList());
@@ -66,7 +67,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static VisualEditorPlugin GetPluginPropertiesById(int id)
         {
-            return MappersRepository.VisualEditorPluginMapper.GetBizObject(QPContext.EFContext.VePluginSet
+            return MapperFacade.VisualEditorPluginMapper.GetBizObject(QPContext.EFContext.VePluginSet
                 .Include("LastModifiedByUser")
                 .Include("VeCommands")
                 .SingleOrDefault(g => g.Id == id)
@@ -82,7 +83,7 @@ namespace Quantumart.QP8.BLL.Repository
                 timeStamp = Common.GetSqlDate(scope.DbConnection);
             }
 
-            var dal = MappersRepository.VisualEditorPluginMapper.GetDalObject(plugin);
+            var dal = MapperFacade.VisualEditorPluginMapper.GetDalObject(plugin);
             dal.LastModifiedBy = QPContext.CurrentUserId;
             dal.Modified = timeStamp;
             entities.VePluginSet.Attach(dal);
@@ -108,7 +109,7 @@ namespace Quantumart.QP8.BLL.Repository
             var forceIds = (plugin.ForceCommandIds == null) ? null : new Queue<int>(plugin.ForceCommandIds);
             foreach (var command in plugin.VeCommands)
             {
-                var dalCommand = MappersRepository.VisualEditorCommandMapper.GetDalObject(command);
+                var dalCommand = MapperFacade.VisualEditorCommandMapper.GetDalObject(command);
 
                 dalCommand.Modified = timeStamp;
                 dalCommand.LastModifiedBy = QPContext.CurrentUserId;
@@ -146,7 +147,7 @@ namespace Quantumart.QP8.BLL.Repository
                 timeStamp = Common.GetSqlDate(scope.DbConnection);
             }
 
-            var dal = MappersRepository.VisualEditorPluginMapper.GetDalObject(plugin);
+            var dal = MapperFacade.VisualEditorPluginMapper.GetDalObject(plugin);
             dal.LastModifiedBy = QPContext.CurrentUserId;
             dal.Modified = timeStamp;
             dal.Created = timeStamp;
@@ -165,7 +166,7 @@ namespace Quantumart.QP8.BLL.Repository
             var forceIds = (plugin.ForceCommandIds == null) ? null : new Queue<int>(plugin.ForceCommandIds);
             foreach (var command in plugin.VeCommands)
             {
-                var dalCommand = MappersRepository.VisualEditorCommandMapper.GetDalObject(command);
+                var dalCommand = MapperFacade.VisualEditorCommandMapper.GetDalObject(command);
                 dalCommand.PluginId = dal.Id;
                 if (forceIds != null)
                 {
@@ -182,7 +183,7 @@ namespace Quantumart.QP8.BLL.Repository
             entities.SaveChanges();
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.VisualEditorCommand);
 
-            return MappersRepository.VisualEditorPluginMapper.GetBizObject(dal);
+            return MapperFacade.VisualEditorPluginMapper.GetBizObject(dal);
         }
 
         internal static int GetCommandMaxRowOrder()
@@ -220,7 +221,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<VisualEditorCommand> GetAllCommands()
         {
-            return MappersRepository.VisualEditorCommandMapper.GetBizList(QPContext.EFContext.VeCommandSet.ToList());
+            return MapperFacade.VisualEditorCommandMapper.GetBizList(QPContext.EFContext.VeCommandSet.ToList());
         }
 
         internal static IEnumerable<VisualEditorCommand> GetSiteCommands(int siteId)
@@ -228,7 +229,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetVisualEditorCommandsBySiteId(scope.DbConnection, siteId).ToList();
-                return MappersRepository.VisualEditorCommandRowMapper.GetBizList(rows);
+                return MapperFacade.VisualEditorCommandRowMapper.GetBizList(rows);
             }
         }
 
@@ -237,7 +238,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetVisualEditorCommandsByFieldId(scope.DbConnection, fieldId).ToList();
-                return MappersRepository.VisualEditorCommandRowMapper.GetBizList(rows);
+                return MapperFacade.VisualEditorCommandRowMapper.GetBizList(rows);
             }
         }
 
@@ -334,13 +335,13 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetVisualEditorStylesPage(scope.DbConnection, contentId, cmd.SortExpression, out totalRecords, cmd.StartRecord, cmd.PageSize);
-                return MappersRepository.VisualEditorStyleListItemRowMapper.GetBizList(rows.ToList());
+                return MapperFacade.VisualEditorStyleListItemRowMapper.GetBizList(rows.ToList());
             }
         }
 
         internal static VisualEditorStyle GetStylePropertiesById(int id)
         {
-            return MappersRepository.VisualEditorStyleMapper.GetBizObject(QPContext.EFContext.VeStyleSet
+            return MapperFacade.VisualEditorStyleMapper.GetBizObject(QPContext.EFContext.VeStyleSet
                 .Include("LastModifiedByUser")
                 .SingleOrDefault(g => g.Id == id)
             );
@@ -366,7 +367,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static IEnumerable<VisualEditorStyle> GetAllStyles()
         {
-            return MappersRepository.VisualEditorStyleMapper.GetBizList(QPContext.EFContext.VeStyleSet.OrderBy(n => n.Order).ToList());
+            return MapperFacade.VisualEditorStyleMapper.GetBizList(QPContext.EFContext.VeStyleSet.OrderBy(n => n.Order).ToList());
         }
 
         internal static IEnumerable<VisualEditorStyle> GetSiteStyles(int siteId)
@@ -374,7 +375,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetVisualEditorStylesBySiteId(scope.DbConnection, siteId).ToList();
-                return MappersRepository.VisualEditorStyleRowMapper.GetBizList(rows);
+                return MapperFacade.VisualEditorStyleRowMapper.GetBizList(rows);
             }
         }
 
@@ -383,7 +384,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (var scope = new QPConnectionScope())
             {
                 var rows = Common.GetVisualEditorStylesByFieldId(scope.DbConnection, fieldId).ToList();
-                return MappersRepository.VisualEditorStyleRowMapper.GetBizList(rows);
+                return MapperFacade.VisualEditorStyleRowMapper.GetBizList(rows);
             }
         }
 

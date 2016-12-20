@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) {
+Quantumart.QP8.BackendNotificationPropertiesMediator = function (rootElementId) {
 
 	var $root = jQuery('#' + rootElementId);
 

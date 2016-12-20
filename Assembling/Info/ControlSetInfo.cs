@@ -1,8 +1,9 @@
 using System;
 using System.Data;
 using System.Text;
+using Quantumart.QP8.Assembling;
 
-namespace Assembling.Info
+namespace Quantumart.QP8.Assembling.Info
 {
 
     public class ControlSetInfo

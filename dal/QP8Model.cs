@@ -226,6 +226,7 @@ using System.Runtime.Serialization;
 [assembly: EdmRelationshipAttribute("QP8Model", "FK_CONTENT_ATTRIBUTE_PARENT_ATTRIBUTE_ID1", "FieldDAL", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Quantumart.QP8.DAL.FieldDAL), "FieldDAL1", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.FieldDAL), true)]
 [assembly: EdmRelationshipAttribute("QP8Model", "FK_CONTENT_ATTRIBUTE_TREE_ORDER_FIELD", "FieldDAL", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Quantumart.QP8.DAL.FieldDAL), "FieldDAL1", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.FieldDAL), true)]
 [assembly: EdmRelationshipAttribute("QP8Model", "ACTION_EXCLUSIONS", "BackendActionDAL", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.BackendActionDAL), "BackendActionDAL1", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.BackendActionDAL))]
+[assembly: EdmRelationshipAttribute("QP8Model", "FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateLogEntity", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Quantumart.QP8.DAL.XmlDbUpdateLogEntity), "XmlDbUpdateActionsLogEntity", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Quantumart.QP8.DAL.XmlDbUpdateActionsLogEntity), true)]
 
 #endregion
 
@@ -1685,6 +1686,54 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<AppSettingsDAL> _AppSettingsSet;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<ExternalNotificationDAL> ExternalNotificationSet
+        {
+            get
+            {
+                if ((_ExternalNotificationSet == null))
+                {
+                    _ExternalNotificationSet = base.CreateObjectSet<ExternalNotificationDAL>("ExternalNotificationSet");
+                }
+                return _ExternalNotificationSet;
+            }
+        }
+        private ObjectSet<ExternalNotificationDAL> _ExternalNotificationSet;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<XmlDbUpdateLogEntity> XML_DB_UPDATE
+        {
+            get
+            {
+                if ((_XML_DB_UPDATE == null))
+                {
+                    _XML_DB_UPDATE = base.CreateObjectSet<XmlDbUpdateLogEntity>("XML_DB_UPDATE");
+                }
+                return _XML_DB_UPDATE;
+            }
+        }
+        private ObjectSet<XmlDbUpdateLogEntity> _XML_DB_UPDATE;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<XmlDbUpdateActionsLogEntity> XML_DB_UPDATE_ACTIONS
+        {
+            get
+            {
+                if ((_XML_DB_UPDATE_ACTIONS == null))
+                {
+                    _XML_DB_UPDATE_ACTIONS = base.CreateObjectSet<XmlDbUpdateActionsLogEntity>("XML_DB_UPDATE_ACTIONS");
+                }
+                return _XML_DB_UPDATE_ACTIONS;
+            }
+        }
+        private ObjectSet<XmlDbUpdateActionsLogEntity> _XML_DB_UPDATE_ACTIONS;
 
         #endregion
 
@@ -2393,6 +2442,30 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("AppSettingsSet", appSettingsDAL);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the ExternalNotificationSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToExternalNotificationSet(ExternalNotificationDAL externalNotificationDAL)
+        {
+            base.AddObject("ExternalNotificationSet", externalNotificationDAL);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the XML_DB_UPDATE EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToXML_DB_UPDATE(XmlDbUpdateLogEntity xmlDbUpdateLogEntity)
+        {
+            base.AddObject("XML_DB_UPDATE", xmlDbUpdateLogEntity);
+        }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the XML_DB_UPDATE_ACTIONS EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToXML_DB_UPDATE_ACTIONS(XmlDbUpdateActionsLogEntity xmlDbUpdateActionsLogEntity)
+        {
+            base.AddObject("XML_DB_UPDATE_ACTIONS", xmlDbUpdateActionsLogEntity);
+        }
 
         #endregion
 
@@ -2980,7 +3053,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="splitted">Initial value of the Splitted property.</param>
         /// <param name="permanentLock">Initial value of the PermanentLock property.</param>
         /// <param name="cancelSplit">Initial value of the CancelSplit property.</param>
-        public static ArticleDAL CreateArticleDAL(global::System.Decimal id, global::System.Decimal visible, global::System.Decimal statusTypeId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal contentId, global::System.Decimal lastModifiedBy, global::System.Decimal archived, global::System.Boolean notForReplication, global::System.Boolean delayed, global::System.Boolean splitted, global::System.Boolean permanentLock, global::System.Boolean cancelSplit)
+        /// <param name="uniqueId">Initial value of the UniqueId property.</param>
+        public static ArticleDAL CreateArticleDAL(global::System.Decimal id, global::System.Decimal visible, global::System.Decimal statusTypeId, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal contentId, global::System.Decimal lastModifiedBy, global::System.Decimal archived, global::System.Boolean notForReplication, global::System.Boolean delayed, global::System.Boolean splitted, global::System.Boolean permanentLock, global::System.Boolean cancelSplit, global::System.Guid uniqueId)
         {
             ArticleDAL articleDAL = new ArticleDAL();
             articleDAL.Id = id;
@@ -2996,6 +3070,7 @@ namespace Quantumart.QP8.DAL
             articleDAL.Splitted = splitted;
             articleDAL.PermanentLock = permanentLock;
             articleDAL.CancelSplit = cancelSplit;
+            articleDAL.UniqueId = uniqueId;
             return articleDAL;
         }
 
@@ -3365,6 +3440,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _CancelSplit;
         partial void OnCancelSplitChanging(global::System.Boolean value);
         partial void OnCancelSplitChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Guid UniqueId
+        {
+            get
+            {
+                return _UniqueId;
+            }
+            set
+            {
+                OnUniqueIdChanging(value);
+                ReportPropertyChanging("UniqueId");
+                _UniqueId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UniqueId");
+                OnUniqueIdChanged();
+            }
+        }
+        private global::System.Guid _UniqueId;
+        partial void OnUniqueIdChanging(global::System.Guid value);
+        partial void OnUniqueIdChanged();
 
         #endregion
 
@@ -14634,30 +14733,6 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public global::System.String FpSettings
-        {
-            get
-            {
-                return _FpSettings;
-            }
-            set
-            {
-                OnFpSettingsChanging(value);
-                ReportPropertyChanging("FpSettings");
-                _FpSettings = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("FpSettings");
-                OnFpSettingsChanged();
-            }
-        }
-        private global::System.String _FpSettings;
-        partial void OnFpSettingsChanging(global::System.String value);
-        partial void OnFpSettingsChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.DateTime Created
@@ -16632,6 +16707,339 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="ExternalNotificationDAL")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class ExternalNotificationDAL : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new ExternalNotificationDAL object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="articleId">Initial value of the ArticleId property.</param>
+        /// <param name="created">Initial value of the Created property.</param>
+        /// <param name="url">Initial value of the Url property.</param>
+        /// <param name="tries">Initial value of the Tries property.</param>
+        /// <param name="sent">Initial value of the Sent property.</param>
+        /// <param name="modified">Initial value of the Modified property.</param>
+        public static ExternalNotificationDAL CreateExternalNotificationDAL(global::System.Decimal id, global::System.Decimal articleId, global::System.DateTime created, global::System.String url, global::System.Decimal tries, global::System.Boolean sent, global::System.DateTime modified)
+        {
+            ExternalNotificationDAL externalNotificationDAL = new ExternalNotificationDAL();
+            externalNotificationDAL.Id = id;
+            externalNotificationDAL.ArticleId = articleId;
+            externalNotificationDAL.Created = created;
+            externalNotificationDAL.Url = url;
+            externalNotificationDAL.Tries = tries;
+            externalNotificationDAL.Sent = sent;
+            externalNotificationDAL.Modified = modified;
+            return externalNotificationDAL;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Decimal _Id;
+        partial void OnIdChanging(global::System.Decimal value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String EventName
+        {
+            get
+            {
+                return _EventName;
+            }
+            set
+            {
+                OnEventNameChanging(value);
+                ReportPropertyChanging("EventName");
+                _EventName = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("EventName");
+                OnEventNameChanged();
+            }
+        }
+        private global::System.String _EventName;
+        partial void OnEventNameChanging(global::System.String value);
+        partial void OnEventNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal ArticleId
+        {
+            get
+            {
+                return _ArticleId;
+            }
+            set
+            {
+                OnArticleIdChanging(value);
+                ReportPropertyChanging("ArticleId");
+                _ArticleId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ArticleId");
+                OnArticleIdChanged();
+            }
+        }
+        private global::System.Decimal _ArticleId;
+        partial void OnArticleIdChanging(global::System.Decimal value);
+        partial void OnArticleIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Created
+        {
+            get
+            {
+                return _Created;
+            }
+            set
+            {
+                OnCreatedChanging(value);
+                ReportPropertyChanging("Created");
+                _Created = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Created");
+                OnCreatedChanged();
+            }
+        }
+        private global::System.DateTime _Created;
+        partial void OnCreatedChanging(global::System.DateTime value);
+        partial void OnCreatedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Url
+        {
+            get
+            {
+                return _Url;
+            }
+            set
+            {
+                OnUrlChanging(value);
+                ReportPropertyChanging("Url");
+                _Url = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Url");
+                OnUrlChanged();
+            }
+        }
+        private global::System.String _Url;
+        partial void OnUrlChanging(global::System.String value);
+        partial void OnUrlChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal Tries
+        {
+            get
+            {
+                return _Tries;
+            }
+            set
+            {
+                OnTriesChanging(value);
+                ReportPropertyChanging("Tries");
+                _Tries = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Tries");
+                OnTriesChanged();
+            }
+        }
+        private global::System.Decimal _Tries;
+        partial void OnTriesChanging(global::System.Decimal value);
+        partial void OnTriesChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String NewXml
+        {
+            get
+            {
+                return _NewXml;
+            }
+            set
+            {
+                OnNewXmlChanging(value);
+                ReportPropertyChanging("NewXml");
+                _NewXml = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("NewXml");
+                OnNewXmlChanged();
+            }
+        }
+        private global::System.String _NewXml;
+        partial void OnNewXmlChanging(global::System.String value);
+        partial void OnNewXmlChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String OldXml
+        {
+            get
+            {
+                return _OldXml;
+            }
+            set
+            {
+                OnOldXmlChanging(value);
+                ReportPropertyChanging("OldXml");
+                _OldXml = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("OldXml");
+                OnOldXmlChanged();
+            }
+        }
+        private global::System.String _OldXml;
+        partial void OnOldXmlChanging(global::System.String value);
+        partial void OnOldXmlChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean Sent
+        {
+            get
+            {
+                return _Sent;
+            }
+            set
+            {
+                OnSentChanging(value);
+                ReportPropertyChanging("Sent");
+                _Sent = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Sent");
+                OnSentChanged();
+            }
+        }
+        private global::System.Boolean _Sent;
+        partial void OnSentChanging(global::System.Boolean value);
+        partial void OnSentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Modified
+        {
+            get
+            {
+                return _Modified;
+            }
+            set
+            {
+                OnModifiedChanging(value);
+                ReportPropertyChanging("Modified");
+                _Modified = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Modified");
+                OnModifiedChanged();
+            }
+        }
+        private global::System.DateTime _Modified;
+        partial void OnModifiedChanging(global::System.DateTime value);
+        partial void OnModifiedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Decimal> ContentId
+        {
+            get
+            {
+                return _ContentId;
+            }
+            set
+            {
+                OnContentIdChanging(value);
+                ReportPropertyChanging("ContentId");
+                _ContentId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ContentId");
+                OnContentIdChanged();
+            }
+        }
+        private Nullable<global::System.Decimal> _ContentId;
+        partial void OnContentIdChanging(Nullable<global::System.Decimal> value);
+        partial void OnContentIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Decimal> SiteId
+        {
+            get
+            {
+                return _SiteId;
+            }
+            set
+            {
+                OnSiteIdChanging(value);
+                ReportPropertyChanging("SiteId");
+                _SiteId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("SiteId");
+                OnSiteIdChanged();
+            }
+        }
+        private Nullable<global::System.Decimal> _SiteId;
+        partial void OnSiteIdChanging(Nullable<global::System.Decimal> value);
+        partial void OnSiteIdChanged();
+
+        #endregion
+
+    
     }
     
     /// <summary>
@@ -28915,7 +29323,9 @@ namespace Quantumart.QP8.DAL
         /// <param name="permanentLock">Initial value of the PermanentLock property.</param>
         /// <param name="useEnglishQuotes">Initial value of the UseEnglishQuotes property.</param>
         /// <param name="sendNotifications">Initial value of the SendNotifications property.</param>
-        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String liveDirectory, global::System.String liveVirtualRoot, global::System.String stageDirectory, global::System.String stageVirtualRoot, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications)
+        /// <param name="externalDevelopment">Initial value of the ExternalDevelopment property.</param>
+        /// <param name="downloadEfSource">Initial value of the DownloadEfSource property.</param>
+        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String liveDirectory, global::System.String liveVirtualRoot, global::System.String stageDirectory, global::System.String stageVirtualRoot, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications, global::System.Boolean externalDevelopment, global::System.Boolean downloadEfSource)
         {
             SiteDAL siteDAL = new SiteDAL();
             siteDAL.Id = id;
@@ -28951,6 +29361,8 @@ namespace Quantumart.QP8.DAL
             siteDAL.PermanentLock = permanentLock;
             siteDAL.UseEnglishQuotes = useEnglishQuotes;
             siteDAL.SendNotifications = sendNotifications;
+            siteDAL.ExternalDevelopment = externalDevelopment;
+            siteDAL.DownloadEfSource = downloadEfSource;
             return siteDAL;
         }
 
@@ -30136,6 +30548,54 @@ namespace Quantumart.QP8.DAL
         private global::System.String _ContentFormScript;
         partial void OnContentFormScriptChanging(global::System.String value);
         partial void OnContentFormScriptChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean ExternalDevelopment
+        {
+            get
+            {
+                return _ExternalDevelopment;
+            }
+            set
+            {
+                OnExternalDevelopmentChanging(value);
+                ReportPropertyChanging("ExternalDevelopment");
+                _ExternalDevelopment = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ExternalDevelopment");
+                OnExternalDevelopmentChanged();
+            }
+        }
+        private global::System.Boolean _ExternalDevelopment;
+        partial void OnExternalDevelopmentChanging(global::System.Boolean value);
+        partial void OnExternalDevelopmentChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean DownloadEfSource
+        {
+            get
+            {
+                return _DownloadEfSource;
+            }
+            set
+            {
+                OnDownloadEfSourceChanging(value);
+                ReportPropertyChanging("DownloadEfSource");
+                _DownloadEfSource = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DownloadEfSource");
+                OnDownloadEfSourceChanged();
+            }
+        }
+        private global::System.Boolean _DownloadEfSource;
+        partial void OnDownloadEfSourceChanging(global::System.Boolean value);
+        partial void OnDownloadEfSourceChanged();
 
         #endregion
 
@@ -40327,6 +40787,544 @@ namespace Quantumart.QP8.DAL
                 if ((value != null))
                 {
                     ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<WorkflowDAL>("QP8Model.FK_workflow_rules_workflow", "workflow", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="XmlDbUpdateActionsLogEntity")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class XmlDbUpdateActionsLogEntity : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new XmlDbUpdateActionsLogEntity object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="ids">Initial value of the Ids property.</param>
+        /// <param name="parentId">Initial value of the ParentId property.</param>
+        /// <param name="hash">Initial value of the Hash property.</param>
+        /// <param name="applied">Initial value of the Applied property.</param>
+        /// <param name="userId">Initial value of the UserId property.</param>
+        /// <param name="sourceXml">Initial value of the SourceXml property.</param>
+        /// <param name="resultXml">Initial value of the ResultXml property.</param>
+        public static XmlDbUpdateActionsLogEntity CreateXmlDbUpdateActionsLogEntity(global::System.Int32 id, global::System.String ids, global::System.Int32 parentId, global::System.String hash, global::System.DateTime applied, global::System.Int32 userId, global::System.String sourceXml, global::System.String resultXml)
+        {
+            XmlDbUpdateActionsLogEntity xmlDbUpdateActionsLogEntity = new XmlDbUpdateActionsLogEntity();
+            xmlDbUpdateActionsLogEntity.Id = id;
+            xmlDbUpdateActionsLogEntity.Ids = ids;
+            xmlDbUpdateActionsLogEntity.ParentId = parentId;
+            xmlDbUpdateActionsLogEntity.Hash = hash;
+            xmlDbUpdateActionsLogEntity.Applied = applied;
+            xmlDbUpdateActionsLogEntity.UserId = userId;
+            xmlDbUpdateActionsLogEntity.SourceXml = sourceXml;
+            xmlDbUpdateActionsLogEntity.ResultXml = resultXml;
+            return xmlDbUpdateActionsLogEntity;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _Id;
+        partial void OnIdChanging(global::System.Int32 value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Int32> UpdateId
+        {
+            get
+            {
+                return _UpdateId;
+            }
+            set
+            {
+                OnUpdateIdChanging(value);
+                ReportPropertyChanging("UpdateId");
+                _UpdateId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UpdateId");
+                OnUpdateIdChanged();
+            }
+        }
+        private Nullable<global::System.Int32> _UpdateId;
+        partial void OnUpdateIdChanging(Nullable<global::System.Int32> value);
+        partial void OnUpdateIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Ids
+        {
+            get
+            {
+                return _Ids;
+            }
+            set
+            {
+                OnIdsChanging(value);
+                ReportPropertyChanging("Ids");
+                _Ids = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Ids");
+                OnIdsChanged();
+            }
+        }
+        private global::System.String _Ids;
+        partial void OnIdsChanging(global::System.String value);
+        partial void OnIdsChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 ParentId
+        {
+            get
+            {
+                return _ParentId;
+            }
+            set
+            {
+                OnParentIdChanging(value);
+                ReportPropertyChanging("ParentId");
+                _ParentId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ParentId");
+                OnParentIdChanged();
+            }
+        }
+        private global::System.Int32 _ParentId;
+        partial void OnParentIdChanging(global::System.Int32 value);
+        partial void OnParentIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Hash
+        {
+            get
+            {
+                return _Hash;
+            }
+            set
+            {
+                OnHashChanging(value);
+                ReportPropertyChanging("Hash");
+                _Hash = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Hash");
+                OnHashChanged();
+            }
+        }
+        private global::System.String _Hash;
+        partial void OnHashChanging(global::System.String value);
+        partial void OnHashChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Applied
+        {
+            get
+            {
+                return _Applied;
+            }
+            set
+            {
+                OnAppliedChanging(value);
+                ReportPropertyChanging("Applied");
+                _Applied = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Applied");
+                OnAppliedChanged();
+            }
+        }
+        private global::System.DateTime _Applied;
+        partial void OnAppliedChanging(global::System.DateTime value);
+        partial void OnAppliedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 UserId
+        {
+            get
+            {
+                return _UserId;
+            }
+            set
+            {
+                OnUserIdChanging(value);
+                ReportPropertyChanging("UserId");
+                _UserId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UserId");
+                OnUserIdChanged();
+            }
+        }
+        private global::System.Int32 _UserId;
+        partial void OnUserIdChanging(global::System.Int32 value);
+        partial void OnUserIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String SourceXml
+        {
+            get
+            {
+                return _SourceXml;
+            }
+            set
+            {
+                OnSourceXmlChanging(value);
+                ReportPropertyChanging("SourceXml");
+                _SourceXml = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("SourceXml");
+                OnSourceXmlChanged();
+            }
+        }
+        private global::System.String _SourceXml;
+        partial void OnSourceXmlChanging(global::System.String value);
+        partial void OnSourceXmlChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String ResultXml
+        {
+            get
+            {
+                return _ResultXml;
+            }
+            set
+            {
+                OnResultXmlChanging(value);
+                ReportPropertyChanging("ResultXml");
+                _ResultXml = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("ResultXml");
+                OnResultXmlChanged();
+            }
+        }
+        private global::System.String _ResultXml;
+        partial void OnResultXmlChanging(global::System.String value);
+        partial void OnResultXmlChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("QP8Model", "FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateLogEntity")]
+        public XmlDbUpdateLogEntity XML_DB_UPDATE
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<XmlDbUpdateLogEntity>("QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateLogEntity").Value;
+            }
+            set
+            {
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<XmlDbUpdateLogEntity>("QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateLogEntity").Value = value;
+            }
+        }
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [BrowsableAttribute(false)]
+        [DataMemberAttribute()]
+        public EntityReference<XmlDbUpdateLogEntity> XML_DB_UPDATEReference
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<XmlDbUpdateLogEntity>("QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateLogEntity");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<XmlDbUpdateLogEntity>("QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateLogEntity", value);
+                }
+            }
+        }
+
+        #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="XmlDbUpdateLogEntity")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class XmlDbUpdateLogEntity : EntityObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new XmlDbUpdateLogEntity object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="applied">Initial value of the Applied property.</param>
+        /// <param name="hash">Initial value of the Hash property.</param>
+        /// <param name="userId">Initial value of the UserId property.</param>
+        public static XmlDbUpdateLogEntity CreateXmlDbUpdateLogEntity(global::System.Int32 id, global::System.DateTime applied, global::System.String hash, global::System.Int32 userId)
+        {
+            XmlDbUpdateLogEntity xmlDbUpdateLogEntity = new XmlDbUpdateLogEntity();
+            xmlDbUpdateLogEntity.Id = id;
+            xmlDbUpdateLogEntity.Applied = applied;
+            xmlDbUpdateLogEntity.Hash = hash;
+            xmlDbUpdateLogEntity.UserId = userId;
+            return xmlDbUpdateLogEntity;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Int32 _Id;
+        partial void OnIdChanging(global::System.Int32 value);
+        partial void OnIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Applied
+        {
+            get
+            {
+                return _Applied;
+            }
+            set
+            {
+                OnAppliedChanging(value);
+                ReportPropertyChanging("Applied");
+                _Applied = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Applied");
+                OnAppliedChanged();
+            }
+        }
+        private global::System.DateTime _Applied;
+        partial void OnAppliedChanging(global::System.DateTime value);
+        partial void OnAppliedChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Hash
+        {
+            get
+            {
+                return _Hash;
+            }
+            set
+            {
+                OnHashChanging(value);
+                ReportPropertyChanging("Hash");
+                _Hash = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Hash");
+                OnHashChanged();
+            }
+        }
+        private global::System.String _Hash;
+        partial void OnHashChanging(global::System.String value);
+        partial void OnHashChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String FileName
+        {
+            get
+            {
+                return _FileName;
+            }
+            set
+            {
+                OnFileNameChanging(value);
+                ReportPropertyChanging("FileName");
+                _FileName = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("FileName");
+                OnFileNameChanged();
+            }
+        }
+        private global::System.String _FileName;
+        partial void OnFileNameChanging(global::System.String value);
+        partial void OnFileNameChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 UserId
+        {
+            get
+            {
+                return _UserId;
+            }
+            set
+            {
+                OnUserIdChanging(value);
+                ReportPropertyChanging("UserId");
+                _UserId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UserId");
+                OnUserIdChanged();
+            }
+        }
+        private global::System.Int32 _UserId;
+        partial void OnUserIdChanging(global::System.Int32 value);
+        partial void OnUserIdChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Body
+        {
+            get
+            {
+                return _Body;
+            }
+            set
+            {
+                OnBodyChanging(value);
+                ReportPropertyChanging("Body");
+                _Body = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Body");
+                OnBodyChanged();
+            }
+        }
+        private global::System.String _Body;
+        partial void OnBodyChanging(global::System.String value);
+        partial void OnBodyChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Version
+        {
+            get
+            {
+                return _Version;
+            }
+            set
+            {
+                OnVersionChanging(value);
+                ReportPropertyChanging("Version");
+                _Version = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Version");
+                OnVersionChanged();
+            }
+        }
+        private global::System.String _Version;
+        partial void OnVersionChanging(global::System.String value);
+        partial void OnVersionChanged();
+
+        #endregion
+
+    
+        #region Navigation Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [XmlIgnoreAttribute()]
+        [SoapIgnoreAttribute()]
+        [DataMemberAttribute()]
+        [EdmRelationshipNavigationPropertyAttribute("QP8Model", "FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateActionsLogEntity")]
+        public EntityCollection<XmlDbUpdateActionsLogEntity> XML_DB_UPDATE_ACTIONS
+        {
+            get
+            {
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<XmlDbUpdateActionsLogEntity>("QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateActionsLogEntity");
+            }
+            set
+            {
+                if ((value != null))
+                {
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<XmlDbUpdateActionsLogEntity>("QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1", "XmlDbUpdateActionsLogEntity", value);
                 }
             }
         }

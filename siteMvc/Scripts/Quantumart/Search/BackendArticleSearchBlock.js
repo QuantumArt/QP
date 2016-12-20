@@ -21,7 +21,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
 
       var $buttonsWrapper = $(this._buttonsWrapperElement);
 
-      this._$defaultFilterButton = $('<input />', { type: 'button', value: $l.SearchBlock.defaultFilterButtonText, class: 'button' });
+      this._$defaultFilterButton = $('<input />', { type: 'button', value: $l.SearchBlock.defaultFilterButtonText, 'class': 'button' });
       $buttonsWrapper.append('&nbsp;');
       $buttonsWrapper.append(this._$defaultFilterButton);
       $buttonsWrapper = null;
@@ -35,7 +35,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
 
       if (!this.isVirtual) {
         // Создает контейнер для блока полнотекстового поиска
-        var $fullTextBlockElement = $('<div/>', { class: 'articleSearchRegion' });
+        var $fullTextBlockElement = $('<div/>', { 'class': 'articleSearchRegion' });
 
         this._fullTextBlockElement = $fullTextBlockElement.get(0);
 
@@ -48,7 +48,7 @@ Quantumart.QP8.BackendArticleSearchBlock.prototype = {
       }
 
       // Создаем контейнер для блока поиска по полям
-      var $fieldSeachBlockElement = $('<div/>', { class: 'articleSearchRegion' });
+      var $fieldSeachBlockElement = $('<div/>', { 'class': 'articleSearchRegion' });
 
       this._fieldSearchBlockElement = $fieldSeachBlockElement.get(0);
 

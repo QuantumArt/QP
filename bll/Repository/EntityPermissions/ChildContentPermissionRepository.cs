@@ -9,6 +9,7 @@ using System.Data;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Services.DTO;
 using System.Diagnostics;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.BLL.Repository.Helpers;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
@@ -55,7 +56,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 					rows = Common.GetChildContentPermissionsForGroup(scope.DbConnection, siteId, groupId.Value, cmd.SortExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
 				else
 					throw new ArgumentNullException("groupId, siteId");
-				return MappersRepository.ChildEntityPermissionListItemRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.ChildEntityPermissionListItemRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
@@ -119,7 +120,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 
 		public EntityPermission GetParentPermission(int siteId, int? userId, int? groupId)
 		{
-			return MappersRepository.SitePermissionMapper.GetBizObject(QPContext.EFContext.SitePermissionSet
+			return MapperFacade.SitePermissionMapper.GetBizObject(QPContext.EFContext.SitePermissionSet
 				.FirstOrDefault(p => 
 					p.SiteId == siteId &&
 					(groupId.HasValue ? p.GroupId == groupId.Value : p.GroupId == null) &&

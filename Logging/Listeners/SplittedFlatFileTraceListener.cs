@@ -6,89 +6,87 @@ using Quantumart.QP8.Logging.Formatters;
 
 namespace Quantumart.QP8.Logging.Listeners
 {
-	public abstract class SplittedFlatFileTraceListener : CustomTraceListener
-	{
-		#region Properties
-		protected Dictionary<string, FlatFileTraceListener> Listeners { get; private set; }
-		protected string FileName { get; private set; }
-		protected string Header { get; private set; }
-		protected string Footer { get; private set; }
-		#endregion
+    public abstract class SplittedFlatFileTraceListener : CustomTraceListener
+    {
+        protected Dictionary<string, FlatFileTraceListener> Listeners { get; }
 
-		#region Constructor
-		public SplittedFlatFileTraceListener(string fileName, string header, string footer, ILogFormatter formatter, TraceOptions traceOutputOptions)
-			: base()
-		{
-			Listeners = new Dictionary<string, FlatFileTraceListener>();
-			FileName = fileName;
-			Header = header;
-			Footer = footer;
-			Formatter = formatter;
-			TraceOutputOptions = traceOutputOptions;
-		}
-		#endregion
+        protected string FileName { get; private set; }
 
-		#region Overrides
-		public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
-		{
-			var listener = GetTraceListener(data);
-			listener.TraceData(eventCache, source, eventType, id, data);
-		}
+        protected string Header { get; }
 
-		public override void Flush()
-		{
-			foreach (var listener in Listeners.Values)
-			{
-				listener.Flush();
-			}
-		}
+        protected string Footer { get; }
 
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				foreach (var listener in Listeners.Values)
-				{
-					listener.Dispose();
-				}
+        protected SplittedFlatFileTraceListener(string fileName, string header, string footer, ILogFormatter formatter, TraceOptions traceOutputOptions)
+        {
+            Listeners = new Dictionary<string, FlatFileTraceListener>();
+            FileName = fileName;
+            Header = header;
+            Footer = footer;
+            Formatter = formatter;
+            TraceOutputOptions = traceOutputOptions;
+        }
 
-				Listeners.Clear();
-			}
+        public override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
+        {
+            var listener = GetTraceListener(data);
+            listener.TraceData(eventCache, source, eventType, id, data);
+        }
 
-			base.Dispose(disposing);
-		}
+        public override void Flush()
+        {
+            foreach (var listener in Listeners.Values)
+            {
+                listener.Flush();
+            }
+        }
 
-		public override void Write(string message)
-		{
-		}
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (var listener in Listeners.Values)
+                {
+                    listener.Dispose();
+                }
 
-		public override void WriteLine(string message)
-		{
-		}
-		#endregion
+                Listeners.Clear();
+            }
 
-		#region Protected methods
-		protected FlatFileTraceListener GetTraceListener(object data)
-		{
-			string currentFileName = GetCurrentFileName(data);
-			FlatFileTraceListener listener;
+            base.Dispose(disposing);
+        }
 
-			if (!Listeners.TryGetValue(currentFileName, out listener))
-			{
-				listener = new FlatFileTraceListener(currentFileName, Header, Footer, Formatter);
-				listener.TraceOutputOptions = TraceOutputOptions;
-				var templateFormatter =  listener.Formatter as TemplateFormatter;
-				if (templateFormatter != null)
-				{
-					templateFormatter.TraceOutputOptions = TraceOutputOptions;
-				}
-				Listeners[currentFileName] = listener;
-			};
+        public override void Write(string message)
+        {
+        }
 
-			return listener;		
-		}
+        public override void WriteLine(string message)
+        {
+        }
 
-		protected abstract string GetCurrentFileName(object data);
-		#endregion
-	}
+        protected FlatFileTraceListener GetTraceListener(object data)
+        {
+            var currentFileName = GetCurrentFileName(data);
+            FlatFileTraceListener listener;
+
+            if (!Listeners.TryGetValue(currentFileName, out listener))
+            {
+                listener = new FlatFileTraceListener(currentFileName, Header, Footer, Formatter)
+                {
+                    TraceOutputOptions = TraceOutputOptions
+                };
+
+                var templateFormatter = listener.Formatter as TemplateFormatter;
+                if (templateFormatter != null)
+                {
+                    templateFormatter.TraceOutputOptions = TraceOutputOptions;
+                }
+
+                Listeners[currentFileName] = listener;
+            }
+
+            return listener;
+        }
+
+        protected abstract string GetCurrentFileName(object data);
+    }
 }

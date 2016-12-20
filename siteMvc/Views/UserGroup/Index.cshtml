@@ -24,7 +24,7 @@
                    .HtmlAttributes(new { @class = "id" });
 
             c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
-                .HtmlAttributes(new { @class = "title" }); 
+                .HtmlAttributes(new { @class = "title" });
             c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
             c.Bound(s => s.SharedArticles)
                     .ClientTemplate(@"<input type=""checkbox"" disabled=""disabled"" <#= SharedArticlesChecked #> />")
@@ -48,6 +48,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

@@ -1,81 +1,79 @@
-﻿@model UserViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels
+﻿@model Quantumart.QP8.WebMvc.ViewModels.User.UserViewModel
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 
 @using (Html.BeginTabForm(Model))
 {
-	using (Html.BeginFieldGroup(UserStrings.LoginData))
-	{
-		@Html.TextBoxFieldFor(n => n.Data.LogOn)
-		@Html.PasswordFieldFor(n => n.Data.NewPassword)
-		@Html.PasswordFieldFor(n => n.Data.NewPasswordCopy)
-		@Html.TextBoxFieldFor(n => n.Data.NTLogOn)
-		@Html.CheckBoxFieldFor(n => n.Data.AutoLogOn)
-		@Html.CheckBoxFieldFor(n => n.Data.Disabled)
-	}
+    using (Html.BeginFieldGroup(UserStrings.LoginData))
+    {
+        @Html.TextBoxFieldFor(n => n.Data.LogOn)
+        @Html.PasswordFieldFor(n => n.Data.NewPassword)
+        @Html.PasswordFieldFor(n => n.Data.NewPasswordCopy)
+        @Html.TextBoxFieldFor(n => n.Data.NtLogOn)
+        @Html.CheckBoxFieldFor(n => n.Data.AutoLogOn)
+        @Html.CheckBoxFieldFor(n => n.Data.Disabled)
+    }
 
-	using (Html.BeginFieldGroup(UserStrings.ProfileData))
-	{
-		@Html.TextBoxFieldFor(n => n.Data.FirstName)
-		@Html.TextBoxFieldFor(n => n.Data.LastName)
-		@Html.TextBoxFieldFor(n => n.Data.Email)
-		@Html.SelectFieldFor(n => n.Data.LanguageId, Html.List(Model.AvailableLanguages))
-	}
+    using (Html.BeginFieldGroup(UserStrings.ProfileData))
+    {
+        @Html.TextBoxFieldFor(n => n.Data.FirstName)
+        @Html.TextBoxFieldFor(n => n.Data.LastName)
+        @Html.TextBoxFieldFor(n => n.Data.Email)
+        @Html.SelectFieldFor(n => n.Data.LanguageId, Html.List(Model.AvailableLanguages))
+    }
 
-	using (Html.BeginFieldGroup(UserStrings.MembershipData))
-	{
-		@Html.CheckboxListFieldFor(
-			model => model.SelectedGroups,
-			Html.List(Model.GroupListItems),
-			new EntityDataListArgs()
-			{
-				MaxListHeight = 200,
-				ShowIds = true,
-				ParentEntityId = 0,
-				EntityTypeCode = EntityTypeCode.UserGroup,
-				ReadActionCode = ActionCode.UserGroupProperties
-			},
-			new Dictionary<string, object> { { "id", Model.UniqueId("SelectedGroups") } }
-		)
-	}
-	
-	@Html.Partial("ContentDefaultFilters", Model)
+    using (Html.BeginFieldGroup(UserStrings.MembershipData))
+    {
+        @Html.CheckboxListFieldFor(
+            model => model.SelectedGroups,
+            Html.List(Model.GroupListItems),
+            new EntityDataListArgs()
+            {
+                MaxListHeight = 200,
+                ShowIds = true,
+                ParentEntityId = 0,
+                EntityTypeCode = EntityTypeCode.UserGroup,
+                ReadActionCode = ActionCode.UserGroupProperties
+            },
+            new Dictionary<string, object> { { "id", Model.UniqueId("SelectedGroups") } }
+        )
+    }
+
+    @Html.Partial("ContentDefaultFilters", Model)
 
     using (Html.BeginFieldGroup(UserStrings.ViewSettings))
-	{
-		@Html.CheckBoxFieldFor(n => n.Data.EnableContentGroupingInTree)
-	}
+    {
+        @Html.CheckBoxFieldFor(n => n.Data.EnableContentGroupingInTree)
+    }
 
-	using (Html.BeginFieldGroup(UserStrings.OnScreenData))
-	{
-		@Html.CheckBoxFieldFor(n => n.Data.AllowStageEditObject)
-		@Html.CheckBoxFieldFor(n => n.Data.AllowStageEditField)
-	}
+    using (Html.BeginFieldGroup(UserStrings.OnScreenData))
+    {
+        @Html.CheckBoxFieldFor(n => n.Data.AllowStageEditObject)
+        @Html.CheckBoxFieldFor(n => n.Data.AllowStageEditField)
+    }
 
     @Html.Partial("Version", Model.Data)
-	@Html.Partial("EntityDirectLink", Model)
+    @Html.Partial("EntityDirectLink", Model)
 
 }
 
 
 @Html.PrepareInitScript(Model)
 <script type="text/javascript">
-	@(Model.ContextObjectName).set_initializedCallback(function() {	
-		this.contentDefaultFiltersMediator = new Quantumart.QP8.ContentDefaultFiltersMediator("@Model.ContentFilterElementId");
-	});
+    @(Model.ContextObjectName).set_initializedCallback(function() {
+      this.contentDefaultFiltersMediator = new Quantumart.QP8.ContentDefaultFiltersMediator("@Model.ContentFilterElementId");
+    });
 
-	@(Model.ContextObjectName).set_hostLoadedCallback(function() {	
-		if(this.contentDefaultFiltersMediator){
-			this.contentDefaultFiltersMediator.initialize();
-		}
-	});
+  @(Model.ContextObjectName).set_hostLoadedCallback(function() {
+    if(this.contentDefaultFiltersMediator){
+      this.contentDefaultFiltersMediator.initialize();
+    }
+  });
 
-	@(Model.ContextObjectName).set_terminatingCallback(function() { 
-		if(this.contentDefaultFiltersMediator){
-			this.contentDefaultFiltersMediator.dispose();
-		}
-	});
+  @(Model.ContextObjectName).set_terminatingCallback(function() {
+    if(this.contentDefaultFiltersMediator){
+      this.contentDefaultFiltersMediator.dispose();
+    }
+  });
 </script>
 @Html.RunInitScript(Model)

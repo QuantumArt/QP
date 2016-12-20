@@ -4,6 +4,7 @@ using Quantumart.QP8.DAL;
 using System.Collections.Generic;
 using System.Data.Objects;
 using System.Linq;
+using Quantumart.QP8.BLL.Facades;
 
 namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 {
@@ -15,7 +16,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
             {
                 cmd.SortExpression = TranslateHelper.TranslateSortExpression(cmd.SortExpression);
                 var rows = Common.GetActionPermissionPage(scope.DbConnection, parentId, cmd.SortExpression, cmd.FilterExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
-                return MappersRepository.PermissionListItemRowMapper.GetBizList(rows.ToList());
+                return MapperFacade.PermissionListItemRowMapper.GetBizList(rows.ToList());
             }
         }
 
@@ -27,7 +28,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
                 set = set.Include("User").Include("Group").Include("LastModifiedByUser");
             }
 
-            return MappersRepository.BackendActionPermissionMapper.GetBizObject(set.SingleOrDefault(g => g.Id == id));
+            return MapperFacade.BackendActionPermissionMapper.GetBizObject(set.SingleOrDefault(g => g.Id == id));
         }
 
         public EntityPermission Save(EntityPermission permission)

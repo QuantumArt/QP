@@ -8,12 +8,12 @@
 @using (Html.BeginTabForm(Model))
 {
     @Html.Partial("Locking", Model)
-    
+
 	using (Html.BeginFieldGroup(NotificationStrings.BasicParameters))
 	{
 		@Html.TextBoxFieldFor(s => s.Data.Name)
-        if (Model.Data.IsSiteDotNet) 
-        { 
+        if (Model.Data.IsSiteDotNet)
+        {
             @Html.TextBoxFieldFor(s => s.Data.NetFormatName)
         }
         @Html.TextAreaFieldFor(s => s.Data.Description)
@@ -32,9 +32,9 @@
             })
         }
 	}
-	
+
     @Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

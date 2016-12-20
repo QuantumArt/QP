@@ -1,5 +1,5 @@
 ﻿@model UserGroupTreeViewModel
-		   
+
 @using Quantumart.QP8.Constants
 @using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
@@ -17,4 +17,4 @@
     @Html.Telerik().TreeView().Name(Model.MainComponentId)
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

@@ -242,23 +242,32 @@ _Pvt_Extensions
 # JetBrains Rider
 .idea/
 *.sln.iml
+worktree/
 
-# QuantumArt rules
-*.sublime-workspace
-*.orig
 
-package/pack/qp8release
-siteMvc/Views/**/*.generated.cs
 
+# QP Web Assets
 siteMvc/Content/*.min.css
-
-siteMvc/Scripts/Quantumart/**/*.min.js
 siteMvc/Scripts/Quantumart/**/*.map
+siteMvc/Scripts/Quantumart/**/*.min.js
+
+!siteMvc/Content/ckeditor
+!siteMvc/Content/codemirror
+
+
+
+# QP Generated And Builded
+*.orig
+*.sublime-workspace
+**/*.generated.cs
+npm-debug.log.*
+
 siteMvc/Scripts/build
 siteMvc/Content/build
+package/pack/qp8release
 
+!binaries/*.pdb
 !siteMvc/ToCopy/bin
 !siteMvc/ToCopy/bin/*.pdb
 !bll/Services/MultistepActions/Publish/
-!binaries/*.pdb
-/EntityFramework6.Test/DataContext/__DynamicMappingResult.xml
+

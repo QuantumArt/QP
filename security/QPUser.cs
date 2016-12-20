@@ -1,71 +1,44 @@
-﻿using System;
-using Quantumart.QP8.Constants;
-
-namespace Quantumart.QP8.Security
+﻿namespace Quantumart.QP8.Security
 {
-    public class QPUser
+    public class QpUser
     {
-        private int _id = 0;
         /// <summary>
         /// идентификатор пользователя
         /// </summary>
-        public int Id
-        {
-            get { return _id; }
-            set { _id = value; }
-        }
+        public int Id { get; set; } = default(int);
 
-        private string _name = "";
         /// <summary>
         /// логин пользователя
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-            set { _name = value; }
-        }
+        public string Name { get; set; } = string.Empty;
 
-        private string _customerCode = "";
         /// <summary>
         /// код клиента
         /// </summary>
-        public string CustomerCode
+        public string CustomerCode { get; set; } = string.Empty;
+
+        /// <summary>
+        /// идентификатор языка
+        /// </summary>
+        public int LanguageId
         {
-            get { return _customerCode; }
-            set { _customerCode = value; }
+            get { return _languageId; }
+            set
+            {
+                _languageId = value;
+                CultureName = GetCultureNameByLanguageId(_languageId);
+            }
         }
 
-		private int _languageId = 0;
-		/// <summary>
-		/// идентификатор языка
-		/// </summary>
-		public int LanguageId
-		{
-			get { return _languageId; }
-			set { 
-                _languageId = value;
-                _cultureName = GetCultureNameByLanguageId(_languageId);
-            }
-		}
+        /// <summary>
+        /// название культуры
+        /// </summary>
+        public string CultureName { get; private set; } = string.Empty;
 
-		private string _cultureName = "";
-		/// <summary>
-		/// название культуры
-		/// </summary>
-		public string CultureName
-		{
-			get { return _cultureName; }
-		}
-
-        private string[] _roles = new string[0];
         /// <summary>
         /// список ролей, доступных пользователю
         /// </summary>
-        public string[] Roles
-        {
-            get { return _roles; }
-            set { _roles = value; }
-        }
+        public string[] Roles { get; set; } = new string[0];
 
         /// <summary>
         /// Возвращает название языковой культуры по идентификатору языка
@@ -74,27 +47,28 @@ namespace Quantumart.QP8.Security
         /// <returns>название языковой культуры</returns>
         public static string GetCultureNameByLanguageId(int languageId)
         {
-            string cultureName = "neutral";
-
-            if (languageId == Constants.LanguageId.English)
+            var cultureName = "neutral";
+            switch (languageId)
             {
-                cultureName = "en-us";
-            }
-            else if (languageId == Constants.LanguageId.Russian)
-            {
-                cultureName = "ru-ru";
-            }
-            else if (languageId == Constants.LanguageId.Arabic)
-            {
-                cultureName = "ar-ar";
+                case Constants.LanguageId.English:
+                    cultureName = "en-us";
+                    break;
+                case Constants.LanguageId.Russian:
+                    cultureName = "ru-ru";
+                    break;
+                case Constants.LanguageId.Arabic:
+                    cultureName = "ar-ar";
+                    break;
             }
 
             return cultureName;
         }
 
-		/// <summary>
-		/// Установлен ли Silverlight у пользователя
-		/// </summary>
-		public bool IsSilverlightInstalled { get; set; }
+        /// <summary>
+        /// Установлен ли Silverlight у пользователя
+        /// </summary>
+        public bool IsSilverlightInstalled { get; set; }
+
+        private int _languageId;
     }
 }

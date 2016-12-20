@@ -1,0 +1,19 @@
+# mode: Mainline # will be available on 4.0 version
+mode: ContinuousDelivery # default on all except "develop" branch
+# mode: ContinuousDeployment # default on "develop" branch
+assembly-versioning-scheme: MajorMinorPatch
+tag-prefix: '[vV](?:ersion)?[-_.\s]?'
+continuous-delivery-fallback-tag: ci
+major-version-bump-message: '\+semver:\s?(breaking|major)'
+minor-version-bump-message: '\+semver:\s?(feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch|bugfix)'
+commit-message-incrementing: Enabled
+branches:
+  master:
+    mode: ContinuousDelivery
+    tag: ''
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: true
+
+# gitversion /showconfig -- to show current configuration

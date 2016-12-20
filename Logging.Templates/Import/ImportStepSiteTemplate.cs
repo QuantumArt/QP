@@ -13,13 +13,14 @@ namespace Quantumart.QP8.Logging.Templates.Import
     using Quantumart.QP8.Logging.Templates.Default;
     using Quantumart.QP8.Resources;
     using Quantumart.QP8.BLL.Services.MultistepActions.Import;
+    using Quantumart.QP8.BLL.Enums;
     using System;
     
     /// <summary>
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
+    #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
     public partial class ImportStepSiteTemplate : ImportStepSiteTemplateBase
     {
@@ -29,17 +30,10 @@ namespace Quantumart.QP8.Logging.Templates.Import
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
+            this.Write("\r\n");
+            this.Write("\r\n");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
+            #line 13 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
 
 var setts = Model.Settings;
 if (setts.ImportAction == (int)ImportActions.InsertAndUpdate || setts.ImportAction == (int)ImportActions.InsertNew || setts.ImportAction == (int)ImportActions.UpdateIfChanged)
@@ -55,7 +49,7 @@ if (setts.ImportAction == (int)ImportActions.InsertAndUpdate || setts.ImportActi
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
+        #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
 
 private global::Quantumart.QP8.Logging.Loggers.ImportStepSettings _ModelField;
 

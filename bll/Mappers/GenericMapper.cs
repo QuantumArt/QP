@@ -1,60 +1,57 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using AutoMapper;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
-    
     internal abstract class GenericMapper
     {
         public abstract void CreateBizMapper();
+
         public abstract void CreateDalMapper();
     }
-    
-    internal class GenericMapper<Biz, Dal> : GenericMapper
-        where Biz : class
-        where Dal : class
-    {
 
+    internal class GenericMapper<TBiz, TDal> : GenericMapper
+        where TBiz : class
+        where TDal : class
+    {
         public override void CreateBizMapper()
         {
-            Mapper.CreateMap<Dal, Biz>();
+            GetBizMapper();
         }
 
         public override void CreateDalMapper()
         {
-            Mapper.CreateMap<Biz, Dal>();
+            GetDalMapper();
         }
 
-        public virtual Biz GetBizObject(Dal dataObject)
+        public IMappingExpression<TDal, TBiz> GetBizMapper()
         {
-            if (dataObject == null)
-                return null;
-            else
-            {
-                return DefaultMapper.GetBizObject<Biz, Dal>(dataObject);
-            }
+            return Mapper.CreateMap<TDal, TBiz>();
         }
 
-
-        public virtual List<Biz> GetBizList(List<Dal> dataList)
+        public IMappingExpression<TBiz, TDal> GetDalMapper()
         {
-            return DefaultMapper.GetBizList<Biz, Dal>(dataList);
+            return Mapper.CreateMap<TBiz, TDal>();
         }
 
-
-        public virtual Dal GetDalObject(Biz bizObject)
+        public virtual TBiz GetBizObject(TDal dataObject)
         {
-            return DefaultMapper.GetDalObject<Dal, Biz>(bizObject);
+            return DefaultMapper.GetBizObject<TBiz, TDal>(dataObject);
         }
 
-
-        public virtual List<Dal> GetDalList(List<Biz> bizList)
+        public virtual List<TBiz> GetBizList(List<TDal> dataList)
         {
-            return DefaultMapper.GetDalList<Dal, Biz>(bizList);
+            return DefaultMapper.GetBizList<TBiz, TDal>(dataList);
         }
 
+        public virtual TDal GetDalObject(TBiz bizObject)
+        {
+            return DefaultMapper.GetDalObject<TDal, TBiz>(bizObject);
+        }
+
+        public virtual List<TDal> GetDalList(List<TBiz> bizList)
+        {
+            return DefaultMapper.GetDalList<TDal, TBiz>(bizList);
+        }
     }
 }

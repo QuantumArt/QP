@@ -1,37 +1,31 @@
-﻿using QA.Validation.Xaml;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Validators;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.Validators;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using QA.Validation.Xaml;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Interfaces.Db;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.BLL.Validators;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Utils;
+using Quantumart.QP8.Validators;
 
 namespace Quantumart.QP8.BLL
 {
     public class Content : EntityObject
     {
-        #region Classes
-        /// <summary>
-        /// Элемент иерархии виртуальных полей для виртуального контента
-        /// </summary>
         public class VirtualFieldNode
         {
             public VirtualFieldNode()
             {
-                Children = Enumerable.Empty<Content.VirtualFieldNode>();
+                Children = Enumerable.Empty<VirtualFieldNode>();
             }
-            /// <summary>
-            /// Id виртуального поля
-            /// </summary>
+
             public int Id { get; set; }
-            /// <summary>
-            /// Подчиненные поля
-            /// </summary>
+
             public IEnumerable<VirtualFieldNode> Children { get; set; }
 
             public string TreeId { get; set; }
@@ -41,13 +35,11 @@ namespace Quantumart.QP8.BLL
             /// <summary>
             /// Разворачивает иерархию в плоскую структуру
             /// </summary>
-            /// <returns></returns>
             public static IEnumerable<VirtualFieldNode> Linearize(IEnumerable<VirtualFieldNode> nodes)
             {
-                List<VirtualFieldNode> result = new List<VirtualFieldNode>();
-
+                var result = new List<VirtualFieldNode>();
                 Action<IEnumerable<VirtualFieldNode>> toggle = null;
-                toggle = (parentNodes) =>
+                toggle = parentNodes =>
                     {
                         result.AddRange(parentNodes);
                         foreach (var childNode in parentNodes)
@@ -63,35 +55,31 @@ namespace Quantumart.QP8.BLL
             /// <summary>
             /// Сворачивает иерархию на основе строк с иерархическими ключами
             /// </summary>
-            /// <param name="nodeIDsString"></param>
-            /// <returns></returns>
             public static IEnumerable<VirtualFieldNode> Parse(IEnumerable<string> nodeIDsString)
             {
                 if (nodeIDsString == null)
-                    return new VirtualFieldNode[0];
-                else
                 {
-
-                    IEnumerable<string> normilizedNodeIdSeq = nodeIDsString;
-
-                    Func<string, int, IEnumerable<VirtualFieldNode>> getNodes = null;
-                    getNodes = (parentNodeId, level) =>
-                        {
-                            return normilizedNodeIdSeq
-                                    .Where(s => s.Where(c => c.Equals('.')).Count() == level) // количество символов '.' в ключе = его zero-based уровню в иерархии
-                                    .Where(s => String.IsNullOrWhiteSpace(parentNodeId) || s.IndexOf(parentNodeId.TrimEnd(']')) >= 0) // только наследники
-                                    .Select(id => new VirtualFieldNode
-                                    {
-                                        TreeId = id,
-                                        Id = VirtualFieldNode.ParseFieldTreeId(id),
-                                        Children = getNodes(id, level + 1)
-                                    })
-                                    .ToArray();
-                        };
-
-
-                    return getNodes(null, 0);
+                    return new VirtualFieldNode[0];
                 }
+
+                var normilizedNodeIdSeq = nodeIDsString;
+                Func<string, int, IEnumerable<VirtualFieldNode>> getNodes = null;
+                getNodes = (parentNodeId, level) =>
+                {
+                    return normilizedNodeIdSeq
+                        .Where(s => s.Count(c => c.Equals('.')) == level) // количество символов '.' в ключе = его zero-based уровню в иерархии
+                        .Where(s => string.IsNullOrWhiteSpace(parentNodeId) || s.IndexOf(parentNodeId.TrimEnd(']')) >= 0) // только наследники
+                        .Select(id => new VirtualFieldNode
+                        {
+                            TreeId = id,
+                            Id = ParseFieldTreeId(id),
+                            Children = getNodes(id, level + 1)
+                        })
+                        .ToArray();
+                };
+
+
+                return getNodes(null, 0);
             }
 
             /// <summary>
@@ -102,30 +90,30 @@ namespace Quantumart.QP8.BLL
             public static IEnumerable<VirtualFieldNode> GetVirtualJoinFieldNodes(int virtualContentId)
             {
                 if (virtualContentId == 0)
-                    return new Content.VirtualFieldNode[0];
-                else
                 {
-                    Content content = ContentRepository.GetById(virtualContentId);
-                    IEnumerable<Field> fields = content.Fields;
-
-                    Func<int?, string, IEnumerable<Content.VirtualFieldNode>> addChildFieldNodes = null;
-                    addChildFieldNodes = (parentFieldId, parentFieldTreeId) =>
-                    {
-                        var childFieldNodes = fields
-                                            .Where(f => f.JoinId == parentFieldId)
-                                            .Select(f => new Content.VirtualFieldNode { Id = f.Id })
-                                            .ToArray();
-                        foreach (var childFieldNode in childFieldNodes)
-                        {
-                            string childTreeId = GetFieldTreeId(childFieldNode.Id, parentFieldTreeId);
-                            childFieldNode.TreeId = childTreeId;
-                            childFieldNode.Children = addChildFieldNodes(childFieldNode.Id, childTreeId);
-                        }
-                        return childFieldNodes;
-                    };
-
-                    return addChildFieldNodes(null, null);
+                    return new VirtualFieldNode[0];
                 }
+
+                var content = ContentRepository.GetById(virtualContentId);
+                var fields = content.Fields;
+
+                Func<int?, string, IEnumerable<VirtualFieldNode>> addChildFieldNodes = null;
+                addChildFieldNodes = (parentFieldId, parentFieldTreeId) =>
+                {
+                    var childFieldNodes = fields
+                        .Where(f => f.JoinId == parentFieldId)
+                        .Select(f => new VirtualFieldNode { Id = f.Id })
+                        .ToArray();
+                    foreach (var childFieldNode in childFieldNodes)
+                    {
+                        var childTreeId = GetFieldTreeId(childFieldNode.Id, parentFieldTreeId);
+                        childFieldNode.TreeId = childTreeId;
+                        childFieldNode.Children = addChildFieldNodes(childFieldNode.Id, childTreeId);
+                    }
+                    return childFieldNodes;
+                };
+
+                return addChildFieldNodes(null, null);
             }
 
             /// <summary>
@@ -137,10 +125,12 @@ namespace Quantumart.QP8.BLL
             internal static string GetFieldTreeId(int fieldId, string parentFieldTreeId = null)
             {
                 const string rootLevelTreeId = "[]";
-                if (String.IsNullOrWhiteSpace(parentFieldTreeId) || parentFieldTreeId.Equals(rootLevelTreeId))
-                    return String.Format("[{0}]", fieldId);
-                else
-                    return String.Format(String.Concat(parentFieldTreeId.Trim(']'), ".{0}]"), fieldId);
+                if (string.IsNullOrWhiteSpace(parentFieldTreeId) || parentFieldTreeId.Equals(rootLevelTreeId))
+                {
+                    return $"[{fieldId}]";
+                }
+
+                return string.Format(string.Concat(parentFieldTreeId.Trim(']'), ".{0}]"), fieldId);
             }
 
             /// <summary>
@@ -150,17 +140,18 @@ namespace Quantumart.QP8.BLL
             /// <returns>id поля в БД</returns>
             internal static int ParseFieldTreeId(string fieldTreeId)
             {
-                if (String.IsNullOrWhiteSpace(fieldTreeId))
+                if (string.IsNullOrWhiteSpace(fieldTreeId))
+                {
                     return 0;
+                }
 
                 if (fieldTreeId.StartsWith("[") && fieldTreeId.EndsWith("]"))
                 {
                     var fidStr = fieldTreeId.Trim('[', ']').Split('.').LastOrDefault();
-                    return Int32.Parse(fidStr);
+                    return int.Parse(fidStr);
                 }
-                else
-                    throw new FormatException("Field Id format string");
 
+                throw new FormatException("Field Id format string");
             }
 
             /// <summary>
@@ -169,75 +160,63 @@ namespace Quantumart.QP8.BLL
             /// <param name="fieldTreeId"></param>
             internal static string GetParentFieldTreeId(string fieldTreeId)
             {
-                int lastPointIndex = fieldTreeId.LastIndexOf('.');
+                var lastPointIndex = fieldTreeId.LastIndexOf('.');
                 if (lastPointIndex < 0)
+                {
                     return null;
-                else
-                    return String.Concat(fieldTreeId.Substring(0, lastPointIndex), ']');
+                }
+
+                return string.Concat(fieldTreeId.Substring(0, lastPointIndex), ']');
             }
 
             /// <summary>
             /// Добавляет отсутствующие id полей в дереве для верхнего уровня иерархии
             /// так, что бы у каждого id (кроме рутовых) был предок
             /// </summary>
-            /// <param name="argument"></param>
-            /// <returns></returns>
             public static IEnumerable<string> NormalizeFieldTreeIdSeq(IEnumerable<string> fieldTreeIDs)
             {
-                List<string> result = new List<string>(fieldTreeIDs);
-
+                var result = new List<string>(fieldTreeIDs);
                 Action<IEnumerable<string>> round = null;
-                round = (seq) =>
+                round = seq =>
                 {
-                    bool added = false;
+                    var added = false;
                     foreach (var id in seq.OrderByDescending(i => i.Length))
                     {
-                        string parentId = GetParentFieldTreeId(id);
-                        if (!String.IsNullOrEmpty(parentId) && !result.Contains(parentId))
+                        var parentId = GetParentFieldTreeId(id);
+                        if (!string.IsNullOrEmpty(parentId) && !result.Contains(parentId))
                         {
                             added = true;
                             result.Add(parentId);
                         }
                     }
+
                     if (added)
+                    {
                         round(seq);
+                    }
                 };
 
                 round(result);
                 return result;
             }
-
         }
-
 
         public class TreeItem
         {
             public int ContentId { get; set; }
+
             public int Level { get; set; }
         }
 
-        #endregion
-
-        #region constants
-
         public const int MinPageSize = 5;
-
         public const int MaxPageSize = 100;
-
         public const int DefaultPageSize = 20;
-
         public const int MinLimitOfStoredVersions = 1;
-
         public const int MaxLimitOfStoredVersions = 30;
-
         public const int DefaultLimitOfStoredVersions = 10;
-
         internal const string ContentItemIdPropertyName = "CONTENT_ITEM_ID";
         internal const string StatusTypeIdPropertyName = "STATUS_TYPE_ID";
 
-        /// <summary>
-        /// Обязательные поля контента
-        /// </summary>
         internal static readonly ReadOnlyCollection<UserQueryColumn> SystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
         {
             new UserQueryColumn {ColumnName = "CONTENT_ITEM_ID", DbType = "numeric", NumericScale = 0},
@@ -246,44 +225,23 @@ namespace Quantumart.QP8.BLL
             new UserQueryColumn {ColumnName = "ARCHIVE", DbType = "numeric", NumericScale = 0},
             new UserQueryColumn {ColumnName = "CREATED", DbType = "datetime"},
             new UserQueryColumn {ColumnName = "MODIFIED", DbType = "datetime"},
-            new UserQueryColumn {ColumnName = "LAST_MODIFIED_BY", DbType = "numeric", NumericScale = 0},
+            new UserQueryColumn {ColumnName = "LAST_MODIFIED_BY", DbType = "numeric", NumericScale = 0}
         });
 
-        #endregion
-
-        #region private fields
-
-        private ContentWorkflowBind _WorkflowBinding;
-
-        private Site _Site;
-
-        private IEnumerable<Field> _Fields;
-
-        private IEnumerable<ContentConstraint> _Constraints;
-
-        private Lazy<IEnumerable<Content>> aggregatedContents = null;
-
-        private InitPropertyValue<Field> treeField;
-
-        private InitPropertyValue<Field> variationField;
-
-        private InitPropertyValue<IEnumerable<int>> unionContentIDs = null;
-
-        private Lazy<IEnumerable<Content>> virtualSubContents = null;
-
-        private Lazy<IEnumerable<UserQueryColumn>> userQueryContentViewSchema = null;
-
-        private InitPropertyValue<IEnumerable<VirtualFieldNode>> virtualJoinFieldNodes;
-
-        private InitPropertyValue<Content> parentContent;
-
-        private InitPropertyValue<IEnumerable<Content>> childContents;
-
-        private InitPropertyValue<ContentGroup> contentGroup;
-
-        #endregion
-
-        #region creation
+        private Site _site;
+        private IEnumerable<Field> _fields;
+        private ContentWorkflowBind _workflowBinding;
+        private IEnumerable<ContentConstraint> _constraints;
+        private readonly Lazy<IEnumerable<Content>> _aggregatedContents;
+        private readonly InitPropertyValue<Field> _treeField;
+        private readonly InitPropertyValue<Field> _variationField;
+        private readonly InitPropertyValue<IEnumerable<int>> _unionContentIDs;
+        private readonly Lazy<IEnumerable<Content>> _virtualSubContents;
+        private readonly Lazy<IEnumerable<UserQueryColumn>> _userQueryContentViewSchema;
+        private readonly InitPropertyValue<IEnumerable<VirtualFieldNode>> _virtualJoinFieldNodes;
+        private readonly InitPropertyValue<Content> _parentContent;
+        private readonly InitPropertyValue<IEnumerable<Content>> _childContents;
+        private readonly InitPropertyValue<ContentGroup> _contentGroup;
 
         public Content()
         {
@@ -295,42 +253,43 @@ namespace Quantumart.QP8.BLL
             MaxNumOfStoredVersions = DefaultLimitOfStoredVersions;
             UseDefaultFiltration = true;
 
-            virtualJoinFieldNodes = new InitPropertyValue<IEnumerable<VirtualFieldNode>>(() =>
+            _virtualJoinFieldNodes = new InitPropertyValue<IEnumerable<VirtualFieldNode>>(() =>
             {
                 if (!IsNew && VirtualType == Constants.VirtualType.Join)
+                {
                     return VirtualFieldNode.GetVirtualJoinFieldNodes(Id);
-                else
-                    return new VirtualFieldNode[0];
+                }
+
+                return new VirtualFieldNode[0];
             });
 
-            treeField = new InitPropertyValue<Field>(() =>
+            _treeField = new InitPropertyValue<Field>(() =>
             {
-                int id = ContentRepository.GetTreeFieldId(Id);
-                return (id == 0) ? null : FieldRepository.GetById(id);
+                var id = ContentRepository.GetTreeFieldId(Id);
+                return id == 0 ? null : FieldRepository.GetById(id);
             });
 
-            variationField = new InitPropertyValue<Field>(() =>
+            _variationField = new InitPropertyValue<Field>(() =>
             {
-                int id = ContentRepository.GetVariationFieldId(Id);
-                return (id == 0) ? null : FieldRepository.GetById(id);
+                var id = ContentRepository.GetVariationFieldId(Id);
+                return id == 0 ? null : FieldRepository.GetById(id);
             });
 
-            unionContentIDs = new InitPropertyValue<IEnumerable<int>>(() => VirtualContentRepository.GetUnionSourceContents(this.Id));
+            _unionContentIDs = new InitPropertyValue<IEnumerable<int>>(() => VirtualContentRepository.GetUnionSourceContents(Id));
 
-            virtualSubContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetVirtualSubContents(this.Id));
+            _virtualSubContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetVirtualSubContents(Id));
 
-            userQueryContentViewSchema = new Lazy<IEnumerable<UserQueryColumn>>(() => GetUserQueryContentViewSchema());
+            _userQueryContentViewSchema = new Lazy<IEnumerable<UserQueryColumn>>(GetUserQueryContentViewSchema);
 
-            aggregatedContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetAggregatedContents(this.Id));
+            _aggregatedContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetAggregatedContents(Id));
 
-            parentContent = new InitPropertyValue<Content>(() => (this.ParentContentId.HasValue) ? ContentRepository.GetById(this.ParentContentId.Value) : null);
+            _parentContent = new InitPropertyValue<Content>(() => ParentContentId.HasValue ? ContentRepository.GetById(ParentContentId.Value) : null);
 
-            childContents = new InitPropertyValue<IEnumerable<Content>>(() => ContentRepository.GetChildList(this.Id));
+            _childContents = new InitPropertyValue<IEnumerable<Content>>(() => ContentRepository.GetChildList(Id));
 
-            contentGroup = new InitPropertyValue<ContentGroup>(() => ContentRepository.GetGroupById(this.GroupId));
+            _contentGroup = new InitPropertyValue<ContentGroup>(() => ContentRepository.GetGroupById(GroupId));
 
         }
-
 
         public Content(Site site)
             : this()
@@ -340,49 +299,27 @@ namespace Quantumart.QP8.BLL
             GroupId = ContentGroup.GetDefaultGroup(SiteId).Id;
         }
 
-        #endregion
-
-        #region properties
-
-        #region simple read-write
-
         public int[] ForceFieldIds { get; set; }
 
         public int[] ForceLinkIds { get; set; }
 
         [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(ContentStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(Constants.RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(ContentStrings))]
+        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(ContentStrings))]
         [LocalizedDisplayName("Name", NameResourceType = typeof(ContentStrings))]
-        public override string Name
-        {
-            get;
-            set;
-        }
+        public override string Name { get; set; }
 
         [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [LocalizedDisplayName("Description", NameResourceType = typeof(ContentStrings))]
-        public override string Description
-        {
-            get;
-            set;
-        }
+        public override string Description { get; set; }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "FriendlyPluralMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [LocalizedDisplayName("Plural", NameResourceType = typeof(ContentStrings))]
-        public string FriendlyPluralName
-        {
-            get;
-            set;
-        }
+        public string FriendlyPluralName { get; set; }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "FriendlySingularMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [LocalizedDisplayName("Singular", NameResourceType = typeof(ContentStrings))]
-        public string FriendlySingularName
-        {
-            get;
-            set;
-        }
+        public string FriendlySingularName { get; set; }
 
         [LocalizedDisplayName("EnableArticlesPermissions", NameResourceType = typeof(ContentStrings))]
         public bool AllowItemsPermission
@@ -411,7 +348,6 @@ namespace Quantumart.QP8.BLL
             get;
             set;
         }
-
 
         [LocalizedDisplayName("CreateVersions", NameResourceType = typeof(ContentStrings))]
         public bool UseVersionControl
@@ -442,7 +378,7 @@ namespace Quantumart.QP8.BLL
         }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "NameSingularMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(Constants.RegularExpressions.NetName, MessageTemplateResourceName = "NameSingularInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NameSingularInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("NameSingular", NameResourceType = typeof(ContentStrings))]
         public string NetName
         {
@@ -451,7 +387,7 @@ namespace Quantumart.QP8.BLL
         }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "NamePluralMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(Constants.RegularExpressions.NetName, MessageTemplateResourceName = "NamePluralInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NamePluralInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("NamePlural", NameResourceType = typeof(ContentStrings))]
         public string NetPluralName
         {
@@ -467,7 +403,7 @@ namespace Quantumart.QP8.BLL
         }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "AddContextClassNameLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
-        [FormatValidator(Constants.RegularExpressions.FullQualifiedNetName, MessageTemplateResourceName = "AddContextClassNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.FullQualifiedNetName, MessageTemplateResourceName = "AddContextClassNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("AdditionalContextClassName", NameResourceType = typeof(ContentStrings))]
         public string AdditionalContextClassName
         {
@@ -538,27 +474,9 @@ namespace Quantumart.QP8.BLL
 
         public int[] ForceVirtualFieldIds { get; set; }
 
-        #endregion
+        public bool IsVirtual => VirtualType != 0;
 
-        #region simple read-only
-
-        public bool IsVirtual
-        {
-            get
-            {
-                return (VirtualType != 0);
-            }
-        }
-
-        public string VirtualTypeString
-        {
-            get
-            {
-                return GetVirtualTypeString(VirtualType);
-
-            }
-
-        }
+        public string VirtualTypeString => GetVirtualTypeString(VirtualType);
 
         public static string GetVirtualTypeString(int virtualTypeCode)
         {
@@ -571,7 +489,7 @@ namespace Quantumart.QP8.BLL
                 case 3:
                     return "USER QUERY";
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
         }
 
@@ -590,108 +508,48 @@ namespace Quantumart.QP8.BLL
                 case 4:
                     return NotificationStrings.RadioNone;
                 default:
-                    return String.Empty;
+                    return string.Empty;
             }
         }
 
-        public string GroupName
-        {
-            get
-            {
-                return (Group == null) ? String.Empty : Group.Name;
-            }
-        }
+        public string GroupName => Group == null ? string.Empty : Group.Name;
 
         public string SelfRelationFieldFilter
         {
             get
             {
-                Field field = TreeField;
-                return (field == null) ? String.Empty : field.RelationFilter;
+                var field = TreeField;
+                return field == null ? string.Empty : field.RelationFilter;
             }
         }
 
-        public override string EntityTypeCode
-        {
-            get
-            {
-                return IsVirtual ? Constants.EntityTypeCode.VirtualContent : Constants.EntityTypeCode.Content;
-            }
-        }
+        public override string EntityTypeCode => IsVirtual ? Constants.EntityTypeCode.VirtualContent : Constants.EntityTypeCode.Content;
 
-        public override int ParentEntityId
-        {
-            get
-            {
-                return SiteId;
-            }
-        }
+        public override int ParentEntityId => SiteId;
 
-        public override string CannotAddBecauseOfSecurityMessage
-        {
-            get
-            {
-                return ContentStrings.CannotAddBecauseOfSecurity;
-            }
-        }
+        public override string CannotAddBecauseOfSecurityMessage => ContentStrings.CannotAddBecauseOfSecurity;
 
-        public override string CannotUpdateBecauseOfSecurityMessage
-        {
-            get
-            {
-                return ContentStrings.CannotUpdateBecauseOfSecurity;
-            }
-        }
+        public override string CannotUpdateBecauseOfSecurityMessage => ContentStrings.CannotUpdateBecauseOfSecurity;
 
-        public override string PropertyIsNotUniqueMessage
-        {
-            get
-            {
-                return ContentStrings.NameNonUnique;
-            }
-        }
+        public override string PropertyIsNotUniqueMessage => $"{ContentStrings.NameNonUnique}: {Name}({Id})";
 
-        public bool HasTreeField
-        {
-            get
-            {
-                return ContentRepository.HasContentTreeField(Id);
-            }
-        }
+        public bool HasTreeField => ContentRepository.HasContentTreeField(Id);
 
-        public bool HasAnyNotification
-        {
-            get
-            {
-                return ContentRepository.HasAnyNotifications(Id);
-            }
-        }
+        public bool HasAnyNotification => ContentRepository.HasAnyNotifications(Id);
 
-        public bool HasAggregatedFields { get { return Fields.Where(f => f.Aggregated).Any(); } }
+        public bool HasAggregatedFields { get { return Fields.Any(f => f.Aggregated); } }
 
-        public IEnumerable<Content> AggregatedContents { get { return aggregatedContents.Value; } }
+        public IEnumerable<Content> AggregatedContents => _aggregatedContents.Value;
 
-        public Field TreeField
-        {
-            get
-            {
-                return treeField.Value;
-            }
-        }
+        public Field TreeField => _treeField.Value;
 
-        public Field VariationField
-        {
-            get
-            {
-                return variationField.Value;
-            }
-        }
+        public Field VariationField => _variationField.Value;
 
         internal IEnumerable<Field> FieldsForCreateLike
         {
             get
             {
-                HashSet<int> currentFieldIds = new HashSet<int>(Fields.Select(n => n.Id));
+                var currentFieldIds = new HashSet<int>(Fields.Select(n => n.Id));
                 return Fields
                     .Where(n => !n.BackRelationId.HasValue || currentFieldIds.Contains(n.BackRelationId.Value))
                     .Where(f => !f.IsClassifier)
@@ -699,47 +557,22 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        #endregion
-
-        #region references
-
-        public IEnumerable<ContentConstraint> Constraints
-        {
-            get
-            {
-                if (_Constraints == null)
-                {
-                    if (this.IsNew)
-                        _Constraints = Enumerable.Empty<ContentConstraint>();
-                    else
-                        _Constraints = ContentConstraintRepository.GetConstraintsByContentId(this.Id);
-                }
-                return _Constraints;
-            }
-        }
+        public IEnumerable<ContentConstraint> Constraints => _constraints ?? (_constraints = IsNew ? Enumerable.Empty<ContentConstraint>() : ContentConstraintRepository.GetConstraintsByContentId(Id));
 
         public IEnumerable<Field> Fields
         {
             get
             {
-                if (_Fields == null)
+                if (_fields == null)
                 {
-                    if (IsNew)
-                    {
-                        _Fields = Enumerable.Empty<Field>();
-                    }
-                    else
-                    {
-                        _Fields = FieldRepository.GetFullList(Id);
-                    }
-
-                    foreach (var current in _Fields)
+                    _fields = IsNew ? Enumerable.Empty<Field>() : FieldRepository.GetFullList(Id);
+                    foreach (var current in _fields)
                     {
                         current.Content = this;
                     }
                 }
 
-                return _Fields;
+                return _fields;
             }
         }
 
@@ -756,97 +589,46 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-
-        public ContentGroup Group
-        {
-            get
-            {
-                return contentGroup.Value;
-            }
-        }
+        public ContentGroup Group => _contentGroup.Value;
 
         public ContentWorkflowBind WorkflowBinding
         {
             get
             {
-                if (_WorkflowBinding == null)
+                if (_workflowBinding == null)
                 {
                     LoadWorkflowBinding();
                 }
-                return _WorkflowBinding;
+                return _workflowBinding;
             }
             set
             {
-                _WorkflowBinding = value;
+                _workflowBinding = value;
             }
         }
 
         public Site Site
         {
-            get
-            {
-                if (_Site == null)
-                {
-                    _Site = SiteRepository.GetById(SiteId);
-                }
-                return _Site;
-            }
+            get { return _site ?? (_site = SiteRepository.GetById(SiteId)); }
 
             set
             {
-                _Site = value;
+                _site = value;
             }
         }
 
-        public PathInfo RootVersionsLibrary
-        {
-            get
-            {
-                return PathInfo.GetSubPathInfo(ArticleVersion.RootFolder);
-            }
-        }
+        public PathInfo RootVersionsLibrary => PathInfo.GetSubPathInfo(ArticleVersion.RootFolder);
 
-        public PathInfo RootContentsPathInfo
-        {
-            get
-            {
-                return Site.BasePathInfo.GetSubPathInfo("contents");
-            }
-        }
+        public PathInfo RootContentsPathInfo => Site.BasePathInfo.GetSubPathInfo("contents");
 
-        public override PathInfo PathInfo
-        {
-            get
-            {
-                return RootContentsPathInfo.GetSubPathInfo(Id.ToString());
-            }
-        }
+        public override PathInfo PathInfo => RootContentsPathInfo.GetSubPathInfo(Id.ToString());
 
-        public override EntityObject Parent
-        {
-            get
-            {
-                return Site;
-            }
-        }
+        public override EntityObject Parent => Site;
 
-        public Content ParentContent
-        {
-            get
-            {
-                return parentContent.Value;
-            }
-        }
+        public Content ParentContent => _parentContent.Value;
 
-        public IEnumerable<Content> ChildContents
-        {
-            get
-            {
-                return childContents.Value;
-            }
-        }
+        public IEnumerable<Content> ChildContents => _childContents.Value;
 
-        #region Related to Virtual Content
         /// <summary>
         /// Виртуальные поля контента
         /// </summary>
@@ -854,35 +636,23 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return virtualJoinFieldNodes.Value;
+                return _virtualJoinFieldNodes.Value;
             }
             set
             {
-                virtualJoinFieldNodes.Value = value;
+                _virtualJoinFieldNodes.Value = value;
             }
         }
 
         /// <summary>
         /// Дочерние виртуальные контенты
         /// </summary>
-        public IEnumerable<Content> VirtualSubContents
-        {
-            get
-            {
-                return virtualSubContents.Value;
-            }
-        }
+        public IEnumerable<Content> VirtualSubContents => _virtualSubContents.Value;
 
         /// <summary>
         /// Схема view виртуального контента типа User Query
         /// </summary>
-        internal IEnumerable<UserQueryColumn> UserQueryContentViewSchema
-        {
-            get
-            {
-                return userQueryContentViewSchema.Value;
-            }
-        }
+        internal IEnumerable<UserQueryColumn> UserQueryContentViewSchema => _userQueryContentViewSchema.Value;
 
         /// <summary>
         /// ID базовых контентов для построения Union-контента
@@ -892,11 +662,11 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return unionContentIDs.Value;
+                return _unionContentIDs.Value;
             }
             set
             {
-                unionContentIDs.Value = value;
+                _unionContentIDs.Value = value;
             }
         }
 
@@ -912,16 +682,6 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("UserQueryAlternative", NameResourceType = typeof(ContentStrings))]
         public string UserQueryAlternative { get; set; }
 
-        #endregion
-
-        #endregion
-
-        #endregion
-
-        #region methods
-
-        #region public
-
         public void DoCustomBinding()
         {
             if (!MapAsClass)
@@ -932,14 +692,18 @@ namespace Quantumart.QP8.BLL
                 AdditionalContextClassName = null;
             }
             if (CreateDefaultXamlValidation)
+            {
                 XamlValidation = GenerateDefaultValidationXaml();
+            }
             else
-                XamlValidation = String.IsNullOrWhiteSpace(XamlValidation) ? null : XamlValidation;
+            {
+                XamlValidation = string.IsNullOrWhiteSpace(XamlValidation) ? null : XamlValidation;
+            }
         }
 
         public override void Validate()
         {
-            RulesException<Content> errors = new RulesException<Content>();
+            var errors = new RulesException<Content>();
 
             base.Validate(errors);
 
@@ -947,25 +711,37 @@ namespace Quantumart.QP8.BLL
 
             ValidateConditionalRequirements(errors);
 
-            if (this.VirtualType != Constants.VirtualType.None)
+            if (VirtualType != Constants.VirtualType.None)
             {
                 ValidateVirtualContent(errors);
             }
-            if (this.VirtualType == Constants.VirtualType.Join)
+            if (VirtualType == Constants.VirtualType.Join)
+            {
                 ValidateJoinVirtualContent(errors);
-            else if (this.VirtualType == Constants.VirtualType.Union)
+            }
+            else if (VirtualType == Constants.VirtualType.Union)
+            {
                 ValidateUnionVirtualContent(errors);
-            else if (this.VirtualType == Constants.VirtualType.UserQuery)
+            }
+            else if (VirtualType == Constants.VirtualType.UserQuery)
+            {
                 ValidateUserQueryVirtualContent(errors);
+            }
 
             if (!PageSize.IsInRange(MinPageSize, MaxPageSize))
-                errors.ErrorFor(c => c.PageSize, String.Format(ContentStrings.ArticlesNumberPerPageNotInRange, MinPageSize, MaxPageSize));
+            {
+                errors.ErrorFor(c => c.PageSize, string.Format(ContentStrings.ArticlesNumberPerPageNotInRange, MinPageSize, MaxPageSize));
+            }
 
-            if (this.VirtualType == Constants.VirtualType.None)
+            if (VirtualType == Constants.VirtualType.None)
+            {
                 ValidateXaml(errors);
+            }
 
             if (!errors.IsEmpty)
+            {
                 throw errors;
+            }
         }
 
         /// <summary>
@@ -974,9 +750,9 @@ namespace Quantumart.QP8.BLL
         /// <param name="errors"></param>
         private void ValidateXaml(RulesException<Content> errors)
         {
-            if (!DisableXamlValidation && !CreateDefaultXamlValidation && !String.IsNullOrWhiteSpace(XamlValidation))
+            if (!DisableXamlValidation && !CreateDefaultXamlValidation && !string.IsNullOrWhiteSpace(XamlValidation))
             {
-                Dictionary<string, string> data = Fields.ToDictionary(f => f.FormName, f => "");
+                var data = Fields.ToDictionary(f => f.FormName, f => "");
                 // add system properties
                 data[ContentItemIdPropertyName] = "";
                 data[StatusTypeIdPropertyName] = "";
@@ -986,7 +762,7 @@ namespace Quantumart.QP8.BLL
                 }
                 catch (Exception exp)
                 {
-                    errors.ErrorFor(f => f.XamlValidation, String.Format("{0}: {1}", ContentStrings.XamlValidation, exp.Message));
+                    errors.ErrorFor(f => f.XamlValidation, $"{ContentStrings.XamlValidation}: {exp.Message}");
                 }
             }
         }
@@ -1000,15 +776,24 @@ namespace Quantumart.QP8.BLL
             // изменение некоторых свойств запрещено
             if (HasAggregatedFields && !IsNew)
             {
-                Content dbContent = ContentRepository.GetById(Id);
+                var dbContent = ContentRepository.GetById(Id);
                 if (dbContent == null)
-                    throw new Exception(String.Format(ContentStrings.ContentNotFound, Id));
+                {
+                    throw new Exception(string.Format(ContentStrings.ContentNotFound, Id));
+                }
+
                 if (AutoArchive != dbContent.AutoArchive) // Архивировать при удалении
+                {
                     errors.ErrorFor(f => AutoArchive, ContentStrings.CannotChangeAutoArchive);
+                }
                 if (WorkflowBinding.WorkflowId != dbContent.WorkflowBinding.WorkflowId) // Тип Workflow
+                {
                     errors.ErrorFor(f => WorkflowBinding.WorkflowId, ContentStrings.CannotChangeWorkflow);
+                }
                 if (WorkflowBinding.IsAsync != dbContent.WorkflowBinding.IsAsync) // Расщеплять ли статьи по Workflow
+                {
                     errors.ErrorFor(f => WorkflowBinding.IsAsync, ContentStrings.CannotChangeIsAsync);
+                }
             }
         }
 
@@ -1019,67 +804,56 @@ namespace Quantumart.QP8.BLL
         public void ValidateForRemove(IList<string> violationMessages)
         {
             // нельзя удалять если контент агрегированный и есть хотя бы одна статья
-            if (HasAggregatedFields && ContentRepository.IsAnyArticle(Id))
-                violationMessages.Add(String.Format(ContentStrings.ContentIsAggregated,
-                    Environment.NewLine + String.Join(Environment.NewLine,
-                        Fields.Where(f => f.Aggregated)
-                        .Select(c => c.Name)
-                        .ToArray()
-                    )
-                ));
+            if (HasAggregatedFields && ((IContentRepository)new ContentRepository()).IsAnyArticle(Id))
+            {
+                violationMessages.Add(string.Format(ContentStrings.ContentIsAggregated, Environment.NewLine + string.Join(Environment.NewLine, Fields.Where(f => f.Aggregated).Select(c => c.Name).ToArray())));
+            }
 
-            var contentIDComparer = new LambdaEqualityComparer<Content>((c1, c2) => c1.Id == c2.Id, c => c.Id);
+            var contentIdComparer = new LambdaEqualityComparer<Content>((c1, c2) => c1.Id == c2.Id, c => c.Id);
 
             // Получить контенты у которых хотя бы одно поле ссылается на данные контент
-            IEnumerable<Content> relatedO2MContents = ContentRepository.GetRelatedO2MContents(this);
-            IEnumerable<Content> relatedM2MContents = ContentRepository.GetRelatedM2MContents(this);
-            IEnumerable<Content> relatedContents = relatedM2MContents.Union(relatedO2MContents);
+            var relatedO2MContents = ContentRepository.GetRelatedO2MContents(this);
+            var relatedM2MContents = ContentRepository.GetRelatedM2MContents(this);
+            var relatedContents = relatedM2MContents.Union(relatedO2MContents);
             if (relatedContents.Any())
-                violationMessages.Add(String.Format(ContentStrings.RelatedContentsExist,
-                    Environment.NewLine + String.Join(Environment.NewLine,
-                        relatedContents
-                        .Distinct(contentIDComparer)
-                        .Select(c => c.Name)
-                        .ToArray()
-                    )
-                ));
+            {
+                violationMessages.Add(string.Format(ContentStrings.RelatedContentsExist, Environment.NewLine + string.Join(Environment.NewLine, relatedContents.Distinct(contentIdComparer).Select(c => c.Name).ToArray())));
+            }
+
             // ---------------------
 
             // проверка на существование подчиненных виртуальных контентов
-            IEnumerable<Content> inheritedContents = this.VirtualSubContents
+            var inheritedContents = VirtualSubContents
                 .Where(c => c.VirtualType == Constants.VirtualType.UserQuery) // UQ контенты
                 .Concat(VirtualContentRepository.GetJoinRelatedContents(this)) // JOIN контенты
-                .Concat(this.VirtualSubContents
+                .Concat(VirtualSubContents
                     .Where(c => c.VirtualType == Constants.VirtualType.Union && c.UnionSourceContentIDs.Count() < 2)
                 ); // Проверка Union-Контентов (есть ли у union еще контенты)
 
             if (inheritedContents.Any())
-                violationMessages.Add(String.Format(ContentStrings.VirtualSubContentsExist,
-                    Environment.NewLine + String.Join(Environment.NewLine,
-                        inheritedContents
-                        .Distinct(contentIDComparer)
-                        .Select(c => c.Name)
-                        .ToArray()
-                    )
-                ));
+            {
+                violationMessages.Add(string.Format(ContentStrings.VirtualSubContentsExist, Environment.NewLine + string.Join(Environment.NewLine, inheritedContents.Distinct(contentIdComparer).Select(c => c.Name).ToArray())));
+            }
 
             if (!IsContentChangingActionsAllowed)
+            {
                 violationMessages.Add(ContentStrings.ContentChangingIsProhibited);
+            }
         }
 
         public void LoadWorkflowBinding()
         {
-            _WorkflowBinding = WorkflowRepository.GetContentWorkflow(this);
+            _workflowBinding = WorkflowRepository.GetContentWorkflow(this);
         }
 
         public int GetMaxFieldsOrder()
         {
-            return (Fields.Any()) ? Fields.OrderByDescending(f => f.Order).First().Order : 0;
+            return Fields.Any() ? Fields.OrderByDescending(f => f.Order).First().Order : 0;
         }
 
         public int GetMinFieldsOrder()
         {
-            return (Fields.Any()) ? Fields.OrderBy(f => f.Order).First().Order : 0;
+            return Fields.Any() ? Fields.OrderBy(f => f.Order).First().Order : 0;
         }
 
         public Content Persist()
@@ -1093,7 +867,7 @@ namespace Quantumart.QP8.BLL
                 }
                 else
                 {
-                    Content contentToCopy = ContentRepository.GetById(ParentContentId.Value);
+                    var contentToCopy = ContentRepository.GetById(ParentContentId.Value);
 
                     contentToCopy.Name = Name;
                     contentToCopy.ParentContentId = ParentContentId.Value;
@@ -1120,7 +894,7 @@ namespace Quantumart.QP8.BLL
             using (VirtualFieldRepository.LoadVirtualFieldsRelationsToMemory(Id))
             {
 
-                List<string> violationMessages = new List<string>();
+                var violationMessages = new List<string>();
                 ValidateForRemove(violationMessages);
                 if (!violationMessages.Any())
                 {
@@ -1148,7 +922,7 @@ namespace Quantumart.QP8.BLL
                 .Where(n => n.UseForContext)
                 .OrderBy(n => n.Order)
                 .Select(n => new { Content = n.RelatedToContent, FieldId = n.Id })
-                .Select(n => new ArticleContextSearchBlockItem()
+                .Select(n => new ArticleContextSearchBlockItem
                 {
                     ContentName = n.Content.Name,
                     ContentId = n.Content.Id,
@@ -1156,38 +930,34 @@ namespace Quantumart.QP8.BLL
                 });
         }
 
-        #endregion
-
-        #region internal
-
         internal Article CreateArticle()
         {
             if (IsVirtual)
-                throw new Exception(String.Format(ArticleStrings.AppendToVirtual, Id));
+            {
+                throw new Exception(string.Format(ArticleStrings.AppendToVirtual, Id));
+            }
 
             return new Article(this);
         }
 
-
         internal Article CreateArticle(Dictionary<string, string> predefinedValues)
         {
             if (IsVirtual)
-                throw new Exception(String.Format(ArticleStrings.AppendToVirtual, Id));
+            {
+                throw new Exception(string.Format(ArticleStrings.AppendToVirtual, Id));
+            }
 
             return new Article(this, predefinedValues);
         }
 
         internal PathInfo GetVersionPathInfo(int versionId)
         {
-            return RootVersionsLibrary.GetSubPathInfo((versionId == ArticleVersion.CurrentVersionId) ? "current" : versionId.ToString());
+            return RootVersionsLibrary.GetSubPathInfo(versionId == ArticleVersion.CurrentVersionId ? "current" : versionId.ToString());
         }
 
         internal bool HasNotifications(string code)
         {
-            foreach (string currentCode in code.Split(';'))
-                if (ContentRepository.HasNotifications(Id, currentCode))
-                    return true;
-            return false;
+            return code.Split(';').Any(currentCode => ContentRepository.HasNotifications(Id, currentCode));
         }
 
         internal void CreateContentFolders()
@@ -1202,8 +972,8 @@ namespace Quantumart.QP8.BLL
 
         internal void MutateNames()
         {
-            string name = Name;
-            int index = 0;
+            var name = Name;
+            var index = 0;
             do
             {
                 index++;
@@ -1211,7 +981,7 @@ namespace Quantumart.QP8.BLL
             }
             while (ContentRepository.NameExists(this));
 
-            string netName = NetName;
+            var netName = NetName;
             index = 0;
             do
             {
@@ -1220,7 +990,7 @@ namespace Quantumart.QP8.BLL
             }
             while (ContentRepository.NetNameExists(this));
 
-            string netPluralName = NetPluralName;
+            var netPluralName = NetPluralName;
             index = 0;
             do
             {
@@ -1233,65 +1003,53 @@ namespace Quantumart.QP8.BLL
 
         internal void DeleteFields()
         {
-            foreach (Field field in Fields)
+            foreach (var field in Fields)
             {
-                FieldRepository.Delete(field.Id);
+                ((IFieldRepository)new FieldRepository()).Delete(field.Id);
             }
         }
 
-        internal bool AssignedAsyncWorkflow
-        {
-            get
-            {
-                return WorkflowBinding.IsAssigned && WorkflowBinding.IsAsync;
-            }
-        }
+        internal bool AssignedAsyncWorkflow => WorkflowBinding.IsAssigned && WorkflowBinding.IsAsync;
 
         /// <summary>
         /// Проверяет можно ли для статей контента выполнять изменяющие операции
         /// </summary>
-        /// <param name="content"></param>
-        /// <param name="boundToExternal"></param>
-        /// <returns></returns>
         internal bool IsArticleChangingActionsAllowed(bool? boundToExternal)
         {
-            if (DisableChangingActions && (!boundToExternal.HasValue || !boundToExternal.Value))
-                return false;
-            else
-                return true;
+            return !DisableChangingActions || boundToExternal.HasValue && boundToExternal.Value;
         }
 
-        public bool IsContentChangingActionsAllowed
-        {
-            get
-            {
-                return !(DisableChangingActions && !QPContext.IsAdmin);
-            }
-        }
-
-        #endregion
-
-        #region private
+        public bool IsContentChangingActionsAllowed => !(DisableChangingActions && !QPContext.IsAdmin);
 
         private void ValidateConditionalRequirements(RulesException<Content> errors)
         {
             if (MapAsClass)
             {
-                if (String.IsNullOrEmpty(NetName))
+                if (string.IsNullOrEmpty(NetName))
+                {
                     errors.ErrorFor(n => n.NetName, ContentStrings.NameSingularNotEntered);
-                else
-                    if (ContentRepository.NetNameExists(this))
+                }
+                else if (ContentRepository.NetNameExists(this))
+                {
                     errors.ErrorFor(n => n.NetName, ContentStrings.NameSingularNonUnique);
+                }
 
-                if (String.IsNullOrEmpty(NetPluralName))
+                if (string.IsNullOrEmpty(NetPluralName))
+                {
                     errors.ErrorFor(n => n.NetPluralName, ContentStrings.NamePluralNotEntered);
-                else
-                    if (ContentRepository.NetPluralNameExists(this))
+                }
+                else if (ContentRepository.NetPluralNameExists(this))
+                {
                     errors.ErrorFor(n => n.NetPluralName, ContentStrings.NamePluralNonUnique);
+                }
 
-                if (!String.IsNullOrEmpty(AdditionalContextClassName))
+                if (!string.IsNullOrEmpty(AdditionalContextClassName))
+                {
                     if (ContentRepository.ContextClassNameExists(this))
+                    {
                         errors.ErrorFor(n => n.AdditionalContextClassName, ContentStrings.AddContextClassNameNonUnique);
+                    }
+                }
             }
 
         }
@@ -1306,7 +1064,9 @@ namespace Quantumart.QP8.BLL
             {
                 // Нельзя менять тип виртуального контента если на нем построены другие виртуальные контенты
                 if (VirtualType != StoredVirtualType && VirtualSubContents.Any())
+                {
                     errors.ErrorFor(c => c.VirtualType, ContentStrings.VirtualTypeCantBeChanged);
+                }
             }
         }
 
@@ -1316,13 +1076,17 @@ namespace Quantumart.QP8.BLL
         /// <param name="errors"></param>
         private void ValidateJoinVirtualContent(RulesException<Content> errors)
         {
-            if (this.VirtualType == Constants.VirtualType.Join)
+            if (VirtualType == Constants.VirtualType.Join)
             {
                 if (!JoinRootId.HasValue)
+                {
                     errors.ErrorFor(c => c.JoinRootId, ContentStrings.SourceContentNotEntered);
+                }
 
                 if (IsNew && !VirtualJoinFieldNodes.Any())
+                {
                     errors.ErrorFor(c => c.VirtualJoinFieldNodes, ContentStrings.JoinFieldsNotEntered);
+                }
                 else if (!IsNew && VirtualJoinFieldNodes.Any())
                 {
                     var violations = new FieldsConflictValidator().SubContentsCheck(this, VirtualJoinFieldNodes);
@@ -1340,10 +1104,12 @@ namespace Quantumart.QP8.BLL
         /// <param name="errors"></param>
         private void ValidateUnionVirtualContent(RulesException<Content> errors)
         {
-            if (this.VirtualType == Constants.VirtualType.Union)
+            if (VirtualType == Constants.VirtualType.Union)
             {
                 if (!UnionSourceContentIDs.Any())
+                {
                     errors.ErrorFor(c => c.UnionSourceContentIDs, ContentStrings.UnionBaseContentNotEntered);
+                }
                 else
                 {
                     // проверить соответствие полей базовых контентов
@@ -1362,88 +1128,99 @@ namespace Quantumart.QP8.BLL
         /// <param name="errors"></param>
         internal void ValidateUserQueryVirtualContent(RulesException<Content> errors)
         {
-            if (this.VirtualType == Constants.VirtualType.UserQuery)
+            if (VirtualType == Constants.VirtualType.UserQuery)
             {
-                if (String.IsNullOrWhiteSpace(UserQuery))
+                if (string.IsNullOrWhiteSpace(UserQuery))
                 {
                     errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQueryNotEntered);
                 }
                 else
                 {
                     // проверить sql запросы на возможность выполнения
-                    bool areQueriesCorrect = true;
+                    var areQueriesCorrect = true;
                     string userQueryErrorMsg;
                     if (!VirtualContentRepository.IsQueryQueryCorrect(UserQuery, out userQueryErrorMsg))
                     {
                         areQueriesCorrect = false;
-                        errors.ErrorFor(c => c.UserQuery, String.Format(ContentStrings.UserQueryIsInvalid, userQueryErrorMsg));
+                        errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.UserQueryIsInvalid, userQueryErrorMsg));
                     }
-                    if (!String.IsNullOrWhiteSpace(UserQueryAlternative) && !VirtualContentRepository.IsQueryQueryCorrect(UserQueryAlternative, out userQueryErrorMsg))
+                    if (!string.IsNullOrWhiteSpace(UserQueryAlternative) && !VirtualContentRepository.IsQueryQueryCorrect(UserQueryAlternative, out userQueryErrorMsg))
                     {
                         areQueriesCorrect = false;
-                        errors.ErrorFor(c => c.UserQueryAlternative, String.Format(ContentStrings.UserQueryAltIsInvalid, userQueryErrorMsg));
+                        errors.ErrorFor(c => c.UserQueryAlternative, string.Format(ContentStrings.UserQueryAltIsInvalid, userQueryErrorMsg));
                     }
 
                     if (areQueriesCorrect)
                     {
                         // проверить запрос на наличие обязательных полей
-                        IEnumerable<UserQueryColumn> userQueryViewAllColumns = VirtualContentRepository.GetQuerySchema(UserQuery);
+                        var userQueryViewAllColumns = VirtualContentRepository.GetQuerySchema(UserQuery);
 
                         // проверить на наличие обязательных полей
-                        IEnumerable<UserQueryColumn> userQueryViewUniqColumns = userQueryViewAllColumns.Distinct(UserQueryColumn.TableNameIgnoreEqualityComparer);
-                        IEnumerable<UserQueryColumn> expectedMandatoryColumns = SystemMandatoryColumns.Except(userQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer);
+                        var userQueryViewUniqColumns = userQueryViewAllColumns.Distinct(UserQueryColumn.TableNameIgnoreEqualityComparer);
+                        var expectedMandatoryColumns = SystemMandatoryColumns.Except(userQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer);
                         if (expectedMandatoryColumns.Any())
-                            errors.ErrorFor(c => c.UserQuery, String.Format(ContentStrings.NotAllMandatoryColumnsInUserQuery, String.Join(", ", expectedMandatoryColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
+                        {
+                            errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.NotAllMandatoryColumnsInUserQuery, string.Join(", ", expectedMandatoryColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
+                        }
 
                         // проверить запрос на наличие недопустимых DB-типов колонок
-                        IEnumerable<UserQueryColumn> invalidTypeColumns = userQueryViewAllColumns.Where(c => !Field.ValidFieldColumnDbTypeCollection.Contains(c.DbType));
+                        var invalidTypeColumns = userQueryViewAllColumns.Where(c => !Field.ValidFieldColumnDbTypeCollection.Contains(c.DbType));
                         if (invalidTypeColumns.Any())
-                            errors.ErrorFor(c => c.UserQuery, String.Format(ContentStrings.InvalidColumnsInUserQuery, String.Join(", ", invalidTypeColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
+                        {
+                            errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.InvalidColumnsInUserQuery, string.Join(", ", invalidTypeColumns.Select(c => c.ColumnName + " (" + c.DbType + ")"))));
+                        }
 
                         // проверить что типы полей во view не изменены относительно соответствующих полей в реальных таблицах
-                        Func<IEnumerable<UserQueryColumn>, IEnumerable<string>> getChangedTypeColumnMessage = (columns =>
-                                columns
-                                    .Where(c => !c.DbType.Equals(c.TableDbType, StringComparison.InvariantCultureIgnoreCase))
-                                    .Select(c => String.Format(ContentStrings.UserQueryColumnTypeChanged, c.ColumnName, c.TableName, c.TableDbType, c.DbType))
-                            );
+                        Func<IEnumerable<UserQueryColumn>, IEnumerable<string>> getChangedTypeColumnMessage = columns =>
+                            columns
+                                .Where(c => !c.DbType.Equals(c.TableDbType, StringComparison.InvariantCultureIgnoreCase))
+                                .Select(c => string.Format(ContentStrings.UserQueryColumnTypeChanged, c.ColumnName, c.TableName, c.TableDbType, c.DbType));
                         var changedTypeColumnMessages = getChangedTypeColumnMessage(userQueryViewAllColumns);
                         if (changedTypeColumnMessages.Any())
-                            errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + String.Join("; ", changedTypeColumnMessages));
+                        {
+                            errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + string.Join("; ", changedTypeColumnMessages));
+                        }
 
                         // проверить что поля с одинаковыми именами имеют один и тот же тип в таблицах
-                        Func<IEnumerable<UserQueryColumn>, IEnumerable<string>> getDiffTypeColumnMessages = (columns =>
+                        Func<IEnumerable<UserQueryColumn>, IEnumerable<string>> getDiffTypeColumnMessages = columns =>
                             columns
                                 .GroupBy(c => c.ColumnName, StringComparer.InvariantCultureIgnoreCase)
                                 .Where(g => g.Select(c => c.TableDbType)
-                                    .Distinct(StringComparer.InvariantCultureIgnoreCase)
-                                    .Count() > 1)
-                                .Select(g => String.Format(ContentStrings.UserQuerySameNameColumsHaveDiffTypes, g.Key, String.Join(", ", g.Select(c => String.Format("[{0}]", c.TableName)))))
-                            );
+                                                .Distinct(StringComparer.InvariantCultureIgnoreCase)
+                                                .Count() > 1)
+                                .Select(g => string.Format(ContentStrings.UserQuerySameNameColumsHaveDiffTypes, g.Key, string.Join(", ", g.Select(c => $"[{c.TableName}]"))));
                         var diffTypeColumnMessage = getDiffTypeColumnMessages(userQueryViewAllColumns);
                         if (diffTypeColumnMessage.Any())
-                            errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + String.Join("; ", diffTypeColumnMessage));
-
+                        {
+                            errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQuery + ": " + string.Join("; ", diffTypeColumnMessage));
+                        }
 
                         // если UserQueryAlternative задан
-                        if (!String.IsNullOrWhiteSpace(UserQueryAlternative))
+                        if (!string.IsNullOrWhiteSpace(UserQueryAlternative))
                         {
-                            IEnumerable<UserQueryColumn> userAltQueryViewAllColumns = VirtualContentRepository.GetQuerySchema(UserQueryAlternative);
+                            var userAltQueryViewAllColumns = VirtualContentRepository.GetQuerySchema(UserQueryAlternative);
 
                             // проверить запросы на соответсвие полей
-                            IEnumerable<UserQueryColumn> userAltQueryViewUniqColumns = userAltQueryViewAllColumns.Distinct(UserQueryColumn.TableNameIgnoreEqualityComparer);
+                            var userAltQueryViewUniqColumns = userAltQueryViewAllColumns.Distinct(UserQueryColumn.TableNameIgnoreEqualityComparer);
                             if (userQueryViewUniqColumns.Count() != userAltQueryViewUniqColumns.Count() ||
                                 userQueryViewUniqColumns.Except(userAltQueryViewUniqColumns, UserQueryColumn.TableNameIgnoreEqualityComparer).Any())
+                            {
                                 errors.ErrorFor(c => c.UserQueryAlternative, ContentStrings.UserQueryAndAltColumnsMismatch);
+                            }
 
                             // проверить что поля с одинаковыми именами имеют один и тот же тип в таблицах
                             changedTypeColumnMessages = getChangedTypeColumnMessage(userAltQueryViewAllColumns);
                             if (changedTypeColumnMessages.Any())
-                                errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQueryAlternative + ": " + String.Join("; ", changedTypeColumnMessages));
+                            {
+                                errors.ErrorFor(c => c.UserQuery, ContentStrings.UserQueryAlternative + ": " + string.Join("; ", changedTypeColumnMessages));
+                            }
 
                             // проверить что поля с одинаковыми именами имеют один и тот же тип в таблицах
                             diffTypeColumnMessage = getDiffTypeColumnMessages(userAltQueryViewAllColumns);
                             if (diffTypeColumnMessage.Any())
-                                errors.ErrorFor(c => c.UserQueryAlternative, ContentStrings.UserQueryAlternative + ": " + String.Join("; ", diffTypeColumnMessage));
+                            {
+                                errors.ErrorFor(c => c.UserQueryAlternative, ContentStrings.UserQueryAlternative + ": " + string.Join("; ", diffTypeColumnMessage));
+                            }
                         }
                     }
 
@@ -1453,35 +1230,35 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-        /// получить схему view UQ-контента (кроме системных полей)
+        /// Получить схему view UQ-контента (кроме системных полей)
         /// </summary>
-        /// <param name="content"></param>
-        /// <returns></returns>
         internal IEnumerable<UserQueryColumn> GetUserQueryContentViewSchema()
         {
             if (VirtualType == Constants.VirtualType.UserQuery)
             {
                 // получить схему view (кроме системных полей)
-                string viewName = String.Format("content_{0}", Id);
-                IEnumerable<UserQueryColumn> viewColumns = VirtualContentRepository.GetViewSchema(viewName)
-                    .Where(c => !Content.SystemMandatoryColumns.Contains(c, UserQueryColumn.TableNameIgnoreEqualityComparer));
+                var viewName = $"content_{Id}";
+                var viewColumns = VirtualContentRepository.GetViewSchema(viewName)
+                    .Where(c => !SystemMandatoryColumns.Contains(c, UserQueryColumn.TableNameIgnoreEqualityComparer));
 
                 // спец. обработка колонки content_id из union-контентов
                 foreach (var c in viewColumns)
                 {
                     if (c.ContentId.HasValue && Field.NameComparerPredicate("content_id", c.ColumnName))
                     {
-                        Content cnt = ContentRepository.GetById(c.ContentId.Value);
-                        if (cnt.VirtualType == (int)Constants.VirtualType.Union)
+                        var cnt = ContentRepository.GetById(c.ContentId.Value);
+                        if (cnt.VirtualType == Constants.VirtualType.Union)
+                        {
                             c.ResetContentBased();
+                        }
                     }
 
                 }
 
                 return viewColumns;
             }
-            else
-                return Enumerable.Empty<UserQueryColumn>();
+
+            return Enumerable.Empty<UserQueryColumn>();
         }
 
         /// <summary>
@@ -1490,21 +1267,21 @@ namespace Quantumart.QP8.BLL
         /// <returns></returns>
         private string GenerateDefaultValidationXaml()
         {
-            List<PropertyDefinition> propDefs = new List<PropertyDefinition>
+            var propDefs = new List<PropertyDefinition>
             {
                 new PropertyDefinition
                 {
                     PropertyName = ContentItemIdPropertyName,
                     Alias = "Id",
                     Description = "An indentifier of the entity.",
-                    PropertyType = typeof(Int32)
+                    PropertyType = typeof(int)
                 },
                 new PropertyDefinition
                 {
                     PropertyName = StatusTypeIdPropertyName,
                     Alias = "StatusTypeId",
                     Description = "StatusTypeId",
-                    PropertyType = typeof(Int32)
+                    PropertyType = typeof(int)
                 }
 
             };
@@ -1515,14 +1292,11 @@ namespace Quantumart.QP8.BLL
                     PropertyName = f.FormName,
                     Alias = f.FormName,
                     PropertyType = f.XamlType,
-                    Description = String.IsNullOrWhiteSpace(f.FriendlyName) ? f.Name : f.FriendlyName
+                    Description = string.IsNullOrWhiteSpace(f.FriendlyName) ? f.Name : f.FriendlyName
                 }
             ));
             return ValidationServices.GenerateXamlValidatorText(propDefs);
         }
-        #endregion
-
-        #endregion
 
         public int[] GetFieldIds()
         {

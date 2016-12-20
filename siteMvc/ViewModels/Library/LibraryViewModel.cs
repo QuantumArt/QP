@@ -1,264 +1,139 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using B = Quantumart.QP8.BLL;
-using Quantumart.QP8.Resources;
-using C = Quantumart.QP8.Constants;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.BLL;
-using System.Dynamic;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
-	
-	public enum LibraryMode
-	{
-		Site,
-		Content
-	}	
-	
-	public class LibraryViewModel : ViewModel
-	{
+    public class LibraryViewModel : ViewModel
+    {
+        private static readonly List<QPSelectListItem> FileTypeList = GetFileTypeList();
 
-		#region private
+        private static List<QPSelectListItem> GetFileTypeList()
+        {
+            var list = new List<QPSelectListItem>
+            {
+                GetFileTypeListItem(FolderFileType.CSS),
+                GetFileTypeListItem(FolderFileType.Flash),
+                GetFileTypeListItem(FolderFileType.Image),
+                GetFileTypeListItem(FolderFileType.Javascript),
+                GetFileTypeListItem(FolderFileType.Media),
+                GetFileTypeListItem(FolderFileType.Office),
+                GetFileTypeListItem(FolderFileType.PDF)
+            };
 
-		private static List<QPSelectListItem> FileTypeList = GetFileTypeList();
-		
-		private static List<QPSelectListItem> GetFileTypeList()
-		{
-				List<QPSelectListItem> list = new List<QPSelectListItem>();
-				list.Add(GetFileTypeListItem(FolderFileType.CSS));
-				list.Add(GetFileTypeListItem(FolderFileType.Flash));
-				list.Add(GetFileTypeListItem(FolderFileType.Image));
-				list.Add(GetFileTypeListItem(FolderFileType.Javascript));
-				list.Add(GetFileTypeListItem(FolderFileType.Media));
-				list.Add(GetFileTypeListItem(FolderFileType.Office));
-				list.Add(GetFileTypeListItem(FolderFileType.PDF));
-				return list;
-		}
+            return list;
+        }
 
-		private static QPSelectListItem GetFileTypeListItem(FolderFileType type)
-		{
-			return new QPSelectListItem
-			{
-				Text = FolderFile.GetTypeName(type),
-				Value = ((int)type).ToString()
-			};
-		}
+        private static QPSelectListItem GetFileTypeListItem(FolderFileType type)
+        {
+            return new QPSelectListItem
+            {
+                Text = FolderFile.GetTypeName(type),
+                Value = ((int)type).ToString()
+            };
+        }
 
-		#endregion
+        public LibraryViewModel()
+        {
+            Mode = LibraryMode.Site;
+        }
 
-		#region creation
+        public static LibraryViewModel Create(LibraryResult result, string tabId, int parentId, int? filterFileTypeId, bool allowUpload, LibraryMode mode)
+        {
+            var model = Create<LibraryViewModel>(tabId, parentId);
+            model.Mode = mode;
+            model.RootFolder = result.Folder;
+            model.FilterFileTypeId = filterFileTypeId;
+            model.AllowUpload = allowUpload;
+            return model;
+        }
 
-		public LibraryViewModel()
-		{
-			Mode = LibraryMode.Site;
-		}
+        /// <summary>
+        /// Библиотека сайта или контента
+        /// </summary>
+        public LibraryMode Mode { get; set; }
 
-		public static LibraryViewModel Create(LibraryResult result, string tabId, int parentId, int? filterFileTypeId, bool allowUpload, LibraryMode mode)
-		{
-			LibraryViewModel model = ViewModel.Create<LibraryViewModel>(tabId, parentId);
-			model.Mode = mode;
-			model.RootFolder = result.Folder;
-			model.FilterFileTypeId = filterFileTypeId;
-			model.AllowUpload = allowUpload;
-			return model;
-		}
+        /// <summary>
+        /// корневая папка библиотеки
+        /// </summary>
+        public Folder RootFolder { get; set; }
 
-		#endregion
+        /// <summary>
+        /// Предопределенный фильтр по типу файлов
+        /// </summary>
+        public int? FilterFileTypeId { get; set; }
 
-	
-		/// <summary>
-		/// Библиотека сайта или контента
-		/// </summary>
-		public LibraryMode Mode { get; set; }
+        public bool AllowUpload { get; set; }
 
-		/// <summary>
-		/// корневая папка библиотеки
-		/// </summary>
-		public B.Folder RootFolder { get; set; }
+        public string FolderEntityTypeCode => Mode == LibraryMode.Site ? Constants.EntityTypeCode.SiteFolder : Constants.EntityTypeCode.ContentFolder;
 
-		/// <summary>
-		/// Предопределенный фильтр по типу файлов
-		/// </summary>
-		public int? FilterFileTypeId { get; set; }
+        public string FileEntityTypeCode => Mode == LibraryMode.Site ? Constants.EntityTypeCode.SiteFile : Constants.EntityTypeCode.ContentFile;
 
-		public bool AllowUpload { get; set; }
+        public string FolderContextMenuCode => FolderEntityTypeCode;
 
-		public string FolderEntityTypeCode
-		{
-			get
-			{
-				return (Mode == LibraryMode.Site) ? C.EntityTypeCode.SiteFolder : C.EntityTypeCode.ContentFolder;
-			}
-		}
+        public string FileContextMenuCode => FileEntityTypeCode;
 
-		public string FileEntityTypeCode
-		{
-			get
-			{
-				return (Mode == LibraryMode.Site) ? C.EntityTypeCode.SiteFile : C.EntityTypeCode.ContentFile;
-			}
-		}
+        public string SplitterId => UniqueId("Splitter");
 
-		public string FolderContextMenuCode
-		{
-			get
-			{
-				return FolderEntityTypeCode;
-			}
-		}
+        public string ContentElementId => UniqueId("Content");
 
-		public string FileContextMenuCode
-		{
-			get
-			{
-				return FileEntityTypeCode;
-			}
-		}
-		
-		public string SplitterId
-		{
-			get
-			{
-				return UniqueId("Splitter");
-			}
-		}
+        public string TreeElementId => UniqueId("Tree");
 
-		public string ContentElementId
-		{
-			get
-			{
-				return UniqueId("Content");
-			}
-		}
+        public string TreeContainerElementId => UniqueId("TreeContainer");
 
-		public string TreeElementId
-		{
-			get
-			{
-				return UniqueId("Tree");
-			}
-		}
+        public string GridContainerElementId => UniqueId("GridContainer");
 
-		public string TreeContainerElementId
-		{
-			get
-			{
-				return UniqueId("TreeContainer");
-			}
-		}
+        public string ListContainerElementId => UniqueId("ListContainer");
 
-		public string GridContainerElementId
-		{
-			get
-			{
-				return UniqueId("GridContainer");
-			}
-		}
+        public string ThumbContainerElementId => UniqueId("ThumbContainer");
 
-		public string ListContainerElementId
-		{
-			get
-			{
-				return UniqueId("ListContainer");
-			}
-		}
+        public string GridElementId => UniqueId("Grid");
 
-		public string ThumbContainerElementId
-		{
-			get
-			{
-				return UniqueId("ThumbContainer");
-			}
-		}
+        public string ControllerName => Mode == LibraryMode.Site ? "Site" : "Content";
 
-		public string GridElementId
-		{
-			get
-			{
-				return UniqueId("Grid");
-			}
-		}
+        public IEnumerable<QPSelectListItem> FileTypes
+        {
+            get
+            {
+                return FileTypeList.OrderBy(i => i.Value).ToArray();
+            }
+        }
 
-		public string ControllerName
-		{
-			get
-			{
-				return (Mode == LibraryMode.Site) ? "Site" : "Content";
-			}
-		}
+        public UploaderType UploaderType => UploaderTypeHelper.UploaderType;
 
-		public IEnumerable<QPSelectListItem> FileTypes
-		{
-			get
-			{
-				return FileTypeList.OrderBy(i => i.Value).ToArray();
-			}
-		}
+        public override string EntityTypeCode => Mode == LibraryMode.Site ? Constants.EntityTypeCode.Site : Constants.EntityTypeCode.Content;
 
-		public UploaderType UploaderType
-		{
-			get
-			{
-				return UploaderTypeHelper.UploaderType;
-			}
-		}
+        public override string ActionCode => Mode == LibraryMode.Site ? Constants.ActionCode.SiteLibrary : Constants.ActionCode.ContentLibrary;
 
-		#region overrides
+        public override MainComponentType MainComponentType => MainComponentType.Library;
 
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return (Mode == LibraryMode.Site) ? C.EntityTypeCode.Site : C.EntityTypeCode.Content;
-			}
-		}
+        public override string MainComponentId => UniqueId("Library");
 
-		public override string ActionCode
-		{
-			get
-			{
-				return (Mode == LibraryMode.Site) ? C.ActionCode.SiteLibrary : C.ActionCode.ContentLibrary;
-			}
-		}
+        public override ExpandoObject MainComponentOptions
+        {
+            get
+            {
+                dynamic result = base.MainComponentOptions;
+                result.folderContextMenuCode = FolderContextMenuCode;
+                result.fileContextMenuCode = FileContextMenuCode;
+                result.folderId = RootFolder.Id;
+                result.splitterId = SplitterId;
+                result.fileGridId = GridElementId;
+                result.folderTreeId = TreeElementId;
+                result.allowMultipleSelection = !IsWindow;
+                result.uploaderType = (int)UploaderType;
+                result.allowUpload = AllowUpload;
+                if (FilterFileTypeId.HasValue)
+                {
+                    result.filterFileTypeId = (int)FilterFileTypeId;
+                }
 
-		public override MainComponentType MainComponentType
-		{
-			get { return Constants.MainComponentType.Library; }
-		}
-
-		public override string MainComponentId
-		{
-			get { return UniqueId("Library"); }
-		}
-
-		public override ExpandoObject MainComponentOptions
-		{
-			get
-			{
-				dynamic result = base.MainComponentOptions;
-				result.folderContextMenuCode = FolderContextMenuCode;
-				result.fileContextMenuCode = FileContextMenuCode;
-				result.folderId = RootFolder.Id;
-				result.splitterId = SplitterId;
-				result.fileGridId = GridElementId;
-				result.folderTreeId = TreeElementId;
-				result.allowMultipleSelection = !IsWindow;
-				result.uploaderType = (int)UploaderType;
-				result.allowUpload = AllowUpload;
-				if (FilterFileTypeId.HasValue)
-					result.filterFileTypeId = (int)FilterFileTypeId;
-				return result;
-			}
-		}
-
-
-		#endregion
-
-	}
+                return result;
+            }
+        }
+    }
 }

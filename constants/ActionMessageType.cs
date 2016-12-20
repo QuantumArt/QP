@@ -10,7 +10,7 @@ namespace Quantumart.QP8.Constants
         public static readonly string Error = "Error";
         public static readonly string Warning = "Warning";
         public static readonly string Info = "Info";
-		public static readonly string Confirm = "Confirm";
-		public static readonly string Download = "Download";
+        public static readonly string Confirm = "Confirm";
+        public static readonly string Download = "Download";
     }
 }

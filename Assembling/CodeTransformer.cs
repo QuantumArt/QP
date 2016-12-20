@@ -1,11 +1,12 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Assembling.Info;
+using Quantumart.QP8.Assembling.Info;
+using Quantumart.QP8.Assembling;
 
-namespace Assembling
+namespace Quantumart.QP8.Assembling
 {
     public class CodeTransformer
     {
@@ -99,7 +100,7 @@ namespace Assembling
         {
             return code.Replace("\n", "\n\t\t");
         }
-        
+
         public static string GetInitialCodeBehind(string code)
         {
             var sb = new StringBuilder();

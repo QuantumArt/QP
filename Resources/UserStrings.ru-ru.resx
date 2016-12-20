@@ -241,7 +241,10 @@
     <value>Вы не можете удалить пользователя, так как существуют уведомления которые получает пользователь. Уведомления: {0}</value>
   </data>
   <data name="NtLogin" xml:space="preserve">
-    <value>Nt-логин</value>
+    <value>NT-логин</value>
+  </data>
+  <data name="NtLoginInvalidFormat" xml:space="preserve">
+    <value>Некорректный NT-логин</value>
   </data>
   <data name="NtLoginLengthExceeded" xml:space="preserve">
     <value>Длина NT-логина не может превышать {5} символов!</value>

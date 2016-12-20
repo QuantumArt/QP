@@ -3,10 +3,13 @@
 <#@ import namespace="Quantumart.QP8.Logging.Templates.Default" #>
 <#@ import namespace="Quantumart.QP8.Resources" #>
 <#@ import namespace="Quantumart.QP8.BLL.Services.MultistepActions.Import" #>
+<#@ import namespace="Quantumart.QP8.BLL.Enums" #>
+
 <#@ parameter name="Model" type="Quantumart.QP8.Logging.Loggers.ImportStepSettings" #>
 <#@ parameter name="Context" type="Quantumart.QP8.Logging.Loggers.LoggerContext" #>
 <#@ parameter name="LogEntry" type="Microsoft.Practices.EnterpriseLibrary.Logging.LogEntry" #>
 <#@ parameter name="TraceOptions" type="System.Diagnostics.TraceOptions" #>
+
 <#
 var setts = Model.Settings;
 if (setts.ImportAction == (int)ImportActions.InsertAndUpdate || setts.ImportAction == (int)ImportActions.InsertNew || setts.ImportAction == (int)ImportActions.UpdateIfChanged)

@@ -1,4 +1,4 @@
-﻿// ****************************************************************************
+// ****************************************************************************
 // *** Компонент "Панель инструментов"										***
 // ****************************************************************************
 
@@ -51,12 +51,12 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 
 	addToolbarItemsToToolbar: function (count) {
 		var action = this._getCurrentAction();
-	
+
 		var items = this._getToolbarItemCollectionFromAction(action);
 		Quantumart.QP8.BackendViewToolbar.callBaseMethod(this, 'addToolbarItemsToToolbar', [items, count]);
-	
+
 		$q.clearArray(items);
-	
+
 		return;
 	},
 
@@ -90,11 +90,11 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 
 		    Array.add(dataItems, variationButton);
 		}
-	
+
 		// Добавляем расскрывающийся список "Представления"
 		var defaultViewTypeCode = action.DefaultViewType ? action.DefaultViewType.Code : "";
 		var selectedViewTypeCode = this._viewTypeCode ? this._viewTypeCode : defaultViewTypeCode;
-	
+
 		var viewsDropDown = {
 			Type: TOOLBAR_ITEM_TYPE_DROPDOWN,
 			Value: this.VIEWS_DROPDOWN_CODE,
@@ -106,7 +106,7 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 			SelectedSubItemValue: selectedViewTypeCode,
 			Items: []
 		};
-	
+
 		if (!$q.isNullOrEmpty(action.Views)) {
 			jQuery.each(action.Views,
 				function (index, actionView) {
@@ -119,9 +119,9 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 				}
 			);
 		}
-		
+
 		Array.add(dataItems, viewsDropDown);
-	
+
 		// Добавляем кнопку "Показать/скрыть панель предварительного просмотра"
 		if (action.AllowPreview) {
 			var previewButton = {
@@ -137,10 +137,10 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 				TooltipChecked: $l.Toolbar.previewButtonTooltipChecked,
 				IconChecked: "hide_preview_pane.gif"
 			};
-	
+
 			Array.add(dataItems, previewButton);
 		}
-	
+
 		// Добавляем кнопку "Показать/скрыть панель поиска"
 		if (action.AllowSearch) {
 			var searchButton = {
@@ -156,17 +156,17 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 				TooltipChecked: $l.Toolbar.searchButtonTooltipChecked,
 				IconChecked: null
 			};
-	
+
 			Array.add(dataItems, searchButton);
 		}
-	
+
 		return dataItems;
 	},
 
 	notifyToolbarButtonClicking: function (eventArgs) {
 		var itemValue = eventArgs.get_value();
 		var newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFromToolbarButtonEventArgs(eventArgs);
-	
+
 		if (itemValue == this.PREVIEW_BUTTON_CODE) {
 			this.notify(EVENT_TYPE_VIEW_TOOLBAR_PREVIEW_BUTTON_CLICKING, newArgs);
 		}
@@ -177,14 +177,14 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 		    this.notify(EVENT_TYPE_VIEW_TOOLBAR_CONTEXT_BUTTON_CLICKING, newArgs);
 		}
 
-		
+
 		newArgs = null;
 	},
 
 	notifyToolbarButtonClicked: function (eventArgs) {
 		var itemValue = eventArgs.get_value();
 		var newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarButtonEventArgsFromToolbarButtonEventArgs(eventArgs);
-	
+
 		if (itemValue == this.PREVIEW_BUTTON_CODE) {
 			this.notify(EVENT_TYPE_VIEW_TOOLBAR_PREVIEW_BUTTON_CLICKED, newArgs);
 		}
@@ -201,48 +201,48 @@ Quantumart.QP8.BackendViewToolbar.prototype = {
 	notifyDropDownSelectedIndexChanging: function (eventArgs) {
 		var itemValue = eventArgs.get_itemValue();
 		var subItemValue = eventArgs.get_newSubItemValue();
-	
+
 		var newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
 		var actionView = $a.getActionViewByViewTypeCode(this._getCurrentAction(), subItemValue);
 		if (actionView) {
 			newArgs.set_controllerActionUrl(actionView.ControllerActionUrl);
 			newArgs.set_preventDefaultBehavior(actionView.PreventDefaultBehavior);
 			newArgs.set_code(eventArgs.get_newSubItemValue());
-	
+
 			actionView = null;
 		}
-	
+
 		if (itemValue == this.VIEWS_DROPDOWN_CODE) {
 			this.notify(EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGING, newArgs);
 		}
-	
+
 		newArgs = null;
 	},
 
 	notifyDropDownSelectedIndexChanged: function (eventArgs) {
 		var itemValue = eventArgs.get_itemValue();
 		var subItemValue = eventArgs.get_newSubItemValue();
-	
+
 		var newArgs = Quantumart.QP8.BackendViewToolbarButtonEventArgs.getViewToolbarDropDownListEventArgsFromToolbarDropDownListEventArgs(eventArgs);
 		var actionView = $a.getActionViewByViewTypeCode(this._getCurrentAction(), subItemValue);
 		if (actionView) {
 			newArgs.set_controllerActionUrl(actionView.ControllerActionUrl);
 			newArgs.set_preventDefaultBehavior(actionView.PreventDefaultBehavior);
 			newArgs.set_code(subItemValue);
-	
+
 			actionView = null;
 		}
-	
+
 		if (itemValue == this.VIEWS_DROPDOWN_CODE) {
 			this.notify(EVENT_TYPE_VIEW_TOOLBAR_VIEWS_DROPDOWN_SELECTED_INDEX_CHANGED, newArgs);
 		}
-		
+
 		newArgs = null;
 	},
 
 	dispose: function () {
 		Quantumart.QP8.BackendViewToolbar.callBaseMethod(this, "dispose");
-	
+
 		$q.collectGarbageInIE();
 	}
 };

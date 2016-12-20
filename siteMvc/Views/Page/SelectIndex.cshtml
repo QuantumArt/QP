@@ -10,7 +10,7 @@
 @using Quantumart.QP8.WebMvc.ViewModels.Content
 
 @using (Html.BeginDocumentPadding())
-{	
+{
     @(Html.Telerik().Grid<PageListItem>().Name(Model.MainComponentId)
         .DataKeys(k => k.Add(s => s.Id))
         .Columns(c =>
@@ -23,7 +23,7 @@
                     .HtmlAttributes(new { @class = "title" });
                 c.Bound(s => s.Name)
                     .Title(EntityObjectStrings.Name)
-                    .HtmlAttributes(new { @class = "title" });                
+                    .HtmlAttributes(new { @class = "title" });
                 c.Bound(s => s.Description).Title(EntityObjectStrings.Description);
 
             })
@@ -42,6 +42,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

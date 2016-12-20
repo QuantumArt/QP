@@ -1,15 +1,15 @@
-﻿//#region class BackendContentSearchBlock
+//#region class BackendContentSearchBlock
 // === Класс "Блок поиска статей" ===
 Quantumart.QP8.BackendContentSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
 	Quantumart.QP8.BackendContentSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
-	this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);	
+	this._onChangeComboHandler = jQuery.proxy(this._onChangeCombo, this);
 };
 
 Quantumart.QP8.BackendContentSearchBlock.prototype =
 {
 	_minSearchBlockHeight: 80, // минимальная высота блока поиска
 	_maxSearchBlockHeight: 80, // максимальная высота блока поиска
-	_contentGroupListElement: null, // dom-элемент списка групп	
+	_contentGroupListElement: null, // dom-элемент списка групп
 	_siteListElement: null,
 	_contentNameElement: null,
 
@@ -36,7 +36,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 	renderSearchBlock: function () {
 
 		if (this.get_isRendered() !== true) {
-			
+
 			// получить разметку с сервера
 			var serverContent;
 			$q.getJsonFromUrl(
@@ -86,7 +86,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 
 	_onResetButtonClick: function () {
 
-		// очистить блоки поиска		
+		// очистить блоки поиска
 		jQuery(".csFilterCombo", this._searchBlockElement).find("option[value='']").prop("selected", true);
 		jQuery(".csFilterTextbox", this._searchBlockElement).val('');
 
@@ -95,7 +95,7 @@ Quantumart.QP8.BackendContentSearchBlock.prototype =
 		eventArgs = null;
 	},
 
-	dispose: function () {		
+	dispose: function () {
 	    jQuery(".csFilterCombo", this._searchBlockElement).unbind();
 
 		this._contentGroupListElement = null;

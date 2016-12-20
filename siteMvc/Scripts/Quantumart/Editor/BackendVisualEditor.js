@@ -39,7 +39,8 @@
         tabSize: 2,
         indentUnit: 2,
         smartIndent: false,
-        indentWithTabs: false
+        indentWithTabs: false,
+        autoCloseTags: false
       },
       fillEmptyBlocks: false,
       forcePasteAsPlainText: true,
@@ -56,6 +57,14 @@
       contentsCss: opts.contentsCss,
       stylesSet: opts.stylesSet,
       toolbar: opts.toolbar,
+      specialChars: CKEDITOR.config.specialChars.concat([
+        ['&#36;', 'Доллар США'],
+        ['&#8364;', 'Евро'],
+        ['&#8381;', 'Российский рубль'],
+        ['&#8372;', 'Украинская гривна'],
+        ['Br', 'Белорусский рубль'],
+        ['&#8382;', 'Грузинский лари']
+      ]),
       protectedSource: [/<a[^>]*><\/a>/g, /<i[^>]*><\/i>/g, /<b[^>]*><\/b>/g, /<span[^>]*><\/span>/g],
       extraPlugins: 'Spellchecker,Typographer,codemirror',
       removePlugins: 'save,newpage,scayt,spellchecker,forms,language,smiley,iframe,about',

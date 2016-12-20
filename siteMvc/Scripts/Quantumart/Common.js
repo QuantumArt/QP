@@ -56,17 +56,15 @@ Quantumart.QP8.Observable.prototype = {
   _getObserverInfo: function(eventType, observer) {
     var observerInfo = null;
 
-    var observerInfos = jQuery.grep(this._observerInfos[eventType],
-      function(observerInfo) {
-  if (observerInfo.observer) {
-    return (observerInfo.observer == observer);
-  } else {
-    return false;
-  }
+    var observerInfos = jQuery.grep(this._observerInfos[eventType], function(observerInfo) {
+      if (observerInfo.observer) {
+        return (observerInfo.observer == observer);
+      } else {
+        return false;
       }
-    );
+    });
 
-    if (observerInfos.length > 0) {
+    if (observerInfos && observerInfos.length > 0) {
       observerInfo = observerInfos[0];
     }
 
@@ -75,7 +73,6 @@ Quantumart.QP8.Observable.prototype = {
 
   _checkObserver: function(observer) {
     var result = false;
-
     if ($q.isObject(observer) || $q.isFunction(observer)) {
       result = true;
     } else {

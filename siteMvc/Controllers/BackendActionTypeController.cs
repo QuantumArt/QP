@@ -6,17 +6,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class BackendActionTypeController : QPController
     {
-		/// <summary>
-		/// Возвращает код типа действия по коду действия
-		/// </summary>
-		/// <param name="actionCode">код действия</param>
-		/// <returns>код типа действия</returns>
-		[HttpGet]
-		public JsonResult GetCodeByActionCode(string actionCode)
-		{
-			string actionTypeCode = BackendActionTypeService.GetCodeByActionCode(actionCode);
-
-			return Json(actionTypeCode, JsonRequestBehavior.AllowGet);
-		}
+        [HttpGet]
+        public JsonResult GetCodeByActionCode(string actionCode)
+        {
+            return Json(BackendActionTypeService.GetCodeByActionCode(actionCode), JsonRequestBehavior.AllowGet);
+        }
     }
 }

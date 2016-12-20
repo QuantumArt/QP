@@ -1,56 +1,51 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
-using System;
 
 namespace Quantumart.QP8.BLL
 {
-	/// <summary>
-	/// Оповещение.
-	/// </summary>
-	public class Notification : EntityObject
-	{
-		#region creation
-		internal Notification()
-		{
-			FromBackenduserId = SpecialIds.AdminUserId;
-			FromDefaultName = true;
-			FromBackenduser = true;
-			DefaultSenderName = QPConfiguration.ConfigVariable(Config.MailFromNameKey);
-			SelectedReceiverType = ReceiverType.EveryoneInHistory;
-		}
+    /// <summary>
+    /// Оповещение.
+    /// </summary>
+    public class Notification : EntityObject
+    {
+        #region creation
+        internal Notification()
+        {
+            FromBackenduserId = SpecialIds.AdminUserId;
+            FromDefaultName = true;
+            FromBackenduser = true;
+            DefaultSenderName = QPConfiguration.ConfigVariable(Config.MailFromNameKey);
+            SelectedReceiverType = ReceiverType.EveryoneInHistory;
+        }
 
-		internal static Notification Create(int contentId)
-		{						
-			var notification = new Notification() {ContentId = contentId};
-			notification.UseQaMail = !notification.Content.Site.IsDotNet;
-			notification.ExternalUrl = notification.Content.Site.ExternalUrl;
-			return notification;
-		}
-		#endregion
+        internal static Notification Create(int contentId)
+        {						
+            var notification = new Notification {ContentId = contentId};
+            notification.UseQaMail = !notification.Content.Site.IsDotNet;
+            notification.ExternalUrl = notification.Content.Site.ExternalUrl;
+            return notification;
+        }
+        #endregion
 
-		#region properties
-		#region simple read-write
-		public int ContentId { get; set; }
+        #region properties
+        #region simple read-write
+        public int ContentId { get; set; }
 
-		private Content _content;
+        private Content _content;
 
-		public Content Content
-		{
-			get
-			{
-				if(_content == null)
-					_content = ContentRepository.GetById(ContentId);
-				return _content;
-			}
-			set
-			{
-				_content = value;
-			}
-		}
+        public Content Content
+        {
+            get { return _content ?? (_content = ContentRepository.GetById(ContentId)); }
+            set
+            {
+                _content = value;
+            }
+        }
 
         [LocalizedDisplayName("Format", NameResourceType = typeof(NotificationStrings))]
         public int? FormatId { get; set; }
@@ -61,8 +56,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("UserGroup", NameResourceType = typeof(NotificationStrings))]
         public int? GroupId { get; set; }
 
-		[LocalizedDisplayName("QP8User", NameResourceType = typeof(NotificationStrings))]
-		public int? FromBackenduserId { get; set; }
+        [LocalizedDisplayName("QP8User", NameResourceType = typeof(NotificationStrings))]
+        public int? FromBackenduserId { get; set; }
         
         public User FromUser { get; set; }
 
@@ -94,14 +89,14 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("ForFrontend", NameResourceType = typeof(NotificationStrings))]
         public bool ForFrontend { get; set; }
 
-		[LocalizedDisplayName("ForDelayedPublication", NameResourceType = typeof(NotificationStrings))]
-		public bool ForDelayedPublication { get; set; }
+        [LocalizedDisplayName("ForDelayedPublication", NameResourceType = typeof(NotificationStrings))]
+        public bool ForDelayedPublication { get; set; }
 
         [LocalizedDisplayName("SenderName", NameResourceType = typeof(NotificationStrings))]
         public string FromUserName { get; set; }
 
-		[LocalizedDisplayName("UseDefaultSenderName", NameResourceType = typeof(NotificationStrings))]
-		public bool FromDefaultName { get; set; }
+        [LocalizedDisplayName("UseDefaultSenderName", NameResourceType = typeof(NotificationStrings))]
+        public bool FromDefaultName { get; set; }
 
         [LocalizedDisplayName("DefaultSenderName", NameResourceType = typeof(NotificationStrings))]
         public string DefaultSenderName { get; set; }
@@ -115,8 +110,8 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("SendFiles", NameResourceType = typeof(NotificationStrings))]
         public bool SendFiles { get; set; }
 
-		[LocalizedDisplayName("UseQP8UserEmail", NameResourceType = typeof(NotificationStrings))]
-		public bool FromBackenduser { get; set; }
+        [LocalizedDisplayName("UseQP8UserEmail", NameResourceType = typeof(NotificationStrings))]
+        public bool FromBackenduser { get; set; }
         
         public User ToUser { get; set; }
         
@@ -124,58 +119,49 @@ namespace Quantumart.QP8.BLL
 
         public bool NoEmail { get; set; }
 
-		[LocalizedDisplayName("External", NameResourceType = typeof(NotificationStrings))]
-		public bool IsExternal { get; set; }
-		
-		[LocalizedDisplayName("ExternalUrl", NameResourceType = typeof(NotificationStrings))]
-		public string ExternalUrl { get; set; }
+        [LocalizedDisplayName("External", NameResourceType = typeof(NotificationStrings))]
+        public bool IsExternal { get; set; }
+        
+        [LocalizedDisplayName("ExternalUrl", NameResourceType = typeof(NotificationStrings))]
+        public string ExternalUrl { get; set; }
 
-		[LocalizedDisplayName("UseService", NameResourceType = typeof(NotificationStrings))]
-		public bool UseService { get; set; }
+        [LocalizedDisplayName("UseService", NameResourceType = typeof(NotificationStrings))]
+        public bool UseService { get; set; }
 
-		[LocalizedDisplayName("ReceiverType", NameResourceType = typeof(NotificationStrings))]
-		public int SelectedReceiverType { get; set; }
-		#endregion				
-		#region simple read-only
-		public override string EntityTypeCode
-		{
-			get
-			{
-				return Constants.EntityTypeCode.Notification;
-			}
-		}
+        [LocalizedDisplayName("ReceiverType", NameResourceType = typeof(NotificationStrings))]
+        public int SelectedReceiverType { get; set; }
+        #endregion				
+        #region simple read-only
+        public override string EntityTypeCode => Constants.EntityTypeCode.Notification;
 
-		public override int ParentEntityId
-		{
-			get
-			{
-				return ContentId;
-			}
-		}
-		#endregion
-		#endregion
+        public override int ParentEntityId => ContentId;
 
-		#region Validation
-		public override void Validate()
+        public bool IsLegacy => !IsExternal;
+
+        #endregion
+        #endregion
+
+        #region Validation
+        public override void Validate()
         {
             RulesException<Notification> errors = new RulesException<Notification>();
             base.Validate(errors);
 
-			if(Content.HasAggregatedFields)
-				errors.ErrorForModel(NotificationStrings.ContentContainsAggregatedFields);
+            if(Content.HasAggregatedFields)
+                errors.ErrorForModel(NotificationStrings.ContentContainsAggregatedFields);
 
-			if (IsExternal)
-			{
-				if(string.IsNullOrWhiteSpace(ExternalUrl))
-					errors.ErrorFor(n => n.ExternalUrl, NotificationStrings.ExternalUrlNotEntered);
-				else if (!Regex.IsMatch(ExternalUrl, RegularExpressions.AbsoluteWebFolderUrl))
-				{
-					errors.ErrorFor(n => n.ExternalUrl, NotificationStrings.ExternalUrlNotValid);
-				}
-			}
+            if (IsExternal)
+            {
+                if(string.IsNullOrWhiteSpace(ExternalUrl))
+                    errors.ErrorFor(n => n.ExternalUrl, NotificationStrings.ExternalUrlNotEntered);
+                else if (!Regex.IsMatch(ExternalUrl, RegularExpressions.AbsoluteWebFolderUrl))
+                {
+                    errors.ErrorFor(n => n.ExternalUrl, NotificationStrings.ExternalUrlNotValid);
+                }
+            }
 
-			if(!ForCreate && !ForModify && !ForRemove && !ForStatusChanged && !ForStatusPartiallyChanged && !ForFrontend && !ForDelayedPublication)
-				errors.ErrorForModel(NotificationStrings.EventNotSelected);
+            if(!ForCreate && !ForModify && !ForRemove && !ForStatusChanged && !ForStatusPartiallyChanged && !ForFrontend && !ForDelayedPublication)
+                errors.ErrorForModel(NotificationStrings.EventNotSelected);
 
             if (!FromDefaultName)
             {
@@ -185,23 +171,23 @@ namespace Quantumart.QP8.BLL
                     errors.ErrorFor(n => n.FromUserName, String.Format(NotificationStrings.SenderNameMaxLengthExceeded, 255));
             }
 
-			if (!FromBackenduser)
-			{
-				if (string.IsNullOrWhiteSpace(FromUserEmail))
-					errors.ErrorFor(n => n.FromUserEmail, NotificationStrings.SenderEmailNotEntered);
-				else if(FromUserEmail.Length > 255)
-					errors.ErrorFor(n => n.FromUserEmail, String.Format(NotificationStrings.SenderEmailLengthExceeded, 255));
-				else if (!Regex.IsMatch(FromUserEmail, RegularExpressions.Email))
-				{
-					errors.ErrorFor(n => n.FromUserEmail, NotificationStrings.SenderEmailNotValid);
-				}
-			}
+            if (!FromBackenduser)
+            {
+                if (string.IsNullOrWhiteSpace(FromUserEmail))
+                    errors.ErrorFor(n => n.FromUserEmail, NotificationStrings.SenderEmailNotEntered);
+                else if(FromUserEmail.Length > 255)
+                    errors.ErrorFor(n => n.FromUserEmail, String.Format(NotificationStrings.SenderEmailLengthExceeded, 255));
+                else if (!Regex.IsMatch(FromUserEmail, RegularExpressions.Email))
+                {
+                    errors.ErrorFor(n => n.FromUserEmail, NotificationStrings.SenderEmailNotValid);
+                }
+            }
 
-			else
-			{
-				if (!FromBackenduserId.HasValue && !IsExternal)
-					errors.ErrorFor(n => n.FromBackenduserId, NotificationStrings.UserNotSelected);
-			}
+            else
+            {
+                if (!FromBackenduserId.HasValue && !IsExternal)
+                    errors.ErrorFor(n => n.FromBackenduserId, NotificationStrings.UserNotSelected);
+            }
 
             switch (SelectedReceiverType)
             {
@@ -224,85 +210,76 @@ namespace Quantumart.QP8.BLL
         }
         #endregion
 
-		public void DoCustomBinding(bool createDefaultFormat)
-		{
-			if (IsExternal)
-			{
-				FromDefaultName = true;
-				FromBackenduser = true;
-				SelectedReceiverType = ReceiverType.EveryoneInHistory;
-				SendFiles = false;
-				UseQaMail = false;
-				FromUserName = null;
-				FromUserEmail = null;
-				FormatId = null;				
-			}
-			else
-			{
-				ExternalUrl = null;
-				UseService = false;
-			}
+        public void DoCustomBinding(bool createDefaultFormat)
+        {
+            if (IsExternal)
+            {
+                FromDefaultName = true;
+                FromBackenduser = true;
+                SelectedReceiverType = ReceiverType.EveryoneInHistory;
+                SendFiles = false;
+                UseQaMail = false;
+                FromUserName = null;
+                FromUserEmail = null;
+                FormatId = null;				
+            }
+            else
+            {
+                ExternalUrl = null;
+                UseService = false;
+            }
 
-			if (createDefaultFormat)
-				FormatId = null;
-			if (!ForStatusChanged && !ForStatusPartiallyChanged)
-				NotifyOnStatusTypeId = null;
-			if (FromDefaultName)
-				FromUserName = null;
-			if (FromBackenduser)
-				FromUserEmail = null;
-			switch (SelectedReceiverType)
-			{
-				case ReceiverType.User:
-					GroupId = null;
-					EmailFieldId = null;
-					NoEmail = false;
-					break;
-				case ReceiverType.UserGroup:
-					UserId = null;
-					EmailFieldId = null;
-					NoEmail = false;
-					break;
-				case ReceiverType.EmailFromArticle:
-					UserId = null;
-					GroupId = null;
-					NoEmail = false;
-					break;
-				case ReceiverType.EveryoneInHistory:
-					UserId = null;
-					GroupId = null;
-					EmailFieldId = null;
-					NoEmail = false;
-					break;
-				case ReceiverType.None:
-					UserId = null;
-					GroupId = null;
-					EmailFieldId = null;
-					NoEmail = true;
-					break;
-			}
-		}
+            if (createDefaultFormat)
+                FormatId = null;
+            if (!ForStatusChanged && !ForStatusPartiallyChanged)
+                NotifyOnStatusTypeId = null;
+            if (FromDefaultName)
+                FromUserName = null;
+            if (FromBackenduser)
+                FromUserEmail = null;
+            switch (SelectedReceiverType)
+            {
+                case ReceiverType.User:
+                    GroupId = null;
+                    EmailFieldId = null;
+                    NoEmail = false;
+                    break;
+                case ReceiverType.UserGroup:
+                    UserId = null;
+                    EmailFieldId = null;
+                    NoEmail = false;
+                    break;
+                case ReceiverType.EmailFromArticle:
+                    UserId = null;
+                    GroupId = null;
+                    NoEmail = false;
+                    break;
+                case ReceiverType.EveryoneInHistory:
+                    UserId = null;
+                    GroupId = null;
+                    EmailFieldId = null;
+                    NoEmail = false;
+                    break;
+                case ReceiverType.None:
+                    UserId = null;
+                    GroupId = null;
+                    EmailFieldId = null;
+                    NoEmail = true;
+                    break;
+            }
+        }
 
-		public int ComputeReceiverType()
-		{
-			if (UserId.HasValue)
-				return ReceiverType.User;
-			else if (GroupId.HasValue)
-				return ReceiverType.UserGroup;
-			else if (EmailFieldId.HasValue)
-				return ReceiverType.EmailFromArticle;
-			else
-			{
-				return NoEmail ? ReceiverType.None : ReceiverType.EveryoneInHistory;
-			}
-		}
+        public int ComputeReceiverType()
+        {
+            if (UserId.HasValue)
+                return ReceiverType.User;
+            if (GroupId.HasValue)
+                return ReceiverType.UserGroup;
+            if (EmailFieldId.HasValue)
+                return ReceiverType.EmailFromArticle;
+            return NoEmail ? ReceiverType.None : ReceiverType.EveryoneInHistory;
+        }
 
-		public bool CanBeUnbound
-		{
-			get
-			{				
-				return !IsNew && SecurityRepository.IsActionAccessible(ActionCode.UnbindNotification);
-			}
-		}
-	}
+        public bool CanBeUnbound => !IsNew && SecurityRepository.IsActionAccessible(ActionCode.UnbindNotification);
+    }
 }

@@ -16,7 +16,7 @@ namespace Quantumart.QP8.Logging.Templates.Default
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
+    #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
     public partial class DefaultTextTemplate : DefaultTextTemplateBase
     {
@@ -26,19 +26,15 @@ namespace Quantumart.QP8.Logging.Templates.Default
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
-            this.Write("\n");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
+            #line 5 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(LogEntry.Message));
             
             #line default
             #line hidden
-            this.Write("\n");
+            this.Write("\r\n");
             
-            #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
+            #line 6 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
 
 WriteOption("    DateTime", DateTime.Now, TraceOptions.DateTime);
 WriteOption("    TimeStamp", LogEntry.TimeStampString, TraceOptions.Timestamp);
@@ -51,7 +47,7 @@ WriteOption("    ThreadId", LogEntry.Win32ThreadId, TraceOptions.ThreadId);
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
+        #line 11 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
 
 private void WriteOption(string description, object value, TraceOptions option)
 {
@@ -65,7 +61,7 @@ private void WriteOption(string description, object value, TraceOptions option)
         #line default
         #line hidden
         
-        #line 1 "C:\Users\CelutP\Source\Repos\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
+        #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Default\DefaultTextTemplate.tt"
 
 private global::Microsoft.Practices.EnterpriseLibrary.Logging.LogEntry _LogEntryField;
 

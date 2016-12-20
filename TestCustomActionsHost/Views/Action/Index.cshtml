@@ -1,0 +1,163 @@
+﻿@model TestCustomActionsHost.Models.BackendActionViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@Model.Title</h2>
+<h3>HostId: @Model.HostUID</h3>
+
+<button id="btnCheckHost" title="Check Host">Check Host</button>
+<button id="btnOpenAction" title="Open">Open</button>
+<button id="btnOpenNewAction" title="New">New</button>
+<button id="btnChangeAction" title="Open">Change</button>
+<input id="chbInWindow" type="checkbox" value="In Window" /><label for="chbInWindow" >In Window</label>
+<button id="btnClose" title="Close">Close</button>
+
+<button id="btnOpenSelect" title="Select">Select</button>
+<input id="chbIsMultiple" type="checkbox" value="Is Multiple" /><label for="isMultiple" >Is Multiple</label>
+<button id="btnClone" title="Clone">Clone</button>
+
+@section scripts {
+    <script src="~/Scripts/json2.js"></script>
+    <script src="~/Scripts/pmrpc.js"></script>
+    <script src="~/Scripts/QP8BackendApi.Interaction.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var backendWnd = window.parent;
+            Quantumart.QP8.Interaction.checkHost("@Model.HostUID", backendWnd, function (args) {
+                if (args.success) {
+                    var backendObserver = new Quantumart.QP8.Interaction.BackendEventObserver("ooooo", function (eventType, args) {
+                        console.log([eventType, args]);
+                    });
+
+                    var executeOptions = new Quantumart.QP8.Interaction.ExecuteActionOptions();
+                    executeOptions.actionCode = "@Model.ActionCode";
+                    executeOptions.entityTypeCode = "@Model.EntityTypeCode";
+                    executeOptions.entityId = "@Model.EntityId";
+                    executeOptions.parentEntityId = "@Model.ParentEntityId";
+                    executeOptions.actionUID = "@Model.ActionCode";
+                    executeOptions.callerCallback = backendObserver.callbackProcName;
+
+                    executeOptions.options = new Quantumart.QP8.Interaction.ArticleFormState();
+
+                    executeOptions.options.disabledFields = [
+                        "field_1111",
+                        "field_1116", "field_1125", "field_1126", "field_1123", "field_1124", "field_1119", "field_1118", "field_1120", "field_1121", "field_1122", "field_1127", "field_1128", "field_1129", "field_1130",
+                    ];
+
+                    executeOptions.options.hideFields = ["field_1143", "field_1162"];
+                    executeOptions.options.initFieldValues = [
+                        { fieldName: "field_1110", value: "Top" },
+                        { fieldName: "field_1112", value: "Middle" },
+                        { fieldName: "field_1114", value: "Bottom" },
+                        { fieldName: "field_1111", value: 288 },
+                        { fieldName: "field_1115", value: 291 },
+
+                        // String; Textbox
+                        { fieldName: "field_1116", value: "String" },
+                        { fieldName: "field_1125", value: "Textbox" },
+
+                        // VisualEditor
+                        { fieldName: "field_1126", value: "<h2>VisualEditor</h2>" },
+
+                        // File; Image
+                        { fieldName: "field_1123", value: "Кира.jpg" },
+                        { fieldName: "field_1124", value: "Кира.jpg" },
+
+                        // Boolean
+                        { fieldName: "field_1119", value: true },
+
+                        // Numeric
+                        { fieldName: "field_1118", value: 12345.67 },
+
+                        //Date; Time; DateTime
+                        { fieldName: "field_1120", value: new Date() },
+                        { fieldName: "field_1121", value: new Date() },
+                        { fieldName: "field_1122", value: new Date() },
+
+                        // O2M
+                        { fieldName: "field_1127", value: 1661 },
+                        { fieldName: "field_1128", value: 1452 },
+
+                        // M2M;
+                        { fieldName: "field_1129", value: [1660, 1661] },
+                        { fieldName: "field_1130", value: [1453, 1454, 1455] }
+                    ];
+
+                    executeOptions.options.disabledActionCodes = ["save_article"];
+                    executeOptions.options.additionalParams = { str1: "Hello", int1: 10, dt: new Date() };
+
+                    $("#btnOpenAction").click(function () {
+                        executeOptions.changeCurrentTab = false;
+                        executeOptions.isWindow = $("#chbInWindow").is(':checked');
+                        Quantumart.QP8.Interaction.executeBackendAction(executeOptions, "@Model.HostUID", backendWnd);
+                    });
+
+                    $("#btnOpenNewAction").click(function () {
+                        executeOptions.actionCode = 'new_article';
+                        executeOptions.entityId = 0;
+                        executeOptions.changeCurrentTab = false;
+                        executeOptions.isWindow = $("#chbInWindow").is(':checked');
+                        Quantumart.QP8.Interaction.executeBackendAction(executeOptions, "@Model.HostUID", backendWnd);
+                    });
+
+                    $("#btnChangeAction").click(function () {
+                        executeOptions.changeCurrentTab = true;
+                        executeOptions.isWindow = $("#chbInWindow").is(':checked');
+                        Quantumart.QP8.Interaction.executeBackendAction(executeOptions, "@Model.HostUID", backendWnd);
+                    });
+                    $("#btnClose").click(function () {
+                        Quantumart.QP8.Interaction.closeBackendHost("@Model.ActionCode", "@Model.HostUID", backendWnd);
+                    });
+                    $("#btnCheckHost").click(function () {
+                        Quantumart.QP8.Interaction.checkHost("@Model.HostUID", backendWnd, function (args) {
+                            //{ success: true, hostVersion: ... } или { success: false, error: ... }
+                            alert(args.hostVersion);
+                        });
+                    });
+
+                    $("#btnClone").click(function () {
+                        var options = new Quantumart.QP8.Interaction.ExecuteActionOptions();
+                        options.actionCode = "copy_article";
+                        options.entityTypeCode = "article";
+                        options.entityId = 1991753;
+                        options.parentEntityId = 350;
+                        options.callerCallback = backendObserver.callbackProcName;
+                        Quantumart.QP8.Interaction.executeBackendAction(options, "@Model.HostUID", backendWnd);
+                    });
+
+                    $("#btnOpenSelect").click(function () {
+                        var options;
+                        if ($("#chbIsMultiple").is(":checked")) {
+                            options = {
+                                selectActionCode: "multiple_select_article",
+                                entityTypeCode: "article",
+                                parentEntityId: 290,
+                                isMultiple: true,
+                                selectedEntityIDs: [338946, 338944, 338943],
+
+                                selectWindowUID: Date.now.toLocaleString(),
+                                callerCallback: backendObserver.callbackProcName
+                            };
+                        }
+                        else {
+                            options = {
+                                selectActionCode: "select_article",
+                                entityTypeCode: "article",
+                                parentEntityId: 290,
+                                isMultiple: false,
+                                selectedEntityIDs: [338946],
+                                selectWindowUID: Date.now.toLocaleString(),
+                                callerCallback: backendObserver.callbackProcName
+                            };
+                        }
+                        Quantumart.QP8.Interaction.openSelectWindow(options, "@Model.HostUID", backendWnd);
+                    });
+                } else {
+                    window.alert("Backend недоступен: " + args.error);
+                }
+            });
+        });
+    </script>
+}

@@ -1,4 +1,4 @@
-﻿var EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED = "onCloseHostMessageReceived";
+var EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED = "onCloseHostMessageReceived";
 
 Quantumart.QP8.BackendCustomActionHostManager = function () {
 	Quantumart.QP8.BackendCustomActionHostManager.initializeBase(this);
@@ -27,19 +27,19 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     	this.notify(EVENT_TYPE_CLOSE_HOST_MESSAGE_RECEIVED, message);
     },
 
-    onExternalCallerContextsUnbinded: function (message) {    	    	
+    onExternalCallerContextsUnbinded: function (message) {
     	var self = this;
     	jQuery(message.externalCallerContexts).each(function(i, c){
     		var component = self._components[c.hostUID];
     		if(component){
     			component.onExternalCallerContextsUnbinded({
-    				reason: message.reason,    				
+    				reason: message.reason,
     				actionUID: c.data.actionUID,
     				callerCallback: c.data.callerCallback
     			});
     		}
     	});
-    	
+
     },
 
     onActionExecuted: function (eventArgs) {
@@ -52,7 +52,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     	var callerContexts = [];
 
     	jQuery.merge(callerContexts, [eventArgs.get_externalCallerContext()]);
-		
+
     	var hosts = [];
     	jQuery.merge(hosts, Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(eventArgs));
     	jQuery.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs)]);
@@ -60,11 +60,11 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     		jQuery.merge(hosts, Quantumart.QP8.BackendPopupWindowManager.getInstance().getPopupWindowByEventArgs(eventArgs.get_callerContext().eventArgs));
     		jQuery.merge(hosts, [Quantumart.QP8.BackendEditingArea.getInstance().getDocumentByEventArgs(eventArgs.get_callerContext().eventArgs)]);
     	}
-    	hosts = jQuery.grep(hosts, function (h) { return !$q.isNull(h); });    	
-    	if (!$q.isNullOrEmpty(hosts)) {    		
+    	hosts = jQuery.grep(hosts, function (h) { return !$q.isNull(h); });
+    	if (!$q.isNullOrEmpty(hosts)) {
     		jQuery.each(hosts, function (k, host) {
     			jQuery.merge(callerContexts, host.get_externalCallerContexts());
-    		});    		    		
+    		});
     	}
 
     	callerContexts = jQuery.grep(callerContexts, function (c) { return !$q.isNull(c); });
@@ -75,7 +75,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
     				actionCode: actionInfo.get_actionCode(),
     				actionTypeCode: actionInfo.get_actionTypeCode(),
     				entityTypeCode: actionInfo.get_entityTypeCode(),
-    				parentEntityId: eventArgs.get_parentEntityId(),    				
+    				parentEntityId: eventArgs.get_parentEntityId(),
     				actionUID: c.data.actionUID,
     				callerCallback: c.data.callerCallback
     			};
@@ -99,7 +99,7 @@ Quantumart.QP8.BackendCustomActionHostManager.prototype = {
         Quantumart.QP8.BackendCustomActionHostManager._instance = null;
 
         $q.collectGarbageInIE();
-    }  
+    }
 };
 
 Quantumart.QP8.BackendCustomActionHostManager._instance = null; // экземпляр класса

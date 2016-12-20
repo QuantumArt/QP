@@ -1,4 +1,4 @@
-﻿/// <reference path="jquery-1.7.1.intellisense.js" />
+/// <reference path="jquery-1.7.1.intellisense.js" />
 /// <reference path="jquery-1.7.1.js" />
 Quantumart.QP8.ImageCropResizeClient = Quantumart.QP8.ImageCropResizeClient || {};
 Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClient.Cache || {};
@@ -485,7 +485,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
             _$img.appendTo(_$imageContainerDiv);
 
 
-  
+
             //save overwrite options
             var $fieldsetSave = $(_fieldsetSaveHtml);
             if (_parameters.allowFileRewrite) {
@@ -598,11 +598,11 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         for (var i in errors) {
             _$errors.append($("<li>" + errors[i] + "</li>"));
         }
+
         _$errorsContainer.show();
         _setSize(_$img);
     };
     var readData = function () {
-
         var targetFileUrl = "";
         var overwriteFile = _getSaveMode() == _saveMode.overwrite;
 
@@ -633,7 +633,7 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         var select = _imgAreaSelect.getSelection();
         if (select.width || select.height) {
             $.extend(result, {
-                left: Math.max(select.x1, 0), 
+                left: Math.max(select.x1, 0),
                 top: Math.max(select.y1, 0),
                 width: select.width,
                 height: select.height
@@ -646,9 +646,6 @@ Quantumart.QP8.ImageCropResizeClient.Cache = Quantumart.QP8.ImageCropResizeClien
         if (_window) {
         	_window.center();
             _removeErrors();
-        }
-        else {
-            console.log("item was not created or has been deleted");
         }
     };
     var close = function () {

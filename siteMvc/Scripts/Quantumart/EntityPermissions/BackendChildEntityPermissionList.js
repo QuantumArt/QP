@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId) {
+Quantumart.QP8.BackendChildEntityPermissionList = function (searchBlockElementId) {
 
 	function onDataBinding(e) {
 		e.data = jQuery.extend(e.data, searchBlockComponent.getSearchData());

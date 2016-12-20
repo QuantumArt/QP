@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <ProjectType>Local</ProjectType>
@@ -278,7 +278,7 @@
     <Compile Include="Resizer\Resizer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Assembling\Assembling.csproj">
+    <ProjectReference Include="$(SolutionDir)Assembling\Assembling.csproj">
       <Project>{aba32eeb-7b9a-4bd8-973b-cd483f076237}</Project>
       <Name>Assembling</Name>
     </ProjectReference>

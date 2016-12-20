@@ -1,71 +1,61 @@
-﻿@model LogOnCredentials
-
-@using Quantumart.QP8.Resources
-@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.Resources
+@model Quantumart.QP8.BLL.LogOnCredentials
 
 @{
-	Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <head>
     <title>Login page</title>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
-	@(Html.Telerik().StyleSheetRegistrar().StyleSheets(css =>
-			css
-				.Add("basic.css")
-				.Add("page.css")
-		)
-	)
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
+    @(Html.Telerik().StyleSheetRegistrar().StyleSheets(css => css.Add("basic.css").Add("page.css")))
 </head>
 <body>
-	<div id="page" class="loginFormLayout">
-		<div id="content" class="content">
-		@using (Html.BeginForm()) {
-			<div class="formLayout">
-				<p>@LogOnStrings.InfoMessage_Welcome</p>
-				@Html.TextBoxFieldFor(p => p.UserName)
-				@Html.PasswordFieldFor(p => p.Password)
-                @if (ViewBag.AllowSelectCustomerCode)
-                {
-                    @Html.SelectFieldFor(p => p.CustomerCode, (IEnumerable<QPSelectListItem>)ViewBag.CustomerCodes);
-                }
-                else
-                {
-                    @Html.TextBoxFieldFor(p => p.CustomerCode);
-                }
-				<dl class="row">
-					<dt class="label">
-					</dt>
-					<dd class="field">
-						<input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login" />
-						<br />
-						@Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors, new { @style = "margin-top: 0.5em;" })
-					</dd>
-				</dl>
-				@Html.HiddenFor(p => p.IsSilverlightInstalled)
-			</div>
-  }
-		</div>
-	</div>
-	@(Html.Telerik().ScriptRegistrar()
-	.DefaultGroup(g => g.Enabled(false))
-	.Scripts(js => js
-		// Common Libraries
-		.AddGroup("Main", g => g
+    <div id="page" class="loginFormLayout">
+        <div id="content" class="content">
+            @using (Html.BeginForm())
+            {
+                <div class="formLayout">
+                    <p>@LogOnStrings.InfoMessage_Welcome</p>
+                    @Html.TextBoxFieldFor(p => p.UserName)
+                    @Html.PasswordFieldFor(p => p.Password)
+                    @if (ViewBag.AllowSelectCustomerCode)
+                    {
+                        @Html.SelectFieldFor(p => p.CustomerCode, (IEnumerable<QPSelectListItem>) ViewBag.CustomerCodes)
+                    }
+                    else
+                    {
+                        @Html.TextBoxFieldFor(p => p.CustomerCode)
+                    }
+                    <dl class="row">
+                        <dt class="label"></dt>
+                        <dd class="field">
+                            <input type="submit" id="Login" name="Login" value="@LogOnStrings.Button_Login"/>
+                            <br/>
+                            @Html.ValidationSummary(LogOnStrings.ErrorSummary_AuthenticationErrors)
+                        </dd>
+                    </dl>
+
+                    @Html.HiddenFor(p => p.IsSilverlightInstalled)
+                </div>
+            }
+        </div>
+    </div>
+
+    @(Html.Telerik().ScriptRegistrar()
+      .DefaultGroup(g => g.Enabled(false))
+      .Scripts(js => js.AddGroup("Main", g => g
       .Add("es5-shim.js")
-			.Add("jquery-1.7.1.js")
-      .Add("MicrosoftAjax.js")
-			.Add("Silverlight.js")
+      .Add("jquery/jquery-1.7.1.js")
+      .Add("microsoft/MicrosoftAjax.js")
+      .Add("Silverlight.js")
       .Add("Quantumart/Common.js")
       .Add("Quantumart/BackendLogin.js")
-      .Add("Quantumart/version_login.6.0.js")
-			)
-		)
+      .Add("Quantumart/version_login.6.0.js")))
+    )
 
-	)
-
-	<script type="text/javascript">
-        var login = new Quantumart.QP8.BackendLogin({ useSavedCustomerCode: false });
-	</script>
+    <script>
+      var login = new Quantumart.QP8.BackendLogin({ useSavedCustomerCode: false });
+    </script>
 </body>

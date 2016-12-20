@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
-using Assembling;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Helpers;
@@ -79,7 +78,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 			{
 				foreach(int id in templateIds)
 				{
-					new AssembleTemplateObjectsController(id, QPContext.CurrentCustomerCode).Assemble();
+					new AssembleTemplateObjectsController(id, QPContext.CurrentDbConnectionString).Assemble();
 				}
 			}
 			return new MultistepActionStepResult { ProcessedItemsCount = ITEMS_PER_STEP };

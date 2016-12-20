@@ -1,4 +1,4 @@
-﻿//#region class BackendUserSearchBlock
+//#region class BackendUserSearchBlock
 // === Класс "Блок поиска пользователей" ===
 Quantumart.QP8.BackendUserSearchBlock = function (searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options) {
 	Quantumart.QP8.BackendUserSearchBlock.initializeBase(this, [searchBlockGroupCode, searchBlockElementId, entityTypeCode, parentEntityId, options]);
@@ -61,7 +61,7 @@ Quantumart.QP8.BackendUserSearchBlock.prototype = {
 	},
 
 	_onResetButtonClick: function () {
-		// очистить блоки поиска		
+		// очистить блоки поиска
 		jQuery(".csFilterTextbox", this._concreteSearchBlockElement).val('');
 
 		var eventArgs = new Quantumart.QP8.BackendSearchBlockEventArgs(0, null);

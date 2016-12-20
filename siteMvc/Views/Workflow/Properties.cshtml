@@ -8,7 +8,7 @@
 <script type="text/html" id="@Html.UniqueId("WorkflowRulesDisplay_template")">
 	<div data-bind ="foreach: {data: items, afterRender: jQuery.proxy(initializePickers, $root), beforeRemove: disposePickers}">
         <fieldset data-bind="attr:{ class : StName + ' workflow_fieldset'}, style: { backgroundColor: Invalid? 'rgb(255, 238, 238)' : 'white' }">
-            <legend><span data-bind="text: '@WorkflowStrings.Stage ' + ($index() + 1) + ' - ' + StName"></span></legend>                        
+            <legend><span data-bind="text: '@WorkflowStrings.Stage ' + ($index() + 1) + ' - ' + StName"></span></legend>
             <dl class="row">
 	            <dt class="label">
 	                <label>@WorkflowStrings.MemberType:</label>
@@ -20,7 +20,7 @@
 		                        <input type="radio" class = "workflow_radio" data-bind="attr :{uniqueName: true, value: 'User'}, checked: RadioChecked"/>
 		                        <label>@WorkflowStrings.User</label>
 	                        </li>
-	
+
 	                        <li>
 		                        <input type="radio" class = "workflow_radio" data-bind="attr :{uniqueName: true, value: 'Group'}, checked: RadioChecked"/>
 		                        <label for="tab2_Data_IsLive_1">@WorkflowStrings.Group</label>
@@ -29,7 +29,7 @@
                     </div>
 	            </dd>
             </dl>
-            
+
             <dl class="row workflow_user_row" data-bind="visible: RadioChecked() == 'User'">
 	            <dt class="label">
 	                <label>@WorkflowStrings.User:</label>
@@ -38,8 +38,8 @@
                     @Html.QpSingleItemPicker("User", null,
 				        new ControlOptions
 				        {
-					        HtmlAttributes = new Dictionary<string, object> 
-					        {                             
+					        HtmlAttributes = new Dictionary<string, object>
+					        {
 						        {"class", "pep-user-selector"}
 					        }
 				        },
@@ -61,7 +61,7 @@
 	                </em>
                 </dd>
             </dl>
-            
+
             <dl class="row workflow_group_row" data-bind="visible: RadioChecked() == 'Group'">
 	            <dt class="label">
 	                <label>@WorkflowStrings.Group:</label>
@@ -70,7 +70,7 @@
                     @Html.QpSingleItemPicker("Group", null,
 				        new ControlOptions
 				        {
-					        HtmlAttributes = new Dictionary<string, object> 
+					        HtmlAttributes = new Dictionary<string, object>
 					        {
 						        {"class", "pep-user-selector"}
 					        }
@@ -91,8 +91,8 @@
 		                <span class="field-validation-error workflow_permission_message"></span>
 	                </em>
                 </dd>
-            </dl>   
-            
+            </dl>
+
             <dl class="row">
 	            <dt class="label">
 	                <label>@EntityObjectStrings.Description:</label>
@@ -103,7 +103,7 @@
             </dl>
         </fieldset>
     </div>
-    <input type="hidden" name="Workflows_WorkflowRulesDisplay" class="workflowResult" data-bind="value: ko.toJSON($root.items())"/>
+    <input type="hidden" name="WorkflowsWorkflowRulesDisplay" class="workflowResult" data-bind="value: ko.toJSON($root.items())"/>
 </script>
 
 @using (Html.BeginTabForm(Model))
@@ -114,7 +114,7 @@
 		@Html.TextAreaFieldFor(s => s.Data.Description)
         @Html.CheckBoxFieldFor(s => s.Data.CreateDefaultNotification)
         @Html.CheckBoxFieldFor(s => s.Data.ApplyByDefault)
-        
+
         @Html.CheckboxListFieldFor(
 			model => model.ActiveStatuses,
 			Html.List(Model.AllStatusListItems),
@@ -122,16 +122,16 @@
 			new Dictionary<string, object> { { "id", Model.UniqueId("ActiveStatuses") }, {"class", "workflow_control_selector"},
             {"data-weights", Model.StatusWeightsDictionary}}
 		)
-        
+
         @Html.MultipleItemPickerFieldFor(x => x.ActiveContentsIds, Model.ActiveContentsListItems, Model.EntityDataListArgs,
             new Dictionary<string, object> {{"class", "workflow_content_selector"}})
 	}
-            
+
     @Html.WorkflowFor(s => s.WorkflowRulesDisplay, Model.WorkflowRulesDisplay)
-            
+
     @Html.Partial("Version", Model.Data)
 	@Html.Partial("EntityDirectLink", Model)
 
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

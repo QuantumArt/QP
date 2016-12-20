@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, onApplyFilter) {
+Quantumart.QP8.BackendUserAndGroupSearchBlock = function (searchBlockElementId, onApplyFilter) {
 	function getSearchData() {
 		var users = userPicker.getSelectedEntities(),
 		groups = groupPicker.getSelectedEntities(),

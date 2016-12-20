@@ -2,7 +2,7 @@
 @using Quantumart.QP8.BLL;
 
 @model ButtonTraceAreaViewModel
-           
+
 @using (Html.BeginDocumentPadding())
 {
     <div id="@Model.MainComponentId" class="alMainContaner">
@@ -25,4 +25,4 @@
     </div>
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)

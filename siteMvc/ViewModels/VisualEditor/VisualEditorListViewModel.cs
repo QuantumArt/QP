@@ -1,7 +1,7 @@
-﻿using Quantumart.QP8.BLL.ListItems;
+﻿using System.Collections.Generic;
+using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Resources;
-using System.Collections.Generic;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 {

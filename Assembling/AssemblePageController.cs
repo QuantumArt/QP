@@ -1,12 +1,11 @@
-using System;
+﻿using System;
 using System.Data;
 using System.IO;
 using System.Text;
-using Assembling.Info;
+using Quantumart.QP8.Assembling.Info;
 
-namespace Assembling
+namespace Quantumart.QP8.Assembling
 {
-
     public class AssemblePageController : AssembleControllerBase
     {
         public int PageId { get; protected set; }
@@ -29,20 +28,19 @@ namespace Assembling
             }
         }
 
-        public AssemblePageController(int pageId, string customerCode, bool firstInBatch)
-            : base(customerCode, true)
+        public AssemblePageController(int pageId, string connectionParameter, bool firstInBatch)
+            : base(connectionParameter)
         {
             FillController(pageId, null, firstInBatch);
         }
 
 
-        public AssemblePageController(int pageId, string customerCode)
-            : base(customerCode, true)
+        public AssemblePageController(int pageId, string connectionParameter)
+            : base(connectionParameter)
         {
             FillController(pageId, null, true);
         }
 
-        #region Constructors and methods for add-in
         public AssemblePageController(int pageId, DataTable data, bool firstInBatch)
         {
             FillController(pageId, data, firstInBatch);
@@ -67,8 +65,6 @@ namespace Assembling
         {
             FillController(pageId, data, true);
         }
-        #endregion
-
 
         private void ClearPageTrace()
         {

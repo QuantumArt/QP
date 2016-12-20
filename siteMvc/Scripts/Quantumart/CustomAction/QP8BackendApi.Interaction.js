@@ -1,4 +1,4 @@
-﻿(function (global) {
+(function (global) {
 	if (jQuery.type(global.Quantumart) == "undefined") {
 		global.Quantumart = {};
 	}
@@ -15,7 +15,7 @@
 			BackendExternalMessage.prototype = {
 				// Тип
 				type: "",
-				// UID хоста 
+				// UID хоста
 				hostUID: null,
 				// параметры
 				data: null

@@ -1,40 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.WebMvc.Extensions.Helpers;
-
-namespace Quantumart.QP8.WebMvc.ViewModels.Audit
+﻿namespace Quantumart.QP8.WebMvc.ViewModels.Audit
 {
-	public sealed class FailedSessionsAreaViewModel : AreaViewModel
-	{
-		#region creation
+    public sealed class FailedSessionsAreaViewModel : AreaViewModel
+    {
+        public static FailedSessionsAreaViewModel Create(string tabId, int parentId)
+        {
+            var model = ViewModel.Create<FailedSessionsAreaViewModel>(tabId, parentId);
+            return model;
+        }
 
-		public static FailedSessionsAreaViewModel Create(string tabId, int parentId)
-		{
-			FailedSessionsAreaViewModel model = ViewModel.Create<FailedSessionsAreaViewModel>(tabId, parentId);
-			return model;
-		}
+        public override string EntityTypeCode => Constants.EntityTypeCode.CustomerCode;
 
-		#endregion
+        public override string ActionCode => Constants.ActionCode.FailedSession;
 
-		public override string EntityTypeCode
-		{
-			get { return Constants.EntityTypeCode.CustomerCode; }
-		}
-
-		public override string ActionCode
-		{
-			get { return Constants.ActionCode.FailedSession; }
-		}
-
-
-		public string GridElementId
-		{
-			get
-			{
-				return UniqueId("Grid");
-			}
-		}
-	}	
+        public string GridElementId => UniqueId("Grid");
+    }
 }

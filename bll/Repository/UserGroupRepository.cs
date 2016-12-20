@@ -5,6 +5,7 @@ using System.Text;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Services.DTO;
 using System.Data;
+using Quantumart.QP8.BLL.Facades;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Utils;
@@ -16,16 +17,23 @@ namespace Quantumart.QP8.BLL.Repository
 	{
 		internal static IEnumerable<UserGroup> GetAllGroups()
 		{
-			return MappersRepository.UserGroupMapper.GetBizList(QPContext.EFContext.UserGroupSet.ToList());
+			return MapperFacade.UserGroupMapper.GetBizList(QPContext.EFContext.UserGroupSet.ToList());
 		}
 
-		internal static IEnumerable<UserGroupListItem> List(ListCommand cmd, out int totalRecords, IEnumerable<int> selectedIDs)
+        internal static IEnumerable<UserGroup> GetNtGroups()
+        {
+            var groups = QPContext.EFContext.UserGroupSet.Include("ParentGroups").Where(f => f.NtGroup != null);
+            return MapperFacade.UserGroupMapper.GetBizList(groups.ToList());
+        }
+
+
+        internal static IEnumerable<UserGroupListItem> List(ListCommand cmd, out int totalRecords, IEnumerable<int> selectedIDs)
 		{
 			using (var scope = new QPConnectionScope())
 			{
 				cmd.SortExpression = !String.IsNullOrWhiteSpace(cmd.SortExpression) ? TranslateHelper.TranslateSortExpression(cmd.SortExpression) : null;
 				IEnumerable<DataRow> rows = Common.GetUserGroupPage(scope.DbConnection,	selectedIDs, cmd.SortExpression, cmd.FilterExpression, cmd.StartRecord, cmd.PageSize, out totalRecords);
-				return MappersRepository.UserGroupListItemRowMapper.GetBizList(rows.ToList());
+				return MapperFacade.UserGroupListItemRowMapper.GetBizList(rows.ToList());
 			}
 		}
 
@@ -36,7 +44,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static IEnumerable<UserGroup> GetList(IEnumerable<int> IDs)
 		{
 			IEnumerable<decimal> decIDs = Converter.ToDecimalCollection(IDs).Distinct().ToArray();
-			return MappersRepository.UserGroupMapper
+			return MapperFacade.UserGroupMapper
 				.GetBizList(QPContext.EFContext.UserGroupSet
 					.Where(f => decIDs.Contains(f.Id))
 					.ToList()
@@ -45,7 +53,7 @@ namespace Quantumart.QP8.BLL.Repository
 
 		internal static UserGroup GetPropertiesById(int id)
 		{
-			return MappersRepository.UserGroupMapper.GetBizObject(QPContext.EFContext.UserGroupSet
+			return MapperFacade.UserGroupMapper.GetBizObject(QPContext.EFContext.UserGroupSet
 				.Include("ParentGroups")
 				.Include("ChildGroups")
 				.Include("Users")
@@ -56,13 +64,13 @@ namespace Quantumart.QP8.BLL.Repository
 
 		internal static UserGroup GetById(int id)
 		{
-			return MappersRepository.UserGroupMapper.GetBizObject(QPContext.EFContext.UserGroupSet.SingleOrDefault(g => g.Id == id));
+			return MapperFacade.UserGroupMapper.GetBizObject(QPContext.EFContext.UserGroupSet.SingleOrDefault(g => g.Id == id));
 		}
 
 		internal static UserGroup UpdateProperties(UserGroup group)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			UserGroupDAL dal = MappersRepository.UserGroupMapper.GetDalObject(group);
+			UserGroupDAL dal = MapperFacade.UserGroupMapper.GetDalObject(group);
 			dal.LastModifiedBy = QPContext.CurrentUserId;
 			using (new QPConnectionScope())
 			{
@@ -107,7 +115,7 @@ namespace Quantumart.QP8.BLL.Repository
 					dalDb.Users.Remove(u);
 				}
 			}
-			foreach (var u in MappersRepository.UserMapper.GetDalList(group.Users.ToList()))
+			foreach (var u in MapperFacade.UserMapper.GetDalList(group.Users.ToList()))
 			{
 				if (!indbUserIDs.Contains(u.Id))
 				{
@@ -121,13 +129,13 @@ namespace Quantumart.QP8.BLL.Repository
 			entities.SaveChanges();
 
 
-			return MappersRepository.UserGroupMapper.GetBizObject(dal);
+			return MapperFacade.UserGroupMapper.GetBizObject(dal);
 		}
 
 		internal static UserGroup SaveProperties(UserGroup group)
 		{
 			QP8Entities entities = QPContext.EFContext;
-			UserGroupDAL dal = MappersRepository.UserGroupMapper.GetDalObject(group);
+			UserGroupDAL dal = MapperFacade.UserGroupMapper.GetDalObject(group);
 			dal.LastModifiedBy = QPContext.CurrentUserId;
 			using (new QPConnectionScope())
 			{
@@ -139,19 +147,19 @@ namespace Quantumart.QP8.BLL.Repository
 
 			if (group.ParentGroup != null)
 			{
-				UserGroupDAL parentDal = MappersRepository.UserGroupMapper.GetDalObject(group.ParentGroup);
+				UserGroupDAL parentDal = MapperFacade.UserGroupMapper.GetDalObject(group.ParentGroup);
 				entities.UserGroupSet.Attach(parentDal);
 				dal.ParentGroups.Add(parentDal);
 			}
 
-			foreach (var u in MappersRepository.UserMapper.GetDalList(group.Users.ToList()))
+			foreach (var u in MapperFacade.UserMapper.GetDalList(group.Users.ToList()))
 			{
 				entities.UserSet.Attach(u);
 				dal.Users.Add(u);
 			}
 
 			entities.SaveChanges();
-			return MappersRepository.UserGroupMapper.GetBizObject(dal);
+			return MapperFacade.UserGroupMapper.GetBizObject(dal);
 		}
 
 		/// <summary>

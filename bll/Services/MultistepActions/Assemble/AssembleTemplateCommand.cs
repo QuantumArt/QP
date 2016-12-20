@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
-using Assembling;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
@@ -52,7 +51,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 				throw new ApplicationException(String.Format(TemplateStrings.TemplateNotFound, TemplateId));
 			if (!template.SiteIsDotNet)
 				throw new ApplicationException(String.Format(SiteStrings.ShouldBeDotNet));
-			new AssembleTemplateObjectsController(TemplateId, QPContext.CurrentCustomerCode).Assemble();
+			new AssembleTemplateObjectsController(TemplateId, QPContext.CurrentDbConnectionString).Assemble();
 
 			return new MultistepActionStepResult { ProcessedItemsCount = 1 };
 		}

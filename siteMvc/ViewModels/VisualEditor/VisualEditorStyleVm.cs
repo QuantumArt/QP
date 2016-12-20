@@ -13,6 +13,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
         public IDictionary<string, string> Styles { get; set; }
 
         public IDictionary<string, string> Attributes { get; set; }
-
     }
 }

@@ -28,7 +28,7 @@
 				.Sortable(false);
             c.Bound(s => s.Id).Title(EntityObjectStrings.ID)
                    .Width(30)
-                   .HtmlAttributes(new { @class = "id" });			
+                   .HtmlAttributes(new { @class = "id" });
             c.Bound(s => s.Name).Title(EntityObjectStrings.Name)
                 .HtmlAttributes(new { @class = "title" });
             c.Bound(s => s.Receiver).Title(NotificationStrings.Receiver);
@@ -81,6 +81,6 @@
     )
 }
 
-@Html.InitScript(Model)
+@Html.PrepareAndRunInitScript(Model)
 
 @Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false))

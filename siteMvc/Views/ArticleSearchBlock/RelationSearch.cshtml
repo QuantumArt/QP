@@ -70,10 +70,10 @@
 
 <div id="TextAreaContainer" class="row" style="display:none;">
  <span class="label">
-	@Html.QpLabel((string)ViewBag.RelationTextAreaElementID, ArticleStrings.SearchBlock_ListText, true)
+	@Html.QpLabel((string)ViewBag.RelationTextAreaElementID, ArticleStrings.SearchBlock_ListText)
   </span>
   <span class="field">
-    @Html.QpTextArea((string)ViewBag.RelationTextAreaElementID, "", new Dictionary<string, object>
+    @Html.QpTextArea((string)ViewBag.RelationTextAreaElementID, string.Empty, new Dictionary<string, object>
 	  {
       { "class", "numbers-list"}
 	  })

@@ -12,7 +12,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("Basic features for QP8 clients")]
 [assembly: AssemblyCompany("Quantum Art")]
 [assembly: AssemblyProduct("QP7.Framework (QP8.Framework)")]
-[assembly: AssemblyCopyright("Copyright © 2007-2016 Quantum Art")]
+[assembly: AssemblyCopyright("Copyright ï¿½ 2007-2016 Quantum Art")]
 [assembly: AssemblyTrademark("")]
 [assembly: CLSCompliant(true)]
 
@@ -27,6 +27,9 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 
-[assembly: AssemblyVersion("2.0.2.0")]
+[assembly: AssemblyVersion("2.0.4.0")]
 [assembly: ComVisible(false)]
 
+
+[assembly: AssemblyInformationalVersion("0.1.0-ci.511+Branch.master.Sha.590c2e20e88d373f193bd2a468a625adef6d814b")]
+[assembly: AssemblyFileVersion("0.1.0.0")]

@@ -1,4 +1,4 @@
-﻿Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectElementId, joinFieldsTreeElementId) {
+Quantumart.QP8.JoinContentAndJoinFieldsMediator = function (joinContentSelectElementId, joinFieldsTreeElementId) {
     var contentPicker = jQuery("#" + joinContentSelectElementId).data("entity_data_list_component"),
         entityTreeComponent = Quantumart.QP8.BackendEntityTreeManager.getInstance().getTree(joinFieldsTreeElementId);
 
@@ -30,7 +30,7 @@ Quantumart.QP8.UnionRadioAndSourceContentsListMediator = function (unionSourcePa
     function onUnionTypeSelected(){
             unionSourcesComponent._fixListOverflow();
     }
-    
+
     function dispose() {
         $unionSourcePanelElement.unbind();
         $buildParamsPanelElement.unbind();

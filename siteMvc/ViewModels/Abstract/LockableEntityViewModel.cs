@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Quantumart.QP8.BLL;
-using C = Quantumart.QP8.Constants;
+﻿using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
-
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {
@@ -13,35 +8,14 @@ namespace Quantumart.QP8.WebMvc.ViewModels
     {
         public new LockableEntityObject Data
         {
-            get { return (LockableEntityObject)EntityData;  }
-			set { EntityData = value; }
+            get { return (LockableEntityObject)EntityData; }
+            set { EntityData = value; }
         }
 
-		#region read-only members
-		public string UnlockId
-		{
-			get
-			{
-				return UniqueId("unlock");
-			}
-		}
+        public string UnlockId => UniqueId("unlock");
 
-		public string UnlockText
-		{
-			get
-			{
-				return GlobalStrings.Unlock;
-			}
-		}
+        public string UnlockText => GlobalStrings.Unlock;
 
-		public virtual string CaptureLockActionCode
-		{
-			get
-			{
-				return String.Empty;
-			}
-		}
-		#endregion
-		
-	}
+        public virtual string CaptureLockActionCode => string.Empty;
+    }
 }

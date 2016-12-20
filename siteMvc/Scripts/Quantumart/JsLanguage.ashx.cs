@@ -1,22 +1,18 @@
-﻿using System;
-using System.Text;
-using System.IO;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.Utils;
 using System.Collections.Generic;
-using System.Globalization;
+using System.IO;
 using System.Threading;
 using System.Web;
-using Quantumart.QP8;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
 
 namespace Quantumart.QP8.WebMvc.Backend
 {
-	public class JsLanguage : IHttpHandler
+    public class JsLanguage : IHttpHandler
 	{
-		const string LANG_SCRIPT_FOLDER_PATH = "/Scripts/Languages/";
+	    private const string LangScriptFolderPath = "/Scripts/Quantumart/languages/";
+		public bool IsReusable => false;
 
-		private readonly List<string> _scriptFileNames = new List<string>() {			
+		private readonly List<string> _scriptFileNames = new List<string>() {
 			"BackendCommon.Lang.js",
 			"BackendActionExecutor.Lang.js",
 			"BackendHome.Lang.js",
@@ -28,9 +24,8 @@ namespace Quantumart.QP8.WebMvc.Backend
 			"BackendToolbar.Lang.js",
 			"BackendFileField.Lang.js",
 			"BackendActionLink.Lang.js",
-			"BackendTraceWindow.Lang.js",
 			"BackendEntityDataList.Lang.js",
-			"BackendSearchBlock.Lang.js", 
+			"BackendSearchBlock.Lang.js",
 			"BackendBreadCrumbs.Lang.js",
 			"BackendPager.Lang.js",
 			"BackendFileList.Lang.js",
@@ -45,24 +40,16 @@ namespace Quantumart.QP8.WebMvc.Backend
             "BackendDocumentHost.Lang.js"
         };
 
-		public bool IsReusable
+	    public void ProcessRequest(HttpContext context)
 		{
-			get
-			{
-				return false;
-			}
-		}
+			var response = context.Response;
+			var server = context.Server;
 
-		public void ProcessRequest(HttpContext context)
-		{
-			HttpResponse response = context.Response;
-			HttpServerUtility server = context.Server;
-
-			string cultureName = Thread.CurrentThread.CurrentCulture.Name.ToLowerInvariant();
-			bool useMinifiedScripts = !HttpContext.Current.IsDebuggingEnabled;
+			var cultureName = Thread.CurrentThread.CurrentCulture.Name.ToLowerInvariant();
+			var useMinifiedScripts = !HttpContext.Current.IsDebuggingEnabled;
 
 			response.ContentType = "text/javascript";
-			foreach (string scriptFileName in this._scriptFileNames)
+			foreach (var scriptFileName in _scriptFileNames)
 			{
 				response.Write(GetLanguageScriptCode(server, scriptFileName, cultureName, useMinifiedScripts));
 			}
@@ -78,8 +65,8 @@ namespace Quantumart.QP8.WebMvc.Backend
 		/// <returns>код локализационного скрипта</returns>
 		private string GetLanguageScriptCode(HttpServerUtility server, string scriptName, string cultureName, bool useMinifiedScript)
 		{
-			string scriptCode = String.Empty;
-			string scriptPath = GetLanguageScriptPath(server, scriptName, cultureName, useMinifiedScript);
+			var scriptCode = string.Empty;
+			var scriptPath = GetLanguageScriptPath(server, scriptName, cultureName, useMinifiedScript);
 
 			if (scriptPath.Length > 0)
 			{
@@ -90,7 +77,7 @@ namespace Quantumart.QP8.WebMvc.Backend
 		}
 
 		/// <summary>
-		/// Возвращает путь к локализационному скрипту 
+		/// Возвращает путь к локализационному скрипту
 		/// </summary>
 		/// <param name="server">объект HttpServerUtility</param>
 		/// <param name="scriptName">имя скрипта</param>
@@ -99,28 +86,15 @@ namespace Quantumart.QP8.WebMvc.Backend
 		/// <returns>путь к локализационному скрипту</returns>
 		private string GetLanguageScriptPath(HttpServerUtility server, string scriptName, string cultureName, bool useMinifiedScript)
 		{
-			string scriptPath = String.Empty;
+			var scriptPath = string.Empty;
 
-			string scriptNameWithoutExtension = Path.GetFileNameWithoutExtension(scriptName);
-			string scriptExtension = Path.GetExtension(scriptName);
+			var scriptNameWithoutExtension = Path.GetFileNameWithoutExtension(scriptName);
+			var scriptExtension = Path.GetExtension(scriptName);
 
-			string neutralScriptPath = GetPhysicalFilePath(server, scriptName);
-			string neutralMinifiedScriptPath = GetPhysicalFilePath(server,
-				scriptNameWithoutExtension + 
-				(useMinifiedScript ? ".min" : "") + 
-				scriptExtension
-			);
-			string localizedScriptPath = GetPhysicalFilePath(server,
-				scriptNameWithoutExtension + 
-				(cultureName.Length > 0 ? "." + cultureName : "") + 
-				scriptExtension
-			);
-			string localizedMinifiedScriptPath = GetPhysicalFilePath(server,
-				scriptNameWithoutExtension +
-				(cultureName.Length > 0 ? "." + cultureName : "") +
-				(useMinifiedScript ? ".min" : "") + 
-				scriptExtension
-			);
+			var neutralScriptPath = GetPhysicalFilePath(server, scriptName);
+			var neutralMinifiedScriptPath = GetPhysicalFilePath(server, scriptNameWithoutExtension + (useMinifiedScript ? ".min" : "") + scriptExtension);
+			var localizedScriptPath = GetPhysicalFilePath(server, scriptNameWithoutExtension + (cultureName.Length > 0 ? "." + cultureName : "") + scriptExtension);
+			var localizedMinifiedScriptPath = GetPhysicalFilePath(server, scriptNameWithoutExtension + (cultureName.Length > 0 ? "." + cultureName : "") + (useMinifiedScript ? ".min" : "") + scriptExtension);
 
 			if (cultureName.Length > 0)
 			{
@@ -139,7 +113,7 @@ namespace Quantumart.QP8.WebMvc.Backend
 			{
 				return neutralMinifiedScriptPath;
 			}
-			
+
 			if (File.Exists(neutralScriptPath))
 			{
 				return neutralScriptPath;
@@ -156,10 +130,7 @@ namespace Quantumart.QP8.WebMvc.Backend
 		/// <returns>физический путь к файлу</returns>
 		public string GetPhysicalFilePath(HttpServerUtility server, string scriptName)
 		{
-			string filePath = server.MapPath(
-				PathUtility.Combine(SitePathHelper.GetCurrentRootUrl(), LANG_SCRIPT_FOLDER_PATH, scriptName)
-			);
-
+			var filePath = server.MapPath(PathUtility.Combine(SitePathHelper.GetCurrentRootUrl(), LangScriptFolderPath, scriptName));
 			return filePath;
 		}
 	}
