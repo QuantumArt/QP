@@ -7,9 +7,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
 {
     public static class XDocumentExtensions
     {
-        public static string ToNormalizedString(this XDocument doc)
+        public static string ToNormalizedString(this XDocument doc, bool withoutXmlDeclaration = false)
         {
-            return doc.ToNormalizedString(SaveOptions.None);
+            return doc.ToNormalizedString(SaveOptions.None, withoutXmlDeclaration);
         }
 
         public static string ToNormalizedString(this XDocument doc, SaveOptions saveOptions, bool withoutXmlDeclaration = false)
