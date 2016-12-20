@@ -5,10 +5,6 @@ Quantumart.QP8.BackendSettingsPopupWindow = function (eventArgs, options, callba
     if (options) {
         this._isSettingsSet = options.isSettingsSet;
         this._contentId = options.ContentId;
-        this._blockedFieldId = options.BlockedFieldId;
-        options = jQuery.extend(options, {
-        	additionalUrlParameters: { blockedFieldId: options.BlockedFieldId }
-        });
     }
 
     this._callback = callback;
@@ -27,7 +23,6 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
     _callback: null,
     _settingsWindow: null,
     _settingsActionUrl: null,
-    _blockedFieldId: 0,
     NEXT_BUTTON: 'Next',
 
     _initializeSettingsWindow: function () {

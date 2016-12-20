@@ -40,16 +40,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(_service.MultistepActionSettings(parentId, id));
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
-        public ActionResult Settings(string tabId, int parentId, int id, int blockedFieldId)
+        public ActionResult Settings(string tabId, int parentId, int id)
         {
             var model = new ImportViewModel
             {
-                ContentId = id,
-                BlockedFieldId = blockedFieldId
+                ContentId = id
             };
 
             return JsonHtml($"{FolderForTemplate}/ImportTemplate", model);

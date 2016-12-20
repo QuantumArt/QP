@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Quantumart.QP8.BLL.Repository;
+﻿using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
@@ -17,13 +16,5 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
         public int StagesCount => 3;
 
         public string UploadPath => $"{SiteRepository.GetById(SiteId).UploadDir}\\contents\\{ContentId}\\";
-
-        public int BlockedFieldId
-        {
-            get
-            {
-                return ContentRepository.GetById(ContentId).Fields.FirstOrDefault(s => s.IsClassifier || s.Aggregated)?.Id ?? 0;
-            }
-        }
     }
 }

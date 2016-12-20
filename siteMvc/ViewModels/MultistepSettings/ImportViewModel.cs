@@ -123,16 +123,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             };
         }
 
-        public int BlockedFieldId { get; set; }
-
-        public IEnumerable<ListItem> FieldsList
-        {
-            get
-            {
-                return ArticleService.GetListOfFieldsForImport(ContentId).Where(n => n.Value != BlockedFieldId.ToString());
-            }
-        }
-
         public ImportFieldGroupViewModel FieldGroup
         {
             get
