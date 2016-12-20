@@ -10,7 +10,6 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 {
@@ -104,7 +103,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 _sb.Append(_settings.LineSeparator);
             }
 
-            _sb.Append(ArticleStrings.CONTENT_ITEM_ID);
+            _sb.Append(FieldName.ContentItemId);
             if (_settings.HeaderNames.Any())
             {
                 _sb.AppendFormat("{0}{1}", _settings.Delimiter, string.Join(_settings.Delimiter.ToString(), _settings.HeaderNames));
@@ -117,7 +116,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
             if (!_settings.ExcludeSystemFields)
             {
-                foreach (var fieldName in new[] { "CREATED", "MODIFIED", "UNIQUE_ID", ArticleStrings.IsChanged })
+                foreach (var fieldName in new[]
+                {
+                    FieldName.Created,
+                    FieldName.Modified,
+                    FieldName.UniqueId,
+                    FieldName.IsChanged
+                })
                 {
                     _sb.Append(_settings.Delimiter);
                     _sb.Append(fieldName);
@@ -176,9 +181,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         {
                             foreach (var fieldValue in new[]
                             {
-                                MultistepActionHelper.DateCultureFormat(article["Created"].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                                MultistepActionHelper.DateCultureFormat(article["Modified"].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                                article["Unique_Id"].ToString(),
+                                MultistepActionHelper.DateCultureFormat(article["CREATED"].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                                MultistepActionHelper.DateCultureFormat(article["MODIFIED"].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                                article["UNIQUE_ID"].ToString(),
                                 "0"
                             })
                             {

@@ -27,10 +27,10 @@ namespace Quantumart.QP8.BLL
         private ServiceField() { }
 
         public ServiceFieldType Type { get; private set; }
-        public int ID { get; private set; }        
+        public int ID { get; private set; }
         public string Name { get; private set; }
         public string ColumnName { get; private set; }
-        public ArticleFieldSearchType ArticleFieldSearchType { get; private set; } 
+        public ArticleFieldSearchType ArticleFieldSearchType { get; private set; }
 
         /// <summary>
         /// Создать служебное поле заданного типа
@@ -39,16 +39,16 @@ namespace Quantumart.QP8.BLL
         /// <returns></returns>
         public static ServiceField Create(ServiceFieldType type)
         {
-            
+
             switch(type)
             {
                 case ServiceFieldType.ID:
-                    return new ServiceField() 
-                    { 
+                    return new ServiceField()
+                    {
                         Type = type,
                         ID = (int)type,
                         Name = EntityObjectStrings.ID,
-                        ColumnName = FieldName.CONTENT_ITEM_ID,
+                        ColumnName = FieldName.ContentItemId,
                         ArticleFieldSearchType = ArticleFieldSearchType.Identifier
                     };
                 case ServiceFieldType.Created:
@@ -57,7 +57,7 @@ namespace Quantumart.QP8.BLL
                         Type = type,
                         ID = (int)type,
                         Name = EntityObjectStrings.Created,
-                        ColumnName = FieldName.CREATED,
+                        ColumnName = FieldName.Created,
                         ArticleFieldSearchType = ArticleFieldSearchType.DateRange
                     };
                 case ServiceFieldType.Modified:
@@ -66,7 +66,7 @@ namespace Quantumart.QP8.BLL
                         Type = type,
                         ID = (int)type,
                         Name = EntityObjectStrings.Modified,
-                        ColumnName = FieldName.MODIFIED,
+                        ColumnName = FieldName.Modified,
                         ArticleFieldSearchType = ArticleFieldSearchType.DateRange
                     };
                 case ServiceFieldType.LastModifiedBy:
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.BLL
                         Type = type,
                         ID = (int)type,
                         Name = EntityObjectStrings.LastModifiedBy,
-                        ColumnName = FieldName.LAST_MODIFIED_BY,
+                        ColumnName = FieldName.LastModifiedBy,
                         ArticleFieldSearchType = ArticleFieldSearchType.O2MRelation
                     };
                 case ServiceFieldType.StatusType:
@@ -84,7 +84,7 @@ namespace Quantumart.QP8.BLL
                         Type = type,
                         ID = (int)type,
                         Name = ArticleStrings.Status,
-                        ColumnName = FieldName.STATUS_TYPE_ID,
+                        ColumnName = FieldName.StatusTypeId,
                         ArticleFieldSearchType = ArticleFieldSearchType.O2MRelation
                     };
                 default:
@@ -102,8 +102,8 @@ namespace Quantumart.QP8.BLL
                 .OfType<ServiceFieldType>()
                 .Where(t => t != ServiceFieldType.None)
                 .Reverse()
-                .Select(t => ServiceField.Create(t))                
+                .Select(t => ServiceField.Create(t))
                 .AsEnumerable();
-        }		
+        }
     }
 }

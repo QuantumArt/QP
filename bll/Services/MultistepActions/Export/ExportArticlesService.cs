@@ -104,7 +104,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         private static int[] GetArticleIds(int[] ids, int contentId)
         {
             var setts = HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] as ExportSettings;
-            var orderBy = string.IsNullOrEmpty(setts.OrderByField) ? "CONTENT_ITEM_ID" : setts.OrderByField;
+            var orderBy = string.IsNullOrEmpty(setts.OrderByField) ? FieldName.ContentItemId : setts.OrderByField;
             return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy);
         }
     }

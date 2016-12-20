@@ -113,7 +113,7 @@ namespace Quantumart.QP8.BLL.Services
             result.IsUpdatable = content.IsUpdatable;
 
             var titleField = FieldRepository.GetTitleField(contentId);
-            result.TitleFieldName = titleField == null ? FieldName.CONTENT_ITEM_ID : titleField.FormName;
+            result.TitleFieldName = titleField == null ? FieldName.ContentItemId : titleField.FormName;
             result.DisplayFields = FieldRepository.GetList(contentId, true);
             result.IsAddNewAccessable = !isArchive && SecurityRepository.IsActionAccessible(ActionCode.AddNewArticle) && SecurityRepository.IsEntityAccessible(EntityTypeCode.Content, contentId, ActionTypeCode.Update);
             result.IsArticleChangingActionsAllowed = content.IsArticleChangingActionsAllowed(boundToExternal);
@@ -818,8 +818,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static List<ListItem> GetListOfFieldsToSort(int contentId)
         {
-            var list = new List<ListItem> { new ListItem { Text = ArticleStrings.ID, Value = ArticleStrings.ID } };
-            return list;
+            return new List<ListItem> { new ListItem { Text = FieldName.Id, Value = FieldName.Id } };
         }
 
         public static Dictionary<string, List<string>> GetM2MValuesBatch(IEnumerable<int> ids, int linkId, string displayFieldName, int contentId)

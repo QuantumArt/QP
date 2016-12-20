@@ -42,17 +42,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     .Title(@"<input type=""checkbox"" name=""SelectHeader"" value="""" />")
                     .Width(30)
                     .HeaderHtmlAttributes(new { @class = "t-select-header" })
-                    .ClientTemplate($@"<input type=""checkbox"" name=""SelectedArticlesIDs"" value=""<#= {FieldName.CONTENT_ITEM_ID} #>"" />")
+                    .ClientTemplate($@"<input type=""checkbox"" name=""SelectedArticlesIDs"" value=""<#= {FieldName.ContentItemId} #>"" />")
                     .HtmlAttributes(new { @class = "t-select-cell" })
                     .Sortable(false);
             }
 
-            columnFactory.Bound(typeof(decimal), FieldName.CONTENT_ITEM_ID)
-                .Title(ArticleStrings.ID)
+            columnFactory.Bound(typeof(decimal), FieldName.ContentItemId)
+                .Title(FieldName.Id)
                 .HtmlAttributes(new { @class = "id" })
                 .Width(30);
 
-            columnFactory.Bound(typeof(decimal), FieldName.LOCKED_BY)
+            columnFactory.Bound(typeof(decimal), FieldName.LockedBy)
                 .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" title=\"{1}\" alt=\"{1}\" />",
                     Url.ToAbsolute(PathUtility.Combine(SitePathHelper.GetThemeRootImageFolderUrl(currentTheme), "/grid/header_icons/lock.gif")),
                     ArticleStrings.IsLockedHeaderTooltip
@@ -60,11 +60,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 .HeaderHtmlAttributes(new { @class = "t-image-header" })
                 .ClientTemplate(string.Format(
                     @"<img src=""{0}/{1}"" title=""{2}"" alt=""{2}"" class=""smallIcon"" />", SitePathHelper.GetThemeSmallIconsImageFolderUrl(currentTheme),
-                    "<#= " + FieldName.LOCKED_BY_ICON + " #>",
-                    "<#= " + FieldName.LOCKED_BY_TOOLTIP + " #>"
+                    "<#= " + FieldName.LockedByIcon + " #>",
+                    "<#= " + FieldName.LockedByTooltip + " #>"
                 )).HtmlAttributes(new { style = "text-align: center;" });
 
-            columnFactory.Bound(typeof(bool), FieldName.SCHEDULED)
+            columnFactory.Bound(typeof(bool), FieldName.Scheduled)
                 .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" title=\"{1}\" alt=\"{1}\" />",
                     Url.ToAbsolute(PathUtility.Combine(SitePathHelper.GetThemeRootImageFolderUrl(currentTheme), "/grid/header_icons/scheduled.gif")),
                     ArticleStrings.IsScheduledTooltip
@@ -72,11 +72,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 .HeaderHtmlAttributes(new { @class = "t-image-header" })
                 .ClientTemplate(string.Format(
                     @"<img src=""{0}/{1}"" title=""{2}"" alt=""{2}"" class=""smallIcon"" />", SitePathHelper.GetThemeSmallIconsImageFolderUrl(currentTheme),
-                    "<#= " + FieldName.SCHEDULED_ICON + " #>",
-                    "<#= " + FieldName.SCHEDULED_TOOLTIP + " #>"
+                    "<#= " + FieldName.ScheduledIcon + " #>",
+                    "<#= " + FieldName.ScheduledTooltip + " #>"
                 )).HtmlAttributes(new { style = "text-align: center;" });
 
-            columnFactory.Bound(typeof(bool), FieldName.SPLITTED)
+            columnFactory.Bound(typeof(bool), FieldName.Splitted)
                 .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" title=\"{1}\" alt=\"{1}\" />",
                     Url.ToAbsolute(PathUtility.Combine(SitePathHelper.GetThemeRootImageFolderUrl(currentTheme), "/grid/header_icons/splited.gif")),
                     ArticleStrings.IsSplitedTooltip
@@ -84,11 +84,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 .HeaderHtmlAttributes(new { @class = "t-image-header" })
                 .ClientTemplate(string.Format(
                     @"<img src=""{0}/{1}"" title=""{2}"" alt=""{2}"" class=""smallIcon"" />", SitePathHelper.GetThemeSmallIconsImageFolderUrl(currentTheme),
-                    "<#= " + FieldName.SPLITTED_ICON + " #>",
-                    "<#= " + FieldName.SPLITTED_TOOLTIP + " #>"
+                    "<#= " + FieldName.SplittedIcon + " #>",
+                    "<#= " + FieldName.SplittedTooltip + " #>"
                 )).HtmlAttributes(new { style = "text-align: center;" });
 
-            columnFactory.Bound(typeof(bool), FieldName.VISIBLE)
+            columnFactory.Bound(typeof(bool), FieldName.Visible)
                 .Title(string.Format("<img src=\"{0}\" style=\"width: 16px; height: 16px;\" class=\"t-image\" title=\"{1}\" alt=\"{1}\" />",
                     Url.ToAbsolute(PathUtility.Combine(SitePathHelper.GetThemeRootImageFolderUrl(currentTheme), "/grid/header_icons/invisible.gif")),
                     ArticleStrings.IsInvisibleTooltip
@@ -96,8 +96,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 .HeaderHtmlAttributes(new { @class = "t-image-header" })
                 .ClientTemplate(string.Format(
                     @"<img src=""{0}/{1}"" title=""{2}"" alt=""{2}"" class=""smallIcon"" />", SitePathHelper.GetThemeSmallIconsImageFolderUrl(currentTheme),
-                    "<#= " + FieldName.VISIBLE_ICON + " #>",
-                    "<#= " + FieldName.VISIBLE_TOOLTIP + " #>"
+                    "<#= " + FieldName.VisibleIcon + " #>",
+                    "<#= " + FieldName.VisibleTooltip + " #>"
                 )).HtmlAttributes(new { style = "text-align: center;" });
 
             var i = 0;
@@ -108,10 +108,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 i++;
             }
 
-            columnFactory.Bound(typeof(string), FieldName.STATUS_TYPE_NAME).Title(ArticleStrings.Status).ClientTemplate("<#= " + FieldName.STATUS_TYPE_NAME + " #>");
-            columnFactory.Bound(typeof(DateTime), FieldName.CREATED).Title(ArticleStrings.Created).ClientTemplate("<#= " + FieldName.CREATED + " #>");
-            columnFactory.Bound(typeof(DateTime), FieldName.MODIFIED).Title(ArticleStrings.Modified).ClientTemplate("<#= " + FieldName.MODIFIED + " #>");
-            columnFactory.Bound(typeof(int), FieldName.MODIFIER_LOGIN).Title(ArticleStrings.LastModifiedBy).ClientTemplate("<#= " + FieldName.MODIFIER_LOGIN + " #>");
+            columnFactory.Bound(typeof(string), FieldName.StatusTypeName).Title(ArticleStrings.Status).ClientTemplate("<#= " + FieldName.StatusTypeName + " #>");
+            columnFactory.Bound(typeof(DateTime), FieldName.Created).Title(ArticleStrings.Created).ClientTemplate("<#= " + FieldName.Created + " #>");
+            columnFactory.Bound(typeof(DateTime), FieldName.Modified).Title(ArticleStrings.Modified).ClientTemplate("<#= " + FieldName.Modified + " #>");
+            columnFactory.Bound(typeof(int), FieldName.ModifierLogin).Title(ArticleStrings.LastModifiedBy).ClientTemplate("<#= " + FieldName.ModifierLogin + " #>");
         }
 
         private static void ConfigureDynamicColumn(GridColumnFactory<DataRow> columnFactory, Field field, bool isFirstColumn, bool hasTitleLink, Dictionary<int, int> relationCounts)

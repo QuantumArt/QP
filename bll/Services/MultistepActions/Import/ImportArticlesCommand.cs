@@ -47,15 +47,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public MultistepActionStepResult Step(int step)
         {
-            if (HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] == null)
-            {
-                throw new ArgumentException("There is no specified settings");
-            }
+            var settings = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
+            Ensure.NotNull(settings);
 
-            var setts = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
-            var reader = new CsvReader(SiteId, ContentId, setts);
+            var reader = new CsvReader(SiteId, ContentId, settings);
             var result = new MultistepActionStepResult();
-            using (var tscope = new TransactionScope())
+            using (var ts = new TransactionScope())
             {
                 using (new QPConnectionScope())
                 {
@@ -68,17 +65,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                             reader.PostUpdateM2MRelationAndO2MRelationFields();
                         }
 
-                        _logger.LogStep(step, setts);
+                        _logger.LogStep(step, settings);
                         result.ProcessedItemsCount = processedItemsCount;
                         result.AdditionalInfo = _logReader.Read();
                     }
                     catch (Exception ex)
                     {
-                        throw new ImportException(string.Format(ImportStrings.ImportInterrupted, ex.Message, reader.LastProcessed), ex, setts);
+                        throw new ImportException(string.Format(ImportStrings.ImportInterrupted, ex.Message, reader.LastProcessed), ex, settings);
                     }
                 }
 
-                tscope.Complete();
+                ts.Complete();
             }
 
             return result;

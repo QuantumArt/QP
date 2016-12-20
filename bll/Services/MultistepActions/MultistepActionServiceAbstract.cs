@@ -81,10 +81,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions
         public MultistepActionStepResult Step(int stage, int step)
         {
             var context = (MultistepActionServiceContext)HttpContext.Current.Session[ContextSessionKey];
-            var state = context.CommandStates[stage];
-            var command = CreateCommand(state);
-            var result = command.Step(step);
-            return result;
+            var command = CreateCommand(context.CommandStates[stage]);
+            return command.Step(step);
         }
 
         public virtual void TearDown()

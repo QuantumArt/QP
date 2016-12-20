@@ -506,7 +506,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             bool useMainTable;
             var contextFilter = GetContextFilter(contextQuery, content.Fields.ToList(), out useMainTable);
-
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(filterQuery, commonFilter, contextFilter));
             Common.AddLinkFilteringToQuery(linkedFilters, whereBuilder, filterSqlParams);
             return $"SELECT DISTINCT TOP({searchLimit}) c.content_item_id from content_{treeField.ContentId}_united c WHERE {whereBuilder}";
@@ -549,7 +548,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
                 fields = fields ?? new[] { treeField.Relation }.ToList();
                 var extraFrom = " left join content_item cil on c.content_item_id = cil.content_item_id and locked_by is not null left join users lu on lu.user_id = cil.locked_by " + GetExtraFromForRelations(fields);
-
                 var rows = Common.GetArticlesSimpleList(
                     scope.DbConnection,
                     QPContext.CurrentUserId,
@@ -676,12 +674,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                if (id == 0)
-                {
-                    return Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId);
-                }
-
-                return Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, QPContext.IsLive);
+                return id == 0
+                    ? Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId)
+                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, QPContext.IsLive);
             }
         }
 
@@ -1033,6 +1028,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                             .Where(a => aggregatedArticlesId.Contains(a.Id))
                             .ToList());
                 }
+
                 return Enumerable.Empty<Article>();
             }
         }
@@ -1065,9 +1061,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         internal static bool IsAnyAggregatedFields(int articleId)
         {
-            return QPContext.EFContext.ArticleSet.Any(a =>
-                a.Id == articleId &&
-                a.Content.Fields.Any(f => f.Aggregated));
+            return QPContext.EFContext.ArticleSet.Any(a => a.Id == articleId && a.Content.Fields.Any(f => f.Aggregated));
         }
 
         internal static bool CheckRelationSecurity(Article article, bool isDeletable)
@@ -1111,14 +1105,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var testIds = testValues.SelectMany(n => n.Value).Distinct().ToArray();
                 var startLevel = isDeletable ? PermissionLevel.FullAccess : PermissionLevel.Modify;
                 var securityInfo = CommonSecurity.GetRelationSecurityInfo(scope.DbConnection, contentId, testIds);
-
                 if (securityInfo.IsEmpty)
                 {
                     return testValues.ToDictionary(n => n.Key, m => true);
                 }
 
                 var partResult = new Dictionary<int, bool>();
-
                 foreach (var currentContentId in securityInfo.ContentIds)
                 {
                     var currentMapping = securityInfo.GetItemMapping(currentContentId);
@@ -1143,10 +1135,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     }
                 }
 
-
                 return testValues.ToDictionary(n => n.Key, m => m.Value.All(k => partResult[k]));
             }
-
         }
 
         internal static Dictionary<int, bool> CheckSecurity(int contentId, int[] testIds, bool isDeletable, bool disableSecurityCheck)
@@ -1155,6 +1145,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 return testIds.ToDictionary(n => n, m => true);
             }
+
             var startLevel = isDeletable ? PermissionLevel.FullAccess : PermissionLevel.Modify;
             using (var scope = new QPConnectionScope())
             {
@@ -1186,6 +1177,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 return null;
             }
+
             using (var scope = new QPConnectionScope())
             {
                 return Common.GetArticleHierarchy(scope.DbConnection, contentId, treeName);
@@ -1217,11 +1209,21 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static List<int> InsertArticleIds(string query)
+        internal static List<int> InsertArticleIds(string query, bool preserveGuids = false)
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.InsertArticleIds(scope.DbConnection, query);
+                return preserveGuids
+                    ? Common.InsertArticleIdsWithGuids(scope.DbConnection, query)
+                    : Common.InsertArticleIds(scope.DbConnection, query);
+            }
+        }
+
+        internal static void UpdateArticleGuids(List<Tuple<int, Guid>> guidsByIdToUpdate)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.UpdateArticleGuids(scope.DbConnection, guidsByIdToUpdate);
             }
         }
 

@@ -1017,6 +1017,7 @@ namespace Quantumart.QP8.BLL
 
                 result.Add(new FieldValue { Field = field, ObjectValue = objectValue, Article = article });
             }
+
             return result;
         }
 
