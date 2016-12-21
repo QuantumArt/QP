@@ -53,7 +53,6 @@
   },
   "private": true,
   "-vs-binding": {
-    "AfterBuild":["build-dev"],
     "ProjectOpened":["install"]
   }
 }
