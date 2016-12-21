@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Xml.Linq;
 using System.Xml.XPath;
 using FluentAssertions;
 using Moq;
@@ -27,7 +29,6 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
     public class XmlDbUpdateTests
     {
         private readonly IFixture _fixture;
-        private readonly NonQpEnvironmentContext _context;
 
         public XmlDbUpdateTests()
         {
@@ -37,8 +38,6 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();
             LogProvider.LogFactory = new NullLogFactory();
-
-            _context = new NonQpEnvironmentContext(null);
         }
 
         [XmlDbUpdateDataReader(@"TestData\ConsoleDbUpdate\XmlData\test_sample_for_hash.xml", "ACADB78E0CE686C60564A71F1F595993")]
@@ -223,11 +222,15 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             var actionToRecord = _fixture.Create<XmlDbUpdateRecordedAction>();
 
             // Exercise system
-            var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl);
-            var actualElement = resultXmlDocument.XPathSelectElements("/actions");
+            IEnumerable<XElement> actualElements;
+            using (new NonQpEnvironmentContext(null))
+            {
+                var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl);
+                actualElements = resultXmlDocument.XPathSelectElements("/actions");
+            }
 
             // Verify outcome
-            actualElement.Should().NotBeNullOrEmpty();
+            actualElements.Should().NotBeNullOrEmpty();
         }
 
         [Theory, AutoData, Trait("XmlDbUpdate", "ActionSerializing")]
@@ -237,11 +240,15 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             var actionToRecord = _fixture.Create<XmlDbUpdateRecordedAction>();
 
             // Exercise system
-            var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl, true);
-            var actualElement = resultXmlDocument.XPathSelectElements("/actions");
+            IEnumerable<XElement> actualElements;
+            using (new NonQpEnvironmentContext(null))
+            {
+                var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl, true);
+                actualElements = resultXmlDocument.XPathSelectElements("/actions");
+            }
 
             // Verify outcome
-            actualElement.Should().BeNullOrEmpty();
+            actualElements.Should().BeNullOrEmpty();
         }
 
         [Theory, AutoData, Trait("XmlDbUpdate", "ActionSerializing")]
@@ -251,7 +258,11 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             var actionToRecord = _fixture.Create<XmlDbUpdateRecordedAction>();
 
             // Exercise system
-            var resultXml = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl, true).ToNormalizedString(true);
+            string resultXml;
+            using (new NonQpEnvironmentContext(null))
+            {
+                resultXml = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl, true).ToNormalizedString(true);
+            }
 
             // Verify outcome
             Assert.False(resultXml.StartsWith("<?"));
@@ -265,16 +276,15 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             var expectedElementsCount = actionToRecord.Form.Count;
 
             // Exercise system
-            var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl);
-            var actualElementsCount = resultXmlDocument.XPathSelectElements("//action/field").Count();
+            int actualElementsCount;
+            using (new NonQpEnvironmentContext(null))
+            {
+                var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl);
+                actualElementsCount = resultXmlDocument.XPathSelectElements("//action/field").Count();
+            }
 
             // Verify outcome
             Assert.Equal(expectedElementsCount, actualElementsCount);
-        }
-
-        ~XmlDbUpdateTests()
-        {
-            _context.Dispose();
         }
     }
 }
