@@ -88,6 +88,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\Specimens\NameValueSpecimenBuilder.cs" />
     <Compile Include="XmlCsvDbUpdateTests\CsvDbUpdateClassifierArticleTests.cs" />
     <Compile Include="XmlCsvDbUpdateTests\CsvDbUpdateSimpleArticleTests.cs" />
     <Compile Include="XmlCsvDbUpdateTests\CsvDbUpdateRelationArticleTests.cs" />
