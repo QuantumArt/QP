@@ -5,15 +5,15 @@ using System.Collections;
 using System.Collections.Generic;
 namespace EntityFramework6.Test.DataContext
 {
-	public partial class ToSymmetricRelationAtricle: IQPArticle
-	{
+    public partial class ToSymmetricRelationAtricle: IQPArticle
+    {
         public ToSymmetricRelationAtricle()
         {
 		    ToSymmetricRelation = new HashSet<SymmetricRelationArticle>();
 		    BackwardForSymmetricRelation = new HashSet<SymmetricRelationArticle>();
         }
 
-		public virtual Int32 Id { get; set; }
+        public virtual Int32 Id { get; set; }
         public virtual Int32 StatusTypeId { get; set; }
         public virtual bool Visible { get; set; }
         public virtual bool Archive { get; set; }
@@ -24,11 +24,11 @@ namespace EntityFramework6.Test.DataContext
 
 		/// <summary>
 		/// 
-		/// </summary>		
+		/// </summary>
 		public  ICollection<SymmetricRelationArticle> ToSymmetricRelation { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for 38259/SymmetricRelation
-		/// </summary>		
+		/// </summary>
 		public  ICollection<SymmetricRelationArticle> BackwardForSymmetricRelation { get; set; }
 	}
 }

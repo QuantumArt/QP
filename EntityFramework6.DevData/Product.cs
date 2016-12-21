@@ -5,8 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 namespace Quantumart.QP8.EntityFramework6.DevData
 {
-	public partial class Product: IQPArticle
-	{
+    public partial class Product: IQPArticle
+    {
         public Product()
         {
 		    Regions = new HashSet<Region>();
@@ -14,7 +14,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		    MobileTariffs = new HashSet<MobileTariff>();
         }
 
-		public virtual Int32 Id { get; set; }
+        public virtual Int32 Id { get; set; }
         public virtual Int32 StatusTypeId { get; set; }
         public virtual bool Visible { get; set; }
         public virtual bool Archive { get; set; }
@@ -23,17 +23,17 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         public virtual Int32 LastModifiedBy { get; set; }
         public virtual StatusType StatusType { get; set; }
 
-		public virtual Int32? Type { get; set; }
-		public virtual String PDF { get; set; }
-		public virtual String Legal { get; set; }
-		public virtual String Benefit { get; set; }
-		public virtual Int32? SortOrder { get; set; }
-		public virtual Int32? MarketingSign_ID { get; set; }
-		public virtual DateTime? StartDate { get; set; }
-		public virtual DateTime? EndDate { get; set; }
-		public virtual String ArchiveTitle { get; set; }
-		public virtual String ArchiveNotes { get; set; }
-		public virtual Int32? OldSiteId { get; set; }
+        public virtual Int32? Type { get; set; }
+        public virtual String PDF { get; set; }
+        public virtual String Legal { get; set; }
+        public virtual String Benefit { get; set; }
+        public virtual Int32? SortOrder { get; set; }
+        public virtual Int32? MarketingSign_ID { get; set; }
+        public virtual DateTime? StartDate { get; set; }
+        public virtual DateTime? EndDate { get; set; }
+        public virtual String ArchiveTitle { get; set; }
+        public virtual String ArchiveNotes { get; set; }
+        public virtual Int32? OldSiteId { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>			
@@ -44,24 +44,23 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		public virtual Int32? MarketingProduct_ID { get; set; }
 		/// <summary>
 		/// 
-		/// </summary>		
+		/// </summary>
 		public  ICollection<Region> Regions { get; set; }
 		/// <summary>
 		/// 
-		/// </summary>		
+		/// </summary>
 		public  ICollection<ProductParameter> Parameters { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for field (id: 1192)/Product MobileTariffs
-		/// </summary>		
+		/// </summary>
 		public  ICollection<MobileTariff> MobileTariffs { get; set; }
-		
 		#region Generated Content properties
-		// public string PDFUrl { get; set; }
-		// public string PDFUploadPath { get; set; }
-		// public Int32 TypeExact { get { return this.Type == null ? default(Int32) : this.Type.Value; } }
-		// public Int32 SortOrderExact { get { return this.SortOrder == null ? default(Int32) : this.SortOrder.Value; } }
-		// public Int32 MarketingSign_IDExact { get { return this.MarketingSign_ID == null ? default(Int32) : this.MarketingSign_ID.Value; } }
-		// public Int32 OldSiteIdExact { get { return this.OldSiteId == null ? default(Int32) : this.OldSiteId.Value; } }
+        // public string PDFUrl { get; set; }
+        // public string PDFUploadPath { get; set; }
+        // public Int32 TypeExact { get { return this.Type == null ? default(Int32) : this.Type.Value; } }
+        // public Int32 SortOrderExact { get { return this.SortOrder == null ? default(Int32) : this.SortOrder.Value; } }
+        // public Int32 MarketingSign_IDExact { get { return this.MarketingSign_ID == null ? default(Int32) : this.MarketingSign_ID.Value; } }
+        // public Int32 OldSiteIdExact { get { return this.OldSiteId == null ? default(Int32) : this.OldSiteId.Value; } }
 		#endregion
 	}
 }

@@ -168,6 +168,5 @@ namespace EntityFramework6.Test.DataContext
             throw new InvalidOperationException(_contentAccess + " is not supported.");
         }
         #endregion
-
     }
 }

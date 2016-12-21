@@ -5,13 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 namespace EntityFramework6.Test.DataContext
 {
-	public partial class DateItemForUpdate: IQPArticle
-	{
+    public partial class DateItemForUpdate: IQPArticle
+    {
         public DateItemForUpdate()
         {
         }
 
-		public virtual Int32 Id { get; set; }
+        public virtual Int32 Id { get; set; }
         public virtual Int32 StatusTypeId { get; set; }
         public virtual bool Visible { get; set; }
         public virtual bool Archive { get; set; }
@@ -20,7 +20,7 @@ namespace EntityFramework6.Test.DataContext
         public virtual Int32 LastModifiedBy { get; set; }
         public virtual StatusType StatusType { get; set; }
 
-		public virtual DateTime? DateValueField { get; set; }
+        public virtual DateTime? DateValueField { get; set; }
 	}
 }
 	

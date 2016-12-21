@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace EntityFramework6.Test.DataContext
 {
-	public partial class EF6Model : DbContext
-	{
-		public static ContentAccess DefaultContentAccess = ContentAccess.Live;
+    public partial class EF6Model : DbContext
+    {
+        public static ContentAccess DefaultContentAccess = ContentAccess.Live;
 
         partial void OnContextCreated();
 
@@ -21,14 +21,14 @@ namespace EntityFramework6.Test.DataContext
             : base("name=EF6Model")
         {
             this.Configuration.LazyLoadingEnabled = true;
-			this.Configuration.ProxyCreationEnabled = false;
+            this.Configuration.ProxyCreationEnabled = false;
 
-			OnContextCreated();
+            OnContextCreated();
         }
 
         public virtual DbSet<StatusType> StatusTypes { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserGroup> UserGroups { get; set; }					
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
 
         public virtual DbSet<AfiellFieldsItem> AfiellFieldsItems { get; set; }
         public virtual DbSet<Schema> Schemas { get; set; }
@@ -54,8 +54,8 @@ namespace EntityFramework6.Test.DataContext
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-		    var schemaProvider = new StaticSchemaProvider();
-		    var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
+            var schemaProvider = new StaticSchemaProvider();
+            var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
             mapping.OnModelCreating(modelBuilder);
         }
 	}

@@ -1,15 +1,8 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EntityFramework6.Test.DataContext
 {
-    ///<summary>
-    /// An interface for all contents
-    ///</summary>
     public interface IQPArticle
     {
         int Id { get; set; }
@@ -21,9 +14,6 @@ namespace EntityFramework6.Test.DataContext
         int LastModifiedBy { get; set; }
         StatusType StatusType { get; set; }
 
-        ///<summary>
-        /// Method used for initialization entities after them to be loaded from database
-        ///</summary>
         void OnMaterialized(IQPLibraryService context);
 
         Hashtable Pack(IQPFormService context, params string[] propertyNames);

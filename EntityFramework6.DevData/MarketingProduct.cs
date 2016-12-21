@@ -5,14 +5,14 @@ using System.Collections;
 using System.Collections.Generic;
 namespace Quantumart.QP8.EntityFramework6.DevData
 {
-	public partial class MarketingProduct: IQPArticle
-	{
+    public partial class MarketingProduct: IQPArticle
+    {
         public MarketingProduct()
         {
 		    Products = new HashSet<Product>();
         }
 
-		public virtual Int32 Id { get; set; }
+        public virtual Int32 Id { get; set; }
         public virtual Int32 StatusTypeId { get; set; }
         public virtual bool Visible { get; set; }
         public virtual bool Archive { get; set; }
@@ -21,30 +21,29 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         public virtual Int32 LastModifiedBy { get; set; }
         public virtual StatusType StatusType { get; set; }
 
-		public virtual String Title { get; set; }
-		public virtual String Alias { get; set; }
-		public virtual Int32? ProductType { get; set; }
-		public virtual String Benefit { get; set; }
-		public virtual String ShortBenefit { get; set; }
-		public virtual String Legal { get; set; }
-		public virtual String Description { get; set; }
-		public virtual String ShortDescription { get; set; }
-		public virtual String Purpose { get; set; }
-		public virtual Int32? Family_ID { get; set; }
-		public virtual String TitleForFamily { get; set; }
-		public virtual String CommentForFamily { get; set; }
-		public virtual Int32? MarketingSign_ID { get; set; }
-		public virtual Int32? OldSiteId { get; set; }
+        public virtual String Title { get; set; }
+        public virtual String Alias { get; set; }
+        public virtual Int32? ProductType { get; set; }
+        public virtual String Benefit { get; set; }
+        public virtual String ShortBenefit { get; set; }
+        public virtual String Legal { get; set; }
+        public virtual String Description { get; set; }
+        public virtual String ShortDescription { get; set; }
+        public virtual String Purpose { get; set; }
+        public virtual Int32? Family_ID { get; set; }
+        public virtual String TitleForFamily { get; set; }
+        public virtual String CommentForFamily { get; set; }
+        public virtual Int32? MarketingSign_ID { get; set; }
+        public virtual Int32? OldSiteId { get; set; }
 		/// <summary>
 		/// 
-		/// </summary>		
+		/// </summary>
 		public  ICollection<Product> Products { get; set; }
-		
 		#region Generated Content properties
-		// public Int32 ProductTypeExact { get { return this.ProductType == null ? default(Int32) : this.ProductType.Value; } }
-		// public Int32 Family_IDExact { get { return this.Family_ID == null ? default(Int32) : this.Family_ID.Value; } }
-		// public Int32 MarketingSign_IDExact { get { return this.MarketingSign_ID == null ? default(Int32) : this.MarketingSign_ID.Value; } }
-		// public Int32 OldSiteIdExact { get { return this.OldSiteId == null ? default(Int32) : this.OldSiteId.Value; } }
+        // public Int32 ProductTypeExact { get { return this.ProductType == null ? default(Int32) : this.ProductType.Value; } }
+        // public Int32 Family_IDExact { get { return this.Family_ID == null ? default(Int32) : this.Family_ID.Value; } }
+        // public Int32 MarketingSign_IDExact { get { return this.MarketingSign_ID == null ? default(Int32) : this.MarketingSign_ID.Value; } }
+        // public Int32 OldSiteIdExact { get { return this.OldSiteId == null ? default(Int32) : this.OldSiteId.Value; } }
 		#endregion
 	}
 }

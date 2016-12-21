@@ -6,8 +6,8 @@ using System.Data.SqlClient;
 
 namespace EntityFramework6.Test.DataContext
 {
-	public class EF6ModelConnectionScope
-	{
+    public class EF6ModelConnectionScope
+    {
 
-	}
+    }
 }

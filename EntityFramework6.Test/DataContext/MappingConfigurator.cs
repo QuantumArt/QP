@@ -15,11 +15,11 @@ namespace EntityFramework6.Test.DataContext
         public MappingConfigurator(ContentAccess contentAccess, ISchemaProvider schemaProvider)
             : base(contentAccess, schemaProvider)
         {
-		}
-       
+        }
+
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-			base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(modelBuilder);
 
             #region AfiellFieldsItem mappings
             modelBuilder.Entity<AfiellFieldsItem>()

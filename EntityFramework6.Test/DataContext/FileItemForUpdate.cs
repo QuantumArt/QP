@@ -5,13 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 namespace EntityFramework6.Test.DataContext
 {
-	public partial class FileItemForUpdate: IQPArticle
-	{
+    public partial class FileItemForUpdate: IQPArticle
+    {
         public FileItemForUpdate()
         {
         }
 
-		public virtual Int32 Id { get; set; }
+        public virtual Int32 Id { get; set; }
         public virtual Int32 StatusTypeId { get; set; }
         public virtual bool Visible { get; set; }
         public virtual bool Archive { get; set; }
@@ -20,11 +20,10 @@ namespace EntityFramework6.Test.DataContext
         public virtual Int32 LastModifiedBy { get; set; }
         public virtual StatusType StatusType { get; set; }
 
-		public virtual String FileValueField { get; set; }
-		
+        public virtual String FileValueField { get; set; }
 		#region Generated Content properties
-		// public string FileValueFieldUrl { get; set; }
-		// public string FileValueFieldUploadPath { get; set; }
+        // public string FileValueFieldUrl { get; set; }
+        // public string FileValueFieldUploadPath { get; set; }
 		#endregion
 	}
 }

@@ -6,8 +6,8 @@ using System.Data.SqlClient;
 
 namespace Quantumart.QP8.EntityFramework6.DevData
 {
-	public class EF6ModelConnectionScope
-	{
+    public class EF6ModelConnectionScope
+    {
 
-	}
+    }
 }

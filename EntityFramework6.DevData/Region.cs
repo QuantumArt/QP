@@ -5,8 +5,8 @@ using System.Collections;
 using System.Collections.Generic;
 namespace Quantumart.QP8.EntityFramework6.DevData
 {
-	public partial class Region: IQPArticle
-	{
+    public partial class Region: IQPArticle
+    {
         public Region()
         {
 		    AllowedRegions = new HashSet<Region>();
@@ -17,7 +17,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		    BackwardForDeniedRegions = new HashSet<Region>();
         }
 
-		public virtual Int32 Id { get; set; }
+        public virtual Int32 Id { get; set; }
         public virtual Int32 StatusTypeId { get; set; }
         public virtual bool Visible { get; set; }
         public virtual bool Archive { get; set; }
@@ -26,9 +26,9 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         public virtual Int32 LastModifiedBy { get; set; }
         public virtual StatusType StatusType { get; set; }
 
-		public virtual String Title { get; set; }
-		public virtual String Alias { get; set; }
-		public virtual Int32? OldSiteId { get; set; }
+        public virtual String Title { get; set; }
+        public virtual String Alias { get; set; }
+        public virtual Int32? OldSiteId { get; set; }
 		/// <summary>
 		/// 
 		/// </summary>			
@@ -39,31 +39,30 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 		public virtual Int32? Parent_ID { get; set; }
 		/// <summary>
 		/// 
-		/// </summary>		
+		/// </summary>
 		public  ICollection<Region> AllowedRegions { get; set; }
 		/// <summary>
 		/// 
-		/// </summary>		
+		/// </summary>
 		public  ICollection<Region> DeniedRegions { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for field (id: 1138)/Parent Children
-		/// </summary>		
+		/// </summary>
 		public  ICollection<Region> Children { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for 1228/Regions
-		/// </summary>		
+		/// </summary>
 		public  ICollection<Product> BackwardForRegions { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for 1659/AllowedRegions
-		/// </summary>		
+		/// </summary>
 		public  ICollection<Region> BackwardForAllowedRegions { get; set; }
 		/// <summary>
 		/// Auto-generated backing property for 1660/DeniedRegions
-		/// </summary>		
+		/// </summary>
 		public  ICollection<Region> BackwardForDeniedRegions { get; set; }
-		
 		#region Generated Content properties
-		// public Int32 OldSiteIdExact { get { return this.OldSiteId == null ? default(Int32) : this.OldSiteId.Value; } }
+        // public Int32 OldSiteIdExact { get { return this.OldSiteId == null ? default(Int32) : this.OldSiteId.Value; } }
 		#endregion
 	}
 }
