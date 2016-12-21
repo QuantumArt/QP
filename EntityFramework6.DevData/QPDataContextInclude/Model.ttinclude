@@ -1,0 +1,55 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#+ void AddModel(GenerationContext context){
+var model = context.Model;
+var settings = context.Settings;
+#>
+using System;
+using System.Data.Entity;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;	
+<#= settings.Usings#>
+
+namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint")#>
+{
+    public partial class <#=model.Schema.ClassName#> : DbContext
+    {
+        public static ContentAccess DefaultContentAccess = ContentAccess.Live;
+
+        partial void OnContextCreated();
+
+        static <#=model.Schema.ClassName#>()
+        {
+            Database.SetInitializer<<#= model.Schema.ClassName#>>(new NullDatabaseInitializer<<#=model.Schema.ClassName#>>());
+        }
+
+        public <#=model.Schema.ClassName#>()
+            : base("name=<#=model.Schema.ConnectionStringName#>")
+        {
+            this.Configuration.LazyLoadingEnabled = <#=settings.LazyLoadingEnabled.ToString().ToLower()#>;
+            this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
+
+            OnContextCreated();
+        }
+
+        public virtual DbSet<StatusType> StatusTypes { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
+
+<#+
+        foreach(var content in model.Contents)
+        {
+#>
+        public virtual DbSet<<#=content.MappedName#>> <#=content.PluralMappedName#> { get; set; }
+<#+
+        }
+#>
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            var schemaProvider = new StaticSchemaProvider();
+            var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
+            mapping.OnModelCreating(modelBuilder);
+        }
+	}
+}
+<#+}#>
