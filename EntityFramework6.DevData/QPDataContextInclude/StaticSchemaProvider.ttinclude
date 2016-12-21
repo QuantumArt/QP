@@ -12,19 +12,19 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 {
     public class StaticSchemaProvider : ISchemaProvider
     {
-	   public StaticSchemaProvider()
+       public StaticSchemaProvider()
        {
        }
 
-	    #region ISchemaProvider implementation
+        #region ISchemaProvider implementation
         public ModelReader GetSchema()
         {
-			var schema = new ModelReader();
+            var schema = new ModelReader();
 
-			schema.Schema.SiteName = "<#=model.Schema.SiteName ?? ""#>";
-			schema.Schema.ReplaceUrls = <#=model.Schema.ReplaceUrls.ToString().ToLower()#>;
+            schema.Schema.SiteName = "<#=model.Schema.SiteName ?? ""#>";
+            schema.Schema.ReplaceUrls = <#=model.Schema.ReplaceUrls.ToString().ToLower()#>;
 
-			schema.Attributes = new List<AttributeInfo>
+            schema.Attributes = new List<AttributeInfo>
             {
 <#+
             foreach (var attribute in model.Attributes)
@@ -37,10 +37,10 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
                     Name = "<#=attribute.Name#>",
                     MappedName = "<#=attribute.MappedName#>",
                     LinkId = <#=attribute.LinkId#>,
-					Type = "<#=attribute.Type#>"
+                    Type = "<#=attribute.Type#>"
                 },
 <#+
-			}
+            }
 #>
             };
 
@@ -49,8 +49,8 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
             schema.Contents = new List<ContentInfo>
             {
 <#+
-	            foreach (var content in model.Contents)
-		        {
+                foreach (var content in model.Contents)
+                {
 #>
                 new ContentInfo
                 {
@@ -60,20 +60,20 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
                    Attributes = new List<AttributeInfo>(attributesLookup[<#=content.Id#>])
                 },
 <#+
-			}
+            }
 #>
             };
 
-			schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
+            schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
 
-			return schema;
+            return schema;
         }
 
         public object GetCacheKey()
         {
             return null;
         }
-		#endregion
+        #endregion
     }
 }
 <#+}#>

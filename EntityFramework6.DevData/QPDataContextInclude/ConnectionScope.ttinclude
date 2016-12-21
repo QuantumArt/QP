@@ -11,9 +11,9 @@ using System.Data.SqlClient;
 
 namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint")#>
 {
-	public class <#= model.Schema.ClassName#>ConnectionScope
-	{
+    public class <#= model.Schema.ClassName#>ConnectionScope
+    {
 
-	}
+    }
 }
 <#+}#>

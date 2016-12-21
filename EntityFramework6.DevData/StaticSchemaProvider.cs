@@ -7,16 +7,16 @@ namespace Quantumart.QP8.EntityFramework6.DevData
 {
     public class StaticSchemaProvider : ISchemaProvider
     {
-	   public StaticSchemaProvider()
+       public StaticSchemaProvider()
        {
        }
 
-	    #region ISchemaProvider implementation
+        #region ISchemaProvider implementation
         public ModelReader GetSchema()
         {
-			var schema = new ModelReader();
+            var schema = new ModelReader();
 
-			schema.Attributes = new List<AttributeInfo>
+            schema.Attributes = new List<AttributeInfo>
             {
                 new AttributeInfo
                 {
@@ -564,15 +564,15 @@ namespace Quantumart.QP8.EntityFramework6.DevData
                 },
             };
 
-			schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
+            schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
 
-			return schema;
+            return schema;
         }
 
         public object GetCacheKey()
         {
             return null;
         }
-		#endregion
+        #endregion
     }
 }

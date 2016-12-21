@@ -7,19 +7,19 @@ namespace EntityFramework6.Test.DataContext
 {
     public class StaticSchemaProvider : ISchemaProvider
     {
-	   public StaticSchemaProvider()
+       public StaticSchemaProvider()
        {
        }
 
-	    #region ISchemaProvider implementation
+        #region ISchemaProvider implementation
         public ModelReader GetSchema()
         {
-			var schema = new ModelReader();
+            var schema = new ModelReader();
 
-			schema.Schema.SiteName = "original_site";
-			schema.Schema.ReplaceUrls = true;
+            schema.Schema.SiteName = "original_site";
+            schema.Schema.ReplaceUrls = true;
 
-			schema.Attributes = new List<AttributeInfo>
+            schema.Attributes = new List<AttributeInfo>
             {
                 new AttributeInfo
                 {
@@ -28,7 +28,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "StringField",
                     MappedName = "String",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -37,7 +37,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "IntegerField",
                     MappedName = "Integer",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -46,7 +46,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "DecimalField",
                     MappedName = "Decimal",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -55,7 +55,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "BooleanFiled",
                     MappedName = "Boolean",
                     LinkId = 0,
-					Type = "Boolean"
+                    Type = "Boolean"
                 },
                 new AttributeInfo
                 {
@@ -64,7 +64,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "DateField",
                     MappedName = "Date",
                     LinkId = 0,
-					Type = "Date"
+                    Type = "Date"
                 },
                 new AttributeInfo
                 {
@@ -73,7 +73,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "TimeField",
                     MappedName = "Time",
                     LinkId = 0,
-					Type = "Time"
+                    Type = "Time"
                 },
                 new AttributeInfo
                 {
@@ -82,7 +82,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "DateTimeField",
                     MappedName = "DateTime",
                     LinkId = 0,
-					Type = "DateTime"
+                    Type = "DateTime"
                 },
                 new AttributeInfo
                 {
@@ -91,7 +91,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "FileField",
                     MappedName = "File",
                     LinkId = 0,
-					Type = "File"
+                    Type = "File"
                 },
                 new AttributeInfo
                 {
@@ -100,7 +100,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "ImageField",
                     MappedName = "Image",
                     LinkId = 0,
-					Type = "Image"
+                    Type = "Image"
                 },
                 new AttributeInfo
                 {
@@ -109,7 +109,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "TextBoxField",
                     MappedName = "TextBox",
                     LinkId = 0,
-					Type = "Textbox"
+                    Type = "Textbox"
                 },
                 new AttributeInfo
                 {
@@ -118,7 +118,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "VisualEditField",
                     MappedName = "VisualEdit",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -127,7 +127,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "DynamicImageField",
                     MappedName = "DynamicImage",
                     LinkId = 0,
-					Type = "Dynamic Image"
+                    Type = "Dynamic Image"
                 },
                 new AttributeInfo
                 {
@@ -136,7 +136,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "EnumField",
                     MappedName = "Enum",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -145,7 +145,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -154,7 +154,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "StringValueField",
                     MappedName = "StringValue",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -163,7 +163,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "StringValueField",
                     MappedName = "StringValue",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -172,7 +172,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "StringValueField",
                     MappedName = "StringValue",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -181,7 +181,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -190,7 +190,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -199,7 +199,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -208,7 +208,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Alias",
                     MappedName = "Alias",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -217,7 +217,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -226,7 +226,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "FileItem",
                     MappedName = "FileItem",
                     LinkId = 0,
-					Type = "File"
+                    Type = "File"
                 },
                 new AttributeInfo
                 {
@@ -235,7 +235,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "SymmetricRelation",
                     MappedName = "SymmetricRelation",
                     LinkId = 100,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -244,7 +244,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "ToSymmetricRelation",
                     MappedName = "ToSymmetricRelation",
                     LinkId = 101,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -253,7 +253,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -262,7 +262,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Reference",
                     MappedName = "Reference",
                     LinkId = 149,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -271,7 +271,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -280,7 +280,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -289,7 +289,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Reference",
                     MappedName = "Reference",
                     LinkId = 0,
-					Type = "O2M"
+                    Type = "O2M"
                 },
                 new AttributeInfo
                 {
@@ -298,7 +298,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -307,7 +307,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "DateValueField",
                     MappedName = "DateValueField",
                     LinkId = 0,
-					Type = "Date"
+                    Type = "Date"
                 },
                 new AttributeInfo
                 {
@@ -316,7 +316,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "TimeValueField",
                     MappedName = "TimeValueField",
                     LinkId = 0,
-					Type = "Time"
+                    Type = "Time"
                 },
                 new AttributeInfo
                 {
@@ -325,7 +325,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "DateTimeValueField",
                     MappedName = "DateTimeValueField",
                     LinkId = 0,
-					Type = "DateTime"
+                    Type = "DateTime"
                 },
                 new AttributeInfo
                 {
@@ -334,7 +334,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "FileValueField",
                     MappedName = "FileValueField",
                     LinkId = 0,
-					Type = "File"
+                    Type = "File"
                 },
                 new AttributeInfo
                 {
@@ -343,7 +343,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "ImageValueField",
                     MappedName = "ImageValueField",
                     LinkId = 0,
-					Type = "Image"
+                    Type = "Image"
                 },
                 new AttributeInfo
                 {
@@ -352,7 +352,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "BackReference",
                     MappedName = "BackReference",
                     LinkId = 0,
-					Type = "M2O"
+                    Type = "M2O"
                 },
                 new AttributeInfo
                 {
@@ -361,7 +361,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "BackwardForSymmetricRelation",
                     MappedName = "BackwardForSymmetricRelation",
                     LinkId = 100,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -370,7 +370,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "BackwardForToSymmetricRelation",
                     MappedName = "BackwardForToSymmetricRelation",
                     LinkId = 101,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -379,7 +379,7 @@ namespace EntityFramework6.Test.DataContext
                     Name = "BackwardForReference",
                     MappedName = "BackwardForReference",
                     LinkId = 149,
-					Type = "M2M"
+                    Type = "M2M"
                 },
             };
 
@@ -536,15 +536,15 @@ namespace EntityFramework6.Test.DataContext
                 },
             };
 
-			schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
+            schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
 
-			return schema;
+            return schema;
         }
 
         public object GetCacheKey()
         {
             return null;
         }
-		#endregion
+        #endregion
     }
 }

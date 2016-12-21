@@ -3,7 +3,6 @@ using NUnit.Framework;
 using EntityFramework6.Test.DataContext;
 using EntityFramework6.Test.Infrastructure;
 using Quantumart.QP8.CodeGeneration.Services;
-using Quantumart.QPublishing.Info;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Data.SqlClient;

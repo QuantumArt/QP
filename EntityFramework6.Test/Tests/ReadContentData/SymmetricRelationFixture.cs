@@ -3,7 +3,6 @@ using System.Data.Entity;
 using NUnit.Framework;
 using EntityFramework6.Test.DataContext;
 using EntityFramework6.Test.Infrastructure;
-using Quantumart.QPublishing.Info;
 
 namespace EntityFramework6.Test.Tests.ReadContentData
 {

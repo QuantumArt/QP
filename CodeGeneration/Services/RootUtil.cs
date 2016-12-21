@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Xml.Linq;
 
 namespace Quantumart.QP8.CodeGeneration.Services
@@ -21,7 +17,10 @@ namespace Quantumart.QP8.CodeGeneration.Services
 
         public static string ToPascal(string input)
         {
-            if (input == null) return null;
+            if (input == null)
+            {
+                return null;
+            }
 
             switch (input)
             {

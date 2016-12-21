@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Quantumart.QP8.CodeGeneration.Services
+﻿namespace Quantumart.QP8.CodeGeneration.Services
 {
     public class SchemaInfo
     {

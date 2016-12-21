@@ -168,6 +168,5 @@ namespace Quantumart.QP8.EntityFramework.Services
             throw new InvalidOperationException(_contentAccess + " is not supported.");
         }
         #endregion
-
     }
 }

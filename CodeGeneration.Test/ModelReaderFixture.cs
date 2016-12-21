@@ -1,5 +1,4 @@
-﻿using System;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Quantumart.QP8.CodeGeneration.Services;
 using System.IO;
 

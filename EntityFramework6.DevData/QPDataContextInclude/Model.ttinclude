@@ -11,9 +11,9 @@ using System.Linq;
 
 namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint")#>
 {
-	public partial class <#=model.Schema.ClassName#> : DbContext
-	{
-		public static ContentAccess DefaultContentAccess = ContentAccess.Live;
+    public partial class <#=model.Schema.ClassName#> : DbContext
+    {
+        public static ContentAccess DefaultContentAccess = ContentAccess.Live;
 
         partial void OnContextCreated();
 
@@ -26,18 +26,18 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
             : base("name=<#=model.Schema.ConnectionStringName#>")
         {
             this.Configuration.LazyLoadingEnabled = <#=settings.LazyLoadingEnabled.ToString().ToLower()#>;
-			this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
+            this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
 
-			OnContextCreated();
+            OnContextCreated();
         }
 
         public virtual DbSet<StatusType> StatusTypes { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserGroup> UserGroups { get; set; }					
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
 
 <#+
-		foreach(var content in model.Contents)
-		{
+        foreach(var content in model.Contents)
+        {
 #>
         public virtual DbSet<<#=content.MappedName#>> <#=content.PluralMappedName#> { get; set; }
 <#+
@@ -46,8 +46,8 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-		    var schemaProvider = new StaticSchemaProvider();
-		    var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
+            var schemaProvider = new StaticSchemaProvider();
+            var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
             mapping.OnModelCreating(modelBuilder);
         }
 	}

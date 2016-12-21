@@ -2,10 +2,7 @@
 using EntityFramework6.Test.Infrastructure;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace EntityFramework6.Test.Tests.UpdateContentData

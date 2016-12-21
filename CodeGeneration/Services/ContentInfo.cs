@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quantumart.QP8.CodeGeneration.Services
 {
@@ -27,10 +24,16 @@ namespace Quantumart.QP8.CodeGeneration.Services
             get
             {
                 var name = "content_" + Id;
+
                 if (UseDefaultFiltration)
+                {
                     name += (IsStageMode ? "_stage_new" : "_live_new");
+                }
                 else
+                {
                     name += "_united_new";
+                }
+
                 return name;
             }
         }

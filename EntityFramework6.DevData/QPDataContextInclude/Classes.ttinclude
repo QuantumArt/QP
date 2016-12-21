@@ -14,7 +14,7 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-<#+       
+<#+
 	}
 	 #>
 <#+  foreach(var content in model.Contents) { #>	
@@ -32,8 +32,8 @@ using System.Collections.Generic;
 #>
 namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("NamespaceHint")#>
 {
-	public partial class <#=content.MappedName #>: IQPArticle
-	{
+    public partial class <#=content.MappedName #>: IQPArticle
+    {
         public <#=content.MappedName #>()
         {
 <#+	   	foreach(var attribute in content.Attributes.Where(x => x.IsM2M || x.IsM2O)) { #>
@@ -41,7 +41,7 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 <#+		} #>
         }
 
-		public virtual Int32 Id { get; set; }
+        public virtual Int32 Id { get; set; }
         public virtual Int32 StatusTypeId { get; set; }
         public virtual bool Visible { get; set; }
         public virtual bool Archive { get; set; }
@@ -50,8 +50,8 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
         public virtual Int32 LastModifiedBy { get; set; }
         public virtual StatusType StatusType { get; set; }
 
-<#+	   	foreach(var attribute in content.Attributes.Where(x => !x.IsM2M && !x.IsM2O && !x.IsO2M)) { #>
-		public virtual <#= attribute.NetType#> <#=attribute.MappedName#> { get; set; }
+<#+     foreach(var attribute in content.Attributes.Where(x => !x.IsM2M && !x.IsM2O && !x.IsO2M)) { #>
+        public virtual <#= attribute.NetType#> <#=attribute.MappedName#> { get; set; }
 <#+		} #>
 <#+	   	foreach(var attribute in content.Attributes.Where(x => x.IsO2M)) { #>
 		/// <summary>
@@ -68,20 +68,20 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
 <#+	   	foreach(var attribute in content.Attributes.Where(x => x.IsM2M || x.IsM2O)) { #>
 		/// <summary>
 		/// <#=attribute.Description??""#>
-		/// </summary>		
+		/// </summary>
 		public <#+ if( settings.ProxyCreationEnabled ) { #> virtual <#+}#> ICollection<<#=attribute.RelatedContent.MappedName#>> <#=attribute.MappedName#> { get; set; }
 <#+		} #>
 
-<#+	    if(content.Attributes.Any(x => x.GenerateLibraryUrl || x.GenerateUploadPath || x.IsNullable)) { #>		
+<#+	    if(content.Attributes.Any(x => x.GenerateLibraryUrl || x.GenerateUploadPath || x.IsNullable)) { #>
 		#region Generated Content properties
 <#+	   	foreach(var attribute in content.Attributes.Where(x => x.GenerateLibraryUrl)) { #>
-		// public string <#=attribute.MappedName#>Url { get; set; }
-<#+		} 
+        // public string <#=attribute.MappedName#>Url { get; set; }
+<#+		}
   		foreach(var attribute in content.Attributes.Where(x => x.GenerateUploadPath)) { #>
-		// public string <#=attribute.MappedName#>UploadPath { get; set; }
+        // public string <#=attribute.MappedName#>UploadPath { get; set; }
 <#+		} 
   		foreach(var attribute in content.Attributes.Where(x => x.IsNullable)) { #>
-		// public <#= attribute.ExactType#> <#=attribute.MappedName#>Exact { get { return this.<#=attribute.MappedName#> == null ? default(<#= attribute.ExactType#>) : this.<#=attribute.MappedName#>.Value; } }
+        // public <#= attribute.ExactType#> <#=attribute.MappedName#>Exact { get { return this.<#=attribute.MappedName#> == null ? default(<#= attribute.ExactType#>) : this.<#=attribute.MappedName#>.Value; } }
 <#+		} #>
 		#endregion
 <#+  } #>

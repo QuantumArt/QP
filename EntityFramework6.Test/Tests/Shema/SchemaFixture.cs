@@ -1,7 +1,6 @@
 ﻿using EntityFramework6.Test.DataContext;
 using EntityFramework6.Test.Infrastructure;
 using NUnit.Framework;
-using System.Linq;
 
 namespace EntityFramework6.Test.Tests.Shema
 {

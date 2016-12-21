@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Quantumart.QP8.CodeGeneration.Services
 {
@@ -60,12 +56,9 @@ namespace Quantumart.QP8.CodeGeneration.Services
                         return "String";
                     case "Boolean": return "Boolean?";
                     case "Numeric":
-                        if (IsLong && Size == 0)
-                            return "Int64?";
-                        if (Size == 0)
-                            return "Int32?";
-                        if (IsLong)
-                            return "Decimal?";
+                        if (IsLong && Size == 0) { return "Int64?"; }
+                        if (Size == 0) { return "Int32?"; }
+                        if (IsLong) { return "Decimal?"; }
                         return "Double?";
                     case "O2M":
                         return "Int32?";
@@ -91,12 +84,9 @@ namespace Quantumart.QP8.CodeGeneration.Services
                         return "String";
                     case "Boolean": return "Boolean";
                     case "Numeric":
-                        if (IsLong && Size == 0)
-                            return "Int64";
-                        if (Size == 0)
-                            return "Int32";
-                        if (IsLong)
-                            return "Decimal";
+                        if (IsLong && Size == 0) { return "Int64"; }
+                        if (Size == 0) { return "Int32"; }                            
+                        if (IsLong) { return "Decimal"; }                            
                         return "Double";
                     case "O2M":
                         return "Int32";

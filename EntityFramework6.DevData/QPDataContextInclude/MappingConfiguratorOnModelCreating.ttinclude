@@ -12,8 +12,8 @@ var settings = context.Settings;
 #>
 base.OnModelCreating(modelBuilder);
 <#+
-		foreach(var content in model.Contents)
-		{
+        foreach(var content in model.Contents)
+        {
 #>
 
             #region <#=content.MappedName#> mappings
@@ -62,12 +62,12 @@ base.OnModelCreating(modelBuilder);
 
             foreach (var attribute in content.Attributes.Where(x => x.IsM2M && x.IsSource == true))
             {
-				if(!settings.UseReversedAssociations || !attribute.RelatedContent.SplitArticles)
+                if(!settings.UseReversedAssociations || !attribute.RelatedContent.SplitArticles)
                 {
 #>
-            
-			modelBuilder.Entity<<#=attribute.Content.MappedName#>>().HasMany<<#=attribute.RelatedContent.MappedName#>>(p => p.<#=attribute.MappedName#>)
-				.WithMany(r => r.<#=attribute.RelatedAttribute.MappedName#>)
+
+            modelBuilder.Entity<<#=attribute.Content.MappedName#>>().HasMany<<#=attribute.RelatedContent.MappedName#>>(p => p.<#=attribute.MappedName#>)
+                .WithMany(r => r.<#=attribute.RelatedAttribute.MappedName#>)
                 .Map(rp =>
                 {
                     rp.MapLeftKey("id");
@@ -75,8 +75,8 @@ base.OnModelCreating(modelBuilder);
                     rp.ToTable(<#=getLinkTableMapping(content, attribute)#>);
                 });
 <#+
-				}
-				else
+                }
+                else
                 {
 #>
 
@@ -92,14 +92,14 @@ base.OnModelCreating(modelBuilder);
                 .Map(rp =>
                 { 
 <#+
-					if(attribute.ContentId != attribute.RelatedContentId)
+                    if(attribute.ContentId != attribute.RelatedContentId)
                     {
 #>
                     rp.MapLeftKey("id"); // !+
                     rp.MapRightKey("linked_id");
 <#+
                     }
-					else
+                    else
                     {
 #>
                     rp.MapLeftKey("linked_id"); // ===
@@ -111,7 +111,7 @@ base.OnModelCreating(modelBuilder);
                 });
 
 <#+
-				}
+                }
             }
 #>
 
@@ -125,7 +125,7 @@ base.OnModelCreating(modelBuilder);
 #>
             modelBuilder.Entity<<#=attribute.Content.MappedName#>>().Ignore(p => p.<#=attribute.MappedName#>UploadPath);
 <#+
-			}#> 
+            }#> 
             #endregion
 <#+
         }

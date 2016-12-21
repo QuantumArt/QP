@@ -7,19 +7,19 @@ namespace Quantumart.QP8.EntityFramework6.Data
 {
     public class StaticSchemaProvider : ISchemaProvider
     {
-	   public StaticSchemaProvider()
+       public StaticSchemaProvider()
        {
        }
 
-	    #region ISchemaProvider implementation
+        #region ISchemaProvider implementation
         public ModelReader GetSchema()
         {
-			var schema = new ModelReader();
+            var schema = new ModelReader();
 
-			schema.Schema.SiteName = "Product Catalog";
-			schema.Schema.ReplaceUrls = true;
+            schema.Schema.SiteName = "Product Catalog";
+            schema.Schema.ReplaceUrls = true;
 
-			schema.Attributes = new List<AttributeInfo>
+            schema.Attributes = new List<AttributeInfo>
             {
                 new AttributeInfo
                 {
@@ -28,7 +28,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -37,7 +37,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Alias",
                     MappedName = "Alias",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "ProductType",
                     MappedName = "ProductType",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -55,7 +55,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Benefit",
                     MappedName = "Benefit",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -64,7 +64,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "ShortBenefit",
                     MappedName = "ShortBenefit",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -73,7 +73,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Legal",
                     MappedName = "Legal",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -82,7 +82,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Description",
                     MappedName = "Description",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -91,7 +91,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "ShortDescription",
                     MappedName = "ShortDescription",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -100,7 +100,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Purpose",
                     MappedName = "Purpose",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -109,7 +109,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Family",
                     MappedName = "Family_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -118,7 +118,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "TitleForFamily",
                     MappedName = "TitleForFamily",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -127,7 +127,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "CommentForFamily",
                     MappedName = "CommentForFamily",
                     LinkId = 0,
-					Type = "Textbox"
+                    Type = "Textbox"
                 },
                 new AttributeInfo
                 {
@@ -136,7 +136,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "MarketingSign",
                     MappedName = "MarketingSign_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -145,7 +145,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "OldSiteId",
                     MappedName = "OldSiteId",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -154,7 +154,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Products",
                     MappedName = "Products",
                     LinkId = 0,
-					Type = "M2O"
+                    Type = "M2O"
                 },
                 new AttributeInfo
                 {
@@ -163,7 +163,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "MarketingProduct",
                     MappedName = "MarketingProduct",
                     LinkId = 0,
-					Type = "O2M"
+                    Type = "O2M"
                 },
                 new AttributeInfo
                 {
@@ -172,7 +172,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Regions",
                     MappedName = "Regions",
                     LinkId = 21,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -181,7 +181,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Parameters",
                     MappedName = "Parameters",
                     LinkId = 0,
-					Type = "M2O"
+                    Type = "M2O"
                 },
                 new AttributeInfo
                 {
@@ -190,7 +190,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Type",
                     MappedName = "Type",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -199,7 +199,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "PDF",
                     MappedName = "PDF",
                     LinkId = 0,
-					Type = "File"
+                    Type = "File"
                 },
                 new AttributeInfo
                 {
@@ -208,7 +208,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Legal",
                     MappedName = "Legal",
                     LinkId = 0,
-					Type = "Textbox"
+                    Type = "Textbox"
                 },
                 new AttributeInfo
                 {
@@ -217,7 +217,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Benefit",
                     MappedName = "Benefit",
                     LinkId = 0,
-					Type = "Textbox"
+                    Type = "Textbox"
                 },
                 new AttributeInfo
                 {
@@ -226,7 +226,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "SortOrder",
                     MappedName = "SortOrder",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -235,7 +235,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "MarketingSign",
                     MappedName = "MarketingSign_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -244,7 +244,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "StartDate",
                     MappedName = "StartDate",
                     LinkId = 0,
-					Type = "Date"
+                    Type = "Date"
                 },
                 new AttributeInfo
                 {
@@ -253,7 +253,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "EndDate",
                     MappedName = "EndDate",
                     LinkId = 0,
-					Type = "Date"
+                    Type = "Date"
                 },
                 new AttributeInfo
                 {
@@ -262,7 +262,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "ArchiveTitle",
                     MappedName = "ArchiveTitle",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -271,7 +271,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "ArchiveNotes",
                     MappedName = "ArchiveNotes",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -280,7 +280,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "OldSiteId",
                     MappedName = "OldSiteId",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -289,7 +289,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "Textbox"
+                    Type = "Textbox"
                 },
                 new AttributeInfo
                 {
@@ -298,7 +298,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Product",
                     MappedName = "Product",
                     LinkId = 0,
-					Type = "O2M"
+                    Type = "O2M"
                 },
                 new AttributeInfo
                 {
@@ -307,7 +307,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Group",
                     MappedName = "Group_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -316,7 +316,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "BaseParameter",
                     MappedName = "BaseParameter_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -325,7 +325,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Zone",
                     MappedName = "Zone_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -334,7 +334,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Direction",
                     MappedName = "Direction_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -343,7 +343,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "SortOrder",
                     MappedName = "SortOrder",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -352,7 +352,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "NumValue",
                     MappedName = "NumValue",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -361,7 +361,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Value",
                     MappedName = "Value",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -370,7 +370,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Unit",
                     MappedName = "Unit_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -379,7 +379,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Legal",
                     MappedName = "Legal",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -388,7 +388,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "ShortTitle",
                     MappedName = "ShortTitle",
                     LinkId = 0,
-					Type = "Textbox"
+                    Type = "Textbox"
                 },
                 new AttributeInfo
                 {
@@ -397,7 +397,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "ShortValue",
                     MappedName = "ShortValue",
                     LinkId = 0,
-					Type = "VisualEdit"
+                    Type = "VisualEdit"
                 },
                 new AttributeInfo
                 {
@@ -406,7 +406,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "MatrixParameter",
                     MappedName = "MatrixParameter_ID",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -415,7 +415,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "OldSiteId",
                     MappedName = "OldSiteId",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -424,7 +424,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -433,7 +433,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Parent",
                     MappedName = "Parent",
                     LinkId = 0,
-					Type = "O2M"
+                    Type = "O2M"
                 },
                 new AttributeInfo
                 {
@@ -442,7 +442,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Alias",
                     MappedName = "Alias",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -451,7 +451,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "OldSiteId",
                     MappedName = "OldSiteId",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -460,7 +460,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "AllowedRegions",
                     MappedName = "AllowedRegions",
                     LinkId = 71,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -469,7 +469,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "DeniedRegions",
                     MappedName = "DeniedRegions",
                     LinkId = 72,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -478,7 +478,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Product",
                     MappedName = "Product",
                     LinkId = 0,
-					Type = "O2M"
+                    Type = "O2M"
                 },
                 new AttributeInfo
                 {
@@ -487,7 +487,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "SplitInternetDeviceCount",
                     MappedName = "SplitInternetDeviceCount",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -496,7 +496,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Title",
                     MappedName = "Title",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -505,7 +505,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Value",
                     MappedName = "ValueMapped",
                     LinkId = 0,
-					Type = "String"
+                    Type = "String"
                 },
                 new AttributeInfo
                 {
@@ -514,7 +514,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "RelatedSettings",
                     MappedName = "RelatedSettings",
                     LinkId = 69,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -523,7 +523,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "DecimalValue",
                     MappedName = "DecimalValue",
                     LinkId = 0,
-					Type = "Numeric"
+                    Type = "Numeric"
                 },
                 new AttributeInfo
                 {
@@ -532,7 +532,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "Children",
                     MappedName = "Children",
                     LinkId = 0,
-					Type = "M2O"
+                    Type = "M2O"
                 },
                 new AttributeInfo
                 {
@@ -541,7 +541,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "MobileTariffs",
                     MappedName = "MobileTariffs",
                     LinkId = 0,
-					Type = "M2O"
+                    Type = "M2O"
                 },
                 new AttributeInfo
                 {
@@ -550,7 +550,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "BackwardForRegions",
                     MappedName = "BackwardForRegions",
                     LinkId = 21,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -559,7 +559,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "BackwardForRelatedSettings",
                     MappedName = "BackwardForRelatedSettings",
                     LinkId = 69,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -568,7 +568,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "BackwardForAllowedRegions",
                     MappedName = "BackwardForAllowedRegions",
                     LinkId = 71,
-					Type = "M2M"
+                    Type = "M2M"
                 },
                 new AttributeInfo
                 {
@@ -577,7 +577,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                     Name = "BackwardForDeniedRegions",
                     MappedName = "BackwardForDeniedRegions",
                     LinkId = 72,
-					Type = "M2M"
+                    Type = "M2M"
                 },
             };
 
@@ -629,15 +629,15 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 },
             };
 
-			schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
+            schema.Contents.ForEach(c => c.Attributes.ForEach(a => a.Content = c));
 
-			return schema;
+            return schema;
         }
 
         public object GetCacheKey()
         {
             return null;
         }
-		#endregion
+        #endregion
     }
 }

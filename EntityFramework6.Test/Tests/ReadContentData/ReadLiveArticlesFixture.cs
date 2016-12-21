@@ -20,9 +20,9 @@ namespace EntityFramework6.Test.Tests
             }
         }
 
-        //Для расщепленной статьи в режиме Live должна загружаться опубликованная статья
         private static string ALIAS_FOR_SPLITTED_ARTICLES = "SplittedItem";
         private static string TITLE_FOR_SPLITTED_PPUBLISHED_ARTICLES = "PublishArticle";
+
         [Test, Combinatorial]
         [Category("ReadContentData")]
         public void Check_That_Splitted_Article_isLoaded_Published_Version([Values(ContentAccess.Live)] ContentAccess access, [MappingValues] Mapping mapping)

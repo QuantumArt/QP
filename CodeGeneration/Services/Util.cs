@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Quantumart.QP8.CodeGeneration.Services
@@ -37,13 +34,17 @@ namespace Quantumart.QP8.CodeGeneration.Services
             try
             {
                 var a = e.Elements().FirstOrDefault(x => x.Name == name);
+
                 if (a == null || a.Value == null || a.Value == "")
                 {
                     if (required) throw new Exception("value should not be null or empty");
                     return default(T);
                 }
+
                 if (typeof(T) == typeof(bool) && a.Value.Length == 1)
+                {
                     return (T)(object)Convert.ToBoolean(Convert.ToInt16(a.Value));
+                }
 
                 var converter = TypeDescriptor.GetConverter(typeof(T));
                 return (T)converter.ConvertFromInvariantString(a.Value);

@@ -20,33 +20,33 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
         public MappingConfigurator(ContentAccess contentAccess, ISchemaProvider schemaProvider)
             : base(contentAccess, schemaProvider)
         {
-		}
-       
+        }
+
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-			<#+ MappingConfiguratorOnModelCreating(context, GetDynamicFieldMapping, GetDynamicTableMapping, GetDynamicLinkTableMapping, GetDynamicReversedLinkTablMapping); #>
+        <#+ MappingConfiguratorOnModelCreating(context, GetDynamicFieldMapping, GetDynamicTableMapping, GetDynamicLinkTableMapping, GetDynamicReversedLinkTablMapping); #>
         }
     }
 }
 <#+
 }
 string GetDynamicFieldMapping(AttributeInfo attribute)
-{	
-	return string.Format("GetFieldName(\"{0}\", \"{1}\")", attribute.Content.MappedName, attribute.MappedName);
+{
+    return string.Format("GetFieldName(\"{0}\", \"{1}\")", attribute.Content.MappedName, attribute.MappedName);
 }
 
 string GetDynamicTableMapping(ContentInfo content)
-{	
-	return string.Format("GetTableName(\"{0}\")", content.MappedName);
+{
+    return string.Format("GetTableName(\"{0}\")", content.MappedName);
 }
 
 string GetDynamicLinkTableMapping(ContentInfo content, AttributeInfo field)
 {
-	return string.Format("GetLinkTableName(\"{0}\", \"{1}\")", content.MappedName, field.MappedName);
+    return string.Format("GetLinkTableName(\"{0}\", \"{1}\")", content.MappedName, field.MappedName);
 }
 
 string GetDynamicReversedLinkTablMapping(ContentInfo content, AttributeInfo field)
 {
-	return string.Format("GetReversedLinkTableName(\"{0}\", \"{1}\")", content.MappedName, field.MappedName);
+    return string.Format("GetReversedLinkTableName(\"{0}\", \"{1}\")", content.MappedName, field.MappedName);
 }
 #>

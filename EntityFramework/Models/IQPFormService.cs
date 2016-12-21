@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Quantumart.QP8.EntityFramework.Models
+﻿namespace Quantumart.QP8.EntityFramework.Models
 {
     public interface IQPFormService
     {

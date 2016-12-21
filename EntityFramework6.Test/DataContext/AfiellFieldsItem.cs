@@ -33,17 +33,6 @@ namespace EntityFramework6.Test.DataContext
 		public virtual String VisualEdit { get; set; }
 		public virtual String DynamicImage { get; set; }
 		public virtual String Enum { get; set; }
-		
-		#region Generated Content properties
-		// public string FileUrl { get; set; }
-		// public string ImageUrl { get; set; }
-		// public string DynamicImageUrl { get; set; }
-		// public string FileUploadPath { get; set; }
-		// public string ImageUploadPath { get; set; }
-		// public Int32 IntegerExact { get { return this.Integer == null ? default(Int32) : this.Integer.Value; } }
-		// public Decimal DecimalExact { get { return this.Decimal == null ? default(Decimal) : this.Decimal.Value; } }
-		// public Boolean BooleanExact { get { return this.Boolean == null ? default(Boolean) : this.Boolean.Value; } }
-		#endregion
 	}
 }
 	
