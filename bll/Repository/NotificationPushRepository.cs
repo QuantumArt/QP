@@ -7,6 +7,7 @@ using System.Xml.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QPublishing.Database;
 
@@ -222,6 +223,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
         {
+            QPConfiguration.SetAppSettings(DBConnector.AppSettings);
             var cnn = new DBConnector(connectionString)
             {
                 CacheData = false,

@@ -64,7 +64,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             var currentDbVersion = _appInfoRepository.GetCurrentDbVersion();
             ValidateReplayInput(filteredXmlDocument, currentDbVersion);
 
-            var filteredXmlString = filteredXmlDocument.ToStringWithDeclaration(SaveOptions.DisableFormatting);
+            var filteredXmlString = filteredXmlDocument.ToNormalizedString(SaveOptions.DisableFormatting);
             var dbLogEntry = new XmlDbUpdateLogModel
             {
                 UserId = _userId,
@@ -109,7 +109,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             foreach (var xmlAction in actionElements)
             {
                 XmlDbUpdateRecordedAction action;
-                var xmlActionString = xmlAction.ToString(SaveOptions.DisableFormatting);
+                var xmlActionString = xmlAction.ToNormalizedString(SaveOptions.DisableFormatting, true);
 
                 try
                 {
@@ -139,12 +139,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 }
 
                 var xmlActionStringLog = xmlAction.RemoveDescendants().ToString(SaveOptions.DisableFormatting);
-                Logger.Log.Debug($"-> Begin replaying action: -> {xmlActionStringLog}");
+                Logger.Log.Debug($"-> Begin replaying action [{logEntry.Hash}]: -> {xmlActionStringLog}");
                 var replayedAction = ReplayAction(action, backendUrl);
-                Logger.Log.Debug($"End replaying action: {xmlActionStringLog}");
+                Logger.Log.Debug($"End replaying action [{logEntry.Hash}]: {xmlActionStringLog}");
 
                 logEntry.Ids = string.Join(",", replayedAction.Ids);
-                logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, currentDbVersion, backendUrl).ToStringWithDeclaration(SaveOptions.DisableFormatting);
+                logEntry.ResultXml = XmlDbUpdateSerializerHelpers.SerializeAction(replayedAction, currentDbVersion, backendUrl, true).ToNormalizedString(SaveOptions.DisableFormatting, true);
                 _dbLogService.InsertActionLogEntry(logEntry);
             }
         }

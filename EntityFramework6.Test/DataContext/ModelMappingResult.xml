@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<schema connectionStringName="qp_database" class="EF6Model" namespace="QA.EF" useLongUrls="true" replaceUrls="true" dbIndependent="true" isPartial="false" sendNotifications="false" siteName="original_site" siteId="52" forStage="true" connectionString="Initial Catalog=qp_ef6_test;Data Source=MSCSQL01;Workstation ID=MSCDEV02;User ID=publishing;Password=QuantumartHost.SQL" connectionStringObject="System.Configuration.ConfigurationManager.ConnectionStrings">
+  <content id="618" name="AfiellFieldsItem" mapped_name="AfiellFieldsItem" plural_mapped_name="AfiellFieldsItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringField" mapped_name="String" id="38004" type="String" is_localization="false" size="255" />
+    <attribute name="IntegerField" mapped_name="Integer" id="38005" type="Numeric" is_localization="false" size="0" is_long="false" />
+    <attribute name="DecimalField" mapped_name="Decimal" id="38006" type="Numeric" is_localization="false" size="2" is_long="true" />
+    <attribute name="BooleanFiled" mapped_name="Boolean" id="38007" type="Boolean" is_localization="false" />
+    <attribute name="DateField" mapped_name="Date" id="38008" type="Date" is_localization="false" />
+    <attribute name="TimeField" mapped_name="Time" id="38009" type="Time" is_localization="false" />
+    <attribute name="DateTimeField" mapped_name="DateTime" id="38010" type="DateTime" is_localization="false" />
+    <attribute name="FileField" mapped_name="File" id="38011" type="File" is_localization="false" />
+    <attribute name="ImageField" mapped_name="Image" id="38012" type="Image" is_localization="false" />
+    <attribute name="TextBoxField" mapped_name="TextBox" id="38013" type="Textbox" is_localization="false" />
+    <attribute name="VisualEditField" mapped_name="VisualEdit" id="38014" type="VisualEdit" is_localization="false" />
+    <attribute name="DynamicImageField" mapped_name="DynamicImage" id="38015" type="Dynamic Image" is_localization="false" />
+    <attribute name="EnumField" mapped_name="Enum" id="38016" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="620" name="Schema" mapped_name="Schema" plural_mapped_name="Schemas" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38031" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="621" name="StringItem" mapped_name="StringItem" plural_mapped_name="StringItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringValueField" mapped_name="StringValue" id="38032" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="622" name="StringItemForUpdate" mapped_name="StringItemForUpdate" plural_mapped_name="StringItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringValueField" mapped_name="StringValue" id="38033" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="623" name="StringItemForInsert" mapped_name="StringItemForUnsert" plural_mapped_name="StringItemsForInsert" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="StringValueField" mapped_name="StringValue" id="38034" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="624" name="ItemForUpdate" mapped_name="ItemForUpdate" plural_mapped_name="ItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38035" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="625" name="ItemForInsert" mapped_name="ItemForInsert" plural_mapped_name="ItemsForInsert" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38036" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="626" name="PublishedNotPublishedItem" mapped_name="PublishedNotPublishedItem" plural_mapped_name="PublishedNotPublishedItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38037" type="String" is_localization="false" size="255" />
+    <attribute name="Alias" mapped_name="Alias" id="38038" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="627" name="ReplacingPlaceholdersItem" mapped_name="ReplacingPlaceholdersItem" plural_mapped_name="ReplacingPlaceholdersItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="38039" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="628" name="FileFieldsItem" mapped_name="FileFieldsItem" plural_mapped_name="FileFieldsItems" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="FileItem" mapped_name="FileItem" id="38182" type="File" is_localization="false" />
+  </content>
+  <content id="694" name="SymmetricRelationArticles" mapped_name="SymmetricRelationArticle" plural_mapped_name="SymmetricRelationArticles" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="SymmetricRelation" mapped_name="SymmetricRelation" id="38259" type="M2M" is_localization="false" related_content_id="695" link_id="100" use_separate_reverse_views="false" />
+  </content>
+  <content id="695" name="ToSymmetricRelationAtricles" mapped_name="ToSymmetricRelationAtricle" plural_mapped_name="ToSymmetricRelationAtricles" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="ToSymmetricRelation" mapped_name="ToSymmetricRelation" id="38260" type="M2M" is_localization="false" related_content_id="694" link_id="101" use_separate_reverse_views="false" />
+  </content>
+  <content id="993" name="MtMItemForUpdate" mapped_name="MtMItemForUpdate" plural_mapped_name="MtMItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="39282" type="String" is_localization="false" size="255" />
+    <attribute name="Reference" mapped_name="Reference" id="39284" type="M2M" is_localization="false" related_content_id="994" link_id="149" use_separate_reverse_views="false" />
+  </content>
+  <content id="994" name="MtMDictionaryForUpdate" mapped_name="MtMDictionaryForUpdate" plural_mapped_name="MtMDictionaryForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="39283" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="998" name="OtMItemForUpdate" mapped_name="OtMItemForUpdate" plural_mapped_name="OtMItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="39290" type="String" is_localization="false" size="255" />
+    <attribute name="Reference" mapped_back_name="BackReference" mapped_name="Reference" id="39293" type="O2M" is_localization="false" related_content_id="999" has_m2o="false" />
+  </content>
+  <content id="999" name="OtMDictionaryForUpdate" mapped_name="OtMDictionaryForUpdate" plural_mapped_name="OtMDictionaryForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="Title" mapped_name="Title" id="39291" type="String" is_localization="false" size="255" />
+  </content>
+  <content id="1002" name="DateItemForUpdate" mapped_name="DateItemForUpdate" plural_mapped_name="DateItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="DateValueField" mapped_name="DateValueField" id="39298" type="Date" is_localization="false" />
+  </content>
+  <content id="1003" name="TimeItemForUpdate" mapped_name="TimeItemForUpdate" plural_mapped_name="TimeItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="TimeValueField" mapped_name="TimeValueField" id="39299" type="Time" is_localization="false" />
+  </content>
+  <content id="1004" name="DateTimeItemForUpdate" mapped_name="DateTimeItemForUpdate" plural_mapped_name="DateTimeItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="DateTimeValueField" mapped_name="DateTimeValueField" id="39300" type="DateTime" is_localization="false" />
+  </content>
+  <content id="1008" name="FileItemForUpdate" mapped_name="FileItemForUpdate" plural_mapped_name="FileItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="FileValueField" mapped_name="FileValueField" id="39308" type="File" is_localization="false" />
+  </content>
+  <content id="1009" name="ImageItemForUpdate" mapped_name="ImageItemForUpdate" plural_mapped_name="ImageItemsForUpdate" use_default_filtration="true" virtual="0" user_query="0">
+    <attribute name="ImageValueField" mapped_name="ImageValueField" id="39309" type="Image" is_localization="false" />
+  </content>
+  <link id="100" self="0" content_id="694" linked_content_id="695" mapped_name="SymmetricRelationArticlesToSymmetricRelationAtriclesArticle" plural_mapped_name="SymmetricRelationArticlesToSymmetricRelationAtriclesArticles" />
+  <link id="101" self="0" content_id="695" linked_content_id="694" mapped_name="ToSymmetricRelationAtriclesSymmetricRelationArticlesArticle" plural_mapped_name="ToSymmetricRelationAtriclesSymmetricRelationArticlesArticles" />
+  <link id="149" self="0" content_id="993" linked_content_id="994" mapped_name="MtMItemForUpdateMtMDictionaryForUpdateArticle" plural_mapped_name="MtMItemForUpdateMtMDictionaryForUpdateArticles" />
+  <status_type id="141" name="Created" site_id="52" />
+  <status_type id="142" name="Approved" site_id="52" />
+  <status_type id="143" name="Published" site_id="52" />
+  <status_type id="144" name="None" site_id="52" />
+  <status_type id="145" name="Created" site_id="53" />
+  <status_type id="146" name="Approved" site_id="53" />
+  <status_type id="147" name="Published" site_id="53" />
+  <status_type id="148" name="None" site_id="53" />
+  <status_type id="169" name="Created" site_id="59" />
+  <status_type id="170" name="Approved" site_id="59" />
+  <status_type id="171" name="Published" site_id="59" />
+  <status_type id="172" name="None" site_id="59" />
+  <status_type id="173" name="Created" site_id="60" />
+  <status_type id="174" name="Approved" site_id="60" />
+  <status_type id="175" name="Published" site_id="60" />
+  <status_type id="176" name="None" site_id="60" />
+  <status_type id="237" name="Created" site_id="76" />
+  <status_type id="238" name="Approved" site_id="76" />
+  <status_type id="239" name="Published" site_id="76" />
+  <status_type id="240" name="None" site_id="76" />
+</schema>

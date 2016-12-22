@@ -1,14 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Web;
+using System.Xml.Linq;
+using System.Xml.XPath;
+using FluentAssertions;
 using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
+using Ploeh.AutoFixture.Xunit2;
 using QP8.WebMvc.Tests.Infrastructure.Attributes;
+using QP8.WebMvc.Tests.Infrastructure.Specimens;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Adapters;
 using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
+using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
@@ -23,6 +33,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
         public XmlDbUpdateTests()
         {
             _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization()).Customize(new MultipleCustomization());
+            _fixture.Customizations.Add(new NameValueSpecimenBuilder());
             _fixture.Customize<XmlDbUpdateRecordedAction>(m => m.Without(action => action.Lcid));
 
             QPContext.CurrentDbConnectionString = _fixture.Create<string>();
@@ -203,6 +214,77 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             // Verify outcome
             dbLogService.Verify(m => m.InsertActionLogEntry(It.IsAny<XmlDbUpdateActionsLogModel>()), Times.Exactly(4));
         }
+
+        [Theory, AutoData, Trait("XmlDbUpdate", "ActionSerializing")]
+        public void GetXmlDbUpdateRecordedAction_WhenSerializingForRecord_ShouldIncludeRootElement(string currentDbVersion, string backendUrl)
+        {
+            // Fixture setup
+            var actionToRecord = _fixture.Create<XmlDbUpdateRecordedAction>();
+
+            // Exercise system
+            IEnumerable<XElement> actualElements;
+            using (new NonQpEnvironmentContext(null))
+            {
+                var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl);
+                actualElements = resultXmlDocument.XPathSelectElements("/actions");
+            }
+
+            // Verify outcome
+            actualElements.Should().NotBeNullOrEmpty();
+        }
+
+        [Theory, AutoData, Trait("XmlDbUpdate", "ActionSerializing")]
+        public void GetXmlDbUpdateRecordedAction_WhenSerializingForLogging_ShouldNotIncludeRootElement(string currentDbVersion, string backendUrl)
+        {
+            // Fixture setup
+            var actionToRecord = _fixture.Create<XmlDbUpdateRecordedAction>();
+
+            // Exercise system
+            IEnumerable<XElement> actualElements;
+            using (new NonQpEnvironmentContext(null))
+            {
+                var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl, true);
+                actualElements = resultXmlDocument.XPathSelectElements("/actions");
+            }
+
+            // Verify outcome
+            actualElements.Should().BeNullOrEmpty();
+        }
+
+        [Theory, AutoData, Trait("XmlDbUpdate", "ActionSerializing")]
+        public void GetXmlDbUpdateRecordedAction_WhenSerializingForLogging_ShouldNotIncludeXmlDeclaration(string currentDbVersion, string backendUrl)
+        {
+            // Fixture setup
+            var actionToRecord = _fixture.Create<XmlDbUpdateRecordedAction>();
+
+            // Exercise system
+            string resultXml;
+            using (new NonQpEnvironmentContext(null))
+            {
+                resultXml = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl, true).ToNormalizedString(true);
+            }
+
+            // Verify outcome
+            Assert.False(resultXml.StartsWith("<?"));
+        }
+
+        [Theory, AutoData, Trait("XmlDbUpdate", "ActionSerializing")]
+        public void GetXmlDbUpdateRecordedAction_WhenSerializing_ShouldIncludeFormElements(string currentDbVersion, string backendUrl)
+        {
+            // Fixture setup
+            var actionToRecord = _fixture.Create<XmlDbUpdateRecordedAction>();
+            var expectedElementsCount = actionToRecord.Form.Count;
+
+            // Exercise system
+            int actualElementsCount;
+            using (new NonQpEnvironmentContext(null))
+            {
+                var resultXmlDocument = XmlDbUpdateSerializerHelpers.SerializeAction(actionToRecord, currentDbVersion, backendUrl);
+                actualElementsCount = resultXmlDocument.XPathSelectElements("//action/field").Count();
+            }
+
+            // Verify outcome
+            Assert.Equal(expectedElementsCount, actualElementsCount);
+        }
     }
 }
-

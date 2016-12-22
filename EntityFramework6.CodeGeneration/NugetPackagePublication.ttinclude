@@ -1,0 +1,5 @@
+<#@ template debug="false" hostspecific="true" language="C#" #>
+<#+ void AddPublicationScript(NugetContext context){#>
+nuget pack NugetPackage.nuspec
+nuget push QP8.EntityFramework6.<#=context.Version#>.nupkg -Source <#=context.PackageSource#>
+<#+}#>

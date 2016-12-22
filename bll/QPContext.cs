@@ -577,6 +577,7 @@ namespace Quantumart.QP8.BLL
                             Roles = new string[0]
                         };
 
+                        dbUser.LastLogOn = DateTime.Now;
                         CreateSuccessfulSession(user, dbContext);
                         var context = HttpContext.Current;
                         if (context != null)

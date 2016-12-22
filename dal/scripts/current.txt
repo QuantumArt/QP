@@ -1,3 +1,4 @@
+FixContentItemTriggers
 MultipleUpdate
 OptimizeHierarchy
 VeButtons
