@@ -609,4 +609,7 @@
   <data name="GuidWrongFormat" xml:space="preserve">
     <value>Неверный формат уникального идентификатора</value>
   </data>
+  <data name="ShouldContainAllSelectedCases" xml:space="preserve">
+    <value>Результат должен содержать ВСЕ выбранные варианты</value>
+  </data>
 </root>

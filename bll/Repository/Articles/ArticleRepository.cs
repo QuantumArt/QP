@@ -132,7 +132,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 exstensionContentIds = searchQueryParams.Select(p => p.ContentID).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
                 contentReferences = searchQueryParams
                     .Where(p => !string.IsNullOrEmpty(p.ContentID) && !string.IsNullOrEmpty(p.ReferenceFieldID))
-                    .Select(p => new ContentReference { ReferenceFieldID = int.Parse(p.ReferenceFieldID), TargetContentId = int.Parse(p.ContentID) })
+                    .Select(p => new ContentReference(int.Parse(p.ContentID), int.Parse(p.ReferenceFieldID)))
                     .ToArray();
             }
 

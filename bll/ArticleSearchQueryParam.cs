@@ -1,8 +1,5 @@
 ﻿namespace Quantumart.QP8.BLL
 {
-    /// <summary>
-    /// Параметр запроса для поиска статей
-    /// </summary>
     public class ArticleSearchQueryParam
     {
         public ArticleFieldSearchType SearchType { get; set; }

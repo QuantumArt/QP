@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -1819,13 +1819,13 @@ namespace Quantumart.QP8.DAL
             IList<SqlParameter> sqlParameters = null, bool useSql2012Syntax = false,
             IEnumerable<int> filterIds = null)
         {
-            var forceCountQuery = entityTypeCode == "content_item" &&
-                                  (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
+            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
+
             totalRecords = 0;
             DataTable result = null;
             if (useSecurity)
             {
-                var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, groupId, startLevel, endLevel,entityTypeCode, parentEntityTypeCode, parentEntityId);
+                var securitySql = GetPermittedItemsAsQuery(sqlConnection, userId, groupId, startLevel, endLevel, entityTypeCode, parentEntityTypeCode, parentEntityId);
                 fromBlock = fromBlock.Replace("<$_security_insert_$>", securitySql);
             }
 
@@ -2150,7 +2150,7 @@ namespace Quantumart.QP8.DAL
             Dictionary<int, string> referenceMap = null;
             if (options.ContentReferences.Any())
             {
-                referenceMap = GetFieldNames(sqlConnection, options.ContentReferences.Select(r => r.ReferenceFieldID).ToArray());
+                referenceMap = GetFieldNames(sqlConnection, options.ContentReferences.Select(r => r.ReferenceFieldId).ToArray());
             }
 
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
@@ -2217,28 +2217,21 @@ namespace Quantumart.QP8.DAL
                 string inverseString;
                 if (!linkFilter.IsNull)
                 {
-                    inverseString = linkFilter.Inverse ? "NOT" : "";
                     var paramName = "@link" + linkFilter.LinkId;
+                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY item_id HAVING COUNT(item_id) = (SELECT COUNT(*) FROM {paramName})" : string.Empty;
                     sqlParams.Add(GetIdsDatatableParam(paramName, linkFilter.Ids));
 
+                    inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
-                        ? string.Format(
-                            "{2} EXISTS (select item_id from dbo.item_link_united with(nolock) where {3}.content_item_id = item_id and link_id = {0} AND linked_item_id in (select id from {1}))",
-                            linkFilter.LinkId, paramName, inverseString, tableAlias)
-                        : string.Format(
-                            "{3} EXISTS (select * from content_{0}_united cu with(nolock) where {4}.content_item_id = [{1}] and cu.content_item_id in (select id from {2})) ",
-                            linkFilter.ContentId, linkFilter.FieldName, paramName, inverseString, tableAlias);
+                        ? $"{inverseString} EXISTS (select item_id from dbo.item_link_united with(nolock) where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId} AND linked_item_id in (select id from {paramName}){unionAllSqlString})"
+                        : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu with(nolock) where {tableAlias}.content_item_id = [{linkFilter.FieldName}] and cu.content_item_id in (select id from {paramName})) ";
                 }
                 else
                 {
-                    inverseString = linkFilter.Inverse ? "" : "NOT";
+                    inverseString = linkFilter.Inverse ? string.Empty : "NOT ";
                     internalSql = linkFilter.IsManyToMany
-                        ? string.Format(
-                            "{1} EXISTS (select item_id from dbo.item_link_united with(nolock) where {2}.content_item_id = item_id and link_id = {0})",
-                            linkFilter.LinkId, inverseString, tableAlias)
-                        : string.Format(
-                            "{2} EXISTS (select * from content_{0}_united with(nolock) where {3}.content_item_id = [{1}]) ",
-                            linkFilter.ContentId, linkFilter.FieldName, inverseString, tableAlias);
+                        ? $"{inverseString}EXISTS (select item_id from dbo.item_link_united with(nolock) where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId})"
+                        : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united with(nolock) where {tableAlias}.content_item_id = [{linkFilter.FieldName}]) ";
                 }
 
                 if (whereBuilder.Length != 0)
@@ -2437,8 +2430,8 @@ namespace Quantumart.QP8.DAL
                         selectBuilder.AppendFormat(", c.[{0}]", fieldName);
                     }
                 }
-                var relatedAttributeId = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID");
 
+                var relatedAttributeId = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID");
                 if (relatedAttributeId.HasValue)
                 {
                     var tableAlias = "rel_" + relatedAttributeId;
@@ -2453,11 +2446,9 @@ namespace Quantumart.QP8.DAL
                     }
 
                     var attributeTypeId = (int)row.Field<decimal>("RELATED_ATTRIBUTE_TYPE_ID");
-
                     var currentBlock = GetCurrentBlock(tableAlias, relatedFieldName, attributeTypeId);
 
                     selectBuilder.AppendFormat(", {0} AS {1}", currentBlock, fieldAlias);
-
                     fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_UNITED AS {1} with(nolock) ON c.[{2}] = {1}.content_item_id ", relatedContentId, tableAlias, fieldName);
 
                     var relatedAttributeId2 = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID2");
@@ -2521,9 +2512,9 @@ namespace Quantumart.QP8.DAL
                 fromBuilder.AppendFormatLine(" INNER JOIN ({0}) AS pl ON {1}.CONTENT_ITEM_ID = pl.ALLOWED_CONTENT_ITEM_ID", innerSql, tablePrefix);
             }
 
-            foreach (var reference in options.ContentReferences.Where(reference => referenceMap.ContainsKey(reference.ReferenceFieldID)))
+            foreach (var reference in options.ContentReferences.Where(reference => referenceMap.ContainsKey(reference.ReferenceFieldId)))
             {
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0}_{1} with(nolock) ON c.[{2}] = c_{0}_{1}.CONTENT_ITEM_ID", reference.TargetContentId, reference.ReferenceFieldID, referenceMap[reference.ReferenceFieldID]);
+                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0}_{1} with(nolock) ON c.[{2}] = c_{0}_{1}.CONTENT_ITEM_ID", reference.TargetContentId, reference.ReferenceFieldId, referenceMap[reference.ReferenceFieldId]);
             }
 
             foreach (var contentId in options.ExstensionContentIds)
@@ -3069,8 +3060,8 @@ namespace Quantumart.QP8.DAL
 
             var sb = new StringBuilder();
             sb.AppendLine("if exists(select content_data_id from content_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id)");
-            sb.AppendLine("	update content_data set data = @new_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id");
-            sb.AppendLine("else	insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA) values(@item_id, @attr_id, @new_data)");
+            sb.AppendLine(" update content_data set data = @new_data where ATTRIBUTE_ID = @attr_id and CONTENT_ITEM_ID = @item_id");
+            sb.AppendLine("else insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA) values(@item_id, @attr_id, @new_data)");
             using (var cmd = SqlCommandFactory.Create(sb.ToString(), connection))
             {
                 cmd.CommandType = CommandType.Text;
@@ -3107,7 +3098,7 @@ namespace Quantumart.QP8.DAL
         {
             const string query = "select 1 as A into #disable_td_delete_item_o2m_nullify; " +
                 "delete FROM CONTENT_ITEM WHERE CONTENT_ITEM_ID in (" +
-                "	select top(@deleted_count) CONTENT_ITEM_ID from CONTENT_ITEM where CONTENT_ID = @content_id order by CONTENT_ITEM_ID " +
+                "   select top(@deleted_count) CONTENT_ITEM_ID from CONTENT_ITEM where CONTENT_ID = @content_id order by CONTENT_ITEM_ID " +
                 ")";
 
             using (var cmd = SqlCommandFactory.Create(query, connection))
@@ -6209,56 +6200,56 @@ namespace Quantumart.QP8.DAL
             .Append(Environment.NewLine)
             .AppendLine("protected void LoadContainer(Object sender, EventArgs e)")
             .AppendLine("{")
-            .AppendLine("	container.DataSource = Data;")
-            .AppendLine("	container.DataBind();")
+            .AppendLine("   container.DataSource = Data;")
+            .AppendLine("   container.DataBind();")
             .AppendLine("}")
             .Append(Environment.NewLine)
             .AppendLine("override public void InitUserHandlers(EventArgs e)")
             .AppendLine("{")
-            .AppendLine("	LoadContainer(this, e);")
+            .AppendLine("   LoadContainer(this, e);")
             .AppendLine("}")
             .Append(Environment.NewLine)
             .AppendLine("protected void R1_ItemCreated(Object Sender, RepeaterItemEventArgs e)")
             .AppendLine("{")
-            .AppendLine("	if(e.Item.ItemType == ListItemType.Item) {")
-            .AppendLine("		id = Int32.Parse(Field(Data.Rows[e.Item.ItemIndex], \"content_item_id\"));")
-            .AppendLine("			backendLink = String.Format(\"<a href='{0}?actionCode=edit_article&entityTypeCode=article&customerCode={1}&entityId={2}'>Link to the article</a>\",\"" + backendUrl + "\", \"" + currentCustomerCode + "\", id);")
-            .AppendLine("		lastModifiedBy = Int32.Parse(Field(Data.Rows[e.Item.ItemIndex], \"last_modified_by\"));")
-            .AppendLine("		statusTypeId = Int32.Parse(Field(Data.Rows[e.Item.ItemIndex], \"status_type_id\"));")
-            .AppendLine("		switch (Value(\"on\")) {")
-            .AppendLine("		case \"for_status_changed\": ")
-            .AppendLine("			prevStatus = Status.GetPreviousStatus(id);")
-            .AppendLine("			nextStatus = Status.GetStatusName(statusTypeId);")
-            .AppendLine("			eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article status was changed from \"+")
+            .AppendLine("   if(e.Item.ItemType == ListItemType.Item) {")
+            .AppendLine("       id = Int32.Parse(Field(Data.Rows[e.Item.ItemIndex], \"content_item_id\"));")
+            .AppendLine("           backendLink = String.Format(\"<a href='{0}?actionCode=edit_article&entityTypeCode=article&customerCode={1}&entityId={2}'>Link to the article</a>\",\"" + backendUrl + "\", \"" + currentCustomerCode + "\", id);")
+            .AppendLine("       lastModifiedBy = Int32.Parse(Field(Data.Rows[e.Item.ItemIndex], \"last_modified_by\"));")
+            .AppendLine("       statusTypeId = Int32.Parse(Field(Data.Rows[e.Item.ItemIndex], \"status_type_id\"));")
+            .AppendLine("       switch (Value(\"on\")) {")
+            .AppendLine("       case \"for_status_changed\": ")
+            .AppendLine("           prevStatus = Status.GetPreviousStatus(id);")
+            .AppendLine("           nextStatus = Status.GetStatusName(statusTypeId);")
+            .AppendLine("           eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article status was changed from \"+")
             .AppendLine("\"<strong>{0}</strong> to <strong>{1}</strong></div>\",")
             .AppendLine(" prevStatus, Status.GetStatusName(statusTypeId));")
-            .AppendLine("			break;")
-            .AppendLine("		case \"for_status_partially_changed\":")
-            .AppendLine("			eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was modified by <strong>{0}</strong><br>\"+")
+            .AppendLine("           break;")
+            .AppendLine("       case \"for_status_partially_changed\":")
+            .AppendLine("           eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was modified by <strong>{0}</strong><br>\"+")
             .AppendLine("\"Already Approved: {1}<br>Waiting For Approval: {2}</div>\",")
             .AppendLine(" Status.GetUserName(lastModifiedBy), Status.GetParallelApproved(id, statusTypeId), Status.GetParallelWaitingForApproval(id));")
-            .AppendLine("			break;")
-            .AppendLine("		case \"for_create\": ")
-            .AppendLine("			eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was created by <strong>{0}</strong></div>\", ")
+            .AppendLine("           break;")
+            .AppendLine("       case \"for_create\": ")
+            .AppendLine("           eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was created by <strong>{0}</strong></div>\", ")
             .AppendLine("Status.GetUserName(lastModifiedBy));")
-            .AppendLine("			break;")
-            .AppendLine("		case \"for_modify\": ")
-            .AppendLine("			eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was modified by <strong>{0}</strong></div>\", ")
+            .AppendLine("           break;")
+            .AppendLine("       case \"for_modify\": ")
+            .AppendLine("           eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was modified by <strong>{0}</strong></div>\", ")
             .AppendLine("Status.GetUserName(lastModifiedBy));")
-            .AppendLine("			break;")
-            .AppendLine("		case \"for_remove\": ")
-            .AppendLine("			eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was removed by <strong>{0}</strong></div>\", ")
+            .AppendLine("           break;")
+            .AppendLine("       case \"for_remove\": ")
+            .AppendLine("           eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was removed by <strong>{0}</strong></div>\", ")
             .AppendLine("Status.GetUserName(lastModifiedBy));")
-            .AppendLine("			break;")
-            .AppendLine("		case \"for_frontend\": ")
-            .AppendLine("			eventDescription = \"<div style='margin: 5px 0px;'>Article was requested from frontend.</div>\";")
-            .AppendLine("			break;")
-            .AppendLine("		default: ")
-            .AppendLine("			eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was modified by <strong>{0}</strong></div>\", ")
+            .AppendLine("           break;")
+            .AppendLine("       case \"for_frontend\": ")
+            .AppendLine("           eventDescription = \"<div style='margin: 5px 0px;'>Article was requested from frontend.</div>\";")
+            .AppendLine("           break;")
+            .AppendLine("       default: ")
+            .AppendLine("           eventDescription = String.Format(\"<div style='margin: 5px 0px;'>Article was modified by <strong>{0}</strong></div>\", ")
             .AppendLine("Status.GetUserName(lastModifiedBy));")
-            .AppendLine("			break;")
-            .AppendLine("		}")
-            .AppendLine("	}")
+            .AppendLine("           break;")
+            .AppendLine("       }")
+            .AppendLine("   }")
             .AppendLine("}");
 
             return codeBehind.ToString();
@@ -6269,9 +6260,9 @@ namespace Quantumart.QP8.DAL
             var formatBody = new StringBuilder();
             formatBody.AppendLine(GetDefaultNotificationStyle())
             .AppendLine("<%")
-            .AppendLine("	Dim prevStatus")
-            .AppendLine("	prevStatus = GetPreviousStatus(Field(\"content_item_id\"))")
-            .AppendLine("	If IsEmpty(prevStatus) Then prevStatus = \"None\" ")
+            .AppendLine("   Dim prevStatus")
+            .AppendLine("   prevStatus = GetPreviousStatus(Field(\"content_item_id\"))")
+            .AppendLine("   If IsEmpty(prevStatus) Then prevStatus = \"None\" ")
             .AppendLine("%>")
             .AppendLine("<!-- Article Status -->")
             .AppendLine("<div style='margin: 5px 0px;'>Article status was changed from <strong><" + "%=prevStatus%" + "></strong> to <strong><" + "%=GetStatusName(Field(\"status_type_id\"))%" + "></strong></div>")
@@ -6319,23 +6310,23 @@ namespace Quantumart.QP8.DAL
             defaultStyle.AppendLine("<style type='text/css'>")
             .AppendLine(".my_table ")
             .AppendLine("{")
-            .AppendLine("	border: 1px solid Black;")
+            .AppendLine("   border: 1px solid Black;")
             .AppendLine("}")
             .AppendLine("td.left_td")
             .AppendLine("{")
-            .AppendLine("	border-bottom-color:	Black;")
-            .AppendLine("	border-bottom-style:	solid;")
-            .AppendLine("	border-bottom-width:	1px;")
-            .AppendLine("	border-right-style:		solid;")
-            .AppendLine("	border-right-width:		1px;")
-            .AppendLine("	padding:				4px;")
+            .AppendLine("   border-bottom-color:    Black;")
+            .AppendLine("   border-bottom-style:    solid;")
+            .AppendLine("   border-bottom-width:    1px;")
+            .AppendLine("   border-right-style:     solid;")
+            .AppendLine("   border-right-width:     1px;")
+            .AppendLine("   padding:                4px;")
             .AppendLine("}")
             .AppendLine("td.right_td")
             .AppendLine("{")
-            .AppendLine("	border-bottom-color:	Black;")
-            .AppendLine("	border-bottom-style:	solid;")
-            .AppendLine("	border-bottom-width:	1px;")
-            .AppendLine("	padding:				4px;")
+            .AppendLine("   border-bottom-color:    Black;")
+            .AppendLine("   border-bottom-style:    solid;")
+            .AppendLine("   border-bottom-width:    1px;")
+            .AppendLine("   padding:                4px;")
             .AppendLine("}")
             .AppendLine("</style>");
 
@@ -6541,7 +6532,7 @@ namespace Quantumart.QP8.DAL
 
         public static IEnumerable<DataRow> GetRelationshipsBetweenAttributes(SqlConnection sqlConnection, int oldSiteId, int newSiteId, string relationsBetweenContentsXml)
         {
-            var query = $@"	declare @xmlprms xml = '{relationsBetweenContentsXml}'
+            var query = $@" declare @xmlprms xml = '{relationsBetweenContentsXml}'
 
                                 ;with relationsBetweenContents as (
                                     select doc.col.value('./@sourceId', 'int') source_content_id
@@ -6877,7 +6868,7 @@ namespace Quantumart.QP8.DAL
 
         public static IEnumerable<DataRow> GetRelationsBetweenStatuses(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
-            const string query = @"	select st1.STATUS_TYPE_ID as source_status_type_id
+            const string query = @" select st1.STATUS_TYPE_ID as source_status_type_id
                                                     ,st2.STATUS_TYPE_ID as destination_status_type_id
                                             from [dbo].[status_type] as st1 (NOLOCK)
                                             inner join [dbo].[status_type] as st2 (NOLOCK)
@@ -6954,7 +6945,7 @@ namespace Quantumart.QP8.DAL
                                         from @xmlprmsContentItems.nodes('/items/item') doc(col)
 
                                 update copydata
-                                set [data] =(	case	when at.[TYPE_NAME] = 'Dynamic Image' then replace(cd.data, 'field_' + CAST(cd.ATTRIBUTE_ID as varchar), 'field_' + CAST(ra.destination_attribute_id as varchar))
+                                set [data] =(   case    when at.[TYPE_NAME] = 'Dynamic Image' then replace(cd.data, 'field_' + CAST(cd.ATTRIBUTE_ID as varchar), 'field_' + CAST(ra.destination_attribute_id as varchar))
                                                         when at.[TYPE_NAME] = 'Relation Many-to-One' and cd.DATA is not null then CAST(ra1.destination_attribute_id as varchar)
                                                         else cd.data
                                                 end)
@@ -7762,7 +7753,7 @@ namespace Quantumart.QP8.DAL
                 forAttributesOfContents = $"and ca.CONTENT_ID in ({newContentIds})";
             }
 
-            var query = $@"	    declare @xmlprms xml = '{relationsBetweenAttributesXml}'
+            var query = $@"     declare @xmlprms xml = '{relationsBetweenAttributesXml}'
 
                                     ;with relationsBetweenAttributes as (
                                         select doc.col.value('./@sourceId', 'int') source_attribute_id
@@ -8004,7 +7995,7 @@ namespace Quantumart.QP8.DAL
                                 into @newvirtualcontents;
 
 
-                            select 	content_id_old
+                            select  content_id_old
                                 , content_id_new
                                 , virtual_type
                                 , sqlquery
@@ -8237,7 +8228,7 @@ namespace Quantumart.QP8.DAL
 
         public static IEnumerable<DataRow> GetRelationsBetweenPages(SqlConnection sqlConnection, string relationsBetweenTemplates)
         {
-            var query = $@"	declare @xmlprms xml = '{relationsBetweenTemplates}'
+            var query = $@" declare @xmlprms xml = '{relationsBetweenTemplates}'
 
                                 ;with relations_between_templates as (
                                         select doc.col.value('./@sourceId', 'int') source_page_template_id
@@ -8781,7 +8772,7 @@ namespace Quantumart.QP8.DAL
                 { "modified", DateTime.Now.ToString(CultureInfo.GetCultureInfo("en-US")) }
             };
 
-            var query = $@"	set nocount on;
+            var query = $@" set nocount on;
                 if @new_content_ids is not null begin
                     declare @content_ids table
                     (
@@ -8936,7 +8927,7 @@ namespace Quantumart.QP8.DAL
                                             from @xmlprmsAttributes.nodes('/items/item') doc(col)
                                         )
                                     update [dbo].[content_attribute]
-                                    set		[related_attribute_id] = rai.attr_new
+                                    set     [related_attribute_id] = rai.attr_new
                                           ,[related_image_attribute_id]= ria.attr_new
                                           ,[persistent_attr_id]= pai.attr_new
                                           ,[join_attr_id]= jai.attr_new
@@ -8999,7 +8990,7 @@ namespace Quantumart.QP8.DAL
 
         public static void UpdateContentsParentContentId(SqlConnection sqlConnection, int destinationSiteId, string relationsBetweenContentsXml)
         {
-            var query = $@"	declare @xmlprmsContents xml = '{relationsBetweenContentsXml}'
+            var query = $@" declare @xmlprmsContents xml = '{relationsBetweenContentsXml}'
 
                                 ;with relationsBetweenContents as (
                                     select doc.col.value('./@sourceId', 'int') source_content_id
@@ -9215,7 +9206,7 @@ namespace Quantumart.QP8.DAL
 
         public static IEnumerable<DataRow> CopyContentLinks(SqlConnection sqlConnection, int sourceSiteId, int destinationSiteId)
         {
-            const string query = @"	set nocount on;
+            const string query = @" set nocount on;
 
                                 --copying links between contents
                                 declare @relations_between_content_links table(

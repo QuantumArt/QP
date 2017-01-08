@@ -5,7 +5,7 @@
 	<legend>@ArticleStrings.SearchBlock_FullTextBlockTitle</legend>
 	<div class="fullTextBlock">
         <select id="@ViewBag.TextFieldsComboID" class="dropDownList">
-                @{var groups = ((IEnumerable<IGrouping<string, Quantumart.QP8.BLL.ArticleSearchableField>>)ViewBag.SearchableFieldList).ToList();}
+        @{var groups = ((IEnumerable<IGrouping<string, Quantumart.QP8.BLL.ArticleSearchableField>>)ViewBag.SearchableFieldList).ToList();}
 				@foreach (var g in groups)
 				{
                     if (g.Key == null || groups.Count() <= 1)
@@ -27,8 +27,7 @@
 				}
 			</select>
 
-		@Html.TextBox((string)ViewBag.QueryTextBoxID, string.Empty, new { @class = "textbox" })
-
+      @Html.TextBox((string)ViewBag.QueryTextBoxID, string.Empty, new { @class = "textbox" })
 	    <label class="hidden">&nbsp;@ArticleStrings.SearchBlock_FullTextBlockSearchResultLimitTitle:&nbsp;@ArticleFullTextSearchSettings.SearchResultLimit</label>
 	</div>
 </fieldset>

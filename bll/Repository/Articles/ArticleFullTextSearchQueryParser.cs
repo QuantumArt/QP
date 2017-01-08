@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics.Contracts;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Utils.FullTextSearch;
 
@@ -16,7 +16,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         public ArticleFullTextSearchQueryParser(ISearchGrammarParser iSearchGrammarParser)
         {
-            Contract.Requires(iSearchGrammarParser != null);
+            Ensure.NotNull(iSearchGrammarParser);
             _iSearchGrammarParser = iSearchGrammarParser;
         }
 
@@ -27,14 +27,14 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         /// <param name="hasError">есть ли ошибка при парсинге поисковой строки</param>
         /// <param name="fieldIdList">список id полей(атрибутов)</param>
         /// <param name="queryString">параметры Full Text поиска для Sql Server</param>
-        /// <param name="rawQueryString"></param>
+        /// <param name="rawQueryString">Строка запроса</param>
         /// <returns>True - искать, False - не искать</returns>
         public bool Parse(IEnumerable<ArticleSearchQueryParam> searchQueryParams, out bool? hasError, out string fieldIdList, out string queryString, out string rawQueryString)
         {
             hasError = null;
             fieldIdList = null;
             queryString = null;
-			rawQueryString = null;
+            rawQueryString = null;
 
             var processedParam = searchQueryParams?.FirstOrDefault(p => p.SearchType == ArticleFieldSearchType.FullText);
             if (processedParam == null)
@@ -42,9 +42,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return false;
             }
 
-            // проверям формат FieldID
-			var allIds = false;
-			int[] ids = null;
+            var allIds = false;
+            int[] ids = null;
             if (string.IsNullOrWhiteSpace(processedParam.FieldID))
             {
                 allIds = true;
@@ -93,7 +92,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             hasError = false;
             fieldIdList = allIds ? string.Empty : string.Join(",", ids);
             queryString = Cleaner.ToSafeSqlString(sqlQString);
-			rawQueryString = qString;
+            rawQueryString = qString;
 
             return true;
         }

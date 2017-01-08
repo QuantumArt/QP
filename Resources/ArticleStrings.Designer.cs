@@ -527,7 +527,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("Friday", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Entered guid is already exists.
         /// </summary>
@@ -536,7 +536,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GuidShouldBeUnique", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Wrong guid format.
         /// </summary>
@@ -545,7 +545,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("GuidWrongFormat", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Hours.
         /// </summary>
@@ -1159,6 +1159,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Result must contain ALL selected cases.
+        /// </summary>
+        public static string ShouldContainAllSelectedCases {
+            get {
+                return ResourceManager.GetString("ShouldContainAllSelectedCases", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show End Time.
         /// </summary>
         public static string ShowEndTime {
@@ -1346,7 +1355,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("TotalSelectedArticles", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to The number of current article variations - &lt;span class=&quot;currentTotal&quot;&gt;&lt;/span&gt;.
         /// </summary>
@@ -1382,7 +1391,7 @@ namespace Quantumart.QP8.Resources {
                 return ResourceManager.GetString("UniqueId", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Create Like operation doesn&apos;t support some of the content unique constraints .
         /// </summary>
