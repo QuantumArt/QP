@@ -186,9 +186,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                var content = ContentRepository.GetById(contentId);
-
                 bool useMainTable;
+                var content = ContentRepository.GetById(contentId);
                 var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out useMainTable);
 
                 int[] extensionContentIds;
@@ -502,9 +501,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return string.Empty;
             }
 
-            var content = ContentRepository.GetById(treeField.ContentId);
-
             bool useMainTable;
+            var content = ContentRepository.GetById(treeField.ContentId);
             var contextFilter = GetContextFilter(contextQuery, content.Fields.ToList(), out useMainTable);
 
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(filterQuery, commonFilter, contextFilter));

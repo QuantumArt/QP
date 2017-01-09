@@ -1819,8 +1819,6 @@ namespace Quantumart.QP8.DAL
             IList<SqlParameter> sqlParameters = null, bool useSql2012Syntax = false,
             IEnumerable<int> filterIds = null)
         {
-            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
-
             totalRecords = 0;
             DataTable result = null;
             if (useSecurity)
@@ -1829,6 +1827,7 @@ namespace Quantumart.QP8.DAL
                 fromBlock = fromBlock.Replace("<$_security_insert_$>", securitySql);
             }
 
+            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
             if (countOnly || forceCountQuery)
             {
                 var countBuilder = new StringBuilder();
