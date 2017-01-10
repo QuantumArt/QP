@@ -184,29 +184,30 @@ namespace Quantumart.QP8.DAL
             bool useSecurity,
             IList<int> selectedArticleIds,
             IList<int> idsToFilter,
+            int? searchLimit = null,
             string extraSelect = "",
             string extraFrom = "",
             string orderBy = "")
         {
             var queryBuilder = new StringBuilder();
-
-            queryBuilder.AppendFormatLine(" select c.content_item_id as id, {0}, cast(case WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END as bit) as is_selected ", displayExpression);
+            var selectQuery = searchLimit.HasValue ? $"SELECT DISTINCT TOP ({searchLimit})" : "SELECT";
+            queryBuilder.AppendFormatLine($" {selectQuery} c.content_item_id AS id, {displayExpression}, CAST(CASE WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END AS bit) AS is_selected ");
             queryBuilder.AppendLine(extraSelect ?? string.Empty);
-            queryBuilder.AppendFormatLine(" from content_{0}_united c ", contentId);
+            queryBuilder.AppendFormatLine($" FROM content_{contentId}_united c ");
 
             if (useSecurity)
             {
                 var securitySql = GetPermittedItemsAsQuery(cn, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId);
-                queryBuilder.AppendFormatLine(" inner join ({0}) as pi on c.content_item_id = pi.content_item_id ", securitySql);
+                queryBuilder.AppendFormatLine(" INNER JOIN ({0}) AS pi ON c.content_item_id = pi.content_item_id ", securitySql);
             }
 
-            queryBuilder.Append(selectionMode == ListSelectionMode.AllItems ? " left join " : " inner join ");
-            queryBuilder.AppendFormatLine("( select content_item_id from content_{0} where content_item_id IN (select id from @myData)) as cis on c.content_item_id = cis.content_item_id ", contentId);
+            queryBuilder.Append(selectionMode == ListSelectionMode.AllItems ? " LEFT JOIN " : " INNER JOIN ");
+            queryBuilder.AppendFormatLine("( SELECT content_item_id FROM content_{0} WHERE content_item_id IN (SELECT id FROM @myData)) AS cis ON c.content_item_id = cis.content_item_id ", contentId);
             queryBuilder.AppendLine(extraFrom ?? string.Empty);
-            queryBuilder.AppendLine(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" where {filter}");
+            queryBuilder.AppendLine(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" WHERE {filter}");
 
-            orderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id asc" : orderBy;
-            queryBuilder.AppendLine($" order by {orderBy}");
+            orderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderBy;
+            queryBuilder.AppendLine($" ORDER BY {orderBy}");
 
             return GetDatatableResult(cn, queryBuilder, GetIdsDatatableParam("@ids", idsToFilter), GetIdsDatatableParam("@myData", selectedArticleIds));
         }
@@ -1819,8 +1820,6 @@ namespace Quantumart.QP8.DAL
             IList<SqlParameter> sqlParameters = null, bool useSql2012Syntax = false,
             IEnumerable<int> filterIds = null)
         {
-            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
-
             totalRecords = 0;
             DataTable result = null;
             if (useSecurity)
@@ -1829,6 +1828,7 @@ namespace Quantumart.QP8.DAL
                 fromBlock = fromBlock.Replace("<$_security_insert_$>", securitySql);
             }
 
+            var forceCountQuery = entityTypeCode == "content_item" && (filter == "c.archive = 0" || string.IsNullOrEmpty(filter));
             if (countOnly || forceCountQuery)
             {
                 var countBuilder = new StringBuilder();

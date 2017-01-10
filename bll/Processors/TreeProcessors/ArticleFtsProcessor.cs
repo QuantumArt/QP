@@ -1,10 +1,10 @@
-﻿using Quantumart.QP8.BLL.Repository;
+﻿using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL.DTO;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 
 namespace Quantumart.QP8.BLL.Processors.TreeProcessors
 {

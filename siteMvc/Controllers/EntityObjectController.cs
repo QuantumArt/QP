@@ -57,17 +57,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// Возвращает список дочерних сущностей.
         /// </summary>
         [HttpPost]
-        public JsonNetResult<IList<EntityTreeItem>> GetChildList(string entityTypeCode,
+        public JsonNetResult<IList<EntityTreeItem>> GetChildList(
+            string entityTypeCode,
             int? parentEntityId,
             int? entityId,
             bool returnSelf,
             string filter,
+            string hostFilter,
             string selectItemIDs,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleContextQueryParam[]>))] ArticleContextQueryParam[] contextQuery)
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-            var data = EntityObjectService.GetEntityTreeItems(entityTypeCode, parentEntityId, entityId, returnSelf, filter, selectItemIDs, searchQuery, contextQuery, ftsParser);
+            var data = EntityObjectService.GetEntityTreeItems(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, ftsParser);
             return new JsonNetResult<IList<EntityTreeItem>>(data);
         }
 

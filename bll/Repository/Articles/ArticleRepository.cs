@@ -186,9 +186,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                var content = ContentRepository.GetById(contentId);
-
                 bool useMainTable;
+                var content = ContentRepository.GetById(contentId);
                 var contextFilter = GetContextFilter(contextQueryParams, content.Fields.ToList(), out useMainTable);
 
                 int[] extensionContentIds;
@@ -444,8 +443,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId);
                 var extraFrom = GetExtraFromForRelations(fields);
-
-                var rows = Common.GetArticlesSimpleList(QPConnectionScope.Current.DbConnection,
+                var rows = Common.GetArticlesSimpleList(
+                    QPConnectionScope.Current.DbConnection,
                     QPContext.CurrentUserId,
                     contentId,
                     displayExpression,
@@ -454,6 +453,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     filter,
                     useSecurity,
                     selection.ToArray(),
+                    null,
                     null,
                     string.Empty,
                     extraFrom,
@@ -476,7 +476,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var searchIds = Common.GetFilterAndFtsSearchResult(scope.DbConnection, treeField.ContentId, extensionContentIds, ftsOptions, searchFilterQuery, filterSqlParams).ToList();
                 var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id, treeField.Name);
                 var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField).ToList();
-
                 var treeItemsDict = treeItems.ToDictionary(kv => kv.Id);
                 foreach (var kv in treeItemsDict.Where(ti => searchIds.Contains(int.Parse(ti.Key))))
                 {
@@ -502,12 +501,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 return string.Empty;
             }
 
-            var content = ContentRepository.GetById(treeField.ContentId);
-
             bool useMainTable;
+            var content = ContentRepository.GetById(treeField.ContentId);
             var contextFilter = GetContextFilter(contextQuery, content.Fields.ToList(), out useMainTable);
-
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(filterQuery, commonFilter, contextFilter));
+
             Common.AddLinkFilteringToQuery(linkedFilters, whereBuilder, filterSqlParams);
             return $"SELECT DISTINCT TOP({searchLimit}) c.content_item_id from content_{treeField.ContentId}_united c WHERE {whereBuilder}";
         }
@@ -527,7 +525,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var extraFilter = commonFilter.Replace("c.", "cnt.");
             return idsToFilter == null
                 ? GetArticleTreeForParentResult(null, commonFilter, treeField)
-                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id in (select id from @ids) ", extraFilter, treeField, idsToFilter);
+                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM @ids) ", extraFilter, treeField, idsToFilter);
         }
 
         internal static IEnumerable<EntityTreeItem> GetArticleTreeItemsResult(string commonFilter, string extraFilter, Field treeField, IList<int> idsToFilter)
@@ -535,20 +533,20 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             using (var scope = new QPConnectionScope())
             {
                 var useSecurity = !QPContext.IsAdmin && ContentRepository.IsArticlePermissionsAllowed(treeField.ContentId);
-                var extraSelect = $", c.{treeField.Name} as parentId" +
+                var extraSelect = $", c.{treeField.Name} AS parentId" +
                                   ", cil.locked_by" +
-                                  ", lu.first_name + ' ' + lu.last_name as locker_name" +
-                                  ", cast(case when (" +
-                                    $"select count(content_item_id) from content_{treeField.ContentId}_united cnt " +
-                                    $"where [{treeField.Name}] = c.content_item_id and {extraFilter}" +
-                                  ") > 0 then 1 else 0 end as bit) as has_children ";
+                                  ", lu.first_name + ' ' + lu.last_name AS locker_name" +
+                                  ", CAST(CASE WHEN (" +
+                                    $"SELECT COUNT(content_item_id) FROM content_{treeField.ContentId}_united cnt " +
+                                    $"WHERE [{treeField.Name}] = c.content_item_id AND {extraFilter}" +
+                                  ") > 0 THEN 1 ELSE 0 END AS bit) AS has_children ";
 
                 var fields = treeField.TreeFieldTitleCount <= 1 ? null : ((IContentRepository)new ContentRepository()).GetDisplayFieldIds(treeField.ContentId, treeField.IncludeRelationsInTitle, treeField.Id)
                     .Take(treeField.TreeFieldTitleCount)
                     .Select(FieldRepository.GetById).ToList();
 
                 fields = fields ?? new[] { treeField.Relation }.ToList();
-                var extraFrom = " left join content_item cil on c.content_item_id = cil.content_item_id and locked_by is not null left join users lu on lu.user_id = cil.locked_by " + GetExtraFromForRelations(fields);
+                var extraFrom = " LEFT JOIN content_item cil ON c.content_item_id = cil.content_item_id AND locked_by IS NOT NULL LEFT JOIN users lu ON lu.user_id = cil.locked_by " + GetExtraFromForRelations(fields);
 
                 var rows = Common.GetArticlesSimpleList(
                     scope.DbConnection,
@@ -561,6 +559,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     useSecurity,
                     null,
                     idsToFilter,
+                    ArticleFullTextSearchSettings.SearchResultLimit,
                     extraSelect,
                     extraFrom,
                     GetSimpleListOrderExpression(treeField, fields));
