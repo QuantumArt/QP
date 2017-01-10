@@ -3,7 +3,7 @@
 <dl class="row">
 	<dd>
 		@Html.QpRadioButtonList((string)ViewBag.ByValueElementID,
-		new[] 
+		new[]
 		{
 			new QPSelectListItem
 			{
@@ -25,12 +25,12 @@
 
 <dl class="row">
 	<dt class="label">
-		@Html.QpLabel((string)ViewBag.DateFromElementID, ArticleStrings.SearchBlock_Value, true)
+		@Html.QpLabel((string)ViewBag.DateFromElementID, ArticleStrings.SearchBlock_Value)
 	</dt>
 	<dd class="field">
-		@Html.Time((string)ViewBag.DateFromElementID, DateTime.Now.AddMonths(-1), 
-			new Dictionary<string, object> 
-			{ 
+		@Html.Time((string)ViewBag.DateFromElementID, DateTime.Now.AddMonths(-1),
+			new Dictionary<string, object>
+			{
 				{ "id", (string)ViewBag.DateFromElementID },
 				{ "class", "textbox"}
 			},
@@ -41,12 +41,12 @@
 
 <dl class="row" style="display:none;">
 	<dt class="label">
-		@Html.QpLabel((string)ViewBag.DateToElementID, ArticleStrings.SearchBlock_RangeToText, true)
+		@Html.QpLabel((string)ViewBag.DateToElementID, ArticleStrings.SearchBlock_RangeToText)
 	</dt>
 	<dd class="field">
-		@Html.Time((string)ViewBag.DateToElementID, DateTime.Now, 
-			new Dictionary<string, object> 
-			{ 
+		@Html.Time((string)ViewBag.DateToElementID, DateTime.Now,
+			new Dictionary<string, object>
+			{
 				{ "id", (string)ViewBag.DateToElementID },
 				{ "class", "textbox"}
 			},

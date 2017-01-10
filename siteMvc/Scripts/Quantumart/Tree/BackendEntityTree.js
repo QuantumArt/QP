@@ -64,6 +64,10 @@ Quantumart.QP8.BackendEntityTree = function(treeGroupCode, treeElementId, entity
     if (hostOptions.searchQuery) {
       this._searchQuery = hostOptions.searchQuery;
     }
+
+    if (hostOptions.filter) {
+      this._hostFilter = hostOptions.filter;
+    }
   }
 
   $q.bindProxies.call(this, [
@@ -92,7 +96,8 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   _treeManagerComponent: null, // менеджер деревьев сущностей
   _rootEntityId: null, // при задании позволяет показать поддерево
   _contextMenuActionCode: '',
-  _filter: '', // фильтр сущностей, _treeFieldId: 0, //Идентификатор поля по которому создаются дочерние элементы
+  _filter: '',
+  _hostFilter: '',
   _zIndex: 0,
 
   get_treeGroupCode: function() {
@@ -899,6 +904,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       entityId: entityId,
       returnSelf: returnSelf,
       filter: this._filter,
+      hostFilter: this._hostFilter,
       selectItemIDs: this._selectedEntitiesIDs,
       searchQuery: this._searchQuery
     }, succ, fail);
