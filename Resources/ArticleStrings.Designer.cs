@@ -1132,6 +1132,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Result must contain ALL selected cases.
+        /// </summary>
+        public static string ShouldContainAllSelectedCases {
+            get {
+                return ResourceManager.GetString("ShouldContainAllSelectedCases", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show End Time.
         /// </summary>
         public static string ShowEndTime {

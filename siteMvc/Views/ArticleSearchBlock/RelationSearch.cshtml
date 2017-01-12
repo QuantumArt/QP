@@ -1,7 +1,6 @@
-﻿@using Quantumart.QP8.Constants
-@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-
 <div class="row">
 	<span>
 		@Html.QpRadioButtonList((string)ViewBag.SelectorElementID, new[]
@@ -10,7 +9,7 @@
       {
         Text = ArticleStrings.SearchBlock_BySelector,
         Selected = true,
-        Value = "0",
+        Value = "0"
       },
       new QPSelectListItem
       {
@@ -29,7 +28,7 @@
 		new ControlOptions(),
     RelationType.ManyToMany,
     true,
-		new EntityDataListArgs()
+		new EntityDataListArgs
 		{
 			EntityTypeCode = EntityTypeCode.Article,
 			ParentEntityId = ((Field)ViewBag.Field).RelateToContentId,
@@ -92,4 +91,11 @@
 		@Html.QpCheckBox((string)ViewBag.InverseCheckBoxElementID, null, false, new Dictionary<string, object>())
 		@Html.QpLabel((string)ViewBag.InverseCheckBoxElementID, ArticleStrings.SearchBlock_InverseCheckBoxLabelText, false)
 	</span>
+</div>
+
+<div class="row">
+  <span class="checkbox">
+    @Html.QpCheckBox((string)ViewBag.UnionAllCheckBoxElementID, null, false, new Dictionary<string, object>())
+    @Html.QpLabel((string)ViewBag.UnionAllCheckBoxElementID, ArticleStrings.ShouldContainAllSelectedCases, false)
+  </span>
 </div>

@@ -1,12 +1,12 @@
 ﻿@using Quantumart.QP8.Resources
 @{
-    string numberFromElementId = (string)ViewBag.NumberFromElementID;
-    string numberToElementId = (string)ViewBag.NumberToElementID;
-    string inverseCheckBoxElementId = (string)ViewBag.InverseCheckBoxElementID;
+    var numberFromElementId = (string)ViewBag.NumberFromElementID;
+    var numberToElementId = (string)ViewBag.NumberToElementID;
+    var inverseCheckBoxElementId = (string)ViewBag.InverseCheckBoxElementID;
 }
 <div class="row">
 	@Html.QpRadioButtonList((string)ViewBag.ByValueElementID,
-	new[] 
+	new[]
 	{
 		new QPSelectListItem
 		{
@@ -34,12 +34,12 @@
 
 <dl class="row">
 	<dt class="label">
-		@Html.QpLabel(numberFromElementId, ArticleStrings.SearchBlock_Value, true)
+		@Html.QpLabel(numberFromElementId, ArticleStrings.SearchBlock_Value)
 	</dt>
 	<dd class="field">
 		@Html.NumericTextBox(numberFromElementId, null,
-			new Dictionary<string, object> 
-			{ 
+			new Dictionary<string, object>
+			{
 				{ "id", numberFromElementId},
 				{ "class", "identifier"}
 			})
@@ -48,12 +48,12 @@
 
 <dl class="row" style="display:none;">
 	<dt class="label">
-		@Html.QpLabel(numberToElementId, ArticleStrings.SearchBlock_RangeToText, true)
+		@Html.QpLabel(numberToElementId, ArticleStrings.SearchBlock_RangeToText)
 	</dt>
 	<dd class="field">
-		@Html.NumericTextBox(numberToElementId, null, 
-			new Dictionary<string, object> 
-			{ 
+		@Html.NumericTextBox(numberToElementId, null,
+			new Dictionary<string, object>
+			{
 				{ "id", numberToElementId },
 				{ "class", "identifier"}
 			})
@@ -62,11 +62,11 @@
 
 <dl class="row" style="display:none;">
  <dt class="label">
-	@Html.QpLabel((string)ViewBag.TextElementID, ArticleStrings.SearchBlock_ListText, true)
+	@Html.QpLabel((string)ViewBag.TextElementID, ArticleStrings.SearchBlock_ListText)
   </dt>
   <dd class="field">
     @Html.QpTextArea((string)ViewBag.TextElementID, "",
-	    new Dictionary<string, object> 
+	    new Dictionary<string, object>
 	    {
             { "class", "identifier-list"}
 	    })

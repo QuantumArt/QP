@@ -1,11 +1,11 @@
-﻿using Quantumart.QP8.BLL.Processors.TreeProcessors;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.DAL.DTO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using Quantumart.QP8.BLL.Processors.TreeProcessors;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL.DTO;
 
 namespace Quantumart.QP8.BLL.Factories
 {
@@ -14,7 +14,7 @@ namespace Quantumart.QP8.BLL.Factories
         /// <summary>
         /// Фабрика для запроса на отображение дерева в QP
         /// </summary>
-        internal static ITreeProcessor Create(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string commonFilter, string selectItemIDs, IList<ArticleSearchQueryParam> searchQuery, IList<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser)
+        internal static ITreeProcessor Create(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string commonFilter, string hostFilter, string selectItemIDs, IList<ArticleSearchQueryParam> searchQuery, IList<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser)
         {
             using (new QPConnectionScope())
             {
@@ -28,6 +28,8 @@ namespace Quantumart.QP8.BLL.Factories
 
                     var filterSqlParams = new List<SqlParameter>();
                     var filterQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
+                    filterQuery = $"{hostFilter}{filterQuery}";
+
                     var linkedFilters = (ArticleRepository.GetLinkSearchParameter(searchQuery) ?? new ArticleLinkSearchParameter[0]).ToList();
                     var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
                     var hasFilterSearchParams = !string.IsNullOrEmpty(filterQuery) || linkedFilters.Any();

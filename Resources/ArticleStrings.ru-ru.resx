@@ -600,8 +600,8 @@
   <data name="GuidWrongFormat" xml:space="preserve">
     <value>Неверный формат уникального идентификатора</value>
   </data>
-  <data name="ArticleRepository_GetByIdForTree_NotFound" xml:space="preserve">
-    <value>Статья не найдена (ID = {0})</value>
+  <data name="ShouldContainAllSelectedCases" xml:space="preserve">
+    <value>Результат должен содержать ВСЕ выбранные варианты</value>
   </data>
   <data name="CannotRemoveBecauseOfRelationSecurity" xml:space="preserve">
     <value>Невозможно удалить статью из контента, потому что у Вас недостаточно прав доступа для всех связанных статей</value>

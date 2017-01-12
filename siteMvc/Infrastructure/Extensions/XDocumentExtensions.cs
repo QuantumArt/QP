@@ -12,7 +12,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
             return doc.ToNormalizedString(SaveOptions.None, withoutXmlDeclaration);
         }
 
-        public static string ToNormalizedString(this XDocument doc, SaveOptions saveOptions, bool withoutXmlDeclaration = false)
+        public static string ToNormalizedString(this XDocument doc, SaveOptions saveOptions, bool omitXmlDeclaration = false)
         {
             if (doc == null)
             {
@@ -22,13 +22,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
             var xmlSettings = new XmlWriterSettings
             {
                 Encoding = Encoding.UTF8,
+                OmitXmlDeclaration = omitXmlDeclaration,
                 NamespaceHandling = NamespaceHandling.OmitDuplicates
             };
-
-            if (withoutXmlDeclaration)
-            {
-                xmlSettings.OmitXmlDeclaration = true;
-            }
 
             if (saveOptions == SaveOptions.DisableFormatting)
             {

@@ -1,12 +1,12 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using Quantumart.QP8.BLL.Factories;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 // ReSharper disable PossibleInvalidOperationException
 // ReSharper disable PossibleMultipleEnumeration
@@ -55,9 +55,9 @@ namespace Quantumart.QP8.BLL.Services
             return null;
         }
 
-        public static IList<EntityTreeItem> GetEntityTreeItems(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string filter, string selectItemIDs, IList<ArticleSearchQueryParam> searchQuery, IList<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser)
+        public static IList<EntityTreeItem> GetEntityTreeItems(string entityTypeCode, int? parentEntityId, int? entityId, bool returnSelf, string filter, string hostFilter, string selectItemIDs, IList<ArticleSearchQueryParam> searchQuery, IList<ArticleContextQueryParam> contextQuery, ArticleFullTextSearchQueryParser ftsParser)
         {
-            return ArticleTreeFactory.Create(entityTypeCode, parentEntityId, entityId, returnSelf, filter, selectItemIDs, searchQuery, contextQuery, ftsParser).Process();
+            return ArticleTreeFactory.Create(entityTypeCode, parentEntityId, entityId, returnSelf, filter, hostFilter, selectItemIDs, searchQuery, contextQuery, ftsParser).Process();
         }
 
         /// <summary>

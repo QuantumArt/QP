@@ -184,29 +184,30 @@ namespace Quantumart.QP8.DAL
             bool useSecurity,
             IList<int> selectedArticleIds,
             IList<int> idsToFilter,
+            int? searchLimit = null,
             string extraSelect = "",
             string extraFrom = "",
             string orderBy = "")
         {
             var queryBuilder = new StringBuilder();
-
-            queryBuilder.AppendFormatLine(" select c.content_item_id as id, {0}, cast(case WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END as bit) as is_selected ", displayExpression);
+            var selectQuery = searchLimit.HasValue ? $"SELECT DISTINCT TOP ({searchLimit})" : "SELECT";
+            queryBuilder.AppendFormatLine($" {selectQuery} c.content_item_id AS id, {displayExpression}, CAST(CASE WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END AS bit) AS is_selected ");
             queryBuilder.AppendLine(extraSelect ?? string.Empty);
-            queryBuilder.AppendFormatLine(" from content_{0}_united c ", contentId);
+            queryBuilder.AppendFormatLine($" FROM content_{contentId}_united c ");
 
             if (useSecurity)
             {
                 var securitySql = GetPermittedItemsAsQuery(cn, userId, 0, PermissionLevel.List, PermissionLevel.FullAccess, EntityTypeCode.OldArticle, EntityTypeCode.Content, contentId);
-                queryBuilder.AppendFormatLine(" inner join ({0}) as pi on c.content_item_id = pi.content_item_id ", securitySql);
+                queryBuilder.AppendFormatLine(" INNER JOIN ({0}) AS pi ON c.content_item_id = pi.content_item_id ", securitySql);
             }
 
-            queryBuilder.Append(selectionMode == ListSelectionMode.AllItems ? " left join " : " inner join ");
-            queryBuilder.AppendFormatLine("( select content_item_id from content_{0} where content_item_id IN (select id from @myData)) as cis on c.content_item_id = cis.content_item_id ", contentId);
+            queryBuilder.Append(selectionMode == ListSelectionMode.AllItems ? " LEFT JOIN " : " INNER JOIN ");
+            queryBuilder.AppendFormatLine("( SELECT content_item_id FROM content_{0} WHERE content_item_id IN (SELECT id FROM @myData)) AS cis ON c.content_item_id = cis.content_item_id ", contentId);
             queryBuilder.AppendLine(extraFrom ?? string.Empty);
-            queryBuilder.AppendLine(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" where {filter}");
+            queryBuilder.AppendLine(string.IsNullOrWhiteSpace(filter) ? string.Empty : $" WHERE {filter}");
 
-            orderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id asc" : orderBy;
-            queryBuilder.AppendLine($" order by {orderBy}");
+            orderBy = string.IsNullOrWhiteSpace(orderBy) ? "c.content_item_id ASC" : orderBy;
+            queryBuilder.AppendLine($" ORDER BY {orderBy}");
 
             return GetDatatableResult(cn, queryBuilder, GetIdsDatatableParam("@ids", idsToFilter), GetIdsDatatableParam("@myData", selectedArticleIds));
         }
@@ -2118,7 +2119,7 @@ namespace Quantumart.QP8.DAL
             Dictionary<int, string> referenceMap = null;
             if (options.ContentReferences.Any())
             {
-                referenceMap = GetFieldNames(sqlConnection, options.ContentReferences.Select(r => r.ReferenceFieldID).ToArray());
+                referenceMap = GetFieldNames(sqlConnection, options.ContentReferences.Select(r => r.ReferenceFieldId).ToArray());
             }
 
             var useSelection = options.SelectedIDs != null && options.SelectedIDs.Any();
@@ -2185,28 +2186,21 @@ namespace Quantumart.QP8.DAL
                 string inverseString;
                 if (!linkFilter.IsNull)
                 {
-                    inverseString = linkFilter.Inverse ? "NOT" : "";
                     var paramName = "@link" + linkFilter.LinkId;
+                    var unionAllSqlString = linkFilter.UnionAll ? $" GROUP BY item_id HAVING COUNT(item_id) = (SELECT COUNT(*) FROM {paramName})" : string.Empty;
                     sqlParams.Add(GetIdsDatatableParam(paramName, linkFilter.Ids));
 
+                    inverseString = linkFilter.Inverse ? "NOT " : string.Empty;
                     internalSql = linkFilter.IsManyToMany
-                        ? string.Format(
-                            "{2} EXISTS (select item_id from dbo.item_link_united with(nolock) where {3}.content_item_id = item_id and link_id = {0} AND linked_item_id in (select id from {1}))",
-                            linkFilter.LinkId, paramName, inverseString, tableAlias)
-                        : string.Format(
-                            "{3} EXISTS (select * from content_{0}_united cu with(nolock) where {4}.content_item_id = [{1}] and cu.content_item_id in (select id from {2})) ",
-                            linkFilter.ContentId, linkFilter.FieldName, paramName, inverseString, tableAlias);
+                        ? $"{inverseString} EXISTS (select item_id from dbo.item_link_united with(nolock) where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId} AND linked_item_id in (select id from {paramName}){unionAllSqlString})"
+                        : $"{inverseString} EXISTS (select * from content_{linkFilter.ContentId}_united cu with(nolock) where {tableAlias}.content_item_id = [{linkFilter.FieldName}] and cu.content_item_id in (select id from {paramName})) ";
                 }
                 else
                 {
-                    inverseString = linkFilter.Inverse ? "" : "NOT";
+                    inverseString = linkFilter.Inverse ? string.Empty : "NOT ";
                     internalSql = linkFilter.IsManyToMany
-                        ? string.Format(
-                            "{1} EXISTS (select item_id from dbo.item_link_united with(nolock) where {2}.content_item_id = item_id and link_id = {0})",
-                            linkFilter.LinkId, inverseString, tableAlias)
-                        : string.Format(
-                            "{2} EXISTS (select * from content_{0}_united with(nolock) where {3}.content_item_id = [{1}]) ",
-                            linkFilter.ContentId, linkFilter.FieldName, inverseString, tableAlias);
+                        ? $"{inverseString}EXISTS (select item_id from dbo.item_link_united with(nolock) where {tableAlias}.content_item_id = item_id and link_id = {linkFilter.LinkId})"
+                        : $"{inverseString}EXISTS (select * from content_{linkFilter.ContentId}_united with(nolock) where {tableAlias}.content_item_id = [{linkFilter.FieldName}]) ";
                 }
 
                 if (whereBuilder.Length != 0)
@@ -2405,8 +2399,8 @@ namespace Quantumart.QP8.DAL
                         selectBuilder.AppendFormat(", c.[{0}]", fieldName);
                     }
                 }
-                var relatedAttributeId = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID");
 
+                var relatedAttributeId = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID");
                 if (relatedAttributeId.HasValue)
                 {
                     var tableAlias = "rel_" + relatedAttributeId;
@@ -2421,11 +2415,9 @@ namespace Quantumart.QP8.DAL
                     }
 
                     var attributeTypeId = (int)row.Field<decimal>("RELATED_ATTRIBUTE_TYPE_ID");
-
                     var currentBlock = GetCurrentBlock(tableAlias, relatedFieldName, attributeTypeId);
 
                     selectBuilder.AppendFormat(", {0} AS {1}", currentBlock, fieldAlias);
-
                     fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_UNITED AS {1} with(nolock) ON c.[{2}] = {1}.content_item_id ", relatedContentId, tableAlias, fieldName);
 
                     var relatedAttributeId2 = (int?)row.Field<decimal?>("RELATED_ATTRIBUTE_ID2");
@@ -2489,9 +2481,9 @@ namespace Quantumart.QP8.DAL
                 fromBuilder.AppendFormatLine(" INNER JOIN ({0}) AS pl ON {1}.CONTENT_ITEM_ID = pl.ALLOWED_CONTENT_ITEM_ID", innerSql, tablePrefix);
             }
 
-            foreach (var reference in options.ContentReferences.Where(reference => referenceMap.ContainsKey(reference.ReferenceFieldID)))
+            foreach (var reference in options.ContentReferences.Where(reference => referenceMap.ContainsKey(reference.ReferenceFieldId)))
             {
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0}_{1} with(nolock) ON c.[{2}] = c_{0}_{1}.CONTENT_ITEM_ID", reference.TargetContentId, reference.ReferenceFieldID, referenceMap[reference.ReferenceFieldID]);
+                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.CONTENT_{0}_UNITED c_{0}_{1} with(nolock) ON c.[{2}] = c_{0}_{1}.CONTENT_ITEM_ID", reference.TargetContentId, reference.ReferenceFieldId, referenceMap[reference.ReferenceFieldId]);
             }
 
             foreach (var contentId in options.ExtensionContentIds)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.DAL.DTO;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
@@ -14,6 +15,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         public ArticleLinkSearchQueryParser(IArticleSearchRepository articleSearchRepository)
         {
+            Ensure.NotNull(articleSearchRepository);
             _articleSearchRepository = articleSearchRepository;
         }
 
@@ -46,63 +48,38 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         private ArticleLinkSearchParameter ParseParam(ArticleSearchQueryParam p)
         {
-            //Contract.Requires(p != null);
-            //Contract.Requires(p.SearchType == ArticleFieldSearchType.M2MRelation || p.SearchType == ArticleFieldSearchType.M2ORelation);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.M2MRelation || p.SearchType == ArticleFieldSearchType.M2ORelation);
 
             if (p == null)
             {
                 throw new ArgumentException("p");
             }
+
             if (p.SearchType != ArticleFieldSearchType.M2MRelation && p.SearchType != ArticleFieldSearchType.M2ORelation)
             {
                 throw new ArgumentException("Undefined search paramenter type: " + p.SearchType);
             }
 
-            if (string.IsNullOrWhiteSpace(p.FieldID))
-            {
-                throw new ArgumentException("FieldID");
-            }
+            Ensure.NotNullOrWhiteSpace(p.FieldID, "FieldId");
 
-            // Парсим FieldID
-            // тут может быть FormatException - это нормально
             var fieldId = int.Parse(p.FieldID);
-
-            // параметры не пустые и их не меньше 2х (используем 1й и 2й - остальные отбрасываем)
-            if (p.QueryParams == null || p.QueryParams.Length < 3)
-            {
-                throw new ArgumentException();
-            }
-
-            // первый параметр должен быть null или object[]
-            if (p.QueryParams[0] != null && !(p.QueryParams[0] is object[]))
-            {
-                throw new InvalidCastException();
-            }
-
-            // второй параметр должен быть bool
-            if (!(p.QueryParams[1] is bool))
-            {
-                throw new InvalidCastException();
-            }
-
-            if (!(p.QueryParams[2] is bool))
-            {
-                throw new InvalidCastException();
-            }
+            Ensure.That<InvalidCastException>(p.QueryParams[0] is object[]);
+            Ensure.That<InvalidCastException>(p.QueryParams[1] is bool);
+            Ensure.That<InvalidCastException>(p.QueryParams[2] is bool);
+            Ensure.That<InvalidCastException>(p.QueryParams[3] is bool);
 
             var isNull = (bool)p.QueryParams[1];
             var inverse = (bool)p.QueryParams[2];
+            var unionAll = (bool)p.QueryParams[3];
             var values = Enumerable.Empty<int>();
             if (!isNull)
             {
-                // Если массив null или пустой - то возвращаем null
                 if (p.QueryParams[0] == null || ((object[])p.QueryParams[0]).Length == 0)
                 {
                     return null;
                 }
 
-                // Преобразуем массив к массиву int[]
-                // тут возможен InvalidCastException, но это нормально, так как в этом случае действительно переданы некорректные данные
                 values = ((object[])p.QueryParams[0]).Cast<int>().ToArray();
             }
 
@@ -133,16 +110,13 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 Ids = values.ToArray(),
                 IsManyToMany = p.SearchType == ArticleFieldSearchType.M2MRelation,
                 IsNull = isNull,
-                Inverse = inverse
+                Inverse = inverse,
+                UnionAll = unionAll
             };
 
             if (!result.IsManyToMany)
             {
-                if (field.BackRelation == null)
-                {
-                    throw new ApplicationException("Не удалость получить BackRelation для поля с id = " + fieldId);
-                }
-
+                Ensure.NotNull(field.BackRelation, $"Не удалость получить BackRelation для поля с id = {fieldId}");
                 result.FieldName = field.BackRelation.Name;
                 result.ContentId = field.BackRelation.ContentId;
             }

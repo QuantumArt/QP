@@ -25,7 +25,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает содержимое блока полнотекстового поиска.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult FullTextBlock(int parentEntityId, string elementIdPrefix)
         {
@@ -47,7 +46,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает содержимое блока поиска по всем полям.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult FieldSearchBlock(int parentEntityId, string elementIdPrefix)
         {
@@ -63,7 +61,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает разметку для блока поиска по идентификатору.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult Identifier(string elementIdPrefix)
         {
@@ -80,7 +77,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает разметку для блока поиска по полю c датой.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult DateRange(string elementIdPrefix)
         {
@@ -91,7 +87,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает разметку для блока поиска по полю c временем.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult TimeRange(string elementIdPrefix)
         {
@@ -102,7 +97,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает разметку для блока поиска по полю c датой-временем.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult DateTimeRange(string elementIdPrefix)
         {
@@ -110,20 +104,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("DateTimeRange", null);
         }
 
-        private void SetDateOrTimeRangeViewBag(string elementIdPrefix)
-        {
-            ViewBag.ElementIdPrefix = elementIdPrefix;
-            ViewBag.DateFromElementID = $"{elementIdPrefix}_dateFrom";
-            ViewBag.DateToElementID = $"{elementIdPrefix}_dateTo";
-            ViewBag.IsNullCheckBoxElementID = $"{elementIdPrefix}_isNullCheckBox";
-            ViewBag.DisablingContainerElementID = $"{elementIdPrefix}_disablingContainer";
-            ViewBag.ByValueElementID = $"{elementIdPrefix}_byValueSelector";
-        }
-
         /// <summary>
         /// Возвращает разметку для блока поиска по числовому полю.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult NumericRange(string elementIdPrefix)
         {
@@ -140,7 +123,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает разметку для блока поиска по текстовому полю.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult TextSearch(string elementIdPrefix)
         {
@@ -154,7 +136,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает разметку для блока поиска по строковому перечислению.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult StringEnum(string elementIdPrefix, int fieldID)
@@ -165,7 +146,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("StringEnum", model);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult ContentsListForClassifier(string elementIdPrefix, int fieldID)
@@ -190,6 +170,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             ViewBag.IsNullCheckBoxElementID = $"{elementIdPrefix}_isNullCheckBox";
             ViewBag.InverseCheckBoxElementID = $"{elementIdPrefix}_inverseCheckBox";
+            ViewBag.UnionAllCheckBoxElementID = $"{elementIdPrefix}_unionAllCheckBox";
             ViewBag.RelationElementID = $"{elementIdPrefix}_relation";
             ViewBag.SelectorElementID = $"{elementIdPrefix}_selector";
             ViewBag.RelationTextAreaElementID = $"{elementIdPrefix}_relationTextArea";
@@ -231,7 +212,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("RelationSearch", null);
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public ActionResult DefaultFilterStates(string actionCode, int contentId)
         {
@@ -250,12 +230,21 @@ namespace Quantumart.QP8.WebMvc.Controllers
         /// <summary>
         /// Возвращает разметку для блока переключения контекста.
         /// </summary>
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         public ActionResult ContextBlock(int id, string actionCode, string hostId)
         {
             var model = new ContextBlockViewModel(id, actionCode, hostId);
             return JsonHtml("ContextBlock", model);
+        }
+
+        private void SetDateOrTimeRangeViewBag(string elementIdPrefix)
+        {
+            ViewBag.ElementIdPrefix = elementIdPrefix;
+            ViewBag.DateFromElementID = $"{elementIdPrefix}_dateFrom";
+            ViewBag.DateToElementID = $"{elementIdPrefix}_dateTo";
+            ViewBag.IsNullCheckBoxElementID = $"{elementIdPrefix}_isNullCheckBox";
+            ViewBag.DisablingContainerElementID = $"{elementIdPrefix}_disablingContainer";
+            ViewBag.ByValueElementID = $"{elementIdPrefix}_byValueSelector";
         }
     }
 }

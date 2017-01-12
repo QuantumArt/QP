@@ -1,11 +1,8 @@
 ﻿namespace Quantumart.QP8.BLL
 {
-    /// <summary>
-    /// Тип поиска по полям
-    /// </summary>
     public enum ArticleFieldSearchType
     {
-        None = 0,
+        None,
         FullText,
         Text,
         DateRange,
