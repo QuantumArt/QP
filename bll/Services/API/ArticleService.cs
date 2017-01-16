@@ -295,9 +295,12 @@ namespace Quantumart.QP8.BLL.Services.API
 
         public RulesException ValidateXamlById(int articleId)
         {
-            var errors = new RulesException();
-            Article.ValidateXamlById(articleId, errors);
-            return errors;
+            using (new QPConnectionScope(ConnectionString))
+            {
+                var errors = new RulesException();
+                Article.ValidateXamlById(articleId, errors);
+                return errors;
+            }
         }
     }
 }
