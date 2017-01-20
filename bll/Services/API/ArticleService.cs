@@ -292,5 +292,15 @@ namespace Quantumart.QP8.BLL.Services.API
                 return ArticleRepository.GetParentIds(ids, treeField.Id, treeField.Name);
             }
         }
+
+        public RulesException ValidateXamlById(int articleId)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                var errors = new RulesException();
+                Article.ValidateXamlById(articleId, errors);
+                return errors;
+            }
+        }
     }
 }

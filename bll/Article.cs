@@ -376,6 +376,13 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        public static void ValidateXamlById(int articleId, RulesException errors)
+        {
+            var article = ArticleRepository.GetById(articleId);
+            article.ValidateXaml(errors);
+        }
+
+
         private void ValidateWorkflow(RulesException errors)
         {
             if (!IsUpdatableWithWorkflow)
