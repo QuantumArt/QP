@@ -395,7 +395,7 @@
     <Compile Include="Services\API\DbService.cs" />
     <Compile Include="Services\API\FieldService.cs" />
     <Compile Include="Services\API\IArticleMatchService.cs" />
-    <Compile Include="Services\API\IArticleService.cs" />
+    <Compile Include="Services\API\IBatchUpdateService.cs" />
     <Compile Include="Services\API\Models\ArticleData.cs" />
     <Compile Include="Services\API\Models\FieldData.cs" />
     <Compile Include="Services\API\Models\InsertData.cs" />

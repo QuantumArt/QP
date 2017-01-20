@@ -10,7 +10,7 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
-    public class ArticleService : ServiceBase, IArticleService
+    public class ArticleService : ServiceBase, IBatchUpdateService
     {
         public ArticleService(int userId)
             : base(userId)
