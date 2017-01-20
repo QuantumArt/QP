@@ -5,6 +5,7 @@ using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
+    // TODO: Move relations to unity
     public class ReplayHelper
     {
         public static Dictionary<int, Field> GetRelations(int contentId)
@@ -12,9 +13,8 @@ namespace Quantumart.QP8.BLL.Helpers
             return ContentRepository
                 .GetById(contentId)
                 .Fields
-                .Where(n => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }
-                    .Contains(n.ExactType)
-                ).ToDictionary(n => n.Id, n => n);
+                .Where(n => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(n.ExactType))
+                .ToDictionary(n => n.Id, n => n);
         }
 
         public static Dictionary<int, Field> GetClasifiers(int contentId)
@@ -22,15 +22,8 @@ namespace Quantumart.QP8.BLL.Helpers
             return ContentRepository
                 .GetById(contentId)
                 .Fields
-                .Where(n => new[] { FieldExactTypes.Classifier }
-                    .Contains(n.ExactType)
-                ).ToDictionary(n => n.Id, n => n);
-        }
-
-
-        public static Field GetSingleField(int contentId)
-        {
-            return FieldRepository.GetFullList(contentId).First();
+                .Where(n => new[] { FieldExactTypes.Classifier }.Contains(n.ExactType))
+                .ToDictionary(n => n.Id, n => n);
         }
     }
 }

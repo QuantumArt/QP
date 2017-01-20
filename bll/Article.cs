@@ -545,6 +545,7 @@ namespace Quantumart.QP8.BLL
                     var boolValue = bool.TryParse(value, out isBool);
                     value = (isBool ? Converter.ToInt32(boolValue) : Converter.ToInt32(value)).ToString();
                 }
+
                 pair.UpdateValue(value);
             }
         }

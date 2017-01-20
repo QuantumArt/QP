@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Adapters;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
