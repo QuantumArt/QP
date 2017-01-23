@@ -3,7 +3,7 @@ using Quantumart.QP8.BLL.Services.API.Models;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
-    public interface IArticleService
+    public interface IBatchUpdateService
     {
         InsertData[] BatchUpdate(IEnumerable<Article> articles);
 

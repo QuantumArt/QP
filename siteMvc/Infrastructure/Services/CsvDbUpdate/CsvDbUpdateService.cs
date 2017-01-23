@@ -19,9 +19,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
         private readonly IContentRepository _contentRepository;
         private readonly IFieldRepository _fieldRepository;
         private readonly IArticleRepository _articleRepository;
-        private readonly IArticleService _articleService;
+        private readonly IBatchUpdateService _articleService;
 
-        public CsvDbUpdateService(IArticleService articleService, IFieldRepository fieldRepository, IContentRepository contentRepository, IArticleRepository articleRepository)
+        public CsvDbUpdateService(IBatchUpdateService articleService, IFieldRepository fieldRepository, IContentRepository contentRepository, IArticleRepository articleRepository)
         {
             _contentRepository = contentRepository;
             _articleRepository = articleRepository;
