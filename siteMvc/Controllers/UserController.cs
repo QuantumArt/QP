@@ -1,8 +1,5 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Web.Mvc;
-using System.Web.WebPages;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services;
@@ -24,7 +21,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly IUserService _service;
 
-        public UserController(IUserService service, IArticleService dbArticleService) : base(dbArticleService)
+        public UserController(IUserService service, IArticleService dbArticleService)
+            : base(dbArticleService)
         {
             _service = service;
         }

@@ -1,8 +1,5 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Web.Mvc;
-using System.Web.WebPages;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services;
@@ -20,7 +17,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class FieldController : QPController
     {
-        public FieldController(IArticleService dbArticleService) : base(dbArticleService)
+        public FieldController(IArticleService dbArticleService)
+            : base(dbArticleService)
         {
         }
 

@@ -19,18 +19,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
     // ReSharper disable once InconsistentNaming
     public class QPController : Controller
     {
+        protected IArticleService DbArticleService;
 
         public QPController()
         {
-
         }
 
         public QPController(IArticleService dbArticleService)
         {
-            _dbArticleService = dbArticleService;
+            DbArticleService = dbArticleService;
         }
-
-        protected IArticleService _dbArticleService;
 
         public string RenderPartialView(string partialViewName, object model)
         {
@@ -261,8 +259,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             {
                 var substitutedGuids = formIds
                     .Where(f => f.IsInt())
-                    .Select(_dbArticleService.GetArticleGuidById)
-                    .Where<Guid>(g => g != Guid.Empty)
+                    .Select(DbArticleService.GetArticleGuidById)
+                    .Where(g => g != Guid.Empty)
                     .Select(g => g.ToString())
                     .ToArray();
 

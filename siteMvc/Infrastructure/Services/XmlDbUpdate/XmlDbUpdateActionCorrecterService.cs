@@ -324,9 +324,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
         private void CorrectDynamicArticleFormIdValues(NameValueCollection form, int contentId)
         {
-            var relations = ReplayHelper.GetRelations(contentId);
-            var classifiers = ReplayHelper.GetClasifiers(contentId);
-            foreach (var fieldName in form.AllKeys.Where(field => Regex.IsMatch(field, @"^field_\d+$")))
+            var fieldRegexp = new Regex(@"^field_\d+$", RegexOptions.Compiled);
+            foreach (var fieldName in form.AllKeys.Where(field => fieldRegexp.IsMatch(field)))
             {
                 int parsedFieldId;
                 if (!int.TryParse(fieldName.Replace("field_", string.Empty), out parsedFieldId))
@@ -335,27 +334,30 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 }
 
                 var correctedFieldId = CorrectIdValue(EntityTypeCode.Field, parsedFieldId);
-                if (relations.ContainsKey(correctedFieldId) || classifiers.ContainsKey(correctedFieldId))
+                var fieldValues = form[fieldName]?.Split(',').ToList();
+                form.Remove(fieldName);
+
+                if (fieldValues != null)
                 {
-                    var entityTypeCode = relations.ContainsKey(correctedFieldId) ? EntityTypeCode.Article : EntityTypeCode.Content;
-                    var formIds = form[fieldName]?.Split(',');
-                    if (formIds != null)
+                    if (ReplayHelper.IsRelation(contentId, correctedFieldId))
                     {
-                        var correctedIds = CorrectIdsValue(entityTypeCode, formIds);
-                        form[$"field_{correctedFieldId}"] = string.Join(",", correctedIds);
+                        fieldValues = CorrectIdsValue(EntityTypeCode.Article, fieldValues).ToList();
                     }
 
-                    if (correctedFieldId != parsedFieldId)
+                    if (ReplayHelper.IsClassifier(contentId, correctedFieldId))
                     {
-                        form.Remove($"field_{parsedFieldId}");
+                        fieldValues = CorrectIdsValue(EntityTypeCode.Content, fieldValues).ToList();
                     }
+
+                    form[$"field_{correctedFieldId}"] = string.Join(",", fieldValues);
                 }
             }
         }
 
         private void CorrectDynamicArticleFormGuidValues(NameValueCollection form, bool useGuidSubstitution)
         {
-            foreach (var fieldName in form.AllKeys.Where(field => Regex.IsMatch(field, @"^field_uniqueid_\d+$")))
+            var uniqueFieldRegexp = new Regex(@"^field_uniqueid_\d+$", RegexOptions.Compiled);
+            foreach (var fieldName in form.AllKeys.Where(field => uniqueFieldRegexp.IsMatch(field)))
             {
                 int parsedFieldId;
                 if (!int.TryParse(fieldName.Replace("field_uniqueid_", string.Empty), out parsedFieldId))

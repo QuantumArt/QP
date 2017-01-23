@@ -99,33 +99,30 @@ namespace QP8.Integration.Tests
         {
             var mockFileSystem = new Mock<IFileSystem>();
             Cnn.FileSystem = mockFileSystem.Object;
+
             var actualPathes = new List<string>();
-            mockFileSystem
-                .Setup(x => x.CreateDirectory(It.IsAny<string>()))
-                .Callback<string>(path =>
-                {
-                    actualPathes.Add(path);
-                });
+            mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>())).Callback<string>(path =>
+            {
+                actualPathes.Add(path);
+            });
 
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
-
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[0].ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
 
             var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
-
             Assert.That(paths, Is.SubsetOf(actualPathes), "CreateDirectory calls");
         }
 
@@ -134,22 +131,19 @@ namespace QP8.Integration.Tests
         {
             var mockFileSystem = new Mock<IFileSystem>();
             Cnn.FileSystem = mockFileSystem.Object;
+
             var actualPathes = new List<string>();
-            mockFileSystem
-                .Setup(x => x.CreateDirectory(It.IsAny<string>()))
-                .Callback<string>(path =>
-                {
-                    actualPathes.Add(path);
-                });
+            mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>())).Callback<string>(path =>
+            {
+                actualPathes.Add(path);
+            });
 
+            var id = 0;
             var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
-
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [imageName] = "testxx.jpg"
             };
-
-            var id = 0;
 
             Assert.DoesNotThrow(() =>
             {
@@ -157,14 +151,12 @@ namespace QP8.Integration.Tests
             }, "Create");
 
             var ids = new[] { id };
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
             }, "Update");
 
             var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
-
             Assert.That(paths, Is.SubsetOf(actualPathes), "CreateDirectory calls");
         }
 
@@ -175,27 +167,23 @@ namespace QP8.Integration.Tests
             Cnn.FileSystem = mockFileSystem.Object;
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
 
-
-
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0",
                 [ImageName] = "test44.jpg"
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0",
                 [ImageName] = "test55.jpg"
             };
+
             values.Add(article2);
-
             var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
-
-            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions() { CreateVersions = false }), "Update");
-
+            Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { CreateVersions = false }), "Update");
             var versions = Global.GetMaxVersions(Cnn, ids).ToArray();
 
             Assert.That(versions, Is.Empty, "No new versions");
@@ -205,16 +193,14 @@ namespace QP8.Integration.Tests
         [Test]
         public void MassUpdate_CopyFiles_ContentHasFileFields()
         {
-
             var mockFileSystem = new Mock<IFileSystem>();
             Cnn.FileSystem = mockFileSystem.Object;
-            var list = new List<CopyFile>();
 
+            var list = new List<CopyFile>();
             mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((from, to) =>
             {
                 list.Add(new CopyFile(from, to));
-            }
-            );
+            });
 
             var values = new List<Dictionary<string, string>>();
             const string name1 = "test234";
@@ -222,33 +208,32 @@ namespace QP8.Integration.Tests
             const string ext1 = "jpg";
             const string ext2 = "png";
             const string folder2 = "center";
-            var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
 
+            var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
                 [ImageName] = $"{name1}.{ext1}"
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
                 [ImageName] = $"{folder2}/{name2}.{ext2}"
             };
-            values.Add(article2);
 
+            values.Add(article2);
             var attrFolder = Cnn.GetDirectoryForFileAttribute(Cnn.FieldID(Global.SiteId, ContentName, ImageName));
             var currentVersionFolder = Cnn.GetCurrentVersionFolderForContent(ContentId);
             var fileValuesBefore = Global.GetFieldValues<string>(Cnn, ContentId, ImageName, ids);
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-
             var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
             var file1 = new CopyFile(
                 Path.Combine(currentVersionFolder, fileValuesBefore[0]),
                 Path.Combine(paths[0], fileValuesBefore[0])
             );
-
 
             var file2 = new CopyFile(
                 Path.Combine(currentVersionFolder, fileValuesBefore[1]),
@@ -285,8 +270,8 @@ namespace QP8.Integration.Tests
         {
             var mockFileSystem = new Mock<IFileSystem>();
             Cnn.FileSystem = mockFileSystem.Object;
-            var list = new List<CopyFile>();
 
+            var list = new List<CopyFile>();
             mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>())).Callback<string, string>((from, to) =>
             {
                 list.Add(new CopyFile(from, to));
@@ -299,12 +284,12 @@ namespace QP8.Integration.Tests
             const string folder2 = "center";
 
             var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [imageName] = $"{name1}.{ext1}"
             };
 
-            var article2 = new Hashtable()
+            var article2 = new Hashtable
             {
                 [imageName] = $"{folder2}/{name2}.{ext2}"
             };
@@ -316,25 +301,20 @@ namespace QP8.Integration.Tests
             }, "Create");
 
             var ids = new[] { id };
-
             var attrFolder = Cnn.GetDirectoryForFileAttribute(Cnn.FieldID(Global.SiteId, ContentName, ImageName));
             var currentVersionFolder = Cnn.GetCurrentVersionFolderForContent(ContentId);
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
             }, "Update");
 
             var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, id);
             }, "Update");
 
             var paths2 = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
-
-
             var file1 = new CopyFile(
                 Path.Combine(attrFolder, article1[imageName].ToString()),
                 Path.Combine(currentVersionFolder, article1[imageName].ToString())
@@ -344,7 +324,6 @@ namespace QP8.Integration.Tests
                 Path.Combine(currentVersionFolder, article1[imageName].ToString()),
                 Path.Combine(paths[0], article1[imageName].ToString())
             );
-
 
             var file3 = new CopyFile(
                 Path.Combine(attrFolder, article2[imageName].ToString().Replace(@"/", @"\")),
@@ -356,12 +335,10 @@ namespace QP8.Integration.Tests
                 Path.Combine(paths2[0], $"{name2}.{ext2}")
             );
 
-
             Assert.That(list, Has.Member(file1), "Copy old file to current dir");
             Assert.That(list, Has.Member(file2), "Copy old file to version dir");
             Assert.That(list, Has.Member(file3), "Copy new file to current dir without subfolders");
             Assert.That(list, Has.Member(file4), "Copy new file to version dir without subfolders");
-
         }
 
         [Test]
@@ -372,16 +349,14 @@ namespace QP8.Integration.Tests
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
 
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called for empty file fields");
         }
 
@@ -393,16 +368,14 @@ namespace QP8.Integration.Tests
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
 
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-
             mockFileSystem.Verify(x => x.CreateDirectory(It.IsAny<string>()), Times.Never(), "Shouldn't be called for empty file fields");
         }
 
@@ -415,12 +388,12 @@ namespace QP8.Integration.Tests
             mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>()));
 
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0",
-                ["Video"] = "newtest.mp4",
+                ["Video"] = "newtest.mp4"
             };
+
             values.Add(article1);
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
@@ -439,9 +412,9 @@ namespace QP8.Integration.Tests
             mockFileSystem.Setup(x => x.CreateDirectory(It.IsAny<string>()));
             mockFileSystem.Setup(x => x.CopyFile(It.IsAny<string>(), It.IsAny<string>()));
 
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
-                ["Video"] = "newtest.mp4",
+                ["Video"] = "newtest.mp4"
             };
 
             var id = 0;
@@ -465,30 +438,29 @@ namespace QP8.Integration.Tests
         {
             var mockFileSystem = new Mock<IFileSystem>();
             Cnn.FileSystem = mockFileSystem.Object;
+
             var actualPathes = new List<string>();
-            mockFileSystem
-                .Setup(x => x.RemoveDirectory(It.IsAny<string>()))
-                .Callback<string>(path =>
-                {
-                    actualPathes.Add(path);
-                });
+            mockFileSystem.Setup(x => x.RemoveDirectory(It.IsAny<string>())).Callback<string>(path =>
+            {
+                actualPathes.Add(path);
+            });
 
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0",
                 [ImageName] = "testxx.jpg"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
+
             var id = int.Parse(values[0][SystemColumnNames.Id]);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
+
             var paths = Global.GetMaxVersions(Cnn, new[] { id }).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-
             Assert.That(paths, Is.EqualTo(actualPathes), "RemoveDirectory calls");
         }
 
@@ -498,46 +470,39 @@ namespace QP8.Integration.Tests
             var mockFileSystem = new Mock<IFileSystem>();
             Cnn.FileSystem = mockFileSystem.Object;
             var actualPathes = new List<string>();
-            mockFileSystem
-                .Setup(x => x.RemoveDirectory(It.IsAny<string>()))
-                .Callback<string>(path =>
-                {
-                    actualPathes.Add(path);
-                });
+            mockFileSystem.Setup(x => x.RemoveDirectory(It.IsAny<string>())).Callback<string>(path =>
+            {
+                actualPathes.Add(path);
+            });
 
             var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
-
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [imageName] = "testxx.jpg"
             };
 
             var id = 0;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Create");
 
             var ids = new[] { id };
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
             }, "Update");
 
             var paths = Global.GetMaxVersions(Cnn, ids).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
             }, "Update");
 
-
             Assert.DoesNotThrow(() =>
-           {
-               id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
-           }, "Update");
+            {
+                id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
+            }, "Update");
 
             Assert.That(paths, Is.EqualTo(actualPathes), "RemoveDirectory calls");
         }
@@ -548,36 +513,34 @@ namespace QP8.Integration.Tests
             var mockDynamicImage = new Mock<IDynamicImage>();
             Cnn.DynamicImageCreator = mockDynamicImage.Object;
             var actualImages = new List<DynamicImageInfo>();
-            mockDynamicImage
-                .Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()))
-                .Callback<DynamicImageInfo>(info =>
-                {
-                    actualImages.Add(info);
-                });
+            mockDynamicImage.Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>())).Callback<DynamicImageInfo>(info =>
+            {
+                actualImages.Add(info);
+            });
 
             var values = new List<Dictionary<string, string>>();
-
             const string name1 = "test789";
             const string name2 = "test321";
             const string ext1 = "jpg";
             const string ext2 = "png";
             const string folder2 = "cnt";
-            var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
 
+            var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
                 [ImageName] = $"{name1}.{ext1}",
                 ["File"] = "test.docx"
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
                 [ImageName] = $"{folder2}/{name2}.{ext2}"
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
 
             const string imagePng = "PngImage";
@@ -621,13 +584,12 @@ namespace QP8.Integration.Tests
         {
             var mockDynamicImage = new Mock<IDynamicImage>();
             Cnn.DynamicImageCreator = mockDynamicImage.Object;
+
             var actualImages = new List<DynamicImageInfo>();
-            mockDynamicImage
-                .Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()))
-                .Callback<DynamicImageInfo>(info =>
-                {
-                    actualImages.Add(info);
-                });
+            mockDynamicImage.Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>())).Callback<DynamicImageInfo>(info =>
+            {
+                actualImages.Add(info);
+            });
 
             const string name1 = "test789";
             const string name2 = "test321";
@@ -636,13 +598,12 @@ namespace QP8.Integration.Tests
             const string folder2 = "cnt";
 
             var imageName = Cnn.FieldName(Global.SiteId, ContentName, "BaseImage");
-
-            var article1 = new Hashtable()
+            var article1 = new Hashtable
             {
                 [imageName] = $"{name1}.{ext1}"
             };
 
-            var article2 = new Hashtable()
+            var article2 = new Hashtable
             {
                 [imageName] = $"{folder2}/{name2}.{ext2}"
             };
@@ -654,7 +615,6 @@ namespace QP8.Integration.Tests
             }, "Create");
 
             var ids = new[] { id };
-
             const string imagePng = "PngImage";
             const string imageJpg = "JpgImage";
             const string imageGif = "GifImage";
@@ -706,23 +666,20 @@ namespace QP8.Integration.Tests
             mockDynamicImage.Setup(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()));
 
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
                 [SystemColumnNames.Id] = "0"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
-
             mockDynamicImage.Verify(x => x.CreateDynamicImage(It.IsAny<DynamicImageInfo>()), Times.Never(), "Shouldn't be called for empty image fields");
         }
 
         [TearDown]
         public static void TestTearDown()
         {
-
             Cnn.FileSystem = new FakeFileSystem();
             Cnn.DynamicImageCreator = new FakeDynamicImage();
         }
