@@ -65,12 +65,7 @@ namespace Quantumart.QP8.BLL.Services
         public Guid GetArticleGuidById(int id)
         {
             var articleGuid = GetArticleGuidByIdOrDefault(id);
-            if (!articleGuid.HasValue)
-            {
-                throw new Exception($"Не найдена статья с заданным Id: {id}");
-            }
-
-            return articleGuid.Value;
+            return articleGuid ?? Guid.Empty;
         }
 
         public Guid? GetArticleGuidByIdOrDefault(int id)

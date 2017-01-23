@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
@@ -24,6 +27,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
     [ValidateInput(false)]
     public class ArticleController : QPController
     {
+
+        public ArticleController(IArticleService dbArticleService) : base (dbArticleService)
+        {
+        }
+
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.Articles)]
         [BackendActionContext(ActionCode.Articles)]
@@ -248,6 +256,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                     model.Data = ArticleService.Create(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
                     PersistFromId(model.Data.Id, model.Data.UniqueId.Value);
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
+                    foreach (var fv in model.Data.FieldValues.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
+                    {
+                        AppendFormGuidsFromIds($"field_{fv.Field.Id}", $"field_uniqueid_{fv.Field.Id}");
+                    }
+
                     return Redirect("Properties", new
                     {
                         tabId,
@@ -299,6 +312,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 {
                     model.Data = ArticleService.Update(model.Data, backendActionCode, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction());
                     PersistResultId(model.Data.Id, model.Data.UniqueId.Value);
+                    foreach (var fv in model.Data.FieldValues.Where(f => new[] { FieldExactTypes.O2MRelation, FieldExactTypes.M2MRelation, FieldExactTypes.M2ORelation }.Contains(f.Field.ExactType)))
+                    {
+                        AppendFormGuidsFromIds($"field_{fv.Field.Id}", $"field_uniqueid_{fv.Field.Id}");
+                    }
+
                     return Redirect("Properties", new
                     {
                         tabId,
@@ -558,5 +576,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 Data = ArticleService.GetChildArticles(ids, fieldId, filter)
             };
         }
+
     }
 }
