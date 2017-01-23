@@ -4,7 +4,7 @@ using System.Dynamic;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
 {
     public abstract class ViewModel
     {

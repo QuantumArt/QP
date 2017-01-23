@@ -56,6 +56,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 action.Form = new NameValueCollection
                 {
                     httpContext.Request.Form,
+                    GetDynamicFieldValuesFromHttpContext(httpContext, "field_uniqueid_"),
                     GetStringValuesFromHttpContext(httpContext, "DefaultArticleUniqueIds"),
                     GetStringValuesFromHttpContext(httpContext, "Data.O2MUniqueIdDefaultValue"),
                     GetStringValuesFromHttpContext(httpContext, "ContentDefaultFilter.ArticleUniqueIDs")
@@ -312,14 +313,25 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             return httpContext.Items.Contains(key) ? httpContext.Items[key].ToString().Split(",".ToCharArray()).Select(Guid.Parse).ToArray() : new Guid[] { };
         }
 
+        private static NameValueCollection GetDynamicFieldValuesFromHttpContext(HttpContextBase httpContext, string fieldPrefix)
+        {
+            var result = new NameValueCollection();
+            foreach (var ctxKey in httpContext.Items.Keys.OfType<string>().Where(key => key.StartsWith(fieldPrefix)))
+            {
+                result.Add(GetStringValuesFromHttpContext(httpContext, ctxKey));
+            }
+
+            return result;
+        }
+
         private static NameValueCollection GetStringValuesFromHttpContext(HttpContextBase httpContext, string key)
         {
             var result = new NameValueCollection();
             if (httpContext.Items.Contains(key))
             {
-                foreach (var guid in (string[])httpContext.Items[key])
+                foreach (var value in (string[])httpContext.Items[key])
                 {
-                    result.Add(key, guid);
+                    result.Add(key, value);
                 }
             }
 

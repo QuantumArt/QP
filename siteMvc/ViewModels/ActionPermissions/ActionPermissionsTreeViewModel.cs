@@ -2,6 +2,7 @@
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 using Quantumart.QP8.WebMvc.ViewModels.Interfaces;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.ActionPermissions

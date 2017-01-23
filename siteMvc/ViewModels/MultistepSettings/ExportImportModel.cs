@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
@@ -7,7 +7,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
     public class ExportImportModel : EntityViewModel
     {
@@ -47,8 +47,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         public List<ListItem> LineSeparators => new List<ListItem>
         {
-            new ListItem("0", MultistepActionStrings.CR),
-            new ListItem("1", MultistepActionStrings.CRLF),
+            new ListItem("0", MultistepActionStrings.CRLF),
+            new ListItem("1", MultistepActionStrings.CR),
             new ListItem("2", MultistepActionStrings.LF)
         };
 

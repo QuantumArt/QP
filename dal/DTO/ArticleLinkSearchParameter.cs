@@ -16,7 +16,7 @@
 
         public int ContentId { get; set; }
 
-        public int ExstensionContentId { get; set; }
+        public int ExtensionContentId { get; set; }
 
         public int ReferenceFieldId { get; set; }
 

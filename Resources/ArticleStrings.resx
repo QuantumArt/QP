@@ -1,17 +1,17 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -138,9 +138,6 @@
   <data name="Invisible" xml:space="preserve">
     <value>Invisible</value>
   </data>
-  <data name="ID" xml:space="preserve">
-    <value>ID</value>
-  </data>
   <data name="LastModifiedBy" xml:space="preserve">
     <value>Last Modified By</value>
   </data>
@@ -161,9 +158,6 @@
   </data>
   <data name="NotValidOrMissingValue" xml:space="preserve">
     <value>Field '{0}' value must be valid or missing </value>
-  </data>
-  <data name="NotValidValue" xml:space="preserve">
-    <value>Field '{0}' value must be valid</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
@@ -561,12 +555,6 @@
   <data name="Comments" xml:space="preserve">
     <value>Comments</value>
   </data>
-  <data name="IsChanged" xml:space="preserve">
-    <value>IsChanged</value>
-  </data>
-  <data name="CONTENT_ITEM_ID" xml:space="preserve">
-    <value>CONTENT_ITEM_ID</value>
-  </data>
   <data name="VariationGroup" xml:space="preserve">
     <value>Variations</value>
   </data>
@@ -610,10 +598,13 @@
     <value>Unique Id</value>
   </data>
   <data name="GuidShouldBeUnique" xml:space="preserve">
-    <value>Entered guid is already exists</value>
+    <value>Entered guid already exists</value>
   </data>
   <data name="GuidWrongFormat" xml:space="preserve">
     <value>Wrong guid format</value>
+  </data>
+  <data name="NotValidField" xml:space="preserve">
+    <value>Field '{0}' value must be valid</value>
   </data>
   <data name="ShouldContainAllSelectedCases" xml:space="preserve">
     <value>Result must contain ALL selected cases</value>

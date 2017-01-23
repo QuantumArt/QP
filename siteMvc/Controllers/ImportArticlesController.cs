@@ -10,7 +10,7 @@ using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -37,20 +37,17 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 throw new Exception(DBStrings.SingeUserModeMessage);
             }
 
-            var prms = _service.MultistepActionSettings(parentId, id);
-            return Json(prms);
+            return Json(_service.MultistepActionSettings(parentId, id));
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ImportArticles)]
         [BackendActionContext(ActionCode.ImportArticles)]
-        public ActionResult Settings(string tabId, int parentId, int id, int blockedFieldId)
+        public ActionResult Settings(string tabId, int parentId, int id)
         {
             var model = new ImportViewModel
             {
-                ContentId = id,
-                BlockedFieldId = blockedFieldId
+                ContentId = id
             };
 
             return JsonHtml($"{FolderForTemplate}/ImportTemplate", model);
@@ -66,8 +63,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             TryUpdateModel(model);
             model.SetCorrespondingFieldName(collection);
             var settings = model.GetImportSettingsObject(parentId, id);
-            var reader = new FileReader(settings);
-            var fieldsList = MultistepActionHelper.GetFileFields(settings, reader);
+            var fieldsList = MultistepActionHelper.GetFileFields(settings, new FileReader(settings));
             return Json(fieldsList);
         }
 
@@ -78,8 +74,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
-            var settings = _service.Setup(parentId, id, boundToExternal);
-            return Json(settings);
+            return Json(_service.Setup(parentId, id, boundToExternal));
         }
 
         [HttpPost]
@@ -102,8 +97,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public ActionResult Step(int stage, int step)
         {
-            var stepResult = _service.Step(stage, step);
-            return Json(stepResult);
+            return Json(_service.Step(stage, step));
         }
 
         [HttpPost]

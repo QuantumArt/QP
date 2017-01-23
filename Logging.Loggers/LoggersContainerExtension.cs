@@ -2,7 +2,7 @@
 
 namespace Quantumart.QP8.Logging.Loggers
 {
-    public static class LoggersContainerExstension
+    public static class LoggersContainerExtension
     {
         public static IUnityContainer RegisterLoggerModel<T>(this IUnityContainer container)
             where T : class

@@ -42,7 +42,6 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </summary>
         /// <typeparam name="TException">Type of exception to throw</typeparam>
         /// <param name="condition">Condition to test/ensure</param>
-        /// <param name="message">Message for the exception</param>
         /// <param name="args">args for TException constructor></param>
         /// <exception>Thrown when <cref>TException</cref><paramref name="condition"/> is false</exception>
         /// <remarks><see cref="TException"/> must have a constructor that takes a single string</remarks>

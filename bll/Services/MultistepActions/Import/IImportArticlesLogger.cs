@@ -3,7 +3,9 @@
 	public interface IImportArticlesLogger
 	{
 		void LogStartImport(ImportSettings settings);
+
 		void LogStep(int step, ImportSettings settings);
+
 		void LogEndImport(ImportSettings settings);
 	}
 }

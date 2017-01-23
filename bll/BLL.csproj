@@ -194,7 +194,7 @@
     <Compile Include="Repository\ArticleMatching\ArticleMatchRepository.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\ComparitionCondition.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\ConditionBase.cs" />
-    <Compile Include="Repository\ArticleMatching\Conditions\ConditionExstensions.cs" />
+    <Compile Include="Repository\ArticleMatching\Conditions\ConditionExtensions.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\FieldCondition.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\LogicalCondition.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\NotCondition.cs" />
@@ -395,7 +395,7 @@
     <Compile Include="Services\API\DbService.cs" />
     <Compile Include="Services\API\FieldService.cs" />
     <Compile Include="Services\API\IArticleMatchService.cs" />
-    <Compile Include="Services\API\IArticleService.cs" />
+    <Compile Include="Services\API\IBatchUpdateService.cs" />
     <Compile Include="Services\API\Models\ArticleData.cs" />
     <Compile Include="Services\API\Models\FieldData.cs" />
     <Compile Include="Services\API\Models\InsertData.cs" />
