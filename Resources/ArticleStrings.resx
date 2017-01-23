@@ -583,7 +583,7 @@
     <value>Article is not found (ID = {0})</value>
   </data>
   <data name="SearchBlock_FullTextBlockSearchResultLimitTitle" xml:space="preserve">
-    <value>Search result limit</value>
+    <value>View result limit</value>
   </data>
   <data name="ExpandChilds" xml:space="preserve">
     <value>Expand childs</value>
