@@ -28,7 +28,9 @@ namespace Quantumart.QP8.BLL.Factories
 
                     var filterSqlParams = new List<SqlParameter>();
                     var filterQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
-                    filterQuery = $"{hostFilter}{filterQuery}";
+                    filterQuery = string.IsNullOrWhiteSpace(filterQuery)
+                        ? hostFilter
+                        : $"({hostFilter} AND {filterQuery})";
 
                     var linkedFilters = (ArticleRepository.GetLinkSearchParameter(searchQuery) ?? new ArticleLinkSearchParameter[0]).ToList();
                     var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
