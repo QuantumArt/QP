@@ -1,8 +1,8 @@
-﻿using System;
-using System.Web;
+﻿using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
@@ -19,7 +19,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         public int[] Ids { get; }
 
-        public ExportArticlesCommand(MultistepActionStageCommandState state) : this(state.ParentId, state.Id, 0, state.Ids) { }
+        public ExportArticlesCommand(MultistepActionStageCommandState state)
+            : this(state.ParentId, state.Id, 0, state.Ids) { }
 
         public ExportArticlesCommand(int siteId, int contentId, int itemCount, int[] ids)
         {
@@ -52,18 +53,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         public MultistepActionStepResult Step(int step)
         {
             var content = ContentRepository.GetById(ContentId);
-            if (content == null)
-            {
-                throw new Exception(string.Format(ContentStrings.ContentNotFound, ContentId));
-            }
+            var settings = HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] as ExportSettings;
+            Ensure.NotNull(content, string.Format(ContentStrings.ContentNotFound, ContentId));
+            Ensure.NotNull(settings);
 
-            if (HttpContext.Current.Session["ExportArticlesService.Settings"] == null)
-            {
-                throw new ArgumentException("There is no specified settings");
-            }
-
-            var setts = HttpContext.Current.Session["ExportArticlesService.Settings"] as ExportSettings;
-            var csv = new CsvWriter(SiteId, ContentId, Ids, setts);
+            var csv = new CsvWriter(SiteId, ContentId, Ids, settings);
             var result = new MultistepActionStepResult { ProcessedItemsCount = csv.Write(step, ItemsPerStep) };
             if (csv.CsvReady)
             {

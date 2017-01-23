@@ -12,12 +12,11 @@ namespace Quantumart.QP8.Scheduler.Core
     {
         protected override void Initialize()
         {
-            Container.RegisterType<ISchedule, NullSchedule>(ConfigurationExstension.DefaultScheduleName);
+            Container.RegisterType<ISchedule, NullSchedule>(ConfigurationExtension.DefaultScheduleName);
             Container.RegisterType<IConnectionStrings, ConnectionStrings>();
 
             var descriptors = Container.ResolveAll<ProcessorDescriptor>();
             var services = descriptors.Select(d => d.Service).Distinct();
-
             foreach (var service in services)
             {
                 Container.RegisterType<Func<IUnityContainer>>(service, new InjectionFactory(parent =>

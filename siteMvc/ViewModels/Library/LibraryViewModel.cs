@@ -5,6 +5,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
 namespace Quantumart.QP8.WebMvc.ViewModels
 {

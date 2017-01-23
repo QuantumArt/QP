@@ -376,6 +376,13 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        public static void ValidateXamlById(int articleId, RulesException errors)
+        {
+            var article = ArticleRepository.GetById(articleId);
+            article.ValidateXaml(errors);
+        }
+
+
         private void ValidateWorkflow(RulesException errors)
         {
             if (!IsUpdatableWithWorkflow)
@@ -545,6 +552,7 @@ namespace Quantumart.QP8.BLL
                     var boolValue = bool.TryParse(value, out isBool);
                     value = (isBool ? Converter.ToInt32(boolValue) : Converter.ToInt32(value)).ToString();
                 }
+
                 pair.UpdateValue(value);
             }
         }
@@ -1017,6 +1025,7 @@ namespace Quantumart.QP8.BLL
 
                 result.Add(new FieldValue { Field = field, ObjectValue = objectValue, Article = article });
             }
+
             return result;
         }
 

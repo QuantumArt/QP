@@ -146,7 +146,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
 
         public override bool IsListDynamic => true;
 
-        public override string KeyColumnName => Constants.FieldName.CONTENT_ITEM_ID;
+        public override string KeyColumnName => Constants.FieldName.ContentItemId;
 
         public override string Filter
         {

@@ -4,7 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.WebPages;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionResults;
@@ -17,6 +19,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
     // ReSharper disable once InconsistentNaming
     public class QPController : Controller
     {
+        protected IArticleService DbArticleService;
+
+        public QPController()
+        {
+        }
+
+        public QPController(IArticleService dbArticleService)
+        {
+            DbArticleService = dbArticleService;
+        }
+
         public string RenderPartialView(string partialViewName, object model)
         {
             if (string.IsNullOrEmpty(partialViewName))
@@ -236,6 +249,22 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             if (formatId.HasValue)
             {
                 PersistToHttpContext("NOTIFICATION_FORMAT_ID", formatId.Value);
+            }
+        }
+
+        protected void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
+        {
+            var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
+            if (formIds != null)
+            {
+                var substitutedGuids = formIds
+                    .Where(f => f.IsInt())
+                    .Select(DbArticleService.GetArticleGuidById)
+                    .Where(g => g != Guid.Empty)
+                    .Select(g => g.ToString())
+                    .ToArray();
+
+                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
             }
         }
     }

@@ -1,81 +1,76 @@
-﻿using Quantumart.QP8.BLL.Services.MultistepActions.Export;
-using Quantumart.QP8.Resources;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Web;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
 {
-	public abstract class MultistepActionServiceBase<TCommand> : MultistepActionServiceAbstract, IActionCode
-		where TCommand : MultistepActionStageCommandBase
-	{
-		private TCommand Command { get; set; }
+    public abstract class MultistepActionServiceBase<TCommand> : MultistepActionServiceAbstract, IActionCode
+        where TCommand : MultistepActionStageCommandBase
+    {
+        private TCommand Command { get; set; }
 
-		protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
-		{
-			return new MultistepActionSettings
-			{
-				Stages = new[] 
-				{ 
+        protected override MultistepActionSettings CreateActionSettings(int parentId, int id)
+        {
+            return new MultistepActionSettings
+            {
+                Stages = new[]
+                {
                     Command.GetStageSettings()
-				},
+                },
 
-				ParentId = parentId
-			};
-		}
+                ParentId = parentId
+            };
+        }
 
-		protected MultistepActionServiceContext CreateContext(int parentId, int id, int[] ids, bool? boundToExternal)
-		{
-			var action = BackendActionService.GetByCode(ActionCode);
-			int itemsPerStep = action.EntityLimit ?? 1;
-			var state = new MultistepActionStageCommandState() { ParentId = parentId, Id = id, Ids = ids, BoundToExternal = boundToExternal, ItemsPerStep = itemsPerStep };
-						
-			Command = (TCommand)CreateCommand(state);
-			return new MultistepActionServiceContext { CommandStates = new[] { Command.GetState() } };
-		}
+        protected MultistepActionServiceContext CreateContext(int parentId, int id, int[] ids, bool? boundToExternal)
+        {
+            var action = BackendActionService.GetByCode(ActionCode);
+            var itemsPerStep = action.EntityLimit ?? 1;
+            var state = new MultistepActionStageCommandState() { ParentId = parentId, Id = id, Ids = ids, BoundToExternal = boundToExternal, ItemsPerStep = itemsPerStep };
 
-		protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
-		{
-			return CreateContext(parentId, id, new int[0], boundToExternal);
-		}
+            Command = (TCommand)CreateCommand(state);
+            return new MultistepActionServiceContext { CommandStates = new[] { Command.GetState() } };
+        }
 
-		protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
-		{
-			var command = Activator.CreateInstance<TCommand>();
-			command.Initialize(state);
-			return command;
-		}
+        protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
+        {
+            return CreateContext(parentId, id, new int[0], boundToExternal);
+        }
 
-		protected override string ContextSessionKey
-		{
-			get { return GetType().Name + ".Settings"; }
-		}
+        protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
+        {
+            var command = Activator.CreateInstance<TCommand>();
+            command.Initialize(state);
+            return command;
+        }
 
-		public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
-		{
-			if (HasAlreadyRun())
-				throw new ApplicationException(MultistepActionStrings.ActionHasAlreadyRun);
+        protected override string ContextSessionKey => GetType().Name + ".Settings";
 
-			MultistepActionServiceContext context = CreateContext(parentId, id, ids, boundToExternal);
-			HttpContext.Current.Session[ContextSessionKey] = context;
+        public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
+        {
+            if (HasAlreadyRun())
+            {
+                throw new ApplicationException(MultistepActionStrings.ActionHasAlreadyRun);
+            }
 
-			MultistepActionSettings settings = CreateActionSettings(parentId, id);
-			return settings;
-		}
+            var context = CreateContext(parentId, id, ids, boundToExternal);
+            HttpContext.Current.Session[ContextSessionKey] = context;
 
-		public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
-		{
-			return Setup(parentId, id, new int[0], boundToExternal);
-		}
+            var settings = CreateActionSettings(parentId, id);
+            return settings;
+        }
 
-		public override void TearDown()
-		{
-			MultistepActionStageCommandBase.TearDown();
-			base.TearDown();
-		}		
+        public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
+        {
+            return Setup(parentId, id, new int[0], boundToExternal);
+        }
 
-		public abstract string ActionCode { get; }
-	}
+        public override void TearDown()
+        {
+            MultistepActionStageCommandBase.TearDown();
+            base.TearDown();
+        }
+
+        public abstract string ActionCode { get; }
+    }
 }

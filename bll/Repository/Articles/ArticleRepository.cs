@@ -113,7 +113,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static string FillFullTextSearchParams(int contentId, string filter, IList<ArticleSearchQueryParam> searchQueryParams, ArticleFullTextSearchQueryParser ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] exstensionContentIds, out ContentReference[] contentReferences)
+        internal static string FillFullTextSearchParams(int contentId, string filter, IList<ArticleSearchQueryParam> searchQueryParams, ArticleFullTextSearchQueryParser ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] extensionContentIds, out ContentReference[] contentReferences)
         {
             ftsOptions = GetFtsSearchParameter(ftsParser, searchQueryParams, ArticleFullTextSearchSettings.SearchResultLimit);
             var availableForList = QPContext.IsAdmin || Common.IsEntityAccessible(QPConnectionScope.Current.DbConnection, QPContext.CurrentUserId, EntityTypeCode.Content, contentId, ActionTypeCode.List);
@@ -124,12 +124,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             if (searchQueryParams == null)
             {
-                exstensionContentIds = new int[0];
+                extensionContentIds = new int[0];
                 contentReferences = new ContentReference[0];
             }
             else
             {
-                exstensionContentIds = searchQueryParams.Select(p => p.ContentID).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
+                extensionContentIds = searchQueryParams.Select(p => p.ContentID).Distinct().Where(id => !string.IsNullOrEmpty(id)).Select(int.Parse).ToArray();
                 contentReferences = searchQueryParams
                     .Where(p => !string.IsNullOrEmpty(p.ContentID) && !string.IsNullOrEmpty(p.ReferenceFieldID))
                     .Select(p => new ContentReference(int.Parse(p.ContentID), int.Parse(p.ReferenceFieldID)))
@@ -199,7 +199,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var options = new ArticlePageOptions
                 {
                     ContentId = contentId,
-                    ExstensionContentIds = extensionContentIds,
+                    ExtensionContentIds = extensionContentIds,
                     ContentReferences = contentReferences.Distinct().ToArray(),
                     SelectedIDs = selectedArticleIDs,
                     FilterIds = filterIds,
@@ -443,8 +443,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
                 var useSecurity = !isUserAdmin && ContentRepository.IsArticlePermissionsAllowed(contentId);
                 var extraFrom = GetExtraFromForRelations(fields);
-
-                var rows = Common.GetArticlesSimpleList(QPConnectionScope.Current.DbConnection,
+                var rows = Common.GetArticlesSimpleList(
+                    QPConnectionScope.Current.DbConnection,
                     QPContext.CurrentUserId,
                     contentId,
                     displayExpression,
@@ -453,6 +453,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     filter,
                     useSecurity,
                     selection.ToArray(),
+                    null,
                     null,
                     string.Empty,
                     extraFrom,
@@ -475,7 +476,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var searchIds = Common.GetFilterAndFtsSearchResult(scope.DbConnection, treeField.ContentId, extensionContentIds, ftsOptions, searchFilterQuery, filterSqlParams).ToList();
                 var parentIds = Common.GetParentIdsTreeResult(scope.DbConnection, searchIds, treeField.Id, treeField.Name);
                 var treeItems = GetArticleTreeFilteredResult(parentIds, commonFilter, treeField).ToList();
-
                 var treeItemsDict = treeItems.ToDictionary(kv => kv.Id);
                 foreach (var kv in treeItemsDict.Where(ti => searchIds.Contains(int.Parse(ti.Key))))
                 {
@@ -504,8 +504,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             bool useMainTable;
             var content = ContentRepository.GetById(treeField.ContentId);
             var contextFilter = GetContextFilter(contextQuery, content.Fields.ToList(), out useMainTable);
-
             var whereBuilder = new StringBuilder(SqlFilterComposer.Compose(filterQuery, commonFilter, contextFilter));
+
             Common.AddLinkFilteringToQuery(linkedFilters, whereBuilder, filterSqlParams);
             return $"SELECT DISTINCT TOP({searchLimit}) c.content_item_id from content_{treeField.ContentId}_united c WHERE {whereBuilder}";
         }
@@ -525,7 +525,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var extraFilter = commonFilter.Replace("c.", "cnt.");
             return idsToFilter == null
                 ? GetArticleTreeForParentResult(null, commonFilter, treeField)
-                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id in (select id from @ids) ", extraFilter, treeField, idsToFilter);
+                : GetArticleTreeItemsResult($"{commonFilter} AND c.content_item_id IN (SELECT id FROM @ids) ", extraFilter, treeField, idsToFilter);
         }
 
         internal static IEnumerable<EntityTreeItem> GetArticleTreeItemsResult(string commonFilter, string extraFilter, Field treeField, IList<int> idsToFilter)
@@ -533,21 +533,20 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             using (var scope = new QPConnectionScope())
             {
                 var useSecurity = !QPContext.IsAdmin && ContentRepository.IsArticlePermissionsAllowed(treeField.ContentId);
-                var extraSelect = $", c.{treeField.Name} as parentId" +
+                var extraSelect = $", c.{treeField.Name} AS parentId" +
                                   ", cil.locked_by" +
-                                  ", lu.first_name + ' ' + lu.last_name as locker_name" +
-                                  ", cast(case when (" +
-                                    $"select count(content_item_id) from content_{treeField.ContentId}_united cnt " +
-                                    $"where [{treeField.Name}] = c.content_item_id and {extraFilter}" +
-                                  ") > 0 then 1 else 0 end as bit) as has_children ";
+                                  ", lu.first_name + ' ' + lu.last_name AS locker_name" +
+                                  ", CAST(CASE WHEN (" +
+                                    $"SELECT COUNT(content_item_id) FROM content_{treeField.ContentId}_united cnt " +
+                                    $"WHERE [{treeField.Name}] = c.content_item_id AND {extraFilter}" +
+                                  ") > 0 THEN 1 ELSE 0 END AS bit) AS has_children ";
 
                 var fields = treeField.TreeFieldTitleCount <= 1 ? null : ((IContentRepository)new ContentRepository()).GetDisplayFieldIds(treeField.ContentId, treeField.IncludeRelationsInTitle, treeField.Id)
                     .Take(treeField.TreeFieldTitleCount)
                     .Select(FieldRepository.GetById).ToList();
 
                 fields = fields ?? new[] { treeField.Relation }.ToList();
-                var extraFrom = " left join content_item cil on c.content_item_id = cil.content_item_id and locked_by is not null left join users lu on lu.user_id = cil.locked_by " + GetExtraFromForRelations(fields);
-
+                var extraFrom = " LEFT JOIN content_item cil ON c.content_item_id = cil.content_item_id AND locked_by IS NOT NULL LEFT JOIN users lu ON lu.user_id = cil.locked_by " + GetExtraFromForRelations(fields);
                 var rows = Common.GetArticlesSimpleList(
                     scope.DbConnection,
                     QPContext.CurrentUserId,
@@ -559,6 +558,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     useSecurity,
                     null,
                     idsToFilter,
+                    ArticleFullTextSearchSettings.SearchResultLimit,
                     extraSelect,
                     extraFrom,
                     GetSimpleListOrderExpression(treeField, fields));
@@ -674,12 +674,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             using (new QPConnectionScope())
             {
-                if (id == 0)
-                {
-                    return Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId);
-                }
-
-                return Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, QPContext.IsLive);
+                return id == 0
+                    ? Common.GetDefaultArticleRow(QPConnectionScope.Current.DbConnection, contentId)
+                    : Common.GetArticleRow(QPConnectionScope.Current.DbConnection, id, contentId, QPContext.IsLive);
             }
         }
 
@@ -955,7 +952,6 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     var sortInfo = sortInfoList[sortInfoIndex];
                     var oldFieldName = sortInfo.FieldName;
                     var newFieldName = oldFieldName;
-
                     if (DynamicColumnNamePattern.IsMatch(oldFieldName))
                     {
                         var field = fieldList.SingleOrDefault(n => n.FormName == oldFieldName);
@@ -1032,6 +1028,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                             .Where(a => aggregatedArticlesId.Contains(a.Id))
                             .ToList());
                 }
+
                 return Enumerable.Empty<Article>();
             }
         }
@@ -1064,9 +1061,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         internal static bool IsAnyAggregatedFields(int articleId)
         {
-            return QPContext.EFContext.ArticleSet.Any(a =>
-                a.Id == articleId &&
-                a.Content.Fields.Any(f => f.Aggregated));
+            return QPContext.EFContext.ArticleSet.Any(a => a.Id == articleId && a.Content.Fields.Any(f => f.Aggregated));
         }
 
         internal static bool CheckRelationSecurity(Article article, bool isDeletable)
@@ -1110,14 +1105,12 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 var testIds = testValues.SelectMany(n => n.Value).Distinct().ToArray();
                 var startLevel = isDeletable ? PermissionLevel.FullAccess : PermissionLevel.Modify;
                 var securityInfo = CommonSecurity.GetRelationSecurityInfo(scope.DbConnection, contentId, testIds);
-
                 if (securityInfo.IsEmpty)
                 {
                     return testValues.ToDictionary(n => n.Key, m => true);
                 }
 
                 var partResult = new Dictionary<int, bool>();
-
                 foreach (var currentContentId in securityInfo.ContentIds)
                 {
                     var currentMapping = securityInfo.GetItemMapping(currentContentId);
@@ -1142,10 +1135,8 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                     }
                 }
 
-
                 return testValues.ToDictionary(n => n.Key, m => m.Value.All(k => partResult[k]));
             }
-
         }
 
         internal static Dictionary<int, bool> CheckSecurity(int contentId, int[] testIds, bool isDeletable, bool disableSecurityCheck)
@@ -1154,6 +1145,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 return testIds.ToDictionary(n => n, m => true);
             }
+
             var startLevel = isDeletable ? PermissionLevel.FullAccess : PermissionLevel.Modify;
             using (var scope = new QPConnectionScope())
             {
@@ -1185,6 +1177,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             {
                 return null;
             }
+
             using (var scope = new QPConnectionScope())
             {
                 return Common.GetArticleHierarchy(scope.DbConnection, contentId, treeName);
@@ -1201,20 +1194,36 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             }
         }
 
-        internal static List<DataRow> GetArticlesForExport(int contentId, string exstensions, string columns, string filter, int startRow, int pageSize, string orderBy, IEnumerable<ExportSettings.FieldSetting> fieldsToExpand, out int totalRecords)
+        internal static List<DataRow> GetArticlesForExport(int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, IEnumerable<ExportSettings.FieldSetting> fieldsToExpand)
+        {
+            int totalRecords;
+            return GetArticlesForExport(contentId, extensions, columns, filter, startRow, pageSize, orderBy, fieldsToExpand, out totalRecords);
+        }
+
+        internal static List<DataRow> GetArticlesForExport(int contentId, string extensions, string columns, string filter, int startRow, int pageSize, string orderBy, IEnumerable<ExportSettings.FieldSetting> fieldsToExpand, out int totalRecords)
         {
             using (var scope = new QPConnectionScope())
             {
-                var allExstensions = $"{exstensions} {GetExtraFromForRelations(fieldsToExpand)}";
-                return Common.GetArticlesForExport(scope.DbConnection, contentId, allExstensions, columns, filter, startRow, pageSize, orderBy, out totalRecords);
+                var allExtensions = $"{extensions} {GetExtraFromForRelations(fieldsToExpand)}";
+                return Common.GetArticlesForExport(scope.DbConnection, contentId, allExtensions, columns, filter, startRow, pageSize, orderBy, out totalRecords);
             }
         }
 
-        internal static List<int> InsertArticleIds(string query)
+        internal static List<int> InsertArticleIds(string query, bool preserveGuids = false)
         {
             using (var scope = new QPConnectionScope())
             {
-                return Common.InsertArticleIds(scope.DbConnection, query);
+                return preserveGuids
+                    ? Common.InsertArticleIdsWithGuids(scope.DbConnection, query)
+                    : Common.InsertArticleIds(scope.DbConnection, query);
+            }
+        }
+
+        internal static void UpdateArticleGuids(List<Tuple<int, Guid>> guidsByIdToUpdate)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                Common.UpdateArticleGuids(scope.DbConnection, guidsByIdToUpdate);
             }
         }
 

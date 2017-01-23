@@ -90,11 +90,11 @@ namespace Quantumart.QP8.BLL.Repository.Articles
                 throw new ApplicationException("Не удалость получить LinkedId для поля с id = " + fieldId);
             }
 
-            int exstensionContentId;
+            int extensionContentId;
             int referenceFieldId;
-            if (!int.TryParse(p.ContentID, out exstensionContentId))
+            if (!int.TryParse(p.ContentID, out extensionContentId))
             {
-                exstensionContentId = 0;
+                extensionContentId = 0;
             }
 
             if (!int.TryParse(p.ReferenceFieldID, out referenceFieldId))
@@ -105,7 +105,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var result = new ArticleLinkSearchParameter
             {
                 LinkId = linkedId.Value,
-                ExstensionContentId = exstensionContentId,
+                ExtensionContentId = extensionContentId,
                 ReferenceFieldId = referenceFieldId,
                 Ids = values.ToArray(),
                 IsManyToMany = p.SearchType == ArticleFieldSearchType.M2MRelation,

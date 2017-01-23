@@ -5,7 +5,7 @@ using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
     public class ExportViewModel : ExportImportModel
     {

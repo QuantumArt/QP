@@ -80,7 +80,7 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        internal static void CreateFrontedViews(int contentId)
+        internal static void CreateFrontendViews(int contentId)
         {
             using (var scope = new QPConnectionScope())
             {

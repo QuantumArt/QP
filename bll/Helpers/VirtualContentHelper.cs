@@ -693,7 +693,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
             // контент уже обновлен так что можно перестроить view
             DropContentViews(dbContent);
-            CreateContentViews(dbContent);
+            CreateContentViews(dbContent, false);
 
             IEnumerable<int> contentsAfterUpdate = dbContent.UserQueryContentViewSchema.SelectUniqContentIDs().OrderBy(i => i);
 
@@ -716,6 +716,8 @@ namespace Quantumart.QP8.BLL.Helpers
                 // Обновить все дочерние контенты
                 UpdateVirtualSubContents(dbContent);
             }
+
+            CreateFrontendViews(dbContent);
 
             return dbContent;
         }
@@ -1256,7 +1258,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <summary>
         /// Создать вьюхи для контента
         /// </summary>
-        internal void CreateContentViews(Content newContent)
+        internal void CreateContentViews(Content newContent, bool withFront = true)
         {
             if (newContent.VirtualType == VirtualType.Join)
             {
@@ -1269,6 +1271,11 @@ namespace Quantumart.QP8.BLL.Helpers
             else if (newContent.VirtualType == VirtualType.UserQuery)
             {
                 CreateUserQueryViews(newContent);
+            }
+
+            if (withFront)
+            {
+                CreateFrontendViews(newContent);
             }
         }
 
@@ -1285,8 +1292,12 @@ namespace Quantumart.QP8.BLL.Helpers
                 VirtualContentRepository.RunCreateViewDdl(viewCreateDdl);
                 VirtualContentRepository.RunCreateViewDdl(asyncViewCreateDdl);
                 VirtualContentRepository.CreateUnitedView(newContent.Id);
-                VirtualContentRepository.CreateFrontedViews(newContent.Id);
             }
+        }
+
+        private static void CreateFrontendViews(Content newContent)
+        {
+            VirtualContentRepository.CreateFrontendViews(newContent.Id);
         }
 
         /// <summary>
@@ -1386,7 +1397,6 @@ namespace Quantumart.QP8.BLL.Helpers
             VirtualContentRepository.RunCreateViewDdl(viewCreateDdl);
             VirtualContentRepository.RunCreateViewDdl(asyncViewCreateDdl);
             VirtualContentRepository.CreateUnitedView(content.Id);
-            VirtualContentRepository.CreateFrontedViews(content.Id);
         }
 
         internal string GenerateCreateUnionViewDdl(int contentId, IEnumerable<int> unionSourceContentIDs, IEnumerable<string> contentFieldNames, Dictionary<string, HashSet<int>> fieldNameInSourceContents)
@@ -1462,7 +1472,6 @@ namespace Quantumart.QP8.BLL.Helpers
                 }
 
                 VirtualContentRepository.RunCreateViewDdl(viewUnitedCreateDdl);
-                VirtualContentRepository.CreateFrontedViews(content.Id);
             }
             catch (SqlException ex)
             {
