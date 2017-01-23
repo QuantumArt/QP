@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
@@ -23,12 +24,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
     {
         private readonly IUserService _service;
 
-        private readonly IArticleService _dbArticleService;
-
-        public UserController(IUserService service, IArticleService dbArticleService)
+        public UserController(IUserService service, IArticleService dbArticleService) : base(dbArticleService)
         {
             _service = service;
-            _dbArticleService = dbArticleService;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -230,22 +228,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
 
             return JsonHtml("Profile", model);
-        }
-#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
-
-        private void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
-        {
-            var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
-            if (formIds != null)
-            {
-                var substitutedGuids = formIds
-                    .Where(f => f.IsInt())
-                    .Select(_dbArticleService.GetArticleGuidById)
-                    .Select(g => g.ToString())
-                    .ToArray();
-
-                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
-            }
         }
     }
 }

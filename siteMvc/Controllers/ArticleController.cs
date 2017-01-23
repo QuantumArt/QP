@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -26,11 +27,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
     [ValidateInput(false)]
     public class ArticleController : QPController
     {
-        private readonly IArticleService _dbArticleService;
 
-        public ArticleController(IArticleService dbArticleService)
+        public ArticleController(IArticleService dbArticleService) : base (dbArticleService)
         {
-            _dbArticleService = dbArticleService;
         }
 
         [ExceptionResult(ExceptionResultMode.UiAction)]
@@ -578,20 +577,5 @@ namespace Quantumart.QP8.WebMvc.Controllers
             };
         }
 
-        // TODO: Move to service/helper
-        private void AppendFormGuidsFromIds(string formIdsKey, string formUniqueIdsKey)
-        {
-            var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
-            if (formIds != null)
-            {
-                var substitutedGuids = formIds
-                    .Where(f => f.IsInt())
-                    .Select(_dbArticleService.GetArticleGuidById)
-                    .Select(g => g.ToString())
-                    .ToArray();
-
-                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
-            }
-        }
     }
 }
