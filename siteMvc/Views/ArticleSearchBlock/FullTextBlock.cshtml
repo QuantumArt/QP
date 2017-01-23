@@ -1,33 +1,32 @@
-@using Quantumart.QP8.Constants
+@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
 
 <fieldset>
-	<legend>@ArticleStrings.SearchBlock_FullTextBlockTitle</legend>
-	<div class="fullTextBlock">
-        <select id="@ViewBag.TextFieldsComboID" class="dropDownList">
-        @{var groups = ((IEnumerable<IGrouping<string, Quantumart.QP8.BLL.ArticleSearchableField>>)ViewBag.SearchableFieldList).ToList();}
-				@foreach (var g in groups)
-				{
-                    if (g.Key == null || groups.Count() <= 1)
-                    {
-                            foreach(var f in g)
-                            {
-				                <option value="@f.Value" data-search_type="@((int)f.ArticleFieldSearchType)" data-field_id="@f.ID" data-content_id="@f.ContentId" data-field_column="@f.ColumnName" aria-checkeddata-field_all="@f.IsAll" data-field_is_title="@f.IsTitle" @f.Selected>@f.Name</option>
-                            }
-                    }
-                    else
-                    {
-                        <optgroup label="@g.Key">
-                            @foreach(var f in g)
-                            {
-                				<option value="@f.Value" data-search_type="@((int)f.ArticleFieldSearchType)" data-field_id="@f.ID" data-content_id="@f.ContentId" data-field_column="@f.ColumnName" data-field_all="@f.IsAll" data-field_is_title="@f.IsTitle" @f.Selected>@f.Name</option>
-                            }
-                        </optgroup>
-                    }
-				}
-			</select>
+  <legend>@ArticleStrings.SearchBlock_FullTextBlockTitle</legend>
+  <div class="fullTextBlock">
+    <select id="@ViewBag.TextFieldsComboID" class="dropDownList">
+      @{var fieldGroups = ((IEnumerable<IGrouping<string, ArticleSearchableField>>)ViewBag.SearchableFieldList).ToList();}
+      @foreach (var group in fieldGroups)
+      {
+        if (group.Key == null || fieldGroups.Count <= 1)
+        {
+          foreach (var field in group)
+          {
+            <option value="@field.Value" data-search_type="@((int)field.ArticleFieldSearchType)" data-field_id="@field.ID" data-content_id="@field.ContentId" data-field_column="@field.ColumnName" aria-checkeddata-field_all="@field.IsAll" data-field_is_title="@field.IsTitle" @field.Selected>@field.Name</option>
+          }
+        }
+        else
+        {
+          <optgroup label="@group.Key">
+          @foreach (var f in group)
+          {
+            <option value="@f.Value" data-search_type="@((int)f.ArticleFieldSearchType)" data-field_id="@f.ID" data-content_id="@f.ContentId" data-field_column="@f.ColumnName" data-field_all="@f.IsAll" data-field_is_title="@f.IsTitle" @f.Selected>@f.Name</option>
+          }
+          </optgroup>
+        }
+      }
+    </select>
 
-      @Html.TextBox((string)ViewBag.QueryTextBoxID, string.Empty, new { @class = "textbox" })
-	    <label class="hidden">&nbsp;@ArticleStrings.SearchBlock_FullTextBlockSearchResultLimitTitle:&nbsp;@ArticleFullTextSearchSettings.SearchResultLimit</label>
-	</div>
+    @Html.TextBox((string)ViewBag.QueryTextBoxID, string.Empty, new { @class = "textbox" })
+  </div>
 </fieldset>

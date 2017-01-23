@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -580,7 +580,7 @@
     <value>Текст</value>
   </data>
   <data name="SearchBlock_FullTextBlockSearchResultLimitTitle" xml:space="preserve">
-    <value>Лимит поиска</value>
+    <value>Лимит отображения</value>
   </data>
   <data name="ExpandChilds" xml:space="preserve">
     <value>Расширить вниз</value>
