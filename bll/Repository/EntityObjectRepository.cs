@@ -305,7 +305,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.VirtualArticle)
                 {
-                    return Common.GetTreeIdsToLoad(scope.DbConnection, $"CONTENT_{parentEntityId}_UNITED", ((IContentRepository)new ContentRepository()).GetTreeFieldName(parentEntityId, 0), FieldName.CONTENT_ITEM_ID, selectItemIds);
+                    return Common.GetTreeIdsToLoad(scope.DbConnection, $"CONTENT_{parentEntityId}_UNITED", ((IContentRepository)new ContentRepository()).GetTreeFieldName(parentEntityId, 0), FieldName.ContentItemId, selectItemIds);
                 }
 
                 return Common.GetTreeIdsToLoad(scope.DbConnection, entityTypeCode, selectItemIds);

@@ -31,10 +31,8 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   //Private Methods
   _initFileUploader: function(context, uploadPath) {
     this._fileWrapperElementId = context._popupWindowId + '_upload_pl_cont_import';
-    var $fileWrapper = jQuery('#' + this._fileWrapperElementId);
-
-    this._fileWrapperElement = $fileWrapper.get(0);
-    jQuery(this._fileWrapperElement).closest('.documentWrapper').addClass('ImportWrapper');
+    this._fileWrapperElement = document.getElementById(this._fileWrapperElementId);
+    $(this._fileWrapperElement).closest('.documentWrapper').addClass('ImportWrapper');
     if (this._uploaderType == Quantumart.QP8.Enums.UploaderType.Silverlight) {
       this._uploaderComponent = new Quantumart.QP8.BackendSilverlightUploader(this._fileWrapperElement, {
         background: '#ffffff',
@@ -49,8 +47,9 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
 
     this._uploaderComponent.initialize();
     this._uploaderComponent.set_folderPath(uploadPath);
-    this._uploaderComponent.attachObserver(EVENT_TYPE_LIBRARY_FILE_UPLOADED, jQuery.proxy(this._onFileUploadedHandler, this));
+    this._uploaderComponent.attachObserver(EVENT_TYPE_LIBRARY_FILE_UPLOADED, $.proxy(this._onFileUploadedHandler, this));
   },
+
   _onFileUploadedHandler: function(eventType, sender, eventArgs) {
     this.fileName = eventArgs.get_fileNames()[0];
 
@@ -117,6 +116,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       this._$uniqueContentFieldId.on('change', function() {
         that._updateMappingOptions.call(that);
       });
+
       this._$uniqueFieldToUpdate.on('change', function() {
         that._updateMappingOptions.call(that);
       });
@@ -125,7 +125,6 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     this._$importAction.on('change', function() {
       that._showValidationSigns(that._$fields, that._fieldsPredicate);
       that._$fields.trigger('change');
-
       that._$uniqueFieldToUpdate.trigger('change');
       that._showValidationSigns($('.star:first'), that._uniqueFieldToUpdatePredicate);
     });
@@ -241,9 +240,9 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     };
 
     Array.add(dataItems, importButton);
-
     return dataItems;
   },
+
   InitActions: function(object, options) {
     this._initFileUploader(object, options.UploadPath);
     this._initValidation();
@@ -252,7 +251,6 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   Validate: function() {
     var that = this;
     var errorMessage = '';
-
     if (this.fileName == '') {
       errorMessage = $l.MultistepAction.NoDownloadedFile;
     }
@@ -313,14 +311,11 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     }
   },
   loadFromFile: function(options) {
-    var that = this,
-                prms = $('#' + options._popupWindowComponent._documentWrapperElementId + ' form input, #' + options._popupWindowComponent._documentWrapperElementId + ' form select').serialize();
-
+    var that = this;
+    var prms = $('#' + options._popupWindowComponent._documentWrapperElementId + ' form input, #' + options._popupWindowComponent._documentWrapperElementId + ' form select').serialize();
     var act = new Quantumart.QP8.BackendActionExecutor.getBackendActionByCode(options._actionCode);
     var getFieldsUrl = String.format('{0}FileFields/0/{1}/{2}/', act.ControllerActionUrl, options._parentEntityId, options._contentId);
-
     getFieldsUrl = getFieldsUrl.replace(/^~\//, APPLICATION_ROOT_URL);
-
     $.ajax({
       url: getFieldsUrl,
       data: prms,
@@ -338,17 +333,18 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       }
     });
   },
-  _fillOptionsFromFile: function(fields) {
-    var options = new Array(),
-                fieldsClass = ' .dropDownList.dataList.fields',
-                documentId = '#' + this.options._popupWindowComponent._documentWrapperElementId + ' ';
 
+  _fillOptionsFromFile: function(fields) {
+    var options = new Array();
+    var fieldsClass = ' .dropDownList.dataList.fields';
+    var documentId = '#' + this.options._popupWindowComponent._documentWrapperElementId + ' ';
     $(documentId + fieldsClass).html('');
     $.each($(documentId + fieldsClass), function(index, item) {
       $(item).append($('<option>', {
         value: -1,
         text: ''
       }));
+
       $.each(fields, function(i, it) {
         $(item).append($('<option>', {
           value: it,
@@ -357,9 +353,11 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
         }));
       });
     });
+
     this._$uniqueFieldToUpdate.val('CONTENT_ITEM_ID');
     this._$fieldGroup.show();
   },
+
   dispose: function() {
     this._disposeValidation();
     if (this._uploaderComponent) {

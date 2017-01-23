@@ -15,7 +15,6 @@ namespace Quantumart.QP8.BLL.Repository
 {
     internal class NotificationPushRepository
     {
-        #region Private fields and properties
         private int ContentId { get; set; }
 
         private int SiteId { get; set; }
@@ -26,35 +25,25 @@ namespace Quantumart.QP8.BLL.Repository
 
         private Notification[] Notifications { get; set; }
 
-        private Notification[] ServiceNotifications => Notifications.Where(n => n.UseService).ToArray();
+        private IEnumerable<Notification> ServiceNotifications => Notifications.Where(n => n.UseService).ToArray();
 
-        private Notification[] NonServiceNotifications => Notifications.Where(n => !n.UseService).ToArray();
+        private IEnumerable<Notification> NonServiceNotifications => Notifications.Where(n => !n.UseService).ToArray();
 
         public string ConnectionString { get; set; } = QPContext.CurrentDbConnectionString;
 
-
         private string[] Codes { get; set; }
-
-        #endregion
-
-        #region public properties
 
         /// <summary>
         /// Do not send internal e-mail notifications
         /// </summary>
         public bool IgnoreInternal { get; set; }
 
-        #endregion
-
-        #region Constructor
         internal NotificationPushRepository()
         {
             Articles = new Article[0];
             Notifications = new Notification[0];
         }
-        #endregion
 
-        #region Internal methods
         internal void SendNotificationOneWay(string connectionString, int id, string code)
         {
             QueueAsync(() => Notify(connectionString, id, code, IgnoreInternal));
@@ -121,20 +110,31 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal void SendNonServiceNotifications(bool waitFor)
         {
-            if (!NonServiceNotifications.Any()) return;
+            if (!NonServiceNotifications.Any())
+            {
+                return;
+            }
+
             foreach (var item in ArticleIds)
             {
                 if (waitFor)
+                {
                     SendNotification(ConnectionString, item, string.Join(";", Codes));
+                }
                 else
+                {
                     SendNotificationOneWay(ConnectionString, item, string.Join(";", Codes));
+                }
             }
         }
 
-
         internal void SendServiceNotifications()
         {
-            if (!ServiceNotifications.Any()) return;
+            if (!ServiceNotifications.Any())
+            {
+                return;
+            }
+
             try
             {
                 IEnumerable<ExternalNotification> notificationQueue;
@@ -204,10 +204,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        #endregion
-
-        #region Private methods
-
         private static void QueueAsync(Action action)
         {
             ThreadPool.QueueUserWorkItem((o) => action());
@@ -221,10 +217,11 @@ namespace Quantumart.QP8.BLL.Repository
                 action();
                 evt.Set();
             });
+
             evt.WaitOne();
         }
 
-        private void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
+        private static void Notify(string connectionString, int id, string code, bool disableInternalNotifications)
         {
             QPConfiguration.SetAppSettings(DBConnector.AppSettings);
             var cnn = new DBConnector(connectionString)
@@ -235,6 +232,7 @@ namespace Quantumart.QP8.BLL.Repository
                 ExternalExceptionHandler = HandleException,
                 ThrowNotificationExceptions = false
             };
+
             foreach (var simpleCode in code.Split(';'))
             {
                 cnn.SendNotification(id, simpleCode);
@@ -246,8 +244,8 @@ namespace Quantumart.QP8.BLL.Repository
             var doc = new XDocument(new XElement("article", new XAttribute("id", article.Id)));
             if (doc.Root != null)
             {
-                doc.Root.Add(new XElement("created", (article.Created).ToString(CultureInfo.InvariantCulture)));
-                doc.Root.Add(new XElement("modified", (article.Modified).ToString(CultureInfo.InvariantCulture)));
+                doc.Root.Add(new XElement("created", article.Created.ToString(CultureInfo.InvariantCulture)));
+                doc.Root.Add(new XElement("modified", article.Modified.ToString(CultureInfo.InvariantCulture)));
                 doc.Root.Add(new XElement("contentId", article.ContentId));
                 doc.Root.Add(new XElement("siteId", article.Content.SiteId));
                 doc.Root.Add(new XElement("visible", article.Visible));
@@ -261,19 +259,19 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     extRoot.Add(new XElement("extension", new XAttribute("typeId", item.ContentId), new XAttribute("id", item.Id), GetFieldValuesElement(item.FieldValues)));
                 }
+
                 doc.Root.Add(extRoot);
             }
+
             return doc;
         }
 
         private static XElement GetFieldValuesElement(IEnumerable<FieldValue> fieldValues)
         {
             var fields = new XElement("customFields");
-
             foreach (var fieldValue in fieldValues)
             {
                 string value;
-
                 if (fieldValue.RelatedItems != null && fieldValue.RelatedItems.Any())
                 {
                     value = string.Join(",", fieldValue.RelatedItems);
@@ -285,6 +283,7 @@ namespace Quantumart.QP8.BLL.Repository
 
                 fields.Add(new XElement("field", new XAttribute("name", fieldValue.Field.Name), new XAttribute("id", fieldValue.Field.Id), value));
             }
+
             return fields;
         }
 
@@ -303,14 +302,14 @@ namespace Quantumart.QP8.BLL.Repository
 
             var enumerable = codes as string[] ?? codes.ToArray();
             var count = enumerable.Length;
-
             if (!enumerable.Any())
             {
                 throw new ArgumentException(@"no codes defined", nameof(codes));
             }
+
             if (enumerable.Any(c => c == NotificationCode.Create || c == NotificationCode.Delete) && count > 1)
             {
-                throw new ArgumentException($"codes {NotificationCode.Create} and {NotificationCode.Delete} can't be used with othes codes", nameof(codes));
+                throw new ArgumentException($@"codes {NotificationCode.Create} and {NotificationCode.Delete} can't be used with othes codes", nameof(codes));
             }
 
             string[] availableCodes =
@@ -325,17 +324,15 @@ namespace Quantumart.QP8.BLL.Repository
             };
 
             var wrongCodes = enumerable.Select(c => c.ToLowerInvariant()).Except(availableCodes).ToArray();
-
             if (wrongCodes.Any())
             {
-                throw new ArgumentException($"codes {string.Join(", ", wrongCodes)} is not valid", nameof(codes));
+                throw new ArgumentException($@"codes {string.Join(", ", wrongCodes)} is not valid", nameof(codes));
             }
         }
 
-        private void HandleException(Exception ex)
+        private static void HandleException(Exception ex)
         {
             EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, "Policy");
         }
-        #endregion
     }
 }

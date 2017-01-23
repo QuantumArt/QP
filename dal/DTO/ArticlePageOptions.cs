@@ -13,7 +13,7 @@ namespace Quantumart.QP8.DAL.DTO
 
         public int ContentId { get; set; }
 
-        public int[] ExstensionContentIds { get; set; }
+        public int[] ExtensionContentIds { get; set; }
 
         public ContentReference[] ContentReferences { get; set; }
 
@@ -56,7 +56,7 @@ namespace Quantumart.QP8.DAL.DTO
         {
             if (ReferenceEquals(otherRef, null))
             {
-                return false;
+	            return false;
             }
 
             if (ReferenceEquals(this, otherRef))

@@ -26,7 +26,7 @@ namespace Quantumart.QP8.BLL.Helpers
             {
                 foreach (var id in articleIds)
                 {
-                    var dr = new SimpleDataRow { { FieldName.CONTENT_ITEM_ID, (decimal)id } };
+                    var dr = new SimpleDataRow { { FieldName.ContentItemId, (decimal)id } };
                     yield return dr;
                 }
             }
@@ -63,13 +63,13 @@ namespace Quantumart.QP8.BLL.Helpers
                 {
                     var dr = new SimpleDataRow();
 
-                    CopyValue(dr, row, FieldName.CONTENT_ITEM_ID);
-                    CopyValue(dr, row, FieldName.STATUS_TYPE_NAME);
+                    CopyValue(dr, row, FieldName.ContentItemId);
+                    CopyValue(dr, row, FieldName.StatusTypeName);
                     CopyValue(dr, row, "STATUS_TYPE_COLOR");
-                    CopyValue(dr, row, FieldName.MODIFIER_LOGIN);
+                    CopyValue(dr, row, FieldName.ModifierLogin);
 
-                    dr.Add(FieldName.MODIFIED, row.Field<DateTime>(FieldName.MODIFIED).ValueToDisplay());
-                    dr.Add(FieldName.CREATED, row.Field<DateTime>(FieldName.CREATED).ValueToDisplay());
+                    dr.Add(FieldName.Modified, row.Field<DateTime>(FieldName.Modified).ValueToDisplay());
+                    dr.Add(FieldName.Created, row.Field<DateTime>(FieldName.Created).ValueToDisplay());
 
                     AddLockedByIcon(dr, row);
                     AddSplittedIcon(dr, row);
@@ -92,7 +92,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
         private static void AddLockedByIcon(SimpleDataRow newRow, DataRow row)
         {
-            var lockedBy = (int?)row.Field<decimal?>(FieldName.LOCKED_BY);
+            var lockedBy = (int?)row.Field<decimal?>(FieldName.LockedBy);
             string icon, toolTip;
 
             if (lockedBy == QPContext.CurrentUserId)
@@ -103,7 +103,7 @@ namespace Quantumart.QP8.BLL.Helpers
             else if (lockedBy.HasValue)
             {
                 icon = LockedNotByYouIcon;
-                var lockerDisplayName = row.Field<string>(FieldName.LOCKER_FIRST_NAME) + " " + row.Field<string>(FieldName.LOCKER_LAST_NAME);
+                var lockerDisplayName = row.Field<string>(FieldName.LockerFirstName) + " " + row.Field<string>(FieldName.LockerLastName);
                 toolTip = string.Format(SiteStrings.Tooltip_LockedByUser, lockerDisplayName);
             }
             else
@@ -112,13 +112,13 @@ namespace Quantumart.QP8.BLL.Helpers
                 toolTip = string.Empty;
             }
 
-            newRow.Add(FieldName.LOCKED_BY_ICON, icon);
-            newRow.Add(FieldName.LOCKED_BY_TOOLTIP, toolTip);
+            newRow.Add(FieldName.LockedByIcon, icon);
+            newRow.Add(FieldName.LockedByTooltip, toolTip);
         }
 
         private static void AddSplittedIcon(SimpleDataRow newRow, DataRow row)
         {
-            var splitted = row.Field<bool?>(FieldName.SPLITTED);
+            var splitted = row.Field<bool?>(FieldName.Splitted);
             string icon, toolTip;
             if (splitted.HasValue && splitted.Value)
             {
@@ -130,13 +130,13 @@ namespace Quantumart.QP8.BLL.Helpers
                 icon = EmptyIcon;
                 toolTip = string.Empty;
             }
-            newRow.Add(FieldName.SPLITTED_ICON, icon);
-            newRow.Add(FieldName.SPLITTED_TOOLTIP, toolTip);
+            newRow.Add(FieldName.SplittedIcon, icon);
+            newRow.Add(FieldName.SplittedTooltip, toolTip);
         }
 
         private static void AddScheduledIcon(SimpleDataRow newRow, DataRow row)
         {
-            var scheduled = row.Field<bool?>(FieldName.SCHEDULED);
+            var scheduled = row.Field<bool?>(FieldName.Scheduled);
             string icon, toolTip;
             if (scheduled.HasValue && scheduled.Value)
             {
@@ -148,13 +148,13 @@ namespace Quantumart.QP8.BLL.Helpers
                 icon = EmptyIcon;
                 toolTip = string.Empty;
             }
-            newRow.Add(FieldName.SCHEDULED_ICON, icon);
-            newRow.Add(FieldName.SCHEDULED_TOOLTIP, toolTip);
+            newRow.Add(FieldName.ScheduledIcon, icon);
+            newRow.Add(FieldName.ScheduledTooltip, toolTip);
         }
 
         private static void AddInvisibleIcon(SimpleDataRow newRow, DataRow row)
         {
-            var visible = row.Field<bool?>(FieldName.VISIBLE);
+            var visible = row.Field<bool?>(FieldName.Visible);
             string icon, toolTip;
             if (visible.HasValue && visible.Value)
             {
@@ -166,8 +166,8 @@ namespace Quantumart.QP8.BLL.Helpers
                 icon = IsInvisibleIcon;
                 toolTip = ArticleStrings.IsInvisibleTooltip;
             }
-            newRow.Add(FieldName.VISIBLE_ICON, icon);
-            newRow.Add(FieldName.VISIBLE_TOOLTIP, toolTip);
+            newRow.Add(FieldName.VisibleIcon, icon);
+            newRow.Add(FieldName.VisibleTooltip, toolTip);
         }
 
 

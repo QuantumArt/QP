@@ -552,6 +552,7 @@ namespace Quantumart.QP8.BLL
                     var boolValue = bool.TryParse(value, out isBool);
                     value = (isBool ? Converter.ToInt32(boolValue) : Converter.ToInt32(value)).ToString();
                 }
+
                 pair.UpdateValue(value);
             }
         }
@@ -1024,6 +1025,7 @@ namespace Quantumart.QP8.BLL
 
                 result.Add(new FieldValue { Field = field, ObjectValue = objectValue, Article = article });
             }
+
             return result;
         }
 

@@ -1,7 +1,7 @@
-﻿using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
-using System.Web;
+﻿using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 
 namespace Quantumart.QP8.WebMvc.WinLogOn
 {
@@ -11,11 +11,10 @@ namespace Quantumart.QP8.WebMvc.WinLogOn
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
             routes.MapRoute(
-                "Default", // Route name
-                "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "WinLogOn", action = "Index", id = UrlParameter.Optional } // Parameter defaults
+                "Default",
+                "{controller}/{action}/{id}",
+                new { controller = "WinLogOn", action = "Index", id = UrlParameter.Optional }
             );
-
         }
 
         protected void Application_Start()

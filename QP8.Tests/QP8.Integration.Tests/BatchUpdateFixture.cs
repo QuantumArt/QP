@@ -428,7 +428,7 @@ namespace QP8.Integration.Tests
         }
 
         [Test]
-        public void BatchUpdate_BaseContent_UpdateExstensionField()
+        public void BatchUpdate_BaseContent_UpdateExtensionField()
         {
             var articleId = GetArticleId(BaseContentId);
             ClearClassifierField(articleId);
@@ -461,11 +461,11 @@ namespace QP8.Integration.Tests
 
             Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
-            var exstensionResult = result[0];
-            Assert.That(exstensionResult.ContentId, Is.EqualTo(Ex21ContentId));
-            Assert.That(exstensionResult.OriginalArticleId, Is.Not.EqualTo(exstensionResult.CreatedArticleId));
+            var extensionResult = result[0];
+            Assert.That(extensionResult.ContentId, Is.EqualTo(Ex21ContentId));
+            Assert.That(extensionResult.OriginalArticleId, Is.Not.EqualTo(extensionResult.CreatedArticleId));
 
-            var parentValues = Global.GetFieldValues<decimal>(Cnn, Ex21ContentId, Ex21Parent, new[] { exstensionResult.CreatedArticleId });
+            var parentValues = Global.GetFieldValues<decimal>(Cnn, Ex21ContentId, Ex21Parent, new[] { extensionResult.CreatedArticleId });
             Assert.That(parentValues, Is.Not.Null, ValuesNotFound);
             Assert.That(parentValues, Has.Length.EqualTo(1));
             var parentValue = parentValues[0];

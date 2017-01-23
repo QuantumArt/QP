@@ -26,6 +26,7 @@ using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
 using Quantumart.QP8.WebMvc.ViewModels.CustomAction;
 using Quantumart.QP8.WebMvc.ViewModels.EntityPermissions;
 using Quantumart.QP8.WebMvc.ViewModels.Field;
+using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 using Quantumart.QP8.WebMvc.ViewModels.Notification;
 using Quantumart.QP8.WebMvc.ViewModels.PageTemplate;
 using Quantumart.QP8.WebMvc.ViewModels.User;

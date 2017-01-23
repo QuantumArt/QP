@@ -22,7 +22,7 @@ namespace Quantumart.QP8.BLL.Repository.EntityPermissions
 			using (var scope = new QPConnectionScope())
 			{
 				Field titleField = FieldRepository.GetTitleField(contentId);
-				string titleFieldName = (titleField == null) ? FieldName.CONTENT_ITEM_ID : titleField.Name;
+				string titleFieldName = (titleField == null) ? FieldName.ContentItemId : titleField.Name;
 
 				cmd.SortExpression = TranslateHelper.TranslateSortExpression(cmd.SortExpression);
 				IEnumerable<DataRow> rows = null;

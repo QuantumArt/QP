@@ -194,7 +194,7 @@
     <Compile Include="Repository\ArticleMatching\ArticleMatchRepository.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\ComparitionCondition.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\ConditionBase.cs" />
-    <Compile Include="Repository\ArticleMatching\Conditions\ConditionExstensions.cs" />
+    <Compile Include="Repository\ArticleMatching\Conditions\ConditionExtensions.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\FieldCondition.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\LogicalCondition.cs" />
     <Compile Include="Repository\ArticleMatching\Conditions\NotCondition.cs" />

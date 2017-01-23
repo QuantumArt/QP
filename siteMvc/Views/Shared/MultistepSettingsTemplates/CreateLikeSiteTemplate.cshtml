@@ -1,5 +1,4 @@
 ﻿@using Quantumart.QP8.Resources
-
 @model Quantumart.QP8.WebMvc.ViewModels.CreateLikeSiteModel
 
 @using (Html.BeginTabForm(Model))
@@ -17,35 +16,34 @@
         @Html.CheckBoxFieldFor(s => s.DoNotCopyFiles)
     }
     using (Html.BeginFieldGroup(SiteStrings.Legend_SiteLocation))
-    { 
+    {
         @Html.TextBoxFieldFor(s => s.Data.Dns)
     }
-    
+
     using (Html.BeginFieldGroup(SiteStrings.Legend_UploadedFilesLocation))
-	{ 
-		@Html.TextBoxFieldFor(s => s.Data.UploadUrl)
+    {
+        @Html.TextBoxFieldFor(s => s.Data.UploadUrl)
+        @Html.TextBoxFieldFor(s => s.Data.UploadDir)
+    }
 
-		@Html.TextBoxFieldFor(s => s.Data.UploadDir)
-	}
-    
     using (Html.BeginFieldGroup(SiteStrings.Legend_LivePagesLocation))
-	{ 
-		@Html.TextBoxFieldFor(s => s.Data.LiveVirtualRoot)
-		@Html.TextBoxFieldFor(s => s.Data.LiveDirectory)
-	}
+    {
+        @Html.TextBoxFieldFor(s => s.Data.LiveVirtualRoot)
+        @Html.TextBoxFieldFor(s => s.Data.LiveDirectory)
+    }
 
-	using (Html.BeginFieldGroup(SiteStrings.Legend_StagePagesLocation))
-	{ 
-		@Html.TextBoxFieldFor(s => s.Data.StageVirtualRoot)
-		@Html.TextBoxFieldFor(s => s.Data.StageDirectory)
-	}
+    using (Html.BeginFieldGroup(SiteStrings.Legend_StagePagesLocation))
+    {
+        @Html.TextBoxFieldFor(s => s.Data.StageVirtualRoot)
+        @Html.TextBoxFieldFor(s => s.Data.StageDirectory)
+    }
 
     if (Model.Data.AssemblingType != "vbscript")
-    { 
+    {
         using (Html.BeginFieldGroup(SiteStrings.Legend_AssemblyFilesLocation))
-	    { 
-		    @Html.TextBoxFieldFor(s => s.Data.AssemblyPath)
-		    @Html.TextBoxFieldFor(s => s.Data.StageAssemblyPath)
-	    }
+        {
+            @Html.TextBoxFieldFor(s => s.Data.AssemblyPath)
+            @Html.TextBoxFieldFor(s => s.Data.StageAssemblyPath)
+        }
     }
 }
