@@ -190,7 +190,7 @@ namespace Quantumart.QP8.DAL
             string orderBy = "")
         {
             var queryBuilder = new StringBuilder();
-            var selectQuery = searchLimit.HasValue ? $"SELECT DISTINCT TOP ({searchLimit})" : "SELECT";
+            var selectQuery = searchLimit.HasValue ? $"SELECT TOP ({searchLimit})" : "SELECT";
             queryBuilder.AppendFormatLine($" {selectQuery} c.content_item_id AS id, {displayExpression}, CAST(CASE WHEN (cis.content_item_id IS NOT NULL) THEN 1 ELSE 0 END AS bit) AS is_selected ");
             queryBuilder.AppendLine(extraSelect ?? string.Empty);
             queryBuilder.AppendFormatLine($" FROM content_{contentId}_united c ");
@@ -2237,26 +2237,15 @@ namespace Quantumart.QP8.DAL
             }
             else if (filter.IsManyToMany)
             {
-                fromBuilder.AppendFormatLine(
-                    " inner join (select distinct linked_item_id from content_{0}_united link_sec_{1} with(nolock) ",
-                    filter.RelatedContentId, filter.FieldId);
-                fromBuilder.AppendFormatLine(
-                    " inner join item_link links_{1} with(nolock) on link_sec_{1}.content_item_id = links_{1}.item_id and links_{1}.link_id = {0} ",
-                    filter.LinkId, filter.FieldId);
-                fromBuilder.AppendFormatLine(
-                    " inner join ({0}) pi_{1} on link_sec_{1}.content_item_id = pi_{1}.content_item_id ", securitySql,
-                    filter.FieldId);
-                fromBuilder.AppendFormatLine(
-                    " ) as sec_items_{0} on c.content_item_id = sec_items_{0}.linked_item_id ", filter.FieldId);
+                fromBuilder.AppendFormatLine(" inner join (select distinct linked_item_id from content_{0}_united link_sec_{1} with(nolock) ", filter.RelatedContentId, filter.FieldId);
+                fromBuilder.AppendFormatLine(" inner join item_link links_{1} with(nolock) on link_sec_{1}.content_item_id = links_{1}.item_id and links_{1}.link_id = {0} ", filter.LinkId, filter.FieldId);
+                fromBuilder.AppendFormatLine(" inner join ({0}) pi_{1} on link_sec_{1}.content_item_id = pi_{1}.content_item_id ", securitySql, filter.FieldId);
+                fromBuilder.AppendFormatLine(" ) as sec_items_{0} on c.content_item_id = sec_items_{0}.linked_item_id ", filter.FieldId);
             }
             else
             {
-                fromBuilder.AppendFormatLine(
-                    " inner join content_{0}_united rel_sec_{1} with(nolock) on c.[{2}] = rel_sec_{1}.content_item_id",
-                    filter.RelatedContentId, filter.FieldId, filter.FieldName);
-                fromBuilder.AppendFormatLine(
-                    " inner join ({0}) pi_{1} on rel_sec_{1}.content_item_id = pi_{1}.content_item_id ", securitySql,
-                    filter.FieldId);
+                fromBuilder.AppendFormatLine(" inner join content_{0}_united rel_sec_{1} with(nolock) on c.[{2}] = rel_sec_{1}.content_item_id", filter.RelatedContentId, filter.FieldId, filter.FieldName);
+                fromBuilder.AppendFormatLine(" inner join ({0}) pi_{1} on rel_sec_{1}.content_item_id = pi_{1}.content_item_id ", securitySql, filter.FieldId);
             }
         }
 
@@ -2271,15 +2260,15 @@ namespace Quantumart.QP8.DAL
             }
         }
 
-        public static bool AddFullTextFilteringToQuery(SqlConnection cn, ArticleFullTextSearchParameter ftOptions, int contentId, int[] extensionContentIds, StringBuilder fromBuilder)
+        public static bool AddFullTextFilteringToQuery(SqlConnection cn, ArticleFullTextSearchParameter ftsOptions, int contentId, int[] extensionContentIds, StringBuilder fromBuilder)
         {
-            var useFullText = !string.IsNullOrEmpty(ftOptions.QueryString) && !(ftOptions.HasError.HasValue && ftOptions.HasError.Value);
+            var useFullText = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
             if (useFullText)
             {
                 var sb = new StringBuilder();
                 sb.Append("CREATE TABLE #ft_temp (content_item_id decimal primary key); ");
                 sb.Append("insert into #ft_temp ");
-                sb.Append(GetFullTextSearchQuery(cn, contentId, extensionContentIds, ftOptions));
+                sb.Append(GetFullTextSearchQuery(cn, contentId, extensionContentIds, ftsOptions));
 
                 using (var cmd = SqlCommandFactory.Create(sb.ToString(), cn))
                 {
