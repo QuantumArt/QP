@@ -28,9 +28,9 @@ namespace Quantumart.QP8.BLL.Helpers
                 var keyValuePair = param.Split('=');
                 if (keyValuePair.Length == 2)
                 {
-                    if (!result.ContainsKey(keyValuePair[0].Replace("Data.", "")))
+                    if (!result.ContainsKey(keyValuePair[0].Replace("Data.", string.Empty)))
                     {
-                        result.Add(keyValuePair[0].Replace("Data.", ""), keyValuePair[1]);
+                        result.Add(keyValuePair[0].Replace("Data.", string.Empty), keyValuePair[1]);
                     }
                 }
             }
@@ -114,15 +114,21 @@ namespace Quantumart.QP8.BLL.Helpers
 
         public static string BoolFormat(string value)
         {
-            switch (value)
+            if (value == "False")
             {
-                case "False":
-                    return "0";
-                case "True":
-                    return "1";
+                return "0";
             }
-            if (new[] {"1", "0", "NULL", ""}.Contains(value))
+
+            if (value == "True")
+            {
+                return "1";
+            }
+
+            if (new[] { "1", "0", "NULL", string.Empty }.Contains(value))
+            {
                 return value;
+            }
+
             throw new FormatException(string.Format(ImportStrings.BoolFormatError, value));
         }
 
@@ -188,16 +194,16 @@ namespace Quantumart.QP8.BLL.Helpers
             switch (separatorId)
             {
                 case "0":
-                    separator = "\r";
+                    separator = "\r\n";
                     break;
                 case "1":
-                    separator = "\r\n";
+                    separator = "\r";
                     break;
                 case "2":
                     separator = "\n";
                     break;
                 default:
-                    separator = "\r";
+                    separator = "\r\n";
                     break;
             }
 
