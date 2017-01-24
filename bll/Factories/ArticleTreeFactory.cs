@@ -27,17 +27,14 @@ namespace Quantumart.QP8.BLL.Factories
                     commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out ftsOptions, out extensionContentIds, out contentReferences);
 
                     var filterSqlParams = new List<SqlParameter>();
-                    var filterQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
-                    filterQuery = string.IsNullOrWhiteSpace(filterQuery)
-                        ? hostFilter
-                        : $"({hostFilter} AND {filterQuery})";
-
+                    var sourceQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
                     var linkedFilters = (ArticleRepository.GetLinkSearchParameter(searchQuery) ?? new ArticleLinkSearchParameter[0]).ToList();
                     var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
-                    var hasFilterSearchParams = !string.IsNullOrEmpty(filterQuery) || linkedFilters.Any();
+                    var hasFilterSearchParams = !string.IsNullOrEmpty(sourceQuery) || linkedFilters.Any();
+                    var combinedFilter = string.IsNullOrWhiteSpace(sourceQuery) ? hostFilter : $"({hostFilter} AND {sourceQuery})";
 
                     return hasFtsSearchParams || hasFilterSearchParams
-                        ? new ArticleFtsProcessor(contentId, commonFilter, filterQuery, linkedFilters, contextQuery, filterSqlParams, extensionContentIds, ftsOptions)
+                        ? new ArticleFtsProcessor(contentId, commonFilter, combinedFilter, linkedFilters, contextQuery, filterSqlParams, extensionContentIds, ftsOptions)
                         : new ArticleSimpleProcessor(contentId, entityId, commonFilter, entityTypeCode, selectItemIDs) as ITreeProcessor;
                 }
 
