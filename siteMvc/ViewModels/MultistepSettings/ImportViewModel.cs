@@ -54,13 +54,16 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             get
             {
                 var content = ContentService.Read(ContentId);
-                return
-                    new[] { new ListItem(string.Empty, FieldName.ContentItemId) }.Concat(
-                        content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation && f.IsUnique)
-                        .Select(f => new ListItem(f.Id.ToString(), f.Name))
-                    ).ToList();
+                return new[]
+                {
+                    new ListItem(string.Empty, FieldName.ContentItemId)
+                }
+                .Concat(content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation && f.IsUnique)
+                .Select(f => new ListItem(f.Id.ToString(), f.Name)))
+                .ToList();
             }
         }
+
         public BLL.Field UniqueContentField { get; set; }
 
         [LocalizedDisplayName("DownloadedFile", NameResourceType = typeof(MultistepActionStrings))]
@@ -79,7 +82,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
                 if (key.StartsWith(IdPrefix))
                 {
                     int contentId;
-                    if (int.TryParse(key.Replace(IdPrefix, ""), out contentId))
+                    if (int.TryParse(key.Replace(IdPrefix, string.Empty), out contentId))
                     {
                         UniqueAggregatedFieldsToUpdate[contentId] = collection[key];
                     }
@@ -87,7 +90,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
                 else if (key.StartsWith(FieldPrefix))
                 {
                     int fieldId;
-                    if (int.TryParse(key.Replace(FieldPrefix, ""), out fieldId))
+                    if (int.TryParse(key.Replace(FieldPrefix, string.Empty), out fieldId))
                     {
                         var field = FieldRepository.GetById(fieldId);
                         if (field != null)

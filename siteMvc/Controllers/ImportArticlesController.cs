@@ -45,12 +45,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.ImportArticles)]
         public ActionResult Settings(string tabId, int parentId, int id)
         {
-            var model = new ImportViewModel
+            return JsonHtml($"{FolderForTemplate}/ImportTemplate", new ImportViewModel
             {
                 ContentId = id
-            };
-
-            return JsonHtml($"{FolderForTemplate}/ImportTemplate", model);
+            });
         }
 
         [HttpPost]
@@ -63,8 +61,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             TryUpdateModel(model);
             model.SetCorrespondingFieldName(collection);
             var settings = model.GetImportSettingsObject(parentId, id);
-            var fieldsList = MultistepActionHelper.GetFileFields(settings, new FileReader(settings));
-            return Json(fieldsList);
+            return Json(MultistepActionHelper.GetFileFields(settings, new FileReader(settings)));
         }
 
         [HttpPost]
