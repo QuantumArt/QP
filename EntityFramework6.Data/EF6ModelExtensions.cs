@@ -20,77 +20,77 @@ namespace Quantumart.QP8.EntityFramework6.Data
 {
     public partial class EF6Model: IQPLibraryService, IQPFormService, IQPSchema
     {
-		#region Constructors
+        #region Constructors
 
-		public EF6Model(string connectionStringOrName)
+        public EF6Model(string connectionStringOrName)
             : base(connectionStringOrName)
         {
-			MappingResolver = GetDefaultMappingResolver();
+            MappingResolver = GetDefaultMappingResolver();
             this.Configuration.LazyLoadingEnabled = true;
-			this.Configuration.ProxyCreationEnabled = false;
+            this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
-		public EF6Model(DbConnection connection, bool contextOwnsConnection)
+        public EF6Model(DbConnection connection, bool contextOwnsConnection)
             : base(connection, contextOwnsConnection)
         {
-			MappingResolver = GetDefaultMappingResolver();
+            MappingResolver = GetDefaultMappingResolver();
             this.Configuration.LazyLoadingEnabled = true;
-			this.Configuration.ProxyCreationEnabled = false;
+            this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
         public EF6Model(DbCompiledModel model, ModelReader schema) : base(model)
         {
-			MappingResolver = new MappingResolver(schema);
+            MappingResolver = new MappingResolver(schema);
             this.Configuration.LazyLoadingEnabled = true;
-			this.Configuration.ProxyCreationEnabled = false;
+            this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
         public EF6Model(DbConnection connection, DbCompiledModel model, ModelReader schema, bool contextOwnsConnection)
             : base(connection, model, contextOwnsConnection)
         {
-			MappingResolver = new MappingResolver(schema);
+            MappingResolver = new MappingResolver(schema);
             this.Configuration.LazyLoadingEnabled = true;
-			this.Configuration.ProxyCreationEnabled = false;
+            this.Configuration.ProxyCreationEnabled = false;
             OnContextCreated();
         }
 
-		private IMappingResolver GetDefaultMappingResolver()
+        private IMappingResolver GetDefaultMappingResolver()
         {
             var schema = new StaticSchemaProvider();
             return new MappingResolver(schema.GetSchema());
         }
 
-		protected ObjectContext CurrentObjectContext
-		{
+        protected ObjectContext CurrentObjectContext
+        {
 			get 
 			{
 				return ((IObjectContextAdapter)this).ObjectContext;
 			}
-		}
+        }
 
-		#endregion
+        #endregion
 
-		#region Private members
-		private const string uploadPlaceholder = "<%=upload_url%>";
-		private const string sitePlaceholder = "<%=site_url%>";
-		private static string _defaultSiteName = "Product Catalog";
-		private static string _defaultConnectionString;
-		private static string _defaultConnectionStringName = "EF6Model";
-		private bool _shouldRemoveSchema = false;
-		private string _siteName;
-		private DBConnector _cnn;
-		#endregion
+        #region Private members
+        private const string uploadPlaceholder = "<%=upload_url%>";
+        private const string sitePlaceholder = "<%=site_url%>";
+        private static string _defaultSiteName = "Product Catalog";
+        private static string _defaultConnectionString;
+        private static string _defaultConnectionStringName = "EF6Model";
+        private bool _shouldRemoveSchema = false;
+        private string _siteName;
+        private DBConnector _cnn;
+        #endregion
 
-		#region Properties
-		public static bool RemoveUploadUrlSchema = false;
+        #region Properties
+        public static bool RemoveUploadUrlSchema = false;
 
-		protected IMappingResolver MappingResolver { get; private set; }
+        protected IMappingResolver MappingResolver { get; private set; }
 
-		public bool ShouldRemoveSchema { get { return _shouldRemoveSchema; } set { _shouldRemoveSchema = value; } }
-		public Int32 SiteId { get; private set; }
+        public bool ShouldRemoveSchema { get { return _shouldRemoveSchema; } set { _shouldRemoveSchema = value; } }
+        public Int32 SiteId { get; private set; }
 		public string SiteUrl { get { return StageSiteUrl; } }		
 		public string UploadUrl { get { return LongUploadUrl; } }		
 		public string LiveSiteUrl { get; private set; }		
@@ -298,12 +298,12 @@ namespace Quantumart.QP8.EntityFramework6.Data
             ShortUploadUrl = Cnn.GetImagesUploadUrl(SiteId, true, _shouldRemoveSchema);
             PublishedId = Cnn.GetMaximumWeightStatusTypeId(SiteId);
         }
-		#endregion
+        #endregion
 
-		partial void OnContextCreated()
-		{
-			this.CurrentObjectContext.ObjectMaterialized += OnObjectMaterialized;
-		}
+        partial void OnContextCreated()
+        {
+            this.CurrentObjectContext.ObjectMaterialized += OnObjectMaterialized;
+        }
 
         void OnObjectMaterialized(object sender, ObjectMaterializedEventArgs e)
         {
@@ -318,13 +318,13 @@ namespace Quantumart.QP8.EntityFramework6.Data
 			}
         }
 
-		#region Save changes
-		public override int SaveChanges()
+        #region Save changes
+        public override int SaveChanges()
         {
             return OnSaveChanges2();
         }
 
-		private int OnSaveChanges2()
+        private int OnSaveChanges2()
         {
             ChangeTracker.DetectChanges();
 
@@ -449,7 +449,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .GetProperties()
                 .Where(f => fields.Contains(f.Name))
                 .Select(f => new {
-					field = MappingResolver.GetAttribute(contentName, f.Name.Replace("_ID", "")).Name,
+                    field = MappingResolver.GetAttribute(contentName, f.Name.Replace("_ID", "")).Name,
                     value = GetValue(f.GetValue(article))
                 })
                 .Where(f => passNullValues || f.value != null)
@@ -476,7 +476,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
             {
                 return null;
             }
-			else if (o is IQPArticle)
+            else if (o is IQPArticle)
             {
                 return ((IQPArticle)o).Id.ToString();
             }
@@ -498,7 +498,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
         int OnSaveChanges()
         {
-			base.ChangeTracker.DetectChanges();
+            base.ChangeTracker.DetectChanges();
 
             var objectCount = 0;
             var ctx = CurrentObjectContext;
@@ -514,10 +514,10 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 if (!addedItem.IsRelationship)
                 {
                     var entity = addedItem.Entity as IQPArticle;
-					if(entity != null)
-					{
+                    if(entity != null)
+                    {
                         ProcessCreating(addedItem.EntitySet.ElementType.Name, entity, addedItem);
-					}
+                    }
                 }
                 else
                 {
@@ -546,7 +546,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
         private void ProcessCreating(string contentName, IQPArticle instance, ObjectStateEntry entry)
         {
-			throw new NotImplementedException();
+            throw new NotImplementedException();
             var properties = entry.GetModifiedProperties().ToList();
             var values = instance.Pack(this);
             DateTime created = DateTime.Now;
@@ -563,7 +563,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
             instance.Modified = created;
         }
 
-		private void ProcessUpdating(string contentName, IQPArticle instance, ObjectStateEntry entry)
+        private void ProcessUpdating(string contentName, IQPArticle instance, ObjectStateEntry entry)
         {
 		    throw new NotImplementedException();
 		    var properties = entry.GetModifiedProperties().ToList();
@@ -573,14 +573,14 @@ namespace Quantumart.QP8.EntityFramework6.Data
 			// Cnn.AddFormToContent(SiteId, Cnn.GetContentIdByNetName(SiteId, contentName), instance.StatusType.StatusTypeName, ref values, (int)instance.Id, true, 0, instance.Visible, instance.Archive, true, ref modified);
 			// instance.Modified = modified;
         }
-		#endregion
-		string IQPFormService.GetFormNameByNetNames(string netContentName, string netFieldName)
-		{
-			return Cnn.GetFormNameByNetNames(this.SiteId, netContentName, netFieldName);
-		}
+        #endregion
+        string IQPFormService.GetFormNameByNetNames(string netContentName, string netFieldName)
+        {
+            return Cnn.GetFormNameByNetNames(this.SiteId, netContentName, netFieldName);
+        }
 
-		#region IQPSchema implementation
-		public SchemaInfo GetInfo()
+        #region IQPSchema implementation
+        public SchemaInfo GetInfo()
         {
             return MappingResolver.GetSchema();
         }
@@ -591,14 +591,14 @@ namespace Quantumart.QP8.EntityFramework6.Data
             return MappingResolver.GetContent(typeof(T).Name);
         }
 
-		public AttributeInfo GetInfo<Tcontent>(Expression<Func<Tcontent, object>> fieldSelector)
+        public AttributeInfo GetInfo<Tcontent>(Expression<Func<Tcontent, object>> fieldSelector)
             where Tcontent : IQPArticle
         {
             var contentName = typeof(Tcontent).Name;
             var expression = (MemberExpression)fieldSelector.Body;
             var attributeName = expression.Member.Name;
             return MappingResolver.GetAttribute(contentName, attributeName);
-        }   
+        }
         #endregion
-	}
+    }
 }

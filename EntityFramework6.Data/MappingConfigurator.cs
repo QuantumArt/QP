@@ -15,11 +15,11 @@ namespace Quantumart.QP8.EntityFramework6.Data
         public MappingConfigurator(ContentAccess contentAccess, ISchemaProvider schemaProvider)
             : base(contentAccess, schemaProvider)
         {
-		}
-       
+        }
+
         public override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-			base.OnModelCreating(modelBuilder);
+        base.OnModelCreating(modelBuilder);
 
             #region MarketingProduct mappings
             modelBuilder.Entity<MarketingProduct>()
