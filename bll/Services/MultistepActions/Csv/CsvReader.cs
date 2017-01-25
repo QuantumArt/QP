@@ -141,7 +141,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         if (int.TryParse(fv.Value, out classifierContentId))
                         {
                             var extensionArticle = InitializeArticle(classifierContentId);
-                            ReadLineFields(extensionArticle, fieldValues, classifierContentId, line.Number);
+                            ReadLineFields(extensionArticle, fieldValues, classifierContentId, line.Number, true);
 
                             var content = _aggregatedContentsMap[classifierContentId];
                             var field = content.Fields.First(f => f.Aggregated);
@@ -160,7 +160,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
         }
 
-        private void ReadLineFields(Article article, IReadOnlyList<string> fieldValues, int contentId, int lineNumber)
+        private void ReadLineFields(Article article, IReadOnlyList<string> fieldValues, int contentId, int lineNumber, bool isExtension = false)
         {
             List<Field> fields;
             if (_fieldsMap.TryGetValue(contentId, out fields))
@@ -195,7 +195,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 }
             }
 
-            ReadServiceFields(ref article, fieldValues);
+            ReadServiceFields(ref article, fieldValues, isExtension);
         }
 
         private static bool IsEmpty(string value)
@@ -221,9 +221,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return value;
         }
 
-        private void ReadServiceFields(ref Article article, IReadOnlyList<string> fieldValues)
+        private void ReadServiceFields(ref Article article, IReadOnlyList<string> fieldValues, bool isExtension)
         {
-            article = ReadUniqueIdField(article, fieldValues);
+            if (!isExtension)
+            {
+                article = ReadUniqueIdField(article, fieldValues);
+            }
+
             if (_importSettings.ImportAction != (int)ImportActions.InsertAll)
             {
                 article = ReadIsUniqueField(article, fieldValues);
