@@ -25,6 +25,9 @@ namespace <#=System.Runtime.Remoting.Messaging.CallContext.LogicalGetData("Names
         public <#=model.Schema.ClassName#>()
             : base("name=<#=model.Schema.ConnectionStringName#>")
         {
+<#+ if (settings.GenerateExtensions) { #>
+            MappingResolver = GetDefaultMappingResolver();
+<#+ } #>
             this.Configuration.LazyLoadingEnabled = <#=settings.LazyLoadingEnabled.ToString().ToLower()#>;
             this.Configuration.ProxyCreationEnabled = <#=settings.ProxyCreationEnabled.ToString().ToLower()#>;
 

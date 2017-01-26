@@ -9,8 +9,8 @@ namespace Quantumart.QP8.EntityFramework6.Data
     {
         public Setting()
         {
-            RelatedSettings = new HashSet<Setting>();
-            BackwardForRelatedSettings = new HashSet<Setting>();
+		    RelatedSettings = new HashSet<Setting>();
+		    BackwardForRelatedSettings = new HashSet<Setting>();
         }
 
         public virtual Int32 Id { get; set; }
@@ -25,13 +25,16 @@ namespace Quantumart.QP8.EntityFramework6.Data
         public virtual String Title { get; set; }
         public virtual String ValueMapped { get; set; }
         public virtual Decimal? DecimalValue { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public ICollection<Setting> RelatedSettings { get; set; }
-        /// <summary>
-        /// Auto-generated backing property for 1657/RelatedSettings
-        /// </summary>
-        public ICollection<Setting> BackwardForRelatedSettings { get; set; }
-    }
+		/// <summary>
+		/// 
+		/// </summary>
+		public  ICollection<Setting> RelatedSettings { get; set; }
+		/// <summary>
+		/// Auto-generated backing property for 1657/RelatedSettings
+		/// </summary>
+		public  ICollection<Setting> BackwardForRelatedSettings { get; set; }
+		#region Generated Content properties
+        // public Decimal DecimalValueExact { get { return this.DecimalValue == null ? default(Decimal) : this.DecimalValue.Value; } }
+		#endregion
+	}
 }

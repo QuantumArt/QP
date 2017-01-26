@@ -5,11 +5,11 @@
   <metadata>
     <id><#=context.PackageName#></id>
     <version><#=context.Version#></version>
-    <title>title</title>
-    <authors>author</authors>
-    <owners>author</owners>
+    <title>QP8.EntityFramework6</title>
+    <authors>Quantum Art</authors>
+    <owners>Quantum Art</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>description</description>
+    <description>Entity Framework 6 class generator</description>
     <releaseNotes>Add creation data context for EntityFramework6</releaseNotes>
     <copyright>Copyright © 2007-2016 Quantum Art</copyright>
     <tags>QP8 EntityFramework</tags>
@@ -19,6 +19,8 @@
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Configuration" targetFramework="net45"  />
+      <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework="net45"  />
+      <frameworkAssembly assemblyName="System.Data.DataSetExtensions" targetFramework="net45"  />
     </frameworkAssemblies>
   </metadata>
   <files>

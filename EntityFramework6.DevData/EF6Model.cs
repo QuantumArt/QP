@@ -20,6 +20,7 @@ namespace Quantumart.QP8.EntityFramework6.DevData
         public EF6Model()
             : base("name=qp_database")
         {
+            MappingResolver = GetDefaultMappingResolver();
             this.Configuration.LazyLoadingEnabled = true;
             this.Configuration.ProxyCreationEnabled = false;
 

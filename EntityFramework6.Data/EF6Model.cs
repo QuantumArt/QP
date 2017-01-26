@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace Quantumart.QP8.EntityFramework6.Data
 {
-	public partial class EF6Model : DbContext
-	{
-		public static ContentAccess DefaultContentAccess = ContentAccess.Live;
+    public partial class EF6Model : DbContext
+    {
+        public static ContentAccess DefaultContentAccess = ContentAccess.Live;
 
         partial void OnContextCreated();
 
@@ -20,15 +20,16 @@ namespace Quantumart.QP8.EntityFramework6.Data
         public EF6Model()
             : base("name=EF6Model")
         {
+            MappingResolver = GetDefaultMappingResolver();
             this.Configuration.LazyLoadingEnabled = true;
-			this.Configuration.ProxyCreationEnabled = false;
+            this.Configuration.ProxyCreationEnabled = false;
 
-			OnContextCreated();
+            OnContextCreated();
         }
 
         public virtual DbSet<StatusType> StatusTypes { get; set; }
         public virtual DbSet<User> Users { get; set; }
-        public virtual DbSet<UserGroup> UserGroups { get; set; }					
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
 
         public virtual DbSet<MarketingProduct> MarketingProducts { get; set; }
         public virtual DbSet<Product> Products { get; set; }
@@ -39,8 +40,8 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-		    var schemaProvider = new StaticSchemaProvider();
-		    var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
+            var schemaProvider = new StaticSchemaProvider();
+            var mapping = new MappingConfigurator(DefaultContentAccess, schemaProvider);
             mapping.OnModelCreating(modelBuilder);
         }
 	}
