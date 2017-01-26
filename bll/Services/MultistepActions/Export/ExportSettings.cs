@@ -37,10 +37,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         public int[] FieldIdsToExpand { get; set; }
 
         public Field[] FieldsToExpand => _fieldsToExpand.Value;
+
         public IEnumerable<FieldSetting> FieldsToExpandSettings => _fieldsToExpandSettings.Value;
+
+        private string _orderByField = string.Empty;
         private readonly Lazy<Field[]> _fieldsToExpand;
         private readonly Lazy<IEnumerable<FieldSetting>> _fieldsToExpandSettings;
-        private string _orderByField = string.Empty;
 
         public string OrderByField
         {

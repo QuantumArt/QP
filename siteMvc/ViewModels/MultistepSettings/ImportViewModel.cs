@@ -2,7 +2,8 @@
 using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Enums.Csv;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
@@ -32,15 +33,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public bool NoHeaders { get; set; }
 
         [LocalizedDisplayName("ImportAction", NameResourceType = typeof(MultistepActionStrings))]
-        public int ImportAction { get; set; } = (int)BLL.Enums.ImportActions.InsertAndUpdate;
+        public int ImportAction { get; set; } = (int)CsvImportMode.InsertAndUpdate;
 
         public List<ListItem> ImportActions => new List<ListItem>
         {
-            new ListItem(((int)BLL.Enums.ImportActions.InsertAll).ToString(), UserStrings.ArticlesInsertAll),
-            new ListItem(((int)BLL.Enums.ImportActions.InsertNew).ToString(), UserStrings.ArticlesInsertNew),
-            new ListItem(((int)BLL.Enums.ImportActions.InsertAndUpdate).ToString(), UserStrings.ArticlesInsertAndUpdate),
-            new ListItem(((int)BLL.Enums.ImportActions.Update).ToString(), UserStrings.ArticlesUpdate),
-            new ListItem(((int)BLL.Enums.ImportActions.UpdateIfChanged).ToString(), UserStrings.ArticlesUpdateIfChanged)
+            new ListItem(((int)CsvImportMode.InsertAll).ToString(), UserStrings.ArticlesInsertAll),
+            new ListItem(((int)CsvImportMode.InsertNew).ToString(), UserStrings.ArticlesInsertNew),
+            new ListItem(((int)CsvImportMode.InsertAndUpdate).ToString(), UserStrings.ArticlesInsertAndUpdate),
+            new ListItem(((int)CsvImportMode.Update).ToString(), UserStrings.ArticlesUpdate),
+            new ListItem(((int)CsvImportMode.UpdateIfChanged).ToString(), UserStrings.ArticlesUpdateIfChanged)
         };
 
         [LocalizedDisplayName("UniqueFieldToUpdate", NameResourceType = typeof(MultistepActionStrings))]
@@ -112,10 +113,10 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         {
             return new ImportSettings(parentId, id)
             {
-                Culture = MultistepActionHelper.GetCulture(Culture),
-                Delimiter = MultistepActionHelper.GetDelimiter(Delimiter),
-                Encoding = MultistepActionHelper.GetEncoding(Encoding),
-                LineSeparator = MultistepActionHelper.GetLineSeparator(LineSeparator),
+                Culture = ((CsvCulture)int.Parse(Culture)).Description(),
+                Delimiter = char.Parse(((CsvDelimiter)int.Parse(Delimiter)).Description()),
+                Encoding = ((CsvEncoding)int.Parse(Encoding)).Description(),
+                LineSeparator = ((CsvLineSeparator)int.Parse(LineSeparator)).Description(),
                 FileName = FileName,
                 UniqueFieldToUpdate = UniqueFieldToUpdate,
                 UniqueContentField = UniqueContentField,

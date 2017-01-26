@@ -38,53 +38,6 @@ namespace Quantumart.QP8.BLL.Helpers
             return result;
         }
 
-        public static string GetEncoding(string encodingInt)
-        {
-            string result;
-            switch (encodingInt)
-            {
-                case "0":
-                    result = "Windows-1251";
-                    break;
-                case "1":
-                    result = "UTF-8";
-                    break;
-                case "2":
-                    result = "UTF-16";
-                    break;
-                case "3":
-                    result = "KOI8-R";
-                    break;
-                case "4":
-                    result = "cp866";
-                    break;
-                default:
-                    result = "Windows-1251";
-                    break;
-            }
-
-            return result;
-        }
-
-        public static string GetCulture(string cultureNum)
-        {
-            string result;
-            switch (cultureNum)
-            {
-                case "0":
-                    result = "ru-RU";
-                    break;
-                case "1":
-                    result = "en-US";
-                    break;
-                default:
-                    result = "ru-RU";
-                    break;
-            }
-
-            return result;
-        }
-
         public static string NumericCultureFormat(string value, string fromCulture, string toCulture)
         {
             double result;
@@ -164,50 +117,6 @@ namespace Quantumart.QP8.BLL.Helpers
 
             value = result.ToString(CultureInfo.GetCultureInfo(toCulture).DateTimeFormat);
             return value;
-        }
-
-        public static char GetDelimiter(string delimiterId)
-        {
-            char delimiterChar;
-            switch (delimiterId)
-            {
-                case "0":
-                    delimiterChar = ',';
-                    break;
-                case "1":
-                    delimiterChar = ';';
-                    break;
-                case "2":
-                    delimiterChar = '\t';
-                    break;
-                default:
-                    delimiterChar = ';';
-                    break;
-            }
-
-            return delimiterChar;
-        }
-
-        public static string GetLineSeparator(string separatorId)
-        {
-            string separator;
-            switch (separatorId)
-            {
-                case "0":
-                    separator = "\r\n";
-                    break;
-                case "1":
-                    separator = "\r";
-                    break;
-                case "2":
-                    separator = "\n";
-                    break;
-                default:
-                    separator = "\r\n";
-                    break;
-            }
-
-            return separator;
         }
 
         public static List<string> GetFileFields(ImportSettings setts, FileReader reader)

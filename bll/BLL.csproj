@@ -136,9 +136,14 @@
     <Compile Include="ArticleContextSearchBlockItem.cs" />
     <Compile Include="ArticleFieldSearchType.cs" />
     <Compile Include="Db.cs" />
-    <Compile Include="Enums\ImportActions.cs" />
+    <Compile Include="Enums\Csv\CsvCulture.cs" />
+    <Compile Include="Enums\Csv\CsvDelimiter.cs" />
+    <Compile Include="Enums\Csv\CsvEncoding.cs" />
+    <Compile Include="Enums\Csv\CsvLineSeparator.cs" />
+    <Compile Include="Enums\Csv\CsvImportMode.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="Factories\Logging\NullLogFactory.cs" />
@@ -147,6 +152,7 @@
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
     <Compile Include="Helpers\Ensure.cs" />
+    <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Web;
 using System.Xml.Linq;
-using Quantumart.QP8.BLL.Enums;
+using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -84,10 +84,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             switch (_importSettings.ImportAction)
             {
-                case (int)ImportActions.InsertAll:
+                case (int)CsvImportMode.InsertAll:
                     InsertArticles(_articlesListFromCsv);
                     break;
-                case (int)ImportActions.InsertAndUpdate:
+                case (int)CsvImportMode.InsertAndUpdate:
                     var existingArticles = UpdateArticles(_articlesListFromCsv);
                     SaveUpdatedArticleIdsToSettings(existingArticles.GetBaseArticleIds());
                     var nonExistingArticles = _articlesListFromCsv.Filter(a => !existingArticles.GetBaseArticleIds().Contains<int>(a.Id));
@@ -97,15 +97,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                         SaveInsertedArticleIdsToSettings(nonExistingArticles.GetBaseArticleIds());
                     }
                     break;
-                case (int)ImportActions.Update:
+                case (int)CsvImportMode.Update:
                     UpdateArticles(_articlesListFromCsv);
                     break;
-                case (int)ImportActions.UpdateIfChanged:
+                case (int)CsvImportMode.UpdateIfChanged:
                     var changedArticles = _articlesListFromCsv.Filter(a => a.Created == DateTime.MinValue);
                     UpdateArticles(changedArticles);
                     SaveUpdatedArticleIdsToSettings(changedArticles.GetBaseArticleIds());
                     break;
-                case (int)ImportActions.InsertNew:
+                case (int)CsvImportMode.InsertNew:
                     var nonExistArticles = GetNonExistingArticles(_articlesListFromCsv);
                     if (nonExistArticles.Count > 0)
                     {
@@ -228,12 +228,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 article = ReadUniqueIdField(article, fieldValues);
             }
 
-            if (_importSettings.ImportAction != (int)ImportActions.InsertAll)
+            if (_importSettings.ImportAction != (int)CsvImportMode.InsertAll)
             {
                 article = ReadIsUniqueField(article, fieldValues);
             }
 
-            if (_importSettings.ImportAction == (int)ImportActions.UpdateIfChanged)
+            if (_importSettings.ImportAction == (int)CsvImportMode.UpdateIfChanged)
             {
                 article = ReadIsChangedStatus(article, fieldValues);
             }
@@ -1029,7 +1029,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 while (!string.IsNullOrEmpty(line = rdr.ReadLine()))
                 {
                     i++;
-                    var value = line.Trim('\n', '\r');
+                    var value = line.Trim('\r', '\n');
                     var isSep = value.StartsWith("sep=");
                     if (isSep)
                     {

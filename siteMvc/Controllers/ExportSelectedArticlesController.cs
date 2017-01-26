@@ -1,7 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
-using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Enums.Csv;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Services.MultistepActions;
 using Quantumart.QP8.BLL.Services.MultistepActions.Export;
 using Quantumart.QP8.Constants;
@@ -29,8 +30,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult PreSettings(int parentId, int[] IDs)
         {
-            var prms = _service.MultistepActionSettings(parentId, 0, IDs);
-            return Json(prms);
+            return Json(_service.MultistepActionSettings(parentId, 0, IDs));
         }
 
         [HttpPost]
@@ -46,8 +46,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 Ids = IDs
             };
 
-            var viewName = $"{FolderForTemplate}/ExportTemplate";
-            return JsonHtml(viewName, model);
+            return JsonHtml($"{FolderForTemplate}/ExportTemplate", model);
         }
 
         [HttpPost]
@@ -58,8 +57,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult Setup(int parentId, int[] IDs, bool? boundToExternal)
         {
-            var settings = _service.Setup(parentId, 0, IDs, boundToExternal);
-            return Json(settings);
+            return Json(_service.Setup(parentId, 0, IDs, boundToExternal));
         }
 
         [HttpPost]
@@ -72,12 +70,13 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var model = new ExportViewModel();
             TryUpdateModel(model);
+
             var settings = new ExportSettings
             {
-                Culture = MultistepActionHelper.GetCulture(model.Culture),
-                Delimiter = MultistepActionHelper.GetDelimiter(model.Delimiter),
-                Encoding = MultistepActionHelper.GetEncoding(model.Encoding),
-                LineSeparator = MultistepActionHelper.GetLineSeparator(model.LineSeparator),
+                Culture = ((CsvCulture)int.Parse(model.Culture)).Description(),
+                Delimiter = char.Parse(((CsvDelimiter)int.Parse(model.Delimiter)).Description()),
+                Encoding = ((CsvEncoding)int.Parse(model.Encoding)).Description(),
+                LineSeparator = ((CsvLineSeparator)int.Parse(model.LineSeparator)).Description(),
                 AllFields = model.AllFields,
                 OrderByField = model.OrderByField
             };
@@ -98,8 +97,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         public ActionResult Step(int stage, int step)
         {
-            var stepResult = _service.Step(stage, step);
-            return Json(stepResult);
+            return Json(_service.Step(stage, step));
         }
 
         [HttpPost]

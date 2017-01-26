@@ -3,7 +3,7 @@
 <#@ import namespace="Quantumart.QP8.Logging.Templates.Default" #>
 <#@ import namespace="Quantumart.QP8.Resources" #>
 <#@ import namespace="Quantumart.QP8.BLL.Services.MultistepActions.Import" #>
-<#@ import namespace="Quantumart.QP8.BLL.Enums" #>
+<#@ import namespace="Quantumart.QP8.BLL.Enums.Csv" #>
 
 <#@ parameter name="Model" type="Quantumart.QP8.Logging.Loggers.ImportStepSettings" #>
 <#@ parameter name="Context" type="Quantumart.QP8.Logging.Loggers.LoggerContext" #>
@@ -11,11 +11,11 @@
 <#@ parameter name="TraceOptions" type="System.Diagnostics.TraceOptions" #>
 
 <#
-var setts = Model.Settings;
-if (setts.ImportAction == (int)ImportActions.InsertAndUpdate || setts.ImportAction == (int)ImportActions.InsertNew || setts.ImportAction == (int)ImportActions.UpdateIfChanged)
+var settings = Model.Settings;
+if (settings.ImportAction == (int)CsvImportMode.InsertAndUpdate || settings.ImportAction == (int)CsvImportMode.InsertNew || settings.ImportAction == (int)CsvImportMode.UpdateIfChanged)
     {
-        string inserted = String.Format(MultistepActionStrings.InsertedArticlesCount, setts.InsertedArticleIds.Count);
-        string updated = String.Format(MultistepActionStrings.UpdatedArticlesCount, setts.UpdatedArticleIds.Count);
+        string inserted = String.Format(MultistepActionStrings.InsertedArticlesCount, settings.InsertedArticleIds.Count);
+        string updated = String.Format(MultistepActionStrings.UpdatedArticlesCount, settings.UpdatedArticleIds.Count);
         Write("{0}; {1}.", inserted, updated);
     }
 #>
