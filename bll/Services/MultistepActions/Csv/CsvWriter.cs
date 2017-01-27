@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -18,7 +18,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
     public class CsvWriter
     {
         private const string FolderForUpload = "temp";
-        private const string IdentifierFieldName = "CONTENT_ITEM_ID";
+        private const string IdentifierFieldName = FieldName.ContentItemId;
         private const string ExtensionQueryTemplate = " LEFT JOIN CONTENT_{0} [ex{1}] ON [ex{1}].[{2}] = base.CONTENT_ITEM_ID ";
         private const string FieldNameQueryTemplate = "[ex{0}].[{1}] [{0}.{1}]";
         private const string FieldNameHeaderTemplate = "{0}.{1}";

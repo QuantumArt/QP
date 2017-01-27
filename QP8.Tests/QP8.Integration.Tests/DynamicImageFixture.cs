@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -110,13 +111,13 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString()
             };
 
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString()
             };
 
             values.Add(article2);
@@ -170,19 +171,19 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 [ImageName] = "test44.jpg"
             };
 
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 [ImageName] = "test55.jpg"
             };
 
             values.Add(article2);
-            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
+            var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { CreateVersions = false }), "Update");
             var versions = Global.GetMaxVersions(Cnn, ids).ToArray();
 
@@ -212,14 +213,14 @@ namespace QP8.Integration.Tests
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 [ImageName] = $"{name1}.{ext1}"
             };
 
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
                 [ImageName] = $"{folder2}/{name2}.{ext2}"
             };
 
@@ -351,7 +352,7 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0"
+                [FieldName.ContentItemId] = "0"
             };
 
             values.Add(article1);
@@ -370,7 +371,7 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0"
+                [FieldName.ContentItemId] = "0"
             };
 
             values.Add(article1);
@@ -390,7 +391,7 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Video"] = "newtest.mp4"
             };
 
@@ -448,14 +449,14 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 [ImageName] = "testxx.jpg"
             };
 
             values.Add(article1);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
 
-            var id = int.Parse(values[0][SystemColumnNames.Id]);
+            var id = int.Parse(values[0][FieldName.ContentItemId]);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
 
             var paths = Global.GetMaxVersions(Cnn, new[] { id }).Select(n => Cnn.GetVersionFolderForContent(ContentId, n)).ToArray();
@@ -528,7 +529,7 @@ namespace QP8.Integration.Tests
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 [ImageName] = $"{name1}.{ext1}",
                 ["File"] = "test.docx"
             };
@@ -536,7 +537,7 @@ namespace QP8.Integration.Tests
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
                 [ImageName] = $"{folder2}/{name2}.{ext2}"
             };
 
@@ -668,7 +669,7 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0"
+                [FieldName.ContentItemId] = "0"
             };
 
             values.Add(article1);

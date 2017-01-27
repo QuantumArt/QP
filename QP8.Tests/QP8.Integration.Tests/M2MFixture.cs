@@ -9,11 +9,11 @@ using NUnit.Framework;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
 using Quantumart.QPublishing.FileSystem;
-using Quantumart.QPublishing.Info;
 using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 
 namespace QP8.Integration.Tests
@@ -80,15 +80,15 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
-                ["STATUS_TYPE_ID"] = NoneId.ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
+                [FieldName.StatusTypeId] = NoneId.ToString()
             };
 
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
-                ["STATUS_TYPE_ID"] = NoneId.ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
+                [FieldName.StatusTypeId] = NoneId.ToString()
             };
 
             values.Add(article2);
@@ -98,7 +98,6 @@ namespace QP8.Integration.Tests
             var titlesBefore = Global.GetTitles(Cnn, ContentId, ints);
             var cntArticlesAsyncBefore = Global.CountArticles(Cnn, ContentId, ints, true);
             var cntArticlesBefore = Global.CountArticles(Cnn, ContentId, ints);
-
 
             Assert.That(cntAsyncBefore, Is.EqualTo(0));
             Assert.That(cntBefore, Is.Not.EqualTo(0));
@@ -114,7 +113,6 @@ namespace QP8.Integration.Tests
             }
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
-
             var cntAsyncAfterSplit = Global.CountLinks(Cnn, ints, true);
             var cntAfterSplit = Global.CountLinks(Cnn, ints);
             var asyncTitlesAfterSplit = Global.GetTitles(Cnn, ContentId, ints, true);
@@ -137,14 +135,14 @@ namespace QP8.Integration.Tests
             var values2 = new List<Dictionary<string, string>>();
             var article3 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
             values2.Add(article4);
 
@@ -175,41 +173,38 @@ namespace QP8.Integration.Tests
             }
         }
 
-
         [Test]
         public void MassUpdate_InsertSplitAndMergeData_ForM2MAndStatusChanging()
         {
             var values = new List<Dictionary<string, string>>();
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
             var ints2 = new[] { CategoryIds[2], CategoryIds[3], CategoryIds[4] };
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest",
                 ["Categories"] = string.Join(",", ints1),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest",
                 ["Categories"] = string.Join(",", ints2),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values.Add(article2);
-
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
-
-            var ids1 = new[] { int.Parse(article1[SystemColumnNames.Id]) };
-            var ids2 = new[] { int.Parse(article2[SystemColumnNames.Id]) };
+            var ids1 = new[] { int.Parse(article1[FieldName.ContentItemId]) };
+            var ids2 = new[] { int.Parse(article2[FieldName.ContentItemId]) };
             var intsSaved1 = Global.GetLinks(Cnn, ids1);
             var intsSaved2 = Global.GetLinks(Cnn, ids2);
 
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
-
             if (EfLinksExists)
             {
                 var intsEfSaved1 = Global.GetEfLinks(Cnn, ids1, ContentId);
@@ -225,8 +220,8 @@ namespace QP8.Integration.Tests
             article2["Categories"] = string.Join(",", intsNew2);
             article1["Title"] = titles[0];
             article2["Title"] = titles[1];
-            article1["STATUS_TYPE_ID"] = NoneId.ToString();
-            article2["STATUS_TYPE_ID"] = NoneId.ToString();
+            article1[FieldName.StatusTypeId] = NoneId.ToString();
+            article2[FieldName.StatusTypeId] = NoneId.ToString();
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change and split");
 
@@ -255,20 +250,19 @@ namespace QP8.Integration.Tests
             var values2 = new List<Dictionary<string, string>>();
             var article3 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.ContentItemId] = article1[FieldName.ContentItemId],
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.ContentItemId] = article2[FieldName.ContentItemId],
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values2.Add(article4);
-
-
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values2, 1), "Merge");
-
             var intsMerged1 = Global.GetLinks(Cnn, ids1);
             var intsMerged2 = Global.GetLinks(Cnn, ids2);
             var intsMergedAsync1 = Global.GetLinks(Cnn, ids1, true);
@@ -359,7 +353,6 @@ namespace QP8.Integration.Tests
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, id);
             }, "Merge with values");
 
-
             var intsMerged1 = Global.GetLinks(Cnn, ids1);
             var intsMergedAsync1 = Global.GetLinks(Cnn, ids1, true);
             var mergedTitles = Global.GetTitles(Cnn, ContentId, ids1);
@@ -372,10 +365,10 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var intsEFMerged1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEFMergedAsync1 = Global.GetEfLinks(Cnn, ids1, ContentId, true);
-                Assert.That(intsEFMerged1, Is.EqualTo(intsUpdatedAsync1), "Article EF M2M (main) merged");
-                Assert.That(intsEFMergedAsync1, Is.Empty, "Article EF M2M (async) cleared");
+                var intsEfMerged1 = Global.GetEfLinks(Cnn, ids1, ContentId);
+                var intsEfMergedAsync1 = Global.GetEfLinks(Cnn, ids1, ContentId, true);
+                Assert.That(intsEfMerged1, Is.EqualTo(intsUpdatedAsync1), "Article EF M2M (main) merged");
+                Assert.That(intsEfMergedAsync1, Is.Empty, "Article EF M2M (async) cleared");
             }
         }
 
@@ -385,28 +378,28 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
             var ints2 = new[] { CategoryIds[2], CategoryIds[3], CategoryIds[4] };
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest",
                 ["Categories"] = string.Join(",", ints1),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest",
                 ["Categories"] = string.Join(",", ints2),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
 
-            var ids1 = new[] { int.Parse(article1[SystemColumnNames.Id]) };
-            var ids2 = new[] { int.Parse(article2[SystemColumnNames.Id]) };
+            var ids1 = new[] { int.Parse(article1[FieldName.ContentItemId]) };
+            var ids2 = new[] { int.Parse(article2[FieldName.ContentItemId]) };
             var ids = ids1.Union(ids2).ToArray();
             var intsSaved1 = Global.GetLinks(Cnn, ids1);
             var intsSaved2 = Global.GetLinks(Cnn, ids2);
@@ -416,10 +409,10 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var intsEFSaved1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEFSaved2 = Global.GetEfLinks(Cnn, ids2, ContentId);
-                Assert.That(ints1, Is.EqualTo(intsEFSaved1), "First article EF M2M saved");
-                Assert.That(ints2, Is.EqualTo(intsEFSaved2), "Second article EF M2M saved");
+                var intsEfSaved1 = Global.GetEfLinks(Cnn, ids1, ContentId);
+                var intsEfSaved2 = Global.GetEfLinks(Cnn, ids2, ContentId);
+                Assert.That(ints1, Is.EqualTo(intsEfSaved1), "First article EF M2M saved");
+                Assert.That(ints2, Is.EqualTo(intsEfSaved2), "Second article EF M2M saved");
             }
 
             var titles = new[] { "xnewtest", "xnewtest" };
@@ -435,25 +428,22 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var cntEFLinks = Global.CountEfLinks(Cnn, ids, ContentId);
-                Assert.That(cntEFLinks, Is.EqualTo(cntLinks), "EF links");
+                var cntEfLinks = Global.CountEfLinks(Cnn, ids, ContentId);
+                Assert.That(cntEfLinks, Is.EqualTo(cntLinks), "EF links");
             }
 
-
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change");
-
             var intsUpdated1 = Global.GetLinks(Cnn, ids1);
             var intsUpdated2 = Global.GetLinks(Cnn, ids2);
 
             Assert.That(intsNew1, Is.EqualTo(intsUpdated1), "First article M2M updated");
             Assert.That(intsNew2, Is.EqualTo(intsUpdated2), "Second article M2M updated");
-
             if (EfLinksExists)
             {
-                var intsEFUpdated1 = Global.GetEfLinks(Cnn, ids1, ContentId);
-                var intsEFUpdated2 = Global.GetEfLinks(Cnn, ids2, ContentId);
-                Assert.That(intsNew1, Is.EqualTo(intsEFUpdated1), "First article EF M2M updated");
-                Assert.That(intsNew2, Is.EqualTo(intsEFUpdated2), "Second article EF M2M updated");
+                var intsEfUpdated1 = Global.GetEfLinks(Cnn, ids1, ContentId);
+                var intsEfUpdated2 = Global.GetEfLinks(Cnn, ids2, ContentId);
+                Assert.That(intsNew1, Is.EqualTo(intsEfUpdated1), "First article EF M2M updated");
+                Assert.That(intsNew2, Is.EqualTo(intsEfUpdated2), "Second article EF M2M updated");
             }
 
             var versions = Global.GetMaxVersions(Cnn, ids);
@@ -469,7 +459,6 @@ namespace QP8.Integration.Tests
         public void AddFormToContent_SaveAndUpdateOK_ForM2MData()
         {
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
-
             var article1 = new Hashtable
             {
                 [TitleName] = "newtest",
@@ -478,7 +467,6 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
@@ -486,14 +474,12 @@ namespace QP8.Integration.Tests
 
             var ids = new[] { id };
             var intsSaved1 = Global.GetLinks(Cnn, ids);
-
             Assert.That(id, Is.Not.EqualTo(0), "Saved");
             Assert.That(ints1, Is.EqualTo(intsSaved1), "Article M2M saved");
-
             if (EfLinksExists)
             {
-                var intsEFSaved1 = Global.GetEfLinks(Cnn, ids, ContentId);
-                Assert.That(ints1, Is.EqualTo(intsEFSaved1), "Article EF M2M saved");
+                var intsEfSaved1 = Global.GetEfLinks(Cnn, ids, ContentId);
+                Assert.That(ints1, Is.EqualTo(intsEfSaved1), "Article EF M2M saved");
             }
 
             const string title1 = "xnewtest";
@@ -506,8 +492,8 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var cntEFLinks = Global.CountEfLinks(Cnn, ids, ContentId);
-                Assert.That(cntEFLinks, Is.EqualTo(cntLinks), "EF links");
+                var cntEfLinks = Global.CountEfLinks(Cnn, ids, ContentId);
+                Assert.That(cntEfLinks, Is.EqualTo(cntLinks), "EF links");
             }
 
             Assert.DoesNotThrow(() =>
@@ -516,13 +502,11 @@ namespace QP8.Integration.Tests
             }, "Update");
 
             var intsUpdated1 = Global.GetLinks(Cnn, ids);
-
             Assert.That(intsNew1, Is.EqualTo(intsUpdated1), "Article M2M updated");
-
             if (EfLinksExists)
             {
-                var intsEFUpdated1 = Global.GetEfLinks(Cnn, ids, ContentId);
-                Assert.That(intsNew1, Is.EqualTo(intsEFUpdated1), "Article EF M2M updated");
+                var intsEfUpdated1 = Global.GetEfLinks(Cnn, ids, ContentId);
+                Assert.That(intsNew1, Is.EqualTo(intsEfUpdated1), "Article EF M2M updated");
             }
 
             var versions = Global.GetMaxVersions(Cnn, ids);
@@ -534,11 +518,9 @@ namespace QP8.Integration.Tests
             Assert.That(cntLinks, Is.EqualTo(cntVersionLinks), "Links moved to versions");
         }
 
-
         [Test]
         public void MassUpdate_UpdateOK_ForAsymmetricData()
         {
-
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
             var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
             var numbersBefore = Global.GetNumbers(Cnn, ContentId, ids);
@@ -549,19 +531,20 @@ namespace QP8.Integration.Tests
             const int num = 30;
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Title"] = title1,
                 ["Number"] = num.ToString()
 
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
                 ["Title"] = title2
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
 
             var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
@@ -579,31 +562,30 @@ namespace QP8.Integration.Tests
         [Test]
         public void ImportToContent_UpdateOK_ForAsymmetricData()
         {
-
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "testa",
                 ["Number"] = "20",
                 ["Description"] = "abc"
 
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "testb",
                 ["Number"] = "30",
                 ["Description"] = "def"
 
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values), "Create");
 
-            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
+            var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
             var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
             var numbersBefore = Global.GetNumbers(Cnn, ContentId, ids);
 
@@ -613,20 +595,19 @@ namespace QP8.Integration.Tests
             const int num = 40;
             var article3 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
+                [FieldName.ContentItemId] = article1[FieldName.ContentItemId],
                 ["Title"] = title1,
                 ["Number"] = num.ToString()
-
             };
+
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
+                [FieldName.ContentItemId] = article2[FieldName.ContentItemId],
                 ["Title"] = title2
-
             };
-            values2.Add(article4);
 
+            values2.Add(article4);
             Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2), "Update");
 
             var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
@@ -645,52 +626,48 @@ namespace QP8.Integration.Tests
         [Test]
         public void ImportToContent_UpdateOK_ForAsymmetricDataWithOverrideMissedFields()
         {
-
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "testa",
                 ["Number"] = "20",
                 ["Description"] = "abc"
-
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "testb",
                 ["Number"] = "30",
                 ["Description"] = "def"
-
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values), "Create");
 
-            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
-
+            var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
             var values2 = new List<Dictionary<string, string>>();
             const string title1 = "newtestab";
             const string title2 = "newtestabc";
             const int num = 40;
             var article3 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
+                [FieldName.ContentItemId] = article1[FieldName.ContentItemId],
                 ["Title"] = title1,
                 ["Number"] = num.ToString()
 
             };
+
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
+                [FieldName.ContentItemId] = article2[FieldName.ContentItemId],
                 ["Title"] = title2
-
             };
-            values2.Add(article4);
 
+            values2.Add(article4);
             Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2, 1, null, true), "Update");
 
             var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
@@ -708,31 +685,28 @@ namespace QP8.Integration.Tests
         [Test]
         public void ImportToContent_UpdateOK_ForAsymmetricDataWithOverrideMissedFieldsAndAttrIds()
         {
-
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "testa",
                 ["Number"] = "20",
                 ["Description"] = "abc"
-
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "testb",
                 ["Number"] = "30",
                 ["Description"] = "def"
-
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values), "Create");
 
-            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
+            var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
             var descriptionsBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
 
             var values2 = new List<Dictionary<string, string>>();
@@ -741,27 +715,24 @@ namespace QP8.Integration.Tests
             const int num = 40;
             var article3 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
+                [FieldName.ContentItemId] = article1[FieldName.ContentItemId],
                 ["Title"] = title1,
                 ["Number"] = num.ToString()
-
             };
+
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
+                [FieldName.ContentItemId] = article2[FieldName.ContentItemId],
                 ["Title"] = title2
-
             };
-            values2.Add(article4);
 
+            values2.Add(article4);
             var titleId = Cnn.FieldID(Global.SiteId, Cnn.GetContentName(ContentId), "Title");
             var numberId = Cnn.FieldID(Global.SiteId, Cnn.GetContentName(ContentId), "Number");
             var attrIds = new[] { titleId, numberId };
 
-
             Assert.DoesNotThrow(() => Cnn.ImportToContent(ContentId, values2, 1, attrIds, true), "Update");
-
             var descriptionsAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids);
             var titlesAfter = Global.GetTitles(Cnn, ContentId, ids);
             var numbersAfter = Global.GetNumbers(Cnn, ContentId, ids);
@@ -772,59 +743,51 @@ namespace QP8.Integration.Tests
             Assert.That(titlesAfter[0], Is.EqualTo(title1), "Title 1 is changed");
             Assert.That(descriptionsAfter[1], Is.EqualTo(descriptionsBefore[1]), "Description 2 remains the same");
             Assert.That(descriptionsAfter[0], Is.EqualTo(descriptionsBefore[0]), "Description 1 remains the same");
-
         }
-
-
 
         [Test]
         public void MassUpdate_ReturnModified_ForInsertingAndUpdatingData()
         {
-
             var ids = new[] { BaseArticlesIds[0], BaseArticlesIds[1] };
             var modifiedBefore = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids);
-
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString()
             };
+
             values.Add(article2);
             var article3 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0"
+                [FieldName.ContentItemId] = "0"
             };
-            values.Add(article3);
 
+            values.Add(article3);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update and Insert");
-            var afterIds = values.Select(n => n[SystemColumnNames.Id]).Select(int.Parse).ToArray();
+            var afterIds = values.Select(n => n[FieldName.ContentItemId]).Select(int.Parse).ToArray();
             var newId = afterIds.Except(ids).Single();
 
             var modifiedAfter = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", afterIds);
-            var everyOneHasModified = values.All(n => n.ContainsKey(SystemColumnNames.Modified));
-            var createdItemId = int.Parse(values.Single(n => n.ContainsKey(SystemColumnNames.Created))[SystemColumnNames.Id]);
+            var everyOneHasModified = values.All(n => n.ContainsKey(FieldName.Modified));
+            var createdItemId = int.Parse(values.Single(n => n.ContainsKey(FieldName.Created))[FieldName.ContentItemId]);
 
             Assert.That(newId, Is.EqualTo(createdItemId), "New item has created");
             Assert.That(modifiedBefore, Does.Not.EqualTo(modifiedAfter.Take(2).ToArray()), "Modified changed");
             Assert.That(everyOneHasModified, Is.True, "All articles has Modified");
 
-            var modifiedReturned = values.Select(n => DateTime.Parse(n[SystemColumnNames.Modified], CultureInfo.InvariantCulture)).ToArray();
-
+            var modifiedReturned = values.Select(n => DateTime.Parse(n[FieldName.Modified], CultureInfo.InvariantCulture)).ToArray();
             Assert.That(modifiedAfter, Is.EqualTo(modifiedReturned), "Return modified");
-
         }
-
 
         [Test]
         public void AddFormToContent_ReturnModified_ReturnModifiedTrue()
         {
-
             var article1 = new Hashtable
             {
                 [TitleName] = "abc",
@@ -832,23 +795,19 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
             var ids = new[] { id };
-
             var modified = DateTime.MinValue;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, true, false, true, ref modified);
             }, "Update article");
 
             var modifiedAfter = Global.GetFieldValues<DateTime>(Cnn, ContentId, "Modified", ids)[0];
-
             Assert.That(modified, Is.EqualTo(modifiedAfter), "Modified changed");
 
         }
@@ -857,25 +816,23 @@ namespace QP8.Integration.Tests
         public void MassUpdate_DoesntReturnModified_ReturnModifiedFalse()
         {
             var values = new List<Dictionary<string, string>>();
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString()
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { ReturnModified = false }), "Update");
 
-            var noOneHasModified = values.All(n => !n.ContainsKey(SystemColumnNames.Modified));
+            var noOneHasModified = values.All(n => !n.ContainsKey(FieldName.Modified));
             Assert.That(noOneHasModified, Is.EqualTo(true), "All articles has Modified");
-
         }
-
 
         [Test]
         public void MassUpdate_ThrowsException_ValidateAttributeValueInvalidNumericData()
@@ -883,11 +840,11 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Number"] = "test"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.That(
                 () => Cnn.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("type is incorrect"),
@@ -904,14 +861,12 @@ namespace QP8.Integration.Tests
                 [MainCategoryName] = CategoryIds[0]
             };
 
-            Assert.That(
-                () =>
-                {
-                    Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
-                },
-                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("type is incorrect"),
-                "Validate numeric data"
-            );
+            Assert.That(() =>
+            {
+                Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
+            },
+            Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("type is incorrect"),
+            "Validate numeric data");
         }
 
         [Test]
@@ -920,11 +875,11 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Title"] = "test123"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.That(
                 () => Cnn.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("input mask"),
@@ -941,14 +896,12 @@ namespace QP8.Integration.Tests
                 [MainCategoryName] = CategoryIds[0]
             };
 
-            Assert.That(
-                () =>
-                {
-                    Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
-                },
-                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("input mask"),
-                "Validate input mask"
-            );
+            Assert.That(() =>
+            {
+                Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
+            },
+            Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("input mask"),
+            "Validate input mask");
         }
 
         [Test]
@@ -957,30 +910,28 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
 
-            var id = int.Parse(values[0][SystemColumnNames.Id]);
+            var id = int.Parse(values[0][FieldName.ContentItemId]);
             var ids = new[] { id };
-
             Assert.That(id, Is.Not.EqualTo(0), "Return id");
 
             var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
             var num = (int)Global.GetNumbers(Cnn, ContentId, ids)[0];
             var cnt = Global.CountLinks(Cnn, ids);
-
             Assert.That(num, Is.Not.EqualTo(0), "Default number");
             Assert.That(desc, Is.Not.Null.Or.Empty, "Default description");
             Assert.That(cnt, Is.EqualTo(2), "Default M2M");
 
             if (EfLinksExists)
             {
-                var cntEF = Global.CountEfLinks(Cnn, ids, ContentId);
-                Assert.That(cntEF, Is.EqualTo(2), "Default EF M2M");
+                var cntEf = Global.CountEfLinks(Cnn, ids, ContentId);
+                Assert.That(cntEf, Is.EqualTo(2), "Default EF M2M");
             }
         }
 
@@ -990,18 +941,16 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Description"] = $@"<a href=""{ Cnn.GetImagesUploadUrl(Global.SiteId) }"">test</a>"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Add article");
 
-            var id = int.Parse(values[0][SystemColumnNames.Id]);
+            var id = int.Parse(values[0][FieldName.ContentItemId]);
             var ids = new[] { id };
-
             var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
-
             Assert.That(desc, Does.Contain(@"<%=upload_url%>"));
         }
 
@@ -1011,18 +960,16 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Description"] = $@"<a href=""{ Cnn.GetImagesUploadUrl(Global.SiteId) }"">test</a>"
             };
-            values.Add(article1);
 
+            values.Add(article1);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1, new MassUpdateOptions { ReplaceUrls = false }), "Add article");
 
-            var id = int.Parse(values[0][SystemColumnNames.Id]);
+            var id = int.Parse(values[0][FieldName.ContentItemId]);
             var ids = new[] { id };
-
             var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
-
             Assert.That(desc, Does.Not.Contain(@"<%=upload_url%>"));
         }
 
@@ -1035,14 +982,12 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
             var ids = new[] { id };
-
             Assert.That(id, Is.Not.EqualTo(0), "Return id");
 
             var desc = Global.GetFieldValues<string>(Cnn, ContentId, "Description", ids)[0];
@@ -1055,8 +1000,8 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var cntEF = Global.CountEfLinks(Cnn, ids, ContentId);
-                Assert.That(cntEF, Is.EqualTo(2), "Default EF M2M");
+                var cntEf = Global.CountEfLinks(Cnn, ids, ContentId);
+                Assert.That(cntEf, Is.EqualTo(2), "Default EF M2M");
             }
         }
 
@@ -1070,13 +1015,15 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString()
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString()
             };
+
             values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update");
 
@@ -1086,7 +1033,6 @@ namespace QP8.Integration.Tests
         [Test]
         public void AddFormToContent_UpdateArchiveVisible_UpdateFlagsTrue()
         {
-
             var article1 = new Hashtable
             {
                 [TitleName] = "abc",
@@ -1094,19 +1040,15 @@ namespace QP8.Integration.Tests
             };
 
             var id = 0;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
             var ids = new[] { id };
-
             var visibleBefore = Global.GetFieldValues<decimal>(Cnn, ContentId, "Visible", ids)[0];
             var archiveBefore = Global.GetFieldValues<decimal>(Cnn, ContentId, "Archive", ids)[0];
-
             var modified = DateTime.MinValue;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article1, id, true, 0, false, true, true, ref modified);
@@ -1114,7 +1056,6 @@ namespace QP8.Integration.Tests
 
             var visibleAfter = Global.GetFieldValues<decimal>(Cnn, ContentId, "Visible", ids)[0];
             var archiveAfter = Global.GetFieldValues<decimal>(Cnn, ContentId, "Archive", ids)[0];
-
             Assert.That(visibleBefore, Is.Not.EqualTo(visibleAfter), "Visible changed");
             Assert.That(archiveBefore, Is.Not.EqualTo(archiveAfter), "Archive changed");
             Assert.That(visibleAfter, Is.EqualTo(0), "Visible updated");
@@ -1124,7 +1065,6 @@ namespace QP8.Integration.Tests
         [Test]
         public void AddFormToContent_UpdateOnlyOneField_AttrIdProvided()
         {
-
             var article1 = new Hashtable
             {
                 [TitleName] = "txt",
@@ -1137,21 +1077,16 @@ namespace QP8.Integration.Tests
             };
 
             var mainCatId = int.Parse(MainCategoryName.Replace("field_", ""));
-
             var id = 0;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
             var ids = new[] { id };
-
             var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
             var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
-
             var files = (HttpFileCollection)null;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentId, "Published", ref article2, ref files, id, true, mainCatId);
@@ -1159,7 +1094,6 @@ namespace QP8.Integration.Tests
 
             var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
             var catAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
-
             Assert.That(titleBefore, Is.EqualTo(titleAfter), "Same Title");
             Assert.That(catBefore, Is.Not.EqualTo(catAfter), "Category changed");
             Assert.That(catAfter, Is.EqualTo(CategoryIds[1]), "Category updated");
@@ -1168,7 +1102,6 @@ namespace QP8.Integration.Tests
         [Test]
         public void AddFormToContent_UpdateOnlyNonEmpty_UpdateEmptyTrue()
         {
-
             var article1 = new Hashtable
             {
                 [TitleName] = "pdf",
@@ -1182,22 +1115,17 @@ namespace QP8.Integration.Tests
                 [NumberName] = ""
             };
 
-
             var id = 0;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, 0);
             }, "Add article");
 
             var ids = new[] { id };
-
             var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
             var catBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
             var numBefore = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "Number", ids)[0];
-
             var files = (HttpFileCollection)null;
-
             Assert.DoesNotThrow(() =>
             {
                 id = Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article2, ref files, id, false);
@@ -1206,7 +1134,6 @@ namespace QP8.Integration.Tests
             var titleAfter = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
             var catAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "MainCategory", ids)[0];
             var numAfter = (int)Global.GetFieldValues<decimal>(Cnn, ContentId, "Number", ids)[0];
-
             Assert.That(titleBefore, Is.Not.EqualTo(titleAfter), "Changed Title");
             Assert.That(catBefore, Is.EqualTo(catAfter), "Same Category");
             Assert.That(numBefore, Is.EqualTo(numAfter), "Same Number");
@@ -1243,8 +1170,8 @@ namespace QP8.Integration.Tests
 
             if (EfLinksExists)
             {
-                var cntEFLinks = Global.CountEfLinks(Cnn, ids, ContentId);
-                Assert.That(cntEFLinks, Is.EqualTo(cntLinks), "EF links saved");
+                var cntEfLinks = Global.CountEfLinks(Cnn, ids, ContentId);
+                Assert.That(cntEfLinks, Is.EqualTo(cntLinks), "EF links saved");
             }
 
             Assert.DoesNotThrow(() =>
@@ -1254,11 +1181,10 @@ namespace QP8.Integration.Tests
 
             var cntLinksAfter = Global.CountLinks(Cnn, ids);
             Assert.That(cntLinksAfter, Is.EqualTo(0), "Links nullified");
-
             if (EfLinksExists)
             {
-                var cntEFLinksAfter = Global.CountEfLinks(Cnn, ids, ContentId);
-                Assert.That(cntEFLinksAfter, Is.EqualTo(0), "EF links nullified");
+                var cntEfLinksAfter = Global.CountEfLinks(Cnn, ids, ContentId);
+                Assert.That(cntEfLinksAfter, Is.EqualTo(0), "EF links nullified");
             }
         }
 
@@ -1273,7 +1199,6 @@ namespace QP8.Integration.Tests
             ContentId = Global.GetContentId(Cnn, "Test M2M");
             DictionaryContentId = Global.GetContentId(Cnn, "Test Category");
             var srv = new ContentService(Global.ConnectionString, 1);
-
             if (srv.Exists(ContentId))
             {
                 srv.Delete(ContentId);

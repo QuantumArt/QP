@@ -214,18 +214,16 @@ namespace Quantumart.QP8.BLL
         public const int MinLimitOfStoredVersions = 1;
         public const int MaxLimitOfStoredVersions = 30;
         public const int DefaultLimitOfStoredVersions = 10;
-        internal const string ContentItemIdPropertyName = "CONTENT_ITEM_ID";
-        internal const string StatusTypeIdPropertyName = "STATUS_TYPE_ID";
 
         internal static readonly ReadOnlyCollection<UserQueryColumn> SystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
         {
-            new UserQueryColumn {ColumnName = "CONTENT_ITEM_ID", DbType = "numeric", NumericScale = 0},
-            new UserQueryColumn {ColumnName = "STATUS_TYPE_ID", DbType = "numeric", NumericScale = 0},
-            new UserQueryColumn {ColumnName = "VISIBLE", DbType = "numeric", NumericScale = 0},
-            new UserQueryColumn {ColumnName = "ARCHIVE", DbType = "numeric", NumericScale = 0},
-            new UserQueryColumn {ColumnName = "CREATED", DbType = "datetime"},
-            new UserQueryColumn {ColumnName = "MODIFIED", DbType = "datetime"},
-            new UserQueryColumn {ColumnName = "LAST_MODIFIED_BY", DbType = "numeric", NumericScale = 0}
+            new UserQueryColumn {ColumnName = FieldName.ContentItemId, DbType = "numeric", NumericScale = 0},
+            new UserQueryColumn {ColumnName = FieldName.StatusTypeId, DbType = "numeric", NumericScale = 0},
+            new UserQueryColumn {ColumnName = FieldName.Visible, DbType = "numeric", NumericScale = 0},
+            new UserQueryColumn {ColumnName = FieldName.Archive, DbType = "numeric", NumericScale = 0},
+            new UserQueryColumn {ColumnName = FieldName.Created, DbType = "datetime"},
+            new UserQueryColumn {ColumnName = FieldName.Modified, DbType = "datetime"},
+            new UserQueryColumn {ColumnName = FieldName.LastModifiedBy, DbType = "numeric", NumericScale = 0}
         });
 
         private Site _site;
@@ -752,10 +750,10 @@ namespace Quantumart.QP8.BLL
         {
             if (!DisableXamlValidation && !CreateDefaultXamlValidation && !string.IsNullOrWhiteSpace(XamlValidation))
             {
-                var data = Fields.ToDictionary(f => f.FormName, f => "");
-                // add system properties
-                data[ContentItemIdPropertyName] = "";
-                data[StatusTypeIdPropertyName] = "";
+                var data = Fields.ToDictionary(f => f.FormName, f => string.Empty);
+                data[FieldName.ContentItemId] = string.Empty;
+                data[FieldName.StatusTypeId] = string.Empty;
+
                 try
                 {
                     ValidationServices.TestValidator(data, XamlValidation, Site.XamlDictionaries);
@@ -1271,14 +1269,14 @@ namespace Quantumart.QP8.BLL
             {
                 new PropertyDefinition
                 {
-                    PropertyName = ContentItemIdPropertyName,
+                    PropertyName = FieldName.ContentItemId,
                     Alias = "Id",
                     Description = "An indentifier of the entity.",
                     PropertyType = typeof(int)
                 },
                 new PropertyDefinition
                 {
-                    PropertyName = StatusTypeIdPropertyName,
+                    PropertyName = FieldName.StatusTypeId,
                     Alias = "StatusTypeId",
                     Description = "StatusTypeId",
                     PropertyType = typeof(int)
@@ -1286,15 +1284,14 @@ namespace Quantumart.QP8.BLL
 
             };
 
-            propDefs.AddRange(Fields.Select(f =>
-                new PropertyDefinition
-                {
-                    PropertyName = f.FormName,
-                    Alias = f.FormName,
-                    PropertyType = f.XamlType,
-                    Description = string.IsNullOrWhiteSpace(f.FriendlyName) ? f.Name : f.FriendlyName
-                }
-            ));
+            propDefs.AddRange(Fields.Select(f => new PropertyDefinition
+            {
+                PropertyName = f.FormName,
+                Alias = f.FormName,
+                PropertyType = f.XamlType,
+                Description = string.IsNullOrWhiteSpace(f.FriendlyName) ? f.Name : f.FriendlyName
+            }));
+
             return ValidationServices.GenerateXamlValidatorText(propDefs);
         }
 

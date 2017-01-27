@@ -175,7 +175,7 @@ namespace Quantumart.QP8.BLL
             CorrectEntityType(ssdl, ns, EntityTypeCode.User, "USERS", "USER_ID");
             CorrectEntityType(ssdl, ns, EntityTypeCode.UserGroup, "USER_GROUP", "GROUP_ID");
             CorrectEntityType(ssdl, ns, EntityTypeCode.Workflow, "WORKFLOW", "WORFKLOW_ID");
-            CorrectEntityType(ssdl, ns, EntityTypeCode.StatusType, "STATUS_TYPE", "STATUS_TYPE_ID");
+            CorrectEntityType(ssdl, ns, EntityTypeCode.StatusType, "STATUS_TYPE", FieldName.StatusTypeId);
             CorrectEntityType(ssdl, ns, EntityTypeCode.Notification, "NOTIFICATIONS", "NOTIFICATION_ID");
         }
 

@@ -560,7 +560,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 value = string.Empty;
             }
 
-            fieldValueXml.Add(new XElement("CONTENT_ITEM_ID", articleId));
+            fieldValueXml.Add(new XElement(FieldName.ContentItemId, articleId));
             fieldValueXml.Add(new XElement("ATTRIBUTE_ID", fieldValue.Field.Id));
             switch (fieldValue.Field.Type.DatabaseType)
             {

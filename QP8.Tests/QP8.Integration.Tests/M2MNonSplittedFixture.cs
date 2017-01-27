@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -59,42 +60,39 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
             var ints2 = new[] { CategoryIds[2], CategoryIds[3], CategoryIds[4] };
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest",
                 ["Categories"] = string.Join(",", ints1),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest",
                 ["Categories"] = string.Join(",", ints2),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
-            values.Add(article2);
 
+            values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
 
-            var ids1 = new[] { int.Parse(article1[SystemColumnNames.Id]) };
-            var ids2 = new[] { int.Parse(article2[SystemColumnNames.Id]) };
+            var ids1 = new[] { int.Parse(article1[FieldName.ContentItemId]) };
+            var ids2 = new[] { int.Parse(article2[FieldName.ContentItemId]) };
             var intsSaved1 = Global.GetLinks(Cnn, ids1);
             var intsSaved2 = Global.GetLinks(Cnn, ids2);
 
             Assert.That(ints1, Is.EqualTo(intsSaved1), "First article M2M saved");
             Assert.That(ints2, Is.EqualTo(intsSaved2), "Second article M2M saved");
-
             if (EfLinksExists)
             {
                 var intsEfSaved1 = Global.GetEfLinks(Cnn, ids1, ContentId);
                 var intsEfSaved2 = Global.GetEfLinks(Cnn, ids2, ContentId);
-
                 Assert.That(ints1, Is.EqualTo(intsEfSaved1), "First article EF M2M saved");
                 Assert.That(ints2, Is.EqualTo(intsEfSaved2), "Second article EF M2M saved");
-
             }
 
             var titles = new[] { "xnewtest", "xnewtest" };
@@ -104,11 +102,10 @@ namespace QP8.Integration.Tests
             article2["Categories"] = string.Join(",", intsNew2);
             article1["Title"] = titles[0];
             article2["Title"] = titles[1];
-            article1["STATUS_TYPE_ID"] = NoneId.ToString();
-            article2["STATUS_TYPE_ID"] = NoneId.ToString();
+            article1[FieldName.StatusTypeId] = NoneId.ToString();
+            article2[FieldName.StatusTypeId] = NoneId.ToString();
 
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change to none");
-
             var intsUpdated1 = Global.GetLinks(Cnn, ids1);
             var intsUpdated2 = Global.GetLinks(Cnn, ids2);
             var intsUpdatedAsync1 = Global.GetLinks(Cnn, ids1, true);
@@ -135,17 +132,18 @@ namespace QP8.Integration.Tests
             var values2 = new List<Dictionary<string, string>>();
             var article3 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article1[SystemColumnNames.Id],
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.ContentItemId] = article1[FieldName.ContentItemId],
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values2.Add(article3);
             var article4 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = article2[SystemColumnNames.Id],
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.ContentItemId] = article2[FieldName.ContentItemId],
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
-            values2.Add(article4);
 
+            values2.Add(article4);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values2, 1), "Change to published");
 
             var intsPublished1 = Global.GetLinks(Cnn, ids1);
@@ -153,7 +151,6 @@ namespace QP8.Integration.Tests
 
             Assert.That(intsPublished1, Is.EqualTo(intsUpdated1), "First article same");
             Assert.That(intsPublished2, Is.EqualTo(intsUpdated2), "Second article same");
-
             if (EfLinksExists)
             {
                 var intsEfPublished1 = Global.GetEfLinks(Cnn, ids1, ContentId);
@@ -169,31 +166,29 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var ints1 = new[] { CategoryIds[1], CategoryIds[3], CategoryIds[5] };
             var ints2 = new[] { CategoryIds[2], CategoryIds[3], CategoryIds[4] };
-
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest",
                 ["Categories"] = string.Join(",", ints1),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "newtest",
                 ["Categories"] = string.Join(",", ints2),
-                ["STATUS_TYPE_ID"] = PublishedId.ToString()
+                [FieldName.StatusTypeId] = PublishedId.ToString()
             };
+
             values.Add(article2);
-
-            var ids = new[] { int.Parse(article1[SystemColumnNames.Id]), int.Parse(article2[SystemColumnNames.Id]) };
-
+            var ids = new[] { int.Parse(article1[FieldName.ContentItemId]), int.Parse(article2[FieldName.ContentItemId]) };
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Create");
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Change");
 
             var versions = Global.GetMaxVersions(Cnn, ids);
-
             Assert.That(versions, Is.Empty, "Versions created");
         }
 
