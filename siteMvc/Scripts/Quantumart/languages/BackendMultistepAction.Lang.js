@@ -30,6 +30,5 @@ Backend.Lang.MultistepAction = {
 	UniqueFieldToUpdate: "Please select identifier field for article matching",
 	UniqueExtensionFieldToUpdate: "Please select identifier field for content",
 	RequiredField: " is required",
-	AnyFieldRequired: "At least one field required",
-	BrokenDataIntegrity: "Broken data integrity for field "
+	AnyFieldRequired: "At least one field required"
 };

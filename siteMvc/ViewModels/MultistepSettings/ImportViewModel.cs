@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
@@ -37,11 +37,11 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public List<ListItem> ImportActions => new List<ListItem>
         {
-            new ListItem(((int)CsvImportMode.InsertAll).ToString(), UserStrings.ArticlesInsertAll),
-            new ListItem(((int)CsvImportMode.InsertNew).ToString(), UserStrings.ArticlesInsertNew),
-            new ListItem(((int)CsvImportMode.InsertAndUpdate).ToString(), UserStrings.ArticlesInsertAndUpdate),
-            new ListItem(((int)CsvImportMode.Update).ToString(), UserStrings.ArticlesUpdate),
-            new ListItem(((int)CsvImportMode.UpdateIfChanged).ToString(), UserStrings.ArticlesUpdateIfChanged)
+            new ListItem(((int) CsvImportMode.InsertAll).ToString(), UserStrings.ArticlesInsertAll),
+            new ListItem(((int) CsvImportMode.InsertNew).ToString(), UserStrings.ArticlesInsertNew),
+            new ListItem(((int) CsvImportMode.InsertAndUpdate).ToString(), UserStrings.ArticlesInsertAndUpdate),
+            new ListItem(((int) CsvImportMode.Update).ToString(), UserStrings.ArticlesUpdate),
+            new ListItem(((int) CsvImportMode.UpdateIfChanged).ToString(), UserStrings.ArticlesUpdateIfChanged)
         };
 
         [LocalizedDisplayName("UniqueFieldToUpdate", NameResourceType = typeof(MultistepActionStrings))]
@@ -56,12 +56,12 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
             {
                 var content = ContentService.Read(ContentId);
                 return new[]
-                {
-                    new ListItem(string.Empty, FieldName.ContentItemId)
-                }
-                .Concat(content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation && f.IsUnique)
-                .Select(f => new ListItem(f.Id.ToString(), f.Name)))
-                .ToList();
+                    {
+                        new ListItem(string.Empty, FieldName.ContentItemId)
+                    }
+                    .Concat(content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation && f.IsUnique)
+                        .Select(f => new ListItem(f.Id.ToString(), f.Name)))
+                    .ToList();
             }
         }
 
@@ -131,61 +131,41 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         {
             get
             {
-                var rootGroup = new ImportFieldGroupViewModel(MultistepActionStrings.MappingFields);
                 var content = ContentService.Read(ContentId);
-                var fields = content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation).ToList();
-                Update(rootGroup, fields, false);
-                return rootGroup;
+                var fields = content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation);
+                return Update(new ImportFieldGroupViewModel(MultistepActionStrings.MappingFields), fields);
             }
         }
 
-        private static void Update(ImportFieldGroupViewModel groupModel, IList<BLL.Field> fields, bool extension)
+        private static ImportFieldGroupViewModel Update(ImportFieldGroupViewModel groupModel, IEnumerable<BLL.Field> fields)
         {
-            if (extension)
-            {
-                var content = fields.Select(f => f.Content).FirstOrDefault();
-                if (content != null)
-                {
-                    groupModel.Fields.Add(new ExtendedListItem
-                    {
-                        Text = content.Name + "." + FieldName.ContentItemId,
-                        Value = "Id_" + content.Id,
-                        Description = "Id",
-                        Required = false,
-                        IsIdentifier = true,
-                        IsAggregated = true
-                    });
-                }
-            }
-
             foreach (var field in fields)
             {
-                var text = extension ? $"{field.Content.Name}.{field.Name}" : field.Name;
                 var item = new ExtendedListItem
                 {
-                    Text = text,
+                    Text = field.Name,
                     Value = field.Id.ToString(),
                     Description = field.Name,
                     Required = field.Required,
                     IsIdentifier = false,
-                    IsAggregated = extension,
+                    IsAggregated = false,
                     Unique = field.IsUnique,
-                    BrokenDataIntegrity = !CheckFieldForDataIntegrity(field)
                 };
 
                 if (field.IsClassifier)
                 {
                     var classifierGroup = new ImportFieldGroupViewModel("Classifier");
-                    var contents = field.Content.AggregatedContents.Where(c => c.Fields.Any(f => f.Aggregated && f.ClassifierId == field.Id));
+                    classifierGroup.Fields.Add(item);
+
+                    var contents = field.Content.AggregatedContents.Where(c => c.Fields.Any(f => f.Aggregated && f.ClassifierId == field.Id)).ToList();
+                    var extensionFields = contents.SelectMany(c => c.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation)).ToList();
                     foreach (var content in contents)
                     {
-                        var contentGroup = new ImportFieldGroupViewModel(content.Name);
-                        var extensionFields = content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation).ToList();
-                        Update(contentGroup, extensionFields, true);
+                        var contentExtensionFields = extensionFields.Where(ef => ef.ContentId == content.Id).ToList();
+                        var contentGroup = UpdateExtension(new ImportFieldGroupViewModel(content.Name), contentExtensionFields);
                         classifierGroup.Groups.Add(contentGroup);
                     }
 
-                    classifierGroup.Fields.Add(item);
                     groupModel.Groups.Add(classifierGroup);
                 }
                 else if (!field.Aggregated)
@@ -193,20 +173,46 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
                     groupModel.Fields.Add(item);
                 }
             }
+
+            return groupModel;
         }
 
-        private static bool CheckFieldForDataIntegrity(BLL.Field field)
+        private static ImportFieldGroupViewModel UpdateExtension(ImportFieldGroupViewModel groupModel, IList<BLL.Field> fields)
         {
-            try
+            var content = fields.Select(f => f.Content).FirstOrDefault();
+            if (content != null)
             {
-                field.Validate();
-            }
-            catch
-            {
-                return false;
+                groupModel.Fields.Add(new ExtendedListItem
+                {
+                    Text = content.Name + "." + FieldName.ContentItemId,
+                    Value = "Id_" + content.Id,
+                    Description = "Id",
+                    Required = false,
+                    IsIdentifier = true,
+                    IsAggregated = true
+                });
             }
 
-            return true;
+            foreach (var field in fields)
+            {
+                var item = new ExtendedListItem
+                {
+                    Text = $"{field.Content.Name}.{field.Name}",
+                    Value = field.Id.ToString(),
+                    Description = field.Name,
+                    Required = field.Required,
+                    IsIdentifier = false,
+                    IsAggregated = true,
+                    Unique = field.IsUnique,
+                };
+
+                if (!field.Aggregated)
+                {
+                    groupModel.Fields.Add(item);
+                }
+            }
+
+            return groupModel;
         }
     }
 

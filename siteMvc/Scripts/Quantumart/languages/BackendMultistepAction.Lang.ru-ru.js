@@ -30,6 +30,5 @@ Backend.Lang.MultistepAction = {
 	UniqueFieldToUpdate: "Пожалуйста, выберите поле идентификатора для сопоставления статей",
 	UniqueExtensionFieldToUpdate: "Пожалуйста, выберите поле идентификатора для контента",
 	RequiredField: " - обязательное поле",
-	AnyFieldRequired: "Должно быть выбрано хотя бы одно поле",
-	BrokenDataIntegrity: "Нарушена цесостность данных для поля "
+	AnyFieldRequired: "Должно быть выбрано хотя бы одно поле"
 };

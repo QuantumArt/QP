@@ -418,9 +418,6 @@ namespace Quantumart.QP8.BLL
 
         internal bool HasAnyAggregators => _hasAnyAggregators.Value;
 
-        /// <summary>
-        /// Значения строкового перечисления
-        /// </summary>
         [LocalizedDisplayName("EnumValues", NameResourceType = typeof(FieldStrings))]
         public IEnumerable<StringEnumItem> StringEnumItems { get; set; }
 

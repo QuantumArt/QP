@@ -211,8 +211,6 @@ a.html:hover
   width: 100% !important;
 }
 
-
-
 .editingForm .formLayout select.dropDownList
 {
   width: 352px !important;
@@ -224,465 +222,461 @@ a.html:hover
   height: 100px !important;
 }
 
-.formLayout
+.formLayout fieldset
 {
+  margin: 0 0 0.5em 0;
+  padding: 15px;
+  border: 1px solid #909090;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 
-  .formLayout fieldset
-  {
-    margin: 0 0 0.5em 0;
-    padding: 15px;
-    border: 1px solid #909090;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-  }
+.formLayout fieldset legend
+{
+  margin: 0 0 0.5em 0;
+  padding: 0 3px 0 5px;
+  font-weight: bold;
+}
 
-  .formLayout fieldset legend
-  {
-    margin: 0 0 0.5em 0;
-    padding: 0 3px 0 5px;
-    font-weight: bold;
-  }
+.formLayout dl.row
+{
+  clear: both;
+  padding: 0;
+  margin: 0;
+  min-height: 1.0em;
+}
+.formLayout dl.row dl.row
+{
+  clear: none;
+  margin-left: 20px;
+  padding: 0;
+}
+.formLayout dl.row dl.row dd.field
+{
+  margin: 0;
+  padding: 0;
+}
 
-  .formLayout dl.row
-  {
-    clear: both;
-    padding: 0;
-    margin: 0;
-    min-height: 1.0em;
-  }
-  .formLayout dl.row dl.row
-  {
-    clear: none;
-    margin-left: 20px;
-    padding: 0;
-  }
-  .formLayout dl.row dl.row dd.field
-  {
-    margin: 0;
-    padding: 0;
-  }
+.formLayout dt.label
+{
+  display: block;
+  float: left;
+  margin: 0;
+  padding: 0;
+  width: 16.0em;
+  font-style: normal;
+}
+.formLayout .forCheckboxGroup,
+.formLayout .forRadioGroup,
+.formLayout .forTextarea
+{
+  padding-top: 0;
+}
 
-  .formLayout dt.label
-  {
-    display: block;
-    float: left;
-    margin: 0;
-    padding: 0;
-    width: 16.0em;
-    font-style: normal;
-  }
-  .formLayout .forCheckboxGroup,
-  .formLayout .forRadioGroup,
-  .formLayout .forTextarea
-  {
-    padding-top: 0;
-  }
+.formLayout dd.field
+{
+  margin: 0 0 0 17.0em;
+  padding: 0;
+}
 
-  .formLayout dd.field
-  {
-    margin: 0 0 0 17.0em;
-    padding: 0;
-  }
+.formLayout dt.label,
+.formLayout dd.field
+{
+  padding-bottom: 0.5em;
+}
 
-  .formLayout dt.label,
-  .formLayout dd.field
-  {
-    padding-bottom: 0.5em;
-  }
+.formLayout .wide
+{
+  margin-top: 0.5em;
+}
+.formLayout .wide dt.label
+{
+  float: none;
+  width: auto;
+}
+.formLayout .wide .forCheckboxGroup,
+.formLayout .wide .forRadioGroup,
+.formLayout .wide .forDropdownListGroup,
+.formLayout .wide .forDropdownList,
+.formLayout .wide .forTextarea
+{
+  padding-bottom: 0;
+}
+.formLayout .wide dd.field
+{
+  margin-left: 0;
+  margin-bottom: 0.5em;
+  padding-left: 0;
+}
 
-  .formLayout .wide
-  {
-    margin-top: 0.5em;
-  }
-  .formLayout .wide dt.label
-  {
+.formLayout label[disabled="true"]
+{
+  opacity: 0.4;
+  color: black;
+}
+
+.formLayout input.textbox,
+.formLayout textarea.textbox,
+.formLayout select.dropDownList,
+.formLayout select.listBox
+{
+  width: 100%;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.formLayout textarea.textbox
+{
+  font-size: 1.2em;
+}
+
+.formLayout .originalSize
+{
+  width: auto;
+}
+
+.formLayout input,
+.formLayout textarea,
+.formLayout select,
+.formLayout .versionText,
+.formLayout .versionArea
+
+{
+  border: 1px solid #909090;
+}
+
+.formLayout input.error,
+.formLayout textarea.error,
+.formLayout select.error,
+.formLayout input.input-validation-error,
+.formLayout textarea.input-validation-error,
+.formLayout select.input-validation-error
+{
+  background-color: #fee;
+}
+
+.formLayout input.checkbox,
+.formLayout span.checkbox input,
+.formLayout div.checkboxsList ul input,
+.formLayout input.radioButton,
+.formLayout span.radioButton input,
+.formLayout div.radioButtonsList ul input
+{
+  margin: 0;
+  padding-left: 0;
+  padding-right: 0;
+  border: none;
+  outline: none;
+  vertical-align: middle;
+}
+
+.formLayout span.checkbox label,
+.formLayout span.radioButton label
+{
+  margin: 0;
+  padding-right: 0;
+  vertical-align: middle;
+}
+
+.formLayout div.checkboxsList ul label,
+.formLayout div.radioButtonsList ul label,
+.formLayout div.checkboxsList ul .idLink,
+.formLayout div.radioButtonsList ul .idLink
+{
+  margin: 0;
+  padding-right: 0.5em;
+  vertical-align: middle;
+}
+
+.formLayout div.checkboxsList ul,
+.formLayout div.radioButtonsList ul
+{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  vertical-align: middle;
+}
+
+.formLayout div.checkboxsList ul li,
+.formLayout div.radioButtonsList ul li
+{
+  margin: 0;
+  padding: 0 0 0.5em 0;
+}
+
+.formLayout div.horizontalDirection ul li
+{
+  display:inline-block;
+}
+
+.formLayout div.verticalDirection ul li
+{
+  float: none;
+}
+
+.formLayout div.dateTimeWrapper
+{
     float: none;
-    width: auto;
-  }
-  .formLayout .wide .forCheckboxGroup,
-  .formLayout .wide .forRadioGroup,
-  .formLayout .wide .forDropdownListGroup,
-  .formLayout .wide .forDropdownList,
-  .formLayout .wide .forTextarea
-  {
-    padding-bottom: 0;
-  }
-  .formLayout .wide dd.field
-  {
-    margin-left: 0;
-    margin-bottom: 0.5em;
-    padding-left: 0;
-  }
+}
 
-  .formLayout label[disabled="true"]
-  {
-    opacity: 0.4;
-    color: black;
-  }
+div.dateTimeWrapper .dateTimeCheckboxWrapper
+{
 
-  .formLayout input.textbox,
-  .formLayout textarea.textbox,
-  .formLayout select.dropDownList,
-  .formLayout select.listBox
-  {
+}
+
+.formLayout input.dateTimePicker
+{
+  width: 175px;
+  float: left;
+  margin-right: 5px;
+}
+
+.formLayout input.date,
+.formLayout input.time,
+.formLayout input.datetime
+{
+  font-family: Verdana,Arial,Helvetica,sans-serif;
+  font-size: 1.11em;
+}
+
+.formLayout .t-datetimepicker
+{
+  width:17em;
+}
+
+.formLayout .t-datepicker
+{
+  width:11em;
+}
+
+.formLayout .t-timepicker
+{
+  width:10em;
+}
+
+
+
+.formLayout input.button
+{
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+  width: auto;
+}
+
+.formLayout .description
+{
+  display: block;
+  margin: 0;
+  padding: 0.2em 0;
+  color: #666;
+  font-size: 0.89em;
+  font-style: normal;
+}
+
+.formLayout .validators
+{
+  display: block;
+  font-style: normal;
+}
+
+.formLayout .validator,
+.formLayout .field-validation-error
+{
+  color: #f00;
+  font-size: 0.95em;
+  line-height: 1.2em;
+}
+
+.formLayout .validationSummary,
+.formLayout .validation-summary-errors
+{
+  color: #f00;
+  font-size: 0.95em;
+  font-weight: bold;
+  line-height: 1.2em;
+}
+
+.formLayout textarea.visualEditor
+{
+  width:100%;
+}
+
+.visualEditorComponent .visualEditorContainer
+{
+  display:none;
+}
+
+.formLayout div.fieldWrapper
+{
+  float: none;
+}
+.formLayout div.fieldWrapper input.textbox,
+.formLayout div.fieldWrapper .versionText,
+.formLayout div.fieldWrapper .downloadButton,
+.formLayout div.fieldWrapper .previewButton,
+.formLayout div.fieldWrapper .libraryButton,
+.formLayout div.fieldWrapper .customButton,
+.formLayout div.fieldWrapper .browseButton
+{
+  float: left;
+  margin-right: 5px;
+}
+.formLayout div.fieldWrapper .downloadButton img,
+.formLayout div.fieldWrapper .previewButton img,
+.formLayout div.fieldWrapper .libraryButton img,
+.formLayout div.fieldWrapper .customButton img
+{
+  width: 16px;
+  height: 16px;
+  border: none;
+}
+.formLayout div.fieldWrapper .downloadButton,
+.formLayout div.fieldWrapper .previewButton,
+.formLayout div.fieldWrapper .libraryButton,
+.formLayout div.fieldWrapper .customButton
+{
+  cursor: pointer;
+}
+.formLayout div.fieldWrapper .downloadButton
+{
+  background: transparent url('QP8/icons/16x16/download.gif');
+}
+.formLayout div.fieldWrapper .previewButton
+{
+  background: transparent url('QP8/icons/16x16/preview.gif');
+}
+.formLayout div.fieldWrapper .libraryButton,
+.formLayout div.fieldWrapper .customButton
+{
+  background: transparent url('QP8/icons/16x16/content_folder.gif');
+}
+
+.formLayout .versionText,
+.formLayout .versionArea
+{
+      margin-bottom: 5px;
+      padding: 2px;
+}
+
+.formLayout .versionText
+{
+      float: left;
+}
+
+.formLayout .versionArea
+{
+    height: 180px;
     width: 100%;
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-  }
+    overflow: hidden;
+}
 
-  .formLayout textarea.textbox
-  {
-    font-size: 1.2em;
-  }
+.formLayout ul.linkButtons, .documentWrapper ul.linkButtons
+{
+  margin: 0 0 0.4em 0;
+  padding: 0 0 0.3em 0;
+  list-style: none;
+}
+.formLayout ul.linkButtons li, .documentWrapper ul.linkButtons li
+{
+  float: left;
+  margin: 0;
+  /* line-height: 1.5; */
+  padding: 0 0.8em 0 0;
+}
+.formLayout div.dataListWrapper div.checkboxsList,
+.formLayout div.dataListWrapper div.multipleItemPicker
+{
+  overflow: auto;
+}
+.formLayout div.dataListWrapper div.overflow
+{
+  padding: 4px 5px;
+  overflow: auto;
+  border: 1px dashed #909090;
+}
 
-  .formLayout .originalSize
-  {
-    width: auto;
-  }
+.formLayout div.singleItemPicker
+{
+}
+.formLayout div.singleItemPicker input.textbox
+{
+  float: left;
+  margin: 0 5px 0 0;
+}
+.formLayout div.singleItemPicker .pickButton
+{
+  float: left;
+}
+.formLayout div.singleItemPicker .pickButton
+{
+  position: relative;
+  top: 2px;
+  cursor: hand;
+  cursor: pointer;
+  background: transparent url('QP8/icons/16x16/pick.gif') no-repeat;
+}
+.formLayout div.singleItemPicker .pickButton img
+{
+  width: 16px;
+  height: 16px;
+      border: none;
+}
 
-  .formLayout input,
-  .formLayout textarea,
-  .formLayout select,
-  .formLayout .versionText,
-  .formLayout .versionArea
+.formLayout div.singleItemPicker .idLink
+{
+  padding-right: 0.5em;
+}
 
-  {
-    border: 1px solid #909090;
-  }
+.formLayout div.disabled .pickButton
+{
+  cursor: default;
+  background: transparent url('QP8/icons/16x16/pick_disabled.gif') no-repeat;
+}
 
-  .formLayout input.error,
-  .formLayout textarea.error,
-  .formLayout select.error,
-  .formLayout input.input-validation-error,
-  .formLayout textarea.input-validation-error,
-  .formLayout select.input-validation-error
-  {
-    background-color: #fee;
-  }
+.formLayout div.multipleItemPicker
+{
+  float: none;
+}
+.formLayout div.multipleItemPicker ul
+{
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  vertical-align: middle;
+}
+.formLayout div.multipleItemPicker ul li
+{
+  float: none;
+  margin: 0;
+  padding: 0 0 0.5em 0;
+}
+.formLayout div.multipleItemPicker ul label,
+.formLayout div.multipleItemPicker ul .idLink
+{
+  margin: 0;
+  vertical-align: middle;
+  padding-right: 0.5em;
+}
 
-  .formLayout input.checkbox,
-  .formLayout span.checkbox input,
-  .formLayout div.checkboxsList ul input,
-  .formLayout input.radioButton,
-  .formLayout span.radioButton input,
-  .formLayout div.radioButtonsList ul input
-  {
-    margin: 0;
-    padding-left: 0;
-    padding-right: 0;
-    border: none;
-    outline: none;
-    vertical-align: middle;
-  }
+.formLayout .star
+{
+    color: red;
+}
 
-  .formLayout span.checkbox label,
-  .formLayout span.radioButton label
-  {
-    margin: 0;
-    padding-right: 0;
-    vertical-align: middle;
-  }
+.formLayout .t-numerictextbox .t-formatted-value.textbox
+{
+  border:0;
+  padding-top: 3px;
+}
 
-  .formLayout div.checkboxsList ul label,
-  .formLayout div.radioButtonsList ul label,
-  .formLayout div.checkboxsList ul .idLink,
-  .formLayout div.radioButtonsList ul .idLink
-  {
-    margin: 0;
-    padding-right: 0.5em;
-    vertical-align: middle;
-  }
-
-  .formLayout div.checkboxsList ul,
-  .formLayout div.radioButtonsList ul
-  {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    vertical-align: middle;
-  }
-
-  .formLayout div.checkboxsList ul li,
-  .formLayout div.radioButtonsList ul li
-  {
-    margin: 0;
-    padding: 0 0 0.5em 0;
-  }
-
-  .formLayout div.horizontalDirection ul li
-  {
-    display:inline-block;
-  }
-
-  .formLayout div.verticalDirection ul li
-  {
-    float: none;
-  }
-
-  .formLayout div.dateTimeWrapper
-  {
-      float: none;
-  }
-
-  div.dateTimeWrapper .dateTimeCheckboxWrapper
-  {
-
-  }
-
-  .formLayout input.dateTimePicker
-  {
-    width: 175px;
-    float: left;
-    margin-right: 5px;
-  }
-
-  .formLayout input.date,
-  .formLayout input.time,
-  .formLayout input.datetime
-  {
-    font-family: Verdana,Arial,Helvetica,sans-serif;
-    font-size: 1.11em;
-  }
-
-  .formLayout .t-datetimepicker
-  {
-    width:17em;
-  }
-
-  .formLayout .t-datepicker
-  {
-    width:11em;
-  }
-
-  .formLayout .t-timepicker
-  {
-    width:10em;
-  }
-
-
-
-  .formLayout input.button
-  {
-    margin-top: 0.3em;
-    margin-bottom: 0.3em;
-    width: auto;
-  }
-
-  .formLayout .description
-  {
-    display: block;
-    margin: 0;
-    padding: 0.2em 0;
-    color: #666;
-    font-size: 0.89em;
-    font-style: normal;
-  }
-
-  .formLayout .validators
-  {
-    display: block;
-    font-style: normal;
-  }
-
-  .formLayout .validator,
-  .formLayout .field-validation-error
-  {
-    color: #f00;
-    font-size: 0.95em;
-    line-height: 1.2em;
-  }
-
-  .formLayout .validationSummary,
-  .formLayout .validation-summary-errors
-  {
-    color: #f00;
-    font-size: 0.95em;
-    font-weight: bold;
-    line-height: 1.2em;
-  }
-
-  .formLayout textarea.visualEditor
-  {
-    width:100%;
-  }
-
-  .visualEditorComponent .visualEditorContainer
-  {
-    display:none;
-  }
-
-  .formLayout div.fieldWrapper
-  {
-    float: none;
-  }
-  .formLayout div.fieldWrapper input.textbox,
-  .formLayout div.fieldWrapper .versionText,
-  .formLayout div.fieldWrapper .downloadButton,
-  .formLayout div.fieldWrapper .previewButton,
-  .formLayout div.fieldWrapper .libraryButton,
-  .formLayout div.fieldWrapper .customButton,
-  .formLayout div.fieldWrapper .browseButton
-  {
-    float: left;
-    margin-right: 5px;
-  }
-  .formLayout div.fieldWrapper .downloadButton img,
-  .formLayout div.fieldWrapper .previewButton img,
-  .formLayout div.fieldWrapper .libraryButton img,
-  .formLayout div.fieldWrapper .customButton img
-  {
-    width: 16px;
-    height: 16px;
-    border: none;
-  }
-  .formLayout div.fieldWrapper .downloadButton,
-  .formLayout div.fieldWrapper .previewButton,
-  .formLayout div.fieldWrapper .libraryButton,
-  .formLayout div.fieldWrapper .customButton
-  {
-    cursor: pointer;
-  }
-  .formLayout div.fieldWrapper .downloadButton
-  {
-    background: transparent url('QP8/icons/16x16/download.gif');
-  }
-  .formLayout div.fieldWrapper .previewButton
-  {
-    background: transparent url('QP8/icons/16x16/preview.gif');
-  }
-  .formLayout div.fieldWrapper .libraryButton,
-  .formLayout div.fieldWrapper .customButton
-  {
-    background: transparent url('QP8/icons/16x16/content_folder.gif');
-  }
-
-  .formLayout .versionText,
-  .formLayout .versionArea
-  {
-        margin-bottom: 5px;
-        padding: 2px;
-  }
-
-  .formLayout .versionText
-  {
-        float: left;
-  }
-
-  .formLayout .versionArea
-  {
-      height: 180px;
-      width: 100%;
-      overflow: hidden;
-  }
-
-  .formLayout ul.linkButtons, .documentWrapper ul.linkButtons
-  {
-    margin: 0 0 0.4em 0;
-    padding: 0 0 0.3em 0;
-    list-style: none;
-  }
-  .formLayout ul.linkButtons li, .documentWrapper ul.linkButtons li
-  {
-    float: left;
-    margin: 0;
-    /* line-height: 1.5; */
-    padding: 0 0.8em 0 0;
-  }
-  .formLayout div.dataListWrapper div.checkboxsList,
-  .formLayout div.dataListWrapper div.multipleItemPicker
-  {
-    overflow: auto;
-  }
-  .formLayout div.dataListWrapper div.overflow
-  {
-    padding: 4px 5px;
-    overflow: auto;
-    border: 1px dashed #909090;
-  }
-
-  .formLayout div.singleItemPicker
-  {
-  }
-  .formLayout div.singleItemPicker input.textbox
-  {
-    float: left;
-    margin: 0 5px 0 0;
-  }
-  .formLayout div.singleItemPicker .pickButton
-  {
-    float: left;
-  }
-  .formLayout div.singleItemPicker .pickButton
-  {
-    position: relative;
-    top: 2px;
-    cursor: hand;
-    cursor: pointer;
-    background: transparent url('QP8/icons/16x16/pick.gif') no-repeat;
-  }
-  .formLayout div.singleItemPicker .pickButton img
-  {
-    width: 16px;
-    height: 16px;
-        border: none;
-  }
-
-  .formLayout div.singleItemPicker .idLink
-  {
-    padding-right: 0.5em;
-  }
-
-  .formLayout div.disabled .pickButton
-  {
-    cursor: default;
-    background: transparent url('QP8/icons/16x16/pick_disabled.gif') no-repeat;
-  }
-
-  .formLayout div.multipleItemPicker
-  {
-    float: none;
-  }
-  .formLayout div.multipleItemPicker ul
-  {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    vertical-align: middle;
-  }
-  .formLayout div.multipleItemPicker ul li
-  {
-    float: none;
-    margin: 0;
-    padding: 0 0 0.5em 0;
-  }
-  .formLayout div.multipleItemPicker ul label,
-  .formLayout div.multipleItemPicker ul .idLink
-  {
-    margin: 0;
-    vertical-align: middle;
-    padding-right: 0.5em;
-  }
-
-  .formLayout .star
-  {
-      color: red;
-  }
-
-  .formLayout .t-numerictextbox .t-formatted-value.textbox
-  {
-    border:0;
-    padding-top: 3px;
-  }
-
-  .formLayout .groupCheckbox
-  {
-    padding-bottom: 1.2em;
-  }
-    .formLayout .countItemsBlock
-  {
-    padding-bottom: 0.4em;
-  }
+.formLayout .groupCheckbox
+{
+  padding-bottom: 1.2em;
+}
+  .formLayout .countItemsBlock
+{
+  padding-bottom: 0.4em;
+}
 
 input[type="text"].readonly, textarea.readonly
 {
@@ -2472,7 +2466,7 @@ span.seachResultHighlight
 /*#region Long Operation Window */
 .lop-main
 {
-  margin: 0 10px
+  margin: 0 10px;
 }
 
 .lop-action-name
@@ -2480,9 +2474,6 @@ span.seachResultHighlight
   font-size: 1.5em;
 }
 
-.lop-info
-{
-}
 
 .lop-info dt
 {

@@ -340,7 +340,7 @@ gulp.task('assets:js', ['assets:js1', 'assets:js2'], function() {
 gulp.task('assets:js1', ['assets:revisions'], function() {
   return gulp.src(paths.scripts1, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: true, debug: true }))
+    .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
     .pipe($.rename({ suffix: '.min' }))
     .pipe($.uglify())
     .pipe($.concat('app1.min.js'))
@@ -353,7 +353,7 @@ gulp.task('assets:js1', ['assets:revisions'], function() {
 gulp.task('assets:js2', ['assets:revisions'], function() {
   return gulp.src(paths.scripts2, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: true, debug: true }))
+    .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
     .pipe($.uglify())
     .pipe($.concat('app2.min.js'))
     .pipe($.sourcemaps.write('maps'))
@@ -374,7 +374,7 @@ gulp.task('assets:img', function() {
 gulp.task('assets:css', ['assets:revisions'], function() {
   return gulp.src(paths.styles)
     .pipe($.plumber({ errorHandler: reportError }))
-    .pipe($.sourcemaps.init({ loadMaps: true, debug: true }))
+    .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
     .pipe($.sass().on('error', bs.notify))
     .pipe($.replace(/url\(\'/g, 'url(\'images/'))
     .pipe($.autoprefixer({ browsers: AUTOPREFIXER_BROWSERS }))

@@ -217,13 +217,13 @@ namespace Quantumart.QP8.BLL
 
         internal static readonly ReadOnlyCollection<UserQueryColumn> SystemMandatoryColumns = new ReadOnlyCollection<UserQueryColumn>(new List<UserQueryColumn>
         {
-            new UserQueryColumn {ColumnName = FieldName.ContentItemId, DbType = "numeric", NumericScale = 0},
-            new UserQueryColumn {ColumnName = FieldName.StatusTypeId, DbType = "numeric", NumericScale = 0},
-            new UserQueryColumn {ColumnName = FieldName.Visible, DbType = "numeric", NumericScale = 0},
-            new UserQueryColumn {ColumnName = FieldName.Archive, DbType = "numeric", NumericScale = 0},
-            new UserQueryColumn {ColumnName = FieldName.Created, DbType = "datetime"},
-            new UserQueryColumn {ColumnName = FieldName.Modified, DbType = "datetime"},
-            new UserQueryColumn {ColumnName = FieldName.LastModifiedBy, DbType = "numeric", NumericScale = 0}
+            new UserQueryColumn { ColumnName = FieldName.ContentItemId, DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.StatusTypeId, DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Visible, DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Archive, DbType = "numeric", NumericScale = 0 },
+            new UserQueryColumn { ColumnName = FieldName.Created, DbType = "datetime" },
+            new UserQueryColumn { ColumnName = FieldName.Modified, DbType = "datetime" },
+            new UserQueryColumn { ColumnName = FieldName.LastModifiedBy, DbType = "numeric", NumericScale = 0 }
         });
 
         private Site _site;
@@ -607,8 +607,10 @@ namespace Quantumart.QP8.BLL
 
         public Site Site
         {
-            get { return _site ?? (_site = SiteRepository.GetById(SiteId)); }
-
+            get
+            {
+                return _site ?? (_site = SiteRepository.GetById(SiteId));
+            }
             set
             {
                 _site = value;
