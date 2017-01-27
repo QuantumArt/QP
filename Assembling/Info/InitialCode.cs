@@ -11,6 +11,5 @@ namespace Quantumart.QP8.Assembling.Info
             CodeBehind = codeBehind;
             Presentation = presentation;
         }
-
     }
 }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using Quantumart.QP8.Assembling.Info;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling
 {
@@ -17,6 +15,7 @@ namespace Quantumart.QP8.Assembling
                 " INNER JOIN page_template AS pt ON pt.page_template_id = p.page_template_id" +
                 " INNER JOIN site AS s ON pt.site_id = s.site_id" +
                 " where p.page_id = " + pageId;
+
             FillController(pageId, sqlQuery, null);
         }
 
@@ -28,7 +27,7 @@ namespace Quantumart.QP8.Assembling
             {
                 Info = new AssembleInfo(this, data);
             }
-            else if (!String.IsNullOrEmpty(sqlQuery))
+            else if (!string.IsNullOrEmpty(sqlQuery))
             {
                 Info = new AssembleInfo(this, sqlQuery);
             }
@@ -48,9 +47,8 @@ namespace Quantumart.QP8.Assembling
 
         public AssemblePageObjectsController(int pageId, DataTable data)
         {
-            FillController(pageId, "", data);
+            FillController(pageId, string.Empty, data);
         }
-
 
         internal override string GetFilter()
         {
@@ -62,6 +60,5 @@ namespace Quantumart.QP8.Assembling
             AssembleControlSet();
             InvalidatePageCache();
         }
-
     }
 }

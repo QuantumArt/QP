@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.Assembling.Info;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling
 {
@@ -25,31 +23,29 @@ namespace Quantumart.QP8.Assembling
         {
             var hash = new Hashtable
             {
-                {"System", ""},
-                {"System.Data", ""},
-                {"System.Data.SqlClient", ""},
-                {"System.Configuration", ""},
-                {"System.Collections", ""},
-                {"System.Text", ""},
-                {"System.Text.RegularExpressions", ""},
-                {"System.Web.UI", ""},
-                {"System.Web.UI.WebControls", ""},
-                {"System.Web.Caching", ""},
-                {"Quantumart.QPublishing", ""}
+                { "System", string.Empty },
+                { "System.Data", string.Empty },
+                { "System.Data.SqlClient", string.Empty },
+                { "System.Configuration", string.Empty },
+                { "System.Collections", string.Empty },
+                { "System.Text", string.Empty },
+                { "System.Text.RegularExpressions", string.Empty },
+                { "System.Web.UI", string.Empty },
+                { "System.Web.UI.WebControls", string.Empty },
+                { "System.Web.Caching", string.Empty },
+                { "Quantumart.QPublishing", string.Empty }
             };
+
             return hash;
-
         }
-
 
         private static string ReplaceContainerFields(ControlInfo control, string code)
         {
-            var pattern = "((?:#|\\s|\\()(?:Field|FieldNS))[ \\t]*\\(\\s*\"([^\",\\)\\r\\n]+)\"\\s*\\)";
+            const string pattern = "((?:#|\\s|\\()(?:Field|FieldNS))[ \\t]*\\(\\s*\"([^\",\\)\\r\\n]+)\"\\s*\\)";
             var expressionToAppend = control.IsCSharp ? "((DataRowView)(Container.DataItem))" : "CType(Container.DataItem, DataRowView)";
             var m = Regex.Match(code, pattern, StandardRegexOptions);
             while (m.Success)
             {
-
                 var sb = new StringBuilder();
                 sb.Append(m.Groups[1].Value);
                 sb.Append("(");
@@ -59,21 +55,20 @@ namespace Quantumart.QP8.Assembling
                 sb.Append("\")");
 
                 code = code.Replace(m.Value, sb.ToString());
-
                 m = m.NextMatch();
             }
+
             return code;
         }
 
         private static string AppendOnScreenHead(string head, string result)
         {
-            return Regex.Replace(result, "</head>", String.Format(CultureInfo.InvariantCulture, "{0}$0", head), StandardRegexOptions);
+            return Regex.Replace(result, "</head>", string.Format(CultureInfo.InvariantCulture, "{0}$0", head), StandardRegexOptions);
         }
 
         public static string GetProcessedPresentation(ControlInfo control)
         {
             var code = control.Presentation;
-
             if (control.CurrentType == ControlType.PublishingContainer)
             {
                 code = ReplaceContainerFields(control, code);
@@ -83,6 +78,7 @@ namespace Quantumart.QP8.Assembling
             {
                 code = AppendOnScreenHead(AssembleControllerBase.GetOnScreenHeadHtml(control), code);
             }
+
             return code;
         }
 
@@ -106,6 +102,7 @@ namespace Quantumart.QP8.Assembling
             var sb = new StringBuilder();
             var result = code;
             bool isCSharp;
+
             var userNameSpaces = CutNamespaceDefinitionsFromCode(ref result, out isCSharp);
             var pattern = !isCSharp ? @"[^\w]class[^\w][^\n]+\n" : @"[^\w]class[^\w][^{]+{[^\n]*\n";
             var m = Regex.Match(result, pattern, StandardRegexOptions);
@@ -113,17 +110,17 @@ namespace Quantumart.QP8.Assembling
             {
                 result = result.Substring(m.Index + m.Value.Length);
                 var newPattern = !isCSharp ? @"end class.+$" : @"}[^}]+}[^}]*$";
-                result = Regex.Replace(result, newPattern, "");
+                result = Regex.Replace(result, newPattern, string.Empty);
             }
+
             sb.Append(AssembleControllerBase.GetUsingNamespaces(isCSharp, userNameSpaces));
             sb.Append(result);
             return EliminateIndent(sb.ToString());
-
         }
 
         public static string GetInitialPresentation(string code)
         {
-            var pattern = "<%@ Register TagPrefix=\"qp\" [^\\n]+\\n";
+            const string pattern = "<%@ Register TagPrefix=\"qp\" [^\\n]+\\n";
             var m = Regex.Match(code, pattern, StandardRegexOptions);
             var result = code.Substring(m.Index + m.Value.Length);
             return result;
@@ -136,15 +133,17 @@ namespace Quantumart.QP8.Assembling
             code = code.Replace("\r\r\n", "\r\n");
             return code;
         }
+
         internal static Hashtable CutNamespaceDefinitionsFromCode(ref string text)
         {
             bool isCSharp;
             return CutNamespaceDefinitionsFromCode(ref text, out isCSharp);
         }
+
         internal static Hashtable CutNamespaceDefinitionsFromCode(ref string text, out bool isCSharp)
         {
             var userNamespaces = new Hashtable();
-            var testPattern = "\\s*using\\s+";
+            const string testPattern = "\\s*using\\s+";
             isCSharp = Regex.IsMatch(text, testPattern);
             var pattern = isCSharp ? "\\s*using\\s+([^\\s;]+)\\s*;" : "\\s*Imports\\s+(\\S+)\\s?";
             var m = Regex.Match(text, pattern);
@@ -155,13 +154,14 @@ namespace Quantumart.QP8.Assembling
                 {
                     if (!userNamespaces.Contains(code))
                     {
-                        userNamespaces.Add(code, "");
+                        userNamespaces.Add(code, string.Empty);
                     }
                 }
+
                 m = m.NextMatch();
             }
 
-            text = Regex.Replace(text, pattern, "");
+            text = Regex.Replace(text, pattern, string.Empty);
             return userNamespaces;
         }
     }

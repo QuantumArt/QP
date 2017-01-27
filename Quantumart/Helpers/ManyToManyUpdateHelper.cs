@@ -5,24 +5,17 @@ namespace Quantumart.QPublishing.Helpers
     public class ManyToManyUpdateHelper
     {
         #region private
-
         public int Counter { get; set; }
 
         private StringBuilder Result { get; }
 
-        #region table names
+        private const string InsertNonAsyncLinkTable = "item_to_item";
 
-        private static readonly string InsertNonAsyncLinkTable = "item_to_item";
+        private const string DeleteNonAsyncLinkTable = "item_link_united_full";
 
-        private static readonly string DeleteNonAsyncLinkTable = "item_link_united_full";
+        private const string SelectNonAsyncLinkTable = "item_link";
 
-        private static readonly string SelectNonAsyncLinkTable = "item_link";
-
-        private static readonly string AsyncLinkTable = "item_link_async";
-
-        #endregion
-
-        #region parameter names
+        private const string AsyncLinkTable = "item_link_async";
 
         private string LinkParamName => $"@link{Counter}";
 
@@ -32,13 +25,11 @@ namespace Quantumart.QPublishing.Helpers
 
         private string CrossIdTableName => $"@cross_ids{Counter}";
 
-        private string ItemParamName => "@ItemId";
+        private static string ItemParamName => "@ItemId";
 
-        private string SplittedParamName => "@splitted";
+        private static string SplittedParamName => "@splitted";
 
         private string CurrentItemVariableName => $"@current{Counter}";
-
-        #endregion
 
         #region sql statements
 
@@ -74,17 +65,20 @@ namespace Quantumart.QPublishing.Helpers
             var sb = new StringBuilder();
             sb.AppendFormatLine(IdTableSql, NewIdTableName);
             if (!string.IsNullOrEmpty(ids))
+            {
                 foreach (var id in ids.Split(','))
                 {
                     sb.AppendFormatLine("insert into {0} values ({1});", NewIdTableName, id);
                 }
+            }
+
             sb.AppendLine();
             return sb.ToString();
         }
 
-        private string IdTableSql => "declare {0} table (id numeric primary key);";
+        private static string IdTableSql => "declare {0} table (id numeric primary key);";
 
-        private string CorrectValueSqlTemplate => "delete from {0} where id in (select id from {1});";
+        private static string CorrectValueSqlTemplate => "delete from {0} where id in (select id from {1});";
 
         private string CorrectOldValueTableSql => string.Format(CorrectValueSqlTemplate, OldIdTableName, CrossIdTableName);
 
@@ -175,7 +169,6 @@ namespace Quantumart.QPublishing.Helpers
         }
 
         #endregion
-
         #endregion
 
         #region constructors
@@ -185,7 +178,8 @@ namespace Quantumart.QPublishing.Helpers
             Result = new StringBuilder();
         }
 
-        public static string GetSql(string value, int counter) {
+        public static string GetSql(string value, int counter)
+        {
             var helper = new ManyToManyUpdateHelper(counter);
             helper.СollectSqlForManyToMany(value);
             return helper.Result.ToString();

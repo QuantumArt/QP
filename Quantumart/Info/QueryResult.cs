@@ -2,9 +2,9 @@
 
 namespace Quantumart.QPublishing.Info
 {
-	public class QueryResult
-	{
+    public class QueryResult
+    {
         public DataTable DataTable;
         public long TotalRecords;
-	}
+    }
 }

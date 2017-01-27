@@ -16,9 +16,7 @@ namespace Quantumart.QPublishing.Database
 {
     public class DbCacheManager
     {
-
         #region fields and properties
-
         private static readonly object NullObject = new object();
 
         private readonly Dictionary<string, string> _queries = new Dictionary<string, string>();
@@ -33,22 +31,22 @@ namespace Quantumart.QPublishing.Database
 
         private bool _storeInDictionary;
 
-        private readonly string _webSpecificString = "DbConnector should be provided with page-specific information.";
+        private const string WebSpecificString = "DbConnector should be provided with page-specific information.";
 
         private readonly Hashtable _localCache = new Hashtable();
 
-
         internal const int DefaultLongExpirationTime = 60;
-        
+
         internal const int DefaultExpirationTime = 10;
-        
+
         internal const int DefaultShortExpirationTime = 1;
-        
+
         internal const int MinExpirationTime = 1;
-        
+
         internal const int DefaultPrefetchLimit = 1000;
-        
-        public bool StoreInDictionary {
+
+        public bool StoreInDictionary
+        {
             get { return _storeInDictionary; }
             set
             {
@@ -56,36 +54,31 @@ namespace Quantumart.QPublishing.Database
                 _storeInDictionary = true;
             }
         }
-        
+
         public DBConnector Cnn { get; set; }
 
         public QPageEssential Page { get; set; }
-
         #endregion
-
-        #region constructors
 
         public DbCacheManager(DBConnector newCnn)
         {
             Cnn = newCnn;
-            
+
             _queries.Add(ConstraintKey, "SELECT CCR.CONSTRAINT_ID, CCR.ATTRIBUTE_ID, CC.CONTENT_ID FROM CONTENT_CONSTRAINT_RULE CCR WITH(NOLOCK) INNER JOIN CONTENT_CONSTRAINT CC WITH(NOLOCK) ON CC.CONSTRAINT_ID = CCR.CONSTRAINT_ID ");
             _queries.Add(StatusKey, " SELECT C.SITE_ID, C.STATUS_TYPE_ID, C.STATUS_TYPE_NAME, C.WEIGHT, C.DESCRIPTION FROM STATUS_TYPE AS C WITH(NOLOCK)");
-            
+
             _fieldsToValidate.Add(ConstraintKey, new[] { "attribute_id" });
             _fieldsToValidate.Add(StatusKey, new[] { "status_type_id" });
         }
 
-        #endregion
-
         #region General operations
-
         public void ResetCacheItem(string key)
         {
             if (_dataTables.ContainsKey(key))
             {
                 _dataTables.Remove(key);
             }
+
             if (GetDataFromCache(key) != null)
             {
                 RemoveDataFromCache(key);
@@ -97,7 +90,7 @@ namespace Quantumart.QPublishing.Database
             _localCache.Clear();
         }
 
-        private bool IsPageSpecificKey(string key)
+        private static bool IsPageSpecificKey(string key)
         {
             return string.IsNullOrEmpty(key);
         }
@@ -115,7 +108,11 @@ namespace Quantumart.QPublishing.Database
         private void AddEntityToCache<T>(string cacheKey, T ht, double cacheInterval, SqlCacheDependency extDep) where T : class
         {
             object obj = ht;
-            if (ht == null) obj = NullObject;
+            if (ht == null)
+            {
+                obj = NullObject;
+            }
+
             if (Cnn.UseLocalCache)
             {
                 _localCache[cacheKey] = obj;
@@ -144,28 +141,31 @@ namespace Quantumart.QPublishing.Database
         private void RemoveDataFromCache(string key)
         {
             if (Cnn.UseLocalCache)
+            {
                 _localCache.Remove(key);
+            }
             else
+            {
                 HttpRuntime.Cache.Remove(key);
+            }
         }
 
-        private object GetLockObject(string key)
+        private static object GetLockObject(string key)
         {
             if (LockObjects.ContainsKey(key))
             {
                 return LockObjects[key];
             }
-            else
+
+            lock (Locklock)
             {
-                lock (Locklock)
+                if (!LockObjects.ContainsKey(key))
                 {
-                    if (!LockObjects.ContainsKey(key))
-                    {
-                        var obj = new object();
-                        LockObjects.Add(key, obj);
-                    }
-                    return LockObjects[key];
+                    var obj = new object();
+                    LockObjects.Add(key, obj);
                 }
+
+                return LockObjects[key];
             }
         }
 
@@ -174,20 +174,14 @@ namespace Quantumart.QPublishing.Database
             var cacheFilePath = GetCacheFilePath(cacheKey);
             if (!string.IsNullOrEmpty(cacheFilePath) && File.Exists(cacheFilePath))
             {
-                //Dump.DumpStr(cacheKey + " dependency : " + cacheFilePath);
                 return new CacheDependency(cacheFilePath);
             }
-            else
-            {
-                //Dump.DumpStr(cacheKey + " : " + cacheFilePath);
-                return null;
-            }
-        }
 
+            return null;
+        }
         #endregion
 
         #region Caching objects
-
         #region DataTables
 
         #region Tables
@@ -196,15 +190,15 @@ namespace Quantumart.QPublishing.Database
         {
             return GetCachedTable(key, GetInternalExpirationTime(key), false);
         }
-        
+
         internal DataTable GetCachedTable(string key, double cacheInterval, bool useDependency)
         {
-            if (useDependency) {
+            if (useDependency)
+            {
                 return GetCachedTableWithDependency(key);
             }
-            else {
-                return GetCachedEntity(key, cacheInterval, GetRealData);
-            }
+
+            return GetCachedEntity(key, cacheInterval, GetRealData);
         }
 
         private DataTable GetRealData(string key)
@@ -251,12 +245,10 @@ namespace Quantumart.QPublishing.Database
             {
                 return _dataTables[key];
             }
-            else
-            {
-                var obj = GetCachedTable(key);
-                _dataTables.Add(key, obj);
-                return obj;
-            }
+
+            var obj = GetCachedTable(key);
+            _dataTables.Add(key, obj);
+            return obj;
         }
 
         #endregion
@@ -286,7 +278,7 @@ namespace Quantumart.QPublishing.Database
         private DataView ReGetDataView(string key, string rowFilter)
         {
             ResetCacheItem(key);
-            var dv = new DataView(GetDataTable(key)) {RowFilter = rowFilter};
+            var dv = new DataView(GetDataTable(key)) { RowFilter = rowFilter };
             return dv;
         }
 
@@ -297,10 +289,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return true;
             }
-            else
-            {
-                return fieldsArray.All(field => view.Table.Columns.Contains(field));
-            }
+
+            return fieldsArray.All(field => view.Table.Columns.Contains(field));
         }
 
         private string[] GetFieldsToValidate(string key)
@@ -311,37 +301,34 @@ namespace Quantumart.QPublishing.Database
                 Debug.Assert(_fieldsToValidate.ContainsKey(key), "_fieldsToValidate.ContainsKey(key):" + key);
                 return _fieldsToValidate[key];
             }
-            else
-            {
-                return new string[0];
-            }
+
+            return new string[0];
         }
 
         #endregion
 
         #region Queries
-
-        private string GetBaseObjectsQuery()
+        private static string GetBaseObjectsQuery()
         {
             return "SELECT PT.TEMPLATE_NAME, PT.NET_TEMPLATE_NAME, PT.SITE_ID, PT.PAGE_TEMPLATE_ID, P.PAGE_ID, OBJ.[OBJECT_NAME], OBJ.[OBJECT_ID], OBJ.NET_OBJECT_NAME, OBJF.FORMAT_NAME, OBJF.NET_FORMAT_NAME, OBJ.OBJECT_FORMAT_ID AS DEFAULT_FORMAT_ID, P.PAGE_FOLDER, OBJF.OBJECT_FORMAT_ID AS CURRENT_FORMAT_ID FROM OBJECT AS OBJ INNER JOIN OBJECT_FORMAT AS OBJF ON OBJ.OBJECT_ID = OBJF.OBJECT_ID INNER JOIN PAGE_TEMPLATE PT ON OBJ.PAGE_TEMPLATE_ID = PT.PAGE_TEMPLATE_ID LEFT JOIN PAGE AS P ON P.PAGE_ID = OBJ.PAGE_ID";
         }
 
-        private string GetPageQuery()
+        private static string GetPageQuery()
         {
             return "SELECT P.PAGE_ID, P.PAGE_TEMPLATE_ID, P.PAGE_NAME, PAGE_FILENAME, P.PROXY_CACHE, P.CACHE_HOURS, P.CHARSET, P.GENERATE_TRACE, P.PAGE_FOLDER, P.DISABLE_BROWSE_SERVER, P.SET_LAST_MODIFIED_HEADER, P.SEND_NOCACHE_HEADERS FROM PAGE P INNER JOIN PAGE_TEMPLATE PT ON P.PAGE_TEMPLATE_ID = PT.PAGE_TEMPLATE_ID";
         }
 
-        private string GetPageTemplateQuery()
+        private static string GetPageTemplateQuery()
         {
             return "SELECT PT.SITE_ID, PT.PAGE_TEMPLATE_ID, PT.TEMPLATE_FOLDER, PT.NET_TEMPLATE_NAME, PT.TEMPLATE_NAME, PT.CHARSET, PT.SEND_NOCACHE_HEADERS FROM PAGE_TEMPLATE PT";
         }
 
-        private string GetContentQuery()
+        private static string GetContentQuery()
         {
             return "SELECT C.CONTENT_ID, C.CONTENT_NAME, C.NET_CONTENT_NAME, C.VIRTUAL_TYPE, C.SITE_ID, C.MAX_NUM_OF_STORED_VERSIONS, S.SITE_NAME, CWB.WORKFLOW_ID FROM CONTENT AS C WITH(NOLOCK) INNER JOIN SITE AS S  WITH(NOLOCK) ON C.SITE_ID = S.SITE_ID LEFT JOIN CONTENT_WORKFLOW_BIND CWB on CWB.CONTENT_ID = C.CONTENT_ID";
         }
 
-        private string GetAttributeQuery()
+        private static string GetAttributeQuery()
         {
             var sb = new StringBuilder();
             sb.Append("SELECT C.SITE_ID, AT.TYPE_NAME, AT.DATABASE_TYPE, AT.INPUT_TYPE, CA.ATTRIBUTE_ID, CA.CONTENT_ID, CA.ATTRIBUTE_NAME, CA.NET_ATTRIBUTE_NAME, ");
@@ -373,18 +360,13 @@ namespace Quantumart.QPublishing.Database
                 Debug.Assert(_queries.ContainsKey(key), "_queries.ContainsKey(key):" + key);
                 return _queries[key];
             }
-            else
-            {
-                return newKey;
-            }
+
+            return newKey;
         }
-
         #endregion
-
         #endregion
 
         #region Hashtables
-
         internal Hashtable GetCachedHashTable(string key)
         {
             return GetCachedHashTable(key, GetInternalExpirationTime(key));
@@ -392,7 +374,11 @@ namespace Quantumart.QPublishing.Database
 
         internal Hashtable GetCachedHashTable(string key, double cacheInterval)
         {
-            if (Page == null && IsPageSpecificKey(key)) throw new Exception(_webSpecificString);
+            if (Page == null && IsPageSpecificKey(key))
+            {
+                throw new Exception(WebSpecificString);
+            }
+
             return GetCachedEntity(key, cacheInterval, FillHashTable);
         }
 
@@ -403,7 +389,11 @@ namespace Quantumart.QPublishing.Database
 
         internal DualHashTable GetCachedDualHashTable(string key, double cacheInterval)
         {
-            if (Page == null && IsPageSpecificKey(key)) throw new Exception(_webSpecificString);
+            if (Page == null && IsPageSpecificKey(key))
+            {
+                throw new Exception(WebSpecificString);
+            }
+
             return GetCachedEntity(key, cacheInterval, FillDualHashTable);
         }
 
@@ -412,37 +402,38 @@ namespace Quantumart.QPublishing.Database
             var key = contentId.ToString();
             var attributeIdForLinqHash = GetCachedHashTable(AttributeIdForLinqHashKey);
             if (attributeIdForLinqHash.ContainsKey(key))
-                return (Hashtable)attributeIdForLinqHash[key];
-            else
             {
-                var dualHash = GetCachedDualHashTable(AttributeHashKey);
-                var resultHash = new Hashtable();
-                var idHash = dualHash.Ids.ContainsKey(key) ? (ArrayList)dualHash.Ids[key] : AddAttributeIdHashEntry(key);
-                foreach (var item in idHash)
-                {
-                    if (item != null)
-                    {
-                        var itemKey = ((int)item).ToString();
-                        var attr = (ContentAttribute)dualHash.Items[itemKey];
-                        if (attr?.LinqName != null)
-                        {
-                            var linqKey = attr.LinqName.ToLowerInvariant();
-                            resultHash[linqKey] = attr.Id;
-                        }
-                        else if (attr == null)
-                        {
-                            Dump.DumpStr($"{DateTime.Now}: Attribute returned for key '{key}' is null");
-                        }
-                    }
-                    else
-                    {
-                        Dump.DumpStr($"{DateTime.Now}: Item in arraylist for key '{key}' is null");
-                    }
-
-                }
-                attributeIdForLinqHash[key] = resultHash;
-                return resultHash;
+                return (Hashtable)attributeIdForLinqHash[key];
             }
+
+            var dualHash = GetCachedDualHashTable(AttributeHashKey);
+            var resultHash = new Hashtable();
+            var idHash = dualHash.Ids.ContainsKey(key) ? (ArrayList)dualHash.Ids[key] : AddAttributeIdHashEntry(key);
+            foreach (var item in idHash)
+            {
+                if (item != null)
+                {
+                    var itemKey = ((int)item).ToString();
+                    var attr = (ContentAttribute)dualHash.Items[itemKey];
+                    if (attr?.LinqName != null)
+                    {
+                        var linqKey = attr.LinqName.ToLowerInvariant();
+                        resultHash[linqKey] = attr.Id;
+                    }
+                    else if (attr == null)
+                    {
+                        Dump.DumpStr($"{DateTime.Now}: Attribute returned for key '{key}' is null");
+                    }
+                }
+                else
+                {
+                    Dump.DumpStr($"{DateTime.Now}: Item in arraylist for key '{key}' is null");
+                }
+
+            }
+
+            attributeIdForLinqHash[key] = resultHash;
+            return resultHash;
         }
 
         internal Hashtable GetLinkForLinqHashTable(int siteId)
@@ -450,25 +441,25 @@ namespace Quantumart.QPublishing.Database
             var key = siteId.ToString();
             var linkForLinqHash = GetCachedHashTable(LinkForLinqHashKey);
             if (linkForLinqHash.ContainsKey(key))
-                return (Hashtable)linkForLinqHash[key];
-            else
             {
-                var localHash = new Hashtable();
-                var dt2 = Cnn.GetRealData(
-                    $"EXEC sp_executesql N'SELECT LINK_ID, NET_LINK_NAME FROM CONTENT_TO_CONTENT CC INNER JOIN CONTENT C ON CC.L_CONTENT_ID = C.CONTENT_ID WHERE SITE_ID = @Id', N'@Id NUMERIC', @Id = {siteId}");
-                foreach (DataRow row in dt2.Rows)
-                {
-                    var itemKey = Convert.ToString(row["NET_LINK_NAME"]);
-                    if (!String.IsNullOrEmpty(itemKey))
-                    {
-                        itemKey = itemKey.ToLowerInvariant();
-                        var linkId = (int)(decimal)row["LINK_ID"];
-                        localHash[itemKey] = linkId;
-                    }
-                }
-                linkForLinqHash[key] = localHash;
-                return localHash;
+                return (Hashtable)linkForLinqHash[key];
             }
+
+            var localHash = new Hashtable();
+            var dt2 = Cnn.GetRealData(
+                $"EXEC sp_executesql N'SELECT LINK_ID, NET_LINK_NAME FROM CONTENT_TO_CONTENT CC INNER JOIN CONTENT C ON CC.L_CONTENT_ID = C.CONTENT_ID WHERE SITE_ID = @Id', N'@Id NUMERIC', @Id = {siteId}");
+            foreach (DataRow row in dt2.Rows)
+            {
+                var itemKey = Convert.ToString(row["NET_LINK_NAME"]);
+                if (!string.IsNullOrEmpty(itemKey))
+                {
+                    itemKey = itemKey.ToLowerInvariant();
+                    var linkId = (int)(decimal)row["LINK_ID"];
+                    localHash[itemKey] = linkId;
+                }
+            }
+            linkForLinqHash[key] = localHash;
+            return localHash;
         }
 
         internal Hashtable GetContentIdForLinqHashTable(int siteId)
@@ -476,35 +467,33 @@ namespace Quantumart.QPublishing.Database
             var key = siteId.ToString();
             var contentIdForLinqHash = GetCachedHashTable(ContentIdForLinqHashKey);
             if (contentIdForLinqHash.ContainsKey(key))
-                return (Hashtable)contentIdForLinqHash[key];
-            else
             {
-                var resultHash = new Hashtable();
-                var dualHash = GetCachedDualHashTable(ContentHashKey);
-                var idHash = dualHash.Ids.ContainsKey(key) ? (Hashtable)dualHash.Ids[key] : AddContentIdHashEntry(key);
-
-                foreach (var item in idHash.Values)
-                {
-                    var itemKey = ((int)item).ToString();
-                    var content = (Content)dualHash.Items[itemKey];
-                    if (content.LinqName != null)
-                    {
-                        var linqKey = content.LinqName.ToLowerInvariant();
-                        resultHash[linqKey] = content.Id;
-                    }
-                }
-                contentIdForLinqHash[key] = resultHash;
-                return resultHash;
+                return (Hashtable)contentIdForLinqHash[key];
             }
 
+            var resultHash = new Hashtable();
+            var dualHash = GetCachedDualHashTable(ContentHashKey);
+            var idHash = dualHash.Ids.ContainsKey(key) ? (Hashtable)dualHash.Ids[key] : AddContentIdHashEntry(key);
+
+            foreach (var item in idHash.Values)
+            {
+                var itemKey = ((int)item).ToString();
+                var content = (Content)dualHash.Items[itemKey];
+                if (content.LinqName != null)
+                {
+                    var linqKey = content.LinqName.ToLowerInvariant();
+                    resultHash[linqKey] = content.Id;
+                }
+            }
+            contentIdForLinqHash[key] = resultHash;
+            return resultHash;
         }
 
         #region Add hash entries
-
         internal ContentAttribute AddAttributeHashEntry(string itemKey)
         {
             var dt = Cnn.GetRealData("EXEC sp_executesql N'SELECT CONTENT_ID FROM CONTENT_ATTRIBUTE WITH(NOLOCK) WHERE ATTRIBUTE_ID = @attrId', N'@attrId NUMERIC', @attrId = " + itemKey);
-            var contentId = dt.Rows.Count == 0 ? 0 : Int32.Parse(dt.Rows[0]["CONTENT_ID"].ToString());
+            var contentId = dt.Rows.Count == 0 ? 0 : int.Parse(dt.Rows[0]["CONTENT_ID"].ToString());
             ContentAttribute result = null;
             AddAttributeIdHashEntry(contentId.ToString(), itemKey, ref result);
             return result;
@@ -515,58 +504,60 @@ namespace Quantumart.QPublishing.Database
             RelationInfo result = null;
             var linkHash = GetCachedHashTable(LinkHashKey);
             var attributeHash = new Hashtable();
-
-            var dt2 = Cnn.GetRealData(
-                $"EXEC sp_executesql N'SELECT ATTRIBUTE_NAME, LINK_ID, BACK_RELATED_ATTRIBUTE_ID FROM CONTENT_ATTRIBUTE WHERE (LINK_ID IS NOT NULL OR BACK_RELATED_ATTRIBUTE_ID IS NOT NULL) AND CONTENT_ID = @Id', N'@Id NUMERIC', @Id = {contentKey}");
+            var dt2 = Cnn.GetRealData($"EXEC sp_executesql N'SELECT ATTRIBUTE_NAME, LINK_ID, BACK_RELATED_ATTRIBUTE_ID FROM CONTENT_ATTRIBUTE WHERE (LINK_ID IS NOT NULL OR BACK_RELATED_ATTRIBUTE_ID IS NOT NULL) AND CONTENT_ID = @Id', N'@Id NUMERIC', @Id = {contentKey}");
             foreach (DataRow row in dt2.Rows)
             {
                 var key = row["ATTRIBUTE_NAME"].ToString().ToLowerInvariant();
                 var linkId = (int?)CastDbNull.To<decimal?>(row["LINK_ID"]);
                 var info = new RelationInfo
                 {
-                    LinkId = linkId ?? (int) (decimal) row["BACK_RELATED_ATTRIBUTE_ID"],
+                    LinkId = linkId ?? (int)(decimal)row["BACK_RELATED_ATTRIBUTE_ID"],
                     IsManyToMany = linkId.HasValue
                 };
+
                 attributeHash[key] = info;
-                if (key == nameKey) result = info;
+                if (key == nameKey)
+                {
+                    result = info;
+                }
             }
 
             lock (GetLockObject(LinkHashKey))
             {
                 linkHash[contentKey] = attributeHash;
             }
+
             return result;
         }
 
-        internal Int32 AddItemHashEntry(string itemKey)
+        internal int AddItemHashEntry(string itemKey)
         {
             var dt = Cnn.GetRealData("EXEC sp_executesql N'SELECT CONTENT_ID FROM CONTENT_ITEM WITH(NOLOCK) WHERE CONTENT_ITEM_ID = @itemId', N'@itemId NUMERIC', @itemId = " + itemKey);
-            var contentId = dt.Rows.Count == 0 ? 0 : Int32.Parse(dt.Rows[0]["CONTENT_ID"].ToString());
-
+            var contentId = dt.Rows.Count == 0 ? 0 : int.Parse(dt.Rows[0]["CONTENT_ID"].ToString());
             var contentPrefetchKey = "content" + contentId;
             var hash = GetCachedHashTable(ItemHashKey);
-
             lock (GetLockObject(ItemHashKey))
             {
                 hash[itemKey] = contentId;
                 if (!hash.ContainsKey(contentPrefetchKey))
                 {
-                    var dt2 = Cnn.GetRealData(
-                        $"EXEC sp_executesql N'SELECT TOP {GetPrefetchLimit()} CONTENT_ITEM_ID FROM CONTENT_ITEM WITH(NOLOCK) WHERE CONTENT_ID = @Id ORDER BY CONTENT_ITEM_ID DESC', N'@Id NUMERIC', @Id = {contentId}");
+                    var dt2 = Cnn.GetRealData($"EXEC sp_executesql N'SELECT TOP {GetPrefetchLimit()} CONTENT_ITEM_ID FROM CONTENT_ITEM WITH(NOLOCK) WHERE CONTENT_ID = @Id ORDER BY CONTENT_ITEM_ID DESC', N'@Id NUMERIC', @Id = {contentId}");
                     foreach (DataRow row in dt2.Rows)
                     {
                         hash[row["content_item_id"].ToString()] = contentId;
                     }
+
                     hash[contentPrefetchKey] = 1;
                 }
             }
+
             return contentId;
         }
 
         internal Content AddContentHashEntry(string itemKey)
         {
             var dt = Cnn.GetRealData("EXEC sp_executesql N'SELECT SITE_ID FROM CONTENT WITH(NOLOCK) WHERE CONTENT_ID = @contentId', N'@contentId NUMERIC', @contentId = " + itemKey);
-            var siteId = dt.Rows.Count == 0 ? 0 : Int32.Parse(dt.Rows[0]["SITE_ID"].ToString());
+            var siteId = dt.Rows.Count == 0 ? 0 : int.Parse(dt.Rows[0]["SITE_ID"].ToString());
             Content content = null;
             AddContentIdHashEntry(siteId.ToString(), itemKey, ref content);
             return content;
@@ -590,13 +581,13 @@ namespace Quantumart.QPublishing.Database
                 {
                     var current = new Content
                     {
-                        Id = (int) (decimal) row["CONTENT_ID"],
+                        Id = (int)(decimal)row["CONTENT_ID"],
                         Name = row["CONTENT_NAME"].ToString(),
-                        SiteId = (int) (decimal) row["SITE_ID"],
-                        VirtualType = (int) (decimal) row["VIRTUAL_TYPE"]
+                        SiteId = (int)(decimal)row["SITE_ID"],
+                        VirtualType = (int)(decimal)row["VIRTUAL_TYPE"]
                     };
                     var linqName = Convert.ToString(row["NET_CONTENT_NAME"]);
-                    current.LinqName = !String.IsNullOrEmpty(linqName) ? linqName : DefaultLinqNameGenerator.GetMappedName(current.Name, current.Id, true) + "Article";
+                    current.LinqName = !string.IsNullOrEmpty(linqName) ? linqName : DefaultLinqNameGenerator.GetMappedName(current.Name, current.Id, true) + "Article";
                     current.MaxVersionNumber = (byte)row["MAX_NUM_OF_STORED_VERSIONS"];
                     current.WorkflowId = (int?)CastDbNull.To<decimal?>(row["WORKFLOW_ID"]);
 
@@ -605,7 +596,10 @@ namespace Quantumart.QPublishing.Database
 
                     dualHash.Items[idKey] = current;
 
-                    if (idKey == itemKey) result = current;
+                    if (idKey == itemKey)
+                    {
+                        result = current;
+                    }
 
                     localHash[nameKey] = current.Id;
                 }
@@ -637,7 +631,7 @@ namespace Quantumart.QPublishing.Database
                     attrs.Add(id);
                     var key = id.ToString();
 
-                    var current = new ContentAttribute()
+                    var current = new ContentAttribute
                     {
                         Id = id,
                         Name = row["ATTRIBUTE_NAME"].ToString(),
@@ -662,11 +656,11 @@ namespace Quantumart.QPublishing.Database
                     };
 
                     var linqName = Convert.ToString(row["NET_ATTRIBUTE_NAME"]);
-                    current.LinqName = !String.IsNullOrEmpty(linqName) ? linqName : DefaultLinqNameGenerator.GetMappedName(current.Name, current.Id, false);
+                    current.LinqName = !string.IsNullOrEmpty(linqName) ? linqName : DefaultLinqNameGenerator.GetMappedName(current.Name, current.Id, false);
 
                     if (row["SOURCE_CONTENT_ID"] != DBNull.Value)
                     {
-                        current.SourceAttribute = new SourceAttribute()
+                        current.SourceAttribute = new SourceAttribute
                         {
                             Id = (int)(decimal)row["PERSISTENT_ATTR_ID"],
                             ContentId = (int)(decimal)row["SOURCE_CONTENT_ID"],
@@ -677,7 +671,8 @@ namespace Quantumart.QPublishing.Database
                     if (row["DYNAMIC_IMAGE_ATTRIBUTE_ID"] != DBNull.Value)
                     {
                         if (current.RelatedImageId != null)
-                            current.DynamicImage = new DynamicImageAttribute()
+                        {
+                            current.DynamicImage = new DynamicImageAttribute
                             {
                                 Id = current.Id,
                                 BaseImageId = (int)current.RelatedImageId,
@@ -687,11 +682,12 @@ namespace Quantumart.QPublishing.Database
                                 Width = CastDbNull.To<short>(row["WIDTH"]),
                                 Height = CastDbNull.To<short>(row["HEIGHT"])
                             };
+                        }
                     }
 
                     if (row["BASE_RELATION_ATTRIBUTE_ID"] != DBNull.Value)
                     {
-                        current.BackRelation = new BackRelation()
+                        current.BackRelation = new BackRelation
                         {
                             Id = (int)(decimal)row["BASE_RELATION_ATTRIBUTE_ID"],
                             ContentId = (int)(decimal)row["BASE_RELATION_CONTENT_ID"],
@@ -700,7 +696,10 @@ namespace Quantumart.QPublishing.Database
                     }
 
                     dualHash.Items[key] = current;
-                    if (itemKey == key) result = current;
+                    if (itemKey == key)
+                    {
+                        result = current;
+                    }
                 }
 
                 dualHash.Ids[contentKey] = attrs;
@@ -721,7 +720,6 @@ namespace Quantumart.QPublishing.Database
         #endregion
 
         #region Fill
-
         internal Hashtable FillTemplateObjectsHashTable()
         {
             var dv = Page.UseMultiSiteLogic ? Cnn.GetAllTemplateObjects("") : Cnn.GetTemplateObjects("");
@@ -729,7 +727,7 @@ namespace Quantumart.QPublishing.Database
             var templateObjects = new Hashtable(dv.Count * 5);
             foreach (DataRowView drv in dv)
             {
-                var url = Page.UseMultiSiteLogic ? Page.GetControlUrl(drv, Int32.Parse(drv["SITE_ID"].ToString())) : Page.GetControlUrl(drv);
+                var url = Page.UseMultiSiteLogic ? Page.GetControlUrl(drv, int.Parse(drv["SITE_ID"].ToString())) : Page.GetControlUrl(drv);
                 var tKey = drv["TEMPLATE_NAME"].ToString().ToLowerInvariant();
                 var fKey = drv["FORMAT_NAME"].ToString().ToLowerInvariant();
                 var oKey = drv["OBJECT_NAME"].ToString().ToLowerInvariant();
@@ -747,27 +745,39 @@ namespace Quantumart.QPublishing.Database
                     toKey = $"{id},{toKey}";
                     isCurrentTemplate = true;
                 }
-                if (!templateObjects.Contains(tofKey)) templateObjects.Add(tofKey, url);
-                if (!templateObjects.Contains(ofKey) && isCurrentTemplate) templateObjects.Add(ofKey, url);
-                if (!templateObjects.Contains(toKey) && isDefaultFormat) templateObjects.Add(toKey, url);
 
-                if (!templateObjects.Contains(oKey) && isDefaultFormat && isCurrentTemplate) templateObjects.Add(oKey, url);
+                if (!templateObjects.Contains(tofKey))
+                {
+                    templateObjects.Add(tofKey, url);
+                }
+
+                if (!templateObjects.Contains(ofKey) && isCurrentTemplate)
+                {
+                    templateObjects.Add(ofKey, url);
+                }
+
+                if (!templateObjects.Contains(toKey) && isDefaultFormat)
+                {
+                    templateObjects.Add(toKey, url);
+                }
+
+                if (!templateObjects.Contains(oKey) && isDefaultFormat && isCurrentTemplate)
+                {
+                    templateObjects.Add(oKey, url);
+                }
             }
+
             return templateObjects;
         }
 
         internal Hashtable FillPageObjectsHashTable()
         {
-            var dv = Page.UseMultiSiteLogic ? Cnn.GetAllPageObjects("") : Cnn.GetPageObjects("");
-
+            var dv = Page.UseMultiSiteLogic ? Cnn.GetAllPageObjects(string.Empty) : Cnn.GetPageObjects(string.Empty);
             var pageObjects = new Hashtable(dv.Count * 2);
             foreach (DataRowView drv in dv)
             {
-
                 var siteId = drv["SITE_ID"].ToString();
-
-
-                var url = Page.UseMultiSiteLogic ? Page.GetControlUrl(drv, Int32.Parse(siteId)) : Page.GetControlUrl(drv);
+                var url = Page.UseMultiSiteLogic ? Page.GetControlUrl(drv, int.Parse(siteId)) : Page.GetControlUrl(drv);
                 var oKey = drv["OBJECT_NAME"].ToString().ToLowerInvariant();
                 string ofKey = $"{oKey}.{drv["FORMAT_NAME"].ToString().ToLowerInvariant()}";
                 if (Page.UseMultiSiteLogic)
@@ -776,16 +786,25 @@ namespace Quantumart.QPublishing.Database
                     oKey = $"{id},{oKey}";
                     ofKey = $"{id},{ofKey}";
                 }
+
                 var isDefaultFormat = drv["CURRENT_FORMAT_ID"].ToString() == drv["DEFAULT_FORMAT_ID"].ToString();
-                if (!pageObjects.Contains(ofKey)) pageObjects.Add(ofKey, url);
-                if (!pageObjects.Contains(oKey) && isDefaultFormat) pageObjects.Add(oKey, url);
+                if (!pageObjects.Contains(ofKey))
+                {
+                    pageObjects.Add(ofKey, url);
+                }
+
+                if (!pageObjects.Contains(oKey) && isDefaultFormat)
+                {
+                    pageObjects.Add(oKey, url);
+                }
             }
+
             return pageObjects;
         }
 
         private Hashtable FillTemplateHashTable()
         {
-            var dv = Page.UseMultiSiteLogic ? Cnn.GetAllTemplates("") : Cnn.GetTemplates(""); 
+            var dv = Page.UseMultiSiteLogic ? Cnn.GetAllTemplates("") : Cnn.GetTemplates("");
             var templates = new Hashtable(dv.Count);
             foreach (DataRowView drv in dv)
             {
@@ -800,6 +819,7 @@ namespace Quantumart.QPublishing.Database
                     templates.Add(key, new Template { Id = DBConnector.GetNumInt(drv["PAGE_TEMPLATE_ID"]), Folder = drv["TEMPLATE_FOLDER"].ToString() });
                 }
             }
+
             return templates;
         }
 
@@ -815,6 +835,7 @@ namespace Quantumart.QPublishing.Database
                     allPages.Add(key, drv["PAGE_FOLDER"].ToString());
                 }
             }
+
             return allPages;
         }
 
@@ -824,12 +845,13 @@ namespace Quantumart.QPublishing.Database
             var pageMapping = new Hashtable(dv.Count);
             foreach (DataRowView drv in dv)
             {
-                var key = Int32.Parse(drv["SITE_ID2"].ToString());
+                var key = int.Parse(drv["SITE_ID2"].ToString());
                 if (!pageMapping.Contains(key))
                 {
                     pageMapping.Add(key, DBConnector.GetNumInt(drv["PAGE_ID2"]));
                 }
             }
+
             return pageMapping;
         }
 
@@ -845,21 +867,25 @@ namespace Quantumart.QPublishing.Database
                     templateMapping.Add(key, DBConnector.GetNumInt(drv["PAGE_TEMPLATE_ID2"]));
                 }
             }
+
             return templateMapping;
         }
 
         private Hashtable FillStatusHashTable()
         {
-            var weightSql = "SELECT MAX(WEIGHT) AS MAX_WEIGHT, SITE_ID FROM STATUS_TYPE WITH(NOLOCK) GROUP BY SITE_ID";
-            string sql =
-                $"WITH WEIGHTS AS({weightSql}) SELECT ST.SITE_ID, STATUS_TYPE_ID AS ID, STATUS_TYPE_NAME AS NAME FROM STATUS_TYPE ST WITH(NOLOCK) INNER JOIN WEIGHTS W ON ST.SITE_ID = W.SITE_ID AND ST.WEIGHT = W.MAX_WEIGHT";
+            const string weightSql = "SELECT MAX(WEIGHT) AS MAX_WEIGHT, SITE_ID FROM STATUS_TYPE WITH(NOLOCK) GROUP BY SITE_ID";
+            string sql = $"WITH WEIGHTS AS({weightSql}) SELECT ST.SITE_ID, STATUS_TYPE_ID AS ID, STATUS_TYPE_NAME AS NAME FROM STATUS_TYPE ST WITH(NOLOCK) INNER JOIN WEIGHTS W ON ST.SITE_ID = W.SITE_ID AND ST.WEIGHT = W.MAX_WEIGHT";
             var dt = Cnn.GetRealData(sql);
             var statuses = new Hashtable(dt.Rows.Count);
             foreach (DataRow row in dt.Rows)
             {
                 var key = DBConnector.GetNumInt(row["SITE_ID"]);
-                if (!statuses.ContainsKey(key)) statuses.Add(key, new StatusType { Id = DBConnector.GetNumInt(row["ID"]), Name = row["NAME"].ToString() });
+                if (!statuses.ContainsKey(key))
+                {
+                    statuses.Add(key, new StatusType { Id = DBConnector.GetNumInt(row["ID"]), Name = row["NAME"].ToString() });
+                }
             }
+
             return statuses;
         }
 
@@ -871,6 +897,7 @@ namespace Quantumart.QPublishing.Database
             {
                 siteIds[row["SITE_NAME"].ToString().ToLowerInvariant()] = DBConnector.GetNumInt(row["SITE_ID"]);
             }
+
             return siteIds;
         }
 
@@ -911,42 +938,85 @@ namespace Quantumart.QPublishing.Database
 
         private Hashtable FillHashTable(string key)
         {
+            if (string.Equals(key, ContentIdForLinqHashKey))
+            {
+                return new Hashtable();
+            }
 
-            if (String.Equals(key, ContentIdForLinqHashKey))
-                return new Hashtable();
-            else if (String.Equals(key, StatusHashKey))
+            if (string.Equals(key, StatusHashKey))
+            {
                 return FillStatusHashTable();
-            else if (String.Equals(key, SiteHashKey))
+            }
+
+            if (string.Equals(key, SiteHashKey))
+            {
                 return FillSiteHashTable();
-            else if (String.Equals(key, SiteIdHashKey))
+            }
+
+            if (string.Equals(key, SiteIdHashKey))
+            {
                 return FillSiteIdHashTable();
-            else if (String.Equals(key, PageHashKey))
+            }
+
+            if (string.Equals(key, PageHashKey))
+            {
                 return FillPageHashTable();
-            else if (String.Equals(key, TemplateHashKey))
+            }
+
+            if (string.Equals(key, TemplateHashKey))
+            {
                 return FillTemplateHashTable();
-            else if (String.Equals(key, TemplateMappingHashKey))
+            }
+
+            if (string.Equals(key, TemplateMappingHashKey))
+            {
                 return FillTemplateMapping();
-            else if (String.Equals(key, LinkHashKey))
+            }
+
+            if (string.Equals(key, LinkHashKey))
+            {
                 return new Hashtable();
-            else if (String.Equals(key, LinkForLinqHashKey))
+            }
+
+            if (string.Equals(key, LinkForLinqHashKey))
+            {
                 return new Hashtable();
-            else if (String.Equals(key, AttributeIdForLinqHashKey))
+            }
+
+            if (string.Equals(key, AttributeIdForLinqHashKey))
+            {
                 return new Hashtable();
-            else if (String.Equals(key, ItemLinkHashKey))
+            }
+
+            if (string.Equals(key, ItemLinkHashKey))
+            {
                 return new Hashtable();
-            else if (String.Equals(key, ItemHashKey))
+            }
+
+            if (string.Equals(key, ItemHashKey))
+            {
                 return new Hashtable();
-            else if (String.Equals(key, PageMappingHashKey))
+            }
+
+            if (string.Equals(key, PageMappingHashKey))
+            {
                 return FillPageMapping();
-            else if (String.Equals(key, PageObjectHashKey))
+            }
+
+            if (string.Equals(key, PageObjectHashKey))
+            {
                 return FillPageObjectsHashTable();
-            else if (String.Equals(key, TemplateObjectHashKey))
+            }
+
+            if (string.Equals(key, TemplateObjectHashKey))
+            {
                 return FillTemplateObjectsHashTable();
-            else
-                throw new Exception("Incorrect key for saved hashtable: " + key);
+            }
+
+            throw new Exception("Incorrect key for saved hashtable: " + key);
         }
 
-        private DualHashTable FillDualHashTable(string key)
+        private static DualHashTable FillDualHashTable(string key)
         {
             return new DualHashTable();
         }
@@ -1069,58 +1139,56 @@ namespace Quantumart.QPublishing.Database
 
         private double GetInternalExpirationTime(string cacheKey)
         {
-
-            if (cacheKey == ItemLinkHashKey) {
+            if (cacheKey == ItemLinkHashKey)
+            {
                 return GetShortExpirationTime();
             }
-            if (cacheKey == ItemHashKey)
-            {
-                return GetLongExpirationTime();
-            }
-            else
-            {
-                return GetExpirationTime();
-            }
+
+            return cacheKey == ItemHashKey ? GetLongExpirationTime() : GetExpirationTime();
         }
 
-        private double GetShortExpirationTime()
+        private static double GetShortExpirationTime()
         {
             return GetExpirationTime("InternalShortExpirationTime", DefaultShortExpirationTime);
         }
 
-        private double GetLongExpirationTime()
+        private static double GetLongExpirationTime()
         {
             return GetExpirationTime("InternalLongExpirationTime", DefaultLongExpirationTime);
         }
 
-        private double GetExpirationTime(string key = "InternalExpirationTime", double defaultValue = DefaultExpirationTime)
+        private static double GetExpirationTime(string key = "InternalExpirationTime", double defaultValue = DefaultExpirationTime)
         {
             var expireInMinutes = DBConnector.AppSettings[key];
             double result;
             if (double.TryParse(expireInMinutes, out result))
             {
-                if (result < MinExpirationTime) result = MinExpirationTime;
+                if (result < MinExpirationTime)
+                {
+                    result = MinExpirationTime;
+                }
+
                 return result;
             }
-            else
-            {
-                return defaultValue;
-            }
+
+            return defaultValue;
         }
 
-        private int GetPrefetchLimit()
+        private static int GetPrefetchLimit()
         {
             int result;
             var prefetchLimitString = DBConnector.AppSettings["PrefetchLimit"];
             if (int.TryParse(prefetchLimitString, out result))
             {
-                if (result < 1) result = DefaultPrefetchLimit;
+                if (result < 1)
+                {
+                    result = DefaultPrefetchLimit;
+                }
+
                 return result;
             }
-            else
-            {
-                return DefaultPrefetchLimit;
-            }
+
+            return DefaultPrefetchLimit;
         }
 
         #endregion
@@ -1142,14 +1210,14 @@ namespace Quantumart.QPublishing.Database
 
         public string StatusKey => $"{CacheKeyPrefix}statusList";
 
-        private string GetPageObjectKey(Int32 pageId)
+        private string GetPageObjectKey(int pageId)
         {
             return $"{CacheKeyPrefix}pageObjects{pageId}";
         }
 
         public string PageObjectKey => GetPageObjectKey(Page?.page_id ?? 0);
 
-        private string GetPageObjectHashKey(Int32 pageId)
+        private string GetPageObjectHashKey(int pageId)
         {
             return $"{CacheKeyPrefix}pageObjectsHash{pageId}";
         }
@@ -1168,11 +1236,11 @@ namespace Quantumart.QPublishing.Database
 
         public string TemplateObjectHashKey => GetTemplateObjectHashKey(Page?.page_template_id ?? 0);
 
-        private string GetTemplateObjectHashKey(Int32 pageTemplateId)
+        private string GetTemplateObjectHashKey(int pageTemplateId)
         {
             return $"{CacheKeyPrefix}templateObjectsHash{pageTemplateId}";
         }
-        
+
         public string TemplateKey => $"{CacheKeyPrefix}templates";
 
         public string TemplateHashKey => $"{CacheKeyPrefix}templatesHash";
@@ -1197,7 +1265,7 @@ namespace Quantumart.QPublishing.Database
 
         public string PageMappingHashKey => GetPageMappingHashKey(Page?.PageId ?? 0);
 
-        private string GetPageMappingHashKey(Int32 pageId)
+        private string GetPageMappingHashKey(int pageId)
         {
             return $"{CacheKeyPrefix}pageMappingHash{pageId}";
         }
@@ -1233,61 +1301,64 @@ namespace Quantumart.QPublishing.Database
         #endregion
 
         #region Cache files
-
         private string GetCacheFilePath(string cacheKey)
         {
             if (cacheKey == PageObjectKey || cacheKey == PageObjectHashKey)
             {
                 return PageObjectCacheFile;
             }
-            else if (cacheKey == TemplateObjectKey || cacheKey == TemplateObjectHashKey)
+
+            if (cacheKey == TemplateObjectKey || cacheKey == TemplateObjectHashKey)
             {
                 return TemplateObjectCacheFile;
             }
-            else if (cacheKey == AllPageObjectsKey || cacheKey == AllPageObjectsHashKey)
+
+            if (cacheKey == AllPageObjectsKey || cacheKey == AllPageObjectsHashKey)
             {
                 return AllPageObjectsCacheFile;
             }
-            else if (cacheKey == AllTemplateObjectsKey || cacheKey == AllTemplateObjectsHashKey)
+
+            if (cacheKey == AllTemplateObjectsKey || cacheKey == AllTemplateObjectsHashKey)
             {
                 return AllTemplateObjectsCacheFile;
             }
-            else if (cacheKey == AllTemplatesKey || cacheKey == AllPagesKey || cacheKey == AllTemplatesHashKey || cacheKey == AllPagesHashKey || cacheKey == TemplateMappingKey || cacheKey == PageMappingKey || cacheKey == TemplateMappingHashKey || cacheKey == PageMappingHashKey)
+
+            if (cacheKey == AllTemplatesKey || cacheKey == AllPagesKey || cacheKey == AllTemplatesHashKey || cacheKey == AllPagesHashKey || cacheKey == TemplateMappingKey || cacheKey == PageMappingKey || cacheKey == TemplateMappingHashKey || cacheKey == PageMappingHashKey)
             {
                 return AllStructureCacheFile;
             }
-            else if (cacheKey == TemplateKey || cacheKey == PageKey || cacheKey == PageHashKey || cacheKey == TemplateHashKey)
+
+            if (cacheKey == TemplateKey || cacheKey == PageKey || cacheKey == PageHashKey || cacheKey == TemplateHashKey)
             {
                 return StructureCacheFile;
             }
-            else if (cacheKey.Contains(FileContentsCacheKeyPrefix))
-                return cacheKey.Replace(FileContentsCacheKeyPrefix, String.Empty);
-            else
+
+            if (cacheKey.Contains(FileContentsCacheKeyPrefix))
             {
-                return "";
+                return cacheKey.Replace(FileContentsCacheKeyPrefix, string.Empty);
             }
+
+            return string.Empty;
         }
 
         public string CacheFilePath => $"{Cnn.GetSiteDirectory(Page.site_id, !Page.IsStage, Page.IsTest)}\\dependencies";
 
-        public string AllTemplateObjectsCacheFile => $"{CacheFilePath}\\\\{"all_templates.dep"}";
+        public string AllTemplateObjectsCacheFile => $"{CacheFilePath}\\\\all_templates.dep";
 
-        public string AllTemplateObjectsCacheDataFile => $"{CacheFilePath}\\\\{"all_templates.dat"}";
+        public string AllTemplateObjectsCacheDataFile => $"{CacheFilePath}\\\\all_templates.dat";
 
-        public string AllPageObjectsCacheFile => $"{CacheFilePath}\\\\{"all_pages.dep"}";
+        public string AllPageObjectsCacheFile => $"{CacheFilePath}\\\\all_pages.dep";
 
-        public string TemplateObjectCacheFile => $"{CacheFilePath}\\\\{"templates.dep"}";
+        public string TemplateObjectCacheFile => $"{CacheFilePath}\\\\templates.dep";
 
-        public string PageObjectCacheFile => $"{CacheFilePath}\\\\{Page.page_id}{".dep"}";
+        public string PageObjectCacheFile => $"{CacheFilePath}\\\\{Page.page_id}.dep";
 
-        public string StructureCacheFile => $"{CacheFilePath}\\\\{"structure.dep"}";
+        public string StructureCacheFile => $"{CacheFilePath}\\\\structure.dep";
 
-        public string AllStructureCacheFile => $"{CacheFilePath}\\\\{"all_structure.dep"}";
-
+        public string AllStructureCacheFile => $"{CacheFilePath}\\\\all_structure.dep";
         #endregion
 
         #region SetWebSpecificInformation
-
         public void SetWebSpecificInformation(QPageEssential page)
         {
             Page = page;
@@ -1327,8 +1398,6 @@ namespace Quantumart.QPublishing.Database
                 _fieldsToValidate.Add(AllPagesKey, new[] { "page_name" });
             }
         }
-
         #endregion
-
     }
 }

@@ -1,6 +1,3 @@
-
-using System;
-
 namespace Quantumart.QP8.Assembling.Info
 {
     public class Code
@@ -17,7 +14,7 @@ namespace Quantumart.QP8.Assembling.Info
 
         public Code(CodeFile presentation, CodeFile codeBehind, CodeFile systemCodeBehind)
         {
-            Fill(presentation, codeBehind, systemCodeBehind, "", "");
+            Fill(presentation, codeBehind, systemCodeBehind, string.Empty, string.Empty);
         }
 
         public Code(CodeFile presentation, CodeFile codeBehind, CodeFile systemCodeBehind, string basePath, string fullPath)
@@ -31,7 +28,7 @@ namespace Quantumart.QP8.Assembling.Info
             Presentation = presentation;
             SystemCodeBehind = systemCodeBehind;
             AbsolutePath = fullPath;
-            RelativePath = String.IsNullOrEmpty(fullPath) ? "" : fullPath.Replace(basePath, "");
+            RelativePath = string.IsNullOrEmpty(fullPath) ? string.Empty : fullPath.Replace(basePath, string.Empty);
         }
     }
 }

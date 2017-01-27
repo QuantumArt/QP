@@ -4,7 +4,6 @@ namespace Quantumart.QPublishing.Helpers
 {
     internal static class CastDbNull
     {
-        
         public static T To<T>(object value, T defaultValue)
         {
             return value != DBNull.Value ? (T)value : defaultValue;

@@ -15,40 +15,40 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 throw new ArgumentException("Invalid object call: " + call);
             }
-            else if (callParams.Length == 3)
+
+            switch (callParams.Length)
             {
-                TemplateName = callParams[0];
-                ObjectName = callParams[1];
-                FormatName = callParams[2];
-                TypeCode = "TOF";
-            }
-            else if (callParams.Length == 2)
-            {
-                if (info.IsTemplateName(callParams[0]))
-                {
-                    TypeCode = "TO";
+                case 3:
                     TemplateName = callParams[0];
                     ObjectName = callParams[1];
+                    FormatName = callParams[2];
+                    TypeCode = "TOF";
+                    break;
+                case 2:
+                    if (info.IsTemplateName(callParams[0]))
+                    {
+                        TypeCode = "TO";
+                        TemplateName = callParams[0];
+                        ObjectName = callParams[1];
 
-                }
-                else
-                {
-                    TypeCode = "OF";
+                    }
+                    else
+                    {
+                        TypeCode = "OF";
+                        ObjectName = callParams[0];
+                        FormatName = callParams[1];
+                    }
+                    break;
+                case 1:
+                    TypeCode = "O";
                     ObjectName = callParams[0];
-                    FormatName = callParams[1];
-                }
-            }
-            else if (callParams.Length == 1)
-            {
-                TypeCode = "O";
-                ObjectName = callParams[0];
+                    break;
             }
 
             TemplateName = TemplateName.ToLowerInvariant();
             ObjectName = ObjectName.ToLowerInvariant();
             FormatName = FormatName.ToLowerInvariant();
         }
-
 
         public string TypeCode { get; }
 

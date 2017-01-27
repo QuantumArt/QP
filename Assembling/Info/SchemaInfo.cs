@@ -6,9 +6,8 @@ namespace Quantumart.QP8.Assembling.Info
     {
         private SchemaInfo()
         {
-
         }
-        
+
         public string ConnectionStringName { get; set; }
 
         public string ClassName { get; set; }
@@ -19,7 +18,7 @@ namespace Quantumart.QP8.Assembling.Info
 
         public bool ReplaceUrls { get; set; }
 
-		public bool SendNotifications { get; set; }
+        public bool SendNotifications { get; set; }
 
         public bool DbIndependent { get; set; }
 
@@ -34,13 +33,14 @@ namespace Quantumart.QP8.Assembling.Info
                 ConnectionStringName = DbConnector.GetValue(row, "CONNECTION_STRING_NAME", "qp_database"),
                 ClassName = DbConnector.GetValue(row, "CONTEXT_CLASS_NAME", "QPDataContext"),
                 NamespaceName = DbConnector.GetValue(row, "namespace", ""),
-                UseLongUrls = (bool) row["USE_LONG_URLS"],
-                ReplaceUrls = (bool) row["REPLACE_URLS"],
-                DbIndependent = (bool) row["PROCEED_DB_INDEPENDENT_GENERATION"],
-                SendNotifications = (bool) row["SEND_NOTIFICATIONS"],
+                UseLongUrls = (bool)row["USE_LONG_URLS"],
+                ReplaceUrls = (bool)row["REPLACE_URLS"],
+                DbIndependent = (bool)row["PROCEED_DB_INDEPENDENT_GENERATION"],
+                SendNotifications = (bool)row["SEND_NOTIFICATIONS"],
                 SiteName = row["SITE_NAME"].ToString(),
                 IsPartial = false
             };
+
             return info;
         }
     }

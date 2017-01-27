@@ -4,13 +4,12 @@ namespace Quantumart.QP8.Assembling.Info
 {
     public class FileNameHelper
     {
-
         public string SiteRoot { get; set; }
 
         public string DataContextClass { get; set; }
 
         public bool ProceedMappingWithDb { get; set; }
-        
+
         private string AppDataFile(string fileName)
         {
             return $@"{SiteRoot}\App_Data\{fileName}";
@@ -50,9 +49,7 @@ namespace Quantumart.QP8.Assembling.Info
 
         public string ExtensionsXsltFileName => AppDataFile("Extensions.xslt");
 
-
         public string DbmlFileName => AppDataFile(GetPrefixedFileName(".dbml"));
-
 
         public string MapFileName => AppDataFile(GetPrefixedFileName(".map"));
 
@@ -67,7 +64,6 @@ namespace Quantumart.QP8.Assembling.Info
         public string ModificationCodeFileName => AppCodeFile(GetPrefixedFileName("Modifications.cs"));
 
         public string ExtensionsCodeFileName => AppCodeFile(GetPrefixedFileName("Extensions.cs"));
-
 
         public string OldExtensionsCodeFileName => AppCodeFile("UserExtensions.cs");
     }

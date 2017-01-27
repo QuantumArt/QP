@@ -48,7 +48,7 @@ namespace Quantumart.QPublishing.Database
 
         internal string FieldName(int attributeId)
         {
-            return "field_" + attributeId.ToString();
+            return "field_" + attributeId;
         }
 
         #endregion
@@ -142,12 +142,17 @@ namespace Quantumart.QPublishing.Database
             {
                 statusTypeId = GetStatusTypeId(actualSiteId, statusName);
                 if (statusTypeId <= 0)
+                {
                     throw new Exception($"Status '{statusName}' is not found on the site (ID = {actualSiteId})");
+                }
             }
             else
             {
                 if (contentItemId == 0)
+                {
                     throw new ArgumentException("status_name parameter is null or empty");
+                }
+
                 var cmd = new SqlCommand("select status_type_id from content_item where content_item_id = @id")
                 {
                     CommandType = CommandType.Text
@@ -221,7 +226,7 @@ namespace Quantumart.QPublishing.Database
             string filter = null;
             sqlStringBuilder.AppendLine(attributeId > 0
                 ? GetSqlUpdateAttributes(command, contentItemId,
-                    new List<ContentAttribute>() { GetContentAttributeObject(attributeId) }, values, true,
+                    new List<ContentAttribute> { GetContentAttributeObject(attributeId) }, values, true,
                     dynamicImagesList, contentId, actualSiteId)
                 : GetSqlUpdateAttributes(command, contentItemId, GetContentAttributeObjects(contentId), values,
                     updateEmpty, dynamicImagesList, contentId, actualSiteId));
@@ -370,7 +375,10 @@ namespace Quantumart.QPublishing.Database
         private void ValidateAttributeValue(ContentAttribute attr, string data, bool updateEmpty)
         {
 
-            if (string.IsNullOrEmpty(data) && !updateEmpty) return;
+            if (string.IsNullOrEmpty(data) && !updateEmpty)
+            {
+                return;
+            }
 
             if (string.IsNullOrEmpty(data))
             {
@@ -399,7 +407,7 @@ namespace Quantumart.QPublishing.Database
                         HandleInvalidAttributeValue(attr.Name,
                             $"Attribute value size is too long. Value: '{data}', allowed size: {attr.Size}");
                     }
-                    else if (!String.IsNullOrEmpty(attr.InputMask) && !ValidateInputMask(attr.InputMask, data))
+                    else if (!string.IsNullOrEmpty(attr.InputMask) && !ValidateInputMask(attr.InputMask, data))
                     {
                         HandleInvalidAttributeValue(attr.Name,
                             $"Attribute value does not comply with input mask. Value: '{data}'");
@@ -420,16 +428,17 @@ namespace Quantumart.QPublishing.Database
                 {
                     return;
                 }
-                else
-                {
-                    constraintId = GetNumInt(dv[0]["CONSTRAINT_ID"]);
-                }
+
+                constraintId = GetNumInt(dv[0]["CONSTRAINT_ID"]);
             }
 
             var dv2 = GetConstraints("CONSTRAINT_ID = " + constraintId);
 
             var contentId = 0;
-            if (dv2.Count > 0) contentId = GetNumInt(dv2[0]["CONTENT_ID"]);
+            if (dv2.Count > 0)
+            {
+                contentId = GetNumInt(dv2[0]["CONTENT_ID"]);
+            }
 
             var cmd = new SqlCommand { CommandType = CommandType.Text };
             cmd.Parameters.Add("@itemId", SqlDbType.Decimal).Value = id;
@@ -491,10 +500,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         private void HandleInvalidAttributeValue(string attributeName, string comment)
@@ -511,12 +518,14 @@ namespace Quantumart.QPublishing.Database
                 Value = value
             };
             if (attr.DbTypeName == "NVARCHAR")
+            {
                 result.Size = attr.Size;
+            }
             if (attr.DbTypeName == "NUMERIC")
             {
                 result.Precision = 18;
                 result.Scale = (byte)attr.Size;
-                result.Value = Decimal.Parse(value, CultureInfo.InvariantCulture);
+                result.Value = decimal.Parse(value, CultureInfo.InvariantCulture);
             }
             if (attr.DbTypeName == "DATETIME")
             {
@@ -531,19 +540,23 @@ namespace Quantumart.QPublishing.Database
             {
                 return SqlDbType.Decimal;
             }
-            else if (dbType == "NVARCHAR")
+
+            if (dbType == "NVARCHAR")
             {
                 return SqlDbType.NVarChar;
             }
-            else if (dbType == "NTEXT")
+
+            if (dbType == "NTEXT")
             {
                 return SqlDbType.NText;
             }
-            else if (dbType == "DATETIME")
+
+            if (dbType == "DATETIME")
             {
                 return SqlDbType.DateTime;
             }
-            else throw new Exception("Unknown DB type");
+
+            throw new Exception("Unknown DB type");
         }
 
         #endregion
@@ -583,7 +596,7 @@ namespace Quantumart.QPublishing.Database
                 var fileExtension = Strings.Mid(fileName, dotPos + 1, Strings.Len(fileName) - dotPos);
 
                 var index = 1;
-                fileName = fileNameWithoutExtension + "[" + index.ToString() + "]" + "." + fileExtension;
+                fileName = fileNameWithoutExtension + "[" + index + "]" + "." + fileExtension;
 
                 while (true)
                 {
@@ -593,7 +606,7 @@ namespace Quantumart.QPublishing.Database
                     }
 
                     index = index + 1;
-                    fileName = fileNameWithoutExtension + "[" + index.ToString() + "]" + "." + fileExtension;
+                    fileName = fileNameWithoutExtension + "[" + index + "]" + "." + fileExtension;
                 }
 
 
@@ -671,8 +684,10 @@ namespace Quantumart.QPublishing.Database
         {
             var idParam = command.Parameters.Add(IdentityParamString, SqlDbType.Decimal);
             idParam.Direction = ParameterDirection.Output;
-            if (queryString.Trim().Substring(queryString.Length - 1) != ";") queryString = queryString + ";";
-
+            if (queryString.Trim().Substring(queryString.Length - 1) != ";")
+            {
+                queryString = queryString + ";";
+            }
 
             return queryString + Environment.NewLine + "SELECT " + IdentityParamString + " = SCOPE_IDENTITY();" + Environment.NewLine;
         }
@@ -715,7 +730,9 @@ namespace Quantumart.QPublishing.Database
             var longSiteStageUrl = GetSiteUrl(siteId, false);
 
             if (UpdateManyToOne)
+            {
                 oSb.AppendLine("create table #resultIds (id numeric, attribute_id numeric not null, to_remove bit not null default 0);");
+            }
 
             //create sql statements
             foreach (var attr in contentAttributes)
@@ -756,7 +773,7 @@ namespace Quantumart.QPublishing.Database
                         if (attr.LinkId.HasValue && UpdateManyToMany)
                         {
                             command.Parameters.AddWithValue(linkParamName, attr.LinkId);
-                            command.Parameters.Add(new SqlParameter(linkValueParamName, SqlDbType.NVarChar, -1) { Value = !String.IsNullOrEmpty(data) ? (object)data : DBNull.Value });
+                            command.Parameters.Add(new SqlParameter(linkValueParamName, SqlDbType.NVarChar, -1) { Value = !string.IsNullOrEmpty(data) ? (object)data : DBNull.Value });
                             oSb.AppendLine(
                                 $"exec qp_update_m2m @itemId, {linkParamName}, {linkValueParamName}, @splitted;");
                         }
@@ -764,7 +781,7 @@ namespace Quantumart.QPublishing.Database
                         if (attr.BackRelation != null && UpdateManyToOne)
                         {
                             command.Parameters.AddWithValue(backFieldParamName, attr.BackRelation.Id);
-                            command.Parameters.Add(new SqlParameter(backFieldValueParamName, SqlDbType.NVarChar, -1) { Value = !String.IsNullOrEmpty(data) ? (object)data : DBNull.Value });
+                            command.Parameters.Add(new SqlParameter(backFieldValueParamName, SqlDbType.NVarChar, -1) { Value = !string.IsNullOrEmpty(data) ? (object)data : DBNull.Value });
                             oSb.AppendLine(
                                 $"exec qp_update_m2o @itemId, {backFieldParamName}, {backFieldValueParamName};");
                         }
@@ -848,21 +865,22 @@ namespace Quantumart.QPublishing.Database
             {
                 return true;
             }
-            else
-            {
-                var dataString = data.ToString();
-                return string.IsNullOrEmpty(dataString) || string.Equals(dataString, "NULL");
-            }
+
+            var dataString = data.ToString();
+            return string.IsNullOrEmpty(dataString) || string.Equals(dataString, "NULL");
         }
 
-        internal List<Int32> GetConstraints(Int32 contentId)
+        internal List<int> GetConstraints(int contentId)
         {
             var dv = GetConstraints("CONTENT_ID = " + contentId);
-            var list = new List<Int32>();
+            var list = new List<int>();
             foreach (DataRowView drv in dv)
             {
                 var id = GetNumInt(drv["CONSTRAINT_ID"]);
-                if (!list.Contains(id)) list.Add(id);
+                if (!list.Contains(id))
+                {
+                    list.Add(id);
+                }
             }
             return list;
         }

@@ -1,18 +1,15 @@
-﻿using System;
-
-namespace Quantumart.QPublishing.Info
+﻿namespace Quantumart.QPublishing.Info
 {
     public class SiteInfo
     {
-        public SiteInfo(Int32 id, string url)
+        public SiteInfo(int id, string url)
         {
             Id = id;
             Url = url;
         }
-        
-        public Int32 Id { get; }
+
+        public int Id { get; }
 
         public string Url { get; }
     }
-    
 }

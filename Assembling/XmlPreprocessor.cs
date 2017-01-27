@@ -22,8 +22,6 @@ namespace Quantumart.QP8.Assembling
             Controller = caller;
         }
 
-        #region private members
-
         internal class ContentProperties
         {
             public int Id { get; set; }
@@ -40,7 +38,6 @@ namespace Quantumart.QP8.Assembling
                 IsVirtual = isVirtual;
                 IsUserQuery = isUserQuery;
             }
-
         }
 
         private ContentProperties GetContentProperties(string name)
@@ -50,6 +47,7 @@ namespace Quantumart.QP8.Assembling
             {
                 throw new ArgumentException($"Cannot find content {name}");
             }
+
             var id = int.Parse(dv[0]["content_id"].ToString(), CultureInfo.InvariantCulture);
             var isVirtual = dv[0]["virtual_type"].ToString() != "0";
             var isUserQuery = dv[0]["virtual_type"].ToString() == "3";
@@ -59,13 +57,12 @@ namespace Quantumart.QP8.Assembling
 
         private static int? GetNullableInt32(DataRowView row, string key)
         {
-            return !(row[key] is DBNull) ? (int?) GetInt32(row, key) : null;
+            return !(row[key] is DBNull) ? (int?)GetInt32(row, key) : null;
         }
-
 
         private static int GetInt32(DataRowView row, string key)
         {
-            return Int32.Parse(row[key].ToString(), CultureInfo.InvariantCulture);
+            return int.Parse(row[key].ToString(), CultureInfo.InvariantCulture);
         }
 
         private static int GetFieldId(DataRowView row)
@@ -92,8 +89,12 @@ namespace Quantumart.QP8.Assembling
                     result = "M2M";
                 }
             }
+
             if ("Relation Many-to-One" == result)
+            {
                 result = "M2O";
+            }
+
             return result;
         }
 
@@ -103,10 +104,8 @@ namespace Quantumart.QP8.Assembling
             {
                 return GetInt32(row, "link_id");
             }
-            else
-            {
-                throw new ArgumentNullException("Link_id is null for field " + GetInt32(row, "attribute_id"));
-            }
+
+            throw new ArgumentNullException("Link_id is null for field " + GetInt32(row, "attribute_id"));
         }
 
         private static int? GetRelatedM2OId(DataRowView row)
@@ -122,8 +121,7 @@ namespace Quantumart.QP8.Assembling
         private DataRowView GetRootRow(DataRowView row)
         {
             var result = row;
-            var fieldId = "";
-
+            var fieldId = string.Empty;
             if (!DBNull.Value.Equals(row["persistent_attr_id"]))
             {
                 fieldId = row["persistent_attr_id"].ToString();
@@ -137,54 +135,53 @@ namespace Quantumart.QP8.Assembling
                 fieldId = row["uq_attr_id"].ToString();
             }
 
-            if (!String.IsNullOrEmpty(fieldId))
+            if (!string.IsNullOrEmpty(fieldId))
             {
-                var dv = new DataView(Controller.FieldsTable) {RowFilter = "attribute_id = " + fieldId};
+                var dv = new DataView(Controller.FieldsTable) { RowFilter = "attribute_id = " + fieldId };
                 result = dv.Count == 0 ? null : GetRootRow(dv[0]);
             }
+
             return result;
         }
 
         private int GetRelatedContentId(DataRowView row)
         {
             var fieldType = GetFieldType(row);
-            if (("O2M" == fieldType) || ("M2O" == fieldType))
+            switch (fieldType)
             {
-                var dv = new DataView(Controller.FieldsTable);
-                var relatedId = row["O2M" == fieldType ? "related_attribute_id" : "back_related_attribute_id"].ToString();
-                if (String.IsNullOrEmpty(relatedId))
-                {
-                    return 0;
-                }
-                else
-                {
-                    dv.RowFilter = "attribute_id = " + relatedId;
-                    return dv.Count == 0 ? 0 : Int32.Parse(dv[0]["content_id"].ToString(), CultureInfo.InvariantCulture);
-                }
-            }
-            else if ("M2M" == fieldType)
-            {
-                var rootRow = GetRootRow(row);
-                if (rootRow == null)
-                {
-                    return 0;
-                }
-                else
-                {
-                    var dv = new DataView(Controller.LinkTable)
+                case "O2M":
+                case "M2O":
                     {
-                        RowFilter =
-                            string.Format(CultureInfo.InvariantCulture, "link_id = {0} and content_id = {1}",
-                                rootRow["link_id"], rootRow["content_id"])
-                    };
-                    return dv.Count == 0 ? 0 : Int32.Parse(dv[0]["linked_content_id"].ToString(), CultureInfo.InvariantCulture);
-                }
-            }
-            else
-            {
-                return 0;
+                        var dv = new DataView(Controller.FieldsTable);
+                        var relatedId = row["O2M" == fieldType ? "related_attribute_id" : "back_related_attribute_id"].ToString();
+                        if (string.IsNullOrEmpty(relatedId))
+                        {
+                            return 0;
+                        }
+
+                        dv.RowFilter = "attribute_id = " + relatedId;
+                        return dv.Count == 0 ? 0 : int.Parse(dv[0]["content_id"].ToString(), CultureInfo.InvariantCulture);
+                    }
+                case "M2M":
+                    {
+                        var rootRow = GetRootRow(row);
+                        if (rootRow == null)
+                        {
+                            return 0;
+                        }
+
+                        var dv = new DataView(Controller.LinkTable)
+                        {
+                            RowFilter =
+                                string.Format(CultureInfo.InvariantCulture, "link_id = {0} and content_id = {1}",
+                                    rootRow["link_id"], rootRow["content_id"])
+                        };
+
+                        return dv.Count == 0 ? 0 : int.Parse(dv[0]["linked_content_id"].ToString(), CultureInfo.InvariantCulture);
+                    }
             }
 
+            return 0;
         }
 
 
@@ -192,39 +189,33 @@ namespace Quantumart.QP8.Assembling
         {
             var dv = new DataView(Controller.FieldsTable)
             {
-                RowFilter =
-                    String.Format(CultureInfo.InvariantCulture, "attribute_name = '{0}' and content_id = {1}", name,
-                        contentId)
+                RowFilter = string.Format(CultureInfo.InvariantCulture, "attribute_name = '{0}' and content_id = {1}", name, contentId)
             };
+
             if (dv.Count == 0)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Cannot find field {0} in content {1}", name, contentId.ToString(CultureInfo.InvariantCulture)));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Cannot find field {0} in content {1}", name, contentId.ToString(CultureInfo.InvariantCulture)));
             }
-            else
-            {
-                return dv[0];
-            }
+
+            return dv[0];
         }
 
         private DataRowView GetFieldInfoRow(string name, int contentId)
         {
             var dv = new DataView(Controller.FieldsInfoTable)
             {
-                RowFilter =
-                    String.Format(CultureInfo.InvariantCulture, "COLUMN_NAME = '{0}' and TABLE_NAME = 'content_{1}'", name,
-                        contentId)
+                RowFilter = string.Format(CultureInfo.InvariantCulture, "COLUMN_NAME = '{0}' and TABLE_NAME = 'content_{1}'", name, contentId)
             };
+
             if (dv.Count == 0)
             {
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture, "Cannot find field {0} in table content_{1}", name, contentId.ToString(CultureInfo.InvariantCulture)));
+                throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Cannot find field {0} in table content_{1}", name, contentId.ToString(CultureInfo.InvariantCulture)));
             }
-            else
-            {
-                return dv[0];
-            }
+
+            return dv[0];
         }
 
-        private void AppendToSchema(XDocument doc, XElement elem)
+        private static void AppendToSchema(XDocument doc, XElement elem)
         {
             if (elem != null)
             {
@@ -241,6 +232,7 @@ namespace Quantumart.QP8.Assembling
                     .Select(el => el.Attribute("link_id").Value)
                     .Where(n => !string.IsNullOrEmpty(n))
                     .Distinct());
+
             var definedLinks = new HashSet<string>(doc.Descendants("link").Select(el => el.Attribute("id").Value));
             var undefinedLinks = usedLinks.Where(n => !definedLinks.Contains(n)).ToArray();
             var unusedLinks = new HashSet<string>(definedLinks.Where(n => !usedLinks.Contains(n)));
@@ -250,7 +242,6 @@ namespace Quantumart.QP8.Assembling
                 .ToDictionary(n => n.key, n => n.count);
 
             doc.Descendants("link").Where(n => unusedLinks.Contains(n.Attribute("id").Value)).Remove();
-
             var dv = new DataView(Controller.ContentToContentTable);
             foreach (var linkId in undefinedLinks)
             {
@@ -271,10 +262,9 @@ namespace Quantumart.QP8.Assembling
         {
             foreach (DataRow row in Controller.StatusTable.Rows)
             {
-                var id = Int32.Parse(row["STATUS_TYPE_ID"].ToString());
+                var id = int.Parse(row["STATUS_TYPE_ID"].ToString());
                 var name = row["STATUS_TYPE_NAME"].ToString();
-                var siteId = Int32.Parse(row["SITE_ID"].ToString());
-
+                var siteId = int.Parse(row["SITE_ID"].ToString());
                 AppendToSchema(doc,
                     new XElement("status_type",
                         new XAttribute("id", id),
@@ -285,15 +275,15 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-        private void RemoveEmptyRelations(XDocument doc)
+        private static void RemoveEmptyRelations(XDocument doc)
         {
             doc.Root?.Descendants("attribute").Where(s => (string)s.Attribute("related_content_id") == "0").Remove();
         }
 
-
         private void SetFieldParams(XDocument doc)
         {
             if (doc.Root != null)
+            {
                 foreach (var content in doc.Root.Descendants("content"))
                 {
                     var contentId = SetContentParams(content);
@@ -304,6 +294,7 @@ namespace Quantumart.QP8.Assembling
                         SetFieldParams(contentId, contentField, isUserQuery);
                     }
                 }
+            }
         }
 
         private void SetFieldParams(int contentId, XElement contentField, bool isUserQuery)
@@ -321,15 +312,17 @@ namespace Quantumart.QP8.Assembling
                 var dataType = fieldInfo["DATA_TYPE"].ToString();
                 var resultDataType = GetResultDataType(dataType);
                 if (!string.IsNullOrEmpty(resultDataType))
+                {
                     contentField.SetAttributeValue("force_db_type", resultDataType);
-
+                }
             }
+
             contentField.SetAttributeValue("id", GetFieldId(field));
             var fieldType = GetFieldType(field);
             contentField.SetAttributeValue("type", fieldType);
             contentField.SetAttributeValue("is_localization", (bool)field["IS_LOCALIZATION"]);
 
-            if (("String" == fieldType) || ("Numeric" == fieldType))
+            if ("String" == fieldType || "Numeric" == fieldType)
             {
                 contentField.SetAttributeValue("size", GetFieldSize(field));
             }
@@ -340,44 +333,49 @@ namespace Quantumart.QP8.Assembling
             }
 
             var isClassifier = (bool)field["IS_CLASSIFIER"];
-
             if (isClassifier)
             {
                 contentField.SetAttributeValue("is_classifier", "true");
                 contentField.SetAttributeValue("use_inheritance", "true");
             }
 
-            if (("M2M" == fieldType) || ("O2M" == fieldType) || ("M2O" == fieldType))
+            if ("M2M" == fieldType || "O2M" == fieldType || "M2O" == fieldType)
             {
                 var relId = GetRelatedContentId(field);
                 contentField.SetAttributeValue("related_content_id", relId);
-                var classifierAttributeId = GetNullableInt32(field, "CLASSIFIER_ATTRIBUTE_ID");
 
+                var classifierAttributeId = GetNullableInt32(field, "CLASSIFIER_ATTRIBUTE_ID");
                 if (classifierAttributeId != null)
                 {
-                    contentField.Add(
-                        new XAttribute("classifier_attribute_id", classifierAttributeId)
-                    );
+                    contentField.Add(new XAttribute("classifier_attribute_id", classifierAttributeId));
                 }
 
-                if ("M2O" == fieldType)
+                switch (fieldType)
                 {
-                    var baseM2OId = GetBaseM2OId(field);
-                    if (baseM2OId != null)
-                        contentField.SetAttributeValue("related_attribute_id", baseM2OId.Value);
-                }
-                else if ("M2M" == fieldType)
-                {
-                    if (relId != 0)
-                        contentField.SetAttributeValue("link_id", GetFieldLinkId(field));
-                    contentField.SetAttributeValue("use_separate_reverse_views", (bool)field["USE_SEPARATE_REVERSE_VIEWS"]);
-                }
-                else if ("O2M" == fieldType)
-                {
-                    contentField.SetAttributeValue("has_m2o", GetRelatedM2OId(field).HasValue.ToString().ToLowerInvariant());
-                    if (contentField.Attribute("mapped_back_name") == null)
-                        if (contentField.Parent != null)
-                            contentField.SetAttributeValue("mapped_back_name", contentField.Parent.Attribute("plural_mapped_name")?.Value);
+                    case "M2O":
+                        var baseM2OId = GetBaseM2OId(field);
+                        if (baseM2OId != null)
+                        {
+                            contentField.SetAttributeValue("related_attribute_id", baseM2OId.Value);
+                        }
+                        break;
+                    case "M2M":
+                        if (relId != 0)
+                        {
+                            contentField.SetAttributeValue("link_id", GetFieldLinkId(field));
+                        }
+                        contentField.SetAttributeValue("use_separate_reverse_views", (bool)field["USE_SEPARATE_REVERSE_VIEWS"]);
+                        break;
+                    case "O2M":
+                        contentField.SetAttributeValue("has_m2o", GetRelatedM2OId(field).HasValue.ToString().ToLowerInvariant());
+                        if (contentField.Attribute("mapped_back_name") == null)
+                        {
+                            if (contentField.Parent != null)
+                            {
+                                contentField.SetAttributeValue("mapped_back_name", contentField.Parent.Attribute("plural_mapped_name")?.Value);
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -392,7 +390,7 @@ namespace Quantumart.QP8.Assembling
                     break;
                 case "tinyint":
                     resultDataType = "TinyInt";
-                
+
                     break;
                 case "smallint":
                     resultDataType = "SmallInt";
@@ -404,6 +402,7 @@ namespace Quantumart.QP8.Assembling
                     resultDataType = "BigInt";
                     break;
             }
+
             return resultDataType;
         }
 
@@ -436,7 +435,11 @@ namespace Quantumart.QP8.Assembling
             if (root != null)
             {
                 var attr = root.Attribute("namespace");
-                if (attr != null) cnt.NameSpace = attr.Value;
+                if (attr != null)
+                {
+                    cnt.NameSpace = attr.Value;
+                }
+
                 root.SetAttributeValue("siteId", Controller.SiteId.ToString(CultureInfo.InvariantCulture));
                 root.SetAttributeValue("forStage", (!Controller.IsLive).ToString().ToLower());
                 SetDefaultClass(root);
@@ -461,7 +464,7 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-        private static  bool HasRussianChars(string text)
+        private static bool HasRussianChars(string text)
         {
             return Regex.IsMatch(text, @"[а-яА-Я]");
         }
@@ -478,14 +481,16 @@ namespace Quantumart.QP8.Assembling
 
         public static string GetMappedName(string name, int id, bool isContent)
         {
-            var mappedName = Regex.Replace(name, @"[\s\._]+", String.Empty);
+            var mappedName = Regex.Replace(name, @"[\s\._]+", string.Empty);
             if (!IsValidIdentifier(mappedName))
             {
                 if (HasRussianChars(mappedName))
                 {
                     mappedName = TranslateRusEng(mappedName);
                     if (!IsValidIdentifier(mappedName))
+                    {
                         mappedName = GetDefaultName(id, isContent);
+                    }
                 }
                 else
                 {
@@ -568,9 +573,10 @@ namespace Quantumart.QP8.Assembling
                 {"Ю", "Yu"},
                 {"Я", "Ya"}
             };
-            return dict;
 
+            return dict;
         }
+
         private static string TranslateRusEng(string mappedName)
         {
             var sb = new StringBuilder();
@@ -584,15 +590,17 @@ namespace Quantumart.QP8.Assembling
             return sb.ToString();
         }
 
-        private XElement GetSchemaElement(SchemaInfo info)
+        private static XElement GetSchemaElement(SchemaInfo info)
         {
             var result = new XElement("schema",
                 new XAttribute("connectionStringName", info.ConnectionStringName),
                 new XAttribute("class", info.ClassName)
             );
 
-            if (!String.IsNullOrEmpty(info.NamespaceName))
+            if (!string.IsNullOrEmpty(info.NamespaceName))
+            {
                 result.SetAttributeValue("namespace", info.NamespaceName);
+            }
 
             result.SetAttributeValue("useLongUrls", info.UseLongUrls);
             result.SetAttributeValue("replaceUrls", info.ReplaceUrls);
@@ -605,21 +613,23 @@ namespace Quantumart.QP8.Assembling
 
         private XElement GetLinkElement(DataRow row, Dictionary<string, int> equalCounts, bool useDb)
         {
-            return GetLinkElement(row, equalCounts, String.Empty, String.Empty, useDb);
+            return GetLinkElement(row, equalCounts, string.Empty, string.Empty, useDb);
         }
 
         private XElement GetLinkElement(DataRow row, Dictionary<string, int> equalCounts, string customMappedName, string customPluralMappedName, bool useDb)
         {
-            var linkId = Int32.Parse(row["LINK_ID"].ToString());
-            var contentId = Int32.Parse(row["L_CONTENT_ID"].ToString());
-            var linkedContentId = Int32.Parse(row["R_CONTENT_ID"].ToString());
-
+            var linkId = int.Parse(row["LINK_ID"].ToString());
+            var contentId = int.Parse(row["L_CONTENT_ID"].ToString());
+            var linkedContentId = int.Parse(row["R_CONTENT_ID"].ToString());
             var mappedName = GetLinkedMappedName(contentId, linkedContentId);
-            if (String.IsNullOrEmpty(mappedName))
+            if (string.IsNullOrEmpty(mappedName))
+            {
                 return null;
+            }
 
             var count = RegisterHit(equalCounts, $"{contentId} {linkedContentId}");
             mappedName = mappedName + "Article";
+
             var pluralMappedName = mappedName + "s";
             if (count > 1)
             {
@@ -627,15 +637,13 @@ namespace Quantumart.QP8.Assembling
                 pluralMappedName = $"{pluralMappedName}_{count}";
             }
 
-
             if (useDb)
             {
                 var dbMappedName = DbConnector.GetValue(row, "NET_LINK_NAME", "");
                 var dbPluralMappedName = DbConnector.GetValue(row, "NET_PLURAL_LINK_NAME", "");
-                mappedName = String.IsNullOrEmpty(dbMappedName) ? mappedName : dbMappedName;
-                pluralMappedName = String.IsNullOrEmpty(dbPluralMappedName) ? pluralMappedName : dbPluralMappedName;
+                mappedName = string.IsNullOrEmpty(dbMappedName) ? mappedName : dbMappedName;
+                pluralMappedName = string.IsNullOrEmpty(dbPluralMappedName) ? pluralMappedName : dbPluralMappedName;
             }
-
 
             var linkElement =
                 new XElement("link",
@@ -643,42 +651,46 @@ namespace Quantumart.QP8.Assembling
                     new XAttribute("self", contentId == linkedContentId ? "1" : "0"),
                     new XAttribute("content_id", contentId),
                     new XAttribute("linked_content_id", linkedContentId),
-                    new XAttribute("mapped_name", !String.IsNullOrEmpty(customMappedName) ? customMappedName : mappedName),
-                    new XAttribute("plural_mapped_name", !String.IsNullOrEmpty(customPluralMappedName) ? customPluralMappedName : pluralMappedName)
+                    new XAttribute("mapped_name", !string.IsNullOrEmpty(customMappedName) ? customMappedName : mappedName),
+                    new XAttribute("plural_mapped_name", !string.IsNullOrEmpty(customPluralMappedName) ? customPluralMappedName : pluralMappedName)
                 );
-            return linkElement;
 
+            return linkElement;
         }
 
         private string GetLinkedMappedName(int contentId, int linkedContentId)
         {
-            var dv = new DataView(Controller.ContentsTable) {RowFilter = "content_id = " + contentId};
-            if (dv.Count == 0) return String.Empty;
-            var firstMappedName = GetMappedName(dv[0]["CONTENT_NAME"].ToString(), Int32.Parse(dv[0]["CONTENT_ID"].ToString()), true);
+            var dv = new DataView(Controller.ContentsTable) { RowFilter = "content_id = " + contentId };
+            if (dv.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            var firstMappedName = GetMappedName(dv[0]["CONTENT_NAME"].ToString(), int.Parse(dv[0]["CONTENT_ID"].ToString()), true);
             dv.RowFilter = "content_id = " + linkedContentId;
-            if (dv.Count == 0) return String.Empty;
-            var secondMappedName = GetMappedName(dv[0]["CONTENT_NAME"].ToString(), Int32.Parse(dv[0]["CONTENT_ID"].ToString()), true);
+            if (dv.Count == 0)
+            {
+                return string.Empty;
+            }
+
+            var secondMappedName = GetMappedName(dv[0]["CONTENT_NAME"].ToString(), int.Parse(dv[0]["CONTENT_ID"].ToString()), true);
             var mappedName = $"{firstMappedName}{secondMappedName}";
             return mappedName;
         }
 
         private XElement GetContentElement(DataRow row, bool useDb)
         {
-            var id = Int32.Parse(row["CONTENT_ID"].ToString());
+            var id = int.Parse(row["CONTENT_ID"].ToString());
             var name = row["CONTENT_NAME"].ToString();
             var mappedName = GetMappedName(name, id, true);
 
             mappedName = mappedName + "Article";
             var pluralMappedName = mappedName + "s";
-
-
-
             var dbMappedName = DbConnector.GetValue(row, "NET_CONTENT_NAME", "");
             var dbPluralMappedName = DbConnector.GetValue(row, "NET_PLURAL_CONTENT_NAME", "");
             var useDefaultFiltration = ((bool)row["use_default_filtration"]).ToString().ToLower();
-            mappedName = String.IsNullOrEmpty(dbMappedName) ? mappedName : dbMappedName;
-            pluralMappedName = String.IsNullOrEmpty(dbPluralMappedName) ? pluralMappedName : dbPluralMappedName;
-
+            mappedName = string.IsNullOrEmpty(dbMappedName) ? mappedName : dbMappedName;
+            pluralMappedName = string.IsNullOrEmpty(dbPluralMappedName) ? pluralMappedName : dbPluralMappedName;
 
             var contentElement =
                 new XElement("content",
@@ -687,14 +699,15 @@ namespace Quantumart.QP8.Assembling
                     new XAttribute("mapped_name", mappedName),
                     new XAttribute("plural_mapped_name", pluralMappedName),
                     new XAttribute("use_default_filtration", useDefaultFiltration)
-
-                );
-
+                    );
 
             var relatedCounts = new Dictionary<string, int>();
-            var dv = new DataView(Controller.FieldsTable) {RowFilter = "content_id = " + id};
+            var dv = new DataView(Controller.FieldsTable) { RowFilter = "content_id = " + id };
             if (useDb)
+            {
                 dv.RowFilter += " and map_as_property = 1";
+            }
+
             dv.Sort = "attribute_order";
             foreach (DataRowView drv in dv)
             {
@@ -706,60 +719,55 @@ namespace Quantumart.QP8.Assembling
 
         private XElement GetFieldElement(string pluralMappedName, Dictionary<string, int> relatedCounts, DataRowView drv, bool useDb)
         {
-
             var fieldName = drv["ATTRIBUTE_NAME"].ToString();
-            var fieldId = Int32.Parse(drv["ATTRIBUTE_ID"].ToString());    
+            var fieldId = int.Parse(drv["ATTRIBUTE_ID"].ToString());
             var mappedFieldName = GetMappedName(fieldName, fieldId, false);
 
             if (useDb)
             {
                 var dbMappedName = DbConnector.GetValue(drv.Row, "NET_ATTRIBUTE_NAME", "");
-                mappedFieldName = String.IsNullOrEmpty(dbMappedName) ? mappedFieldName : dbMappedName;
+                mappedFieldName = string.IsNullOrEmpty(dbMappedName) ? mappedFieldName : dbMappedName;
             }
-            var fieldElement =
-                new XElement("attribute",
-                    new XAttribute("name", fieldName)
-                );
 
-            if (!String.IsNullOrEmpty(mappedFieldName) && !String.Equals(mappedFieldName, fieldName))
+            var fieldElement = new XElement("attribute", new XAttribute("name", fieldName));
+            if (!string.IsNullOrEmpty(mappedFieldName) && !string.Equals(mappedFieldName, fieldName))
             {
                 fieldElement.Add(
                     new XAttribute("mapped_name", mappedFieldName)
                 );
             }
+
             var fieldType = GetFieldType(drv);
             if (fieldType == "O2M")
             {
                 var relCount = RegisterHit(relatedCounts, GetRelatedContentId(drv).ToString());
                 var mappedBackFieldName = relCount > 1 ? $"{pluralMappedName}_{relCount}" : pluralMappedName;
-
                 if (useDb)
                 {
                     var dbBackMappedName = DbConnector.GetValue(drv.Row, "NET_BACK_ATTRIBUTE_NAME", "");
-                    mappedBackFieldName = String.IsNullOrEmpty(dbBackMappedName) ? mappedBackFieldName : dbBackMappedName;
+                    mappedBackFieldName = string.IsNullOrEmpty(dbBackMappedName) ? mappedBackFieldName : dbBackMappedName;
                 }
 
-                fieldElement.Add(
-                    new XAttribute("mapped_back_name", mappedBackFieldName)
-                );
+                fieldElement.Add(new XAttribute("mapped_back_name", mappedBackFieldName));
             }
+
             return fieldElement;
         }
 
-        private static int RegisterHit(Dictionary<string, int> relatedCounts, string key)
+        private static int RegisterHit(IDictionary<string, int> relatedCounts, string key)
         {
             int relCount;
             if (!relatedCounts.ContainsKey(key))
             {
                 relCount = 1;
                 relatedCounts.Add(key, relCount);
-
             }
             else
             {
                 relCount = relatedCounts[key] + 1;
                 relatedCounts[key] = relCount;
             }
+
             return relCount;
         }
 
@@ -775,8 +783,8 @@ namespace Quantumart.QP8.Assembling
             var generatedNamespace = AttributeWithDefault(schema, "namespace", DBNull.Value);
             var generatedClass = AttributeWithDefault(schema, "class", "QPDataContext");
             var cnnStringName = AttributeWithDefault(schema, "connectionStringName", "qp_database");
-            var replaceUrls = String.Equals(AttributeWithDefault(schema, "replaceUrls", "false").ToString(), "true");
-            var useLongUrls = String.Equals(AttributeWithDefault(schema, "useLongUrls", "false").ToString(), "true");
+            var replaceUrls = string.Equals(AttributeWithDefault(schema, "replaceUrls", "false").ToString(), "true");
+            var useLongUrls = string.Equals(AttributeWithDefault(schema, "useLongUrls", "false").ToString(), "true");
             ImportMappedRoot(Controller.SiteId, generatedNamespace, replaceUrls, useLongUrls, cnnStringName, generatedClass);
         }
 
@@ -785,7 +793,7 @@ namespace Quantumart.QP8.Assembling
             var xAttribute = link.Attribute("id");
             if (xAttribute != null)
             {
-                var linkId = Decimal.Parse(xAttribute.Value);
+                var linkId = decimal.Parse(xAttribute.Value);
                 var mappedName = AttributeWithDefault(link, "mapped_name", DBNull.Value);
                 var mappedPluralName = AttributeWithDefault(link, "plural_mapped_name", DBNull.Value);
                 ImportMappedLink(linkId, mappedName, mappedPluralName);
@@ -803,7 +811,7 @@ namespace Quantumart.QP8.Assembling
         private decimal ProcessContentNode(XElement content)
         {
             var xAttribute = content.Attribute("id");
-            var contentId = xAttribute == null ? 0 : Decimal.Parse(xAttribute.Value);
+            var contentId = xAttribute == null ? 0 : decimal.Parse(xAttribute.Value);
             var mappedName = AttributeWithDefault(content, "mapped_name", DBNull.Value);
             var mappedPluralName = AttributeWithDefault(content, "plural_mapped_name", DBNull.Value);
             ImportMappedContent(contentId, mappedName, mappedPluralName);
@@ -863,16 +871,14 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-
-        #endregion
-
-
         public void ResolveMapping(string source, string destination) //helper.UsableMappingXmlFileName //helper.Mapping2XmlFileName
         {
             if (!File.Exists(source))
+            {
                 throw new FileNotFoundException($"Cannot find mapping file {source}");
-            var doc = XDocument.Load(source);
+            }
 
+            var doc = XDocument.Load(source);
             SetRootParams(doc, Controller);
             CreateEmptyMappedNames(doc);
             SetFieldParams(doc);
@@ -895,6 +901,7 @@ namespace Quantumart.QP8.Assembling
                 contentToContentView.RowFilter = "map_as_class = 1";
                 CreateMapping(true, info, contentView, contentToContentView, helper);
             }
+
             ResolveMapping(helper.UsableMappingXmlFileName, helper.MappingResultXmlFileName);
         }
 
@@ -902,25 +909,25 @@ namespace Quantumart.QP8.Assembling
         {
             var schemaInfo = SchemaInfo.Create(Controller.SiteRow);
             schemaInfo.IsPartial = true;
-            if (!String.IsNullOrEmpty(info.NamespaceName))
+            if (!string.IsNullOrEmpty(info.NamespaceName))
+            {
                 schemaInfo.NamespaceName = info.NamespaceName;
+            }
+
             schemaInfo.ClassName = info.ClassName;
             var contentView = new DataView(Controller.ContentsTable)
             {
                 RowFilter = $"add_context_class_name = '{info.FullClassName}'"
             };
-            var contentToContentView = new DataView(Controller.ContentToContentTable) {RowFilter = "map_as_class = 1"};
+
+            var contentToContentView = new DataView(Controller.ContentToContentTable) { RowFilter = "map_as_class = 1" };
             CreateMapping(true, schemaInfo, contentView, contentToContentView, helper);
             ResolveMapping(helper.UsableMappingXmlFileName, helper.MappingResultXmlFileName);
         }
 
         public void CreateMapping(bool useDb, SchemaInfo info, DataView contentView, DataView contentToContentView, FileNameHelper helper)
         {
-            var doc = new XDocument(
-                new XDeclaration("1.0", "UTF-8", "yes"),
-                GetSchemaElement(info)
-            );
-
+            var doc = new XDocument(new XDeclaration("1.0", "UTF-8", "yes"), GetSchemaElement(info));
             foreach (DataRowView drv in contentView)
             {
                 AppendToSchema(doc, GetContentElement(drv.Row, useDb));
@@ -937,24 +944,21 @@ namespace Quantumart.QP8.Assembling
 
         public void ImportMapping(FileNameHelper helper)
         {
-
             ResolveMapping(helper.ImportedMappingXmlFileName, helper.OldMappingResultXmlFileName);
 
             var doc = XDocument.Load(helper.OldMappingResultXmlFileName);
-
             ProcessRootNode(doc.Root);
-
             if (doc.Root != null)
             {
                 foreach (var content in doc.Root.Descendants("content"))
                 {
                     var contentId = ProcessContentNode(content);
-
                     foreach (var field in content.Descendants("attribute"))
                     {
                         ProcessFieldNode(contentId, field);
                     }
                 }
+
                 foreach (var link in doc.Root.Descendants("link"))
                 {
                     ProcessLinkNode(link);

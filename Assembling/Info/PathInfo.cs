@@ -1,8 +1,8 @@
 using System;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling.Info
 {
@@ -35,18 +35,18 @@ namespace Quantumart.QP8.Assembling.Info
 
         public string FullPageCodePath => FullPagePath + "." + AssembleInfo.PageLanguage;
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         public string UploadUrlPrefix { get; private set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         public string BaseUploadUrl { get; private set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         public string UploadUrl => BaseUploadUrl + "images";
 
         public string ActualDns { get; private set; }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         public string SiteUrl { get; private set; }
 
         public string PageControlsPath { get; private set; }
@@ -74,10 +74,8 @@ namespace Quantumart.QP8.Assembling.Info
                 {
                     return _info.Controller.FixedLocation == AssembleLocation.Live;
                 }
-                else
-                {
-                    return _info.IsLive;
-                }
+
+                return _info.IsLive;
             }
         }
 
@@ -88,73 +86,73 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 throw new InvalidOperationException("Empty Assemble Info");
             }
+
+            LivePath = _info.GetString("LIVE_DIRECTORY");
+            StagePath = _info.GetString("STAGE_DIRECTORY");
+
+            if (_info.ForceLive)
+            {
+                BaseAssemblePath = LivePath;
+            }
+            else if (!IsLive)
+            {
+                BaseAssemblePath = StagePath;
+            }
+            else if (_info.ForceTestDirectory)
+            {
+                BaseAssemblePath = _info.GetString("TEST_DIRECTORY");
+            }
             else
             {
-                LivePath = _info.GetString("LIVE_DIRECTORY");
-                StagePath = _info.GetString("STAGE_DIRECTORY");
-
-                if (_info.ForceLive)
-                    BaseAssemblePath = LivePath;
-                else if (!IsLive)
-                    BaseAssemblePath = StagePath;
-                else if (_info.ForceTestDirectory)
-                    BaseAssemblePath = _info.GetString("TEST_DIRECTORY");
-                else
-                    BaseAssemblePath = LivePath;
-
-                if (_info.Mode == AssembleMode.Preview)
-                {
-                    BaseAssemblePath += "\\temp\\preview\\objects\\";
-                }
-                else if (_info.Mode == AssembleMode.PreviewAll || _info.Mode == AssembleMode.PreviewById)
-                {
-                    BaseAssemblePath += "\\temp\\preview\\articles\\";
-                }
-                else if (_info.Mode == AssembleMode.Notification)
-                {
-                    BaseAssemblePath += "\\qp_notifications\\";
-                }
-                else if (_info.Mode == AssembleMode.GlobalCss)
-                {
-                    BaseAssemblePath += "\\temp\\css\\" ;
-                }
-
-                BaseUploadPath = _info.FirstDataRow["UPLOAD_DIR"].ToString();
-                TemplateFolder = _info.FirstDataRow["TEMPLATE_FOLDER"].ToString();
-                PageFolder = _info.Data.Columns["PAGE_FOLDER"] != null ? _info.FirstDataRow["PAGE_FOLDER"].ToString() : "";
-
-                CalculateUrls();
-                CalculateFullPath();
-
+                BaseAssemblePath = LivePath;
             }
+
+            if (_info.Mode == AssembleMode.Preview)
+            {
+                BaseAssemblePath += "\\temp\\preview\\objects\\";
+            }
+            else if (_info.Mode == AssembleMode.PreviewAll || _info.Mode == AssembleMode.PreviewById)
+            {
+                BaseAssemblePath += "\\temp\\preview\\articles\\";
+            }
+            else if (_info.Mode == AssembleMode.Notification)
+            {
+                BaseAssemblePath += "\\qp_notifications\\";
+            }
+            else if (_info.Mode == AssembleMode.GlobalCss)
+            {
+                BaseAssemblePath += "\\temp\\css\\";
+            }
+
+            BaseUploadPath = _info.FirstDataRow["UPLOAD_DIR"].ToString();
+            TemplateFolder = _info.FirstDataRow["TEMPLATE_FOLDER"].ToString();
+            PageFolder = _info.Data.Columns["PAGE_FOLDER"] != null ? _info.FirstDataRow["PAGE_FOLDER"].ToString() : "";
+
+            CalculateUrls();
+            CalculateFullPath();
         }
 
         private void CalculateFullPath()
         {
             var sb = new StringBuilder(BaseAssemblePath);
             sb.Append("\\");
-            if (!String.IsNullOrEmpty(TemplateFolder))
+            if (!string.IsNullOrEmpty(TemplateFolder))
             {
                 sb.Append(TemplateFolder);
                 sb.Append("\\");
             }
 
             TemplateFolderPath = sb.ToString();
-
-            if (!String.IsNullOrEmpty(PageFolder))
+            if (!string.IsNullOrEmpty(PageFolder))
             {
                 sb.Append(PageFolder);
                 sb.Append("\\");
             }
 
             PageFolderPath = sb.ToString();
-
             FullPagePath = (_info.IsAssembleFormatMode ? BaseAssemblePath : PageFolderPath) + _info.PageFileName;
-
             TemplateControlsPath = TemplateFolderPath + TemplateControlsFolderName + "\\";
             PageControlsPath = PageFolderPath + PageControlsFolderName + "\\";
-
-
         }
 
         private void CalculateUrls()
@@ -181,40 +179,29 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 return _info.FirstDataRow["DNS"].ToString();
             }
-            else if (_info.FirstDataRow["STAGE_DNS"] == DBNull.Value)
-            {
-                return _info.FirstDataRow["DNS"].ToString();
-            }
-            else
-            {
-                return _info.FirstDataRow["STAGE_DNS"].ToString();
-            }
+
+            return _info.FirstDataRow["STAGE_DNS"] == DBNull.Value
+                ? _info.FirstDataRow["DNS"].ToString()
+                : _info.FirstDataRow["STAGE_DNS"].ToString();
         }
         private string GetSiteUrl()
         {
-
-            if (IsLive)
-            {
-                return _info.FirstDataRow["LIVE_VIRTUAL_ROOT"].ToString();
-            }
-            else
-            {
-                return _info.FirstDataRow["STAGE_VIRTUAL_ROOT"].ToString();
-            }
+            return IsLive
+                ? _info.FirstDataRow["LIVE_VIRTUAL_ROOT"].ToString()
+                : _info.FirstDataRow["STAGE_VIRTUAL_ROOT"].ToString();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings")]
+        [SuppressMessage("Microsoft.Design", "CA1055:UriReturnValuesShouldNotBeStrings")]
         public string GetContentUploadUrl(int contentId)
         {
             return BaseUploadUrl + "contents/" + contentId;
         }
 
-        public string CacheFilePath => String.Format(CultureInfo.InvariantCulture, "{0}\\dependencies", BaseAssemblePath);
-
+        public string CacheFilePath => string.Format(CultureInfo.InvariantCulture, "{0}\\dependencies", BaseAssemblePath);
 
         public string FullCacheFileName(string shortFileName)
         {
-            return String.Format(CultureInfo.InvariantCulture, "{0}\\{1}", CacheFilePath, shortFileName);
+            return string.Format(CultureInfo.InvariantCulture, "{0}\\{1}", CacheFilePath, shortFileName);
         }
 
         public string StructureCacheFile => FullCacheFileName("structure.dep");
@@ -226,7 +213,6 @@ namespace Quantumart.QP8.Assembling.Info
 
         public string PageObjectCacheFile => FullCacheFileName(_info.PageId + ".dep");
 
-
         public string AllPageObjectsCacheFile => FullCacheFileName("all_pages.dep");
 
         internal string GetExternalPath(int templateId)
@@ -236,11 +222,13 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 RowFilter = "PAGE_TEMPLATE_ID = " + templateId.ToString(CultureInfo.InvariantCulture)
             };
+
             if (dv.Count > 0)
             {
                 templateFolder = dv[0]["TEMPLATE_FOLDER"].ToString();
                 controlsFolderName = GetTemplateControlsFolderName(AssembleInfo.GetNetName(dv[0]["NET_TEMPLATE_NAME"].ToString(), templateId.ToString(CultureInfo.InvariantCulture), "t"));
             }
+
             var sb = new StringBuilder(BaseAssemblePath);
             sb.Append(templateFolder);
             sb.Append("\\");

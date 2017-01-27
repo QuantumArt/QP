@@ -7,18 +7,25 @@ namespace Quantumart.QPublishing.FileSystem
         public void RemoveDirectory(string path)
         {
             if (Directory.Exists(path))
+            {
                 Directory.Delete(path, true);
+            }
         }
 
         public void CreateDirectory(string path)
         {
             if (!Directory.Exists(path))
+            {
                 Directory.CreateDirectory(path);
+            }
         }
 
         public void CopyFile(string sourceName, string destName)
         {
-            if (!File.Exists(sourceName)) return;
+            if (!File.Exists(sourceName))
+            {
+                return;
+            }
 
             if (File.Exists(destName))
             {

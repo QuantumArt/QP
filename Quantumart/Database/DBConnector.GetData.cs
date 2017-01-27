@@ -11,8 +11,6 @@ namespace Quantumart.QPublishing.Database
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
-        #region GetData, GetContentData, ProcessData
-
         #region GetDataViaDataSet
 
         public DataTable GetDataViaDataSet(string queryString)
@@ -254,7 +252,7 @@ namespace Quantumart.QPublishing.Database
         byte includeArchive, long lngUserId, long lngGroupId, int intStartLevel, int intEndLevel, bool blnFilterRecords)
         {
 
-            var obj = new ContentDataQueryObject(this, siteName, contentName, String.Empty, whereExpression,
+            var obj = new ContentDataQueryObject(this, siteName, contentName, string.Empty, whereExpression,
                 orderExpression, startRow, pageSize, useSchedule, statusName, showSplittedArticle, includeArchive, false,
                 0, false, false)
             {
@@ -668,7 +666,6 @@ namespace Quantumart.QPublishing.Database
                 }
             }
         }
-        #endregion
         #endregion
     }
 }

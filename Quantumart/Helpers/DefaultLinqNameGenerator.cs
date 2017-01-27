@@ -77,9 +77,10 @@ namespace Quantumart.QPublishing.Helpers
                 {"Ю", "Yu"},
                 {"Я", "Ya"}
             };
-            return dict;
 
+            return dict;
         }
+
         private static string TranslateRusEng(string mappedName)
         {
             var sb = new StringBuilder();
@@ -90,6 +91,7 @@ namespace Quantumart.QPublishing.Helpers
                 var s2 = dict.Contains(s) ? dict[s].ToString() : s;
                 sb.Append(s2);
             }
+
             return sb.ToString();
         }
 
@@ -117,7 +119,9 @@ namespace Quantumart.QPublishing.Helpers
                 {
                     mappedName = TranslateRusEng(mappedName);
                     if (!IsValidIdentifier(mappedName))
+                    {
                         mappedName = GetDefaultName(id, isContent);
+                    }
                 }
                 else
                 {

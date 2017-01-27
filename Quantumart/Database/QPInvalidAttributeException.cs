@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 
 namespace Quantumart.QPublishing.Database
 {
@@ -18,7 +19,7 @@ namespace Quantumart.QPublishing.Database
         {
         }
 
-        public QpInvalidAttributeException(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        public QpInvalidAttributeException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

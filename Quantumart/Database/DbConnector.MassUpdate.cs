@@ -188,18 +188,18 @@ namespace Quantumart.QPublishing.Database
 
         private int[] GetVersionIdsToRemove(int[] ids, int maxNumber)
         {
-
             var cmd = new SqlCommand(@"  select content_item_version_id from
                 (
                     select content_item_id, content_item_version_id,
                     row_number() over(partition by civ.content_item_id order by civ.content_item_version_id desc) as num
-                    from content_item_version civ 
+                    from content_item_version civ
                     where content_item_id in (select id from @ids)
                     ) c
                     where c.num >= @maxNumber")
             {
                 CommandType = CommandType.Text
             };
+
             cmd.Parameters.AddWithValue("@maxNumber", maxNumber);
             cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.Structured) { TypeName = "Ids", Value = IdsToDataTable(ids) });
             return GetRealData(cmd).AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_version_id")).ToArray();
@@ -236,7 +236,6 @@ namespace Quantumart.QPublishing.Database
                         };
 
                         DynamicImageCreator.CreateDynamicImage(info);
-
                         article[dynImageAttr.Name] = DynamicImage.GetDynamicImageRelUrl(info.ImageName, info.AttrId, info.FileType);
                     }
                 }
@@ -560,19 +559,16 @@ namespace Quantumart.QPublishing.Database
 
                 exec qp_merge_articles @NewNonSplittedIds, @lastModifiedBy, 1
 
-                SELECT ID FROM @NewArticles
-                ";
+                SELECT ID FROM @NewArticles                ";
+
             var cmd = new SqlCommand(insertInto) { CommandType = CommandType.Text };
             cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = doc.ToString(SaveOptions.None) });
             cmd.Parameters.AddWithValue("@contentId", contentId);
             cmd.Parameters.AddWithValue("@lastModifiedBy", lastModifiedBy);
             cmd.Parameters.AddWithValue("@notForReplication", 1);
 
-
             var ids = new Queue<int>(GetRealData(cmd).AsEnumerable().Select(n => (int)(decimal)n["ID"]).ToArray());
-
             var newIds = ids.ToArray();
-
             foreach (var value in values)
             {
                 if (value[SystemColumnNames.Id] == "0")
@@ -584,5 +580,4 @@ namespace Quantumart.QPublishing.Database
             return newIds;
         }
     }
-
 }

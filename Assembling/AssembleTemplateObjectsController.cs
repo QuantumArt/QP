@@ -1,11 +1,8 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using Quantumart.QP8.Assembling.Info;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling
 {
-
     public class AssembleTemplateObjectsController : AssembleControllerBase
     {
         public int TemplateId { get; private set; }
@@ -17,6 +14,7 @@ namespace Quantumart.QP8.Assembling
                 " FROM page_template AS pt " +
                 " INNER JOIN site AS s ON pt.site_id = s.site_id" +
                 " where pt.page_template_id = " + templateId;
+
             FillController(templateId, sqlQuery, null);
         }
 
@@ -28,7 +26,7 @@ namespace Quantumart.QP8.Assembling
             {
                 Info = new AssembleInfo(this, data);
             }
-            else if (!String.IsNullOrEmpty(sqlQuery))
+            else if (!string.IsNullOrEmpty(sqlQuery))
             {
                 Info = new AssembleInfo(this, sqlQuery);
             }
@@ -36,11 +34,12 @@ namespace Quantumart.QP8.Assembling
 
         public AssembleTemplateObjectsController(int templateId, DataTable data)
         {
-            FillController(templateId, "", data);
+            FillController(templateId, string.Empty, data);
         }
+
         public AssembleTemplateObjectsController(int templateId, DataRow row)
         {
-            FillController(templateId, "", ConvertToDataTable(row));
+            FillController(templateId, string.Empty, ConvertToDataTable(row));
         }
 
         public AssembleTemplateObjectsController(int templateId, string connectionParameter)
@@ -49,13 +48,11 @@ namespace Quantumart.QP8.Assembling
             FillController(templateId);
         }
 
-
         public AssembleTemplateObjectsController(int templateId, DbConnector cnn)
             : base(cnn)
         {
             FillController(templateId);
         }
-
 
         internal override string GetFilter()
         {
@@ -67,6 +64,5 @@ namespace Quantumart.QP8.Assembling
             AssembleControlSet();
             InvalidateTemplateCache();
         }
-
     }
 }

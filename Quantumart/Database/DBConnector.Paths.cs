@@ -3,29 +3,22 @@ using System.Text;
 
 namespace Quantumart.QPublishing.Database
 {
-
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
-        #region Paths and urls
-
         internal static string CombineWithoutDoubleSlashes(string first, string second)
         {
-            // it is allowed for url to start with '//'
-            // see schemaless urls
-
-            if (String.IsNullOrEmpty(second))
-                return first;
-            else
+            if (string.IsNullOrEmpty(second))
             {
-                var sb = new StringBuilder();
-
-                sb.Append(first.Replace(@":/", @"://").TrimEnd('/'));
-                sb.Append("/");
-                sb.Append(second.Replace("//", "/").TrimStart('/'));
-
-                return sb.ToString();
+                return first;
             }
+
+            var sb = new StringBuilder();
+            sb.Append(first.Replace(@":/", @"://").TrimEnd('/'));
+            sb.Append("/");
+            sb.Append(second.Replace("//", "/").TrimStart('/'));
+
+            return sb.ToString();
         }
 
         #region GetImagesUploadUrl
@@ -57,7 +50,7 @@ namespace Quantumart.QPublishing.Database
         public string GetUploadDir(int siteId)
         {
             var site = GetSite(siteId);
-            return site == null ? String.Empty : site.UploadDir;
+            return site == null ? string.Empty : site.UploadDir;
         }
 
         #endregion
@@ -72,7 +65,7 @@ namespace Quantumart.QPublishing.Database
         public string GetUploadUrlRel(int siteId)
         {
             var site = GetSite(siteId);
-            return site == null ? String.Empty : site.UploadUrl;
+            return site == null ? string.Empty : site.UploadUrl;
         }
 
         public string GetUploadUrl(int siteId, bool asShortAsPossible)
@@ -150,7 +143,7 @@ namespace Quantumart.QPublishing.Database
         public string GetSiteUrlRel(int siteId, bool isLive)
         {
             var site = GetSite(siteId);
-            return site == null ? String.Empty : (isLive ? site.LiveVirtualRoot : site.StageVirtualRoot);
+            return site == null ? string.Empty : (isLive ? site.LiveVirtualRoot : site.StageVirtualRoot);
         }
 
         #endregion
@@ -165,7 +158,7 @@ namespace Quantumart.QPublishing.Database
         public string GetDns(int siteId, bool isLive)
         {
             var site = GetSite(siteId);
-            return site == null ? String.Empty : (isLive || string.IsNullOrEmpty(site.StageDns) ? site.Dns : site.StageDns);
+            return site == null ? string.Empty : (isLive || string.IsNullOrEmpty(site.StageDns) ? site.Dns : site.StageDns);
         }
 
         #endregion
@@ -189,14 +182,22 @@ namespace Quantumart.QPublishing.Database
         public string GetSiteDirectory(int siteId, bool isLive, bool isTest)
         {
             var site = GetSite(siteId);
-            if (site == null) return String.Empty;
+            if (site == null)
+            {
+                return string.Empty;
+            }
 
             if (isLive && isTest)
-                return String.IsNullOrEmpty(site.TestDirectory) ? site.TestDirectory : String.Empty;
-            else if (isLive)
+            {
+                return string.IsNullOrEmpty(site.TestDirectory) ? site.TestDirectory : string.Empty;
+            }
+
+            if (isLive)
+            {
                 return site.LiveDirectory;
-            else
-                return site.StageDirectory;
+            }
+
+            return site.StageDirectory;
         }
 
         public string GetSiteLiveDirectory(int siteId)
@@ -226,7 +227,10 @@ namespace Quantumart.QPublishing.Database
         {
             var targetSiteId = 0;
             var contentId = GetDynamicContentId(contentName, 0, siteId, ref targetSiteId);
-            if (targetSiteId == 0) targetSiteId = siteId;
+            if (targetSiteId == 0)
+            {
+                targetSiteId = siteId;
+            }
             return GetContentUploadUrlByID(targetSiteId, contentId);
         }
 
@@ -267,10 +271,13 @@ namespace Quantumart.QPublishing.Database
         private string GetFieldSubFolder(int attrId, bool revertSlashes)
         {
             var result = GetContentAttributeObject(attrId).SubFolder;
-            if (!String.IsNullOrEmpty(result))
+            if (!string.IsNullOrEmpty(result))
             {
                 result = @"\" + result;
-                if (revertSlashes) result = result.Replace(@"\", @"/");
+                if (revertSlashes)
+                {
+                    result = result.Replace(@"\", @"/");
+                }
             }
             return result;
         }
@@ -284,12 +291,12 @@ namespace Quantumart.QPublishing.Database
         {
             var attr = GetContentAttributeObject(attrId);
             if (attr == null)
-                throw new Exception("No File/Image Attribute found with attribute_id=" + attrId.ToString());
-            else
             {
-                var baseDir = attr.UseSiteLibrary ? GetSiteLibraryDirectory(attr.SiteId) : GetContentLibraryDirectory(attr.SiteId, attr.ContentId);
-                return baseDir + GetFieldSubFolder(attrId);
+                throw new Exception("No File/Image Attribute found with attribute_id=" + attrId);
             }
+
+            var baseDir = attr.UseSiteLibrary ? GetSiteLibraryDirectory(attr.SiteId) : GetContentLibraryDirectory(attr.SiteId, attr.ContentId);
+            return baseDir + GetFieldSubFolder(attrId);
         }
 
         #endregion
@@ -301,7 +308,7 @@ namespace Quantumart.QPublishing.Database
             return GetFieldSubFolder(attrId, true);
         }
 
-        public string GetFieldUploadUrl(string fieldName, Int32 contentId)
+        public string GetFieldUploadUrl(string fieldName, int contentId)
         {
             return GetFieldUploadUrl(0, fieldName, contentId);
         }
@@ -326,36 +333,34 @@ namespace Quantumart.QPublishing.Database
         public string GetUrlForFileAttribute(int fieldId, bool asShortAsPossible, bool removeSchema)
         {
             if (fieldId == 0)
-                return String.Empty;
+            {
+                return string.Empty;
+            }
+
+            var attr = GetContentAttributeObject(fieldId);
+            if (attr == null)
+            {
+                return string.Empty;
+            }
+
+            int sourceContentId, sourceFieldId;
+            bool useSiteLibrary;
+            if (attr.SourceAttribute == null)
+            {
+                sourceContentId = attr.ContentId;
+                sourceFieldId = attr.Id;
+                useSiteLibrary = attr.UseSiteLibrary;
+            }
             else
             {
-                var attr = GetContentAttributeObject(fieldId);
-                if (attr == null)
-                    return String.Empty;
-                else
-                {
-                    int sourceContentId, sourceFieldId;
-                    bool useSiteLibrary;
-                    if (attr.SourceAttribute == null)
-                    {
-                        sourceContentId = attr.ContentId;
-                        sourceFieldId = attr.Id;
-                        useSiteLibrary = attr.UseSiteLibrary;
-                    }
-                    else
-                    {
-                        sourceContentId = attr.SourceAttribute.ContentId;
-                        sourceFieldId = attr.SourceAttribute.Id;
-                        useSiteLibrary = attr.SourceAttribute.UseSiteLibrary;
-                    }
-
-                    var baseUrl = useSiteLibrary ? GetImagesUploadUrl(attr.SiteId, asShortAsPossible, removeSchema) : GetContentUploadUrlByID(attr.SiteId, sourceContentId, asShortAsPossible, removeSchema);
-                    return CombineWithoutDoubleSlashes(baseUrl, GetFieldSubUrl(sourceFieldId));
-                }
+                sourceContentId = attr.SourceAttribute.ContentId;
+                sourceFieldId = attr.SourceAttribute.Id;
+                useSiteLibrary = attr.SourceAttribute.UseSiteLibrary;
             }
-        }
 
-        #endregion
+            var baseUrl = useSiteLibrary ? GetImagesUploadUrl(attr.SiteId, asShortAsPossible, removeSchema) : GetContentUploadUrlByID(attr.SiteId, sourceContentId, asShortAsPossible, removeSchema);
+            return CombineWithoutDoubleSlashes(baseUrl, GetFieldSubUrl(sourceFieldId));
+        }
 
         #endregion
     }

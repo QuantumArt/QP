@@ -66,7 +66,7 @@ namespace Quantumart.QPublishing.Helpers
 
         public void ExtractFirstLine(ref string traceString, ref string trace)
         {
-            var divider = "<br>";
+            const string divider = "<br>";
             if (trace.IndexOf(divider, StringComparison.Ordinal) > 0)
             {
                 var substrLength = trace.IndexOf(divider, StringComparison.Ordinal) + divider.Length;
@@ -95,7 +95,7 @@ namespace Quantumart.QPublishing.Helpers
         public bool MatchesLine(string line, string pattrn, out MatchCollection firstMatch)
         {
             var regEx = new Regex(pattrn, RegexOptions.IgnoreCase | RegexOptions.Multiline);
-            var matches  = regEx.Matches(line);
+            var matches = regEx.Matches(line);
             var functionReturnValue = matches.Count > 0;
             firstMatch = matches;
 
@@ -120,8 +120,8 @@ namespace Quantumart.QPublishing.Helpers
         {
             var traceString = string.Empty;
             Match firstMatch = null;
-            var order = 1;
 
+            var order = 1;
             while (!string.IsNullOrEmpty(trace))
             {
                 var found = false;
@@ -161,6 +161,7 @@ namespace Quantumart.QPublishing.Helpers
                         SaveLine(traceId, int.Parse(formatId), parent, order, int.Parse(traced), defValuesString, undefValuesString);
                     }
                 }
+
                 order = order + 1;
             }
         }
@@ -188,7 +189,7 @@ namespace Quantumart.QPublishing.Helpers
             MatchCollection matches;
             MatchesLine(undefValuesString, "Value\\((?<key>.*?)\\);", out matches);
             var conn = new DBConnector();
-            foreach (Match match  in matches)
+            foreach (Match match in matches)
             {
                 var key = match.Groups["key"].ToString().Replace("'", "''");
                 if (key.Length <= 50)

@@ -2,7 +2,6 @@ using System.Data;
 
 namespace Quantumart.QPublishing.Controls
 {
-
     public abstract class QPublishControl : QUserControl, IQPublishControl
     {
         protected QPublishControl()
@@ -11,7 +10,6 @@ namespace Quantumart.QPublishing.Controls
         }
 
         public QPublishControlEssential QPublishControlEssential { get; set; }
-
 
         public DataTable Data
         {
@@ -24,7 +22,7 @@ namespace Quantumart.QPublishing.Controls
             get { return QPublishControlEssential.TotalRecords; }
             set { QPublishControlEssential.TotalRecords = value; }
         }
-        
+
         public long AbsoluteTotalRecords
         {
             get { return QPublishControlEssential.AbsoluteTotalRecords; }
@@ -48,66 +46,79 @@ namespace Quantumart.QPublishing.Controls
             get { return QPublishControlEssential.EnableCacheInvalidation; }
             set { QPublishControlEssential.EnableCacheInvalidation = value; }
         }
+
         public bool ForceUnited
         {
             get { return QPublishControlEssential.ForceUnited; }
             set { QPublishControlEssential.ForceUnited = value; }
         }
+
         public bool UseSchedule
         {
             get { return QPublishControlEssential.UseSchedule; }
             set { QPublishControlEssential.UseSchedule = value; }
         }
+
         public bool ShowArchive
         {
             get { return QPublishControlEssential.ShowArchive; }
             set { QPublishControlEssential.ShowArchive = value; }
         }
+
         public string Statuses
         {
             get { return QPublishControlEssential.Statuses; }
             set { QPublishControlEssential.Statuses = value; }
         }
+
         public string CustomFilter
         {
             get { return QPublishControlEssential.CustomFilter; }
             set { QPublishControlEssential.CustomFilter = value; }
         }
+
         public string StaticOrder
         {
             get { return QPublishControlEssential.StaticOrder; }
             set { QPublishControlEssential.StaticOrder = value; }
         }
+
         public string DynamicOrder
         {
             get { return QPublishControlEssential.DynamicOrder; }
             set { QPublishControlEssential.DynamicOrder = value; }
         }
+
         public string StartRow
         {
             get { return QPublishControlEssential.StartRow; }
             set { QPublishControlEssential.StartRow = value; }
         }
+
         public string PageSize
         {
             get { return QPublishControlEssential.PageSize; }
             set { QPublishControlEssential.PageSize = value; }
         }
+
         public bool UseSecurity
         {
             get { return QPublishControlEssential.UseSecurity; }
             set { QPublishControlEssential.UseSecurity = value; }
         }
+
         public bool UseLevelFiltration
         {
             get { return QPublishControlEssential.UseLevelFiltration; }
             set { QPublishControlEssential.UseLevelFiltration = value; }
         }
+
         public string StartLevel
         {
             get { return QPublishControlEssential.StartLevel; }
             set { QPublishControlEssential.StartLevel = value; }
         }
+
         public string EndLevel
         {
             get { return QPublishControlEssential.EndLevel; }
@@ -131,7 +142,6 @@ namespace Quantumart.QPublishing.Controls
             get { return QPublishControlEssential.DynamicVariable; }
             set { QPublishControlEssential.DynamicVariable = value; }
         }
-
 
         public int ContentID
         {
@@ -171,7 +181,5 @@ namespace Quantumart.QPublishing.Controls
         {
             QPublishControlEssential.FillData();
         }
-
-
     }
 }

@@ -6,7 +6,6 @@ using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QPublishing.Helpers
 {
-
     public class Status
     {
         public static string GetPreviousStatus(int id)
@@ -46,10 +45,8 @@ namespace Quantumart.QPublishing.Helpers
             {
                 return dt.Rows[0]["LOGIN"].ToString();
             }
-            else
-            {
-                return "";
-            }
+
+            return "";
         }
 
         public static string GetUserName(int userId)
@@ -63,11 +60,8 @@ namespace Quantumart.QPublishing.Helpers
             {
                 return GetUserName(dt.Rows[0]);
             }
-            else
-            {
-                return "";
 
-            }
+            return "";
         }
         public static string GetUserName(DataRow row)
         {
@@ -112,10 +106,8 @@ namespace Quantumart.QPublishing.Helpers
             {
                 return DBConnector.GetNumInt(dtStatus.Rows[0]["STATUS_TYPE_ID"]);
             }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
 
         public static string GetParallelWaitingForApproval(int contentItemId)
@@ -128,9 +120,12 @@ namespace Quantumart.QPublishing.Helpers
 
         public static string GetUserCommaList(DataTable dt)
         {
-            if (dt.Rows.Count == 0) return "none";
+            if (dt.Rows.Count == 0)
+            {
+                return "none";
+            }
+
             return string.Join(", ", (from DataRow row in dt.Rows select $"<strong>{GetUserName(row)}</strong>").ToArray());
         }
-
     }
 }

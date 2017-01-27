@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Quantumart.QP8.Assembling.Info
+﻿namespace Quantumart.QP8.Assembling.Info
 {
     public class ContextClassInfo
     {
@@ -8,34 +6,24 @@ namespace Quantumart.QP8.Assembling.Info
 
         public string NamespaceName { get; set; }
 
-        public string FullClassName
-        {
-            get
-            {
-                if (String.IsNullOrEmpty(NamespaceName))
-                    return ClassName;
-                else
-                    return $"{NamespaceName}.{ClassName}";
-            }
-        }
+        public string FullClassName => string.IsNullOrEmpty(NamespaceName) ? ClassName : $"{NamespaceName}.{ClassName}";
 
-        public static ContextClassInfo Parse (string input)
+        public static ContextClassInfo Parse(string input)
         {
-
             var index = input.LastIndexOf('.');
             string contextClass, contextNamespace;
             if (index == -1)
             {
                 contextClass = input;
-                contextNamespace = String.Empty;
+                contextNamespace = string.Empty;
             }
             else
             {
                 contextClass = input.Substring(index + 1);
                 contextNamespace = input.Substring(0, index);
             }
-            return new ContextClassInfo() { ClassName = contextClass, NamespaceName = contextNamespace };
-        }
 
+            return new ContextClassInfo { ClassName = contextClass, NamespaceName = contextNamespace };
+        }
     }
 }

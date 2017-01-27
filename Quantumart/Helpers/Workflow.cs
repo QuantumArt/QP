@@ -1,12 +1,11 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QPublishing.Helpers
 {
-
     public class Workflow
     {
-
         public static bool DbContentItemHasOwnWorkflow(int itemId)
         {
             var conn = new DBConnector();
@@ -20,7 +19,7 @@ namespace Quantumart.QPublishing.Helpers
             return DbContentItemHasOwnWorkflow(itemId);
         }
 
-        // ReSharper disable once RedundantAssignment
+        [SuppressMessage("ReSharper", "RedundantAssignment")]
         public static bool DbWillContentItemStatusBeDecreased(int siteId, int itemId, int userId, int currentStatusWeight, ref int toStatusId, ref int toStatusWeight)
         {
             var functionReturnValue = false;
@@ -38,6 +37,7 @@ namespace Quantumart.QPublishing.Helpers
                     functionReturnValue = toStatusWeight < currentStatusWeight;
                 }
             }
+
             return functionReturnValue;
         }
 
@@ -50,10 +50,8 @@ namespace Quantumart.QPublishing.Helpers
             {
                 return DBConnector.GetNumInt(dt.Rows[0]["workflow_id"]);
             }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
 
         public static int DbGetUserWeight(int userId, int workflowId)
@@ -108,9 +106,8 @@ namespace Quantumart.QPublishing.Helpers
             {
                 return DBConnector.GetNumInt(dt.Rows[0]["workflow_id"]);
             }
-            else
-                return 0;
 
+            return 0;
         }
 
         public static int GetNoneId(int siteId)
@@ -129,10 +126,11 @@ namespace Quantumart.QPublishing.Helpers
             var conn = new DBConnector();
             var dt = conn.GetCachedData(strSql);
             if (dt.Rows.Count > 0)
-                return  DBConnector.GetNumInt(dt.Rows[0]["min_weight"]);
-            else 
-                return 0;
+            {
+                return DBConnector.GetNumInt(dt.Rows[0]["min_weight"]);
+            }
 
+            return 0;
         }
 
         public static int GetWorkflowMaxWeight(decimal workflowId)
@@ -160,12 +158,8 @@ namespace Quantumart.QPublishing.Helpers
             {
                 return (decimal)dt.Rows[0]["max_weight"];
             }
-            else
-            {
-                return 0;
-            }
 
+            return 0;
         }
-
     }
 }

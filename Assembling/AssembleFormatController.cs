@@ -1,14 +1,11 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using Quantumart.QP8.Assembling.Info;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling
 {
     public class AssembleFormatController : AssembleControllerBase
     {
         public int FormatId { get; protected set; }
-
 
         public AssembleFormatController(int formatId, AssembleMode mode, string connectionParameter, bool isCustomerCode, AssembleLocation fixedLocation)
             : base(connectionParameter, isCustomerCode)
@@ -35,7 +32,6 @@ namespace Quantumart.QP8.Assembling
             FillController(formatId, mode, "", data);
         }
 
-
         private void FillController(int formatId, AssembleMode mode)
         {
             var sqlQuery =
@@ -57,17 +53,15 @@ namespace Quantumart.QP8.Assembling
             {
                 Info = new AssembleInfo(this, data);
             }
-            else if (!String.IsNullOrEmpty(sqlQuery))
+            else if (!string.IsNullOrEmpty(sqlQuery))
             {
                 Info = new AssembleInfo(this, sqlQuery);
             }
         }
 
-
-
         public override void Assemble()
         {
-            if (String.IsNullOrEmpty(Info.PageId))
+            if (string.IsNullOrEmpty(Info.PageId))
             {
                 InvalidateTemplateCache();
             }
@@ -83,6 +77,5 @@ namespace Quantumart.QP8.Assembling
         {
             return "and objf.object_format_id = " + FormatId;
         }
-
     }
 }

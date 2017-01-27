@@ -2,7 +2,6 @@ using System;
 using System.Data;
 using System.Globalization;
 using System.Text;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling.Info
 {
@@ -26,18 +25,8 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 return Control.GetInt32("CONTENT_ID");
             }
-            else
-            {
-                throw new DataException(Control.MissedContentExceptionString);
-            }
-        }
 
-
-
-        ~ContainerInfo()
-        {
-            Statuses?.Dispose();
-            Workflow?.Dispose();
+            throw new DataException(Control.MissedContentExceptionString);
         }
 
         public AssembleInfo Info => Control.Info;
@@ -59,6 +48,7 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 maxStatusId = Info.GetMaxStatus().Id;
             }
+
             return maxStatusId;
         }
 
@@ -66,11 +56,9 @@ namespace Quantumart.QP8.Assembling.Info
 
         private ControlInfo Control { get; }
 
-
-        public bool IsRandom => String.Equals(Control.GetString("ROTATE_CONTENT"), "1");
+        public bool IsRandom => string.Equals(Control.GetString("ROTATE_CONTENT"), "1");
 
         public bool IsNewAssembling => true;
-
 
         public bool AllowOrderDynamic => Control.GetObject("ALLOW_ORDER_DYNAMIC") != DBNull.Value && Control.GetNumericBoolean("ALLOW_ORDER_DYNAMIC");
 
@@ -88,13 +76,21 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 var value = Control.GetString("FILTER_VALUE").Trim();
                 if (!AssembleRootObject)
+                {
                     return value;
-                else if (Info.Mode == AssembleMode.PreviewById || Info.Mode == AssembleMode.Notification) // will be replaced in the runtime
-                    return String.Empty;
-                else if (Info.Mode == AssembleMode.PreviewAll || String.IsNullOrEmpty(value)) // will remain in the runtime
+                }
+
+                if (Info.Mode == AssembleMode.PreviewById || Info.Mode == AssembleMode.Notification) // will be replaced in the runtime
+                {
+                    return string.Empty;
+                }
+
+                if (Info.Mode == AssembleMode.PreviewAll || string.IsNullOrEmpty(value)) // will remain in the runtime
+                {
                     return @"""1 = 1""";
-                else
-                    return value;
+                }
+
+                return value;
             }
         }
 
@@ -103,7 +99,7 @@ namespace Quantumart.QP8.Assembling.Info
             get
             {
                 var filter = CustomFilter;
-                if (String.IsNullOrEmpty(filter))
+                if (string.IsNullOrEmpty(filter))
                 {
                     filter = "\"\"";
                 }
@@ -122,14 +118,13 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 return "\"1=1\"";
             }
-            else if ((Info.Mode == AssembleMode.PreviewById || Info.Mode == AssembleMode.Notification) && AssembleRootObject)
+
+            if ((Info.Mode == AssembleMode.PreviewById || Info.Mode == AssembleMode.Notification) && AssembleRootObject)
             {
-                return String.Format(CultureInfo.InvariantCulture, "\" c.content_item_id=\" {0} NumValue(\"id\")", concat);
+                return string.Format(CultureInfo.InvariantCulture, "\" c.content_item_id=\" {0} NumValue(\"id\")", concat);
             }
-            else
-            {
-                return String.Format(CultureInfo.InvariantCulture, "String.Format({0}, {1}, {2}, {3}, {4})", "\" {0} {1} {2} {3} \"", VisibleFilter, ArchiveFilter, StatusFilter, MainFilter);
-            }
+
+            return string.Format(CultureInfo.InvariantCulture, "String.Format({0}, {1}, {2}, {3}, {4})", "\" {0} {1} {2} {3} \"", VisibleFilter, ArchiveFilter, StatusFilter, MainFilter);
         }
 
         public string DynamicOrder
@@ -137,7 +132,7 @@ namespace Quantumart.QP8.Assembling.Info
             get
             {
                 var orderDynamic = Control.GetString("ORDER_DYNAMIC").Trim();
-                return AllowOrderDynamic && !String.IsNullOrEmpty(orderDynamic) ? orderDynamic : "\"\"";
+                return AllowOrderDynamic && !string.IsNullOrEmpty(orderDynamic) ? orderDynamic : "\"\"";
             }
         }
 
@@ -149,14 +144,10 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 if (IsRandom)
                 {
-
                     return IsNewAssembling ? "\"\"" : "\"NewId()\"";
                 }
-                else
-                {
 
-                    return String.Format(CultureInfo.InvariantCulture, "GetContainerOrderExpression(\"{0}\", {1})", StaticOrder, DynamicOrder);
-                }
+                return string.Format(CultureInfo.InvariantCulture, "GetContainerOrderExpression(\"{0}\", {1})", StaticOrder, DynamicOrder);
             }
         }
 
@@ -164,14 +155,12 @@ namespace Quantumart.QP8.Assembling.Info
         {
             get
             {
-                if (String.IsNullOrEmpty(Control.GetString("SELECT_START")) || AssembleRootObjectInFormatMode || IsRandom)
+                if (string.IsNullOrEmpty(Control.GetString("SELECT_START")) || AssembleRootObjectInFormatMode || IsRandom)
                 {
                     return "1";
                 }
-                else
-                {
-                    return Control.GetString("SELECT_START");
-                }
+
+                return Control.GetString("SELECT_START");
             }
         }
 
@@ -179,14 +168,12 @@ namespace Quantumart.QP8.Assembling.Info
         {
             get
             {
-                if (AssembleRootObjectInFormatMode || String.IsNullOrEmpty(Control.GetString("SELECT_TOTAL")))
+                if (AssembleRootObjectInFormatMode || string.IsNullOrEmpty(Control.GetString("SELECT_TOTAL")))
                 {
                     return "0";
                 }
-                else
-                {
-                    return Control.GetString("SELECT_TOTAL");
-                }
+
+                return Control.GetString("SELECT_TOTAL");
             }
         }
 
@@ -202,9 +189,7 @@ namespace Quantumart.QP8.Assembling.Info
 
         public bool AssembleRootObject => Info.GetString("OBJECT_ID") == Control.GetString("OBJECT_ID");
 
-
         public static string SecurityMagicString => "<$_security_insert_$>";
-
 
         public bool ApplySecurity => Control.GetNumericBoolean("APPLY_SECURITY");
 
@@ -216,10 +201,8 @@ namespace Quantumart.QP8.Assembling.Info
                 {
                     return (string)Info.PermissionLevels[Control.GetString("START_LEVEL")];
                 }
-                else
-                {
-                    return "0";
-                }
+
+                return "0";
             }
         }
 
@@ -231,45 +214,27 @@ namespace Quantumart.QP8.Assembling.Info
                 {
                     return (string)Info.PermissionLevels[Control.GetString("END_LEVEL")];
                 }
-                else
-                {
-                    return "0";
-                }
+
+                return "0";
             }
         }
 
-        public bool UseLevelFiltration
-        {
-            get
-            {
-                if (ApplySecurity)
-                {
-                    return Control.GetBoolean("USE_LEVEL_FILTRATION");
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        public bool UseLevelFiltration => ApplySecurity && Control.GetBoolean("USE_LEVEL_FILTRATION");
 
         public int Duration
         {
             get
             {
-                if (!Info.IsLive || String.IsNullOrEmpty(Control.GetString("DURATION")))
+                if (!Info.IsLive || string.IsNullOrEmpty(Control.GetString("DURATION")))
                 {
                     return 0;
                 }
-                else
-                {
-                    return Control.GetInt32("DURATION") * 60;
-                }
+
+                return Control.GetInt32("DURATION") * 60;
             }
         }
 
         public bool EnableCacheInvalidation => Control.GetBoolean("ENABLE_CACHE_INVALIDATION");
-
 
         public DataView Statuses { get; }
 
@@ -279,16 +244,14 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 RowFilter = "OBJECT_ID = " + Control.GetInt32("OBJECT_ID")
             };
+
             return dv;
         }
 
         private string GetStatusName(string statusId)
         {
-            var dv = new DataView(Info.Statuses) {RowFilter = "STATUS_TYPE_ID = " + statusId};
-            if (dv.Count > 0)
-                return dv[0]["STATUS_TYPE_NAME"].ToString();
-            else
-                return String.Empty;
+            var dv = new DataView(Info.Statuses) { RowFilter = "STATUS_TYPE_ID = " + statusId };
+            return dv.Count > 0 ? dv[0]["STATUS_TYPE_NAME"].ToString() : string.Empty;
         }
 
         public bool StatusExists(int statusId)
@@ -300,23 +263,22 @@ namespace Quantumart.QP8.Assembling.Info
                     return true;
                 }
             }
+
             return false;
         }
 
         public string StatusName(int statusId)
         {
-            var dv = new DataView(Info.Statuses) {RowFilter = "status_type_id = " + statusId};
-            return dv.Count == 0 ? String.Empty : dv[0]["STATUS_TYPE_NAME"].ToString();
+            var dv = new DataView(Info.Statuses) { RowFilter = "status_type_id = " + statusId };
+            return dv.Count == 0 ? string.Empty : dv[0]["STATUS_TYPE_NAME"].ToString();
         }
 
-        private string StatusQueryString =>
-            $"select status_type_id from status_type where status_type_name in ({StatusString})";
+        private string StatusQueryString => $"select status_type_id from status_type where status_type_name in ({StatusString})";
 
         public string StatusString
         {
             get
             {
-
                 var sb = new StringBuilder();
                 if (WorkflowAssigned && Statuses.Count > 0)
                 {
@@ -330,6 +292,7 @@ namespace Quantumart.QP8.Assembling.Info
                 {
                     sb.AppendFormat("'{0}'", StatusName(MaxStatusId));
                 }
+
                 return sb.ToString();
             }
         }
@@ -346,32 +309,25 @@ namespace Quantumart.QP8.Assembling.Info
                 {
                     return "CONTENT_" + ContentId();
                 }
-                else
-                {
-                    return "CONTENT_" + ContentId() + "_UNITED";
-                }
+
+                return "CONTENT_" + ContentId() + "_UNITED";
             }
         }
 
-
-
         private DataView GetWorkflow()
         {
-            return new DataView(Info.Workflow) {RowFilter = "CONTENT_ID = " + ContentId()};
+            return new DataView(Info.Workflow) { RowFilter = "CONTENT_ID = " + ContentId() };
         }
 
         private int GetWorkflowField(string fieldName)
         {
-            if (WorkflowAssigned)
-            {
-                return Convert.ToInt32((decimal)Workflow[0][fieldName]);
-            }
-            else
-            {
-                return 0;
-            }
+            return WorkflowAssigned ? Convert.ToInt32((decimal)Workflow[0][fieldName]) : 0;
         }
 
+        ~ContainerInfo()
+        {
+            Statuses?.Dispose();
+            Workflow?.Dispose();
+        }
     }
-
 }

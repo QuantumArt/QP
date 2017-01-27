@@ -1,18 +1,16 @@
 using System;
 using System.Data;
 using System.Text;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling.Info
 {
-
     public class ControlSetInfo
     {
-
         public ControlSetInfo(AssembleInfo info)
         {
             FillControlSet(info, true);
         }
+
         public ControlSetInfo(AssembleInfo info, bool isDbConnected)
         {
             FillControlSet(info, isDbConnected);
@@ -40,7 +38,6 @@ namespace Quantumart.QP8.Assembling.Info
         }
 
         public ControlInfo Current { get; set; }
-
 
         public AssembleInfo Info { get; private set; }
 
@@ -76,6 +73,7 @@ namespace Quantumart.QP8.Assembling.Info
             sb.Append(" left join content c on (c.content_id = cnt.content_id or c.content_id = cf.content_id)");
             BaseObjectsSql = sb.ToString();
         }
+
         public string BaseObjectsSql { get; private set; }
 
         public string SiteObjectsSql
@@ -87,8 +85,6 @@ namespace Quantumart.QP8.Assembling.Info
                 return sb.ToString();
             }
         }
-
-
 
         internal void FillTemplateRow()
         {
@@ -119,7 +115,6 @@ namespace Quantumart.QP8.Assembling.Info
             }
         }
 
-
         public static string GetCallFilter(ObjectCall call)
         {
             var sb = new StringBuilder();
@@ -138,21 +133,20 @@ namespace Quantumart.QP8.Assembling.Info
             }
             return sb.ToString();
         }
+
         public static string GetAdditionalCallFilter(ObjectCall call)
         {
+            switch (call.TypeCode)
+            {
+                case "TOF":
+                case "TO":
+                    return " and [page_id] is null ";
+                case "OF":
+                case "O":
+                    return " and [page_id] is not null ";
+            }
 
-            if (call.TypeCode == "TOF" || call.TypeCode == "TO")
-            {
-                return " and [page_id] is null ";
-            }
-            else if (call.TypeCode == "OF" || call.TypeCode == "O")
-            {
-                return " and [page_id] is not null ";
-            }
-            else
-            {
-                return "";
-            }
+            return string.Empty;
         }
 
         internal bool HasAlreadyLoaded(ObjectCall call)
@@ -176,7 +170,7 @@ namespace Quantumart.QP8.Assembling.Info
         {
 
             var sb = new StringBuilder(SiteObjectsSql);
-            if ((call.TypeCode == "OF" || call.TypeCode == "O") && !String.IsNullOrEmpty(Info.PageId))
+            if ((call.TypeCode == "OF" || call.TypeCode == "O") && !string.IsNullOrEmpty(Info.PageId))
             {
                 sb.Append(" and lower(obj.object_name) = N'");
                 sb.Append(call.ObjectName);

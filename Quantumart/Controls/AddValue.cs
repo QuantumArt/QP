@@ -4,7 +4,6 @@ using Quantumart.QPublishing.Pages;
 
 namespace Quantumart.QPublishing.Controls
 {
-
     public class AddValue : UserControl
     {
         // ReSharper disable once InconsistentNaming
@@ -17,6 +16,5 @@ namespace Quantumart.QPublishing.Controls
         {
             ((QPage)Page).AddValue(key, value);
         }
-
     }
 }

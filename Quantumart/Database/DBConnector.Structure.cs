@@ -10,16 +10,17 @@ namespace Quantumart.QPublishing.Database
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
-
         #region GetSite...
 
         internal Site GetSite(int siteId)
         {
             var sites = GetSiteHashTable();
             if (sites.ContainsKey(siteId))
+            {
                 return (Site)sites[siteId];
-            else
-                throw new Exception($"Site (id = {siteId}) is not found");
+            }
+
+            throw new Exception($"Site (id = {siteId}) is not found");
         }
 
         public int GetSiteId(string name)
@@ -38,7 +39,7 @@ namespace Quantumart.QPublishing.Database
         public string GetSiteName(int siteId)
         {
             var site = GetSite(siteId);
-            return site == null ? String.Empty : site.Name;
+            return site == null ? string.Empty : site.Name;
         }
 
         #endregion
@@ -53,10 +54,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return (Content)hash[key];
             }
-            else
-            {
-                return CacheManager.AddContentHashEntry(key);
-            }
+
+            return CacheManager.AddContentHashEntry(key);
         }
 
         public int GetContentId(int siteId, string contentName)
@@ -77,15 +76,21 @@ namespace Quantumart.QPublishing.Database
 
             var siteKey = siteId.ToString();
             if (!hash.ContainsKey(siteKey))
+            {
                 localHash = CacheManager.AddContentIdHashEntry(siteKey);
+            }
             else
+            {
                 localHash = (Hashtable)hash[siteKey];
+            }
 
             var contentKey = contentName.ToLowerInvariant();
             if (localHash.ContainsKey(contentKey))
+            {
                 return (int)localHash[contentKey];
-            else
-                return 0;
+            }
+
+            return 0;
         }
 
         public int GetContentIdByNetName(int siteId, string netName)
@@ -102,7 +107,7 @@ namespace Quantumart.QPublishing.Database
 
         public int GetContentIdForItem(string itemIds)
         {
-            return GetContentIdForItem(Int32.Parse(itemIds.Split(',')[0]));
+            return GetContentIdForItem(int.Parse(itemIds.Split(',')[0]));
         }
 
         public int GetContentIdForItem(int itemId)
@@ -137,7 +142,7 @@ namespace Quantumart.QPublishing.Database
         public string GetContentName(int contentId)
         {
             var content = GetContentObject(contentId);
-            return content == null ? String.Empty : content.Name;
+            return content == null ? string.Empty : content.Name;
         }
 
         public int GetContentVirtualType(int contentId)
@@ -155,7 +160,9 @@ namespace Quantumart.QPublishing.Database
             {
                 var tableName = "content_" + contentId;
                 if (IsStage)
+                {
                     tableName += "_united";
+                }
                 var targetTable = GetCachedData(
                     $"EXEC sp_executesql N'SELECT [{fieldName}] FROM {tableName} WITH(NOLOCK) WHERE content_item_id = @itemId', N'@itemId NUMERIC', @itemId = {itemId}");
                 if (targetTable.Rows.Count > 0)
@@ -178,10 +185,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return (ContentAttribute)hash[key];
             }
-            else
-            {
-                return CacheManager.AddAttributeHashEntry(key);
-            }
+
+            return CacheManager.AddAttributeHashEntry(key);
         }
 
         public IEnumerable<ContentAttribute> GetContentAttributeObjects(int contentId)
@@ -212,12 +217,14 @@ namespace Quantumart.QPublishing.Database
             {
                 var attr = GetContentAttributeObject(attrId);
                 if (attr != null && attr.ContentId == contentId)
+                {
                     result = attrId;
+                }
             }
             return result;
         }
 
-        private int GetAttributeIdFromFieldName(string valueFieldName)
+        private static int GetAttributeIdFromFieldName(string valueFieldName)
         {
             var result = 0;
             if (!string.IsNullOrEmpty(valueFieldName) && valueFieldName.IndexOf("field_", StringComparison.Ordinal) == 0)
@@ -225,7 +232,7 @@ namespace Quantumart.QPublishing.Database
                 var strAttrId = valueFieldName.ToLowerInvariant().Replace("field_", "");
                 if (Information.IsNumeric(strAttrId))
                 {
-                    result = Int32.Parse(strAttrId);
+                    result = int.Parse(strAttrId);
                 }
             }
             return result;
@@ -235,7 +242,6 @@ namespace Quantumart.QPublishing.Database
         {
             return FieldName(GetAttributeIdByNetNames(siteId, netContentName, netFieldName));
         }
-
         #endregion
     }
 }

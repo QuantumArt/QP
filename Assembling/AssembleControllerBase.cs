@@ -9,7 +9,6 @@ using Quantumart.QP8.Assembling.Info;
 
 namespace Quantumart.QP8.Assembling
 {
-
     public enum AssembleMode
     {
         Page,
@@ -99,8 +98,6 @@ namespace Quantumart.QP8.Assembling
                         Directory.CreateDirectory(currentPath);
                     }
                 }
-
-
             }
         }
 
@@ -442,7 +439,7 @@ namespace Quantumart.QP8.Assembling
             var undefValues = new Hashtable();
 
             FindFormatValues(control, defValues, undefValues);
-            if ((defValues.Keys.Count > 0) || (undefValues.Keys.Count > 0))
+            if (defValues.Keys.Count > 0 || undefValues.Keys.Count > 0)
             {
                 sb.Append(Padding(padLevel)).AppendFormat("{0}", GetIf(control.IsCSharp, "Not QPTrace Is Nothing", "QPTrace != null")).AppendLine("");
                 foreach (string key in defValues.Keys)
@@ -501,7 +498,7 @@ namespace Quantumart.QP8.Assembling
                         var value = m.Groups["key"].Value;
                         var trimValue = value.Length > 2 ? value.Substring(1, value.Length - 2) : value;
                         var key = value.ToLowerInvariant();
-                        if ((value.IndexOf('"') != 0) || (value.LastIndexOf('"') != value.Length - 1) || (trimValue.IndexOf('"') > 0))
+                        if (value.IndexOf('"') != 0 || value.LastIndexOf('"') != value.Length - 1 || trimValue.IndexOf('"') > 0)
                         {
                             if (!undefined.Contains(key))
                             {
@@ -529,7 +526,7 @@ namespace Quantumart.QP8.Assembling
             {
                 arr[2] = control.Row["FILTER_VALUE"].ToString();
                 arr[3] = control.Row["SELECT_TOTAL"].ToString();
-                var allowDynamicOrder = (control.GetObject("ALLOW_ORDER_DYNAMIC") != DBNull.Value) && control.GetNumericBoolean("ALLOW_ORDER_DYNAMIC");
+                var allowDynamicOrder = control.GetObject("ALLOW_ORDER_DYNAMIC") != DBNull.Value && control.GetNumericBoolean("ALLOW_ORDER_DYNAMIC");
                 arr[4] = allowDynamicOrder ? control.Row["ORDER_DYNAMIC"].ToString() : "";
             }
 
@@ -632,7 +629,7 @@ namespace Quantumart.QP8.Assembling
                 using (var sw = CreateFile(Info.Paths.FullPageCodePath))
                 {
                     sw.Write(PageCodeBehind);
-                    sw.WriteLine("");
+                    sw.WriteLine(string.Empty);
                     sw.Write(GetPageCodeTimeStamp());
                     sw.Close();
                 }
@@ -701,7 +698,7 @@ namespace Quantumart.QP8.Assembling
             using (var sw = CreateFile(control.TargetFolder + control.CommonCodeFileName))
             {
                 sw.Write(GetControlCodeBehind(control, false));
-                sw.WriteLine("");
+                sw.WriteLine(string.Empty);
                 sw.Write(GetCodeTimeStamp(control));
                 sw.Close();
             }
@@ -942,7 +939,7 @@ namespace Quantumart.QP8.Assembling
                 if (IsDbConnected && !Info.IsAssembleObjectsMode)
                 {
                     ParseFormat(control);
-                    if (Info.IsAssembleFormatMode && (Info.Controls.RowIndex == 0))
+                    if (Info.IsAssembleFormatMode && Info.Controls.RowIndex == 0)
                     {
                         var checkFormat =
                             new ControlInfo(Info.Controls.Data.Rows[Info.Controls.RowIndex + 1], Info);
@@ -1009,7 +1006,7 @@ namespace Quantumart.QP8.Assembling
 
         protected void WriteControlGetDataCode(ControlInfo control, StringBuilder sb, int padLevel)
         {
-            if ((control.CurrentType == ControlType.PublishingForm) || ((control.CurrentType == ControlType.PublishingContainer) && !control.Container.IsNewAssembling))
+            if (control.CurrentType == ControlType.PublishingForm || control.CurrentType == ControlType.PublishingContainer && !control.Container.IsNewAssembling)
             {
                 sb.Append(Padding(padLevel)).AppendLine("ContentName = \"" + control.GetString("CONTENT_NAME") + "\"" + LineEnd(control.IsCSharp));
                 sb.Append(Padding(padLevel)).AppendLine(string.Format(CultureInfo.InvariantCulture, "ContentUploadURL = \"{0}\"{1}", Info.Paths.GetContentUploadUrl(control.GetInt32("CONTENT_ID")), LineEnd(control.IsCSharp)));
@@ -1296,7 +1293,7 @@ namespace Quantumart.QP8.Assembling
         {
             sb.Append(GetInitCode(control, padLevel));
             sb.Append(GetTraceCode(control, padLevel));
-            if ((control.CurrentType == ControlType.PublishingForm) || (control.CurrentType == ControlType.PublishingContainer))
+            if (control.CurrentType == ControlType.PublishingForm || control.CurrentType == ControlType.PublishingContainer)
             {
                 if (string.IsNullOrEmpty(control.GetString("CONTENT_ID")))
                 {

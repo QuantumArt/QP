@@ -34,8 +34,6 @@ namespace Quantumart.QPublishing.Database
 
             ContentAttribute[] attrs;
             var fullUpdate = (attrIds == null || attrIds.Length == 0) && overrideMissedFields;
-
-
             var enumerable = values?.ToArray() ?? new Dictionary<string, string>[0];
             var fullAttrs = GetContentAttributeObjects(contentId).Where(n => n.Type != AttributeType.M2ORelation).ToArray();
             if (!overrideMissedFields && attrIds == null)
@@ -73,9 +71,6 @@ namespace Quantumart.QPublishing.Database
             {
                 DisposeInternalConnection();
             }
-
-
-
         }
 
         private void ReplicateData(IEnumerable<Dictionary<string, string>> values, string attrString)
@@ -85,6 +80,7 @@ namespace Quantumart.QPublishing.Database
                 CommandType = CommandType.StoredProcedure,
                 CommandTimeout = 120
             };
+
             var result = string.Join(",", values.Select(n => n[SystemColumnNames.Id]).ToArray());
             cmd.Parameters.Add(new SqlParameter("@ids", SqlDbType.NVarChar, -1) { Value = result });
             cmd.Parameters.Add(new SqlParameter("@attr_ids", SqlDbType.NVarChar, -1) { Value = attrString });
@@ -93,12 +89,17 @@ namespace Quantumart.QPublishing.Database
 
         private void ImportItemLink(XDocument linkDoc)
         {
-            if (linkDoc == null) throw new ArgumentNullException(nameof(linkDoc));
+            if (linkDoc == null)
+            {
+                throw new ArgumentNullException(nameof(linkDoc));
+            }
+
             var cmd = new SqlCommand("qp_update_m2m_values")
             {
                 CommandType = CommandType.StoredProcedure,
                 CommandTimeout = 120
             };
+
             cmd.Parameters.AddWithValue("@xmlParameter", linkDoc.ToString(SaveOptions.None));
             ProcessData(cmd);
         }
@@ -107,6 +108,7 @@ namespace Quantumart.QPublishing.Database
         {
             var linkDoc = new XDocument();
             linkDoc.Add(new XElement("items"));
+
             var toManyAttrs = manyToManyAttrs as ContentAttribute[] ?? manyToManyAttrs.ToArray();
             foreach (var value in values)
             {
@@ -115,7 +117,10 @@ namespace Quantumart.QPublishing.Database
                     string temp;
                     var linkElem = new XElement("item");
                     linkElem.Add(new XAttribute("id", value[SystemColumnNames.Id]));
-                    if (attr.LinkId != null) linkElem.Add(new XAttribute("linkId", attr.LinkId.Value));
+                    if (attr.LinkId != null)
+                    {
+                        linkElem.Add(new XAttribute("linkId", attr.LinkId.Value));
+                    }
                     if (value.TryGetValue(attr.Name, out temp))
                     {
                         linkElem.Add(new XAttribute("value", temp));
@@ -123,34 +128,35 @@ namespace Quantumart.QPublishing.Database
                     }
                 }
             }
+
             return linkDoc;
         }
 
 
         private void ImportContentData(XDocument dataDoc)
         {
-            var sql = @"	
+            const string sql = @"
             WITH X (CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA, BLOB_DATA)
             AS
             (
                 SELECT
                 doc.col.value('./@id', 'int') CONTENT_ITEM_ID
                 ,doc.col.value('./@attrId', 'int') ATTRIBUTE_ID
-                ,doc.col.value('(DATA)[1]', 'nvarchar(3500)') DATA  
-                ,doc.col.value('(BLOB_DATA)[1]', 'nvarchar(max)') BLOB_DATA 
+                ,doc.col.value('(DATA)[1]', 'nvarchar(3500)') DATA
+                ,doc.col.value('(BLOB_DATA)[1]', 'nvarchar(max)') BLOB_DATA
                 FROM @xmlParameter.nodes('/ITEMS/ITEM') doc(col)
             )
             UPDATE CONTENT_DATA
             SET CONTENT_DATA.DATA = X.DATA, CONTENT_DATA.BLOB_DATA = X.BLOB_DATA, NOT_FOR_REPLICATION = 1, MODIFIED = GETDATE()
-            FROM dbo.CONTENT_DATA 
-            INNER JOIN X ON CONTENT_DATA.CONTENT_ITEM_ID = X.CONTENT_ITEM_ID AND dbo.CONTENT_DATA.ATTRIBUTE_ID = X.ATTRIBUTE_ID
-            ";
+            FROM dbo.CONTENT_DATA
+            INNER JOIN X ON CONTENT_DATA.CONTENT_ITEM_ID = X.CONTENT_ITEM_ID AND dbo.CONTENT_DATA.ATTRIBUTE_ID = X.ATTRIBUTE_ID            ";
 
             var cmd = new SqlCommand(sql)
             {
                 CommandTimeout = 120,
                 CommandType = CommandType.Text
             };
+
             cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = dataDoc.ToString(SaveOptions.None) });
             ProcessData(cmd);
         }
@@ -188,7 +194,9 @@ namespace Quantumart.QPublishing.Database
                         elem.Add(new XElement(attr.DbField, XmlValidChars(temp)));
                     }
                     if (valueExists || overrideMissedFields)
+                    {
                         dataDoc.Root?.Add(elem);
+                    }
                 }
             }
             return dataDoc;
@@ -234,13 +242,13 @@ namespace Quantumart.QPublishing.Database
 
         private void ImportContentItem(int contentId, IEnumerable<Dictionary<string, string>> values, int lastModifiedBy, XDocument doc)
         {
-            var insertInto = @"
-                DECLARE @Articles TABLE 
+            const string insertInto = @"
+                DECLARE @Articles TABLE
                 (
                     CONTENT_ITEM_ID NUMERIC,
                     STATUS_TYPE_ID NUMERIC,
                     VISIBLE NUMERIC,
-                    ARCHIVE NUMERIC                
+                    ARCHIVE NUMERIC
                 )
 
                 DECLARE @NewArticles TABLE(ID INT)
@@ -258,42 +266,43 @@ namespace Quantumart.QPublishing.Database
                 SELECT @contentId, VISIBLE, ARCHIVE, STATUS_TYPE_ID, @lastModifiedBy, @notForReplication
                 FROM @Articles a WHERE a.CONTENT_ITEM_ID = 0
 
-                UPDATE CONTENT_ITEM with(rowlock) SET 
-                    VISIBLE = COALESCE(a.visible, ci.visible), 
-                    ARCHIVE = COALESCE(a.archive, ci.archive), 
+                UPDATE CONTENT_ITEM with(rowlock) SET
+                    VISIBLE = COALESCE(a.visible, ci.visible),
+                    ARCHIVE = COALESCE(a.archive, ci.archive),
                     STATUS_TYPE_ID = COALESCE(a.STATUS_TYPE_ID, ci.STATUS_TYPE_ID),
                     LAST_MODIFIED_BY = @lastModifiedBy,
                     MODIFIED = GETDATE()
                 FROM @Articles a INNER JOIN content_item ci on a.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
-                   
+
                 SELECT ID FROM @NewArticles
                 ";
-            var cmd = new SqlCommand(insertInto) {CommandType = CommandType.Text};
+            var cmd = new SqlCommand(insertInto) { CommandType = CommandType.Text };
             cmd.Parameters.Add(new SqlParameter("@xmlParameter", SqlDbType.Xml) { Value = doc.ToString(SaveOptions.None) });
             cmd.Parameters.AddWithValue("@contentId", contentId);
             cmd.Parameters.AddWithValue("@lastModifiedBy", lastModifiedBy);
             cmd.Parameters.AddWithValue("@notForReplication", 1);
 
-
             var ids = new Queue<int>(GetRealData(cmd).AsEnumerable().Select(n => (int)n["ID"]).ToArray());
-
             foreach (var value in values)
             {
                 if (value[SystemColumnNames.Id] == "0")
+                {
                     value[SystemColumnNames.Id] = ids.Dequeue().ToString();
+                }
             }
         }
 
-        private static int? GetIntFromDictionary(Dictionary<string, string> value, string key, int? defaultValue)
+        private static int? GetIntFromDictionary(IReadOnlyDictionary<string, string> value, string key, int? defaultValue)
         {
             var result = defaultValue;
             string tempId;
             if (value.TryGetValue(key, out tempId))
             {
                 int id;
-                if (int.TryParse(tempId, out id)) ;
+                int.TryParse(tempId, out id);
                 result = id;
             }
+
             return result;
         }
 
@@ -302,6 +311,5 @@ namespace Quantumart.QPublishing.Database
             var temp = GetIntFromDictionary(value, key, isNew ? defaultValue : null);
             return temp.HasValue ? new XElement(key, temp.Value) : null;
         }
-
     }
 }

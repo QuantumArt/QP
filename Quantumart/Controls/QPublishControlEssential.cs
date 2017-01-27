@@ -8,23 +8,19 @@ using Quantumart.QPublishing.Pages;
 
 namespace Quantumart.QPublishing.Controls
 {
-    
     public class QPublishControlEssential
     {
         private string _contentName;
         private string _contentUploadUrl;
 
         private Hashtable _fieldInfoDictionary;
-
-
-        ///relation to the parent control
         private readonly IQUserControl _currentControl;
-        
+
         public QPublishControlEssential(IQUserControl control)
         {
             _currentControl = control;
         }
-        
+
         public IQPage Page => _currentControl.QPage;
 
         public DataTable Data { get; set; }
@@ -67,7 +63,6 @@ namespace Quantumart.QPublishing.Controls
 
         public string Statuses { get; set; } = "'Published'";
 
-
         public int ContentId { get; set; }
 
         public int ExtSiteId { get; set; }
@@ -78,43 +73,49 @@ namespace Quantumart.QPublishing.Controls
 
         public bool EnableCacheInvalidation { get; set; } = false;
 
-        public string ContentName {
-            get {
-                if (string.IsNullOrEmpty(_contentName)) {
+        public string ContentName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_contentName))
+                {
                     _contentName = Page.Cnn.GetContentName(Convert.ToInt32(ContentId));
                 }
                 return _contentName;
             }
             set { _contentName = value; }
         }
-        
-        public new Hashtable FieldInfoDictionary {
+
+        public new Hashtable FieldInfoDictionary
+        {
             get { return _fieldInfoDictionary ?? (_fieldInfoDictionary = new Hashtable()); }
             set { _fieldInfoDictionary = value; }
         }
-        
-        public string ContentUploadUrl {
-            get {
-                if (string.IsNullOrEmpty(_contentUploadUrl)) {
+
+        public string ContentUploadUrl
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_contentUploadUrl))
+                {
                     _contentUploadUrl = Page.Cnn.GetContentUploadUrlByID(ExtSiteId, ContentId);
                 }
                 return _contentUploadUrl;
             }
             set { _contentUploadUrl = value; }
         }
-        
-        public string CacheKey { get; set; }
 
+        public string CacheKey { get; set; }
 
         private string Select
         {
             get
             {
-                string @select = "c.*";
-                @select = UseSecurity && !UseLevelFiltration ?
-                    $"{@select}, IsNull(pi.permission_level,0) as current_permission_level "
-                    : @select;
-                return @select;
+                var select = "c.*";
+                select = UseSecurity && !UseLevelFiltration ?
+                    $"{select}, IsNull(pi.permission_level,0) as current_permission_level "
+                    : select;
+                return select;
             }
         }
 
@@ -122,15 +123,15 @@ namespace Quantumart.QPublishing.Controls
         {
             get
             {
-                string @from =
-                    $" content_{ContentId}{(Page.IsStage || ForceUnited ? "_UNITED" : String.Empty)} AS c WITH (NOLOCK)";
+                string from =
+                    $" content_{ContentId}{(Page.IsStage || ForceUnited ? "_UNITED" : string.Empty)} AS c WITH (NOLOCK)";
                 if (UseSecurity)
                 {
-                    @from = UseLevelFiltration ?
-                        $"{@from} inner join ({MagicString}) as pi on c.content_item_id = pi.content_item_id"
-                        : $"{@from} left outer join ({MagicString}) as pi on c.content_item_id = pi.content_item_id";
+                    from = UseLevelFiltration ?
+                        $"{from} inner join ({MagicString}) as pi on c.content_item_id = pi.content_item_id"
+                        : $"{from} left outer join ({MagicString}) as pi on c.content_item_id = pi.content_item_id";
                 }
-                return @from;
+                return from;
             }
         }
 
@@ -138,16 +139,18 @@ namespace Quantumart.QPublishing.Controls
         {
             get
             {
-                string visibleFilter = UseSchedule ? "c.visible = 1" : "1 = 1";
-                string archiveFilter = ShowArchive ? String.Empty : "and c.archive = 0";
-                string statusFilter = Page.IsStage ? String.Empty :
+                var visibleFilter = UseSchedule ? "c.visible = 1" : "1 = 1";
+                var archiveFilter = ShowArchive ? string.Empty : "and c.archive = 0";
+                var statusFilter = Page.IsStage ? string.Empty :
                     $"AND c.status_type_id in (select status_type_id from status_type where status_type_name in ({Statuses}))";
                 if (IsRoot)
-                    return !String.IsNullOrEmpty(CustomFilter) ? CustomFilter :
+                {
+                    return !string.IsNullOrEmpty(CustomFilter) ? CustomFilter :
                         $"c.content_item_id = {Page.NumValue("id")}";
-                else
-                    return
-                        $" {visibleFilter} {archiveFilter} {statusFilter} {QPageEssential.GetSimpleContainerFilterExpression(CustomFilter)} ";
+                }
+
+                return
+                    $" {visibleFilter} {archiveFilter} {statusFilter} {QPageEssential.GetSimpleContainerFilterExpression(CustomFilter)} ";
             }
         }
 
@@ -155,65 +158,69 @@ namespace Quantumart.QPublishing.Controls
 
         private void DetermineExtSiteId()
         {
-            int extSiteId = Page.site_id;
+            var extSiteId = Page.site_id;
             if (!string.IsNullOrEmpty(DynamicVariable))
             {
                 ContentId = Page.Cnn.GetDynamicContentId(Page.InternalStrValue(DynamicVariable), ContentId, Page.site_id, ref extSiteId);
             }
             ExtSiteId = extSiteId;
         }
-        
+
         public string GetBackendUrlForNotification(string defaultBackendUrl)
         {
             var backendUrl = DBConnector.AppSettings["BackendUrlForNotification"] ?? "http://" + defaultBackendUrl;
             return backendUrl;
         }
-        
+
         public string GetFieldUploadUrl(string fieldName)
         {
             return _currentControl.QPage.GetFieldUploadUrl(fieldName, ContentId);
         }
 
-       
         // ReSharper disable once RedundantAssignment
-        protected long[] GetRandomIds(string @from, string @where, int count, ref long totalCount)
+        protected long[] GetRandomIds(string from, string where, int count, ref long totalCount)
         {
-            long[] ids = GetIds(@from, @where);
-            
-            if (count > ids.Length || count == 0) {
+            var ids = GetIds(from, where);
+
+            if (count > ids.Length || count == 0)
+            {
                 count = ids.Length;
             }
             totalCount = ids.Length;
-            
-            Random rnd = new Random(DateTime.Now.Millisecond);
-            long[] result = new long[count];
-            
-            for (int i = 0; i <= count - 1; i++) {
-                int j = rnd.Next(i, ids.Length);
-                if (j == ids.Length) {
+
+            var rnd = new Random(DateTime.Now.Millisecond);
+            var result = new long[count];
+
+            for (var i = 0; i <= count - 1; i++)
+            {
+                var j = rnd.Next(i, ids.Length);
+                if (j == ids.Length)
+                {
                     j -= 1;
                 }
-                long temp = ids[i];
+                var temp = ids[i];
                 ids[i] = ids[j];
                 ids[j] = temp;
                 result[i] = ids[i];
             }
-            
+
             return result;
         }
-        
-        protected long[] GetIds(string @from, string @where)
+
+        protected long[] GetIds(string from, string where)
         {
-            DataTable dt = Page.Cnn.GetCachedData($"select content_item_id as id from {@from} where {@where}", Duration / 60);
-            long[] result = new long[dt.Rows.Count];
-            
-            for (int i = 0; i <= dt.Rows.Count - 1; i++) {
-                result[i] = Int64.Parse(dt.Rows[i]["id"].ToString());
+            // ReSharper disable once PossibleLossOfFraction
+            var dt = Page.Cnn.GetCachedData($"select content_item_id as id from {from} where {where}", Duration / 60);
+            var result = new long[dt.Rows.Count];
+            for (var i = 0; i <= dt.Rows.Count - 1; i++)
+            {
+                result[i] = long.Parse(dt.Rows[i]["id"].ToString());
             }
+
             return result;
         }
-        
-        private string MagicString => "<$_security_insert_$>";
+
+        private static string MagicString => "<$_security_insert_$>";
 
         public void FillData()
         {
@@ -221,53 +228,63 @@ namespace Quantumart.QPublishing.Controls
             FillDataTable(Select, From, Where, OrderBy);
         }
 
-
-        private string GetSessionVariable(string name, string defaultValue)
+        private static string GetSessionVariable(string name, string defaultValue)
         {
-            string result = defaultValue;
+            var result = defaultValue;
             if (HttpContext.Current.Session != null)
             {
-                object obj = HttpContext.Current.Session[name];
+                var obj = HttpContext.Current.Session[name];
                 if (obj != null)
+                {
                     return obj.ToString();
+                }
             }
             return result;
         }
-        
-        public void FillDataTable(string @select, string @from, string @where, string @orderBy)
+
+        public void FillDataTable(string select, string from, string where, string orderBy)
         {
             long totalRecords = 0;
-            if (string.IsNullOrEmpty(@select)) @select = " c.* ";
-            int uid = Int32.Parse(GetSessionVariable("@qp_UID", "0"));
-            int gid = Int32.Parse(GetSessionVariable("@qp_GID", "0"));
-            ContainerQueryObject queryObj = new ContainerQueryObject(Page.Cnn, @select, @from, @where, orderBy, StartRow, PageSize, !RotateContent && PageSize != "0", UseSecurity, Duration, StartLevel, EndLevel, ContentId, uid, gid);
-            if (!RotateContent) {
+            if (string.IsNullOrEmpty(select))
+            {
+                select = " c.* ";
+            }
+            var uid = int.Parse(GetSessionVariable("@qp_UID", "0"));
+            var gid = int.Parse(GetSessionVariable("@qp_GID", "0"));
+            var queryObj = new ContainerQueryObject(Page.Cnn, select, from, where, orderBy, StartRow, PageSize, !RotateContent && PageSize != "0", UseSecurity, Duration, StartLevel, EndLevel, ContentId, uid, gid);
+            if (!RotateContent)
+            {
                 Data = Page.Cnn.GetContainerQueryResultTable(queryObj, out totalRecords);
                 AbsoluteTotalRecords = totalRecords;
             }
-            else {
-                long[] ids = GetRandomIds(@from, @where, Int32.Parse(PageSize), ref totalRecords);
+            else
+            {
+                var ids = GetRandomIds(from, where, int.Parse(PageSize), ref totalRecords);
                 AbsoluteTotalRecords = totalRecords;
                 queryObj.OrderBy = " ";
                 queryObj.StartRow = "1";
                 queryObj.PageSize = "1";
-                if (ids.Length == 0) {
+                if (ids.Length == 0)
+                {
                     queryObj.Where = "c.content_item_id = 0";
                     Data = Page.Cnn.GetContainerQueryResultTable(queryObj, out totalRecords);
                 }
-                for (int i = 0; i <= ids.Length - 1; i++) {
+                for (var i = 0; i <= ids.Length - 1; i++)
+                {
                     queryObj.Where = $"c.content_item_id = {ids[i]}";
-                    DataTable dt = Page.Cnn.GetContainerQueryResultTable(@queryObj, out totalRecords);
-                    if (Data == null) {
+                    var dt = Page.Cnn.GetContainerQueryResultTable(queryObj, out totalRecords);
+                    if (Data == null)
+                    {
                         Data = dt;
                     }
-                    else {
+                    else
+                    {
                         Data.Merge(dt);
                     }
                 }
             }
             TotalRecords = Data.Rows.Count;
-            RecordsPerPage = Int32.Parse(PageSize);
+            RecordsPerPage = int.Parse(PageSize);
         }
     }
 }

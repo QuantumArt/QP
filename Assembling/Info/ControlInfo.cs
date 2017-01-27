@@ -23,9 +23,11 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 Container = new ContainerInfo(this);
             }
+
             TargetFolder = GetTargetFolder();
             CodeBehind = CodeTransformer.Preprocess(Row["CODE_BEHIND"].ToString());
             Presentation = CodeTransformer.Preprocess(Row["FORMAT_BODY"].ToString());
+
             var code = CodeBehind;
             UserNamespaces = CodeTransformer.CutNamespaceDefinitionsFromCode(ref code);
             CodeBehind = CodeTransformer.AppendIndent(code);
@@ -37,26 +39,30 @@ namespace Quantumart.QP8.Assembling.Info
         {
             return Convert.ToBoolean(GetInt32(fieldName));
         }
+
         public int GetInt32(string fieldName)
         {
             if (Row.Table.Columns[fieldName] == null)
             {
-                throw new DataException(String.Format(CultureInfo.InvariantCulture, "Field {0} is not found in the object-level information table", fieldName));
+                throw new DataException(string.Format(CultureInfo.InvariantCulture, "Field {0} is not found in the object-level information table", fieldName));
             }
             return Convert.ToInt32(GetString(fieldName), CultureInfo.InvariantCulture);
         }
+
         public string GetString(string fieldName)
         {
             return Row.Table.Columns[fieldName] != null ? Row[fieldName].ToString() : "";
         }
+
         public bool GetBoolean(string fieldName)
         {
             if (Row.Table.Columns[fieldName] == null)
             {
-                throw new DataException(String.Format(CultureInfo.InvariantCulture, "Field {0} is not found in the object-level information table", fieldName));
+                throw new DataException(string.Format(CultureInfo.InvariantCulture, "Field {0} is not found in the object-level information table", fieldName));
             }
             return (bool)Row[fieldName];
         }
+
         public object GetObject(string fieldName)
         {
             return Row[fieldName];
@@ -72,7 +78,6 @@ namespace Quantumart.QP8.Assembling.Info
 
         public string CodeBehind { get; set; }
 
-
         public int TemplateId => GetInt32("PAGE_TEMPLATE_ID");
 
         public int LanguageId => GetInt32("NET_LANGUAGE_ID");
@@ -85,15 +90,21 @@ namespace Quantumart.QP8.Assembling.Info
 
         public bool ContentSelected => GetObject("CONTENT_ID") != DBNull.Value;
 
-        public string MissedContentExceptionString => String.Format(CultureInfo.InvariantCulture, "Content is not selected in {3} (Object: {0}, Template: {1}, Page Id: {2})", GetString("OBJECT_NAME"), GetString("TEMPLATE_NAME"), GetString("PAGE_ID"), TypeName);
+        public string MissedContentExceptionString => string.Format(CultureInfo.InvariantCulture, "Content is not selected in {3} (Object: {0}, Template: {1}, Page Id: {2})", GetString("OBJECT_NAME"), GetString("TEMPLATE_NAME"), GetString("PAGE_ID"), TypeName);
 
         public string TypeName
         {
             get
             {
-                if (CurrentType == ControlType.PublishingContainer) return "Publishing Container";
-                else if (CurrentType == ControlType.PublishingForm) return "Publishing Form";
-                else return "Generic";
+                switch (CurrentType)
+                {
+                    case ControlType.PublishingContainer:
+                        return "Publishing Container";
+                    case ControlType.PublishingForm:
+                        return "Publishing Form";
+                    default:
+                        return "Generic";
+                }
             }
         }
 
@@ -109,29 +120,16 @@ namespace Quantumart.QP8.Assembling.Info
                 {
                     return NetObjectName;
                 }
-                else
-                {
-                    return NetObjectName + "_" + NetFormatName;
-                }
+
+                return NetObjectName + "_" + NetFormatName;
             }
         }
 
         public string NetObjectName => AssembleInfo.GetNetName(GetString("NET_OBJECT_NAME"), GetString("OBJECT_ID"), "o");
 
-        public string NetFormatName
-        {
-            get
-            {
-                if (IsRoot)
-                {
-                    return "";
-                }
-                else
-                {
-                    return AssembleInfo.GetNetName(GetString("NET_FORMAT_NAME"), GetString("CURRENT_FORMAT_ID"), "f");
-                }
-            }
-        }
+        public string NetFormatName => IsRoot
+            ? string.Empty
+            : AssembleInfo.GetNetName(GetString("NET_FORMAT_NAME"), GetString("CURRENT_FORMAT_ID"), "f");
 
         public bool EnableViewState => GetBoolean("ENABLE_VIEWSTATE");
 
@@ -139,26 +137,13 @@ namespace Quantumart.QP8.Assembling.Info
 
         public string TagName => GetString("TAG_NAME");
 
-        public string AddTag
-        {
-            get 
-            {
-                if (String.IsNullOrEmpty(TagName))
-                {
-                    return String.Empty;
-                }
-                else
-                {
-                    return String.Format(CultureInfo.InvariantCulture, "<add tagPrefix=\"qpc\" tagName=\"{0}\" src=\"{1}\" />", TagName, NetControlUrl);
-                }
-            }
-        }
+        public string AddTag => string.IsNullOrEmpty(TagName)
+            ? string.Empty
+            : string.Format(CultureInfo.InvariantCulture, "<add tagPrefix=\"qpc\" tagName=\"{0}\" src=\"{1}\" />", TagName, NetControlUrl);
 
         public string NetControlUrl => "/~" + TargetFolder.Replace(Info.Paths.BaseAssemblePath, "").Replace("\\", "/");
 
-
         public ControlType CurrentType => AssembleInfo.GetControlType(TypeId);
-
 
         public string TargetFolder { get; }
 
@@ -171,9 +156,11 @@ namespace Quantumart.QP8.Assembling.Info
                 sb.Append("_");
                 sb.Append(formatName);
             }
+
             sb.Append(".ascx");
             return sb.ToString();
         }
+
         public static string GetSimpleFileName(string objectName)
         {
             var sb = new StringBuilder();
@@ -184,7 +171,7 @@ namespace Quantumart.QP8.Assembling.Info
 
         private static bool NotRoot(string formatName)
         {
-            return !String.IsNullOrEmpty(formatName);
+            return !string.IsNullOrEmpty(formatName);
         }
 
         public string CommonFileName => GetFileName(NetObjectName, NetFormatName);
@@ -199,33 +186,17 @@ namespace Quantumart.QP8.Assembling.Info
 
         private string GetTargetFolder()
         {
-
             if (IsRoot)
             {
-                if (Info.IsAssembleFormatMode)
-                {
-                    return Info.Paths.PageControlsPath;
-                }
-                else
-                {
-                    return Info.Paths.TemplateControlsPath;
-                }
+                return Info.IsAssembleFormatMode ? Info.Paths.PageControlsPath : Info.Paths.TemplateControlsPath;
             }
-            else
+
+            if (IsPageControl)
             {
-                if (IsPageControl)
-                {
-                    return Info.Paths.PageControlsPath;
-                }
-                else if (TemplateId == Info.TemplateId)
-                {
-                    return Info.Paths.TemplateControlsPath;
-                }
-                else
-                {
-                    return Info.Paths.GetExternalPath(TemplateId);
-                }
+                return Info.Paths.PageControlsPath;
             }
+
+            return TemplateId == Info.TemplateId ? Info.Paths.TemplateControlsPath : Info.Paths.GetExternalPath(TemplateId);
         }
 
         private bool IsPageControl => Row["PAGE_ID"] != DBNull.Value;
@@ -233,44 +204,39 @@ namespace Quantumart.QP8.Assembling.Info
         internal string GetThankYouPage()
         {
             var sb = new StringBuilder();
-            var dv = new DataView(Info.ThankYouPages) {RowFilter = "OBJECT_ID = " + GetString("OBJECT_ID")};
+            var dv = new DataView(Info.ThankYouPages) { RowFilter = "OBJECT_ID = " + GetString("OBJECT_ID") };
             if (dv.Count > 0)
             {
                 var templateFolder = dv[0]["TEMPLATE_FOLDER"].ToString();
-                if (!String.IsNullOrEmpty(templateFolder))
+                if (!string.IsNullOrEmpty(templateFolder))
                 {
                     sb.Append(templateFolder);
                     sb.Append("/");
                 }
+
                 var pageFolder = dv[0]["PAGE_FOLDER"].ToString();
-                if (!String.IsNullOrEmpty(pageFolder))
+                if (!string.IsNullOrEmpty(pageFolder))
                 {
                     sb.Append(pageFolder);
                     sb.Append("/");
                 }
+
                 sb.Append(dv[0]["PAGE_FILENAME"]);
             }
-            return sb.ToString();
 
+            return sb.ToString();
         }
 
         private string GetCustomClassField()
         {
-
             switch (CurrentType)
             {
                 case ControlType.PublishingContainer:
-                    {
-                        return "custom_class_for_containers";
-                    }
+                    return "custom_class_for_containers";
                 case ControlType.PublishingForm:
-                    {
-                        return "custom_class_for_forms";
-                    }
+                    return "custom_class_for_forms";
                 default:
-                    {
-                        return "custom_class_for_generics";
-                    }
+                    return "custom_class_for_generics";
             }
 
         }
@@ -283,14 +249,8 @@ namespace Quantumart.QP8.Assembling.Info
                 {
                     return GetString("CONTROL_CUSTOM_CLASS");
                 }
-                else if (!String.IsNullOrEmpty(GetString("CONTROL_CUSTOM_CLASS")))
-                {
-                    return GetString("CONTROL_CUSTOM_CLASS");
-                }
-                else
-                {
-                    return Info.GetString(GetCustomClassField());
-                }
+
+                return !string.IsNullOrEmpty(GetString("CONTROL_CUSTOM_CLASS")) ? GetString("CONTROL_CUSTOM_CLASS") : Info.GetString(GetCustomClassField());
             }
         }
 
@@ -298,36 +258,19 @@ namespace Quantumart.QP8.Assembling.Info
         {
             get
             {
-                if (CurrentType == ControlType.PublishingContainer)
+                switch (CurrentType)
                 {
-                    return "Quantumart.QPublishing." + (Info.AssembleForMobile ? "QMobilePublishControl" : "QPublishControl");
-                }
-                else if (CurrentType == ControlType.PublishingForm)
-                {
-                    return "Quantumart.QPublishing.PublishingForm";
-                }
-                else
-                {
-                    return "Quantumart.QPublishing." + (Info.AssembleForMobile ? "QMobileQUserControl" : "QUserControl");
+                    case ControlType.PublishingContainer:
+                        return "Quantumart.QPublishing." + (Info.AssembleForMobile ? "QMobilePublishControl" : "QPublishControl");
+                    case ControlType.PublishingForm:
+                        return "Quantumart.QPublishing.PublishingForm";
                 }
 
+                return "Quantumart.QPublishing." + (Info.AssembleForMobile ? "QMobileQUserControl" : "QUserControl");
             }
 
         }
-        public string BaseClassName
-        {
-            get
-            {
-                if (!String.IsNullOrEmpty(CustomClassName))
-                {
-                    return CustomClassName;
-                }
-                else
-                {
-                    return SystemClassName;
-                }
 
-            }
-        }
+        public string BaseClassName => !string.IsNullOrEmpty(CustomClassName) ? CustomClassName : SystemClassName;
     }
 }

@@ -1,4 +1,3 @@
-
 using System;
 using Quantumart.QPublishing.Pages;
 
@@ -7,7 +6,6 @@ namespace Quantumart.QPublishing.Controls
 
     public sealed class PlaceHolder : QUserControlBase
     {
-
         protected override void OnInit(EventArgs e)
         {
             var page = Page as QPage;

@@ -34,7 +34,6 @@ namespace Quantumart.QP8.Assembling
             FillController(pageId, null, firstInBatch);
         }
 
-
         public AssemblePageController(int pageId, string connectionParameter)
             : base(connectionParameter)
         {
@@ -89,14 +88,11 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-
-
         public override void Assemble()
         {
             CreateFolder(Info.Paths.PageControlsPath);
             RemoveOldTemplateControl();
             CreateFolder(Info.Paths.TemplateControlsPath);
-
             ClearPageTrace();
 
             if (Info.AssembleAllControls)
@@ -109,18 +105,17 @@ namespace Quantumart.QP8.Assembling
             }
 
             AssemblePageFiles();
-
             InvalidatePageCache();
             InvalidateTemplateCache();
             InvalidateStructureCache();
         }
 
-
-
-
         private void AssembleAllControls()
         {
-            if (!IsDbConnected) throw new InvalidOperationException("Cannot proceed \"Assemble All Controls\" command in disconnected mode");
+            if (!IsDbConnected)
+            {
+                throw new InvalidOperationException("Cannot proceed \"Assemble All Controls\" command in disconnected mode");
+            }
 
             if (FirstInBatch)
             {
@@ -132,8 +127,5 @@ namespace Quantumart.QP8.Assembling
             var pageController = new AssemblePageObjectsController(PageId, Cnn);
             pageController.Assemble();
         }
-
-
-
     }
 }

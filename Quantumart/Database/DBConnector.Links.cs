@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlTypes;
@@ -15,9 +14,6 @@ namespace Quantumart.QPublishing.Database
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
-
-        #region Links
-
         #region GetContentItemLinkIds
 
         public string GetContentItemLinkIDs(string linkFieldName, long itemId)
@@ -54,10 +50,8 @@ namespace Quantumart.QPublishing.Database
             {
                 return itemLinkHash[key].ToString();
             }
-            else
-            {
-                return CacheManager.AddItemLinkHashEntry(linkId, itemIds, isManyToMany);
-            }
+
+            return CacheManager.AddItemLinkHashEntry(linkId, itemIds, isManyToMany);
         }
 
         #region IdsToXml
@@ -99,8 +93,13 @@ namespace Quantumart.QPublishing.Database
             var dt = new DataTable();
             dt.Columns.Add("id");
             if (ids != null)
+            {
                 foreach (var id in ids)
+                {
                     dt.Rows.Add(id);
+                }
+            }
+
             return dt;
         }
 
@@ -123,7 +122,7 @@ namespace Quantumart.QPublishing.Database
         public string GetRealContentItemLinkIDs(string linkFieldName, string itemIds)
         {
             var info = GetRelationInfoForItem(linkFieldName, itemIds);
-            return info == null ? String.Empty : GetRealContentItemLinkIDs(info.LinkId, itemIds, info.IsManyToMany);
+            return info == null ? string.Empty : GetRealContentItemLinkIDs(info.LinkId, itemIds, info.IsManyToMany);
         }
 
         public string GetRealContentItemLinkIDs(int linkId, long itemId)
@@ -144,23 +143,23 @@ namespace Quantumart.QPublishing.Database
         public string GetRealContentItemLinkIDs(int linkId, string itemIds, bool isManyToMany)
         {
             var sql = GetContentItemLinkQuery(linkId, itemIds, isManyToMany);
-            if (String.IsNullOrEmpty(sql))
-                return String.Empty;
-            else
+            if (string.IsNullOrEmpty(sql))
             {
-                var dt = GetRealData(sql);
-                var result = new List<string> {"0"};
-                result.AddRange(dt.Rows.OfType<DataRow>().Select(n => n[0].ToString()));
-                return String.Join(",", result.ToArray());
+                return string.Empty;
             }
+
+            var dt = GetRealData(sql);
+            var result = new List<string> { "0" };
+            result.AddRange(dt.Rows.OfType<DataRow>().Select(n => n[0].ToString()));
+            return string.Join(",", result.ToArray());
         }
 
         public Dictionary<int, string> GetRealContentItemLinkIDsMultiple(int linkId, IEnumerable<int> ids, bool isManyToMany)
         {
             var result = new Dictionary<int, List<string>>();
-            var idstr = String.Join(",", ids.Select(n => n.ToString()).ToArray());
+            var idstr = string.Join(",", ids.Select(n => n.ToString()).ToArray());
             var sql = GetContentItemLinkQuery(linkId, idstr, isManyToMany, true);
-            if (!String.IsNullOrEmpty(sql))
+            if (!string.IsNullOrEmpty(sql))
             {
                 var dt = GetRealData(sql);
                 foreach (DataRow dr in dt.Rows)
@@ -169,7 +168,7 @@ namespace Quantumart.QPublishing.Database
                     var linkedItemId = (int)(decimal)dr["linked_item_id"];
                     if (!result.ContainsKey(itemId))
                     {
-                        result.Add(itemId, new List<string>() { linkedItemId.ToString() });
+                        result.Add(itemId, new List<string> { linkedItemId.ToString() });
                     }
                     else
                     {
@@ -177,7 +176,7 @@ namespace Quantumart.QPublishing.Database
                     }
                 }
             }
-            return result.Select(n => new KeyValuePair<int, string>(n.Key, String.Join(",", n.Value.ToArray())))
+            return result.Select(n => new KeyValuePair<int, string>(n.Key, string.Join(",", n.Value.ToArray())))
                 .ToDictionary(n => n.Key, n => n.Value);
 
 
@@ -187,7 +186,6 @@ namespace Quantumart.QPublishing.Database
         #endregion
 
         #region GetContentItemLinkQuery
-
         public string GetContentItemLinkQuery(string linkFieldName, long itemId)
         {
             return GetContentItemLinkQuery(linkFieldName, itemId.ToString());
@@ -196,7 +194,7 @@ namespace Quantumart.QPublishing.Database
         public string GetContentItemLinkQuery(string linkFieldName, string itemIds)
         {
             var info = GetRelationInfoForItem(linkFieldName, itemIds);
-            return info == null ? String.Empty : GetContentItemLinkQuery(info.LinkId, itemIds, info.IsManyToMany);
+            return info == null ? string.Empty : GetContentItemLinkQuery(info.LinkId, itemIds, info.IsManyToMany);
         }
 
         public string GetContentItemLinkQuery(int linkId, long itemId)
@@ -217,11 +215,13 @@ namespace Quantumart.QPublishing.Database
         public string GetContentItemLinkQuery(int linkId, string itemIds, bool isManyToMany, bool returnAll = false)
         {
             if (linkId == LegacyNotFound)
-                return String.Empty;
+            {
+                return string.Empty;
+            }
 
             var ids = itemIds.Split(',');
             string table;
-
+            string select;
             if (isManyToMany)
             {
                 table = IsStage ? "item_link_united" : "item_link";
@@ -229,36 +229,30 @@ namespace Quantumart.QPublishing.Database
                 {
                     return string.Format("EXEC sp_executesql N'SELECT linked_item_id FROM {2} WITH (NOLOCK) WHERE item_id = @itemId AND link_id = @linkId', N'@itemId NUMERIC, @linkId NUMERIC', @itemId = {0}, @linkId = {1};", ids[0], linkId, table);
                 }
-                else
-                {
-                    var select = returnAll ? "item_id, linked_item_id" : "DISTINCT linked_item_id";
-                    return string.Format("SELECT {3} FROM {2} WITH (NOLOCK) where item_id in ({0}) AND link_id = {1}", itemIds, linkId, table, select);
-                }
+
+                select = returnAll ? "item_id, linked_item_id" : "DISTINCT linked_item_id";
+                return string.Format("SELECT {3} FROM {2} WITH (NOLOCK) where item_id in ({0}) AND link_id = {1}", itemIds, linkId, table, select);
             }
-            else
+
+            var attr = GetContentAttributeObject(linkId);
+            if (attr == null)
             {
-                var attr = GetContentAttributeObject(linkId);
-                if (attr == null)
-                    return String.Empty;
-                table = IsStage ? "content_{0}_united" : "content_{0}";
-                table = String.Format(table, attr.ContentId);
-                if (ids.Length == 1)
-                {
-                    return
-                        $"EXEC sp_executesql N'SELECT content_item_id FROM {table} WITH(NOLOCK) WHERE [{attr.Name}] = @itemId', N'@itemId NUMERIC', @itemId = {ids[0]}";
-                }
-                else
-                {
-                    var select = returnAll ?
-                        $"[{attr.Name}] as item_id, content_item_id as linked_item_id"
-                        :
-                        "DISTINCT content_item_id";
-                    return string.Format("SELECT {3} FROM {0} WITH (NOLOCK) WHERE [{1}] in ({2})", table, attr.Name, itemIds, select);
-                }
+                return string.Empty;
             }
 
-        }
+            table = IsStage ? "content_{0}_united" : "content_{0}";
+            table = string.Format(table, attr.ContentId);
+            if (ids.Length == 1)
+            {
+                return $"EXEC sp_executesql N'SELECT content_item_id FROM {table} WITH(NOLOCK) WHERE [{attr.Name}] = @itemId', N'@itemId NUMERIC', @itemId = {ids[0]}";
+            }
 
+            select = returnAll
+                ? $"[{attr.Name}] as item_id, content_item_id as linked_item_id"
+                : "DISTINCT content_item_id";
+
+            return string.Format("SELECT {3} FROM {0} WITH (NOLOCK) WHERE [{1}] in ({2})", table, attr.Name, itemIds, select);
+        }
         #endregion
 
         #region GetLinkID
@@ -277,9 +271,11 @@ namespace Quantumart.QPublishing.Database
         {
             var info = GetRelationInfo(linkFieldName, contentId);
             if (info != null && info.IsManyToMany)
+            {
                 return info.LinkId;
-            else
-                return LegacyNotFound;
+            }
+
+            return LegacyNotFound;
         }
 
         public int GetLinkIdByNetName(int siteId, string netName)
@@ -305,14 +301,17 @@ namespace Quantumart.QPublishing.Database
             var nameKey = linkFieldName.ToLowerInvariant();
             var localHash = (Hashtable)linkHash[contentKey];
             if (localHash == null)
+            {
                 return CacheManager.AddLinkHashEntry(contentKey, nameKey);
-            else if (localHash.ContainsKey(nameKey))
-                return (RelationInfo)localHash[nameKey];
-            else
-                return null;
-        }
+            }
 
-        #endregion
+            if (localHash.ContainsKey(nameKey))
+            {
+                return (RelationInfo)localHash[nameKey];
+            }
+
+            return null;
+        }
 
         #endregion
     }

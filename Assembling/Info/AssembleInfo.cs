@@ -5,13 +5,11 @@ using System.Data;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling.Info
 {
     public class AssembleInfo
     {
-
         public AssembleInfo(AssembleControllerBase controller, string sqlQuery)
         {
             Controller = controller;
@@ -30,6 +28,7 @@ namespace Quantumart.QP8.Assembling.Info
         {
             return Convert.ToBoolean(GetInt32(fieldName));
         }
+
         public int GetInt32(string fieldName)
         {
             int result;
@@ -41,32 +40,29 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 throw new InvalidCastException(string.Format(CultureInfo.InvariantCulture, "Cannot convert field {0} to Int32", fieldName));
             }
-            else
-            {
-                return result;
-            }
+
+            return result;
         }
+
         public string GetString(string fieldName)
         {
             return FirstDataRow.Table.Columns[fieldName] != null ? FirstDataRow[fieldName].ToString() : "";
         }
+
         public bool GetBoolean(string fieldName)
         {
             if (FirstDataRow.Table.Columns[fieldName] == null)
             {
                 throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, "Field {0} is not found in the page-level information table", fieldName));
             }
+
             if (FirstDataRow[fieldName] == DBNull.Value)
             {
-                //return false;
                 throw new ArgumentException("Unexpected null value: " + fieldName);
             }
-            else
-            {
-                return (bool)FirstDataRow[fieldName];
-            }
-        }
 
+            return (bool)FirstDataRow[fieldName];
+        }
 
         private void FillAssembleInfo()
         {
@@ -82,12 +78,15 @@ namespace Quantumart.QP8.Assembling.Info
                     FillDataTables();
                 }
             }
-            else throw new DataException("Cannot load assemble data");
+            else
+            {
+                throw new DataException("Cannot load assemble data");
+            }
         }
 
         private void InitPermissionLevels()
         {
-            PermissionLevels = new Hashtable {{"4", "0"}, {"6", "1"}, {"3", "2"}, {"2", "3"}, {"1", "4"}};
+            PermissionLevels = new Hashtable { { "4", "0" }, { "6", "1" }, { "3", "2" }, { "2", "3" }, { "1", "4" } };
         }
 
         public string TemplateCodeBehind
@@ -97,20 +96,9 @@ namespace Quantumart.QP8.Assembling.Info
                 if (!IsAssembleFormatMode)
                 {
                     return GetString("CODE_BEHIND");
-
                 }
-                else
-                {
-                    if (IsPreviewMode)
-                    {
-                        return GetString("PREVIEW_CODE_BEHIND");
-                    }
-                    else
-                    {
-                        return "";
-                    }
 
-                }
+                return IsPreviewMode ? GetString("PREVIEW_CODE_BEHIND") : "";
             }
         }
 
@@ -122,25 +110,24 @@ namespace Quantumart.QP8.Assembling.Info
                 {
                     return GetString("TEMPLATE_BODY");
                 }
+
+                var result = string.Format(CultureInfo.InvariantCulture, "<qp:placeholder runat=\"server\" calls=\"{0}.{1}\" />", GetString("OBJECT_NAME"), GetString("FORMAT_NAME"));
+                if (IsPreviewMode)
+                {
+                    if (!string.IsNullOrEmpty(GetString("PREVIEW_TEMPLATE_BODY")))
+                    {
+                        result = Regex.Replace(GetString("PREVIEW_TEMPLATE_BODY"), @"<qp:previewholder\s+\/>", result);
+                    }
+                }
                 else
                 {
-                    var result = string.Format(CultureInfo.InvariantCulture, "<qp:placeholder runat=\"server\" calls=\"{0}.{1}\" />", GetString("OBJECT_NAME"), GetString("FORMAT_NAME"));
-                    if (IsPreviewMode)
+                    if (Mode == AssembleMode.GlobalCss)
                     {
-                        if (!string.IsNullOrEmpty(GetString("PREVIEW_TEMPLATE_BODY")))
-                        {
-                            result = Regex.Replace(GetString("PREVIEW_TEMPLATE_BODY"), @"<qp:previewholder\s+\/>", result);
-                        }
+                        result = string.Format(CultureInfo.InvariantCulture, "<html><body>{0}</body></html>", result);
                     }
-                    else
-                    {
-                        if (Mode == AssembleMode.GlobalCss)
-                        {
-                            result = string.Format(CultureInfo.InvariantCulture, "<html><body>{0}</body></html>", result);
-                        }
-                    }
-                    return result;
                 }
+
+                return result;
             }
         }
 
@@ -157,6 +144,7 @@ namespace Quantumart.QP8.Assembling.Info
                         hash.Add(record, "");
                     }
                 }
+
                 return hash;
             }
         }
@@ -182,9 +170,7 @@ namespace Quantumart.QP8.Assembling.Info
 
         public Hashtable PermissionLevels { get; private set; }
 
-
         public ControlSetInfo Controls { get; set; }
-
 
         public PathInfo Paths { get; private set; }
 
@@ -196,7 +182,7 @@ namespace Quantumart.QP8.Assembling.Info
 
         public Encoding Encoding => Encoding.GetEncoding(CharSet);
 
-        public int CacheTimeInMinutes => Mode == AssembleMode.Page ? GetInt32("CACHE_HOURS")*60 : 0;
+        public int CacheTimeInMinutes => Mode == AssembleMode.Page ? GetInt32("CACHE_HOURS") * 60 : 0;
 
         public int CachingType => Mode == AssembleMode.Page ? GetInt32("PROXY_CACHE") : 0;
 
@@ -245,7 +231,6 @@ namespace Quantumart.QP8.Assembling.Info
 
         public DataTable Objects { get; set; }
 
-
         public string TemplateFileName => NetTemplateName + ".ascx";
 
         public string TemplateCodeFileName => TemplateFileName + "." + GetLangExtension(GetInt32("NET_LANGUAGE_ID"));
@@ -272,50 +257,23 @@ namespace Quantumart.QP8.Assembling.Info
 
         private string CustomClassName => GetString(!string.IsNullOrEmpty(GetString("PAGE_CUSTOM_CLASS")) ? "PAGE_CUSTOM_CLASS" : "CUSTOM_CLASS_FOR_PAGES");
 
-        public string SystemClassName
-        {
-            get
-            {
-                if (AssembleForMobile)
-                {
-                    return "Quantumart.QPublishing.QMobilePage";
-                }
-                else
-                {
-                    return "Quantumart.QPublishing.QPage";
-                }
+        public string SystemClassName => AssembleForMobile ? "Quantumart.QPublishing.QMobilePage" : "Quantumart.QPublishing.QPage";
 
-            }
-        }
+        public string BaseClassName => !string.IsNullOrEmpty(CustomClassName) ? CustomClassName : SystemClassName;
 
-        public string BaseClassName
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(CustomClassName))
-                {
-                    return CustomClassName;
-                }
-                else
-                {
-                    return SystemClassName;
-                }
-            }
-        }
+        public bool IsAssembleObjectsMode => Mode == AssembleMode.AllPageObjects ||
+                                             Mode == AssembleMode.AllTemplateObjects ||
+                                             Mode == AssembleMode.SelectedObjects;
 
-        public bool IsAssembleObjectsMode => (Mode == AssembleMode.AllPageObjects) ||
-                                             (Mode == AssembleMode.AllTemplateObjects) ||
-                                             (Mode == AssembleMode.SelectedObjects);
+        public bool IsAssembleFormatMode => Mode == AssembleMode.GlobalCss ||
+                                            Mode == AssembleMode.Notification ||
+                                            Mode == AssembleMode.Preview ||
+                                            Mode == AssembleMode.PreviewById ||
+                                            Mode == AssembleMode.PreviewAll;
 
-        public bool IsAssembleFormatMode => (Mode == AssembleMode.GlobalCss) ||
-                                            (Mode == AssembleMode.Notification) ||
-                                            (Mode == AssembleMode.Preview) ||
-                                            (Mode == AssembleMode.PreviewById) ||
-                                            (Mode == AssembleMode.PreviewAll);
-
-        public bool IsPreviewMode => (Mode == AssembleMode.PreviewById) ||
-                                     (Mode == AssembleMode.PreviewAll) ||
-                                     (Mode == AssembleMode.Preview);
+        public bool IsPreviewMode => Mode == AssembleMode.PreviewById ||
+                                     Mode == AssembleMode.PreviewAll ||
+                                     Mode == AssembleMode.Preview;
 
         public bool IsLive => Location == AssembleLocation.Live;
 
@@ -352,28 +310,46 @@ namespace Quantumart.QP8.Assembling.Info
                 RowFilter = "SITE_ID = " + siteId.ToString(CultureInfo.InvariantCulture),
                 Sort = "WEIGHT DESC"
             };
+
             var result = new Status
             {
-                Id = Convert.ToInt32((decimal) dv[0]["STATUS_TYPE_ID"]),
+                Id = Convert.ToInt32((decimal)dv[0]["STATUS_TYPE_ID"]),
                 Name = dv[0]["STATUS_TYPE_NAME"].ToString()
             };
+
             dv.Dispose();
             return result;
         }
 
         public static string GetLangExtension(int langCode)
         {
-            var result = "";
-            if (langCode == 1) result = "cs";
-            if (langCode == 2) result = "vb";
+            var result = string.Empty;
+            if (langCode == 1)
+            {
+                result = "cs";
+            }
+
+            if (langCode == 2)
+            {
+                result = "vb";
+            }
+
             return result;
         }
 
         public static string GetLangName(int langCode)
         {
-            var result = "";
-            if (langCode == 1) result = "c#";
-            if (langCode == 2) result = "vb";
+            var result = string.Empty;
+            if (langCode == 1)
+            {
+                result = "c#";
+            }
+
+            if (langCode == 2)
+            {
+                result = "vb";
+            }
+
             return result;
         }
 
@@ -384,13 +360,12 @@ namespace Quantumart.QP8.Assembling.Info
                 case 2: { return ControlType.PublishingContainer; }
                 case 9: { return ControlType.PublishingForm; }
                 default: { return ControlType.Generic; }
-
             }
         }
 
         internal bool IsTemplateName(string name)
         {
-            var dv = new DataView(Templates) {RowFilter = "[template_name] = '" + name + "'"};
+            var dv = new DataView(Templates) { RowFilter = "[template_name] = '" + name + "'" };
             var result = dv.Count > 0;
             dv.Dispose();
             return result;
@@ -402,29 +377,22 @@ namespace Quantumart.QP8.Assembling.Info
             {
                 if (IsAssembleFormatMode)
                 {
-                    if (Mode == AssembleMode.Notification)
+                    switch (Mode)
                     {
-                        return IsLive || ForceLive ? "assemble_notification_in_live" : "assemble_notification_in_stage";
+                        case AssembleMode.Notification:
+                            return IsLive || ForceLive ? "assemble_notification_in_live" : "assemble_notification_in_stage";
+                        case AssembleMode.Preview:
+                            return IsLive || ForceLive ? "assemble_preview_in_live" : "assemble_preview_in_stage";
                     }
-                    else if (Mode == AssembleMode.Preview)
-                    {
-                        return IsLive || ForceLive ? "assemble_preview_in_live" : "assemble_preview_in_stage";
-                    }
-                    else
-                    {
-                        return "";
-                    }
-                }
-                else
-                {
 
-                    return IsLive ? "assemble_in_live" : "assemble_in_stage";
+                    return string.Empty;
                 }
+
+                return IsLive ? "assemble_in_live" : "assemble_in_stage";
             }
-
         }
 
-        internal bool GenerateTrace => (Mode == AssembleMode.Page) && GetBoolean("GENERATE_TRACE");
+        internal bool GenerateTrace => Mode == AssembleMode.Page && GetBoolean("GENERATE_TRACE");
 
         internal bool GenerateOnScreen => !(IsLive || IsAssembleFormatMode) && EnableOnScreen;
     }

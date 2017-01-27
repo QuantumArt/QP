@@ -7,10 +7,8 @@ using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QPublishing.Helpers
 {
-
     public class Dump
     {
-
         private static readonly object DataLocker = new object();
         private static readonly object TextLocker = new object();
         private static readonly object HashLocker = new object();

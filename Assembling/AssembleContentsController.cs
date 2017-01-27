@@ -28,7 +28,6 @@ namespace Quantumart.QP8.Assembling
         private DataRow _siteRow;
         private DataTable _contentToContentTable;
 
-
         public void ClearTables()
         {
             _contentsTable = null;
@@ -40,18 +39,15 @@ namespace Quantumart.QP8.Assembling
             _siteRow = null;
             _contentToContentTable = null;
         }
-        
+
         public DataRow SiteRow => _siteRow ?? (_siteRow = Cnn.GetDataTable("select * from site where site_id = " + SiteId).Rows[0]);
 
         public DataTable StatusTable => _statusTable ?? (_statusTable = Cnn.GetDataTable("select * from status_type"));
 
-        public DataTable AdditionalContextClassNameTable => _contentGroupTable ??
-                                                            (_contentGroupTable =
-                                                                Cnn.GetDataTable(
-                                                                    "select distinct add_context_class_name from content where add_context_class_name is not null and site_id = " +
-                                                                    SiteId));
+        public DataTable AdditionalContextClassNameTable => _contentGroupTable ?? (_contentGroupTable = Cnn.GetDataTable("select distinct add_context_class_name from content where add_context_class_name is not null and site_id = " + SiteId));
 
-        public DataTable UserQueryTable {
+        public DataTable UserQueryTable
+        {
             get
             {
                 if (null == _userQueryTable)
@@ -66,7 +62,8 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-        public DataTable ContentsTable {
+        public DataTable ContentsTable
+        {
             get
             {
                 if (null == _contentsTable)
@@ -99,25 +96,19 @@ namespace Quantumart.QP8.Assembling
                     qb.Append(" left join content_attribute ca3 on ca.attribute_id = ca3.back_related_attribute_id");
 
                     qb.Append($" where c.site_id = {SiteId} ");
-                    qb.Append(" ) cc where cc.COUNT = 1"); 
+                    qb.Append(" ) cc where cc.COUNT = 1");
                     _fieldsTable = Cnn.GetDataTable(qb.ToString());
                 }
                 return _fieldsTable;
             }
         }
 
-        public DataTable FieldsInfoTable => _fieldsInfoTable ??
-                                            (_fieldsInfoTable =
-                                                Cnn.GetDataTable("select COLUMN_NAME, TABLE_NAME, DATA_TYPE from INFORMATION_SCHEMA.COLUMNS"));
+        public DataTable FieldsInfoTable => _fieldsInfoTable ?? (_fieldsInfoTable = Cnn.GetDataTable("select COLUMN_NAME, TABLE_NAME, DATA_TYPE from INFORMATION_SCHEMA.COLUMNS"));
 
         public DataTable LinkTable => _linkTable ?? (_linkTable = Cnn.GetDataTable("select * from content_link"));
 
-        public DataTable ContentToContentTable => _contentToContentTable ??
-                                                  (_contentToContentTable =
-                                                      Cnn.GetDataTable(
-                                                          $"select cc.* from content_to_content cc inner join CONTENT c on l_content_id = c.CONTENT_ID INNER JOIN CONTENT c2 on r_content_id = c2.CONTENT_ID WHERE c.SITE_ID = {SiteId} and c2.SITE_ID = {SiteId} and cc.link_id in (select link_id from content_attribute ca)"));
+        public DataTable ContentToContentTable => _contentToContentTable ?? (_contentToContentTable = Cnn.GetDataTable($"select cc.* from content_to_content cc inner join CONTENT c on l_content_id = c.CONTENT_ID INNER JOIN CONTENT c2 on r_content_id = c2.CONTENT_ID WHERE c.SITE_ID = {SiteId} and c2.SITE_ID = {SiteId} and cc.link_id in (select link_id from content_attribute ca)"));
 
-        #region constructors and initializers
         public AssembleContentsController(int siteId, string sqlMetalPath, string connectionParameter) : base(connectionParameter)
         {
             FillController(siteId, sqlMetalPath);
@@ -129,19 +120,19 @@ namespace Quantumart.QP8.Assembling
             FillController(siteId, sqlMetalPath);
         }
 
-        public void FillController(int siteId, string sqlMetalPath) {
+        public void FillController(int siteId, string sqlMetalPath)
+        {
             CurrentAssembleMode = AssembleMode.Contents;
             SiteId = siteId;
-            if (string.IsNullOrEmpty(sqlMetalPath)) {
+            if (string.IsNullOrEmpty(sqlMetalPath))
+            {
                 throw new ArgumentException("Path to SqlMetal utility cannot be null or empty");
             }
             SqlMetalPath = sqlMetalPath;
         }
-        #endregion
-
-        #region paths
 
         private string _siteRoot;
+
         public string SiteRoot
         {
             get
@@ -149,8 +140,9 @@ namespace Quantumart.QP8.Assembling
                 var path = SiteRow["is_live"].ToString() == "1" ? "assembly_path" : "stage_assembly_path";
                 return _siteRoot ?? (_siteRoot = SiteRow[path].ToString().Replace(@"\bin", ""));
             }
-            set { _siteRoot = value;  }
+            set { _siteRoot = value; }
         }
+
 
         private bool? _isLive;
 
@@ -172,7 +164,7 @@ namespace Quantumart.QP8.Assembling
 
         public bool GetFlag(string key, bool defaultValue)
         {
-            return !SiteRow.Table.Columns.Contains(key) ? defaultValue : (bool)SiteRow[key];     
+            return !SiteRow.Table.Columns.Contains(key) ? defaultValue : (bool)SiteRow[key];
         }
 
         public string DataContextClass
@@ -184,11 +176,9 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-        #endregion
-
         public override void Assemble()
         {
-            var helper = new FileNameHelper() { SiteRoot = SiteRoot, DataContextClass = DataContextClass, ProceedMappingWithDb = ProceedMappingWithDb };
+            var helper = new FileNameHelper { SiteRoot = SiteRoot, DataContextClass = DataContextClass, ProceedMappingWithDb = ProceedMappingWithDb };
             var xmlProcessor = new XmlPreprocessor(this);
             if (ImportMappingToDb)
             {
@@ -226,31 +216,33 @@ namespace Quantumart.QP8.Assembling
             }
         }
 
-        private void GenerateDbmlFile(FileNameHelper helper)
+        private static void GenerateDbmlFile(FileNameHelper helper)
         {
             var xslTran = new XslCompiledTransform();
             xslTran.Load(helper.MappingXsltFileName);
             xslTran.Transform(helper.MappingResultXmlFileName, helper.DbmlFileName);
         }
 
-        private void GenerateManyToMany(FileNameHelper helper)
+        private static void GenerateManyToMany(FileNameHelper helper)
         {
             var xslTran = new XslCompiledTransform();
             xslTran.Load(helper.ManyXsltFileName);
             xslTran.Transform(helper.MappingResultXmlFileName, helper.ExtendCodeFileName);
         }
 
-        private void GenerateModifications(FileNameHelper helper)
+        private static void GenerateModifications(FileNameHelper helper)
         {
             var xslTran = new XslCompiledTransform();
             xslTran.Load(helper.ModificationXsltFileName);
             xslTran.Transform(helper.MappingResultXmlFileName, helper.ModificationCodeFileName);
         }
 
-        private void GenerateExtensions(FileNameHelper helper)
+        private static void GenerateExtensions(FileNameHelper helper)
         {
             if (File.Exists(helper.OldExtensionsCodeFileName))
+            {
                 File.Delete(helper.OldExtensionsCodeFileName);
+            }
             var xslTran = new XslCompiledTransform();
             xslTran.Load(helper.ExtensionsXsltFileName);
             xslTran.Transform(helper.MappingResultXmlFileName, helper.ExtensionsCodeFileName);
@@ -260,16 +252,16 @@ namespace Quantumart.QP8.Assembling
 
         private string Output => _output.ToString();
 
-        private Encoding OutputEncoding => Encoding.GetEncoding("cp866");
-
+        private static Encoding OutputEncoding => Encoding.GetEncoding("cp866");
 
         private void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
-            if (!string.IsNullOrEmpty(outLine.Data)) {
+            if (!string.IsNullOrEmpty(outLine.Data))
+            {
                 _output.AppendLine(OutputEncoding.GetString(Encoding.Default.GetBytes(outLine.Data)));
             }
         }
-        
+
         private void ProcessDbmlFile(FileNameHelper helper)
         {
             var process = new Process
@@ -292,7 +284,7 @@ namespace Quantumart.QP8.Assembling
                 File.WriteAllText(helper.SqlMetalLogFileName, Output);
                 if (process.ExitCode != 0)
                 {
-                    var message = string.Join("\r\n", 
+                    var message = string.Join("\r\n",
                         Regex.Split(Output, "\r\n")
                         .Where(n => n.Contains("Error "))
                         .Select(n =>
@@ -310,7 +302,9 @@ namespace Quantumart.QP8.Assembling
             }
 
             if (GenerateMapFileOnly && File.Exists(helper.FakeCodeFileName))
+            {
                 File.Delete(helper.FakeCodeFileName);
+            }
         }
 
         private string GenerateCommandLineParams(FileNameHelper helper)
@@ -319,15 +313,14 @@ namespace Quantumart.QP8.Assembling
             cmdBuilder.AppendFormat("{0} ", helper.DbmlFileName);
             cmdBuilder.AppendFormat("/code:{0} ", GenerateMapFileOnly ? helper.FakeCodeFileName : helper.MainCodeFileName);
             if (ProceedDbIndependentGeneration)
+            {
                 cmdBuilder.AppendFormat("/map:{0} ", helper.MapFileName);
+            }
             if (!string.IsNullOrEmpty(NameSpace))
+            {
                 cmdBuilder.AppendFormat("/namespace:{0} ", NameSpace);
+            }
             return cmdBuilder.ToString();
         }
-
-
-
-
     }
-
 }

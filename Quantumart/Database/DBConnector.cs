@@ -256,7 +256,7 @@ namespace Quantumart.QPublishing.Database
         public static string GetString(object obj, string defaultValue)
         {
             var result = Convert.ToString(obj);
-            return String.IsNullOrEmpty(result) ? defaultValue : result;
+            return string.IsNullOrEmpty(result) ? defaultValue : result;
         }
 
         public static bool GetNumBool(object obj)
@@ -271,7 +271,7 @@ namespace Quantumart.QPublishing.Database
 
         private static string ExtractCachePrefix(string cnnString)
         {
-            var result = String.Empty;
+            var result = string.Empty;
             if (cnnString != null)
             {
                 var cnnParams = cnnString.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries).AsEnumerable().Select(s => new { Key = s.Split('=')[0], Value = s.Split('=')[1] }).ToArray();
@@ -359,7 +359,7 @@ namespace Quantumart.QPublishing.Database
 
         private string LoadFileContents(string key)
         {
-            var path = key.Replace(CacheManager.FileContentsCacheKeyPrefix, String.Empty);
+            var path = key.Replace(CacheManager.FileContentsCacheKeyPrefix, string.Empty);
             return File.ReadAllText(path);
         }
 
@@ -730,7 +730,7 @@ namespace Quantumart.QPublishing.Database
             var site = GetSite(siteId);
             if (site == null)
             {
-                return String.Empty;
+                return string.Empty;
             }
 
             return isLive ? site.AssemblyDirectory : site.StageAssemblyDirectory;
@@ -763,7 +763,5 @@ namespace Quantumart.QPublishing.Database
         }
 
         #endregion
-
     }
-
 }

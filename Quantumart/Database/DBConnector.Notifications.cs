@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -11,15 +12,12 @@ using System.Xml.Linq;
 using Microsoft.VisualBasic;
 using Quantumart.QP8.Assembling;
 using Quantumart.QPublishing.Info;
-using VersionNotFoundException = Quantumart.QPublishing.Info.VersionNotFoundException;
 
 namespace Quantumart.QPublishing.Database
 {
     // ReSharper disable once InconsistentNaming
     public partial class DBConnector
     {
-        #region Notifications
-
         public bool DisableServiceNotifications { get; set; }
 
         public bool DisableInternalNotifications { get; set; }
@@ -29,7 +27,7 @@ namespace Quantumart.QPublishing.Database
         private void ProceedExternalNotification(int id, string eventName, string externalUrl, ContentItem item, bool useService)
         {
             eventName = eventName.ToLowerInvariant();
-            if (!String.IsNullOrEmpty(externalUrl))
+            if (!string.IsNullOrEmpty(externalUrl))
             {
                 if (useService)
                 {
@@ -119,31 +117,35 @@ namespace Quantumart.QPublishing.Database
                 .Select(n => $"{n.Key}={n.Value.ToString().ToLowerInvariant()}")
                 .ToArray();
 
-            var queryString = String.Join("&", arr);
+            var queryString = string.Join("&", arr);
             var delimiter = externalUrl.Contains("?") ? "&" : "?";
-            var fullUrl = String.Concat(externalUrl, delimiter, queryString);
+            var fullUrl = string.Concat(externalUrl, delimiter, queryString);
             var request = (HttpWebRequest)WebRequest.Create(fullUrl);
-            var result = request.GetResponseAsync().ContinueWith((t) => { InternalExceptionHandler(t.Exception, "GetResponseAsync", request); });
+            var result = request.GetResponseAsync().ContinueWith(t => { InternalExceptionHandler(t.Exception, "GetResponseAsync", request); });
             if (ExternalExceptionHandler != null)
             {
-                result.ContinueWith((t) => { ExternalExceptionHandler(t.Exception); });
+                result.ContinueWith(t => { ExternalExceptionHandler(t.Exception); });
             }
         }
 
         private void InternalExceptionHandler(Exception ex, string code, WebRequest request)
         {
             var errorMessage = $"DbConnector.Notifications.cs, {code}, URL: {request?.RequestUri}, MESSAGE: {ex.Message}, STACK TRACE: {ex.StackTrace}";
-            System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+            EventLog.WriteEntry("Application", errorMessage);
             if (ThrowNotificationExceptions)
+            {
                 throw new Exception(errorMessage, ex);
-
+            }
         }
 
         public void SendNotification(int contentItemId, string notificationOn)
         {
             var contentId = GetContentIdForItem(contentItemId);
             if (contentId == 0)
+            {
                 throw new Exception($"Article (ID = {contentItemId}) is not found");
+            }
+
             var siteId = GetSiteIdByContentId(contentId);
             SendNotification(siteId, notificationOn, contentItemId, "", !IsStage);
         }
@@ -164,7 +166,7 @@ namespace Quantumart.QPublishing.Database
                     foreach (var row in dataRows)
                     {
                         var useService = hasUseServiceColumn && (bool)row["USE_SERVICE"];
-                        var url = GetString(row["EXTERNAL_URL"], String.Empty);
+                        var url = GetString(row["EXTERNAL_URL"], string.Empty);
                         ProceedExternalNotification(contentItemId, notificationOn, url, item, useService);
                     }
 
@@ -243,7 +245,7 @@ namespace Quantumart.QPublishing.Database
                                             $"An error has occurred while getting url data: {targetUrl}. Error message: {ex.Message}";
                                         var errorMessage =
                                             $"DbConnector.cs, SendNotification, MESSAGE: {ex.Message} STACK TRACE: {ex.StackTrace}";
-                                        System.Diagnostics.EventLog.WriteEntry("Application", errorMessage);
+                                        EventLog.WriteEntry("Application", errorMessage);
                                         doAttachFiles = false;
                                     }
 
@@ -275,7 +277,7 @@ namespace Quantumart.QPublishing.Database
             }
         }
 
-        private void ValidateNotificationEvent(string notificationOn)
+        private static void ValidateNotificationEvent(string notificationOn)
         {
             string[] events =
             {
@@ -289,7 +291,6 @@ namespace Quantumart.QPublishing.Database
             };
 
             var ok = events.Contains(notificationOn.ToLowerInvariant());
-
             if (!ok)
             {
                 throw new Exception("notificationOn parameter is not valid. Choose it from the following range: " + string.Join(", ", events));
@@ -313,14 +314,13 @@ namespace Quantumart.QPublishing.Database
                     var charset = response.CharacterSet ?? "UTF-8";
                     return stream == null ? null : new StreamReader(stream, Encoding.GetEncoding(charset)).ReadToEnd();
                 }
-                else
+
+                if (throwException)
                 {
-                    if (throwException)
-                    {
-                        throw new Exception(response.StatusDescription + "(" + response.StatusCode + "): " + url);
-                    }
-                    return url + "<br>" + response.StatusCode + "<br>" + response.StatusDescription;
+                    throw new Exception(response.StatusDescription + "(" + response.StatusCode + "): " + url);
                 }
+
+                return url + "<br>" + response.StatusCode + "<br>" + response.StatusDescription;
             }
         }
 
@@ -329,7 +329,7 @@ namespace Quantumart.QPublishing.Database
             GetUrlContent(url);
         }
 
-        private HttpWebResponse GetUrlResponse(string url)
+        private static HttpWebResponse GetUrlResponse(string url)
         {
             HttpWebResponse functionReturnValue;
             try
@@ -341,22 +341,19 @@ namespace Quantumart.QPublishing.Database
             {
                 functionReturnValue = (HttpWebResponse)ex.Response;
             }
+
             return functionReturnValue;
         }
 
         private string GetObjectFolderUrl(int siteId, bool isLive)
         {
-            //Return String.Format("{0}/{1}/", GetSiteUrl(siteId, isLive), "temp/notifications")
             return $"{GetSiteUrl(siteId, isLive)}/qp_notifications/";
         }
 
-
         private string GetNotificationBodyUrl(int siteId, int objectId, int contentItemId, bool isLive, string notificationOn)
         {
-            return
-                $"{GetObjectFolderUrl(siteId, isLive || ForceLive(siteId))}{objectId}.{GetSiteFileExtension(siteId)}?id={contentItemId}&on={notificationOn}";
+            return $"{GetObjectFolderUrl(siteId, isLive || ForceLive(siteId))}{objectId}.{GetSiteFileExtension(siteId)}?id={contentItemId}&on={notificationOn}";
         }
-
         #endregion
 
         #region Assembling
@@ -384,7 +381,7 @@ namespace Quantumart.QPublishing.Database
             return site != null && site.ScriptLanguage.ToLowerInvariant() == "vbscript" ? SitePlatform.Asp : SitePlatform.Aspnet;
         }
 
-        private string GetFileExtension(SitePlatform platform)
+        private static string GetFileExtension(SitePlatform platform)
         {
             switch (platform)
             {
@@ -393,6 +390,7 @@ namespace Quantumart.QPublishing.Database
                 case SitePlatform.Aspnet:
                     return "aspx";
             }
+
             return "aspx";
         }
 
@@ -430,7 +428,7 @@ namespace Quantumart.QPublishing.Database
             var liveString = isLive ? "1" : "0";
 
             return
-                $"{GetSiteUrl(siteId, isLive)}{AppSettings["RelNotifyUrl"]}?id={contentItemId.ToString()}&target={notificationOn}&email={notificationEmail}&is_live={liveString}";
+                $"{GetSiteUrl(siteId, isLive)}{AppSettings["RelNotifyUrl"]}?id={contentItemId}&target={notificationOn}&email={notificationEmail}&is_live={liveString}";
         }
 
         #endregion
@@ -521,12 +519,12 @@ namespace Quantumart.QPublishing.Database
         }
 
 
-        private string ConvertToString(object obj)
+        private static string ConvertToString(object obj)
         {
             return obj == DBNull.Value ? "" : obj.ToString();
         }
 
-        private string ConvertToNullString(object obj)
+        private static string ConvertToNullString(object obj)
         {
             return ReferenceEquals(obj, DBNull.Value) ? "NULL" : obj.ToString();
         }
@@ -583,23 +581,24 @@ namespace Quantumart.QPublishing.Database
             foreach (DataRow fileRow in rstData.Rows)
             {
                 var fileName = currentDir + "\\" + fileRow["data"];
-                if (File.Exists(fileName)) mailMess.Attachments.Add(new Attachment(fileName));
+                if (File.Exists(fileName))
+                {
+                    mailMess.Attachments.Add(new Attachment(fileName));
+                }
             }
         }
 
-        private void SendMail(MailMessage mailMess)
+        private static void SendMail(MailMessage mailMess)
         {
             var mailHost = AppSettings["MailHost"];
-            var smtpMail = new SmtpClient {UseDefaultCredentials = false};
+            var smtpMail = new SmtpClient { UseDefaultCredentials = false };
 
             if (string.IsNullOrEmpty(mailHost))
             {
                 throw new Exception("MailHost configuration parameter is not defined");
             }
-            else
-            {
-                smtpMail.Host = mailHost;
-            }
+
+            smtpMail.Host = mailHost;
             if (!string.IsNullOrEmpty(AppSettings["MailLogin"]))
             {
                 var credentials = new NetworkCredential
@@ -607,12 +606,14 @@ namespace Quantumart.QPublishing.Database
                     UserName = AppSettings["MailLogin"],
                     Password = AppSettings["MailPassword"]
                 };
+
                 smtpMail.Credentials = credentials;
             }
+
             smtpMail.Send(mailMess);
         }
 
-        private void SetToMail(MailMessage mailMess, DataTable toTable)
+        private static void SetToMail(MailMessage mailMess, DataTable toTable)
         {
             foreach (DataRow dr in toTable.Rows)
             {
@@ -620,7 +621,7 @@ namespace Quantumart.QPublishing.Database
             }
         }
 
-        private void SetToMail(MailMessage mailMess, string allEmails)
+        private static void SetToMail(MailMessage mailMess, string allEmails)
         {
             var emails = allEmails.Split(';');
             foreach (var email in emails)
@@ -634,7 +635,6 @@ namespace Quantumart.QPublishing.Database
 
         private void SetToMail(DataRow notifyRow, int contentItemId, string notificationOn, string notificationEmail, MailMessage mailMess, ref string strSqlRegisterNotificationsForUsers)
         {
-
             var notificationId = GetNumInt(notifyRow["NOTIFICATION_ID"]);
             if (Strings.Len(notificationEmail) > 0)
             {
@@ -647,10 +647,6 @@ namespace Quantumart.QPublishing.Database
                 strSqlRegisterNotificationsForUsers = GetSqlRegisterNotificationsForUsers(toTable, contentItemId, notificationId, notificationOn);
             }
         }
-
-
-        #endregion
-
         #endregion
     }
 }

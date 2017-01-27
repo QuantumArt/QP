@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -10,9 +9,9 @@ namespace Quantumart.QPublishing.Resizer
     {
         public static Bitmap Resize(Bitmap img, int width, int height)
         {
-            Bitmap output = new Bitmap(width, height);
-            Graphics resizer = Graphics.FromImage(output);
-            resizer.InterpolationMode = InterpolationMode.HighQualityBilinear; 
+            var output = new Bitmap(width, height);
+            var resizer = Graphics.FromImage(output);
+            resizer.InterpolationMode = InterpolationMode.HighQualityBilinear;
             resizer.DrawImage(img, 0, 0, width, height);
             return output;
         }
@@ -20,44 +19,41 @@ namespace Quantumart.QPublishing.Resizer
         public static void SaveImage(Bitmap img, string fileType, string filePath, int quality)
         {
             ImageFormat convertFormat;
-
             switch (fileType)
             {
                 case "JPG":
-                    
-                    EncoderParameters parameters = new EncoderParameters(1);
-                    EncoderParameter parameter = new EncoderParameter(Encoder.Quality, quality);
+
+                    var parameters = new EncoderParameters(1);
+                    var parameter = new EncoderParameter(Encoder.Quality, quality);
                     parameters.Param[0] = parameter;
 
-                    ImageCodecInfo imageCodecInfo = GetEncoderInfo("image/jpeg");
+                    var imageCodecInfo = GetEncoderInfo("image/jpeg");
 
-                    using (FileStream fs = File.OpenWrite(filePath))
+                    using (var fs = File.OpenWrite(filePath))
                     {
                         img.Save(fs, imageCodecInfo, parameters);
                     }
 
                     break;
-
                 case "GIF":
                     convertFormat = ImageFormat.Gif;
-                    using (FileStream fs = File.OpenWrite(filePath))
+                    using (var fs = File.OpenWrite(filePath))
                     {
                         img.Save(fs, convertFormat);
                     }
 
                     break;
-
                 case "PNG":
                     convertFormat = ImageFormat.Png;
-                    using (FileStream fs = File.OpenWrite(filePath))
+                    using (var fs = File.OpenWrite(filePath))
                     {
                         img.Save(fs, convertFormat);
                     }
                     break;
             }
         }
-         
-        private static ImageCodecInfo GetEncoderInfo(String mimeType)
+
+        private static ImageCodecInfo GetEncoderInfo(string mimeType)
         {
             int j;
             var encoders = ImageCodecInfo.GetImageEncoders();
@@ -68,6 +64,7 @@ namespace Quantumart.QPublishing.Resizer
                     return encoders[j];
                 }
             }
+
             return null;
         }
     }

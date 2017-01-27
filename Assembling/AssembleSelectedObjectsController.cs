@@ -1,7 +1,5 @@
-﻿using System;
-using System.Data;
+﻿using System.Data;
 using Quantumart.QP8.Assembling.Info;
-using Quantumart.QP8.Assembling;
 
 namespace Quantumart.QP8.Assembling
 {
@@ -21,6 +19,7 @@ namespace Quantumart.QP8.Assembling
                 " LEFT JOIN page AS p ON p.page_id=obj.page_id" +
                 " INNER JOIN site AS s ON pt.site_id = s.site_id" +
                 " where obj.object_id in ( " + Ids + ")";
+
             Info = new AssembleInfo(this, sqlQuery);
 
         }
@@ -40,7 +39,7 @@ namespace Quantumart.QP8.Assembling
         public override void Assemble()
         {
             AssembleControlSet();
-            if (String.IsNullOrEmpty(Info.PageId))
+            if (string.IsNullOrEmpty(Info.PageId))
             {
                 InvalidateTemplateCache();
             }
