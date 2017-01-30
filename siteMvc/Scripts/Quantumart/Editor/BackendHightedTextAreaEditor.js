@@ -84,7 +84,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
             if (this._storedTempValue !== curVal) {
                 this._storedTempValue = curVal;
                 this._componentElem.addClass(CHANGED_FIELD_CLASS_NAME);
-                this._componentElem.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": this._componentElem.attr("name"), "value": this._componentElem.data('codeMirror').getValue() });
+                this._componentElem.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": this._componentElem.attr("name"), "value": this._componentElem.data('codeMirror').getValue(), "contentFieldName": this._componentElem.closest("dl").data("field_name") });
             }
         }
     },
