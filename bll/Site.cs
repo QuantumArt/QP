@@ -7,11 +7,11 @@ using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Validators;
-using Quantumart.QP8.Configuration;
-using C = Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.BLL
 {
@@ -25,10 +25,10 @@ namespace Quantumart.QP8.BLL
         internal Site()
         {
             AllowUserSessions = true;
-            AssemblingType = C.AssemblingType.AspDotNet;
+            AssemblingType = Constants.AssemblingType.AspDotNet;
             IsLive = true;
-            OnScreenFieldBorder = C.OnScreenBorderMode.OnMouseOver;
-            OnScreenObjectBorder = C.OnScreenBorderMode.Never;
+            OnScreenFieldBorder = OnScreenBorderMode.OnMouseOver;
+            OnScreenObjectBorder = OnScreenBorderMode.Never;
             ProceedMappingWithDb = true;
             ProceedDbIndependentGeneration = true;
             ContextClassName = DefaultContextClassName;
@@ -41,351 +41,225 @@ namespace Quantumart.QP8.BLL
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.InvalidEntityName, Negated = true, MessageTemplateResourceName = "NameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("Name", NameResourceType = typeof(EntityObjectStrings))]
-        public override string Name
-        {
-            get;
-            set;
-        }
+        public override string Name { get; set; }
 
         /// <summary>
         /// описание сущности
         /// </summary>
         [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("Description", NameResourceType = typeof(SiteStrings))]
-        public override string Description
-        {
-            get;
-            set;
-        }
+        public override string Description { get; set; }
 
         /// <summary>
         /// тип сборки
         /// </summary>
         [LocalizedDisplayName("AssemblingType", NameResourceType = typeof(SiteStrings))]
-        public string AssemblingType
-        {
-            get;
-            set;
-        }
+        public string AssemblingType { get; set; }
 
         /// <summary>
         /// признак, разрешающий использование пользовательских сессий
         /// </summary>
         [LocalizedDisplayName("AllowUserSessions", NameResourceType = typeof(SiteStrings))]
-        public bool AllowUserSessions
-        {
-            get;
-            set;
-        }
+        public bool AllowUserSessions { get; set; }
 
         /// <summary>
         /// признак, разрешающий собирать страницы для предварительного просмотра и уведомлений в Основном режиме
         /// </summary>
         [LocalizedDisplayName("AssemblePreviewAndNotificationsInLiveModeOnly", NameResourceType = typeof(SiteStrings))]
-        public bool AssembleFormatsInLive
-        {
-            get;
-            set;
-        }
+        public bool AssembleFormatsInLive { get; set; }
 
         /// <summary>
         /// признак работы сайта в основном режиме
         /// </summary>
         [LocalizedDisplayName("SiteMode", NameResourceType = typeof(SiteStrings))]
-        public bool IsLive
-        {
-            get;
-            set;
-        }
+        public bool IsLive { get; set; }
 
         /// <summary>
         /// DNS
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "DnsNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "DnsMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.DomainName, MessageTemplateResourceName = "DnsInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.DomainName, MessageTemplateResourceName = "DnsInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("Dns", NameResourceType = typeof(SiteStrings))]
         [Example("localhost")]
-        public string Dns
-        {
-            get;
-            set;
-        }
+        public string Dns { get; set; }
 
         /// <summary>
         /// признак использования отдельного DNS
         /// </summary>
         [LocalizedDisplayName("UseSeparateDnsForStageMode", NameResourceType = typeof(SiteStrings))]
-        public bool SeparateDns
-        {
-            get;
-            set;
-        }
+        public bool SeparateDns { get; set; }
 
         /// <summary>
         /// DNS для тестового режима
         /// </summary>
         [MaxLengthValidator(255, MessageTemplateResourceName = "StageDnsMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.DomainName, MessageTemplateResourceName = "StageDnsInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.DomainName, MessageTemplateResourceName = "StageDnsInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("StageDns", NameResourceType = typeof(SiteStrings))]
-        public string StageDns
-        {
-            get;
-            set;
-        }
+        public string StageDns { get; set; }
 
         /// <summary>
         /// URL загрузки
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "UploadUrlNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "UploadUrlMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "UploadUrlInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "UploadUrlInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example("/qp_demo_net/upload/")]
         [LocalizedDisplayName("UploadUrl", NameResourceType = typeof(SiteStrings))]
-        public string UploadUrl
-        {
-            get;
-            set;
-        }
+        public string UploadUrl { get; set; }
 
         /// <summary>
         /// признак, разрешающий использовать абсолютный URL закачки
         /// </summary>
         [LocalizedDisplayName("UseAbsoluteUploadUrl", NameResourceType = typeof(SiteStrings))]
-        public bool UseAbsoluteUploadUrl
-        {
-            get;
-            set;
-        }
+        public bool UseAbsoluteUploadUrl { get; set; }
 
         /// <summary>
         /// префикс URL загрузки
         /// </summary>
         [MaxLengthValidator(255, MessageTemplateResourceName = "UploadUrlPrefixMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.AbsoluteWebFolderUrl, MessageTemplateResourceName = "UploadUrlPrefixInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWebFolderUrl, MessageTemplateResourceName = "UploadUrlPrefixInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("UploadUrlPrefix", NameResourceType = typeof(SiteStrings))]
-        public string UploadUrlPrefix
-        {
-            get;
-            set;
-        }
+        public string UploadUrlPrefix { get; set; }
 
         /// <summary>
         /// путь загрузки
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "UploadDirNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "UploadDirMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "UploadDirInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "UploadDirInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\upload")]
         [LocalizedDisplayName("UploadPath", NameResourceType = typeof(SiteStrings))]
-        public string UploadDir
-        {
-            get;
-            set;
-        }
+        public string UploadDir { get; set; }
 
         /// <summary>
         /// виртуальный путь расположения страниц в Основном режиме
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "LiveVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "LiveVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "LiveVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "LiveVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example("/qp_demo_net/")]
         [LocalizedDisplayName("LiveVirtualRoot", NameResourceType = typeof(SiteStrings))]
-        public string LiveVirtualRoot
-        {
-            get;
-            set;
-        }
+        public string LiveVirtualRoot { get; set; }
 
         /// <summary>
         /// путь расположения страниц в Основном режиме
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "LiveDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "LiveDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "LiveDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "LiveDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net")]
         [LocalizedDisplayName("LiveDirectory", NameResourceType = typeof(SiteStrings))]
-        public string LiveDirectory
-        {
-            get;
-            set;
-        }
+        public string LiveDirectory { get; set; }
 
         /// <summary>
         /// признак, разрешающий использовать тестовую папку
         /// </summary>
         [LocalizedDisplayName("ForceTestDirectory", NameResourceType = typeof(SiteStrings))]
-        public bool ForceTestDirectory
-        {
-            get;
-            set;
-        }
+        public bool ForceTestDirectory { get; set; }
 
         /// <summary>
         /// тестовая папка
         /// </summary>
         [MaxLengthValidator(255, MessageTemplateResourceName = "TestDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "TestDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "TestDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("TestDirectory", NameResourceType = typeof(SiteStrings))]
-        public string TestDirectory
-        {
-            get;
-            set;
-        }
+        public string TestDirectory { get; set; }
 
         /// <summary>
         /// виртуальный путь расположения страниц в Тестовом режиме
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "StageVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "StageVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "StageVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.RelativeWebFolderUrl, MessageTemplateResourceName = "StageVirtualRootInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example("/qp_demo_net/stage/")]
         [LocalizedDisplayName("StageVirtualRoot", NameResourceType = typeof(SiteStrings))]
-        public string StageVirtualRoot
-        {
-            get;
-            set;
-        }
+        public string StageVirtualRoot { get; set; }
 
         /// <summary>
         /// путь расположения страниц в Тестовом режиме
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "StageDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "StageDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "StageDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "StageDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\stage")]
         [LocalizedDisplayName("StageDirectory", NameResourceType = typeof(SiteStrings))]
-        public string StageDirectory
-        {
-            get;
-            set;
-        }
+        public string StageDirectory { get; set; }
 
         /// <summary>
         /// путь расположения файлов сборок для Основного режима
         /// </summary>
         [MaxLengthValidator(255, MessageTemplateResourceName = "AssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "AssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "AssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\bin")]
         [LocalizedDisplayName("LiveAssemblyPath", NameResourceType = typeof(SiteStrings))]
-        public string AssemblyPath
-        {
-            get;
-            set;
-        }
+        public string AssemblyPath { get; set; }
 
         /// <summary>
         /// путь расположения файлов сборок для Тестового режима
         /// </summary>
         [MaxLengthValidator(255, MessageTemplateResourceName = "StageAssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "StageAssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "StageAssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [Example(@"C:\Inetpub\wwwroot\qp_demo_net\stage\bin")]
         [LocalizedDisplayName("StageAssemblyPath", NameResourceType = typeof(SiteStrings))]
-        public string StageAssemblyPath
-        {
-            get;
-            set;
-        }
+        public string StageAssemblyPath { get; set; }
 
         [LocalizedDisplayName("ForceAssemble", NameResourceType = typeof(SiteStrings))]
-        public bool ForceAssemble
-        {
-            get;
-            set;
-        }
+        public bool ForceAssemble { get; set; }
 
         /// <summary>
         /// отображение рамки объекта в режиме OnScreen
         /// </summary>
         [LocalizedDisplayName("OnScreenObjectBorder", NameResourceType = typeof(SiteStrings))]
-        public int OnScreenObjectBorder
-        {
-            get;
-            set;
-        }
+        public int OnScreenObjectBorder { get; set; }
 
         /// <summary>
         /// отображение рамки поля в режиме OnScreen
         /// </summary>
         [LocalizedDisplayName("OnScreenFieldBorder", NameResourceType = typeof(SiteStrings))]
-        public int OnScreenFieldBorder
-        {
-            get;
-            set;
-        }
+        public int OnScreenFieldBorder { get; set; }
 
         /// <summary>
         /// маска разрешений для объектов в режиме OnScreen
         /// </summary>
 
-        public int OnScreenObjectTypeMask
-        {
-            get;
-            set;
-        }
+        public int OnScreenObjectTypeMask { get; set; }
 
         /// <summary>
         /// Разрешает импортировать файл отображения в базу данных
         /// </summary>
         [LocalizedDisplayName("ImportMappingToDb", NameResourceType = typeof(SiteStrings))]
-        public bool ImportMappingToDb
-        {
-            get;
-            set;
-        }
+        public bool ImportMappingToDb { get; set; }
 
         /// <summary>
         /// Разрешает использовать прямое отображение из базы данных
         /// </summary>
         [LocalizedDisplayName("ProceedMappingWithDb", NameResourceType = typeof(SiteStrings))]
-        public bool ProceedMappingWithDb
-        {
-            get;
-            set;
-        }
+        public bool ProceedMappingWithDb { get; set; }
 
-        /// <summary>
-        /// Имя строки подключения
-        /// </summary>
         [LocalizedDisplayName("ConnectionStringName", NameResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "ConnectionStringNameMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.NetName, MessageTemplateResourceName = "ConnectionStringNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "ConnectionStringNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         public string ConnectionStringName { get; set; }
 
-        /// <summary>
-        /// Разрешает заменять URL'ы в LINQ-to-SQL
-        /// </summary>
         [LocalizedDisplayName("ReplaceUrls", NameResourceType = typeof(SiteStrings))]
         public bool ReplaceUrls { get; set; }
 
-        /// <summary>
-        /// Разрешает использовать длинные URL'ы в LINQ-to-SQL
-        /// </summary>
         [LocalizedDisplayName("UseLongUrls", NameResourceType = typeof(SiteStrings))]
         public bool UseLongUrls { get; set; }
 
-        /// <summary>
-        /// Пространство имен для генерируемых классов
-        /// </summary>
         [LocalizedDisplayName("Namespace", NameResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "NamespaceMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.FullQualifiedNetName, MessageTemplateResourceName = "NamespaceInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.FullQualifiedNetName, MessageTemplateResourceName = "NamespaceInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         public string Namespace { get; set; }
 
-        /// <summary>
-        /// Имя контекстного класса
-        /// </summary>
         [LocalizedDisplayName("ContextClassName", NameResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "ContextClassNameMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
-        [FormatValidator(C.RegularExpressions.NetName, MessageTemplateResourceName = "ContextClassNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
+        [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "ContextClassNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         public string ContextClassName { get; set; }
 
-        /// <summary>
-        /// Разрешает посылать notifications в LINQ-to-SQL
-        /// </summary>
         [LocalizedDisplayName("SendNotifications", NameResourceType = typeof(SiteStrings))]
         public bool SendNotifications { get; set; }
 
@@ -394,6 +268,9 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("UseEnglishQuotes", NameResourceType = typeof(SiteStrings))]
         public bool UseEnglishQuotes { get; set; }
+
+        [LocalizedDisplayName("DisableListAutoWrap", NameResourceType = typeof(SiteStrings))]
+        public bool DisableListAutoWrap { get; set; }
 
         [LocalizedDisplayName("DbIndependent", NameResourceType = typeof(SiteStrings))]
         public bool ProceedDbIndependentGeneration { get; set; }
@@ -435,7 +312,7 @@ namespace Quantumart.QP8.BLL
 
         [LocalizedDisplayName("ExternalDevelopment", NameResourceType = typeof(SiteStrings))]
         public bool ExternalDevelopment { get; set; }
-        public override string EntityTypeCode => C.EntityTypeCode.Site;
+        public override string EntityTypeCode => Constants.EntityTypeCode.Site;
 
         public override string LockedByAnyoneElseMessage => SiteStrings.LockedByAnyoneElse;
 
@@ -443,10 +320,9 @@ namespace Quantumart.QP8.BLL
 
         public override string PropertyIsNotUniqueMessage => SiteStrings.NameNonUnique;
 
+        public string IsLiveIcon => $"site{(IsLive ? 1 : 0)}.gif";
 
-        public string IsLiveIcon => $"site{((IsLive) ? 1 : 0)}.gif";
-
-        public string ActualDnsForPages => (!IsLive && SeparateDns) ? StageDns : Dns;
+        public string ActualDnsForPages => !IsLive && SeparateDns ? StageDns : Dns;
 
         public string LongUploadUrl
         {
@@ -458,21 +334,28 @@ namespace Quantumart.QP8.BLL
         }
 
         public string ImagesLongUploadUrl => LongUploadUrl + "images";
+
         public string LiveUrl => "http://" + Dns + LiveVirtualRoot;
-        public string StageUrl => "http://" + ((SeparateDns) ? StageDns : Dns) + StageVirtualRoot;
-        public string CurrentUrl => (IsLive) ? LiveUrl : StageUrl;
+
+        public string StageUrl => "http://" + (SeparateDns ? StageDns : Dns) + StageVirtualRoot;
+
+        public string CurrentUrl => IsLive ? LiveUrl : StageUrl;
+
         public string TestBinDirectory => PathUtility.Combine(TestDirectory, SitePathRepository.RELATIVE_BIN_PATH);
+
         public string AppDataDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
+
         public string AppCodeDirectory => AssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
+
         public string AppDataStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_DATA_PATH;
+
         public string AppCodeStageDirectory => StageAssemblyPath.Replace(SitePathRepository.RELATIVE_BIN_PATH, "") + SitePathRepository.RELATIVE_APP_CODE_PATH;
-    
-        public bool IsDotNet => AssemblingType == C.AssemblingType.AspDotNet;
+
+        public bool IsDotNet => AssemblingType == Constants.AssemblingType.AspDotNet;
 
         public string TempDirectoryForClasses => $@"{QPConfiguration.TempDirectory}\{QPContext.CurrentCustomerCode}\{Id}";
 
         public string TempArchiveForClasses => TempDirectoryForClasses + ".zip";
-
 
         public PathInfo BasePathInfo => new PathInfo { Path = UploadDir, Url = LongUploadUrl };
 
@@ -483,7 +366,6 @@ namespace Quantumart.QP8.BLL
         public IEnumerable<ContentGroup> ContentGroups => ContentRepository.GetSiteContentGroups(Id);
 
         public IEnumerable<Workflow> Workflows => WorkflowRepository.GetSiteWorkflows(Id);
-
 
         public override void Validate()
         {
@@ -577,15 +459,15 @@ namespace Quantumart.QP8.BLL
             {
                 GenerateMapFileOnly = false;
 
-                if (AssemblingType != C.AssemblingType.Asp)
+                if (AssemblingType != Constants.AssemblingType.Asp)
                 {
-                    OnScreenObjectBorder = C.OnScreenBorderMode.Never;
+                    OnScreenObjectBorder = OnScreenBorderMode.Never;
                 }
 
                 if (!EnableOnScreen)
                 {
-                    OnScreenObjectBorder = C.OnScreenBorderMode.Never;
-                    OnScreenFieldBorder = C.OnScreenBorderMode.Never;
+                    OnScreenObjectBorder = OnScreenBorderMode.Never;
+                    OnScreenFieldBorder = OnScreenBorderMode.Never;
                 }
 
                 if (!ForceTestDirectory)
@@ -752,7 +634,7 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
-            if (!string.IsNullOrEmpty(ExternalUrl) && !Regex.IsMatch(ExternalUrl, C.RegularExpressions.AbsoluteWebFolderUrl))
+            if (!string.IsNullOrEmpty(ExternalUrl) && !Regex.IsMatch(ExternalUrl, RegularExpressions.AbsoluteWebFolderUrl))
             {
                 errors.ErrorFor(s => s.ExternalUrl, SiteStrings.ExternalUrlNotValid);
             }
@@ -760,12 +642,14 @@ namespace Quantumart.QP8.BLL
 
         internal void CreateLinqDirectories()
         {
-            var dataDir = (IsLive) ? AppDataDirectory : AppDataStageDirectory;
-            var codeDir = (IsLive) ? AppCodeDirectory : AppCodeStageDirectory;
+            var dataDir = IsLive ? AppDataDirectory : AppDataStageDirectory;
+            var codeDir = IsLive ? AppCodeDirectory : AppCodeStageDirectory;
             Directory.CreateDirectory(dataDir);
             SitePathRepository.CopySiteDirectory(dataDir, SitePathRepository.RELATIVE_APP_DATA_PATH);
             if (!DownloadEfSource)
+            {
                 Directory.CreateDirectory(codeDir);
+            }
         }
 
         internal void SaveVisualEditorStyles(int[] activeStyleIds)
@@ -773,11 +657,9 @@ namespace Quantumart.QP8.BLL
             var defaultStyles = VisualEditorRepository.GetAllStyles().ToList();
             var offVeStyles = VisualEditorHelpers.Subtract(defaultStyles, activeStyleIds).Select(c => c.Id).ToArray();
             var oldSiteStylesIdsOn = new HashSet<int>(VisualEditorRepository.GetResultStyles(Id).Where(n => n.On).Select(n => n.Id));
-
             var defaultStyleDictionary = defaultStyles.ToDictionary(s => s.Id, s => s.On);
             var changedStyles = activeStyleIds.Where(cId => !oldSiteStylesIdsOn.Contains(cId)).ToDictionary(cId => cId, cId => true);
             foreach (var cId in offVeStyles.Where(cId => !oldSiteStylesIdsOn.Contains(cId)))
-       
             {
                 changedStyles.Add(cId, false);
             }

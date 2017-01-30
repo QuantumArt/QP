@@ -1377,6 +1377,7 @@ namespace Quantumart.QP8.DAL
         private const string GetVisualEditorConfigQuery =
             "select ISNULL(A.P_ENTER_MODE, S.P_ENTER_MODE) AS PEnterMode, " +
             "ISNULL(A.USE_ENGLISH_QUOTES, S.USE_ENGLISH_QUOTES) AS UseEnglishQuotes,   " +
+            "ISNULL(A.DISABLE_LIST_AUTO_WRAP, S.DISABLE_LIST_AUTO_WRAP) AS DisableListAutoWrap,   " +
             "ISNULL(A.ROOT_ELEMENT_CLASS, S.ROOT_ELEMENT_CLASS) AS RootElementClass,   " +
             "ISNULL(A.EXTERNAL_CSS, S.EXTERNAL_CSS) AS ExternalCss   " +
             "from CONTENT_ATTRIBUTE A  " +

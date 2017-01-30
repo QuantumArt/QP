@@ -21,7 +21,8 @@ CKEDITOR.editorConfig = function(config) {
     fullPage: false,
     enterMode: 2,
     shiftEnterMode: 1,
-    useEnglishQuotes: false
+    useEnglishQuotes: false,
+    disableListAutoWrap: true
   };
 
   config.toolbar = [

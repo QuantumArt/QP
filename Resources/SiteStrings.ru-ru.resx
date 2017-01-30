@@ -579,4 +579,7 @@
   <data name="ExternalDevelopment" xml:space="preserve">
     <value>Внешняя разработка</value>
   </data>
+  <data name="DisableListAutoWrap" xml:space="preserve">
+    <value>Отключить автоматическое оборачивание списков (ul, ol, dl)</value>
+  </data>
 </root>

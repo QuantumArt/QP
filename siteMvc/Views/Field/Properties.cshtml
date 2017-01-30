@@ -1,11 +1,7 @@
 ﻿@model FieldViewModel
-
-@using Quantumart.QP8
 @using Quantumart.QP8.Constants
-@using Quantumart.QP8.Utils
 @using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
 @using Quantumart.QP8.WebMvc.ViewModels.Field
 
 <script type="text/html" id="@Html.UniqueId("Data_ExternalCssItems_template")">
@@ -100,7 +96,7 @@
                                     Html.List(Model.GetAcceptableCombinationFields()),
                                     Model.InCombinationWithEventArgs,
                                     new Dictionary<string, object> { { "id", Model.InCombinationWithElementId } }
-                                    )
+                                )
                             }
                         </dd>
                     </dl>
@@ -209,7 +205,7 @@
                     {
                         HtmlAttributes = new Dictionary<string, object> { { "id", Model.RelateToSelectElementId } }
                     }
-                    )
+                )
 
                 using (Html.BeginPanel("O2MMainProps"))
                 {
@@ -272,7 +268,7 @@
                        Enabled = true,
                        HtmlAttributes = new Dictionary<string, object> { { "id", Model.O2MDefaultElementId } }
                    }
-                            )
+                        )
                         ;
                     }
                 }
@@ -380,15 +376,15 @@
                 @Html.TextBoxFieldFor(s => s.Data.DocType, new Dictionary<string, object> { { "style", "width:100% !important;" } })
                 @Html.CheckBoxFieldFor(s => s.Data.PEnterMode)
                 @Html.CheckBoxFieldFor(s => s.Data.UseEnglishQuotes)
+                @Html.CheckBoxFieldFor(s => s.Data.DisableListAutoWrap)
                 @Html.CheckboxListFieldFor(
                     model => model.ActiveVeCommands,
                     Html.List(Model.DefaultCommandsListItems),
                     new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
                     new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeCommands") } }
-                    )
+                )
 
                 @Html.TextBoxFieldFor(s => s.Data.RootElementClass)
-
                 @Html.AggregationListFieldFor(s => s.Data.ExternalCssItems, Model.Data.ExternalCssItems, "Url")
 
                 @Html.CheckboxListFieldFor(
@@ -396,14 +392,14 @@
                     Html.List(Model.AllStylesListItems),
                     new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
                     new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeStyles") } }
-                    )
+                )
 
                 @Html.CheckboxListFieldFor(
                     model => model.ActiveVeFormats,
                     Html.List(Model.AllFormatsListItems),
                     new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
                     new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeFormats") } }
-                    )
+                )
 
             }
 

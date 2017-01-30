@@ -64,6 +64,7 @@ var paths = {
     'Scripts/pmrpc.js',
     'Scripts/underscore.js',
     'Scripts/knockout.js',
+    'Scripts/immutablejs/immutable.min.js',
 
     'Scripts/jquery/jquery.cookie.js',
     'Scripts/jquery/jquery.timers.js',

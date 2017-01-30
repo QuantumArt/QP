@@ -1,4 +1,4 @@
-﻿-- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.0
 -- Label
@@ -14,7 +14,7 @@ PRINT '7.5.7.0 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Leonid Barenblit
 -- version 7.5.7.1
 -- Enable child groups override parent permissions, user overrides group
@@ -47,7 +47,7 @@ Declare @sTemp varchar(8000)
 Declare @sWhereParentEntity varchar (8000)
 Declare @sDefaultSQL varchar (8000)
 Declare @sGroupBy varchar (200)
-Declare @intIncrement int 
+Declare @intIncrement int
 Declare @CurrentLevelAddition int
 Declare @sSQLStart varchar(300)
 Declare @sSQLEnd varchar (600)
@@ -55,25 +55,25 @@ Declare @sSQLEnd varchar (600)
 /***********************************/
 /**** Declare Table Variables   ****/
 /***********************************/
-declare @ChildGroups table 
-( 
+declare @ChildGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 
-declare @ParentGroups table 
-( 
+declare @ParentGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 
-declare @UsedGroups table 
-( 
+declare @UsedGroups table
+(
 	group_id numeric(18,0)
-) 
+)
 
-declare @TempParentGroups table 
-( 
+declare @TempParentGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 /***********************************/
 
 select @NewLine = CHAR(13) + CHAR(10)
@@ -83,7 +83,7 @@ Select @sSQLStart = ' select ' + @entity_name + '_id, cast(min(pl) as int)%10 as
 Select @sSQLEnd = ') as qp_zzz group by qp_zzz.' + @entity_name + '_id HAVING cast(min(pl) as int)%10 >= ' + Cast(@start_level AS varchar) + ' AND cast(min(pl) as int)%10 <= ' + Cast(@end_level AS varchar)
 
 Select @sGroupBy =  ' group by ' + @entity_name + '_id '
-Select @sWhereParentEntity = '' 
+Select @sWhereParentEntity = ''
 select @sPermissionTable = @entity_name + '_access_PermLevel'
 
 if @parent_entity_name != '' and @parent_entity_id != 0
@@ -107,7 +107,7 @@ select @sDefaultSQL = ' select 0 as ' + @entity_name + '_id, 0 as permission_lev
 if @user_id > 0
 Begin
    Select @sSQL = @sSelectUser + @sGroupBy
-   insert into @ChildGroups (group_id) select distinct group_id from user_group_bind where user_id = @user_id 
+   insert into @ChildGroups (group_id) select distinct group_id from user_group_bind where user_id = @user_id
    Select @CurrentLevelAddition = @CurrentLevelAddition + @intIncrement
 End
 
@@ -121,11 +121,11 @@ Begin
    if @sSQL != '' Select @SQLOut = @sSQL
    else Select @SQLOut = @sDefaultSQL
    return
-End 
+End
 
-SELECT @sTemp = COALESCE(@sTemp + ', ', '') + CAST(group_id AS varchar) FROM @ChildGroups  
+SELECT @sTemp = COALESCE(@sTemp + ', ', '') + CAST(group_id AS varchar) FROM @ChildGroups
 if @sSQL != '' Select @sSQL = @sSQL + @sUnion
-Select @sSQL = @sSQL + Replace( Replace(@sSelectGroup,@srLevelIncrement,@CurrentLevelAddition), @srGroupInList, @sTemp ) 
+Select @sSQL = @sSQL + Replace( Replace(@sSelectGroup,@srLevelIncrement,@CurrentLevelAddition), @srGroupInList, @sTemp )
 Select @sSQL = @sSQL + @sGroupBy
 
 insert into @UsedGroups(group_id) select group_id from @ChildGroups
@@ -170,20 +170,20 @@ PRINT '7.5.7.1 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.2
 -- Custom Classes
 -- **************************************
 
-if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'custom_class_for_pages') 
+if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'custom_class_for_pages')
 begin
-	alter table page_template 
+	alter table page_template
 	add custom_class_for_pages nvarchar(255) NULL
 end
 GO
 
-if not exists (select * From information_schema.columns where table_name = 'page' and column_name = 'page_custom_class') 
+if not exists (select * From information_schema.columns where table_name = 'page' and column_name = 'page_custom_class')
 begin
 	alter table page
 	add page_custom_class nvarchar(255) NULL
@@ -199,43 +199,43 @@ GO
 PRINT '7.5.7.2 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.3
 -- Custom Classes. Part 2
 -- **************************************
 
-if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'template_custom_class') 
+if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'template_custom_class')
 begin
-	alter table page_template 
+	alter table page_template
 	add template_custom_class nvarchar(255) NULL
 end
 GO
 
-if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'custom_class_for_generics') 
+if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'custom_class_for_generics')
 begin
-	alter table page_template 
+	alter table page_template
 	add custom_class_for_generics nvarchar(255) NULL
 end
 GO
 
-if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'custom_class_for_containers') 
+if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'custom_class_for_containers')
 begin
-	alter table page_template 
+	alter table page_template
 	add custom_class_for_containers nvarchar(255) NULL
 end
 GO
 
-if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'custom_class_for_forms') 
+if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'custom_class_for_forms')
 begin
-	alter table page_template 
+	alter table page_template
 	add custom_class_for_forms nvarchar(255) NULL
 end
 GO
 
-if not exists (select * From information_schema.columns where table_name = 'object' and column_name = 'control_custom_class') 
+if not exists (select * From information_schema.columns where table_name = 'object' and column_name = 'control_custom_class')
 begin
-	alter table object 
+	alter table object
 	add control_custom_class nvarchar(255) NULL
 end
 GO
@@ -249,7 +249,7 @@ GO
 PRINT '7.5.7.3 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.4
 -- Custom Classes. Part 3
@@ -270,15 +270,15 @@ ALTER   PROCEDURE [dbo].[qp_save_object]
 @global bit = 0,
 @enable_viewState bit = 0,
 @custom_class nvarchar(255) = null
-AS 
+AS
 -- Local variables
 DECLARE @strSQL nvarchar(2000)
-DECLARE @parent_fmt_id numeric(18,0) 
-DECLARE @parent_type_id numeric(18,0) 
+DECLARE @parent_fmt_id numeric(18,0)
+DECLARE @parent_type_id numeric(18,0)
 DECLARE @parent_fmt_name nvarchar(255)
 DECLARE @use_default_values numeric(18,0)
-DECLARE @allow_stage_edit numeric(18,0) 
-DECLARE @object_id numeric(18,0) 
+DECLARE @allow_stage_edit numeric(18,0)
+DECLARE @object_id numeric(18,0)
 -- body function
 IF @object_overrided = 0
 BEGIN
@@ -287,9 +287,9 @@ BEGIN
 		Set @object_overrided = 1
 END
 IF @object_overrided <> 0
-	SELECT @object_name = o.object_name, @net_object_name = o.net_object_name, 
-		@parent_fmt_id = o.object_format_id, @parent_type_id = o.object_type_id, 
-		@parent_fmt_name = f.format_name, @use_default_values = o.use_default_values, @allow_stage_edit = o.allow_stage_edit 
+	SELECT @object_name = o.object_name, @net_object_name = o.net_object_name,
+		@parent_fmt_id = o.object_format_id, @parent_type_id = o.object_type_id,
+		@parent_fmt_name = f.format_name, @use_default_values = o.use_default_values, @allow_stage_edit = o.allow_stage_edit
 	FROM object AS o
 	LEFT OUTER JOIN object_format AS f ON f.object_format_id = o.object_format_id
 	WHERE o.object_id = @parent_object_id
@@ -300,7 +300,7 @@ IF @allow_stage_edit IS Null
         Set @allow_stage_edit = 0
 INSERT INTO object
 	(page_template_id, page_id, object_name, net_object_name, object_type_id, parent_object_id, description, last_modified_by, allow_stage_edit, global, enable_viewState, control_custom_class)
-VALUES 
+VALUES
 	(@page_template_id, @page_id, @object_name, @net_object_name, @object_type_id, @parent_object_id, @description, @user_id, @allow_stage_edit, @global, @enable_viewState, @custom_class )
 Set @object_id = CAST(SCOPE_IDENTITY() AS NUMERIC)
 -- Copy object parameters for publishing container
@@ -311,19 +311,19 @@ BEGIN
 	BEGIN
 		UPDATE object SET use_default_values = 1 WHERE object_id = @object_id
 
-		INSERT INTO object_values 
+		INSERT INTO object_values
 			(object_id, variable_name, variable_value)
-		SELECT @object_id, variable_name, variable_value 
+		SELECT @object_id, variable_name, variable_value
 		FROM object_values WHERE object_id = @parent_object_id
 	END
 END
-IF @parent_fmt_id is NOT Null 
+IF @parent_fmt_id is NOT Null
 BEGIN
 	INSERT INTO object_format
 		(object_id, format_name, description, format_body, last_modified_by, net_language_id, net_format_name, code_behind)
 	SELECT
 		@object_id, format_name, description, format_body, @user_id, net_language_id, net_format_name, code_behind
-	FROM object_format 
+	FROM object_format
 	WHERE object_id = @parent_object_id
 
 	UPDATE object SET object_format_id =
@@ -334,7 +334,7 @@ END
 IF @GLOBAL = 1 AND @object_type_id = 3
 	UPDATE object SET global = 0 WHERE object_type_id = 3 AND page_template_id IN (
 		SELECT page_template_id FROM page_template WHERE site_id = (
-			SELECT site_id FROM page_template WHERE page_template_id = @page_template_id)) 
+			SELECT site_id FROM page_template WHERE page_template_id = @page_template_id))
 		AND object_id <> @object_id
 SELECT @object_id AS object_id
 RETURN 0
@@ -349,14 +349,14 @@ GO
 PRINT '7.5.7.4 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.5
 -- Site Info
 -- **************************************
 
-ALTER TRIGGER [dbo].[tu_site_formats_modified] ON [dbo].[SITE] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_site_formats_modified] ON [dbo].[SITE]
+FOR UPDATE
 AS
 
 	declare @upload_url nvarchar(255), @new_upload_url nvarchar(255)
@@ -399,7 +399,7 @@ AS
 				@new_live_virtual_root = live_virtual_root,
 				@new_allow_user_sessions = allow_user_sessions
 		from site where site_id = @site_id
-		
+
 		--if at least one required was changed we update 'modified' field for all site templates and formats
 		if	IsNull(@new_upload_url, '') <> IsNull(@upload_url, '')
 			or IsNull(@new_use_absolute_upload_url, '') <> IsNull(@use_absolute_upload_url, '')
@@ -410,7 +410,7 @@ AS
 		begin
 			update page_template set modified = Getdate() where site_id = @site_id
 			update object_format set modified = Getdate() where object_id in (
-				select object_id from object o 
+				select object_id from object o
 				join page_template pt on o.page_template_id = pt.page_template_id
 				where pt.site_id = @site_id
 			)
@@ -421,7 +421,7 @@ AS
 
 GO
 
-create procedure [dbo].[qp_delete_default] 
+create procedure [dbo].[qp_delete_default]
 @table_name nvarchar(255),
 @column_name nvarchar(255)
 as
@@ -466,19 +466,19 @@ AS
 
 	INSERT INTO container
 		(object_id, content_id, allow_order_dynamic, order_static, order_dynamic, filter_value,
-		select_start, select_total, schedule_dependence, rotate_content, apply_security, show_archived, 
+		select_start, select_total, schedule_dependence, rotate_content, apply_security, show_archived,
 		duration, enable_cache_invalidation, dynamic_content_variable, start_level, end_level, use_level_filtration)
 	SELECT
 	         @object_id, content_id, allow_order_dynamic, order_static, order_dynamic, filter_value,
 		select_start, select_total, schedule_dependence, rotate_content, apply_security, show_archived,
 		duration, enable_cache_invalidation, dynamic_content_variable, start_level, end_level, use_level_filtration
-	FROM container 
+	FROM container
 	WHERE object_id = @parent_object_id
 GO
 
-	
-	
-	
+
+
+
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
 VALUES
@@ -488,7 +488,7 @@ GO
 PRINT '7.5.7.5 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.6
 -- Site Info
@@ -502,7 +502,7 @@ select @user_list_id = tab_id from tabs where tab_name = 'Users'
 if not exists(select * from toolbar_buttons where location_tab_id = @user_list_id  and button_name = @button_name)
 begin
 	insert into toolbar_buttons(permission_level_id, location_tab_id, image_disabled, image_enabled, button_name, buttons_order, action_tab_id, always_enabled, action_function)
-	values(1, @user_list_id , 'images/toolbar/search_disabled.gif', 'images/toolbar/search.gif', @button_name, 2, @user_list_id, 1, 'search') 
+	values(1, @user_list_id , 'images/toolbar/search_disabled.gif', 'images/toolbar/search.gif', @button_name, 2, @user_list_id, 1, 'search')
 end
 
 INSERT INTO SYSTEM_INFO
@@ -514,7 +514,7 @@ GO
 PRINT '7.5.7.6 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.7
 -- Small fix
@@ -556,7 +556,7 @@ DECLARE @fullWhereExpression nvarchar(4000)
 DECLARE @insert_key varchar(200)
 DECLARE @Select varchar(200)
 
-set @insert_key ='<$_security_insert_$>' 
+set @insert_key ='<$_security_insert_$>'
 set @Select = 'c.*'
 
 select @siteId = site_id from site where site_name = @SiteName
@@ -585,7 +585,7 @@ end
 
 if @WhereExpression = '' begin
 	set @fullWhereExpression = '1 = 1'
-end 
+end
 else begin
 	set @fullWhereExpression = @WhereExpression
 end
@@ -606,11 +606,11 @@ if @use_security>0
 begin
 	if @filter_records > 0
 	begin
-		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 	end
 	else
 	begin
-        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 		set @Select = @Select + ', IsNull(pi.permission_level,0) as current_permission_level  '
 	end
 end
@@ -644,18 +644,18 @@ GO
 PRINT '7.5.7.7 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.8
 -- Assemble fields for page template
 -- **************************************
 
-ALTER TABLE [dbo].[PAGE_TEMPLATE] ADD 
+ALTER TABLE [dbo].[PAGE_TEMPLATE] ADD
 	[ASSEMBLE_IN_LIVE] [bit] NOT NULL CONSTRAINT [DF_ASSEMBLE_IN_LIVE]  DEFAULT ((1)),
 	[ASSEMBLE_IN_STAGE] [bit] NOT NULL CONSTRAINT [DF_ASSEMBLE_IN_STAGE]  DEFAULT ((1))
-GO	
+GO
 
-ALTER TRIGGER [dbo].[tu_reassemble] ON [dbo].[PAGE_TEMPLATE] 
+ALTER TRIGGER [dbo].[tu_reassemble] ON [dbo].[PAGE_TEMPLATE]
 FOR  UPDATE
 AS
 	if update(template_name) or update(template_body) or update(code_behind) or update(net_template_name) or update(net_language_id) or update(template_custom_class)
@@ -675,18 +675,18 @@ PRINT '7.5.7.8 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.9
 -- Assemble fields for object formats and pages
 -- **************************************
 
-ALTER TABLE [dbo].[OBJECT_FORMAT] ADD 
+ALTER TABLE [dbo].[OBJECT_FORMAT] ADD
 	[ASSEMBLE_IN_LIVE] [bit] NOT NULL CONSTRAINT [DF_OBJECT_FORMAT_ASSEMBLE_IN_LIVE]  DEFAULT ((1)),
 	[ASSEMBLE_IN_STAGE] [bit] NOT NULL CONSTRAINT [DF_OBJECT_FORMAT_ASSEMBLE_IN_STAGE]  DEFAULT ((1))
-GO	
+GO
 
-ALTER TABLE [dbo].[PAGE] ADD 
+ALTER TABLE [dbo].[PAGE] ADD
 	[ASSEMBLE_IN_LIVE] [bit] NOT NULL CONSTRAINT [DF_PAGE_ASSEMBLE_IN_LIVE]  DEFAULT ((1)),
 	[ASSEMBLE_IN_STAGE] [bit] NOT NULL CONSTRAINT [DF_PAGE_ASSEMBLE_IN_STAGE]  DEFAULT ((1))
 GO
@@ -700,16 +700,16 @@ GO
 PRINT '7.5.7.9 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.7.10
 -- Triggers fix
 -- **************************************
 
-ALTER TRIGGER [dbo].[tu_site_formats_modified] ON [dbo].[SITE] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_site_formats_modified] ON [dbo].[SITE]
+FOR UPDATE
 AS
-	
+
 	declare @live_directory nvarchar(255), @new_live_directory nvarchar(255)
 	declare @stage_directory nvarchar(255), @new_stage_directory nvarchar(255)
 	declare @allow_user_sessions numeric, @new_allow_user_sessions numeric
@@ -743,43 +743,43 @@ AS
 				@new_stage_directory = stage_directory,
 				@new_allow_user_sessions = allow_user_sessions
 		from site where site_id = @site_id
-		
+
 		--if at least one required was changed we update 'modified' field for all site templates and formats
 		if	IsNull(@new_live_directory, '') <> IsNull(@live_directory, '')
 		begin
-			update page_template set assemble_in_live = 1 
+			update page_template set assemble_in_live = 1
 			where site_id = @site_id
 
-			update page set assemble_in_live = 1 
+			update page set assemble_in_live = 1
 			from page p inner join page_template pt on pt.page_template_id = p.page_template_id
 			where pt.site_id = @site_id
-			
+
 			update object_format set assemble_in_live = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			inner join page_template pt on pt.page_template_id = obj.page_template_id
 			where pt.site_id = @site_id
 		end
 
 		if	IsNull(@new_stage_directory, '') <> IsNull(@stage_directory, '')
 		begin
-			update page_template set assemble_in_stage = 1 
+			update page_template set assemble_in_stage = 1
 			where site_id = @site_id
 
-			update page set assemble_in_stage = 1 
+			update page set assemble_in_stage = 1
 			from page p inner join page_template pt on pt.page_template_id = p.page_template_id
 			where pt.site_id = @site_id
-			
+
 			update object_format set assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			inner join page_template pt on pt.page_template_id = obj.page_template_id
 			where pt.site_id = @site_id
 		end
-		
+
 		if 	IsNull(@new_allow_user_sessions, '') <> IsNull(@allow_user_sessions, '')
 		begin
-			update page set assemble_in_live = 1 
+			update page set assemble_in_live = 1
 			from page p inner join page_template pt on pt.page_template_id = p.page_template_id
 			where pt.site_id = @site_id
 		end
@@ -788,7 +788,7 @@ AS
 GO
 
 ALTER  TRIGGER [dbo].[tu_page_template_modified] ON [dbo].[PAGE_TEMPLATE]
-FOR UPDATE 
+FOR UPDATE
 AS
 BEGIN
 	declare @template_folder nvarchar(255), @new_template_folder nvarchar(255)
@@ -799,10 +799,10 @@ BEGIN
 		page_template_id numeric,
 		template_folder nvarchar(255)
 	)
-	
+
 	/* Collect affected items */
 	insert into @pt (page_template_id, template_folder)
-	select page_template_id, template_folder from deleted d   
+	select page_template_id, template_folder from deleted d
 
 	set @i = 1
 	select @count = count(id) from @pt
@@ -811,29 +811,29 @@ BEGIN
 	begin
 		select @template_folder = template_folder, @page_template_id = page_template_id from @pt where id = @i
 		select @new_template_folder = template_folder from page_template where page_template_id = @page_template_id
-		
+
 		if IsNull(@template_folder, '') <> IsNull(@new_template_folder, '')
 		begin
 
-			update page set assemble_in_live = 1, assemble_in_stage = 1 
+			update page set assemble_in_live = 1, assemble_in_stage = 1
 			where page_template_id = @page_template_id
-			
+
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 		end
-		
+
 		/* Curtail Format Stored Versions */
 		exec qp_wrapper_curtail_object_format_versions NULL, @page_template_id
-		
+
 		set @i = @i + 1
 	end
 END
 GO
 
-ALTER TRIGGER [dbo].[tu_template_formats_modified] ON [dbo].[PAGE] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_template_formats_modified] ON [dbo].[PAGE]
+FOR UPDATE
 AS
 BEGIN
 	declare @page_folder nvarchar(255), @new_page_folder nvarchar(255)
@@ -846,10 +846,10 @@ BEGIN
 		page_folder nvarchar(255),
 		generate_trace bit
 	)
-	
+
 	/* Collect affected items */
 	insert into @p (page_id, page_folder, generate_trace)
-	select page_id, page_folder, generate_trace from deleted d   
+	select page_id, page_folder, generate_trace from deleted d
 
 	set @i = 1
 	select @count = count(id) from @p
@@ -858,7 +858,7 @@ BEGIN
 	begin
 		select @page_folder = page_folder, @page_id = page_id, @page_trace = generate_trace from @p where id = @i
 		select @new_page_folder = page_folder, @new_page_trace = generate_trace from page where page_id = @page_id
-		
+
 		if IsNull(@page_folder, '') <> IsNull(@new_page_folder, '') or @page_trace <> @new_page_trace
 		begin
 				update object_format set assemble_in_live = 1, assemble_in_stage = 1 where object_id in (
@@ -870,16 +870,16 @@ END
 GO
 
 
-ALTER TRIGGER [dbo].[tu_object_format_modified] ON [dbo].[OBJECT] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_object_format_modified] ON [dbo].[OBJECT]
+FOR UPDATE
 AS
 if update(page_id) or update([object_name]) or update(object_type_id) or update(net_object_name) or update(enable_viewstate)
 	update object_format set assemble_in_live = 1, assemble_in_stage = 1 where object_id in (select object_id from inserted)
 GO
 
 
-ALTER TRIGGER [dbo].[tu_container_format_modified] ON [dbo].[CONTAINER] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_container_format_modified] ON [dbo].[CONTAINER]
+FOR UPDATE
 AS
 if not update(locked_by) begin
 	update object_format set assemble_in_live = 1, assemble_in_stage = 1 where object_id in (select object_id from inserted)
@@ -894,38 +894,38 @@ AS
 IF UPDATE(locked) or UPDATE(locked_by)
 BEGIN
 	UPDATE objF
-		SET objF.LOCKED = i.LOCKED, 
+		SET objF.LOCKED = i.LOCKED,
 			objF.LOCKED_BY = i.LOCKED_BY
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(modified) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.MODIFIED = i.MODIFIED
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(last_modified_by) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.LAST_MODIFIED_BY = i.LAST_MODIFIED_BY
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(assemble_in_live) or UPDATE(assemble_in_stage) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.assemble_in_live = i.assemble_in_live,
 			objF.assemble_in_stage = i.assemble_in_stage
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
@@ -933,21 +933,21 @@ END
 IF UPDATE(format_name) or UPDATE(format_body) or UPDATE(code_behind) or UPDATE(net_format_name) or UPDATE(net_language_id) or UPDATE(description)
 BEGIN
 	-- Create object format version
-	DECLARE @object_format_id NUMERIC 
+	DECLARE @object_format_id NUMERIC
 	SELECT @object_format_id = object_format_id FROM deleted
-	
-	INSERT INTO object_format_version (object_format_id, object_id, format_name, description, created, modified, 
+
+	INSERT INTO object_format_version (object_format_id, object_id, format_name, description, created, modified,
 	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled )
-	SELECT object_format_id, object_id, format_name, description, created, modified, 
-	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled  
+	SELECT object_format_id, object_id, format_name, description, created, modified,
+	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled
 	FROM deleted
 
 	declare @i numeric, @count numeric
 	declare @objf table (
 			id numeric identity(1,1) primary key,
-			object_format_id numeric 
+			object_format_id numeric
 	)
-	
+
 	insert into @objf (object_format_id)
 		select object_format_id
 		from deleted d
@@ -958,10 +958,10 @@ BEGIN
 	while @i < @count + 1
 	begin
 		select @object_format_id = object_format_id from @objf where id = @i
-		EXEC qp_curtail_object_format_versions @object_format_id 
+		EXEC qp_curtail_object_format_versions @object_format_id
 		set @i = @i + 1
 	end
-	
+
 	UPDATE
 		objF
 	SET
@@ -979,7 +979,7 @@ BEGIN
 END
 
 IF UPDATE(object_id) or UPDATE(created) or UPDATE(assembled)
-BEGIN 
+BEGIN
 	UPDATE
 		objF
 	SET
@@ -999,11 +999,11 @@ FOR UPDATE
 AS
 if update(format_name) or update(format_body) or update(code_behind) or update(net_format_name) or update(net_language_id)
 begin
-	update page set reassemble = 1 where page_id in ( 
-               (select o.page_id from object o, inserted i where o.object_id = i.object_id)    
+	update page set reassemble = 1 where page_id in (
+               (select o.page_id from object o, inserted i where o.object_id = i.object_id)
            union
                (select p.page_id from page p , inserted i , object o where p.page_template_id = o.page_template_id and o.page_id is Null and o.object_id = i.object_id
-                )      
+                )
 	)
 	update object_format set modified = getdate(), assemble_in_live = 1, assemble_in_stage = 1 where object_format_id in (select object_format_id from inserted)
 end
@@ -1017,9 +1017,9 @@ VALUES
 GO
 
 PRINT '7.5.7.10 completed'
-GO	
+GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.8.0
 -- Label
@@ -1033,7 +1033,7 @@ GO
 PRINT '7.5.8.0 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.8.1
 -- Some new fields + Triggers
@@ -1048,16 +1048,16 @@ alter table object_format ADD ASSEMBLE_PREVIEW_IN_LIVE bit not null constraint D
 alter table object_format ADD ASSEMBLE_PREVIEW_IN_STAGE bit not null constraint DF_OBJECT_FORMAT_ASSEMBLE_PREVIEW_IN_STAGE default 1
 GO
 
-ALTER TRIGGER [dbo].[tu_object_format_modified] ON [dbo].[OBJECT] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_object_format_modified] ON [dbo].[OBJECT]
+FOR UPDATE
 AS
 if update(page_id) or update([object_name]) or update(object_type_id) or update(net_object_name) or update(enable_viewstate) or update(control_custom_class) or update(disable_databind)
 	update object_format set assemble_in_live = 1, assemble_in_stage = 1 where object_id in (select object_id from inserted)
-    UPDATE page SET reassemble = 1 WHERE page_id IN 
-	( 
-		SELECT page_id FROM inserted 
-		UNION 
-		SELECT DISTINCT p.page_id FROM inserted AS i LEFT OUTER JOIN page AS p ON p.page_template_id = i.page_template_id 
+    UPDATE page SET reassemble = 1 WHERE page_id IN
+	(
+		SELECT page_id FROM inserted
+		UNION
+		SELECT DISTINCT p.page_id FROM inserted AS i LEFT OUTER JOIN page AS p ON p.page_template_id = i.page_template_id
 		WHERE i.page_id IS NULL
 	)
 
@@ -1087,11 +1087,11 @@ FOR UPDATE
 AS
 if update(format_name) or update(format_body) or update(code_behind) or update(net_format_name) or update(net_language_id)
 begin
-	update page set reassemble = 1 where page_id in ( 
-               (select o.page_id from object o, inserted i where o.object_id = i.object_id)    
+	update page set reassemble = 1 where page_id in (
+               (select o.page_id from object o, inserted i where o.object_id = i.object_id)
            union
                (select p.page_id from page p , inserted i , object o where p.page_template_id = o.page_template_id and o.page_id is Null and o.object_id = i.object_id
-                )      
+                )
 	)
 	update object_format set assemble_in_live = 1, assemble_in_stage = 1, modified = getdate() where object_format_id in (select object_format_id from inserted)
 end
@@ -1101,10 +1101,10 @@ GO
 CREATE TRIGGER [dbo].[tu_assemble_format_preview_notification] ON [dbo].[OBJECT_FORMAT]
 FOR UPDATE
 AS
-	update object_format set assemble_preview_in_live = 1, assemble_notification_in_live = 1 from object_format inner join 
+	update object_format set assemble_preview_in_live = 1, assemble_notification_in_live = 1 from object_format inner join
 	inserted i on object_format.object_format_id = i.object_format_id inner join deleted d on i.object_format_id = d.object_format_id where i.assemble_in_live = 1 and d.assemble_in_live = 0
 
-	update object_format set assemble_preview_in_stage = 1, assemble_notification_in_stage = 1 from object_format inner join 
+	update object_format set assemble_preview_in_stage = 1, assemble_notification_in_stage = 1 from object_format inner join
 	inserted i on object_format.object_format_id = i.object_format_id inner join deleted d on i.object_format_id = d.object_format_id where i.assemble_in_stage = 1 and d.assemble_in_stage = 0
 GO
 
@@ -1125,15 +1125,15 @@ ALTER   PROCEDURE [dbo].[qp_save_object]
 @custom_class nvarchar(255) = null,
 @disable_databind bit = 0
 
-AS 
+AS
 -- Local variables
 DECLARE @strSQL nvarchar(2000)
-DECLARE @parent_fmt_id numeric(18,0) 
-DECLARE @parent_type_id numeric(18,0) 
+DECLARE @parent_fmt_id numeric(18,0)
+DECLARE @parent_type_id numeric(18,0)
 DECLARE @parent_fmt_name nvarchar(255)
 DECLARE @use_default_values numeric(18,0)
-DECLARE @allow_stage_edit numeric(18,0) 
-DECLARE @object_id numeric(18,0) 
+DECLARE @allow_stage_edit numeric(18,0)
+DECLARE @object_id numeric(18,0)
 -- body function
 IF @object_overrided = 0
 BEGIN
@@ -1142,9 +1142,9 @@ BEGIN
 		Set @object_overrided = 1
 END
 IF @object_overrided <> 0
-	SELECT @object_name = o.object_name, @net_object_name = o.net_object_name, 
-		@parent_fmt_id = o.object_format_id, @parent_type_id = o.object_type_id, 
-		@parent_fmt_name = f.format_name, @use_default_values = o.use_default_values, @allow_stage_edit = o.allow_stage_edit 
+	SELECT @object_name = o.object_name, @net_object_name = o.net_object_name,
+		@parent_fmt_id = o.object_format_id, @parent_type_id = o.object_type_id,
+		@parent_fmt_name = f.format_name, @use_default_values = o.use_default_values, @allow_stage_edit = o.allow_stage_edit
 	FROM object AS o
 	LEFT OUTER JOIN object_format AS f ON f.object_format_id = o.object_format_id
 	WHERE o.object_id = @parent_object_id
@@ -1155,7 +1155,7 @@ IF @allow_stage_edit IS Null
         Set @allow_stage_edit = 0
 INSERT INTO object
 	(page_template_id, page_id, object_name, net_object_name, object_type_id, parent_object_id, description, last_modified_by, allow_stage_edit, global, enable_viewState, disable_databind, control_custom_class)
-VALUES 
+VALUES
 	(@page_template_id, @page_id, @object_name, @net_object_name, @object_type_id, @parent_object_id, @description, @user_id, @allow_stage_edit, @global, @enable_viewState, @disable_databind, @custom_class )
 Set @object_id = CAST(SCOPE_IDENTITY() AS NUMERIC)
 -- Copy object parameters for publishing container
@@ -1166,19 +1166,19 @@ BEGIN
 	BEGIN
 		UPDATE object SET use_default_values = 1 WHERE object_id = @object_id
 
-		INSERT INTO object_values 
+		INSERT INTO object_values
 			(object_id, variable_name, variable_value)
-		SELECT @object_id, variable_name, variable_value 
+		SELECT @object_id, variable_name, variable_value
 		FROM object_values WHERE object_id = @parent_object_id
 	END
 END
-IF @parent_fmt_id is NOT Null 
+IF @parent_fmt_id is NOT Null
 BEGIN
 	INSERT INTO object_format
 		(object_id, format_name, description, format_body, last_modified_by, net_language_id, net_format_name, code_behind)
 	SELECT
 		@object_id, format_name, description, format_body, @user_id, net_language_id, net_format_name, code_behind
-	FROM object_format 
+	FROM object_format
 	WHERE object_id = @parent_object_id
 
 	UPDATE object SET object_format_id =
@@ -1189,16 +1189,16 @@ END
 IF @GLOBAL = 1 AND @object_type_id = 3
 	UPDATE object SET global = 0 WHERE object_type_id = 3 AND page_template_id IN (
 		SELECT page_template_id FROM page_template WHERE site_id = (
-			SELECT site_id FROM page_template WHERE page_template_id = @page_template_id)) 
+			SELECT site_id FROM page_template WHERE page_template_id = @page_template_id))
 		AND object_id <> @object_id
 SELECT @object_id AS object_id
 RETURN 0
 GO
 
-ALTER TRIGGER [dbo].[tu_site_formats_modified] ON [dbo].[SITE] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_site_formats_modified] ON [dbo].[SITE]
+FOR UPDATE
 AS
-	
+
 	declare @live_directory nvarchar(255), @new_live_directory nvarchar(255)
 	declare @stage_directory nvarchar(255), @new_stage_directory nvarchar(255)
 	declare @allow_user_sessions numeric, @new_allow_user_sessions numeric
@@ -1232,43 +1232,43 @@ AS
 				@new_stage_directory = stage_directory,
 				@new_allow_user_sessions = allow_user_sessions
 		from site where site_id = @site_id
-		
+
 		--if at least one required was changed we update 'modified' field for all site templates and formats
 		if	IsNull(@new_live_directory, '') <> IsNull(@live_directory, '')
 		begin
-			update page_template set assemble_in_live = 1 
+			update page_template set assemble_in_live = 1
 			where site_id = @site_id
 
-			update page set assemble_in_live = 1 
+			update page set assemble_in_live = 1
 			from page p inner join page_template pt on pt.page_template_id = p.page_template_id
 			where pt.site_id = @site_id
-			
+
 			update object_format set assemble_in_live = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			inner join page_template pt on pt.page_template_id = obj.page_template_id
 			where pt.site_id = @site_id
 		end
 
 		if	IsNull(@new_stage_directory, '') <> IsNull(@stage_directory, '')
 		begin
-			update page_template set assemble_in_stage = 1 
+			update page_template set assemble_in_stage = 1
 			where site_id = @site_id
 
-			update page set assemble_in_stage = 1 
+			update page set assemble_in_stage = 1
 			from page p inner join page_template pt on pt.page_template_id = p.page_template_id
 			where pt.site_id = @site_id
-			
+
 			update object_format set assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			inner join page_template pt on pt.page_template_id = obj.page_template_id
 			where pt.site_id = @site_id
 		end
-		
+
 		if 	IsNull(@new_allow_user_sessions, '') <> IsNull(@allow_user_sessions, '')
 		begin
-			update page set assemble_in_live = 1, assemble_in_stage = 1 
+			update page set assemble_in_live = 1, assemble_in_stage = 1
 			from page p inner join page_template pt on pt.page_template_id = p.page_template_id
 			where pt.site_id = @site_id
 		end
@@ -1277,7 +1277,7 @@ AS
 GO
 
 ALTER  TRIGGER [dbo].[tu_page_template_modified] ON [dbo].[PAGE_TEMPLATE]
-FOR UPDATE 
+FOR UPDATE
 AS
 BEGIN
 	declare @template_folder nvarchar(255), @new_template_folder nvarchar(255)
@@ -1299,10 +1299,10 @@ BEGIN
 		using nvarchar(512)
 
 	)
-	
+
 	/* Collect affected items */
 	insert into @pt (page_template_id, template_folder, custom_class_for_pages, custom_class_for_generics, custom_class_for_containers, custom_class_for_forms, using)
-	select page_template_id, template_folder, custom_class_for_pages, custom_class_for_generics, custom_class_for_containers, custom_class_for_forms, using from deleted d   
+	select page_template_id, template_folder, custom_class_for_pages, custom_class_for_generics, custom_class_for_containers, custom_class_for_forms, using from deleted d
 
 	set @i = 1
 	select @count = count(id) from @pt
@@ -1311,20 +1311,20 @@ BEGIN
 	begin
 		select @custom_class_for_pages = custom_class_for_pages, @custom_class_for_generics = custom_class_for_generics, @custom_class_for_containers = custom_class_for_containers, @custom_class_for_forms = custom_class_for_forms, @using = using, @template_folder = template_folder, @page_template_id = page_template_id from @pt where id = @i
 		select @new_custom_class_for_pages = custom_class_for_pages, @new_custom_class_for_generics = custom_class_for_generics, @new_custom_class_for_containers = custom_class_for_containers, @new_custom_class_for_forms = custom_class_for_forms, @new_using = using, @new_template_folder = template_folder from page_template where page_template_id = @page_template_id
-		
+
 		if IsNull(@template_folder, '') <> IsNull(@new_template_folder, '')
 		or IsNull(@custom_class_for_pages, '') <> IsNull(@new_custom_class_for_pages, '')
 		begin
-			update page set assemble_in_live = 1, assemble_in_stage = 1 
+			update page set assemble_in_live = 1, assemble_in_stage = 1
 			where page_template_id = @page_template_id
 		end
-		
+
 		if IsNull(@template_folder, '') <> IsNull(@new_template_folder, '')
 		or IsNull(@using, '') <> IsNull(@new_using, '')
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 		end
 
@@ -1332,7 +1332,7 @@ BEGIN
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 			and obj.object_type_id <> 2 and obj.object_type_id <> 9
 		end
@@ -1341,7 +1341,7 @@ BEGIN
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 			and obj.object_type_id = 2
 		end
@@ -1350,20 +1350,20 @@ BEGIN
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 			and obj.object_type_id = 9
 		end
-		
+
 		/* Curtail Format Stored Versions */
 		exec qp_wrapper_curtail_object_format_versions NULL, @page_template_id
-		
+
 		set @i = @i + 1
 	end
 END
 GO
 
-ALTER TRIGGER [dbo].[tu_reassemble] ON [dbo].[PAGE_TEMPLATE] 
+ALTER TRIGGER [dbo].[tu_reassemble] ON [dbo].[PAGE_TEMPLATE]
 FOR  UPDATE
 AS
 	if update(template_name) or update(template_body) or update(code_behind) or update(net_template_name) or update(net_language_id) or update(template_custom_class)
@@ -1374,8 +1374,8 @@ AS
 	end
 GO
 
-ALTER TRIGGER [dbo].[tu_template_formats_modified] ON [dbo].[PAGE] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_template_formats_modified] ON [dbo].[PAGE]
+FOR UPDATE
 AS
 BEGIN
 	declare @page_folder nvarchar(255), @new_page_folder nvarchar(255)
@@ -1394,10 +1394,10 @@ BEGIN
 		enable_viewstate bit,
 		generate_trace bit
 	)
-	
+
 	/* Collect affected items */
 	insert into @p (page_id, page_folder, generate_trace, page_filename, page_custom_class, enable_viewstate)
-	select page_id, page_folder, generate_trace, page_filename, page_custom_class, enable_viewstate from deleted d   
+	select page_id, page_folder, generate_trace, page_filename, page_custom_class, enable_viewstate from deleted d
 
 	set @i = 1
 	select @count = count(id) from @p
@@ -1406,23 +1406,23 @@ BEGIN
 	begin
 		select @page_folder = page_folder, @page_id = page_id, @page_trace = generate_trace, @page_filename = page_filename, @enable_viewstate = enable_viewstate, @page_custom_class = page_custom_class from @p where id = @i
 		select @new_page_folder = page_folder, @new_page_trace = generate_trace, @new_page_filename = page_filename, @new_enable_viewstate = enable_viewstate, @new_page_custom_class = page_custom_class from page where page_id = @page_id
-		
-		if IsNull(@page_folder, '') <> IsNull(@new_page_folder, '') 
+
+		if IsNull(@page_folder, '') <> IsNull(@new_page_folder, '')
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1 where object_id in (
 				select object_id from object where page_id = @page_id)
 		end
 
-		if @page_trace <> @new_page_trace 
+		if @page_trace <> @new_page_trace
 		or @enable_viewstate <> @new_enable_viewstate
 		or IsNull(@page_filename, '') <> IsNull(@new_page_filename, '')
 		or IsNull(@page_custom_class, '') <> IsNull(@new_page_custom_class, '')
-		or IsNull(@page_folder, '') <> IsNull(@new_page_folder, '') 
+		or IsNull(@page_folder, '') <> IsNull(@new_page_folder, '')
 		begin
 			update page set modified = getdate(), reassemble = 1, assemble_in_live = 1, assemble_in_stage = 1 where page_id in (select page_id from inserted)
 		end
-	
-		
+
+
 		set @i = @i + 1
 	end
 END
@@ -1437,13 +1437,13 @@ GO
 PRINT '7.5.8.1 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.8.2
 -- Some new fields + Triggers
 -- **************************************
 
-ALTER TRIGGER [dbo].[tu_reassemble] ON [dbo].[PAGE_TEMPLATE] 
+ALTER TRIGGER [dbo].[tu_reassemble] ON [dbo].[PAGE_TEMPLATE]
 FOR  UPDATE
 AS
 	if update(template_name) or update(template_body) or update(code_behind) or update(net_template_name) or update(net_language_id) or update(template_custom_class)
@@ -1455,16 +1455,16 @@ AS
 
 	if update(preview_template_body) or update(preview_code_behind)
 	begin
-		update object_format  
+		update object_format
 		set assemble_preview_in_live = 1, assemble_preview_in_stage = 1
-		from object_format 	
-		inner join object obj on object_format.object_id = obj.object_id 
+		from object_format
+		inner join object obj on object_format.object_id = obj.object_id
 		inner join inserted i on obj.page_template_id = i.page_template_id
-		
+
 	end
 GO
 
-ALTER TABLE [dbo].[SITE] ADD 
+ALTER TABLE [dbo].[SITE] ADD
 	[ASSEMBLE_FORMATS_IN_LIVE] [bit] NOT NULL CONSTRAINT [DF_SITE_ASSEMBLE_FORMATS_IN_LIVE]  DEFAULT ((1))
 GO
 
@@ -1479,58 +1479,58 @@ AS
 IF UPDATE(locked) or UPDATE(locked_by)
 BEGIN
 	UPDATE objF
-		SET objF.LOCKED = i.LOCKED, 
+		SET objF.LOCKED = i.LOCKED,
 			objF.LOCKED_BY = i.LOCKED_BY
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(modified) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.MODIFIED = i.MODIFIED
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(last_modified_by) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.LAST_MODIFIED_BY = i.LAST_MODIFIED_BY
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(assemble_in_live) or UPDATE(assemble_in_stage) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.assemble_in_live = i.assemble_in_live,
 			objF.assemble_in_stage = i.assemble_in_stage
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
-    
-	update objF set assemble_preview_in_live = 1, assemble_notification_in_live = 1 from object_format as objF inner join 
-	inserted i on objF.object_format_id = i.object_format_id where i.assemble_in_live = 1 
 
-	update objF set assemble_preview_in_stage = 1, assemble_notification_in_stage = 1 from object_format as objF inner join 
-	inserted i on objF.object_format_id = i.object_format_id where i.assemble_in_stage = 1 
+	update objF set assemble_preview_in_live = 1, assemble_notification_in_live = 1 from object_format as objF inner join
+	inserted i on objF.object_format_id = i.object_format_id where i.assemble_in_live = 1
+
+	update objF set assemble_preview_in_stage = 1, assemble_notification_in_stage = 1 from object_format as objF inner join
+	inserted i on objF.object_format_id = i.object_format_id where i.assemble_in_stage = 1
 
 
 END
 
 IF UPDATE(assemble_preview_in_live) or UPDATE(assemble_preview_in_stage) or UPDATE(assemble_notification_in_stage) or UPDATE(assemble_notification_in_live) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.assemble_preview_in_live = i.assemble_preview_in_live,
 			objF.assemble_preview_in_stage = i.assemble_preview_in_stage,
 			objF.assemble_notification_in_live = i.assemble_notification_in_live,
 			objF.assemble_notification_in_stage = i.assemble_notification_in_stage
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
@@ -1538,21 +1538,21 @@ END
 IF UPDATE(format_name) or UPDATE(format_body) or UPDATE(code_behind) or UPDATE(net_format_name) or UPDATE(net_language_id) or UPDATE(description)
 BEGIN
 	-- Create object format version
-	DECLARE @object_format_id NUMERIC 
+	DECLARE @object_format_id NUMERIC
 	SELECT @object_format_id = object_format_id FROM deleted
-	
-	INSERT INTO object_format_version (object_format_id, object_id, format_name, description, created, modified, 
+
+	INSERT INTO object_format_version (object_format_id, object_id, format_name, description, created, modified,
 	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled )
-	SELECT object_format_id, object_id, format_name, description, created, modified, 
-	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled  
+	SELECT object_format_id, object_id, format_name, description, created, modified,
+	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled
 	FROM deleted
 
 	declare @i numeric, @count numeric
 	declare @objf table (
 			id numeric identity(1,1) primary key,
-			object_format_id numeric 
+			object_format_id numeric
 	)
-	
+
 	insert into @objf (object_format_id)
 		select object_format_id
 		from deleted d
@@ -1563,10 +1563,10 @@ BEGIN
 	while @i < @count + 1
 	begin
 		select @object_format_id = object_format_id from @objf where id = @i
-		EXEC qp_curtail_object_format_versions @object_format_id 
+		EXEC qp_curtail_object_format_versions @object_format_id
 		set @i = @i + 1
 	end
-	
+
 	UPDATE
 		objF
 	SET
@@ -1584,7 +1584,7 @@ BEGIN
 END
 
 IF UPDATE(object_id) or UPDATE(created) or UPDATE(assembled)
-BEGIN 
+BEGIN
 	UPDATE
 		objF
 	SET
@@ -1601,8 +1601,8 @@ update page set assemble_in_live = 1, assemble_in_stage = 1
 update object_format set assemble_in_live = 1, assemble_in_stage = 1
 update page_template set assemble_in_live = 1, assemble_in_stage = 1
 GO
-	
-	
+
+
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
 VALUES
@@ -1612,7 +1612,7 @@ GO
 PRINT '7.5.8.2 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.9.0
 -- Label
@@ -1626,7 +1626,7 @@ GO
 PRINT '7.5.9.0 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.9.1
 -- Small fix
@@ -1644,7 +1644,7 @@ PRINT '7.5.9.1 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.9.2
 -- Home Optimizations for MTS
@@ -1665,43 +1665,43 @@ exec sp_dboption @db_name , 'arithabort', 'true'
 GO
 
 create view [dbo].[site_content_item_modified] with schemabinding as
-select ci.content_item_id, c.site_id, ci.modified from dbo.content_item ci inner join dbo.content c on ci.content_id = c.content_id 
+select ci.content_item_id, c.site_id, ci.modified from dbo.content_item ci inner join dbo.content c on ci.content_id = c.content_id
 GO
 
-CREATE UNIQUE CLUSTERED INDEX [ix_site_id_modified] ON [dbo].[site_content_item_modified] 
+CREATE UNIQUE CLUSTERED INDEX [ix_site_id_modified] ON [dbo].[site_content_item_modified]
 (
 	[site_id] ASC,
 	[modified] ASC,
 	[content_item_id] ASC
-) 
+)
 GO
 
-ALTER PROCEDURE [dbo].[qp_lastArticles] 
-@user_id numeric 
+ALTER PROCEDURE [dbo].[qp_lastArticles]
+@user_id numeric
 AS
 DECLARE @sites table (rownum int IDENTITY (1, 1) Primary key NOT NULL, site_id INT)
 DECLARE @temp table (rownum int IDENTITY (1, 1) Primary key NOT NULL, content_item_id NUMERIC, content_id NUMERIC, content_name NVARCHAR (200), modified DATETIME, site_id INT, site_name NVARCHAR (100), title NVARCHAR (200), archive BIT )
 DECLARE @site NUMERIC, @content_id NUMERIC, @content_item_id NUMERIC, @titleName NVARCHAR (200), @title NVARCHAR (200), @sql nvarchar(2000)
-DECLARE @RowCnt int 
+DECLARE @RowCnt int
 DECLARE @MaxRows int
 select @RowCnt = 1
 
 insert into @sites(site_id) select * from qp_sites_list_ids(@user_id, 1)
 
-select @MaxRows=count(*) from @sites 
-while @RowCnt <= @MaxRows 
+select @MaxRows=count(*) from @sites
+while @RowCnt <= @MaxRows
 begin
-	select @site = site_id 
-	from @sites 
+	select @site = site_id
+	from @sites
 	where rownum = @RowCnt
 
 	INSERT INTO @temp
 	SELECT ci.content_item_id, c.content_id, c.content_name, ci.modified, c.site_id, site_name, dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) title, cast(archive as bit) archive FROM content_item ci
-	INNER JOIN content c ON ci.content_id = c.content_id 
+	INNER JOIN content c ON ci.content_id = c.content_id
 	INNER JOIN site ON site.site_id = c.site_id
     where ci.content_item_id in (select top 5 content_item_id from site_content_item_modified with(noexpand) where site_id = @site order by modified desc)
 
-    Select @RowCnt = @RowCnt + 1 
+    Select @RowCnt = @RowCnt + 1
 end
 SELECT * from @temp
 GO
@@ -1729,7 +1729,7 @@ ALTER PROCEDURE [dbo].[qp_insert_content_item]
   @last_modified_by NUMERIC,
   @status_type_id NUMERIC,
   @content_item_id NUMERIC OUTPUT,
-  @not_for_replication bit = 1 
+  @not_for_replication bit = 1
 AS BEGIN
   INSERT INTO content_item (content_id, last_modified_by, status_type_id, visible, not_for_replication)
   VALUES (@content_id, @last_modified_by, @status_type_id, 1, @not_for_replication)
@@ -1751,17 +1751,17 @@ PRINT '7.5.9.2 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.9.3
 -- Missed trigger
 -- **************************************
 
 CREATE TRIGGER [dbo].[tbd_delete_content_to_content] ON [dbo].[content_to_content] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 
-delete content_attribute from content_attribute ca	
+delete content_attribute from content_attribute ca
 inner join deleted d on d.link_id = ca.link_id
 
 delete content_to_content from content_to_content cc inner join deleted d on cc.link_id = d.link_id
@@ -1779,7 +1779,7 @@ PRINT '7.5.9.3 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.10.0
 -- Label
@@ -1794,14 +1794,14 @@ GO
 PRINT '7.5.10.0 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.5.10.1
 -- Fix Null Net_Language_Id
 -- **************************************
 
 update object_format set net_language_id = 1 from object_format objf
-inner join object obj on objf.object_id = obj.object_id 
+inner join object obj on objf.object_id = obj.object_id
 inner join page_template pt on pt.page_template_id = obj.page_template_id
 inner join site s on pt.site_id = s.site_id
 where objf.net_language_id is null and s.script_language = '.net final'
@@ -1816,7 +1816,7 @@ GO
 PRINT '7.5.10.1 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.0.0
 -- Label
@@ -1831,7 +1831,7 @@ GO
 PRINT '7.6.0.0 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.1.0
 -- Label
@@ -1846,7 +1846,7 @@ GO
 PRINT '7.6.1.0 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.1.1
 -- Publishing Form Relation fix
@@ -1866,13 +1866,13 @@ PRINT '7.6.1.1 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.1.2
 -- Tags
 -- **************************************
 
-ALTER TABLE OBJECT_FORMAT 
+ALTER TABLE OBJECT_FORMAT
 ADD TAG_NAME nvarchar(255) NULL
 
 GO
@@ -1886,7 +1886,7 @@ GO
 PRINT '7.6.1.2 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.0
 -- Label
@@ -1901,7 +1901,7 @@ GO
 PRINT '7.6.2.0 completed'
 GO
 -----------------------------------------------------------------------------------------------
--- ************************************** 
+-- **************************************
 -- Gaas Alex
 -- version 7.6.2.1
 -- Multilingual
@@ -1920,7 +1920,7 @@ CREATE TABLE [dbo].[MULTILINGUAL] (
 
 GO
 
-ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] ADD 
+ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] ADD
 	[MULTILINGUAL]	[bit] NOT NULL CONSTRAINT [DF_CONTENT_ATTRIBUTE_MULTILINGUAL] DEFAULT (0),
 	[PARENT_CONTENT_ATTRIBUTE_ID] [numeric](18, 0) NULL,
 	[MLANGUAGE_ID]	[numeric](18, 0) NULL CONSTRAINT [FK_CONTENT_ATTRIBUTE_MLANGUAGE_ID] FOREIGN KEY ([MLANGUAGE_ID]) REFERENCES [dbo].[MULTILINGUAL]([MLANGUAGE_ID])
@@ -1953,7 +1953,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [dbo].[qp_create_fields_for_multilingual] 
+CREATE PROCEDURE [dbo].[qp_create_fields_for_multilingual]
 	@parent_content_attribute_id_param numeric (18, 0)
 AS
 BEGIN
@@ -1968,8 +1968,8 @@ BEGIN
 	declare @content_id int
 	if @multilingual_count <> 0
 	begin
-		
-		set @content_id = (select top 1 content_id from content_attribute 
+
+		set @content_id = (select top 1 content_id from content_attribute
 			where attribute_id = @parent_content_attribute_id_param group by content_id)
 
 		declare @mlanguage_id numeric, @mlanguage_postfix nvarchar(5)
@@ -1996,7 +1996,7 @@ BEGIN
 				friendly_name = [dbo].[qp_construct_lfield_name_friendly](friendly_name, @mlanguage_postfix),
 				mlanguage_id = @mlanguage_id
 
-			insert into content_attribute 
+			insert into content_attribute
 				([CONTENT_ID]
 				   ,[ATTRIBUTE_NAME]
 				   ,[FORMAT_MASK]
@@ -2036,7 +2036,7 @@ BEGIN
 				   ,[MULTILINGUAL]
 				   ,[PARENT_CONTENT_ATTRIBUTE_ID]
 				   ,[MLANGUAGE_ID])
-			select 
+			select
 				t1.CONTENT_ID
 			   ,[ATTRIBUTE_NAME]
 			   ,[FORMAT_MASK]
@@ -2075,11 +2075,11 @@ BEGIN
 			   ,[full_page]
 			   ,[MULTILINGUAL]
 			   ,[PARENT_CONTENT_ATTRIBUTE_ID]
-			   ,[MLANGUAGE_ID] 
+			   ,[MLANGUAGE_ID]
 			from #temp_insert_content_attribute t1 inner join content t2
 				on t1.content_id = t2.content_id
 			where t2.virtual_type = 0
-			
+
 
 			insert into content_attribute
 			([CONTENT_ID]
@@ -2159,10 +2159,10 @@ BEGIN
 			   ,[full_page]
 			   ,[MULTILINGUAL]
 			   ,NULL--[PARENT_CONTENT_ATTRIBUTE_ID]
-			   ,[MLANGUAGE_ID] 
-			from #temp_insert_content_attribute ca1 cross join (select v_content.CONTENT_ID from Content base_content inner join Content v_content 
+			   ,[MLANGUAGE_ID]
+			from #temp_insert_content_attribute ca1 cross join (select v_content.CONTENT_ID from Content base_content inner join Content v_content
 				on base_content.content_id = v_content.virtual_join_primary_content_id
-				where base_content.content_id = @content_id) ca2  
+				where base_content.content_id = @content_id) ca2
 			drop table #temp_insert_content_attribute
 			set @j = @j + 1
 		end
@@ -2225,7 +2225,7 @@ END
 GO
 
 
-CREATE PROCEDURE [dbo].[qp_delete_fields_for_multilingual] 
+CREATE PROCEDURE [dbo].[qp_delete_fields_for_multilingual]
 	@parent_content_attribute_id_param numeric (18, 0)
 AS
 BEGIN
@@ -2262,7 +2262,7 @@ BEGIN
 END
 GO
 
-CREATE FUNCTION [dbo].[qp_compare_strings] 
+CREATE FUNCTION [dbo].[qp_compare_strings]
 (
 	@FIRST_STRING VARCHAR(255),
 	@SECOND_STRING VARCHAR(255)
@@ -2297,10 +2297,10 @@ BEGIN
 
 	--declare @test bit set @test = 0
 	declare @attribute_id numeric, @content_id numeric
-	declare @i numeric, @j numeric 
+	declare @i numeric, @j numeric
 	declare @content_count numeric, @attribute_count numeric
 	declare @max numeric
-	
+
 	declare @c table (
 		id numeric identity(1,1) primary key,
 		content_id numeric
@@ -2310,7 +2310,7 @@ BEGIN
 		id numeric identity(1,1) primary key,
 		attribute_id numeric
 	)
-	
+
 	/* Collect affected items */
 	insert into @c(content_id)
 	select distinct content_id from deleted where parent_content_attribute_id is null
@@ -2323,18 +2323,18 @@ BEGIN
 		select @content_id = content_id from @c where id = @i
 
 		delete from @ca
-	
+
 		insert into @ca (attribute_id)
 		select attribute_id from content_attribute where content_id = @content_id and parent_content_attribute_id is null order by attribute_order asc
-	
-		select @attribute_count = count(id) from @ca		
+
+		select @attribute_count = count(id) from @ca
 		set @j = 1
 
 		while @j < @attribute_count + 1
 		begin
 			select @attribute_id = attribute_id from @ca where id = @j
 
-			update content_attribute set attribute_order = @j where attribute_id = @attribute_id	
+			update content_attribute set attribute_order = @j where attribute_id = @attribute_id
 
 			set @j = @j + 1
 		end
@@ -2344,37 +2344,37 @@ BEGIN
 END
 GO
 
-CREATE TRIGGER [dbo].[td_remove_field_ml] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE 
-AS 
+CREATE TRIGGER [dbo].[td_remove_field_ml] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE
+AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
 	declare @attribute_id numeric, @parent_content_attribute_id numeric, @multilingual bit
-	
+
 	declare @base_table_name nvarchar(30), @table_name nvarchar(30)
-	
+
 	declare @i numeric, @count numeric
-	
+
 	declare @ca table (
 		id numeric identity(1,1) primary key,
-		attribute_id numeric, 
+		attribute_id numeric,
 		parent_content_attribute_id numeric,
-		multilingual bit 
+		multilingual bit
 	)
-	
+
 	/* Collect affected items */
 	insert into @ca (attribute_id, parent_content_attribute_id, multilingual)
-	select d.attribute_id, d.parent_content_attribute_id, d.multilingual 
-	from deleted d 
+	select d.attribute_id, d.parent_content_attribute_id, d.multilingual
+	from deleted d
 
 	set @i = 1
 	select @count = count(id) from @ca
 
 	while @i < @count + 1
 	begin
-		select @attribute_id = attribute_id, @parent_content_attribute_id = parent_content_attribute_id, @multilingual = multilingual 
+		select @attribute_id = attribute_id, @parent_content_attribute_id = parent_content_attribute_id, @multilingual = multilingual
 			from @ca where id = @i
 
 			/*
@@ -2394,7 +2394,7 @@ END
 GO
 
 CREATE TRIGGER [dbo].[ti_insert_field_ml] ON [dbo].[CONTENT_ATTRIBUTE] FOR INSERT
-AS 
+AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
@@ -2405,7 +2405,7 @@ BEGIN
 
 	declare @ca table (
 		id numeric identity(1,1) primary key,
-		attribute_id numeric, 
+		attribute_id numeric,
 		parent_content_attribute_id numeric,
 		multilingual bit
 	)
@@ -2432,16 +2432,16 @@ BEGIN
 		end
 		set @i = @i + 1
 	end
-	
+
 END
 GO
 
-ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE 
-AS 
+ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
+AS
 BEGIN
-if not update(attribute_order) and 
+if not update(attribute_order) and
 		(
-			update(attribute_name) or update(attribute_type_id) 
+			update(attribute_name) or update(attribute_type_id)
 			or update(attribute_size) or update(index_flag)
 		)
 	begin
@@ -2454,33 +2454,33 @@ if not update(attribute_order) and
 		declare @new_indexed numeric, @new_required numeric
 		declare @new_attribute_type_id numeric, @new_type_name nvarchar(255), @new_database_type nvarchar(255)
 		declare @new_multilingual bit, @new_parent_content_attribute_id numeric, @new_mlanguage_id numeric
-		
+
 		declare @base_table_name nvarchar(30), @table_name nvarchar(30)
-	
+
 		declare @i numeric, @count numeric, @preserve_index bit
 
 		declare @parent_content_attribute_name nvarchar(255), @mlanguage_postfix nvarchar(5)
-	
+
 		declare @ca table (
 			id numeric identity(1,1) primary key,
-			attribute_id numeric, 
-			attribute_name nvarchar(255), 
+			attribute_id numeric,
+			attribute_name nvarchar(255),
 			attribute_size numeric,
 			indexed numeric,
-			required numeric, 
-			attribute_type_id numeric, 
-			type_name nvarchar(255), 
+			required numeric,
+			attribute_type_id numeric,
+			type_name nvarchar(255),
 			database_type nvarchar(255),
 			content_id numeric,
 			multilingual bit,
 			parent_content_attribute_id numeric,
 			mlanguage_id numeric
 		)
-	
+
 		/* Collect affected items */
 		insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id, multilingual, parent_content_attribute_id, mlanguage_id)
-			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id, d.multilingual, d.parent_content_attribute_id, mlanguage_id 
-			from deleted d 
+			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id, d.multilingual, d.parent_content_attribute_id, mlanguage_id
+			from deleted d
 			inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
 			inner join content c on d.content_id = c.content_id
 			where c.virtual_type = 0
@@ -2491,25 +2491,25 @@ if not update(attribute_order) and
 		while @i < @count + 1
 		begin
 			select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
-				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id, 
+				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id,
 				@type_name = type_name, @database_type = database_type, @content_id = content_id,
-				@multilingual = multilingual, @parent_content_attribute_id = parent_content_attribute_id, @mlanguage_id = mlanguage_id 
+				@multilingual = multilingual, @parent_content_attribute_id = parent_content_attribute_id, @mlanguage_id = mlanguage_id
 				from @ca where id = @i
 
 			select @new_attribute_name = ca.attribute_name, @new_attribute_size = ca.attribute_size,
-				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id, 
-				@new_type_name = at.type_name, @new_database_type = at.database_type, 
-				@new_multilingual = ca.multilingual, @new_parent_content_attribute_id = ca.parent_content_attribute_id, @new_mlanguage_id = ca.mlanguage_id 
-				from content_attribute ca 
+				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id,
+				@new_type_name = at.type_name, @new_database_type = at.database_type,
+				@new_multilingual = ca.multilingual, @new_parent_content_attribute_id = ca.parent_content_attribute_id, @new_mlanguage_id = ca.mlanguage_id
+				from content_attribute ca
 				inner join attribute_type at on ca.attribute_type_id = at.attribute_type_id
 				where attribute_id = @attribute_id
 
-				set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
+				set @base_table_name = 'content_' + convert(nvarchar, @content_id)
 				set @table_name = @base_table_name + '_ASYNC'
 
 				if @indexed = 1 and @new_indexed = 1
 					set @preserve_index = 1
-				else 
+				else
 					set @preserve_index = 0
 
 
@@ -2518,19 +2518,19 @@ if not update(attribute_order) and
 					exec qp_drop_index @base_table_name, @attribute_name
 					exec qp_drop_index @table_name, @attribute_name
 				end
-				
+
 				if @database_type <> @new_database_type or @attribute_size <> @new_attribute_size
 				begin
 
 					if @database_type = 'ntext' and @new_database_type <> 'ntext'
-						exec qp_copy_blob_data_to_data @attribute_id				
+						exec qp_copy_blob_data_to_data @attribute_id
 					else if @database_type <> 'ntext' and @new_database_type = 'ntext'
-						exec qp_copy_data_to_blob_data @attribute_id	
+						exec qp_copy_data_to_blob_data @attribute_id
 
 					exec qp_recreate_column @base_table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_recreate_column @table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_content_united_view_recreate @content_id
-				end 
+				end
 				else begin
 					if @attribute_name <> @new_attribute_name
 					begin
@@ -2542,7 +2542,7 @@ if not update(attribute_order) and
 						end
 
 						exec qp_rename_column @base_table_name, @attribute_name, @new_attribute_name, @preserve_index
-						exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index 
+						exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index
 						exec qp_content_united_view_recreate @content_id
 					end
 				end
@@ -2567,7 +2567,7 @@ exec qp_drop_existing 'ManageMLFieldsForVirtualContents', 'IsProcedure'
 GO
 
 
-EXEC dbo.sp_executesql @statement = N'CREATE proc [dbo].[ManageMLFieldsForVirtualContents] 
+EXEC dbo.sp_executesql @statement = N'CREATE proc [dbo].[ManageMLFieldsForVirtualContents]
 (
 	@content_id int,
 	@column_name nvarchar(4000)
@@ -2578,13 +2578,13 @@ BEGIN
 	declare @content_name nvarchar(1000)
 	declare @counter int, @count int
 	set @counter = 0
-	set @count = (select  count(*) from content c1 inner join content c2 
+	set @count = (select  count(*) from content c1 inner join content c2
 		on c1.CONTENT_ID = c2.virtual_join_primary_content_id
 	where c1.CONTENT_ID = @content_id)
 	if @count>0 begin
 		--cursor for all virtual contents relating with selected content
 		DECLARE c_cursor CURSOR FOR
-		select  c2.CONTENT_ID from content c1 inner join content c2 
+		select  c2.CONTENT_ID from content c1 inner join content c2
 			on c1.CONTENT_ID = c2.virtual_join_primary_content_id
 		where c1.CONTENT_ID = @content_id
 		OPEN c_cursor
@@ -2631,7 +2631,7 @@ BEGIN
 					create table #temp3(
 						rid int
 					)
-					
+
 					declare @tmp_variable nvarchar(4000)
 					--parse internal row into #temp for search binding @column_name
 					declare @internal_rid int
@@ -2655,7 +2655,7 @@ BEGIN
 						end
 						--clear the buffer of #temp2 table
 						delete from #temp2
-						FETCH NEXT FROM temptable_cursor INTO @internal_rid	
+						FETCH NEXT FROM temptable_cursor INTO @internal_rid
 					END
 					CLOSE temptable_cursor
 					DEALLOCATE temptable_cursor
@@ -2663,7 +2663,7 @@ BEGIN
 					delete from #temp where rid<>1 and rid in (select rid from #temp3)
 					drop table #temp2
 					drop table #temp3
-					----------------------------------------------------------------	
+					----------------------------------------------------------------
 					if (select count(*) from #temp where rid=@last_row)=0 begin
 						insert into #temp select substring(@test, charindex(''FROM'', @test), len(@test))
 					end
@@ -2686,10 +2686,10 @@ BEGIN
 								set @release_string = @release_string + '', '' + @temp_name
 						end
 						else begin
-							set @release_string = @temp_name 
+							set @release_string = @temp_name
 						end
-						FETCH NEXT FROM t_cursor INTO @temp_name, @temp_rid				
-					END 
+						FETCH NEXT FROM t_cursor INTO @temp_name, @temp_rid
+					END
 					CLOSE t_cursor
 					DEALLOCATE t_cursor
 					if rtrim(@test)<>rtrim(@release_string) begin
@@ -2709,18 +2709,18 @@ BEGIN
 		DEALLOCATE c_cursor
 		----------------------------------------------------------------------------------------
 		--1
-		delete from CONTENT_ATTRIBUTE where ATTRIBUTE_ID IN (select ATTRIBUTE_ID from CONTENT_ATTRIBUTE where persistent_attr_id in 
-		(select ca_child.ATTRIBUTE_ID from CONTENT_ATTRIBUTE ca_parent inner join 
+		delete from CONTENT_ATTRIBUTE where ATTRIBUTE_ID IN (select ATTRIBUTE_ID from CONTENT_ATTRIBUTE where persistent_attr_id in
+		(select ca_child.ATTRIBUTE_ID from CONTENT_ATTRIBUTE ca_parent inner join
 				CONTENT_ATTRIBUTE ca_child on ca_parent.ATTRIBUTE_ID = ca_child.PARENT_CONTENT_ATTRIBUTE_ID
-				where ca_parent.ATTRIBUTE_NAME=@column_name) and content_id in 
+				where ca_parent.ATTRIBUTE_NAME=@column_name) and content_id in
 			(
-				select v_content.CONTENT_ID from Content base_content inner join Content v_content 
+				select v_content.CONTENT_ID from Content base_content inner join Content v_content
 				on base_content.content_id = v_content.virtual_join_primary_content_id
 				where base_content.content_id = @content_id
 			)
 		)
 		--2
-		delete from CONTENT_ATTRIBUTE where ATTRIBUTE_ID IN (select ca_child.ATTRIBUTE_ID from CONTENT_ATTRIBUTE ca_parent inner join 
+		delete from CONTENT_ATTRIBUTE where ATTRIBUTE_ID IN (select ca_child.ATTRIBUTE_ID from CONTENT_ATTRIBUTE ca_parent inner join
 			CONTENT_ATTRIBUTE ca_child on ca_parent.ATTRIBUTE_ID = ca_child.persistent_attr_id
 			where ca_parent.ATTRIBUTE_NAME = @column_name and ca_child.MULTILINGUAL = 1 and ca_parent.content_id = @content_id)
 		----------------------------------------------------------------------------------------
@@ -2732,12 +2732,12 @@ BEGIN
 		select c2.ATTRIBUTE_ID from CONTENT_ATTRIBUTE c1 inner join CONTENT_ATTRIBUTE c2 on
 		c1.Attribute_id = c2.persistent_attr_id
 	)
-END' 
+END'
 GO
 
 
 CREATE TRIGGER [dbo].[tu_update_field_ml] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
-AS 
+AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
@@ -2755,8 +2755,8 @@ if update(multilingual)
 		declare @ca table (
 			id numeric identity(1,1) primary key,
 			content_id numeric,
-			attribute_id numeric, 
-			attribute_name nvarchar(255), 
+			attribute_id numeric,
+			attribute_name nvarchar(255),
 			indexed bit,
 			parent_content_attribute_id numeric,
 			multilingual bit
@@ -2778,11 +2778,11 @@ if update(multilingual)
 
 			if @indexed = 1 and @new_indexed = 1
 				set @preserve_index = 1
-			else 
+			else
 				set @preserve_index = 0
 
 			-- Construct content's tables names
-			set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
+			set @base_table_name = 'content_' + convert(nvarchar, @content_id)
 			set @table_name = @base_table_name + '_ASYNC'
 
 			-- If multilingual capability switch ON
@@ -2856,7 +2856,7 @@ if update(multilingual)
 			if	(@multilingual_inserted = 1 and @parent_content_attribute_id_inserted is null)
 				and
 				(
-					update(attribute_name) or update(attribute_type_id) 
+					update(attribute_name) or update(attribute_type_id)
 					or update(attribute_size) or update(index_flag) or update(attribute_order)
 					or update(friendly_name)
 				)
@@ -2905,8 +2905,8 @@ if update(multilingual)
 
 		end
 		update CONTENT_ATTRIBUTE SET REQUIRED = 0, DEFAULT_VALUE = NULL
-			where attribute_id in (select attribute_id from inserted where PARENT_CONTENT_ATTRIBUTE_ID IS NULL AND MULTILINGUAL = 1) 
-				
+			where attribute_id in (select attribute_id from inserted where PARENT_CONTENT_ATTRIBUTE_ID IS NULL AND MULTILINGUAL = 1)
+
 	end
 END
 GO
@@ -2939,13 +2939,13 @@ declare @edit_lang_tab_id numeric
 select @edit_lang_tab_id =  tab_id from tabs where tab_name = 'Language Info'
 
 
-insert into toolbar_buttons 
-( 
+insert into toolbar_buttons
+(
    permission_level_id, location_tab_id, image_disabled, image_enabled, button_name, buttons_order, action_tab_id, always_enabled, action_function
 )
 values
 (
-   3, @globalize_tab_id, 'images/toolbar/edit_disabled.gif', 'images/toolbar/edit.gif', 'Properties', 1, @edit_lang_tab_id, 0, NULL    
+   3, @globalize_tab_id, 'images/toolbar/edit_disabled.gif', 'images/toolbar/edit.gif', 'Properties', 1, @edit_lang_tab_id, 0, NULL
 )
 
 insert into buttons (permission_level_id, button_type, action_file, buttons_order, cancel_action, button_name, action_tab_id, location_tab_id, confirm_phrase)
@@ -2987,7 +2987,7 @@ GO
 PRINT '7.6.2.1 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.2
 -- SQL injection fix
@@ -3006,17 +3006,17 @@ DECLARE @str varchar(4000)
 IF @use_morphology  =  1
 	SET @str = ' INSERT INTO #temp(link_id)' +
 		' SELECT link_id '+
-		' FROM '+ 
+		' FROM '+
 		@tabname +' as s'+
 		' INNER JOIN'+
 		' FREETEXTTABLE('+@tabname+', *,''' + replace(@expression, '''', '') + ' dsfsdf4fjkhj'') AS KEY_TBL'+
-		' ON s.link_id = KEY_TBL.[KEY]'+		      
-		' WHERE KEY_TBL.RANK >'+ cast(@minrank as varchar)+                      
+		' ON s.link_id = KEY_TBL.[KEY]'+
+		' WHERE KEY_TBL.RANK >'+ cast(@minrank as varchar)+
 		' ORDER BY cast(keywords as nvarchar) desc, KEY_TBL.RANK DESC'
 ELSE
 	SET @str = ' INSERT INTO #temp(link_id)' +
 		' SELECT link_id '+
-		' FROM '+ 
+		' FROM '+
 		@tabname +' as s'+
 		' INNER JOIN'+
 		' CONTAINSTABLE('+@tabname+', *,''"'+ replace(@expression, '"', '') + '" OR "dsfsdf4fjkhj"'') AS KEY_TBL'+
@@ -3044,13 +3044,13 @@ GO
 PRINT '7.6.2.2 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.3
 -- Multilingual fixes
 -- **************************************
 
-ALTER PROCEDURE [dbo].[qp_create_fields_for_multilingual] 
+ALTER PROCEDURE [dbo].[qp_create_fields_for_multilingual]
 	@parent_content_attribute_id_param numeric (18, 0)
 AS
 BEGIN
@@ -3065,8 +3065,8 @@ BEGIN
 	declare @content_id int
 	if @multilingual_count <> 0
 	begin
-		
-		set @content_id = (select top 1 content_id from content_attribute 
+
+		set @content_id = (select top 1 content_id from content_attribute
 			where attribute_id = @parent_content_attribute_id_param group by content_id)
 
 		declare @mlanguage_id numeric, @mlanguage_postfix nvarchar(5)
@@ -3093,7 +3093,7 @@ BEGIN
 				friendly_name = [dbo].[qp_construct_lfield_name_friendly](friendly_name, @mlanguage_postfix),
 				mlanguage_id = @mlanguage_id
 
-			insert into content_attribute 
+			insert into content_attribute
 				([CONTENT_ID]
 				   ,[ATTRIBUTE_NAME]
 				   ,[FORMAT_MASK]
@@ -3133,7 +3133,7 @@ BEGIN
 				   ,[MULTILINGUAL]
 				   ,[PARENT_CONTENT_ATTRIBUTE_ID]
 				   ,[MLANGUAGE_ID])
-			select 
+			select
 				t1.CONTENT_ID
 			   ,[ATTRIBUTE_NAME]
 			   ,[FORMAT_MASK]
@@ -3172,11 +3172,11 @@ BEGIN
 			   ,[full_page]
 			   ,[MULTILINGUAL]
 			   ,[PARENT_CONTENT_ATTRIBUTE_ID]
-			   ,[MLANGUAGE_ID] 
+			   ,[MLANGUAGE_ID]
 			from #temp_insert_content_attribute t1 inner join content t2
 				on t1.content_id = t2.content_id
 			where t2.virtual_type = 0
-			
+
 
 			insert into content_attribute
 			([CONTENT_ID]
@@ -3256,10 +3256,10 @@ BEGIN
 			   ,[full_page]
 			   ,[MULTILINGUAL]
 			   ,NULL--[PARENT_CONTENT_ATTRIBUTE_ID]
-			   ,[MLANGUAGE_ID] 
-			from #temp_insert_content_attribute ca1 cross join (select v_content.CONTENT_ID from Content base_content inner join Content v_content 
+			   ,[MLANGUAGE_ID]
+			from #temp_insert_content_attribute ca1 cross join (select v_content.CONTENT_ID from Content base_content inner join Content v_content
 				on base_content.content_id = v_content.virtual_join_primary_content_id
-				where base_content.content_id = @content_id) ca2  
+				where base_content.content_id = @content_id) ca2
 			drop table #temp_insert_content_attribute
 			set @j = @j + 1
 		end
@@ -3267,24 +3267,24 @@ BEGIN
 END
 GO
 
-ALTER TRIGGER [dbo].[td_remove_field_ml] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE 
-AS 
+ALTER TRIGGER [dbo].[td_remove_field_ml] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE
+AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
 	declare @attribute_id numeric
-	
+
 	declare @i numeric, @count numeric
-	
+
 	declare @ca table (
 		id numeric identity(1,1) primary key,
-		attribute_id numeric 
+		attribute_id numeric
 	)
-	
+
 	/* Collect affected items */
-	insert into @ca (attribute_id) select d.attribute_id from deleted d 
+	insert into @ca (attribute_id) select d.attribute_id from deleted d
 	where multilingual = 1 and parent_content_attribute_id is null
 
 	set @i = 1
@@ -3293,7 +3293,7 @@ BEGIN
 	while @i < @count + 1
 	begin
 		select @attribute_id = attribute_id from @ca where id = @i
-				
+
 		delete from content_attribute
 		where parent_content_attribute_id = @attribute_id
 
@@ -3304,18 +3304,18 @@ END
 GO
 
 ALTER TRIGGER [dbo].[tu_update_field_ml] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
-AS 
+AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-		declare @attribute_id numeric 
-		declare @attribute_name nvarchar(255), @attribute_type_id numeric, @attribute_size numeric 
-		declare @indexed bit, @attribute_order numeric, @friendly_name nvarchar(255), @multilingual bit 
-		declare @new_attribute_name nvarchar(255), @new_attribute_type_id numeric, @new_attribute_size numeric 
-		declare @new_indexed bit, @new_attribute_order numeric, @new_friendly_name nvarchar(255), @new_multilingual bit 
-		
+		declare @attribute_id numeric
+		declare @attribute_name nvarchar(255), @attribute_type_id numeric, @attribute_size numeric
+		declare @indexed bit, @attribute_order numeric, @friendly_name nvarchar(255), @multilingual bit
+		declare @new_attribute_name nvarchar(255), @new_attribute_type_id numeric, @new_attribute_size numeric
+		declare @new_indexed bit, @new_attribute_order numeric, @new_friendly_name nvarchar(255), @new_multilingual bit
+
 		declare @i int, @count int
 
 		declare @ca table (
@@ -3326,13 +3326,13 @@ BEGIN
 			attribute_size numeric,
 			index_flag numeric,
 			attribute_order numeric,
-			friendly_name nvarchar(300), 
+			friendly_name nvarchar(300),
 			multilingual bit
 		)
 
 		insert into @ca
-		select attribute_id, attribute_name, attribute_type_id, attribute_size, index_flag, attribute_order, friendly_name, multilingual 
-		from deleted d 
+		select attribute_id, attribute_name, attribute_type_id, attribute_size, index_flag, attribute_order, friendly_name, multilingual
+		from deleted d
 		where parent_content_attribute_id is null
 
 		set @i = 1
@@ -3344,7 +3344,7 @@ BEGIN
 					@attribute_type_id = attribute_type_id, @attribute_size = attribute_size,
 					@indexed = index_flag, @attribute_order = attribute_order, @friendly_name = friendly_name,
 					@multilingual = multilingual from @ca where id = @i
-			
+
 			select @new_attribute_name = attribute_name,
 					@new_attribute_type_id = attribute_type_id, @new_attribute_size = attribute_size,
 					@new_indexed = index_flag, @new_attribute_order = attribute_order, @new_friendly_name = friendly_name,
@@ -3374,30 +3374,30 @@ BEGIN
 				set mlanguage_id = null
 				where attribute_id = @attribute_id
 			end
-			
+
 			if (@new_multilingual = 1)
 			begin
 				update CONTENT_ATTRIBUTE SET REQUIRED = 0, DEFAULT_VALUE = NULL
-				where attribute_id = @attribute_id 	
+				where attribute_id = @attribute_id
 			end
-			
+
 			if (@multilingual = 1 and @new_multilingual = 1)
 			begin
 				if @attribute_name <> @new_attribute_name
 					update content_attribute
 					set attribute_name = [dbo].[qp_construct_lfield_name_with_id](@new_attribute_name, mlanguage_id)
 					where parent_content_attribute_id = @attribute_id
-				
-				if @attribute_type_id <> @new_attribute_type_id 
+
+				if @attribute_type_id <> @new_attribute_type_id
 					update content_attribute
 					set attribute_type_id = @new_attribute_type_id
 					where parent_content_attribute_id = @attribute_id
-				
-				if @attribute_size <> @new_attribute_size 
+
+				if @attribute_size <> @new_attribute_size
 					update content_attribute
 					set attribute_size = @new_attribute_size
 					where parent_content_attribute_id = @attribute_id
-				
+
 				if @indexed <> @new_indexed
 					update content_attribute
 					set index_flag = @new_indexed
@@ -3412,16 +3412,16 @@ BEGIN
 					update content_attribute
 					set friendly_name = [dbo].[qp_construct_lfield_name_with_id_friendly](@new_friendly_name, mlanguage_id)
 					where parent_content_attribute_id = @attribute_id
-			end				
+			end
 			set @i = @i + 1
 		end
 END
 GO
 
 ALTER TRIGGER [dbo].[ti_insert_field_ml] ON [dbo].[CONTENT_ATTRIBUTE] FOR INSERT
-AS 
+AS
 BEGIN
-   --print 'insert field ml'	
+   --print 'insert field ml'
    -- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
@@ -3431,7 +3431,7 @@ BEGIN
 
 	declare @ca table (
 		id numeric identity(1,1) primary key,
-		attribute_id numeric 
+		attribute_id numeric
 	)
 	insert into @ca select attribute_id from inserted where multilingual = 1 and parent_content_attribute_id is null
 
@@ -3441,20 +3441,20 @@ BEGIN
 	while @i < @count + 1
 	begin
 		select @attribute_id = attribute_id from @ca where id = @i
-		
+
 		exec qp_create_fields_for_multilingual @attribute_id
 
 		-- Set mlanguage's identifier for ml-field
 		update content_attribute
 		set mlanguage_id = (select mlanguage_id from multilingual where is_main = 1)
 		where attribute_id = @attribute_id
-		
+
 		set @i = @i + 1
 	end
-	
+
 END
 GO
-ALTER  TRIGGER [td_users_pass_objs_ownership_to_admin] ON [dbo].[USERS] 
+ALTER  TRIGGER [td_users_pass_objs_ownership_to_admin] ON [dbo].[USERS]
 FOR DELETE
 AS
   DECLARE @uid NUMERIC
@@ -3481,10 +3481,10 @@ AS
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE STYLE SET last_modified_by = 1 WHERE last_modified_by = @uid
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE WORKFLOW SET last_modified_by = 1 WHERE last_modified_by = @uid
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 WHERE last_modified_by = @uid
@@ -3493,12 +3493,12 @@ AS
     UPDATE USER_GROUP SET last_modified_by = 1 WHERE last_modified_by = @uid
     UPDATE USERS SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 WHERE last_modified_by = @uid
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id = @uid
     UPDATE DOC SET last_modified_by = 1 WHERE last_modified_by = @uid
 
 	UPDATE MULTILINGUAL SET last_modified_by = 1 WHERE last_modified_by = @uid
-    
+
 	FETCH NEXT FROM usr INTO @uid
   END
   CLOSE usr
@@ -3515,7 +3515,7 @@ PRINT '7.6.2.3 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.4
 -- Multilingual undo
@@ -3547,7 +3547,7 @@ GO
 drop trigger [dbo].[td_remove_field_ml]
 GO
 
-ALTER  TRIGGER [td_users_pass_objs_ownership_to_admin] ON [dbo].[USERS] 
+ALTER  TRIGGER [td_users_pass_objs_ownership_to_admin] ON [dbo].[USERS]
 FOR DELETE
 AS
   DECLARE @uid NUMERIC
@@ -3574,10 +3574,10 @@ AS
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE STYLE SET last_modified_by = 1 WHERE last_modified_by = @uid
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE WORKFLOW SET last_modified_by = 1 WHERE last_modified_by = @uid
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 WHERE last_modified_by = @uid
@@ -3586,7 +3586,7 @@ AS
     UPDATE USER_GROUP SET last_modified_by = 1 WHERE last_modified_by = @uid
     UPDATE USERS SET last_modified_by = 1 WHERE last_modified_by = @uid
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 WHERE last_modified_by = @uid
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id = @uid
     UPDATE DOC SET last_modified_by = 1 WHERE last_modified_by = @uid
 
@@ -3602,10 +3602,10 @@ AS
 BEGIN
 
 	declare @attribute_id numeric, @content_id numeric
-	declare @i numeric, @j numeric 
+	declare @i numeric, @j numeric
 	declare @content_count numeric, @attribute_count numeric
 	declare @max numeric
-	
+
 	declare @c table (
 		id numeric identity(1,1) primary key,
 		content_id numeric
@@ -3615,7 +3615,7 @@ BEGIN
 		id numeric identity(1,1) primary key,
 		attribute_id numeric
 	)
-	
+
 	/* Collect affected items */
 	insert into @c(content_id)
 	select distinct content_id from deleted
@@ -3628,18 +3628,18 @@ BEGIN
 		select @content_id = content_id from @c where id = @i
 
 		delete from @ca
-	
+
 		insert into @ca (attribute_id)
 		select attribute_id from content_attribute where content_id = @content_id order by attribute_order asc
-	
-		select @attribute_count = count(id) from @ca		
+
+		select @attribute_count = count(id) from @ca
 		set @j = 1
 
 		while @j < @attribute_count + 1
 		begin
 			select @attribute_id = attribute_id from @ca where id = @j
 
-			update content_attribute set attribute_order = @j where attribute_id = @attribute_id	
+			update content_attribute set attribute_order = @j where attribute_id = @attribute_id
 
 			set @j = @j + 1
 		end
@@ -3649,12 +3649,12 @@ BEGIN
 END
 GO
 
-ALTER  TRIGGER [tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE 
-AS 
+ALTER  TRIGGER [tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
+AS
 BEGIN
-if not update(attribute_order) and 
+if not update(attribute_order) and
 		(
-			update(attribute_name) or update(attribute_type_id) 
+			update(attribute_name) or update(attribute_type_id)
 			or update(attribute_size) or update(index_flag)
 		)
 	begin
@@ -3665,28 +3665,28 @@ if not update(attribute_order) and
 		declare @new_attribute_name nvarchar(255), @new_attribute_size numeric
 		declare @new_indexed numeric, @new_required numeric
 		declare @new_attribute_type_id numeric, @new_type_name nvarchar(255), @new_database_type nvarchar(255)
-		
+
 		declare @base_table_name nvarchar(30), @table_name nvarchar(30)
-	
+
 		declare @i numeric, @count numeric, @preserve_index bit
-	
+
 		declare @ca table (
 			id numeric identity(1,1) primary key,
-			attribute_id numeric, 
-			attribute_name nvarchar(255), 
+			attribute_id numeric,
+			attribute_name nvarchar(255),
 			attribute_size numeric,
 			indexed numeric,
-			required numeric, 
-			attribute_type_id numeric, 
-			type_name nvarchar(255), 
+			required numeric,
+			attribute_type_id numeric,
+			type_name nvarchar(255),
 			database_type nvarchar(255),
 			content_id numeric
 		)
-	
+
 	/* Collect affected items */
 		insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id)
-			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id 
-			from deleted d 
+			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id
+			from deleted d
 			inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
 			inner join content c on d.content_id = c.content_id
 			where c.virtual_type = 0
@@ -3697,23 +3697,23 @@ if not update(attribute_order) and
 		while @i < @count + 1
 		begin
 			select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
-				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id, 
-				@type_name = type_name, @database_type = database_type, @content_id = content_id 
+				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id,
+				@type_name = type_name, @database_type = database_type, @content_id = content_id
 				from @ca where id = @i
 
 			select @new_attribute_name = ca.attribute_name, @new_attribute_size = ca.attribute_size,
-				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id, 
+				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id,
 				@new_type_name = at.type_name, @new_database_type = at.database_type
-				from content_attribute ca 
+				from content_attribute ca
 				inner join attribute_type at on ca.attribute_type_id = at.attribute_type_id
 				where attribute_id = @attribute_id
 
-				set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
+				set @base_table_name = 'content_' + convert(nvarchar, @content_id)
 				set @table_name = @base_table_name + '_ASYNC'
 
 				if @indexed = 1 and @new_indexed = 1
 					set @preserve_index = 1
-				else 
+				else
 					set @preserve_index = 0
 
 
@@ -3722,24 +3722,24 @@ if not update(attribute_order) and
 					exec qp_drop_index @base_table_name, @attribute_name
 					exec qp_drop_index @table_name, @attribute_name
 				end
-				
+
 				if @database_type <> @new_database_type or @attribute_size <> @new_attribute_size
 				begin
 
 					if @database_type = 'ntext' and @new_database_type <> 'ntext'
-						exec qp_copy_blob_data_to_data @attribute_id				
+						exec qp_copy_blob_data_to_data @attribute_id
 					else if @database_type <> 'ntext' and @new_database_type = 'ntext'
-						exec qp_copy_data_to_blob_data @attribute_id	
+						exec qp_copy_data_to_blob_data @attribute_id
 
 					exec qp_recreate_column @base_table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_recreate_column @table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_content_united_view_recreate @content_id
-				end 
+				end
 				else begin
 					if @attribute_name <> @new_attribute_name
 					begin
 						exec qp_rename_column @base_table_name, @attribute_name, @new_attribute_name, @preserve_index
-						exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index 
+						exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index
 						exec qp_content_united_view_recreate @content_id
 					end
 				end
@@ -3757,7 +3757,7 @@ if not update(attribute_order) and
 END
 GO
 
-ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] DROP [DF_CONTENT_ATTRIBUTE_MULTILINGUAL] 
+ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] DROP [DF_CONTENT_ATTRIBUTE_MULTILINGUAL]
 GO
 ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] DROP [FK_CONTENT_ATTRIBUTE_MLANGUAGE_ID]
 GO
@@ -3767,7 +3767,7 @@ ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] DROP COLUMN [PARENT_CONTENT_ATTRIBUTE_ID]
 GO
 ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] DROP COLUMN [MLANGUAGE_ID]
 GO
-DROP TABLE multilingual 
+DROP TABLE multilingual
 GO
 
 declare @globalize_tab_id numeric
@@ -3793,7 +3793,7 @@ GO
 PRINT '7.6.2.4 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.5
 -- Parallel Workflow (Part 1)
@@ -3806,7 +3806,7 @@ CREATE TABLE [dbo].[WAITING_FOR_APPROVAL](
 	[CONTENT_ITEM_ID] [numeric](18, 0) NOT NULL,
 	[USER_ID] [numeric](18, 0) NOT NULL,
 	[STATUS_TYPE_ID] numeric (18,0) NOT NULL
- CONSTRAINT [PK_WAITING_FOR_APPROVAL] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_WAITING_FOR_APPROVAL] PRIMARY KEY CLUSTERED
 (
 	[CONTENT_ITEM_ID] ASC,
 	[USER_ID] ASC
@@ -3840,28 +3840,28 @@ GO
 PRINT '7.6.2.5 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.6
 -- Parallel Workflow (Part 2)
 -- **************************************
 
 ALTER TRIGGER [dbo].[tbd_delete_content_item] ON [dbo].[CONTENT_ITEM] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 
 delete waiting_for_approval from waiting_for_approval wa inner join deleted d on wa.content_item_id = d.content_item_id
 
 IF dbo.qp_get_version_control() IS NOT NULL BEGIN
-	delete item_to_item_version from item_to_item_version iiv 
+	delete item_to_item_version from item_to_item_version iiv
 	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
-	inner join deleted d on d.content_item_id = civ.content_item_id 
+	inner join deleted d on d.content_item_id = civ.content_item_id
 
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join deleted d on d.content_item_id = iiv.linked_item_id 
+	delete item_to_item_version from item_to_item_version iiv
+	inner join deleted d on d.content_item_id = iiv.linked_item_id
 END
 
-delete item_to_item from item_to_item ii 
+delete item_to_item from item_to_item ii
 inner join deleted d on d.content_item_id = ii.r_item_id or d.content_item_id = ii.l_item_id
 
 delete content_data from content_data cd inner join deleted d on cd.content_item_id = d.content_item_id
@@ -3881,16 +3881,16 @@ GO
 PRINT '7.6.2.6 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.7
 -- Parallel Workflow (Part 3)
 -- **************************************
 
-CREATE VIEW [dbo].[content_item_workflow] AS 
+CREATE VIEW [dbo].[content_item_workflow] AS
 
-select ci.content_item_id, ISNULL(awb.workflow_id, cwb.workflow_id) as workflow_id 
-from content_item ci 
+select ci.content_item_id, ISNULL(awb.workflow_id, cwb.workflow_id) as workflow_id
+from content_item ci
 left join article_workflow_bind awb on ci.content_item_id = awb.content_item_id
 left join content_workflow_bind cwb on ci.content_id = cwb.content_id
 
@@ -3904,7 +3904,7 @@ GO
 PRINT '7.6.2.7 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.8
 -- Parallel Workflow (Part 4)
@@ -3917,15 +3917,15 @@ GO
 alter table article_workflow_bind add [is_async] bit not null constraint [df_article_workflow_bind_is_async] default (1)
 GO
 
-update content_workflow_bind 
+update content_workflow_bind
 set is_async = c.async_workflow
-from content_workflow_bind cwb 
+from content_workflow_bind cwb
 inner join content c on cwb.content_id = c.content_id
 GO
 
-ALTER VIEW [dbo].[content_item_workflow] AS 
-select ci.content_item_id, ISNULL(awb.workflow_id, cwb.workflow_id) as workflow_id, ISNULL(awb.is_async, cwb.is_async) as is_async 
-from content_item ci 
+ALTER VIEW [dbo].[content_item_workflow] AS
+select ci.content_item_id, ISNULL(awb.workflow_id, cwb.workflow_id) as workflow_id, ISNULL(awb.is_async, cwb.is_async) as is_async
+from content_item ci
 left join article_workflow_bind awb on ci.content_item_id = awb.content_item_id
 left join content_workflow_bind cwb on ci.content_id = cwb.content_id
 GO
@@ -3939,16 +3939,16 @@ GO
 PRINT '7.6.2.8 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.9
 -- Parallel Workflow (Part 5)
 -- **************************************
 
-ALTER VIEW [dbo].[content_item_workflow] AS 
+ALTER VIEW [dbo].[content_item_workflow] AS
 
-select ci.content_item_id, ci.content_id, ISNULL(awb.workflow_id, cwb.workflow_id) as workflow_id, ISNULL(awb.is_async, cwb.is_async) as is_async 
-from content_item ci 
+select ci.content_item_id, ci.content_id, ISNULL(awb.workflow_id, cwb.workflow_id) as workflow_id, ISNULL(awb.is_async, cwb.is_async) as is_async
+from content_item ci
 left join article_workflow_bind awb on ci.content_item_id = awb.content_item_id
 left join content_workflow_bind cwb on ci.content_id = cwb.content_id
 GO
@@ -3961,16 +3961,16 @@ GO
 PRINT '7.6.2.9 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.10
 -- Parallel Workflow (Part 5)
 -- **************************************
 
-ALTER VIEW [dbo].[content_item_workflow] AS 
-select  
+ALTER VIEW [dbo].[content_item_workflow] AS
+select
 ci.content_item_id, ci.content_id, ISNULL(awb.workflow_id, cwb.workflow_id) as workflow_id, ISNULL(awb.is_async, cwb.is_async) as is_async, CASE WHEN awb.workflow_id IS NULL THEN 0 ELSE 1 END as article_worfklow
-from content_item ci 
+from content_item ci
 left join article_workflow_bind awb on ci.content_item_id = awb.content_item_id
 left join content_workflow_bind cwb on ci.content_id = cwb.content_id
 GO
@@ -3984,7 +3984,7 @@ GO
 PRINT '7.6.2.10 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.11
 -- Article Workflow + qp_latestApproval MTS Optimization
@@ -3997,26 +3997,26 @@ DECLARE @temp table (rownum int IDENTITY (1, 1) Primary key NOT NULL,content_ite
 declare @ids table(content_item_id NUMERIC)
 DECLARE @sites table (rownum int IDENTITY (1, 1) Primary key NOT NULL,site_id INT)
 DECLARE @site NUMERIC, @content_id NUMERIC, @content_item_id NUMERIC, @titleName NVARCHAR (200), @title NVARCHAR (200), @sql nvarchar(2000)
-DECLARE @RowCnt int 
+DECLARE @RowCnt int
 DECLARE @MaxRows int
 select @RowCnt = 1
 
 insert into @sites(site_id) select * from qp_sites_list_ids(@user_id, 1)
 
 
-select @MaxRows=count(*) from @sites 
-while @RowCnt <= @MaxRows 
+select @MaxRows=count(*) from @sites
+while @RowCnt <= @MaxRows
 begin
-	select @site = site_id 
-	from @sites 
+	select @site = site_id
+	from @sites
 	where rownum = @RowCnt
 
 insert into @temp(content_item_id, modified)
 select distinct top 5 ch.content_item_id, max(ch.status_history_date)
-from content_item_status_history ch with(nolock) 
+from content_item_status_history ch with(nolock)
 inner join content_item_workflow ciw on ch.content_item_id = ciw.content_item_id
 inner join content c on ciw.content_id = c.content_id
-where c.site_id = @site and user_id = @user_id and ch.status_type_id is not null 
+where c.site_id = @site and user_id = @user_id and ch.status_type_id is not null
 and datediff(d, ch.status_history_date, getdate()) < 30
 group by ch.content_item_id
 order by max(ch.status_history_date) desc
@@ -4024,7 +4024,7 @@ order by max(ch.status_history_date) desc
     Select @RowCnt = @RowCnt + 1
 END
 
-SELECT s.site_name, ci.archive, c.site_id, c.content_id, dbo.qp_get_article_title_func(ci.content_item_id, ci.content_id) as title, t.content_item_id, t.modified from @temp t 
+SELECT s.site_name, ci.archive, c.site_id, c.content_id, dbo.qp_get_article_title_func(ci.content_item_id, ci.content_id) as title, t.content_item_id, t.modified from @temp t
 inner join content_item ci on ci.content_item_id = t.content_item_id
 inner join content c on ci.content_id = c.content_id
 inner join site s on s.site_id = c.site_id
@@ -4038,31 +4038,31 @@ AS
 DECLARE @temp table (rownum int IDENTITY (1, 1) Primary key NOT NULL,content_item_id NUMERIC, content_id  NUMERIC, modified DATETIME, site_id INT, site_name NVARCHAR (100), title NVARCHAR (200), archive BIT )
 DECLARE @sites table (rownum int IDENTITY (1, 1) Primary key NOT NULL, site_id INT)
 DECLARE @site NUMERIC, @content_id NUMERIC, @content_item_id NUMERIC, @titleName NVARCHAR (200), @title NVARCHAR (200), @sql nvarchar(2000)
-DECLARE @RowCnt int 
+DECLARE @RowCnt int
 DECLARE @MaxRows int
 select @RowCnt = 1
 
 insert into @sites(site_id) select * from qp_sites_list_ids(@user_id, 1)
 
-select @MaxRows=count(*) from @sites 
-while @RowCnt <= @MaxRows 
+select @MaxRows=count(*) from @sites
+while @RowCnt <= @MaxRows
 begin
-	select @site = site_id 
-	from @sites 
+	select @site = site_id
+	from @sites
 	where rownum = @RowCnt
 
 	INSERT INTO @temp
 	SELECT ci.content_item_id, c.content_id, ci.modified, s.site_id, s.site_name, dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) title, cast(archive as bit) archive FROM content c
 	INNER JOIN content_item AS ci ON c.content_id = ci.content_id
 	INNER JOIN site s ON s.site_id = c.site_id
-	INNER JOIN content_item_workflow ciw ON ci.content_item_id = ciw.content_item_id	
+	INNER JOIN content_item_workflow ciw ON ci.content_item_id = ciw.content_item_id
 	INNER JOIN workflow_rules as wr on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
 	INNER JOIN workflow_rules as wr2 on wr.workflow_id = wr2.workflow_id
 	WHERE wr2.rule_order = wr.rule_order + 1 AND s.site_id = @site AND
 			(wr2.user_id=@user_id OR wr2.group_id IN (
-			SELECT group_id FROM user_group_bind WHERE user_id=@user_id)) 
+			SELECT group_id FROM user_group_bind WHERE user_id=@user_id))
 
-    Select @RowCnt = @RowCnt + 1 
+    Select @RowCnt = @RowCnt + 1
 END
 
 SELECT * from @temp
@@ -4070,11 +4070,11 @@ GO
 
 ALTER TRIGGER [dbo].[td_content_and_article_workflow_bind]
 ON [dbo].[workflow]
-FOR DELETE 
+FOR DELETE
 AS
 DELETE content_workflow_bind FROM content_workflow_bind cwb inner join deleted d on cwb.workflow_id = d.workflow_id
 DELETE article_workflow_bind FROM article_workflow_bind awb inner join deleted d on awb.workflow_id = d.workflow_id
-DELETE waiting_for_approval from waiting_for_approval wa 
+DELETE waiting_for_approval from waiting_for_approval wa
 inner join content_item_workflow ciw on wa.content_item_id = ciw.content_item_id
 inner join deleted d on ciw.workflow_id = d.workflow_id
 GO
@@ -4087,11 +4087,11 @@ begin
 		declare @content_id numeric , @content_item_id numeric, @last_modified_by numeric, @modified datetime, @created datetime, @status_type_id numeric, @visible numeric, @archive numeric
 		declare @char_content_id nvarchar(10), @char_content_item_id nvarchar(10)
 		declare @sql nvarchar(2000), @nsql nvarchar(4000)
-		declare @async_string varchar(20), @table_name varchar(25), @is_target_table_async bit 
+		declare @async_string varchar(20), @table_name varchar(25), @is_target_table_async bit
 		declare @async_id numeric, @item_exists bit
-		declare @workflow_id numeric, @is_async NUMERIC	
+		declare @workflow_id numeric, @is_async NUMERIC
 		declare @i numeric, @count numeric
-		
+
 		DECLARE @ci table (
 			id numeric identity(1,1) primary key,
 			content_item_id numeric,
@@ -4099,7 +4099,7 @@ begin
 			workflow_id numeric,
 			is_async numeric
 		)
-					
+
 		insert into @ci(content_item_id, content_id, workflow_id, is_async)
 			select i.content_item_id, i.content_id, ciw.workflow_id, ciw.is_async
 			FROM inserted AS i
@@ -4111,31 +4111,31 @@ begin
 		set @i = 1
 		while @i < @count + 1
 		begin
-			select 
-				@content_item_id = content_item_id, @content_id = content_id, 
+			select
+				@content_item_id = content_item_id, @content_id = content_id,
 				@workflow_id = workflow_id, @is_async = is_async
 				from @ci where id = @i
-				
-			select @modified = modified, @created = created, @status_type_id = status_type_id, 
+
+			select @modified = modified, @created = created, @status_type_id = status_type_id,
 				@archive = archive, @visible = visible, @last_modified_by = last_modified_by
 				from content_item where content_item_id = @content_item_id
-				
+
 			set @char_content_item_id = convert(nvarchar, @content_item_id)
 			set @char_content_id = convert(nvarchar, @content_id)
 
 			exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out
-				
+
 			if @is_target_table_async = 1
 			begin
 				exec qp_item_exists @table_name, @content_item_id, @item_exists = @item_exists out
 				if @item_exists = 0
 				begin
-					exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified 
+					exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified
 					print @sql
 					exec sp_executesql @sql
 				end
 			end
-				
+
 			exec qp_get_update_item_sql @table_name, @content_item_id, @modified, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out
 			print @sql
 			exec sp_executesql @sql
@@ -4143,15 +4143,15 @@ begin
 			if @is_target_table_async = 1 and (update(archive) or update(visible)) begin
 				set @table_name = 'content_' + @char_content_id
 				exec qp_get_update_flags_sql @table_name, @content_item_id, @visible, @archive, @sql = @sql out
-				exec sp_executesql @sql   
+				exec sp_executesql @sql
 			end
-			
+
 			if @is_target_table_async = 0
 			begin
 				set @table_name = 'content_' + @char_content_id + '_ASYNC'
 				exec qp_get_delete_item_sql @table_name, @content_item_id, @sql = @sql out
-				exec sp_executesql @sql   
-			end 
+				exec sp_executesql @sql
+			end
 			set @i = @i + 1
 		end
 	end
@@ -4160,13 +4160,13 @@ GO
 
 ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
 BEGIN
-  set nocount on	
+  set nocount on
   IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
 	BEGIN
 		IF NOT (UPDATE(not_for_replication) AND EXISTS(select content_data_id from deleted))
 		BEGIN
-			DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC, @default_value NVARCHAR(255), @attribute_name NVARCHAR(255) 
-			DECLARE @content_item_id NUMERIC, @content_id NUMERIC 
+			DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC, @default_value NVARCHAR(255), @attribute_name NVARCHAR(255)
+			DECLARE @content_item_id NUMERIC, @content_id NUMERIC
 			DECLARE @workflow_id NUMERIC, @is_async NUMERIC
 			DECLARE @async_string varchar(10), @is_target_table_async bit, @table_name nvarchar(25)
 			DECLARE @sql NVARCHAR(4000)
@@ -4184,7 +4184,7 @@ BEGIN
 				workflow_id numeric,
 				is_async numeric
 			)
-			
+
 			insert into @cd(attribute_id, attribute_name, attribute_type_id, attribute_size, default_value, content_item_id, content_id, workflow_id, is_async)
 				select i.attribute_id, ca.attribute_name, ca.attribute_type_id, ca.attribute_size, ca.default_value, i.content_item_id, ci.content_id, ciw.workflow_id, ciw.is_async
 				FROM inserted AS i
@@ -4198,25 +4198,25 @@ BEGIN
 			set @i = 1
 			while @i < @count + 1
 			begin
-				select 
-					@attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_type_id = attribute_type_id, @attribute_size = attribute_size, @default_value = default_value, 
-					@content_item_id = content_item_id, @content_id = content_id, 
+				select
+					@attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_type_id = attribute_type_id, @attribute_size = attribute_size, @default_value = default_value,
+					@content_item_id = content_item_id, @content_id = content_id,
 					@workflow_id = workflow_id, @is_async = is_async
 					from @cd where id = @i
 					exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out
-				
+
 					exec qp_get_update_cell_sql @table_name, @content_item_id, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
 					exec(@sql)
 
 				set @i = @i + 1
-			end --while 
+			end --while
 		end --if
 	end --if
 END
 GO
 
-ALTER PROCEDURE [dbo].[qp_replicate] 
-@content_item_id numeric, 
+ALTER PROCEDURE [dbo].[qp_replicate]
+@content_item_id numeric,
 @debug bit = 0
 AS
 BEGIN
@@ -4226,50 +4226,50 @@ BEGIN
 	declare @source_column nvarchar(10), @table_name nvarchar(25)
 
 	declare @attribute_name nvarchar(255), @attribute_type_id numeric, @attribute_id numeric, @attribute_size numeric, @default_value nvarchar(255)
-	
-	declare @content_id numeric, @virtual_type numeric 
+
+	declare @content_id numeric, @virtual_type numeric
 	declare @workflow_id numeric, @is_async numeric, @is_target_table_async bit
-	
-	declare @status_type_id numeric, @visible numeric, @archive numeric 
+
+	declare @status_type_id numeric, @visible numeric, @archive numeric
 	declare @last_modified_by numeric, @created datetime, @modified datetime
 
 	declare @item_exists bit
-	
+
 	declare @i numeric, @count numeric -- cycle variables
 
 	/* Replicate content_item */
-			
-	select 
+
+	select
 		@status_type_id = ci.status_type_id, @visible = ci.visible, @archive = ci.archive,
-		@last_modified_by = ci.last_modified_by, @created = ci.created, @modified = ci.modified, 
-		@content_id = c.content_id, @workflow_id = ciw.workflow_id, @is_async = ciw.is_async 
+		@last_modified_by = ci.last_modified_by, @created = ci.created, @modified = ci.modified,
+		@content_id = c.content_id, @workflow_id = ciw.workflow_id, @is_async = ciw.is_async
 		from content_item ci
 		inner join content c on ci.content_id = c.content_id
-		left outer join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id 
+		left outer join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id
 		where ci.content_item_id = @content_item_id
-	
 
-	exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out	
-	
+
+	exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out
+
 	exec qp_item_exists @table_name, @content_item_id, @item_exists = @item_exists out
-	
+
 	if @item_exists = 0 begin
-		exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified 
-		if @debug = 0 
+		exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified
+		if @debug = 0
 			exec sp_executesql @sql
 		else
 			print(@sql)
 	end
 	else begin
 		exec qp_get_update_item_sql @table_name, @content_item_id, @modified, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out
-		if @debug = 0 
+		if @debug = 0
 			exec sp_executesql @sql
 		else
 			print(@sql)
 	end
 
 	/* Replicate content_data */
-	
+
 	/* get attribute list */
 
 	declare @ca table (
@@ -4280,11 +4280,11 @@ BEGIN
 		attribute_size numeric,
 		default_value nvarchar(255)
 	)
-	
+
 	insert into @ca (attribute_name, attribute_id, attribute_type_id, attribute_size, default_value)
-	select attribute_name, attribute_id, attribute_type_id, attribute_size, default_value 
+	select attribute_name, attribute_id, attribute_type_id, attribute_size, default_value
 	from content_attribute where content_id = @content_id
-	
+
 	select @count = count(attribute_id) from @ca
 
 	set @i = 1
@@ -4294,16 +4294,16 @@ BEGIN
 	while @i < @count + 1
 	begin
 		if @sql <> ''
-			set @sql = @sql + ';'	
-		
+			set @sql = @sql + ';'
+
 		select @attribute_name = attribute_name, @attribute_id = attribute_id, @attribute_type_id = attribute_type_id, @attribute_size = attribute_size, @default_value = default_value
 		from @ca where number = @i
-		
+
 		exec qp_get_update_cell_sql @table_name, @content_item_id, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql_piece out
-		
+
 		if len(@sql) + len(@sql_piece) > 4000
 		begin
-			if @debug = 0 
+			if @debug = 0
 				exec sp_executesql @sql
 			else
 				print(@sql)
@@ -4316,7 +4316,7 @@ BEGIN
 
 	/* execute collected sql */
 
-	if @debug = 0 
+	if @debug = 0
 		exec sp_executesql @sql
 	else
 		print(@sql)
@@ -4339,16 +4339,16 @@ GO
 PRINT '7.6.2.11 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.12
 -- Parallel Workflow (Part 6)
 -- **************************************
 
-ALTER VIEW [dbo].[content_item_workflow] AS 
-select  
+ALTER VIEW [dbo].[content_item_workflow] AS
+select
 ci.content_item_id, ci.content_id, CASE WHEN awb.content_item_id IS NOT NULL THEN awb.workflow_id ELSE cwb.workflow_id END as workflow_id, ISNULL(awb.is_async, cwb.is_async) as is_async, CASE WHEN awb.content_item_id IS NULL THEN 0 ELSE 1 END as article_worfklow
-from content_item ci 
+from content_item ci
 left join article_workflow_bind awb on ci.content_item_id = awb.content_item_id
 left join content_workflow_bind cwb on ci.content_id = cwb.content_id
 GO
@@ -4363,7 +4363,7 @@ PRINT '7.6.2.12 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.13
 -- Workflow
@@ -4381,7 +4381,7 @@ PRINT '7.6.2.13 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.14
 -- Audit Trail
@@ -4416,7 +4416,7 @@ PRINT '7.6.2.14 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.15
 -- Parallel Workflow
@@ -4444,16 +4444,16 @@ GO
 PRINT '7.6.2.15 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.16
 -- Parallel Workflow (misspelling)
 -- **************************************
 
-ALTER VIEW [dbo].[content_item_workflow] AS 
-select  
+ALTER VIEW [dbo].[content_item_workflow] AS
+select
 ci.content_item_id, ci.content_id, CASE WHEN awb.content_item_id IS NOT NULL THEN awb.workflow_id ELSE cwb.workflow_id END as workflow_id, ISNULL(awb.is_async, cwb.is_async) as is_async, CASE WHEN awb.content_item_id IS NULL THEN 0 ELSE 1 END as article_workflow
-from content_item ci 
+from content_item ci
 left join article_workflow_bind awb on ci.content_item_id = awb.content_item_id
 left join content_workflow_bind cwb on ci.content_id = cwb.content_id
 GO
@@ -4467,7 +4467,7 @@ GO
 PRINT '7.6.2.16 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.17
 -- Translations
@@ -4529,7 +4529,7 @@ GO
 PRINT '7.6.2.17 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.18
 -- DB Architecture fixes
@@ -4549,13 +4549,13 @@ exec qp_drop_existing 'qp_schedule_update_today', 'IsProcedure'
 GO
 drop index object_format_version.ix_object_format_version_id
 GO
-ALTER procedure [dbo].[qp_delete_constraint] 
+ALTER procedure [dbo].[qp_delete_constraint]
 @table_name nvarchar(255),
 @column_name nvarchar(255)
 as
 declare @constraint_name nvarchar(255)
-select @constraint_name = constraint_name from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where table_name = @table_name and column_name = @column_name 
-and constraint_name not in (select constraint_name from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where table_name = @table_name group by constraint_name having count(*) > 1) 
+select @constraint_name = constraint_name from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where table_name = @table_name and column_name = @column_name
+and constraint_name not in (select constraint_name from INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE where table_name = @table_name group by constraint_name having count(*) > 1)
 if @constraint_name <> ''
 exec('ALTER TABLE ' + @table_name + ' DROP CONSTRAINT '+ @constraint_name)
 GO
@@ -4571,11 +4571,11 @@ exec qp_delete_constraint 'user_to_panel', 'panel_id'
 GO
 exec qp_delete_constraint 'user_to_panel', 'panel_id'
 GO
-ALTER TABLE BUTTONS ADD CONSTRAINT FK_BUTTONS_LOCATION_TAB_ID FOREIGN KEY (location_tab_id) REFERENCES TABS (tab_id)  
+ALTER TABLE BUTTONS ADD CONSTRAINT FK_BUTTONS_LOCATION_TAB_ID FOREIGN KEY (location_tab_id) REFERENCES TABS (tab_id)
 GO
-ALTER TABLE USER_TO_PANEL ADD CONSTRAINT FK_USER_TO_PANEL_USER_ID FOREIGN KEY (user_id) REFERENCES USERS (user_id)  
+ALTER TABLE USER_TO_PANEL ADD CONSTRAINT FK_USER_TO_PANEL_USER_ID FOREIGN KEY (user_id) REFERENCES USERS (user_id)
 GO
-ALTER TABLE USER_TO_PANEL ADD CONSTRAINT FK_USER_TO_PANEL_PANEL_ID FOREIGN KEY (panel_id) REFERENCES TODAY_PANELS (panel_id)  
+ALTER TABLE USER_TO_PANEL ADD CONSTRAINT FK_USER_TO_PANEL_PANEL_ID FOREIGN KEY (panel_id) REFERENCES TODAY_PANELS (panel_id)
 GO
 
 exec qp_delete_constraint 'SITE', 'stage_edit_field_border'
@@ -4653,7 +4653,7 @@ select * from object_values
 GO
 truncate table object_values
 GO
-delete ovc1 from object_values_copy ovc1 inner join object_values_copy ovc2 
+delete ovc1 from object_values_copy ovc1 inner join object_values_copy ovc2
 on ovc1.object_id = ovc2.object_id and ovc1.variable_name = ovc2.variable_name and ovc1.id > ovc2.id
 GO
 insert into object_values
@@ -4676,16 +4676,16 @@ GO
 PRINT '7.6.2.18 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.19
 -- Translations
 -- **************************************
 
-exec qp_update_translations 'One of the selected articles has related ones. Removing can cause errors on the site. Continue?', 
+exec qp_update_translations 'One of the selected articles has related ones. Removing can cause errors on the site. Continue?',
 'На одну из выбранных статей ссылаются другие статьи. Ее удаление может привести к ошибкам на сайте. Продолжить?'
 
-exec qp_update_translations 'There are some articles related to the current one. Removing can cause errors on the site. Continue?', 
+exec qp_update_translations 'There are some articles related to the current one. Removing can cause errors on the site. Continue?',
 'На текущую статью ссылаются другие статьи. Ее удаление может привести к ошибкам на сайте. Продолжить?'
 GO
 
@@ -4698,7 +4698,7 @@ GO
 PRINT '7.6.2.19 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.20
 -- Workflow Rules for Home
@@ -4707,7 +4707,7 @@ create view dbo.full_workflow_rules as
 select * from workflow_rules
 union all
 select 0, 1, null, 0, null, null, status_type_id, '(no comments)', workflow_id
-from workflow w inner join 
+from workflow w inner join
 status_type st on w.site_id = st.site_id
 where status_type_name = 'None'
 GO
@@ -4716,7 +4716,7 @@ ALTER      PROCEDURE [dbo].[qp_approvalArticles]
 @user_id numeric
 AS
 
-SELECT ci.content_item_id, c.content_id, ci.modified, s.site_id, s.site_name, dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) title, cast(archive as bit) archive 
+SELECT ci.content_item_id, c.content_id, ci.modified, s.site_id, s.site_name, dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) title, cast(archive as bit) archive
 FROM content_item_workflow ciw
 INNER JOIN content_item ci ON ci.content_item_id = ciw.content_item_id
 INNER JOIN full_workflow_rules wr on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
@@ -4724,14 +4724,14 @@ INNER JOIN full_workflow_rules wr2 on wr.workflow_id = wr2.workflow_id AND wr2.r
 INNER JOIN content c ON ci.content_id = c.content_id
 INNER JOIN site s ON c.site_id = s.site_id
 WHERE (
-	wr2.user_id = @user_id 
+	wr2.user_id = @user_id
 	OR wr2.group_id IN (SELECT group_id FROM user_group_bind WHERE user_id=@user_id)
 )
 AND (
-	ci.content_item_id not in (select content_item_id from waiting_for_approval) 
+	ci.content_item_id not in (select content_item_id from waiting_for_approval)
 	OR ci.content_item_id in (select content_item_id from waiting_for_approval where user_id = @user_id)
 )
-ORDER BY c.site_id, ciw.content_item_id  
+ORDER BY c.site_id, ciw.content_item_id
 GO
 
 ALTER     PROCEDURE [dbo].[qp_latestApproval]
@@ -4741,34 +4741,34 @@ DECLARE @temp table (rownum int IDENTITY (1, 1) Primary key NOT NULL,content_ite
 declare @ids table(content_item_id NUMERIC)
 DECLARE @sites table (rownum int IDENTITY (1, 1) Primary key NOT NULL,site_id INT)
 DECLARE @site NUMERIC, @content_id NUMERIC, @content_item_id NUMERIC, @titleName NVARCHAR (200), @title NVARCHAR (200), @sql nvarchar(2000)
-DECLARE @RowCnt int 
+DECLARE @RowCnt int
 DECLARE @MaxRows int
 select @RowCnt = 1
 
 insert into @sites(site_id) select * from qp_sites_list_ids(@user_id, 1)
 
 
-select @MaxRows=count(*) from @sites 
-while @RowCnt <= @MaxRows 
+select @MaxRows=count(*) from @sites
+while @RowCnt <= @MaxRows
 begin
-	select @site = site_id 
-	from @sites 
+	select @site = site_id
+	from @sites
 	where rownum = @RowCnt
 
 insert into @temp(content_item_id, modified)
 select distinct top 5 ch.content_item_id, max(ch.status_history_date)
-from content_item_status_history ch with(nolock) 
+from content_item_status_history ch with(nolock)
 inner join content_item ci on ch.content_item_id = ci.content_item_id
 inner join content c on ci.content_id = c.content_id
-where c.site_id = @site and user_id = @user_id 
-and ch.system_status_type_id in (9, 12) 
+where c.site_id = @site and user_id = @user_id
+and ch.system_status_type_id in (9, 12)
 group by ch.content_item_id
 order by max(ch.status_history_date) desc
 
     Select @RowCnt = @RowCnt + 1
 END
 
-SELECT s.site_name, ci.archive, c.site_id, c.content_id, dbo.qp_get_article_title_func(ci.content_item_id, ci.content_id) as title, t.content_item_id, t.modified from @temp t 
+SELECT s.site_name, ci.archive, c.site_id, c.content_id, dbo.qp_get_article_title_func(ci.content_item_id, ci.content_id) as title, t.content_item_id, t.modified from @temp t
 inner join content_item ci on ci.content_item_id = t.content_item_id
 inner join content c on ci.content_id = c.content_id
 inner join site s on s.site_id = c.site_id
@@ -4783,7 +4783,7 @@ GO
 
 PRINT '7.6.2.20 completed'
 GO
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.21
 -- Some translations
@@ -4803,7 +4803,7 @@ GO
 PRINT '7.6.2.21 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.22
 -- Missed cascade delete
@@ -4827,12 +4827,12 @@ GO
 PRINT '7.6.2.22 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.23
 -- Fix procedure
 -- **************************************
-ALTER procedure [dbo].[qp_delete_default] 
+ALTER procedure [dbo].[qp_delete_default]
 @table_name nvarchar(255),
 @column_name nvarchar(255)
 as
@@ -4860,7 +4860,7 @@ PRINT '7.6.2.23 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.24
 -- LINQ Integration
@@ -4874,7 +4874,7 @@ select @contents_id = tab_id from tabs where tab_name = 'Contents'
 if not exists(select * from toolbar_buttons where location_tab_id = @contents_id and button_name = @button_name)
 begin
 	insert into toolbar_buttons(permission_level_id, location_tab_id, image_disabled, image_enabled, button_name, buttons_order, action_tab_id, always_enabled, action_function)
-	values(1, @contents_id, 'images/toolbar/assemble_disabled.gif', 'images/toolbar/assemble.gif', @button_name, 2, @contents_id, 1, 'assembleContents') 
+	values(1, @contents_id, 'images/toolbar/assemble_disabled.gif', 'images/toolbar/assemble.gif', @button_name, 2, @contents_id, 1, 'assembleContents')
 end
 GO
 
@@ -4887,7 +4887,7 @@ GO
 PRINT '7.6.2.24 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.25
 -- QUOTED_IDENTIFIER
@@ -4897,7 +4897,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 alter table content_item disable trigger td_delete_item
 alter table content_attribute disable trigger td_content_attribute_clean_empty_links
@@ -4905,8 +4905,8 @@ alter table content_attribute disable trigger td_remove_field
 alter table content_attribute disable trigger td_reorder_fields
 alter table content_constraint disable trigger td_content_indexes
 
-delete content_item_status_history from content_item_status_history cis	
-inner join content_item ci on ci.content_item_id = cis.content_item_id 
+delete content_item_status_history from content_item_status_history cis
+inner join content_item ci on ci.content_item_id = cis.content_item_id
 inner join content c on c.content_id = ci.content_id
 inner join deleted d on d.site_id = c.site_id
 
@@ -4915,10 +4915,10 @@ inner join content c on c.content_id = ci.content_id
 inner join deleted d on d.site_id = c.site_id
 
 delete content from content c
-inner join deleted d on d.site_id = c.site_id	 	
+inner join deleted d on d.site_id = c.site_id
 
 delete page_template from page_template pt
-inner join deleted d on d.site_id = pt.site_id	 	
+inner join deleted d on d.site_id = pt.site_id
 
 delete site from site s inner join deleted d on s.site_id = d.site_id
 
@@ -4933,7 +4933,7 @@ END
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content] ON [dbo].[CONTENT] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 alter table content_item disable trigger td_delete_item
 
@@ -4950,10 +4950,10 @@ delete content_to_content from content_to_content cc
 inner join deleted d on d.content_id = cc.r_content_id or d.content_id = cc.l_content_id
 
 delete container from container c
-inner join deleted d on d.content_id = c.content_id 
+inner join deleted d on d.content_id = c.content_id
 
 delete content_form from content_form cf
-inner join deleted d on d.content_id = cf.content_id 
+inner join deleted d on d.content_id = cf.content_id
 
 delete content_item from content_item ci
 inner join deleted d on d.content_id = ci.content_id
@@ -4966,21 +4966,21 @@ END
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content_item] ON [dbo].[CONTENT_ITEM] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 
 delete waiting_for_approval from waiting_for_approval wa inner join deleted d on wa.content_item_id = d.content_item_id
 
 IF dbo.qp_get_version_control() IS NOT NULL BEGIN
-	delete item_to_item_version from item_to_item_version iiv 
+	delete item_to_item_version from item_to_item_version iiv
 	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
-	inner join deleted d on d.content_item_id = civ.content_item_id 
+	inner join deleted d on d.content_item_id = civ.content_item_id
 
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join deleted d on d.content_item_id = iiv.linked_item_id 
+	delete item_to_item_version from item_to_item_version iiv
+	inner join deleted d on d.content_item_id = iiv.linked_item_id
 END
 
-delete item_to_item from item_to_item ii 
+delete item_to_item from item_to_item ii
 inner join deleted d on d.content_item_id = ii.r_item_id or d.content_item_id = ii.l_item_id
 
 delete content_data from content_data cd inner join deleted d on cd.content_item_id = d.content_item_id
@@ -5001,7 +5001,7 @@ PRINT '7.6.2.25 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.26
 -- Explicit notification assembling
@@ -5015,7 +5015,7 @@ select @notifications_id = tab_id from tabs where tab_name = 'Notifications'
 if not exists(select * from toolbar_buttons where location_tab_id = @notifications_id and button_name = @button_name)
 begin
 	insert into toolbar_buttons(permission_level_id, location_tab_id, image_disabled, image_enabled, button_name, buttons_order, action_tab_id, always_enabled, action_function)
-	values(1, @notifications_id, 'images/toolbar/assemble_disabled.gif', 'images/toolbar/assemble.gif', @button_name, 2, @notifications_id, 1, 'assembleNotification') 
+	values(1, @notifications_id, 'images/toolbar/assemble_disabled.gif', 'images/toolbar/assemble.gif', @button_name, 2, @notifications_id, 1, 'assembleNotification')
 end
 GO
 
@@ -5028,7 +5028,7 @@ GO
 PRINT '7.6.2.26 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.6.2.27
 -- Constraints
@@ -5047,7 +5047,7 @@ CREATE TABLE #constraints
    [attribute_names] [nvarchar](512),
   [attribute_ids] [varchar](256),
   [attribute_types] [varchar](256)
-  
+
 )
 DECLARE @constraint NUMERIC
 DECLARE @attribute  NUMERIC
@@ -5136,7 +5136,7 @@ AS
 ----------------------------------
   DECLARE @SecuritySQL varchar(max)
   SET @SecuritySQL = ''
-  
+
   if @use_security = 1
   Begin
 		EXEC	dbo.qp_GetPermittedItemsAsQuery
@@ -5147,7 +5147,7 @@ AS
                 @entity_name = 'content_item',
 				@parent_entity_name = @parent_entity_name,
 				@parent_entity_id = @parent_entity_id,
-				
+
 				@SQLOut = @SecuritySQL OUTPUT
 
         SET @From = Replace(@From,@insert_key,@SecuritySQL)
@@ -5185,11 +5185,11 @@ AS
 
         IF @StartRow = 0 Or @StartRow = 1
         BEGIN
-          
+
           SET @strPageSize = CAST(@PageSize AS nvarchar)
           SET @Select = 'SELECT ' + @Select
           SET @From = ' FROM ' + @From
-          IF @Where <> '' SET @Where = ' WHERE ' + @Where 
+          IF @Where <> '' SET @Where = ' WHERE ' + @Where
           IF @OrderBy <> '' Set @OrderBy = ' ORDER BY ' + @OrderBy
           EXEC ('SET ROWCOUNT ' + @strPageSize + ';' + @Select + @From + @Where + @OrderBy + ';' + 'SET ROWCOUNT 0;')
           IF @Getcount = 1
@@ -5206,7 +5206,7 @@ AS
         END
 
         SET @Columns = @OrderBy
-       
+
   WHILE(LEN(@Columns) > 0)
   BEGIN
       SET @LoopCount = @LoopCount + 1
@@ -5233,7 +5233,7 @@ AS
 		ELSE
 			-- Иначе выделяем имя поля sel.fieldName
 			SET @ColumnName = SUBSTRING(@Columns, @BracketsPos + 1, (@Pos - @BracketsPos) - 1)
-		SET @Pos = CHARINDEX(',', @Columns, @Pos + 1) 
+		SET @Pos = CHARINDEX(',', @Columns, @Pos + 1)
 		END
 	IF @Pos = 0
 		Set @Pos = LEN(@Columns) + 1
@@ -5341,21 +5341,21 @@ AS
     BEGIN
 	SET @VariableSubConditions2 = REPLACE(@VariableSubConditions2, '>', '=')
 	SET @VariableSubConditions2 = REPLACE(@VariableSubConditions2, '<', '=')
-	SET @VariableSubConditions2 = ISNULL(@VariableSubConditions2 + ' AND ', '') + 
+	SET @VariableSubConditions2 = ISNULL(@VariableSubConditions2 + ' AND ', '') +
 	  'ISNULL(CAST(' + @ColumnName + ' AS sql_variant), '''') ' +
 	  @CompareOperator + ' ' +
 	  'ISNULL(' + @VariableName + ', '''')'
 	SET @VariableConditions2 = ISNULL(@VariableConditions2 + ' OR ', '') + '(' + @VariableSubConditions2 + ')'
     END
--- Если встретили вычисляемое выражение, то создаём шаблон (предыдущие условия + шаблон), 
--- а последующие условия собираем по отдельности в @VariableConditions и @VariableConditions2 
+-- Если встретили вычисляемое выражение, то создаём шаблон (предыдущие условия + шаблон),
+-- а последующие условия собираем по отдельности в @VariableConditions и @VariableConditions2
 -- для последующей вставки в шаблон
 -- для элементов с не нулевым значением вычисляемого выражения)
     IF @BracketedExpressionInOrderBy = 1
     BEGIN
 	SET @VariableSubConditions = REPLACE(@VariableSubConditions, '>', '=')
 	SET @VariableSubConditions = REPLACE(@VariableSubConditions, '<', '=')
-	SET @VariableSubConditions = ISNULL('('+ @VariableSubConditions + ') AND ', '') 
+	SET @VariableSubConditions = ISNULL('('+ @VariableSubConditions + ') AND ', '')
 	SET @TemplateConditions = ISNULL(@VariableConditions + ' OR ', '') + @VariableSubConditions +'(('+ @VariableName +' Is Not Null AND (<@0@> OR ('+ @ColumnName +' Is Null))) OR ('+ @ColumnName +' Is Null AND (<@1@>)))'
 	SET @VariableConditions = Null
 	SET @VariableSubConditions  = Null
@@ -5363,14 +5363,14 @@ AS
     END
     SET @VariableSubConditions = REPLACE(@VariableSubConditions, '>', '=')
     SET @VariableSubConditions = REPLACE(@VariableSubConditions, '<', '=')
-    SET @VariableSubConditions = ISNULL(@VariableSubConditions + ' AND ', '') + 
+    SET @VariableSubConditions = ISNULL(@VariableSubConditions + ' AND ', '') +
       'ISNULL(CAST(' + @ColumnName + ' AS sql_variant), '''') ' +
       @CompareOperator + ' ' +
       'ISNULL(' + @VariableName + ', '''')'
     SET @VariableConditions = ISNULL(@VariableConditions + ' OR ', '') + '(' + @VariableSubConditions + ')'
   END
 -- Если вычисляемое выражение имело место быть, то собираем шаблон
--- PS если вычисляемое выражение находится в конце OrderBy, то вставляем 1=1 
+-- PS если вычисляемое выражение находится в конце OrderBy, то вставляем 1=1
 -- для экранации 2-го условия, т.к. следующей итерации не будет
   IF @BracketedExpressionInOrderBy = 0
   BEGIN
@@ -5401,14 +5401,14 @@ AS
 
   SET @strCountSQL = N'SELECT @TotalRecords = Count(*) ' + @From + @Where
   exec sp_executesql @strCountSQL, N'@TotalRecords int output', @TotalRecords = @TotalRecords output
-  
+
   IF @StartRow <= @TotalRecords
    BEGIN
 	EXEC( @VariableDeclarations + @VariableAssignments + @From + @Where + @OrderBy + @Select + @From + @VariableConditions + @OrderBy + ';' + 'SET ROWCOUNT 0;' )
-   END  
-        
+   END
+
    RETURN 0
-   
+
 GO
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
@@ -5426,24 +5426,24 @@ GO
 -- ***********************************************
 
 ALTER Function [dbo].[qp_get_article_title_func]
-( 
-@content_item_id numeric, 
-@content_id numeric 
+(
+@content_item_id numeric,
+@content_id numeric
 )
 Returns nvarchar(200)
-AS 
+AS
 
 BEGIN
         declare @titleName NVARCHAR(200)
-        set @titleName = null 
+        set @titleName = null
 
         Select @titleName = data from content_data where content_item_id = @content_item_id
         and attribute_id in (
-                    select top 1 attribute_id from content_attribute 
+                    select top 1 attribute_id from content_attribute
                     WHERE content_id = @content_id AND attribute_name = dbo.qp_get_display_field(@content_id, 1)
         )
 
-        return @titleName	
+        return @titleName
 END
 GO
 
@@ -5464,7 +5464,7 @@ GO
 
 ALTER TABLE CONTENT_ATTRIBUTE ADD RENAME_MATCHED BIT NOT NULL CONSTRAINT DF_RENAME_MATCHED DEFAULT 0
 GO
-ALTER TABLE CONTENT_ATTRIBUTE ADD SUBFOLDER NVARCHAR(255) NULL 
+ALTER TABLE CONTENT_ATTRIBUTE ADD SUBFOLDER NVARCHAR(255) NULL
 GO
 ALTER TABLE CONTENT_ATTRIBUTE ADD DISABLE_VERSION_CONTROL BIT NOT NULL CONSTRAINT DF_DISABLE_VERSION_CONTROL DEFAULT 0
 GO
@@ -5495,9 +5495,9 @@ BEGIN
 				set @result = @blob_data
 			else
 				set @result = @data
-			return @result	
-				
-END 
+			return @result
+
+END
 GO
 
 CREATE FUNCTION [dbo].qp_get_visibility_code(@visible bit, @id numeric)
@@ -5512,7 +5512,7 @@ WHEN (@visible <> 1) AND (@id IS NULL) THEN 'invisible'
 WHEN (@visible <> 1) AND (@id IS NOT NULL) THEN 'invisible_scheduled'
 END
 END
-GO 
+GO
 
 CREATE FUNCTION [dbo].[qp_fullText](@text nvarchar(255), @site_id numeric)
 returns @data table(content_item_id numeric, attribute_id numeric, content_id numeric, rownumber numeric)
@@ -5521,9 +5521,9 @@ begin
 	declare @text2 nvarchar(255)
 	set @text2 = @text + ' d1234DSFTd'
 	insert into @data
-	select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber' 
-	from content_data cd  
-	INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id   
+	select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber'
+	from content_data cd
+	INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id
 	INNER JOIN content AS cinfo with(nolock) ON ci.content_id = cinfo.content_id
 	WHERE cinfo.site_id = @site_id and FREETEXT( cd.* ,@text2)
 	return
@@ -5532,7 +5532,7 @@ GO
 
 CREATE function [dbo].[qp_fullTextIds](@text nvarchar(255), @content_id numeric)
 returns @ids table (id numeric primary key)
-as 
+as
 begin
 	declare @text2 nvarchar(255)
 	set @text2 = @text + ' d1234DSFTd'
@@ -5549,9 +5549,9 @@ begin
 	declare @text2 nvarchar(255)
 	set @text2 = '%' + @text + '%'
 	insert into @data
-	select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber' 
-	from content_data cd  
-	INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id   
+	select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber'
+	from content_data cd
+	INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id
 	INNER JOIN content AS cinfo with(nolock) ON ci.content_id = cinfo.content_id
 	WHERE cinfo.site_id = @site_id and cd.data like @text2 or cd.blob_data like @text2
 	return
@@ -5560,7 +5560,7 @@ GO
 
 CREATE function [dbo].[qp_likeIds](@text nvarchar(255), @content_id numeric)
 returns @ids table (id numeric primary key)
-as 
+as
 begin
 	declare @text2 nvarchar(255)
 	set @text2 = '%' + @text + '%'
@@ -5585,7 +5585,7 @@ GO
 -- Version Control optimization
 -- ***********************************************
 
-CREATE NONCLUSTERED INDEX [IX_HISTORY_CONTENT_ITEM_VERSION] ON [dbo].[CONTENT_ITEM_STATUS_HISTORY] 
+CREATE NONCLUSTERED INDEX [IX_HISTORY_CONTENT_ITEM_VERSION] ON [dbo].[CONTENT_ITEM_STATUS_HISTORY]
 (
 	[content_item_version_id] ASC
 ) ON [PRIMARY]
@@ -5632,17 +5632,17 @@ GO
 ALTER  PROCEDURE [dbo].[qp_mostUpdated]
 @user_id numeric
 AS
-select * from 
+select * from
 (
 select s2.site_name, c.content_name, cnt.content_id, cnt.count, c.site_id,
-row_number() over (partition by c.site_id order by cnt.count desc) as 'RowNumber' 
-from content c 
+row_number() over (partition by c.site_id order by cnt.count desc) as 'RowNumber'
+from content c
 inner join qp_sites_list_ids(@user_id, 1) s on c.site_id = s.site_id
 inner join site s2 on c.site_id = s2.site_id
-inner join 
+inner join
 (select count(*) as count , ci.content_id from content_item as ci with(nolock)
 WHERE ci.modified > DATEADD(month, -1, GetDate())
-group by ci.content_id) as cnt 
+group by ci.content_id) as cnt
 on cnt.content_id = c.content_id
 ) as result
 where result.rownumber <= 5
@@ -5652,23 +5652,23 @@ ALTER      PROCEDURE [dbo].[qp_approvalArticles]
 @user_id numeric
 AS
 
-SELECT top 100 ci.content_item_id, c.content_id, ci.modified, s.site_id, s.site_name, dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) title, cast(archive as bit) archive 
-FROM content_item_workflow ciw with(nolock) 
+SELECT top 100 ci.content_item_id, c.content_id, ci.modified, s.site_id, s.site_name, dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) title, cast(archive as bit) archive
+FROM content_item_workflow ciw with(nolock)
 INNER JOIN content_item ci with(nolock) ON ci.content_item_id = ciw.content_item_id
 INNER JOIN full_workflow_rules wr with(nolock) on ciw.workflow_id = wr.workflow_id AND ci.status_type_id = wr.successor_status_id
 INNER JOIN full_workflow_rules wr2 with(nolock) on wr.workflow_id = wr2.workflow_id AND wr2.rule_order = wr.rule_order + 1
 INNER JOIN content c with(nolock) ON ci.content_id = c.content_id
 INNER JOIN site s with(nolock) ON c.site_id = s.site_id
 WHERE (
-	wr2.user_id = @user_id 
+	wr2.user_id = @user_id
 	OR wr2.group_id IN (SELECT group_id FROM user_group_bind with(nolock) WHERE user_id=@user_id)
 )
 AND (
-	ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock)) 
+	ci.content_item_id not in (select content_item_id from waiting_for_approval with(nolock))
 	OR ci.content_item_id in (select content_item_id from waiting_for_approval with(nolock) where user_id = @user_id)
 )
 ORDER BY c.site_id, ciw.content_item_id
-GO  
+GO
 
 ALTER     PROCEDURE [dbo].[qp_latestApproval]
 @user_id numeric
@@ -5677,65 +5677,65 @@ DECLARE @temp table (rownum int IDENTITY (1, 1) Primary key NOT NULL,content_ite
 declare @ids table(content_item_id NUMERIC)
 DECLARE @sites table (rownum int IDENTITY (1, 1) Primary key NOT NULL,site_id INT)
 DECLARE @site NUMERIC, @content_id NUMERIC, @content_item_id NUMERIC, @titleName NVARCHAR (200), @title NVARCHAR (200), @sql nvarchar(2000)
-DECLARE @RowCnt int 
+DECLARE @RowCnt int
 DECLARE @MaxRows int
 select @RowCnt = 1
 
 insert into @sites(site_id) select * from qp_sites_list_ids(@user_id, 1)
 
 
-select @MaxRows=count(*) from @sites 
-while @RowCnt <= @MaxRows 
+select @MaxRows=count(*) from @sites
+while @RowCnt <= @MaxRows
 begin
-	select @site = site_id 
-	from @sites 
+	select @site = site_id
+	from @sites
 	where rownum = @RowCnt
 
 insert into @temp(content_item_id, modified)
 select distinct top 5 ch.content_item_id, max(ch.status_history_date)
-from content_item_status_history ch with(nolock) 
+from content_item_status_history ch with(nolock)
 inner join content_item ci with(nolock) on ch.content_item_id = ci.content_item_id
 inner join content c with(nolock) on ci.content_id = c.content_id
-where c.site_id = @site and user_id = @user_id 
-and ch.system_status_type_id in (9, 12) 
+where c.site_id = @site and user_id = @user_id
+and ch.system_status_type_id in (9, 12)
 group by ch.content_item_id
 order by max(ch.status_history_date) desc
 
     Select @RowCnt = @RowCnt + 1
 END
 
-SELECT s.site_name, ci.archive, c.site_id, c.content_id, dbo.qp_get_article_title_func(ci.content_item_id, ci.content_id) as title, t.content_item_id, t.modified from @temp t 
+SELECT s.site_name, ci.archive, c.site_id, c.content_id, dbo.qp_get_article_title_func(ci.content_item_id, ci.content_id) as title, t.content_item_id, t.modified from @temp t
 inner join content_item ci with(nolock) on ci.content_item_id = t.content_item_id
 inner join content c with(nolock) on ci.content_id = c.content_id
 inner join site s with(nolock) on s.site_id = c.site_id
 GO
 
-ALTER PROCEDURE [dbo].[qp_lastArticles] 
-@user_id numeric 
+ALTER PROCEDURE [dbo].[qp_lastArticles]
+@user_id numeric
 AS
 DECLARE @sites table (rownum int IDENTITY (1, 1) Primary key NOT NULL, site_id INT)
 DECLARE @temp table (rownum int IDENTITY (1, 1) Primary key NOT NULL, content_item_id NUMERIC, content_id NUMERIC, content_name NVARCHAR (200), modified DATETIME, site_id INT, site_name NVARCHAR (100), title NVARCHAR (200), archive BIT )
 DECLARE @site NUMERIC, @content_id NUMERIC, @content_item_id NUMERIC, @titleName NVARCHAR (200), @title NVARCHAR (200), @sql nvarchar(2000)
-DECLARE @RowCnt int 
+DECLARE @RowCnt int
 DECLARE @MaxRows int
 select @RowCnt = 1
 
 insert into @sites(site_id) select * from qp_sites_list_ids(@user_id, 1)
 
-select @MaxRows=count(*) from @sites 
-while @RowCnt <= @MaxRows 
+select @MaxRows=count(*) from @sites
+while @RowCnt <= @MaxRows
 begin
-	select @site = site_id 
-	from @sites 
+	select @site = site_id
+	from @sites
 	where rownum = @RowCnt
 
 	INSERT INTO @temp
 	SELECT ci.content_item_id, c.content_id, c.content_name, ci.modified, c.site_id, site_name, dbo.qp_get_article_title_func(ci.content_item_id, c.content_id) title, cast(archive as bit) archive FROM content_item ci with (nolock)
-	INNER JOIN content c with (nolock) ON ci.content_id = c.content_id 
+	INNER JOIN content c with (nolock) ON ci.content_id = c.content_id
 	INNER JOIN site with (nolock) ON site.site_id = c.site_id
     where ci.content_item_id in (select top 5 content_item_id from site_content_item_modified with(noexpand) where site_id = @site order by modified desc)
 
-    Select @RowCnt = @RowCnt + 1 
+    Select @RowCnt = @RowCnt + 1
 end
 SELECT * from @temp
 GO
@@ -5778,16 +5778,16 @@ returns @data table(content_item_id numeric, attribute_id numeric, content_id nu
 as
 begin
 	declare @text2 nvarchar(255)
-	
+
 	declare @use_fulltext bit
 	select @use_fulltext = fulltextserviceproperty('IsFulltextInstalled')
-	
+
 	if @use_fulltext = 1 begin
 		if @exact = 0 begin
 			insert into @data
-			select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber' 
-			from content_data cd  
-			INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id   
+			select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber'
+			from content_data cd
+			INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id
 			INNER JOIN content AS cinfo with(nolock) ON ci.content_id = cinfo.content_id
 			WHERE cinfo.site_id = @site_id and FREETEXT( cd.* ,@text)
 		end
@@ -5795,9 +5795,9 @@ begin
 			set @text2 = '"' + @text + '"'
 
 			insert into @data
-			select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber' 
-			from content_data cd  
-			INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id   
+			select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber'
+			from content_data cd
+			INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id
 			INNER JOIN content AS cinfo with(nolock) ON ci.content_id = cinfo.content_id
 			WHERE cinfo.site_id = @site_id and CONTAINS( cd.* ,@text2)
 		end
@@ -5805,23 +5805,23 @@ begin
 	else begin
 		set @text2 = '%' + @text + '%'
 		insert into @data
-		select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber' 
-		from content_data cd  
-		INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id   
+		select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber'
+		from content_data cd
+		INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id
 		INNER JOIN content AS cinfo with(nolock) ON ci.content_id = cinfo.content_id
 		WHERE cinfo.site_id = @site_id and cd.data like @text2 or cd.blob_data like @text2
 	end
-	
+
 	return
 end
 GO
 
 ALTER function [dbo].[qp_fullTextIds](@text nvarchar(255), @content_id numeric, @exact bit)
 returns @ids table (id numeric primary key, data nvarchar(max))
-as 
+as
 begin
 	declare @text2 nvarchar(255)
-	
+
 	declare @use_fulltext bit
 	select @use_fulltext = fulltextserviceproperty('IsFulltextInstalled')
 
@@ -5830,9 +5830,9 @@ begin
 			insert into @ids
 			select id, data from (
 			select cd.content_item_id as id, dbo.qp_select_data_field(ca.attribute_type_id, cd.data, cd.blob_data) as data, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber'
-			from content_data cd 
-			inner join content_item ci on ci.content_item_id = cd.content_item_id 
-			inner join content_attribute ca on ca.attribute_id = cd.attribute_id 
+			from content_data cd
+			inner join content_item ci on ci.content_item_id = cd.content_item_id
+			inner join content_attribute ca on ca.attribute_id = cd.attribute_id
 			where ci.content_id = @content_id and freetext(cd.*, @text )
 			) s where s.rownumber = 1
 		end
@@ -5841,21 +5841,21 @@ begin
 			insert into @ids
 			select id, data from (
 			select cd.content_item_id as id, dbo.qp_select_data_field(ca.attribute_type_id, cd.data, cd.blob_data) as data, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber'
-			from content_data cd 
-			inner join content_item ci on ci.content_item_id = cd.content_item_id 
-			inner join content_attribute ca on ca.attribute_id = cd.attribute_id 
+			from content_data cd
+			inner join content_item ci on ci.content_item_id = cd.content_item_id
+			inner join content_attribute ca on ca.attribute_id = cd.attribute_id
 			where ci.content_id = @content_id and contains(cd.*, @text2 )
 			) s where s.rownumber = 1
 		end
-	end 
+	end
 	else begin
 		set @text2 = '%' + @text + '%'
 		insert into @ids
 		select id, data from (
-		select cd.content_item_id as id, dbo.qp_select_data_field(ca.attribute_type_id, cd.data, cd.blob_data) as data, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber' 
-		from content_data cd 
-		inner join content_item ci on ci.content_item_id = cd.content_item_id 
-		inner join content_attribute ca on ca.attribute_id = cd.attribute_id 
+		select cd.content_item_id as id, dbo.qp_select_data_field(ca.attribute_type_id, cd.data, cd.blob_data) as data, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber'
+		from content_data cd
+		inner join content_item ci on ci.content_item_id = cd.content_item_id
+		inner join content_attribute ca on ca.attribute_id = cd.attribute_id
 		where ci.content_id = @content_id and cd.data like @text2 or cd.blob_data like @text2
 		) s where s.rownumber = 1
 
@@ -5880,7 +5880,7 @@ GO
 -- ***********************************************
 
 ALTER TABLE CONTENT ADD
-	[ALT_QUERY] ntext NULL 
+	[ALT_QUERY] ntext NULL
 GO
 
 ALTER  PROCEDURE [dbo].[qp_build_query_vcontent_view]
@@ -5899,7 +5899,7 @@ AS BEGIN
   DECLARE @link_id NUMERIC
 
   SET @view_name = 'content_' + CAST(@content_id AS NVARCHAR)
-  
+
   SELECT @sql = query, @alt_sql = alt_query FROM content WHERE content_id = @content_id
   SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + ' AS ' + @sql
   EXEC(@sql)
@@ -5943,7 +5943,7 @@ AS BEGIN
           @attr_type = attribute_type_id,
           @attr_rel_id = related_attribute_id,
 		  @attr_related_image_attribute_id = related_image_attribute_id,
-		  @attr_use_site_library = use_site_library, 
+		  @attr_use_site_library = use_site_library,
 		  @view_in_list = view_in_list,
           @link_id = link_id
         FROM content_attribute
@@ -6006,9 +6006,9 @@ AS BEGIN
   CLOSE fields
   DEALLOCATE fields
 
-  IF @alt_sql IS NULL 
+  IF @alt_sql IS NULL
   	SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + '_united AS select * from dbo.content_' + + CAST(@content_id AS NVARCHAR)
-  ELSE 
+  ELSE
     SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + '_united  AS ' + @alt_sql
   EXEC(@sql)
 
@@ -6048,7 +6048,7 @@ CREATE TABLE [dbo].[item_link_async](
 	[link_id] [numeric](18, 0) NOT NULL,
 	[item_id] [numeric](18, 0) NOT NULL,
 	[linked_item_id] [numeric](18, 0) NOT NULL,
-PRIMARY KEY CLUSTERED 
+PRIMARY KEY CLUSTERED
 (
 	[link_id] ASC,
 	[item_id] ASC,
@@ -6072,22 +6072,22 @@ GO
 exec qp_delete_constraint 'item_to_item', 'link_id'
 GO
 
-CREATE view [dbo].[item_link_united] as  select i.* from item_link i left join item_link_async i2  on i.item_id = i2.item_id  where i2.item_id is null  union all  select * from item_link_async 
+CREATE view [dbo].[item_link_united] as  select i.* from item_link i left join item_link_async i2  on i.item_id = i2.item_id  where i2.item_id is null  union all  select * from item_link_async
 GO
 
-CREATE view [dbo].[item_link_united_full] as  select i.* from item_link i union all select * from item_link_async 
+CREATE view [dbo].[item_link_united_full] as  select i.* from item_link i union all select * from item_link_async
 GO
 
 CREATE TRIGGER [dbo].[td_item_link_united_full] ON [dbo].[item_link_united_full] INSTEAD OF DELETE
 AS BEGIN
-  delete item_link_async from item_link_async ii 
+  delete item_link_async from item_link_async ii
   inner join deleted d on d.link_id = ii.link_id and (
   (d.item_id = ii.item_id and d.linked_item_id = ii.linked_item_id)
   or
   (d.item_id = ii.linked_item_id and d.linked_item_id = ii.item_id)
   )
 
-  delete item_to_item from item_to_item ii 
+  delete item_to_item from item_to_item ii
   inner join deleted d on d.link_id = ii.link_id and (
   (d.item_id = ii.l_item_id and d.linked_item_id = ii.r_item_id)
   or
@@ -6097,10 +6097,10 @@ END
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content_to_content] ON [dbo].[content_to_content] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 
-delete content_attribute from content_attribute ca	
+delete content_attribute from content_attribute ca
 inner join deleted d on d.link_id = ca.link_id
 
 delete from item_link_united_full where link_id in (select link_id from deleted)
@@ -6111,21 +6111,21 @@ END
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content_item] ON [dbo].[CONTENT_ITEM] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 
 delete waiting_for_approval from waiting_for_approval wa inner join deleted d on wa.content_item_id = d.content_item_id
 
 IF dbo.qp_get_version_control() IS NOT NULL BEGIN
-	delete item_to_item_version from item_to_item_version iiv 
+	delete item_to_item_version from item_to_item_version iiv
 	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
-	inner join deleted d on d.content_item_id = civ.content_item_id 
+	inner join deleted d on d.content_item_id = civ.content_item_id
 
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join deleted d on d.content_item_id = iiv.linked_item_id 
+	delete item_to_item_version from item_to_item_version iiv
+	inner join deleted d on d.content_item_id = iiv.linked_item_id
 END
 
-delete item_link_united_full from item_link_united_full ii where ii.item_id in (select content_item_id from deleted) 
+delete item_link_united_full from item_link_united_full ii where ii.item_id in (select content_item_id from deleted)
 
 delete content_data from content_data cd inner join deleted d on cd.content_item_id = d.content_item_id
 
@@ -6136,10 +6136,10 @@ GO
 
 ALTER TRIGGER [dbo].[td_site_item_link] ON [dbo].[site_item_link] INSTEAD OF DELETE
 AS BEGIN
-  delete item_to_item from item_to_item ii 
+  delete item_to_item from item_to_item ii
   inner join deleted d on d.link_id = ii.link_id and d.l_item_id = ii.l_item_id and d.r_item_id = ii.r_item_id
-  
-  delete item_link_async from item_link_async ii 
+
+  delete item_link_async from item_link_async ii
   inner join deleted d on d.link_id = ii.link_id and (
   (ii.item_id = d.l_item_id and ii.linked_item_id = d.r_item_id)
   or
@@ -6163,22 +6163,22 @@ AS
 
 GO
 
-CREATE PROCEDURE [dbo].[qp_merge_links] 
+CREATE PROCEDURE [dbo].[qp_merge_links]
 @content_item_id numeric
-AS 
-	
+AS
+
 	declare @result int, @delayed_publication bit
 	exec dbo.qp_check_article_splitted @content_item_id, @result = @result out
 	select @delayed_publication = schedule_new_version_publication from content_item with(nolock) where content_item_id = @content_item_id
 	if @result = 1 and @delayed_publication = 1
 	begin
 		DELETE item_to_item with (rowlock)
-		WHERE link_id in (select link_id from content_attribute ca inner join content_item ci on ca.content_id = ci.content_id where ci.content_item_id = @content_item_id) 
-		AND (l_item_id = @content_item_id OR r_item_id = @content_item_id ) 
+		WHERE link_id in (select link_id from content_attribute ca inner join content_item ci on ca.content_id = ci.content_id where ci.content_item_id = @content_item_id)
+		AND (l_item_id = @content_item_id OR r_item_id = @content_item_id )
 
-		insert into item_to_item (link_id, l_item_id, r_item_id) 
+		insert into item_to_item (link_id, l_item_id, r_item_id)
 		select link_id, item_id, linked_item_id from item_link_async where item_id = @content_item_id
-		
+
 		delete from item_link_async with(rowlock) where item_id = @content_item_id
 	end
 GO
@@ -6205,7 +6205,7 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
     DECLARE @delete_level INT
 
     IF @freq_type = 1 OR @freq_type = 2 BEGIN
-      DECLARE @now_date DATETIME  
+      DECLARE @now_date DATETIME
       DECLARE @now_date_int BIGINT, @start_date_int BIGINT, @end_date_int BIGINT
 
       SET @now_date = DATEADD(mi, 1, GETDATE())
@@ -6259,10 +6259,10 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
 			  + '
 				EXECUTE qp_create_deactivation_job @item_id=' + CAST(@item_id AS NVARCHAR) + ', ' + @str_set_params
 		else begin	--scheduleNewVersionPublication
-			set @sql  = ';exec qp_merge_links ' + CAST(@item_id AS NVARCHAR) + 
+			set @sql  = ';exec qp_merge_links ' + CAST(@item_id AS NVARCHAR) +
 						';UPDATE content_item with(rowlock) SET schedule_new_version_publication = 0, not_for_replication = 1 WHERE content_item_id = ' + CAST(@item_id AS NVARCHAR) +
 						';exec qp_replicate ' + CAST(@item_id AS NVARCHAR)
-						
+
 			set @freq_type = 1
 		end
 
@@ -6297,9 +6297,9 @@ END
 GO
 
 CREATE procedure [dbo].[qp_check_target_table_async]
-@content_item_id numeric, 
-@content_id numeric, 
-@workflow_id numeric, 
+@content_item_id numeric,
+@content_id numeric,
+@workflow_id numeric,
 @async_workflow numeric,
 @is_target_table_async bit output
 AS
@@ -6309,18 +6309,18 @@ AS
 
 	set @is_target_table_async = 0
 
-	if @workflow_id is not null 
+	if @workflow_id is not null
 	begin
 
 		select @new_status_weight = st.weight, @schedule_new_version_publication = ci.schedule_new_version_publication
 		from status_type st inner join content_item ci
-		on st.status_type_id = ci.status_type_id 
+		on st.status_type_id = ci.status_type_id
 		where content_item_id = @content_item_id
 
 		exec qp_get_workflow_max_status_weight @workflow_id, @max_status_weight = @max_status_weight out
-		
+
 			EXEC qp_get_frontend_status_weight @content_id, @content_item_id, @weight = @curr_status_weight out
-				
+
 		if (@new_status_weight < @curr_status_weight and @async_workflow = 1) or (@new_status_weight = @max_status_weight and @schedule_new_version_publication = 1)
 		begin
 			set @is_target_table_async = 1
@@ -6330,11 +6330,11 @@ AS
 GO
 
 
-ALTER procedure [dbo].[qp_define_target_table] 
-@content_item_id numeric, 
-@content_id numeric, 
-@workflow_id numeric, 
-@async_workflow numeric, 
+ALTER procedure [dbo].[qp_define_target_table]
+@content_item_id numeric,
+@content_id numeric,
+@workflow_id numeric,
+@async_workflow numeric,
 @is_target_table_async bit output,
 @table_name nvarchar(25) output
 AS
@@ -6346,21 +6346,21 @@ AS
 		set @async_string = ''
 	else
 		set @async_string = '_ASYNC'
-	
+
 	set @table_name = 'CONTENT_' + convert(nvarchar, @content_id) + @async_string
 GO
 
 CREATE procedure [dbo].[qp_is_target_table_async](
   @content_item_id numeric (18,0),
-  @is_target_table_async bit output 
+  @is_target_table_async bit output
 )
-AS 
-    
+AS
+
 	declare @content_id numeric, @workflow_id numeric, @is_async bit
-	
+
 	select @content_id = content_id from content_item where content_item_id = @content_item_id
 
-	select @workflow_id = workflow_id, @is_async = is_async from content_item_workflow where content_item_id = @content_item_id 
+	select @workflow_id = workflow_id, @is_async = is_async from content_item_workflow where content_item_id = @content_item_id
 
 	exec qp_check_target_table_async @content_item_id, @content_id, @workflow_id, @is_async , @is_target_table_async = @is_target_table_async out
 
@@ -6388,7 +6388,7 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
     DECLARE @delete_level INT
 
     IF @freq_type = 1 OR @freq_type = 2 BEGIN
-      DECLARE @now_date DATETIME  
+      DECLARE @now_date DATETIME
       DECLARE @now_date_int BIGINT, @start_date_int BIGINT, @end_date_int BIGINT
 
       SET @now_date = DATEADD(mi, 1, GETDATE())
@@ -6482,7 +6482,7 @@ GO
 ALTER  PROCEDURE [dbo].[restore_content_item_version]
   @uid NUMERIC,
   @version_id NUMERIC
-AS 
+AS
   DECLARE @id NUMERIC, @tm DATETIME
   DECLARE @content_id numeric
   SET @tm = GETDATE()
@@ -6497,32 +6497,32 @@ AS
     -- Clear many-to-many
     IF exists(select count(linked_item_id) from item_link_async where item_id = @id)
     begin
-		
+
 		DELETE FROM item_link_async where item_id = @id and link_id in (select link_id from content_attribute where content_id = @content_id)
-		
+
 		INSERT INTO item_link_async
 		SELECT link_id, @id, linked_item_id FROM item_to_item_version AS iv
 		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id
-		WHERE iv.content_item_version_id = @version_id		 
-		
-    end else  
+		WHERE iv.content_item_version_id = @version_id
+
+    end else
     begin
 
 		DELETE FROM item_link_united_full where item_id = @id and link_id in (select link_id from content_attribute where content_id = @content_id)
-	
+
 		-- Set many-to-many
-		INSERT INTO item_to_item 
+		INSERT INTO item_to_item
 		SELECT link_id, @id, linked_item_id FROM item_to_item_version AS iv
-		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id		
+		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id
 		WHERE iv.content_item_version_id = @version_id
     end
-    
+
     -- Write status history log
-    INSERT INTO content_item_status_history 
+    INSERT INTO content_item_status_history
       (content_item_id, user_id, description, created,
       system_status_type_id, content_item_version_id)
-    VALUES 
-      (@id, @uid, 'Record has been restored from version backup', @tm, 
+    VALUES
+      (@id, @uid, 'Record has been restored from version backup', @tm,
       4, @version_id)
   END
 GO
@@ -6542,12 +6542,12 @@ AS
   FROM content AS c
   INNER JOIN content_item AS ci ON c.content_id = ci.content_id
   WHERE ci.content_item_id = @content_item_id
-IF @max_num_of_stored_versions <> 0 
+IF @max_num_of_stored_versions <> 0
 BEGIN
   DECLARE @item_version_count INT
   SELECT @item_version_count = COUNT(content_item_version_id) FROM content_item_version
-  WHERE content_item_id = @content_item_id 
-  IF @item_version_count >= @max_num_of_stored_versions 
+  WHERE content_item_id = @content_item_id
+  IF @item_version_count >= @max_num_of_stored_versions
   BEGIN
 	DECLARE @item_version_id NUMERIC
 	SELECT TOP 1 @item_version_id = content_item_version_id FROM content_item_version
@@ -6557,7 +6557,7 @@ BEGIN
   END
   -- Create content item version
   IF @content_version_id IS NOT NULL
-    DELETE FROM content_item_version 
+    DELETE FROM content_item_version
     WHERE content_version_id = @content_version_id AND content_item_id = @content_item_id
   INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id)
   VALUES (@tm, 'backup', @content_version_id, @content_item_id)
@@ -6569,16 +6569,16 @@ BEGIN
   WHERE content_item_id = @content_item_id
   -- Store Many-to-Many slice
   INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
-  SELECT @content_item_version_id, ca.attribute_id, linked_item_id 
+  SELECT @content_item_version_id, ca.attribute_id, linked_item_id
   FROM item_link_united AS il
   INNER JOIN content_attribute AS ca ON ca.link_id = il.link_id
   INNER JOIN content_item AS ci ON ci.content_id =  ca.content_id AND ci.content_item_id = il.item_id
   WHERE il.item_id = @content_item_id
   -- Write status history log
-  INSERT INTO content_item_status_history 
-    (content_item_id, user_id, description, created, content_item_version_id, 
+  INSERT INTO content_item_status_history
+    (content_item_id, user_id, description, created, content_item_version_id,
     system_status_type_id)
-  VALUES 
+  VALUES
     (@content_item_id, @uid, 'Record version backup has been created', @tm, @content_item_version_id,
     2)
 END
@@ -6591,7 +6591,7 @@ exec qp_update_translations 'Forced Status Changing', 'Принудительн�
 exec qp_update_translations 'Workflow Rule will be applied, overriding Forced Status Changing setting.', 'Будет применено правило Workflow, несмотря на установку принудительного изменения статуса'
 exec qp_update_translations 'Exact Search', 'Строгое соответствие'
 exec qp_update_translations 'Exact Full Text Search', 'Строгий полнотекстовый поиск'
-exec qp_update_translations 'Upload size exceeds allowed limit:', 'Размер загрузки превышает разрешенный предел:' 
+exec qp_update_translations 'Upload size exceeds allowed limit:', 'Размер загрузки превышает разрешенный предел:'
 
 GO
 
@@ -6615,7 +6615,7 @@ CREATE TABLE [dbo].[REMOVED_ENTITIES](
 	[ID] [numeric](18, 0) NOT NULL,
 	[USER_ID] [numeric](18, 0) NOT NULL,
 	[DELETED] [datetime] NOT NULL,
- CONSTRAINT [PK_REMOVED_ENTITIES] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_REMOVED_ENTITIES] PRIMARY KEY CLUSTERED
 (
 	[ENTITY_NAME] ASC,
 	[ID] ASC
@@ -6624,7 +6624,7 @@ CREATE TABLE [dbo].[REMOVED_ENTITIES](
 
 GO
 
-CREATE NONCLUSTERED INDEX [IX_REMOVED_ENTITIES_DELETED] ON [dbo].[REMOVED_ENTITIES] 
+CREATE NONCLUSTERED INDEX [IX_REMOVED_ENTITIES_DELETED] ON [dbo].[REMOVED_ENTITIES]
 (
 	[DELETED] DESC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -6641,7 +6641,7 @@ CREATE TABLE [dbo].[REMOVED_FILES](
 	[PATH] [nvarchar](1024) NOT NULL,
 	[DESTINATION] [nvarchar] (1024) NULL,
 	[DELETED] [datetime] NOT NULL
- CONSTRAINT [PK_REMOVED_FILES] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_REMOVED_FILES] PRIMARY KEY CLUSTERED
 (
 	[DELETED] DESC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -6662,7 +6662,7 @@ CREATE TABLE [dbo].[DANGEROUS_ACTIONS](
 	[USER_ID] [numeric](18, 0) NOT NULL,
 	[PERFORMED] [datetime] NOT NULL,
 	[DESCRIPTION] [nvarchar] (1024) NULL
- CONSTRAINT [PK_DANGEROUS_ACTIONS] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_DANGEROUS_ACTIONS] PRIMARY KEY CLUSTERED
 (
 	[PERFORMED] DESC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -6670,14 +6670,14 @@ CREATE TABLE [dbo].[DANGEROUS_ACTIONS](
 
 GO
 
-CREATE NONCLUSTERED INDEX [IX_DANGEROUS_ACTIONS_ENTITY_NAME_ID] ON [dbo].[DANGEROUS_ACTIONS] 
+CREATE NONCLUSTERED INDEX [IX_DANGEROUS_ACTIONS_ENTITY_NAME_ID] ON [dbo].[DANGEROUS_ACTIONS]
 (
 	[ENTITY_NAME] ASC,
 	[ID] DESC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX [IX_DANGEROUS_ACTIONS_ACTION_NAME] ON [dbo].[DANGEROUS_ACTIONS] 
+CREATE NONCLUSTERED INDEX [IX_DANGEROUS_ACTIONS_ACTION_NAME] ON [dbo].[DANGEROUS_ACTIONS]
 (
 	[ACTION_NAME] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -6722,7 +6722,7 @@ EXEC sp_dbcmptlevel @name , '90'
 GO
 
 update buttons set permission_level_id = 2 where button_name = 'Restore' and location_tab_id in (
-select tab_id from tabs where tab_name = 'Article Restore Preview') 
+select tab_id from tabs where tab_name = 'Article Restore Preview')
 GO
 
 INSERT INTO SYSTEM_INFO
@@ -6741,7 +6741,7 @@ GO
 -- ***********************************************
 
 ALTER  TRIGGER [dbo].[tu_page_template_modified] ON [dbo].[PAGE_TEMPLATE]
-FOR UPDATE 
+FOR UPDATE
 AS
 BEGIN
 	declare @template_folder nvarchar(255), @new_template_folder nvarchar(255)
@@ -6766,10 +6766,10 @@ BEGIN
 		using nvarchar(512)
 
 	)
-	
+
 	/* Collect affected items */
 	insert into @pt (page_template_id, template_folder, custom_class_for_pages, custom_class_for_generics, custom_class_for_containers, custom_class_for_forms, using, charset)
-	select page_template_id, template_folder, custom_class_for_pages, custom_class_for_generics, custom_class_for_containers, custom_class_for_forms, using, charset from deleted d   
+	select page_template_id, template_folder, custom_class_for_pages, custom_class_for_generics, custom_class_for_containers, custom_class_for_forms, using, charset from deleted d
 
 	set @i = 1
 	select @count = count(id) from @pt
@@ -6778,38 +6778,38 @@ BEGIN
 	begin
 		select @custom_class_for_pages = custom_class_for_pages, @custom_class_for_generics = custom_class_for_generics, @custom_class_for_containers = custom_class_for_containers, @custom_class_for_forms = custom_class_for_forms, @using = using, @charset = charset, @template_folder = template_folder, @page_template_id = page_template_id from @pt where id = @i
 		select @new_custom_class_for_pages = custom_class_for_pages, @new_custom_class_for_generics = custom_class_for_generics, @new_custom_class_for_containers = custom_class_for_containers, @new_custom_class_for_forms = custom_class_for_forms, @new_using = using, @new_charset = charset, @new_template_folder = template_folder from page_template where page_template_id = @page_template_id
-		
+
 		if IsNull(@template_folder, '') <> IsNull(@new_template_folder, '')
 		or IsNull(@custom_class_for_pages, '') <> IsNull(@new_custom_class_for_pages, '')
 		begin
-			update page set assemble_in_live = 1, assemble_in_stage = 1 
+			update page set assemble_in_live = 1, assemble_in_stage = 1
 			where page_template_id = @page_template_id
 		end
-		
+
 		if IsNull(@template_folder, '') <> IsNull(@new_template_folder, '')
 		or IsNull(@using, '') <> IsNull(@new_using, '')
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 		end
-		
+
 		if IsNull(@charset, '') <> IsNull(@new_charset, '')
 		begin
-		
+
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id and obj.page_id is null
-		
+
 		end
 
 		if IsNull(@custom_class_for_generics, '') <> IsNull(@new_custom_class_for_generics, '')
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 			and obj.object_type_id <> 2 and obj.object_type_id <> 9
 		end
@@ -6818,7 +6818,7 @@ BEGIN
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 			and obj.object_type_id = 2
 		end
@@ -6827,22 +6827,22 @@ BEGIN
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1
 			from object_format objf
-			inner join object obj on objf.object_id = obj.object_id 
+			inner join object obj on objf.object_id = obj.object_id
 			where obj.page_template_id = @page_template_id
 			and obj.object_type_id = 9
 		end
-		
+
 		/* Curtail Format Stored Versions */
 		exec qp_wrapper_curtail_object_format_versions NULL, @page_template_id
-		
+
 		set @i = @i + 1
 	end
 END
 
 GO
 
-ALTER TRIGGER [dbo].[tu_template_formats_modified] ON [dbo].[PAGE] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_template_formats_modified] ON [dbo].[PAGE]
+FOR UPDATE
 AS
 BEGIN
 	declare @page_folder nvarchar(255), @new_page_folder nvarchar(255)
@@ -6863,10 +6863,10 @@ BEGIN
 		enable_viewstate bit,
 		generate_trace bit
 	)
-	
+
 	/* Collect affected items */
 	insert into @p (page_id, page_folder, generate_trace, page_filename, page_custom_class, charset, enable_viewstate)
-	select page_id, page_folder, generate_trace, page_filename, page_custom_class, charset, enable_viewstate from deleted d   
+	select page_id, page_folder, generate_trace, page_filename, page_custom_class, charset, enable_viewstate from deleted d
 
 	set @i = 1
 	select @count = count(id) from @p
@@ -6875,24 +6875,24 @@ BEGIN
 	begin
 		select @page_folder = page_folder, @page_id = page_id, @page_trace = generate_trace, @page_filename = page_filename, @enable_viewstate = enable_viewstate, @page_custom_class = page_custom_class, @charset = charset from @p where id = @i
 		select @new_page_folder = page_folder, @new_page_trace = generate_trace, @new_page_filename = page_filename, @new_enable_viewstate = enable_viewstate, @new_page_custom_class = page_custom_class, @new_charset = charset from page where page_id = @page_id
-		
+
 		if IsNull(@page_folder, '') <> IsNull(@new_page_folder, '')
-		or IsNull(@charset, '') <> IsNull(@new_charset, '') 
+		or IsNull(@charset, '') <> IsNull(@new_charset, '')
 		begin
 			update object_format set assemble_in_live = 1, assemble_in_stage = 1 where object_id in (
 				select object_id from object where page_id = @page_id)
 		end
 
-		if @page_trace <> @new_page_trace 
+		if @page_trace <> @new_page_trace
 		or @enable_viewstate <> @new_enable_viewstate
 		or IsNull(@page_filename, '') <> IsNull(@new_page_filename, '')
 		or IsNull(@page_custom_class, '') <> IsNull(@new_page_custom_class, '')
-		or IsNull(@page_folder, '') <> IsNull(@new_page_folder, '') 
+		or IsNull(@page_folder, '') <> IsNull(@new_page_folder, '')
 		begin
 			update page set modified = getdate(), reassemble = 1, assemble_in_live = 1, assemble_in_stage = 1 where page_id in (select page_id from inserted)
 		end
-	
-		
+
+
 		set @i = @i + 1
 	end
 END
@@ -6927,7 +6927,7 @@ exec qp_update_translations 'Custom Class for Template', 'Пользовател
 exec qp_update_translations 'Custom Class for Generics', 'Пользовательский класс для объектов типа Generic'
 exec qp_update_translations 'Custom Class for Publishing Containers', 'Пользовательский класс для для объектов типа Publishing Container'
 exec qp_update_translations 'Custom Class for Publishing Forms', 'Пользовательский класс для для объектов типа Publishing Form'
-exec qp_update_translations 'Override Page-level Settings', 'Перезаписать настройки страниц'  	
+exec qp_update_translations 'Override Page-level Settings', 'Перезаписать настройки страниц'
 exec qp_update_translations 'Override Object-level Settings', 'Перезаписать настройки объектов'
 exec qp_update_translations 'Additional Namespaces', 'Дополнительные пространства имен'
 exec qp_update_translations 'Inheritance', 'Наследование'
@@ -6936,7 +6936,7 @@ exec qp_update_translations 'Selection' , 'Выборка'
 exec qp_update_translations 'Security', 'Безопасность'
 exec qp_update_translations 'Use Backend Integrated Security', 'Использовать интеграцию с Backend'
 exec qp_update_translations 'Use Level Filtration', 'Использовать фильтрацию по уровням'
-exec qp_update_translations 'Return Only Matching Records', 'Возвращать только подходящие записи'    
+exec qp_update_translations 'Return Only Matching Records', 'Возвращать только подходящие записи'
 exec qp_update_translations 'Return All with Specified Permission Level', 'Возвращать все записи вместе с уровнями доступа'
 exec qp_update_translations 'Start Level', 'Начальный уровень'
 exec qp_update_translations 'End Level', 'Конечный уровень'
@@ -6944,7 +6944,7 @@ exec qp_update_translations 'Browse Server', 'Просмотр сервера'
 exec qp_update_translations 'Disable Browse Server', 'Отключить режим просмотра сервера'
 exec qp_update_translations 'Set Last Modified Header', 'Устанавливать заголовок Last-Modified'
 exec qp_update_translations 'Use Alternative Query For United View', 'Использовать альтернативный запрос для United View'
-exec qp_update_translations 'Rename Matched Files', 'Переименовывать совпадающие файлы'  	
+exec qp_update_translations 'Rename Matched Files', 'Переименовывать совпадающие файлы'
 exec qp_update_translations 'Disable Version Control', 'Отключить контроль версий'
 exec qp_update_translations 'File Subfolder', 'Подпапка для файлов'
 exec qp_update_translations 'Child Groups', 'Дочерние группы'
@@ -7009,22 +7009,22 @@ GO
 exec qp_drop_existing 'qp_build_link_view', 'IsProcedure'
 GO
 
-CREATE PROCEDURE [dbo].[qp_build_link_view] 
+CREATE PROCEDURE [dbo].[qp_build_link_view]
 @link_id NUMERIC
 AS BEGIN
 	DECLARE @content_id numeric
 	DECLARE @sql nvarchar(max), @sql2 nvarchar(max)
-	
+
 	DECLARE @view_name nvarchar(20), @view_name2 nvarchar(25)
 	set @view_name = 'link_' + CAST(@link_id AS NVARCHAR)
 	set @view_name2 = 'link_' + CAST(@link_id AS NVARCHAR) + '_united'
-	
+
 	select @content_id = l_content_id from content_to_content where link_id = @link_id
 	SET @sql = 'CREATE VIEW dbo.' + @view_name + ' AS select il.item_id, il.linked_item_id from item_link il inner join content_item ci on il.item_id = ci.CONTENT_ITEM_ID  where CONTENT_ID = ' + CAST(@content_id AS NVARCHAR) + ' and link_id = ' + CAST(@link_id AS NVARCHAR)
 	--print @sql
 	SET @sql2 = REPLACE(@sql, @view_name, @view_name2)
 	SET @sql2 = REPLACE(@sql2, 'item_link il', 'item_link_united il')
-	
+
 	exec qp_drop_existing @view_name , 'IsView'
 	exec qp_drop_existing @view_name2, 'IsView'
 	exec(@sql)
@@ -7043,7 +7043,7 @@ AS BEGIN
 	set @view_name2 = 'link_' + CAST(@link_id AS NVARCHAR) + '_united'
 	exec qp_drop_existing @view_name , 'IsView'
 	exec qp_drop_existing @view_name2, 'IsView'
-	
+
 END
 GO
 
@@ -7051,7 +7051,7 @@ exec qp_drop_existing 'qp_rebuild_all_link_views', 'IsProcedure'
 GO
 
 
-CREATE PROCEDURE [dbo].[qp_rebuild_all_link_views] 
+CREATE PROCEDURE [dbo].[qp_rebuild_all_link_views]
 AS
 
 BEGIN
@@ -7059,12 +7059,12 @@ BEGIN
 		id numeric identity(1,1) primary key,
 		link_id numeric
 	)
-	
+
 	insert into @c(link_id) select link_id from content_to_content where link_id in
 	(select link_id from CONTENT_ATTRIBUTE where link_id is not null)
-	
+
 	declare @i int, @count int, @link_id numeric
-	
+
 	set @i = 1
 	select @count = count(id) from @c
 
@@ -7083,17 +7083,17 @@ GO
 
 
 CREATE TRIGGER [dbo].[ti_content_to_content] ON [dbo].[content_to_content] AFTER INSERT
-AS 
+AS
 BEGIN
 
 	declare @link_id numeric, @i numeric, @count numeric
-	
+
 	declare @cc table (
 		id numeric identity(1,1) primary key,
 		link_id numeric
 	)
-	
-	insert into @cc (link_id) select i.link_id from inserted i 
+
+	insert into @cc (link_id) select i.link_id from inserted i
 
 	set @i = 1
 	select @count = count(id) from @cc
@@ -7115,17 +7115,17 @@ GO
 
 
 CREATE TRIGGER [dbo].[td_content_to_content] ON [dbo].[content_to_content] AFTER DELETE
-AS 
+AS
 BEGIN
 
 	declare @link_id numeric, @i numeric, @count numeric
-	
+
 	declare @cc table (
 		id numeric identity(1,1) primary key,
 		link_id numeric
 	)
-	
-	insert into @cc (link_id) select d.link_id from deleted d 
+
+	insert into @cc (link_id) select d.link_id from deleted d
 
 	set @i = 1
 	select @count = count(id) from @cc
@@ -7200,7 +7200,7 @@ DECLARE @fullWhereExpression nvarchar(max)
 DECLARE @insert_key varchar(200)
 DECLARE @Select varchar(200)
 
-set @insert_key ='<$_security_insert_$>' 
+set @insert_key ='<$_security_insert_$>'
 set @Select = 'c.*'
 
 select @siteId = site_id from site where site_name = @SiteName
@@ -7231,7 +7231,7 @@ end
 
 if @WhereExpression = '' begin
 	set @fullWhereExpression = '1 = 1'
-end 
+end
 else begin
 	set @fullWhereExpression = @WhereExpression
 end
@@ -7252,11 +7252,11 @@ if @use_security>0
 begin
 	if @filter_records > 0
 	begin
-		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 	end
 	else
 	begin
-        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 		set @Select = @Select + ', IsNull(pi.permission_level,0) as current_permission_level  '
 	end
 end
@@ -7302,7 +7302,7 @@ IF EXISTS(SELECT * FROM SYSINDEXES WHERE NAME = 'IX_STATUS_TYPE_NAME')
 DROP INDEX STATUS_TYPE.IX_STATUS_TYPE_NAME
 GO
 
-CREATE NONCLUSTERED INDEX [IX_STATUS_TYPE_NAME] ON [dbo].[STATUS_TYPE] 
+CREATE NONCLUSTERED INDEX [IX_STATUS_TYPE_NAME] ON [dbo].[STATUS_TYPE]
 (
 	[STATUS_TYPE_NAME] ASC
 )
@@ -7327,13 +7327,13 @@ GO
 ALTER TRIGGER [dbo].[td_content_attribute_clean_empty_links] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE
 AS
 BEGIN
-	declare @link_id numeric 
+	declare @link_id numeric
 	declare @i numeric, @count numeric
 	declare @links table (
 		id numeric identity(1,1) primary key,
 		link_id numeric
 	)
-	
+
 
 	insert into @links (link_id)
 	select link_id from deleted d where link_id is not null
@@ -7353,7 +7353,7 @@ GO
 
 ALTER PROCEDURE [dbo].[qp_drop_link_with_check]
 @link_id numeric
-AS 
+AS
 IF @link_id is not null
 BEGIN
 	IF NOT EXISTS (SELECT link_id from content_attribute ca join content c on c.content_id = ca.content_id where link_id = @link_id and (c.virtual_type = 0 or c.virtual_type = 2))
@@ -7388,7 +7388,7 @@ AS BEGIN
   DECLARE @Slice nvarchar(4000)
   SELECT @Counter = 1
   IF @Str IS NULL RETURN
- 
+
   WHILE @Counter !=0
   BEGIN
     SELECT @Counter = CHARINDEX(@Delimiter,@Str)
@@ -7396,10 +7396,10 @@ AS BEGIN
       SELECT @Slice = LEFT(@Str,@Counter - 1)
     ELSE
       SELECT @Slice = @Str
-    
+
     INSERT INTO @Results(Items) VALUES(@Slice)
     SELECT @Str = RIGHT(@Str,LEN(@Str) - @Counter)
-    
+
     IF LEN(@Str) = 0 BREAK
   END
   RETURN
@@ -7410,39 +7410,39 @@ exec qp_drop_existing 'qp_filter_columns', 'IsScalarFunction'
 GO
 CREATE FUNCTION dbo.qp_filter_columns(@content_id numeric, @str nvarchar(4000)) RETURNS nvarchar(4000)
 AS BEGIN
-  
+
   DECLARE @columns TABLE
   (
 	id numeric identity(1,1) primary key,
 	name nvarchar(255)
   )
-  
+
   DECLARE @i numeric, @count numeric
   DECLARE @result nvarchar(4000), @name nvarchar(4000)
-  
+
   set @result = '';
-  
-  
+
+
   WITH fields (name) AS (SELECT LTrim(items) from split(@str, ','))
   INSERT INTO @columns(name)
   select name from fields
   where name in (SELECT attribute_name from content_attribute where content_id = @content_id) or name in ('content_item_id', 'archive', 'visible', 'created', 'modified', 'last_modified_by')
-  
+
   select @count = count(id) from @columns
   set @i = 1
-  
+
   while @i <= @count
   begin
 	if @i > 1 set @result = @result + ', '
 	select @name = name from @columns where id = @i
-	set @result = @result + @name	
-	
+	set @result = @result + @name
+
 	set @i = @i + 1
   end
-  
+
   if @result = '' set @result = 'c.*'
-  
-  
+
+
   RETURN @result
 END
 GO
@@ -7487,7 +7487,7 @@ DECLARE @fullWhereExpression nvarchar(max)
 DECLARE @insert_key varchar(200)
 DECLARE @Select varchar(200)
 
-set @insert_key ='<$_security_insert_$>' 
+set @insert_key ='<$_security_insert_$>'
 
 
 select @siteId = site_id from site where site_name = @SiteName
@@ -7520,7 +7520,7 @@ end
 
 if @WhereExpression = '' begin
 	set @fullWhereExpression = '1 = 1'
-end 
+end
 else begin
 	set @fullWhereExpression = @WhereExpression
 end
@@ -7541,11 +7541,11 @@ if @use_security>0
 begin
 	if @filter_records > 0
 	begin
-		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 	end
 	else
 	begin
-        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 		set @Select = @Select + ', IsNull(pi.permission_level,0) as current_permission_level  '
 	end
 end
@@ -7588,18 +7588,18 @@ GO
 
 
 ALTER TRIGGER [dbo].[ti_content_to_content] ON [dbo].[content_to_content] AFTER INSERT
-AS 
+AS
 BEGIN
 
 	declare @link_id numeric, @i numeric, @count numeric, @inscount numeric
-	
+
 	declare @cc table (
 		id numeric identity(1,1) primary key,
 		link_id numeric
 	)
-	
+
 	select @count = count(link_id) from inserted
-	
+
 	if (@count = 1) -- prevent @@identity change (for restore site)
 	begin
 		select @link_id = link_id from inserted
@@ -7607,7 +7607,7 @@ BEGIN
 	end
 	else if (@count > 1)
 	begin
-		insert into @cc (link_id) select i.link_id from inserted i 
+		insert into @cc (link_id) select i.link_id from inserted i
 
 		set @i = 1
 
@@ -7670,8 +7670,8 @@ DECLARE @i NUMERIC, @count NUMERIC
 Set @str = @str_fields
 CREATE TABLE #tmp(
 	id numeric identity(1,1) primary key,
-	[attribute_name] [nvarchar] (255), 
-	[content_id] [numeric](18, 0) 
+	[attribute_name] [nvarchar] (255),
+	[content_id] [numeric](18, 0)
 )
 exec ('INSERT INTO #tmp SELECT attribute_name, content_id FROM content_attribute WHERE attribute_id in ('+ @str +')')
 Set @str = ''
@@ -7680,11 +7680,11 @@ Set @Wfuffix = ''
 Set @where = ''
 set @i = 1
 SELECT @count = count(id) from #tmp
-WHILE @i < @count + 1 
+WHILE @i < @count + 1
 BEGIN
 	SELECT @name = attribute_name, @content_id = content_id	FROM #tmp WHERE id = @i
 	Set @str = @str + @fuffix +'['+ cast(@name AS nvarchar) +']'
-	Set @where = @where + @Wfuffix +'['+ cast(@name AS nvarchar) +']' + ' Is Not Null' 
+	Set @where = @where + @Wfuffix +'['+ cast(@name AS nvarchar) +']' + ' Is Not Null'
 	Set @fuffix = ','
 	Set @Wfuffix = ' and '
 	Set @i = @i + 1
@@ -7711,12 +7711,12 @@ GO
 -- Hash for password, authentication
 -- ***********************************************
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'hash' and TABLE_NAME = 'users')
-alter table users 
+alter table users
 add hash binary(20)
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'salt' and TABLE_NAME = 'users')
-alter table users 
+alter table users
 add salt bigint
 GO
 
@@ -7727,7 +7727,7 @@ exec qp_drop_existing 'qp_get_hash', 'IsScalarFunction'
 GO
 
 create function dbo.qp_get_hash(@password as char(20), @salt as bigint) returns binary(20)
-as 
+as
 begin
 	return cast(hashbytes('sha1', @password + cast(@salt as nvarchar(30))) as binary(20))
 end
@@ -7763,7 +7763,7 @@ begin
 			RETURN 6
 		end
 	end
-	else 
+	else
 	begin
 		select @disabled = disabled, @hash = hash, @salt = salt, @user_id = user_id from users where login = @login
 		if @user_id is null
@@ -7781,22 +7781,22 @@ begin
 			RAISERROR('Password is incorrect', 16, 1)
 			RETURN 3
 		end
-		else if @check_admin_access = 1 
+		else if @check_admin_access = 1
 		begin
 			if not exists(select * from USER_GROUP_BIND where GROUP_ID = 1 and USER_ID = @user_id)
 			begin
 				RAISERROR('Account is not a member of Administrators group', 16, 1)
-				RETURN 4			
+				RETURN 4
 			end
 		end
 	end
 	select * from USERS where USER_ID = @user_id
-	RETURN 0	
+	RETURN 0
 end
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'PASSWORD_MODIFIED' and TABLE_NAME = 'users')
-alter table users 
+alter table users
 add PASSWORD_MODIFIED datetime not null CONSTRAINT [DF_PASSWORD_MODIFIED]  DEFAULT ((getdate()))
 GO
 
@@ -7817,19 +7817,19 @@ begin
 			user_id numeric,
 			salt bigint,
 			password nvarchar(255)
-		)		
+		)
 
 		if not exists (select user_id from deleted)
 			set @is_insert = 1
 		else
 			set @is_insert = 0
-			
+
 		insert into @users(user_id, password, salt)
 		select user_id, password, salt from inserted
-		
+
 		set @i = 1
 		select @count = count(user_id) from @users
-		
+
 		while @i < @count + 1
 		begin
 			select @user_id = user_id, @password = password, @salt = salt from @users where id = @i
@@ -7927,7 +7927,7 @@ begin
 			RAISERROR('Auto login option is switched off for your account. Contact <@MailForErrors@>', 16, 1)
 		end
 	end
-	else 
+	else
 	begin
 		select @disabled = disabled, @hash = hash, @salt = salt, @user_id = user_id from users where login = @login
 		if @user_id is null
@@ -7945,7 +7945,7 @@ begin
 			set @return_code = 3
 			RAISERROR('Password is incorrect', 16, 1)
 		end
-		else if @check_admin_access = 1 
+		else if @check_admin_access = 1
 		begin
 			if not exists(select * from USER_GROUP_BIND where GROUP_ID = 1 and USER_ID = @user_id)
 			begin
@@ -7997,7 +7997,7 @@ begin
 			RETURN
 		end
 	end
-	else 
+	else
 	begin
 		select @disabled = disabled, @hash = hash, @salt = salt, @user_id = user_id from users where login = @login
 		if @user_id is null
@@ -8015,18 +8015,18 @@ begin
 			RAISERROR('Password is incorrect', 16, 3)
 			RETURN
 		end
-		else if @check_admin_access = 1 
+		else if @check_admin_access = 1
 		begin
 			if not exists(select * from USER_GROUP_BIND where GROUP_ID = 1 and USER_ID = @user_id)
 			begin
 				RAISERROR('Account is not a member of Administrators group', 16, 4)
-				RETURN			
+				RETURN
 			end
 		end
 	end
-	
+
 	select * from USERS where USER_ID = @user_id
-	RETURN	
+	RETURN
 end
 
 GO
@@ -8043,7 +8043,7 @@ GO
 -- ***********************************************
 -- Andrey Taritsyn
 -- version 7.7.0.16
--- Add relation for tables SITE and USERS by 
+-- Add relation for tables SITE and USERS by
 -- column LAST_MODIFIED_BY
 -- ***********************************************
 
@@ -8054,9 +8054,9 @@ ALTER TABLE dbo.SITE ADD CONSTRAINT
 	) REFERENCES dbo.USERS
 	(
 	USER_ID
-	) ON UPDATE  NO ACTION 
-	 ON DELETE  NO ACTION 
-	
+	) ON UPDATE  NO ACTION
+	 ON DELETE  NO ACTION
+
 GO
 
 INSERT INTO SYSTEM_INFO
@@ -8111,7 +8111,7 @@ DECLARE @fullWhereExpression nvarchar(max)
 DECLARE @insert_key varchar(200)
 DECLARE @Select varchar(max)
 
-set @insert_key ='<$_security_insert_$>' 
+set @insert_key ='<$_security_insert_$>'
 
 
 select @siteId = site_id from site where site_name = @SiteName
@@ -8144,7 +8144,7 @@ end
 
 if @WhereExpression = '' begin
 	set @fullWhereExpression = '1 = 1'
-end 
+end
 else begin
 	set @fullWhereExpression = @WhereExpression
 end
@@ -8165,11 +8165,11 @@ if @use_security>0
 begin
 	if @filter_records > 0
 	begin
-		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 	end
 	else
 	begin
-        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 		set @Select = @Select + ', IsNull(pi.permission_level,0) as current_permission_level  '
 	end
 end
@@ -8219,12 +8219,12 @@ ALTER TABLE SITE
 		CONNECTION_STRING_NAME NVARCHAR(255) NULL,
 		CONTEXT_CLASS_NAME NVARCHAR(255) NULL
 
-		
+
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'MAP_AS_CLASS' and TABLE_NAME = 'CONTENT')
 ALTER TABLE CONTENT
-	ADD 
+	ADD
 		MAP_AS_CLASS bit NOT NULL CONSTRAINT [DF_MAP_CONTENT_AS_CLASS] DEFAULT ((0)),
 		NET_CONTENT_NAME nvarchar(255) NULL,
 		NET_PLURAL_CONTENT_NAME nvarchar(255) NULL,
@@ -8233,7 +8233,7 @@ GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'MAP_AS_PROPERTY' and TABLE_NAME = 'CONTENT_ATTRIBUTE')
 ALTER TABLE CONTENT_ATTRIBUTE
-	ADD 
+	ADD
 		MAP_AS_PROPERTY bit NOT NULL CONSTRAINT [DF_MAP_AS_PROPERTY] DEFAULT ((0)),
 		NET_ATTRIBUTE_NAME nvarchar(255) NULL,
 		NET_BACK_ATTRIBUTE_NAME nvarchar(255) NULL
@@ -8254,8 +8254,8 @@ exec qp_drop_existing 'dbo.qp_content_max_status_name', 'IsScalarFunction'
 GO
 CREATE FUNCTION [dbo].[qp_workflow_max_status_name](@workflow_id numeric) returns nvarchar(255)
 AS
-BEGIN	
-	
+BEGIN
+
 return (select top 1 st.status_type_name from workflow_rules wr
 inner join status_type st on wr.successor_status_id = st.status_type_id
 where wr.workflow_id = @workflow_id order by wr.RULE_ORDER desc)
@@ -8268,26 +8268,26 @@ AS
 BEGIN
 	declare @workflow_id numeric
 	declare @result nvarchar(255)
-	
+
 	select @workflow_id = workflow_id from CONTENT_WORKFLOW_BIND where content_id = @content_id
 	if @workflow_id is null
 		set @result = 'Published'
 	else
 		set @result = dbo.qp_workflow_max_status_name(@workflow_id)
-	return @result	
+	return @result
 END
 GO
 
-	
+
 exec qp_drop_existing 'dbo.qp_content_frontend_views_create', 'IsProcedure'
 GO
 
 exec qp_drop_existing 'dbo.qp_content_frontend_views_recreate', 'IsProcedure'
 GO
 
-CREATE PROCEDURE [dbo].[qp_content_frontend_views_create] 
+CREATE PROCEDURE [dbo].[qp_content_frontend_views_create]
   @content_id NUMERIC
-  AS 
+  AS
   DECLARE @str_sql nvarchar(max), @char_content_id nvarchar(20)
   SET @char_content_id = CONVERT(nvarchar,@content_id)
 
@@ -8295,29 +8295,29 @@ CREATE PROCEDURE [dbo].[qp_content_frontend_views_create]
       ' select * from dbo.content_' + @char_content_id + ' where visible = 1 and archive = 0  and status_type_id in (' +
       ' select status_type_id from status_type where status_type_name = ''' + dbo.qp_content_max_status_name(@content_id) + ''')'
   EXEC(@str_sql)
-  
+
   SET @str_sql = ' create view dbo.content_' + @char_content_id + '_stage as ' +
       ' select * from dbo.content_' + @char_content_id + '_united where visible = 1 and archive = 0  '
   EXEC(@str_sql)
 
-  
+
 GO
 
-CREATE PROCEDURE [dbo].[qp_content_frontend_views_recreate] 
+CREATE PROCEDURE [dbo].[qp_content_frontend_views_recreate]
   @content_id NUMERIC
   AS
 
   declare @view_name nvarchar(50)
-  SET @view_name = 'dbo.content_' + CONVERT(varchar,@content_id) + '_live' 
+  SET @view_name = 'dbo.content_' + CONVERT(varchar,@content_id) + '_live'
   EXEC qp_drop_existing @view_name, 'IsView'
-  SET @view_name = 'dbo.content_' + CONVERT(varchar,@content_id) + '_stage' 
+  SET @view_name = 'dbo.content_' + CONVERT(varchar,@content_id) + '_stage'
   EXEC qp_drop_existing @view_name, 'IsView'
-  
+
   exec qp_content_frontend_views_create @content_id
 GO
 
 
-ALTER PROCEDURE [dbo].[qp_content_table_drop]  
+ALTER PROCEDURE [dbo].[qp_content_table_drop]
   @content_id numeric
 AS BEGIN
   DECLARE @base_table_name VARCHAR(100), @table_name VARCHAR(100)
@@ -8325,7 +8325,7 @@ AS BEGIN
   SET @base_table_name = 'dbo.content_' + CONVERT(VARCHAR, @content_id)
   exec qp_drop_existing @base_table_name, 'IsView'
   exec qp_drop_existing @base_table_name, 'IsUserTable'
-	
+
   set @table_name = @base_table_name + '_ASYNC'
   exec qp_drop_existing @table_name, 'IsView'
   exec qp_drop_existing @table_name, 'IsUserTable'
@@ -8335,7 +8335,7 @@ AS BEGIN
 
   set @table_name = @base_table_name + '_live'
   exec qp_drop_existing @table_name, 'IsView'
-  
+
   set @table_name = @base_table_name + '_stage'
   exec qp_drop_existing @table_name, 'IsView'
 
@@ -8361,7 +8361,7 @@ AS BEGIN
   DECLARE @link_id NUMERIC
 
   SET @view_name = 'content_' + CAST(@content_id AS NVARCHAR)
-  
+
   SELECT @sql = query, @alt_sql = alt_query FROM content WHERE content_id = @content_id
   SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + ' AS ' + @sql
   EXEC(@sql)
@@ -8405,7 +8405,7 @@ AS BEGIN
           @attr_type = attribute_type_id,
           @attr_rel_id = related_attribute_id,
 		  @attr_related_image_attribute_id = related_image_attribute_id,
-		  @attr_use_site_library = use_site_library, 
+		  @attr_use_site_library = use_site_library,
 		  @view_in_list = view_in_list,
           @link_id = link_id
         FROM content_attribute
@@ -8468,41 +8468,41 @@ AS BEGIN
   CLOSE fields
   DEALLOCATE fields
 
-  IF @alt_sql IS NULL 
+  IF @alt_sql IS NULL
   	SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + '_united AS select * from dbo.content_' + + CAST(@content_id AS NVARCHAR)
-  ELSE 
+  ELSE
     SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + '_united  AS ' + @alt_sql
   EXEC(@sql)
-  
+
   exec qp_content_frontend_views_create @content_id
 
 END
 GO
 
-ALTER TRIGGER [dbo].[td_remove_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE 
-AS 
+ALTER TRIGGER [dbo].[td_remove_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE
+AS
 BEGIN
 
 	declare @attribute_id numeric, @attribute_name nvarchar(255), @content_id numeric
 	declare @indexed numeric, @type_name nvarchar(255)
-	
+
 	declare @base_table_name nvarchar(30), @table_name nvarchar(30)
-	
+
 	declare @i numeric, @count numeric
-	
+
 	declare @ca table (
 		id numeric identity(1,1) primary key,
-		attribute_id numeric, 
+		attribute_id numeric,
 		attribute_name nvarchar(255),
-		type_name nvarchar(255), 
+		type_name nvarchar(255),
 		indexed numeric,
-		content_id numeric 
+		content_id numeric
 	)
-	
+
 	/* Collect affected items */
 	insert into @ca (attribute_id, attribute_name, indexed, type_name, content_id)
-		select d.attribute_id, d.attribute_name, d.index_flag, at.type_name, d.content_id 
-		from deleted d 
+		select d.attribute_id, d.attribute_name, d.index_flag, at.type_name, d.content_id
+		from deleted d
 		inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
 		inner join content c on d.content_id = c.content_id
 		where c.virtual_type = 0
@@ -8515,14 +8515,14 @@ BEGIN
 	while @i < @count + 1
 	begin
 		select @attribute_id = attribute_id, @attribute_name = attribute_name, @indexed = indexed,
-			@type_name = type_name, @content_id = content_id 
+			@type_name = type_name, @content_id = content_id
 			from @ca where id = @i
 
-			set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
+			set @base_table_name = 'content_' + convert(nvarchar, @content_id)
 
 			/* Drop indexes if exists */
 			set @table_name = @base_table_name + '_ASYNC'
-			if @indexed = 1 
+			if @indexed = 1
 			begin
 				exec qp_drop_index @base_table_name, @attribute_name
 				exec qp_drop_index @table_name, @attribute_name
@@ -8535,42 +8535,42 @@ BEGIN
 			/* Recreate United View */
 			exec qp_content_united_view_recreate @content_id
 			exec qp_content_frontend_views_recreate @content_id
-			
+
 		set @i = @i + 1
 	end
 END
 
 GO
 
-ALTER TRIGGER [dbo].[ti_insert_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR INSERT 
-AS 
+ALTER TRIGGER [dbo].[ti_insert_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR INSERT
+AS
 BEGIN
 
 	declare @attribute_id numeric, @attribute_name nvarchar(255), @attribute_size numeric, @content_id numeric
 	declare @indexed numeric, @required numeric
 	declare @attribute_type_id numeric, @type_name nvarchar(255), @database_type nvarchar(255)
-	
+
 	declare @base_table_name nvarchar(30), @table_name nvarchar(30)
-	
+
 	declare @i numeric, @count numeric, @max numeric
-	
+
 	declare @ca table (
 		id numeric identity(1,1) primary key,
-		attribute_id numeric, 
-		attribute_name nvarchar(255), 
+		attribute_id numeric,
+		attribute_name nvarchar(255),
 		attribute_size numeric,
-		indexed numeric, 
+		indexed numeric,
 		required numeric,
-		attribute_type_id numeric, 
-		type_name nvarchar(255), 
+		attribute_type_id numeric,
+		type_name nvarchar(255),
 		database_type nvarchar(255),
 		content_id numeric
 	)
-	
+
 	/* Collect affected items */
 	insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id)
-		select i.attribute_id, i.attribute_name, i.attribute_size, i.index_flag, i.required, i.attribute_type_id, at.type_name, at.database_type, i.content_id 
-		from inserted i 
+		select i.attribute_id, i.attribute_name, i.attribute_size, i.index_flag, i.required, i.attribute_type_id, at.type_name, at.database_type, i.content_id
+		from inserted i
 		inner join attribute_type at on i.attribute_type_id = at.attribute_type_id
 		inner join content c on i.content_id = c.content_id
 		where c.virtual_type = 0
@@ -8581,30 +8581,30 @@ BEGIN
 	while @i < @count + 1
 	begin
 		select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
-			@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id, 
-			@type_name = type_name, @database_type = database_type, @content_id = content_id 
+			@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id,
+			@type_name = type_name, @database_type = database_type, @content_id = content_id
 			from @ca where id = @i
-			
-			set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
-			
+
+			set @base_table_name = 'content_' + convert(nvarchar, @content_id)
+
 			IF NOT EXISTS(SELECT * FROM sysobjects WHERE id = OBJECT_ID(@base_table_name) AND OBJECTPROPERTY(id, 'IsUserTable') = 1)
 			begin
 				exec qp_rebuild_content @content_id
 			end
 			else begin
-				
+
 				/* Add column in common and async tables */
 				set @table_name = @base_table_name + '_ASYNC'
 				exec qp_add_column @base_table_name, @attribute_name, @type_name, @database_type, @attribute_size
 				exec qp_add_column @table_name, @attribute_name, @type_name, @database_type, @attribute_size
 
 				/* Create indexes on new fields if required */
-				if @indexed = 1 
+				if @indexed = 1
 				begin
 					exec qp_add_index @base_table_name, @attribute_name
 					exec qp_add_index @table_name, @attribute_name
-				end		
-				
+				end
+
 				/* Recreate United View */
 				exec qp_content_united_view_recreate @content_id
 				exec qp_content_frontend_views_recreate @content_id
@@ -8614,12 +8614,12 @@ BEGIN
 END
 GO
 
-ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE 
-AS 
+ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
+AS
 BEGIN
-if not update(attribute_order) and 
+if not update(attribute_order) and
 		(
-			update(attribute_name) or update(attribute_type_id) 
+			update(attribute_name) or update(attribute_type_id)
 			or update(attribute_size) or update(index_flag)
 		)
 	begin
@@ -8630,28 +8630,28 @@ if not update(attribute_order) and
 		declare @new_attribute_name nvarchar(255), @new_attribute_size numeric
 		declare @new_indexed numeric, @new_required numeric
 		declare @new_attribute_type_id numeric, @new_type_name nvarchar(255), @new_database_type nvarchar(255)
-		
+
 		declare @base_table_name nvarchar(30), @table_name nvarchar(30)
-	
+
 		declare @i numeric, @count numeric, @preserve_index bit
-	
+
 		declare @ca table (
 			id numeric identity(1,1) primary key,
-			attribute_id numeric, 
-			attribute_name nvarchar(255), 
+			attribute_id numeric,
+			attribute_name nvarchar(255),
 			attribute_size numeric,
 			indexed numeric,
-			required numeric, 
-			attribute_type_id numeric, 
-			type_name nvarchar(255), 
+			required numeric,
+			attribute_type_id numeric,
+			type_name nvarchar(255),
 			database_type nvarchar(255),
 			content_id numeric
 		)
-	
+
 	/* Collect affected items */
 		insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id)
-			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id 
-			from deleted d 
+			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id
+			from deleted d
 			inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
 			inner join content c on d.content_id = c.content_id
 			where c.virtual_type = 0
@@ -8662,23 +8662,23 @@ if not update(attribute_order) and
 		while @i < @count + 1
 		begin
 			select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
-				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id, 
-				@type_name = type_name, @database_type = database_type, @content_id = content_id 
+				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id,
+				@type_name = type_name, @database_type = database_type, @content_id = content_id
 				from @ca where id = @i
 
 			select @new_attribute_name = ca.attribute_name, @new_attribute_size = ca.attribute_size,
-				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id, 
+				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id,
 				@new_type_name = at.type_name, @new_database_type = at.database_type
-				from content_attribute ca 
+				from content_attribute ca
 				inner join attribute_type at on ca.attribute_type_id = at.attribute_type_id
 				where attribute_id = @attribute_id
 
-				set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
+				set @base_table_name = 'content_' + convert(nvarchar, @content_id)
 				set @table_name = @base_table_name + '_ASYNC'
 
 				if @indexed = 1 and @new_indexed = 1
 					set @preserve_index = 1
-				else 
+				else
 					set @preserve_index = 0
 
 
@@ -8687,25 +8687,25 @@ if not update(attribute_order) and
 					exec qp_drop_index @base_table_name, @attribute_name
 					exec qp_drop_index @table_name, @attribute_name
 				end
-				
+
 				if @database_type <> @new_database_type or @attribute_size <> @new_attribute_size
 				begin
 
 					if @database_type = 'ntext' and @new_database_type <> 'ntext'
-						exec qp_copy_blob_data_to_data @attribute_id				
+						exec qp_copy_blob_data_to_data @attribute_id
 					else if @database_type <> 'ntext' and @new_database_type = 'ntext'
-						exec qp_copy_data_to_blob_data @attribute_id	
+						exec qp_copy_data_to_blob_data @attribute_id
 
 					exec qp_recreate_column @base_table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_recreate_column @table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_content_united_view_recreate @content_id
 					exec qp_content_frontend_views_recreate @content_id
-				end 
+				end
 				else begin
 					if @attribute_name <> @new_attribute_name
 					begin
 						exec qp_rename_column @base_table_name, @attribute_name, @new_attribute_name, @preserve_index
-						exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index 
+						exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index
 						exec qp_content_united_view_recreate @content_id
 						exec qp_content_frontend_views_recreate @content_id
 					end
@@ -8745,14 +8745,14 @@ CREATE PROCEDURE [dbo].[qp_recreate_all_frontend_views]
 AS
 
 	declare @content_id numeric
-	
+
 	declare @i numeric, @count numeric, @max numeric
-	
+
 	declare @c table (
 		id numeric identity(1,1) primary key,
-		content_id numeric 
+		content_id numeric
 	)
-	
+
 	/* Collect affected items */
 	insert into @c (content_id)
 		select content_id from content order by content_id asc
@@ -8796,11 +8796,11 @@ exec qp_update_translations 'Connection string name', 'Имя строки по�
 exec qp_update_translations 'LINQ Mapping Parameters', 'Параметры отображения в LINQ-классы'
 exec qp_update_translations 'Map as class', 'Отображать как класс'
 exec qp_update_translations 'Name (singular)', 'Имя (единственное)'
-exec qp_update_translations 'Name (plural)', 'Имя (множественное)' 
+exec qp_update_translations 'Name (plural)', 'Имя (множественное)'
 exec qp_update_translations 'Use default filtration', 'Использовать фильтрацию по умолчанию'
 exec qp_update_translations 'Map as LINQ Property', 'Отображать как LINQ-свойство'
 exec qp_update_translations 'LINQ Property Name', 'Имя LINQ-свойства'
-exec qp_update_translations 'LINQ Back Property Name', 'Имя обратного LINQ-свойства' 
+exec qp_update_translations 'LINQ Back Property Name', 'Имя обратного LINQ-свойства'
 exec qp_update_translations 'Map Junction Table as Class', 'Отображать узловую таблицу как класс'
 exec qp_update_translations 'LINQ Junction Class Name (singular)', 'Имя узлового LINQ-класса (единственное)'
 exec qp_update_translations 'LINQ Junction Class Name (plural)', 'Имя узлового LINQ-класса (множественное)'
@@ -8815,14 +8815,14 @@ GO
 PRINT '7.7.0.18 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.19
 -- Splitted field
 -- **************************************
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'SPLITTED' and TABLE_NAME = 'CONTENT_ITEM')
-ALTER TABLE CONTENT_ITEM 
+ALTER TABLE CONTENT_ITEM
 	ADD SPLITTED BIT NOT NULL CONSTRAINT DF_SPLITTED DEFAULT (0)
 GO
 
@@ -8842,11 +8842,11 @@ begin
 		declare @content_id numeric , @content_item_id numeric, @last_modified_by numeric, @modified datetime, @created datetime, @status_type_id numeric, @visible numeric, @archive numeric
 		declare @char_content_id nvarchar(10), @char_content_item_id nvarchar(10)
 		declare @sql nvarchar(2000), @nsql nvarchar(4000)
-		declare @async_string varchar(20), @table_name varchar(25), @is_target_table_async bit 
+		declare @async_string varchar(20), @table_name varchar(25), @is_target_table_async bit
 		declare @async_id numeric, @item_exists bit
-		declare @workflow_id numeric, @is_async NUMERIC	
+		declare @workflow_id numeric, @is_async NUMERIC
 		declare @i numeric, @count numeric
-		
+
 		DECLARE @ci table (
 			id numeric identity(1,1) primary key,
 			content_item_id numeric,
@@ -8854,7 +8854,7 @@ begin
 			workflow_id numeric,
 			is_async numeric
 		)
-					
+
 		insert into @ci(content_item_id, content_id, workflow_id, is_async)
 			select i.content_item_id, i.content_id, ciw.workflow_id, ciw.is_async
 			FROM inserted AS i
@@ -8866,33 +8866,33 @@ begin
 		set @i = 1
 		while @i < @count + 1
 		begin
-			select 
-				@content_item_id = content_item_id, @content_id = content_id, 
+			select
+				@content_item_id = content_item_id, @content_id = content_id,
 				@workflow_id = workflow_id, @is_async = is_async
 				from @ci where id = @i
-				
-			select @modified = modified, @created = created, @status_type_id = status_type_id, 
+
+			select @modified = modified, @created = created, @status_type_id = status_type_id,
 				@archive = archive, @visible = visible, @last_modified_by = last_modified_by
 				from content_item where content_item_id = @content_item_id
-				
+
 			set @char_content_item_id = convert(nvarchar, @content_item_id)
 			set @char_content_id = convert(nvarchar, @content_id)
 
 			exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out
-			
+
 			update content_item set splitted = @is_target_table_async where content_item_id = @content_item_id
-				
+
 			if @is_target_table_async = 1
 			begin
 				exec qp_item_exists @table_name, @content_item_id, @item_exists = @item_exists out
 				if @item_exists = 0
 				begin
-					exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified 
+					exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified
 					print @sql
 					exec sp_executesql @sql
 				end
 			end
-				
+
 			exec qp_get_update_item_sql @table_name, @content_item_id, @modified, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out
 			print @sql
 			exec sp_executesql @sql
@@ -8900,15 +8900,15 @@ begin
 			if @is_target_table_async = 1 and (update(archive) or update(visible)) begin
 				set @table_name = 'content_' + @char_content_id
 				exec qp_get_update_flags_sql @table_name, @content_item_id, @visible, @archive, @sql = @sql out
-				exec sp_executesql @sql   
+				exec sp_executesql @sql
 			end
-			
+
 			if @is_target_table_async = 0
 			begin
 				set @table_name = 'content_' + @char_content_id + '_ASYNC'
 				exec qp_get_delete_item_sql @table_name, @content_item_id, @sql = @sql out
-				exec sp_executesql @sql   
-			end 
+				exec sp_executesql @sql
+			end
 			set @i = @i + 1
 		end
 	end
@@ -8929,7 +8929,7 @@ begin
 	)
 	insert into @ids(item_id, content_id)
 	select content_item_id, content_id from content_item
-	
+
 	set @id = 1
 	select @count = count(id) from @ids
 
@@ -8943,7 +8943,7 @@ begin
 		else
 			exec sp_executesql @sql, N'@id numeric', @id = @item_id
 		set @id = @id + 1
-	end	
+	end
 end
 GO
 
@@ -8966,7 +8966,7 @@ PRINT '7.7.0.19 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.20
 -- Get Version Control Data in plain view
@@ -9008,10 +9008,10 @@ declare @attrs table
 (
 	id numeric primary key identity(1,1),
 	name nvarchar(255)
-	
+
 )
 
-insert into @attrs(name) 
+insert into @attrs(name)
 select attribute_name from content_attribute where content_id = @content_id order by attribute_order
 
 declare @i numeric, @count numeric, @name nvarchar(255)
@@ -9047,7 +9047,7 @@ PRINT '7.7.0.20 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.21
 -- Fix some foreign key names
@@ -9066,13 +9066,13 @@ create procedure add_update_foreign_key
 AS
 
 declare @name sysname
-select @name = name from sys.foreign_keys fk 
+select @name = name from sys.foreign_keys fk
 inner join INFORMATION_SCHEMA.KEY_COLUMN_USAGE cku on fk.name = cku.CONSTRAINT_NAME
-where fk.parent_object_id in (select object_id from sys.objects where name = @table_name) 
+where fk.parent_object_id in (select object_id from sys.objects where name = @table_name)
 	and fk.referenced_object_id in (select object_id from sys.objects where name = @ref_table_name)
 	and cku.COLUMN_NAME = @column_name
-print @name	
-	
+print @name
+
 if @name is not null
 	exec sp_rename @name, @constraint_name
 else
@@ -9277,15 +9277,15 @@ GO
 exec qp_drop_existing 'tbd_user', 'IsTrigger'
 GO
 
-CREATE TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+CREATE TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
 BEGIN
-	
-	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id 
 
-    UPDATE SITE SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id  
-    UPDATE SITE SET locked = NULL, locked_by = NULL FROM SITE c inner join deleted d on c.locked_by = d.user_id  
+	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
+
+    UPDATE SITE SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
+    UPDATE SITE SET locked = NULL, locked_by = NULL FROM SITE c inner join deleted d on c.locked_by = d.user_id
 
     UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
@@ -9294,7 +9294,7 @@ BEGIN
 
     UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
-    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id
     UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
 
@@ -9305,10 +9305,10 @@ BEGIN
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
@@ -9317,10 +9317,10 @@ BEGIN
     UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
     UPDATE DOC SET last_modified_by = 1 FROM DOC c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
@@ -9335,7 +9335,7 @@ GO
 PRINT '7.7.0.21 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.22
 -- Fix some foreign key names #2
@@ -9353,7 +9353,7 @@ GO
 
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.23
 -- Fix some foreign key names #3
@@ -9368,49 +9368,49 @@ GO
 PRINT '7.7.0.23 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.24
--- Add some primary keys 
+-- Add some primary keys
 -- **************************************
 
 
 ALTER TABLE dbo.translations ADD CONSTRAINT
-	PK_translations PRIMARY KEY CLUSTERED 
+	PK_translations PRIMARY KEY CLUSTERED
 	(
 		phrase_id, language_id
-	) 
+	)
 GO
 
-alter table dbo.SITE_ACCESS ADD 
-	SITE_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_SITE_ACCESS PRIMARY KEY NONCLUSTERED 
+alter table dbo.SITE_ACCESS ADD
+	SITE_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_SITE_ACCESS PRIMARY KEY NONCLUSTERED
 GO
 
-alter table dbo.CONTENT_ACCESS ADD 
-	CONTENT_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_CONTENT_ACCESS PRIMARY KEY NONCLUSTERED 
+alter table dbo.CONTENT_ACCESS ADD
+	CONTENT_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_CONTENT_ACCESS PRIMARY KEY NONCLUSTERED
 GO
 
-alter table dbo.CONTENT_ITEM_ACCESS ADD 
-	CONTENT_ITEM_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_CONTENT_ITEM_ACCESS PRIMARY KEY NONCLUSTERED 
+alter table dbo.CONTENT_ITEM_ACCESS ADD
+	CONTENT_ITEM_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_CONTENT_ITEM_ACCESS PRIMARY KEY NONCLUSTERED
 GO
 
-alter table dbo.WORKFLOW_ACCESS ADD 
-	WORKFLOW_ACCESS_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_WORKFLOW_ACCESS PRIMARY KEY NONCLUSTERED 
+alter table dbo.WORKFLOW_ACCESS ADD
+	WORKFLOW_ACCESS_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_WORKFLOW_ACCESS PRIMARY KEY NONCLUSTERED
 GO
 
-alter table dbo.FOLDER_ACCESS ADD 
-	FOLDER_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_FOLDER_ACCESS PRIMARY KEY NONCLUSTERED 
+alter table dbo.FOLDER_ACCESS ADD
+	FOLDER_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_FOLDER_ACCESS PRIMARY KEY NONCLUSTERED
 GO
 
-alter table dbo.CONTENT_FOLDER_ACCESS ADD 
-	CONTENT_FOLDER_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_CONTENT_FOLDER_ACCESS PRIMARY KEY NONCLUSTERED 
+alter table dbo.CONTENT_FOLDER_ACCESS ADD
+	CONTENT_FOLDER_ACCESS_ID NUMERIC IDENTITY(1,1) CONSTRAINT PK_CONTENT_FOLDER_ACCESS PRIMARY KEY NONCLUSTERED
 GO
 
 alter table dbo.GROUP_TO_GROUP ADD CONSTRAINT
-	PK_GROUP_TO_GROUP PRIMARY KEY CLUSTERED 
+	PK_GROUP_TO_GROUP PRIMARY KEY CLUSTERED
 	(
 		CHILD_GROUP_ID
-	) 
+	)
 GO
 
 
@@ -9424,10 +9424,10 @@ PRINT '7.7.0.24 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.25
--- Version Control SP 
+-- Version Control SP
 -- **************************************
 
 exec qp_drop_existing 'qp_get_versions', 'IsProcedure'
@@ -9442,19 +9442,19 @@ begin
 declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @prefixed_fields nvarchar(max)
 declare @content_id numeric
 select @content_id = content_id from content_item ci where ci.CONTENT_ITEM_ID = @item_id
- 
+
 if @content_id is not null
 begin
 	select @fields = dbo.qp_get_content_field_list(@content_id, '')
 	select @prefixed_fields = dbo.qp_get_content_field_list(@content_id, 'pt.')
-	
-	
+
+
 	if @version_id = 0
 		set @version_sql = ''
 	else
 		set @version_sql = ' and vcd.CONTENT_ITEM_VERSION_ID= @version_id'
-	
-	
+
+
 	set @sql = N'select pt.content_item_id, pt.version_id, s.STATUS_HISTORY_DATE AS MODIFIED, s.USER_ID as last_modified_by, ' + @prefixed_fields  + N' from
 	(
 	select civ.CONTENT_ITEM_ID, vcd.CONTENT_ITEM_VERSION_ID as version_id, ca.ATTRIBUTE_NAME, dbo.qp_get_version_data(vcd.ATTRIBUTE_ID, vcd.CONTENT_ITEM_VERSION_ID) as data from CONTENT_ATTRIBUTE ca
@@ -9485,10 +9485,10 @@ PRINT '7.7.0.25 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.26
--- Rebuild Views 
+-- Rebuild Views
 -- **************************************
 
 exec sp_refreshview 'SITE_ACCESS_PermLevel'
@@ -9517,11 +9517,11 @@ exec sp_refreshview 'FOLDER_ACCESS_PermLevel_parent_folder'
 GO
 exec sp_refreshview 'FOLDER_ACCESS_PermLevel_site'
 GO
-        
+
 exec sp_refreshview 'WORKFLOW_ACCESS_PermLevel'
 GO
 exec sp_refreshview 'WORKFLOW_ACCESS_PermLevel_site'
-GO 
+GO
 
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
@@ -9533,7 +9533,7 @@ PRINT '7.7.0.26 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.27
 -- Many-to-Many changes
@@ -9543,7 +9543,7 @@ exec qp_drop_existing 'ti_item_to_item', 'IsTrigger'
 GO
 
 CREATE TRIGGER [dbo].[ti_item_to_item] ON [dbo].[item_to_item] AFTER INSERT
-AS 
+AS
 BEGIN
 
 with items (link_id, item_id, linked_item_id)
@@ -9573,10 +9573,10 @@ FROM item_to_item AS ii
 GO
 
 
-ALTER view [dbo].[item_link_united] as  
+ALTER view [dbo].[item_link_united] as
 SELECT link_id, item_id, linked_item_id from item_link il where item_id not in (select CONTENT_ITEM_ID FROM CONTENT_ITEM where splitted = 1)
 UNION
-SELECT link_id, item_id, linked_item_id from item_link_async ila 
+SELECT link_id, item_id, linked_item_id from item_link_async ila
 GO
 
 INSERT INTO SYSTEM_INFO
@@ -9589,16 +9589,16 @@ PRINT '7.7.0.27 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Taritsyn Andrey
 -- version 7.7.0.28
--- Cascading delete site references from 
--- SITE_ACCESS table 
+-- Cascading delete site references from
+-- SITE_ACCESS table
 -- **************************************
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 	alter table content_attribute disable trigger td_content_attribute_clean_empty_links
@@ -9606,8 +9606,8 @@ BEGIN
 	alter table content_attribute disable trigger td_reorder_fields
 	alter table content_constraint disable trigger td_content_indexes
 
-	delete content_item_status_history from content_item_status_history cis	
-	inner join content_item ci on ci.content_item_id = cis.content_item_id 
+	delete content_item_status_history from content_item_status_history cis
+	inner join content_item ci on ci.content_item_id = cis.content_item_id
 	inner join content c on c.content_id = ci.content_id
 	inner join deleted d on d.site_id = c.site_id
 
@@ -9616,13 +9616,13 @@ BEGIN
 	inner join deleted d on d.site_id = c.site_id
 
 	delete content from content c
-	inner join deleted d on d.site_id = c.site_id	 	
+	inner join deleted d on d.site_id = c.site_id
 
 	delete page_template from page_template pt
 	inner join deleted d on d.site_id = pt.site_id
 
 	delete site_access from site_access as sa
-	inner join deleted as d on d.site_id = sa.site_id 	
+	inner join deleted as d on d.site_id = sa.site_id
 
 	delete site from site s inner join deleted d on s.site_id = d.site_id
 
@@ -9644,15 +9644,15 @@ GO
 PRINT '7.7.0.28 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.29
--- SITE_ACCESS table 
+-- SITE_ACCESS table
 -- **************************************
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 	alter table content_attribute disable trigger td_content_attribute_clean_empty_links
@@ -9660,8 +9660,8 @@ BEGIN
 	alter table content_attribute disable trigger td_reorder_fields
 	alter table content_constraint disable trigger td_content_indexes
 
-	delete content_item_status_history from content_item_status_history cis	
-	inner join content_item ci on ci.content_item_id = cis.content_item_id 
+	delete content_item_status_history from content_item_status_history cis
+	inner join content_item ci on ci.content_item_id = cis.content_item_id
 	inner join content c on c.content_id = ci.content_id
 	inner join deleted d on d.site_id = c.site_id
 
@@ -9670,7 +9670,7 @@ BEGIN
 	inner join deleted d on d.site_id = c.site_id
 
 	delete content from content c
-	inner join deleted d on d.site_id = c.site_id	 	
+	inner join deleted d on d.site_id = c.site_id
 
 	delete page_template from page_template pt
 	inner join deleted d on d.site_id = pt.site_id
@@ -9687,28 +9687,28 @@ END
 GO
 
 ALTER TABLE CONTENT_ACCESS DROP CONSTRAINT FK_CONTENT_ACCESS_CONTENT_ID
-GO 
+GO
 ALTER TABLE CONTENT_ACCESS ADD CONSTRAINT FK_CONTENT_ACCESS_CONTENT_ID FOREIGN KEY (CONTENT_ID) REFERENCES CONTENT (CONTENT_ID) ON DELETE CASCADE
 GO
 
 ALTER TABLE CONTENT_ACCESS DROP CONSTRAINT FK_CONTENT_ACCESS_USER_ID
-GO 
+GO
 ALTER TABLE CONTENT_ACCESS ADD CONSTRAINT FK_CONTENT_ACCESS_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID)  ON DELETE CASCADE
 GO
 
-ALTER TABLE CONTENT_ACCESS DROP CONSTRAINT FK_CONTENT_ACCESS_GROUP_ID 
+ALTER TABLE CONTENT_ACCESS DROP CONSTRAINT FK_CONTENT_ACCESS_GROUP_ID
 GO
 ALTER TABLE CONTENT_ACCESS ADD CONSTRAINT FK_CONTENT_ACCESS_GROUP_ID FOREIGN KEY (GROUP_ID) REFERENCES USER_GROUP (GROUP_ID) ON DELETE CASCADE
 GO
 
-ALTER TABLE CONTENT_FORM DROP CONSTRAINT FK_CONTENT_FORM_OBJECT_ID 
+ALTER TABLE CONTENT_FORM DROP CONSTRAINT FK_CONTENT_FORM_OBJECT_ID
 GO
 ALTER TABLE CONTENT_FORM ADD CONSTRAINT FK_CONTENT_FORM_OBJECT_ID FOREIGN KEY (OBJECT_ID) REFERENCES OBJECT (OBJECT_ID)  ON DELETE CASCADE
 GO
 
-ALTER TABLE CONTENT_GROUP DROP CONSTRAINT FK_CONTENT_GROUP_SITE_ID 
+ALTER TABLE CONTENT_GROUP DROP CONSTRAINT FK_CONTENT_GROUP_SITE_ID
 GO
-ALTER TABLE CONTENT_GROUP ADD CONSTRAINT FK_CONTENT_GROUP_SITE_ID FOREIGN KEY (SITE_ID) REFERENCES SITE (SITE_ID)  ON DELETE CASCADE 
+ALTER TABLE CONTENT_GROUP ADD CONSTRAINT FK_CONTENT_GROUP_SITE_ID FOREIGN KEY (SITE_ID) REFERENCES SITE (SITE_ID)  ON DELETE CASCADE
 GO
 
 ALTER TABLE CONTENT_ITEM_VERSION DROP CONSTRAINT FK_CONTENT_ITEM_VERSION_CONTENT_ITEM_ID
@@ -9717,63 +9717,63 @@ ALTER TABLE CONTENT_ITEM_VERSION ADD CONSTRAINT FK_CONTENT_ITEM_VERSION_CONTENT_
 GO
 
 ALTER TABLE CONTENT_ITEM_ACCESS DROP CONSTRAINT FK_CONTENT_ITEM_ACCESS_USER_ID
-GO 
+GO
 ALTER TABLE CONTENT_ITEM_ACCESS ADD CONSTRAINT FK_CONTENT_ITEM_ACCESS_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE CONTENT_ITEM_ACCESS DROP CONSTRAINT FK_CONTENT_ITEM_ACCESS_GROUP_ID 
+ALTER TABLE CONTENT_ITEM_ACCESS DROP CONSTRAINT FK_CONTENT_ITEM_ACCESS_GROUP_ID
 GO
 ALTER TABLE CONTENT_ITEM_ACCESS ADD CONSTRAINT FK_CONTENT_ITEM_ACCESS_GROUP_ID FOREIGN KEY (GROUP_ID) REFERENCES USER_GROUP (GROUP_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE CONTENT_ITEM_ACCESS DROP CONSTRAINT FK_CONTENT_ITEM_ACCESS_CONTENT_ITEM_ID 
+ALTER TABLE CONTENT_ITEM_ACCESS DROP CONSTRAINT FK_CONTENT_ITEM_ACCESS_CONTENT_ITEM_ID
 GO
 ALTER TABLE CONTENT_ITEM_ACCESS ADD CONSTRAINT FK_CONTENT_ITEM_ACCESS_CONTENT_ITEM_ID FOREIGN KEY (CONTENT_ITEM_ID) REFERENCES CONTENT_ITEM (CONTENT_ITEM_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE CONTENT_ITEM_SCHEDULE DROP CONSTRAINT FK_CONTENT_ITEM_SCHEDULE_CONTENT_ITEM_ID 
+ALTER TABLE CONTENT_ITEM_SCHEDULE DROP CONSTRAINT FK_CONTENT_ITEM_SCHEDULE_CONTENT_ITEM_ID
 GO
 ALTER TABLE CONTENT_ITEM_SCHEDULE ADD CONSTRAINT FK_CONTENT_ITEM_SCHEDULE_CONTENT_ITEM_ID FOREIGN KEY (CONTENT_ITEM_ID) REFERENCES CONTENT_ITEM (CONTENT_ITEM_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE ITEM_TO_ITEM_VERSION DROP CONSTRAINT FK_ITEM_TO_ITEM_VERSION_LINKED_ITEM_ID 
+ALTER TABLE ITEM_TO_ITEM_VERSION DROP CONSTRAINT FK_ITEM_TO_ITEM_VERSION_LINKED_ITEM_ID
 GO
-ALTER TABLE ITEM_TO_ITEM_VERSION ADD CONSTRAINT FK_ITEM_TO_ITEM_VERSION_LINKED_ITEM_ID FOREIGN KEY (LINKED_ITEM_ID) REFERENCES CONTENT_ITEM (CONTENT_ITEM_ID)  ON DELETE CASCADE 
+ALTER TABLE ITEM_TO_ITEM_VERSION ADD CONSTRAINT FK_ITEM_TO_ITEM_VERSION_LINKED_ITEM_ID FOREIGN KEY (LINKED_ITEM_ID) REFERENCES CONTENT_ITEM (CONTENT_ITEM_ID)  ON DELETE CASCADE
 GO
 
-ALTER TABLE SITE_ACCESS DROP CONSTRAINT FK_SITE_ACCESS_USER_ID 
-GO 
+ALTER TABLE SITE_ACCESS DROP CONSTRAINT FK_SITE_ACCESS_USER_ID
+GO
 ALTER TABLE SITE_ACCESS ADD CONSTRAINT FK_SITE_ACCESS_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE SITE_ACCESS DROP CONSTRAINT FK_SITE_ACCESS_GROUP_ID 
+ALTER TABLE SITE_ACCESS DROP CONSTRAINT FK_SITE_ACCESS_GROUP_ID
 GO
 ALTER TABLE SITE_ACCESS ADD CONSTRAINT FK_SITE_ACCESS_GROUP_ID FOREIGN KEY (GROUP_ID) REFERENCES USER_GROUP (GROUP_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE SITE_ACCESS DROP CONSTRAINT FK_SITE_ACCESS_SITE_ID 
-GO 
+ALTER TABLE SITE_ACCESS DROP CONSTRAINT FK_SITE_ACCESS_SITE_ID
+GO
 ALTER TABLE SITE_ACCESS ADD CONSTRAINT FK_SITE_ACCESS_SITE_ID FOREIGN KEY (SITE_ID) REFERENCES SITE (SITE_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE USER_GROUP_BIND DROP CONSTRAINT FK_USER_GROUP_BIND_USER_ID 
-GO 
-ALTER TABLE USER_GROUP_BIND ADD CONSTRAINT FK_USER_GROUP_BIND_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID)  ON DELETE CASCADE  
+ALTER TABLE USER_GROUP_BIND DROP CONSTRAINT FK_USER_GROUP_BIND_USER_ID
+GO
+ALTER TABLE USER_GROUP_BIND ADD CONSTRAINT FK_USER_GROUP_BIND_USER_ID FOREIGN KEY (USER_ID) REFERENCES USERS (USER_ID)  ON DELETE CASCADE
 GO
 
-ALTER TABLE USER_GROUP_BIND DROP CONSTRAINT FK_USER_GROUP_BIND_GROUP_ID 
+ALTER TABLE USER_GROUP_BIND DROP CONSTRAINT FK_USER_GROUP_BIND_GROUP_ID
 GO
 ALTER TABLE USER_GROUP_BIND ADD CONSTRAINT FK_USER_GROUP_BIND_GROUP_ID FOREIGN KEY (GROUP_ID) REFERENCES USER_GROUP (GROUP_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE VERSION_CONTENT_DATA DROP CONSTRAINT FK_VERSION_CONTENT_DATA_ATTRIBUTE_ID 
+ALTER TABLE VERSION_CONTENT_DATA DROP CONSTRAINT FK_VERSION_CONTENT_DATA_ATTRIBUTE_ID
 GO
 ALTER TABLE VERSION_CONTENT_DATA ADD CONSTRAINT FK_VERSION_CONTENT_DATA_ATTRIBUTE_ID FOREIGN KEY (ATTRIBUTE_ID) REFERENCES CONTENT_ATTRIBUTE (ATTRIBUTE_ID)   ON DELETE CASCADE
 GO
 
-ALTER TABLE CONTENT_ATTRIBUTE DROP CONSTRAINT FK_CONTENT_ATTRIBUTE_CONTENT_ID 
-GO 
-ALTER TABLE CONTENT_ATTRIBUTE ADD CONSTRAINT FK_CONTENT_ATTRIBUTE_CONTENT_ID FOREIGN KEY (CONTENT_ID) REFERENCES CONTENT (CONTENT_ID)  ON DELETE CASCADE 
+ALTER TABLE CONTENT_ATTRIBUTE DROP CONSTRAINT FK_CONTENT_ATTRIBUTE_CONTENT_ID
+GO
+ALTER TABLE CONTENT_ATTRIBUTE ADD CONSTRAINT FK_CONTENT_ATTRIBUTE_CONTENT_ID FOREIGN KEY (CONTENT_ID) REFERENCES CONTENT (CONTENT_ID)  ON DELETE CASCADE
 GO
 
 ALTER TABLE CONTENT_ITEM_STATUS_HISTORY DROP CONSTRAINT FK_CONTENT_ITEM_STATUS_HISTORY_CONTENT_ITEM_ID
@@ -9792,7 +9792,7 @@ PRINT '7.7.0.29 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.30
 -- with(nolock) fix
@@ -9803,16 +9803,16 @@ returns @data table(content_item_id numeric, attribute_id numeric, content_id nu
 as
 begin
 	declare @text2 nvarchar(255)
-	
+
 	declare @use_fulltext bit
 	select @use_fulltext = fulltextserviceproperty('IsFulltextInstalled')
-	
+
 	if @use_fulltext = 1 begin
 		if @exact = 0 begin
 			insert into @data
-			select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber' 
-			from content_data cd with(nolock) 
-			INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id   
+			select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber'
+			from content_data cd with(nolock)
+			INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id
 			INNER JOIN content AS cinfo with(nolock) ON ci.content_id = cinfo.content_id
 			WHERE cinfo.site_id = @site_id and FREETEXT( cd.* ,@text)
 		end
@@ -9820,9 +9820,9 @@ begin
 			set @text2 = '"' + @text + '"'
 
 			insert into @data
-			select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber' 
-			from content_data cd with(nolock) 
-			INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id   
+			select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber'
+			from content_data cd with(nolock)
+			INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id
 			INNER JOIN content AS cinfo with(nolock) ON ci.content_id = cinfo.content_id
 			WHERE cinfo.site_id = @site_id and CONTAINS( cd.* ,@text2)
 		end
@@ -9830,23 +9830,23 @@ begin
 	else begin
 		set @text2 = '%' + @text + '%'
 		insert into @data
-		select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber' 
-		from content_data cd with(nolock) 
-		INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id   
+		select cd.content_item_id, cd.attribute_id, ci.content_id, row_number() over (partition by cd.content_item_id order by attribute_id desc) as 'rownumber'
+		from content_data cd with(nolock)
+		INNER JOIN content_item AS ci with(nolock) ON ci.content_item_id = cd.content_item_id
 		INNER JOIN content AS cinfo with(nolock) ON ci.content_id = cinfo.content_id
 		WHERE cinfo.site_id = @site_id and cd.data like @text2 or cd.blob_data like @text2
 	end
-	
+
 	return
 end
 GO
 
 ALTER function [dbo].[qp_fullTextIds](@text nvarchar(255), @content_id numeric, @exact bit)
 returns @ids table (id numeric primary key, data nvarchar(max))
-as 
+as
 begin
 	declare @text2 nvarchar(255)
-	
+
 	declare @use_fulltext bit
 	select @use_fulltext = fulltextserviceproperty('IsFulltextInstalled')
 
@@ -9856,8 +9856,8 @@ begin
 			select id, data from (
 			select cd.content_item_id as id, dbo.qp_select_data_field(ca.attribute_type_id, cd.data, cd.blob_data) as data, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber'
 			from content_data cd with(nolock)
-			inner join content_item ci with(nolock) on ci.content_item_id = cd.content_item_id 
-			inner join content_attribute ca with(nolock) on ca.attribute_id = cd.attribute_id 
+			inner join content_item ci with(nolock) on ci.content_item_id = cd.content_item_id
+			inner join content_attribute ca with(nolock) on ca.attribute_id = cd.attribute_id
 			where ci.content_id = @content_id and freetext(cd.*, @text )
 			) s where s.rownumber = 1
 		end
@@ -9866,21 +9866,21 @@ begin
 			insert into @ids
 			select id, data from (
 			select cd.content_item_id as id, dbo.qp_select_data_field(ca.attribute_type_id, cd.data, cd.blob_data) as data, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber'
-			from content_data cd with(nolock) 
-			inner join content_item ci with(nolock) on ci.content_item_id = cd.content_item_id 
-			inner join content_attribute ca with(nolock) on ca.attribute_id = cd.attribute_id 
+			from content_data cd with(nolock)
+			inner join content_item ci with(nolock) on ci.content_item_id = cd.content_item_id
+			inner join content_attribute ca with(nolock) on ca.attribute_id = cd.attribute_id
 			where ci.content_id = @content_id and contains(cd.*, @text2 )
 			) s where s.rownumber = 1
 		end
-	end 
+	end
 	else begin
 		set @text2 = '%' + @text + '%'
 		insert into @ids
 		select id, data from (
-		select cd.content_item_id as id, dbo.qp_select_data_field(ca.attribute_type_id, cd.data, cd.blob_data) as data, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber' 
-		from content_data cd with(nolock) 
-		inner join content_item ci with(nolock) on ci.content_item_id = cd.content_item_id 
-		inner join content_attribute ca with(nolock) on ca.attribute_id = cd.attribute_id 
+		select cd.content_item_id as id, dbo.qp_select_data_field(ca.attribute_type_id, cd.data, cd.blob_data) as data, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber'
+		from content_data cd with(nolock)
+		inner join content_item ci with(nolock) on ci.content_item_id = cd.content_item_id
+		inner join content_attribute ca with(nolock) on ca.attribute_id = cd.attribute_id
 		where ci.content_id = @content_id and cd.data like @text2 or cd.blob_data like @text2
 		) s where s.rownumber = 1
 
@@ -9903,7 +9903,7 @@ GO
 PRINT '7.7.0.30 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.31
 -- Tree Auto Expand fix
@@ -9942,10 +9942,10 @@ else
 
 
 
-WHILE @ret IS NOT NULL 
-BEGIN 	
+WHILE @ret IS NOT NULL
+BEGIN
 	-- infinite loop
-	IF EXISTS(select ID from @tmp0 where NODE_ID = @ret) 
+	IF EXISTS(select ID from @tmp0 where NODE_ID = @ret)
 		BREAK
 
 	INSERT INTO @tmp0 (NODE_ID) values(@ret)
@@ -9993,7 +9993,7 @@ PRINT '7.7.0.31 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.32
 -- Version reverse sorting
@@ -10011,19 +10011,19 @@ begin
 declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @prefixed_fields nvarchar(max)
 declare @content_id numeric
 select @content_id = content_id from content_item ci where ci.CONTENT_ITEM_ID = @item_id
- 
+
 if @content_id is not null
 begin
 	select @fields = dbo.qp_get_content_field_list(@content_id, '')
 	select @prefixed_fields = dbo.qp_get_content_field_list(@content_id, 'pt.')
-	
-	
+
+
 	if @version_id = 0
 		set @version_sql = ''
 	else
 		set @version_sql = ' and vcd.CONTENT_ITEM_VERSION_ID= @version_id'
-	
-	
+
+
 	set @sql = N'select pt.content_item_id, pt.version_id, s.STATUS_HISTORY_DATE AS MODIFIED, s.USER_ID as last_modified_by, ' + @prefixed_fields  + N' from
 	(
 	select civ.CONTENT_ITEM_ID, vcd.CONTENT_ITEM_VERSION_ID as version_id, ca.ATTRIBUTE_NAME, dbo.qp_get_version_data(vcd.ATTRIBUTE_ID, vcd.CONTENT_ITEM_VERSION_ID) as data from CONTENT_ATTRIBUTE ca
@@ -10054,7 +10054,7 @@ PRINT '7.7.0.32 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.33
 -- Mandatory Version Control
@@ -10071,7 +10071,7 @@ CREATE TABLE [dbo].[CONTENT_ITEM_VERSION] (
 	[VERSION_LABEL] [nvarchar] (255) NOT NULL,
 	[CONTENT_VERSION_ID] [numeric](18, 0) NULL,
 	[CONTENT_ITEM_ID] [numeric](18, 0) NOT NULL REFERENCES CONTENT_ITEM(CONTENT_ITEM_ID) ON DELETE CASCADE,
-	[DESCRIPTION] [nvarchar] (512) NULL 
+	[DESCRIPTION] [nvarchar] (512) NULL
 ) ON [PRIMARY]
 GO
 
@@ -10085,7 +10085,7 @@ CREATE TABLE [dbo].[VERSION_CONTENT_DATA] (
 	[CONTENT_ITEM_VERSION_ID] [numeric](18, 0) NOT NULL,
 	---------------------------------------------------
 	[DATA] [nvarchar] (3500) NULL,
-	[BLOB_DATA] [ntext] NULL, 
+	[BLOB_DATA] [ntext] NULL,
 	[CREATED] [datetime] DEFAULT (GETDATE()) NOT NULL,
 	PRIMARY KEY CLUSTERED (ATTRIBUTE_ID, CONTENT_ITEM_VERSION_ID) ON [PRIMARY],
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
@@ -10100,30 +10100,30 @@ CREATE TABLE [dbo].[item_to_item_version] (
 	[content_item_version_id] [numeric](18, 0) NOT NULL ,
 	[attribute_id] [numeric](18, 0) NOT NULL ,
 	[linked_item_id] [numeric](18, 0) NOT NULL ,
-	 PRIMARY KEY CLUSTERED 
+	 PRIMARY KEY CLUSTERED
 	(
 		[content_item_version_id],
 		[attribute_id],
 		[linked_item_id]
 	)  ON [PRIMARY] ,
-	 FOREIGN KEY 
+	 FOREIGN KEY
 	(
 		[content_item_version_id]
 	) REFERENCES [content_item_version] (
 		[content_item_version_id]
 	),
-	FOREIGN KEY 
+	FOREIGN KEY
 	(
 		[linked_item_id]
 	) REFERENCES [CONTENT_ITEM] (
 		[CONTENT_ITEM_ID]
 	),
-	 FOREIGN KEY 
+	 FOREIGN KEY
 	(
 		[attribute_id]
 	) REFERENCES [content_attribute] (
 		[attribute_id]
-	) ON DELETE CASCADE 
+	) ON DELETE CASCADE
 ) ON [PRIMARY]
 GO
 
@@ -10149,12 +10149,12 @@ GO
 
 exec qp_drop_existing 'content_item_version_delete', 'IsTrigger'
 GO
- 
+
 CREATE TRIGGER [dbo].[content_item_version_delete] ON [dbo].[CONTENT_ITEM_VERSION] FOR DELETE
-AS 
+AS
 begin
-	DELETE version_content_data 
-	FROM version_content_data as vcd 
+	DELETE version_content_data
+	FROM version_content_data as vcd
 	INNER JOIN deleted d on d.content_item_version_id = vcd.content_item_version_id
 
     DELETE content_item_status_history
@@ -10186,12 +10186,12 @@ AS
   FROM content AS c
   INNER JOIN content_item AS ci ON c.content_id = ci.content_id
   WHERE ci.content_item_id = @content_item_id
-IF @max_num_of_stored_versions <> 0 
+IF @max_num_of_stored_versions <> 0
 BEGIN
   DECLARE @item_version_count INT
   SELECT @item_version_count = COUNT(content_item_version_id) FROM content_item_version
-  WHERE content_item_id = @content_item_id 
-  IF @item_version_count >= @max_num_of_stored_versions 
+  WHERE content_item_id = @content_item_id
+  IF @item_version_count >= @max_num_of_stored_versions
   BEGIN
 	DECLARE @item_version_id NUMERIC
 	SELECT TOP 1 @item_version_id = content_item_version_id FROM content_item_version
@@ -10201,7 +10201,7 @@ BEGIN
   END
   -- Create content item version
   IF @content_version_id IS NOT NULL
-    DELETE FROM content_item_version 
+    DELETE FROM content_item_version
     WHERE content_version_id = @content_version_id AND content_item_id = @content_item_id
   INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id)
   VALUES (@tm, 'backup', @content_version_id, @content_item_id)
@@ -10213,16 +10213,16 @@ BEGIN
   WHERE content_item_id = @content_item_id
   -- Store Many-to-Many slice
   INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
-  SELECT @content_item_version_id, ca.attribute_id, linked_item_id 
+  SELECT @content_item_version_id, ca.attribute_id, linked_item_id
   FROM item_link_united AS il
   INNER JOIN content_attribute AS ca ON ca.link_id = il.link_id
   INNER JOIN content_item AS ci ON ci.content_id =  ca.content_id AND ci.content_item_id = il.item_id
   WHERE il.item_id = @content_item_id
   -- Write status history log
-  INSERT INTO content_item_status_history 
-    (content_item_id, user_id, description, created, content_item_version_id, 
+  INSERT INTO content_item_status_history
+    (content_item_id, user_id, description, created, content_item_version_id,
     system_status_type_id)
-  VALUES 
+  VALUES
     (@content_item_id, @uid, 'Record version backup has been created', @tm, @content_item_version_id,
     2)
 END
@@ -10237,7 +10237,7 @@ CREATE PROCEDURE [dbo].[clear_content_versions]
   @content_id NUMERIC
 AS
 	-- Delete Many-to-Many versions of content's items
-	DELETE item_to_item_version 
+	DELETE item_to_item_version
 	FROM item_to_item_version AS iiv
 		INNER JOIN content_item_version AS v on iiv.content_item_version_id = v.content_item_version_id
 		INNER JOIN content_item AS i ON i.content_item_id = v.content_item_id
@@ -10245,7 +10245,7 @@ AS
 
 	-- Delete versions of content's items
 	DELETE content_item_version
-	FROM content_item_version AS v 
+	FROM content_item_version AS v
 		INNER JOIN content_item AS i ON i.content_item_id = v.content_item_id
 	WHERE i.content_id = @content_id
 GO
@@ -10256,7 +10256,7 @@ go
 CREATE  PROCEDURE [dbo].[restore_content_item_version]
   @uid NUMERIC,
   @version_id NUMERIC
-AS 
+AS
   DECLARE @id NUMERIC, @tm DATETIME
   DECLARE @content_id numeric
   SET @tm = GETDATE()
@@ -10271,32 +10271,32 @@ AS
     -- Clear many-to-many
     IF exists(select count(linked_item_id) from item_link_async where item_id = @id)
     begin
-		
+
 		DELETE FROM item_link_async where item_id = @id and link_id in (select link_id from content_attribute where content_id = @content_id)
-		
+
 		INSERT INTO item_link_async
 		SELECT link_id, @id, linked_item_id FROM item_to_item_version AS iv
 		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id
-		WHERE iv.content_item_version_id = @version_id		 
-		
-    end else  
+		WHERE iv.content_item_version_id = @version_id
+
+    end else
     begin
 
 		DELETE FROM item_link_united_full where item_id = @id and link_id in (select link_id from content_attribute where content_id = @content_id)
-	
+
 		-- Set many-to-many
-		INSERT INTO item_to_item 
+		INSERT INTO item_to_item
 		SELECT link_id, @id, linked_item_id FROM item_to_item_version AS iv
-		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id		
+		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id
 		WHERE iv.content_item_version_id = @version_id
     end
-    
+
     -- Write status history log
-    INSERT INTO content_item_status_history 
+    INSERT INTO content_item_status_history
       (content_item_id, user_id, description, created,
       system_status_type_id, content_item_version_id)
-    VALUES 
-      (@id, @uid, 'Record has been restored from version backup', @tm, 
+    VALUES
+      (@id, @uid, 'Record has been restored from version backup', @tm,
       4, @version_id)
   END
 GO
@@ -10311,9 +10311,9 @@ begin
 	update buttons set buttons_order = 2 where location_tab_id = @atab_id and button_name = 'Archive'
 	update buttons set buttons_order = 3 where location_tab_id = @atab_id and button_name = 'Remove'
 	update buttons set buttons_order = 4 where location_tab_id = @atab_id and button_name = 'Cancel'
-	UPDATE buttons SET action_file = 'permissions/act_check_modify.asp,contents/records/act_check_locked.asp,version_control/act_create_record_version.asp,contents/records/act_update_record.asp' 
+	UPDATE buttons SET action_file = 'permissions/act_check_modify.asp,contents/records/act_check_locked.asp,version_control/act_create_record_version.asp,contents/records/act_update_record.asp'
 	WHERE location_tab_id = @atab_id AND button_name = 'Update'
-	UPDATE buttons SET action_file = 'permissions/act_check_modify.asp,contents/records/act_check_locked.asp,version_control/act_create_record_version.asp,contents/records/act_update_record.asp' 
+	UPDATE buttons SET action_file = 'permissions/act_check_modify.asp,contents/records/act_check_locked.asp,version_control/act_create_record_version.asp,contents/records/act_update_record.asp'
 	WHERE location_tab_id = @atab_id AND button_name = 'Update & Up'
 end
 GO
@@ -10334,12 +10334,12 @@ UPDATE buttons SET action_file = 'contents/fields/act_update_field.asp,version_c
 GO
 
 if dbo.qp_get_version_control() = 0
-INSERT INTO buttons 
+INSERT INTO buttons
  (permission_level_id, button_type, buttons_order,
- button_name, action_tab_id, location_tab_id, action_file, 
+ button_name, action_tab_id, location_tab_id, action_file,
  cancel_action, CONFIRM_PHRASE)
-VALUES 
- (1, 'submit', 2, 'Remove Backups', 
+VALUES
+ (1, 'submit', 2, 'Remove Backups',
  70, 70, 'permissions/act_check_delete.asp,contents/records/act_check_locked.asp,version_control/act_clear_backup_history.asp',
  0, 'Are you sure?')
 GO
@@ -10359,28 +10359,28 @@ VALUES ('Article Restore Preview', 'version_control/dsp_record_version_preview.a
   @tab_goup, 1, 'Content Article Version Restore Preview', 70)
 SET @id = @@IDENTITY
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
- action_file, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
+ action_file,
  cancel_action, CONFIRM_PHRASE)
-VALUES 
- (1, 'submit', 1, 'Restore', @atab_id, @id, 
+VALUES
+ (1, 'submit', 1, 'Restore', @atab_id, @id,
  'permissions/act_check_modify.asp,contents/records/act_check_locked.asp,version_control/act_restore_record.asp',
  1, 'Are you sure?')
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
- action_file, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
+ action_file,
  cancel_action, CONFIRM_PHRASE)
-VALUES 
- (1, 'submit', 2, 'Remove', 70, @id, 
+VALUES
+ (1, 'submit', 2, 'Remove', 70, @id,
  'permissions/act_check_delete.asp,contents/records/act_check_locked.asp,version_control/act_remove_version.asp',
  0, 'Are you sure?')
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', 70, @id, NULL, 1)
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
@@ -10465,27 +10465,27 @@ INSERT INTO toolbar_buttons (
 --  Create buttons and toolbar buttons for Page Format Restore Preview tab
 --------------------------------------
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
- action_file, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
+ action_file,
  cancel_action, CONFIRM_PHRASE)
-VALUES 
- (1, 'submit', 1, 'Restore', @page_object_formats, @page_format_restore_preview, 
+VALUES
+ (1, 'submit', 1, 'Restore', @page_object_formats, @page_format_restore_preview,
  'pages/templates/objects/act_check_locked.asp,pages/objects/formats/history/act_restore_page_format.asp',
  1, 'Are you sure?')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
- action_file, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
+ action_file,
  cancel_action, CONFIRM_PHRASE)
-VALUES 
- (1, 'submit', 2, 'Remove', @page_format_history_tab_id, @page_format_restore_preview, 
+VALUES
+ (1, 'submit', 2, 'Remove', @page_format_history_tab_id, @page_format_restore_preview,
  'pages/templates/objects/act_check_locked.asp,pages/objects/formats/history/act_remove_page_version.asp',
  0, 'Are you sure?')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', @page_format_history_tab_id, @page_format_restore_preview, NULL, 1)
 --------------------------------------
 -- Create buttons and toolbar buttons for Format History tab
@@ -10518,29 +10518,29 @@ INSERT INTO toolbar_buttons (
 --  Create buttons and toolbar buttons for Format Restore Preview tab
 --------------------------------------
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
- action_file, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
+ action_file,
  cancel_action, CONFIRM_PHRASE)
-VALUES 
- (1, 'submit', 1, 'Restore', @template_object_formats, @format_restore_preview, 
+VALUES
+ (1, 'submit', 1, 'Restore', @template_object_formats, @format_restore_preview,
  'pages/templates/objects/act_check_locked.asp,pages/templates/objects/formats/history/act_restore_format.asp',
  1, 'Are you sure?')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
- action_file, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
+ action_file,
  cancel_action, CONFIRM_PHRASE)
-VALUES 
- (1, 'submit', 2, 'Remove', @format_history_tab_id, @format_restore_preview, 
+VALUES
+ (1, 'submit', 2, 'Remove', @format_history_tab_id, @format_restore_preview,
  'pages/templates/objects/act_check_locked.asp,pages/templates/objects/formats/history/act_remove_version.asp',
  0, 'Are you sure?')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', @format_history_tab_id, @format_restore_preview, NULL, 1)
-End 
+End
 GO
 --------------------------------------
 --  Create table, stored procedures, triggers
@@ -10562,22 +10562,22 @@ CREATE TABLE [dbo].[OBJECT_FORMAT_VERSION] (
 	[LOCKED] [datetime] NULL ,
 	[LOCKED_BY] [numeric](18, 0) NULL ,
 	[ASSEMBLED] [datetime] NULL,
-	CONSTRAINT [PK_OBJECT_FORMAT_VERSION] PRIMARY KEY  CLUSTERED 
+	CONSTRAINT [PK_OBJECT_FORMAT_VERSION] PRIMARY KEY  CLUSTERED
 	(
 		[OBJECT_FORMAT_VERSION_ID]
-	)  ON [PRIMARY] ,	
-	CONSTRAINT [FK_OBJECT_FORMAT_VERSION_NET_LANGUAGES] FOREIGN KEY 
+	)  ON [PRIMARY] ,
+	CONSTRAINT [FK_OBJECT_FORMAT_VERSION_NET_LANGUAGES] FOREIGN KEY
 	(
 		[NET_LANGUAGE_ID]
 	) REFERENCES [NET_LANGUAGES] (
 		[NET_LANGUAGE_ID]
-	),	
-	CONSTRAINT [FK_OBJECT_FORMAT_VERSION_ID] FOREIGN KEY 
+	),
+	CONSTRAINT [FK_OBJECT_FORMAT_VERSION_ID] FOREIGN KEY
 	(
 		[OBJECT_FORMAT_ID]
 	) REFERENCES [OBJECT_FORMAT] (
 		[OBJECT_FORMAT_ID]
-	) ON DELETE CASCADE 
+	) ON DELETE CASCADE
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 
@@ -10593,7 +10593,7 @@ GO
 CREATE PROCEDURE [dbo].[restore_object_format_version]
    @version_id NUMERIC
 AS
-	UPDATE obf 
+	UPDATE obf
 	SET obf.format_name = obfv.format_name,
 	obf.description = obfv.description,
 	obf.created = obfv.created,
@@ -10606,7 +10606,7 @@ AS
 	obf.assembled = obfv.assembled
 	FROM object_format AS obf
 	INNER JOIN object_format_version AS obfv ON obfv.object_format_id = obf.object_format_id
-	WHERE obfv.object_format_version_id = @version_id	
+	WHERE obfv.object_format_version_id = @version_id
 GO
 
 exec qp_drop_existing 'clear_object_format_versions' , 'IsProcedure'
@@ -10615,7 +10615,7 @@ CREATE PROCEDURE [dbo].[clear_object_format_versions]
   @object_format_id NUMERIC
 AS
   -- Delete versions of format's items
-  DELETE FROM object_format_version 
+  DELETE FROM object_format_version
   WHERE object_format_id = @object_format_id
 
 GO
@@ -10652,14 +10652,14 @@ AS
 	SELECT @count = COUNT(id) FROM @tb_object_format_id
 	WHILE @i < @count + 1
 	BEGIN
-		SELECT @item = object_format_id, @max_length = max_num_of_format_stored_versions 
+		SELECT @item = object_format_id, @max_length = max_num_of_format_stored_versions
 			FROM @tb_object_format_id WHERE id = @i
 		SET ROWCOUNT @max_length
 		SELECT @min_data = modified FROM object_format_version
 			WHERE object_format_id = @item
 			ORDER BY modified DESC
 		SET ROWCOUNT 0;
-		DELETE FROM object_format_version 
+		DELETE FROM object_format_version
 			WHERE object_format_id = @item AND modified < @min_data
 		SET @i = @i + 1
 	END
@@ -10684,58 +10684,58 @@ AS
 IF UPDATE(locked) or UPDATE(locked_by)
 BEGIN
 	UPDATE objF
-		SET objF.LOCKED = i.LOCKED, 
+		SET objF.LOCKED = i.LOCKED,
 			objF.LOCKED_BY = i.LOCKED_BY
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(modified) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.MODIFIED = i.MODIFIED
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(last_modified_by) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.LAST_MODIFIED_BY = i.LAST_MODIFIED_BY
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
 IF UPDATE(assemble_in_live) or UPDATE(assemble_in_stage) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.assemble_in_live = i.assemble_in_live,
 			objF.assemble_in_stage = i.assemble_in_stage
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
-    
-	update objF set assemble_preview_in_live = 1, assemble_notification_in_live = 1 from object_format as objF inner join 
-	inserted i on objF.object_format_id = i.object_format_id where i.assemble_in_live = 1 
 
-	update objF set assemble_preview_in_stage = 1, assemble_notification_in_stage = 1 from object_format as objF inner join 
-	inserted i on objF.object_format_id = i.object_format_id where i.assemble_in_stage = 1 
+	update objF set assemble_preview_in_live = 1, assemble_notification_in_live = 1 from object_format as objF inner join
+	inserted i on objF.object_format_id = i.object_format_id where i.assemble_in_live = 1
+
+	update objF set assemble_preview_in_stage = 1, assemble_notification_in_stage = 1 from object_format as objF inner join
+	inserted i on objF.object_format_id = i.object_format_id where i.assemble_in_stage = 1
 
 
 END
 
 IF UPDATE(assemble_preview_in_live) or UPDATE(assemble_preview_in_stage) or UPDATE(assemble_notification_in_stage) or UPDATE(assemble_notification_in_live) BEGIN
 	UPDATE objF
-		SET 
+		SET
 			objF.assemble_preview_in_live = i.assemble_preview_in_live,
 			objF.assemble_preview_in_stage = i.assemble_preview_in_stage,
 			objF.assemble_notification_in_live = i.assemble_notification_in_live,
 			objF.assemble_notification_in_stage = i.assemble_notification_in_stage
 		FROM inserted AS i
-			INNER JOIN OBJECT_FORMAT AS objF 
+			INNER JOIN OBJECT_FORMAT AS objF
 			ON i.object_format_id = objF.object_format_id
 END
 
@@ -10743,21 +10743,21 @@ END
 IF UPDATE(format_name) or UPDATE(format_body) or UPDATE(code_behind) or UPDATE(net_format_name) or UPDATE(net_language_id) or UPDATE(description)
 BEGIN
 	-- Create object format version
-	DECLARE @object_format_id NUMERIC 
+	DECLARE @object_format_id NUMERIC
 	SELECT @object_format_id = object_format_id FROM deleted
-	
-	INSERT INTO object_format_version (object_format_id, object_id, format_name, description, created, modified, 
+
+	INSERT INTO object_format_version (object_format_id, object_id, format_name, description, created, modified,
 	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled )
-	SELECT object_format_id, object_id, format_name, description, created, modified, 
-	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled  
+	SELECT object_format_id, object_id, format_name, description, created, modified,
+	last_modified_by, format_body, net_language_id, net_format_name, code_behind, assembled
 	FROM deleted
 
 	declare @i numeric, @count numeric
 	declare @objf table (
 			id numeric identity(1,1) primary key,
-			object_format_id numeric 
+			object_format_id numeric
 	)
-	
+
 	insert into @objf (object_format_id)
 		select object_format_id
 		from deleted d
@@ -10768,10 +10768,10 @@ BEGIN
 	while @i < @count + 1
 	begin
 		select @object_format_id = object_format_id from @objf where id = @i
-		EXEC qp_curtail_object_format_versions @object_format_id 
+		EXEC qp_curtail_object_format_versions @object_format_id
 		set @i = @i + 1
 	end
-	
+
 	UPDATE
 		objF
 	SET
@@ -10789,7 +10789,7 @@ BEGIN
 END
 
 IF UPDATE(object_id) or UPDATE(created) or UPDATE(assembled)
-BEGIN 
+BEGIN
 	UPDATE
 		objF
 	SET
@@ -10817,8 +10817,8 @@ VALUES
   ('Track Article Changes', 'version_control/dsp_record_version_preview.asp', @tab_goup, 1, 70)
 SET @id = @@IDENTITY
 
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
@@ -10827,9 +10827,9 @@ VALUES
   'track_changes')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', 70, @id, NULL, 1)
 
 SET @tab_goup = @tab_goup + 1
@@ -10839,8 +10839,8 @@ VALUES
   ('Compare Backups', 'version_control/dsp_record_version_preview.asp', @tab_goup, 1, 70)
 SET @id = @@IDENTITY
 
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
@@ -10849,9 +10849,9 @@ VALUES
   'compare_backups')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', 70, @id, NULL, 1)
 --------------------------------------
 -- Alexander Vasiliev
@@ -10874,8 +10874,8 @@ VALUES ('Track Format Changes', 'pages/templates/objects/formats/history/dsp_for
   @tab_goup, 1, @format_history_tab_id, 1)
 SET @format_track_changes = @@IDENTITY
 
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
@@ -10884,9 +10884,9 @@ VALUES
   'track_changes')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', @format_history_tab_id, @format_track_changes, NULL, 1)
 --------------------------------------
 -- Compare Backups
@@ -10898,19 +10898,19 @@ VALUES ('Compare Format Backups', 'pages/templates/objects/formats/history/dsp_f
   @tab_goup, 1, @format_history_tab_id, 1)
 SET @format_compare_backups = @@IDENTITY
 
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
   (3, @format_history_tab_id, 'images/toolbar/compare_dis.gif', 'images/toolbar/compare.gif',
   'Compare Backups', 3, @format_compare_backups, 0,
   'compare_backups')
-  
+
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', @format_history_tab_id, @format_compare_backups, NULL, 1)
 --------------------------------------
 -- Page Object Format Version tabs
@@ -10932,8 +10932,8 @@ VALUES ('Track Page Format Changes', 'pages/objects/formats/history/dsp_page_for
   @tab_goup, 1, @page_format_history_tab_id, 1)
 SET @page_format_track_changes = @@IDENTITY
 
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
@@ -10942,9 +10942,9 @@ VALUES
   'track_changes')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', @page_format_history_tab_id, @page_format_track_changes, NULL, 1)
 --------------------------------------
 -- Compare Page Format Backups
@@ -10956,19 +10956,19 @@ VALUES ('Compare Page Format Backups', 'pages/objects/formats/history/dsp_page_f
   @tab_goup, 1, @page_format_history_tab_id, 1)
 SET @page_format_compare_backups = @@IDENTITY
 
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
   (3, @page_format_history_tab_id, 'images/toolbar/compare_dis.gif', 'images/toolbar/compare.gif',
   'Compare Backups', 3, @page_format_compare_backups, 0,
   'compare_backups')
-  
+
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', @page_format_history_tab_id, @page_format_compare_backups, NULL, 1)
 end
 GO
@@ -10990,7 +10990,7 @@ PRINT '7.7.0.33 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.34
 -- Schedule fix
@@ -11004,13 +11004,13 @@ GO
 exec qp_drop_existing 'qp_merge_article', 'IsProcedure'
 GO
 
-CREATE PROCEDURE dbo.qp_merge_article 
+CREATE PROCEDURE dbo.qp_merge_article
 @item_id numeric
 AS
 BEGIN
-	exec qp_merge_links @item_id 
+	exec qp_merge_links @item_id
 	UPDATE content_item with(rowlock) SET schedule_new_version_publication = 0, not_for_replication = 1 WHERE content_item_id = @item_id
-	exec qp_replicate @item_id 
+	exec qp_replicate @item_id
 	UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id = @item_id
 	DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id = @item_id
 END
@@ -11021,7 +11021,7 @@ ALTER TRIGGER [dbo].[td_content_item_schedule_del_job] ON [dbo].[CONTENT_ITEM_SC
   SELECT @current_db = DB_NAME()
   DECLARE items CURSOR FOR SELECT content_item_id, delete_job FROM deleted
   OPEN items
-  
+
   FETCH NEXT FROM items INTO @item_id, @delete_job
   WHILE @@FETCH_STATUS = 0 BEGIN
     IF @delete_job = 1
@@ -11064,7 +11064,7 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
     DECLARE @delete_level INT
 
     IF @freq_type = 1 OR @freq_type = 2 BEGIN
-      DECLARE @now_date DATETIME  
+      DECLARE @now_date DATETIME
       DECLARE @now_date_int BIGINT, @start_date_int BIGINT, @end_date_int BIGINT
 
       SET @now_date = DATEADD(mi, 1, GETDATE())
@@ -11118,7 +11118,7 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
 			  + '
 				EXECUTE qp_create_deactivation_job @item_id=' + CAST(@item_id AS NVARCHAR) + ', ' + @str_set_params
 		else begin	--scheduleNewVersionPublication
-			set @sql  = 'exec qp_merge_article ' + CAST(@item_id AS NVARCHAR) 
+			set @sql  = 'exec qp_merge_article ' + CAST(@item_id AS NVARCHAR)
 			set @freq_type = 1
 		end
 
@@ -11161,13 +11161,13 @@ GO
 PRINT '7.7.0.34 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.35
 -- Missed foreign key
 -- **************************************
 
-ALTER TABLE CONTENT_ITEM ADD CONSTRAINT FK_CONTENT_ITEM_LAST_MODIFIED_BY FOREIGN KEY (LAST_MODIFIED_BY) REFERENCES USERS (USER_ID)  
+ALTER TABLE CONTENT_ITEM ADD CONSTRAINT FK_CONTENT_ITEM_LAST_MODIFIED_BY FOREIGN KEY (LAST_MODIFIED_BY) REFERENCES USERS (USER_ID)
 GO
 
 INSERT INTO SYSTEM_INFO
@@ -11179,7 +11179,7 @@ GO
 PRINT '7.7.0.35 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.36
 -- Default Article
@@ -11192,12 +11192,12 @@ as
 begin
 
 declare @sql nvarchar(max), @fields nvarchar(max), @prefixed_fields nvarchar(max)
- 
+
 if @content_id is not null
 begin
 	select @fields = dbo.qp_get_content_field_list(@content_id, '')
 	select @prefixed_fields = dbo.qp_get_content_field_list(@content_id, 'pt.')
-	
+
 	set @sql = N'select ' + @prefixed_fields  + N' from
 	(
 	select ca.ATTRIBUTE_NAME, CASE WHEN ca.attribute_type_id in (9, 10) THEN convert(nvarchar(max), ca.DEFAULT_BLOB_VALUE) ELSE ca.DEFAULT_VALUE END as data from CONTENT_ATTRIBUTE ca
@@ -11206,7 +11206,7 @@ begin
 	(
 	MAX(src.data)
 	FOR src.ATTRIBUTE_NAME IN (' + @fields +  N')
-	) AS pt 
+	) AS pt
 	'
 	print @sql
 	exec sp_executesql @sql, N'@content_id numeric', @content_id = @content_id
@@ -11223,7 +11223,7 @@ GO
 PRINT '7.7.0.36 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.37
 -- VE Url
@@ -11247,19 +11247,19 @@ PRINT '7.7.0.37 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.38
 -- Article merging fix
 -- **************************************
 
-ALTER PROCEDURE [dbo].[qp_merge_article] 
+ALTER PROCEDURE [dbo].[qp_merge_article]
 @item_id numeric
 AS
 BEGIN
-	exec qp_merge_links @item_id 
+	exec qp_merge_links @item_id
 	UPDATE content_item with(rowlock) SET schedule_new_version_publication = 0 WHERE content_item_id = @item_id
-	exec qp_replicate @item_id 
+	exec qp_replicate @item_id
 	UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id = @item_id
 	DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id = @item_id
 END
@@ -11274,20 +11274,20 @@ GO
 PRINT '7.7.0.38 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.39
 -- Quick fixes
 -- **************************************
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'P_ENTER_MODE' and TABLE_NAME = 'SITE')
-ALTER TABLE SITE 
+ALTER TABLE SITE
 	ADD P_ENTER_MODE BIT NOT NULL CONSTRAINT DF_P_ENTER_MODE DEFAULT (1)
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'P_ENTER_MODE' and TABLE_NAME = 'CONTENT_ATTRIBUTE')
-ALTER TABLE CONTENT_ATTRIBUTE 
-	ADD P_ENTER_MODE BIT NULL 
+ALTER TABLE CONTENT_ATTRIBUTE
+	ADD P_ENTER_MODE BIT NULL
 GO
 
 UPDATE SITE SET P_ENTER_MODE = 0
@@ -11309,7 +11309,7 @@ AS BEGIN
   DECLARE @link_id NUMERIC
 
   SET @view_name = 'content_' + CAST(@content_id AS NVARCHAR)
-  
+
   SELECT @sql = query, @alt_sql = alt_query FROM content WHERE content_id = @content_id
   SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + ' AS ' + @sql
   EXEC(@sql)
@@ -11349,7 +11349,7 @@ AS BEGIN
           @attr_type = attribute_type_id,
           @attr_rel_id = related_attribute_id,
 		  @attr_related_image_attribute_id = related_image_attribute_id,
-		  @attr_use_site_library = use_site_library, 
+		  @attr_use_site_library = use_site_library,
 		  @view_in_list = view_in_list,
           @link_id = link_id
         FROM content_attribute
@@ -11412,19 +11412,19 @@ AS BEGIN
   CLOSE fields
   DEALLOCATE fields
 
-  IF @alt_sql IS NULL 
+  IF @alt_sql IS NULL
   	SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + '_united AS select * from dbo.content_' + + CAST(@content_id AS NVARCHAR)
-  ELSE 
+  ELSE
     SET @sql = N'CREATE VIEW dbo.content_' + CAST(@content_id AS NVARCHAR) + '_united  AS ' + @alt_sql
   EXEC(@sql)
-  
+
   exec qp_content_frontend_views_create @content_id
 
 END
 GO
 
 
-ALTER  PROCEDURE [dbo].[qp_delete_unified_fields] 
+ALTER  PROCEDURE [dbo].[qp_delete_unified_fields]
 --Deletes attributes in union source contents, which have no virtual child contents
 @virtual_attribute_id numeric
 
@@ -11442,9 +11442,9 @@ join content_attribute ca on ca.attribute_id = ua.union_attr_id
 left outer join user_query_attrs uq on ca.attribute_id = uq.user_query_attr_id
 left outer join content c on c.virtual_join_primary_content_id = ca.content_id
 left outer join union_attrs una on una.union_attr_id = ua.union_attr_id and una.virtual_attr_id <> @virtual_attribute_id
-WHERE ua.virtual_attr_id = @virtual_attribute_id and uq.user_query_attr_id is null 
+WHERE ua.virtual_attr_id = @virtual_attribute_id and uq.user_query_attr_id is null
 	and c.virtual_join_primary_content_id is null and una.virtual_attr_id is null
-    
+
 UPDATE notifications SET email_attribute_id = NULL WHERE email_attribute_id in (select union_attr_id from #temp)
 
 DELETE FROM union_attrs where virtual_attr_id = @virtual_attribute_id
@@ -11463,23 +11463,23 @@ PRINT '7.7.0.39 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.40
 -- Permanent Locks
 -- **************************************
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'PERMANENT_LOCK' and TABLE_NAME = 'SITE')
-ALTER TABLE SITE 
+ALTER TABLE SITE
 	ADD PERMANENT_LOCK BIT NOT NULL CONSTRAINT DF_SITE_PERMANENT_LOCK DEFAULT (0)
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'PERMANENT_LOCK' and TABLE_NAME = 'CONTENT_ITEM')
-ALTER TABLE CONTENT_ITEM 
+ALTER TABLE CONTENT_ITEM
 	ADD PERMANENT_LOCK BIT NOT NULL CONSTRAINT DF_CONTENT_ITEM_PERMANENT_LOCK DEFAULT (0)
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'LOCKED' and TABLE_NAME = 'CONTENT_ITEM')
-ALTER TABLE CONTENT_ITEM 
+ALTER TABLE CONTENT_ITEM
 	ADD LOCKED DATETIME NULL
 GO
 
@@ -11498,7 +11498,7 @@ GO
 PRINT '7.7.0.40 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.41
 -- Fix filter with brackets
@@ -11506,42 +11506,42 @@ GO
 
 ALTER FUNCTION [dbo].[qp_filter_columns](@content_id numeric, @str nvarchar(max)) RETURNS nvarchar(max)
 AS BEGIN
-  
+
   SET @str = REPLACE(REPLACE(RTrim(LTrim(@str)), '[', ''), ']', '')
-  
+
   DECLARE @columns TABLE
   (
 	id numeric identity(1,1) primary key,
 	name nvarchar(255)
   )
-  
+
   DECLARE @i numeric, @count numeric
   DECLARE @result nvarchar(max), @name nvarchar(max)
-  
+
   set @result = '';
-  
-  
+
+
   WITH fields (name) AS (SELECT LTrim(items) from split(@str, ','))
   INSERT INTO @columns(name)
   select '[' + name + ']' from fields
   where name in (SELECT attribute_name from content_attribute where content_id = @content_id) or name in ('content_item_id', 'archive', 'visible', 'created', 'modified', 'last_modified_by')
-  
+
 
   select @count = count(id) from @columns
   set @i = 1
-  
+
   while @i <= @count
   begin
 	if @i > 1 set @result = @result + ', '
 	select @name = name from @columns where id = @i
-	set @result = @result + @name 
+	set @result = @result + @name
 
 	set @i = @i + 1
   end
-  
+
   if @result = '' set @result = 'c.*'
-  
-  
+
+
   RETURN @result
 END
 GO
@@ -11556,7 +11556,7 @@ PRINT '7.7.0.41 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.42
 -- Fix Version Control Logic
@@ -11571,15 +11571,15 @@ ALTER TABLE [dbo].[CONTENT_ITEM_VERSION]  WITH CHECK ADD  CONSTRAINT [FK_CONTENT
 REFERENCES [dbo].[USERS] ([USER_ID])
 GO
 
-ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
 BEGIN
-	
-	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id 
 
-    UPDATE SITE SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id  
-    UPDATE SITE SET locked = NULL, locked_by = NULL FROM SITE c inner join deleted d on c.locked_by = d.user_id  
+	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
+
+    UPDATE SITE SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
+    UPDATE SITE SET locked = NULL, locked_by = NULL FROM SITE c inner join deleted d on c.locked_by = d.user_id
 
     UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
@@ -11589,7 +11589,7 @@ BEGIN
 
     UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
-    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id
     UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
 
@@ -11600,10 +11600,10 @@ BEGIN
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
@@ -11612,10 +11612,10 @@ BEGIN
     UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
     UPDATE DOC SET last_modified_by = 1 FROM DOC c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
@@ -11635,7 +11635,7 @@ PRINT '7.7.0.42 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.7.0.43
 -- Home Update
@@ -11646,8 +11646,8 @@ ALTER PROCEDURE [dbo].[qp_lastPages]
 AS
 with d as (
 	SELECT page.page_id, page.page_template_id, page.modified, site.site_id, page.page_name, site.site_name, ROW_NUMBER() over (partition by sl.site_id order by page.modified DESC ) rn
-	FROM qp_sites_list_ids(@user_id, 1) sl INNER merge JOIN site on sl.site_id = site.site_id 
-	INNER JOIN page_template AS pt ON pt.site_id = site.site_id 
+	FROM qp_sites_list_ids(@user_id, 1) sl INNER merge JOIN site on sl.site_id = site.site_id
+	INNER JOIN page_template AS pt ON pt.site_id = site.site_id
 	INNER JOIN page ON page.page_template_id = pt.page_template_id
 )
 select page_id, page_template_id, modified, site_id, page_name, site_name from d where rn <= 5
@@ -11705,7 +11705,7 @@ DECLARE @fullWhereExpression nvarchar(max)
 DECLARE @insert_key varchar(200)
 DECLARE @Select varchar(max)
 
-set @insert_key ='<$_security_insert_$>' 
+set @insert_key ='<$_security_insert_$>'
 
 
 select @siteId = site_id from site where site_name = @SiteName
@@ -11737,7 +11737,7 @@ end
 
 if @WhereExpression = '' begin
 	set @fullWhereExpression = '1 = 1'
-end 
+end
 else begin
 	set @fullWhereExpression = @WhereExpression
 end
@@ -11758,11 +11758,11 @@ if @use_security>0
 begin
 	if @filter_records > 0
 	begin
-		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 	end
 	else
 	begin
-        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 		set @Select = @Select + ', IsNull(pi.permission_level,0) as current_permission_level  '
 	end
 end
@@ -11814,29 +11814,29 @@ ALTER TABLE dbo.CONTENT_ITEM_VERSION ADD CONSTRAINT
 	) REFERENCES dbo.CONTENT_ITEM
 	(
 	CONTENT_ITEM_ID
-	) ON UPDATE  NO ACTION 
-	 ON DELETE  NO ACTION 
-	
+	) ON UPDATE  NO ACTION
+	 ON DELETE  NO ACTION
+
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content_item] ON [dbo].[CONTENT_ITEM] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 
 delete waiting_for_approval from waiting_for_approval wa inner join deleted d on wa.content_item_id = d.content_item_id
 
 IF dbo.qp_get_version_control() IS NOT NULL BEGIN
 	delete content_item_version from content_item_version civ inner join deleted d on civ.content_item_id = d.content_item_id
-	
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
-	inner join deleted d on d.content_item_id = civ.content_item_id 
 
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join deleted d on d.content_item_id = iiv.linked_item_id 
+	delete item_to_item_version from item_to_item_version iiv
+	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
+	inner join deleted d on d.content_item_id = civ.content_item_id
+
+	delete item_to_item_version from item_to_item_version iiv
+	inner join deleted d on d.content_item_id = iiv.linked_item_id
 END
 
-delete item_link_united_full from item_link_united_full ii where ii.item_id in (select content_item_id from deleted) 
+delete item_link_united_full from item_link_united_full ii where ii.item_id in (select content_item_id from deleted)
 
 delete content_data from content_data cd inner join deleted d on cd.content_item_id = d.content_item_id
 
@@ -11845,14 +11845,14 @@ delete content_item from content_item ci inner join deleted d on ci.content_item
 END
 GO
 
-DROP TRIGGER [dbo].[content_item_version_delete] 
+DROP TRIGGER [dbo].[content_item_version_delete]
 GO
- 
+
 CREATE TRIGGER [dbo].[tbd_content_item_version] ON [dbo].[CONTENT_ITEM_VERSION] INSTEAD OF DELETE
-AS 
+AS
 begin
-	DELETE version_content_data 
-	FROM version_content_data as vcd 
+	DELETE version_content_data
+	FROM version_content_data as vcd
 	INNER JOIN deleted d on d.content_item_version_id = vcd.content_item_version_id
 
     DELETE content_item_status_history
@@ -11863,7 +11863,7 @@ begin
     DELETE item_to_item_version
 	FROM item_to_item_version as iiv
 	INNER JOIN deleted d on d.content_item_version_id = iiv.content_item_version_id
-	
+
 	delete content_item_version from content_item_version civ inner join deleted d on civ.content_item_version_id = d.content_item_version_id
 end
 GO
@@ -11913,8 +11913,8 @@ VALUES
   (@tab_name, 'version_control/dsp_record_version_preview.asp', @tab_group, 1, 70)
 SET @id = @@IDENTITY
 
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
@@ -11923,9 +11923,9 @@ VALUES
   'track_changes')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', 70, @id, NULL, 1)
 
 SET @tab_group = @tab_group + 1
@@ -11935,8 +11935,8 @@ VALUES
   ('Compare Backups', 'version_control/dsp_record_version_preview.asp', @tab_group, 1, 70)
 SET @id = @@IDENTITY
 
-INSERT INTO toolbar_buttons 
-  (permission_level_id, location_tab_id, image_disabled, image_enabled, 
+INSERT INTO toolbar_buttons
+  (permission_level_id, location_tab_id, image_disabled, image_enabled,
   button_name, buttons_order, action_tab_id, always_enabled,
   action_file)
 VALUES
@@ -11945,9 +11945,9 @@ VALUES
   'compare_backups')
 
 INSERT INTO buttons
- (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id, 
+ (permission_level_id, button_type, buttons_order, button_name, action_tab_id, location_tab_id,
  action_file, cancel_action)
-VALUES 
+VALUES
  (3, 'submit', 3, 'Cancel', 70, @id, NULL, 1)
 GO
 
@@ -11973,13 +11973,13 @@ AS BEGIN
 
 	SELECT @fld_name = attribute_name FROM (
 	SELECT  top 1 attribute_name,
-	  CASE attribute_type_id 
-		WHEN 10 THEN 0 
+	  CASE attribute_type_id
+		WHEN 10 THEN 0
 		WHEN 9  THEN 0
 		ELSE 1
 	  END AS is_blob
-	FROM content_attribute 
-	WHERE content_id = @content_id 
+	FROM content_attribute
+	WHERE content_id = @content_id
 	AND (attribute_type_id <> 11 AND @with_relation_field = 0 OR @with_relation_field = 1)
 	ORDER BY view_in_list desc, is_blob desc, attribute_order asc) AS a
 
@@ -11989,13 +11989,13 @@ AS BEGIN
 END
 GO
 
-ALTER PROCEDURE [dbo].[qp_get_article_title] 
-@content_item_id numeric, 
-@content_id numeric, 
+ALTER PROCEDURE [dbo].[qp_get_article_title]
+@content_item_id numeric,
+@content_id numeric,
 @title nvarchar(255) output
 AS
 BEGIN
-	declare @titleName NVARCHAR(255), @sql nvarchar(2000)  
+	declare @titleName NVARCHAR(255), @sql nvarchar(2000)
 	SELECT @titleName = dbo.qp_get_display_field(@content_id, default)
 
 	SET @sql = 'SELECT @title = CAST([' + @titleName + '] AS NVARCHAR (255)) FROM content_' + cast(@content_id as varchar) + '_united' +
@@ -12024,7 +12024,7 @@ GO
 exec qp_drop_existing 'qp_apply_link_id_to_data', 'IsProcedure'
 GO
 
-CREATE PROCEDURE dbo.qp_apply_link_id_to_data 
+CREATE PROCEDURE dbo.qp_apply_link_id_to_data
 	@item_id numeric,
 	@link_id numeric
 AS
@@ -12041,7 +12041,7 @@ begin
 			update content_data set data = @link_id where ATTRIBUTE_ID = @attribute_id and CONTENT_ITEM_ID = @item_id
 		else
 			insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
-			values(@item_id, @attribute_id, @link_id) 
+			values(@item_id, @attribute_id, @link_id)
 	end
 
 end
@@ -12157,16 +12157,16 @@ CREATE PROCEDURE [dbo].[qp_GetContentPageNew]
 	@entity_name nvarchar(100) = 'content_item',
 	@parent_entity_name nvarchar(100) = '',
 	@parent_entity_id numeric(18,0) = 0,
-	
+
 	@insert_key varchar(200) = '<$_security_insert_$>'
 AS
 BEGIN
 	SET NOCOUNT ON
-	
+
 	-- Получаем фильтр по правам
 	DECLARE @security_sql AS nvarchar(max)
 	SET @security_sql = ''
-	
+
 	IF (@use_security = 1)
 		BEGIN
 			EXEC dbo.qp_GetPermittedItemsAsQuery
@@ -12176,15 +12176,15 @@ BEGIN
 				@end_level = @end_level,
 				@entity_name = @entity_name,
 				@parent_entity_name = @parent_entity_name,
-				@parent_entity_id = @parent_entity_id,				
+				@parent_entity_id = @parent_entity_id,
 				@SQLOut = @security_sql OUTPUT
-				
+
 			SET @From = REPLACE(@From, @insert_key, @security_sql)
 		END
-		
+
 	-- Получаем общее количество записей
 	DECLARE @sql_count AS nvarchar(max)
-	
+
 	SET @sql_count = ''
 	SET @sql_count = @sql_count + 'SELECT ' + CHAR(13)
 	SET @sql_count = @sql_count + '		@record_count = COUNT(*) ' + CHAR(13)
@@ -12195,33 +12195,33 @@ BEGIN
 			SET @sql_count = @sql_count + 'WHERE ' + CHAR(13)
 			SET @sql_count = @sql_count + @Where + CHAR(13)
 		END
-	EXEC sp_executesql 
-		@sql_count, 
-		N'@record_count int OUTPUT', 
+	EXEC sp_executesql
+		@sql_count,
+		N'@record_count int OUTPUT',
 		@record_count = @TotalRecords OUTPUT
-	
+
 	-- Задаем количество записей на странице по умолчанию
 	IF (@PageSize <= 0)
 		BEGIN
 			SET @PageSize = @TotalRecords
 		END
-		
+
 	-- Задаем номер начальной записи по умолчанию
 	IF (@StartRow <= 0)
 		BEGIN
 			SET @StartRow = 1
 		END
-		
+
 	-- Задаем номер конечной записи
 	DECLARE @end_row AS int
 	SET @end_row = @StartRow + @PageSize - 1
-		
+
 			-- Возвращаем результат
 	DECLARE @sql_result AS nvarchar(max)
-	
+
 	IF (@TotalRecords > @PageSize)
 		BEGIN
-			SET @sql_result = ''		
+			SET @sql_result = ''
 			SET @sql_result = @sql_result + 'WITH PAGED_DATA_CTE' + CHAR(13)
 			SET @sql_result = @sql_result + 'AS' + CHAR(13)
 			SET @sql_result = @sql_result + '(' + CHAR(13)
@@ -12241,7 +12241,7 @@ BEGIN
 				END
 			SET @sql_result = @sql_result + '	) AS c ' + CHAR(13)
 			SET @sql_result = @sql_result + ')' + CHAR(13) + CHAR(13)
-			
+
 			SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 			SET @sql_result = @sql_result + '	* ' + CHAR(13)
 			SET @sql_result = @sql_result + 'FROM ' + CHAR(13)
@@ -12267,9 +12267,9 @@ BEGIN
 			SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 			SET @sql_result = @sql_result + @OrderBy + CHAR(13)
 		END
-	
+
 	EXEC(@sql_result)
-	
+
 	SET NOCOUNT OFF
 END
 GO
@@ -12328,35 +12328,35 @@ GO
 
 CREATE function [dbo].[qp_fullTextIds](@text nvarchar(255), @content_id numeric, @exact bit)
 returns @ids table (id numeric primary key, attribute_id numeric)
-as 
+as
 begin
 	declare @text2 nvarchar(255)
-	
+
 	declare @use_fulltext bit
 	select @use_fulltext = fulltextserviceproperty('IsFulltextInstalled')
 
 	if @use_fulltext = 1 begin
-		
+
 		declare @ids2 table
 		(
 			id decimal,
 			rank int
 		)
 
-		if @exact = 0 
+		if @exact = 0
 		begin
-			insert into @ids2 
+			insert into @ids2
 			select * from freetexttable(content_data, *, @text)
-		end 
-		else 
+		end
+		else
 		begin
 			set @text2 = '"' + @text + '"'
-			insert into @ids2 
+			insert into @ids2
 			select * from containstable(content_data, *, @text2)
-		end	
-		
+		end
+
 		insert into @ids
-		select id, attribute_id  from ( 
+		select id, attribute_id  from (
 		select cd.content_item_id as id, cd.attribute_id, row_number() over (partition by cd.content_item_id order by cd.content_data_id) as 'rownumber'
 		from @ids2 ids
 		inner join content_data cd with(nolock) on cd.content_data_id = ids.id
@@ -12364,14 +12364,14 @@ begin
 		where ci.CONTENT_ID = @content_id) s
 		where s.rownumber = 1
 
-	end 
+	end
 	else begin
 		set @text2 = '%' + @text + '%'
 		insert into @ids
 		select id, attribute_id from (
-		select cd.content_item_id as id, cd.attribute_id, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber' 
-		from content_data cd with(nolock) 
-		inner join content_item ci with(nolock) on ci.content_item_id = cd.content_item_id 
+		select cd.content_item_id as id, cd.attribute_id, row_number() over (partition by cd.content_item_id order by cd.attribute_id desc) as 'rownumber'
+		from content_data cd with(nolock)
+		inner join content_item ci with(nolock) on ci.content_item_id = cd.content_item_id
 		where ci.content_id = @content_id and cd.data like @text2 or cd.blob_data like @text2
 		) s where s.rownumber = 1
 
@@ -12399,7 +12399,7 @@ CREATE PROCEDURE [dbo].[qp_GetContentPageFullText]
   @exactSearch bit,
   @linkId int = 0,
   @itemId int = 0,
-  
+
   @use_security bit=0,
   @user_id numeric(18,0)=0,
   @group_id numeric(18,0)=0,
@@ -12411,14 +12411,14 @@ CREATE PROCEDURE [dbo].[qp_GetContentPageFullText]
 
   @insert_key varchar(200)='<$_security_insert_$>'
 
-  
+
 )
 AS
   SET NOCOUNT ON
 
 
 create table #temp(id decimal not null, attribute_id decimal not null, selected bit default(0) PRIMARY KEY CLUSTERED (selected, id, attribute_id))
-	
+
 insert into #temp(id, attribute_id) select * from [dbo].qp_FullTextIds(@text, @contentId, @exactSearch)
 
 if @linkId <> 0
@@ -12428,8 +12428,8 @@ else if @itemId <> 0
 
 
 exec qp_GetContentPageNew
-	@Select = @Select, @From = @From, @Where = @Where, @OrderBy = @OrderBy, 
-	@StartRow = @StartRow, @PageSize = @PageSize, @TotalRecords = @TotalRecords output, 
+	@Select = @Select, @From = @From, @Where = @Where, @OrderBy = @OrderBy,
+	@StartRow = @StartRow, @PageSize = @PageSize, @TotalRecords = @TotalRecords output,
 	@use_security = @use_security, @user_id = @user_id, @group_id = @group_id, @start_level = @start_level,
 	@end_level = @end_level, @entity_name = @entity_name, @parent_entity_name = @parent_entity_name, @parent_entity_id = @parent_entity_id,
 	@insert_key = @insert_key
@@ -12507,7 +12507,7 @@ GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'ADD_CONTEXT_CLASS_NAME' and TABLE_NAME = 'CONTENT')
 ALTER TABLE CONTENT ADD
-	[ADD_CONTEXT_CLASS_NAME] nvarchar(255) NULL 
+	[ADD_CONTEXT_CLASS_NAME] nvarchar(255) NULL
 GO
 
 exec qp_update_translations 'Proceed DB-independent generation', 'Выполнять генерацию, независимую от БД'
@@ -12531,14 +12531,14 @@ GO
 -- Delayed publication and modified date
 -- ***********************************************
 
-ALTER PROCEDURE [dbo].[qp_merge_article] 
+ALTER PROCEDURE [dbo].[qp_merge_article]
 @item_id numeric
 AS
 BEGIN
-	exec qp_merge_links @item_id 
+	exec qp_merge_links @item_id
 	UPDATE content_item with(rowlock) SET schedule_new_version_publication = 0 WHERE content_item_id = @item_id
-	exec qp_replicate @item_id 
-	UPDATE content_item with(rowlock) SET MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1 where content_item_id = @item_id 
+	exec qp_replicate @item_id
+	UPDATE content_item with(rowlock) SET MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1 where content_item_id = @item_id
 	UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id = @item_id
 	DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id = @item_id
 END
@@ -12615,7 +12615,7 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
     DECLARE @delete_level INT
 
     IF @freq_type = 1 OR @freq_type = 2 BEGIN
-      DECLARE @now_date DATETIME  
+      DECLARE @now_date DATETIME
       DECLARE @now_date_int BIGINT, @start_date_int BIGINT, @end_date_int BIGINT
 
       SET @now_date = DATEADD(mi, 1, GETDATE())
@@ -12669,7 +12669,7 @@ ALTER TRIGGER [dbo].[ti_content_item_schedule_add_job] ON [dbo].[CONTENT_ITEM_SC
 			  + '
 				EXECUTE qp_create_deactivation_job @item_id=' + CAST(@item_id AS NVARCHAR) + ', ' + @str_set_params
 		else begin	--scheduleNewVersionPublication
-			set @sql  = 'exec qp_merge_article ' + CAST(@item_id AS NVARCHAR) 
+			set @sql  = 'exec qp_merge_article ' + CAST(@item_id AS NVARCHAR)
 			set @freq_type = 1
 		end
 
@@ -12722,19 +12722,19 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[qp_ch
 DROP PROCEDURE [dbo].[qp_check_article_splitted]
 GO
 
-ALTER PROCEDURE [dbo].[qp_merge_article] 
+ALTER PROCEDURE [dbo].[qp_merge_article]
 @item_id numeric
 AS
 BEGIN
-	exec qp_merge_links @item_id 
+	exec qp_merge_links @item_id
 	UPDATE content_item with(rowlock) SET schedule_new_version_publication = 0, not_for_replication = 1, MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1 WHERE content_item_id = @item_id
-	exec qp_replicate @item_id 
+	exec qp_replicate @item_id
 	UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id = @item_id
 	DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id = @item_id
 END
 GO
 
-ALTER PROCEDURE [dbo].[qp_replicate] 
+ALTER PROCEDURE [dbo].[qp_replicate]
 @content_item_id numeric
 AS
 BEGIN
@@ -12744,53 +12744,53 @@ BEGIN
 	declare @table_name nvarchar(50), @async_table_name nvarchar(50)
 
 	declare @attribute_name nvarchar(255), @attribute_type_id numeric, @attribute_id numeric, @attribute_size numeric, @default_value nvarchar(255)
-	
-	declare @content_id numeric, @virtual_type numeric 
+
+	declare @content_id numeric, @virtual_type numeric
 	declare @workflow_id numeric, @is_async numeric, @is_target_table_async bit
-	
-	declare @status_type_id numeric, @visible numeric, @archive numeric 
+
+	declare @status_type_id numeric, @visible numeric, @archive numeric
 	declare @last_modified_by numeric, @created datetime, @modified datetime
 
 	declare @item_exists bit
-	
+
 	declare @i numeric, @count numeric
 	declare @end nvarchar(2)
 	set @end = ';' + char(13)
 
 	/* Replicate content_item */
-			
-	select 
-		@status_type_id = ci.status_type_id, @visible = ci.visible, @archive = ci.archive,
-		@last_modified_by = ci.last_modified_by, @created = ci.created, @modified = ci.modified, 
-		@content_id = c.content_id, @workflow_id = ciw.workflow_id, @is_async = ciw.is_async 
-		from content_item ci with(nolock) 
-		inner join content c with(nolock) on ci.content_id = c.content_id
-		left outer join content_item_workflow ciw with(nolock) on ci.content_item_id = ciw.content_item_id 
-		where ci.content_item_id = @content_item_id
-	
 
-	exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out	
-	
+	select
+		@status_type_id = ci.status_type_id, @visible = ci.visible, @archive = ci.archive,
+		@last_modified_by = ci.last_modified_by, @created = ci.created, @modified = ci.modified,
+		@content_id = c.content_id, @workflow_id = ciw.workflow_id, @is_async = ciw.is_async
+		from content_item ci with(nolock)
+		inner join content c with(nolock) on ci.content_id = c.content_id
+		left outer join content_item_workflow ciw with(nolock) on ci.content_item_id = ciw.content_item_id
+		where ci.content_item_id = @content_item_id
+
+
+	exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out
+
 	exec qp_item_exists @table_name, @content_item_id, @item_exists = @item_exists out
-	
+
 	if @item_exists = 0 begin
-		exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql_piece out, @created = @created, @modified = @modified 
+		exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql_piece out, @created = @created, @modified = @modified
 		set @sql = @sql_piece + @end
 	end
 	else begin
 		exec qp_get_update_item_sql @table_name, @content_item_id, @modified, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql_piece out
 		set @sql = @sql_piece + @end
 	end
-	
+
 	if @is_target_table_async = 0
 	begin
 		set @async_table_name = 'content_' + convert(nvarchar, @content_id) + '_ASYNC'
 		exec qp_get_delete_item_sql @async_table_name, @content_item_id, @sql = @sql_piece out
 		set @sql = @sql + @sql_piece + @end
-	end 
+	end
 
 	/* Replicate content_data */
-	
+
 	/* get attribute list */
 
 	declare @ca table (
@@ -12801,22 +12801,22 @@ BEGIN
 		attribute_size numeric,
 		default_value nvarchar(255)
 	)
-	
+
 	insert into @ca (attribute_name, attribute_id, attribute_type_id, attribute_size, default_value)
-	select attribute_name, attribute_id, attribute_type_id, attribute_size, default_value 
+	select attribute_name, attribute_id, attribute_type_id, attribute_size, default_value
 	from content_attribute with(nolock) where content_id = @content_id
-	
+
 	select @count = count(attribute_id) from @ca
 	set @i = 1
-	
+
 	/* collect dynamic sql for each attribute */
 	while @i < @count + 1
 	begin
 		select @attribute_name = attribute_name, @attribute_id = attribute_id, @attribute_type_id = attribute_type_id, @attribute_size = attribute_size, @default_value = default_value
 		from @ca where number = @i
-		
+
 		exec qp_get_update_cell_sql @table_name, @content_item_id, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql_piece out
-		
+
 		set @sql = @sql + @sql_piece + @end
 		set @i = @i + 1
 	end
@@ -12825,7 +12825,7 @@ BEGIN
 
 	print @sql
 	exec sp_executesql @sql
-	
+
 	update content_item with(rowlock) set not_for_replication = 0 where content_item_id = @content_item_id
 END
 GO
@@ -12838,11 +12838,11 @@ begin
 		declare @content_id numeric , @content_item_id numeric, @last_modified_by numeric, @modified datetime, @created datetime, @status_type_id numeric, @visible numeric, @archive numeric
 		declare @char_content_id nvarchar(10), @char_content_item_id nvarchar(10)
 		declare @sql nvarchar(2000)
-		declare @async_string varchar(20), @table_name varchar(25), @is_target_table_async bit 
+		declare @async_string varchar(20), @table_name varchar(25), @is_target_table_async bit
 		declare @async_id numeric, @item_exists bit, @not_for_replication bit
-		declare @workflow_id numeric, @is_async NUMERIC	
+		declare @workflow_id numeric, @is_async NUMERIC
 		declare @i numeric, @count numeric
-		
+
 		DECLARE @ci table (
 			id numeric identity(1,1) primary key,
 			content_item_id numeric,
@@ -12851,7 +12851,7 @@ begin
 			is_async numeric,
 			not_for_replication bit
 		)
-					
+
 		insert into @ci(content_item_id, content_id, workflow_id, is_async, not_for_replication)
 			select i.content_item_id, i.content_id, ciw.workflow_id, ciw.is_async, i.not_for_replication
 			FROM inserted AS i
@@ -12863,29 +12863,29 @@ begin
 		set @i = 1
 		while @i < @count + 1
 		begin
-			select 
-				@content_item_id = content_item_id, @content_id = content_id, 
+			select
+				@content_item_id = content_item_id, @content_id = content_id,
 				@workflow_id = workflow_id, @is_async = is_async, @not_for_replication = not_for_replication
 				from @ci where id = @i
-				
+
 			exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out
-			
+
 			update content_item set splitted = @is_target_table_async where content_item_id = @content_item_id
-			
+
 			if @not_for_replication = 0 and not update(not_for_replication)
-			begin 
-				
-				select @modified = modified, @created = created, @status_type_id = status_type_id, 
+			begin
+
+				select @modified = modified, @created = created, @status_type_id = status_type_id,
 				@archive = archive, @visible = visible, @last_modified_by = last_modified_by
 				from content_item with(nolock) where content_item_id = @content_item_id
-				
+
 				set @char_content_item_id = convert(nvarchar, @content_item_id)
 				set @char_content_id = convert(nvarchar, @content_id)
-				
+
 				exec qp_item_exists @table_name, @content_item_id, @item_exists = @item_exists out
 				if @item_exists = 0
 				begin
-					exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified 
+					exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified
 					print @sql
 					exec sp_executesql @sql
 				end
@@ -12900,38 +12900,38 @@ begin
 					set @table_name = 'content_' + @char_content_id
 					exec qp_get_update_flags_sql @table_name, @content_item_id, @visible, @archive, @sql = @sql out
 					print @sql
-					exec sp_executesql @sql   
+					exec sp_executesql @sql
 				end
-				
+
 				if @is_target_table_async = 0
 				begin
 					set @table_name = 'content_' + @char_content_id + '_ASYNC'
 					exec qp_get_delete_item_sql @table_name, @content_item_id, @sql = @sql out
 					print @sql
-					exec sp_executesql @sql   
+					exec sp_executesql @sql
 				end
-			end 
+			end
 			set @i = @i + 1
 		end
 	end
 end
 GO
 
-ALTER PROCEDURE [dbo].[qp_merge_links] 
+ALTER PROCEDURE [dbo].[qp_merge_links]
 @content_item_id numeric
-AS 
+AS
 declare @splitted bit
 BEGIN
 	select @splitted = splitted from content_item with(nolock) where content_item_id = @content_item_id
 	if @splitted = 1
 	BEGIN
 		DELETE item_to_item with(rowlock)
-		WHERE link_id in (select link_id from content_attribute ca with(nolock) inner join content_item ci with(nolock) on ca.content_id = ci.content_id where ci.content_item_id = @content_item_id) 
-		AND (l_item_id = @content_item_id OR r_item_id = @content_item_id ) 
+		WHERE link_id in (select link_id from content_attribute ca with(nolock) inner join content_item ci with(nolock) on ca.content_id = ci.content_id where ci.content_item_id = @content_item_id)
+		AND (l_item_id = @content_item_id OR r_item_id = @content_item_id )
 
-		insert into item_to_item with(rowlock) (link_id, l_item_id, r_item_id) 
+		insert into item_to_item with(rowlock) (link_id, l_item_id, r_item_id)
 		select link_id, item_id, linked_item_id from item_link_async with(nolock) where item_id = @content_item_id
-		
+
 		delete from item_link_async with(rowlock) where item_id = @content_item_id
 	END
 END
@@ -12939,13 +12939,13 @@ GO
 
 
 ALTER PROCEDURE [dbo].[qp_get_insert_item_sql]
-@table_name nvarchar(25), 
-@content_item_id numeric, 
-@last_modified_by numeric, 
-@status_type_id numeric, 
-@visible numeric, 
+@table_name nvarchar(25),
+@content_item_id numeric,
+@last_modified_by numeric,
+@status_type_id numeric,
+@visible numeric,
 @archive numeric,
-@sql nvarchar(2000) output, 
+@sql nvarchar(2000) output,
 @created datetime = NULL,
 @modified datetime = NULL
 as
@@ -12961,7 +12961,7 @@ begin
 	else begin
 		set @optional_string = ' '
 		set @optional_value_string = ' '
-	end 
+	end
 
 	set @sql = 'insert into ' + @table_name + ' with(rowlock) '
 			+ ' (content_item_id, last_modified_by, status_type_id,visible, archive' + @optional_string + ') values ('
@@ -12971,30 +12971,30 @@ END
 GO
 
 ALTER PROCEDURE [dbo].[qp_get_update_item_sql]
-@table_name nvarchar(25), 
+@table_name nvarchar(25),
 @content_item_id numeric,
-@modified datetime, 
-@last_modified_by numeric, 
-@status_type_id numeric, 
-@visible numeric, 
-@archive numeric, 
-@sql nvarchar(1024) output 
+@modified datetime,
+@last_modified_by numeric,
+@status_type_id numeric,
+@visible numeric,
+@archive numeric,
+@sql nvarchar(1024) output
 as
 BEGIN
 	set @sql = 'update ' + @table_name + ' with(rowlock) set '
-			+ ' [modified] = ''' + convert(nvarchar, @modified) + '''' 
+			+ ' [modified] = ''' + convert(nvarchar, @modified) + ''''
 			+ ', [last_modified_by] = ' + convert(nvarchar, @last_modified_by)
-			+ ', [status_type_id] = ' + convert(nvarchar, @status_type_id) 
- 			+ ', [visible] = ' + convert(nvarchar, @visible) 
-			+ ', [archive] = ' + convert(nvarchar, @archive) 
+			+ ', [status_type_id] = ' + convert(nvarchar, @status_type_id)
+ 			+ ', [visible] = ' + convert(nvarchar, @visible)
+			+ ', [archive] = ' + convert(nvarchar, @archive)
 			+ ' where content_item_id = ' + convert(nvarchar, @content_item_id)
 END
 GO
 
 ALTER PROCEDURE [dbo].[qp_check_target_table_async]
-@content_item_id numeric, 
-@content_id numeric, 
-@workflow_id numeric, 
+@content_item_id numeric,
+@content_id numeric,
+@workflow_id numeric,
 @async_workflow numeric,
 @is_target_table_async bit output
 AS
@@ -13005,18 +13005,18 @@ BEGIN
 
 	set @is_target_table_async = 0
 
-	if @workflow_id is not null 
+	if @workflow_id is not null
 	begin
 
 		select @new_status_weight = st.weight, @schedule_new_version_publication = ci.schedule_new_version_publication
 		from status_type st with(nolock) inner join content_item ci with(nolock)
-		on st.status_type_id = ci.status_type_id 
+		on st.status_type_id = ci.status_type_id
 		where content_item_id = @content_item_id
 
 		exec qp_get_workflow_max_status_weight @workflow_id, @max_status_weight = @max_status_weight out
-		
+
 			EXEC qp_get_frontend_status_weight @content_id, @content_item_id, @weight = @curr_status_weight out
-				
+
 		if (@new_status_weight < @curr_status_weight and @async_workflow = 1) or (@new_status_weight = @max_status_weight and @schedule_new_version_publication = 1)
 		begin
 			set @is_target_table_async = 1
@@ -13044,7 +13044,7 @@ ALTER PROCEDURE [dbo].[qp_item_exists]
 AS
 BEGIN
 	-- Declare the return variable here
-	declare @nsql nvarchar(2000), @id numeric 
+	declare @nsql nvarchar(2000), @id numeric
 	set @item_exists = 1
 	set @nsql = N'select @id = content_item_id from ' + @table_name + ' with(nolock) where content_item_id = ' + convert(nvarchar, @content_item_id)
 	exec sp_executesql @nsql, N'@id numeric out', @id out
@@ -13067,8 +13067,8 @@ ALTER PROCEDURE [dbo].[qp_get_workflow_max_status_weight]
 @max_status_weight numeric output
 AS
 BEGIN
-	select @max_status_weight = max(st.weight) from workflow_rules wr with(nolock)  
-	inner join status_type st with(nolock) on wr.successor_status_id = st.status_type_id 
+	select @max_status_weight = max(st.weight) from workflow_rules wr with(nolock)
+	inner join status_type st with(nolock) on wr.successor_status_id = st.status_type_id
 	where wr.workflow_id = @workflow_id
 END
 GO
@@ -13092,10 +13092,10 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 ALTER TRIGGER [dbo].[tbd_content_item_version] ON [dbo].[CONTENT_ITEM_VERSION] INSTEAD OF DELETE
-AS 
+AS
 begin
-	DELETE version_content_data 
-	FROM version_content_data as vcd 
+	DELETE version_content_data
+	FROM version_content_data as vcd
 	INNER JOIN deleted d on d.content_item_version_id = vcd.content_item_version_id
 
     DELETE content_item_status_history
@@ -13106,29 +13106,29 @@ begin
     DELETE item_to_item_version
 	FROM item_to_item_version as iiv
 	INNER JOIN deleted d on d.content_item_version_id = iiv.content_item_version_id
-	
+
 	delete content_item_version from content_item_version civ inner join deleted d on civ.content_item_version_id = d.content_item_version_id
 end
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content_item] ON [dbo].[CONTENT_ITEM] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 
 delete waiting_for_approval from waiting_for_approval wa inner join deleted d on wa.content_item_id = d.content_item_id
 
 IF dbo.qp_get_version_control() IS NOT NULL BEGIN
 	delete content_item_version from content_item_version civ inner join deleted d on civ.content_item_id = d.content_item_id
-	
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
-	inner join deleted d on d.content_item_id = civ.content_item_id 
 
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join deleted d on d.content_item_id = iiv.linked_item_id 
+	delete item_to_item_version from item_to_item_version iiv
+	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
+	inner join deleted d on d.content_item_id = civ.content_item_id
+
+	delete item_to_item_version from item_to_item_version iiv
+	inner join deleted d on d.content_item_id = iiv.linked_item_id
 END
 
-delete item_link_united_full from item_link_united_full ii where ii.item_id in (select content_item_id from deleted) 
+delete item_link_united_full from item_link_united_full ii where ii.item_id in (select content_item_id from deleted)
 
 delete content_data from content_data cd inner join deleted d on cd.content_item_id = d.content_item_id
 
@@ -13137,15 +13137,15 @@ delete content_item from content_item ci inner join deleted d on ci.content_item
 END
 GO
 
-ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
 BEGIN
-	
-	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id 
 
-    UPDATE SITE SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id  
-    UPDATE SITE SET locked = NULL, locked_by = NULL FROM SITE c inner join deleted d on c.locked_by = d.user_id  
+	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
+
+    UPDATE SITE SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
+    UPDATE SITE SET locked = NULL, locked_by = NULL FROM SITE c inner join deleted d on c.locked_by = d.user_id
 
     UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
@@ -13155,7 +13155,7 @@ BEGIN
 
     UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
-    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id
     UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
 
@@ -13166,10 +13166,10 @@ BEGIN
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
@@ -13178,16 +13178,16 @@ BEGIN
     UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
     UPDATE DOC SET last_modified_by = 1 FROM DOC c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 	alter table content_attribute disable trigger td_content_attribute_clean_empty_links
@@ -13195,8 +13195,8 @@ BEGIN
 	alter table content_attribute disable trigger td_reorder_fields
 	alter table content_constraint disable trigger td_content_indexes
 
-	delete content_item_status_history from content_item_status_history cis	
-	inner join content_item ci on ci.content_item_id = cis.content_item_id 
+	delete content_item_status_history from content_item_status_history cis
+	inner join content_item ci on ci.content_item_id = cis.content_item_id
 	inner join content c on c.content_id = ci.content_id
 	inner join deleted d on d.site_id = c.site_id
 
@@ -13205,7 +13205,7 @@ BEGIN
 	inner join deleted d on d.site_id = c.site_id
 
 	delete content from content c
-	inner join deleted d on d.site_id = c.site_id	 	
+	inner join deleted d on d.site_id = c.site_id
 
 	delete page_template from page_template pt
 	inner join deleted d on d.site_id = pt.site_id
@@ -13246,19 +13246,19 @@ begin
 declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @prefixed_fields nvarchar(max)
 declare @content_id numeric
 select @content_id = content_id from content_item ci where ci.CONTENT_ITEM_ID = @item_id
- 
+
 if @content_id is not null
 begin
 	select @fields = dbo.qp_get_content_field_list(@content_id, '')
 	select @prefixed_fields = dbo.qp_get_content_field_list(@content_id, 'pt.')
-	
-	
+
+
 	if @version_id = 0
 		set @version_sql = ''
 	else
 		set @version_sql = ' and vcd.CONTENT_ITEM_VERSION_ID= @version_id'
-	
-	
+
+
 	set @sql = N'select pt.content_item_id, pt.version_id, pt.created AS modified, pt.created_by as last_modified_by, ' + @prefixed_fields  + N' from
 	(
 	select civ.CONTENT_ITEM_ID, civ.CREATED, civ.CREATED_BY, vcd.CONTENT_ITEM_VERSION_ID as version_id, ca.ATTRIBUTE_NAME, dbo.qp_get_version_data(vcd.ATTRIBUTE_ID, vcd.CONTENT_ITEM_VERSION_ID) as data from CONTENT_ATTRIBUTE ca
@@ -13340,11 +13340,11 @@ ALTER Function [dbo].[qp_is_entity_accessible](
   @user_id numeric (18,0)=0,
   @group_id numeric (18,0)=0,
   @start_level int=1,
-  @end_level int=4,  
+  @end_level int=4,
   @return_level int=0
 )
 Returns int
-AS 
+AS
 
 BEGIN
 
@@ -13359,38 +13359,38 @@ if @user_id > 0 and dbo.qp_is_user_admin(@user_id)>0 return @FullAccessLevel
 /***********************************/
 /**** Declare Table Variables   ****/
 /***********************************/
-declare @ChildGroups table 
-( 
+declare @ChildGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 
-declare @ParentGroups table 
-( 
+declare @ParentGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 
-declare @UsedGroups table 
-( 
+declare @UsedGroups table
+(
 	group_id numeric(18,0)
-) 
+)
 
-declare @TempParentGroups table 
-( 
+declare @TempParentGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 
-declare @Entities table 
-( 
+declare @Entities table
+(
 	entity_id numeric(18,0) NOT NULL,
     permission_level numeric(18,0) NOT NULL,
     user_id numeric(18,0) NULL,
     group_id numeric(18,0) NULL
-) 
+)
 /***********************************/
 
 declare @content_id decimal
 
-  If @entity_name='content' 
+  If @entity_name='content'
 	  Begin
 		 insert into @Entities (entity_id, permission_level, user_id, group_id)
 		   select content_id, permission_level, user_id, group_id from content_access_permlevel
@@ -13399,7 +13399,7 @@ declare @content_id decimal
   If @entity_name='content_item'
 	  Begin
 		 declare @use_own_security bit
-		 select @use_own_security = c.allow_items_permission, @content_id = ci.content_id 
+		 select @use_own_security = c.allow_items_permission, @content_id = ci.content_id
 			from content c with(nolock) inner join content_item ci with(nolock) on c.content_id = ci.content_id where ci.content_item_id = @entity_id
 		 if (@use_own_security = 1)
 			insert into @Entities (entity_id, permission_level, user_id, group_id)
@@ -13408,7 +13408,7 @@ declare @content_id decimal
 		else
 			insert into @Entities (entity_id, permission_level, user_id, group_id)
 				select @entity_id, permission_level, user_id, group_id from content_access_permlevel
-				where content_id = @content_id		
+				where content_id = @content_id
 	  End
   If @entity_name='site'
 	  Begin
@@ -13425,10 +13425,10 @@ declare @content_id decimal
   If @entity_name='content_folder'
 	  Begin
 		select @content_id = content_id from content_folder with(nolock) where folder_id = @entity_id
-		
+
 		insert into @Entities (entity_id, permission_level, user_id, group_id)
 			select @entity_id, permission_level, user_id, group_id from content_access_permlevel
-			where content_id = @content_id	
+			where content_id = @content_id
 
       End
   If @entity_name='workflow'
@@ -13461,7 +13461,7 @@ Begin
    select @maxLevel = IsNull(max(permission_level),@nothing_found) from @Entities where
        user_id = @user_id
 
-   Select @current_result = @maxLevel   
+   Select @current_result = @maxLevel
 
    if @maxLevel != @nothing_found
    Begin
@@ -13469,8 +13469,8 @@ Begin
       if @maxLevel < @start_level or @maxLevel> @end_level return @no_access
       if @maxLevel >= @start_level And @maxLevel <= @end_level return @yes_access
    End
-   
-   insert into @ChildGroups (group_id) select distinct group_id from user_group_bind where user_id = @user_id   
+
+   insert into @ChildGroups (group_id) select distinct group_id from user_group_bind where user_id = @user_id
 End
 
 if @group_id > 0 AND @user_id <= 0
@@ -13481,12 +13481,12 @@ End
 if (select count(*) from @ChildGroups) = 0
 Begin
    return @current_result
-End 
+End
 
 select @maxLevel = IsNull(max(permission_level),@nothing_found) from @Entities where
        group_id in (select group_id from @ChildGroups)
 
-Select @current_result = @maxLevel  
+Select @current_result = @maxLevel
 
 if @maxLevel != @nothing_found
 Begin
@@ -13505,11 +13505,11 @@ BEGIN
 
     /* need to check that parent groups are not appearing in child groups */
     insert into @TempParentGroups (group_id) select pg.group_id from @ParentGroups pg where pg.group_id not in(select cg.group_id from @ChildGroups cg) and pg.group_id not in (select group_id from @UsedGroups)
-    
-	select @maxLevel = IsNull(max(permission_level),@nothing_found) from @Entities where
-		   group_id in (select group_id from @TempParentGroups) 
 
-    Select @current_result = @maxLevel  
+	select @maxLevel = IsNull(max(permission_level),@nothing_found) from @Entities where
+		   group_id in (select group_id from @TempParentGroups)
+
+    Select @current_result = @maxLevel
 
 	if @maxLevel != @nothing_found
 	Begin
@@ -13554,27 +13554,27 @@ CREATE FUNCTION [dbo].[qp_get_user_weight](@user_id numeric, @workflow_id numeri
 AS
 BEGIN
 	declare @weight numeric
-	
+
 	SELECT @weight = max(st.weight) FROM workflow_rules wr WITH(NOLOCK)
 		INNER JOIN status_type st WITH(NOLOCK) ON wr.successor_status_id = st.status_type_id
 		WHERE wr.workflow_id = @workflow_id and wr.user_id = @user_id
 	if @weight is null
 	begin
 		declare @groups table ( id numeric primary key );
-		
-		WITH groups(group_id) AS 
+
+		WITH groups(group_id) AS
 		(select group_id from user_group_bind where user_id = @user_id
 		UNION ALL select parent_group_id from group_to_group gg inner join groups g on g.group_id = gg.child_group_id)
 		insert into @groups
 		select distinct * from groups;
-		
-		SELECT @weight = max(st.weight) FROM workflow_rules wr WITH(NOLOCK) 
-		INNER JOIN status_type st WITH(NOLOCK) ON wr.successor_status_id = st.status_type_id 
+
+		SELECT @weight = max(st.weight) FROM workflow_rules wr WITH(NOLOCK)
+		INNER JOIN status_type st WITH(NOLOCK) ON wr.successor_status_id = st.status_type_id
 		WHERE wr.workflow_id = @workflow_id and wr.group_id in (select id from @groups)
 	end
-	
-	return @weight	
-	
+
+	return @weight
+
 END
 GO
 
@@ -13597,7 +13597,7 @@ exec dbo.qp_drop_existing 'td_item_to_item', 'IsTrigger'
 GO
 
 CREATE TRIGGER [dbo].[td_item_to_item] ON [dbo].[item_to_item] AFTER DELETE
-AS 
+AS
 BEGIN
 
 delete item_to_item from item_to_item ii inner join deleted d on ii.link_id = d.link_id and ii.l_item_id = d.r_item_id and ii.r_item_id = d.l_item_id
@@ -13607,14 +13607,14 @@ GO
 
 ALTER TRIGGER [dbo].[td_item_link_united_full] ON [dbo].[item_link_united_full] INSTEAD OF DELETE
 AS BEGIN
-  delete item_link_async from item_link_async ii 
+  delete item_link_async from item_link_async ii
   inner join deleted d on d.link_id = ii.link_id and (
   (d.item_id = ii.item_id and d.linked_item_id = ii.linked_item_id)
   or
   (d.item_id = ii.linked_item_id and d.linked_item_id = ii.item_id)
   )
 
-  delete item_to_item from item_to_item ii 
+  delete item_to_item from item_to_item ii
   inner join deleted d on d.link_id = ii.link_id and d.item_id = ii.l_item_id and d.linked_item_id = ii.r_item_id
 END
 GO
@@ -13642,7 +13642,7 @@ GO
 
 
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[CONTENT_DATA]') AND name = N'ix_attribute_id')
-CREATE NONCLUSTERED INDEX [ix_attribute_id] ON [dbo].[CONTENT_DATA] 
+CREATE NONCLUSTERED INDEX [ix_attribute_id] ON [dbo].[CONTENT_DATA]
 (
 	[ATTRIBUTE_ID] ASC
 )
@@ -13676,12 +13676,12 @@ BEGIN
 		IF EXISTS (select * From sys.fulltext_index_columns where object_id in (select object_id From sys.objects where name = 'CONTENT_DATA' ) and language_id = 1033) AND EXISTS(select * from sys.fulltext_languages where lcid = 1049)
 		BEGIN
 			declare @sql nvarchar(max)
-			ALTER FULLTEXT INDEX ON [dbo].[CONTENT_DATA] DROP ([BLOB_DATA]) 
+			ALTER FULLTEXT INDEX ON [dbo].[CONTENT_DATA] DROP ([BLOB_DATA])
 			set @sql = 'ALTER FULLTEXT INDEX ON [dbo].[CONTENT_DATA] ADD ([BLOB_DATA] LANGUAGE 1049)'
 			exec sp_executesql @sql
-			ALTER FULLTEXT INDEX ON [dbo].[CONTENT_DATA] DROP ([DATA]) 
+			ALTER FULLTEXT INDEX ON [dbo].[CONTENT_DATA] DROP ([DATA])
 			set @sql = 'ALTER FULLTEXT INDEX ON [dbo].[CONTENT_DATA] ADD ([DATA] LANGUAGE 1049)'
-			exec sp_executesql @sql			
+			exec sp_executesql @sql
 		END
 		ALTER FULLTEXT CATALOG QPublishingFullTextCatalog REORGANIZE
 	END
@@ -13732,7 +13732,7 @@ GO
 -- ***********************************************
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 	alter table content_attribute disable trigger td_content_attribute_clean_empty_links
@@ -13750,9 +13750,9 @@ BEGIN
 	delete from item_to_item where link_id in
 	(select link_id from site_content_link scl
 	inner join deleted d on d.site_id = scl.site_id)
-	
-	delete content_item_status_history from content_item_status_history cis	
-	inner join content_item ci on ci.content_item_id = cis.content_item_id 
+
+	delete content_item_status_history from content_item_status_history cis
+	inner join content_item ci on ci.content_item_id = cis.content_item_id
 	inner join content c on c.content_id = ci.content_id
 	inner join deleted d on d.site_id = c.site_id
 
@@ -13762,7 +13762,7 @@ BEGIN
 
 	delete content from content c
 	inner join deleted d on d.site_id = c.site_id
-	
+
 	update [object] set object_format_id = null from [object] obj
 	inner join page_template pt on obj.page_template_id = pt.page_template_id
 	inner join deleted d on d.site_id = pt.site_id
@@ -13770,7 +13770,7 @@ BEGIN
 	delete page_template from page_template pt
 	inner join deleted d on d.site_id = pt.site_id
 
-	delete site from site s 	
+	delete site from site s
 	inner join deleted d on d.site_id = s.site_id
 
 
@@ -13818,21 +13818,21 @@ BEGIN
 		)
 
 		insert into @links (link_id, attribute_id)
-		select d.link_id, d.attribute_id from deleted d inner join inserted i on d.attribute_id = i.attribute_id where d.link_id IS NOT NULL AND (i.link_id IS NULL OR i.link_id <> d.link_id) 
+		select d.link_id, d.attribute_id from deleted d inner join inserted i on d.attribute_id = i.attribute_id where d.link_id IS NOT NULL AND (i.link_id IS NULL OR i.link_id <> d.link_id)
 
 		set @i = 1
 		select @count = count(id) from @links
-		set @version = dbo.qp_get_version_control()		
+		set @version = dbo.qp_get_version_control()
 
 		while @i < @count + 1
 		begin
 			select @link_id = link_id, @attribute_id = attribute_id from @links where id = @i
-			
+
 			exec qp_drop_link_with_check @link_id
-			
+
 			if @version is not null
 			   DELETE FROM item_to_item_version WHERE attribute_id = @attribute_id
-			
+
 			set @i = @i + 1
 		end
 	end
@@ -13856,13 +13856,13 @@ GO
 -- ***********************************************
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'SEND_NOCACHE_HEADERS' and TABLE_NAME = 'PAGE_TEMPLATE')
-ALTER TABLE PAGE_TEMPLATE 
+ALTER TABLE PAGE_TEMPLATE
 	ADD SEND_NOCACHE_HEADERS BIT NOT NULL CONSTRAINT DF_SEND_NOCACHE_HEADERS DEFAULT (1)
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'SEND_NOCACHE_HEADERS' and TABLE_NAME = 'PAGE')
-ALTER TABLE PAGE 
-	ADD SEND_NOCACHE_HEADERS BIT NULL 
+ALTER TABLE PAGE
+	ADD SEND_NOCACHE_HEADERS BIT NULL
 GO
 
 INSERT INTO SYSTEM_INFO
@@ -13874,7 +13874,7 @@ GO
 PRINT '7.8.0.17 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.8.0.18
 -- Use english quotes
@@ -13886,13 +13886,13 @@ exec qp_update_translations 'Use english typografic rules', 'Использов�
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'USE_ENGLISH_QUOTES' and TABLE_NAME = 'SITE')
-ALTER TABLE SITE 
+ALTER TABLE SITE
 	ADD USE_ENGLISH_QUOTES BIT NOT NULL CONSTRAINT DF_USE_ENGLISH_QUOTES DEFAULT (0)
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'USE_ENGLISH_QUOTES' and TABLE_NAME = 'CONTENT_ATTRIBUTE')
-ALTER TABLE CONTENT_ATTRIBUTE 
-	ADD USE_ENGLISH_QUOTES BIT NULL 
+ALTER TABLE CONTENT_ATTRIBUTE
+	ADD USE_ENGLISH_QUOTES BIT NULL
 GO
 
 INSERT INTO SYSTEM_INFO
@@ -13904,25 +13904,25 @@ GO
 PRINT '7.8.0.18 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.8.0.19
 -- Fix union_attrs primary key
 -- **************************************
 
-IF NOT EXISTS (SELECT * FROM  INFORMATION_SCHEMA.TABLE_CONSTRAINTS T INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE K ON T.CONSTRAINT_NAME = K.CONSTRAINT_NAME  
+IF NOT EXISTS (SELECT * FROM  INFORMATION_SCHEMA.TABLE_CONSTRAINTS T INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE K ON T.CONSTRAINT_NAME = K.CONSTRAINT_NAME
 WHERE T.CONSTRAINT_NAME = 'PK_UNION_ATTRS' AND K.COLUMN_NAME = 'union_attr_id')
 BEGIN
 
 	ALTER TABLE dbo.union_attrs
 		DROP CONSTRAINT PK_union_attrs
-	
+
 	ALTER TABLE dbo.union_attrs ADD CONSTRAINT
-	PK_union_attrs PRIMARY KEY CLUSTERED 
+	PK_union_attrs PRIMARY KEY CLUSTERED
 	(
 	virtual_attr_id,
 	union_attr_id
-	) 
+	)
 
 END
 GO
@@ -13936,7 +13936,7 @@ GO
 PRINT '7.8.0.19 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.8.0.20
 -- Hide custom tabs for selected contents
@@ -13948,7 +13948,7 @@ BEGIN
 	CREATE TABLE [dbo].[CONTENT_TAB_BIND](
 		[CONTENT_ID] [numeric](18, 0) NOT NULL,
 		[TAB_ID] [numeric](18, 0) NOT NULL,
-	PRIMARY KEY CLUSTERED 
+	PRIMARY KEY CLUSTERED
 	(
 		[CONTENT_ID] ASC,
 		[TAB_ID] ASC
@@ -13961,12 +13961,12 @@ BEGIN
 	ALTER TABLE [dbo].[CONTENT_TAB_BIND]  WITH CHECK ADD  CONSTRAINT [FK_CONTENT_TAB_BIND_TAB_ID] FOREIGN KEY([TAB_ID])
 	REFERENCES [dbo].[TABS] ([TAB_ID])
 	ON DELETE CASCADE
-	
+
 END
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content] ON [dbo].[CONTENT] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 alter table content_item disable trigger td_delete_item
 
@@ -13983,10 +13983,10 @@ delete content_to_content from content_to_content cc
 inner join deleted d on d.content_id = cc.r_content_id or d.content_id = cc.l_content_id
 
 delete container from container c
-inner join deleted d on d.content_id = c.content_id 
+inner join deleted d on d.content_id = c.content_id
 
 delete content_form from content_form cf
-inner join deleted d on d.content_id = cf.content_id 
+inner join deleted d on d.content_id = cf.content_id
 
 delete content_item from content_item ci
 inner join deleted d on d.content_id = ci.content_id
@@ -14001,7 +14001,7 @@ END
 GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'EXCLUDED' and TABLE_NAME = 'TABS')
-ALTER TABLE TABS 
+ALTER TABLE TABS
 	ADD EXCLUDED BIT NOT NULL CONSTRAINT DF_TABS_EXCLUDED DEFAULT (0)
 GO
 
@@ -14035,7 +14035,7 @@ BEGIN
 	END
 	return @result
 END
-GO 
+GO
 
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
@@ -14046,7 +14046,7 @@ GO
 PRINT '7.8.0.20 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.8.0.21
 -- Checking child articles
@@ -14071,20 +14071,20 @@ BEGIN
 	)
 	insert into @relatedFields(content_id, attribute_name)
 	select content_id, attribute_name from content_attribute where attribute_type_id = 11 and related_attribute_id in (select attribute_id from content_attribute ca where ca.content_id = @baseContentId)
-	
+
 	declare @content_id numeric, @attribute_name nvarchar(255), @sql nvarchar(max)
 
 	declare @total numeric, @i numeric
 	select @total = count(id) from @relatedFields
 	set @i = 1
-	
+
 	while @i <= @total
 	begin
 		declare @result numeric
 		select @content_id = content_id, @attribute_name = attribute_name from @relatedFields where id = @i
-		set @sql = N'select @result = count(content_item_id) from content_' + cast(@content_id as nvarchar) + '_united where [' + @attribute_name + '] = @value' 
-		exec sp_executesql @sql, N'@result numeric output, @value numeric', @result = @result out, @value = @article_id	
- 		set @count = @count + @result 
+		set @sql = N'select @result = count(content_item_id) from content_' + cast(@content_id as nvarchar) + '_united where [' + @attribute_name + '] = @value'
+		exec sp_executesql @sql, N'@result numeric output, @value numeric', @result = @result out, @value = @article_id
+ 		set @count = @count + @result
 		set @i = @i + 1
 	end
 END
@@ -14101,7 +14101,7 @@ GO
 PRINT '7.8.0.21 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.8.0.22
 -- QP8 interface
@@ -14356,7 +14356,7 @@ GO
 
 
 -- End of views deleting
- 
+
 
 -- Fields deleting
 
@@ -14621,7 +14621,7 @@ CREATE TABLE [dbo].[ACTION_TYPE](
 	[CODE] [nvarchar](50) NOT NULL,
 	[REQUIRED_PERMISSION_LEVEL_ID] [numeric](18, 0) NOT NULL,
 	[ITEMS_AFFECTED] tinyint NOT NULL CONSTRAINT DF_ACTION_TYPE_ITEMS_AFFECTED DEFAULT 1,
- CONSTRAINT [PK_ACTION_TYPE] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ACTION_TYPE] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14636,7 +14636,7 @@ GO
 ALTER TABLE [dbo].[ACTION_TYPE] CHECK CONSTRAINT [FK_ACTION_TYPE_PERMISSION_LEVEL]
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX [IX_ACTION_TYPE_CODE] ON [dbo].[ACTION_TYPE] 
+CREATE UNIQUE NONCLUSTERED INDEX [IX_ACTION_TYPE_CODE] ON [dbo].[ACTION_TYPE]
 (
 	[CODE] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14671,7 +14671,7 @@ CREATE TABLE [dbo].[ENTITY_TYPE](
 	[TAB_ID] [numeric](18, 0) NULL,
 	[DISABLED] [bit] NOT NULL,
 	[CANCEL_ACTION_ID] [int] NULL,
- CONSTRAINT [PK_ENTITY_TYPE] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ENTITY_TYPE] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14702,7 +14702,7 @@ GO
 ALTER TABLE [dbo].[ENTITY_TYPE] ADD  CONSTRAINT [DF_ENTITY_TYPE_DISABLED]  DEFAULT ((0)) FOR [DISABLED]
 GO
 
-CREATE NONCLUSTERED INDEX [IX_ENTITY_TYPE_PARENT_ID_ORDER] ON [dbo].[ENTITY_TYPE] 
+CREATE NONCLUSTERED INDEX [IX_ENTITY_TYPE_PARENT_ID_ORDER] ON [dbo].[ENTITY_TYPE]
 (
 	[PARENT_ID] ASC,
 	[ORDER] ASC
@@ -14712,7 +14712,7 @@ INCLUDE (DISABLED)
 WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX [IX_ENTITY_TYPE_CODE] ON [dbo].[ENTITY_TYPE] 
+CREATE UNIQUE NONCLUSTERED INDEX [IX_ENTITY_TYPE_CODE] ON [dbo].[ENTITY_TYPE]
 (
 	[CODE] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14728,7 +14728,7 @@ CREATE TABLE [dbo].[VIEW_TYPE](
 	[NAME] [nvarchar](50) NOT NULL,
 	[CODE] [nvarchar](50) NOT NULL,
 	[ICON] [nvarchar](255) NULL,
- CONSTRAINT [PK_VIEW_TYPE] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_VIEW_TYPE] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14736,7 +14736,7 @@ CREATE TABLE [dbo].[VIEW_TYPE](
 
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX [IX_VIEW_TYPE_CODE] ON [dbo].[VIEW_TYPE] 
+CREATE UNIQUE NONCLUSTERED INDEX [IX_VIEW_TYPE_CODE] ON [dbo].[VIEW_TYPE]
 (
 	[CODE] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14769,7 +14769,7 @@ CREATE TABLE [dbo].[BACKEND_ACTION](
 	[ALLOW_PREVIEW] bit NOT NULL,
 	[NEXT_SUCCESSFUL_ACTION_ID]  [int] NULL,
 	[NEXT_FAILED_ACTION_ID] [int] NULL,
- CONSTRAINT [PK_BACKEND_ACTION] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_BACKEND_ACTION] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14838,13 +14838,13 @@ GO
 ALTER TABLE [dbo].[ENTITY_TYPE] CHECK CONSTRAINT [FK_ENTITY_TYPE_BACKEND_ACTION1]
 GO
 
-CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_PARENT_ID] ON [dbo].[BACKEND_ACTION] 
+CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_PARENT_ID] ON [dbo].[BACKEND_ACTION]
 (
 	[PARENT_ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX [IX_BACKEND_ACTION_CODE] ON [dbo].[BACKEND_ACTION] 
+CREATE UNIQUE NONCLUSTERED INDEX [IX_BACKEND_ACTION_CODE] ON [dbo].[BACKEND_ACTION]
 (
 	[CODE] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14861,7 +14861,7 @@ CREATE TABLE [dbo].[ACTION_VIEW](
 	[ORDER] [int] NOT NULL,
 	[CONTROLLER_ACTION_URL] [nvarchar](255) NULL,
 	[PREVENT_DEFAULT_BEHAVIOR] [bit] NOT NULL
- CONSTRAINT [PK_ACTION_VIEW] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ACTION_VIEW] PRIMARY KEY CLUSTERED
 (
 	[ACTION_ID] ASC, [TYPE_ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14894,7 +14894,7 @@ GO
 CREATE TABLE [dbo].[CONTEXT_MENU](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[CODE] [nvarchar](50) NOT NULL,
- CONSTRAINT [PK_CONTEXT_MENU] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_CONTEXT_MENU] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14929,7 +14929,7 @@ CREATE TABLE [dbo].[CONTEXT_MENU_ITEM](
 	[ICON] [nvarchar](255) NULL,
 	[ICON_DISABLED] [nvarchar](255) NULL,
 	[BOTTOM_SEPARATOR] [bit] NOT NULL,
- CONSTRAINT [PK_CONTEXT_MENU_ITEM] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_CONTEXT_MENU_ITEM] PRIMARY KEY CLUSTERED
 (
 	[CONTEXT_MENU_ID] ASC,
 	[ACTION_ID] ASC
@@ -14955,7 +14955,7 @@ GO
 ALTER TABLE [dbo].[CONTEXT_MENU_ITEM] ADD  CONSTRAINT [DF_CONTEXT_MENU_ITEM_BOTTOM_SEPARATOR]  DEFAULT ((0)) FOR [BOTTOM_SEPARATOR]
 GO
 
-CREATE UNIQUE NONCLUSTERED INDEX [IX_CONTEXT_MENU_CODE] ON [dbo].[CONTEXT_MENU] 
+CREATE UNIQUE NONCLUSTERED INDEX [IX_CONTEXT_MENU_CODE] ON [dbo].[CONTEXT_MENU]
 (
 	[CODE] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -14974,7 +14974,7 @@ CREATE TABLE [dbo].[ACTION_TOOLBAR_BUTTON](
 	[ICON] [nvarchar](255) NULL,
 	[ICON_DISABLED] [nvarchar](255) NULL,
 	[IS_COMMAND] [bit] NOT NULL,
- CONSTRAINT [PK_ACTION_TOOLBAR_BUTTON] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ACTION_TOOLBAR_BUTTON] PRIMARY KEY CLUSTERED
 (
 	[PARENT_ACTION_ID] ASC,
 	[ACTION_ID] ASC
@@ -15005,18 +15005,18 @@ GO
 
 -- Fields creating
 
-ALTER TABLE ATTRIBUTE_TYPE 
+ALTER TABLE ATTRIBUTE_TYPE
 ADD ICON nvarchar(255) NULL
 GO
 
-ALTER TABLE OBJECT_TYPE 
+ALTER TABLE OBJECT_TYPE
 ADD ICON nvarchar(255) NULL
 GO
 
-update ATTRIBUTE_TYPE set ICON = REPLACE(type_image, 'images/types/', '') 
+update ATTRIBUTE_TYPE set ICON = REPLACE(type_image, 'images/types/', '')
 GO
 
-update OBJECT_TYPE set ICON = REPLACE(image_name, 'objects/', '') 
+update OBJECT_TYPE set ICON = REPLACE(image_name, 'objects/', '')
 GO
 
 update ATTRIBUTE_TYPE set ICON = 'date.gif' where TYPE_NAME = 'Date'
@@ -15029,7 +15029,7 @@ GO
 -- Views creating
 
 CREATE VIEW dbo.CONTENT_ATTRIBUTE_TYPE AS
-select at.DATABASE_TYPE, at.INPUT_TYPE, at.ICON, at.TYPE_NAME, ca.* from CONTENT_ATTRIBUTE ca inner join ATTRIBUTE_TYPE at on ca.ATTRIBUTE_TYPE_ID = at.ATTRIBUTE_TYPE_ID 
+select at.DATABASE_TYPE, at.INPUT_TYPE, at.ICON, at.TYPE_NAME, ca.* from CONTENT_ATTRIBUTE ca inner join ATTRIBUTE_TYPE at on ca.ATTRIBUTE_TYPE_ID = at.ATTRIBUTE_TYPE_ID
 GO
 
 
@@ -15039,13 +15039,13 @@ GO
 
 
 CREATE VIEW dbo.TEMPLATE_OBJECT AS
-select o.*, ot.ICON from OBJECT o 
+select o.*, ot.ICON from OBJECT o
 INNER JOIN OBJECT_TYPE ot on o.object_type_id = ot.object_type_id
 WHERE o.PAGE_ID IS NULL
 GO
 
 CREATE VIEW dbo.PAGE_OBJECT AS
-select o.*, ot.ICON from OBJECT o 
+select o.*, ot.ICON from OBJECT o
 INNER JOIN OBJECT_TYPE ot on o.object_type_id = ot.object_type_id
 WHERE o.PAGE_ID IS NOT NULL
 GO
@@ -15072,7 +15072,7 @@ AS
 	SELECT
 		et.ID,
 		et.CODE,
-		et.PARENT_ID, 
+		et.PARENT_ID,
 		pet.code AS PARENT_CODE,
 		CAST(0 AS bit) AS IS_FOLDER,
 		CAST('' AS nvarchar(255)) AS ICON,
@@ -15105,20 +15105,20 @@ GO
 CREATE VIEW [dbo].[VW_ACTION_TOOLBAR_BUTTON_VIRTUAL]
 AS
 	SELECT
-		ba.ID AS ACTION_ID,		
+		ba.ID AS ACTION_ID,
 		ba.CODE AS ACTION_CODE,
 		bat.CODE AS ACTION_TYPE_CODE,
 		ba2.ID AS PARENT_ACTION_ID,
-		ba2.CODE AS PARENT_ACTION_CODE,		
+		ba2.CODE AS PARENT_ACTION_CODE,
 		atb.NAME AS NAME,
 		bat.ITEMS_AFFECTED,
-		atb.[ORDER], 
+		atb.[ORDER],
 		atb.ICON,
 		atb.ICON_DISABLED,
-		atb.IS_COMMAND	
-	FROM 
+		atb.IS_COMMAND
+	FROM
 		ACTION_TOOLBAR_BUTTON AS atb
-	INNER JOIN 
+	INNER JOIN
 		BACKEND_ACTION AS ba
 	ON
 		ba.ID = atb.ACTION_ID
@@ -15129,7 +15129,7 @@ AS
 	INNER JOIN
 		BACKEND_ACTION AS ba2
 	ON
-		ba2.ID = atb.PARENT_ACTION_ID 
+		ba2.ID = atb.PARENT_ACTION_ID
 	WHERE
 		(1 = 0)
 GO
@@ -15138,8 +15138,8 @@ CREATE VIEW dbo.CONTENT_GROUP_NAME AS
 	select content_group_id as id, name from content_group
 GO
 
-CREATE VIEW dbo.V_USER_QUERY_ATTRS AS 
-	select vca.ATTRIBUTE_ID as USER_QUERY_ATTR_ID, ca.ATTRIBUTE_ID BASE_ATTR_ID 
+CREATE VIEW dbo.V_USER_QUERY_ATTRS AS
+	select vca.ATTRIBUTE_ID as USER_QUERY_ATTR_ID, ca.ATTRIBUTE_ID BASE_ATTR_ID
 	from user_query_attrs uqa
 	join CONTENT_ATTRIBUTE vca on uqa.virtual_content_id = vca.CONTENT_ID
 	join CONTENT_ATTRIBUTE ca on uqa.user_query_attr_id = ca.ATTRIBUTE_ID
@@ -15149,14 +15149,14 @@ GO
 CREATE VIEW dbo.VIRTUAL_ATTR_BASE_ATTR_RELATION AS
 	WITH V2BREL AS
 		(SELECT [USER_QUERY_ATTR_ID] as VIRTUAL_ATTR_ID
-			  ,[BASE_ATTR_ID] as BASE_ATTR_ID      
+			  ,[BASE_ATTR_ID] as BASE_ATTR_ID
 		FROM V_USER_QUERY_ATTRS
 		UNION ALL
 		SELECT [virtual_attr_id] as VIRTUAL_ATTR_ID
-			  ,[union_attr_id] as BASE_ATTR_ID      
+			  ,[union_attr_id] as BASE_ATTR_ID
 		FROM union_attrs
 		UNION ALL
-		select ATTRIBUTE_ID as VIRTUAL_ATTR_ID, 
+		select ATTRIBUTE_ID as VIRTUAL_ATTR_ID,
 		persistent_attr_id as BASE_ATTR_ID
 		from CONTENT_ATTRIBUTE
 		where persistent_attr_id is not null)
@@ -15171,10 +15171,10 @@ GO
 
 CREATE VIEW [dbo].[VIRTUAL_CONTENT_RELATION] AS
 	select  DISTINCT
-			PA.CONTENT_ID AS BASE_CONTENT_ID,		
+			PA.CONTENT_ID AS BASE_CONTENT_ID,
 			A.CONTENT_ID AS VIRTUAL_CONTENT_ID
 			from CONTENT_ATTRIBUTE A
-			JOIN CONTENT_ATTRIBUTE PA ON A.persistent_attr_id = PA.ATTRIBUTE_ID		
+			JOIN CONTENT_ATTRIBUTE PA ON A.persistent_attr_id = PA.ATTRIBUTE_ID
 	UNION
 	SELECT [union_content_id] AS BASE_CONTENT_ID,
 		   [virtual_content_id] AS VIRTUAL_CONTENT_ID
@@ -15201,7 +15201,7 @@ begin
 end
 go
 
-create function [dbo].[qp_tab_access_level](@user_id numeric, @tab_id numeric) returns int 
+create function [dbo].[qp_tab_access_level](@user_id numeric, @tab_id numeric) returns int
 as
 begin
 	declare @result int, @parent_tab_id decimal
@@ -15210,7 +15210,7 @@ begin
 	else
 	begin
 		select @result = dbo.qp_is_entity_accessible('tab', @tab_id, @user_id, 0, 0, 0, 1)
-		if @result = -1 
+		if @result = -1
 		begin
 			select @result = dbo.qp_tab_access_level(@user_id, (select parent_tab_id from tabs where tab_id = @tab_id))
 		end
@@ -15229,14 +15229,14 @@ begin
 	else if @entity_code = 'virtual_content'
 		set @old_code = 'content'
 	else if @entity_code = 'site_folder'
-		set @old_code = 'folder'	
+		set @old_code = 'folder'
 	else if @entity_code in ('content', 'site', 'content_folder')
 		set @old_code = @entity_code
-	
+
 	declare @result int
 	if @old_code is null
 		select @result = permission_level from PERMISSION_LEVEL where PERMISSION_LEVEL_NAME = 'Full Access'
-	else	
+	else
 		select @result = dbo.qp_is_entity_accessible(@old_code, @entity_id, @user_id, 0, 0, 0, 1)
 	return @result
 end
@@ -15373,13 +15373,13 @@ create function dbo.qp_is_action_accessible(@user_id int, @action_id int) return
 AS
 begin
 	declare @tab_id numeric, @entity_type_id int, @level int, @req_level int, @result int
-	
-	select @tab_id = tab_id, @entity_type_id = [TYPE_ID], @req_level = pl.permission_level 
-	from BACKEND_ACTION ba 
+
+	select @tab_id = tab_id, @entity_type_id = [TYPE_ID], @req_level = pl.permission_level
+	from BACKEND_ACTION ba
 	INNER JOIN ACTION_TYPE at on ba.type_id = at.id
 	INNER JOIN PERMISSION_LEVEL pl on at.required_permission_level_id = pl.permission_level_id
 	where ba.ID = @action_id
-	
+
 	if @tab_id is null
 		select @tab_id = tab_id from ENTITY_TYPE where ID = @entity_type_id
 
@@ -15392,25 +15392,25 @@ begin
 			set @result = 1
 	end
 	return @result
-end 
+end
 GO
 
 CREATE FUNCTION [dbo].[qp_is_action_accessible_by_action_code]
 (
 	@user_id int,
 	@action_code nvarchar(50)
-)	
+)
 RETURNS BIT
 AS
 BEGIN
 	declare @tab_id numeric, @entity_type_id int, @level int, @req_level int, @result int
-	
-	select @tab_id = tab_id, @entity_type_id = [TYPE_ID], @req_level = pl.permission_level 
-	from BACKEND_ACTION ba 
+
+	select @tab_id = tab_id, @entity_type_id = [TYPE_ID], @req_level = pl.permission_level
+	from BACKEND_ACTION ba
 	INNER JOIN ACTION_TYPE at on ba.type_id = at.id
 	INNER JOIN PERMISSION_LEVEL pl on at.required_permission_level_id = pl.permission_level_id
 	where ba.CODE = @action_code
-	
+
 	if @tab_id is null
 		select @tab_id = tab_id from ENTITY_TYPE where ID = @entity_type_id
 
@@ -15458,8 +15458,8 @@ begin
 end
 GO
 
-CREATE FUNCTION [dbo].[qp_get_article_relation_columns] 
-(	
+CREATE FUNCTION [dbo].[qp_get_article_relation_columns]
+(
 	@content_id numeric(18,0)
 )
 RETURNS
@@ -15478,35 +15478,35 @@ BEGIN
 		ca.ATTRIBUTE_NAME,
 		rca.ATTRIBUTE_ID AS REL_ATTRIBUTE_ID,
 		rca.ATTRIBUTE_NAME AS REL_ATTRIBUTE_NAME
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	INNER JOIN
 		CONTENT_ATTRIBUTE AS rca
 	ON
 		rca.ATTRIBUTE_ID = ca.RELATED_ATTRIBUTE_ID
-	WHERE 
+	WHERE
 		ca.CONTENT_ID = @content_id
-		AND ca.ATTRIBUTE_TYPE_ID = 
+		AND ca.ATTRIBUTE_TYPE_ID =
 		(
-			SELECT 
-				ATTRIBUTE_TYPE_ID 
-			FROM 
-				ATTRIBUTE_TYPE 
-			WHERE 
+			SELECT
+				ATTRIBUTE_TYPE_ID
+			FROM
+				ATTRIBUTE_TYPE
+			WHERE
 				INPUT_TYPE = 'relation'
 		)
-		AND ca.RELATED_ATTRIBUTE_ID IN 
+		AND ca.RELATED_ATTRIBUTE_ID IN
 		(
-			SELECT 
-				ATTRIBUTE_ID 
-			FROM 
-				CONTENT_ATTRIBUTE 
-			WHERE 
+			SELECT
+				ATTRIBUTE_ID
+			FROM
+				CONTENT_ATTRIBUTE
+			WHERE
 				CONTENT_ID = @content_id
 		)
 	ORDER BY
 		ca.ATTRIBUTE_ID ASC
-		
+
 	RETURN
 END
 GO
@@ -15515,21 +15515,21 @@ CREATE procedure [dbo].[qp_get_toolbar](@user_id int, @action_id int)
 AS
 begin
 	declare @language_id numeric(18, 0)
-	
+
 	set @language_id = dbo.qp_language(@user_id)
 
-	select 
-		ba.CODE, 
-		ba2.CODE AS PARENT_CODE, 
-		dbo.qp_translate(atb.NAME, @language_id) as NAME, 
-		atb.[ORDER], 
+	select
+		ba.CODE,
+		ba2.CODE AS PARENT_CODE,
+		dbo.qp_translate(atb.NAME, @language_id) as NAME,
+		atb.[ORDER],
 		atb.ICON,
 		atb.ICON_DISABLED,
-		atb.IS_COMMAND 
+		atb.IS_COMMAND
 	from ACTION_TOOLBAR_BUTTON atb
 	inner join BACKEND_ACTION ba on atb.ACTION_ID = ba.ID
-	inner join BACKEND_ACTION ba2 on atb.PARENT_ACTION_ID = ba2.ID 
-	WHERE atb.PARENT_ACTION_ID = @action_id and dbo.qp_is_action_accessible(@user_id, atb.ACTION_ID) = 1 
+	inner join BACKEND_ACTION ba2 on atb.PARENT_ACTION_ID = ba2.ID
+	WHERE atb.PARENT_ACTION_ID = @action_id and dbo.qp_is_action_accessible(@user_id, atb.ACTION_ID) = 1
 	order by [ORDER]
 end
 GO
@@ -15547,20 +15547,20 @@ BEGIN
 	select @entity_code = dbo.qp_entity_type_code(entity_type_id) from backend_action where code = @action_code
 
 	SELECT
-		ba.ID AS ACTION_ID,		
+		ba.ID AS ACTION_ID,
 		ba.CODE AS ACTION_CODE,
 		bat.CODE AS ACTION_TYPE_CODE,
 		ba2.ID AS PARENT_ACTION_ID,
-		ba2.CODE AS PARENT_ACTION_CODE, 
+		ba2.CODE AS PARENT_ACTION_CODE,
 		dbo.qp_translate(atb.NAME, @language_id) AS NAME,
 		bat.ITEMS_AFFECTED,
-		atb.[ORDER], 
+		atb.[ORDER],
 		atb.ICON,
 		atb.ICON_DISABLED,
-		atb.IS_COMMAND 
-	FROM 
+		atb.IS_COMMAND
+	FROM
 		ACTION_TOOLBAR_BUTTON AS atb
-	INNER JOIN 
+	INNER JOIN
 		BACKEND_ACTION AS ba
 	ON
 		atb.ACTION_ID = ba.ID
@@ -15571,9 +15571,9 @@ BEGIN
 	INNER JOIN
 		BACKEND_ACTION AS ba2
 	ON
-		atb.PARENT_ACTION_ID = ba2.ID 
+		atb.PARENT_ACTION_ID = ba2.ID
 	WHERE
-		atb.PARENT_ACTION_ID = @action_id 
+		atb.PARENT_ACTION_ID = @action_id
 		AND dbo.qp_is_action_accessible(@user_id, atb.ACTION_ID) = 1
 		AND dbo.qp_action_visible(@user_id, @entity_code, @entity_id, ba.CODE) = 1
 	ORDER BY
@@ -15581,7 +15581,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [dbo].[qp_lock](@code nvarchar(50), @id numeric, @user_id numeric = null) 
+CREATE PROCEDURE [dbo].[qp_lock](@code nvarchar(50), @id numeric, @user_id numeric = null)
 AS
 BEGIN
 	declare @source nvarchar(50), @id_field nvarchar(50)
@@ -15589,12 +15589,12 @@ BEGIN
 	set @locked = getdate()
 	if @user_id is null
 		set @locked = null
-		
-	select 
+
+	select
 		@source = source,
 		@id_field = ID_FIELD
-	from 
-		ENTITY_TYPE 
+	from
+		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 
@@ -15613,9 +15613,9 @@ BEGIN
 	DECLARE @result AS bit
 	DECLARE @sql nvarchar(800)
 	DECLARE @entity_count AS int
-	
+
 	SET @result = 0
-	
+
 	IF (@entity_type_code = 'db')
 		BEGIN
 			SET @result = 1
@@ -15623,13 +15623,13 @@ BEGIN
 	ELSE IF (@entity_type_code = 'article' OR @entity_type_code = 'archive_article')
 		BEGIN
 			DECLARE @is_archive AS bit
-			
+
 			SET @is_archive = 0
 			IF (@entity_type_code = 'archive_article')
 				BEGIN
 					SET @is_archive = 1
 				END
-		
+
 			SET @sql = ''
 			SET @sql = @sql + 'SELECT ' + CHAR(13)
 			SET @sql = @sql + '	@entity_count = COUNT(CONTENT_ITEM_ID) ' + CHAR(13)
@@ -15638,12 +15638,12 @@ BEGIN
 			SET @sql = @sql + 'WHERE ' + CHAR(13)
 			SET @sql = @sql + '	CONTENT_ITEM_ID = ' + CAST(@entity_id AS varchar) + ' ' + CHAR(13)
 			SET @sql = @sql + '	AND ARCHIVE = ' + CAST(@is_archive AS varchar) + ' ' + CHAR(13)
-			
-			EXEC sp_executesql 
-				@sql, 
-				N'@entity_count int OUTPUT', 
+
+			EXEC sp_executesql
+				@sql,
+				N'@entity_count int OUTPUT',
 				@entity_count = @entity_count OUTPUT
-				
+
 			IF (@entity_count > 0)
 				BEGIN
 					SET @result = 1
@@ -15652,7 +15652,7 @@ BEGIN
 	ELSE
 		BEGIN
 			SET NOCOUNT ON
-		
+
 			DECLARE @source AS nvarchar(50)
 			DECLARE @id_field AS nvarchar(50)
 
@@ -15663,9 +15663,9 @@ BEGIN
 				ENTITY_TYPE
 			WHERE
 				CODE = @entity_type_code
-				
+
 			IF (@source IS NOT NULL AND @id_field IS NOT NULL)
-				BEGIN						
+				BEGIN
 					SET @sql = ''
 					SET @sql = @sql + 'SELECT ' + CHAR(13)
 					SET @sql = @sql + '	@entity_count = COUNT(' + @id_field + ') ' + CHAR(13)
@@ -15673,26 +15673,26 @@ BEGIN
 					SET @sql = @sql + '	' + @source + ' ' + CHAR(13)
 					SET @sql = @sql + 'WHERE ' + CHAR(13)
 					SET @sql = @sql + '	' + @id_field + ' = ' + CAST(@entity_id AS varchar) + ' '
-					
-					EXEC sp_executesql 
-						@sql, 
-						N'@entity_count int OUTPUT', 
+
+					EXEC sp_executesql
+						@sql,
+						N'@entity_count int OUTPUT',
 						@entity_count = @entity_count OUTPUT
-						
+
 					IF (@entity_count > 0)
 						BEGIN
 							SET @result = 1
 						END
 				END
-				
+
 			SET NOCOUNT OFF
 		END
-	
+
 	SELECT @result AS result
 END
 GO
 
-CREATE PROCEDURE [dbo].qp_is_entity_exists(@code nvarchar(50), @name nvarchar(255), @id numeric, @parent_id numeric, @recurring_id numeric) 
+CREATE PROCEDURE [dbo].qp_is_entity_exists(@code nvarchar(50), @name nvarchar(255), @id numeric, @parent_id numeric, @recurring_id numeric)
 AS
 BEGIN
 
@@ -15703,14 +15703,14 @@ BEGIN
 	if @recurring_id = 0 set @recurring_id = null
 	set @result = 0
 
-	select 
+	select
 		@source = source,
-		@title_field = TITLE_FIELD, 
+		@title_field = TITLE_FIELD,
 		@parent_id_field = PARENT_ID_FIELD,
 		@id_field = ID_FIELD,
 		@recurring_id_field = RECURRING_ID_FIELD
-	from 
-		ENTITY_TYPE 
+	from
+		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 
@@ -15722,7 +15722,7 @@ BEGIN
 
 	set @sql = 'select @count = count(' + @id_field + ') from ' + @source + ' where ' + @title_field + ' = @name and ' + @id_field + ' <> @id ' + @condition
 	exec sp_executesql @sql, N'@name nvarchar(255), @id numeric, @parent_id numeric, @recurring_id numeric, @count int output', @name = @name, @id = @id, @parent_id = @parent_id, @recurring_id = @recurring_id, @count = @count output
-	
+
 	if @count > 0
 		set @result = 1
 
@@ -15752,7 +15752,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @source nvarchar(50), @id_field nvarchar(50), @title_field nvarchar(50)
 	declare @parent_id_field nvarchar(50), @icon_field nvarchar(50)
@@ -15761,35 +15761,35 @@ begin
 	declare @recurring_id_field nvarchar(50), @source_sp nvarchar(50)
 	declare @id_str nvarchar(10), @parent_id bigint
 	declare @default_action_id int, @context_menu_id int
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
-	select 
+
+	select
 		@source = source,
 		@source_sp = source_sp,
 		@id_field = id_field,
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = dbo.qp_checked_action_id(@user_id, default_action_id),
-		@context_menu_id = CONTEXT_MENU_ID 
-	from 
-		ENTITY_TYPE 
+		@context_menu_id = CONTEXT_MENU_ID
+	from
+		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 
 	set @id_str = CAST(@id as nvarchar(10))
-	
+
 	if @icon_field is null
 		set @icon_field = 'NULL'
 	if @icon_modifier_field is null
-		set @icon_modifier_field = 'NULL'	
-	
+		set @icon_modifier_field = 'NULL'
+
 
 	if @is_folder = 1 or @recurring_id_field is not null
 	begin
@@ -15798,12 +15798,12 @@ begin
 		if @has_item_nodes = 1
 		begin
 			set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-			
-			
+
+
 			-- process recurring --
 			if @recurring_id_field is not null
 			begin
-				if @is_folder = 1 
+				if @is_folder = 1
 					set @where = @parent_id_field + ' = ' + @id_str + ' and ' + @recurring_id_field + ' is null '
 				else
 					set @where = @recurring_id_field + ' = ' + @id_str
@@ -15814,15 +15814,15 @@ begin
 			end
 			else
 				set @where = '1 = 1'
-			
+
 			if @order_field is null
 				set @order = @title_field
 			else
-				set @order = @order_field  
-			
+				set @order = @order_field
+
 		end
-		
-		
+
+
 		if @source_sp is null
 			set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where + ' order by ' + @order
 		else
@@ -15834,30 +15834,30 @@ begin
 				if @is_folder = 1
 					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=0'
 				else
-					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str			
-				
-			
+					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str
+
+
 		end
-		
+
 		insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
 		exec sp_executesql @sql
-		
-		
+
+
 		if @count_only = 0
 		begin
-			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-			update 
+			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+			update
 				@result
-			set 
-				PARENT_ID = @id, 
-				CODE = @code, 
-				IS_FOLDER = 0, 
-				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER), 
-				DEFAULT_ACTION_ID = @default_action_id, 
+			set
+				PARENT_ID = @id,
+				CODE = @code,
+				IS_FOLDER = 0,
+				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
+				DEFAULT_ACTION_ID = @default_action_id,
 				CONTEXT_MENU_ID = @context_menu_id
 		end
 		else
-			select @count = COUNT(ID) from @result	
+			select @count = COUNT(ID) from @result
 	end
 	else
 	begin
@@ -15870,12 +15870,12 @@ begin
 				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), dbo.qp_checked_action_id(@user_id, DEFAULT_ACTION_ID), CONTEXT_MENU_ID From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 order by [Order]
 		else
 			if @code is not null
-				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID = dbo.qp_entity_type_id(@code) and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 	
+				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID = dbo.qp_entity_type_id(@code) and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0
 			else
-				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 	
+				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0
 
 	end
-	
+
 	if @count_only = 0
 	begin
 		declare @i numeric, @total numeric
@@ -15886,7 +15886,7 @@ begin
 		while @i <= @total
 		begin
 			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = Is_folder from @result where NUMBER = @i
-			
+
 			if @local_is_folder = 1
 				exec dbo.qp_expand @user_id, @local_code, @local_parent_id, 1, 1, @count = @children_count output
 			else
@@ -15896,45 +15896,45 @@ begin
 				update @result set has_children = 0 where NUMBER = @i
 			else
 				update @result set has_children = 1 where NUMBER = @i
-			
+
 			set @i = @i + 1
 		end
-		
-		select 
+
+		select
 			TREE_NODE.ID,
-			TREE_NODE.CODE, 
+			TREE_NODE.CODE,
 			CASE WHEN (TREE_NODE.CODE != 'site') THEN
 				TREE_NODE.PARENT_ID
 			ELSE
 				NULL
 			END AS PARENT_ID,
-			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-			TREE_NODE.IS_FOLDER, 
-			TREE_NODE.ICON, 
-			TREE_NODE.TITLE, 
-			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE, 
+			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+			TREE_NODE.IS_FOLDER,
+			TREE_NODE.ICON,
+			TREE_NODE.TITLE,
+			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 			ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 			TREE_NODE.HAS_CHILDREN
 		from
 			@result AS TREE_NODE
 		left outer join
 			BACKEND_ACTION
 		on
-			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 		left outer join
 			ACTION_TYPE
 		on
-			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID	
+			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID
 	end
 end
 GO
 
 CREATE procedure [dbo].[qp_get_node]
-	@user_id numeric = 0, 
-	@code nvarchar(50) = null, 
-	@id bigint = 0, 
-	@parent_id bigint = null, 
+	@user_id numeric = 0,
+	@code nvarchar(50) = null,
+	@id bigint = 0,
+	@parent_id bigint = null,
 	@is_folder bit = 0
 as
 begin
@@ -15954,7 +15954,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @local_id bigint, @local_name nvarchar(50)
 	declare @local_code nvarchar(50), @local_parent_id bigint
@@ -15965,40 +15965,40 @@ begin
 	declare @id_str nvarchar(10)
 	declare @default_action_id int, @folder_default_action_id int
 	declare @context_menu_id int, @folder_context_menu_id int
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	select
 		@local_id = ID,
 		@local_name = NAME,
 		@local_code = CODE,
 		@local_parent_id = PARENT_ID,
-		@source = source, 
-		@source_sp = source_sp, 
-		@id_field = id_field, 
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@source = source,
+		@source_sp = source_sp,
+		@id_field = id_field,
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = dbo.qp_checked_action_id(@user_id, default_action_id),
-		@folder_default_action_id = dbo.qp_checked_action_id(@user_id, FOLDER_DEFAULT_ACTION_ID), 
+		@folder_default_action_id = dbo.qp_checked_action_id(@user_id, FOLDER_DEFAULT_ACTION_ID),
 		@context_menu_id = CONTEXT_MENU_ID,
 		@folder_context_menu_id = FOLDER_CONTEXT_MENU_ID
-	from 
+	from
 		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 		and dbo.qp_tab_access_level(@user_id, tab_id) >= 1
 		and disabled = 0
-	
+
 	if (@@ROWCOUNT > 0)
 	begin
 		set @id_str = CAST(@id as nvarchar(10))
-		
+
 		if (@icon_field is null)
 		begin
 			set @icon_field = 'NULL'
@@ -16007,14 +16007,14 @@ begin
 		begin
 			set @icon_modifier_field = 'NULL'
 		end
-	
+
 		if (@is_folder = 1 OR @local_parent_id IS NULL)
 		begin
 			if (@local_parent_id IS NOT NULL)
 			begin
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select 
-					@local_id, 
+				select
+					@local_id,
 					@parent_id,
 					dbo.qp_translate(dbo.qp_pluralize(@local_name), @language_id),
 					@local_code,
@@ -16026,8 +16026,8 @@ begin
 			else
 			begin
 			insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-			select 
-				@local_id, 
+			select
+				@local_id,
 				@parent_id,
 				dbo.qp_translate(dbo.qp_pluralize(@local_name), @language_id),
 				@local_code,
@@ -16044,16 +16044,16 @@ begin
 				declare @sql nvarchar(800), @select nvarchar(800), @where nvarchar(800)
 
 				set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-				set @where = @id_field + ' = ' + @id_str 
-				
+				set @where = @id_field + ' = ' + @id_str
+
 				set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where
-				
+
 				insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
-				exec sp_executesql @sql		
-				
-				--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-				update 
-					@result 
+				exec sp_executesql @sql
+
+				--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+				update
+					@result
 				set
 					PARENT_ID = @parent_id,
 					CODE = @local_code,
@@ -16061,21 +16061,21 @@ begin
 					ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
 					DEFAULT_ACTION_ID = @default_action_id,
 					CONTEXT_MENU_ID = @context_menu_id
-			end	
+			end
 		end
-		
+
 		declare @children_count int
-		
-		exec dbo.qp_expand 
-			@user_id, 
-			@local_code, 
-			@local_id, 
+
+		exec dbo.qp_expand
+			@user_id,
+			@local_code,
+			@local_id,
 			0,
 			1,
 			@count = @children_count output
 
 		if @children_count = 0
-			update 
+			update
 				@result
 			set
 				has_children = 0
@@ -16085,8 +16085,8 @@ begin
 			set
 				has_children = 1
 	end
-	
-	SELECT 
+
+	SELECT
 		TREE_NODE.ID,
 		TREE_NODE.CODE,
 		CASE WHEN (TREE_NODE.CODE != 'site') THEN
@@ -16094,20 +16094,20 @@ begin
 		ELSE
 			NULL
 		END AS PARENT_ID,
-		dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-		TREE_NODE.IS_FOLDER, 
-		TREE_NODE.ICON, 
-		TREE_NODE.TITLE, 
+		dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+		TREE_NODE.IS_FOLDER,
+		TREE_NODE.ICON,
+		TREE_NODE.TITLE,
 		dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 		ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-		dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+		dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 		TREE_NODE.HAS_CHILDREN
 	FROM
 		@result AS TREE_NODE
 	LEFT OUTER JOIN
 		BACKEND_ACTION
 	ON
-		TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+		TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 	LEFT OUTER JOIN
 		ACTION_TYPE
 	ON
@@ -16119,22 +16119,22 @@ CREATE PROCEDURE [dbo].[qp_get_context_menu_items_list](@user_id int, @menu_id i
 AS
 BEGIN
 	DECLARE @language_id AS numeric(18, 0)
-	
+
 	SET @language_id = dbo.qp_language(@user_id)
 
 	SELECT
 		cmi.CONTEXT_MENU_ID,
 		cmi.ACTION_ID,
-		dbo.qp_context_menu_code(cmi.CONTEXT_MENU_ID) as CONTEXT_MENU_CODE, 
+		dbo.qp_context_menu_code(cmi.CONTEXT_MENU_ID) as CONTEXT_MENU_CODE,
 		ba.CODE as ACTION_CODE,
-		at.CODE AS ACTION_TYPE_CODE, 
+		at.CODE AS ACTION_TYPE_CODE,
 		dbo.qp_translate(cmi.NAME, @language_id) as NAME,
-		cmi.[ORDER], 
+		cmi.[ORDER],
 		cmi.ICON,
 		cmi.ICON_DISABLED,
 		cmi.BOTTOM_SEPARATOR
 	FROM
-		CONTEXT_MENU_ITEM cmi 
+		CONTEXT_MENU_ITEM cmi
 	INNER JOIN
 		backend_action AS ba
 	ON
@@ -16142,17 +16142,17 @@ BEGIN
 	INNER JOIN
 		ACTION_TYPE AS at
 	ON
-		ba.TYPE_ID = at.ID 
+		ba.TYPE_ID = at.ID
 	WHERE
 		CONTEXT_MENU_ID = @menu_id
-		and dbo.qp_is_action_accessible(@user_id, cmi.ACTION_ID) = 1 
+		and dbo.qp_is_action_accessible(@user_id, cmi.ACTION_ID) = 1
 	ORDER BY
 		[ORDER] asc
 END
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_context_menu_by_id]
-	@user_id int, 
+	@user_id int,
 	@menu_id int,
 	@load_related_data bit = 0
 AS
@@ -16172,17 +16172,17 @@ BEGIN
 	WHERE
 		cm.ID = @menu_id
 		AND dbo.qp_is_action_accessible(@user_id, cmi.ACTION_ID) = 1
-		
+
 	IF (@context_menu_id IS NOT NULL)
 		BEGIN
 			SELECT
 				@context_menu_id AS ID,
 				@context_menu_code AS CODE
-			
+
 			IF (@load_related_data = 1)
 				BEGIN
 					EXEC qp_get_context_menu_items_list
-						@user_id = @user_id, 
+						@user_id = @user_id,
 						@menu_id = @context_menu_id
 				END
 		END
@@ -16190,13 +16190,13 @@ END
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_context_menu_by_code]
-	@user_id int, 
+	@user_id int,
 	@menu_code nvarchar(50),
 	@load_related_data bit = 0
 AS
 BEGIN
 	DECLARE @menu_id AS int
-	
+
 	SET @menu_id = dbo.qp_context_menu_id(@menu_code)
 
 	EXEC qp_get_context_menu_by_id
@@ -16228,9 +16228,9 @@ GO
 CREATE FUNCTION [dbo].[qp_action_visible](@user_id int, @entity_code nvarchar(50), @entity_id numeric, @action_code nvarchar(50)) returns bit
 AS
 BEGIN
-	declare @result bit	
+	declare @result bit
 
-	if @entity_id = 0 
+	if @entity_id = 0
 	begin
 		set @result = 1
 	end
@@ -16240,7 +16240,7 @@ BEGIN
 		select @permitted_level = dbo.qp_entity_access_level(@user_id, @entity_code, @entity_id)
 
 		select @action_level = pl.PERMISSION_LEVEL from BACKEND_ACTION ba
-		INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID 
+		INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID
 		INNER JOIN PERMISSION_LEVEL pl on at.REQUIRED_PERMISSION_LEVEL_ID = pl.PERMISSION_LEVEL_ID
 		where ba.CODE = @action_code
 
@@ -16258,7 +16258,7 @@ AS
 BEGIN
 	DECLARE @entity_code nvarchar(50)
 	select @entity_code = dbo.qp_entity_type_code(entity_type_id) from backend_action where code = @action_code
-	
+
 	SELECT
 		ba.CODE,
 		dbo.qp_action_visible(@user_id, @entity_code, @entity_id, ba.CODE) as visible
@@ -16287,7 +16287,7 @@ END
 GO
 
 
-CREATE PROCEDURE [dbo].[qp_real_content_list] 
+CREATE PROCEDURE [dbo].[qp_real_content_list]
 	@site_id numeric,
 	@user_id  numeric,
 	@permission_level numeric,
@@ -16297,12 +16297,12 @@ CREATE PROCEDURE [dbo].[qp_real_content_list]
 AS
 BEGIN
 	declare @new_filter nvarchar(max)
-	set @new_filter = @filter + ' and virtual_type = 0'    
+	set @new_filter = @filter + ' and virtual_type = 0'
 	exec qp_content_list @site_id, @user_id, @permission_level, @order_by, @new_filter, @select
 END
 GO
 
-CREATE PROCEDURE [dbo].[qp_virtual_content_list] 
+CREATE PROCEDURE [dbo].[qp_virtual_content_list]
 	@site_id numeric,
 	@user_id  numeric,
 	@permission_level numeric,
@@ -16312,7 +16312,7 @@ CREATE PROCEDURE [dbo].[qp_virtual_content_list]
 AS
 BEGIN
 	declare @new_filter nvarchar(max)
-	set @new_filter = @filter + ' and virtual_type <> 0'    
+	set @new_filter = @filter + ' and virtual_type <> 0'
 	exec qp_content_list @site_id, @user_id, @permission_level, @order_by, @new_filter, @select
 END
 GO
@@ -16323,16 +16323,16 @@ CREATE PROCEDURE [dbo].[qp_get_entity_type_by_id]
 AS
 BEGIN
 	DECLARE @language_id AS numeric(18, 0)
-		
+
 	SET @language_id = dbo.qp_language(@user_id)
-	
+
 	SELECT
 		e.ID,
 		dbo.qp_translate(e.NAME, @language_id) AS NAME,
 		e.CODE,
 		pe.ID AS PARENT_ID,
 		pe.CODE AS PARENT_CODE,
-		e.[ORDER],      
+		e.[ORDER],
 		e.HAS_ITEM_NODES,
 		e.[DISABLED],
 		e.CANCEL_ACTION_ID,
@@ -16358,7 +16358,7 @@ CREATE PROCEDURE [dbo].[qp_get_entity_type_by_code]
 AS
 BEGIN
 	DECLARE @entity_type_id AS int
-	
+
 	SET @entity_type_id = dbo.qp_entity_type_id(@entity_type_code)
 
 	EXEC dbo.qp_get_entity_type_by_id
@@ -16411,7 +16411,7 @@ CREATE PROCEDURE [dbo].[qp_get_view_type_by_id]
 AS
 BEGIN
 	DECLARE @language_id AS numeric(18, 0)
-	
+
 	SET @language_id = dbo.qp_language(@user_id)
 
 	SELECT
@@ -16427,14 +16427,14 @@ END
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_action_views_list_by_action_id]
-	@user_id int, 
+	@user_id int,
 	@action_id int
 AS
 BEGIN
 	DECLARE @language_id numeric(18, 0)
-	
+
 	SET @language_id = dbo.qp_language(@user_id)
-	
+
 	SELECT
 		av.ACTION_ID,
 		vt.ID,
@@ -16458,14 +16458,14 @@ END
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_action_views_list_by_action_code]
-	@user_id int, 
+	@user_id int,
 	@action_code nvarchar(50)
 AS
 BEGIN
 	DECLARE @action_id AS int
-	
+
 	SET @action_id = dbo.qp_action_id(@action_code)
-	
+
 	EXEC qp_get_action_views_list_by_action_id
 		@user_id = @user_id,
 		@action_id = @action_id
@@ -16478,16 +16478,16 @@ CREATE PROCEDURE [dbo].[qp_get_action_type_by_id]
 AS
 BEGIN
 	DECLARE @language_id AS numeric(18, 0)
-		
+
 	SET @language_id = dbo.qp_language(@user_id)
-	
+
 	SELECT
 		ID,
 		dbo.qp_translate(NAME, @language_id) AS NAME,
 		CODE,
 		REQUIRED_PERMISSION_LEVEL_ID,
 		ITEMS_AFFECTED
-	FROM 
+	FROM
 		ACTION_TYPE
 	WHERE
 		ID = @action_type_id
@@ -16500,7 +16500,7 @@ CREATE PROCEDURE [dbo].[qp_get_action_type_by_code]
 AS
 BEGIN
 	DECLARE @action_type_id AS int
-	
+
 	SET @action_type_id = dbo.qp_action_type_id(@action_type_code)
 
 	EXEC dbo.qp_get_action_type_by_id
@@ -16522,7 +16522,7 @@ BEGIN
 	ON
 		bat.ID = ba.[TYPE_ID]
 	WHERE
-		ba.CODE = @action_code			
+		ba.CODE = @action_code
 END
 GO
 
@@ -16536,9 +16536,9 @@ BEGIN
 	DECLARE @action_type_id AS int
 	DECLARE @entity_type_id AS int
 	DECLARE @default_view_type_id AS int
-	
+
 	SET @language_id = dbo.qp_language(@user_id)
-	
+
 	SELECT
 		@action_type_id = [TYPE_ID],
 		@entity_type_id = ENTITY_TYPE_ID,
@@ -16546,8 +16546,8 @@ BEGIN
 	FROM
 		BACKEND_ACTION
 	WHERE
-		ID = @action_id	
-	
+		ID = @action_id
+
 	SELECT
 		ID,
 		[TYPE_ID],
@@ -16582,26 +16582,26 @@ BEGIN
 	FROM
 		BACKEND_ACTION
 	WHERE
-		ID = @action_id	
-	
+		ID = @action_id
+
 	IF (@load_related_data = 1 AND @action_type_id IS NOT NULL AND @entity_type_id IS NOT NULL)
 		BEGIN
 			EXEC qp_get_action_type_by_id
 				@user_id = @user_id,
 				@action_type_id = @action_type_id
-				
+
 			EXEC qp_get_entity_type_by_id
 				@user_id = @user_id,
 				@entity_type_id = @entity_type_id
-				
+
 			EXEC qp_get_view_type_by_id
 				@user_id = @user_id,
 				@view_type_id = @default_view_type_id
-				
+
 			EXEC qp_get_action_views_list_by_action_id
 				@user_id = @user_id,
 				@action_id = @action_id
-		END	
+		END
 END
 GO
 
@@ -16612,7 +16612,7 @@ CREATE PROCEDURE [dbo].[qp_get_action_by_code]
 AS
 BEGIN
 	DECLARE @action_id AS int
-	
+
 	SET @action_id = dbo.qp_action_id(@action_code)
 
 	EXEC dbo.qp_get_action_by_id
@@ -16637,8 +16637,8 @@ BEGIN
 	DECLARE @action_id AS int
 
 	SET NOCOUNT ON
-	
-	SELECT 
+
+	SELECT
 		@action_id = ba.ID
 	FROM
 		BACKEND_ACTION AS ba
@@ -16646,16 +16646,16 @@ BEGIN
 		ACTION_TYPE AS bat
 	ON
 		bat.ID = ba.TYPE_ID
-	INNER JOIN 
+	INNER JOIN
 		ENTITY_TYPE AS et
 	ON
 		et.ID = ba.ENTITY_TYPE_ID
 	WHERE
 		bat.CODE = @action_type_code
 		AND et.CODE = @entity_type_code
-	
+
 	SET NOCOUNT OFF
-	
+
 	EXEC [dbo].[qp_get_action_by_id]
 		@user_id = @user_id,
 		@action_id = @action_id,
@@ -16672,7 +16672,7 @@ CREATE PROCEDURE [dbo].[qp_get_paged_data]
 	@total_records int OUTPUT,
 	@start_row int = 0,
 	@page_size int = 0,
-	
+
 	@use_security bit = 0,
 	@user_id numeric(18,0) = 0,
 	@group_id numeric(18,0) = 0,
@@ -16681,12 +16681,12 @@ CREATE PROCEDURE [dbo].[qp_get_paged_data]
 	@entity_name nvarchar(100),
 	@parent_entity_name nvarchar(100) = '',
 	@parent_entity_id numeric(18,0) = 0,
-	
+
 	@insert_key varchar(200) = '<$_security_insert_$>'
 AS
 BEGIN
 	SET NOCOUNT ON
-	
+
 	-- Получаем фильтр по правам
 	DECLARE @security_sql AS nvarchar(max)
 	SET @security_sql = ''
@@ -16700,15 +16700,15 @@ BEGIN
 				@end_level = @end_level,
 				@entity_name = @entity_name,
 				@parent_entity_name = @parent_entity_name,
-				@parent_entity_id = @parent_entity_id,				
+				@parent_entity_id = @parent_entity_id,
 				@SQLOut = @security_sql OUTPUT
-				
+
 			SET @from_block = REPLACE(@from_block, @insert_key, @security_sql)
 		END
-		
+
 	-- Получаем общее количество записей
 	DECLARE @sql_count AS nvarchar(max)
-	
+
 	if (@count_only = 1)
 	BEGIN
 		SET @sql_count = ''
@@ -16723,31 +16723,31 @@ BEGIN
 			END
 
 
-		EXEC sp_executesql 
-			@sql_count, 
-			N'@record_count int OUTPUT', 
+		EXEC sp_executesql
+			@sql_count,
+			N'@record_count int OUTPUT',
 			@record_count = @total_records OUTPUT
 	END
-	
+
 	-- Задаем номер начальной записи по умолчанию
 	IF (@start_row <= 0)
 		BEGIN
 			SET @start_row = 1
 		END
-		
+
 	-- Задаем номер конечной записи
 	DECLARE @end_row AS int
 	if (@page_size = 0)
-		SET @end_row = 0			
+		SET @end_row = 0
 	else
-		SET @end_row = @start_row + @page_size - 1		
-	
+		SET @end_row = @start_row + @page_size - 1
+
 	IF (@count_only = 0)
 		BEGIN
 			-- Возвращаем результат
 			DECLARE @sql_result AS nvarchar(max)
-			
-			SET @sql_result = ''		
+
+			SET @sql_result = ''
 			SET @sql_result = @sql_result + 'WITH PAGED_DATA_CTE' + CHAR(13)
 			SET @sql_result = @sql_result + 'AS' + CHAR(13)
 			SET @sql_result = @sql_result + '(' + CHAR(13)
@@ -16767,7 +16767,7 @@ BEGIN
 				END
 			SET @sql_result = @sql_result + '	) AS c ' + CHAR(13)
 			SET @sql_result = @sql_result + ')' + CHAR(13) + CHAR(13)
-			
+
 			SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 			SET @sql_result = @sql_result + '	* ' + CHAR(13)
 			SET @sql_result = @sql_result + 'FROM ' + CHAR(13)
@@ -16775,18 +16775,18 @@ BEGIN
 			IF (@end_row > 0 or @start_row > 1)
 			BEGIN
 				SET @sql_result = @sql_result + 'WHERE 1 = 1' + CHAR(13)
-				IF @start_row > 1 
+				IF @start_row > 1
 					SET @sql_result = @sql_result + ' AND ROW_NUMBER >= ' + CAST(@start_row AS nvarchar) + ' '
 				IF @end_row > 0
 					SET @sql_result = @sql_result + ' AND ROW_NUMBER <= ' + CAST(@end_row AS nvarchar) + ' ' + CHAR(13)
-			END	
+			END
 			SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 			SET @sql_result = @sql_result + '	ROW_NUMBER ASC ' + CHAR(13)
 
 			print(@sql_result)
 			EXEC(@sql_result)
 		END
-	
+
 	SET NOCOUNT OFF
 END
 GO
@@ -16811,14 +16811,14 @@ BEGIN
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @processed_order_by_block AS nvarchar(max)
 	DECLARE @default_sort_column_name AS nvarchar(255)
-	
+
 	IF (dbo.qp_is_user_admin(@user_id) = 1)
 		set @use_security = 0
 	ELSE
 		set @use_security = 1
-		
+
 	SET @default_sort_column_name = 'CONTENT_ID'
-		
+
 	SET @use_custom_selection = 0
 	IF (@selected_content_ids IS NOT NULL)
 		BEGIN
@@ -16833,52 +16833,52 @@ BEGIN
 		mu.LAST_NAME AS MODIFIER_LAST_NAME,
 		mu.EMAIL AS MODIFIER_EMAIL,
 		mu.[LOGIN] AS MODIFIER_LOGIN,';
-		
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
-		BEGIN			
-			SET @select_block = @select_block + '		CASE WHEN (cis.CONTENT_ID IS NOT NULL) THEN 1 ELSE 0 END ' + CHAR(13)			
+		BEGIN
+			SET @select_block = @select_block + '		CASE WHEN (cis.CONTENT_ID IS NOT NULL) THEN 1 ELSE 0 END ' + CHAR(13)
 		END
 	ELSE
 		BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
-		
+
+
 	SET @from_block = '		CONTENT AS c
 	'
 	if @use_security = 1
 		SET @from_block = @from_block +
-		'INNER JOIN 
+		'INNER JOIN
 			(
-				SELECT 
+				SELECT
 					sec.content_id AS ALLOWED_CONTENT_ID,
 					sec.permission_level AS PERMISSION_LEVEL
-				FROM 
+				FROM
 					(<$_security_insert_$>) AS sec
 			) AS pl
-		ON 
+		ON
 			c.CONTENT_ID = pl.ALLOWED_CONTENT_ID
 		'
 
 	SET @from_block = @from_block +
-	'LEFT OUTER JOIN USERS AS mu ON mu.USER_ID = c.LAST_MODIFIED_BY 
+	'LEFT OUTER JOIN USERS AS mu ON mu.USER_ID = c.LAST_MODIFIED_BY
 	LEFT OUTER JOIN CONTENT_GROUP_NAME AS cg ON cg.id = c.CONTENT_GROUP_ID'
-	
+
 	IF (@use_custom_selection = 1)
 	BEGIN
 		SET @from_block = @from_block + ' LEFT OUTER JOIN (SELECT CONTENT_ID from CONTENT where CONTENT_ID in (' + @selected_content_ids + ')) AS cis ON c.CONTENT_ID = cis.CONTENT_ID ' + CHAR(13)
 	END
-		
-	SET @where_block = @filter		
+
+	SET @where_block = @filter
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @processed_order_by_block = UPPER(@order_by)
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '  ', ' ')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '[', '')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, ']', '')
-			
+
 			IF (@processed_order_by_block = (@default_sort_column_name + ' ASC'))
 				BEGIN
 					SET @order_by_block = 'is_selected DESC, ' + @order_by
@@ -16886,13 +16886,13 @@ BEGIN
 			ELSE IF (@processed_order_by_block = (@default_sort_column_name + ' DESC'))
 				BEGIN
 					SET @order_by_block = 'is_selected ASC, ' + @order_by
-				END	
+				END
 			ELSE
 				BEGIN
 					SET @order_by_block = @order_by
 				END
 		END
-	
+
 	EXEC qp_get_paged_data
 		@select_block = @select_block,
 		@from_block = @from_block,
@@ -16902,7 +16902,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -16911,7 +16911,7 @@ BEGIN
 		@entity_name = 'content',
 		@parent_entity_name = '',
 		@parent_entity_id = 0
-		
+
 	SET NOCOUNT OFF
 END
 GO
@@ -16944,14 +16944,14 @@ BEGIN
 		s.[DESCRIPTION],
 		s.script_language,
 		s.ALLOW_USER_SESSIONS,
-		s.ASSEMBLE_FORMATS_IN_LIVE,		
+		s.ASSEMBLE_FORMATS_IN_LIVE,
 		s.IS_LIVE,
 		s.DNS,
 		s.STAGE_DNS,
 		s.UPLOAD_URL,
 		s.use_absolute_upload_url,
 		s.upload_url_prefix,
-		s.UPLOAD_DIR,		
+		s.UPLOAD_DIR,
 		s.LIVE_VIRTUAL_ROOT,
 		s.LIVE_DIRECTORY,
 		s.FORCE_TEST_DIRECTORY,
@@ -16970,7 +16970,7 @@ BEGIN
 		s.REPLACE_URLS,
 		s.USE_LONG_URLS,
 		s.NAMESPACE,
-		s.CONTEXT_CLASS_NAME,		
+		s.CONTEXT_CLASS_NAME,
 		s.CREATED,
 		s.MODIFIED,
 		s.LAST_MODIFIED_BY,
@@ -16986,20 +16986,20 @@ BEGIN
 		mu.LAST_NAME AS MODIFIER_LAST_NAME,
 		mu.EMAIL AS MODIFIER_EMAIL,
 		mu.[LOGIN] AS MODIFIER_LOGIN';
-		
+
 	SET @from_block = '		SITE AS s
 	'
 	if @use_security = 1
 		SET @from_block = @from_block +
-		'INNER JOIN 
+		'INNER JOIN
 			(
-				SELECT 
+				SELECT
 					sec.site_id AS ALLOWED_SITE_ID,
 					sec.permission_level AS PERMISSION_LEVEL
-				FROM 
+				FROM
 					(<$_security_insert_$>) AS sec
 			) AS pl
-		ON 
+		ON
 			s.SITE_ID = pl.ALLOWED_SITE_ID'
 
 	SET @from_block = @from_block +
@@ -17011,10 +17011,10 @@ BEGIN
 		USERS AS mu
 	ON
 		mu.USER_ID = s.LAST_MODIFIED_BY'
-		
+
 	SET @where_block = @filter
 	SET @order_by_block = @order_by
-	
+
 	EXEC qp_get_paged_data
 		@select_block = @select_block,
 		@from_block = @from_block,
@@ -17024,7 +17024,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -17033,13 +17033,13 @@ BEGIN
 		@entity_name = 'site',
 		@parent_entity_name = '',
 		@parent_entity_id = 0
-		
+
 	SET NOCOUNT OFF
 END
 GO
 
 CREATE PROCEDURE [dbo].[qp_paged_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@selected_article_ids AS nvarchar(max) = NULL,
 	@permission_level numeric(18,0),
@@ -17060,15 +17060,15 @@ BEGIN
 	DECLARE @where_block AS nvarchar(max)
 	DECLARE @order_by_block AS nvarchar(max)
 	DECLARE @processed_order_by_block AS nvarchar(max)
-	
+
 	DECLARE @default_sort_column_name AS nvarchar(255)
 	DECLARE @dynamic_select_block AS nvarchar(max)
 	DECLARE @related_select_block AS nvarchar(max)
 	DECLARE @related_from_block AS nvarchar(max)
-	
+
 	DECLARE @attribute_id numeric, @rel_attribute_id numeric, @rel_attribute_type_id numeric, @rel_content_id numeric, @rel_count int
 	DECLARE @attribute_name nvarchar(255), @rel_attribute_name nvarchar(255), @rel_field_name nvarchar(255), @rel_table_name nvarchar(255)
-	
+
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @use_security bit, @parent_level numeric
 
@@ -17083,21 +17083,21 @@ BEGIN
 	SET @dynamic_select_block = ''
 	SET @related_select_block = ''
 	SET @related_from_block = ''
-	
+
 	SET @use_custom_selection = 0
 	IF (@selected_article_ids IS NOT NULL)
 		BEGIN
 			SET @use_custom_selection = 1
 		END
-	
+
 	-- Создаем курсор, содержащий список связей
-	DECLARE rel_cursor CURSOR 
+	DECLARE rel_cursor CURSOR
 		LOCAL
-		FORWARD_ONLY 
+		FORWARD_ONLY
 		STATIC
-		READ_ONLY 
+		READ_ONLY
 	FOR
-		SELECT 
+		SELECT
 			ca.ATTRIBUTE_ID,
 			ca.ATTRIBUTE_NAME,
 			rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID,
@@ -17105,7 +17105,7 @@ BEGIN
 			rca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME,
 			rca.CONTENT_ID AS RELATED_CONTENT_ID,
 			ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ID ASC) AS 'RELATED_COUNT'
-		FROM 
+		FROM
 			CONTENT_ATTRIBUTE AS ca
 		LEFT OUTER JOIN
 			CONTENT_ATTRIBUTE AS rca
@@ -17114,10 +17114,10 @@ BEGIN
 		WHERE
 			ca.CONTENT_ID = @content_id
 			AND ca.view_in_list = 1
-		ORDER BY 
+		ORDER BY
 			ca.permanent_flag DESC,
 			ca.attribute_order ASC
-			
+
 	-- Открываем курсор
 	OPEN rel_cursor
 
@@ -17131,13 +17131,13 @@ BEGIN
 		@rel_attribute_name,
 		@rel_content_id,
 		@rel_count
-		
+
 	WHILE (@@FETCH_STATUS = 0)
 		BEGIN
 			SET @dynamic_select_block = @dynamic_select_block + '	c.[' + @attribute_name + '], '
-		
+
 			IF (@rel_attribute_id IS NOT NULL)
-				BEGIN		
+				BEGIN
 					declare @current_block nvarchar(512)
 					set @rel_table_name = 'rel_' + CAST(@rel_attribute_id AS varchar)
 					set @rel_field_name = 'rel_field_' + CAST(@rel_attribute_id AS varchar)
@@ -17146,18 +17146,18 @@ BEGIN
 						set @rel_table_name = @rel_table_name + '_' + CAST(@rel_count AS varchar)
 						set @rel_field_name = @rel_field_name + '_' + CAST(@rel_count AS varchar)
 					end
-					
+
 					SET @related_select_block = @related_select_block + '	'
 					SET @current_block = @rel_table_name + '.[' + @rel_attribute_name + ']'
 					if @rel_attribute_type_id in (9, 10)
 						SET @current_block = 'cast (' + @current_block + ' as nvarchar(255))'
 					SET @related_select_block = @related_select_block + @current_block
-					SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '	
-					SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN 
+					SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '
+					SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN
 			content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' +
 			@rel_table_name + '.content_item_id = c.[' + @attribute_name + '] '
 				END
-		
+
 			FETCH NEXT FROM rel_cursor
 			INTO
 				@attribute_id,
@@ -17168,7 +17168,7 @@ BEGIN
 				@rel_content_id,
 				@rel_count
 		END
-		
+
 	-- Закрываем и уничтожаем курсор
 	CLOSE rel_cursor
 	DEALLOCATE rel_cursor
@@ -17178,7 +17178,7 @@ BEGIN
 	c.CREATED,
 	c.MODIFIED,
 	c.LAST_MODIFIED_BY,
-	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id, 
+	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id,
 	COALESCE(c2.status_type_id, c.status_type_id) AS current_status_type_id,
 	ci.CONTENT_ID,
 	ci.SCHEDULE_NEW_VERSION_PUBLICATION,
@@ -17193,7 +17193,7 @@ BEGIN
 	mu.FIRST_NAME AS MODIFIER_FIRST_NAME,
 	mu.LAST_NAME AS MODIFIER_LAST_NAME,
 	mu.[LOGIN] AS MODIFIER_LOGIN, '
-	
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
 		BEGIN
@@ -17208,21 +17208,21 @@ BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
+
 	IF (LEN(@dynamic_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@dynamic_select_block, LEN(@dynamic_select_block) - 1)
 		END
-	
+
 	IF (LEN(@related_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@related_select_block, LEN(@related_select_block) - 1)
 		END
-	
+
 	SET @from_block = ''
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
 	IF @use_security = 1
-	BEGIN	
+	BEGIN
 		SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 		SET @from_block = @from_block + '	(<$_security_insert_$>) AS pi ' + CHAR(13)
 		SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -17232,29 +17232,29 @@ BEGIN
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + ' AS c2 ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	c2.content_item_id = c.content_item_id ' + CHAR(13)
-	
+
 	-- FULL TEXT SEARCH
 	declare @use_full_text bit, @full_text_sql nvarchar(max)
 	set @use_full_text = 0
 	IF ((@fts_is_incorrect_query IS NULL OR @fts_is_incorrect_query = 0) AND
 		LEN(@fts_attribute_ids) > 0 AND LEN(@fts_query_string) > 0)
 		set @use_full_text = 1
-		
+
 	IF @use_full_text = 1
 	BEGIN
 		CREATE TABLE #ft_temp (content_item_id int primary key)
-		
+
 		SET @from_block = @from_block + 'INNER JOIN #ft_temp as qp_fts' + CHAR(13)
 		SET @from_block = @from_block + 'ON c.content_item_id = qp_fts.content_item_id ' + CHAR(13)
-		
+
 		SET @full_text_sql = ' insert into #ft_temp select distinct CI.CONTENT_ITEM_ID from content_item CI, content_data CD ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CI.CONTENT_ID = ' + CAST(@content_id AS varchar)  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CD.ATTRIBUTE_ID in (' + @fts_attribute_ids + ') '  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and contains(CD.*, ''' + @fts_query_string + ''')'  + CHAR(13)
 		exec sp_executesql @full_text_sql
-	END	
-	-----	
+	END
+	-----
 	-- Поиск по Many To Many --
 	IF(@m2m_params IS NOT NULL)
 		BEGIN
@@ -17264,43 +17264,43 @@ BEGIN
 			declare @m2m_i int
 			set @m2m_i = 0
 
-			DECLARE m2m_param_cursor CURSOR 
+			DECLARE m2m_param_cursor CURSOR
 					LOCAL
-					FORWARD_ONLY 
+					FORWARD_ONLY
 					STATIC
-					READ_ONLY 
+					READ_ONLY
 				FOR
-					select 
-						'(link_id = ' + T.f.value('./@lid', 'varchar(10)') +  
+					select
+						'(link_id = ' + T.f.value('./@lid', 'varchar(10)') +
 						' AND linked_item_id in (' + T.f.value('./@iids', 'varchar(max)') + '))' from
 					@m2m_params.nodes('/m2m/f') as T(f)
-					
+
 			OPEN m2m_param_cursor
 
 			FETCH NEXT FROM m2m_param_cursor
 				INTO @m2m_condition
 
 			WHILE (@@FETCH_STATUS = 0)
-				BEGIN		
+				BEGIN
 					if(@m2m_i > 0)
 						SET @m2m_select = @m2m_select + ' OR '
 					SET @m2m_select = @m2m_select + @m2m_condition
 					SET @m2m_i = @m2m_i + 1
-					
+
 					FETCH NEXT FROM m2m_param_cursor
 						INTO @m2m_condition
-				END	
+				END
 
 			-- Закрываем и уничтожаем курсор
 			CLOSE m2m_param_cursor
-			DEALLOCATE m2m_param_cursor	
-			
+			DEALLOCATE m2m_param_cursor
+
 			SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 			SET @from_block = @from_block + '(' + @m2m_select + ') as qp_m2miids'  + CHAR(13)
 			SET @from_block = @from_block + 'ON c.content_item_id = qp_m2miids.item_id '  + CHAR(13)
 		END
 	-----
-		
+
 	IF (@use_custom_selection = 1)
 		BEGIN
 			SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
@@ -17314,7 +17314,7 @@ BEGIN
 			SET @from_block = @from_block + '	) AS cis ' + CHAR(13)
 			SET @from_block = @from_block + 'ON ' + CHAR(13)
 			SET @from_block = @from_block + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
-		END	
+		END
 	SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
 	SET @from_block = @from_block + '	content_item AS ci with(nolock) ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -17339,14 +17339,14 @@ BEGIN
 	SET @from_block = @from_block + '	USERS AS mu ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	mu.USER_ID = ci.LAST_MODIFIED_BY ' + CHAR(13)
-	
+
 	IF (LEN(@related_from_block) > 0)
 		BEGIN
 			SET @from_block = @from_block + @related_from_block
 		END
-		
+
 	SET @where_block = @filter
-	
+
 	IF(@fts_is_incorrect_query = 1)
 	BEGIN
 		IF (LEN(@where_block) > 0)
@@ -17361,7 +17361,7 @@ BEGIN
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '  ', ' ')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '[', '')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, ']', '')
-			
+
 			IF (@processed_order_by_block = (@default_sort_column_name + ' ASC'))
 				BEGIN
 					SET @order_by_block = 'is_selected DESC, ' + @order_by
@@ -17369,7 +17369,7 @@ BEGIN
 			ELSE IF (@processed_order_by_block = (@default_sort_column_name + ' DESC'))
 				BEGIN
 					SET @order_by_block = 'is_selected ASC, ' + @order_by
-				END	
+				END
 			ELSE
 				BEGIN
 					SET @order_by_block = @order_by
@@ -17379,12 +17379,12 @@ BEGIN
 		BEGIN
 			SET @order_by_block = 'STATUS_TYPE_NAME ASC, content_item_id ASC '
 		END
-	
+
 
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
 	if @parent_level = 0
 	BEGIN
-		SET @where_block = @where_block + '	AND 1 = 0' 		
+		SET @where_block = @where_block + '	AND 1 = 0'
 	END
 
 
@@ -17397,7 +17397,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -17406,16 +17406,16 @@ BEGIN
 		@entity_name = 'content_item',
 		@parent_entity_name = '',
 		@parent_entity_id = 0
-		
+
 	IF @use_full_text = 1
 		DROP TABLE #ft_temp
-		
+
 	SET NOCOUNT OFF
 END
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_folders_tree]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@parent_entity_id numeric(18,0),
 	@is_site bit = 1,
 	@parent_folder_id numeric(18,0) = NULL,
@@ -17426,9 +17426,9 @@ AS
 BEGIN
 
 	DECLARE @security_sql AS nvarchar(max), @sql_result AS nvarchar(max)
-	DECLARE @entity_name AS nvarchar(50), @parent_entity_name AS nvarchar(50) 
+	DECLARE @entity_name AS nvarchar(50), @parent_entity_name AS nvarchar(50)
 	DECLARE @use_security bit, @parent_level numeric, @block_filter nvarchar(10)
-	
+
 	SET @entity_name = case @is_site when 1 then 'folder' else 'content_folder' end
 	print @entity_name
 	SET @parent_entity_name = case @is_site when 1 then 'site' else 'content' end
@@ -17441,7 +17441,7 @@ BEGIN
 		set @use_security = 0
 		select @parent_level = dbo.qp_entity_access_level(@user_id, @parent_entity_name, @parent_entity_id)
 		if @parent_level = 0
-			set @block_filter = ' AND 1 = 0 '		
+			set @block_filter = ' AND 1 = 0 '
 	end
 
 	if @use_security = 1
@@ -17452,9 +17452,9 @@ BEGIN
 			@end_level = 4,
 			@entity_name = @entity_name,
 			@parent_entity_name = @parent_entity_name,
-			@parent_entity_id = @parent_entity_id,				
+			@parent_entity_id = @parent_entity_id,
 			@SQLOut = @security_sql OUTPUT
-				
+
 	SET @sql_result = ''
 	SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 	IF (@count_only = 0)
@@ -17502,7 +17502,7 @@ BEGIN
 			SET @sql_result = @sql_result + 'ON ' + CHAR(13)
 			SET @sql_result = @sql_result + '	mu.USER_ID = c.LAST_MODIFIED_BY ' + CHAR(13)
 		END
-	SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)			
+	SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)
 	IF (@parent_folder_id IS NOT NULL)
 		BEGIN
 			SET @sql_result = @sql_result + '	c.PARENT_FOLDER_ID = ' + CAST(@parent_folder_id AS varchar) + ' ' + CHAR(13)
@@ -17518,27 +17518,27 @@ BEGIN
 		SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 		SET @sql_result = @sql_result + ' c.NAME ASC '
 	END
-			
+
 	IF (@count_only = 0)
 		BEGIN
 			print @sql_result
 			EXEC(@sql_result)
-					
-			SET @total_records = @@ROWCOUNT 
+
+			SET @total_records = @@ROWCOUNT
 		END
 	ELSE
 		BEGIN
 			print @sql_result
-			EXEC sp_executesql 
-				@sql_result, 
-				N'@record_count int OUTPUT', 
+			EXEC sp_executesql
+				@sql_result,
+				N'@record_count int OUTPUT',
 				@record_count = @total_records OUTPUT
 		END
 END
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_articles_tree]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@article_id numeric(18,0) = NULL,
 	@permission_level numeric(18,0),
@@ -17554,17 +17554,17 @@ BEGIN
 	DECLARE @sql_result AS nvarchar(max)
 	DECLARE @use_security bit, @parent_level numeric
 
-		
+
 	SELECT TOP 1
 		@attribute_name = ATTRIBUTE_NAME,
 		@rel_attribute_name = REL_ATTRIBUTE_NAME
-	FROM 
+	FROM
 		dbo.qp_get_article_relation_columns(@content_id)
-	
+
 	IF (@@ROWCOUNT = 1)
 		BEGIN
 			DECLARE @title_field_name AS nvarchar(255)
-			
+
 			SELECT TOP 1
 				@title_field_name = ATTRIBUTE_NAME
 			FROM
@@ -17577,8 +17577,8 @@ BEGIN
 			select @use_security = allow_items_permission from content with(nolock) where content_id = @content_id
 			select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
 			if @parent_level = 0
-				SET @filter = '1 = 0' 		
-		
+				SET @filter = '1 = 0'
+
 			if @use_security = 1
 				EXEC dbo.qp_GetPermittedItemsAsQuery
 					@user_id = @user_id,
@@ -17587,9 +17587,9 @@ BEGIN
 					@end_level = 4,
 					@entity_name = 'content_item',
 					@parent_entity_name = 'content',
-					@parent_entity_id = @content_id,				
+					@parent_entity_id = @content_id,
 					@SQLOut = @security_sql OUTPUT
-				
+
 			SET @sql_result = ''
 			SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 			IF (@count_only = 0)
@@ -17644,7 +17644,7 @@ BEGIN
 				END
 			SET @sql_result = @sql_result + 'FROM ' + CHAR(13)
 			SET @sql_result = @sql_result + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
-			
+
 			if @use_security = 1
 			BEGIN
 				SET @sql_result = @sql_result + 'INNER JOIN ' + CHAR(13)
@@ -17668,7 +17668,7 @@ BEGIN
 					SET @sql_result = @sql_result + 'ON ' + CHAR(13)
 					SET @sql_result = @sql_result + '	mu.USER_ID = c.LAST_MODIFIED_BY ' + CHAR(13)
 				END
-			SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)			
+			SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)
 			IF (@article_id IS NOT NULL)
 				BEGIN
 					SET @sql_result = @sql_result + '	c.[' + @attribute_name + '] = ' + CAST(@article_id AS varchar) + ' ' + CHAR(13)
@@ -17685,18 +17685,18 @@ BEGIN
 				SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 				SET @sql_result = @sql_result + ' c.CONTENT_ITEM_ID ASC '
 			END
-			
+
 			IF (@count_only = 0)
 				BEGIN
 					EXEC(@sql_result)
-					
-					SET @total_records = @@ROWCOUNT 
+
+					SET @total_records = @@ROWCOUNT
 				END
 			ELSE
 				BEGIN
-					EXEC sp_executesql 
-						@sql_result, 
-						N'@record_count int OUTPUT', 
+					EXEC sp_executesql
+						@sql_result,
+						N'@record_count int OUTPUT',
 						@record_count = @total_records OUTPUT
 				END
 		END
@@ -17708,7 +17708,7 @@ END
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_related_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@article_id numeric(18,0) = 0,
 	@field_id  numeric(18,0) = 0,
@@ -17724,39 +17724,39 @@ BEGIN
 	DECLARE @title_field_name AS nvarchar(255) -- название поля, в котором хранится заголовок статьи
 	DECLARE @alias_field_name AS nvarchar(255) -- название поля, в котором хранится заголовок статьи
 	DECLARE @use_security bit, @parent_level numeric
-	
+
 	DECLARE @security_sql AS nvarchar(max)
 	DECLARE @sql_result AS nvarchar(max)
-	
+
 	DECLARE @SELECTION_MODE_ALL AS tinyint
 	DECLARE @SELECTION_MODE_ONLY_SELECTED AS tinyint
-	
+
 	SET @SELECTION_MODE_ALL = 0
 	SET @SELECTION_MODE_ONLY_SELECTED = 1
-	
+
 	if @selected_article_ids is null or @selected_article_ids = ''
 		set @selected_article_ids = '0'
-	
+
 
 	-- Получаем свойства связи
 	SELECT
 		@link_id = ca.link_id,
 		@alias_field_name = rca.ATTRIBUTE_NAME
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN
 		CONTENT_ATTRIBUTE AS rca
 	ON
 		rca.ATTRIBUTE_ID = ca.RELATED_ATTRIBUTE_ID
-	WHERE 
+	WHERE
 		ca.ATTRIBUTE_ID = @field_id
-			
+
 	SET @is_many_to_many = 0
 	IF (@link_id IS NOT NULL)
 		BEGIN
 			SET @is_many_to_many = 1
 		END
-	
+
 	-- Получаем название поля, в котором хранится заголовок статьи
 	SET @title_field_name = ''
 	IF (@is_many_to_many = 1  OR @field_id = 0)
@@ -17772,7 +17772,7 @@ BEGIN
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
 	if @parent_level = 0
 		SET @filter = '1 = 0'
-	
+
 	-- Возвращаем простой список статей
 	if @use_security = 1
 		EXEC dbo.qp_GetPermittedItemsAsQuery
@@ -17782,9 +17782,9 @@ BEGIN
 			@end_level = 4,
 			@entity_name = 'content_item',
 			@parent_entity_name = 'content',
-			@parent_entity_id = @content_id,				
+			@parent_entity_id = @content_id,
 			@SQLOut = @security_sql OUTPUT
-	
+
 	SET @sql_result = ''
 	SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 	SET @sql_result = @sql_result + '	c.content_item_id AS id, ' + CHAR(13)
@@ -17795,7 +17795,7 @@ BEGIN
 	ELSE
 		BEGIN
 			SET @sql_result = @sql_result + '	'''' AS title, ' + CHAR(13)
-		END		
+		END
 	SET @sql_result = @sql_result + '	CAST(( ' + CHAR(13)
 
 	SET @sql_result = @sql_result + '		CASE WHEN (cis.content_item_id IS NOT NULL) THEN ' + CHAR(13)
@@ -17807,7 +17807,7 @@ BEGIN
 	SET @sql_result = @sql_result + '	) AS bit) AS is_selected ' + CHAR(13)
 	SET @sql_result = @sql_result + 'FROM  ' + CHAR(13)
 	SET @sql_result = @sql_result + '	content_' + CAST(@content_id AS varchar) + '_united AS c ' + CHAR(13)
-	
+
 	if @use_security = 1
 	BEGIN
 		SET @sql_result = @sql_result + 'INNER JOIN ' + CHAR(13)
@@ -17833,7 +17833,7 @@ BEGIN
 	SET @sql_result = @sql_result + '			content_item_id IN (' + @selected_article_ids + ') ' + CHAR(13)
 	SET @sql_result = @sql_result + '	) AS cis ' + CHAR(13)
 	SET @sql_result = @sql_result + 'ON ' + CHAR(13)
-	SET @sql_result = @sql_result + '	c.content_item_id = cis.content_item_id ' + CHAR(13)				
+	SET @sql_result = @sql_result + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
 	If @filter <> ''
 		SET @sql_result = @sql_result + 'WHERE ' +  @filter + CHAR(13)
 	SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
@@ -17843,7 +17843,7 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [dbo].[qp_get_article_alias] 
+CREATE PROCEDURE [dbo].[qp_get_article_alias]
 	@content_id numeric(18,0),
 	@article_id numeric(18,0),
 	@alias nvarchar(255) output
@@ -17855,27 +17855,27 @@ AS
 
 	SELECT TOP 1
 		@aliasColumnName = REL_ATTRIBUTE_NAME
-	FROM 
+	FROM
 		dbo.qp_get_article_relation_columns(@content_id)
 
 	SET @sql_result = '
 	SELECT
-		@alias = CAST([' + @aliasColumnName + '] AS nvarchar(255)) 
+		@alias = CAST([' + @aliasColumnName + '] AS nvarchar(255))
 	FROM
-		content_' + CAST(@content_id AS varchar) + ' 
+		content_' + CAST(@content_id AS varchar) + '
 	WHERE
 		content_item_id = ' + CAST(@article_id as varchar) + ' '
 
-	EXEC sp_executesql 
+	EXEC sp_executesql
 		@sql_result, N'@alias nvarchar(255) out', @alias out
 GO
 
-CREATE  PROCEDURE [dbo].[qp_get_base_field] 
+CREATE  PROCEDURE [dbo].[qp_get_base_field]
 	@field_id numeric(18,0),
 	@article_id numeric(18,0)
 AS
 BEGIN
-	
+
 	declare @content_id numeric
 	declare @field_name nvarchar(255)
 	declare @virtual_type int
@@ -17900,24 +17900,24 @@ CREATE procedure [dbo].[qp_get_parent_entity_id]
 AS
 BEGIN
 	SET @parent_entity_id = NULL
-	
+
 	DECLARE @source AS nvarchar(50)
 	DECLARE @id_field AS nvarchar(50)
 	DECLARE @parent_id_field AS nvarchar(50)
 
-	SELECT 
-		@source = [SOURCE], 
-		@id_field = ID_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD 
-	FROM 
-		ENTITY_TYPE 
-	WHERE 
+	SELECT
+		@source = [SOURCE],
+		@id_field = ID_FIELD,
+		@parent_id_field = PARENT_ID_FIELD
+	FROM
+		ENTITY_TYPE
+	WHERE
 		CODE = @entity_type_code
-				
+
 	IF (@source IS NOT NULL AND @id_field IS NOT NULL)
 		BEGIN
 			DECLARE @sql AS nvarchar(800)
-			
+
 			SET @sql = ''
 			SET @sql = @sql + 'SELECT ' + CHAR(13)
 			SET @sql = @sql + '	@parent_id = ' + @parent_id_field + ' ' + CHAR(13)
@@ -17925,9 +17925,9 @@ BEGIN
 			SET @sql = @sql + '	' + @source + ' ' + CHAR(13)
 			SET @sql = @sql + 'WHERE ' + CHAR(13)
 			SET @sql = @sql + '	' + @id_field + ' = ' + CAST(@entity_id AS varchar) + ' '
-			
-			EXEC sp_executesql @sql, 
-				N'@parent_id numeric(18,0) OUTPUT', 
+
+			EXEC sp_executesql @sql,
+				N'@parent_id numeric(18,0) OUTPUT',
 				@parent_id = @parent_entity_id OUTPUT
 		END
 END
@@ -17943,7 +17943,7 @@ BEGIN
 	DECLARE @source nvarchar(50), @id_field nvarchar(50), @recurring_id_field nvarchar(50)
 
 	SELECT @source = [SOURCE], @id_field = ID_FIELD, @recurring_id_field = RECURRING_ID_FIELD FROM ENTITY_TYPE WHERE CODE = @entity_type_code
-				
+
 	IF (@source IS NOT NULL AND @id_field IS NOT NULL AND @recurring_id_field IS NOT NULL)
 	BEGIN
 		DECLARE @sql nvarchar(800)
@@ -17973,12 +17973,12 @@ BEGIN
 
 	if @entityIds = ''
 		set @entityIds = '0'
-	
+
 	IF @entityTypeCode = 'article'
 	BEGIN
 		declare @contentId numeric, @title nvarchar(255)
 		DECLARE @contentSql nvarchar(max)
-		SET @contentSql = 'select @contentId = content_id from content_item where content_item_id in (' + @entityIds + ')' 
+		SET @contentSql = 'select @contentId = content_id from content_item where content_item_id in (' + @entityIds + ')'
 		EXEC sp_executesql @contentSql, N'@contentId decimal OUTPUT', @contentId = @contentId OUTPUT
 		select @title = attribute_name from content_attribute where attribute_id = dbo.qp_get_self_relation_field_id(@contentId)
 		set @sql = 'select distinct [' + @title + '] from content_' + cast(@contentId as nvarchar) + '_united where [' + @title + '] is not null and content_item_id in (' + @entityIds + ')'
@@ -17989,7 +17989,7 @@ BEGIN
 		DECLARE @source nvarchar(50), @id_field nvarchar(50), @recurring_id_field nvarchar(50)
 
 		SELECT @source = [SOURCE], @id_field = ID_FIELD, @recurring_id_field = RECURRING_ID_FIELD FROM ENTITY_TYPE WHERE CODE = @entityTypeCode
-				
+
 		IF (@source IS NOT NULL AND @id_field IS NOT NULL AND @recurring_id_field IS NOT NULL)
 		BEGIN
 			SET @sql = 'SELECT distinct ' + @recurring_id_field + ' FROM ' + @source + ' WHERE ' + @id_field + ' in (' + @entityIds + ') and ' + @recurring_id_field + ' is not null'
@@ -18015,36 +18015,36 @@ BEGIN
 	ELSE IF (@entity_type_code = 'article' OR @entity_type_code = 'archive_article')
 		BEGIN
 			DECLARE @content_id AS numeric(18,0)
-			
-			SELECT 
-				@content_id = content_id 
-			FROM 
-				content_item 
-			WHERE 
+
+			SELECT
+				@content_id = content_id
+			FROM
+				content_item
+			WHERE
 				CONTENT_ITEM_ID = @entity_id
-			
+
 			EXEC qp_get_article_title @entity_id, @content_id, @title OUT
 		END
 	ELSE
-		BEGIN	
+		BEGIN
 			DECLARE @source AS nvarchar(50)
 			DECLARE @id_field AS nvarchar(50)
 			DECLARE @title_field AS nvarchar(50)
-			
-			SELECT 
-				@source = [SOURCE], 
-				@id_field = ID_FIELD, 
-				@title_field = TITLE_FIELD 
-			FROM 
-				ENTITY_TYPE 
-			WHERE 
+
+			SELECT
+				@source = [SOURCE],
+				@id_field = ID_FIELD,
+				@title_field = TITLE_FIELD
+			FROM
+				ENTITY_TYPE
+			WHERE
 				CODE = @entity_type_code
-						
+
 			IF (@source IS NOT NULL AND @id_field IS NOT NULL)
 			BEGIN
-				DECLARE @sql nvarchar(800)				
+				DECLARE @sql nvarchar(800)
 				SET @sql = 'SELECT @title = ' + @title_field + ' FROM ' + @source + ' WHERE ' + @id_field + ' = ' + CAST(@entity_id AS varchar)
-				
+
 				EXEC sp_executesql @sql, N'@title nvarchar(255) OUTPUT', @title = @title OUTPUT
 			END
 		END
@@ -18052,7 +18052,7 @@ END
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_breadcrumbs]
-	@user_id numeric(18,0), 
+	@user_id numeric(18,0),
 	@entity_type_code nvarchar(50),
 	@entity_id numeric(18,0) = 0,
 	@parent_entity_id numeric(18,0) = NULL,
@@ -18070,7 +18070,7 @@ BEGIN
 		ACTION_CODE nvarchar(50),
 		FOLDER_ACTION_CODE nvarchar(50)
 	)
-	
+
 	DECLARE @language_id AS numeric(18,0)
 	DECLARE @id AS numeric(18,0)
 	DECLARE @parent_id AS numeric(18,0)
@@ -18083,9 +18083,9 @@ BEGIN
 	DECLARE @folder_default_action_code AS nvarchar(50)
 	DECLARE @entity_exist AS bit
 	DECLARE @level as int
-	
+
 	SET @language_id = dbo.qp_language(@user_id)
-	
+
 	IF (@entity_id != 0)
 		BEGIN
 			SET @level = 0
@@ -18097,44 +18097,44 @@ BEGIN
 		BEGIN
 			SET @level = 1
 			SET @id = @parent_entity_id
-			
+
 			EXEC qp_get_parent_entity_type_code_by_entity_type_code
 				@entity_type_code = @entity_type_code,
 				@parent_entity_type_code = @code out
-				
+
 			SET @parent_id = NULL
 		END
 
 	WHILE (@code IS NOT NULL)
 		BEGIN
 			SET @title = ''
-					
-			SELECT 
-				@name = NAME, 
+
+			SELECT
+				@name = NAME,
 				@recurring_id_field = RECURRING_ID_FIELD,
 				@default_action_code = dbo.qp_action_code(DEFAULT_ACTION_ID),
 				@folder_default_action_code = dbo.qp_action_code(FOLDER_DEFAULT_ACTION_ID)
-			FROM 
-				ENTITY_TYPE 
+			FROM
+				ENTITY_TYPE
 			WHERE
 				CODE = @code
-			
-			EXEC qp_get_entity_title 
-				@id, 
-				@code, 
-				@parent_entity_id, 
+
+			EXEC qp_get_entity_title
+				@id,
+				@code,
+				@parent_entity_id,
 				@title OUT
 
 			IF ((@code = 'site_folder' OR @code = 'content_folder') AND @title = '')
 				BEGIN
 					SET @title = dbo.qp_translate('Root Folder', @language_id)
 				END
-				
-			EXEC qp_get_recurring_parent_entity_id 
-				@id, 
-				@code, 
+
+			EXEC qp_get_recurring_parent_entity_id
+				@id,
+				@code,
 				@recurring_id OUT
-			
+
 			IF (@recurring_id IS NOT NULL)
 				BEGIN
 					SET @parent_id = @recurring_id
@@ -18151,35 +18151,35 @@ BEGIN
 							EXEC qp_get_parent_entity_id @id, @code, @parent_id OUT
 						END
 				END
-				
+
 			if @parent_id is null
 				set @parent_id = 0
-				
+
 			INSERT INTO @result(ID, PARENT_ID, CODE, NAME, TITLE, IS_FOLDER, ACTION_CODE, FOLDER_ACTION_CODE)
-			SELECT 
+			SELECT
 				@id,
 				@parent_id,
-				@code, 
+				@code,
 				dbo.qp_translate(@name, @language_id),
 				@title,
 				0,
 				@default_action_code,
 				@folder_default_action_code
-				
+
 			SET @id = @parent_id
-			
+
 			IF (@recurring_id IS NULL)
 				select @code = et2.code from entity_type et1 left join entity_type et2 on et1.parent_id = et2.id where et1.code = @code
-				
+
 			IF @level = 1 and @one_level = 1
 				BREAK
 
 			SET @level = @level + 1
-				
+
 		END
 
 	UPDATE r1 SET ACTION_CODE = r2.FOLDER_ACTION_CODE from @result AS r1 inner join @result AS r2 on r1.ID = r2.PARENT_ID AND r2.FOLDER_ACTION_CODE is not null
-	
+
 	SELECT
 		ID,
 		PARENT_ID,
@@ -18188,12 +18188,12 @@ BEGIN
 		TITLE,
 		IS_FOLDER,
 		ACTION_CODE
-	FROM 
+	FROM
 		@result
 END
 GO
 
-CREATE PROCEDURE [dbo].[qp_content_group_list] 
+CREATE PROCEDURE [dbo].[qp_content_group_list]
 	@site_id numeric,
 	@user_id  numeric,
 	@permission_level numeric = 1,
@@ -18204,15 +18204,15 @@ AS
 BEGIN
 	declare @language_id numeric
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	select content_group_id as id, name as title, NULL AS ICON, NULL AS ICON_MODIFIER from content_group where site_id = @site_id
 	union all
 	select 0, dbo.qp_translate('Default Group', @language_id), NULL, NULL
-	
+
 END
 GO
 
-CREATE PROCEDURE [dbo].[qp_site_folder_list] 
+CREATE PROCEDURE [dbo].[qp_site_folder_list]
 	@site_id numeric,
 	@parent_folder_id numeric,
 	@user_id numeric,
@@ -18242,7 +18242,7 @@ else begin
 	set @parent_entity_id = @site_id
 	set @parent_entity_name = 'site'
 end
-	
+
 if @use_security = 1
 Begin
 	EXEC	dbo.qp_GetPermittedItemsAsQuery
@@ -18253,25 +18253,25 @@ Begin
             @entity_name = 'folder',
 			@parent_entity_name = @parent_entity_name,
 			@parent_entity_id = @parent_entity_id,
-			
-			@SQLOut = @SecuritySQL OUTPUT        
+
+			@SQLOut = @SecuritySQL OUTPUT
 End
 
 SET NOCOUNT OFF
 
-set @strsql = ' select ' + @select + ' from folder 
+set @strsql = ' select ' + @select + ' from folder
                inner join users as u on folder.last_modified_by = u.user_id
 			   '
 if @use_security = 1
 	set @strsql = @strsql +
                'inner join (' + @SecuritySQL + ') as pi on folder.folder_id = pi.folder_id
-               ' 
+               '
 
-if @filter <> '' 
+if @filter <> ''
 	begin
 		set @strsql = @strsql + ' and ' + @filter
 	end
-if @order_by <> '' 
+if @order_by <> ''
 	begin
 		set @strsql = @strsql + ' order by ' + @order_by
 	end
@@ -18299,7 +18299,7 @@ CREATE PROCEDURE [dbo].[qp_all_article_search]
 	@p_order_by nvarchar(max) = N'Rank DESC',
 	@p_start_row int = 0,
 	@p_page_size int = 0,
-	
+
 	@total_records int OUTPUT
 AS
 BEGIN
@@ -18312,12 +18312,12 @@ BEGIN
 		BEGIN
 			SET @p_start_row = 1
 		END
-		
+
 	-- Задаем номер конечной записи
 	DECLARE @p_end_row AS int
 	SET @p_end_row = @p_start_row + @p_page_size - 1
-	
-	-- свормировать запрос для подмножества контентов к которым есть доступ 
+
+	-- свормировать запрос для подмножества контентов к которым есть доступ
 	DECLARE @security_sql AS nvarchar(max)
 	SET @security_sql = ''
 	EXEC dbo.qp_GetPermittedItemsAsQuery
@@ -18327,108 +18327,108 @@ BEGIN
 				@end_level = 4,
 				@entity_name = 'content',
 				@parent_entity_name = 'site',
-				@parent_entity_id = @p_site_id,				
+				@parent_entity_id = @p_site_id,
 				@SQLOut = @security_sql OUTPUT
-		
-	-- посчитать общее кол-во записей					
+
+	-- посчитать общее кол-во записей
 	declare @paramdef nvarchar(4000);
 	declare @query nvarchar(4000);
-	
+
 	create table #temp
 	([rank] int, content_item_id numeric, attribute_id numeric)
-	
+
 	create table #temp2
-	([rank] int, content_item_id numeric, attribute_id numeric)	
-	
+	([rank] int, content_item_id numeric, attribute_id numeric)
+
 	set @query = 'insert into #temp ' + CHAR(13)
 		+ ' select ft.[rank], cd.content_item_id, cd.attribute_id ' + CHAR(13)
 		+ ' from CONTAINSTABLE(content_data, *,  @searchparam) ft ' + CHAR(13)
 		+ ' inner join content_data cd on ft.[key] = cd.content_data_id ' + CHAR(13)
 	exec sp_executesql @query, N'@searchparam nvarchar(4000)', @searchparam = @p_searchparam
-	
+
 	set @query = 'insert into #temp2 ' + CHAR(13)
 		+ ' select cd.* from #temp cd ' + CHAR(13)
 		+ ' inner join content_item ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID ' + CHAR(13)
-		+ ' inner join (' + @security_sql + ') c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)	
+		+ ' inner join (' + @security_sql + ') c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)
 	exec sp_executesql @query
-	
+
 	select @total_records = count(distinct content_item_id) from #temp2
-		
+
 	-- главный запрос
 	declare @query_template nvarchar(4000);
 	set @query_template = N'WITH PAGED_DATA_CTE AS ' + CHAR(13)
-		+ ' (select wrapper.*, ' + CHAR(13) 
+		+ ' (select wrapper.*, ' + CHAR(13)
 		+ ' 		ROW_NUMBER() OVER (ORDER BY <$_order_by_$>) AS ROW ' + CHAR(13)
 		+ '  from ' + CHAR(13)
-		+ '  (select ' + CHAR(13) 
+		+ '  (select ' + CHAR(13)
 		+ ' 	ci.CONTENT_ID as ParentId, ' + CHAR(13)
 		+ ' 	data.CONTENT_ITEM_ID as Id, ' + CHAR(13)
 		+ ' 	data.ATTRIBUTE_ID as FieldId, ' + CHAR(13)
 		+ ' 	attr.ATTRIBUTE_TYPE_ID as FieldTypeId, ' + CHAR(13)
-		+ ' 	c.CONTENT_NAME as ParentName, ' + CHAR(13) 	
+		+ ' 	c.CONTENT_NAME as ParentName, ' + CHAR(13)
 		+ ' 	st.STATUS_TYPE_NAME as StatusName, ' + CHAR(13)
 		+ ' 	ci.CREATED as Created, ' + CHAR(13)
 		+ ' 	ci.MODIFIED as Modified, ' + CHAR(13)
-		+ ' 	usr.[LOGIN] as LastModifiedByUser, ' + CHAR(13)	
+		+ ' 	usr.[LOGIN] as LastModifiedByUser, ' + CHAR(13)
 		+ ' 	data.[rank] as Rank, ' + CHAR(13)
 		+ ' 	ROW_NUMBER() OVER (PARTITION BY data.CONTENT_ITEM_ID ORDER BY data.[rank] DESC) AS SIMILAR_ITEM_ROW ' + CHAR(13)
 		+ '   from #temp2 data ' + CHAR(13)
 		+ '   inner join dbo.CONTENT_ATTRIBUTE attr on data.ATTRIBUTE_ID = attr.ATTRIBUTE_ID ' + CHAR(13)
 		+ '   inner join dbo.CONTENT_ITEM ci on data.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID ' + CHAR(13)
-		+ '	  inner join dbo.CONTENT c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)	
+		+ '	  inner join dbo.CONTENT c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)
 		+ '   inner join dbo.STATUS_TYPE st on st.STATUS_TYPE_ID = ci.STATUS_TYPE_ID ' + CHAR(13)
 		+ '   inner join dbo.USERS usr on usr.[USER_ID] = ci.LAST_MODIFIED_BY ' + CHAR(13)
 		+ '   ) as wrapper ' + CHAR(13)
 		+ '   where wrapper.SIMILAR_ITEM_ROW = 1 ' + CHAR(13)
 		+ ' ) ' + CHAR(13)
-		+ ' select ' + CHAR(13)  
+		+ ' select ' + CHAR(13)
 		+ ' 	ParentId, ' + CHAR(13)
 		+ ' 	ParentName, ' + CHAR(13)
 		+ ' 	Id, ' + CHAR(13)
 		+ ' 	FieldId, ' + CHAR(13)
-		+ '		(case when FieldTypeId in (9, 10) THEN cd.BLOB_DATA ELSE cd.DATA END) as Text, ' + CHAR(13)		
-		+ ' 	dbo.qp_get_article_title_func(Id, ParentId) as Name, ' + CHAR(13)	
+		+ '		(case when FieldTypeId in (9, 10) THEN cd.BLOB_DATA ELSE cd.DATA END) as Text, ' + CHAR(13)
+		+ ' 	dbo.qp_get_article_title_func(Id, ParentId) as Name, ' + CHAR(13)
 		+ ' 	StatusName, ' + CHAR(13)
 		+ ' 	pdc.Created, ' + CHAR(13)
 		+ ' 	pdc.Modified, ' + CHAR(13)
-		+ ' 	LastModifiedByUser, ' + CHAR(13)	
+		+ ' 	LastModifiedByUser, ' + CHAR(13)
 		+ ' 	Rank ' + CHAR(13)
 		+ ' from PAGED_DATA_CTE pdc ' + CHAR(13)
 		+ ' inner join content_data cd on pdc.Id = cd.content_item_id and pdc.FieldId = cd.attribute_id ' + CHAR(13)
 		+ ' where ROW between @start_row and @end_row';
-		
-	
+
+
 	declare @sortExp nvarchar(4000);
-	set @sortExp = case when @p_order_by is null or @p_order_by = '' then N'Rank DESC' else @p_order_by end;	
-	set @query = REPLACE(@query_template, '<$_order_by_$>', @sortExp);	
+	set @sortExp = case when @p_order_by is null or @p_order_by = '' then N'Rank DESC' else @p_order_by end;
+	set @query = REPLACE(@query_template, '<$_order_by_$>', @sortExp);
 	set @paramdef = '@searchparam nvarchar(4000), @site_id int, @start_row int, @end_row int';
 	EXECUTE sp_executesql @query, @paramdef, @searchparam = @p_searchparam, @site_id = @p_site_id, @start_row = @p_start_row, @end_row = @p_end_row;
-	
+
 	drop table #temp
 	drop table #temp2
 END
 GO
 
-CREATE FUNCTION [dbo].[qp_get_display_fields] 
-(	
-  @content_id numeric(18,0), 
+CREATE FUNCTION [dbo].[qp_get_display_fields]
+(
+  @content_id numeric(18,0),
   @with_relation_field BIT = 0
 )
-RETURNS TABLE 
+RETURNS TABLE
 AS
-RETURN 
+RETURN
 (
 	SELECT  ATTRIBUTE_ID, attribute_name,
-	  CASE attribute_type_id 
-		WHEN 10 THEN 0 
+	  CASE attribute_type_id
+		WHEN 10 THEN 0
 		WHEN 9  THEN 0
 		ELSE 1
 	  END AS is_blob,
 	  view_in_list,
 	  attribute_order
-	FROM content_attribute 
-	WHERE content_id = @content_id 
-	AND (attribute_type_id <> 11 AND @with_relation_field = 0 OR @with_relation_field = 1)	
+	FROM content_attribute
+	WHERE content_id = @content_id
+	AND (attribute_type_id <> 11 AND @with_relation_field = 0 OR @with_relation_field = 1)
 )
 GO
 
@@ -18437,16 +18437,16 @@ GO
 CREATE PROCEDURE [dbo].qp_get_real_base_attributes
 	@v_attr_id numeric(18,0)
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
     with TREE(BASE_ATTR_ID, BASE_CNT_VTYPE) AS
 	(
 		select BASE_ATTR_ID, BASE_CNT_VTYPE FROM VIRTUAL_ATTR_BASE_ATTR_RELATION
 		where VIRTUAL_ATTR_ID = @v_attr_id
-		
+
 		union all
-		
+
 		select R.BASE_ATTR_ID, R.BASE_CNT_VTYPE FROM VIRTUAL_ATTR_BASE_ATTR_RELATION R
 		join TREE T ON T.BASE_ATTR_ID = R.VIRTUAL_ATTR_ID
 	)
@@ -18454,11 +18454,11 @@ BEGIN
 END
 GO
 
--- End of procedures and functions creating 
+-- End of procedures and functions creating
 
 -- Altering procedures
 
-ALTER  PROCEDURE [dbo].[qp_sites_list] 
+ALTER  PROCEDURE [dbo].[qp_sites_list]
   @user_id  numeric,
   @permission_level numeric,
   @order_by varchar(256) = 'site_id',
@@ -18476,7 +18476,7 @@ IF (dbo.qp_is_user_admin(@user_id) = 1)
 	set @use_security = 0
 ELSE
 	set @use_security = 1
-	
+
 if @use_security = 1
 Begin
 	EXEC	dbo.qp_GetPermittedItemsAsQuery
@@ -18487,32 +18487,32 @@ Begin
             @entity_name = 'site',
 			@parent_entity_name = '',
 			@parent_entity_id = 0,
-			
-			@SQLOut = @SecuritySQL OUTPUT        
+
+			@SQLOut = @SecuritySQL OUTPUT
 End
 
 SET NOCOUNT OFF
 
 if @site_id_only = 1
     set @strsql = 'select site.site_id '
-  else 
+  else
     set @strsql = 'select ' + @select
 
-set @strsql = @strsql + 
-              '  from site 
+set @strsql = @strsql +
+              '  from site
                inner join users as u on site.last_modified_by = u.user_id
 			   '
 if @use_security = 1
-	set @strsql = @strsql + 
+	set @strsql = @strsql +
               'inner join (' + @SecuritySQL + ') as pi on site.site_id = pi.site_id
-              ' 
- 
+              '
 
-if @filter <> '' 
+
+if @filter <> ''
 	begin
 	  set @strsql = @strsql + ' and ' + @filter
 	end
-if @order_by <> '' 
+if @order_by <> ''
 	begin
 	  set @strsql = @strsql + ' order by ' + @order_by
 	end
@@ -18520,7 +18520,7 @@ if @order_by <> ''
 exec( @strsql )
 GO
 
-ALTER PROCEDURE [dbo].[qp_content_list] 
+ALTER PROCEDURE [dbo].[qp_content_list]
 	@site_id numeric,
 	@user_id  numeric,
 	@permission_level numeric,
@@ -18540,7 +18540,7 @@ IF (dbo.qp_is_user_admin(@user_id) = 1)
 ELSE
 	set @use_security = 1
 
-if @use_security = 1	
+if @use_security = 1
 Begin
 	EXEC	dbo.qp_GetPermittedItemsAsQuery
 			@user_id = @user_id,
@@ -18550,8 +18550,8 @@ Begin
             @entity_name = 'content',
 			@parent_entity_name = 'site',
 			@parent_entity_id = @site_id,
-			
-			@SQLOut = @SecuritySQL OUTPUT        
+
+			@SQLOut = @SecuritySQL OUTPUT
 End
 
 SET NOCOUNT OFF
@@ -18560,20 +18560,20 @@ set @strsql = ' select ' + @select + ' from content inner join users as u on con
 
 if @use_security = 1
 begin
-	set @strsql = @strsql + ' inner join (' + @SecuritySQL + ') as pi on content.content_id = pi.content_id ' 
+	set @strsql = @strsql + ' inner join (' + @SecuritySQL + ') as pi on content.content_id = pi.content_id '
 end
 
 set @strsql = @strsql + ' where content.site_id = ' + cast(@site_id as nvarchar) + ' '
- 
-if @filter <> '' 
+
+if @filter <> ''
 	begin
 		set @strsql = @strsql + ' and ' + @filter
 	end
-if @order_by <> '' 
+if @order_by <> ''
 	begin
 		set @strsql = @strsql + ' order by ' + @order_by
 	end
-	
+
 exec( @strsql )
 GO
 
@@ -19706,7 +19706,7 @@ update BACKEND_ACTION set NEXT_SUCCESSFUL_ACTION_ID = dbo.qp_action_id('edit_vir
 
 update BACKEND_ACTION set NEXT_SUCCESSFUL_ACTION_ID = dbo.qp_action_id('edit_site_file') WHERE CODE = 'update_site_file'
 update BACKEND_ACTION set NEXT_SUCCESSFUL_ACTION_ID = dbo.qp_action_id('edit_content_file') WHERE CODE = 'update_content_file'
-GO 
+GO
 
 insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
 values (dbo.qp_action_id('list_site'), dbo.qp_action_id('edit_site'), 'Properties', 'properties.gif', NULL, 1, 1)
@@ -20115,7 +20115,7 @@ GO
 PRINT '7.8.0.22 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.0
 -- Release
@@ -20130,7 +20130,7 @@ GO
 PRINT '7.9.0.0 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.1
 -- Fix path computing
@@ -20159,8 +20159,8 @@ AS
   END
   CLOSE i
   DEALLOCATE i
-GO  
-  
+GO
+
 ALTER TRIGGER [dbo].[tiu_folder_path] ON [dbo].[FOLDER]
 FOR INSERT, UPDATE
 AS
@@ -20184,7 +20184,7 @@ AS
   END
   CLOSE i
   DEALLOCATE i
-GO 
+GO
 
 update backend_action set has_pre_action = 1 where code in ('remove_content_folder', 'remove_site_folder')
 GO
@@ -20198,7 +20198,7 @@ GO
 PRINT '7.9.0.1 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Maxim Tertyshnyy
 -- version 7.9.0.2
 -- Add Action Log
@@ -20214,51 +20214,51 @@ CREATE TABLE [dbo].[BACKEND_ACTION_LOG](
 	[ENTITY_STRING_ID] [nvarchar](255) NULL,
 	[PARENT_ENTITY_ID] [numeric](18, 0) NULL,
 	[ENTITY_TITLE] [nvarchar](255) NULL,
- CONSTRAINT [PK_ACTION_EXEC_LOG] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ACTION_EXEC_LOG] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_ACTION_CODE] ON [dbo].[BACKEND_ACTION_LOG] 
+CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_ACTION_CODE] ON [dbo].[BACKEND_ACTION_LOG]
 (
 	[ACTION_CODE] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_ACTION_TYPE_CODE] ON [dbo].[BACKEND_ACTION_LOG] 
+CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_ACTION_TYPE_CODE] ON [dbo].[BACKEND_ACTION_LOG]
 (
 	[ACTION_TYPE_CODE] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
 
-CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_ENTITY_STRING_ID] ON [dbo].[BACKEND_ACTION_LOG] 
+CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_ENTITY_STRING_ID] ON [dbo].[BACKEND_ACTION_LOG]
 (
 	[ENTITY_STRING_ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_ENTITY_TYPE_CODE] ON [dbo].[BACKEND_ACTION_LOG] 
+CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_ENTITY_TYPE_CODE] ON [dbo].[BACKEND_ACTION_LOG]
 (
 	[ENTITY_TYPE_CODE] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_EXEC_TIME] ON [dbo].[BACKEND_ACTION_LOG] 
+CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_EXEC_TIME] ON [dbo].[BACKEND_ACTION_LOG]
 (
 	[EXEC_TIME] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_PARENT_ENTITY_ID] ON [dbo].[BACKEND_ACTION_LOG] 
+CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_PARENT_ENTITY_ID] ON [dbo].[BACKEND_ACTION_LOG]
 (
 	[PARENT_ENTITY_ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_USER_ID] ON [dbo].[BACKEND_ACTION_LOG] 
+CREATE NONCLUSTERED INDEX [IX_BACKEND_ACTION_LOG_USER_ID] ON [dbo].[BACKEND_ACTION_LOG]
 (
 	[USER_ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 GO
 
 ALTER PROCEDURE [dbo].[qp_get_articles_tree]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@article_id numeric(18,0) = NULL,
 	@permission_level numeric(18,0),
@@ -20274,17 +20274,17 @@ BEGIN
 	DECLARE @sql_result AS nvarchar(max)
 	DECLARE @use_security bit, @parent_level numeric
 
-		
+
 	SELECT TOP 1
 		@attribute_name = ATTRIBUTE_NAME,
 		@rel_attribute_name = REL_ATTRIBUTE_NAME
-	FROM 
+	FROM
 		dbo.qp_get_article_relation_columns(@content_id)
-	
+
 	IF (@@ROWCOUNT = 1)
 		BEGIN
 			DECLARE @title_field_name AS nvarchar(255)
-			
+
 			SELECT TOP 1
 				@title_field_name = ATTRIBUTE_NAME
 			FROM
@@ -20297,8 +20297,8 @@ BEGIN
 			select @use_security = allow_items_permission from content with(nolock) where content_id = @content_id
 			select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
 			if @parent_level = 0
-				SET @filter = '1 = 0' 		
-		
+				SET @filter = '1 = 0'
+
 			if @use_security = 1
 				EXEC dbo.qp_GetPermittedItemsAsQuery
 					@user_id = @user_id,
@@ -20307,9 +20307,9 @@ BEGIN
 					@end_level = 4,
 					@entity_name = 'content_item',
 					@parent_entity_name = 'content',
-					@parent_entity_id = @content_id,				
+					@parent_entity_id = @content_id,
 					@SQLOut = @security_sql OUTPUT
-				
+
 			SET @sql_result = ''
 			SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 			IF (@count_only = 0)
@@ -20364,7 +20364,7 @@ BEGIN
 				END
 			SET @sql_result = @sql_result + 'FROM ' + CHAR(13)
 			SET @sql_result = @sql_result + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
-			
+
 			if @use_security = 1
 			BEGIN
 				SET @sql_result = @sql_result + 'INNER JOIN ' + CHAR(13)
@@ -20388,7 +20388,7 @@ BEGIN
 					SET @sql_result = @sql_result + 'ON ' + CHAR(13)
 					SET @sql_result = @sql_result + '	mu.USER_ID = c.LAST_MODIFIED_BY ' + CHAR(13)
 				END
-			SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)			
+			SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)
 			IF (@article_id IS NOT NULL)
 				BEGIN
 					SET @sql_result = @sql_result + '	c.[' + @attribute_name + '] = ' + CAST(@article_id AS varchar) + ' ' + CHAR(13)
@@ -20405,18 +20405,18 @@ BEGIN
 				SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 				SET @sql_result = @sql_result + ' c.CONTENT_ITEM_ID ASC '
 			END
-			
+
 			IF (@count_only = 0)
 				BEGIN
 					EXEC(@sql_result)
-					
-					SET @total_records = @@ROWCOUNT 
+
+					SET @total_records = @@ROWCOUNT
 				END
 			ELSE
 				BEGIN
-					EXEC sp_executesql 
-						@sql_result, 
-						N'@record_count int OUTPUT', 
+					EXEC sp_executesql
+						@sql_result,
+						N'@record_count int OUTPUT',
 						@record_count = @total_records OUTPUT
 				END
 		END
@@ -20427,47 +20427,47 @@ BEGIN
 END
 GO
 
-CREATE PROCEDURE [dbo].[qp_get_entity_titles_for_log]	
+CREATE PROCEDURE [dbo].[qp_get_entity_titles_for_log]
 	@entity_type_code nvarchar(50),
 	@entity_item_ids nvarchar(max)
 AS
 BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE @sql nvarchar(max);
 	DECLARE @title_field AS nvarchar(max)
-	
+
 	IF (@entity_type_code = 'article' OR @entity_type_code = 'archive_article')
-		BEGIN						
+		BEGIN
 			--EXEC qp_get_article_titles_for_log @entity_item_ids
 			declare @content_id AS numeric(18,0)
-	
+
 			set @sql = 'select @content_id = content_id FROM content_item WHERE CONTENT_ITEM_ID IN(' +  @entity_item_ids + ')';
-			EXEC sp_executesql @sql, N'@content_id numeric(18,0) OUTPUT', @content_id = @content_id OUTPUT	
+			EXEC sp_executesql @sql, N'@content_id numeric(18,0) OUTPUT', @content_id = @content_id OUTPUT
 			SELECT @title_field = dbo.qp_get_display_field(@content_id, default)
 
 			SET @sql = 'SELECT content_item_id as ID, CAST([' + @title_field + '] AS NVARCHAR (255)) as TITLE FROM content_' + cast(@content_id as varchar) + '_united' +
 				' WHERE content_item_id IN (' + @entity_item_ids + ')'
-		
+
 			PRINT @sql
 			EXEC sp_executesql @sql
 		END
 	ELSE
-		BEGIN	
+		BEGIN
 			DECLARE @source AS nvarchar(50)
-			DECLARE @id_field AS nvarchar(50)			
-			
-			SELECT 
-				@source = [SOURCE], 
-				@id_field = ID_FIELD, 
-				@title_field = TITLE_FIELD 
-			FROM 
-				ENTITY_TYPE 
-			WHERE 
+			DECLARE @id_field AS nvarchar(50)
+
+			SELECT
+				@source = [SOURCE],
+				@id_field = ID_FIELD,
+				@title_field = TITLE_FIELD
+			FROM
+				ENTITY_TYPE
+			WHERE
 				CODE = @entity_type_code
-						
+
 			IF (@source IS NOT NULL AND @id_field IS NOT NULL AND @title_field IS NOT NULL)
-			BEGIN				
+			BEGIN
 				SET @sql = 'SELECT ' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE FROM ' + @source + ' WHERE ' + @id_field + ' IN( ' + @entity_item_ids + ')'
 				EXEC sp_executesql @sql
 			END
@@ -20528,15 +20528,15 @@ GO
 
 
 CREATE VIEW [dbo].[V_BACKEND_ACTION_LOG] AS
-select L.ID as Id, 
-L.EXEC_TIME AS ExecutionTime, 
+select L.ID as Id,
+L.EXEC_TIME AS ExecutionTime,
 AT.CODE AS ActionTypeCode,
 AT.NAME AS ActionTypeName,
-ET.CODE AS EntityTypeCode, 
-ET.NAME AS EntityTypeName, 
-L.ENTITY_STRING_ID AS EntityStringId, 
-L.PARENT_ENTITY_ID AS ParentEntityId, 
-L.ENTITY_TITLE AS EntityTitle, 
+ET.CODE AS EntityTypeCode,
+ET.NAME AS EntityTypeName,
+L.ENTITY_STRING_ID AS EntityStringId,
+L.PARENT_ENTITY_ID AS ParentEntityId,
+L.ENTITY_TITLE AS EntityTitle,
 U.[USER_ID] as UserId,
 U.[LOGIN] as UserLogin
 from dbo.[BACKEND_ACTION_LOG] L
@@ -20548,7 +20548,7 @@ GO
 CREATE PROCEDURE [dbo].[qp_paged_action_log]
 		@where_block nvarchar(max) = '',
 		@order_by_block nvarchar(max) = 'ExecutionTime DESC',
-		@count_only bit = 0,		
+		@count_only bit = 0,
 		@start_row int = 0,
 		@page_size int = 0,
 		@total_records int OUTPUT
@@ -20562,13 +20562,13 @@ BEGIN
 		@select_block = '*',
 		@from_block = 'dbo.[V_BACKEND_ACTION_LOG]',
 		@entity_name = 'db',
-		
+
 		@where_block = @where_block,
-		@order_by_block = @order_by_block,		
+		@order_by_block = @order_by_block,
 		@count_only = @count_only,
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
-		@page_size = @page_size	
+		@page_size = @page_size
 END
 GO
 
@@ -20622,7 +20622,7 @@ PRINT '7.9.0.2 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.3
 -- New Attribute Type
@@ -20636,7 +20636,7 @@ GO
 exec qp_update_translations 'Relation Many-to-One', 'Связь Многие-к-одному'
 GO
 
-if not exists (select * From information_schema.columns where table_name = 'content_attribute' and column_name = 'back_related_attribute_id') 
+if not exists (select * From information_schema.columns where table_name = 'content_attribute' and column_name = 'back_related_attribute_id')
 begin
 	ALTER TABLE dbo.CONTENT_ATTRIBUTE
 	ADD BACK_RELATED_ATTRIBUTE_ID numeric(18, 0) NULL
@@ -20655,7 +20655,7 @@ PRINT '7.9.0.3 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.4
 -- QP8 Audit
@@ -20696,7 +20696,7 @@ PRINT '7.9.0.4 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.5
 -- QP8 Audit
@@ -20704,20 +20704,20 @@ GO
 
 CREATE VIEW dbo.[V_BUTTON_TRACE] WITH SCHEMABINDING
 AS
-	select B.BUTTON_NAME as ButtonName, 
+	select B.BUTTON_NAME as ButtonName,
 		T.activated as ActivatedTime,
 		U.[USER_ID] as UserId,
 		U.[LOGIN] as UserLogin
-	from dbo.[BUTTON_TRACE] T 
+	from dbo.[BUTTON_TRACE] T
 	JOIN dbo.[USERS] U ON U.[USER_ID] = T.[USER_ID]
 	JOIN dbo.[BUTTONS] B ON B.BUTTON_ID = ISNULL(T.button_id, T.tbutton_id)
 GO
 
-CREATE VIEW dbo.[V_REMOVED_ENTITIES] WITH SCHEMABINDING 
+CREATE VIEW dbo.[V_REMOVED_ENTITIES] WITH SCHEMABINDING
 AS
-	select RE.ID as EntityId, 
-		RE.PARENT_ID as ParentEntityId, 
-		RE.ENTITY_NAME as EntityTypeCode, 
+	select RE.ID as EntityId,
+		RE.PARENT_ID as ParentEntityId,
+		RE.ENTITY_NAME as EntityTypeCode,
 		RE.TITLE as EntityTitle,
 		U.[USER_ID] as UserId,
 		U.[LOGIN] as UserLogin,
@@ -20729,56 +20729,56 @@ GO
 CREATE PROCEDURE [dbo].[qp_paged_button_trace]
 		@where_block nvarchar(max) = '',
 		@order_by_block nvarchar(max) = 'ActivatedTime DESC',
-		@count_only bit = 0,		
+		@count_only bit = 0,
 		@start_row int = 0,
 		@page_size int = 0,
 		@total_records int OUTPUT
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
     EXEC qp_get_paged_data
 		@select_block = '*',
 		@from_block = 'dbo.[V_BUTTON_TRACE]',
 		@entity_name = 'db',
-		
+
 		@where_block = @where_block,
-		@order_by_block = @order_by_block,		
+		@order_by_block = @order_by_block,
 		@count_only = @count_only,
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
-		@page_size = @page_size	
+		@page_size = @page_size
 END
 GO
 
 CREATE PROCEDURE [dbo].[qp_paged_removed_entities]
 		@where_block nvarchar(max) = '',
 		@order_by_block nvarchar(max) = 'DeletedTime DESC',
-		@count_only bit = 0,		
+		@count_only bit = 0,
 		@start_row int = 0,
 		@page_size int = 0,
 		@total_records int OUTPUT
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
 
     EXEC qp_get_paged_data
 		@select_block = '*',
 		@from_block = 'dbo.[V_REMOVED_ENTITIES]',
 		@entity_name = 'db',
-		
+
 		@where_block = @where_block,
-		@order_by_block = @order_by_block,		
+		@order_by_block = @order_by_block,
 		@count_only = @count_only,
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
-		@page_size = @page_size	
+		@page_size = @page_size
 END
-GO	
+GO
 
 ALTER PROCEDURE [dbo].[qp_drop_link_with_check]
 @link_id numeric
-AS 
+AS
 IF @link_id is not null
 BEGIN
       IF NOT EXISTS (SELECT link_id from content_attribute ca join content c on c.content_id = ca.content_id where link_id = @link_id)
@@ -20798,7 +20798,7 @@ PRINT '7.9.0.5 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.6
 -- QP8 Audit + fix empty password bug
@@ -20824,19 +20824,19 @@ begin
 			user_id numeric,
 			salt bigint,
 			password nvarchar(255)
-		)		
+		)
 
 		if not exists (select user_id from deleted)
 			set @is_insert = 1
 		else
 			set @is_insert = 0
-			
+
 		insert into @users(user_id, password, salt)
 		select user_id, password, salt from inserted
-		
+
 		set @i = 1
 		select @count = count(user_id) from @users
-		
+
 		while @i < @count + 1
 		begin
 			select @user_id = user_id, @password = password, @salt = salt from @users where id = @i
@@ -20873,13 +20873,13 @@ GO
 PRINT '7.9.0.6 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.7
 -- M2O Field and removing base content
 -- **************************************
 ALTER TRIGGER [dbo].[tbd_delete_content] ON [dbo].[CONTENT] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 alter table content_item disable trigger td_delete_item
 
@@ -20902,10 +20902,10 @@ delete content_to_content from content_to_content cc
 inner join deleted d on d.content_id = cc.r_content_id or d.content_id = cc.l_content_id
 
 delete container from container c
-inner join deleted d on d.content_id = c.content_id 
+inner join deleted d on d.content_id = c.content_id
 
 delete content_form from content_form cf
-inner join deleted d on d.content_id = cf.content_id 
+inner join deleted d on d.content_id = cf.content_id
 
 delete content_item from content_item ci
 inner join deleted d on d.content_id = ci.content_id
@@ -20929,10 +20929,10 @@ GO
 PRINT '7.9.0.7 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.8
--- Audit: 
+-- Audit:
 --    Add Sessions Log
 --    Fix audit views names
 -- **************************************
@@ -20941,14 +20941,14 @@ CREATE PROCEDURE [dbo].[qp_paged_session_log]
 		@is_failed bit,
 		@where_block nvarchar(max) = '',
 		@order_by_block nvarchar(max) = '[SessionId] DESC',
-		@count_only bit = 0,		
+		@count_only bit = 0,
 		@start_row int = 0,
 		@page_size int = 0,
 		@total_records int OUTPUT
 AS
-BEGIN	
+BEGIN
 	SET NOCOUNT ON;
-	
+
 	DECLARE @exact_where_block nvarchar(max);
 	IF @is_failed <> 1
 		BEGIN
@@ -20962,18 +20962,18 @@ BEGIN
 		BEGIN
 			SET @exact_where_block = @exact_where_block + ' AND ' + @where_block;
 		END
-	
+
     EXEC qp_get_paged_data
 		@select_block = '[SESSION_ID] AS SessionId, [LOGIN] as [Login], [USER_ID] as [UserId], [START_TIME] as [StartTime], [END_TIME] as [EndTime], [IP], [BROWSER] as Browser, [SERVER_NAME] as ServerName, [AUTO_LOGGED] as AutoLogged, [SID] as [Sid], [IS_QP7] as IsQP7',
 		@from_block = 'dbo.[SESSIONS_LOG]',
 		@entity_name = 'db',
-		
+
 		@where_block = @exact_where_block,
-		@order_by_block = @order_by_block,		
+		@order_by_block = @order_by_block,
 		@count_only = @count_only,
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
-		@page_size = @page_size	
+		@page_size = @page_size
 END
 GO
 
@@ -21003,7 +21003,7 @@ UPDATE BACKEND_ACTION SET NAME = N'QP7: Button Trace' WHERE CODE = 'list_button_
 UPDATE BACKEND_ACTION SET NAME = N'QP7: Removed Entities' WHERE CODE = 'list_removed_entities'
 GO
 
-UPDATE CONTEXT_MENU_ITEM 
+UPDATE CONTEXT_MENU_ITEM
 SET BOTTOM_SEPARATOR = 1
 WHERE CONTEXT_MENU_ID = dbo.qp_context_menu_id('db') AND ACTION_ID = dbo.qp_action_id('about')
 GO
@@ -21018,14 +21018,14 @@ PRINT '7.9.0.8 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.9
--- M2O Field 
+-- M2O Field
 -- **************************************
 
 ALTER PROCEDURE [dbo].[qp_get_related_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@article_id numeric(18,0) = 0,
 	@field_id  numeric(18,0) = 0,
@@ -21039,23 +21039,23 @@ BEGIN
 	DECLARE @link_id AS numeric(18,0) -- идентификатор связи для полей со связью многие-ко-многим
 	DECLARE @back_relation_id  AS numeric(18,0)
 	DECLARE @is_many_to_many AS bit -- признак наличия связи многие-ко-многим
-	DECLARE @is_many_to_one AS bit 
+	DECLARE @is_many_to_one AS bit
 	DECLARE @title_field_name AS nvarchar(255) -- название поля, в котором хранится заголовок статьи
 	DECLARE @alias_field_name AS nvarchar(255) -- название поля, в котором хранится заголовок статьи
 	DECLARE @use_security bit, @parent_level numeric
-	
+
 	DECLARE @security_sql AS nvarchar(max)
 	DECLARE @sql_result AS nvarchar(max)
-	
+
 	DECLARE @SELECTION_MODE_ALL AS tinyint
 	DECLARE @SELECTION_MODE_ONLY_SELECTED AS tinyint
-	
+
 	SET @SELECTION_MODE_ALL = 0
 	SET @SELECTION_MODE_ONLY_SELECTED = 1
-	
+
 	if @selected_article_ids is null or @selected_article_ids = ''
 		set @selected_article_ids = '0'
-	
+
 
 	-- Получаем свойства связи
 	SELECT
@@ -21065,14 +21065,14 @@ BEGIN
 	FROM CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN CONTENT_ATTRIBUTE AS rca ON rca.ATTRIBUTE_ID = ca.RELATED_ATTRIBUTE_ID
 	WHERE ca.ATTRIBUTE_ID = @field_id
-			
+
 	SET @is_many_to_many = 0
 	SET @is_many_to_one = 0
 	IF @link_id IS NOT NULL
 		SET @is_many_to_many = 1
 	ELSE IF @back_relation_id IS NOT NULL
 		SET @is_many_to_one = 1
-	
+
 	-- Получаем название поля, в котором хранится заголовок статьи
 	SET @title_field_name = ''
 	IF (@is_many_to_many = 1 OR @is_many_to_one = 1 OR @field_id = 0 )
@@ -21088,7 +21088,7 @@ BEGIN
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
 	if @parent_level = 0
 		SET @filter = '1 = 0'
-	
+
 	-- Возвращаем простой список статей
 	if @use_security = 1
 		EXEC dbo.qp_GetPermittedItemsAsQuery
@@ -21098,9 +21098,9 @@ BEGIN
 			@end_level = 4,
 			@entity_name = 'content_item',
 			@parent_entity_name = 'content',
-			@parent_entity_id = @content_id,				
+			@parent_entity_id = @content_id,
 			@SQLOut = @security_sql OUTPUT
-	
+
 	SET @sql_result = ''
 	SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 	SET @sql_result = @sql_result + '	c.content_item_id AS id, ' + CHAR(13)
@@ -21111,7 +21111,7 @@ BEGIN
 	ELSE
 		BEGIN
 			SET @sql_result = @sql_result + '	'''' AS title, ' + CHAR(13)
-		END		
+		END
 	SET @sql_result = @sql_result + '	CAST(( ' + CHAR(13)
 
 	SET @sql_result = @sql_result + '		CASE WHEN (cis.content_item_id IS NOT NULL) THEN ' + CHAR(13)
@@ -21123,7 +21123,7 @@ BEGIN
 	SET @sql_result = @sql_result + '	) AS bit) AS is_selected ' + CHAR(13)
 	SET @sql_result = @sql_result + 'FROM  ' + CHAR(13)
 	SET @sql_result = @sql_result + '	content_' + CAST(@content_id AS varchar) + '_united AS c ' + CHAR(13)
-	
+
 	if @use_security = 1
 	BEGIN
 		SET @sql_result = @sql_result + 'INNER JOIN ' + CHAR(13)
@@ -21149,7 +21149,7 @@ BEGIN
 	SET @sql_result = @sql_result + '			content_item_id IN (' + @selected_article_ids + ') ' + CHAR(13)
 	SET @sql_result = @sql_result + '	) AS cis ' + CHAR(13)
 	SET @sql_result = @sql_result + 'ON ' + CHAR(13)
-	SET @sql_result = @sql_result + '	c.content_item_id = cis.content_item_id ' + CHAR(13)				
+	SET @sql_result = @sql_result + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
 	If @filter <> ''
 		SET @sql_result = @sql_result + 'WHERE ' +  @filter + CHAR(13)
 	SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
@@ -21169,7 +21169,7 @@ PRINT '7.9.0.9 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.10
 -- Custom Action: creating and modification
@@ -21196,11 +21196,11 @@ CREATE TABLE [dbo].[CUSTOM_ACTION](
 	[CREATED] [datetime] NOT NULL,
 	[MODIFIED] [datetime] NOT NULL,
 	[LAST_MODIFIED_BY] [numeric](18, 0) NOT NULL,
- CONSTRAINT [PK_CUSTOM_ACTION] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_CUSTOM_ACTION] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY],
- CONSTRAINT [UNQ_CUSTOM_ACTION_ACTION_ID] UNIQUE NONCLUSTERED 
+ CONSTRAINT [UNQ_CUSTOM_ACTION_ACTION_ID] UNIQUE NONCLUSTERED
 (
 	[ACTION_ID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
@@ -21229,7 +21229,7 @@ GO
 CREATE TABLE [dbo].[ACTION_CONTENT_BIND](
 	[CUSTOM_ACTION_ID] [numeric](18,0) NOT NULL,
 	[CONTENT_ID] [numeric](18, 0) NOT NULL,
- CONSTRAINT [PK_ACTION_CONTENT_BIND] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ACTION_CONTENT_BIND] PRIMARY KEY CLUSTERED
 (
 	[CUSTOM_ACTION_ID] ASC,
 	[CONTENT_ID] ASC
@@ -21255,7 +21255,7 @@ GO
 CREATE TABLE [dbo].[ACTION_SITE_BIND](
 	[CUSTOM_ACTION_ID] [numeric](18, 0) NOT NULL,
 	[SITE_ID] [numeric](18, 0) NOT NULL,
- CONSTRAINT [PK_ACTION_SITE_BIND] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_ACTION_SITE_BIND] PRIMARY KEY CLUSTERED
 (
 	[CUSTOM_ACTION_ID] ASC,
 	[SITE_ID] ASC
@@ -21276,55 +21276,55 @@ GO
 ALTER TABLE [dbo].[ACTION_SITE_BIND] CHECK CONSTRAINT [FK_ACTION_SITE_BIND_SITE]
 GO
 
-ALTER TABLE dbo.ENTITY_TYPE 
+ALTER TABLE dbo.ENTITY_TYPE
 ADD CONTEXT_NAME nvarchar(256) NULL
 GO
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'content_item_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'content_item_id'
 where CODE = 'article'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'content_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'content_id'
 where CODE = 'content'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'site_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'site_id'
 where CODE = 'site'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'page_template_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'page_template_id'
 where CODE = 'template'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'user_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'user_id'
 where CODE = 'user'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'usergroup_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'usergroup_id'
 where CODE = 'user_group'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'attribute_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'attribute_id'
 where CODE = 'field'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'object_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'object_id'
 where CODE = 'template_object'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'page_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'page_id'
 where CODE = 'page'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'object_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'object_id'
 where CODE = 'page_object'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'notification_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'notification_id'
 where CODE = 'notification'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'workflow_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'workflow_id'
 where CODE = 'workflow'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'style_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'style_id'
 where CODE = 'style'
 
-update dbo.ENTITY_TYPE set CONTEXT_NAME = 'status_type_id' 
+update dbo.ENTITY_TYPE set CONTEXT_NAME = 'status_type_id'
 where CODE = 'status'
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content] ON [dbo].[CONTENT] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 
@@ -21341,10 +21341,10 @@ BEGIN
 	inner join deleted d on d.content_id = cc.r_content_id or d.content_id = cc.l_content_id
 
 	delete container from container c
-	inner join deleted d on d.content_id = c.content_id 
+	inner join deleted d on d.content_id = c.content_id
 
 	delete content_form from content_form cf
-	inner join deleted d on d.content_id = cf.content_id 
+	inner join deleted d on d.content_id = cf.content_id
 
 	delete content_item from content_item ci
 	inner join deleted d on d.content_id = ci.content_id
@@ -21363,7 +21363,7 @@ GO
 
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 	alter table content_attribute disable trigger td_content_attribute_clean_empty_links
@@ -21381,9 +21381,9 @@ BEGIN
 	delete from item_to_item where link_id in
 	(select link_id from site_content_link scl
 	inner join deleted d on d.site_id = scl.site_id)
-	
-	delete content_item_status_history from content_item_status_history cis	
-	inner join content_item ci on ci.content_item_id = cis.content_item_id 
+
+	delete content_item_status_history from content_item_status_history cis
+	inner join content_item ci on ci.content_item_id = cis.content_item_id
 	inner join content c on c.content_id = ci.content_id
 	inner join deleted d on d.site_id = c.site_id
 
@@ -21393,18 +21393,18 @@ BEGIN
 
 	delete content from content c
 	inner join deleted d on d.site_id = c.site_id
-	
+
 	update [object] set object_format_id = null from [object] obj
 	inner join page_template pt on obj.page_template_id = pt.page_template_id
 	inner join deleted d on d.site_id = pt.site_id
 
 	delete page_template from page_template pt
 	inner join deleted d on d.site_id = pt.site_id
-	
+
 	delete [ACTION_SITE_BIND] from [ACTION_SITE_BIND] asb
 	inner join deleted d on d.site_id = asb.site_id
 
-	delete site from site s 	
+	delete site from site s
 	inner join deleted d on d.site_id = s.site_id
 
 
@@ -21422,15 +21422,15 @@ BEGIN
 END
 GO
 
-ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
 BEGIN
-	
-	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id 
 
-    UPDATE SITE SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id  
-    UPDATE SITE SET locked = NULL, locked_by = NULL FROM SITE c inner join deleted d on c.locked_by = d.user_id  
+	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
+
+    UPDATE SITE SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
+    UPDATE SITE SET locked = NULL, locked_by = NULL FROM SITE c inner join deleted d on c.locked_by = d.user_id
 
     UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
@@ -21440,7 +21440,7 @@ BEGIN
 
     UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
-    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id
     UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
 
@@ -21451,10 +21451,10 @@ BEGIN
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
@@ -21463,12 +21463,12 @@ BEGIN
     UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
     UPDATE DOC SET last_modified_by = 1 FROM DOC c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     UPDATE CUSTOM_ACTION SET LAST_MODIFIED_BY = 1 FROM CUSTOM_ACTION c INNER JOIN deleted d on c.LAST_MODIFIED_BY = d.[USER_ID]
-    
+
     delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
@@ -21494,7 +21494,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @source nvarchar(50), @id_field nvarchar(50), @title_field nvarchar(50)
 	declare @parent_id_field nvarchar(50), @icon_field nvarchar(50)
@@ -21503,35 +21503,35 @@ begin
 	declare @recurring_id_field nvarchar(50), @source_sp nvarchar(50)
 	declare @id_str nvarchar(10), @parent_id bigint
 	declare @default_action_id int, @context_menu_id int
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
-	select 
+
+	select
 		@source = source,
 		@source_sp = source_sp,
 		@id_field = id_field,
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = dbo.qp_checked_action_id(@user_id, default_action_id),
-		@context_menu_id = CONTEXT_MENU_ID 
-	from 
-		ENTITY_TYPE 
+		@context_menu_id = CONTEXT_MENU_ID
+	from
+		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 
 	set @id_str = CAST(@id as nvarchar(10))
-	
+
 	if @icon_field is null
 		set @icon_field = 'NULL'
 	if @icon_modifier_field is null
-		set @icon_modifier_field = 'NULL'	
-	
+		set @icon_modifier_field = 'NULL'
+
 
 	if @is_folder = 1 or @recurring_id_field is not null
 	begin
@@ -21540,12 +21540,12 @@ begin
 		if @has_item_nodes = 1
 		begin
 			set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-			
-			
+
+
 			-- process recurring --
 			if @recurring_id_field is not null
 			begin
-				if @is_folder = 1 
+				if @is_folder = 1
 					set @where = @parent_id_field + ' = ' + @id_str + ' and ' + @recurring_id_field + ' is null '
 				else
 					set @where = @recurring_id_field + ' = ' + @id_str
@@ -21556,15 +21556,15 @@ begin
 			end
 			else
 				set @where = '1 = 1'
-			
+
 			if @order_field is null
 				set @order = @title_field
 			else
-				set @order = @order_field  
-			
+				set @order = @order_field
+
 		end
-		
-		
+
+
 		if @source_sp is null
 			set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where + ' order by ' + @order
 		else
@@ -21576,32 +21576,32 @@ begin
 				if @is_folder = 1
 					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=0'
 				else
-					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str			
-				
-			
+					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str
+
+
 		end
-		
+
 		insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
 		exec sp_executesql @sql
-		
+
 		--PRINT @sql;
-		
-		
+
+
 		if @count_only = 0
 		begin
-			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-			update 
+			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+			update
 				@result
-			set 
-				PARENT_ID = @id, 
-				CODE = @code, 
-				IS_FOLDER = 0, 
-				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER), 
-				DEFAULT_ACTION_ID = @default_action_id, 
+			set
+				PARENT_ID = @id,
+				CODE = @code,
+				IS_FOLDER = 0,
+				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
+				DEFAULT_ACTION_ID = @default_action_id,
 				CONTEXT_MENU_ID = @context_menu_id
 		end
 		else
-			select @count = COUNT(ID) from @result	
+			select @count = COUNT(ID) from @result
 	end
 	else
 	begin
@@ -21614,12 +21614,12 @@ begin
 				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), dbo.qp_checked_action_id(@user_id, DEFAULT_ACTION_ID), CONTEXT_MENU_ID From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 order by [Order]
 		else
 			if @code is not null
-				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID = dbo.qp_entity_type_id(@code) and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 	
+				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID = dbo.qp_entity_type_id(@code) and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0
 			else
-				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 	
+				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0
 
 	end
-	
+
 	if @count_only = 0
 	begin
 		declare @i numeric, @total numeric
@@ -21630,7 +21630,7 @@ begin
 		while @i <= @total
 		begin
 			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = Is_folder from @result where NUMBER = @i
-			
+
 			if @local_is_folder = 1
 				exec dbo.qp_expand @user_id, @local_code, @local_parent_id, 1, 1, @count = @children_count output
 			else
@@ -21640,32 +21640,32 @@ begin
 				update @result set has_children = 0 where NUMBER = @i
 			else
 				update @result set has_children = 1 where NUMBER = @i
-			
+
 			set @i = @i + 1
 		end
-		
-		select 
+
+		select
 			TREE_NODE.ID,
-			TREE_NODE.CODE, 			
+			TREE_NODE.CODE,
 			TREE_NODE.PARENT_ID as PARENT_ID,
-			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-			TREE_NODE.IS_FOLDER, 
-			TREE_NODE.ICON, 
-			TREE_NODE.TITLE, 
-			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE, 
+			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+			TREE_NODE.IS_FOLDER,
+			TREE_NODE.ICON,
+			TREE_NODE.TITLE,
+			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 			ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 			TREE_NODE.HAS_CHILDREN
 		from
 			@result AS TREE_NODE
 		left outer join
 			BACKEND_ACTION
 		on
-			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 		left outer join
 			ACTION_TYPE
 		on
-			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID	
+			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID
 	end
 end
 GO
@@ -21679,7 +21679,7 @@ GO
 PRINT '7.9.0.10 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.11
 -- M2O Field
@@ -21690,11 +21690,11 @@ exec qp_drop_existing 'workflow_max_statuses', 'IsView'
 GO
 
 CREATE VIEW dbo.workflow_max_statuses
-WITH SCHEMABINDING 
+WITH SCHEMABINDING
 AS
 select workflow_id, STATUS_TYPE_ID as max_status_type_id from
 (
-	select wr.workflow_id, st.status_type_id, ROW_NUMBER() OVER (PARTITION BY wr.WORKFLOW_ID ORDER BY wr.RULE_ORDER DESC ) AS 'Order'  
+	select wr.workflow_id, st.status_type_id, ROW_NUMBER() OVER (PARTITION BY wr.WORKFLOW_ID ORDER BY wr.RULE_ORDER DESC ) AS 'Order'
 	from dbo.workflow_rules wr
 	inner join dbo.status_type st on wr.successor_status_id = st.status_type_id
 ) as v
@@ -21707,7 +21707,7 @@ GO
 CREATE TABLE [dbo].[CHILD_DELAYS](
 	[id] [numeric](18, 0) NOT NULL,
 	[child_id] [numeric](18, 0) NOT NULL,
-PRIMARY KEY CLUSTERED 
+PRIMARY KEY CLUSTERED
 (
 	[id] ASC,
 	[child_id] ASC
@@ -21725,7 +21725,7 @@ REFERENCES [dbo].[CONTENT_ITEM] ([CONTENT_ITEM_ID])
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content_item] ON [dbo].[CONTENT_ITEM] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 
 delete waiting_for_approval from waiting_for_approval wa inner join deleted d on wa.content_item_id = d.content_item_id
@@ -21734,16 +21734,16 @@ delete child_delays from child_delays cd inner join deleted d on cd.child_id = d
 
 IF dbo.qp_get_version_control() IS NOT NULL BEGIN
 	delete content_item_version from content_item_version civ inner join deleted d on civ.content_item_id = d.content_item_id
-	
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
-	inner join deleted d on d.content_item_id = civ.content_item_id 
 
-	delete item_to_item_version from item_to_item_version iiv 
-	inner join deleted d on d.content_item_id = iiv.linked_item_id 
+	delete item_to_item_version from item_to_item_version iiv
+	inner join content_item_version civ on civ.content_item_version_id = iiv.content_item_version_id
+	inner join deleted d on d.content_item_id = civ.content_item_id
+
+	delete item_to_item_version from item_to_item_version iiv
+	inner join deleted d on d.content_item_id = iiv.linked_item_id
 END
 
-delete item_link_united_full from item_link_united_full ii where ii.item_id in (select content_item_id from deleted) 
+delete item_link_united_full from item_link_united_full ii where ii.item_id in (select content_item_id from deleted)
 
 delete content_data from content_data cd inner join deleted d on cd.content_item_id = d.content_item_id
 
@@ -21762,22 +21762,22 @@ PRINT '7.9.0.11 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.12
--- M2O Field 
+-- M2O Field
 -- **************************************
 
 exec qp_drop_existing 'qp_copy_schedule_to_child_delays', 'IsProcedure'
 GO
- 
+
 CREATE PROCEDURE [dbo].qp_copy_schedule_to_child_delays
 @id numeric
 AS
 BEGIN
-	if exists(select * from content_item_schedule where content_item_id = @id and freq_type = 2) 
-	begin 
-		update content_item_schedule set delete_job = 1 where content_item_id in (select child_id from child_delays where id = @id); 
+	if exists(select * from content_item_schedule where content_item_id = @id and freq_type = 2)
+	begin
+		update content_item_schedule set delete_job = 1 where content_item_id in (select child_id from child_delays where id = @id);
 		delete from content_item_schedule where content_item_id in (select child_id from child_delays where id = @id);
 		insert into content_item_schedule (CONTENT_ITEM_ID, MAXIMUM_OCCURENCES, CREATED, MODIFIED, LAST_MODIFIED_BY, freq_type, freq_interval, freq_subday_type, freq_subday_interval, freq_relative_interval, freq_recurrence_factor, active_start_date, active_end_date, active_start_time, active_end_time, occurences, use_duration, duration, duration_units, DEACTIVATE, DELETE_JOB, USE_SERVICE)
 		select child_id, MAXIMUM_OCCURENCES, GETDATE(), GETDATE(), LAST_MODIFIED_BY, freq_type, freq_interval, freq_subday_type, freq_subday_interval, freq_relative_interval, freq_recurrence_factor, active_start_date, active_end_date, active_start_time, active_end_time, occurences, use_duration, duration, duration_units, DEACTIVATE, DELETE_JOB, USE_SERVICE
@@ -21786,13 +21786,13 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE [dbo].[qp_merge_article] 
+ALTER PROCEDURE [dbo].[qp_merge_article]
 @item_id numeric
 AS
 BEGIN
-	exec qp_merge_links @item_id 
+	exec qp_merge_links @item_id
 	UPDATE content_item with(rowlock) SET schedule_new_version_publication = 0, not_for_replication = 1, MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1 WHERE content_item_id = @item_id
-	exec qp_replicate @item_id 
+	exec qp_replicate @item_id
 	UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id = @item_id
 	DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id = @item_id
 	delete from CHILD_DELAYS with(rowlock) WHERE id = @item_id
@@ -21809,10 +21809,10 @@ GO
 PRINT '7.9.0.12 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.13
--- Split nvarchar(max) support 
+-- Split nvarchar(max) support
 -- **************************************
 exec qp_drop_existing 'Split', 'IsTableFunction'
 GO
@@ -21823,7 +21823,7 @@ AS BEGIN
   DECLARE @Slice nvarchar(max)
   SELECT @Counter = 1
   IF @Str IS NULL RETURN
- 
+
   WHILE @Counter !=0
   BEGIN
     SELECT @Counter = CHARINDEX(@Delimiter,@Str)
@@ -21831,10 +21831,10 @@ AS BEGIN
       SELECT @Slice = LEFT(@Str,@Counter - 1)
     ELSE
       SELECT @Slice = @Str
-    
+
     INSERT INTO @Results(Items) VALUES(@Slice)
     SELECT @Str = RIGHT(@Str,LEN(@Str) - @Counter)
-    
+
     IF LEN(@Str) = 0 BREAK
   END
   RETURN
@@ -21851,7 +21851,7 @@ PRINT '7.9.0.13 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.14
 -- Update Article SPs
@@ -21927,16 +21927,16 @@ BEGIN
 	while exists (select * from @newIds)
 	begin
 		select @currentId = id from @newIds
-		
+
 		exec qp_apply_link_id_to_data @linkId, @currentId
-		
-		IF @splitted = 0 
-			and exists (select * from content_item where content_item_id = @currentId and splitted = 1) 
-			and not exists (select * from item_link_async where link_id = @linkId and item_id = @currentId and linked_item_id = @id) 
-			begin	
+
+		IF @splitted = 0
+			and exists (select * from content_item where content_item_id = @currentId and splitted = 1)
+			and not exists (select * from item_link_async where link_id = @linkId and item_id = @currentId and linked_item_id = @id)
+			begin
 				insert into item_link_async with(rowlock) values(@linkId, @currentId, @id)
 			end
-			
+
 		delete from @newIds where id = @currentId
 	end
 END
@@ -21947,9 +21947,9 @@ exec qp_drop_existing 'qp_get_m2o_ids', 'IsProcedure'
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_m2o_ids]
-@contentId numeric, 
-@fieldName nvarchar(255), 
-@id numeric 
+@contentId numeric,
+@fieldName nvarchar(255),
+@id numeric
 AS BEGIN
 	declare @sql nvarchar(1024)
 	set @sql = 'select content_item_id from content_' + CAST(@contentId as nvarchar(255)) + '_united where [' + @fieldName + '] = @id'
@@ -21969,13 +21969,13 @@ BEGIN
 	declare @ids table (id numeric primary key)
 	declare @new_ids table (id numeric primary key);
 	declare @cross_ids table (id numeric primary key);
-	
+
 	declare @contentId numeric, @fieldName nvarchar(255)
 	select @contentId = content_id, @fieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @fieldId
 
 	insert into @ids
 	exec qp_get_m2o_ids @contentId, @fieldName, @id
-	
+
 	select content_item_id
 	from content_data where ATTRIBUTE_ID = @fieldId and DATA = @id
 
@@ -21995,40 +21995,40 @@ GO
 exec qp_drop_existing 'qp_update_m2o_final', 'IsProcedure'
 GO
 
-CREATE PROCEDURE dbo.qp_update_m2o_final 
+CREATE PROCEDURE dbo.qp_update_m2o_final
 @id numeric
 AS
 BEGIN
-	
+
 	if exists(select * from #resultIds)
 	begin
 		declare @statusId numeric
 		declare @splitted bit
 		declare @lastModifiedBy numeric
 		declare @ids table (id numeric, attribute_id numeric not null, to_remove bit not null default 0, processed bit not null default 0, primary key(id, attribute_id))
-		
+
 		insert into @ids(id, attribute_id, to_remove)
 		select * from #resultIds
-		
+
 		select @statusId = STATUS_TYPE_ID, @splitted = SPLITTED, @lastModifiedBy = LAST_MODIFIED_BY from content_item where CONTENT_ITEM_ID = @id
-		
-		update content_item set modified = getdate(), last_modified_by = @lastModifiedBy, not_for_replication = 1 
+
+		update content_item set modified = getdate(), last_modified_by = @lastModifiedBy, not_for_replication = 1
 		where content_item_id in (select id from @ids)
-		
-		update content_data set content_data.data = @id, content_data.blob_data = null, content_data.modified = getdate() 
-		from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id 
+
+		update content_data set content_data.data = @id, content_data.blob_data = null, content_data.modified = getdate()
+		from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id
 		where r.to_remove = 0
-		
-		update content_data set content_data.data = null, content_data.blob_data = null, content_data.modified = getdate() 
-		from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id 
+
+		update content_data set content_data.data = null, content_data.blob_data = null, content_data.modified = getdate()
+		from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id
 		where r.to_remove = 1
-		
+
 		declare @maxStatus numeric
 		declare @resultId numeric
-		
+
 		select @maxStatus = max_status_type_id from content_item_workflow ciw left join workflow_max_statuses wms on ciw.workflow_id = wms.workflow_id where ciw.content_item_id = @id
-		
-		if @statusId = @maxStatus and @splitted = 0 begin 
+
+		if @statusId = @maxStatus and @splitted = 0 begin
 		while exists (select * from child_delays where id = @id)
 		begin
 			select @resultId = child_id from child_delays where id = @id
@@ -22036,16 +22036,16 @@ BEGIN
 			delete from child_delays where id = @id and child_id = @resultId
 		end
 		end else if @maxStatus is not null begin
-			insert into child_delays (id, child_id) select @id, r.id from @ids r 
-			inner join content_item ci on r.id = ci.content_item_id 
-			left join child_delays ex on ex.child_id = ci.content_item_id and ex.id = @id 
-			left join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id 
-			left join workflow_max_statuses wms on ciw.workflow_id = wms.workflow_id 
+			insert into child_delays (id, child_id) select @id, r.id from @ids r
+			inner join content_item ci on r.id = ci.content_item_id
+			left join child_delays ex on ex.child_id = ci.content_item_id and ex.id = @id
+			left join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id
+			left join workflow_max_statuses wms on ciw.workflow_id = wms.workflow_id
 			where ex.child_id is null and ci.status_type_id = wms.max_status_type_id and ci.splitted = 0
-			
+
 			update content_item set schedule_new_version_publication = 1 where content_item_id in (select child_id from child_delays where id = @id)
 		end
-		
+
 		while exists (select id from @ids where processed = 0)
 		begin
 			select @resultId = id from @ids where processed = 0
@@ -22066,7 +22066,7 @@ PRINT '7.9.0.14 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.15
 -- Child delays fix
@@ -22075,7 +22075,7 @@ GO
 exec qp_drop_existing 'qp_update_m2o_final', 'IsProcedure'
 GO
 
-CREATE PROCEDURE [dbo].[qp_update_m2o_final] 
+CREATE PROCEDURE [dbo].[qp_update_m2o_final]
 @id numeric
 AS
 BEGIN
@@ -22083,29 +22083,29 @@ BEGIN
 	declare @splitted bit
 	declare @lastModifiedBy numeric
 	declare @ids table (id numeric, attribute_id numeric not null, to_remove bit not null default 0, processed bit not null default 0, primary key(id, attribute_id))
-	
+
 	insert into @ids(id, attribute_id, to_remove)
 	select * from #resultIds
-	
+
 	select @statusId = STATUS_TYPE_ID, @splitted = SPLITTED, @lastModifiedBy = LAST_MODIFIED_BY from content_item where CONTENT_ITEM_ID = @id
-	
-	update content_item set modified = getdate(), last_modified_by = @lastModifiedBy, not_for_replication = 1 
+
+	update content_item set modified = getdate(), last_modified_by = @lastModifiedBy, not_for_replication = 1
 	where content_item_id in (select id from @ids)
-	
-	update content_data set content_data.data = @id, content_data.blob_data = null, content_data.modified = getdate() 
-	from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id 
+
+	update content_data set content_data.data = @id, content_data.blob_data = null, content_data.modified = getdate()
+	from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id
 	where r.to_remove = 0
-	
-	update content_data set content_data.data = null, content_data.blob_data = null, content_data.modified = getdate() 
-	from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id 
+
+	update content_data set content_data.data = null, content_data.blob_data = null, content_data.modified = getdate()
+	from content_data cd inner join @ids r on cd.attribute_id = r.attribute_id and cd.content_item_id = r.id
 	where r.to_remove = 1
-	
+
 	declare @maxStatus numeric
 	declare @resultId numeric
-	
+
 	select @maxStatus = max_status_type_id from content_item_workflow ciw left join workflow_max_statuses wms on ciw.workflow_id = wms.workflow_id where ciw.content_item_id = @id
 
-	if @statusId = @maxStatus and @splitted = 0 begin 
+	if @statusId = @maxStatus and @splitted = 0 begin
 	while exists (select * from child_delays where id = @id)
 	begin
 		select @resultId = child_id from child_delays where id = @id
@@ -22117,17 +22117,17 @@ BEGIN
 		end
 	end
 	end else if @maxStatus is not null begin
-		insert into child_delays (id, child_id) select @id, r.id from @ids r 
-		inner join content_item ci on r.id = ci.content_item_id 
+		insert into child_delays (id, child_id) select @id, r.id from @ids r
+		inner join content_item ci on r.id = ci.content_item_id
 		left join child_delays ex on ex.child_id = ci.content_item_id and ex.id = @id
-		left join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id 
+		left join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id
 		left join workflow_max_statuses wms on ciw.workflow_id = wms.workflow_id
-		where ex.child_id is null and ci.status_type_id = wms.max_status_type_id 
+		where ex.child_id is null and ci.status_type_id = wms.max_status_type_id
 			and (ci.splitted = 0 or ci.splitted = 1 and exists(select * from CHILD_DELAYS where child_id = ci.CONTENT_ITEM_ID and id <> @id))
-		
+
 		update content_item set schedule_new_version_publication = 1 where content_item_id in (select child_id from child_delays where id = @id)
 	end
-	
+
 	while exists (select id from @ids where processed = 0)
 	begin
 		select @resultId = id from @ids where processed = 0
@@ -22146,7 +22146,7 @@ GO
 PRINT '7.9.0.15 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.16
 -- Create/Restore Versions for M2O
@@ -22167,12 +22167,12 @@ AS
   FROM content AS c
   INNER JOIN content_item AS ci ON c.content_id = ci.content_id
   WHERE ci.content_item_id = @content_item_id
-IF @max_num_of_stored_versions <> 0 
+IF @max_num_of_stored_versions <> 0
 BEGIN
   DECLARE @item_version_count INT
   SELECT @item_version_count = COUNT(content_item_version_id) FROM content_item_version
-  WHERE content_item_id = @content_item_id 
-  IF @item_version_count >= @max_num_of_stored_versions 
+  WHERE content_item_id = @content_item_id
+  IF @item_version_count >= @max_num_of_stored_versions
   BEGIN
 	DECLARE @item_version_id NUMERIC
 	SELECT TOP 1 @item_version_id = content_item_version_id FROM content_item_version
@@ -22180,60 +22180,60 @@ BEGIN
 	DELETE item_to_item_version WHERE content_item_version_id = @item_version_id
 	DELETE content_item_version WHERE content_item_version_id = @item_version_id
   END
-  
+
   -- Create content item version
   IF @content_version_id IS NOT NULL
-    DELETE FROM content_item_version 
+    DELETE FROM content_item_version
     WHERE content_version_id = @content_version_id AND content_item_id = @content_item_id
   INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id)
   VALUES (@tm, 'backup', @content_version_id, @content_item_id)
   SET @content_item_version_id = @@IDENTITY
-  
+
   -- Store content item data
   INSERT INTO version_content_data (attribute_id, content_item_version_id, data, blob_data, created)
   SELECT attribute_id, @content_item_version_id, data, blob_data, @tm
   FROM content_data
   WHERE content_item_id = @content_item_id
-  
+
   -- Store Many-to-Many slice
   INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
-  SELECT @content_item_version_id, ca.attribute_id, linked_item_id 
+  SELECT @content_item_version_id, ca.attribute_id, linked_item_id
   FROM item_link_united AS il
   INNER JOIN content_attribute AS ca ON ca.link_id = il.link_id
   INNER JOIN content_item AS ci ON ci.content_id =  ca.content_id AND ci.content_item_id = il.item_id
   WHERE il.item_id = @content_item_id
-  
+
   -- Store Many-to-One data
   declare @many_to_ones table (id numeric, content_id numeric, name nvarchar(255))
   insert into @many_to_ones (id, content_id, name)
-  select ca.attribute_id, rca.CONTENT_ID, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca 
+  select ca.attribute_id, rca.CONTENT_ID, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca
   inner join CONTENT_ATTRIBUTE rca on ca.BACK_RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID
   where ca.CONTENT_ID = @content_id
-  
+
   while exists(select * from @many_to_ones)
   begin
 	declare @currentFieldId numeric, @currentContentId numeric, @currentFieldName nvarchar(255)
 	select @currentFieldId = id, @currentContentId = content_id, @currentFieldName = name from @many_to_ones
-	
+
 	declare @ids table (id numeric)
 	insert into @ids
 	exec qp_get_m2o_ids @currentContentId, @currentFieldName, @content_item_id
-	
+
 	SELECT @content_item_version_id, @currentFieldId, id from @ids
-	
+
 	INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
 	SELECT @content_item_version_id, @currentFieldId, id from @ids
-	
+
 	delete from @ids
-	
+
 	delete from @many_to_ones where id = @currentFieldId
   end
-  
+
   -- Write status history log
-  INSERT INTO content_item_status_history 
-    (content_item_id, user_id, description, created, content_item_version_id, 
+  INSERT INTO content_item_status_history
+    (content_item_id, user_id, description, created, content_item_version_id,
     system_status_type_id)
-  VALUES 
+  VALUES
     (@content_item_id, @uid, 'Record version backup has been created', @tm, @content_item_version_id,
     2)
 END
@@ -22243,57 +22243,57 @@ GO
 ALTER  PROCEDURE [dbo].[restore_content_item_version]
   @uid NUMERIC,
   @version_id NUMERIC
-AS 
+AS
   DECLARE @id NUMERIC, @tm DATETIME
   DECLARE @content_id numeric, @splitted bit
   SET @tm = GETDATE()
   SELECT @id = content_item_id FROM content_item_version WHERE content_item_version_id = @version_id
   IF @id IS NOT NULL BEGIN
     select @content_id = content_id, @splitted = splitted from content_item where content_item_id = @id
-    
+
     -- Restore common data
     DELETE FROM content_data WHERE content_item_id = @id
     INSERT INTO content_data (attribute_id, content_item_id, data, blob_data)
     SELECT attribute_id, @id, data, blob_data
     FROM version_content_data
     WHERE content_item_version_id = @version_id
-    
+
     -- Restore many-to-many data
     IF @splitted = 1
     begin
 		DELETE FROM item_link_async where item_id = @id and link_id in (select link_id from content_attribute where content_id = @content_id)
-		
+
 		INSERT INTO item_link_async
 		SELECT link_id, @id, linked_item_id FROM item_to_item_version AS iv
 		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id
-		WHERE iv.content_item_version_id = @version_id and link_id is not null		 
-    end else  
+		WHERE iv.content_item_version_id = @version_id and link_id is not null
+    end else
     begin
 		DELETE FROM item_link_united_full where item_id = @id and link_id in (select link_id from content_attribute where content_id = @content_id)
-	
-		INSERT INTO item_to_item 
+
+		INSERT INTO item_to_item
 		SELECT link_id, @id, linked_item_id FROM item_to_item_version AS iv
-		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id		
+		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id
 		WHERE iv.content_item_version_id = @version_id and link_id is not null
     end
-    
+
     -- Restore many-to-one data
     create table #resultIds (id numeric, attribute_id numeric not null, to_remove bit not null default 0)
-    
+
     declare @fieldIds table (id numeric, back_id numeric)
-    
+
     insert into @fieldIds
     select ATTRIBUTE_ID, BACK_RELATED_ATTRIBUTE_ID From CONTENT_ATTRIBUTE where BACK_RELATED_ATTRIBUTE_ID is not null and CONTENT_ID = @content_id
-    
+
     while exists(select * from @fieldIds)
     begin
     	declare @currentFieldId numeric, @currentBackFieldId numeric
     	select @currentFieldId = id, @currentBackFieldId = back_id from @fieldIds
-    	
+
     	declare @ids table (id numeric)
     	insert into @ids
     	select linked_item_id from item_to_item_version where attribute_id = @currentFieldId and content_item_version_id = @version_id
-    	
+
     	declare @value nvarchar(max)
     	set @value = ''
     	while exists(select * from @ids)
@@ -22303,27 +22303,27 @@ AS
     		if @value <> ''
     			set @value = @value + ','
     		set @value = @value + CAST(@currentId as nvarchar)
-    		
+
     		delete from @ids where id = @currentId
-    	
+
     	end
-    	
+
     	exec qp_update_m2o @id, @currentBackFieldId, @value
 
-    
+
 		delete from @fieldIds where id = @currentFieldId
     end
-    
+
     exec qp_update_m2o_final @id
-    
+
     drop table #resultIds
-    
+
     -- Write status history log
-    INSERT INTO content_item_status_history 
+    INSERT INTO content_item_status_history
       (content_item_id, user_id, description, created,
       system_status_type_id, content_item_version_id)
-    VALUES 
-      (@id, @uid, 'Record has been restored from version backup', @tm, 
+    VALUES
+      (@id, @uid, 'Record has been restored from version backup', @tm,
       4, @version_id)
   END
 GO
@@ -22338,14 +22338,14 @@ PRINT '7.9.0.16 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.17
 -- Search for M2O Field
 -- **************************************
 
 ALTER PROCEDURE [dbo].[qp_paged_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@selected_article_ids AS nvarchar(max) = NULL,
 	@permission_level numeric(18,0),
@@ -22366,15 +22366,15 @@ BEGIN
 	DECLARE @where_block AS nvarchar(max)
 	DECLARE @order_by_block AS nvarchar(max)
 	DECLARE @processed_order_by_block AS nvarchar(max)
-	
+
 	DECLARE @default_sort_column_name AS nvarchar(255)
 	DECLARE @dynamic_select_block AS nvarchar(max)
 	DECLARE @related_select_block AS nvarchar(max)
 	DECLARE @related_from_block AS nvarchar(max)
-	
+
 	DECLARE @attribute_id numeric, @rel_attribute_id numeric, @rel_attribute_type_id numeric, @rel_content_id numeric, @rel_count int
 	DECLARE @attribute_name nvarchar(255), @rel_attribute_name nvarchar(255), @rel_field_name nvarchar(255), @rel_table_name nvarchar(255)
-	
+
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @use_security bit, @parent_level numeric
 
@@ -22389,15 +22389,15 @@ BEGIN
 	SET @dynamic_select_block = ''
 	SET @related_select_block = ''
 	SET @related_from_block = ''
-	
+
 	SET @use_custom_selection = 0
 	IF (@selected_article_ids IS NOT NULL)
 		BEGIN
 			SET @use_custom_selection = 1
 		END
-	
+
 	DECLARE @relations TABLE (
-		attribute_id numeric, 
+		attribute_id numeric,
 		attribute_name nvarchar(255),
 		rel_attribute_id numeric,
 		rel_attribute_type_id numeric,
@@ -22405,9 +22405,9 @@ BEGIN
 		rel_content_id  numeric,
 		rel_count numeric
 	)
-	
+
 	INSERT INTO @relations
-	SELECT 
+	SELECT
 		ca.ATTRIBUTE_ID,
 		ca.ATTRIBUTE_NAME,
 		rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID,
@@ -22415,7 +22415,7 @@ BEGIN
 		rca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME,
 		rca.CONTENT_ID AS RELATED_CONTENT_ID,
 		ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ID ASC) AS 'RELATED_COUNT'
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN
 		CONTENT_ATTRIBUTE AS rca
@@ -22424,10 +22424,10 @@ BEGIN
 	WHERE
 		ca.CONTENT_ID = @content_id
 		AND ca.view_in_list = 1
-	ORDER BY 
+	ORDER BY
 		ca.permanent_flag DESC,
 		ca.attribute_order ASC
-			
+
 	-- Открываем курсор
 	WHILE EXISTS(select * from @relations)
 	BEGIN
@@ -22442,9 +22442,9 @@ BEGIN
 		from @relations
 
 		SET @dynamic_select_block = @dynamic_select_block + '	c.[' + @attribute_name + '], '
-	
+
 		IF (@rel_attribute_id IS NOT NULL)
-		BEGIN		
+		BEGIN
 			declare @current_block nvarchar(512)
 			set @rel_table_name = 'rel_' + CAST(@rel_attribute_id AS varchar)
 			set @rel_field_name = 'rel_field_' + CAST(@rel_attribute_id AS varchar)
@@ -22453,29 +22453,29 @@ BEGIN
 				set @rel_table_name = @rel_table_name + '_' + CAST(@rel_count AS varchar)
 				set @rel_field_name = @rel_field_name + '_' + CAST(@rel_count AS varchar)
 			end
-			
+
 			SET @related_select_block = @related_select_block + '	'
 			SET @current_block = @rel_table_name + '.[' + @rel_attribute_name + ']'
 			if @rel_attribute_type_id in (9, 10)
 				SET @current_block = 'cast (' + @current_block + ' as nvarchar(255))'
 			SET @related_select_block = @related_select_block + @current_block
-			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '	
-			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN 
-				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' + 
+			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '
+			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN
+				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' +
 				@rel_table_name + '.content_item_id = c.[' + @attribute_name + '] '
 		END
-		
+
 		delete from @relations where attribute_id = @attribute_id
 
 	END
-		
+
 
 	SET @select_block = '
 	c.CONTENT_ITEM_ID,
 	c.CREATED,
 	c.MODIFIED,
 	c.LAST_MODIFIED_BY,
-	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id, 
+	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id,
 	COALESCE(c2.status_type_id, c.status_type_id) AS current_status_type_id,
 	ci.CONTENT_ID,
 	ci.SCHEDULE_NEW_VERSION_PUBLICATION,
@@ -22490,7 +22490,7 @@ BEGIN
 	mu.FIRST_NAME AS MODIFIER_FIRST_NAME,
 	mu.LAST_NAME AS MODIFIER_LAST_NAME,
 	mu.[LOGIN] AS MODIFIER_LOGIN, '
-	
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
 		BEGIN
@@ -22505,21 +22505,21 @@ BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
+
 	IF (LEN(@dynamic_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@dynamic_select_block, LEN(@dynamic_select_block) - 1)
 		END
-	
+
 	IF (LEN(@related_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@related_select_block, LEN(@related_select_block) - 1)
 		END
-	
+
 	SET @from_block = ''
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
 	IF @use_security = 1
-	BEGIN	
+	BEGIN
 		SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 		SET @from_block = @from_block + '	(<$_security_insert_$>) AS pi ' + CHAR(13)
 		SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -22529,29 +22529,29 @@ BEGIN
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + ' AS c2 ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	c2.content_item_id = c.content_item_id ' + CHAR(13)
-	
+
 	-- FULL TEXT SEARCH
 	declare @use_full_text bit, @full_text_sql nvarchar(max)
 	set @use_full_text = 0
 	IF ((@fts_is_incorrect_query IS NULL OR @fts_is_incorrect_query = 0) AND
 		LEN(@fts_attribute_ids) > 0 AND LEN(@fts_query_string) > 0)
 		set @use_full_text = 1
-		
+
 	IF @use_full_text = 1
 	BEGIN
 		CREATE TABLE #ft_temp (content_item_id int primary key)
-		
+
 		SET @from_block = @from_block + 'INNER JOIN #ft_temp as qp_fts' + CHAR(13)
 		SET @from_block = @from_block + 'ON c.content_item_id = qp_fts.content_item_id ' + CHAR(13)
-		
+
 		SET @full_text_sql = ' insert into #ft_temp select distinct CI.CONTENT_ITEM_ID from content_item CI, content_data CD ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CI.CONTENT_ID = ' + CAST(@content_id AS varchar)  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CD.ATTRIBUTE_ID in (' + @fts_attribute_ids + ') '  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and contains(CD.*, ''' + @fts_query_string + ''')'  + CHAR(13)
 		exec sp_executesql @full_text_sql
-	END	
-	-----	
+	END
+	-----
 	-- Поиск по Many To Many и Many To One --
 	declare @m2o_filter nvarchar(max)
 	set @m2o_filter = ''
@@ -22559,13 +22559,13 @@ BEGIN
 		BEGIN
 			declare @m2m_condition as varchar(max)
 			set @m2m_condition = ''
-			
+
 			declare @link_params_table table (id numeric, ids varchar(max), m2m bit)
-			
+
 			insert into @link_params_table
 			select T.f.value('./@lid', 'numeric'), T.f.value('./@iids', 'varchar(max)'), T.f.value('./@m2m', 'bit')
 			from @link_params.nodes('/link/f') as T(f)
-			
+
 			while exists (select * from @link_params_table)
 			begin
 				declare @currentLinkId numeric, @currentIds varchar(max), @isCurrentM2M bit, @currentLinkText nvarchar(20)
@@ -22576,13 +22576,13 @@ BEGIN
 					SET @from_block = @from_block + ' INNER JOIN ( ' +
 						' select distinct item_id from dbo.item_link_united where link_id = ' + @currentLinkText + ' AND linked_item_id in (' + @currentIds + ') ' +
 						') as link_' + @currentLinkText + '  ON c.content_item_id = link_' + @currentLinkText + '.item_id ' + CHAR(13)
-				end	
+				end
 				else begin
 					declare @currentFieldName nvarchar(255), @currentContentId numeric
 					select @currentContentId = content_id, @currentFieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @currentLinkId
 
-					SET @from_block = @from_block + ' INNER JOIN ( ' + 
-						' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 
+					SET @from_block = @from_block + ' INNER JOIN ( ' +
+						' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 						' where CONTENT_ITEM_ID in (' + @currentIds + ') ' +
 						' ) as back_' + @currentLinkText + '  ON c.content_item_id = back_' + @currentLinkText + '.item_id ' + CHAR(13)
 				end
@@ -22590,7 +22590,7 @@ BEGIN
 			end
 		END
 	-----
-		
+
 	IF (@use_custom_selection = 1)
 		BEGIN
 			SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
@@ -22604,7 +22604,7 @@ BEGIN
 			SET @from_block = @from_block + '	) AS cis ' + CHAR(13)
 			SET @from_block = @from_block + 'ON ' + CHAR(13)
 			SET @from_block = @from_block + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
-		END	
+		END
 	SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
 	SET @from_block = @from_block + '	content_item AS ci with(nolock) ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -22629,28 +22629,28 @@ BEGIN
 	SET @from_block = @from_block + '	USERS AS mu ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	mu.USER_ID = ci.LAST_MODIFIED_BY ' + CHAR(13)
-	
+
 	IF (LEN(@related_from_block) > 0)
 		BEGIN
 			SET @from_block = @from_block + @related_from_block
 		END
-		
+
 	SET @where_block = @filter
-	
+
 	if LEN(@m2o_filter) > 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + @m2o_filter			
+		SET @where_block = @where_block + @m2o_filter
 	END
-	
+
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @processed_order_by_block = UPPER(@order_by)
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '  ', ' ')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '[', '')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, ']', '')
-			
+
 			IF (@processed_order_by_block = (@default_sort_column_name + ' ASC'))
 				BEGIN
 					SET @order_by_block = 'is_selected DESC, ' + @order_by
@@ -22658,7 +22658,7 @@ BEGIN
 			ELSE IF (@processed_order_by_block = (@default_sort_column_name + ' DESC'))
 				BEGIN
 					SET @order_by_block = 'is_selected ASC, ' + @order_by
-				END	
+				END
 			ELSE
 				BEGIN
 					SET @order_by_block = @order_by
@@ -22668,14 +22668,14 @@ BEGIN
 		BEGIN
 			SET @order_by_block = 'STATUS_TYPE_NAME ASC, content_item_id ASC '
 		END
-	
+
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
-	
+
 	if @fts_is_incorrect_query = 1 OR @parent_level = 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + '1 = 0'		
+		SET @where_block = @where_block + '1 = 0'
 	END
 
 	EXEC qp_get_paged_data
@@ -22687,7 +22687,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -22696,10 +22696,10 @@ BEGIN
 		@entity_name = 'content_item',
 		@parent_entity_name = '',
 		@parent_entity_id = 0
-		
+
 	IF @use_full_text = 1
 		DROP TABLE #ft_temp
-		
+
 	SET NOCOUNT OFF
 END
 GO
@@ -22713,7 +22713,7 @@ GO
 PRINT '7.9.0.17 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.18
 -- Getting Context Menu and Toolbar icon url was changed
@@ -22732,25 +22732,25 @@ BEGIN
 	select @entity_code = dbo.qp_entity_type_code(entity_type_id) from backend_action where code = @action_code
 
 	SELECT
-		ba.ID AS ACTION_ID,		
+		ba.ID AS ACTION_ID,
 		ba.CODE AS ACTION_CODE,
 		bat.CODE AS ACTION_TYPE_CODE,
 		ba2.ID AS PARENT_ACTION_ID,
-		ba2.CODE AS PARENT_ACTION_CODE, 
+		ba2.CODE AS PARENT_ACTION_CODE,
 		dbo.qp_translate(atb.NAME, @language_id) AS NAME,
 		bat.ITEMS_AFFECTED,
-		atb.[ORDER], 
+		atb.[ORDER],
 		ISNULL(ca.ICON_URL, atb.ICON) AS ICON,
 		atb.ICON_DISABLED,
-		atb.IS_COMMAND 
-	FROM 
+		atb.IS_COMMAND
+	FROM
 		ACTION_TOOLBAR_BUTTON AS atb
 		INNER JOIN BACKEND_ACTION AS ba ON atb.ACTION_ID = ba.ID
 		LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
 		INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
-		INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID 
+		INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
 	WHERE
-		atb.PARENT_ACTION_ID = @action_id 
+		atb.PARENT_ACTION_ID = @action_id
 		AND dbo.qp_is_action_accessible(@user_id, atb.ACTION_ID) = 1
 		AND dbo.qp_action_visible(@user_id, @entity_code, @entity_id, ba.CODE) = 1
 	ORDER BY
@@ -22762,28 +22762,28 @@ ALTER PROCEDURE [dbo].[qp_get_context_menu_items_list](@user_id int, @menu_id in
 AS
 BEGIN
 	DECLARE @language_id AS numeric(18, 0)
-	
+
 	SET @language_id = dbo.qp_language(@user_id)
 
 	SELECT
 		cmi.CONTEXT_MENU_ID,
 		cmi.ACTION_ID,
-		dbo.qp_context_menu_code(cmi.CONTEXT_MENU_ID) as CONTEXT_MENU_CODE, 
+		dbo.qp_context_menu_code(cmi.CONTEXT_MENU_ID) as CONTEXT_MENU_CODE,
 		ba.CODE as ACTION_CODE,
-		at.CODE AS ACTION_TYPE_CODE, 
+		at.CODE AS ACTION_TYPE_CODE,
 		dbo.qp_translate(cmi.NAME, @language_id) as NAME,
-		cmi.[ORDER], 
-		ISNULL(ca.ICON_URL, cmi.ICON) AS ICON,		
+		cmi.[ORDER],
+		ISNULL(ca.ICON_URL, cmi.ICON) AS ICON,
 		cmi.ICON_DISABLED,
 		cmi.BOTTOM_SEPARATOR
 	FROM
-		CONTEXT_MENU_ITEM cmi 
+		CONTEXT_MENU_ITEM cmi
 		INNER JOIN backend_action AS ba ON cmi.ACTION_ID = ba.ID
 		LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
-		INNER JOIN ACTION_TYPE AS at ON ba.TYPE_ID = at.ID 
+		INNER JOIN ACTION_TYPE AS at ON ba.TYPE_ID = at.ID
 	WHERE
 		CONTEXT_MENU_ID = @menu_id
-		and dbo.qp_is_action_accessible(@user_id, cmi.ACTION_ID) = 1 
+		and dbo.qp_is_action_accessible(@user_id, cmi.ACTION_ID) = 1
 	ORDER BY
 		[ORDER] asc
 END
@@ -22798,7 +22798,7 @@ GO
 PRINT '7.9.0.18 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.19
 -- Add Multiselect Sites and Context
@@ -22837,16 +22837,16 @@ BEGIN
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @processed_order_by_block AS nvarchar(max)
 	DECLARE @default_sort_column_name AS nvarchar(255)
-	
+
 	SET @default_sort_column_name = 'SITE_ID'
-	
+
 	SET NOCOUNT ON
 
 	IF (dbo.qp_is_user_admin(@user_id) = 1)
 		set @use_security = 0
 	ELSE
 		set @use_security = 1
-		
+
 	SET @use_custom_selection = 0
 	IF (@selected_site_ids IS NOT NULL)
 	BEGIN
@@ -22858,14 +22858,14 @@ BEGIN
 		s.[DESCRIPTION],
 		s.script_language,
 		s.ALLOW_USER_SESSIONS,
-		s.ASSEMBLE_FORMATS_IN_LIVE,		
+		s.ASSEMBLE_FORMATS_IN_LIVE,
 		s.IS_LIVE,
 		s.DNS,
 		s.STAGE_DNS,
 		s.UPLOAD_URL,
 		s.use_absolute_upload_url,
 		s.upload_url_prefix,
-		s.UPLOAD_DIR,		
+		s.UPLOAD_DIR,
 		s.LIVE_VIRTUAL_ROOT,
 		s.LIVE_DIRECTORY,
 		s.FORCE_TEST_DIRECTORY,
@@ -22884,7 +22884,7 @@ BEGIN
 		s.REPLACE_URLS,
 		s.USE_LONG_URLS,
 		s.NAMESPACE,
-		s.CONTEXT_CLASS_NAME,		
+		s.CONTEXT_CLASS_NAME,
 		s.CREATED,
 		s.MODIFIED,
 		s.LAST_MODIFIED_BY,
@@ -22900,32 +22900,32 @@ BEGIN
 		mu.LAST_NAME AS MODIFIER_LAST_NAME,
 		mu.EMAIL AS MODIFIER_EMAIL,
 		mu.[LOGIN] AS MODIFIER_LOGIN, ' + CHAR(13);
-		
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
-		BEGIN			
-			SET @select_block = @select_block + '		CASE WHEN (cis.SITE_ID IS NOT NULL) THEN 1 ELSE 0 END ' + CHAR(13)			
+		BEGIN
+			SET @select_block = @select_block + '		CASE WHEN (cis.SITE_ID IS NOT NULL) THEN 1 ELSE 0 END ' + CHAR(13)
 		END
 	ELSE
 		BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
-		
+
+
 	SET @from_block = '		SITE AS s ' + CHAR(13)
-	
+
 	if @use_security = 1
 		SET @from_block = @from_block +
-		'INNER JOIN 
+		'INNER JOIN
 			(
-				SELECT 
+				SELECT
 					sec.site_id AS ALLOWED_SITE_ID,
 					sec.permission_level AS PERMISSION_LEVEL
-				FROM 
+				FROM
 					(<$_security_insert_$>) AS sec
 			) AS pl
-		ON 
+		ON
 			s.SITE_ID = pl.ALLOWED_SITE_ID'
 
 	SET @from_block = @from_block +
@@ -22937,21 +22937,21 @@ BEGIN
 		USERS AS mu
 	ON
 		mu.USER_ID = s.LAST_MODIFIED_BY'
-		
+
 	IF (@use_custom_selection = 1)
 	BEGIN
 		SET @from_block = @from_block + ' LEFT OUTER JOIN (SELECT SITE_ID from SITE where SITE_ID in (' + @selected_site_ids + ')) AS cis ON s.SITE_ID = cis.SITE_ID ' + CHAR(13)
 	END
-		
-	SET @where_block = @filter	
-	
+
+	SET @where_block = @filter
+
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @processed_order_by_block = UPPER(@order_by)
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '  ', ' ')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '[', '')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, ']', '')
-			
+
 			IF (@processed_order_by_block = (@default_sort_column_name + ' ASC'))
 				BEGIN
 					SET @order_by_block = 'is_selected DESC, ' + @order_by
@@ -22959,13 +22959,13 @@ BEGIN
 			ELSE IF (@processed_order_by_block = (@default_sort_column_name + ' DESC'))
 				BEGIN
 					SET @order_by_block = 'is_selected ASC, ' + @order_by
-				END	
+				END
 			ELSE
 				BEGIN
 					SET @order_by_block = @order_by
 				END
 		END
-	
+
 	EXEC qp_get_paged_data
 		@select_block = @select_block,
 		@from_block = @from_block,
@@ -22975,7 +22975,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -22984,7 +22984,7 @@ BEGIN
 		@entity_name = 'site',
 		@parent_entity_name = '',
 		@parent_entity_id = 0
-		
+
 	SET NOCOUNT OFF
 END
 GO
@@ -23000,7 +23000,7 @@ PRINT '7.9.0.19 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.20
 -- Manage Custom Actions actions
@@ -23086,12 +23086,12 @@ insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_
 values (dbo.qp_action_id('edit_custom_action'), dbo.qp_action_id('refresh_custom_action'), 'Refresh', 'refresh.gif', NULL, 4, 1)
 GO
 
-update ENTITY_TYPE 
-set 
-	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_custom_action'), 
+update ENTITY_TYPE
+set
+	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_custom_action'),
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_custom_action'),
 
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('custom_action'), 
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('custom_action'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('custom_actions'),
 
 	[DISABLED] = 0
@@ -23108,7 +23108,7 @@ PRINT '7.9.0.20 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.0.21
 -- Count duplicates
@@ -23118,18 +23118,18 @@ exec qp_drop_existing 'qp_count_duplicates', 'IsProcedure'
 GO
 
 CREATE PROCEDURE dbo.qp_count_duplicates
-@content_id numeric, 
+@content_id numeric,
 @field_ids nvarchar(max),
 @ids nvarchar(max) = null
 AS
 BEGIN
 	declare @field_names_table table (name nvarchar(255))
 	insert @field_names_table select ca.ATTRIBUTE_NAME as name from dbo.Split(@field_ids, ',') f inner join CONTENT_ATTRIBUTE ca on f.Items = ca.ATTRIBUTE_ID
-	
+
 	declare @currentName nvarchar(255)
 	declare @fieldList nvarchar(max)
 	set @fieldList = ''
-	
+
 	while exists(select * from @field_names_table)
 	begin
 		select @currentName = name from @field_names_table
@@ -23138,28 +23138,28 @@ BEGIN
 		set @fieldList = @fieldList + '[' + @currentName + ']'
 		delete from @field_names_table where name = @currentName
 	end
-	
+
 	declare @where nvarchar(max)
 	if @ids is null or @ids = ''
 		set @where = ''
 	else
-		set @where = ' where content_item_id in (' + @ids + ')' 
-	
+		set @where = ' where content_item_id in (' + @ids + ')'
+
 	declare @sql nvarchar(max)
 	if @fieldList = ''
 		set @sql = 'select 0 as cnt'
 	else
 		set @sql = 'select coalesce(sum(c.cnt), 0) from (select COUNT(*) as cnt from content_' + CAST(@content_id as nvarchar(20)) + '_united ' + @where + ' group by ' + @fieldList + ' having COUNT(*) > 1) as c'
-		
+
 	exec sp_executesql @sql
 
 END
 GO
 
 ALTER PROCEDURE [dbo].[qp_get_m2o_ids]
-@contentId numeric, 
-@fieldName nvarchar(255), 
-@id numeric 
+@contentId numeric,
+@fieldName nvarchar(255),
+@id numeric
 AS BEGIN
 	declare @sql nvarchar(1024)
 	declare @final_sql nvarchar(30)
@@ -23167,7 +23167,7 @@ AS BEGIN
 		set @final_sql = ' is null '
 	else
 		set @final_sql = ' = @id'
-	
+
 	set @sql = 'select content_item_id from content_' + CAST(@contentId as nvarchar(255)) + '_united where [' + @fieldName + '] ' + @final_sql
 	exec sp_executesql @sql, N'@id numeric', @id = @id
 END
@@ -23184,7 +23184,7 @@ PRINT '7.9.0.21 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.22
 -- Manage Custom Actions actions
@@ -23196,13 +23196,13 @@ GO
 CREATE VIEW [dbo].[V_CUSTOM_ACTION]
 	WITH SCHEMABINDING
 AS
-	SELECT 
+	SELECT
 		CA.[ID]
 		,CA.[NAME]
 		,CA.[ACTION_ID]
-		,AT.CODE AS ACTION_TYPE_CODE 
-		,AT.NAME AS ACTION_TYPE_NAME 
-		,ET.CODE AS ENTITY_TYPE_CODE 
+		,AT.CODE AS ACTION_TYPE_CODE
+		,AT.NAME AS ACTION_TYPE_NAME
+		,ET.CODE AS ENTITY_TYPE_CODE
 		,ET.NAME AS ENTITY_TYPE_NAME
 		,CA.[URL]
 		,CA.[ICON_URL]
@@ -23230,27 +23230,27 @@ GO
 CREATE PROCEDURE [dbo].[qp_paged_custom_actions]
 		@where_block nvarchar(max) = '',
 		@order_by_block nvarchar(max) = 'ID ASC',
-		@count_only bit = 0,		
+		@count_only bit = 0,
 		@start_row int = 0,
-		@page_size int = 0,		
+		@page_size int = 0,
 		@total_records int OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	
+
 	EXEC qp_get_paged_data
 		@select_block = '*',
 		@from_block = 'V_CUSTOM_ACTION',
 		@entity_name = 'custom_action',
-		
+
 		@where_block = @where_block,
-		@order_by_block = @order_by_block,		
+		@order_by_block = @order_by_block,
 		@count_only = @count_only,
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
-		@page_size = @page_size	    
+		@page_size = @page_size
 END
 GO
 
@@ -23264,33 +23264,33 @@ GO
 PRINT '7.9.0.22 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.23
--- Replace oldschool defaults 
+-- Replace oldschool defaults
 -- **************************************
 
 exec qp_drop_existing 'recreate_defaults', 'IsProcedure'
 GO
 
-CREATE PROCEDURE dbo.recreate_defaults	
+CREATE PROCEDURE dbo.recreate_defaults
 	@table_name nvarchar(256),
 	@column_name nvarchar(256),
-	@default nvarchar(256)	
+	@default nvarchar(256)
 AS BEGIN
 	DECLARE @constraint_name nvarchar(256);
 	SET @constraint_name = 'DF_' + @table_name + '_' + @column_name;
 	DECLARE @sql nvarchar(1024);
 
 	IF EXISTS (select * from
-	(select b.default_object_id, a.name default_object_name, 
-	b.object_id table_id, object_schema_name(b.object_id) table_schema, 
+	(select b.default_object_id, a.name default_object_name,
+	b.object_id table_id, object_schema_name(b.object_id) table_schema,
 	object_name(b.object_id) table_name, b.name column_name, b.column_id
 	from sys.objects a inner join sys.all_columns b
 	on a.object_id = b.default_object_id
 	where 1=1
 	and a.object_id not in (select object_id from sys.default_constraints)) T
-	WHERE T.table_name = @table_name 
+	WHERE T.table_name = @table_name
 	and T.column_name = @column_name)
 	BEGIN
 		SET @sql = '[dbo].[' + @table_name + '].[' + @column_name + ']';
@@ -23392,7 +23392,7 @@ PRINT '7.9.0.23 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.24
 -- Custom Action CRUID and some fixes
@@ -23417,7 +23417,7 @@ PRINT '7.9.0.24 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.25
 -- Add and Fix Context Menu for Entity Type
@@ -23444,7 +23444,7 @@ PRINT '7.9.0.25 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.26
 -- Adding new columns to articles grid
@@ -23454,7 +23454,7 @@ exec qp_drop_existing 'qp_paged_articles_list', 'IsProcedure'
 GO
 
 CREATE PROCEDURE [dbo].[qp_paged_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@selected_article_ids AS nvarchar(max) = NULL,
 	@permission_level numeric(18,0),
@@ -23475,15 +23475,15 @@ BEGIN
 	DECLARE @where_block AS nvarchar(max)
 	DECLARE @order_by_block AS nvarchar(max)
 	DECLARE @processed_order_by_block AS nvarchar(max)
-	
+
 	DECLARE @default_sort_column_name AS nvarchar(255)
 	DECLARE @dynamic_select_block AS nvarchar(max)
 	DECLARE @related_select_block AS nvarchar(max)
 	DECLARE @related_from_block AS nvarchar(max)
-	
+
 	DECLARE @attribute_id numeric, @rel_attribute_id numeric, @rel_attribute_type_id numeric, @rel_content_id numeric, @rel_count int
 	DECLARE @attribute_name nvarchar(255), @rel_attribute_name nvarchar(255), @rel_field_name nvarchar(255), @rel_table_name nvarchar(255)
-	
+
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @use_security bit, @parent_level numeric
 
@@ -23498,15 +23498,15 @@ BEGIN
 	SET @dynamic_select_block = ''
 	SET @related_select_block = ''
 	SET @related_from_block = ''
-	
+
 	SET @use_custom_selection = 0
 	IF (@selected_article_ids IS NOT NULL)
 		BEGIN
 			SET @use_custom_selection = 1
 		END
-	
+
 	DECLARE @relations TABLE (
-		attribute_id numeric, 
+		attribute_id numeric,
 		attribute_name nvarchar(255),
 		rel_attribute_id numeric,
 		rel_attribute_type_id numeric,
@@ -23514,9 +23514,9 @@ BEGIN
 		rel_content_id  numeric,
 		rel_count numeric
 	)
-	
+
 	INSERT INTO @relations
-	SELECT 
+	SELECT
 		ca.ATTRIBUTE_ID,
 		ca.ATTRIBUTE_NAME,
 		rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID,
@@ -23524,7 +23524,7 @@ BEGIN
 		rca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME,
 		rca.CONTENT_ID AS RELATED_CONTENT_ID,
 		ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ID ASC) AS 'RELATED_COUNT'
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN
 		CONTENT_ATTRIBUTE AS rca
@@ -23533,10 +23533,10 @@ BEGIN
 	WHERE
 		ca.CONTENT_ID = @content_id
 		AND ca.view_in_list = 1
-	ORDER BY 
+	ORDER BY
 		ca.permanent_flag DESC,
 		ca.attribute_order ASC
-			
+
 	-- Открываем курсор
 	WHILE EXISTS(select * from @relations)
 	BEGIN
@@ -23551,9 +23551,9 @@ BEGIN
 		from @relations
 
 		SET @dynamic_select_block = @dynamic_select_block + '	c.[' + @attribute_name + '], '
-	
+
 		IF (@rel_attribute_id IS NOT NULL)
-		BEGIN		
+		BEGIN
 			declare @current_block nvarchar(512)
 			set @rel_table_name = 'rel_' + CAST(@rel_attribute_id AS varchar)
 			set @rel_field_name = 'rel_field_' + CAST(@rel_attribute_id AS varchar)
@@ -23562,35 +23562,35 @@ BEGIN
 				set @rel_table_name = @rel_table_name + '_' + CAST(@rel_count AS varchar)
 				set @rel_field_name = @rel_field_name + '_' + CAST(@rel_count AS varchar)
 			end
-			
+
 			SET @related_select_block = @related_select_block + '	'
 			SET @current_block = @rel_table_name + '.[' + @rel_attribute_name + ']'
 			if @rel_attribute_type_id in (9, 10)
 				SET @current_block = 'cast (' + @current_block + ' as nvarchar(255))'
 			SET @related_select_block = @related_select_block + @current_block
-			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '	
-			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN 
-				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' + 
+			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '
+			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN
+				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' +
 				@rel_table_name + '.content_item_id = c.[' + @attribute_name + '] '
 		END
-		
+
 		delete from @relations where attribute_id = @attribute_id
 
 	END
-		
+
 
 	SET @select_block = '
 	c.CONTENT_ITEM_ID,
 	c.CREATED,
 	c.MODIFIED,
 	c.LAST_MODIFIED_BY,
-	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id, 
+	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id,
 	COALESCE(c2.status_type_id, c.status_type_id) AS current_status_type_id,
 	ci.CONTENT_ID,
 	ci.SCHEDULE_NEW_VERSION_PUBLICATION,
 	ci.splitted,
-	CAST(c.visible as bit) as visible,	
-	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled, 
+	CAST(c.visible as bit) as visible,
+	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled,
 	ci.not_for_replication,
 	ci.LOCKED_BY,
 	st.STATUS_TYPE_NAME,
@@ -23601,7 +23601,7 @@ BEGIN
 	mu.FIRST_NAME AS MODIFIER_FIRST_NAME,
 	mu.LAST_NAME AS MODIFIER_LAST_NAME,
 	mu.[LOGIN] AS MODIFIER_LOGIN, '
-	
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
 		BEGIN
@@ -23616,21 +23616,21 @@ BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
+
 	IF (LEN(@dynamic_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@dynamic_select_block, LEN(@dynamic_select_block) - 1)
 		END
-	
+
 	IF (LEN(@related_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@related_select_block, LEN(@related_select_block) - 1)
 		END
-	
+
 	SET @from_block = ''
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
 	IF @use_security = 1
-	BEGIN	
+	BEGIN
 		SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 		SET @from_block = @from_block + '	(<$_security_insert_$>) AS pi ' + CHAR(13)
 		SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -23640,29 +23640,29 @@ BEGIN
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + ' AS c2 ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	c2.content_item_id = c.content_item_id ' + CHAR(13)
-	
+
 	-- FULL TEXT SEARCH
 	declare @use_full_text bit, @full_text_sql nvarchar(max)
 	set @use_full_text = 0
 	IF ((@fts_is_incorrect_query IS NULL OR @fts_is_incorrect_query = 0) AND
 		LEN(@fts_attribute_ids) > 0 AND LEN(@fts_query_string) > 0)
 		set @use_full_text = 1
-		
+
 	IF @use_full_text = 1
 	BEGIN
 		CREATE TABLE #ft_temp (content_item_id int primary key)
-		
+
 		SET @from_block = @from_block + 'INNER JOIN #ft_temp as qp_fts' + CHAR(13)
 		SET @from_block = @from_block + 'ON c.content_item_id = qp_fts.content_item_id ' + CHAR(13)
-		
+
 		SET @full_text_sql = ' insert into #ft_temp select distinct CI.CONTENT_ITEM_ID from content_item CI, content_data CD ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CI.CONTENT_ID = ' + CAST(@content_id AS varchar)  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CD.ATTRIBUTE_ID in (' + @fts_attribute_ids + ') '  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and contains(CD.*, ''' + @fts_query_string + ''')'  + CHAR(13)
 		exec sp_executesql @full_text_sql
-	END	
-	-----	
+	END
+	-----
 	-- Поиск по Many To Many и Many To One --
 	declare @m2o_filter nvarchar(max)
 	set @m2o_filter = ''
@@ -23670,13 +23670,13 @@ BEGIN
 		BEGIN
 			declare @m2m_condition as varchar(max)
 			set @m2m_condition = ''
-			
+
 			declare @link_params_table table (id numeric, ids varchar(max), m2m bit)
-			
+
 			insert into @link_params_table
 			select T.f.value('./@lid', 'numeric'), T.f.value('./@iids', 'varchar(max)'), T.f.value('./@m2m', 'bit')
 			from @link_params.nodes('/link/f') as T(f)
-			
+
 			while exists (select * from @link_params_table)
 			begin
 				declare @currentLinkId numeric, @currentIds varchar(max), @isCurrentM2M bit, @currentLinkText nvarchar(20)
@@ -23687,13 +23687,13 @@ BEGIN
 					SET @from_block = @from_block + ' INNER JOIN ( ' +
 						' select distinct item_id from dbo.item_link_united where link_id = ' + @currentLinkText + ' AND linked_item_id in (' + @currentIds + ') ' +
 						') as link_' + @currentLinkText + '  ON c.content_item_id = link_' + @currentLinkText + '.item_id ' + CHAR(13)
-				end	
+				end
 				else begin
 					declare @currentFieldName nvarchar(255), @currentContentId numeric
 					select @currentContentId = content_id, @currentFieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @currentLinkId
 
-					SET @from_block = @from_block + ' INNER JOIN ( ' + 
-						' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 
+					SET @from_block = @from_block + ' INNER JOIN ( ' +
+						' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 						' where CONTENT_ITEM_ID in (' + @currentIds + ') ' +
 						' ) as back_' + @currentLinkText + '  ON c.content_item_id = back_' + @currentLinkText + '.item_id ' + CHAR(13)
 				end
@@ -23701,7 +23701,7 @@ BEGIN
 			end
 		END
 	-----
-		
+
 	IF (@use_custom_selection = 1)
 		BEGIN
 			SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
@@ -23715,7 +23715,7 @@ BEGIN
 			SET @from_block = @from_block + '	) AS cis ' + CHAR(13)
 			SET @from_block = @from_block + 'ON ' + CHAR(13)
 			SET @from_block = @from_block + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
-		END	
+		END
 	SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
 	SET @from_block = @from_block + '	content_item AS ci with(nolock) ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -23740,28 +23740,28 @@ BEGIN
 	SET @from_block = @from_block + '	USERS AS mu ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	mu.USER_ID = ci.LAST_MODIFIED_BY ' + CHAR(13)
-	
+
 	IF (LEN(@related_from_block) > 0)
 		BEGIN
 			SET @from_block = @from_block + @related_from_block
 		END
-		
+
 	SET @where_block = @filter
-	
+
 	if LEN(@m2o_filter) > 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + @m2o_filter			
+		SET @where_block = @where_block + @m2o_filter
 	END
-	
+
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @processed_order_by_block = UPPER(@order_by)
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '  ', ' ')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '[', '')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, ']', '')
-			
+
 			IF (@processed_order_by_block = (@default_sort_column_name + ' ASC'))
 				BEGIN
 					SET @order_by_block = 'is_selected DESC, ' + @order_by
@@ -23769,7 +23769,7 @@ BEGIN
 			ELSE IF (@processed_order_by_block = (@default_sort_column_name + ' DESC'))
 				BEGIN
 					SET @order_by_block = 'is_selected ASC, ' + @order_by
-				END	
+				END
 			ELSE
 				BEGIN
 					SET @order_by_block = @order_by
@@ -23779,14 +23779,14 @@ BEGIN
 		BEGIN
 			SET @order_by_block = 'STATUS_TYPE_NAME ASC, content_item_id ASC '
 		END
-	
+
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
-	
+
 	if @fts_is_incorrect_query = 1 OR @parent_level = 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + '1 = 0'		
+		SET @where_block = @where_block + '1 = 0'
 	END
 
 	EXEC qp_get_paged_data
@@ -23798,7 +23798,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -23807,10 +23807,10 @@ BEGIN
 		@entity_name = 'content_item',
 		@parent_entity_name = '',
 		@parent_entity_id = 0
-		
+
 	IF @use_full_text = 1
 		DROP TABLE #ft_temp
-		
+
 	SET NOCOUNT OFF
 END
 GO
@@ -23824,7 +23824,7 @@ GO
 PRINT '7.9.0.26 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.27
 -- Search articles: Missing Value relation filter has added
@@ -23835,7 +23835,7 @@ exec qp_drop_existing 'qp_paged_articles_list', 'IsProcedure'
 GO
 
 CREATE PROCEDURE [dbo].[qp_paged_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@selected_article_ids AS nvarchar(max) = NULL,
 	@permission_level numeric(18,0),
@@ -23856,15 +23856,15 @@ BEGIN
 	DECLARE @where_block AS nvarchar(max)
 	DECLARE @order_by_block AS nvarchar(max)
 	DECLARE @processed_order_by_block AS nvarchar(max)
-	
+
 	DECLARE @default_sort_column_name AS nvarchar(255)
 	DECLARE @dynamic_select_block AS nvarchar(max)
 	DECLARE @related_select_block AS nvarchar(max)
 	DECLARE @related_from_block AS nvarchar(max)
-	
+
 	DECLARE @attribute_id numeric, @rel_attribute_id numeric, @rel_attribute_type_id numeric, @rel_content_id numeric, @rel_count int
 	DECLARE @attribute_name nvarchar(255), @rel_attribute_name nvarchar(255), @rel_field_name nvarchar(255), @rel_table_name nvarchar(255)
-	
+
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @use_security bit, @parent_level numeric
 
@@ -23879,15 +23879,15 @@ BEGIN
 	SET @dynamic_select_block = ''
 	SET @related_select_block = ''
 	SET @related_from_block = ''
-	
+
 	SET @use_custom_selection = 0
 	IF (@selected_article_ids IS NOT NULL)
 		BEGIN
 			SET @use_custom_selection = 1
 		END
-	
+
 	DECLARE @relations TABLE (
-		attribute_id numeric, 
+		attribute_id numeric,
 		attribute_name nvarchar(255),
 		rel_attribute_id numeric,
 		rel_attribute_type_id numeric,
@@ -23895,9 +23895,9 @@ BEGIN
 		rel_content_id  numeric,
 		rel_count numeric
 	)
-	
+
 	INSERT INTO @relations
-	SELECT 
+	SELECT
 		ca.ATTRIBUTE_ID,
 		ca.ATTRIBUTE_NAME,
 		rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID,
@@ -23905,7 +23905,7 @@ BEGIN
 		rca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME,
 		rca.CONTENT_ID AS RELATED_CONTENT_ID,
 		ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ID ASC) AS 'RELATED_COUNT'
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN
 		CONTENT_ATTRIBUTE AS rca
@@ -23914,10 +23914,10 @@ BEGIN
 	WHERE
 		ca.CONTENT_ID = @content_id
 		AND ca.view_in_list = 1
-	ORDER BY 
+	ORDER BY
 		ca.permanent_flag DESC,
 		ca.attribute_order ASC
-			
+
 	-- Открываем курсор
 	WHILE EXISTS(select * from @relations)
 	BEGIN
@@ -23932,9 +23932,9 @@ BEGIN
 		from @relations
 
 		SET @dynamic_select_block = @dynamic_select_block + '	c.[' + @attribute_name + '], '
-	
+
 		IF (@rel_attribute_id IS NOT NULL)
-		BEGIN		
+		BEGIN
 			declare @current_block nvarchar(512)
 			set @rel_table_name = 'rel_' + CAST(@rel_attribute_id AS varchar)
 			set @rel_field_name = 'rel_field_' + CAST(@rel_attribute_id AS varchar)
@@ -23943,35 +23943,35 @@ BEGIN
 				set @rel_table_name = @rel_table_name + '_' + CAST(@rel_count AS varchar)
 				set @rel_field_name = @rel_field_name + '_' + CAST(@rel_count AS varchar)
 			end
-			
+
 			SET @related_select_block = @related_select_block + '	'
 			SET @current_block = @rel_table_name + '.[' + @rel_attribute_name + ']'
 			if @rel_attribute_type_id in (9, 10)
 				SET @current_block = 'cast (' + @current_block + ' as nvarchar(255))'
 			SET @related_select_block = @related_select_block + @current_block
-			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '	
-			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN 
-				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' + 
+			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '
+			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN
+				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' +
 				@rel_table_name + '.content_item_id = c.[' + @attribute_name + '] '
 		END
-		
+
 		delete from @relations where attribute_id = @attribute_id
 
 	END
-		
+
 
 	SET @select_block = '
 	c.CONTENT_ITEM_ID,
 	c.CREATED,
 	c.MODIFIED,
 	c.LAST_MODIFIED_BY,
-	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id, 
+	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id,
 	COALESCE(c2.status_type_id, c.status_type_id) AS current_status_type_id,
 	ci.CONTENT_ID,
 	ci.SCHEDULE_NEW_VERSION_PUBLICATION,
 	ci.splitted,
-	CAST(c.visible as bit) as visible,	
-	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled, 
+	CAST(c.visible as bit) as visible,
+	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled,
 	ci.not_for_replication,
 	ci.LOCKED_BY,
 	st.STATUS_TYPE_NAME,
@@ -23982,7 +23982,7 @@ BEGIN
 	mu.FIRST_NAME AS MODIFIER_FIRST_NAME,
 	mu.LAST_NAME AS MODIFIER_LAST_NAME,
 	mu.[LOGIN] AS MODIFIER_LOGIN, '
-	
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
 		BEGIN
@@ -23997,21 +23997,21 @@ BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
+
 	IF (LEN(@dynamic_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@dynamic_select_block, LEN(@dynamic_select_block) - 1)
 		END
-	
+
 	IF (LEN(@related_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@related_select_block, LEN(@related_select_block) - 1)
 		END
-	
+
 	SET @from_block = ''
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
 	IF @use_security = 1
-	BEGIN	
+	BEGIN
 		SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 		SET @from_block = @from_block + '	(<$_security_insert_$>) AS pi ' + CHAR(13)
 		SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -24021,29 +24021,29 @@ BEGIN
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + ' AS c2 ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	c2.content_item_id = c.content_item_id ' + CHAR(13)
-	
+
 	-- FULL TEXT SEARCH
 	declare @use_full_text bit, @full_text_sql nvarchar(max)
 	set @use_full_text = 0
 	IF ((@fts_is_incorrect_query IS NULL OR @fts_is_incorrect_query = 0) AND
 		LEN(@fts_attribute_ids) > 0 AND LEN(@fts_query_string) > 0)
 		set @use_full_text = 1
-		
+
 	IF @use_full_text = 1
 	BEGIN
 		CREATE TABLE #ft_temp (content_item_id int primary key)
-		
+
 		SET @from_block = @from_block + 'INNER JOIN #ft_temp as qp_fts' + CHAR(13)
 		SET @from_block = @from_block + 'ON c.content_item_id = qp_fts.content_item_id ' + CHAR(13)
-		
+
 		SET @full_text_sql = ' insert into #ft_temp select distinct CI.CONTENT_ITEM_ID from content_item CI, content_data CD ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CI.CONTENT_ID = ' + CAST(@content_id AS varchar)  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CD.ATTRIBUTE_ID in (' + @fts_attribute_ids + ') '  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and contains(CD.*, ''' + @fts_query_string + ''')'  + CHAR(13)
 		exec sp_executesql @full_text_sql
-	END	
-	-----	
+	END
+	-----
 	-- Поиск по Many To Many и Many To One --
 	declare @link_filter nvarchar(max)
 	set @link_filter = ''
@@ -24051,38 +24051,38 @@ BEGIN
 		BEGIN
 			declare @m2m_condition as varchar(max)
 			set @m2m_condition = ''
-			
+
 			declare @link_params_table table (id numeric, ids varchar(max), m2m bit, [isnull] bit)
-			
+
 			insert into @link_params_table
 			select T.f.value('./@lid', 'numeric'), T.f.value('./@iids', 'varchar(max)'), T.f.value('./@m2m', 'bit'), T.f.value('./@isnull', 'bit')
 			from @link_params.nodes('/link/f') as T(f)
-			
+
 			while exists (select * from @link_params_table)
 			begin
-				declare @currentLinkId numeric, 
-						@currentIds varchar(max), 
-						@isCurrentM2M bit, 
+				declare @currentLinkId numeric,
+						@currentIds varchar(max),
+						@isCurrentM2M bit,
 						@isNull bit,
 						@currentLinkText nvarchar(20)
-				
+
 				select @currentLinkId = id, @currentIds = ids, @isCurrentM2M = m2m, @isNull = [isnull] from @link_params_table
 				set @currentLinkText = cast(@currentLinkId as nvarchar(20))
-				
-				declare @currentFieldName nvarchar(255), 
+
+				declare @currentFieldName nvarchar(255),
 						@currentContentId numeric
 				select @currentContentId = content_id, @currentFieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @currentLinkId
-				
+
 				if @isNull = 0 begin
 					if @isCurrentM2M = 1 begin
 						SET @from_block = @from_block + ' INNER JOIN ( ' +
 							' select distinct item_id from dbo.item_link_united where link_id = ' + @currentLinkText + ' AND linked_item_id in (' + @currentIds + ') ' +
 							') as link_' + @currentLinkText + '  ON c.content_item_id = link_' + @currentLinkText + '.item_id ' + CHAR(13)
-					end	
+					end
 					else begin
-						
-						SET @from_block = @from_block + ' INNER JOIN ( ' + 
-							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 
+
+						SET @from_block = @from_block + ' INNER JOIN ( ' +
+							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where CONTENT_ITEM_ID in (' + @currentIds + ') ' +
 							' ) as back_' + @currentLinkText + '  ON c.content_item_id = back_' + @currentLinkText + '.item_id ' + CHAR(13)
 					end
@@ -24091,17 +24091,17 @@ BEGIN
 					if @isCurrentM2M = 1 begin
 						set @link_filter = ' NOT EXISTS (select item_id from dbo.item_link_united where c.content_item_id = item_id and link_id = '  + @currentLinkText + ') '
 					end
-					else begin						
-						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 							
+					else begin
+						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where c.content_item_id = [' + @currentFieldName + ']) '
-					end					
+					end
 				end
-				
+
 				delete from @link_params_table where id = @currentLinkId and m2m = @isCurrentM2M
-			end						
+			end
 		END
 	-----
-		
+
 	IF (@use_custom_selection = 1)
 		BEGIN
 			SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
@@ -24115,7 +24115,7 @@ BEGIN
 			SET @from_block = @from_block + '	) AS cis ' + CHAR(13)
 			SET @from_block = @from_block + 'ON ' + CHAR(13)
 			SET @from_block = @from_block + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
-		END	
+		END
 	SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
 	SET @from_block = @from_block + '	content_item AS ci with(nolock) ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -24140,28 +24140,28 @@ BEGIN
 	SET @from_block = @from_block + '	USERS AS mu ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	mu.USER_ID = ci.LAST_MODIFIED_BY ' + CHAR(13)
-	
+
 	IF (LEN(@related_from_block) > 0)
 		BEGIN
 			SET @from_block = @from_block + @related_from_block
 		END
-		
+
 	SET @where_block = @filter
-	
+
 	if LEN(@link_filter) > 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + @link_filter			
+		SET @where_block = @where_block + @link_filter
 	END
-	
+
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @processed_order_by_block = UPPER(@order_by)
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '  ', ' ')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, '[', '')
 			SET @processed_order_by_block = REPLACE(@processed_order_by_block, ']', '')
-			
+
 			IF (@processed_order_by_block = (@default_sort_column_name + ' ASC'))
 				BEGIN
 					SET @order_by_block = 'is_selected DESC, ' + @order_by
@@ -24169,7 +24169,7 @@ BEGIN
 			ELSE IF (@processed_order_by_block = (@default_sort_column_name + ' DESC'))
 				BEGIN
 					SET @order_by_block = 'is_selected ASC, ' + @order_by
-				END	
+				END
 			ELSE
 				BEGIN
 					SET @order_by_block = @order_by
@@ -24179,14 +24179,14 @@ BEGIN
 		BEGIN
 			SET @order_by_block = 'STATUS_TYPE_NAME ASC, content_item_id ASC '
 		END
-	
+
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
-	
+
 	if @fts_is_incorrect_query = 1 OR @parent_level = 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + '1 = 0'		
+		SET @where_block = @where_block + '1 = 0'
 	END
 
 	EXEC qp_get_paged_data
@@ -24198,7 +24198,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -24207,10 +24207,10 @@ BEGIN
 		@entity_name = 'content_item',
 		@parent_entity_name = '',
 		@parent_entity_id = 0
-		
+
 	IF @use_full_text = 1
 		DROP TABLE #ft_temp
-		
+
 	SET NOCOUNT OFF
 END
 GO
@@ -24240,7 +24240,7 @@ GO
 
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.0.28
 -- qp_get_version_data fix
@@ -24250,13 +24250,13 @@ GO
 exec qp_drop_existing 'qp_get_version_data', 'IsScalarFunction'
 GO
 
-CREATE function [dbo].[qp_get_version_data](@attribute_id numeric, @version_id numeric) returns nvarchar(max) 
-as 
-	begin 
-	declare @result nvarchar(max) 
-	select @result = (case when attribute_type_id in (9, 10) THEN convert(nvarchar(max), cd.BLOB_DATA) ELSE cd.DATA end) from version_content_data cd inner join CONTENT_ATTRIBUTE ca on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID where cd.attribute_id = @attribute_id and content_item_version_id = @version_id 
+CREATE function [dbo].[qp_get_version_data](@attribute_id numeric, @version_id numeric) returns nvarchar(max)
+as
+	begin
+	declare @result nvarchar(max)
+	select @result = (case when attribute_type_id in (9, 10) THEN convert(nvarchar(max), cd.BLOB_DATA) ELSE cd.DATA end) from version_content_data cd inner join CONTENT_ATTRIBUTE ca on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID where cd.attribute_id = @attribute_id and content_item_version_id = @version_id
 
-	return @result 
+	return @result
 end
 GO
 
@@ -24277,7 +24277,7 @@ GO
 PRINT '7.9.0.28 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.0
 -- Release
@@ -24293,7 +24293,7 @@ PRINT '7.9.1.0 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.1
 -- Virtual COntents Translation Fix
@@ -24304,7 +24304,7 @@ exec qp_update_translations 'Virtual Articles', 'Виртуальные стат
 GO
 
 ALTER PROCEDURE [dbo].[qp_paged_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@selected_article_ids AS nvarchar(max) = NULL,
 	@permission_level numeric(18,0),
@@ -24325,14 +24325,14 @@ BEGIN
 	DECLARE @where_block AS nvarchar(max)
 	DECLARE @order_by_block AS nvarchar(max)
 	DECLARE @processed_order_by_block AS nvarchar(max)
-	
+
 	DECLARE @dynamic_select_block AS nvarchar(max)
 	DECLARE @related_select_block AS nvarchar(max)
 	DECLARE @related_from_block AS nvarchar(max)
-	
+
 	DECLARE @attribute_id numeric, @rel_attribute_id numeric, @rel_attribute_type_id numeric, @rel_content_id numeric, @rel_count int
 	DECLARE @attribute_name nvarchar(255), @rel_attribute_name nvarchar(255), @rel_field_name nvarchar(255), @rel_table_name nvarchar(255)
-	
+
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @use_security bit, @parent_level numeric
 
@@ -24346,15 +24346,15 @@ BEGIN
 	SET @dynamic_select_block = ''
 	SET @related_select_block = ''
 	SET @related_from_block = ''
-	
+
 	SET @use_custom_selection = 0
 	IF (@selected_article_ids IS NOT NULL)
 		BEGIN
 			SET @use_custom_selection = 1
 		END
-	
+
 	DECLARE @relations TABLE (
-		attribute_id numeric, 
+		attribute_id numeric,
 		attribute_name nvarchar(255),
 		rel_attribute_id numeric,
 		rel_attribute_type_id numeric,
@@ -24362,9 +24362,9 @@ BEGIN
 		rel_content_id  numeric,
 		rel_count numeric
 	)
-	
+
 	INSERT INTO @relations
-	SELECT 
+	SELECT
 		ca.ATTRIBUTE_ID,
 		ca.ATTRIBUTE_NAME,
 		rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID,
@@ -24372,7 +24372,7 @@ BEGIN
 		rca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME,
 		rca.CONTENT_ID AS RELATED_CONTENT_ID,
 		ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ID ASC) AS 'RELATED_COUNT'
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN
 		CONTENT_ATTRIBUTE AS rca
@@ -24381,10 +24381,10 @@ BEGIN
 	WHERE
 		ca.CONTENT_ID = @content_id
 		AND ca.view_in_list = 1
-	ORDER BY 
+	ORDER BY
 		ca.permanent_flag DESC,
 		ca.attribute_order ASC
-			
+
 	-- Открываем курсор
 	WHILE EXISTS(select * from @relations)
 	BEGIN
@@ -24399,9 +24399,9 @@ BEGIN
 		from @relations
 
 		SET @dynamic_select_block = @dynamic_select_block + '	c.[' + @attribute_name + '], '
-	
+
 		IF (@rel_attribute_id IS NOT NULL)
-		BEGIN		
+		BEGIN
 			declare @current_block nvarchar(512)
 			set @rel_table_name = 'rel_' + CAST(@rel_attribute_id AS varchar)
 			set @rel_field_name = 'rel_field_' + CAST(@rel_attribute_id AS varchar)
@@ -24410,35 +24410,35 @@ BEGIN
 				set @rel_table_name = @rel_table_name + '_' + CAST(@rel_count AS varchar)
 				set @rel_field_name = @rel_field_name + '_' + CAST(@rel_count AS varchar)
 			end
-			
+
 			SET @related_select_block = @related_select_block + '	'
 			SET @current_block = @rel_table_name + '.[' + @rel_attribute_name + ']'
 			if @rel_attribute_type_id in (9, 10)
 				SET @current_block = 'cast (' + @current_block + ' as nvarchar(255))'
 			SET @related_select_block = @related_select_block + @current_block
-			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '	
-			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN 
-				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' + 
+			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '
+			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN
+				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' +
 				@rel_table_name + '.content_item_id = c.[' + @attribute_name + '] '
 		END
-		
+
 		delete from @relations where attribute_id = @attribute_id
 
 	END
-		
+
 
 	SET @select_block = '
 	c.CONTENT_ITEM_ID,
 	c.CREATED,
 	c.MODIFIED,
 	c.LAST_MODIFIED_BY,
-	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id, 
+	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id,
 	COALESCE(c2.status_type_id, c.status_type_id) AS current_status_type_id,
 	ci.CONTENT_ID,
 	ci.SCHEDULE_NEW_VERSION_PUBLICATION,
 	ci.splitted,
-	CAST(c.visible as bit) as visible,	
-	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled, 
+	CAST(c.visible as bit) as visible,
+	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled,
 	ci.not_for_replication,
 	ci.LOCKED_BY,
 	st.STATUS_TYPE_NAME,
@@ -24449,7 +24449,7 @@ BEGIN
 	mu.FIRST_NAME AS MODIFIER_FIRST_NAME,
 	mu.LAST_NAME AS MODIFIER_LAST_NAME,
 	mu.[LOGIN] AS MODIFIER_LOGIN, '
-	
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
 		BEGIN
@@ -24464,21 +24464,21 @@ BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
+
 	IF (LEN(@dynamic_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@dynamic_select_block, LEN(@dynamic_select_block) - 1)
 		END
-	
+
 	IF (LEN(@related_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@related_select_block, LEN(@related_select_block) - 1)
 		END
-	
+
 	SET @from_block = ''
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
 	IF @use_security = 1
-	BEGIN	
+	BEGIN
 		SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 		SET @from_block = @from_block + '	(<$_security_insert_$>) AS pi ' + CHAR(13)
 		SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -24488,29 +24488,29 @@ BEGIN
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + ' AS c2 ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	c2.content_item_id = c.content_item_id ' + CHAR(13)
-	
+
 	-- FULL TEXT SEARCH
 	declare @use_full_text bit, @full_text_sql nvarchar(max)
 	set @use_full_text = 0
 	IF ((@fts_is_incorrect_query IS NULL OR @fts_is_incorrect_query = 0) AND
 		LEN(@fts_attribute_ids) > 0 AND LEN(@fts_query_string) > 0)
 		set @use_full_text = 1
-		
+
 	IF @use_full_text = 1
 	BEGIN
 		CREATE TABLE #ft_temp (content_item_id int primary key)
-		
+
 		SET @from_block = @from_block + 'INNER JOIN #ft_temp as qp_fts' + CHAR(13)
 		SET @from_block = @from_block + 'ON c.content_item_id = qp_fts.content_item_id ' + CHAR(13)
-		
+
 		SET @full_text_sql = ' insert into #ft_temp select distinct CI.CONTENT_ITEM_ID from content_item CI, content_data CD ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CI.CONTENT_ID = ' + CAST(@content_id AS varchar)  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CD.ATTRIBUTE_ID in (' + @fts_attribute_ids + ') '  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and contains(CD.*, ''' + @fts_query_string + ''')'  + CHAR(13)
 		exec sp_executesql @full_text_sql
-	END	
-	-----	
+	END
+	-----
 	-- Поиск по Many To Many и Many To One --
 	declare @link_filter nvarchar(max)
 	set @link_filter = ''
@@ -24518,38 +24518,38 @@ BEGIN
 		BEGIN
 			declare @m2m_condition as varchar(max)
 			set @m2m_condition = ''
-			
+
 			declare @link_params_table table (id numeric, ids varchar(max), m2m bit, [isnull] bit)
-			
+
 			insert into @link_params_table
 			select T.f.value('./@lid', 'numeric'), T.f.value('./@iids', 'varchar(max)'), T.f.value('./@m2m', 'bit'), T.f.value('./@isnull', 'bit')
 			from @link_params.nodes('/link/f') as T(f)
-			
+
 			while exists (select * from @link_params_table)
 			begin
-				declare @currentLinkId numeric, 
-						@currentIds varchar(max), 
-						@isCurrentM2M bit, 
+				declare @currentLinkId numeric,
+						@currentIds varchar(max),
+						@isCurrentM2M bit,
 						@isNull bit,
 						@currentLinkText nvarchar(20)
-				
+
 				select @currentLinkId = id, @currentIds = ids, @isCurrentM2M = m2m, @isNull = [isnull] from @link_params_table
 				set @currentLinkText = cast(@currentLinkId as nvarchar(20))
-				
-				declare @currentFieldName nvarchar(255), 
+
+				declare @currentFieldName nvarchar(255),
 						@currentContentId numeric
 				select @currentContentId = content_id, @currentFieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @currentLinkId
-				
+
 				if @isNull = 0 begin
 					if @isCurrentM2M = 1 begin
 						SET @from_block = @from_block + ' INNER JOIN ( ' +
 							' select distinct item_id from dbo.item_link_united where link_id = ' + @currentLinkText + ' AND linked_item_id in (' + @currentIds + ') ' +
 							') as link_' + @currentLinkText + '  ON c.content_item_id = link_' + @currentLinkText + '.item_id ' + CHAR(13)
-					end	
+					end
 					else begin
-						
-						SET @from_block = @from_block + ' INNER JOIN ( ' + 
-							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 
+
+						SET @from_block = @from_block + ' INNER JOIN ( ' +
+							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where CONTENT_ITEM_ID in (' + @currentIds + ') ' +
 							' ) as back_' + @currentLinkText + '  ON c.content_item_id = back_' + @currentLinkText + '.item_id ' + CHAR(13)
 					end
@@ -24558,17 +24558,17 @@ BEGIN
 					if @isCurrentM2M = 1 begin
 						set @link_filter = ' NOT EXISTS (select item_id from dbo.item_link_united where c.content_item_id = item_id and link_id = '  + @currentLinkText + ') '
 					end
-					else begin						
-						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 							
+					else begin
+						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where c.content_item_id = [' + @currentFieldName + ']) '
-					end					
+					end
 				end
-				
+
 				delete from @link_params_table where id = @currentLinkId and m2m = @isCurrentM2M
-			end						
+			end
 		END
 	-----
-		
+
 	IF (@use_custom_selection = 1)
 		BEGIN
 			SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
@@ -24582,7 +24582,7 @@ BEGIN
 			SET @from_block = @from_block + '	) AS cis ' + CHAR(13)
 			SET @from_block = @from_block + 'ON ' + CHAR(13)
 			SET @from_block = @from_block + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
-		END	
+		END
 	SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
 	SET @from_block = @from_block + '	content_item AS ci with(nolock) ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -24607,21 +24607,21 @@ BEGIN
 	SET @from_block = @from_block + '	USERS AS mu ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	mu.USER_ID = ci.LAST_MODIFIED_BY ' + CHAR(13)
-	
+
 	IF (LEN(@related_from_block) > 0)
 		BEGIN
 			SET @from_block = @from_block + @related_from_block
 		END
-		
+
 	SET @where_block = @filter
-	
+
 	if LEN(@link_filter) > 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + @link_filter			
+		SET @where_block = @where_block + @link_filter
 	END
-	
+
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @order_by_block = @order_by
@@ -24630,14 +24630,14 @@ BEGIN
 		BEGIN
 			SET @order_by_block = 'CONTENT_ITEM_ID DESC'
 		END
-	
+
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
-	
+
 	if @fts_is_incorrect_query = 1 OR @parent_level = 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + '1 = 0'		
+		SET @where_block = @where_block + '1 = 0'
 	END
 
 	EXEC qp_get_paged_data
@@ -24649,7 +24649,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -24658,10 +24658,10 @@ BEGIN
 		@entity_name = 'content_item',
 		@parent_entity_name = '',
 		@parent_entity_id = 0
-		
+
 	IF @use_full_text = 1
 		DROP TABLE #ft_temp
-		
+
 	SET NOCOUNT OFF
 END
 GO
@@ -24675,7 +24675,7 @@ GO
 PRINT '7.9.1.1 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.2
 -- Multistep Actions
@@ -24695,19 +24695,19 @@ GO
 PRINT '7.9.1.2 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.3
 -- Apply Default Value Action
 -- **************************************
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, CONFIRM_PHRASE, HAS_PRE_ACTION, IS_MULTISTEP)
 values(
-	'Apply Default Value', 
-	'apply_field_default_value', 
-	dbo.qp_action_type_id('update'), 
-	dbo.qp_entity_type_id('field'), 
-	'~/FieldDefaultValue/', 
-	'Do you really want to apply default value?', 
+	'Apply Default Value',
+	'apply_field_default_value',
+	dbo.qp_action_type_id('update'),
+	dbo.qp_entity_type_id('field'),
+	'~/FieldDefaultValue/',
+	'Do you really want to apply default value?',
 	1,
 	1)
 GO
@@ -24716,14 +24716,14 @@ exec qp_update_translations 'Do you really want to apply default value?', 'Вы 
 GO
 update CONTEXT_MENU_ITEM
 set [ORDER] = 4
-where CONTEXT_MENU_ID = dbo.qp_context_menu_id('field') 
+where CONTEXT_MENU_ID = dbo.qp_context_menu_id('field')
 AND ACTION_ID = dbo.qp_action_id('edit_field')
 GO
 insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, ICON, [ORDER])
 values(
-	dbo.qp_context_menu_id('field'), 
-	dbo.qp_action_id('apply_field_default_value'), 
-	'Apply Default Value', 
+	dbo.qp_context_menu_id('field'),
+	dbo.qp_action_id('apply_field_default_value'),
+	'Apply Default Value',
 	'app_def_val.gif', 3)
 GO
 
@@ -24736,7 +24736,7 @@ GO
 PRINT '7.9.1.3 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.4
 -- Recreate Dynamic Images Action
@@ -24744,12 +24744,12 @@ GO
 
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, CONFIRM_PHRASE, IS_MULTISTEP)
 values(
-	'Recreate Dynamic Images', 
-	'recreate_dynamic_images', 
-	dbo.qp_action_type_id('update'), 
-	dbo.qp_entity_type_id('field'), 
-	'~/RecreateDynamicImages/', 
-	'Do you really want to recreate dynamic images?', 
+	'Recreate Dynamic Images',
+	'recreate_dynamic_images',
+	dbo.qp_action_type_id('update'),
+	dbo.qp_entity_type_id('field'),
+	'~/RecreateDynamicImages/',
+	'Do you really want to recreate dynamic images?',
 	1)
 GO
 exec qp_update_translations 'Recreate Dynamic Images', 'Пересоздать изображения';
@@ -24757,14 +24757,14 @@ exec qp_update_translations 'Do you really want to recreate dynamic images?', '�
 GO
 update CONTEXT_MENU_ITEM
 set [ORDER] = 5
-where CONTEXT_MENU_ID = dbo.qp_context_menu_id('field') 
+where CONTEXT_MENU_ID = dbo.qp_context_menu_id('field')
 AND ACTION_ID = dbo.qp_action_id('edit_field')
 GO
 insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, ICON, [ORDER])
 values(
-	dbo.qp_context_menu_id('field'), 
-	dbo.qp_action_id('recreate_dynamic_images'), 
-	'Recreate Dynamic Images', 
+	dbo.qp_context_menu_id('field'),
+	dbo.qp_action_id('recreate_dynamic_images'),
+	'Recreate Dynamic Images',
 	'recreate_dynamic_img.gif', 4)
 GO
 
@@ -24777,7 +24777,7 @@ GO
 PRINT '7.9.1.4 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.5
 -- Clear Content Action
@@ -24785,12 +24785,12 @@ GO
 
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, CONFIRM_PHRASE, IS_MULTISTEP)
 values(
-	'Clear', 
-	'clear_content', 
-	dbo.qp_action_type_id('update'), 
-	dbo.qp_entity_type_id('content'), 
-	'~/ClearContent/', 
-	'Do you really want to clear content?', 
+	'Clear',
+	'clear_content',
+	dbo.qp_action_type_id('update'),
+	dbo.qp_entity_type_id('content'),
+	'~/ClearContent/',
+	'Do you really want to clear content?',
 	1)
 GO
 exec qp_update_translations 'Clear', 'Очистить';
@@ -24809,7 +24809,7 @@ GO
 PRINT '7.9.1.5 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.6
 -- Remove Content Action
@@ -24817,7 +24817,7 @@ GO
 
 update [BACKEND_ACTION]
 set [IS_MULTISTEP] = 1, CONTROLLER_ACTION_URL  = '~/RemoveContent/'
-where code = 'remove_content' 
+where code = 'remove_content'
 GO
 
 update ACTION_TOOLBAR_BUTTON
@@ -24835,7 +24835,7 @@ GO
 PRINT '7.9.1.6 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.7
 -- Remove Site Action
@@ -24843,7 +24843,7 @@ GO
 
 update [BACKEND_ACTION]
 set [IS_MULTISTEP] = 1, CONTROLLER_ACTION_URL  = '~/RemoveSite/'
-where code = 'remove_site' 
+where code = 'remove_site'
 GO
 
 update ACTION_TOOLBAR_BUTTON
@@ -24875,10 +24875,10 @@ BEGIN
 	where SITE_ID = @site_id
 
 	delete UNION_CONTENTS from UNION_CONTENTS UC
-	JOIN @deleted_contents DI 
-		ON DI.ID = UC.virtual_content_id OR 
-		   DI.ID = UC.union_content_id OR 
-		   DI.ID = UC.master_content_id 
+	JOIN @deleted_contents DI
+		ON DI.ID = UC.virtual_content_id OR
+		   DI.ID = UC.union_content_id OR
+		   DI.ID = UC.master_content_id
 	delete UNION_ATTRS from UNION_ATTRS A
 	JOIN CONTENT_ATTRIBUTE VCA ON A.VIRTUAL_ATTR_ID = VCA.ATTRIBUTE_ID
 	JOIN @deleted_contents DI ON DI.ID = VCA.CONTENT_ID
@@ -24887,20 +24887,20 @@ BEGIN
 	JOIN @deleted_contents DI ON DI.ID = VCA.CONTENT_ID
 
 	delete USER_QUERY_CONTENTS from USER_QUERY_CONTENTS UC
-	JOIN @deleted_contents DI 
-		ON DI.ID = UC.virtual_content_id OR 
-		   DI.ID = UC.real_content_id 
+	JOIN @deleted_contents DI
+		ON DI.ID = UC.virtual_content_id OR
+		   DI.ID = UC.real_content_id
 	delete USER_QUERY_ATTRS from USER_QUERY_ATTRS A
 	JOIN CONTENT_ATTRIBUTE VCA ON A.virtual_content_id = VCA.ATTRIBUTE_ID
 	JOIN @deleted_contents DI ON DI.ID = VCA.CONTENT_ID
 	delete USER_QUERY_ATTRS from USER_QUERY_ATTRS A
 	JOIN CONTENT_ATTRIBUTE VCA ON A.user_query_attr_id = VCA.ATTRIBUTE_ID
 	JOIN @deleted_contents DI ON DI.ID = VCA.CONTENT_ID
-		   
+
 
 	delete CONTENT FROM CONTENT C
 	JOIN @deleted_contents DI ON DI.ID = C.CONTENT_ID
-	
+
 	select ID from @deleted_contents;
 END
 GO
@@ -24914,7 +24914,7 @@ GO
 PRINT '7.9.1.7 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.8
 -- Assemble Site Action
@@ -24922,7 +24922,7 @@ GO
 
 update [BACKEND_ACTION]
 set [IS_MULTISTEP] = 1, CONTROLLER_ACTION_URL  = '~/AssembleSite/'
-where code = 'assemble_site' 
+where code = 'assemble_site'
 GO
 
 INSERT INTO SYSTEM_INFO
@@ -24935,7 +24935,7 @@ PRINT '7.9.1.8 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.9
 -- User Actions
@@ -25040,12 +25040,12 @@ values (dbo.qp_action_id('edit_user'), dbo.qp_action_id('refresh_user'), 'Refres
 GO
 
 
-update ENTITY_TYPE 
-set 
-	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_user'), 
+update ENTITY_TYPE
+set
+	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_user'),
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_user'),
 
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('user'), 
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('user'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('users'),
 
 	[DISABLED] = 0
@@ -25056,23 +25056,23 @@ GO
 exec qp_drop_existing 'tbd_user', 'IsTrigger'
 GO
 
-CREATE TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+CREATE TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
 BEGIN
-	
-	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id     
-         
-    UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id 
-    
-    UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id  
+
+	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
+
+    UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id
+    UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id
+    UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id
+    UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id
+    UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id
+    UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id
+    UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id
+    UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id
+
+    UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id
 
     UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
@@ -25082,7 +25082,7 @@ BEGIN
 
     UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
-    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id
     UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
 
@@ -25093,10 +25093,10 @@ BEGIN
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
@@ -25105,14 +25105,14 @@ BEGIN
     UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
     UPDATE DOC SET last_modified_by = 1 FROM DOC c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     UPDATE CUSTOM_ACTION SET LAST_MODIFIED_BY = 1 FROM CUSTOM_ACTION c INNER JOIN deleted d on c.LAST_MODIFIED_BY = d.[USER_ID]
-    
+
 	UPDATE NOTIFICATIONS SET FROM_BACKENDUSER_ID = 1 FROM NOTIFICATIONS c inner join deleted d on c.FROM_BACKENDUSER_ID = d.user_id
-    
+
     delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
@@ -25128,7 +25128,7 @@ AS
 BEGIN
 	declare @now datetime;
 	set @now = getdate();
-	
+
 	INSERT INTO [USERS]
 		([PASSWORD]
 		,[DISABLED]
@@ -25182,7 +25182,7 @@ BEGIN
 	delete from [USER_GROUP_BIND] where [USER_ID] = @new_user_id
 	INSERT INTO [USER_GROUP_BIND] ([GROUP_ID],[USER_ID])
 	select [GROUP_ID], @new_user_id from [USER_GROUP_BIND] where [USER_ID] = @user_id
-		
+
 	INSERT INTO [TAB_ACCESS]([TAB_ID],[USER_ID],[GROUP_ID],[PERMISSION_LEVEL_ID])
 	select [TAB_ID],@new_user_id,[GROUP_ID],[PERMISSION_LEVEL_ID] from [TAB_ACCESS] where [USER_ID] = @user_id
 
@@ -25275,7 +25275,7 @@ PRINT '7.9.1.9 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.10
 -- User Group Actions
@@ -25314,7 +25314,7 @@ AS
 BEGIN
 	delete GROUP_TO_GROUP from GROUP_TO_GROUP g
 	INNER JOIN deleted d ON g.CHILD_GROUP_ID = d.GROUP_ID OR g.PARENT_GROUP_ID = d.GROUP_ID
-	
+
 	delete USER_GROUP from USER_GROUP g inner join deleted d on g.GROUP_ID = d.GROUP_ID
 END
 GO
@@ -25341,7 +25341,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @source nvarchar(50), @id_field nvarchar(50), @title_field nvarchar(50)
 	declare @parent_id_field nvarchar(50), @icon_field nvarchar(50)
@@ -25350,35 +25350,35 @@ begin
 	declare @recurring_id_field nvarchar(50), @source_sp nvarchar(50)
 	declare @id_str nvarchar(10), @parent_id bigint
 	declare @default_action_id int, @context_menu_id int
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
-	select 
+
+	select
 		@source = source,
 		@source_sp = source_sp,
 		@id_field = id_field,
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = dbo.qp_checked_action_id(@user_id, default_action_id),
-		@context_menu_id = CONTEXT_MENU_ID 
-	from 
-		ENTITY_TYPE 
+		@context_menu_id = CONTEXT_MENU_ID
+	from
+		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 
 	set @id_str = CAST(@id as nvarchar(10))
-	
+
 	if @icon_field is null
 		set @icon_field = 'NULL'
 	if @icon_modifier_field is null
-		set @icon_modifier_field = 'NULL'	
-	
+		set @icon_modifier_field = 'NULL'
+
 
 	if @is_folder = 1 or @recurring_id_field is not null
 	begin
@@ -25387,18 +25387,18 @@ begin
 		if @has_item_nodes = 1
 		begin
 			set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-			
-			
+
+
 			-- process recurring --
 			if @recurring_id_field is not null
 			begin
-				if @is_folder = 1 
+				if @is_folder = 1
 				begin
 					if @parent_id_field is null
 						set @where = @recurring_id_field + ' is null '
 					else
 						set @where = @parent_id_field + ' = ' + @id_str + ' and ' + @recurring_id_field + ' is null '
-				end  
+				end
 				else
 					set @where = @recurring_id_field + ' = ' + @id_str
 			end
@@ -25408,15 +25408,15 @@ begin
 			end
 			else
 				set @where = '1 = 1'
-			
+
 			if @order_field is null
 				set @order = @title_field
 			else
-				set @order = @order_field  
-			
+				set @order = @order_field
+
 		end
-		
-		
+
+
 		if @source_sp is null
 			set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where + ' order by ' + @order
 		else
@@ -25428,32 +25428,32 @@ begin
 				if @is_folder = 1
 					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=0'
 				else
-					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str			
-				
-			
+					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str
+
+
 		end
-		
+
 		insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
 		exec sp_executesql @sql
-		
+
 		--PRINT @sql;
-		
-		
+
+
 		if @count_only = 0
 		begin
-			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-			update 
+			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+			update
 				@result
-			set 
-				PARENT_ID = @id, 
-				CODE = @code, 
-				IS_FOLDER = 0, 
-				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER), 
-				DEFAULT_ACTION_ID = @default_action_id, 
+			set
+				PARENT_ID = @id,
+				CODE = @code,
+				IS_FOLDER = 0,
+				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
+				DEFAULT_ACTION_ID = @default_action_id,
 				CONTEXT_MENU_ID = @context_menu_id
 		end
 		else
-			select @count = COUNT(ID) from @result	
+			select @count = COUNT(ID) from @result
 	end
 	else
 	begin
@@ -25466,12 +25466,12 @@ begin
 				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), dbo.qp_checked_action_id(@user_id, DEFAULT_ACTION_ID), CONTEXT_MENU_ID From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 order by [Order]
 		else
 			if @code is not null
-				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID = dbo.qp_entity_type_id(@code) and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 	
+				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID = dbo.qp_entity_type_id(@code) and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0
 			else
-				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0 	
+				select @count = COUNT(ID) From ENTITY_TYPE where PARENT_ID is null and dbo.qp_tab_access_level(@user_id, tab_id) >= 1 and disabled = 0
 
 	end
-	
+
 	if @count_only = 0
 	begin
 		declare @i numeric, @total numeric
@@ -25482,7 +25482,7 @@ begin
 		while @i <= @total
 		begin
 			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = Is_folder from @result where NUMBER = @i
-			
+
 			if @local_is_folder = 1
 				exec dbo.qp_expand @user_id, @local_code, @local_parent_id, 1, 1, @count = @children_count output
 			else
@@ -25492,32 +25492,32 @@ begin
 				update @result set has_children = 0 where NUMBER = @i
 			else
 				update @result set has_children = 1 where NUMBER = @i
-			
+
 			set @i = @i + 1
 		end
-		
-		select 
+
+		select
 			TREE_NODE.ID,
-			TREE_NODE.CODE, 			
+			TREE_NODE.CODE,
 			TREE_NODE.PARENT_ID as PARENT_ID,
-			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-			TREE_NODE.IS_FOLDER, 
-			TREE_NODE.ICON, 
-			TREE_NODE.TITLE, 
-			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE, 
+			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+			TREE_NODE.IS_FOLDER,
+			TREE_NODE.ICON,
+			TREE_NODE.TITLE,
+			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 			ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 			TREE_NODE.HAS_CHILDREN
 		from
 			@result AS TREE_NODE
 		left outer join
 			BACKEND_ACTION
 		on
-			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 		left outer join
 			ACTION_TYPE
 		on
-			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID	
+			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID
 	end
 end
 GO
@@ -25623,12 +25623,12 @@ insert into ACTION_VIEW(ACTION_ID, TYPE_ID, CONTROLLER_ACTION_URL, [ORDER])
 values(dbo.qp_action_id('list_user_group'), dbo.qp_view_id('user_group_tree'), '~/UserGroup/Tree/', 2)
 GO
 
-update ENTITY_TYPE 
-set 
-	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_user_group'), 
+update ENTITY_TYPE
+set
+	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_user_group'),
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_user_group'),
 
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('user_group'), 
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('user_group'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('user_groups'),
 
 	[DISABLED] = 0
@@ -25653,8 +25653,8 @@ select ug.[GROUP_ID]
       ,ug.[BUILT_IN]
       ,ug.[READONLY]
       ,ug.[use_parallel_workflow]
-	  ,gtg.Parent_Group_Id AS PARENT_GROUP_ID 
-from dbo.USER_GROUP ug 
+	  ,gtg.Parent_Group_Id AS PARENT_GROUP_ID
+from dbo.USER_GROUP ug
 left join dbo.Group_To_Group gtg on ug.GROUP_ID = gtg.Child_Group_Id
 join dbo.USERS U ON U.[USER_ID] = ug.LAST_MODIFIED_BY
 GO
@@ -25670,7 +25670,7 @@ AS
 BEGIN
 	declare @now datetime;
 	set @now = getdate();
-	
+
 	INSERT INTO [USER_GROUP]
            ([GROUP_NAME]
            ,[DESCRIPTION]
@@ -25698,15 +25698,15 @@ BEGIN
 	WHERE [GROUP_ID] = @group_id
 
 	set @new_group_id = scope_identity();
-	
-	
+
+
 	INSERT INTO [GROUP_TO_GROUP] ([CHILD_GROUP_ID] ,[PARENT_GROUP_ID])
     SELECT @new_group_id, [PARENT_GROUP_ID] from [GROUP_TO_GROUP] WHERE [CHILD_GROUP_ID] = @group_id
 
-	
+
 	INSERT INTO [USER_GROUP_BIND] ([GROUP_ID],[USER_ID])
 	select @new_group_id, [USER_ID] from [USER_GROUP_BIND] where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO [TAB_ACCESS]([TAB_ID],[USER_ID],[GROUP_ID],[PERMISSION_LEVEL_ID])
 	select [TAB_ID],[USER_ID],@new_group_id,[PERMISSION_LEVEL_ID] from [TAB_ACCESS] where [GROUP_ID] = @group_id
 
@@ -25729,7 +25729,7 @@ BEGIN
 		  ,[propagate_to_contents]
 	FROM [SITE_ACCESS]
 	where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO CONTENT_ACCESS
 		   ([CONTENT_ID]
 		   ,[USER_ID]
@@ -25749,7 +25749,7 @@ BEGIN
 		  ,[propagate_to_items]
 	FROM [CONTENT_ACCESS]
 	where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO CONTENT_ITEM_ACCESS
 		   (CONTENT_ITEM_ID
 		   ,[USER_ID]
@@ -25767,7 +25767,7 @@ BEGIN
 		  ,@create_by_id
 	FROM CONTENT_ITEM_ACCESS
 	where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO FOLDER_ACCESS
 		   (FOLDER_ID
 		   ,[USER_ID]
@@ -25797,7 +25797,7 @@ GO
 PRINT '7.9.1.10 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.11
 -- Entity Access Rules
@@ -25862,7 +25862,7 @@ PRINT '7.9.1.11 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.12
 -- Remove obsolete objects
@@ -25899,7 +25899,7 @@ PRINT '7.9.1.12 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.13
 -- Fix
@@ -25930,7 +25930,7 @@ GO
 exec qp_drop_existing 'qp_get_breadcrumbs', 'IsProcedure'
 GO
 CREATE PROCEDURE [dbo].[qp_get_breadcrumbs]
-	@user_id numeric(18,0), 
+	@user_id numeric(18,0),
 	@entity_type_code nvarchar(50),
 	@entity_id numeric(18,0) = 0,
 	@parent_entity_id numeric(18,0) = NULL,
@@ -25948,7 +25948,7 @@ BEGIN
 		ACTION_CODE nvarchar(50),
 		FOLDER_ACTION_CODE nvarchar(50)
 	)
-	
+
 	DECLARE @language_id AS numeric(18,0)
 	DECLARE @id AS numeric(18,0)
 	DECLARE @parent_id AS numeric(18,0)
@@ -25961,9 +25961,9 @@ BEGIN
 	DECLARE @folder_default_action_code AS nvarchar(50)
 	DECLARE @entity_exist AS bit
 	DECLARE @level as int
-	
+
 	SET @language_id = dbo.qp_language(@user_id)
-	
+
 	IF (@entity_id != 0)
 		BEGIN
 			SET @level = 0
@@ -25975,44 +25975,44 @@ BEGIN
 		BEGIN
 			SET @level = 1
 			SET @id = @parent_entity_id
-			
+
 			EXEC qp_get_parent_entity_type_code_by_entity_type_code
 				@entity_type_code = @entity_type_code,
 				@parent_entity_type_code = @code out
-				
+
 			SET @parent_id = NULL
 		END
 
 	WHILE (@code IS NOT NULL)
 		BEGIN
 			SET @title = ''
-					
-			SELECT 
-				@name = NAME, 
+
+			SELECT
+				@name = NAME,
 				@recurring_id_field = RECURRING_ID_FIELD,
 				@default_action_code = dbo.qp_action_code(DEFAULT_ACTION_ID),
 				@folder_default_action_code = dbo.qp_action_code(FOLDER_DEFAULT_ACTION_ID)
-			FROM 
-				ENTITY_TYPE 
+			FROM
+				ENTITY_TYPE
 			WHERE
 				CODE = @code
-			
-			EXEC qp_get_entity_title 
-				@id, 
-				@code, 
-				@parent_entity_id, 
+
+			EXEC qp_get_entity_title
+				@id,
+				@code,
+				@parent_entity_id,
 				@title OUT
 
 			IF ((@code = 'site_folder' OR @code = 'content_folder') AND @title = '')
 				BEGIN
 					SET @title = dbo.qp_translate('Root Folder', @language_id)
 				END
-				
-			EXEC qp_get_recurring_parent_entity_id 
-				@id, 
-				@code, 
+
+			EXEC qp_get_recurring_parent_entity_id
+				@id,
+				@code,
 				@recurring_id OUT
-			
+
 			IF (@recurring_id IS NOT NULL)
 				BEGIN
 					SET @parent_id = @recurring_id
@@ -26029,7 +26029,7 @@ BEGIN
 							EXEC qp_get_parent_entity_id @id, @code, @parent_id OUT
 						END
 				END
-				
+
 			if @parent_id is null
 			begin
 				if @code = 'db'
@@ -26037,32 +26037,32 @@ BEGIN
 				else
 					set @parent_id = dbo.qp_entity_type_id('db')
 			end
-				
+
 			INSERT INTO @result(ID, PARENT_ID, CODE, NAME, TITLE, IS_FOLDER, ACTION_CODE, FOLDER_ACTION_CODE)
-			SELECT 
+			SELECT
 				@id,
 				@parent_id,
-				@code, 
+				@code,
 				dbo.qp_translate(@name, @language_id),
 				@title,
 				0,
 				@default_action_code,
 				@folder_default_action_code
-				
+
 			SET @id = @parent_id
-			
+
 			IF (@recurring_id IS NULL)
 				select @code = et2.code from entity_type et1 left join entity_type et2 on et1.parent_id = et2.id where et1.code = @code
-				
+
 			IF @level = 1 and @one_level = 1
 				BREAK
 
 			SET @level = @level + 1
-				
+
 		END
 
 	UPDATE r1 SET ACTION_CODE = r2.FOLDER_ACTION_CODE from @result AS r1 inner join @result AS r2 on r1.ID = r2.PARENT_ID AND r2.FOLDER_ACTION_CODE is not null
-	
+
 	SELECT
 		ID,
 		PARENT_ID,
@@ -26071,7 +26071,7 @@ BEGIN
 		TITLE,
 		IS_FOLDER,
 		ACTION_CODE
-	FROM 
+	FROM
 		@result
 END
 GO
@@ -26085,7 +26085,7 @@ GO
 PRINT '7.9.1.13 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.14
 -- Entity Access Rules
@@ -26240,7 +26240,7 @@ update dbo.CONTEXT_MENU_ITEM set [ORDER] = [ORDER] * 10
 GO
 
 
-update dbo.CONTEXT_MENU_ITEM set [ORDER] = 45 
+update dbo.CONTEXT_MENU_ITEM set [ORDER] = 45
 where CONTEXT_MENU_ID = dbo.qp_context_menu_id('content')
 AND ACTION_ID = dbo.qp_action_id('clear_content')
 GO
@@ -26483,36 +26483,36 @@ insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_
 values (dbo.qp_action_id('edit_site_folder_permission'), dbo.qp_action_id('refresh_site_folder_permission'), 'Refresh', 'refresh.gif', NULL, 30, 1)
 GO
 
-update ENTITY_TYPE 
-set 
+update ENTITY_TYPE
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_site_permission'),
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('site_permission'),
 	[PARENT_ID_FIELD] = 'SITE_ID'
 where CODE = 'site_permission'
 GO
-update ENTITY_TYPE 
-set 
+update ENTITY_TYPE
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_content_permission'),
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('content_permission'),
 	[PARENT_ID_FIELD] = 'CONTENT_ID'
 where CODE = 'content_permission'
 GO
-update ENTITY_TYPE 
-set 
+update ENTITY_TYPE
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_article_permission'),
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('article_permission'),
 	[PARENT_ID_FIELD] = 'CONTENT_ITEM_ID'
 where CODE = 'article_permission'
 GO
-update ENTITY_TYPE 
-set 
+update ENTITY_TYPE
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_site_folder_permission'),
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('site_folder_permission'),
 	[PARENT_ID_FIELD] = 'FOLDER_ID'
 where CODE = 'site_folder_permission'
 GO
-update ENTITY_TYPE 
-set 
+update ENTITY_TYPE
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_workflow_permission'),
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('site_workflow_permission'),
 	[PARENT_ID_FIELD] = 'WORKFLOW_ID'
@@ -26536,7 +26536,7 @@ PRINT '7.9.1.14 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.15
 -- Entity Access Rules
@@ -26568,8 +26568,8 @@ update [dbo].[WORKFLOW_ACCESS] set [CREATED] = GETDATE() WHERE [CREATED] IS NULL
 GO
 ALTER TABLE [WORKFLOW_ACCESS] ALTER COLUMN [CREATED] DATETIME NOT NULL
 GO
-if exists 
-	(SELECT * FROM dbo.sysobjects DF 
+if exists
+	(SELECT * FROM dbo.sysobjects DF
 	JOIN dbo.sysobjects T ON T.id = DF.parent_obj
 	WHERE DF.id = OBJECT_ID(N'[DF_WORKFLOW_ACCESS_CREATED]') AND DF.type = 'D'
 	AND T.id = OBJECT_ID(N'[WORKFLOW_ACCESS]') AND T.type = 'U')
@@ -26584,8 +26584,8 @@ update [dbo].[WORKFLOW_ACCESS] set [MODIFIED] = GETDATE() WHERE [MODIFIED] IS NU
 GO
 ALTER TABLE [WORKFLOW_ACCESS] ALTER COLUMN [MODIFIED] DATETIME NOT NULL
 GO
-if exists 
-	(SELECT * FROM dbo.sysobjects DF 
+if exists
+	(SELECT * FROM dbo.sysobjects DF
 	JOIN dbo.sysobjects T ON T.id = DF.parent_obj
 	WHERE DF.id = OBJECT_ID(N'[DF_WORKFLOW_ACCESS_MODIFIED]') AND DF.type = 'D'
 	AND T.id = OBJECT_ID(N'[WORKFLOW_ACCESS]') AND T.type = 'U')
@@ -26606,7 +26606,7 @@ PRINT '7.9.1.15 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.16
 -- Fix CREATED_BY for versions
@@ -26627,12 +26627,12 @@ AS
   FROM content AS c
   INNER JOIN content_item AS ci ON c.content_id = ci.content_id
   WHERE ci.content_item_id = @content_item_id
-IF @max_num_of_stored_versions <> 0 
+IF @max_num_of_stored_versions <> 0
 BEGIN
   DECLARE @item_version_count INT
   SELECT @item_version_count = COUNT(content_item_version_id) FROM content_item_version
-  WHERE content_item_id = @content_item_id 
-  IF @item_version_count >= @max_num_of_stored_versions 
+  WHERE content_item_id = @content_item_id
+  IF @item_version_count >= @max_num_of_stored_versions
   BEGIN
 	DECLARE @item_version_id NUMERIC
 	SELECT TOP 1 @item_version_id = content_item_version_id FROM content_item_version
@@ -26640,60 +26640,60 @@ BEGIN
 	DELETE item_to_item_version WHERE content_item_version_id = @item_version_id
 	DELETE content_item_version WHERE content_item_version_id = @item_version_id
   END
-  
+
   -- Create content item version
   IF @content_version_id IS NOT NULL
-    DELETE FROM content_item_version 
+    DELETE FROM content_item_version
     WHERE content_version_id = @content_version_id AND content_item_id = @content_item_id
   INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by)
   VALUES (@tm, 'backup', @content_version_id, @content_item_id, @uid)
   SET @content_item_version_id = @@IDENTITY
-  
+
   -- Store content item data
   INSERT INTO version_content_data (attribute_id, content_item_version_id, data, blob_data, created)
   SELECT attribute_id, @content_item_version_id, data, blob_data, @tm
   FROM content_data
   WHERE content_item_id = @content_item_id
-  
+
   -- Store Many-to-Many slice
   INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
-  SELECT @content_item_version_id, ca.attribute_id, linked_item_id 
+  SELECT @content_item_version_id, ca.attribute_id, linked_item_id
   FROM item_link_united AS il
   INNER JOIN content_attribute AS ca ON ca.link_id = il.link_id
   INNER JOIN content_item AS ci ON ci.content_id =  ca.content_id AND ci.content_item_id = il.item_id
   WHERE il.item_id = @content_item_id
-  
+
   -- Store Many-to-One data
   declare @many_to_ones table (id numeric, content_id numeric, name nvarchar(255))
   insert into @many_to_ones (id, content_id, name)
-  select ca.attribute_id, rca.CONTENT_ID, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca 
+  select ca.attribute_id, rca.CONTENT_ID, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca
   inner join CONTENT_ATTRIBUTE rca on ca.BACK_RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID
   where ca.CONTENT_ID = @content_id
-  
+
   while exists(select * from @many_to_ones)
   begin
 	declare @currentFieldId numeric, @currentContentId numeric, @currentFieldName nvarchar(255)
 	select @currentFieldId = id, @currentContentId = content_id, @currentFieldName = name from @many_to_ones
-	
+
 	declare @ids table (id numeric)
 	insert into @ids
 	exec qp_get_m2o_ids @currentContentId, @currentFieldName, @content_item_id
-	
+
 	SELECT @content_item_version_id, @currentFieldId, id from @ids
-	
+
 	INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
 	SELECT @content_item_version_id, @currentFieldId, id from @ids
-	
+
 	delete from @ids
-	
+
 	delete from @many_to_ones where id = @currentFieldId
   end
-  
+
   -- Write status history log
-  INSERT INTO content_item_status_history 
-    (content_item_id, user_id, description, created, content_item_version_id, 
+  INSERT INTO content_item_status_history
+    (content_item_id, user_id, description, created, content_item_version_id,
     system_status_type_id)
-  VALUES 
+  VALUES
     (@content_item_id, @uid, 'Record version backup has been created', @tm, @content_item_version_id,
     2)
 END
@@ -26716,7 +26716,7 @@ PRINT '7.9.1.16 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.17
 -- Fix LAST_MODIFIED_BY foreign key for some entities
@@ -26768,8 +26768,8 @@ select ug.[GROUP_ID]
       ,ug.[BUILT_IN]
       ,ug.[READONLY]
       ,ug.[use_parallel_workflow]
-	  ,gtg.Parent_Group_Id AS PARENT_GROUP_ID 
-from dbo.USER_GROUP ug 
+	  ,gtg.Parent_Group_Id AS PARENT_GROUP_ID
+from dbo.USER_GROUP ug
 left join dbo.Group_To_Group gtg on ug.GROUP_ID = gtg.Child_Group_Id
 join dbo.USERS U ON U.[USER_ID] = ug.LAST_MODIFIED_BY
 GO
@@ -26832,7 +26832,7 @@ GO
 
 update BACKEND_ACTION
 set [IS_WINDOW] = 1, [WINDOW_WIDTH] = 700, [WINDOW_HEIGHT] = 360
-where CODE in 
+where CODE in
 (
 	'new_site_permission'
 	,'edit_site_permission'
@@ -26856,7 +26856,7 @@ GO
 PRINT '7.9.1.17 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.18
 -- Permissions
@@ -26884,7 +26884,7 @@ PRINT '7.9.1.18 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.19
 -- Permissions
@@ -26912,8 +26912,8 @@ AS BEGIN
   FROM
     content_folder AS f
     LEFT OUTER JOIN content_access AS ca ON ca.content_id = f.content_id
-  WHERE 
-    f.content_id IN (SELECT content_id FROM inserted)    
+  WHERE
+    f.content_id IN (SELECT content_id FROM inserted)
 END
 GO
 
@@ -26936,7 +26936,7 @@ values('Child Content Permissions', 'list_child_content_permission', dbo.qp_acti
 GO
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, TAB_ID)
 values('Refresh Content Permissions', 'refresh_child_content_permissions', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('content_permission'), dbo.qp_tab_id('Content Permissions'))
-GO 
+GO
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, TAB_ID, IS_INTERFACE, [IS_WINDOW], [WINDOW_WIDTH], [WINDOW_HEIGHT])
 values('Change Selected Child Content Permissions', 'multiple_change_child_content_permission', dbo.qp_action_type_id('multiple_child_permission_modify'), dbo.qp_entity_type_id('content_permission'), '~/ContentPermission/MultipleChangeAsChild/', dbo.qp_tab_id('Content Permissions'), 1, 1, 700, 150)
 GO
@@ -26992,7 +26992,7 @@ values('Child Article Permissions', 'list_child_article_permission', dbo.qp_acti
 GO
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, TAB_ID)
 values('Refresh Article Permissions', 'refresh_child_article_permissions', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('article_permission'), dbo.qp_tab_id('Article Permissions'))
-GO 
+GO
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, TAB_ID, IS_INTERFACE, [IS_WINDOW], [WINDOW_WIDTH], [WINDOW_HEIGHT])
 values('Change Selected Child Article Permissions', 'multiple_change_child_article_permission', dbo.qp_action_type_id('multiple_child_permission_modify'), dbo.qp_entity_type_id('article_permission'), '~/ArticlePermission/MultipleChangeAsChild/', dbo.qp_tab_id('Article Permissions'), 1, 1, 700, 150)
 GO
@@ -27057,7 +27057,7 @@ PRINT '7.9.1.19 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.20
 -- Fix Action Toolbar Button: correct always enabled
@@ -27076,7 +27076,7 @@ PRINT '7.9.1.20 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.21
 -- Permissions
@@ -27130,7 +27130,7 @@ GO
 PRINT '7.9.1.21 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.22
 -- Notifications
@@ -27206,12 +27206,12 @@ insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_
 values (dbo.qp_action_id('edit_notification'), dbo.qp_action_id('refresh_notification'), 'Refresh', 'refresh.gif', NULL, 3, 1)
 GO
 
-update ENTITY_TYPE 
-set 
-	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_notification'), 
+update ENTITY_TYPE
+set
+	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_notification'),
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_notification'),
 
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('notification'), 
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('notification'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('notifications'),
 
 	[DISABLED] = 0
@@ -27228,7 +27228,7 @@ PRINT '7.9.1.22 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.23
 -- Fix Site Folder Tree Permission Check
@@ -27238,7 +27238,7 @@ exec qp_drop_existing 'qp_get_folders_tree', 'IsProcedure'
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_folders_tree]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@parent_entity_id numeric(18,0),
 	@is_site bit = 1,
 	@parent_folder_id numeric(18,0) = NULL,
@@ -27249,9 +27249,9 @@ AS
 BEGIN
 
 	DECLARE @security_sql AS nvarchar(max), @sql_result AS nvarchar(max)
-	DECLARE @entity_name AS nvarchar(50), @parent_entity_name AS nvarchar(50) 
+	DECLARE @entity_name AS nvarchar(50), @parent_entity_name AS nvarchar(50)
 	DECLARE @use_security bit, @parent_level numeric, @block_filter nvarchar(10)
-	
+
 	SET @entity_name = case @is_site when 1 then 'folder' else 'content_folder' end
 	print @entity_name
 	SET @parent_entity_name = case @is_site when 1 then 'site' else 'content' end
@@ -27264,7 +27264,7 @@ BEGIN
 		set @use_security = 0
 		select @parent_level = dbo.qp_entity_access_level(@user_id, @parent_entity_name, @parent_entity_id)
 		if @parent_level = 0
-			set @block_filter = ' AND 1 = 0 '		
+			set @block_filter = ' AND 1 = 0 '
 	end
 
 	if @use_security = 1 BEGIN
@@ -27275,10 +27275,10 @@ BEGIN
 			@end_level = 4,
 			@entity_name = @entity_name,
 			@parent_entity_name = @parent_entity_name,
-			@parent_entity_id = @parent_entity_id,				
+			@parent_entity_id = @parent_entity_id,
 			@SQLOut = @security_sql OUTPUT
 		IF(@is_site = 1) BEGIN
-			CREATE TABLE #tmp 
+			CREATE TABLE #tmp
 			(
 				N int identity,
 				FOLDER_ID numeric(18,0),
@@ -27310,18 +27310,18 @@ BEGIN
 						join FLD_TREE ON #tmp.FOLDER_ID = FLD_TREE.PARENT_FOLDER_ID
 					)
 					update #tmp set #tmp.PERMISSION_LEVEL = T.PERMISSION_LEVEL
-					from #tmp 
-					join 
+					from #tmp
+					join
 					(
-						select @p0 as FOLDER_ID, F1.PERMISSION_LEVEL from FLD_TREE F1 
+						select @p0 as FOLDER_ID, F1.PERMISSION_LEVEL from FLD_TREE F1
 						JOIN (select min(HL) as MHL from FLD_TREE where PERMISSION_LEVEL IS NOT NULL)  F2 ON F2.MHL = F1.HL
-					) T ON #tmp.FOLDER_ID = T.FOLDER_ID', N'@p0 int', @p0 = @tmp_p0	
+					) T ON #tmp.FOLDER_ID = T.FOLDER_ID', N'@p0 int', @p0 = @tmp_p0
 				END;
 			END;
 			set @security_sql = 'select FOLDER_ID, PERMISSION_LEVEL from #tmp';
 		END;
 	END;
-				
+
 	SET @sql_result = ''
 	SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 	IF (@count_only = 0)
@@ -27369,7 +27369,7 @@ BEGIN
 			SET @sql_result = @sql_result + 'ON ' + CHAR(13)
 			SET @sql_result = @sql_result + '	mu.USER_ID = c.LAST_MODIFIED_BY ' + CHAR(13)
 		END
-	SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)			
+	SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)
 	IF (@parent_folder_id IS NOT NULL)
 		BEGIN
 			SET @sql_result = @sql_result + '	c.PARENT_FOLDER_ID = ' + CAST(@parent_folder_id AS varchar) + ' ' + CHAR(13)
@@ -27385,20 +27385,20 @@ BEGIN
 		SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 		SET @sql_result = @sql_result + ' c.NAME ASC '
 	END
-			
+
 	IF (@count_only = 0)
 		BEGIN
 			print @sql_result
 			EXEC(@sql_result)
-					
-			SET @total_records = @@ROWCOUNT 
+
+			SET @total_records = @@ROWCOUNT
 		END
 	ELSE
 		BEGIN
 			print @sql_result
-			EXEC sp_executesql 
-				@sql_result, 
-				N'@record_count int OUTPUT', 
+			EXEC sp_executesql
+				@sql_result,
+				N'@record_count int OUTPUT',
 				@record_count = @total_records OUTPUT
 		END
 END
@@ -27414,7 +27414,7 @@ PRINT '7.9.1.23 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.24
 -- Action Permissions
@@ -27433,7 +27433,7 @@ CREATE TABLE [dbo].[ENTITY_TYPE_ACCESS](
 	[MODIFIED] [datetime] NOT NULL  DEFAULT (getdate()),
 	[LAST_MODIFIED_BY] [numeric](18, 0) NOT NULL,
 	CONSTRAINT [PK_ENTITY_TYPE_ACCESS] PRIMARY KEY NONCLUSTERED ([ENTITY_TYPE_ACCESS_ID] ASC),
-	CONSTRAINT [IX_ENT_TYPE_ACC] UNIQUE CLUSTERED 
+	CONSTRAINT [IX_ENT_TYPE_ACC] UNIQUE CLUSTERED
 	(
 		[ENTITY_TYPE_ID] ASC,
 		[USER_ID] ASC,
@@ -27472,7 +27472,7 @@ CREATE TABLE [dbo].[ACTION_ACCESS](
 	[MODIFIED] [datetime] NOT NULL  DEFAULT (getdate()),
 	[LAST_MODIFIED_BY] [numeric](18, 0) NOT NULL,
 	CONSTRAINT [PK_ACTION_ACCESS] PRIMARY KEY NONCLUSTERED ([ACTION_ACCESS_ID] ASC),
-	CONSTRAINT [IX_ACT_ACC] UNIQUE CLUSTERED 
+	CONSTRAINT [IX_ACT_ACC] UNIQUE CLUSTERED
 	(
 		[ACTION_ACCESS_ID] ASC,
 		[USER_ID] ASC,
@@ -27499,23 +27499,23 @@ GO
 exec qp_drop_existing 'tbd_user', 'IsTrigger'
 GO
 
-CREATE TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+CREATE TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
 BEGIN
-	
-	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id     
-         
-    UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id 
-    
-    UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id  
+
+	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
+
+    UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id
+    UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id
+    UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id
+    UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id
+    UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id
+    UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id
+    UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id
+    UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id
+
+    UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id
 
     UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
@@ -27525,7 +27525,7 @@ BEGIN
 
     UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
-    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id
     UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
 
@@ -27536,10 +27536,10 @@ BEGIN
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
@@ -27548,17 +27548,17 @@ BEGIN
     UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
     UPDATE DOC SET last_modified_by = 1 FROM DOC c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     UPDATE CUSTOM_ACTION SET LAST_MODIFIED_BY = 1 FROM CUSTOM_ACTION c INNER JOIN deleted d on c.LAST_MODIFIED_BY = d.[USER_ID]
-    
+
 	UPDATE NOTIFICATIONS SET FROM_BACKENDUSER_ID = 1 FROM NOTIFICATIONS c inner join deleted d on c.FROM_BACKENDUSER_ID = d.user_id
-	
+
 	UPDATE ENTITY_TYPE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE ACTION_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
@@ -27572,7 +27572,7 @@ GO
 PRINT '7.9.1.24 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.25
 -- NotificationObjectFormats
@@ -27604,15 +27604,15 @@ GO
 PRINT '7.9.1.25 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.26
 -- NOtification bug fix
 -- **************************************
 UPDATE [dbo].[BACKEND_ACTION]
-   SET 
+   SET
       [HAS_PRE_ACTION] = 0
-      
+
  WHERE CODE = 'remove_notification'
 GO
 
@@ -27625,7 +27625,7 @@ GO
 PRINT '7.9.1.26 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.27
 -- Action Permissions and New Action Security Model
@@ -27683,7 +27683,7 @@ exec qp_drop_existing 'ENTITY_TYPE_ACCESS_PERMLEVEL', 'IsView'
 GO
 CREATE VIEW [dbo].ENTITY_TYPE_ACCESS_PERMLEVEL WITH SCHEMABINDING AS
 SELECT C.ENTITY_TYPE_ACCESS_ID, C.[USER_ID], C.GROUP_ID,
-PL.PERMISSION_LEVEL, X.ID AS ENTITY_TYPE_ID 
+PL.PERMISSION_LEVEL, X.ID AS ENTITY_TYPE_ID
 FROM [dbo].ENTITY_TYPE_ACCESS AS C
 INNER JOIN [dbo].PERMISSION_LEVEL AS PL ON C.PERMISSION_LEVEL_ID = PL.PERMISSION_LEVEL_ID
 INNER JOIN [dbo].ENTITY_TYPE AS X ON C.ENTITY_TYPE_ID = X.ID
@@ -27823,10 +27823,10 @@ insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_
 values (dbo.qp_action_id('edit_entity_type_permission'), dbo.qp_action_id('refresh_entity_type_permission'), 'Refresh', 'refresh.gif', NULL, 30, 1)
 GO
 
-update ENTITY_TYPE 
-set 
+update ENTITY_TYPE
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_entity_type_permission'),
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('entity_type_permission')	
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('entity_type_permission')
 where CODE = 'entity_type_permission'
 GO
 ---------------------
@@ -27902,10 +27902,10 @@ values (dbo.qp_action_id('edit_action_permission'), dbo.qp_action_id('refresh_ac
 GO
 
 
-update ENTITY_TYPE 
-set 
+update ENTITY_TYPE
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_action_permission'),
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('action_permission')	
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('action_permission')
 where CODE = 'action_permission'
 GO
 ----------------------------
@@ -27921,9 +27921,9 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	
+
 	declare @entitySecQuery nvarchar(max);
-	
+
 	EXEC	[dbo].[qp_GetPermittedItemsAsQuery]
 			@user_id = @user_id,
 			@start_level = 0,
@@ -27932,8 +27932,8 @@ BEGIN
 			@SQLOut = @entitySecQuery OUTPUT
 
 
-	SELECT @SQLOut = REPLACE(		
-		REPLACE(N'select COALESCE(L.PERMISSION_LEVEL, 0) AS PERMISSION_LEVEL, T.ID AS ENTITY_TYPE_ID FROM 
+	SELECT @SQLOut = REPLACE(
+		REPLACE(N'select COALESCE(L.PERMISSION_LEVEL, 0) AS PERMISSION_LEVEL, T.ID AS ENTITY_TYPE_ID FROM
 			(<$_security_insert_$>) P1
 			LEFT JOIN ENTITY_TYPE_ACCESS_PERMLEVEL P2 ON P1.entity_type_id = P2.entity_type_id and P1.permission_level = p2.permission_level and P2.[USER_ID] = <$_userid_$>
 			RIGHT JOIN ENTITY_TYPE T ON P1.ENTITY_TYPE_ID = T.ID
@@ -27956,7 +27956,7 @@ BEGIN
 
 	declare @actionSecQuery nvarchar(max);
 	declare @entitySecQuery nvarchar(max);
-	
+
 	EXEC [dbo].[qp_GetPermittedItemsAsQuery]
 		@user_id = @user_id,
 		@start_level = 0,
@@ -27965,19 +27965,19 @@ BEGIN
 		@SQLOut = @actionSecQuery OUTPUT
 
 	EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-		@user_id = @user_id,	
+		@user_id = @user_id,
 		@SQLOut = @entitySecQuery OUTPUT
 
 
 	SELECT @result = REPLACE(
-		REPLACE (N'select AP.BACKEND_ACTION_ID, COALESCE(AP.PERMISSION_LEVEL, EP.PERMISSION_LEVEL, 0) AS PERMISSION_LEVEL from 
-		(select L.PERMISSION_LEVEL AS PERMISSION_LEVEL, T.ID AS BACKEND_ACTION_ID, T.ENTITY_TYPE_ID FROM 
+		REPLACE (N'select AP.BACKEND_ACTION_ID, COALESCE(AP.PERMISSION_LEVEL, EP.PERMISSION_LEVEL, 0) AS PERMISSION_LEVEL from
+		(select L.PERMISSION_LEVEL AS PERMISSION_LEVEL, T.ID AS BACKEND_ACTION_ID, T.ENTITY_TYPE_ID FROM
 			(<$_security_insert_$>) P1
 			LEFT JOIN backend_action_access_PermLevel P2 ON P1.BACKEND_ACTION_ID = P2.BACKEND_ACTION_ID and P1.permission_level = p2.permission_level and P2.[USER_ID] = <$_userid_$>
 			RIGHT JOIN BACKEND_ACTION T ON P1.BACKEND_ACTION_ID = T.ID
 			LEFT join PERMISSION_LEVEL L ON P1.PERMISSION_LEVEL = L.PERMISSION_LEVEL
 		) AP
-		JOIN ', N'<$_security_insert_$>', @actionSecQuery) + 
+		JOIN ', N'<$_security_insert_$>', @actionSecQuery) +
 		REPLACE(N'(<$_security_insert_$>) EP ON AP.ENTITY_TYPE_ID = EP.ENTITY_TYPE_ID', N'<$_security_insert_$>', @entitySecQuery)
 	, N'<$_userid_$>', @user_id)
 
@@ -27990,20 +27990,20 @@ CREATE procedure [dbo].[qp_get_toolbar](@user_id int, @action_id int)
 AS
 begin
 	declare @language_id numeric(18, 0)
-	
+
 	set @language_id = dbo.qp_language(@user_id)
 
-	select 
-		ba.CODE, 
-		ba2.CODE AS PARENT_CODE, 
-		dbo.qp_translate(atb.NAME, @language_id) as NAME, 
-		atb.[ORDER], 
+	select
+		ba.CODE,
+		ba2.CODE AS PARENT_CODE,
+		dbo.qp_translate(atb.NAME, @language_id) as NAME,
+		atb.[ORDER],
 		atb.ICON,
 		atb.ICON_DISABLED,
-		atb.IS_COMMAND 
+		atb.IS_COMMAND
 	from ACTION_TOOLBAR_BUTTON atb
 	inner join BACKEND_ACTION ba on atb.ACTION_ID = ba.ID
-	inner join BACKEND_ACTION ba2 on atb.PARENT_ACTION_ID = ba2.ID 
+	inner join BACKEND_ACTION ba2 on atb.PARENT_ACTION_ID = ba2.ID
 	WHERE atb.PARENT_ACTION_ID = @action_id
 	order by [ORDER]
 end
@@ -28018,63 +28018,63 @@ BEGIN
 	SET @action_id = dbo.qp_action_id(@action_code)
 
 	DECLARE @language_id numeric(18, 0)
-	SET @language_id = dbo.qp_language(@user_id)	
-	
+	SET @language_id = dbo.qp_language(@user_id)
+
 	if EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1 BEGIN
 		SELECT
-		ba.ID AS ACTION_ID,		
+		ba.ID AS ACTION_ID,
 		ba.CODE AS ACTION_CODE,
 		bat.CODE AS ACTION_TYPE_CODE,
 		ba2.ID AS PARENT_ACTION_ID,
-		ba2.CODE AS PARENT_ACTION_CODE, 
+		ba2.CODE AS PARENT_ACTION_CODE,
 		dbo.qp_translate(atb.NAME, @language_id) AS NAME,
 		bat.ITEMS_AFFECTED,
-		atb.[ORDER], 
+		atb.[ORDER],
 		ISNULL(ca.ICON_URL, atb.ICON) AS ICON,
 		atb.ICON_DISABLED,
 		atb.IS_COMMAND
-	FROM 
+	FROM
 		ACTION_TOOLBAR_BUTTON AS atb
 		INNER JOIN BACKEND_ACTION AS ba ON atb.ACTION_ID = ba.ID
 		LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
 		INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
-		INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID		
+		INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
 	WHERE
-		atb.PARENT_ACTION_ID = @action_id		
+		atb.PARENT_ACTION_ID = @action_id
 	ORDER BY
 		[ORDER]
 	END
 	ELSE BEGIN
 		DECLARE @entity_code nvarchar(50)
 		select @entity_code = dbo.qp_entity_type_code(entity_type_id) from backend_action where code = @action_code
-		
+
 		declare @seqQuery nvarchar(max);
 		EXEC [dbo].[qp_GetActionPermissionAsQuery]
 			@user_id = @user_id,
 			@result = @seqQuery OUTPUT
-		
+
 		declare @fullQuery nvarchar(max);
-		
+
 		select @fullQuery = REPLACE (N'SELECT
-			ba.ID AS ACTION_ID,		
+			ba.ID AS ACTION_ID,
 			ba.CODE AS ACTION_CODE,
 			bat.CODE AS ACTION_TYPE_CODE,
 			ba2.ID AS PARENT_ACTION_ID,
-			ba2.CODE AS PARENT_ACTION_CODE, 
+			ba2.CODE AS PARENT_ACTION_CODE,
 			dbo.qp_translate(atb.NAME, @p0) AS NAME,
 			bat.ITEMS_AFFECTED,
-			atb.[ORDER], 
+			atb.[ORDER],
 			ISNULL(ca.ICON_URL, atb.ICON) AS ICON,
 			atb.ICON_DISABLED,
 			atb.IS_COMMAND
-		FROM 
+		FROM
 			ACTION_TOOLBAR_BUTTON AS atb
 			INNER JOIN BACKEND_ACTION AS ba ON atb.ACTION_ID = ba.ID
 			LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
 			INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
 			INNER JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = bat.REQUIRED_PERMISSION_LEVEL_ID
 			INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
-			INNER JOIN 
+			INNER JOIN
 			(<$_security_insert_$>) SEC ON SEC.BACKEND_ACTION_ID = ba.ID
 		WHERE
 			atb.PARENT_ACTION_ID = @p1
@@ -28082,9 +28082,9 @@ BEGIN
 			AND dbo.qp_action_visible(@p2, @p3, @p4, ba.CODE) = 1
 		ORDER BY
 			[ORDER]', N'<$_security_insert_$>', @seqQuery)
-			
-		EXEC sp_executesql @fullQuery, 
-			N'@p0 numeric(18, 0), @p1 int, @p2 int, @p3 nvarchar(50), @p4 int', 
+
+		EXEC sp_executesql @fullQuery,
+			N'@p0 numeric(18, 0), @p1 int, @p2 int, @p3 nvarchar(50), @p4 int',
 			@p0 = @language_id, @p1 = @action_id, @p2 = @user_id, @p3 = @entity_code, @p4 = @entity_id;
 	END
 END
@@ -28094,9 +28094,9 @@ exec qp_drop_existing 'qp_get_context_menus_list', 'IsProcedure'
 GO
 CREATE PROCEDURE [dbo].[qp_get_context_menus_list](@user_id int)
 AS
-BEGIN	
+BEGIN
 	SELECT cm.ID, cm.CODE
-	FROM CONTEXT_MENU AS cm		
+	FROM CONTEXT_MENU AS cm
 	ORDER BY CODE ASC
 END
 GO
@@ -28104,30 +28104,30 @@ GO
 exec qp_drop_existing 'qp_get_context_menu_by_id', 'IsProcedure'
 GO
 CREATE PROCEDURE [dbo].[qp_get_context_menu_by_id]
-	@user_id int, 
+	@user_id int,
 	@menu_id int,
 	@load_related_data bit = 0
 AS
 BEGIN
 	DECLARE @context_menu_id AS int
-	DECLARE @context_menu_code AS nvarchar(50)	
-			
+	DECLARE @context_menu_code AS nvarchar(50)
+
 	SELECT DISTINCT
 		@context_menu_id = cm.ID,
 		@context_menu_code = cm.CODE
 	FROM CONTEXT_MENU AS cm
 		INNER JOIN CONTEXT_MENU_ITEM AS cmi ON cm.ID = cmi.CONTEXT_MENU_ID
 	WHERE cm.ID = @menu_id
-	
-		
+
+
 	IF (@context_menu_id IS NOT NULL) BEGIN
 		SELECT
 			@context_menu_id AS ID,
 			@context_menu_code AS CODE
-		
+
 		IF (@load_related_data = 1)BEGIN
 				EXEC qp_get_context_menu_items_list
-					@user_id = @user_id, 
+					@user_id = @user_id,
 					@menu_id = @context_menu_id
 		END
 	END
@@ -28140,27 +28140,27 @@ CREATE PROCEDURE [dbo].[qp_get_context_menu_items_list](@user_id int, @menu_id i
 AS
 BEGIN
 	DECLARE @language_id AS numeric(18, 0)
-	
+
 	SET @language_id = dbo.qp_language(@user_id)
 
 	SELECT
 		cmi.CONTEXT_MENU_ID,
 		cmi.ACTION_ID,
-		dbo.qp_context_menu_code(cmi.CONTEXT_MENU_ID) as CONTEXT_MENU_CODE, 
+		dbo.qp_context_menu_code(cmi.CONTEXT_MENU_ID) as CONTEXT_MENU_CODE,
 		ba.CODE as ACTION_CODE,
-		at.CODE AS ACTION_TYPE_CODE, 
+		at.CODE AS ACTION_TYPE_CODE,
 		dbo.qp_translate(cmi.NAME, @language_id) as NAME,
-		cmi.[ORDER], 
-		ISNULL(ca.ICON_URL, cmi.ICON) AS ICON,		
+		cmi.[ORDER],
+		ISNULL(ca.ICON_URL, cmi.ICON) AS ICON,
 		cmi.ICON_DISABLED,
 		cmi.BOTTOM_SEPARATOR
 	FROM
-		CONTEXT_MENU_ITEM cmi 
+		CONTEXT_MENU_ITEM cmi
 		INNER JOIN backend_action AS ba ON cmi.ACTION_ID = ba.ID
 		LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
-		INNER JOIN ACTION_TYPE AS at ON ba.TYPE_ID = at.ID 
+		INNER JOIN ACTION_TYPE AS at ON ba.TYPE_ID = at.ID
 	WHERE
-		CONTEXT_MENU_ID = @menu_id		
+		CONTEXT_MENU_ID = @menu_id
 	ORDER BY
 		[ORDER] asc
 END
@@ -28181,17 +28181,17 @@ AS
 		declare @seqQuery nvarchar(max);
 		EXEC [dbo].[qp_GetActionPermissionAsQuery]
 			@user_id = @user_id,
-			@result = @seqQuery OUTPUT			
+			@result = @seqQuery OUTPUT
 
-		declare @fullQuery nvarchar(max);				
-		select @fullQuery = REPLACE(N'SELECT ba.CODE, 
+		declare @fullQuery nvarchar(max);
+		select @fullQuery = REPLACE(N'SELECT ba.CODE,
 									CAST(
 											(
-												CASE 
-													WHEN 
+												CASE
+													WHEN
 														sec.PERMISSION_LEVEL >= PL.PERMISSION_LEVEL AND dbo.qp_action_visible(@p2, @p3, @p4, ba.CODE) = 1
 													THEN 1
-													ELSE 0 
+													ELSE 0
 												END
 											) AS BIT
 									) as visible
@@ -28201,8 +28201,8 @@ AS
 										JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = AT.REQUIRED_PERMISSION_LEVEL_ID
 										JOIN (<$_security_insert_$>) SEC ON SEC.BACKEND_ACTION_ID = ba.ID
 									WHERE cmi.context_menu_id = dbo.qp_context_menu_id(@menu_code)', N'<$_security_insert_$>', @seqQuery);
-		EXEC sp_executesql @fullQuery, 
-			N'@menu_code nvarchar(50), @p2 int, @p3 nvarchar(50), @p4 int', 
+		EXEC sp_executesql @fullQuery,
+			N'@menu_code nvarchar(50), @p2 int, @p3 nvarchar(50), @p4 int',
 			@menu_code = @menu_code, @p2 = @user_id, @p3 = @menu_code, @p4 = @entity_id;
 	END
 END
@@ -28223,21 +28223,21 @@ BEGIN
 	ELSE BEGIN
 		DECLARE @entity_code nvarchar(50)
 		select @entity_code = dbo.qp_entity_type_code(entity_type_id) from backend_action where code = @action_code
-		
+
 		declare @seqQuery nvarchar(max);
 		EXEC [dbo].[qp_GetActionPermissionAsQuery]
 			@user_id = @user_id,
 			@result = @seqQuery OUTPUT
-		
-		declare @fullQuery nvarchar(max);	
-		select @fullQuery = REPLACE(N'SELECT ba.CODE, 
+
+		declare @fullQuery nvarchar(max);
+		select @fullQuery = REPLACE(N'SELECT ba.CODE,
 										CAST(
 												(
-													CASE 
-														WHEN 
+													CASE
+														WHEN
 															sec.PERMISSION_LEVEL >= PL.PERMISSION_LEVEL AND dbo.qp_action_visible(@p2, @p3, @p4, ba.CODE) = 1
 														THEN 1
-														ELSE 0 
+														ELSE 0
 													END
 												) AS BIT
 										) as visible
@@ -28247,10 +28247,10 @@ BEGIN
 											JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = AT.REQUIRED_PERMISSION_LEVEL_ID
 											JOIN (<$_security_insert_$>) SEC ON SEC.BACKEND_ACTION_ID = ba.ID
 										WHERE atb.PARENT_ACTION_ID = dbo.qp_action_id(@p1) AND at.items_affected = 1', N'<$_security_insert_$>', @seqQuery);
-			EXEC sp_executesql @fullQuery, 
-				N'@p1 nvarchar(50), @p2 int, @p3 nvarchar(50), @p4 int', 
+			EXEC sp_executesql @fullQuery,
+				N'@p1 nvarchar(50), @p2 int, @p3 nvarchar(50), @p4 int',
 				@p1 = @action_code, @p2 = @user_id, @p3 = @entity_code, @p4 = @entity_id;
-	END	
+	END
 END
 GO
 
@@ -28276,7 +28276,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @source nvarchar(50), @id_field nvarchar(50), @title_field nvarchar(50)
 	declare @parent_id_field nvarchar(50), @icon_field nvarchar(50)
@@ -28286,39 +28286,39 @@ begin
 	declare @id_str nvarchar(10), @parent_id bigint
 	declare @default_action_id int, @context_menu_id int
 	declare @is_admin bit
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	set @is_admin = 0;
 	IF EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1
 		set @is_admin = 1;
-	
-	select 
+
+	select
 		@source = source,
 		@source_sp = source_sp,
 		@id_field = id_field,
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = default_action_id,
-		@context_menu_id = CONTEXT_MENU_ID 
-	from 
-		ENTITY_TYPE 
+		@context_menu_id = CONTEXT_MENU_ID
+	from
+		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 
 	set @id_str = CAST(@id as nvarchar(10))
-	
+
 	if @icon_field is null
 		set @icon_field = 'NULL'
 	if @icon_modifier_field is null
-		set @icon_modifier_field = 'NULL'	
-	
+		set @icon_modifier_field = 'NULL'
+
 
 	if @is_folder = 1 or @recurring_id_field is not null
 	begin
@@ -28327,18 +28327,18 @@ begin
 		if @has_item_nodes = 1
 		begin
 			set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-			
-			
+
+
 			-- process recurring --
 			if @recurring_id_field is not null
 			begin
-				if @is_folder = 1 
+				if @is_folder = 1
 				begin
 					if @parent_id_field is null
 						set @where = @recurring_id_field + ' is null '
 					else
 						set @where = @parent_id_field + ' = ' + @id_str + ' and ' + @recurring_id_field + ' is null '
-				end  
+				end
 				else
 					set @where = @recurring_id_field + ' = ' + @id_str
 			end
@@ -28348,15 +28348,15 @@ begin
 			end
 			else
 				set @where = '1 = 1'
-			
+
 			if @order_field is null
 				set @order = @title_field
 			else
-				set @order = @order_field  
-			
+				set @order = @order_field
+
 		end
-		
-		
+
+
 		if @source_sp is null
 			set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where + ' order by ' + @order
 		else
@@ -28368,77 +28368,77 @@ begin
 				if @is_folder = 1
 					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=0'
 				else
-					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str			
-				
-			
+					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str
+
+
 		end
-		
+
 		insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
 		exec sp_executesql @sql
-		
+
 		--PRINT @sql;
-		
-		
+
+
 		if @count_only = 0
 		begin
-			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-			update 
+			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+			update
 				@result
-			set 
-				PARENT_ID = @id, 
-				CODE = @code, 
-				IS_FOLDER = 0, 
-				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER), 
-				DEFAULT_ACTION_ID = @default_action_id, 
+			set
+				PARENT_ID = @id,
+				CODE = @code,
+				IS_FOLDER = 0,
+				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
+				DEFAULT_ACTION_ID = @default_action_id,
 				CONTEXT_MENU_ID = @context_menu_id
 		end
 		else
-			select @count = COUNT(ID) from @result	
+			select @count = COUNT(ID) from @result
 	end
 	else begin
 		if @count_only = 0
 		begin
 			declare @entitySecQuery nvarchar(max);
-			
+
 			EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-			@user_id = @user_id,	
+			@user_id = @user_id,
 			@SQLOut = @entitySecQuery OUTPUT
-		
+
 			CREATE TABLE #sectmp
 			(
 				PERMISSION_LEVEL int,
 				ENTITY_TYPE_ID int
-			);	
+			);
 			set @entitySecQuery = N'insert into #sectmp (PERMISSION_LEVEL, ENTITY_TYPE_ID) ' + @entitySecQuery;
 			exec sp_executesql @entitySecQuery;
-			
+
 			if @code is not null
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select ID, @id, dbo.qp_translate(dbo.qp_pluralize(NAME), @language_id), CODE, 1, dbo.qp_get_icon(NULL, dbo.qp_pluralize(CODE), NULL), FOLDER_DEFAULT_ACTION_ID, FOLDER_CONTEXT_MENU_ID 
-				From ENTITY_TYPE 
+				select ID, @id, dbo.qp_translate(dbo.qp_pluralize(NAME), @language_id), CODE, 1, dbo.qp_get_icon(NULL, dbo.qp_pluralize(CODE), NULL), FOLDER_DEFAULT_ACTION_ID, FOLDER_CONTEXT_MENU_ID
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 				where PARENT_ID = dbo.qp_entity_type_id(@code) and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 order by [Order]
 			else
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), DEFAULT_ACTION_ID, CONTEXT_MENU_ID 
-				From ENTITY_TYPE 
+				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), DEFAULT_ACTION_ID, CONTEXT_MENU_ID
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 				where PARENT_ID is null and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 order by [Order]
 		end
 		else
 		begin
 			if @code is not null
-				select @count = COUNT(ID) 
-				From ENTITY_TYPE 
-				where PARENT_ID = dbo.qp_entity_type_id(@code) and disabled = 0 	
+				select @count = COUNT(ID)
+				From ENTITY_TYPE
+				where PARENT_ID = dbo.qp_entity_type_id(@code) and disabled = 0
 			else
-				select @count = COUNT(ID) 
-				From ENTITY_TYPE 
-				where PARENT_ID is null and disabled = 0 	
+				select @count = COUNT(ID)
+				From ENTITY_TYPE
+				where PARENT_ID is null and disabled = 0
 		end
 
 	end
-	
+
 	if @count_only = 0
 	begin
 		declare @i numeric, @total numeric
@@ -28449,7 +28449,7 @@ begin
 		while @i <= @total
 		begin
 			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = Is_folder from @result where NUMBER = @i
-			
+
 			if @local_is_folder = 1
 				exec dbo.qp_expand @user_id, @local_code, @local_parent_id, 1, 1, @count = @children_count output
 			else
@@ -28459,32 +28459,32 @@ begin
 				update @result set has_children = 0 where NUMBER = @i
 			else
 				update @result set has_children = 1 where NUMBER = @i
-			
+
 			set @i = @i + 1
 		end
-		
-		select 
+
+		select
 			TREE_NODE.ID,
-			TREE_NODE.CODE, 			
+			TREE_NODE.CODE,
 			TREE_NODE.PARENT_ID as PARENT_ID,
-			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-			TREE_NODE.IS_FOLDER, 
-			TREE_NODE.ICON, 
-			TREE_NODE.TITLE, 
-			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE, 
+			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+			TREE_NODE.IS_FOLDER,
+			TREE_NODE.ICON,
+			TREE_NODE.TITLE,
+			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 			ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 			TREE_NODE.HAS_CHILDREN
 		from
 			@result AS TREE_NODE
 		left outer join
 			BACKEND_ACTION
 		on
-			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 		left outer join
 			ACTION_TYPE
 		on
-			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID	
+			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID
 	end
 end
 GO
@@ -28493,10 +28493,10 @@ GO
 exec qp_drop_existing 'qp_get_node', 'IsProcedure'
 GO
 CREATE procedure [dbo].[qp_get_node]
-	@user_id numeric = 0, 
-	@code nvarchar(50) = null, 
-	@id bigint = 0, 
-	@parent_id bigint = null, 
+	@user_id numeric = 0,
+	@code nvarchar(50) = null,
+	@id bigint = 0,
+	@parent_id bigint = null,
 	@is_folder bit = 0
 as
 begin
@@ -28516,7 +28516,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @local_id bigint, @local_name nvarchar(50)
 	declare @local_code nvarchar(50), @local_parent_id bigint
@@ -28527,58 +28527,58 @@ begin
 	declare @id_str nvarchar(10)
 	declare @default_action_id int, @folder_default_action_id int
 	declare @context_menu_id int, @folder_context_menu_id int
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	declare @is_admin bit
 	set @is_admin = 0;
 	IF EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1
 		set @is_admin = 1;
-	
+
 	declare @entitySecQuery nvarchar(max);
 	EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-		@user_id = @user_id,	
-		@SQLOut = @entitySecQuery OUTPUT	
+		@user_id = @user_id,
+		@SQLOut = @entitySecQuery OUTPUT
 	CREATE TABLE #sectmp
 	(
 		PERMISSION_LEVEL int,
 		ENTITY_TYPE_ID int
-	);				
+	);
 	set @entitySecQuery = N'insert into #sectmp (PERMISSION_LEVEL, ENTITY_TYPE_ID) ' + @entitySecQuery;
 	exec sp_executesql @entitySecQuery;
-	
+
 	select
 		@local_id = ID,
 		@local_name = NAME,
 		@local_code = CODE,
 		@local_parent_id = PARENT_ID,
-		@source = source, 
-		@source_sp = source_sp, 
-		@id_field = id_field, 
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@source = source,
+		@source_sp = source_sp,
+		@id_field = id_field,
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = default_action_id,
-		@folder_default_action_id = FOLDER_DEFAULT_ACTION_ID, 
+		@folder_default_action_id = FOLDER_DEFAULT_ACTION_ID,
 		@context_menu_id = CONTEXT_MENU_ID,
 		@folder_context_menu_id = FOLDER_CONTEXT_MENU_ID
-	from 
+	from
 		ENTITY_TYPE
 		JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 	where
 		ID = dbo.qp_entity_type_id(@code)
 		and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0)
 		and disabled = 0
-	
+
 	if (@@ROWCOUNT > 0)
 	begin
 		set @id_str = CAST(@id as nvarchar(10))
-		
+
 		if (@icon_field is null)
 		begin
 			set @icon_field = 'NULL'
@@ -28587,14 +28587,14 @@ begin
 		begin
 			set @icon_modifier_field = 'NULL'
 		end
-	
+
 		if (@is_folder = 1 OR @local_parent_id IS NULL)
 		begin
 			if (@local_parent_id IS NOT NULL)
 			begin
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select 
-					@local_id, 
+				select
+					@local_id,
 					@parent_id,
 					dbo.qp_translate(dbo.qp_pluralize(@local_name), @language_id),
 					@local_code,
@@ -28606,8 +28606,8 @@ begin
 			else
 			begin
 			insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-			select 
-				@local_id, 
+			select
+				@local_id,
 				@parent_id,
 				dbo.qp_translate(dbo.qp_pluralize(@local_name), @language_id),
 				@local_code,
@@ -28624,16 +28624,16 @@ begin
 				declare @sql nvarchar(800), @select nvarchar(800), @where nvarchar(800)
 
 				set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-				set @where = @id_field + ' = ' + @id_str 
-				
+				set @where = @id_field + ' = ' + @id_str
+
 				set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where
-				
+
 				insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
-				exec sp_executesql @sql		
-				
-				--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-				update 
-					@result 
+				exec sp_executesql @sql
+
+				--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+				update
+					@result
 				set
 					PARENT_ID = @parent_id,
 					CODE = @local_code,
@@ -28641,21 +28641,21 @@ begin
 					ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
 					DEFAULT_ACTION_ID = @default_action_id,
 					CONTEXT_MENU_ID = @context_menu_id
-			end	
+			end
 		end
-		
+
 		declare @children_count int
-		
-		exec dbo.qp_expand 
-			@user_id, 
-			@local_code, 
-			@local_id, 
+
+		exec dbo.qp_expand
+			@user_id,
+			@local_code,
+			@local_id,
 			0,
 			1,
 			@count = @children_count output
 
 		if @children_count = 0
-			update 
+			update
 				@result
 			set
 				has_children = 0
@@ -28665,8 +28665,8 @@ begin
 			set
 				has_children = 1
 	end
-	
-	SELECT 
+
+	SELECT
 		TREE_NODE.ID,
 		TREE_NODE.CODE,
 		CASE WHEN (TREE_NODE.CODE != 'site') THEN
@@ -28674,20 +28674,20 @@ begin
 		ELSE
 			NULL
 		END AS PARENT_ID,
-		dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-		TREE_NODE.IS_FOLDER, 
-		TREE_NODE.ICON, 
-		TREE_NODE.TITLE, 
+		dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+		TREE_NODE.IS_FOLDER,
+		TREE_NODE.ICON,
+		TREE_NODE.TITLE,
 		dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 		ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-		dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+		dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 		TREE_NODE.HAS_CHILDREN
 	FROM
 		@result AS TREE_NODE
 	LEFT OUTER JOIN
 		BACKEND_ACTION
 	ON
-		TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+		TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 	LEFT OUTER JOIN
 		ACTION_TYPE
 	ON
@@ -28706,7 +28706,7 @@ AS
 BEGIN
 	declare @now datetime;
 	set @now = getdate();
-	
+
 	INSERT INTO [USER_GROUP]
 		   ([GROUP_NAME]
 		   ,[DESCRIPTION]
@@ -28734,15 +28734,15 @@ BEGIN
 	WHERE [GROUP_ID] = @group_id
 
 	set @new_group_id = scope_identity();
-	
-	
+
+
 	INSERT INTO [GROUP_TO_GROUP] ([CHILD_GROUP_ID] ,[PARENT_GROUP_ID])
 	SELECT @new_group_id, [PARENT_GROUP_ID] from [GROUP_TO_GROUP] WHERE [CHILD_GROUP_ID] = @group_id
 
-	
+
 	INSERT INTO [USER_GROUP_BIND] ([GROUP_ID],[USER_ID])
 	select @new_group_id, [USER_ID] from [USER_GROUP_BIND] where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO [TAB_ACCESS]([TAB_ID],[USER_ID],[GROUP_ID],[PERMISSION_LEVEL_ID])
 	select [TAB_ID],[USER_ID],@new_group_id,[PERMISSION_LEVEL_ID] from [TAB_ACCESS] where [GROUP_ID] = @group_id
 
@@ -28765,7 +28765,7 @@ BEGIN
 		  ,[propagate_to_contents]
 	FROM [SITE_ACCESS]
 	where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO CONTENT_ACCESS
 		   ([CONTENT_ID]
 		   ,[USER_ID]
@@ -28785,7 +28785,7 @@ BEGIN
 		  ,[propagate_to_items]
 	FROM [CONTENT_ACCESS]
 	where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO CONTENT_ITEM_ACCESS
 		   (CONTENT_ITEM_ID
 		   ,[USER_ID]
@@ -28803,7 +28803,7 @@ BEGIN
 		  ,@create_by_id
 	FROM CONTENT_ITEM_ACCESS
 	where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO FOLDER_ACCESS
 		   (FOLDER_ID
 		   ,[USER_ID]
@@ -28821,7 +28821,7 @@ BEGIN
 		  ,@create_by_id
 	FROM FOLDER_ACCESS
 	where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO ENTITY_TYPE_ACCESS
 		   (ENTITY_TYPE_ID
 		   ,[USER_ID]
@@ -28839,7 +28839,7 @@ BEGIN
 		  ,@create_by_id
 	FROM ENTITY_TYPE_ACCESS
 	where [GROUP_ID] = @group_id
-	
+
 	INSERT INTO ACTION_ACCESS
 		   (ACTION_ID
 		   ,[USER_ID]
@@ -28871,7 +28871,7 @@ AS
 BEGIN
 	declare @now datetime;
 	set @now = getdate();
-	
+
 	INSERT INTO [USERS]
 		([PASSWORD]
 		,[DISABLED]
@@ -28925,7 +28925,7 @@ BEGIN
 	delete from [USER_GROUP_BIND] where [USER_ID] = @new_user_id
 	INSERT INTO [USER_GROUP_BIND] ([GROUP_ID],[USER_ID])
 	select [GROUP_ID], @new_user_id from [USER_GROUP_BIND] where [USER_ID] = @user_id
-		
+
 	INSERT INTO [TAB_ACCESS]([TAB_ID],[USER_ID],[GROUP_ID],[PERMISSION_LEVEL_ID])
 	select [TAB_ID],@new_user_id,[GROUP_ID],[PERMISSION_LEVEL_ID] from [TAB_ACCESS] where [USER_ID] = @user_id
 
@@ -29004,7 +29004,7 @@ BEGIN
 		  ,@create_by_id
 	FROM FOLDER_ACCESS
 	where [USER_ID] = @user_id
-	
+
 	INSERT INTO ENTITY_TYPE_ACCESS
 		   (ENTITY_TYPE_ID
 		   ,[USER_ID]
@@ -29022,7 +29022,7 @@ BEGIN
 		  ,@create_by_id
 	FROM ENTITY_TYPE_ACCESS
 	where [USER_ID] = @user_id
-	
+
 	INSERT INTO ACTION_ACCESS
 		   (ACTION_ID
 		   ,[USER_ID]
@@ -29060,17 +29060,17 @@ GO
 --GO
 
 ----- fixes------
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[FK_ENT_TYPE_ACC_ENTITY_TYPE]') AND type in (N'F')) 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[FK_ENT_TYPE_ACC_ENTITY_TYPE]') AND type in (N'F'))
 BEGIN
 	ALTER TABLE [dbo].[ENTITY_TYPE_ACCESS] DROP CONSTRAINT [FK_ENT_TYPE_ACC_ENTITY_TYPE]
-	ALTER TABLE [dbo].[ENTITY_TYPE_ACCESS]  WITH CHECK ADD CONSTRAINT [FK_ENT_TYPE_ACC_ENTITY_TYPE] FOREIGN KEY([ENTITY_TYPE_ID]) REFERENCES [dbo].[ENTITY_TYPE] ([ID]) ON DELETE CASCADE	
-END	
+	ALTER TABLE [dbo].[ENTITY_TYPE_ACCESS]  WITH CHECK ADD CONSTRAINT [FK_ENT_TYPE_ACC_ENTITY_TYPE] FOREIGN KEY([ENTITY_TYPE_ID]) REFERENCES [dbo].[ENTITY_TYPE] ([ID]) ON DELETE CASCADE
+END
 GO
-IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[FK_ACT_ACC_ACTION]') AND type in (N'F')) 
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[FK_ACT_ACC_ACTION]') AND type in (N'F'))
 BEGIN
 	ALTER TABLE [dbo].[ACTION_ACCESS] DROP CONSTRAINT [FK_ACT_ACC_ACTION]
-	ALTER TABLE [dbo].[ACTION_ACCESS]  WITH CHECK ADD CONSTRAINT [FK_ACT_ACC_ACTION] FOREIGN KEY([ACTION_ID])REFERENCES [dbo].[BACKEND_ACTION] ([ID]) ON DELETE CASCADE	
-END	
+	ALTER TABLE [dbo].[ACTION_ACCESS]  WITH CHECK ADD CONSTRAINT [FK_ACT_ACC_ACTION] FOREIGN KEY([ACTION_ID])REFERENCES [dbo].[BACKEND_ACTION] ([ID]) ON DELETE CASCADE
+END
 GO
 
 update ACTION_TYPE set REQUIRED_PERMISSION_LEVEL_ID = 6 where CODE = 'multiple_select'
@@ -29105,7 +29105,7 @@ where CODE in (
 GO
 
 update BACKEND_ACTION set [WINDOW_HEIGHT] = 360
-where CODE in 
+where CODE in
 (
 	'new_site_permission'
 	,'edit_site_permission'
@@ -29120,14 +29120,14 @@ where CODE in
 )
 GO
 update BACKEND_ACTION set [WINDOW_HEIGHT] = 150
-where CODE in 
+where CODE in
 (
 	'multiple_change_child_content_permission'
 	,'change_all_child_content_permission'
 	,'change_child_content_permission'
 	,'multiple_change_child_article_permission'
 	,'change_all_child_article_permission'
-	,'change_child_article_permission'	
+	,'change_child_article_permission'
 )
 GO
 
@@ -29291,24 +29291,24 @@ BEGIN
 		BEGIN TRAN
 
 		truncate TABLE ENTITY_TYPE_ACCESS
-		truncate TABLE [ACTION_ACCESS]		
+		truncate TABLE [ACTION_ACCESS]
 
-		CREATE TABLE #TABS_FULL_ACCESS 
+		CREATE TABLE #TABS_FULL_ACCESS
 		(
 			ID int identity,
-			TAB_ID int, 
-			PARENT_TAB_ID int, 
-			[LEVEL] int, 
-			[USER_ID] int, 
-			[GROUP_ID] int, 
+			TAB_ID int,
+			PARENT_TAB_ID int,
+			[LEVEL] int,
+			[USER_ID] int,
+			[GROUP_ID] int,
 			PERMISSION_LEVEL_ID int
 		);
 
 		CREATE TABLE #EXPAND_TABS_ACCESS
-		(	
-			TAB_ID int, 
-			[USER_ID] int, 
-			[GROUP_ID] int, 
+		(
+			TAB_ID int,
+			[USER_ID] int,
+			[GROUP_ID] int,
 			PERMISSION_LEVEL_ID int
 		);
 
@@ -29316,7 +29316,7 @@ BEGIN
 		(
 			select TAB_ID, PARENT_TAB_ID, 0 from TABS where PARENT_TAB_ID is null
 			union all
-			select T.TAB_ID, T.PARENT_TAB_ID, TR.[LEVEL] + 1 from TABS T 
+			select T.TAB_ID, T.PARENT_TAB_ID, TR.[LEVEL] + 1 from TABS T
 			join TAB_TREE TR ON T.PARENT_TAB_ID = TR.TAB_ID
 		)
 		insert into #TABS_FULL_ACCESS
@@ -29324,23 +29324,23 @@ BEGIN
 		from TAB_TREE TR
 		LEFT JOIN TAB_ACCESS TA ON TA.TAB_ID = TR.TAB_ID
 		order by TR.TAB_ID, TR.[LEVEL]
-				
+
 		declare @tmp_count int, @tmp_i int;
-		declare @TAB_ID int, 
-				@PARENT_TAB_ID int, 	
-				@USER_ID int, 
-				@GROUP_ID int, 
+		declare @TAB_ID int,
+				@PARENT_TAB_ID int,
+				@USER_ID int,
+				@GROUP_ID int,
 				@PERMISSION_LEVEL_ID int,
 				@DENY_PERMISSION_LEVEL_ID int;
-				
+
 		select @DENY_PERMISSION_LEVEL_ID = PERMISSION_LEVEL_ID from PERMISSION_LEVEL where PERMISSION_LEVEL = 0;
 		set @tmp_i = 1;
 		select @tmp_count = COUNT(*) from #TABS_FULL_ACCESS;
 
 		WHILE(@tmp_i <= @tmp_count) BEGIN
 			select @TAB_ID = TAB_ID, @PARENT_TAB_ID = PARENT_TAB_ID, @USER_ID = [USER_ID], @GROUP_ID = GROUP_ID, @PERMISSION_LEVEL_ID = PERMISSION_LEVEL_ID
-			from #TABS_FULL_ACCESS where ID = @tmp_i;	
-			
+			from #TABS_FULL_ACCESS where ID = @tmp_i;
+
 			IF @PERMISSION_LEVEL_ID is null
 			BEGIN
 				set @PARENT_TAB_ID = @TAB_ID;
@@ -29348,33 +29348,33 @@ BEGIN
 				while(1 = 1) BEGIN
 					IF NOT EXISTS(select * from #TABS_FULL_ACCESS where TAB_ID = @PARENT_TAB_ID)
 						BREAK;
-						
+
 					select @PARENT_TAB_ID = PARENT_TAB_ID, @PERMISSION_LEVEL_ID = PERMISSION_LEVEL_ID, @USER_ID = [USER_ID], @GROUP_ID = GROUP_ID
-					from #TABS_FULL_ACCESS 
+					from #TABS_FULL_ACCESS
 					where TAB_ID = @PARENT_TAB_ID;
 					if(@PERMISSION_LEVEL_ID is not null)
 						BREAK;
-				END;		
+				END;
 			END
 			IF @PERMISSION_LEVEL_ID is not null BEGIN
 				insert into #EXPAND_TABS_ACCESS(TAB_ID, [USER_ID], GROUP_ID, PERMISSION_LEVEL_ID)
-				values(@TAB_ID, @USER_ID, @GROUP_ID, @PERMISSION_LEVEL_ID);					
+				values(@TAB_ID, @USER_ID, @GROUP_ID, @PERMISSION_LEVEL_ID);
 			END
 			ELSE BEGIN
 				insert into #EXPAND_TABS_ACCESS(TAB_ID, [USER_ID], GROUP_ID, PERMISSION_LEVEL_ID)
 				select @TAB_ID, [USER_ID], null, @DENY_PERMISSION_LEVEL_ID from USERS where [USER_ID] <> 1;
-				
+
 				insert into #EXPAND_TABS_ACCESS(TAB_ID, [USER_ID], GROUP_ID, PERMISSION_LEVEL_ID)
 				select @TAB_ID, NULL, GROUP_ID, @DENY_PERMISSION_LEVEL_ID from USER_GROUP where GROUP_ID <> 1;
 			END
-			
+
 			set @tmp_i = @tmp_i + 1;
 		END;
-			
+
 		insert into ENTITY_TYPE_ACCESS(ENTITY_TYPE_ID, [USER_ID], [GROUP_ID], [PERMISSION_LEVEL_ID], CREATED, MODIFIED, LAST_MODIFIED_BY)
-		select ET.ID ENTITY_TYPE_ID, TA.[USER_ID], TA.[GROUP_ID], TA.PERMISSION_LEVEL_ID, GETDATE(), GETDATE(), 1 
+		select ET.ID ENTITY_TYPE_ID, TA.[USER_ID], TA.[GROUP_ID], TA.PERMISSION_LEVEL_ID, GETDATE(), GETDATE(), 1
 		from #EXPAND_TABS_ACCESS TA
-		JOIN ENTITY_TYPE ET ON ET.TAB_ID = TA.TAB_ID				
+		JOIN ENTITY_TYPE ET ON ET.TAB_ID = TA.TAB_ID
 
 		INSERT INTO [ACTION_ACCESS]
 			   ([ACTION_ID]
@@ -29384,19 +29384,19 @@ BEGIN
 			   ,[CREATED]
 			   ,[MODIFIED]
 			   ,[LAST_MODIFIED_BY])
-		select AC.ID AS [ACTION_ID], TA.[USER_ID], TA.GROUP_ID, TA.PERMISSION_LEVEL_ID, GETDATE(), GETDATE(), 1 
+		select AC.ID AS [ACTION_ID], TA.[USER_ID], TA.GROUP_ID, TA.PERMISSION_LEVEL_ID, GETDATE(), GETDATE(), 1
 		from BACKEND_ACTION AC
 		JOIN #EXPAND_TABS_ACCESS TA ON TA.TAB_ID = AC.TAB_ID
 		JOIN ENTITY_TYPE_ACCESS ETA ON AC.ENTITY_TYPE_ID = ETA.ENTITY_TYPE_ID
 		WHERE TA.PERMISSION_LEVEL_ID <> ETA.PERMISSION_LEVEL_ID
-		
+
 
 		COMMIT TRAN
 	END TRY
-	BEGIN CATCH	
+	BEGIN CATCH
 		IF @@TRANCOUNT > 0
 			ROLLBACK TRANSACTION;
-			
+
 		DECLARE @ErrMsg nvarchar(4000), @ErrSeverity int;
 		SELECT @ErrMsg = ERROR_MESSAGE(), @ErrSeverity = ERROR_SEVERITY();
 		RAISERROR(@ErrMsg, @ErrSeverity, 1);
@@ -29416,7 +29416,7 @@ GO
 PRINT '7.9.1.27 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.28
 -- Split optimization
@@ -29471,33 +29471,33 @@ GO
 
 ALTER FUNCTION [dbo].[qp_filter_columns](@content_id numeric, @str nvarchar(max)) RETURNS nvarchar(max)
 AS BEGIN
-  
+
   DECLARE @columns TABLE
   (
 	name nvarchar(255)
   )
-  
+
   DECLARE @result nvarchar(max)
   set @result = NULL
-  
+
   SET @str = REPLACE(REPLACE(RTrim(LTrim(@str)), '[', ''), ']', '')
   if @str <> ''
   BEGIN
-  
+
 	  WITH fields (name) AS (SELECT nstr from dbo.splitNew(@str, ','))
 	  INSERT INTO @columns(name)
 	  select '[' + name + ']' from fields
 	  where name in (SELECT attribute_name from content_attribute where content_id = @content_id) or name in ('content_item_id', 'archive', 'visible', 'created', 'modified', 'last_modified_by')
-	  
+
 	  SELECT @result = COALESCE(@result + ', ', '') + name
 	  FROM @columns
 	  WHERE name IS NOT NULL
-  
+
   END
 
   if @result is null set @result = 'c.*'
   RETURN @result
-  
+
 END
 GO
 
@@ -29510,7 +29510,7 @@ GO
 PRINT '7.9.1.28 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.29
 -- Notification properties bug fix
@@ -29530,7 +29530,7 @@ GO
 PRINT '7.9.1.29 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.30
 -- External notifications
@@ -29566,7 +29566,7 @@ GO
 PRINT '7.9.1.30 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.31
 -- Site External URL Field
@@ -29587,7 +29587,7 @@ GO
 PRINT '7.9.1.31 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.32
 -- Assembling notifications
@@ -29598,7 +29598,7 @@ VALUES('Multiple Assemble', 'multiple_assemble', 1, 255)
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, TAB_ID, IS_INTERFACE)
 values('Multiple Remove Notification', 'multiple_remove_notification', dbo.qp_action_type_id('multiple_remove'), dbo.qp_entity_type_id('notification'), '~/Notification/MultipleRemove/', dbo.qp_tab_id('Notifications'), 0)
 
-update ACTION_TOOLBAR_BUTTON 
+update ACTION_TOOLBAR_BUTTON
 SET ACTION_ID = dbo.qp_action_id('multiple_remove_notification')
 where ACTION_ID = dbo.qp_action_id('remove_notification') and PARENT_ACTION_ID = dbo.qp_action_id('list_notification')
 
@@ -29632,7 +29632,7 @@ GO
 PRINT '7.9.1.32 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.33
 -- Fix view_in_list for O2M related fields
@@ -29641,7 +29641,7 @@ GO
 UPDATE CONTENT_ATTRIBUTE SET view_in_list = 1
 where ATTRIBUTE_ID in
 (
-	select A.ATTRIBUTE_ID from CONTENT_ATTRIBUTE O2M 
+	select A.ATTRIBUTE_ID from CONTENT_ATTRIBUTE O2M
 	join CONTENT_ATTRIBUTE A ON A.ATTRIBUTE_ID = O2M.RELATED_ATTRIBUTE_ID
 	where O2M.ATTRIBUTE_TYPE_ID = 11 and O2M.link_id is null
 	and (A.ATTRIBUTE_TYPE_ID not in (9, 10, 11, 12, 13) or (A.ATTRIBUTE_TYPE_ID = 11 and A.link_id is null))
@@ -29658,7 +29658,7 @@ GO
 PRINT '7.9.1.33 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.34
 -- Notification template format pop-up window`s size fix
@@ -29676,7 +29676,7 @@ GO
 PRINT '7.9.1.34 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.35
 -- Notification template format pop-up window`s size fix
@@ -29694,7 +29694,7 @@ GO
 PRINT '7.9.1.35 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.36
 -- User Sessions and Failed Logins views names fix
@@ -29714,7 +29714,7 @@ GO
 PRINT '7.9.1.36 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.37
 -- Site and Content libraries context menu items names fix
@@ -29733,7 +29733,7 @@ GO
 PRINT '7.9.1.37 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.38
 -- Site and Content libraries context menu items names fix
@@ -29752,7 +29752,7 @@ GO
 PRINT '7.9.1.38 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.39
 -- Remove clearing history
@@ -29779,7 +29779,7 @@ GO
 PRINT '7.9.1.39 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.40
 -- Fix languages and default notification format
@@ -29788,10 +29788,10 @@ GO
 delete from languages where language_id = 3
 GO
 
-ALTER TRIGGER [dbo].[ti_statuses_and_default_notif] ON [dbo].[SITE] 
+ALTER TRIGGER [dbo].[ti_statuses_and_default_notif] ON [dbo].[SITE]
 FOR INSERT
 AS
- 
+
  insert into status_type (site_id, status_type_name, weight, description, last_modified_by)
              (select site_id , 'Created',  10, 'Article has been created' ,1 from inserted)
  insert into status_type (site_id, status_type_name, weight, description, last_modified_by)
@@ -29800,9 +29800,9 @@ AS
              (select site_id , 'Published',  100, 'Article has been published' ,1 from inserted)
  insert into status_type (site_id, status_type_name, weight, description, last_modified_by)
              (select site_id , 'None',  0, 'No Status has been assigned' ,1 from inserted)
- 
-INSERT INTO page_template(site_id, template_name, net_template_name, template_picture, created, modified, last_modified_by, charset, codepage, locale, is_system, net_language_id)  
-select site_id, 'Default Notification Template', 'Default_Notification_Template', '', getdate(), getdate(), 1, 'utf-8', 65001, 1049, 1, dbo.qp_default_net_language(script_language) from inserted 
+
+INSERT INTO page_template(site_id, template_name, net_template_name, template_picture, created, modified, last_modified_by, charset, codepage, locale, is_system, net_language_id)
+select site_id, 'Default Notification Template', 'Default_Notification_Template', '', getdate(), getdate(), 1, 'utf-8', 65001, 1049, 1, dbo.qp_default_net_language(script_language) from inserted
 GO
 
 update PAGE_TEMPLATE set charset = 'utf-8', codepage = 65001, locale = 1049
@@ -29823,7 +29823,7 @@ PRINT '7.9.1.40 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.41
 -- Visual Editors configuration tables
@@ -29834,7 +29834,7 @@ IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[VE_PL
 BEGIN
 	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_VC_PLUGIN_ID]') AND parent_object_id = OBJECT_ID(N'[dbo].[VE_COMMAND]'))
 		begin
-			ALTER TABLE [dbo].[VE_COMMAND] DROP CONSTRAINT [FK_VC_PLUGIN_ID]	
+			ALTER TABLE [dbo].[VE_COMMAND] DROP CONSTRAINT [FK_VC_PLUGIN_ID]
 			DROP TABLE [dbo].[VE_PLUGIN]
 		end
 END
@@ -29862,12 +29862,12 @@ BEGIN
 	begin
 		ALTER TABLE [dbo].[VE_COMMAND_SITE_BIND] DROP CONSTRAINT [FK_VE_COMMAND_SITE_BIND_COMMAND]
 	end
-	
+
 	IF  EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_VE_COMMAND_FIELD_BIND_FIELD]') AND parent_object_id = OBJECT_ID(N'[dbo].[VE_COMMAND_FIELD_BIND]'))
 	begin
 		ALTER TABLE [dbo].[VE_COMMAND_FIELD_BIND] DROP CONSTRAINT [FK_VE_COMMAND_FIELD_BIND_COMMAND]
-	end		
-	
+	end
+
 	DROP TABLE [dbo].[VE_COMMAND]
 END
 GO
@@ -29902,7 +29902,7 @@ CREATE TABLE [dbo].[VE_COMMAND_SITE_BIND](
 	[COMMAND_ID] NUMERIC(18,0) NOT NULL,
 	[SITE_ID] NUMERIC(18,0) NOT NULL,
 	[ON] [bit] NOT NULL
- CONSTRAINT [PK_VE_COMMAND_SITE_BIND] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_VE_COMMAND_SITE_BIND] PRIMARY KEY CLUSTERED
 (
 	[COMMAND_ID] ASC,
 	[SITE_ID] ASC
@@ -29926,7 +29926,7 @@ GO
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 	alter table content_attribute disable trigger td_content_attribute_clean_empty_links
@@ -29944,9 +29944,9 @@ BEGIN
 	delete from item_to_item where link_id in
 	(select link_id from site_content_link scl
 	inner join deleted d on d.site_id = scl.site_id)
-	
-	delete content_item_status_history from content_item_status_history cis	
-	inner join content_item ci on ci.content_item_id = cis.content_item_id 
+
+	delete content_item_status_history from content_item_status_history cis
+	inner join content_item ci on ci.content_item_id = cis.content_item_id
 	inner join content c on c.content_id = ci.content_id
 	inner join deleted d on d.site_id = c.site_id
 
@@ -29956,21 +29956,21 @@ BEGIN
 
 	delete content from content c
 	inner join deleted d on d.site_id = c.site_id
-	
+
 	update [object] set object_format_id = null from [object] obj
 	inner join page_template pt on obj.page_template_id = pt.page_template_id
 	inner join deleted d on d.site_id = pt.site_id
 
 	delete page_template from page_template pt
 	inner join deleted d on d.site_id = pt.site_id
-	
+
 	delete [ACTION_SITE_BIND] from [ACTION_SITE_BIND] asb
 	inner join deleted d on d.site_id = asb.site_id
-	
+
 	delete [VE_COMMAND_SITE_BIND] from [VE_COMMAND_SITE_BIND] vcsb
 	inner join deleted d on d.SITE_ID = vcsb.SITE_ID
-	
-	delete site from site s 	
+
+	delete site from site s
 	inner join deleted d on d.site_id = s.site_id
 
 
@@ -29997,7 +29997,7 @@ CREATE TABLE [dbo].[VE_COMMAND_FIELD_BIND](
 	[COMMAND_ID] NUMERIC(18,0) NOT NULL,
 	[FIELD_ID] NUMERIC(18,0) NOT NULL,
 	[ON] [bit] NOT NULL
- CONSTRAINT [PK_VE_COMMAND_FIELD_BIND] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_VE_COMMAND_FIELD_BIND] PRIMARY KEY CLUSTERED
 (
 	[COMMAND_ID] ASC,
 	[FIELD_ID] ASC
@@ -30028,7 +30028,7 @@ GO
 PRINT '7.9.1.41 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.42
 -- Visual Editors configuration actions
@@ -30048,8 +30048,8 @@ values('Visual Editor Plugin Properties', 'Properties', 'edit_visual_editor_plug
 
 
 update ENTITY_TYPE
-set 
-	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_visual_editor_plugin'), 
+set
+	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_visual_editor_plugin'),
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_visual_editor_plugin'),
 	[DISABLED] = 0
 where CODE = 'visual_editor_plugin'
@@ -30066,7 +30066,7 @@ PRINT '7.9.1.42 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.43
 -- long numerics support in LINQ-to-SQL
@@ -30075,7 +30075,7 @@ GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'IS_LONG' and TABLE_NAME = 'CONTENT_ATTRIBUTE')
 ALTER TABLE CONTENT_ATTRIBUTE
-	ADD 
+	ADD
 		IS_LONG bit NOT NULL CONSTRAINT [DF_IS_LONG] DEFAULT ((0))
 GO
 
@@ -30089,7 +30089,7 @@ PRINT '7.9.1.43 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.44
 -- notifications support in LINQ-to-SQL
@@ -30097,7 +30097,7 @@ GO
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'SEND_NOTIFICATIONS' and TABLE_NAME = 'SITE')
 ALTER TABLE SITE
-	ADD 
+	ADD
 		SEND_NOTIFICATIONS bit NOT NULL CONSTRAINT [DF_SEND_NOTIFICATIONS] DEFAULT ((1))
 GO
 
@@ -30113,7 +30113,7 @@ GO
 PRINT '7.9.1.44 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.45
 -- fix on fix
@@ -30136,7 +30136,7 @@ GO
 PRINT '7.9.1.45 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.47
 -- Visual editors toolbars etc
@@ -30194,7 +30194,7 @@ GO
 PRINT '7.9.1.47 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.48
 -- Visual editors tables fixes
@@ -30227,7 +30227,7 @@ PRINT '7.9.1.48 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Maxim Tertyshnyy
 -- version 7.9.1.49
 -- Fix and Rebuild Permission
@@ -30254,14 +30254,14 @@ GO
 PRINT '7.9.1.49 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.50
 -- Security Optimization
 -- **************************************
 
 ALTER PROCEDURE [dbo].[qp_paged_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@selected_article_ids AS nvarchar(max) = NULL,
 	@permission_level numeric(18,0),
@@ -30282,14 +30282,14 @@ BEGIN
 	DECLARE @where_block AS nvarchar(max)
 	DECLARE @order_by_block AS nvarchar(max)
 	DECLARE @processed_order_by_block AS nvarchar(max)
-	
+
 	DECLARE @dynamic_select_block AS nvarchar(max)
 	DECLARE @related_select_block AS nvarchar(max)
 	DECLARE @related_from_block AS nvarchar(max)
-	
+
 	DECLARE @attribute_id numeric, @rel_attribute_id numeric, @rel_attribute_type_id numeric, @rel_content_id numeric, @rel_count int
 	DECLARE @attribute_name nvarchar(255), @rel_attribute_name nvarchar(255), @rel_field_name nvarchar(255), @rel_table_name nvarchar(255)
-	
+
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @use_security bit, @parent_level numeric
 
@@ -30303,15 +30303,15 @@ BEGIN
 	SET @dynamic_select_block = ''
 	SET @related_select_block = ''
 	SET @related_from_block = ''
-	
+
 	SET @use_custom_selection = 0
 	IF (@selected_article_ids IS NOT NULL)
 		BEGIN
 			SET @use_custom_selection = 1
 		END
-	
+
 	DECLARE @relations TABLE (
-		attribute_id numeric, 
+		attribute_id numeric,
 		attribute_name nvarchar(255),
 		rel_attribute_id numeric,
 		rel_attribute_type_id numeric,
@@ -30319,9 +30319,9 @@ BEGIN
 		rel_content_id  numeric,
 		rel_count numeric
 	)
-	
+
 	INSERT INTO @relations
-	SELECT 
+	SELECT
 		ca.ATTRIBUTE_ID,
 		ca.ATTRIBUTE_NAME,
 		rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID,
@@ -30329,7 +30329,7 @@ BEGIN
 		rca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME,
 		rca.CONTENT_ID AS RELATED_CONTENT_ID,
 		ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ID ASC) AS 'RELATED_COUNT'
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN
 		CONTENT_ATTRIBUTE AS rca
@@ -30338,10 +30338,10 @@ BEGIN
 	WHERE
 		ca.CONTENT_ID = @content_id
 		AND ca.view_in_list = 1
-	ORDER BY 
+	ORDER BY
 		ca.permanent_flag DESC,
 		ca.attribute_order ASC
-			
+
 	-- Открываем курсор
 	WHILE EXISTS(select * from @relations)
 	BEGIN
@@ -30356,9 +30356,9 @@ BEGIN
 		from @relations
 
 		SET @dynamic_select_block = @dynamic_select_block + '	c.[' + @attribute_name + '], '
-	
+
 		IF (@rel_attribute_id IS NOT NULL)
-		BEGIN		
+		BEGIN
 			declare @current_block nvarchar(512)
 			set @rel_table_name = 'rel_' + CAST(@rel_attribute_id AS varchar)
 			set @rel_field_name = 'rel_field_' + CAST(@rel_attribute_id AS varchar)
@@ -30367,35 +30367,35 @@ BEGIN
 				set @rel_table_name = @rel_table_name + '_' + CAST(@rel_count AS varchar)
 				set @rel_field_name = @rel_field_name + '_' + CAST(@rel_count AS varchar)
 			end
-			
+
 			SET @related_select_block = @related_select_block + '	'
 			SET @current_block = @rel_table_name + '.[' + @rel_attribute_name + ']'
 			if @rel_attribute_type_id in (9, 10)
 				SET @current_block = 'cast (' + @current_block + ' as nvarchar(255))'
 			SET @related_select_block = @related_select_block + @current_block
-			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '	
-			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN 
-				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' + 
+			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '
+			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN
+				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' +
 				@rel_table_name + '.content_item_id = c.[' + @attribute_name + '] '
 		END
-		
+
 		delete from @relations where attribute_id = @attribute_id
 
 	END
-		
+
 
 	SET @select_block = '
 	c.CONTENT_ITEM_ID,
 	c.CREATED,
 	c.MODIFIED,
 	c.LAST_MODIFIED_BY,
-	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id, 
+	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id,
 	COALESCE(c2.status_type_id, c.status_type_id) AS current_status_type_id,
 	ci.CONTENT_ID,
 	ci.SCHEDULE_NEW_VERSION_PUBLICATION,
 	ci.splitted,
-	CAST(c.visible as bit) as visible,	
-	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled, 
+	CAST(c.visible as bit) as visible,
+	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled,
 	ci.not_for_replication,
 	ci.LOCKED_BY,
 	st.STATUS_TYPE_NAME,
@@ -30406,7 +30406,7 @@ BEGIN
 	mu.FIRST_NAME AS MODIFIER_FIRST_NAME,
 	mu.LAST_NAME AS MODIFIER_LAST_NAME,
 	mu.[LOGIN] AS MODIFIER_LOGIN, '
-	
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
 		BEGIN
@@ -30421,21 +30421,21 @@ BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
+
 	IF (LEN(@dynamic_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@dynamic_select_block, LEN(@dynamic_select_block) - 1)
 		END
-	
+
 	IF (LEN(@related_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@related_select_block, LEN(@related_select_block) - 1)
 		END
-	
+
 	SET @from_block = ''
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
 	IF @use_security = 1
-	BEGIN	
+	BEGIN
 		SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 		SET @from_block = @from_block + '	(<$_security_insert_$>) AS pi ' + CHAR(13)
 		SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -30445,29 +30445,29 @@ BEGIN
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + ' AS c2 ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	c2.content_item_id = c.content_item_id ' + CHAR(13)
-	
+
 	-- FULL TEXT SEARCH
 	declare @use_full_text bit, @full_text_sql nvarchar(max)
 	set @use_full_text = 0
 	IF ((@fts_is_incorrect_query IS NULL OR @fts_is_incorrect_query = 0) AND
 		LEN(@fts_attribute_ids) > 0 AND LEN(@fts_query_string) > 0)
 		set @use_full_text = 1
-		
+
 	IF @use_full_text = 1
 	BEGIN
 		CREATE TABLE #ft_temp (content_item_id int primary key)
-		
+
 		SET @from_block = @from_block + 'INNER JOIN #ft_temp as qp_fts' + CHAR(13)
 		SET @from_block = @from_block + 'ON c.content_item_id = qp_fts.content_item_id ' + CHAR(13)
-		
+
 		SET @full_text_sql = ' insert into #ft_temp select distinct CI.CONTENT_ITEM_ID from content_item CI, content_data CD ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CI.CONTENT_ID = ' + CAST(@content_id AS varchar)  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CD.ATTRIBUTE_ID in (' + @fts_attribute_ids + ') '  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and contains(CD.*, ''' + @fts_query_string + ''')'  + CHAR(13)
 		exec sp_executesql @full_text_sql
-	END	
-	-----	
+	END
+	-----
 	-- Поиск по Many To Many и Many To One --
 	declare @link_filter nvarchar(max)
 	set @link_filter = ''
@@ -30475,38 +30475,38 @@ BEGIN
 		BEGIN
 			declare @m2m_condition as varchar(max)
 			set @m2m_condition = ''
-			
+
 			declare @link_params_table table (id numeric, ids varchar(max), m2m bit, [isnull] bit)
-			
+
 			insert into @link_params_table
 			select T.f.value('./@lid', 'numeric'), T.f.value('./@iids', 'varchar(max)'), T.f.value('./@m2m', 'bit'), T.f.value('./@isnull', 'bit')
 			from @link_params.nodes('/link/f') as T(f)
-			
+
 			while exists (select * from @link_params_table)
 			begin
-				declare @currentLinkId numeric, 
-						@currentIds varchar(max), 
-						@isCurrentM2M bit, 
+				declare @currentLinkId numeric,
+						@currentIds varchar(max),
+						@isCurrentM2M bit,
 						@isNull bit,
 						@currentLinkText nvarchar(20)
-				
+
 				select @currentLinkId = id, @currentIds = ids, @isCurrentM2M = m2m, @isNull = [isnull] from @link_params_table
 				set @currentLinkText = cast(@currentLinkId as nvarchar(20))
-				
-				declare @currentFieldName nvarchar(255), 
+
+				declare @currentFieldName nvarchar(255),
 						@currentContentId numeric
 				select @currentContentId = content_id, @currentFieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @currentLinkId
-				
+
 				if @isNull = 0 begin
 					if @isCurrentM2M = 1 begin
 						SET @from_block = @from_block + ' INNER JOIN ( ' +
 							' select distinct item_id from dbo.item_link_united where link_id = ' + @currentLinkText + ' AND linked_item_id in (' + @currentIds + ') ' +
 							') as link_' + @currentLinkText + '  ON c.content_item_id = link_' + @currentLinkText + '.item_id ' + CHAR(13)
-					end	
+					end
 					else begin
-						
-						SET @from_block = @from_block + ' INNER JOIN ( ' + 
-							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 
+
+						SET @from_block = @from_block + ' INNER JOIN ( ' +
+							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where CONTENT_ITEM_ID in (' + @currentIds + ') ' +
 							' ) as back_' + @currentLinkText + '  ON c.content_item_id = back_' + @currentLinkText + '.item_id ' + CHAR(13)
 					end
@@ -30515,17 +30515,17 @@ BEGIN
 					if @isCurrentM2M = 1 begin
 						set @link_filter = ' NOT EXISTS (select item_id from dbo.item_link_united where c.content_item_id = item_id and link_id = '  + @currentLinkText + ') '
 					end
-					else begin						
-						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 							
+					else begin
+						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where c.content_item_id = [' + @currentFieldName + ']) '
-					end					
+					end
 				end
-				
+
 				delete from @link_params_table where id = @currentLinkId and m2m = @isCurrentM2M
-			end						
+			end
 		END
 	-----
-		
+
 	IF (@use_custom_selection = 1)
 		BEGIN
 			SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
@@ -30539,7 +30539,7 @@ BEGIN
 			SET @from_block = @from_block + '	) AS cis ' + CHAR(13)
 			SET @from_block = @from_block + 'ON ' + CHAR(13)
 			SET @from_block = @from_block + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
-		END	
+		END
 	SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
 	SET @from_block = @from_block + '	content_item AS ci with(nolock) ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -30564,21 +30564,21 @@ BEGIN
 	SET @from_block = @from_block + '	USERS AS mu ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	mu.USER_ID = ci.LAST_MODIFIED_BY ' + CHAR(13)
-	
+
 	IF (LEN(@related_from_block) > 0)
 		BEGIN
 			SET @from_block = @from_block + @related_from_block
 		END
-		
+
 	SET @where_block = @filter
-	
+
 	if LEN(@link_filter) > 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + @link_filter			
+		SET @where_block = @where_block + @link_filter
 	END
-	
+
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @order_by_block = @order_by
@@ -30587,14 +30587,14 @@ BEGIN
 		BEGIN
 			SET @order_by_block = 'CONTENT_ITEM_ID DESC'
 		END
-	
+
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
-	
+
 	if @fts_is_incorrect_query = 1 OR @parent_level = 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + '1 = 0'		
+		SET @where_block = @where_block + '1 = 0'
 	END
 
 	EXEC qp_get_paged_data
@@ -30606,7 +30606,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -30615,10 +30615,10 @@ BEGIN
 		@entity_name = 'content_item',
 		@parent_entity_name = 'content',
 		@parent_entity_id = @content_id
-		
+
 	IF @use_full_text = 1
 		DROP TABLE #ft_temp
-		
+
 	SET NOCOUNT OFF
 END
 
@@ -30634,14 +30634,14 @@ PRINT '7.9.1.50 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.51
 -- Folder Security and hierarchy
 -- **************************************
 
 ALTER PROCEDURE [dbo].[qp_get_folders_tree]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@parent_entity_id numeric(18,0),
 	@is_site bit = 1,
 	@parent_folder_id numeric(18,0) = NULL,
@@ -30652,26 +30652,26 @@ AS
 BEGIN
 
 	DECLARE @security_sql AS nvarchar(max), @sql_result AS nvarchar(max)
-	DECLARE @entity_name AS nvarchar(50), @parent_entity_name AS nvarchar(50) 
+	DECLARE @entity_name AS nvarchar(50), @parent_entity_name AS nvarchar(50)
 	DECLARE @use_security bit, @parent_level numeric, @block_filter nvarchar(10)
-	
+
 	SET @entity_name = case @is_site when 1 then 'folder' else 'content_folder' end
 	print @entity_name
 	SET @parent_entity_name = case @is_site when 1 then 'site' else 'content' end
 	print @parent_entity_name
 
 	set @use_security = 1
-	
+
 	if dbo.qp_is_user_admin(@user_id) = 1
 		set @use_security = 0
-	
+
 	set @block_filter = ''
 	if @entity_name = 'content_folder'
 	begin
 		set @use_security = 0
 		select @parent_level = dbo.qp_entity_access_level(@user_id, @parent_entity_name, @parent_entity_id)
 		if @parent_level = 0
-			set @block_filter = ' AND 1 = 0 '		
+			set @block_filter = ' AND 1 = 0 '
 	end
 	else if @parent_folder_id is not null
 	begin
@@ -30690,9 +30690,9 @@ BEGIN
 			@end_level = 4,
 			@entity_name = @entity_name,
 			@parent_entity_name = @parent_entity_name,
-			@parent_entity_id = @parent_entity_id,				
+			@parent_entity_id = @parent_entity_id,
 			@SQLOut = @security_sql OUTPUT
-				
+
 	SET @sql_result = ''
 	SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 	IF (@count_only = 0)
@@ -30722,7 +30722,7 @@ BEGIN
 			if @use_security = 1
 				SET @sql_result = @sql_result + ',	COALESCE(pi.permission_level, ' + CAST(@parent_level as varchar)  + ') as EFFECTIVE_PERMISSION_LEVEL' + CHAR(13)
 
-			
+
 		END
 	ELSE
 		BEGIN
@@ -30744,7 +30744,7 @@ BEGIN
 			SET @sql_result = @sql_result + 'ON ' + CHAR(13)
 			SET @sql_result = @sql_result + '	mu.USER_ID = c.LAST_MODIFIED_BY ' + CHAR(13)
 		END
-	SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)			
+	SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)
 	IF (@parent_folder_id IS NOT NULL)
 		BEGIN
 			SET @sql_result = @sql_result + '	c.PARENT_FOLDER_ID = ' + CAST(@parent_folder_id AS varchar) + ' ' + CHAR(13)
@@ -30754,32 +30754,32 @@ BEGIN
 			SET @sql_result = @sql_result + '	c.PARENT_FOLDER_ID IS NULL ' + CHAR(13)
 			SET @sql_result = @sql_result + '		AND c.' + @parent_entity_name + '_ID = ' + CAST(@parent_entity_id AS varchar) + ' '  + CHAR(13)
 		END
-	
+
 	if @use_security = 1
 	begin
 		SET @sql_result = @sql_result + ' AND COALESCE(pi.permission_level, 4) >= ' + CAST(@permission_level AS varchar) + CHAR(13)
-	end	
-		
+	end
+
 	SET @sql_result = @sql_result + @block_filter
 	IF (@count_only = 0)
 		BEGIN
 		SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 		SET @sql_result = @sql_result + ' c.NAME ASC '
 	END
-			
+
 	IF (@count_only = 0)
 		BEGIN
 			print @sql_result
 			EXEC(@sql_result)
-					
-			SET @total_records = @@ROWCOUNT 
+
+			SET @total_records = @@ROWCOUNT
 		END
 	ELSE
 		BEGIN
 			print @sql_result
-			EXEC sp_executesql 
-				@sql_result, 
-				N'@record_count int OUTPUT', 
+			EXEC sp_executesql
+				@sql_result,
+				N'@record_count int OUTPUT',
 				@record_count = @total_records OUTPUT
 		END
 END
@@ -30791,11 +30791,11 @@ ALTER Function [dbo].[qp_is_entity_accessible](
   @user_id numeric (18,0)=0,
   @group_id numeric (18,0)=0,
   @start_level int=1,
-  @end_level int=4,  
+  @end_level int=4,
   @return_level int=0
 )
 Returns int
-AS 
+AS
 
 BEGIN
 
@@ -30810,38 +30810,38 @@ if @user_id > 0 and dbo.qp_is_user_admin(@user_id)>0 return @FullAccessLevel
 /***********************************/
 /**** Declare Table Variables   ****/
 /***********************************/
-declare @ChildGroups table 
-( 
+declare @ChildGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 
-declare @ParentGroups table 
-( 
+declare @ParentGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 
-declare @UsedGroups table 
-( 
+declare @UsedGroups table
+(
 	group_id numeric(18,0)
-) 
+)
 
-declare @TempParentGroups table 
-( 
+declare @TempParentGroups table
+(
 	group_id numeric(18,0) PRIMARY KEY
-) 
+)
 
-declare @Entities table 
-( 
+declare @Entities table
+(
 	entity_id numeric(18,0) NOT NULL,
     permission_level numeric(18,0) NOT NULL,
     user_id numeric(18,0) NULL,
     group_id numeric(18,0) NULL
-) 
+)
 /***********************************/
 
 declare @content_id decimal
 
-  If @entity_name='content' 
+  If @entity_name='content'
 	  Begin
 		 insert into @Entities (entity_id, permission_level, user_id, group_id)
 		   select content_id, permission_level, user_id, group_id from content_access_permlevel
@@ -30850,7 +30850,7 @@ declare @content_id decimal
   If @entity_name='content_item'
 	  Begin
 		 declare @use_own_security bit
-		 select @use_own_security = c.allow_items_permission, @content_id = ci.content_id 
+		 select @use_own_security = c.allow_items_permission, @content_id = ci.content_id
 			from content c with(nolock) inner join content_item ci with(nolock) on c.content_id = ci.content_id where ci.content_item_id = @entity_id
 		 if (@use_own_security = 1)
 			insert into @Entities (entity_id, permission_level, user_id, group_id)
@@ -30859,7 +30859,7 @@ declare @content_id decimal
 		else
 			insert into @Entities (entity_id, permission_level, user_id, group_id)
 				select @entity_id, permission_level, user_id, group_id from content_access_permlevel
-				where content_id = @content_id		
+				where content_id = @content_id
 	  End
   If @entity_name='site'
 	  Begin
@@ -30876,10 +30876,10 @@ declare @content_id decimal
   If @entity_name='content_folder'
 	  Begin
 		select @content_id = content_id from content_folder with(nolock) where folder_id = @entity_id
-		
+
 		insert into @Entities (entity_id, permission_level, user_id, group_id)
 			select @entity_id, permission_level, user_id, group_id from content_access_permlevel
-			where content_id = @content_id	
+			where content_id = @content_id
 
       End
   If @entity_name='workflow'
@@ -30912,7 +30912,7 @@ Begin
    select @maxLevel = IsNull(max(permission_level),@nothing_found) from @Entities where
        user_id = @user_id
 
-   Select @current_result = @maxLevel   
+   Select @current_result = @maxLevel
 
    if @maxLevel != @nothing_found
    Begin
@@ -30920,8 +30920,8 @@ Begin
       if @maxLevel < @start_level or @maxLevel> @end_level return @no_access
       if @maxLevel >= @start_level And @maxLevel <= @end_level return @yes_access
    End
-   
-   insert into @ChildGroups (group_id) select distinct group_id from user_group_bind where user_id = @user_id   
+
+   insert into @ChildGroups (group_id) select distinct group_id from user_group_bind where user_id = @user_id
 End
 
 if @group_id > 0 AND @user_id <= 0
@@ -30932,12 +30932,12 @@ End
 if (select count(*) from @ChildGroups) = 0
 Begin
    return @current_result
-End 
+End
 
 select @maxLevel = IsNull(max(permission_level),@nothing_found) from @Entities where
        group_id in (select group_id from @ChildGroups)
 
-Select @current_result = @maxLevel  
+Select @current_result = @maxLevel
 
 if @maxLevel != @nothing_found
 Begin
@@ -30956,11 +30956,11 @@ BEGIN
 
     /* need to check that parent groups are not appearing in child groups */
     insert into @TempParentGroups (group_id) select pg.group_id from @ParentGroups pg where pg.group_id not in(select cg.group_id from @ChildGroups cg) and pg.group_id not in (select group_id from @UsedGroups)
-    
-	select @maxLevel = IsNull(max(permission_level),@nothing_found) from @Entities where
-		   group_id in (select group_id from @TempParentGroups) 
 
-    Select @current_result = @maxLevel  
+	select @maxLevel = IsNull(max(permission_level),@nothing_found) from @Entities where
+		   group_id in (select group_id from @TempParentGroups)
+
+    Select @current_result = @maxLevel
 
 	if @maxLevel != @nothing_found
 	Begin
@@ -31017,14 +31017,14 @@ GO
 
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.52
--- Fix content deleting and M2O 
+-- Fix content deleting and M2O
 -- **************************************
 
 ALTER TRIGGER [dbo].[tbd_delete_content] ON [dbo].[CONTENT] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 
@@ -31041,10 +31041,10 @@ BEGIN
 	inner join deleted d on d.content_id = cc.r_content_id or d.content_id = cc.l_content_id
 
 	delete container from container c
-	inner join deleted d on d.content_id = c.content_id 
+	inner join deleted d on d.content_id = c.content_id
 
 	delete content_form from content_form cf
-	inner join deleted d on d.content_id = cf.content_id 
+	inner join deleted d on d.content_id = cf.content_id
 
 	delete content_item from content_item ci
 	inner join deleted d on d.content_id = ci.content_id
@@ -31054,7 +31054,7 @@ BEGIN
 
 	delete [ACTION_CONTENT_BIND] from [ACTION_CONTENT_BIND] acb
 	inner join deleted d on d.content_id = acb.content_id
-	
+
 	delete ca from CONTENT_ATTRIBUTE ca
 	inner join CONTENT_ATTRIBUTE cad on ca.BACK_RELATED_ATTRIBUTE_ID = cad.ATTRIBUTE_ID
 	inner join deleted c on cad.CONTENT_ID = c.CONTENT_ID
@@ -31075,7 +31075,7 @@ PRINT '7.9.1.52 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Maxim Tertyshnyy
 -- version 7.9.1.53
 -- Save & Up
@@ -31114,7 +31114,7 @@ GO
 PRINT '7.9.1.53 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.54
 -- Visible and Archive history
@@ -31163,7 +31163,7 @@ GO
 PRINT '7.9.1.54 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Maxim Tertyshnyy
 -- version 7.9.1.55
 -- Search Articles on Site by ID
@@ -31180,7 +31180,7 @@ CREATE PROCEDURE [dbo].[qp_all_article_search]
 	@p_start_row int = 0,
 	@p_page_size int = 0,
 	@p_item_id int = null,
-	
+
 	@total_records int OUTPUT
 AS
 BEGIN
@@ -31193,12 +31193,12 @@ BEGIN
 		BEGIN
 			SET @p_start_row = 1
 		END
-		
+
 	-- Задаем номер конечной записи
 	DECLARE @p_end_row AS int
 	SET @p_end_row = @p_start_row + @p_page_size - 1
-	
-	-- свормировать запрос для подмножества контентов к которым есть доступ 
+
+	-- свормировать запрос для подмножества контентов к которым есть доступ
 	DECLARE @security_sql AS nvarchar(max)
 	SET @security_sql = ''
 	EXEC dbo.qp_GetPermittedItemsAsQuery
@@ -31208,87 +31208,87 @@ BEGIN
 				@end_level = 4,
 				@entity_name = 'content',
 				@parent_entity_name = 'site',
-				@parent_entity_id = @p_site_id,				
+				@parent_entity_id = @p_site_id,
 				@SQLOut = @security_sql OUTPUT
-		
-	-- посчитать общее кол-во записей					
+
+	-- посчитать общее кол-во записей
 	declare @paramdef nvarchar(4000);
 	declare @query nvarchar(4000);
-	
+
 	create table #temp
 	([rank] int, content_item_id numeric, attribute_id numeric, [priority] int)
-	
+
 	create table #temp2
-	([rank] int, content_item_id numeric, attribute_id numeric, [priority] int)	
-	
+	([rank] int, content_item_id numeric, attribute_id numeric, [priority] int)
+
 	set @query = 'insert into #temp ' + CHAR(13)
 		+ ' select ft.[rank], cd.content_item_id, cd.attribute_id, 0 ' + CHAR(13)
 		+ ' from CONTAINSTABLE(content_data, *,  @searchparam) ft ' + CHAR(13)
 		+ ' inner join content_data cd on ft.[key] = cd.content_data_id ' + CHAR(13)
-		
-	IF @p_item_id is not null 	
-		set @query = @query + ' union select 0, ' + cast(@p_item_id as varchar(20)) + ', 0, 1 ' + CHAR(13)		
-	exec sp_executesql @query, N'@searchparam nvarchar(4000)', @searchparam = @p_searchparam	
-	
+
+	IF @p_item_id is not null
+		set @query = @query + ' union select 0, ' + cast(@p_item_id as varchar(20)) + ', 0, 1 ' + CHAR(13)
+	exec sp_executesql @query, N'@searchparam nvarchar(4000)', @searchparam = @p_searchparam
+
 	set @query = 'insert into #temp2 ' + CHAR(13)
 		+ ' select cd.* from #temp cd ' + CHAR(13)
 		+ ' inner join content_item ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID ' + CHAR(13)
-		+ ' inner join (' + @security_sql + ') c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)	
+		+ ' inner join (' + @security_sql + ') c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)
 	exec sp_executesql @query
-	
-	select @total_records = count(distinct content_item_id) from #temp2		
-		
+
+	select @total_records = count(distinct content_item_id) from #temp2
+
 	-- главный запрос
 	declare @query_template nvarchar(4000);
 	set @query_template = N'WITH PAGED_DATA_CTE AS ' + CHAR(13)
-		+ ' (select wrapper.*, ' + CHAR(13) 
+		+ ' (select wrapper.*, ' + CHAR(13)
 		+ ' 		ROW_NUMBER() OVER (ORDER BY wrapper.[priority] DESC, <$_order_by_$>) AS ROW ' + CHAR(13)
 		+ '  from ' + CHAR(13)
-		+ '  (select ' + CHAR(13) 
+		+ '  (select ' + CHAR(13)
 		+ ' 	ci.CONTENT_ID as ParentId, ' + CHAR(13)
 		+ ' 	data.CONTENT_ITEM_ID as Id, ' + CHAR(13)
 		+ ' 	data.ATTRIBUTE_ID as FieldId, ' + CHAR(13)
 		+ ' 	attr.ATTRIBUTE_TYPE_ID as FieldTypeId, ' + CHAR(13)
-		+ ' 	c.CONTENT_NAME as ParentName, ' + CHAR(13) 	
+		+ ' 	c.CONTENT_NAME as ParentName, ' + CHAR(13)
 		+ ' 	st.STATUS_TYPE_NAME as StatusName, ' + CHAR(13)
 		+ ' 	ci.CREATED as Created, ' + CHAR(13)
 		+ ' 	ci.MODIFIED as Modified, ' + CHAR(13)
-		+ ' 	usr.[LOGIN] as LastModifiedByUser, ' + CHAR(13)	
+		+ ' 	usr.[LOGIN] as LastModifiedByUser, ' + CHAR(13)
 		+ ' 	data.[rank] as Rank, ' + CHAR(13)
 		+ ' 	data.[priority] as [priority], ' + CHAR(13)
 		+ ' 	ROW_NUMBER() OVER (PARTITION BY data.CONTENT_ITEM_ID ORDER BY data.[rank] DESC) AS SIMILAR_ITEM_ROW ' + CHAR(13)
 		+ '   from #temp2 data ' + CHAR(13)
 		+ '   left join dbo.CONTENT_ATTRIBUTE attr on data.ATTRIBUTE_ID = attr.ATTRIBUTE_ID ' + CHAR(13)
 		+ '   inner join dbo.CONTENT_ITEM ci on data.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID ' + CHAR(13)
-		+ '	  inner join dbo.CONTENT c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)	
+		+ '	  inner join dbo.CONTENT c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)
 		+ '   inner join dbo.STATUS_TYPE st on st.STATUS_TYPE_ID = ci.STATUS_TYPE_ID ' + CHAR(13)
 		+ '   inner join dbo.USERS usr on usr.[USER_ID] = ci.LAST_MODIFIED_BY ' + CHAR(13)
 		+ '   ) as wrapper ' + CHAR(13)
 		+ '   where wrapper.SIMILAR_ITEM_ROW = 1 ' + CHAR(13)
 		+ ' ) ' + CHAR(13)
-		+ ' select ' + CHAR(13)  
+		+ ' select ' + CHAR(13)
 		+ ' 	ParentId, ' + CHAR(13)
 		+ ' 	ParentName, ' + CHAR(13)
 		+ ' 	Id, ' + CHAR(13)
 		+ ' 	FieldId, ' + CHAR(13)
-		+ '		(case when FieldTypeId in (9, 10) THEN cd.BLOB_DATA ELSE cd.DATA END) as Text, ' + CHAR(13)		
-		+ ' 	dbo.qp_get_article_title_func(Id, ParentId) as Name, ' + CHAR(13)	
+		+ '		(case when FieldTypeId in (9, 10) THEN cd.BLOB_DATA ELSE cd.DATA END) as Text, ' + CHAR(13)
+		+ ' 	dbo.qp_get_article_title_func(Id, ParentId) as Name, ' + CHAR(13)
 		+ ' 	StatusName, ' + CHAR(13)
 		+ ' 	pdc.Created, ' + CHAR(13)
 		+ ' 	pdc.Modified, ' + CHAR(13)
-		+ ' 	LastModifiedByUser, ' + CHAR(13)	
+		+ ' 	LastModifiedByUser, ' + CHAR(13)
 		+ ' 	Rank ' + CHAR(13)
 		+ ' from PAGED_DATA_CTE pdc ' + CHAR(13)
 		+ ' left join content_data cd on pdc.Id = cd.content_item_id and pdc.FieldId = cd.attribute_id ' + CHAR(13)
 		+ ' where ROW between @start_row and @end_row';
-		
-	
+
+
 	declare @sortExp nvarchar(4000);
-	set @sortExp = case when @p_order_by is null or @p_order_by = '' then N'Rank DESC' else @p_order_by end;	
-	set @query = REPLACE(@query_template, '<$_order_by_$>', @sortExp);	
+	set @sortExp = case when @p_order_by is null or @p_order_by = '' then N'Rank DESC' else @p_order_by end;
+	set @query = REPLACE(@query_template, '<$_order_by_$>', @sortExp);
 	set @paramdef = '@searchparam nvarchar(4000), @site_id int, @start_row int, @end_row int';
 	EXECUTE sp_executesql @query, @paramdef, @searchparam = @p_searchparam, @site_id = @p_site_id, @start_row = @p_start_row, @end_row = @p_end_row;
-	
+
 	drop table #temp
 	drop table #temp2
 END
@@ -31304,19 +31304,19 @@ PRINT '7.9.1.55 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.56
 -- Fix writing to content_item_status_history
 -- **************************************
 
-ALTER PROCEDURE [dbo].[qp_merge_article] 
+ALTER PROCEDURE [dbo].[qp_merge_article]
 @item_id numeric
 AS
 BEGIN
-	exec qp_merge_links @item_id 
+	exec qp_merge_links @item_id
 	UPDATE content_item with(rowlock) SET schedule_new_version_publication = 0, not_for_replication = 1 WHERE content_item_id = @item_id
-	exec qp_replicate @item_id 
+	exec qp_replicate @item_id
 	UPDATE content_item set MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1 where CONTENT_ITEM_ID = @item_id
 	UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id = @item_id
 	DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id = @item_id
@@ -31328,57 +31328,57 @@ GO
 ALTER  PROCEDURE [dbo].[restore_content_item_version]
   @uid NUMERIC,
   @version_id NUMERIC
-AS 
+AS
   DECLARE @id NUMERIC, @tm DATETIME
   DECLARE @content_id numeric, @splitted bit
   SET @tm = GETDATE()
   SELECT @id = content_item_id FROM content_item_version WHERE content_item_version_id = @version_id
   IF @id IS NOT NULL BEGIN
     select @content_id = content_id, @splitted = splitted from content_item where content_item_id = @id
-    
+
     -- Restore common data
     DELETE FROM content_data WHERE content_item_id = @id
     INSERT INTO content_data (attribute_id, content_item_id, data, blob_data)
     SELECT attribute_id, @id, data, blob_data
     FROM version_content_data
     WHERE content_item_version_id = @version_id
-    
+
     -- Restore many-to-many data
     IF @splitted = 1
     begin
 		DELETE FROM item_link_async where item_id = @id and link_id in (select link_id from content_attribute where content_id = @content_id)
-		
+
 		INSERT INTO item_link_async
 		SELECT link_id, @id, linked_item_id FROM item_to_item_version AS iv
 		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id
-		WHERE iv.content_item_version_id = @version_id and link_id is not null		 
-    end else  
+		WHERE iv.content_item_version_id = @version_id and link_id is not null
+    end else
     begin
 		DELETE FROM item_link_united_full where item_id = @id and link_id in (select link_id from content_attribute where content_id = @content_id)
-	
-		INSERT INTO item_to_item 
+
+		INSERT INTO item_to_item
 		SELECT link_id, @id, linked_item_id FROM item_to_item_version AS iv
-		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id		
+		INNER JOIN content_attribute ca on iv.attribute_id = ca.attribute_id
 		WHERE iv.content_item_version_id = @version_id and link_id is not null
     end
-    
+
     -- Restore many-to-one data
     create table #resultIds (id numeric, attribute_id numeric not null, to_remove bit not null default 0)
-    
+
     declare @fieldIds table (id numeric, back_id numeric)
-    
+
     insert into @fieldIds
     select ATTRIBUTE_ID, BACK_RELATED_ATTRIBUTE_ID From CONTENT_ATTRIBUTE where BACK_RELATED_ATTRIBUTE_ID is not null and CONTENT_ID = @content_id
-    
+
     while exists(select * from @fieldIds)
     begin
     	declare @currentFieldId numeric, @currentBackFieldId numeric
     	select @currentFieldId = id, @currentBackFieldId = back_id from @fieldIds
-    	
+
     	declare @ids table (id numeric)
     	insert into @ids
     	select linked_item_id from item_to_item_version where attribute_id = @currentFieldId and content_item_version_id = @version_id
-    	
+
     	declare @value nvarchar(max)
     	set @value = ''
     	while exists(select * from @ids)
@@ -31388,29 +31388,29 @@ AS
     		if @value <> ''
     			set @value = @value + ','
     		set @value = @value + CAST(@currentId as nvarchar)
-    		
+
     		delete from @ids where id = @currentId
-    	
+
     	end
-    	
+
     	exec qp_update_m2o @id, @currentBackFieldId, @value
 
-    
+
 		delete from @fieldIds where id = @currentFieldId
     end
-    
+
     exec qp_update_m2o_final @id
-    
+
     drop table #resultIds
-    
+
     update content_item set MODIFIED = GETDATE(), LAST_MODIFIED_BY = @uid where CONTENT_ITEM_ID = @id
-    
+
     -- Write status history log
-    INSERT INTO content_item_status_history 
+    INSERT INTO content_item_status_history
       (content_item_id, user_id, description, created,
       system_status_type_id, content_item_version_id)
-    VALUES 
-      (@id, @uid, 'Record has been restored from version backup', @tm, 
+    VALUES
+      (@id, @uid, 'Record has been restored from version backup', @tm,
       4, @version_id)
   END
 GO
@@ -31425,7 +31425,7 @@ PRINT '7.9.1.56 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.1.57
 -- missing VePlugin`s translations context menus, etc.
@@ -31466,11 +31466,11 @@ insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 values(dbo.qp_context_menu_id('visual_editor_plugin'), dbo.qp_action_id('edit_visual_editor_plugin'), 'Properties', 3, 'properties.gif')
 GO
 
-update ENTITY_TYPE 
-set 	
+update ENTITY_TYPE
+set
 
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('visual_editor_plugin'), 
-	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('visual_editor_plugins')	
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('visual_editor_plugin'),
+	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('visual_editor_plugins')
 where CODE = 'visual_editor_plugin'
 
 GO
@@ -31483,14 +31483,14 @@ GO
 PRINT '7.9.1.57 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.58
 -- Fix multiple self-relations
 -- **************************************
 
 ALTER PROCEDURE [dbo].[qp_paged_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@selected_article_ids AS nvarchar(max) = NULL,
 	@permission_level numeric(18,0),
@@ -31511,14 +31511,14 @@ BEGIN
 	DECLARE @where_block AS nvarchar(max)
 	DECLARE @order_by_block AS nvarchar(max)
 	DECLARE @processed_order_by_block AS nvarchar(max)
-	
+
 	DECLARE @dynamic_select_block AS nvarchar(max)
 	DECLARE @related_select_block AS nvarchar(max)
 	DECLARE @related_from_block AS nvarchar(max)
-	
+
 	DECLARE @attribute_id numeric, @rel_attribute_id numeric, @rel_attribute_type_id numeric, @rel_content_id numeric, @rel_count int
 	DECLARE @attribute_name nvarchar(255), @rel_attribute_name nvarchar(255), @rel_field_name nvarchar(255), @rel_table_name nvarchar(255)
-	
+
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @use_security bit, @parent_level numeric
 
@@ -31532,15 +31532,15 @@ BEGIN
 	SET @dynamic_select_block = ''
 	SET @related_select_block = ''
 	SET @related_from_block = ''
-	
+
 	SET @use_custom_selection = 0
 	IF (@selected_article_ids IS NOT NULL)
 		BEGIN
 			SET @use_custom_selection = 1
 		END
-	
+
 	DECLARE @relations TABLE (
-		attribute_id numeric, 
+		attribute_id numeric,
 		attribute_name nvarchar(255),
 		rel_attribute_id numeric,
 		rel_attribute_type_id numeric,
@@ -31548,9 +31548,9 @@ BEGIN
 		rel_content_id  numeric,
 		rel_count numeric
 	)
-	
+
 	INSERT INTO @relations
-	SELECT 
+	SELECT
 		ca.ATTRIBUTE_ID,
 		ca.ATTRIBUTE_NAME,
 		rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID,
@@ -31558,7 +31558,7 @@ BEGIN
 		rca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME,
 		rca.CONTENT_ID AS RELATED_CONTENT_ID,
 		ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ORDER ASC) AS 'RELATED_COUNT'
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN
 		CONTENT_ATTRIBUTE AS rca
@@ -31567,10 +31567,10 @@ BEGIN
 	WHERE
 		ca.CONTENT_ID = @content_id
 		AND ca.view_in_list = 1
-	ORDER BY 
+	ORDER BY
 		ca.permanent_flag DESC,
 		ca.attribute_order ASC
-			
+
 	-- Открываем курсор
 	WHILE EXISTS(select * from @relations)
 	BEGIN
@@ -31585,9 +31585,9 @@ BEGIN
 		from @relations
 
 		SET @dynamic_select_block = @dynamic_select_block + '	c.[' + @attribute_name + '], '
-	
+
 		IF (@rel_attribute_id IS NOT NULL)
-		BEGIN		
+		BEGIN
 			declare @current_block nvarchar(512)
 			set @rel_table_name = 'rel_' + CAST(@rel_attribute_id AS varchar)
 			set @rel_field_name = 'rel_field_' + CAST(@rel_attribute_id AS varchar)
@@ -31596,35 +31596,35 @@ BEGIN
 				set @rel_table_name = @rel_table_name + '_' + CAST(@rel_count AS varchar)
 				set @rel_field_name = @rel_field_name + '_' + CAST(@rel_count AS varchar)
 			end
-			
+
 			SET @related_select_block = @related_select_block + '	'
 			SET @current_block = @rel_table_name + '.[' + @rel_attribute_name + ']'
 			if @rel_attribute_type_id in (9, 10)
 				SET @current_block = 'cast (' + @current_block + ' as nvarchar(255))'
 			SET @related_select_block = @related_select_block + @current_block
-			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '	
-			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN 
-				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' + 
+			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '
+			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN
+				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' +
 				@rel_table_name + '.content_item_id = c.[' + @attribute_name + '] '
 		END
-		
+
 		delete from @relations where attribute_id = @attribute_id
 
 	END
-		
+
 
 	SET @select_block = '
 	c.CONTENT_ITEM_ID,
 	c.CREATED,
 	c.MODIFIED,
 	c.LAST_MODIFIED_BY,
-	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id, 
+	COALESCE(ci.status_type_id, c.status_type_id) AS workflow_status_type_id,
 	COALESCE(c2.status_type_id, c.status_type_id) AS current_status_type_id,
 	ci.CONTENT_ID,
 	ci.SCHEDULE_NEW_VERSION_PUBLICATION,
 	ci.splitted,
-	CAST(c.visible as bit) as visible,	
-	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled, 
+	CAST(c.visible as bit) as visible,
+	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled,
 	ci.not_for_replication,
 	ci.LOCKED_BY,
 	st.STATUS_TYPE_NAME,
@@ -31635,7 +31635,7 @@ BEGIN
 	mu.FIRST_NAME AS MODIFIER_FIRST_NAME,
 	mu.LAST_NAME AS MODIFIER_LAST_NAME,
 	mu.[LOGIN] AS MODIFIER_LOGIN, '
-	
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
 		BEGIN
@@ -31650,21 +31650,21 @@ BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
+
 	IF (LEN(@dynamic_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@dynamic_select_block, LEN(@dynamic_select_block) - 1)
 		END
-	
+
 	IF (LEN(@related_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@related_select_block, LEN(@related_select_block) - 1)
 		END
-	
+
 	SET @from_block = ''
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
 	IF @use_security = 1
-	BEGIN	
+	BEGIN
 		SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 		SET @from_block = @from_block + '	(<$_security_insert_$>) AS pi ' + CHAR(13)
 		SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -31674,29 +31674,29 @@ BEGIN
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + ' AS c2 ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	c2.content_item_id = c.content_item_id ' + CHAR(13)
-	
+
 	-- FULL TEXT SEARCH
 	declare @use_full_text bit, @full_text_sql nvarchar(max)
 	set @use_full_text = 0
 	IF ((@fts_is_incorrect_query IS NULL OR @fts_is_incorrect_query = 0) AND
 		LEN(@fts_attribute_ids) > 0 AND LEN(@fts_query_string) > 0)
 		set @use_full_text = 1
-		
+
 	IF @use_full_text = 1
 	BEGIN
 		CREATE TABLE #ft_temp (content_item_id int primary key)
-		
+
 		SET @from_block = @from_block + 'INNER JOIN #ft_temp as qp_fts' + CHAR(13)
 		SET @from_block = @from_block + 'ON c.content_item_id = qp_fts.content_item_id ' + CHAR(13)
-		
+
 		SET @full_text_sql = ' insert into #ft_temp select distinct CI.CONTENT_ITEM_ID from content_item CI, content_data CD ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CI.CONTENT_ID = ' + CAST(@content_id AS varchar)  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CD.ATTRIBUTE_ID in (' + @fts_attribute_ids + ') '  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and contains(CD.*, ''' + @fts_query_string + ''')'  + CHAR(13)
 		exec sp_executesql @full_text_sql
-	END	
-	-----	
+	END
+	-----
 	-- Поиск по Many To Many и Many To One --
 	declare @link_filter nvarchar(max)
 	set @link_filter = ''
@@ -31704,38 +31704,38 @@ BEGIN
 		BEGIN
 			declare @m2m_condition as varchar(max)
 			set @m2m_condition = ''
-			
+
 			declare @link_params_table table (id numeric, ids varchar(max), m2m bit, [isnull] bit)
-			
+
 			insert into @link_params_table
 			select T.f.value('./@lid', 'numeric'), T.f.value('./@iids', 'varchar(max)'), T.f.value('./@m2m', 'bit'), T.f.value('./@isnull', 'bit')
 			from @link_params.nodes('/link/f') as T(f)
-			
+
 			while exists (select * from @link_params_table)
 			begin
-				declare @currentLinkId numeric, 
-						@currentIds varchar(max), 
-						@isCurrentM2M bit, 
+				declare @currentLinkId numeric,
+						@currentIds varchar(max),
+						@isCurrentM2M bit,
 						@isNull bit,
 						@currentLinkText nvarchar(20)
-				
+
 				select @currentLinkId = id, @currentIds = ids, @isCurrentM2M = m2m, @isNull = [isnull] from @link_params_table
 				set @currentLinkText = cast(@currentLinkId as nvarchar(20))
-				
-				declare @currentFieldName nvarchar(255), 
+
+				declare @currentFieldName nvarchar(255),
 						@currentContentId numeric
 				select @currentContentId = content_id, @currentFieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @currentLinkId
-				
+
 				if @isNull = 0 begin
 					if @isCurrentM2M = 1 begin
 						SET @from_block = @from_block + ' INNER JOIN ( ' +
 							' select distinct item_id from dbo.item_link_united where link_id = ' + @currentLinkText + ' AND linked_item_id in (' + @currentIds + ') ' +
 							') as link_' + @currentLinkText + '  ON c.content_item_id = link_' + @currentLinkText + '.item_id ' + CHAR(13)
-					end	
+					end
 					else begin
-						
-						SET @from_block = @from_block + ' INNER JOIN ( ' + 
-							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 
+
+						SET @from_block = @from_block + ' INNER JOIN ( ' +
+							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where CONTENT_ITEM_ID in (' + @currentIds + ') ' +
 							' ) as back_' + @currentLinkText + '  ON c.content_item_id = back_' + @currentLinkText + '.item_id ' + CHAR(13)
 					end
@@ -31744,17 +31744,17 @@ BEGIN
 					if @isCurrentM2M = 1 begin
 						set @link_filter = ' NOT EXISTS (select item_id from dbo.item_link_united where c.content_item_id = item_id and link_id = '  + @currentLinkText + ') '
 					end
-					else begin						
-						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 							
+					else begin
+						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where c.content_item_id = [' + @currentFieldName + ']) '
-					end					
+					end
 				end
-				
+
 				delete from @link_params_table where id = @currentLinkId and m2m = @isCurrentM2M
-			end						
+			end
 		END
 	-----
-		
+
 	IF (@use_custom_selection = 1)
 		BEGIN
 			SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
@@ -31768,7 +31768,7 @@ BEGIN
 			SET @from_block = @from_block + '	) AS cis ' + CHAR(13)
 			SET @from_block = @from_block + 'ON ' + CHAR(13)
 			SET @from_block = @from_block + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
-		END	
+		END
 	SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
 	SET @from_block = @from_block + '	content_item AS ci with(nolock) ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -31793,21 +31793,21 @@ BEGIN
 	SET @from_block = @from_block + '	USERS AS mu ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	mu.USER_ID = ci.LAST_MODIFIED_BY ' + CHAR(13)
-	
+
 	IF (LEN(@related_from_block) > 0)
 		BEGIN
 			SET @from_block = @from_block + @related_from_block
 		END
-		
+
 	SET @where_block = @filter
-	
+
 	if LEN(@link_filter) > 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + @link_filter			
+		SET @where_block = @where_block + @link_filter
 	END
-	
+
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @order_by_block = @order_by
@@ -31819,14 +31819,14 @@ BEGIN
 			ELSE
 				SET @order_by_block = 'CONTENT_ITEM_ID DESC'
 		END
-	
+
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
-	
+
 	if @fts_is_incorrect_query = 1 OR @parent_level = 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + '1 = 0'		
+		SET @where_block = @where_block + '1 = 0'
 	END
 
 	EXEC qp_get_paged_data
@@ -31838,7 +31838,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -31847,10 +31847,10 @@ BEGIN
 		@entity_name = 'content_item',
 		@parent_entity_name = 'content',
 		@parent_entity_id = @content_id
-		
+
 	IF @use_full_text = 1
 		DROP TABLE #ft_temp
-		
+
 	SET NOCOUNT OFF
 END
 GO
@@ -31864,7 +31864,7 @@ PRINT '7.9.1.58 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.59
 -- fix on fix
@@ -31887,7 +31887,7 @@ GO
 PRINT '7.9.1.59 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.60
 -- default VE commands
@@ -31937,9 +31937,9 @@ INSERT INTO [VE_COMMAND]
            ,0
            ,1
            ,1)
-		   
+
 exec qp_update_translations 'Cut', 'Вырезать'
-		                         
+
 GO
 
 INSERT INTO [VE_COMMAND]
@@ -31983,9 +31983,9 @@ INSERT INTO [VE_COMMAND]
            ,2
            ,1
            ,1)
-		   
-exec qp_update_translations 'Paste', 'Вставить'		   
-		                         
+
+exec qp_update_translations 'Paste', 'Вставить'
+
 GO
 
 INSERT INTO [VE_COMMAND]
@@ -32712,7 +32712,7 @@ INSERT INTO [VE_COMMAND]
            ,1--group
            ,0--command
            ,1
-           ,1)                      
+           ,1)
 GO
 
 exec qp_update_translations 'Table', 'Таблица'
@@ -32961,7 +32961,7 @@ GO
 PRINT '7.9.1.60 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.61
 -- Field & Site External CSS
@@ -32970,14 +32970,14 @@ GO
 if not exists (select * From information_schema.columns where table_name = 'SITE' and column_name = 'EXTERNAL_CSS')
 	begin
 	ALTER TABLE SITE ADD
-		EXTERNAL_CSS NVARCHAR(MAX) NULL	
+		EXTERNAL_CSS NVARCHAR(MAX) NULL
 	end
 GO
 
 if not exists (select * From information_schema.columns where table_name = 'CONTENT_ATTRIBUTE' and column_name = 'EXTERNAL_CSS')
 	begin
 	ALTER TABLE CONTENT_ATTRIBUTE ADD
-		EXTERNAL_CSS NVARCHAR(MAX) NULL	
+		EXTERNAL_CSS NVARCHAR(MAX) NULL
 	end
 GO
 
@@ -32991,7 +32991,7 @@ PRINT '7.9.1.61 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.62
 -- Field & Site ROOT_ELEMENT_CLASS
@@ -33000,14 +33000,14 @@ GO
 if not exists (select * From information_schema.columns where table_name = 'SITE' and column_name = 'ROOT_ELEMENT_CLASS')
 	begin
 	ALTER TABLE SITE ADD
-		ROOT_ELEMENT_CLASS NVARCHAR(50) NULL	
+		ROOT_ELEMENT_CLASS NVARCHAR(50) NULL
 	end
 GO
 
 if not exists (select * From information_schema.columns where table_name = 'CONTENT_ATTRIBUTE' and column_name = 'ROOT_ELEMENT_CLASS')
 	begin
 	ALTER TABLE CONTENT_ATTRIBUTE ADD
-		ROOT_ELEMENT_CLASS NVARCHAR(50) NULL	
+		ROOT_ELEMENT_CLASS NVARCHAR(50) NULL
 	end
 GO
 
@@ -33020,7 +33020,7 @@ GO
 PRINT '7.9.1.62 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.63
 -- Activate search block for virtual articles
@@ -33038,7 +33038,7 @@ GO
 PRINT '7.9.1.63 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.1.64
 -- Child Permissions Fix
@@ -33066,7 +33066,7 @@ GO
 PRINT '7.9.1.64 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.65
 -- VE_STYLE, VE_STYLE_SITE_BIND, VE_STYLE_FIELD_BIND
@@ -33111,7 +33111,7 @@ CREATE TABLE [dbo].[VE_STYLE_SITE_BIND](
 	[STYLE_ID] NUMERIC(18,0) NOT NULL,
 	[SITE_ID] NUMERIC(18,0) NOT NULL,
 	[ON] [bit] NOT NULL
- CONSTRAINT [PK_VE_STYLE_SITE_BIND] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_VE_STYLE_SITE_BIND] PRIMARY KEY CLUSTERED
 (
 	[STYLE_ID] ASC,
 	[SITE_ID] ASC
@@ -33135,7 +33135,7 @@ GO
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	alter table content_item disable trigger td_delete_item
 	alter table content_attribute disable trigger td_content_attribute_clean_empty_links
@@ -33153,9 +33153,9 @@ BEGIN
 	delete from item_to_item where link_id in
 	(select link_id from site_content_link scl
 	inner join deleted d on d.site_id = scl.site_id)
-	
-	delete content_item_status_history from content_item_status_history cis	
-	inner join content_item ci on ci.content_item_id = cis.content_item_id 
+
+	delete content_item_status_history from content_item_status_history cis
+	inner join content_item ci on ci.content_item_id = cis.content_item_id
 	inner join content c on c.content_id = ci.content_id
 	inner join deleted d on d.site_id = c.site_id
 
@@ -33165,24 +33165,24 @@ BEGIN
 
 	delete content from content c
 	inner join deleted d on d.site_id = c.site_id
-	
+
 	update [object] set object_format_id = null from [object] obj
 	inner join page_template pt on obj.page_template_id = pt.page_template_id
 	inner join deleted d on d.site_id = pt.site_id
 
 	delete page_template from page_template pt
 	inner join deleted d on d.site_id = pt.site_id
-	
+
 	delete [ACTION_SITE_BIND] from [ACTION_SITE_BIND] asb
 	inner join deleted d on d.site_id = asb.site_id
-	
+
 	delete [VE_COMMAND_SITE_BIND] from [VE_COMMAND_SITE_BIND] vcsb
 	inner join deleted d on d.SITE_ID = vcsb.SITE_ID
-	
+
 	delete [VE_STYLE_SITE_BIND] from [VE_STYLE_SITE_BIND] vssb
 	inner join deleted d on d.SITE_ID = vssb.SITE_ID
-	
-	delete site from site s 	
+
+	delete site from site s
 	inner join deleted d on d.site_id = s.site_id
 
 	alter table content_item enable trigger td_delete_item
@@ -33210,7 +33210,7 @@ CREATE TABLE [dbo].[VE_STYLE_FIELD_BIND](
 	[STYLE_ID] NUMERIC(18,0) NOT NULL,
 	[FIELD_ID] NUMERIC(18,0) NOT NULL,
 	[ON] [bit] NOT NULL
- CONSTRAINT [PK_VE_STYLE_FIELD_BIND] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_VE_STYLE_FIELD_BIND] PRIMARY KEY CLUSTERED
 (
 	[STYLE_ID] ASC,
 	[FIELD_ID] ASC
@@ -33243,14 +33243,14 @@ GO
 PRINT '7.9.1.65 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.66
 -- Redundant fields and joins
 -- **************************************
 
 ALTER PROCEDURE [dbo].[qp_paged_articles_list]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@selected_article_ids AS nvarchar(max) = NULL,
 	@permission_level numeric(18,0),
@@ -33271,14 +33271,14 @@ BEGIN
 	DECLARE @where_block AS nvarchar(max)
 	DECLARE @order_by_block AS nvarchar(max)
 	DECLARE @processed_order_by_block AS nvarchar(max)
-	
+
 	DECLARE @dynamic_select_block AS nvarchar(max)
 	DECLARE @related_select_block AS nvarchar(max)
 	DECLARE @related_from_block AS nvarchar(max)
-	
+
 	DECLARE @attribute_id numeric, @rel_attribute_id numeric, @rel_attribute_type_id numeric, @rel_content_id numeric, @rel_count int
 	DECLARE @attribute_name nvarchar(255), @rel_attribute_name nvarchar(255), @rel_field_name nvarchar(255), @rel_table_name nvarchar(255)
-	
+
 	DECLARE @use_custom_selection AS bit -- признак, разрешающий использование выделения заданного пользователем
 	DECLARE @use_security bit, @parent_level numeric
 
@@ -33292,15 +33292,15 @@ BEGIN
 	SET @dynamic_select_block = ''
 	SET @related_select_block = ''
 	SET @related_from_block = ''
-	
+
 	SET @use_custom_selection = 0
 	IF (@selected_article_ids IS NOT NULL)
 		BEGIN
 			SET @use_custom_selection = 1
 		END
-	
+
 	DECLARE @relations TABLE (
-		attribute_id numeric, 
+		attribute_id numeric,
 		attribute_name nvarchar(255),
 		rel_attribute_id numeric,
 		rel_attribute_type_id numeric,
@@ -33308,9 +33308,9 @@ BEGIN
 		rel_content_id  numeric,
 		rel_count numeric
 	)
-	
+
 	INSERT INTO @relations
-	SELECT 
+	SELECT
 		ca.ATTRIBUTE_ID,
 		ca.ATTRIBUTE_NAME,
 		rca.ATTRIBUTE_ID AS RELATED_ATTRIBUTE_ID,
@@ -33318,7 +33318,7 @@ BEGIN
 		rca.ATTRIBUTE_NAME AS RELATED_ATTRIBUTE_NAME,
 		rca.CONTENT_ID AS RELATED_CONTENT_ID,
 		ROW_NUMBER() OVER(PARTITION BY rca.ATTRIBUTE_ID ORDER BY ca.ATTRIBUTE_ORDER ASC) AS 'RELATED_COUNT'
-	FROM 
+	FROM
 		CONTENT_ATTRIBUTE AS ca
 	LEFT OUTER JOIN
 		CONTENT_ATTRIBUTE AS rca
@@ -33327,10 +33327,10 @@ BEGIN
 	WHERE
 		ca.CONTENT_ID = @content_id
 		AND ca.view_in_list = 1
-	ORDER BY 
+	ORDER BY
 		ca.permanent_flag DESC,
 		ca.attribute_order ASC
-			
+
 	-- Открываем курсор
 	WHILE EXISTS(select * from @relations)
 	BEGIN
@@ -33345,9 +33345,9 @@ BEGIN
 		from @relations
 
 		SET @dynamic_select_block = @dynamic_select_block + '	c.[' + @attribute_name + '], '
-	
+
 		IF (@rel_attribute_id IS NOT NULL)
-		BEGIN		
+		BEGIN
 			declare @current_block nvarchar(512)
 			set @rel_table_name = 'rel_' + CAST(@rel_attribute_id AS varchar)
 			set @rel_field_name = 'rel_field_' + CAST(@rel_attribute_id AS varchar)
@@ -33356,22 +33356,22 @@ BEGIN
 				set @rel_table_name = @rel_table_name + '_' + CAST(@rel_count AS varchar)
 				set @rel_field_name = @rel_field_name + '_' + CAST(@rel_count AS varchar)
 			end
-			
+
 			SET @related_select_block = @related_select_block + '	'
 			SET @current_block = @rel_table_name + '.[' + @rel_attribute_name + ']'
 			if @rel_attribute_type_id in (9, 10)
 				SET @current_block = 'cast (' + @current_block + ' as nvarchar(255))'
 			SET @related_select_block = @related_select_block + @current_block
-			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '	
-			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN 
-				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' + 
+			SET @related_select_block = @related_select_block +   ' AS ' + @rel_field_name + ', '
+			SET @related_from_block = @related_from_block + 'LEFT OUTER JOIN
+				content_' + CAST(@rel_content_id AS varchar)  + '_united AS ' + @rel_table_name + ' ON ' +
 				@rel_table_name + '.content_item_id = c.[' + @attribute_name + '] '
 		END
-		
+
 		delete from @relations where attribute_id = @attribute_id
 
 	END
-		
+
 
 	SET @select_block = '
 	c.CONTENT_ITEM_ID,
@@ -33381,8 +33381,8 @@ BEGIN
 	ci.CONTENT_ID,
 	ci.SCHEDULE_NEW_VERSION_PUBLICATION,
 	ci.splitted,
-	CAST(c.visible as bit) as visible,	
-	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled, 
+	CAST(c.visible as bit) as visible,
+	CAST((CASE WHEN (sch.content_item_id  IS NOT NULL) THEN 1 ELSE 0 END) AS bit) AS scheduled,
 	ci.not_for_replication,
 	ci.LOCKED_BY,
 	st.STATUS_TYPE_NAME,
@@ -33393,7 +33393,7 @@ BEGIN
 	mu.FIRST_NAME AS MODIFIER_FIRST_NAME,
 	mu.LAST_NAME AS MODIFIER_LAST_NAME,
 	mu.[LOGIN] AS MODIFIER_LOGIN, '
-	
+
 	SET @select_block = @select_block + '	CAST(( ' + CHAR(13)
 	IF (@use_custom_selection = 1)
 		BEGIN
@@ -33408,49 +33408,49 @@ BEGIN
 			SET @select_block = @select_block + '		0 ' + CHAR(13)
 		END
 	SET @select_block = @select_block + '	) AS bit) AS is_selected ' + CHAR(13)
-	
+
 	IF (LEN(@dynamic_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@dynamic_select_block, LEN(@dynamic_select_block) - 1)
 		END
-	
+
 	IF (LEN(@related_select_block) > 0)
 		BEGIN
 			SET @select_block = @select_block + ', ' + LEFT(@related_select_block, LEN(@related_select_block) - 1)
 		END
-	
+
 	SET @from_block = ''
 	SET @from_block = @from_block + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
 	IF @use_security = 1
-	BEGIN	
+	BEGIN
 		SET @from_block = @from_block + 'INNER JOIN ' + CHAR(13)
 		SET @from_block = @from_block + '	(<$_security_insert_$>) AS pi ' + CHAR(13)
 		SET @from_block = @from_block + 'ON ' + CHAR(13)
 		SET @from_block = @from_block + '	c.content_item_id = pi.content_item_id ' + CHAR(13)
 	END
-	
+
 	-- FULL TEXT SEARCH
 	declare @use_full_text bit, @full_text_sql nvarchar(max)
 	set @use_full_text = 0
 	IF ((@fts_is_incorrect_query IS NULL OR @fts_is_incorrect_query = 0) AND
 		LEN(@fts_attribute_ids) > 0 AND LEN(@fts_query_string) > 0)
 		set @use_full_text = 1
-		
+
 	IF @use_full_text = 1
 	BEGIN
 		CREATE TABLE #ft_temp (content_item_id int primary key)
-		
+
 		SET @from_block = @from_block + 'INNER JOIN #ft_temp as qp_fts' + CHAR(13)
 		SET @from_block = @from_block + 'ON c.content_item_id = qp_fts.content_item_id ' + CHAR(13)
-		
+
 		SET @full_text_sql = ' insert into #ft_temp select distinct CI.CONTENT_ITEM_ID from content_item CI, content_data CD ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'where CI.CONTENT_ITEM_ID = CD.CONTENT_ITEM_ID ' + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CI.CONTENT_ID = ' + CAST(@content_id AS varchar)  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and CD.ATTRIBUTE_ID in (' + @fts_attribute_ids + ') '  + CHAR(13)
 		SET @full_text_sql = @full_text_sql + 'and contains(CD.*, ''' + @fts_query_string + ''')'  + CHAR(13)
 		exec sp_executesql @full_text_sql
-	END	
-	-----	
+	END
+	-----
 	-- Поиск по Many To Many и Many To One --
 	declare @link_filter nvarchar(max)
 	set @link_filter = ''
@@ -33458,38 +33458,38 @@ BEGIN
 		BEGIN
 			declare @m2m_condition as varchar(max)
 			set @m2m_condition = ''
-			
+
 			declare @link_params_table table (id numeric, ids varchar(max), m2m bit, [isnull] bit)
-			
+
 			insert into @link_params_table
 			select T.f.value('./@lid', 'numeric'), T.f.value('./@iids', 'varchar(max)'), T.f.value('./@m2m', 'bit'), T.f.value('./@isnull', 'bit')
 			from @link_params.nodes('/link/f') as T(f)
-			
+
 			while exists (select * from @link_params_table)
 			begin
-				declare @currentLinkId numeric, 
-						@currentIds varchar(max), 
-						@isCurrentM2M bit, 
+				declare @currentLinkId numeric,
+						@currentIds varchar(max),
+						@isCurrentM2M bit,
 						@isNull bit,
 						@currentLinkText nvarchar(20)
-				
+
 				select @currentLinkId = id, @currentIds = ids, @isCurrentM2M = m2m, @isNull = [isnull] from @link_params_table
 				set @currentLinkText = cast(@currentLinkId as nvarchar(20))
-				
-				declare @currentFieldName nvarchar(255), 
+
+				declare @currentFieldName nvarchar(255),
 						@currentContentId numeric
 				select @currentContentId = content_id, @currentFieldName = attribute_name from CONTENT_ATTRIBUTE where ATTRIBUTE_ID = @currentLinkId
-				
+
 				if @isNull = 0 begin
 					if @isCurrentM2M = 1 begin
 						SET @from_block = @from_block + ' INNER JOIN ( ' +
 							' select distinct item_id from dbo.item_link_united where link_id = ' + @currentLinkText + ' AND linked_item_id in (' + @currentIds + ') ' +
 							') as link_' + @currentLinkText + '  ON c.content_item_id = link_' + @currentLinkText + '.item_id ' + CHAR(13)
-					end	
+					end
 					else begin
-						
-						SET @from_block = @from_block + ' INNER JOIN ( ' + 
-							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 
+
+						SET @from_block = @from_block + ' INNER JOIN ( ' +
+							' select distinct [' + @currentFieldName + '] as item_id from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where CONTENT_ITEM_ID in (' + @currentIds + ') ' +
 							' ) as back_' + @currentLinkText + '  ON c.content_item_id = back_' + @currentLinkText + '.item_id ' + CHAR(13)
 					end
@@ -33498,17 +33498,17 @@ BEGIN
 					if @isCurrentM2M = 1 begin
 						set @link_filter = ' NOT EXISTS (select item_id from dbo.item_link_united where c.content_item_id = item_id and link_id = '  + @currentLinkText + ') '
 					end
-					else begin						
-						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' + 							
+					else begin
+						set @link_filter = 'NOT EXISTS (select * from content_' + cast(@currentContentId as nvarchar(20)) + '_united ' +
 							' where c.content_item_id = [' + @currentFieldName + ']) '
-					end					
+					end
 				end
-				
+
 				delete from @link_params_table where id = @currentLinkId and m2m = @isCurrentM2M
-			end						
+			end
 		END
 	-----
-		
+
 	IF (@use_custom_selection = 1)
 		BEGIN
 			SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
@@ -33522,7 +33522,7 @@ BEGIN
 			SET @from_block = @from_block + '	) AS cis ' + CHAR(13)
 			SET @from_block = @from_block + 'ON ' + CHAR(13)
 			SET @from_block = @from_block + '	c.content_item_id = cis.content_item_id ' + CHAR(13)
-		END	
+		END
 	SET @from_block = @from_block + 'LEFT OUTER JOIN ' + CHAR(13)
 	SET @from_block = @from_block + '	content_item AS ci with(nolock) ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
@@ -33547,21 +33547,21 @@ BEGIN
 	SET @from_block = @from_block + '	USERS AS mu ' + CHAR(13)
 	SET @from_block = @from_block + 'ON ' + CHAR(13)
 	SET @from_block = @from_block + '	mu.USER_ID = ci.LAST_MODIFIED_BY ' + CHAR(13)
-	
+
 	IF (LEN(@related_from_block) > 0)
 		BEGIN
 			SET @from_block = @from_block + @related_from_block
 		END
-		
+
 	SET @where_block = @filter
-	
+
 	if LEN(@link_filter) > 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + @link_filter			
+		SET @where_block = @where_block + @link_filter
 	END
-	
+
 	IF (LEN(@order_by) > 0)
 		BEGIN
 			SET @order_by_block = @order_by
@@ -33573,14 +33573,14 @@ BEGIN
 			ELSE
 				SET @order_by_block = 'CONTENT_ITEM_ID DESC'
 		END
-	
+
 	select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
-	
+
 	if @fts_is_incorrect_query = 1 OR @parent_level = 0
 	BEGIN
 		IF (LEN(@where_block) > 0)
 			SET @where_block = @where_block + '	AND '
-		SET @where_block = @where_block + '1 = 0'		
+		SET @where_block = @where_block + '1 = 0'
 	END
 
 	EXEC qp_get_paged_data
@@ -33592,7 +33592,7 @@ BEGIN
 		@total_records = @total_records OUTPUT,
 		@start_row = @start_row,
 		@page_size = @page_size,
-	
+
 		@use_security = @use_security,
 		@user_id = @user_id,
 		@group_id = 0,
@@ -33601,10 +33601,10 @@ BEGIN
 		@entity_name = 'content_item',
 		@parent_entity_name = 'content',
 		@parent_entity_id = @content_id
-		
+
 	IF @use_full_text = 1
 		DROP TABLE #ft_temp
-		
+
 	SET NOCOUNT OFF
 END
 
@@ -33619,7 +33619,7 @@ PRINT '7.9.1.66 completed'
 
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.67
 -- Fixing Actions
@@ -33724,7 +33724,7 @@ delete from BACKEND_ACTION where CODE = 'cancel'
 
 exec qp_update_translations 'Failed Logins', 'Неудачные попытки входа'
 exec qp_update_translations 'User Sessions', 'Пользовательские сессии'
-exec qp_update_translations 'QP7: Button Trace', 'QP7: Трассировка кнопок' 
+exec qp_update_translations 'QP7: Button Trace', 'QP7: Трассировка кнопок'
 exec qp_update_translations 'QP7: Removed Entities', 'QP7: Удаленные сущности'
 
 exec qp_update_translations 'Custom Actions', 'Пользовательские действия'
@@ -33740,7 +33740,7 @@ update BACKEND_ACTION set NAME = 'Multiple Remove Custom Actions' where CODE = '
 
 delete from BACKEND_ACTION where CODE = 'copy_custom_action'
 
-exec qp_update_translations 'Update Custom Action', 'Обновление пользовательского действия' 
+exec qp_update_translations 'Update Custom Action', 'Обновление пользовательского действия'
 exec qp_update_translations 'Save Custom Action', 'Сохранение пользовательского действия'
 exec qp_update_translations 'Remove Custom Action', 'Удаление пользовательского действия'
 exec qp_update_translations 'New Custom Action', 'Новое пользовательское действие'
@@ -33773,7 +33773,7 @@ exec qp_update_translations 'Multiple Remove Workflow Permissions', 'Множе�
 exec qp_update_translations 'New Workflow Permission', 'Новое право доступа к Workflow'
 exec qp_update_translations 'Remove Workflow Permission', 'Удаление права доступа к Workflow'
 exec qp_update_translations 'Save Workflow Permission', 'Сохранение права доступа к Workflow'
-exec qp_update_translations 'Update Workflow Permission', 'Обновление права доступа к Workflow' 
+exec qp_update_translations 'Update Workflow Permission', 'Обновление права доступа к Workflow'
 
 update BACKEND_ACTION set NAME = 'Change Explicit Entity Type Permission', SHORT_NAME = 'Change Explicit Permission' where CODE = 'change_entity_type_permission'
 update BACKEND_ACTION set NAME = 'Entity Type Permissions List', SHORT_NAME = 'Entity Type Permissions' where CODE = 'list_entity_type_permission'
@@ -33818,7 +33818,7 @@ PRINT '7.9.1.67 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.1.68
 -- Missed translations
@@ -33836,7 +33836,7 @@ GO
 PRINT '7.9.1.68 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.69
 -- Fixing Actions (part 2)
@@ -33851,7 +33851,7 @@ exec qp_update_translations 'Do you really want to remove this permission?', 'В
 
 update backend_action set name = 'Visual Editor Plugins List', short_name = 'Visual Editor Plugins' where CODE = 'list_visual_editor_plugin'
 update ENTITY_TYPE set ACTION_PERMISSION_ENABLE = 1 where CODE = 'visual_editor_plugin'
-update BACKEND_ACTION set SHORT_NAME = 'Permissions' where CODE in 
+update BACKEND_ACTION set SHORT_NAME = 'Permissions' where CODE in
 (
 'list_site_permission',
 'list_content_permission',
@@ -34098,10 +34098,10 @@ PRINT '7.9.1.69 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.1.70
--- Fix: Convert Tab Access To Action permission 
+-- Fix: Convert Tab Access To Action permission
 -- **************************************
 exec qp_drop_existing 'qp_convert_tab_access_to_action_access', 'IsProcedure'
 GO
@@ -34113,24 +34113,24 @@ BEGIN
 		BEGIN TRAN
 
 		truncate TABLE ENTITY_TYPE_ACCESS
-		truncate TABLE [ACTION_ACCESS]		
+		truncate TABLE [ACTION_ACCESS]
 
-		CREATE TABLE #TABS_FULL_ACCESS 
+		CREATE TABLE #TABS_FULL_ACCESS
 		(
 			ID int identity,
-			TAB_ID int, 
-			PARENT_TAB_ID int, 
-			[LEVEL] int, 
-			[USER_ID] int, 
-			[GROUP_ID] int, 
+			TAB_ID int,
+			PARENT_TAB_ID int,
+			[LEVEL] int,
+			[USER_ID] int,
+			[GROUP_ID] int,
 			PERMISSION_LEVEL_ID int
 		);
 
 		CREATE TABLE #EXPAND_TABS_ACCESS
-		(	
-			TAB_ID int, 
-			[USER_ID] int, 
-			[GROUP_ID] int, 
+		(
+			TAB_ID int,
+			[USER_ID] int,
+			[GROUP_ID] int,
 			PERMISSION_LEVEL_ID int
 		);
 
@@ -34138,7 +34138,7 @@ BEGIN
 		(
 			select TAB_ID, PARENT_TAB_ID, 0 from TABS where PARENT_TAB_ID is null
 			union all
-			select T.TAB_ID, T.PARENT_TAB_ID, TR.[LEVEL] + 1 from TABS T 
+			select T.TAB_ID, T.PARENT_TAB_ID, TR.[LEVEL] + 1 from TABS T
 			join TAB_TREE TR ON T.PARENT_TAB_ID = TR.TAB_ID
 		)
 		insert into #TABS_FULL_ACCESS
@@ -34146,23 +34146,23 @@ BEGIN
 		from TAB_TREE TR
 		LEFT JOIN TAB_ACCESS TA ON TA.TAB_ID = TR.TAB_ID
 		order by TR.TAB_ID, TR.[LEVEL]
-				
+
 		declare @tmp_count int, @tmp_i int;
-		declare @TAB_ID int, 
-				@PARENT_TAB_ID int, 	
-				@USER_ID int, 
-				@GROUP_ID int, 
+		declare @TAB_ID int,
+				@PARENT_TAB_ID int,
+				@USER_ID int,
+				@GROUP_ID int,
 				@PERMISSION_LEVEL_ID int,
 				@DENY_PERMISSION_LEVEL_ID int;
-				
+
 		select @DENY_PERMISSION_LEVEL_ID = PERMISSION_LEVEL_ID from PERMISSION_LEVEL where PERMISSION_LEVEL = 0;
 		set @tmp_i = 1;
 		select @tmp_count = COUNT(*) from #TABS_FULL_ACCESS;
 
 		WHILE(@tmp_i <= @tmp_count) BEGIN
 			select @TAB_ID = TAB_ID, @PARENT_TAB_ID = PARENT_TAB_ID, @USER_ID = [USER_ID], @GROUP_ID = GROUP_ID, @PERMISSION_LEVEL_ID = PERMISSION_LEVEL_ID
-			from #TABS_FULL_ACCESS where ID = @tmp_i;	
-			
+			from #TABS_FULL_ACCESS where ID = @tmp_i;
+
 			IF @PERMISSION_LEVEL_ID is null
 			BEGIN
 				set @PARENT_TAB_ID = @TAB_ID;
@@ -34170,39 +34170,39 @@ BEGIN
 				while(1 = 1) BEGIN
 					IF NOT EXISTS(select * from #TABS_FULL_ACCESS where TAB_ID = @PARENT_TAB_ID)
 						BREAK;
-						
+
 					select @PARENT_TAB_ID = PARENT_TAB_ID, @PERMISSION_LEVEL_ID = PERMISSION_LEVEL_ID, @USER_ID = [USER_ID], @GROUP_ID = GROUP_ID
-					from #TABS_FULL_ACCESS 
+					from #TABS_FULL_ACCESS
 					where TAB_ID = @PARENT_TAB_ID;
 					if(@PERMISSION_LEVEL_ID is not null)
 						BREAK;
-				END;		
+				END;
 			END
 			IF @PERMISSION_LEVEL_ID is not null BEGIN
 				insert into #EXPAND_TABS_ACCESS(TAB_ID, [USER_ID], GROUP_ID, PERMISSION_LEVEL_ID)
-				values(@TAB_ID, @USER_ID, @GROUP_ID, @PERMISSION_LEVEL_ID);					
+				values(@TAB_ID, @USER_ID, @GROUP_ID, @PERMISSION_LEVEL_ID);
 			END
 			ELSE BEGIN
 				insert into #EXPAND_TABS_ACCESS(TAB_ID, [USER_ID], GROUP_ID, PERMISSION_LEVEL_ID)
 				select @TAB_ID, [USER_ID], null, @DENY_PERMISSION_LEVEL_ID from USERS where [USER_ID] <> 1;
-				
+
 				insert into #EXPAND_TABS_ACCESS(TAB_ID, [USER_ID], GROUP_ID, PERMISSION_LEVEL_ID)
 				select @TAB_ID, NULL, GROUP_ID, @DENY_PERMISSION_LEVEL_ID from USER_GROUP where GROUP_ID <> 1;
 			END
-			
+
 			set @tmp_i = @tmp_i + 1;
 		END;
-			
+
 		insert into ENTITY_TYPE_ACCESS(ENTITY_TYPE_ID, [USER_ID], [GROUP_ID], [PERMISSION_LEVEL_ID], CREATED, MODIFIED, LAST_MODIFIED_BY)
-			select ET.ID ENTITY_TYPE_ID, TA.[USER_ID], TA.[GROUP_ID], TA.PERMISSION_LEVEL_ID, GETDATE(), GETDATE(), 1 
+			select ET.ID ENTITY_TYPE_ID, TA.[USER_ID], TA.[GROUP_ID], TA.PERMISSION_LEVEL_ID, GETDATE(), GETDATE(), 1
 			from #EXPAND_TABS_ACCESS TA
-			JOIN ENTITY_TYPE ET ON ET.TAB_ID = TA.TAB_ID				
+			JOIN ENTITY_TYPE ET ON ET.TAB_ID = TA.TAB_ID
 
 		INSERT INTO [ACTION_ACCESS]([ACTION_ID],[USER_ID],[GROUP_ID],[PERMISSION_LEVEL_ID],[CREATED],[MODIFIED],[LAST_MODIFIED_BY])
-			select AC.ID AS [ACTION_ID], TA.[USER_ID], TA.GROUP_ID, TA.PERMISSION_LEVEL_ID, GETDATE(), GETDATE(), 1 
+			select AC.ID AS [ACTION_ID], TA.[USER_ID], TA.GROUP_ID, TA.PERMISSION_LEVEL_ID, GETDATE(), GETDATE(), 1
 			from BACKEND_ACTION AC
-			JOIN #EXPAND_TABS_ACCESS TA ON TA.TAB_ID = AC.TAB_ID		
-		
+			JOIN #EXPAND_TABS_ACCESS TA ON TA.TAB_ID = AC.TAB_ID
+
 		-- удалить то, что может быть унаследовано из ENTITY_TYPE_ACCESS без изменений
 		delete from ACTION_ACCESS
 		where ACTION_ACCESS_ID in
@@ -34211,26 +34211,26 @@ BEGIN
 			(
 				select ISNULL(AA.[USER_ID], -1) AS [USER_ID], ISNULL(AA.GROUP_ID, -1) AS GROUP_ID, AC.TAB_ID, AA.PERMISSION_LEVEL_ID, AC.ENTITY_TYPE_ID, AA.ACTION_ACCESS_ID
 				from ACTION_ACCESS AA
-				join BACKEND_ACTION AC ON AA.ACTION_ID = AC.ID						
+				join BACKEND_ACTION AC ON AA.ACTION_ID = AC.ID
 			) AS T1
-			JOIN 
+			JOIN
 			(
 				select ISNULL(EA.[USER_ID], -1) AS [USER_ID], ISNULL(EA.[GROUP_ID], -1) AS GROUP_ID, ET.TAB_ID, EA.PERMISSION_LEVEL_ID, EA.ENTITY_TYPE_ID
 				from ENTITY_TYPE_ACCESS EA
 				JOIN ENTITY_TYPE ET ON EA.ENTITY_TYPE_ID = ET.ID
-			) AS T2 ON T1.[USER_ID] = T2.[USER_ID] AND 
-					   T1.GROUP_ID = T2.GROUP_ID AND 
+			) AS T2 ON T1.[USER_ID] = T2.[USER_ID] AND
+					   T1.GROUP_ID = T2.GROUP_ID AND
 					   T1.TAB_ID = T2.TAB_ID AND
 					   T1.PERMISSION_LEVEL_ID = T2.PERMISSION_LEVEL_ID AND
-					   T1.ENTITY_TYPE_ID = T2.ENTITY_TYPE_ID					   			 
+					   T1.ENTITY_TYPE_ID = T2.ENTITY_TYPE_ID
 		)
-		
+
 		COMMIT TRAN
 	END TRY
-	BEGIN CATCH	
+	BEGIN CATCH
 		IF @@TRANCOUNT > 0
 			ROLLBACK TRANSACTION;
-			
+
 		DECLARE @ErrMsg nvarchar(4000), @ErrSeverity int;
 		SELECT @ErrMsg = ERROR_MESSAGE(), @ErrSeverity = ERROR_SEVERITY();
 		RAISERROR(@ErrMsg, @ErrSeverity, 1);
@@ -34250,7 +34250,7 @@ GO
 PRINT '7.9.1.70 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.0
 -- Release
@@ -34266,7 +34266,7 @@ PRINT '7.9.3.0 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.1
 -- VE Styles toolbars
@@ -34285,8 +34285,8 @@ values('Visual Editor Style Properties', 'Properties', 'edit_visual_editor_style
 
 
 update ENTITY_TYPE
-set 
-	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_visual_editor_style'), 
+set
+	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_visual_editor_style'),
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_visual_editor_style'),
 	[DISABLED] = 0
 where CODE = 'visual_editor_style'
@@ -34368,11 +34368,11 @@ insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 values(dbo.qp_context_menu_id('visual_editor_style'), dbo.qp_action_id('edit_visual_editor_style'), 'Properties', 3, 'properties.gif')
 GO
 
-update ENTITY_TYPE 
-set 	
+update ENTITY_TYPE
+set
 
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('visual_editor_style'), 
-	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('visual_editor_styles')	
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('visual_editor_style'),
+	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('visual_editor_styles')
 where CODE = 'visual_editor_style'
 
 INSERT INTO SYSTEM_INFO
@@ -34384,7 +34384,7 @@ GO
 PRINT '7.9.3.1 completed'
 GO
 
---< ************************************** 
+--< **************************************
 -- Kirill Zakirov
 -- version 7.9.3.2
 -- Statuses, workflows
@@ -34401,9 +34401,9 @@ values('New Workflow', 'new_workflow', dbo.qp_action_type_id('new'), dbo.qp_enti
 insert into BACKEND_ACTION(NAME, SHORT_NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE)
 values('Workflow Properties', 'Properties', 'edit_workflow', dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('workflow'), '~/Workflow/Properties/', 1)
 
-update ENTITY_TYPE 
-set 
-	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_workflow'), 
+update ENTITY_TYPE
+set
+	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_workflow'),
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_workflow')
 where code = 'workflow'
 GO
@@ -34435,9 +34435,9 @@ values('New Status Type', 'new_status_type', dbo.qp_action_type_id('new'), dbo.q
 insert into BACKEND_ACTION(NAME, SHORT_NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE)
 values('Status Type Properties', 'Properties', 'edit_status_type', dbo.qp_action_type_id('read'), dbo.qp_entity_type_id('status_type'), '~/StatusType/Properties/', 1)
 
-update ENTITY_TYPE 
-set 
-	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_status_type'), 
+update ENTITY_TYPE
+set
+	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_status_type'),
 	DEFAULT_ACTION_ID = dbo.qp_action_id('edit_status_type')
 where code = 'status_type'
 
@@ -34451,7 +34451,7 @@ PRINT '7.9.3.2 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.3
 -- STatuses actions, toolbars etc
@@ -34469,7 +34469,7 @@ values('Remove Status Type', 'remove_status_type', dbo.qp_action_type_id('remove
 
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, IS_INTERFACE)
 values('Save Status Type', 'save_status_type', dbo.qp_action_type_id('save'), dbo.qp_entity_type_id('status_type'), 0)
- 
+
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, IS_INTERFACE)
 values('Refresh Status Types', 'refresh_status_types', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('status_type'), 1)
 GO
@@ -34482,7 +34482,7 @@ insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_
 values (dbo.qp_action_id('edit_status_type'), dbo.qp_action_id('remove_status_type'), 'Remove', 'delete.gif', NULL, 2, 1)
 
 insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
-values (dbo.qp_action_id('edit_status_type'), dbo.qp_action_id('refresh_status_type'), 'Refresh', 'refresh.gif', NULL, 3, 1)  
+values (dbo.qp_action_id('edit_status_type'), dbo.qp_action_id('refresh_status_type'), 'Refresh', 'refresh.gif', NULL, 3, 1)
 
 --
 
@@ -34538,15 +34538,15 @@ insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 values(dbo.qp_context_menu_id('status_type'), dbo.qp_action_id('edit_status_type'), 'Properties', 3, 'properties.gif')
 GO
 
-update ENTITY_TYPE 
-set 	
+update ENTITY_TYPE
+set
 
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('status_type'), 
-	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('status_types')	
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('status_type'),
+	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('status_types')
 where CODE = 'status_type'
 
 
-  
+
 
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
@@ -34557,7 +34557,7 @@ GO
 PRINT '7.9.3.3 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.4
 -- Workflow actions, toolbars etc
@@ -34575,7 +34575,7 @@ values('Remove Workflow', 'remove_workflow', dbo.qp_action_type_id('remove'), db
 
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, IS_INTERFACE)
 values('Save Workflow', 'save_workflow', dbo.qp_action_type_id('save'), dbo.qp_entity_type_id('workflow'), 0)
- 
+
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, IS_INTERFACE)
 values('Refresh Workflows', 'refresh_workflows', dbo.qp_action_type_id('refresh'), dbo.qp_entity_type_id('workflow'), 1)
 GO
@@ -34588,7 +34588,7 @@ insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_
 values (dbo.qp_action_id('edit_workflow'), dbo.qp_action_id('remove_workflow'), 'Remove', 'delete.gif', NULL, 2, 1)
 
 insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_DISABLED, [ORDER], IS_COMMAND)
-values (dbo.qp_action_id('edit_workflow'), dbo.qp_action_id('refresh_workflow'), 'Refresh', 'refresh.gif', NULL, 3, 1)  
+values (dbo.qp_action_id('edit_workflow'), dbo.qp_action_id('refresh_workflow'), 'Refresh', 'refresh.gif', NULL, 3, 1)
 
 --
 
@@ -34643,17 +34643,17 @@ insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 values(dbo.qp_context_menu_id('workflow'), dbo.qp_action_id('edit_workflow'), 'Properties', 3, 'properties.gif')
 GO
 
-update ENTITY_TYPE 
+update ENTITY_TYPE
 set
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('workflow'), 
-	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('workflows')	
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('workflow'),
+	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('workflows')
 where CODE = 'workflow'
 
-update STATUS_TYPE  
- Set BUILT_IN = 1  
+update STATUS_TYPE
+ Set BUILT_IN = 1
  where STATUS_TYPE_NAME = 'None' or STATUS_TYPE_NAME = 'Created' or STATUS_TYPE_NAME = 'Approved' or STATUS_TYPE_NAME = 'Published'
  GO
-  
+
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
 VALUES
@@ -34663,7 +34663,7 @@ GO
 PRINT '7.9.3.4 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.5
 -- Tree for Virtual Contents
@@ -34700,7 +34700,7 @@ END
 GO
 
 ALTER PROCEDURE [dbo].[qp_get_articles_tree]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@article_id numeric(18,0) = NULL,
 	@permission_level numeric(18,0),
@@ -34716,17 +34716,17 @@ BEGIN
 	DECLARE @sql_result AS nvarchar(max)
 	DECLARE @use_security bit, @parent_level numeric
 
-		
+
 	SELECT TOP 1
 		@attribute_name = CA1.ATTRIBUTE_NAME,
 		@rel_attribute_name = CA2.ATTRIBUTE_NAME
 	FROM CONTENT_ATTRIBUTE CA1 INNER JOIN CONTENT_ATTRIBUTE CA2 ON CA1.RELATED_ATTRIBUTE_ID = CA2.ATTRIBUTE_ID
-	WHERE CA1.USE_FOR_TREE = 1 AND CA1.CONTENT_ID = @content_id 
+	WHERE CA1.USE_FOR_TREE = 1 AND CA1.CONTENT_ID = @content_id
 
 	IF (@@ROWCOUNT = 1)
 		BEGIN
 			DECLARE @title_field_name AS nvarchar(255)
-			
+
 			SELECT TOP 1
 				@title_field_name = ATTRIBUTE_NAME
 			FROM
@@ -34739,8 +34739,8 @@ BEGIN
 			select @use_security = allow_items_permission from content with(nolock) where content_id = @content_id
 			select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
 			if @parent_level = 0
-				SET @filter = '1 = 0' 		
-		
+				SET @filter = '1 = 0'
+
 			if @use_security = 1
 				EXEC dbo.qp_GetPermittedItemsAsQuery
 					@user_id = @user_id,
@@ -34749,9 +34749,9 @@ BEGIN
 					@end_level = 4,
 					@entity_name = 'content_item',
 					@parent_entity_name = 'content',
-					@parent_entity_id = @content_id,				
+					@parent_entity_id = @content_id,
 					@SQLOut = @security_sql OUTPUT
-				
+
 			SET @sql_result = ''
 			SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 			IF (@count_only = 0)
@@ -34806,7 +34806,7 @@ BEGIN
 				END
 			SET @sql_result = @sql_result + 'FROM ' + CHAR(13)
 			SET @sql_result = @sql_result + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
-			
+
 			if @use_security = 1
 			BEGIN
 				SET @sql_result = @sql_result + 'INNER JOIN ' + CHAR(13)
@@ -34830,7 +34830,7 @@ BEGIN
 					SET @sql_result = @sql_result + 'ON ' + CHAR(13)
 					SET @sql_result = @sql_result + '	mu.USER_ID = c.LAST_MODIFIED_BY ' + CHAR(13)
 				END
-			SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)			
+			SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)
 			IF (@article_id IS NOT NULL)
 				BEGIN
 					SET @sql_result = @sql_result + '	c.[' + @attribute_name + '] = ' + CAST(@article_id AS varchar) + ' ' + CHAR(13)
@@ -34847,18 +34847,18 @@ BEGIN
 				SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 				SET @sql_result = @sql_result + ' c.CONTENT_ITEM_ID ASC '
 			END
-			
+
 			IF (@count_only = 0)
 				BEGIN
 					EXEC(@sql_result)
-					
-					SET @total_records = @@ROWCOUNT 
+
+					SET @total_records = @@ROWCOUNT
 				END
 			ELSE
 				BEGIN
-					EXEC sp_executesql 
-						@sql_result, 
-						N'@record_count int OUTPUT', 
+					EXEC sp_executesql
+						@sql_result,
+						N'@record_count int OUTPUT',
 						@record_count = @total_records OUTPUT
 				END
 		END
@@ -34895,7 +34895,7 @@ PRINT '7.9.3.5 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.3.6
 -- Addin columns to CONTENT_ATTRIBUTE
@@ -34905,7 +34905,7 @@ if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'AGGR
 ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] ADD AGGREGATED BIT NOT NULL CONSTRAINT DF_ATTRIBUTE_AGGREGATED DEFAULT 0
 GO
 
-if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'CLASSIFIER_ATTRIBUTE_ID' and TABLE_NAME = 'CONTENT_ATTRIBUTE') 
+if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'CLASSIFIER_ATTRIBUTE_ID' and TABLE_NAME = 'CONTENT_ATTRIBUTE')
 BEGIN
 	ALTER TABLE [dbo].[CONTENT_ATTRIBUTE] ADD CLASSIFIER_ATTRIBUTE_ID numeric(18,0) NULL
 
@@ -34933,7 +34933,7 @@ GO
 PRINT '7.9.3.6 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.7
 -- Default VE Styles
@@ -35019,7 +35019,7 @@ GO
 PRINT '7.9.3.7 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.8
 -- Backend action for workflow`s contents import
@@ -35038,17 +35038,17 @@ PRINT '7.9.3.8 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.9
 -- Fix children count for backend tree menu
 -- **************************************
 
 ALTER procedure [dbo].[qp_get_node]
-	@user_id numeric = 0, 
-	@code nvarchar(50) = null, 
-	@id bigint = 0, 
-	@parent_id bigint = null, 
+	@user_id numeric = 0,
+	@code nvarchar(50) = null,
+	@id bigint = 0,
+	@parent_id bigint = null,
 	@is_folder bit = 0
 as
 begin
@@ -35068,7 +35068,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @local_id bigint, @local_name nvarchar(50)
 	declare @local_code nvarchar(50), @local_parent_id bigint
@@ -35079,58 +35079,58 @@ begin
 	declare @id_str nvarchar(10)
 	declare @default_action_id int, @folder_default_action_id int
 	declare @context_menu_id int, @folder_context_menu_id int
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	declare @is_admin bit
 	set @is_admin = 0;
 	IF EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1
 		set @is_admin = 1;
-	
+
 	declare @entitySecQuery nvarchar(max);
 	EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-		@user_id = @user_id,	
-		@SQLOut = @entitySecQuery OUTPUT	
+		@user_id = @user_id,
+		@SQLOut = @entitySecQuery OUTPUT
 	CREATE TABLE #sectmp
 	(
 		PERMISSION_LEVEL int,
 		ENTITY_TYPE_ID int
-	);				
+	);
 	set @entitySecQuery = N'insert into #sectmp (PERMISSION_LEVEL, ENTITY_TYPE_ID) ' + @entitySecQuery;
 	exec sp_executesql @entitySecQuery;
-	
+
 	select
 		@local_id = ID,
 		@local_name = NAME,
 		@local_code = CODE,
 		@local_parent_id = PARENT_ID,
-		@source = source, 
-		@source_sp = source_sp, 
-		@id_field = id_field, 
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@source = source,
+		@source_sp = source_sp,
+		@id_field = id_field,
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = default_action_id,
-		@folder_default_action_id = FOLDER_DEFAULT_ACTION_ID, 
+		@folder_default_action_id = FOLDER_DEFAULT_ACTION_ID,
 		@context_menu_id = CONTEXT_MENU_ID,
 		@folder_context_menu_id = FOLDER_CONTEXT_MENU_ID
-	from 
+	from
 		ENTITY_TYPE
 		JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 	where
 		ID = dbo.qp_entity_type_id(@code)
 		and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0)
 		and disabled = 0
-	
+
 	if (@@ROWCOUNT > 0)
 	begin
 		set @id_str = CAST(@id as nvarchar(10))
-		
+
 		if (@icon_field is null)
 		begin
 			set @icon_field = 'NULL'
@@ -35139,14 +35139,14 @@ begin
 		begin
 			set @icon_modifier_field = 'NULL'
 		end
-	
+
 		if (@is_folder = 1 OR @local_parent_id IS NULL)
 		begin
 			if (@local_parent_id IS NOT NULL)
 			begin
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select 
-					@local_id, 
+				select
+					@local_id,
 					@parent_id,
 					dbo.qp_translate(dbo.qp_pluralize(@local_name), @language_id),
 					@local_code,
@@ -35158,8 +35158,8 @@ begin
 			else
 			begin
 			insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-			select 
-				@local_id, 
+			select
+				@local_id,
 				@parent_id,
 				dbo.qp_translate(dbo.qp_pluralize(@local_name), @language_id),
 				@local_code,
@@ -35176,16 +35176,16 @@ begin
 				declare @sql nvarchar(800), @select nvarchar(800), @where nvarchar(800)
 
 				set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-				set @where = @id_field + ' = ' + @id_str 
-				
+				set @where = @id_field + ' = ' + @id_str
+
 				set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where
-				
+
 				insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
-				exec sp_executesql @sql		
-				
-				--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-				update 
-					@result 
+				exec sp_executesql @sql
+
+				--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+				update
+					@result
 				set
 					PARENT_ID = @parent_id,
 					CODE = @local_code,
@@ -35193,21 +35193,21 @@ begin
 					ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
 					DEFAULT_ACTION_ID = @default_action_id,
 					CONTEXT_MENU_ID = @context_menu_id
-			end	
+			end
 		end
-		
+
 		declare @children_count int
-		
-		exec dbo.qp_expand 
-			@user_id, 
-			@local_code, 
-			@local_id, 
+
+		exec dbo.qp_expand
+			@user_id,
+			@local_code,
+			@local_id,
 			@is_folder,
 			1,
 			@count = @children_count output
 
 		if @children_count = 0
-			update 
+			update
 				@result
 			set
 				has_children = 0
@@ -35217,8 +35217,8 @@ begin
 			set
 				has_children = 1
 	end
-	
-	SELECT 
+
+	SELECT
 		TREE_NODE.ID,
 		TREE_NODE.CODE,
 		CASE WHEN (TREE_NODE.CODE != 'site') THEN
@@ -35226,20 +35226,20 @@ begin
 		ELSE
 			NULL
 		END AS PARENT_ID,
-		dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-		TREE_NODE.IS_FOLDER, 
-		TREE_NODE.ICON, 
-		TREE_NODE.TITLE, 
+		dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+		TREE_NODE.IS_FOLDER,
+		TREE_NODE.ICON,
+		TREE_NODE.TITLE,
 		dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 		ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-		dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+		dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 		TREE_NODE.HAS_CHILDREN
 	FROM
 		@result AS TREE_NODE
 	LEFT OUTER JOIN
 		BACKEND_ACTION
 	ON
-		TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+		TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 	LEFT OUTER JOIN
 		ACTION_TYPE
 	ON
@@ -35257,14 +35257,14 @@ GO
 PRINT '7.9.3.9 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.10
 -- Fix children count for article tree
 -- **************************************
 
 ALTER PROCEDURE [dbo].[qp_get_articles_tree]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@content_id numeric(18,0),
 	@article_id numeric(18,0) = NULL,
 	@permission_level numeric(18,0),
@@ -35282,17 +35282,17 @@ BEGIN
 	DECLARE @replaced_filter nvarchar(max)
 	set @replaced_filter = REPLACE(@filter, 'c.', 'cnt.')
 
-		
+
 	SELECT TOP 1
 		@attribute_name = CA1.ATTRIBUTE_NAME,
 		@rel_attribute_name = CA2.ATTRIBUTE_NAME
 	FROM CONTENT_ATTRIBUTE CA1 INNER JOIN CONTENT_ATTRIBUTE CA2 ON CA1.RELATED_ATTRIBUTE_ID = CA2.ATTRIBUTE_ID
-	WHERE CA1.USE_FOR_TREE = 1 AND CA1.CONTENT_ID = @content_id 
+	WHERE CA1.USE_FOR_TREE = 1 AND CA1.CONTENT_ID = @content_id
 
 	IF (@@ROWCOUNT = 1)
 		BEGIN
 			DECLARE @title_field_name AS nvarchar(255)
-			
+
 			SELECT TOP 1
 				@title_field_name = ATTRIBUTE_NAME
 			FROM
@@ -35305,8 +35305,8 @@ BEGIN
 			select @use_security = allow_items_permission from content with(nolock) where content_id = @content_id
 			select @parent_level = dbo.qp_entity_access_level(@user_id, 'content', @content_id)
 			if @parent_level = 0
-				SET @filter = '1 = 0' 		
-		
+				SET @filter = '1 = 0'
+
 			if @use_security = 1
 				EXEC dbo.qp_GetPermittedItemsAsQuery
 					@user_id = @user_id,
@@ -35315,9 +35315,9 @@ BEGIN
 					@end_level = 4,
 					@entity_name = 'content_item',
 					@parent_entity_name = 'content',
-					@parent_entity_id = @content_id,				
+					@parent_entity_id = @content_id,
 					@SQLOut = @security_sql OUTPUT
-				
+
 			SET @sql_result = ''
 			SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 			IF (@count_only = 0)
@@ -35372,7 +35372,7 @@ BEGIN
 				END
 			SET @sql_result = @sql_result + 'FROM ' + CHAR(13)
 			SET @sql_result = @sql_result + '	content_' + CAST(@content_id AS varchar)  + '_united AS c ' + CHAR(13)
-			
+
 			if @use_security = 1
 			BEGIN
 				SET @sql_result = @sql_result + 'INNER JOIN ' + CHAR(13)
@@ -35396,7 +35396,7 @@ BEGIN
 					SET @sql_result = @sql_result + 'ON ' + CHAR(13)
 					SET @sql_result = @sql_result + '	mu.USER_ID = c.LAST_MODIFIED_BY ' + CHAR(13)
 				END
-			SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)			
+			SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)
 			IF (@article_id IS NOT NULL)
 				BEGIN
 					SET @sql_result = @sql_result + '	c.[' + @attribute_name + '] = ' + CAST(@article_id AS varchar) + ' ' + CHAR(13)
@@ -35413,20 +35413,20 @@ BEGIN
 				SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 				SET @sql_result = @sql_result + ' c.CONTENT_ITEM_ID ASC '
 			END
-			
+
 			PRINT @sql_result
-			
+
 			IF (@count_only = 0)
 				BEGIN
 					EXEC(@sql_result)
-					
-					SET @total_records = @@ROWCOUNT 
+
+					SET @total_records = @@ROWCOUNT
 				END
 			ELSE
 				BEGIN
-					EXEC sp_executesql 
-						@sql_result, 
-						N'@record_count int OUTPUT', 
+					EXEC sp_executesql
+						@sql_result,
+						N'@record_count int OUTPUT',
 						@record_count = @total_records OUTPUT
 				END
 		END
@@ -35447,7 +35447,7 @@ GO
 PRINT '7.9.3.10 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.11
 -- Backend tree optimization
@@ -35473,7 +35473,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @source nvarchar(50), @id_field nvarchar(50), @title_field nvarchar(50)
 	declare @parent_id_field nvarchar(50), @icon_field nvarchar(50)
@@ -35483,39 +35483,39 @@ begin
 	declare @id_str nvarchar(10), @parent_id bigint
 	declare @default_action_id int, @context_menu_id int
 	declare @is_admin bit
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	set @is_admin = 0;
 	IF EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1
 		set @is_admin = 1;
-	
-	select 
+
+	select
 		@source = source,
 		@source_sp = source_sp,
 		@id_field = id_field,
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = default_action_id,
-		@context_menu_id = CONTEXT_MENU_ID 
-	from 
-		ENTITY_TYPE 
+		@context_menu_id = CONTEXT_MENU_ID
+	from
+		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 
 	set @id_str = CAST(@id as nvarchar(10))
-	
+
 	if @icon_field is null
 		set @icon_field = 'NULL'
 	if @icon_modifier_field is null
-		set @icon_modifier_field = 'NULL'	
-	
+		set @icon_modifier_field = 'NULL'
+
 
 	if @is_folder = 1 or @recurring_id_field is not null
 	begin
@@ -35524,18 +35524,18 @@ begin
 		if @has_item_nodes = 1
 		begin
 			set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-			
-			
+
+
 			-- process recurring --
 			if @recurring_id_field is not null
 			begin
-				if @is_folder = 1 
+				if @is_folder = 1
 				begin
 					if @parent_id_field is null
 						set @where = @recurring_id_field + ' is null '
 					else
 						set @where = @parent_id_field + ' = ' + @id_str + ' and ' + @recurring_id_field + ' is null '
-				end  
+				end
 				else
 					set @where = @recurring_id_field + ' = ' + @id_str
 			end
@@ -35545,15 +35545,15 @@ begin
 			end
 			else
 				set @where = '1 = 1'
-			
+
 			if @order_field is null
 				set @order = @title_field
 			else
-				set @order = @order_field  
-			
+				set @order = @order_field
+
 		end
-		
-		
+
+
 		if @source_sp is null
 			set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where + ' order by ' + @order
 		else
@@ -35565,74 +35565,74 @@ begin
 				if @is_folder = 1
 					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=0'
 				else
-					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str			
-				
-			
+					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str
+
+
 		end
-		
+
 		insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
 		exec sp_executesql @sql
-		
+
 		--PRINT @sql;
-		
-		
+
+
 		if @count_only = 0
 		begin
-			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-			update 
+			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+			update
 				@result
-			set 
-				PARENT_ID = @id, 
-				CODE = @code, 
-				IS_FOLDER = 0, 
-				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER), 
-				DEFAULT_ACTION_ID = @default_action_id, 
+			set
+				PARENT_ID = @id,
+				CODE = @code,
+				IS_FOLDER = 0,
+				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
+				DEFAULT_ACTION_ID = @default_action_id,
 				CONTEXT_MENU_ID = @context_menu_id
 		end
 		else
-			select @count = COUNT(ID) from @result	
+			select @count = COUNT(ID) from @result
 	end
 	else begin
 		declare @entitySecQuery nvarchar(max);
 		EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-			@user_id = @user_id,	
+			@user_id = @user_id,
 			@SQLOut = @entitySecQuery OUTPUT
-		
+
 		CREATE TABLE #sectmp
 		(
 			PERMISSION_LEVEL int,
 			ENTITY_TYPE_ID int
-		);				
+		);
 		set @entitySecQuery = N'insert into #sectmp (PERMISSION_LEVEL, ENTITY_TYPE_ID) ' + @entitySecQuery;
 		exec sp_executesql @entitySecQuery;
-		
+
 		if @count_only = 0
 			if @code is not null
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select ID, @id, dbo.qp_translate(dbo.qp_pluralize(NAME), @language_id), CODE, 1, dbo.qp_get_icon(NULL, dbo.qp_pluralize(CODE), NULL), FOLDER_DEFAULT_ACTION_ID, FOLDER_CONTEXT_MENU_ID 
-				From ENTITY_TYPE 
+				select ID, @id, dbo.qp_translate(dbo.qp_pluralize(NAME), @language_id), CODE, 1, dbo.qp_get_icon(NULL, dbo.qp_pluralize(CODE), NULL), FOLDER_DEFAULT_ACTION_ID, FOLDER_CONTEXT_MENU_ID
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 				where PARENT_ID = dbo.qp_entity_type_id(@code) and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 order by [Order]
 			else
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), DEFAULT_ACTION_ID, CONTEXT_MENU_ID 
-				From ENTITY_TYPE 
+				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), DEFAULT_ACTION_ID, CONTEXT_MENU_ID
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 				where PARENT_ID is null and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 order by [Order]
 		else
 			if @code is not null
-				select @count = COUNT(ID) 
-				From ENTITY_TYPE 
+				select @count = COUNT(ID)
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
-				where PARENT_ID = dbo.qp_entity_type_id(@code) and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 	
+				where PARENT_ID = dbo.qp_entity_type_id(@code) and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0
 			else
-				select @count = COUNT(ID) 
-				From ENTITY_TYPE 
+				select @count = COUNT(ID)
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
-				where PARENT_ID is null and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 	
+				where PARENT_ID is null and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0
 
 	end
-	
+
 	if @count_only = 0
 	begin
 		declare @i numeric, @total numeric
@@ -35644,7 +35644,7 @@ begin
 		while @i <= @total
 		begin
 			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = Is_folder from @result where NUMBER = @i
-			
+
 			if @local_is_folder = 1
 				exec dbo.qp_expand @user_id, @local_code, @local_parent_id, 1, 1, @count = @children_count output
 			else
@@ -35658,32 +35658,32 @@ begin
 				update @result set has_children = 0 where NUMBER = @i
 			else
 				update @result set has_children = 1 where NUMBER = @i
-			
+
 			set @i = @i + 1
 		end
-		
-		select 
+
+		select
 			TREE_NODE.ID,
-			TREE_NODE.CODE, 			
+			TREE_NODE.CODE,
 			TREE_NODE.PARENT_ID as PARENT_ID,
-			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-			TREE_NODE.IS_FOLDER, 
-			TREE_NODE.ICON, 
-			TREE_NODE.TITLE, 
-			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE, 
+			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+			TREE_NODE.IS_FOLDER,
+			TREE_NODE.ICON,
+			TREE_NODE.TITLE,
+			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 			ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 			TREE_NODE.HAS_CHILDREN
 		from
 			@result AS TREE_NODE
 		left outer join
 			BACKEND_ACTION
 		on
-			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 		left outer join
 			ACTION_TYPE
 		on
-			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID	
+			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID
 	end
 end
 GO
@@ -35697,7 +35697,7 @@ GO
 PRINT '7.9.3.11 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.12
 -- Virtual Content fix
@@ -35716,24 +35716,24 @@ BEGIN
 		content_id numeric,
 		attribute_name nvarchar(255)
 	)
-	
+
 	insert into @relatedFields(content_id, attribute_name)
-	select ca.content_id, ca.attribute_name from content_attribute ca inner join content c on ca.content_id = c.content_id 
+	select ca.content_id, ca.attribute_name from content_attribute ca inner join content c on ca.content_id = c.content_id
 	where c.virtual_type = 0 and ca.attribute_type_id = 11 and related_attribute_id in (select attribute_id from content_attribute ca where ca.content_id = @baseContentId)
-	
+
 	declare @content_id numeric, @attribute_name nvarchar(255), @sql nvarchar(max)
 
 	declare @total numeric, @i numeric
 	select @total = count(id) from @relatedFields
 	set @i = 1
-	
+
 	while @i <= @total
 	begin
 		declare @result numeric
 		select @content_id = content_id, @attribute_name = attribute_name from @relatedFields where id = @i
-		set @sql = N'select @result = count(content_item_id) from content_' + cast(@content_id as nvarchar) + '_united where [' + @attribute_name + '] = @value' 
-		exec sp_executesql @sql, N'@result numeric output, @value numeric', @result = @result out, @value = @article_id	
- 		set @count = @count + @result 
+		set @sql = N'select @result = count(content_item_id) from content_' + cast(@content_id as nvarchar) + '_united where [' + @attribute_name + '] = @value'
+		exec sp_executesql @sql, N'@result numeric output, @value numeric', @result = @result out, @value = @article_id
+ 		set @count = @count + @result
 		set @i = @i + 1
 	end
 END
@@ -35749,17 +35749,17 @@ PRINT '7.9.3.12 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.13
 -- Fix children count for backend tree menu
 -- **************************************
 
 ALTER procedure [dbo].[qp_get_node]
-	@user_id numeric = 0, 
-	@code nvarchar(50) = null, 
-	@id bigint = 0, 
-	@parent_id bigint = null, 
+	@user_id numeric = 0,
+	@code nvarchar(50) = null,
+	@id bigint = 0,
+	@parent_id bigint = null,
 	@is_folder bit = 0
 as
 begin
@@ -35779,7 +35779,7 @@ begin
 		DEFAULT_ACTION_CODE nvarchar(50) null,
 		HAS_CHILDREN bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @local_id bigint, @local_name nvarchar(50)
 	declare @local_code nvarchar(50), @local_parent_id bigint
@@ -35790,58 +35790,58 @@ begin
 	declare @id_str nvarchar(10)
 	declare @default_action_id int, @folder_default_action_id int
 	declare @context_menu_id int, @folder_context_menu_id int
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	declare @is_admin bit
 	set @is_admin = 0;
 	IF EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1
 		set @is_admin = 1;
-	
+
 	declare @entitySecQuery nvarchar(max);
 	EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-		@user_id = @user_id,	
-		@SQLOut = @entitySecQuery OUTPUT	
+		@user_id = @user_id,
+		@SQLOut = @entitySecQuery OUTPUT
 	CREATE TABLE #sectmp
 	(
 		PERMISSION_LEVEL int,
 		ENTITY_TYPE_ID int
-	);				
+	);
 	set @entitySecQuery = N'insert into #sectmp (PERMISSION_LEVEL, ENTITY_TYPE_ID) ' + @entitySecQuery;
 	exec sp_executesql @entitySecQuery;
-	
+
 	select
 		@local_id = ID,
 		@local_name = NAME,
 		@local_code = CODE,
 		@local_parent_id = PARENT_ID,
-		@source = source, 
-		@source_sp = source_sp, 
-		@id_field = id_field, 
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@source = source,
+		@source_sp = source_sp,
+		@id_field = id_field,
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = default_action_id,
-		@folder_default_action_id = FOLDER_DEFAULT_ACTION_ID, 
+		@folder_default_action_id = FOLDER_DEFAULT_ACTION_ID,
 		@context_menu_id = CONTEXT_MENU_ID,
 		@folder_context_menu_id = FOLDER_CONTEXT_MENU_ID
-	from 
+	from
 		ENTITY_TYPE
 		JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 	where
 		ID = dbo.qp_entity_type_id(@code)
 		and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0)
 		and disabled = 0
-	
+
 	if (@@ROWCOUNT > 0)
 	begin
 		set @id_str = CAST(@id as nvarchar(10))
-		
+
 		if (@icon_field is null)
 		begin
 			set @icon_field = 'NULL'
@@ -35850,14 +35850,14 @@ begin
 		begin
 			set @icon_modifier_field = 'NULL'
 		end
-	
+
 		if (@is_folder = 1 OR @local_parent_id IS NULL)
 		begin
 			if (@local_parent_id IS NOT NULL)
 			begin
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select 
-					@local_id, 
+				select
+					@local_id,
 					@parent_id,
 					dbo.qp_translate(dbo.qp_pluralize(@local_name), @language_id),
 					@local_code,
@@ -35869,8 +35869,8 @@ begin
 			else
 			begin
 			insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-			select 
-				@local_id, 
+			select
+				@local_id,
 				@parent_id,
 				dbo.qp_translate(dbo.qp_pluralize(@local_name), @language_id),
 				@local_code,
@@ -35887,16 +35887,16 @@ begin
 				declare @sql nvarchar(800), @select nvarchar(800), @where nvarchar(800)
 
 				set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-				set @where = @id_field + ' = ' + @id_str 
-				
+				set @where = @id_field + ' = ' + @id_str
+
 				set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where
-				
+
 				insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
-				exec sp_executesql @sql		
-				
-				--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-				update 
-					@result 
+				exec sp_executesql @sql
+
+				--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+				update
+					@result
 				set
 					PARENT_ID = @parent_id,
 					CODE = @local_code,
@@ -35904,26 +35904,26 @@ begin
 					ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
 					DEFAULT_ACTION_ID = @default_action_id,
 					CONTEXT_MENU_ID = @context_menu_id
-			end	
+			end
 		end
-		
+
 		declare @children_count int
-		
+
 		if @is_folder = 1
 		begin
 			set @local_id = @parent_id
 		end
-		
-		exec dbo.qp_expand 
-			@user_id, 
-			@local_code, 
-			@local_id, 
+
+		exec dbo.qp_expand
+			@user_id,
+			@local_code,
+			@local_id,
 			@is_folder,
 			1,
 			@count = @children_count output
 
 		if @children_count = 0
-			update 
+			update
 				@result
 			set
 				has_children = 0
@@ -35933,8 +35933,8 @@ begin
 			set
 				has_children = 1
 	end
-	
-	SELECT 
+
+	SELECT
 		TREE_NODE.ID,
 		TREE_NODE.CODE,
 		CASE WHEN (TREE_NODE.CODE != 'site') THEN
@@ -35942,20 +35942,20 @@ begin
 		ELSE
 			NULL
 		END AS PARENT_ID,
-		dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-		TREE_NODE.IS_FOLDER, 
-		TREE_NODE.ICON, 
-		TREE_NODE.TITLE, 
+		dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+		TREE_NODE.IS_FOLDER,
+		TREE_NODE.ICON,
+		TREE_NODE.TITLE,
 		dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 		ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-		dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+		dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 		TREE_NODE.HAS_CHILDREN
 	FROM
 		@result AS TREE_NODE
 	LEFT OUTER JOIN
 		BACKEND_ACTION
 	ON
-		TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+		TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 	LEFT OUTER JOIN
 		ACTION_TYPE
 	ON
@@ -35973,7 +35973,7 @@ PRINT '7.9.3.13 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.14
 -- Multistep Rebuild Virtual Contents
@@ -35999,7 +35999,7 @@ GO
 PRINT '7.9.3.14 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.15
 -- Create Versions for Aggregated
@@ -36020,12 +36020,12 @@ AS
   FROM content AS c
   INNER JOIN content_item AS ci ON c.content_id = ci.content_id
   WHERE ci.content_item_id = @content_item_id
-IF @max_num_of_stored_versions <> 0 
+IF @max_num_of_stored_versions <> 0
 BEGIN
   DECLARE @item_version_count INT
   SELECT @item_version_count = COUNT(content_item_version_id) FROM content_item_version
-  WHERE content_item_id = @content_item_id 
-  IF @item_version_count >= @max_num_of_stored_versions 
+  WHERE content_item_id = @content_item_id
+  IF @item_version_count >= @max_num_of_stored_versions
   BEGIN
 	DECLARE @item_version_id NUMERIC
 	SELECT TOP 1 @item_version_id = content_item_version_id FROM content_item_version
@@ -36033,99 +36033,99 @@ BEGIN
 	DELETE item_to_item_version WHERE content_item_version_id = @item_version_id
 	DELETE content_item_version WHERE content_item_version_id = @item_version_id
   END
-  
+
   -- Create content item version
   IF @content_version_id IS NOT NULL
-    DELETE FROM content_item_version 
+    DELETE FROM content_item_version
     WHERE content_version_id = @content_version_id AND content_item_id = @content_item_id
   INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by)
   VALUES (@tm, 'backup', @content_version_id, @content_item_id, @uid)
   SET @content_item_version_id = @@IDENTITY
-  
+
   -- Get Extensions info
   declare @contentIds TABLE
   (
   	id numeric
   )
-  
+
   insert into @contentIds
-  select convert(numeric, DATA) as ids from content_data 
-  where CONTENT_ITEM_ID = @content_item_id 
+  select convert(numeric, DATA) as ids from content_data
+  where CONTENT_ITEM_ID = @content_item_id
   and DATA is not null
   and ATTRIBUTE_ID in (
   select attribute_id from CONTENT_ATTRIBUTE where content_id = @content_id and IS_CLASSIFIER = 1
   )
-  
+
   declare @extensions TABLE
   (
   	id numeric,
   	content_id numeric,
   	attribute_id numeric
   )
-  
+
   insert into @extensions
   select cd.content_item_id, ca.content_id, ca.ATTRIBUTE_ID from content_data cd inner join CONTENT_ATTRIBUTE ca on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
   where ca.aggregated = 1 and ca.CONTENT_ID in (select * from @contentIds) and cd.DATA = CAST(@content_item_id as nvarchar)
-  
+
   declare @main_ids TABLE
   (
 	id numeric,
 	content_id numeric
   )
-  
+
   insert into @main_ids
   select id, content_id from @extensions
-  
+
   insert into @main_ids
   values(@content_item_id, @content_id)
 
-  
+
   -- Store content item data
   INSERT INTO version_content_data (attribute_id, content_item_version_id, data, blob_data, created)
   SELECT attribute_id, @content_item_version_id, data, blob_data, @tm
   FROM content_data
   WHERE content_item_id in (select id from @main_ids)
-    
+
   -- Store Many-to-Many slice
   INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
-  SELECT @content_item_version_id, ca.attribute_id, linked_item_id 
+  SELECT @content_item_version_id, ca.attribute_id, linked_item_id
   FROM item_link_united AS il
   INNER JOIN content_attribute AS ca ON ca.link_id = il.link_id
   INNER JOIN content_item AS ci ON ci.content_id =  ca.content_id AND ci.content_item_id = il.item_id
   WHERE il.item_id in (select id from @main_ids)
-  
+
   -- Store Many-to-One data
   declare @many_to_ones table (id numeric, content_id numeric, content_item_id numeric, name nvarchar(255))
   insert into @many_to_ones (id, content_id, content_item_id, name)
-  select ca.attribute_id, rca.CONTENT_ID, i.id, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca 
+  select ca.attribute_id, rca.CONTENT_ID, i.id, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca
   inner join CONTENT_ATTRIBUTE rca on ca.BACK_RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID
   inner join @main_ids i on i.content_id = ca.CONTENT_ID
   where ca.CONTENT_ID IN (select content_id from @main_ids)
-  
+
   while exists(select * from @many_to_ones)
   begin
 	declare @currentFieldId numeric, @currentContentId numeric, @currentFieldName nvarchar(255), @currentArticleId numeric
 	select @currentFieldId = id, @currentContentId = content_id, @currentArticleId = content_item_id, @currentFieldName = name from @many_to_ones
-	
+
 	declare @ids table (id numeric)
 	insert into @ids
 	exec qp_get_m2o_ids @currentContentId, @currentFieldName, @currentArticleId
-	
+
 	SELECT @content_item_version_id, @currentFieldId, id from @ids
-	
+
 	INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
 	SELECT @content_item_version_id, @currentFieldId, id from @ids
-	
+
 	delete from @ids
-	
+
 	delete from @many_to_ones where id = @currentFieldId
   end
-  
+
   -- Write status history log
-  INSERT INTO content_item_status_history 
-    (content_item_id, user_id, description, created, content_item_version_id, 
+  INSERT INTO content_item_status_history
+    (content_item_id, user_id, description, created, content_item_version_id,
     system_status_type_id)
-  VALUES 
+  VALUES
     (@content_item_id, @uid, 'Record version backup has been created', @tm, @content_item_version_id,
     2)
 END
@@ -36142,7 +36142,7 @@ PRINT '7.9.3.15 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.16
 -- Getting versions for aggregated articles
@@ -36156,13 +36156,13 @@ declare @attrs table
 (
 	id numeric primary key identity(1,1),
 	name nvarchar(512)
-	
+
 )
 
-insert into @attrs(name) 
-select CASE c.CONTENT_ID WHEN @content_id THEN ca.ATTRIBUTE_NAME ELSE c.CONTENT_NAME + '.' + CA.ATTRIBUTE_NAME END 
-from content_attribute ca 
-inner join content c on ca.CONTENT_ID = c.CONTENT_ID 
+insert into @attrs(name)
+select CASE c.CONTENT_ID WHEN @content_id THEN ca.ATTRIBUTE_NAME ELSE c.CONTENT_NAME + '.' + CA.ATTRIBUTE_NAME END
+from content_attribute ca
+inner join content c on ca.CONTENT_ID = c.CONTENT_ID
 where ca.CONTENT_ID = @content_id or ca.CONTENT_ID in (
 	select content_id from CONTENT_ATTRIBUTE where AGGREGATED = 1 and RELATED_ATTRIBUTE_ID in (select ATTRIBUTE_ID from CONTENT_ATTRIBUTE where CONTENT_ID  = @content_id)
 )
@@ -36195,28 +36195,28 @@ begin
 declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @prefixed_fields nvarchar(max)
 declare @content_id numeric
 select @content_id = content_id from content_item ci where ci.CONTENT_ITEM_ID = @item_id
- 
+
 if @content_id is not null
 begin
 	select @fields = dbo.qp_get_content_field_list(@content_id, '')
 	select @prefixed_fields = dbo.qp_get_content_field_list(@content_id, 'pt.')
-	
-	
+
+
 	if @version_id = 0
 		set @version_sql = ''
 	else
 		set @version_sql = ' and vcd.CONTENT_ITEM_VERSION_ID= @version_id'
-	
-	
+
+
 	set @sql = N'select pt.content_item_id, pt.version_id, pt.created AS modified, pt.created_by as last_modified_by, ' + @prefixed_fields  + N' from
 	(
-	select civ.CONTENT_ITEM_ID, civ.CREATED, civ.CREATED_BY, vcd.CONTENT_ITEM_VERSION_ID as version_id, 
+	select civ.CONTENT_ITEM_ID, civ.CREATED, civ.CREATED_BY, vcd.CONTENT_ITEM_VERSION_ID as version_id,
 	CASE c.CONTENT_ID WHEN @content_id THEN CA.ATTRIBUTE_NAME ELSE c.CONTENT_NAME + ''.'' + ca.ATTRIBUTE_NAME END AS ATTRIBUTE_NAME,
 	dbo.qp_get_version_data(vcd.ATTRIBUTE_ID, vcd.CONTENT_ITEM_VERSION_ID) as data from CONTENT_ATTRIBUTE ca
 	left outer join VERSION_CONTENT_DATA vcd on ca.ATTRIBUTE_ID = vcd.ATTRIBUTE_ID
 	inner join CONTENT_ITEM_VERSION civ on vcd.CONTENT_ITEM_VERSION_ID = civ.CONTENT_ITEM_VERSION_ID
 	inner join CONTENT c on ca.CONTENT_ID = c.CONTENT_ID
-	where 
+	where
 	(
 		ca.CONTENT_ID = @content_id
 		OR
@@ -36248,14 +36248,14 @@ GO
 PRINT '7.9.3.16 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.3.17
 -- Contents for workflow multiple content picker bug fix
 -- **************************************
 
 UPDATE [dbo].[BACKEND_ACTION]
-   SET [TYPE_ID] = dbo.qp_action_type_id('multiple_select')      
+   SET [TYPE_ID] = dbo.qp_action_type_id('multiple_select')
       ,[CONTROLLER_ACTION_URL] = '~/Workflow/MultipleSelectForWorkflow/'
  WHERE CODE = 'multiple_select_contents_for_workflow'
 GO
@@ -36269,7 +36269,7 @@ GO
 PRINT '7.9.3.17 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.18
 -- Versions fixes and optimization
@@ -36277,12 +36277,12 @@ GO
 
 -- MODIFIED for versions
 
-if not exists (select * From information_schema.columns where table_name = 'content_item_version' and column_name = 'MODIFIED') 
+if not exists (select * From information_schema.columns where table_name = 'content_item_version' and column_name = 'MODIFIED')
 ALTER TABLE CONTENT_ITEM_VERSION
 ADD
   [MODIFIED] [datetime] NOT NULL CONSTRAINT [DF_CONTENT_ITEM_VERSION_MODIFIED] DEFAULT (getdate())
 GO
-  
+
 if not exists (select * From information_schema.columns where table_name = 'content_item_version' and column_name = 'LAST_MODIFIED_BY')
 ALTER TABLE CONTENT_ITEM_VERSION
 ADD
@@ -36302,35 +36302,35 @@ inner join cte civ1 on civ1.CONTENT_ITEM_VERSION_ID = base.CONTENT_ITEM_VERSION_
 left join cte civ2 on civ1.CONTENT_ITEM_ID = civ2.CONTENT_ITEM_ID AND civ1.cnt = civ2.cnt+1
 GO
 
-ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+ALTER TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
 BEGIN
-	
-	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id     
-         
-    UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id  
-    UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id 
-    
-    UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id  
+
+	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
+
+    UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id
+    UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id
+    UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id
+    UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id
+    UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id
+    UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id
+    UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id
+    UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id
+
+    UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id
 
     UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_SCHEDULE SET last_modified_by = 1 FROM CONTENT_ITEM_SCHEDULE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_VERSION SET created_by = 1 FROM CONTENT_ITEM_VERSION c inner join deleted d on c.created_by = d.user_id
 	UPDATE CONTENT_ITEM_VERSION SET last_modified_by = 1 FROM CONTENT_ITEM_VERSION c inner join deleted d on c.last_modified_by = d.user_id
-	
+
     UPDATE CONTENT_ATTRIBUTE SET last_modified_by = 1 FROM CONTENT_ATTRIBUTE c inner join deleted d on c.last_modified_by = d.user_id
 
     UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
-    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+    UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id
     UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
 
@@ -36341,10 +36341,10 @@ BEGIN
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
@@ -36353,17 +36353,17 @@ BEGIN
     UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
     UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
-    
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
     UPDATE DOC SET last_modified_by = 1 FROM DOC c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     UPDATE CUSTOM_ACTION SET LAST_MODIFIED_BY = 1 FROM CUSTOM_ACTION c INNER JOIN deleted d on c.LAST_MODIFIED_BY = d.[USER_ID]
-    
+
 	UPDATE NOTIFICATIONS SET FROM_BACKENDUSER_ID = 1 FROM NOTIFICATIONS c inner join deleted d on c.FROM_BACKENDUSER_ID = d.user_id
-	
+
 	UPDATE ENTITY_TYPE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE ACTION_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
-    
+
     delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
@@ -36383,12 +36383,12 @@ AS
   FROM content AS c
   INNER JOIN content_item AS ci ON c.content_id = ci.content_id
   WHERE ci.content_item_id = @content_item_id
-IF @max_num_of_stored_versions <> 0 
+IF @max_num_of_stored_versions <> 0
 BEGIN
   DECLARE @item_version_count INT
   SELECT @item_version_count = COUNT(content_item_version_id) FROM content_item_version
-  WHERE content_item_id = @content_item_id 
-  IF @item_version_count >= @max_num_of_stored_versions 
+  WHERE content_item_id = @content_item_id
+  IF @item_version_count >= @max_num_of_stored_versions
   BEGIN
 	DECLARE @item_version_id NUMERIC
 	SELECT TOP 1 @item_version_id = content_item_version_id FROM content_item_version
@@ -36396,112 +36396,112 @@ BEGIN
 	DELETE item_to_item_version WHERE content_item_version_id = @item_version_id
 	DELETE content_item_version WHERE content_item_version_id = @item_version_id
   END
-  
+
   -- Create content item version
   IF @content_version_id IS NOT NULL
-    DELETE FROM content_item_version 
+    DELETE FROM content_item_version
     WHERE content_version_id = @content_version_id AND content_item_id = @content_item_id
-  
+
   INSERT INTO content_item_version (version, version_label, content_version_id, content_item_id, created_by, modified, last_modified_by)
   SELECT @tm, 'backup', @content_version_id, content_item_id, @uid, modified, last_modified_by
   from content_item where CONTENT_ITEM_ID = @content_item_id
-  
+
   SET @content_item_version_id = @@IDENTITY
-  
+
   -- Get Extensions info
   declare @contentIds TABLE
   (
   	id numeric
   )
-  
+
   insert into @contentIds
-  select convert(numeric, DATA) as ids from content_data 
-  where CONTENT_ITEM_ID = @content_item_id 
+  select convert(numeric, DATA) as ids from content_data
+  where CONTENT_ITEM_ID = @content_item_id
   and DATA is not null
   and ATTRIBUTE_ID in (
   select attribute_id from CONTENT_ATTRIBUTE where content_id = @content_id and IS_CLASSIFIER = 1
   )
-  
+
   declare @aggregates TABLE (content_id numeric, attribute_name nvarchar(255))
   insert into @aggregates
   select ca.content_id, ca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca where ca.aggregated = 1 and ca.CONTENT_ID in (select * from @contentIds)
-  
+
   declare @extensions TABLE (id numeric, content_id numeric)
   declare @currentContentId numeric, @currentFieldName nvarchar(255), @sql nvarchar(1024), @resultId numeric
-  
+
   while exists(select * from @aggregates)
   begin
 
 	select @currentContentId = content_id, @currentFieldName = attribute_name from @aggregates
-	
+
 	set @sql = 'select @resultId = content_item_id from content_' + CAST(@currentContentId as nvarchar(255)) + '_united where [' + @currentFieldName + '] = @content_item_id'
 	exec sp_executesql @sql, N'@content_item_id numeric, @resultId numeric output', @content_item_id = @content_item_id, @resultId = @resultId output
-	
+
 	insert into @extensions
 	values (@resultId, @currentContentId)
-	
+
 	delete from @aggregates where content_id = @currentContentId
-  end 
-  
+  end
+
   declare @main_ids TABLE
   (
 	id numeric,
 	content_id numeric
   )
-  
+
   insert into @main_ids
   select id, content_id from @extensions
-  
+
   insert into @main_ids
   values(@content_item_id, @content_id)
 
-  
+
   -- Store content item data
   INSERT INTO version_content_data (attribute_id, content_item_version_id, data, blob_data, created)
   SELECT attribute_id, @content_item_version_id, data, blob_data, @tm
   FROM content_data
   WHERE content_item_id in (select id from @main_ids)
-    
+
   -- Store Many-to-Many slice
   INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
-  SELECT @content_item_version_id, ca.attribute_id, linked_item_id 
+  SELECT @content_item_version_id, ca.attribute_id, linked_item_id
   FROM item_link_united AS il
   INNER JOIN content_attribute AS ca ON ca.link_id = il.link_id
   INNER JOIN content_item AS ci ON ci.content_id =  ca.content_id AND ci.content_item_id = il.item_id
   WHERE il.item_id in (select id from @main_ids)
-  
+
   -- Store Many-to-One data
   declare @many_to_ones table (id numeric, content_id numeric, content_item_id numeric, name nvarchar(255))
   insert into @many_to_ones (id, content_id, content_item_id, name)
-  select ca.attribute_id, rca.CONTENT_ID, i.id, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca 
+  select ca.attribute_id, rca.CONTENT_ID, i.id, rca.ATTRIBUTE_NAME from CONTENT_ATTRIBUTE ca
   inner join CONTENT_ATTRIBUTE rca on ca.BACK_RELATED_ATTRIBUTE_ID = rca.ATTRIBUTE_ID
   inner join @main_ids i on i.content_id = ca.CONTENT_ID
   where ca.CONTENT_ID IN (select content_id from @main_ids)
-  
+
   while exists(select * from @many_to_ones)
   begin
 	declare @currentFieldId numeric, @currentArticleId numeric
 	select @currentFieldId = id, @currentContentId = content_id, @currentArticleId = content_item_id, @currentFieldName = name from @many_to_ones
-	
+
 	declare @ids table (id numeric)
 	insert into @ids
 	exec qp_get_m2o_ids @currentContentId, @currentFieldName, @currentArticleId
-	
+
 	SELECT @content_item_version_id, @currentFieldId, id from @ids
-	
+
 	INSERT INTO item_to_item_version (content_item_version_id, attribute_id, linked_item_id)
 	SELECT @content_item_version_id, @currentFieldId, id from @ids
-	
+
 	delete from @ids
-	
+
 	delete from @many_to_ones where id = @currentFieldId
   end
-  
+
   -- Write status history log
-  INSERT INTO content_item_status_history 
-    (content_item_id, user_id, description, created, content_item_version_id, 
+  INSERT INTO content_item_status_history
+    (content_item_id, user_id, description, created, content_item_version_id,
     system_status_type_id)
-  VALUES 
+  VALUES
     (@content_item_id, @uid, 'Record version backup has been created', @tm, @content_item_version_id,
     2)
 END
@@ -36510,7 +36510,7 @@ GO
 exec qp_drop_existing 'qp_clear_versions_for_field', 'IsProcedure'
 GO
 
-CREATE procedure [dbo].[qp_clear_versions_for_field] 
+CREATE procedure [dbo].[qp_clear_versions_for_field]
 @attribute_id numeric
 as
 BEGIN
@@ -36518,7 +36518,7 @@ delete from VERSION_CONTENT_DATA where ATTRIBUTE_ID = @attribute_id
 
 delete from item_to_item_version where attribute_id = @attribute_id
 end
-go 
+go
 
 exec qp_drop_existing 'qp_get_content_field_list', 'IsScalarFunction'
 GO
@@ -36527,25 +36527,25 @@ GO
 ALTER TRIGGER [dbo].[tiu_populate_content_data] ON [dbo].[CONTENT_ITEM] FOR INSERT, UPDATE AS
 BEGIN
 	IF NOT
-	(	
+	(
 		EXISTS(select content_item_id from deleted)
 		AND
 		(UPDATE(not_for_replication) OR UPDATE(locked_by) OR UPDATE(splitted))
-		
+
 	)
 	insert into content_data
 		(content_item_id, attribute_id, not_for_replication)
 		select i.content_item_id, ca.attribute_id, i.not_for_replication
-		from inserted i inner join content_attribute ca on i.content_id = ca.content_id 
+		from inserted i inner join content_attribute ca on i.content_id = ca.content_id
 		where ca.attribute_id not in (select cd.attribute_id from content_data cd where cd.content_item_id = i.content_item_id)
 END
 GO
 
 ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
 	declare @content_item_id numeric, @content_id numeric, @virtual_type numeric
-	declare @char_content_item_id nvarchar(10), @char_content_id nvarchar(10) 
+	declare @char_content_item_id nvarchar(10), @char_content_id nvarchar(10)
 	declare @sql nvarchar(1000), @table_name nvarchar(25), @item_exists bit
-	declare @i numeric, @count numeric 
+	declare @i numeric, @count numeric
 
 	declare @ci table (
 		id numeric identity(1,1) primary key,
@@ -36553,7 +36553,7 @@ ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGI
 		content_item_id numeric,
 		virtual_type numeric
 	)
-	
+
 	declare @ca table (
 		content_id numeric,
 		attribute_id numeric
@@ -36562,51 +36562,51 @@ ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGI
 	/* Collect affected items */
 	insert into @ci (content_id, content_item_id, virtual_type)
 	select d.content_id, d.content_item_id, c.virtual_type from deleted d inner join content c
-	on d.content_id = c.content_id 
+	on d.content_id = c.content_id
 
 	/* Collect relations to affected contents */
 	insert into @ca(content_id, attribute_id)
-		select ca2.content_id, ca1.attribute_id from content_attribute ca1 
-		inner join content_attribute ca2 on ca1.related_attribute_id = ca2.attribute_id 
-		where ca2.content_id in (select distinct content_id from @ci) and ca1.attribute_type_id = 11	
+		select ca2.content_id, ca1.attribute_id from content_attribute ca1
+		inner join content_attribute ca2 on ca1.related_attribute_id = ca2.attribute_id
+		where ca2.content_id in (select distinct content_id from @ci) and ca1.attribute_type_id = 11
 
 	set @i = 1
 	select @count = count(id) from @ci
 
 	while @i < @count + 1
 	begin
-		select @content_id = content_id, @content_item_id = content_item_id, 
+		select @content_id = content_id, @content_item_id = content_item_id,
 			@virtual_type = virtual_type from @ci where id = @i
-		
+
 		set @char_content_item_id = convert(nvarchar, @content_item_id)
 		set @char_content_id = convert(nvarchar, @content_id)
 
 		/* Drop relations to current item */
 		if exists(select attribute_id from @ca where content_id = @content_id)
 		begin
-			UPDATE content_attribute SET default_value=null 
-				WHERE attribute_id IN (select attribute_id from @ca where content_id = @content_id) 
+			UPDATE content_attribute SET default_value=null
+				WHERE attribute_id IN (select attribute_id from @ca where content_id = @content_id)
 				AND default_value = @char_content_item_id
-		
-			UPDATE content_data SET data = NULL, blob_data = NULL 
+
+			UPDATE content_data SET data = NULL, blob_data = NULL
 				WHERE attribute_id IN (select attribute_id from @ca where content_id = @content_id)
 				AND data = @char_content_item_id
-				
+
 			DELETE from VERSION_CONTENT_DATA
 				where ATTRIBUTE_ID in (select attribute_id from @ca where content_id = @content_id)
-				AND data = @char_content_item_id	
-		end 		
+				AND data = @char_content_item_id
+		end
 		/* Drop items in user tables */
 		if @virtual_type = 0
 		begin
-			set @table_name = 'content_' + @char_content_id 
+			set @table_name = 'content_' + @char_content_id
 			exec qp_get_delete_item_sql @table_name, @content_item_id, @sql = @sql out
 			exec sp_executesql @sql
-   		
+
 			set @table_name = @table_name + '_ASYNC'
 			exec qp_item_exists @table_name, @content_item_id, @item_exists = @item_exists out
 			if @item_exists = 1
-			begin	
+			begin
 				exec qp_get_delete_item_sql @table_name, @content_item_id, @sql = @sql out
 				exec sp_executesql @sql
 			end
@@ -36616,12 +36616,12 @@ ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGI
 END
 GO
 
-ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE 
-AS 
+ALTER  TRIGGER [dbo].[tu_update_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR UPDATE
+AS
 BEGIN
-if not update(attribute_order) and 
+if not update(attribute_order) and
 		(
-			update(attribute_name) or update(attribute_type_id) 
+			update(attribute_name) or update(attribute_type_id)
 			or update(attribute_size) or update(index_flag)
 		)
 	begin
@@ -36634,31 +36634,31 @@ if not update(attribute_order) and
 		declare @new_attribute_type_id numeric, @new_type_name nvarchar(255), @new_database_type nvarchar(255)
 		declare @related_content_id numeric, @new_related_content_id numeric
 		declare @link_id numeric, @new_link_id numeric
-		
+
 		declare @base_table_name nvarchar(30), @table_name nvarchar(30)
-	
+
 		declare @i numeric, @count numeric, @preserve_index bit
-	
+
 		declare @ca table (
 			id numeric identity(1,1) primary key,
-			attribute_id numeric, 
-			attribute_name nvarchar(255), 
+			attribute_id numeric,
+			attribute_name nvarchar(255),
 			attribute_size numeric,
 			indexed numeric,
-			required numeric, 
-			attribute_type_id numeric, 
-			type_name nvarchar(255), 
+			required numeric,
+			attribute_type_id numeric,
+			type_name nvarchar(255),
 			database_type nvarchar(255),
 			content_id numeric,
 			related_content_id numeric,
 			link_id numeric
 		)
-	
+
 	/* Collect affected items */
 		insert into @ca (attribute_id, attribute_name, attribute_size, indexed, required, attribute_type_id, type_name, database_type, content_id, related_content_id, link_id)
-			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id, 
+			select d.attribute_id, d.attribute_name, d.attribute_size, d.index_flag, d.required, d.attribute_type_id, at.type_name, at.database_type, d.content_id,
 			isnull(ca1.content_id, 0), isnull(d.link_id, 0)
-			from deleted d 
+			from deleted d
 			inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
 			inner join content c on d.content_id = c.content_id
 			left join CONTENT_ATTRIBUTE ca1 on d.RELATED_ATTRIBUTE_ID = ca1.ATTRIBUTE_ID
@@ -36670,30 +36670,30 @@ if not update(attribute_order) and
 		while @i < @count + 1
 		begin
 			select @attribute_id = attribute_id, @attribute_name = attribute_name, @attribute_size = attribute_size,
-				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id, 
+				@indexed = indexed, @required = required, @attribute_type_id = attribute_type_id,
 				@type_name = type_name, @database_type = database_type, @content_id = content_id,
-				@related_content_id = related_content_id, @link_id = link_id 
+				@related_content_id = related_content_id, @link_id = link_id
 				from @ca where id = @i
 
 			select @new_attribute_name = ca.attribute_name, @new_attribute_size = ca.attribute_size,
-				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id, 
+				@new_indexed = ca.index_flag, @new_required = ca.required, @new_attribute_type_id = ca.attribute_type_id,
 				@new_type_name = at.type_name, @new_database_type = at.database_type,
 				@new_related_content_id = isnull(ca1.content_id, 0), @new_link_id = isnull(ca.link_id, 0)
-				from content_attribute ca 
+				from content_attribute ca
 				inner join attribute_type at on ca.attribute_type_id = at.attribute_type_id
 				left join CONTENT_ATTRIBUTE ca1 on ca.RELATED_ATTRIBUTE_ID = ca1.ATTRIBUTE_ID
 				where ca.attribute_id = @attribute_id
 
-				set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
+				set @base_table_name = 'content_' + convert(nvarchar, @content_id)
 				set @table_name = @base_table_name + '_ASYNC'
 
 				if @indexed = 1 and @new_indexed = 1
 					set @preserve_index = 1
-				else 
+				else
 					set @preserve_index = 0
-					
-				if @attribute_type_id <> @new_attribute_type_id 
-					or @link_id <> @new_link_id 
+
+				if @attribute_type_id <> @new_attribute_type_id
+					or @link_id <> @new_link_id
 					or @related_content_id <> @new_related_content_id
 					or (@attribute_size > @new_attribute_size and @attribute_type_id = 1)
 				begin
@@ -36710,20 +36710,20 @@ if not update(attribute_order) and
 				begin
 
 					if @database_type = 'ntext' and @new_database_type <> 'ntext'
-						exec qp_copy_blob_data_to_data @attribute_id				
+						exec qp_copy_blob_data_to_data @attribute_id
 					else if @database_type <> 'ntext' and @new_database_type = 'ntext'
-						exec qp_copy_data_to_blob_data @attribute_id	
+						exec qp_copy_data_to_blob_data @attribute_id
 
 					exec qp_recreate_column @base_table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_recreate_column @table_name, @attribute_id, @attribute_name, @new_attribute_name, @type_name, @new_type_name, @new_database_type, @new_attribute_size, @preserve_index
 					exec qp_content_united_view_recreate @content_id
 					exec qp_content_frontend_views_recreate @content_id
-				end 
+				end
 				else begin
 					if @attribute_name <> @new_attribute_name
 					begin
 						exec qp_rename_column @base_table_name, @attribute_name, @new_attribute_name, @preserve_index
-						exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index 
+						exec qp_rename_column @table_name, @attribute_name, @new_attribute_name, @preserve_index
 						exec qp_content_united_view_recreate @content_id
 						exec qp_content_frontend_views_recreate @content_id
 					end
@@ -36743,7 +36743,7 @@ END
 GO
 
 IF  NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[item_link_async]') AND name = N'IX_ITEM_LINK_ASYNC_ITEM_ID')
-CREATE NONCLUSTERED INDEX [IX_ITEM_LINK_ASYNC_ITEM_ID] ON [dbo].[item_link_async] 
+CREATE NONCLUSTERED INDEX [IX_ITEM_LINK_ASYNC_ITEM_ID] ON [dbo].[item_link_async]
 (
 	[item_id] ASC
 )
@@ -36756,7 +36756,7 @@ as
 begin
 
 declare @sql nvarchar(max), @fields nvarchar(max), @prefixed_fields nvarchar(max)
- 
+
 if @content_id is not null
 begin
 	declare @attributes table
@@ -36765,10 +36765,10 @@ begin
 	)
 	insert into @attributes
 	select attribute_name from CONTENT_ATTRIBUTE where CONTENT_ID = @content_id
-	
+
 	SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
 	SELECT @prefixed_fields = COALESCE(@prefixed_fields + ', ', '') + 'pt.[' + name + ']' FROM @attributes
-	
+
 	set @sql = N'select ' + @prefixed_fields  + N' from
 	(
 	select ca.ATTRIBUTE_NAME, CASE WHEN ca.attribute_type_id in (9, 10) THEN convert(nvarchar(max), ca.DEFAULT_BLOB_VALUE) ELSE ca.DEFAULT_VALUE END as data from CONTENT_ATTRIBUTE ca
@@ -36777,7 +36777,7 @@ begin
 	(
 	MAX(src.data)
 	FOR src.ATTRIBUTE_NAME IN (' + @fields +  N')
-	) AS pt 
+	) AS pt
 	'
 	print @sql
 	exec sp_executesql @sql, N'@content_id numeric', @content_id = @content_id
@@ -36796,7 +36796,7 @@ begin
 declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @prefixed_fields nvarchar(max)
 declare @content_id numeric
 select @content_id = content_id from content_item ci where ci.CONTENT_ITEM_ID = @item_id
- 
+
 if @content_id is not null
 begin
 	declare @attributes table
@@ -36805,13 +36805,13 @@ begin
 	)
 	insert into @attributes
 	select attribute_name from CONTENT_ATTRIBUTE where CONTENT_ID = @content_id
-	
+
 	SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
 
 	set @sql = N'select * from
 	(
-	select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME, 
-	case WHEN ATTRIBUTE_TYPE_ID IN (9, 10) THEN cast (cd.blob_data as nvarchar(max)) ELSE dbo.qp_correct_data(cd.data, ca.attribute_type_id, ca.attribute_size, ca.default_value) END as data 
+	select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME,
+	case WHEN ATTRIBUTE_TYPE_ID IN (9, 10) THEN cast (cd.blob_data as nvarchar(max)) ELSE dbo.qp_correct_data(cd.data, ca.attribute_type_id, ca.attribute_size, ca.default_value) END as data
 	from CONTENT_ATTRIBUTE ca
 	left outer join CONTENT_DATA cd on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
 	inner join CONTENT_ITEM ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
@@ -36840,29 +36840,29 @@ begin
 declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @update_fields nvarchar(max), @prefixed_fields nvarchar(max), @table_name nvarchar(50)
 declare @content_id numeric, @splitted bit
 select @content_id = content_id, @splitted = SPLITTED from content_item ci where ci.CONTENT_ITEM_ID = @item_id
- 
+
 if @content_id is not null
 begin
-	
+
 	set @table_name = 'content_' + CAST(@content_id as nvarchar)
 	if (@splitted = 1)
 		set @table_name = @table_name + '_async'
-		
+
 	declare @attributes table
 	(
 		name nvarchar(255)
 	)
 	insert into @attributes
 	select attribute_name from CONTENT_ATTRIBUTE where CONTENT_ID = @content_id
-	
+
 	SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
-	
+
 	SELECT @update_fields = COALESCE(@update_fields + ', ', '') + 'base.[' + name + '] = pt.[' + name + ']' FROM @attributes
-		
+
 	set @sql = N'update base set ' + @update_fields + ' from ' + @table_name + ' base inner join
 	(
-	select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME, 
-	case WHEN ATTRIBUTE_TYPE_ID IN (9, 10) THEN cast (cd.blob_data as nvarchar(max)) ELSE dbo.qp_correct_data(cd.data, ca.attribute_type_id, ca.attribute_size, ca.default_value) END as data 
+	select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME,
+	case WHEN ATTRIBUTE_TYPE_ID IN (9, 10) THEN cast (cd.blob_data as nvarchar(max)) ELSE dbo.qp_correct_data(cd.data, ca.attribute_type_id, ca.attribute_size, ca.default_value) END as data
 	from CONTENT_ATTRIBUTE ca
 	left outer join CONTENT_DATA cd on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
 	inner join CONTENT_ITEM ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
@@ -36891,51 +36891,51 @@ begin
 declare @sql nvarchar(max), @version_sql nvarchar(100), @fields nvarchar(max), @prefixed_fields nvarchar(max)
 declare @content_id numeric
 select @content_id = content_id from content_item ci where ci.CONTENT_ITEM_ID = @item_id
- 
+
 if @content_id is not null
 begin
-	
+
 	declare @attributes table
 	(
 		name nvarchar(255)
 	)
-	
+
 	declare @main_ids table
 	(
 		id numeric
 	)
-	
+
 	insert into @main_ids
 	select content_id from CONTENT_ATTRIBUTE where AGGREGATED = 1 and RELATED_ATTRIBUTE_ID in (select ATTRIBUTE_ID from CONTENT_ATTRIBUTE where CONTENT_ID  = @content_id)
-	
+
 	insert into @main_ids
 	values(@content_id)
-	
-	
-	insert into @attributes(name) 
-	select CASE c.CONTENT_ID WHEN @content_id THEN ca.ATTRIBUTE_NAME ELSE c.CONTENT_NAME + '.' + CA.ATTRIBUTE_NAME END 
-	from content_attribute ca 
-	inner join content c on ca.CONTENT_ID = c.CONTENT_ID 
+
+
+	insert into @attributes(name)
+	select CASE c.CONTENT_ID WHEN @content_id THEN ca.ATTRIBUTE_NAME ELSE c.CONTENT_NAME + '.' + CA.ATTRIBUTE_NAME END
+	from content_attribute ca
+	inner join content c on ca.CONTENT_ID = c.CONTENT_ID
 	where ca.CONTENT_ID in (select id from @main_ids)
 	order by C.CONTENT_ID, CA.attribute_order
-	
+
 	SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
 	SELECT @prefixed_fields = COALESCE(@prefixed_fields + ', ', '') + 'pt.[' + name + ']' FROM @attributes
-	
+
 	if @version_id = 0
 		set @version_sql = ''
 	else
 		set @version_sql = ' and vcd.CONTENT_ITEM_VERSION_ID= @version_id'
-		
-		
+
+
 	declare @ids nvarchar(max)
 	select @ids = coalesce(@ids + ', ', '') + cast(id as nvarchar(10)) from @main_ids
-	
+
 	set @sql = N'select pt.content_item_id, pt.version_id, pt.created, pt.created_by, pt.modified, pt.last_modified_by, ' + @prefixed_fields  + N' from
 	(
-	select civ.CONTENT_ITEM_ID, civ.CREATED, civ.CREATED_BY, civ.MODIFIED, civ.LAST_MODIFIED_BY, vcd.CONTENT_ITEM_VERSION_ID as version_id, 
+	select civ.CONTENT_ITEM_ID, civ.CREATED, civ.CREATED_BY, civ.MODIFIED, civ.LAST_MODIFIED_BY, vcd.CONTENT_ITEM_VERSION_ID as version_id,
 	case ca.CONTENT_ID when @content_id THEN ca.ATTRIBUTE_NAME ELSE c.CONTENT_NAME + ''.'' + ca.ATTRIBUTE_NAME END AS ATTRIBUTE_NAME,
-	dbo.qp_get_version_data(vcd.ATTRIBUTE_ID, vcd.CONTENT_ITEM_VERSION_ID) as data 
+	dbo.qp_get_version_data(vcd.ATTRIBUTE_ID, vcd.CONTENT_ITEM_VERSION_ID) as data
 	from CONTENT_ATTRIBUTE ca
 	INNER JOIN CONTENT c on ca.CONTENT_ID = c.CONTENT_ID
 	left outer join VERSION_CONTENT_DATA vcd on ca.ATTRIBUTE_ID = vcd.ATTRIBUTE_ID
@@ -36955,7 +36955,7 @@ end
 GO
 
 
-ALTER PROCEDURE [dbo].[qp_replicate] 
+ALTER PROCEDURE [dbo].[qp_replicate]
 @content_item_id numeric
 AS
 BEGIN
@@ -36965,58 +36965,58 @@ BEGIN
 	declare @table_name nvarchar(50), @async_table_name nvarchar(50)
 
 	declare @attribute_name nvarchar(255), @attribute_type_id numeric, @attribute_id numeric, @attribute_size numeric, @default_value nvarchar(255)
-	
-	declare @content_id numeric, @virtual_type numeric 
+
+	declare @content_id numeric, @virtual_type numeric
 	declare @workflow_id numeric, @is_async numeric, @is_target_table_async bit
-	
-	declare @status_type_id numeric, @visible numeric, @archive numeric 
+
+	declare @status_type_id numeric, @visible numeric, @archive numeric
 	declare @last_modified_by numeric, @created datetime, @modified datetime
 
 	declare @item_exists bit
-	
+
 	declare @i numeric, @count numeric
 	declare @end nvarchar(2)
 	set @end = ';' + char(13)
 
 	/* Replicate content_item */
-			
-	select 
-		@status_type_id = ci.status_type_id, @visible = ci.visible, @archive = ci.archive,
-		@last_modified_by = ci.last_modified_by, @created = ci.created, @modified = ci.modified, 
-		@content_id = c.content_id, @workflow_id = ciw.workflow_id, @is_async = ciw.is_async 
-		from content_item ci with(nolock) 
-		inner join content c with(nolock) on ci.content_id = c.content_id
-		left outer join content_item_workflow ciw with(nolock) on ci.content_item_id = ciw.content_item_id 
-		where ci.content_item_id = @content_item_id
-	
 
-	exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out	
-	
+	select
+		@status_type_id = ci.status_type_id, @visible = ci.visible, @archive = ci.archive,
+		@last_modified_by = ci.last_modified_by, @created = ci.created, @modified = ci.modified,
+		@content_id = c.content_id, @workflow_id = ciw.workflow_id, @is_async = ciw.is_async
+		from content_item ci with(nolock)
+		inner join content c with(nolock) on ci.content_id = c.content_id
+		left outer join content_item_workflow ciw with(nolock) on ci.content_item_id = ciw.content_item_id
+		where ci.content_item_id = @content_item_id
+
+
+	exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out
+
 	exec qp_item_exists @table_name, @content_item_id, @item_exists = @item_exists out
-	
+
 	if @item_exists = 0 begin
-		exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql_piece out, @created = @created, @modified = @modified 
+		exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql_piece out, @created = @created, @modified = @modified
 		set @sql = @sql_piece + @end
 	end
 	else begin
 		exec qp_get_update_item_sql @table_name, @content_item_id, @modified, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql_piece out
 		set @sql = @sql_piece + @end
 	end
-	
+
 	if @is_target_table_async = 0
 	begin
 		set @async_table_name = 'content_' + convert(nvarchar, @content_id) + '_ASYNC'
 		exec qp_get_delete_item_sql @async_table_name, @content_item_id, @sql = @sql_piece out
 		set @sql = @sql + @sql_piece + @end
-	end 
+	end
 
 	print @sql
 	exec sp_executesql @sql
-	
+
 	/* Replicate content_data */
-	
+
 	exec qp_update_with_content_data_pivot @content_item_id
-	
+
 	update content_item with(rowlock) set not_for_replication = 0 where content_item_id = @content_item_id
 END
 GO
@@ -37026,8 +37026,8 @@ AS
 BEGIN
 	if update(not_for_replication)
 	begin
-		update base set base.not_for_replication = i.not_for_replication 
-		from content_data base inner join inserted i on i.content_item_id = base.CONTENT_ITEM_ID 
+		update base set base.not_for_replication = i.not_for_replication
+		from content_data base inner join inserted i on i.content_item_id = base.CONTENT_ITEM_ID
 	end
 END
 GO
@@ -37040,11 +37040,11 @@ begin
 		declare @content_id numeric , @content_item_id numeric, @last_modified_by numeric, @modified datetime, @created datetime, @status_type_id numeric, @visible numeric, @archive numeric
 		declare @char_content_id nvarchar(10), @char_content_item_id nvarchar(10)
 		declare @sql nvarchar(2000)
-		declare @async_string varchar(20), @table_name varchar(25), @is_target_table_async bit 
+		declare @async_string varchar(20), @table_name varchar(25), @is_target_table_async bit
 		declare @async_id numeric, @item_exists bit, @not_for_replication bit
-		declare @workflow_id numeric, @is_async NUMERIC	
+		declare @workflow_id numeric, @is_async NUMERIC
 		declare @i numeric, @count numeric
-		
+
 		DECLARE @ci table (
 			id numeric identity(1,1) primary key,
 			content_item_id numeric,
@@ -37053,7 +37053,7 @@ begin
 			is_async numeric,
 			not_for_replication bit
 		)
-					
+
 		insert into @ci(content_item_id, content_id, workflow_id, is_async, not_for_replication)
 			select i.content_item_id, i.content_id, ciw.workflow_id, ciw.is_async, i.not_for_replication
 			FROM inserted AS i
@@ -37065,29 +37065,29 @@ begin
 		set @i = 1
 		while @i < @count + 1
 		begin
-			select 
-				@content_item_id = content_item_id, @content_id = content_id, 
+			select
+				@content_item_id = content_item_id, @content_id = content_id,
 				@workflow_id = workflow_id, @is_async = is_async, @not_for_replication = not_for_replication
 				from @ci where id = @i
-				
+
 			exec qp_define_target_table @content_item_id, @content_id, @workflow_id, @is_async, @is_target_table_async = @is_target_table_async out, @table_name = @table_name out
-			
+
 			update content_item set splitted = @is_target_table_async where content_item_id = @content_item_id
-			
+
 			if @not_for_replication = 0 and not update(not_for_replication)
-			begin 
-				
-				select @modified = modified, @created = created, @status_type_id = status_type_id, 
+			begin
+
+				select @modified = modified, @created = created, @status_type_id = status_type_id,
 				@archive = archive, @visible = visible, @last_modified_by = last_modified_by
 				from content_item with(nolock) where content_item_id = @content_item_id
-				
+
 				set @char_content_item_id = convert(nvarchar, @content_item_id)
 				set @char_content_id = convert(nvarchar, @content_id)
-				
+
 				exec qp_item_exists @table_name, @content_item_id, @item_exists = @item_exists out
 				if @item_exists = 0
 				begin
-					exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified 
+					exec qp_get_insert_item_sql @table_name, @content_item_id, @last_modified_by, @status_type_id, @visible, @archive, @sql = @sql out, @created = @created, @modified = @modified
 					print @sql
 					exec sp_executesql @sql
 				end
@@ -37102,17 +37102,17 @@ begin
 					set @table_name = 'content_' + @char_content_id
 					exec qp_get_update_flags_sql @table_name, @content_item_id, @visible, @archive, @sql = @sql out
 					print @sql
-					exec sp_executesql @sql   
+					exec sp_executesql @sql
 				end
-				
+
 				if @is_target_table_async = 0
 				begin
 					set @table_name = 'content_' + @char_content_id + '_ASYNC'
 					exec qp_get_delete_item_sql @table_name, @content_item_id, @sql = @sql out
 					print @sql
-					exec sp_executesql @sql   
+					exec sp_executesql @sql
 				end
-			end 
+			end
 			set @i = @i + 1
 		end
 	end
@@ -37121,17 +37121,17 @@ GO
 
 ALTER TRIGGER [dbo].[ti_access_content_item] ON [dbo].[CONTENT_ITEM] FOR INSERT
 AS
-  INSERT INTO content_item_access 
+  INSERT INTO content_item_access
     (content_item_id, user_id, permission_level_id, last_modified_by)
   SELECT
     content_item_id, last_modified_by, 1, 1
   FROM inserted
   WHERE inserted.LAST_MODIFIED_BY <> 1
 
-  INSERT INTO content_item_access 
+  INSERT INTO content_item_access
     (content_item_id, user_id, group_id, permission_level_id, last_modified_by)
   SELECT
-    i.content_item_id, ca.user_id, ca.group_id, ca.permission_level_id, 1 
+    i.content_item_id, ca.user_id, ca.group_id, ca.permission_level_id, 1
   FROM content_access AS ca
     INNER JOIN inserted AS i ON ca.content_id = i.content_id
     LEFT OUTER JOIN user_group AS g ON g.group_id = ca.group_id
@@ -37140,7 +37140,7 @@ AS
     AND ((g.shared_content_items = 0 and g.GROUP_ID <> 1) OR g.group_id IS NULL)
     AND ca.propagate_to_items = 1
 
-  INSERT INTO content_item_access 
+  INSERT INTO content_item_access
     (content_item_id, group_id, permission_level_id, last_modified_by)
   SELECT DISTINCT
     i.content_item_id, g.group_id, 1, 1
@@ -37172,13 +37172,13 @@ GO
 delete from CONTENT_ACCESS where USER_ID = 1 or GROUP_ID = 1
 GO
 
-ALTER PROCEDURE [dbo].[qp_merge_article] 
+ALTER PROCEDURE [dbo].[qp_merge_article]
 @item_id numeric
 AS
 BEGIN
-	exec qp_merge_links @item_id 
+	exec qp_merge_links @item_id
 	UPDATE content_item with(rowlock) set not_for_replication = 1 WHERE content_item_id = @item_id
-	UPDATE content_item with(rowlock) set SCHEDULE_NEW_VERSION_PUBLICATION = 0, MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1 where CONTENT_ITEM_ID = @item_id 
+	UPDATE content_item with(rowlock) set SCHEDULE_NEW_VERSION_PUBLICATION = 0, MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1 where CONTENT_ITEM_ID = @item_id
 	exec qp_replicate @item_id
 	UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id = @item_id
 	DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id = @item_id
@@ -37197,7 +37197,7 @@ PRINT '7.9.3.18 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.3.19
 -- Workflow bug fixes
@@ -37207,8 +37207,8 @@ go
 
 UPDATE BACKEND_ACTION
    SET
-       [NAME] = 'Multiple Select Contents For Workflow'      
- WHERE 
+       [NAME] = 'Multiple Select Contents For Workflow'
+ WHERE
 		[Code] = 'multiple_select_contents_for_workflow'
 GO
 
@@ -37224,7 +37224,7 @@ GO
 PRINT '7.9.3.19 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.20
 -- Optimization
@@ -37244,7 +37244,7 @@ BEGIN
 	set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
 	if @is_async = 1
 		set @table_name = @table_name + '_async'
-		
+
 	set @sql = 'delete from ' + @table_name + ' with(rowlock) where content_item_id in (' + @ids +  ')'
 END
 GO
@@ -37259,62 +37259,62 @@ ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGI
 		id numeric primary key,
 		virtual_type numeric
 	)
-	
+
 	insert into @c
 	select distinct d.content_id, c.virtual_type
-	from deleted d inner join content c 
+	from deleted d inner join content c
 	on d.content_id = c.content_id
-	
+
 
 	while exists(select id from @c)
 	begin
-		
+
 		select @content_id = id, @virtual_type = virtual_type from @c
-		
+
 		declare @ids table
 		(
 			id numeric primary key,
 			char_id nvarchar(30)
 		)
-		
+
 		insert into @ids
 		select content_item_id, CONVERT(nvarchar, content_item_id) from deleted where content_id = @content_id
-		
+
 		declare @attr_ids table
 		(
 			id numeric primary key
 		)
-		
+
 		insert into @attr_ids
-		select ca1.attribute_id from CONTENT_ATTRIBUTE ca1 
-		inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID 
+		select ca1.attribute_id from CONTENT_ATTRIBUTE ca1
+		inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID
 		where ca2.CONTENT_ID = @content_id
-		
+
 		set @ids_list = null
 		select @ids_list = coalesce(@ids_list + ', ', '') + char_id from @ids
-	
-	
+
+
 		/* Drop relations to current item */
 		if exists(select id from @attr_ids)
 		begin
-			UPDATE content_attribute SET default_value = null 
-				WHERE attribute_id IN (select id from @attr_ids) 
+			UPDATE content_attribute SET default_value = null
+				WHERE attribute_id IN (select id from @attr_ids)
 				AND default_value IN (select char_id from @ids)
-		
-			UPDATE content_data SET data = NULL, blob_data = NULL 
+
+			UPDATE content_data SET data = NULL, blob_data = NULL
 				WHERE attribute_id IN (select id from @attr_ids)
 				AND data IN (select char_id from @ids)
-				
+
 			DELETE from VERSION_CONTENT_DATA
 				where ATTRIBUTE_ID in (select id from @attr_ids)
-				AND data IN (select char_id from @ids)	
+				AND data IN (select char_id from @ids)
 		end
-		
-		if @virtual_type = 0 
-		begin 		
+
+		if @virtual_type = 0
+		begin
 			exec qp_get_delete_items_sql @content_id, @ids_list, 0, @sql = @sql out
 			exec sp_executesql @sql
-		
+
 			exec qp_get_delete_items_sql @content_id, @ids_list, 1, @sql = @sql out
 			exec sp_executesql @sql
 		end
@@ -37327,10 +37327,10 @@ GO
 exec qp_drop_existing 'qp_get_update_column_sql', 'IsProcedure'
 GO
 
-CREATE PROCEDURE [dbo].[qp_get_update_column_sql] 
-@table_name nvarchar(255), 
-@content_item_ids nvarchar(max), 
-@attribute_id numeric, 
+CREATE PROCEDURE [dbo].[qp_get_update_column_sql]
+@table_name nvarchar(255),
+@content_item_ids nvarchar(max),
+@attribute_id numeric,
 @attribute_type_id numeric,
 @attribute_size numeric,
 @default_value nvarchar(255),
@@ -37340,84 +37340,84 @@ AS
 BEGIN
 	declare @source_column nvarchar(10), @source_function nvarchar(512)
 	if @attribute_type_id in (9, 10)
-		set @source_column = 'blob_data'		
+		set @source_column = 'blob_data'
 	else
-		set @source_column = 'data'	
+		set @source_column = 'data'
 
     if @attribute_type_id in (9,10)
 		set @source_function = 'cd.' + @source_column
-    else	
+    else
 		set @source_function = 'dbo.qp_correct_data(cd.' + @source_column + ', ' + convert(nvarchar, @attribute_type_id) + ', ' + convert(nvarchar, @attribute_size) + ', N''' + isnull(@default_value, '') + ''')'
 
 	set @sql = ' update ' + @table_name + ' set [' + @attribute_name + '] = ' + @source_function + ' from content_data cd '
-	set @sql = @sql + ' where ' + @table_name + '.content_item_id in (' + @content_item_ids + ')'  
+	set @sql = @sql + ' where ' + @table_name + '.content_item_id in (' + @content_item_ids + ')'
 	set @sql = @sql + ' and cd.attribute_id = ' + convert(nvarchar, @attribute_id) + ' and cd.content_item_id = ' + @table_name + '.content_item_id '
 END
 GO
 
 ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
 BEGIN
-  set nocount on	
+  set nocount on
   IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
 	BEGIN
 		IF NOT (UPDATE(not_for_replication) AND EXISTS(select content_data_id from deleted))
 		BEGIN
-			DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC, @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC 
+			DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC, @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC
 			DECLARE @table_name nvarchar(50), @sql NVARCHAR(max), @ids_list nvarchar(max), @async_ids_list nvarchar(max)
-			
+
 			declare @ca table
 			(
 				id numeric primary key
 			)
-			
+
 			insert into @ca
 			select distinct attribute_id from inserted
-			 
+
 			while exists(select id from @ca)
 			begin
-				
+
 				select @attribute_id = id from @ca
-				
+
 				select @attribute_name = attribute_name, @attribute_type_id = attribute_type_id, @attribute_size = attribute_size, @default_value = default_value, @content_id = content_id
 				from content_attribute
 				where ATTRIBUTE_ID = @attribute_id
-				
+
 				declare @ids table
 				(
 					id numeric primary key,
 					splitted bit
 				)
-				
+
 				insert into @ids
 				select i.content_item_id, ci.SPLITTED from inserted i
 				inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
 				inner join content c on ci.CONTENT_ID = c.CONTENT_ID
 				where ATTRIBUTE_ID = @attribute_id and ci.not_for_replication = 0 and c.virtual_type = 0
-				
+
 				set @ids_list = null
 				select @ids_list = coalesce(@ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 0
 				set @async_ids_list = null
 				select @async_ids_list = coalesce(@async_ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 1
-				
+
 				set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
-				
-				if @ids_list <> '' 
+
+				if @ids_list <> ''
 				begin
 					exec qp_get_update_column_sql @table_name, @ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
 					print @sql
 					exec sp_executesql @sql
 				end
-				
-				if @async_ids_list <> '' 
+
+				if @async_ids_list <> ''
 				begin
 					set @table_name = @table_name + '_async'
 					exec qp_get_update_column_sql @table_name, @async_ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
 					print @sql
 					exec sp_executesql @sql
 				end
-				
+
 				delete from @ca where id = @attribute_id
-			end --while 
+			end --while
 		end --if
 	end --if
 END
@@ -37427,9 +37427,9 @@ exec qp_drop_existing 'qp_get_upsert_items_sql', 'IsProcedure'
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_upsert_items_sql]
-@table_name nvarchar(25), 
+@table_name nvarchar(25),
 @ids nvarchar(max),
-@sql nvarchar(max) output 
+@sql nvarchar(max) output
 as
 BEGIN
 	set @sql = 'update base set '
@@ -37438,8 +37438,8 @@ BEGIN
 	set @sql = @sql + ' from ' + @table_name + ' base with(rowlock) '
 	set @sql = @sql + ' inner join content_item ci with(rowlock) on base.content_item_id = ci.content_item_id '
 	set @sql = @sql + ' where ci.content_item_id in (' + @ids + ')'
-	set @sql = @sql + ';' + CHAR(13) + CHAR(10) 
-	
+	set @sql = @sql + ';' + CHAR(13) + CHAR(10)
+
 	set @sql = @sql + 'insert into ' + @table_name + ' (content_item_id, created, modified, last_modified_by, status_type_id, visible, archive) '
 	set @sql = @sql + ' select ci.content_item_id, ci.created, ci.modified, ci.last_modified_by, ci.status_type_id, ci.visible, ci.archive '
 	set @sql = @sql + ' from content_item ci left join ' + @table_name + ' c on ci.content_item_id = c.content_item_id '
@@ -37452,9 +37452,9 @@ exec qp_drop_existing 'qp_get_update_items_flags_sql', 'IsProcedure'
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_update_items_flags_sql]
-@table_name nvarchar(25), 
+@table_name nvarchar(25),
 @ids nvarchar(max),
-@sql nvarchar(max) output 
+@sql nvarchar(max) output
 as
 BEGIN
 	set @sql = 'update base set '
@@ -37462,7 +37462,7 @@ BEGIN
 	set @sql = @sql + ' from ' + @table_name + ' base with(rowlock) '
 	set @sql = @sql + ' inner join content_item ci with(rowlock) on base.content_item_id = ci.content_item_id '
 	set @sql = @sql + ' where ci.content_item_id in (' + @ids + ')'
-	set @sql = @sql + ';' + CHAR(13) + CHAR(10) 
+	set @sql = @sql + ';' + CHAR(13) + CHAR(10)
 END
 GO
 
@@ -37472,41 +37472,41 @@ BEGIN
 	declare @ids_list nvarchar(max)
 
 	declare @table_name varchar(50), @sql nvarchar(max)
-	
+
 	declare @contents table
 	(
 		id numeric primary key
 	)
-		
+
 	insert into @contents
 	select distinct content_id from inserted
-	where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0) 
-	
-	
+	where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0)
+
+
 	while exists (select id from @contents)
 	begin
 		select @content_id = id from @contents
-		
+
 		declare @ids table
 		(
 			id numeric primary key
 		)
-		
+
 		insert into @ids
-		select i.content_item_id from inserted i 
+		select i.content_item_id from inserted i
 		where i.CONTENT_ID = @content_id and i.not_for_replication = 0
-		
+
 		set @ids_list = null
 		select @ids_list = coalesce(@ids_list + ',', '') + convert(nvarchar, id) from @ids
 		set @table_name = 'content_' + convert(nvarchar, @content_id)
-		
+
 		exec qp_get_upsert_items_sql @table_name, @ids_list, @sql = @sql out
 		print @sql
 		exec sp_executesql @sql
-		
+
 		delete from @contents where id = @content_id
 	end
- 
+
 END
 GO
 
@@ -37521,31 +37521,31 @@ as
 begin
 
 	declare @sql nvarchar(max), @fields nvarchar(max), @update_fields nvarchar(max), @prefixed_fields nvarchar(max), @table_name nvarchar(50)
-	 
+
 	set @table_name = 'content_' + CAST(@content_id as nvarchar)
 	if (@is_async = 1)
 	set @table_name = @table_name + '_async'
-		
+
 	declare @attributes table
 	(
 		name nvarchar(255) primary key
 	)
-	
+
 	insert into @attributes
 	select attribute_name from CONTENT_ATTRIBUTE where CONTENT_ID = @content_id
 
 	SELECT @fields = COALESCE(@fields + ', ', '') + '[' + name + ']' FROM @attributes
 
 	SELECT @update_fields = COALESCE(@update_fields + ', ', '') + 'base.[' + name + '] = pt.[' + name + ']' FROM @attributes
-		
+
 	set @sql = N'update base set ' + @update_fields + ' from ' + @table_name + ' base inner join
 	(
-	select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME, 
-	case WHEN ATTRIBUTE_TYPE_ID IN (9, 10) THEN cast (cd.blob_data as nvarchar(max)) ELSE dbo.qp_correct_data(cd.data, ca.attribute_type_id, ca.attribute_size, ca.default_value) END as data 
+	select ci.CONTENT_ITEM_ID, ci.STATUS_TYPE_ID, ci.VISIBLE, ci.ARCHIVE, ci.CREATED, ci.MODIFIED, ci.LAST_MODIFIED_BY, ca.ATTRIBUTE_NAME,
+	case WHEN ATTRIBUTE_TYPE_ID IN (9, 10) THEN cast (cd.blob_data as nvarchar(max)) ELSE dbo.qp_correct_data(cd.data, ca.attribute_type_id, ca.attribute_size, ca.default_value) END as data
 	from CONTENT_ATTRIBUTE ca
 	left outer join CONTENT_DATA cd on ca.ATTRIBUTE_ID = cd.ATTRIBUTE_ID
 	inner join CONTENT_ITEM ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
-	where ca.CONTENT_ID = @content_id and cd.CONTENT_ITEM_ID in (' + @ids + ') 
+	where ca.CONTENT_ID = @content_id and cd.CONTENT_ITEM_ID in (' + @ids + ')
 	) as src
 	PIVOT
 	(
@@ -37562,18 +37562,18 @@ GO
 ALTER TRIGGER [dbo].[tiu_populate_content_data] ON [dbo].[CONTENT_ITEM] FOR INSERT, UPDATE AS
 BEGIN
 	IF NOT
-	(	
+	(
 		EXISTS(select content_item_id from deleted)
 		AND
 		(UPDATE(not_for_replication) OR UPDATE(locked_by) OR UPDATE(splitted))
-		
+
 	)
 	insert into content_data
 		(i.content_item_id, ca.attribute_id, i.not_for_replication)
 		select i.content_item_id, ca.attribute_id, i.not_for_replication
-		from inserted i 
+		from inserted i
 		inner join content_attribute ca on i.content_id = ca.content_id
-		left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID 
+		left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
 		where cd.CONTENT_DATA_ID is null
 END
 GO
@@ -37581,12 +37581,12 @@ GO
 exec qp_drop_existing 'qp_replicate_items', 'IsProcedure'
 GO
 
-CREATE PROCEDURE [dbo].[qp_replicate_items] 
+CREATE PROCEDURE [dbo].[qp_replicate_items]
 @ids nvarchar(max)
 AS
 BEGIN
 	set nocount on
-	
+
 	declare @sql nvarchar(max), @async_ids_list nvarchar(max), @sync_ids_list nvarchar(max)
 	declare @table_name nvarchar(50), @async_table_name nvarchar(50)
 
@@ -37598,67 +37598,67 @@ BEGIN
 		splitted bit,
 		content_id numeric
 	)
-	
+
 	insert into @articles(id) SELECT convert(numeric, nstr) from dbo.splitNew(@ids, ',')
-	
-	update base set base.content_id = ci.content_id, base.splitted = ci.SPLITTED from @articles base inner join content_item ci on base.id = ci.CONTENT_ITEM_ID 
+
+	update base set base.content_id = ci.content_id, base.splitted = ci.SPLITTED from @articles base inner join content_item ci on base.id = ci.CONTENT_ITEM_ID
 
 	declare @contents table
 	(
 		id numeric primary key
 	)
-	
+
 	insert into @contents
 	select distinct content_id from @articles
-	
+
 	while exists (select id from @contents)
 	begin
 		select @content_id = id from @contents
-		
+
 		set @sync_ids_list = null
 		select @sync_ids_list = coalesce(@sync_ids_list + ',', '') + convert(nvarchar, id) from @articles where content_id = @content_id and splitted = 0
 		set @async_ids_list = null
 		select @async_ids_list = coalesce(@async_ids_list + ',', '') + convert(nvarchar, id) from @articles where content_id = @content_id and splitted = 1
-		
+
 		set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
 		set @async_table_name = @table_name + '_async'
-		
+
 		if @sync_ids_list <> ''
 		begin
 			exec qp_get_upsert_items_sql @table_name, @sync_ids_list, @sql = @sql out
 			print @sql
 			exec sp_executesql @sql
-			
+
 			exec qp_get_delete_items_sql @content_id, @sync_ids_list, 1, @sql = @sql out
 			print @sql
 			exec sp_executesql @sql
-			
-			exec qp_update_items_with_content_data_pivot @content_id, @sync_ids_list, 0		
+
+			exec qp_update_items_with_content_data_pivot @content_id, @sync_ids_list, 0
 		end
-		
+
 		if @async_ids_list <> ''
 		begin
 			exec qp_get_upsert_items_sql @async_table_name, @async_ids_list, @sql = @sql out
 			print @sql
 			exec sp_executesql @sql
-			
+
 			exec qp_get_update_items_flags_sql @table_name, @async_ids_list, @sql = @sql out
 			print @sql
 			exec sp_executesql @sql
-			
-			exec qp_update_items_with_content_data_pivot @content_id, @async_ids_list, 1							
+
+			exec qp_update_items_with_content_data_pivot @content_id, @async_ids_list, 1
 		end
-		
+
 		delete from @contents where id = @content_id
 	end
-	
+
 	set @sql = 'update content_item  set not_for_replication = 0 where content_item_id in (' + @ids + ' )'
 	print @sql
 	exec sp_executesql @sql
 END
 GO
 
-ALTER PROCEDURE [dbo].[qp_replicate] 
+ALTER PROCEDURE [dbo].[qp_replicate]
 @content_item_id numeric
 AS
 BEGIN
@@ -37676,51 +37676,51 @@ begin
 		declare @content_id numeric
 		declare @sql nvarchar(max), @table_name varchar(50), @async_table_name varchar(50)
 		declare @ids_list nvarchar(max), @async_ids_list nvarchar(max), @sync_ids_list nvarchar(max)
-		
+
 		declare @contents table
 		(
 			id numeric primary key
 		)
-		
+
 		insert into @contents
 		select distinct content_id from inserted
-		where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0) 
-		
+		where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0)
+
 		create table #ids_with_splitted
 		(
 			id numeric primary key,
 			new_splitted bit
 		)
-		
+
 		while exists (select id from @contents)
 		begin
 			select @content_id = id from @contents
-			
+
 			declare @ids table
 			(
 				id numeric primary key,
 				splitted bit,
 				not_for_replication bit
 			)
-			
+
 			insert into @ids
-			select i.content_item_id, i.SPLITTED, i.not_for_replication from inserted i 
-			inner join content_item ci on i.content_item_id = ci.content_item_id 
+			select i.content_item_id, i.SPLITTED, i.not_for_replication from inserted i
+			inner join content_item ci on i.content_item_id = ci.content_item_id
 			where ci.CONTENT_ID = @content_id
-			
+
 			set @ids_list = null
 			select @ids_list = coalesce(@ids_list + ',', '') + convert(nvarchar, id) from @ids
-						
-			set @sql = 'insert into #ids_with_splitted ' 
+
+			set @sql = 'insert into #ids_with_splitted '
 			set @sql = @sql + ' select content_item_id,'
-			set @sql = @sql + ' case' 
+			set @sql = @sql + ' case'
 			set @sql = @sql + ' when curr_weight < front_weight and is_workflow_async = 1 then 1'
 			set @sql = @sql + ' when curr_weight = workflow_max_weight and delayed = 1 then 1'
 			set @sql = @sql + ' else 0'
 			set @sql = @sql + ' end'
 			set @sql = @sql + ' as new_splitted from ('
 			set @sql = @sql + ' select distinct ci.content_item_id, st1.WEIGHT as curr_weight, st2.WEIGHT as front_weight, '
-			set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, ciw.is_async as is_workflow_async, ' 
+			set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, ciw.is_async as is_workflow_async, '
 			set @sql = @sql + ' ci.SCHEDULE_NEW_VERSION_PUBLICATION as delayed '
 			set @sql = @sql + ' from content_item ci'
 			set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
@@ -37732,46 +37732,46 @@ begin
 			set @sql = @sql + ' where ci.content_item_id in (' + @ids_list + ')) as main'
 			print @sql
 			exec sp_executesql @sql
-			
-			update base set base.splitted = i.new_splitted from @ids base inner join #ids_with_splitted i on base.id = i.id 
+
+			update base set base.splitted = i.new_splitted from @ids base inner join #ids_with_splitted i on base.id = i.id
 			update base set base.splitted = i.splitted from content_item base inner join @ids i on base.CONTENT_ITEM_ID = i.id
-			
+
 			set @sync_ids_list = null
 			select @sync_ids_list = coalesce(@sync_ids_list + ',', '') + convert(nvarchar, id) from @ids where splitted = 0 and not_for_replication = 0
 			set @async_ids_list = null
 			select @async_ids_list = coalesce(@async_ids_list + ',', '') + convert(nvarchar, id) from @ids where splitted = 1 and not_for_replication = 0
-			
+
 			set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
 			set @async_table_name = @table_name + '_async'
-			
+
 			if @sync_ids_list <> ''
 			begin
 				exec qp_get_upsert_items_sql @table_name, @sync_ids_list, @sql = @sql out
 				print @sql
 				exec sp_executesql @sql
-				
+
 				exec qp_get_delete_items_sql @content_id, @sync_ids_list, 1, @sql = @sql out
 				print @sql
-				exec sp_executesql @sql		
+				exec sp_executesql @sql
 			end
-			
+
 			if @async_ids_list <> ''
 			begin
 				exec qp_get_upsert_items_sql @async_table_name, @async_ids_list, @sql = @sql out
 				print @sql
 				exec sp_executesql @sql
-				
+
 				exec qp_get_update_items_flags_sql @table_name, @async_ids_list, @sql = @sql out
 				print @sql
-				exec sp_executesql @sql					
+				exec sp_executesql @sql
 			end
-			
-			delete from #ids_with_splitted						
+
+			delete from #ids_with_splitted
 			delete from @contents where id = @content_id
 		end
-		
+
 		drop table #ids_with_splitted
-		
+
 	end
 end
 GO
@@ -37785,14 +37785,14 @@ GO
 PRINT '7.9.3.20 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.21
 -- Local trigger disabling
 -- **************************************
 
 ALTER TRIGGER [dbo].[tbd_delete_site] ON [dbo].[SITE] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	create table #disable_td_delete_item (id numeric)
 	create table #disable_td_content_attribute_clean_empty_links (id numeric)
@@ -37810,9 +37810,9 @@ BEGIN
 	delete from item_to_item where link_id in
 	(select link_id from site_content_link scl
 	inner join deleted d on d.site_id = scl.site_id)
-	
-	delete content_item_status_history from content_item_status_history cis	
-	inner join content_item ci on ci.content_item_id = cis.content_item_id 
+
+	delete content_item_status_history from content_item_status_history cis
+	inner join content_item ci on ci.content_item_id = cis.content_item_id
 	inner join content c on c.content_id = ci.content_id
 	inner join deleted d on d.site_id = c.site_id
 
@@ -37822,26 +37822,26 @@ BEGIN
 
 	delete content from content c
 	inner join deleted d on d.site_id = c.site_id
-	
+
 	update [object] set object_format_id = null from [object] obj
 	inner join page_template pt on obj.page_template_id = pt.page_template_id
 	inner join deleted d on d.site_id = pt.site_id
 
 	delete page_template from page_template pt
 	inner join deleted d on d.site_id = pt.site_id
-	
+
 	delete [ACTION_SITE_BIND] from [ACTION_SITE_BIND] asb
 	inner join deleted d on d.site_id = asb.site_id
-	
+
 	delete [VE_COMMAND_SITE_BIND] from [VE_COMMAND_SITE_BIND] vcsb
 	inner join deleted d on d.SITE_ID = vcsb.SITE_ID
-	
+
 	delete [VE_STYLE_SITE_BIND] from [VE_STYLE_SITE_BIND] vssb
 	inner join deleted d on d.SITE_ID = vssb.SITE_ID
-	
-	delete site from site s 	
+
+	delete site from site s
 	inner join deleted d on d.site_id = s.site_id
-	
+
 	drop table #disable_td_delete_item
 	drop table #disable_td_content_attribute_clean_empty_links
 	drop table #disable_td_remove_field
@@ -37863,7 +37863,7 @@ begin
 	if object_id('tempdb..#disable_tiud_statuses_format_modified') is null
 	begin
 		update object_format set assemble_in_live = 1, assemble_in_stage = 1, modified = getdate() where object_id in (select object_id from deleted union select object_id from inserted)
-	end	
+	end
 end
 GO
 
@@ -37875,11 +37875,11 @@ begin
 	if object_id('tempdb..#disable_tiud_values_format_modified') is null
 	begin
 		update object_format set assemble_in_live = 1, assemble_in_stage = 1, modified = getdate() where object_id in (select object_id from deleted union select object_id from inserted)
-	end	
+	end
 end
 go
 
-ALTER TRIGGER [dbo].[tbd_delete_object_format] ON [dbo].[OBJECT_FORMAT] 
+ALTER TRIGGER [dbo].[tbd_delete_object_format] ON [dbo].[OBJECT_FORMAT]
 INSTEAD OF DELETE
 AS
 BEGIN
@@ -37889,11 +37889,11 @@ BEGIN
 			id numeric identity,
 			[object_id] numeric
 		)
-		declare @i numeric, @count numeric, @object_id numeric, @new_object_format_id numeric 
-		
+		declare @i numeric, @count numeric, @object_id numeric, @new_object_format_id numeric
+
 		insert into @obj([object_id])
-		select obj.[object_id] from deleted d 
-		inner join object obj 
+		select obj.[object_id] from deleted d
+		inner join object obj
 		on obj.object_format_id = d.object_format_id
 
 		set @i = 1
@@ -37902,27 +37902,27 @@ BEGIN
 		while @i < @count + 1
 		begin
 			select @object_id = object_id from @obj where id = @i
-			
+
 			select top 1 @new_object_format_id = object_format_id from object_format where object_id = @object_id and object_format_id not in (select object_format_id from deleted)
 			update object set object_format_id = @new_object_format_id where object_id = @object_id
 
 			set @i = @i + 1
 		end
 
-		
+
 		update object set object_format_id = null where object_format_id in (select object_format_id from deleted)
-		
+
 		update notifications set format_id = null where format_id in (select object_format_id from deleted)
 
-		delete page_trace from page_trace pt 
+		delete page_trace from page_trace pt
 		inner join page_trace_format ptf on pt.trace_id = ptf.trace_id
-		inner join deleted d on ptf.format_id = d.object_format_id	
+		inner join deleted d on ptf.format_id = d.object_format_id
 
-		delete object_format from object_format objf 
+		delete object_format from object_format objf
 		inner join deleted d on objf.object_format_id = d.object_format_id
 	end
 end
-go	
+go
 
 
 ALTER TRIGGER [dbo].[tiu_bind_objects_by_name] ON [dbo].[OBJECT] FOR INSERT, UPDATE AS
@@ -37936,7 +37936,7 @@ BEGIN
 		declare @obj table (
 			id numeric identity(1,1) primary key,
 			[object_id] numeric,
-			[object_name] nvarchar(255), 
+			[object_name] nvarchar(255),
 			page_id numeric,
 			page_template_id numeric
 		)
@@ -37954,7 +37954,7 @@ BEGIN
 			from @obj where id = @i
 			if (@page_id is null) begin
 				update object set parent_object_id = @object_id where page_template_id = @page_template_id and page_id is not null and [object_name] = @object_name
-			end 
+			end
 			else begin
 				update object set parent_object_id = (select [object_id] from object where page_template_id = @page_template_id and page_id is null and [object_name] = @object_name) where [object_id] = @object_id
 			end
@@ -37966,27 +37966,27 @@ BEGIN
 END
 GO
 
-ALTER TRIGGER [dbo].[tu_object_format_modified] ON [dbo].[OBJECT] 
-FOR UPDATE 
+ALTER TRIGGER [dbo].[tu_object_format_modified] ON [dbo].[OBJECT]
+FOR UPDATE
 AS
 
 if object_id('tempdb..#disable_tu_object_format_modified') is null
 begin
 	if update(page_id) or update([object_name]) or update(object_type_id) or update(net_object_name) or update(enable_viewstate) or update(control_custom_class) or update(disable_databind)
 		update object_format set assemble_in_live = 1, assemble_in_stage = 1 where object_id in (select object_id from inserted)
-		UPDATE page SET reassemble = 1 WHERE page_id IN 
-		( 
-			SELECT page_id FROM inserted 
-			UNION 
-			SELECT DISTINCT p.page_id FROM inserted AS i LEFT OUTER JOIN page AS p ON p.page_template_id = i.page_template_id 
+		UPDATE page SET reassemble = 1 WHERE page_id IN
+		(
+			SELECT page_id FROM inserted
+			UNION
+			SELECT DISTINCT p.page_id FROM inserted AS i LEFT OUTER JOIN page AS p ON p.page_template_id = i.page_template_id
 			WHERE i.page_id IS NULL
 		)
 end
 GO
 
-ALTER TRIGGER [dbo].[td_content_indexes] ON [dbo].[content_constraint] 
-FOR DELETE 
-AS	
+ALTER TRIGGER [dbo].[td_content_indexes] ON [dbo].[content_constraint]
+FOR DELETE
+AS
 DECLARE @constraint_id numeric
 if object_id('tempdb..#disable_td_content_indexes') is null
 begin
@@ -38001,11 +38001,11 @@ begin
 	END
 	CLOSE Constraints
 	DEALLOCATE Constraints
-end	
+end
 GO
 
 ALTER TRIGGER [dbo].[td_item_to_item] ON [dbo].[item_to_item] AFTER DELETE
-AS 
+AS
 BEGIN
 	if object_id('tempdb..#disable_td_item_to_item') is null
 	begin
@@ -38022,10 +38022,10 @@ BEGIN
 	begin
 
 		declare @attribute_id numeric, @content_id numeric
-		declare @i numeric, @j numeric 
+		declare @i numeric, @j numeric
 		declare @content_count numeric, @attribute_count numeric
 		declare @max numeric
-		
+
 		declare @c table (
 			id numeric identity(1,1) primary key,
 			content_id numeric
@@ -38035,7 +38035,7 @@ BEGIN
 			id numeric identity(1,1) primary key,
 			attribute_id numeric
 		)
-		
+
 		/* Collect affected items */
 		insert into @c(content_id)
 		select distinct content_id from deleted
@@ -38048,18 +38048,18 @@ BEGIN
 			select @content_id = content_id from @c where id = @i
 
 			delete from @ca
-		
+
 			insert into @ca (attribute_id)
 			select attribute_id from content_attribute where content_id = @content_id order by attribute_order asc
-		
-			select @attribute_count = count(id) from @ca		
+
+			select @attribute_count = count(id) from @ca
 			set @j = 1
 
 			while @j < @attribute_count + 1
 			begin
 				select @attribute_id = attribute_id from @ca where id = @j
 
-				update content_attribute set attribute_order = @j where attribute_id = @attribute_id	
+				update content_attribute set attribute_order = @j where attribute_id = @attribute_id
 
 				set @j = @j + 1
 			end
@@ -38070,32 +38070,32 @@ BEGIN
 END
 GO
 
-ALTER TRIGGER [dbo].[td_remove_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE 
-AS 
+ALTER TRIGGER [dbo].[td_remove_field] ON [dbo].[CONTENT_ATTRIBUTE] FOR DELETE
+AS
 BEGIN
 
 	if object_id('tempdb..#disable_td_remove_field') is null
 	begin
 		declare @attribute_id numeric, @attribute_name nvarchar(255), @content_id numeric
 		declare @indexed numeric, @type_name nvarchar(255)
-		
+
 		declare @base_table_name nvarchar(30), @table_name nvarchar(30)
-		
+
 		declare @i numeric, @count numeric
-		
+
 		declare @ca table (
 			id numeric identity(1,1) primary key,
-			attribute_id numeric, 
+			attribute_id numeric,
 			attribute_name nvarchar(255),
-			type_name nvarchar(255), 
+			type_name nvarchar(255),
 			indexed numeric,
-			content_id numeric 
+			content_id numeric
 		)
-		
+
 		/* Collect affected items */
 		insert into @ca (attribute_id, attribute_name, indexed, type_name, content_id)
-			select d.attribute_id, d.attribute_name, d.index_flag, at.type_name, d.content_id 
-			from deleted d 
+			select d.attribute_id, d.attribute_name, d.index_flag, at.type_name, d.content_id
+			from deleted d
 			inner join attribute_type at on d.attribute_type_id = at.attribute_type_id
 			inner join content c on d.content_id = c.content_id
 			where c.virtual_type = 0
@@ -38108,14 +38108,14 @@ BEGIN
 		while @i < @count + 1
 		begin
 			select @attribute_id = attribute_id, @attribute_name = attribute_name, @indexed = indexed,
-				@type_name = type_name, @content_id = content_id 
+				@type_name = type_name, @content_id = content_id
 				from @ca where id = @i
 
-				set @base_table_name = 'content_' + convert(nvarchar, @content_id)		
+				set @base_table_name = 'content_' + convert(nvarchar, @content_id)
 
 				/* Drop indexes if exists */
 				set @table_name = @base_table_name + '_ASYNC'
-				if @indexed = 1 
+				if @indexed = 1
 				begin
 					exec qp_drop_index @base_table_name, @attribute_name
 					exec qp_drop_index @table_name, @attribute_name
@@ -38128,7 +38128,7 @@ BEGIN
 				/* Recreate United View */
 				exec qp_content_united_view_recreate @content_id
 				exec qp_content_frontend_views_recreate @content_id
-				
+
 			set @i = @i + 1
 		end
 	end
@@ -38140,13 +38140,13 @@ AS
 BEGIN
 	if object_id('tempdb..#disable_td_content_attribute_clean_empty_links') is null
 	begin
-		declare @link_id numeric 
+		declare @link_id numeric
 		declare @i numeric, @count numeric
 		declare @links table (
 			id numeric identity(1,1) primary key,
 			link_id numeric
 		)
-		
+
 
 		insert into @links (link_id)
 		select link_id from deleted d where link_id is not null
@@ -38169,15 +38169,15 @@ ALTER  TRIGGER [dbo].[ti_union_contents_auto_map_attrs] ON [dbo].[union_contents
 	begin
 	  DECLARE @vcontent_id NUMERIC, @ucontent_id NUMERIC, @master_id numeric, @source_id numeric
 
-	  DECLARE uc CURSOR 
+	  DECLARE uc CURSOR
 	  FOR SELECT i.virtual_content_id, i.union_content_id, i.master_content_id
 	  FROM inserted AS i
 
 	  OPEN uc
 	  FETCH NEXT FROM uc INTO @vcontent_id, @ucontent_id, @master_id
 	  WHILE  @@FETCH_STATUS = 0 BEGIN
-		-- select the source of virtual content attributes   
-		IF @master_id IS NULL 
+		-- select the source of virtual content attributes
+		IF @master_id IS NULL
 		SET @source_id = @ucontent_id
 		ELSE
 		SET @source_id = @master_id
@@ -38210,7 +38210,7 @@ ALTER  TRIGGER [dbo].[ti_union_contents_auto_map_attrs] ON [dbo].[union_contents
 			primary_flag, permanent_flag, relation_condition, display_as_radio_button,
 			view_in_list, readonly_flag, allow_stage_edit, attribute_configuration, related_image_attribute_id, default_blob_value,
 			use_site_library, link_id
-		  ) SELECT 
+		  ) SELECT
 			@ucontent_id, attribute_name, attribute_size, attribute_type_id,
 			last_modified_by, 0, related_attribute_id,
 			format_mask, input_mask, default_value, index_flag, description, required,
@@ -38222,13 +38222,13 @@ ALTER  TRIGGER [dbo].[ti_union_contents_auto_map_attrs] ON [dbo].[union_contents
 			content_id = @vcontent_id
 			AND attribute_id NOT IN (
 			  SELECT mca.attribute_id
-			  FROM content_attribute mca 
+			  FROM content_attribute mca
 				LEFT JOIN content_attribute oca
 				ON mca.attribute_name = oca.attribute_name AND mca.attribute_type_id = oca.attribute_type_id
 			  WHERE mca.content_id = @vcontent_id and oca.content_id = @ucontent_id
 			)
 		END
-		-- autocreate attribute mappings    
+		-- autocreate attribute mappings
 		INSERT INTO union_attrs
 		  (virtual_attr_id, union_attr_id)
 		SELECT
@@ -38237,7 +38237,7 @@ ALTER  TRIGGER [dbo].[ti_union_contents_auto_map_attrs] ON [dbo].[union_contents
 		  LEFT OUTER JOIN content AS c ON c.content_id = va.content_id
 		  LEFT OUTER JOIN inserted AS i ON i.virtual_content_id = va.content_id
 		  LEFT OUTER JOIN content_attribute AS map
-			ON 
+			ON
 			  map.content_id = i.union_content_id
 			  AND map.attribute_name = va.attribute_name
 		AND map.attribute_type_id = va.attribute_type_id
@@ -38245,11 +38245,11 @@ ALTER  TRIGGER [dbo].[ti_union_contents_auto_map_attrs] ON [dbo].[union_contents
 		  c.virtual_type = 2
 		  AND map.attribute_id IS NOT NULL
 		  AND NOT EXISTS (
-			SELECT * FROM union_attrs AS ua 
+			SELECT * FROM union_attrs AS ua
 			WHERE ua.virtual_attr_id = va.attribute_id AND ua.union_attr_id = map.attribute_id
 		  )
 		FETCH NEXT FROM uc INTO @vcontent_id, @ucontent_id, @master_id
-	  END 
+	  END
 	  CLOSE uc
 	  DEALLOCATE uc
 	END
@@ -38270,9 +38270,9 @@ BEGIN
 		)
 
 		insert into @links (link_id, attribute_id)
-			select i.link_id, i.attribute_id from inserted i 
-			inner join deleted d on d.attribute_id = i.attribute_id 
-			where i.link_id IS NOT NULL AND (d.link_id IS NULL OR d.link_id <> i.link_id) 
+			select i.link_id, i.attribute_id from inserted i
+			inner join deleted d on d.attribute_id = i.attribute_id
+			where i.link_id IS NOT NULL AND (d.link_id IS NULL OR d.link_id <> i.link_id)
 
 		set @i = 1
 		select @count = count(id) from @links
@@ -38288,8 +38288,8 @@ BEGIN
 END
 GO
 
-ALTER TRIGGER [dbo].[ti_set_max_order] ON [dbo].[CONTENT_ATTRIBUTE] FOR INSERT 
-AS 
+ALTER TRIGGER [dbo].[ti_set_max_order] ON [dbo].[CONTENT_ATTRIBUTE] FOR INSERT
+AS
 BEGIN
 
 	if object_id('tempdb..#disable_ti_set_max_order') is null
@@ -38302,10 +38302,10 @@ BEGIN
 			attribute_id numeric,
 			content_id numeric
 		)
-		
+
 		/* Collect affected items */
 		insert into @ca (attribute_id, content_id)
-		select attribute_id, content_id from inserted  
+		select attribute_id, content_id from inserted
 
 		set @i = 1
 		select @count = count(id) from @ca
@@ -38313,11 +38313,11 @@ BEGIN
 		while @i < @count + 1
 		begin
 			select @attribute_id = attribute_id , @content_id = content_id from @ca where id = @i
-			
+
 			select @max = MAX(attribute_order) from CONTENT_ATTRIBUTE where content_id = @content_id
-		
+
 			update CONTENT_ATTRIBUTE set ATTRIBUTE_ORDER =  ISNULL(@max, 0) + 1 where attribute_id = @attribute_id
-			
+
 			set @i = @i + 1
 		end
 	END
@@ -38325,7 +38325,7 @@ END
 GO
 
 ALTER TRIGGER [dbo].[tbd_delete_content] ON [dbo].[CONTENT] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	create table #disable_td_delete_item(id numeric)
 
@@ -38342,10 +38342,10 @@ BEGIN
 	inner join deleted d on d.content_id = cc.r_content_id or d.content_id = cc.l_content_id
 
 	delete container from container c
-	inner join deleted d on d.content_id = c.content_id 
+	inner join deleted d on d.content_id = c.content_id
 
 	delete content_form from content_form cf
-	inner join deleted d on d.content_id = cf.content_id 
+	inner join deleted d on d.content_id = cf.content_id
 
 	delete content_item from content_item ci
 	inner join deleted d on d.content_id = ci.content_id
@@ -38355,7 +38355,7 @@ BEGIN
 
 	delete [ACTION_CONTENT_BIND] from [ACTION_CONTENT_BIND] acb
 	inner join deleted d on d.content_id = acb.content_id
-	
+
 	delete ca from CONTENT_ATTRIBUTE ca
 	inner join CONTENT_ATTRIBUTE cad on ca.BACK_RELATED_ATTRIBUTE_ID = cad.ATTRIBUTE_ID
 	inner join deleted c on cad.CONTENT_ID = c.CONTENT_ID
@@ -38367,10 +38367,10 @@ END
 GO
 
 ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
-	
+
 	if object_id('tempdb..#disable_td_delete_item') is null
 	begin
-	
+
 		declare @content_id numeric, @virtual_type numeric
 		declare @sql nvarchar(max)
 		declare @ids_list nvarchar(max)
@@ -38380,62 +38380,62 @@ ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGI
 			id numeric primary key,
 			virtual_type numeric
 		)
-		
+
 		insert into @c
 		select distinct d.content_id, c.virtual_type
-		from deleted d inner join content c 
+		from deleted d inner join content c
 		on d.content_id = c.content_id
-		
+
 
 		while exists(select id from @c)
 		begin
-			
+
 			select @content_id = id, @virtual_type = virtual_type from @c
-			
+
 			declare @ids table
 			(
 				id numeric primary key,
 				char_id nvarchar(30)
 			)
-			
+
 			insert into @ids
 			select content_item_id, CONVERT(nvarchar, content_item_id) from deleted where content_id = @content_id
-			
+
 			declare @attr_ids table
 			(
 				id numeric primary key
 			)
-			
+
 			insert into @attr_ids
-			select ca1.attribute_id from CONTENT_ATTRIBUTE ca1 
-			inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID 
+			select ca1.attribute_id from CONTENT_ATTRIBUTE ca1
+			inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID
 			where ca2.CONTENT_ID = @content_id
-			
+
 			set @ids_list = null
 			select @ids_list = coalesce(@ids_list + ', ', '') + char_id from @ids
-		
-		
+
+
 			/* Drop relations to current item */
 			if exists(select id from @attr_ids)
 			begin
-				UPDATE content_attribute SET default_value = null 
-					WHERE attribute_id IN (select id from @attr_ids) 
+				UPDATE content_attribute SET default_value = null
+					WHERE attribute_id IN (select id from @attr_ids)
 					AND default_value IN (select char_id from @ids)
-			
-				UPDATE content_data SET data = NULL, blob_data = NULL 
+
+				UPDATE content_data SET data = NULL, blob_data = NULL
 					WHERE attribute_id IN (select id from @attr_ids)
 					AND data IN (select char_id from @ids)
-					
+
 				DELETE from VERSION_CONTENT_DATA
 					where ATTRIBUTE_ID in (select id from @attr_ids)
-					AND data IN (select char_id from @ids)	
+					AND data IN (select char_id from @ids)
 			end
-			
-			if @virtual_type = 0 
-			begin 		
+
+			if @virtual_type = 0
+			begin
 				exec qp_get_delete_items_sql @content_id, @ids_list, 0, @sql = @sql out
 				exec sp_executesql @sql
-			
+
 				exec qp_get_delete_items_sql @content_id, @ids_list, 1, @sql = @sql out
 				exec sp_executesql @sql
 			end
@@ -38456,14 +38456,14 @@ PRINT '7.9.3.21 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.3.22
 -- Set HAS_PRE_ACTION = 1 for clear_content mutistep action
 -- **************************************
 
 update backend_action set HAS_PRE_ACTION = 1 where CODE = 'clear_content'
-GO 
+GO
 
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
@@ -38474,7 +38474,7 @@ GO
 PRINT '7.9.3.22 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.23
 -- Fix multiple update
@@ -38482,70 +38482,70 @@ GO
 
 ALTER TRIGGER [dbo].[tiu_content_fill] ON [dbo].[CONTENT_DATA] FOR INSERT, UPDATE AS
 BEGIN
-  set nocount on	
+  set nocount on
   IF EXISTS(select content_data_id from inserted where not_for_replication = 0)
 	BEGIN
 		IF NOT (UPDATE(not_for_replication) AND EXISTS(select content_data_id from deleted))
 		BEGIN
-			DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC, @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC 
+			DECLARE @attribute_id NUMERIC, @attribute_type_id NUMERIC, @attribute_size NUMERIC, @default_value NVARCHAR(255), @attribute_name NVARCHAR(255), @content_id NUMERIC
 			DECLARE @table_name nvarchar(50), @sql NVARCHAR(max), @ids_list nvarchar(max), @async_ids_list nvarchar(max)
-			
+
 			declare @ca table
 			(
 				id numeric primary key
 			)
-			
+
 			insert into @ca
 			select distinct attribute_id from inserted
-			
-						
+
+
 			declare @ids table
 			(
 				id numeric primary key,
 				splitted bit
 			)
-			 
+
 			while exists(select id from @ca)
 			begin
-				
+
 				select @attribute_id = id from @ca
-				
+
 				select @attribute_name = attribute_name, @attribute_type_id = attribute_type_id, @attribute_size = attribute_size, @default_value = default_value, @content_id = content_id
 				from content_attribute
 				where ATTRIBUTE_ID = @attribute_id
-				
+
 				insert into @ids
 				select i.content_item_id, ci.SPLITTED from inserted i
 				inner join content_item ci on ci.CONTENT_ITEM_ID = i.CONTENT_ITEM_ID
 				inner join content c on ci.CONTENT_ID = c.CONTENT_ID
 				where ATTRIBUTE_ID = @attribute_id and ci.not_for_replication = 0 and c.virtual_type = 0
-				
+
 				set @ids_list = null
 				select @ids_list = coalesce(@ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 0
 				set @async_ids_list = null
 				select @async_ids_list = coalesce(@async_ids_list + ', ', '') + CONVERT(nvarchar, id) from @ids where splitted = 1
-				
+
 				set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
-				
-				if @ids_list <> '' 
+
+				if @ids_list <> ''
 				begin
 					exec qp_get_update_column_sql @table_name, @ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
 					print @sql
 					exec sp_executesql @sql
 				end
-				
-				if @async_ids_list <> '' 
+
+				if @async_ids_list <> ''
 				begin
 					set @table_name = @table_name + '_async'
 					exec qp_get_update_column_sql @table_name, @async_ids_list, @attribute_id, @attribute_type_id, @attribute_size, @default_value, @attribute_name, @sql = @sql out
 					print @sql
 					exec sp_executesql @sql
 				end
-				
+
 				delete from @ca where id = @attribute_id
-				
+
 				delete from @ids
-			end --while 
+			end --while
 		end --if
 	end --if
 END
@@ -38570,7 +38570,7 @@ PRINT '7.9.3.23 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.24
 -- group support
@@ -38586,14 +38586,14 @@ begin
 	else if @entity_code = 'virtual_content'
 		set @old_code = 'content'
 	else if @entity_code = 'site_folder'
-		set @old_code = 'folder'	
+		set @old_code = 'folder'
 	else if @entity_code in ('content', 'site', 'content_folder')
 		set @old_code = @entity_code
-	
+
 	declare @result int
 	if @old_code is null
 		select @result = permission_level from PERMISSION_LEVEL where PERMISSION_LEVEL_NAME = 'Full Access'
-	else	
+	else
 		select @result = dbo.qp_is_entity_accessible(@old_code, @entity_id, @user_id, @group_id, 0, 0, 1)
 	return @result
 end
@@ -38629,9 +38629,9 @@ GO
 ALTER FUNCTION [dbo].[qp_action_visible](@user_id int, @entity_code nvarchar(50), @entity_id numeric, @action_code nvarchar(50)) returns bit
 AS
 BEGIN
-	declare @result bit	
+	declare @result bit
 
-	if @entity_id = 0 
+	if @entity_id = 0
 	begin
 		set @result = 1
 	end
@@ -38641,7 +38641,7 @@ BEGIN
 		select @permitted_level = dbo.qp_entity_access_level(@user_id, 0, @entity_code, @entity_id)
 
 		select @action_level = pl.PERMISSION_LEVEL from BACKEND_ACTION ba
-		INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID 
+		INNER JOIN ACTION_TYPE at on ba.TYPE_ID = at.ID
 		INNER JOIN PERMISSION_LEVEL pl on at.REQUIRED_PERMISSION_LEVEL_ID = pl.PERMISSION_LEVEL_ID
 		where ba.CODE = @action_code
 
@@ -38655,7 +38655,7 @@ END
 GO
 
 ALTER PROCEDURE [dbo].[qp_get_folders_tree]
-	@user_id numeric(18,0),	
+	@user_id numeric(18,0),
 	@parent_entity_id numeric(18,0),
 	@is_site bit = 1,
 	@parent_folder_id numeric(18,0) = NULL,
@@ -38666,26 +38666,26 @@ AS
 BEGIN
 
 	DECLARE @security_sql AS nvarchar(max), @sql_result AS nvarchar(max)
-	DECLARE @entity_name AS nvarchar(50), @parent_entity_name AS nvarchar(50) 
+	DECLARE @entity_name AS nvarchar(50), @parent_entity_name AS nvarchar(50)
 	DECLARE @use_security bit, @parent_level numeric, @block_filter nvarchar(10)
-	
+
 	SET @entity_name = case @is_site when 1 then 'folder' else 'content_folder' end
 	print @entity_name
 	SET @parent_entity_name = case @is_site when 1 then 'site' else 'content' end
 	print @parent_entity_name
 
 	set @use_security = 1
-	
+
 	if dbo.qp_is_user_admin(@user_id) = 1
 		set @use_security = 0
-	
+
 	set @block_filter = ''
 	if @entity_name = 'content_folder'
 	begin
 		set @use_security = 0
 		select @parent_level = dbo.qp_entity_access_level(@user_id, 0, @parent_entity_name, @parent_entity_id)
 		if @parent_level = 0
-			set @block_filter = ' AND 1 = 0 '		
+			set @block_filter = ' AND 1 = 0 '
 	end
 	else if @parent_folder_id is not null
 	begin
@@ -38704,9 +38704,9 @@ BEGIN
 			@end_level = 4,
 			@entity_name = @entity_name,
 			@parent_entity_name = @parent_entity_name,
-			@parent_entity_id = @parent_entity_id,				
+			@parent_entity_id = @parent_entity_id,
 			@SQLOut = @security_sql OUTPUT
-				
+
 	SET @sql_result = ''
 	SET @sql_result = @sql_result + 'SELECT ' + CHAR(13)
 	IF (@count_only = 0)
@@ -38736,7 +38736,7 @@ BEGIN
 			if @use_security = 1
 				SET @sql_result = @sql_result + ',	COALESCE(pi.permission_level, ' + CAST(@parent_level as varchar)  + ') as EFFECTIVE_PERMISSION_LEVEL' + CHAR(13)
 
-			
+
 		END
 	ELSE
 		BEGIN
@@ -38758,7 +38758,7 @@ BEGIN
 			SET @sql_result = @sql_result + 'ON ' + CHAR(13)
 			SET @sql_result = @sql_result + '	mu.USER_ID = c.LAST_MODIFIED_BY ' + CHAR(13)
 		END
-	SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)			
+	SET @sql_result = @sql_result + 'WHERE ' + CHAR(13)
 	IF (@parent_folder_id IS NOT NULL)
 		BEGIN
 			SET @sql_result = @sql_result + '	c.PARENT_FOLDER_ID = ' + CAST(@parent_folder_id AS varchar) + ' ' + CHAR(13)
@@ -38768,32 +38768,32 @@ BEGIN
 			SET @sql_result = @sql_result + '	c.PARENT_FOLDER_ID IS NULL ' + CHAR(13)
 			SET @sql_result = @sql_result + '		AND c.' + @parent_entity_name + '_ID = ' + CAST(@parent_entity_id AS varchar) + ' '  + CHAR(13)
 		END
-	
+
 	if @use_security = 1
 	begin
 		SET @sql_result = @sql_result + ' AND COALESCE(pi.permission_level, 4) >= ' + CAST(@permission_level AS varchar) + CHAR(13)
-	end	
-		
+	end
+
 	SET @sql_result = @sql_result + @block_filter
 	IF (@count_only = 0)
 		BEGIN
 		SET @sql_result = @sql_result + 'ORDER BY ' + CHAR(13)
 		SET @sql_result = @sql_result + ' c.NAME ASC '
 	END
-			
+
 	IF (@count_only = 0)
 		BEGIN
 			print @sql_result
 			EXEC(@sql_result)
-					
-			SET @total_records = @@ROWCOUNT 
+
+			SET @total_records = @@ROWCOUNT
 		END
 	ELSE
 		BEGIN
 			print @sql_result
-			EXEC sp_executesql 
-				@sql_result, 
-				N'@record_count int OUTPUT', 
+			EXEC sp_executesql
+				@sql_result,
+				N'@record_count int OUTPUT',
 				@record_count = @total_records OUTPUT
 		END
 END
@@ -38811,7 +38811,7 @@ PRINT '7.9.3.24 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.25
 -- fix user group tree
@@ -38838,7 +38838,7 @@ begin
 		HAS_CHILDREN bit null,
 		IS_RECURRING bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @source nvarchar(50), @id_field nvarchar(50), @title_field nvarchar(50)
 	declare @parent_id_field nvarchar(50), @icon_field nvarchar(50)
@@ -38848,39 +38848,39 @@ begin
 	declare @id_str nvarchar(10), @parent_id bigint
 	declare @default_action_id int, @context_menu_id int
 	declare @is_admin bit
-	
+
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	set @is_admin = 0;
 	IF EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1
 		set @is_admin = 1;
-	
-	select 
+
+	select
 		@source = source,
 		@source_sp = source_sp,
 		@id_field = id_field,
-		@title_field = TITLE_FIELD, 
-		@parent_id_field = PARENT_ID_FIELD, 
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@title_field = TITLE_FIELD,
+		@parent_id_field = PARENT_ID_FIELD,
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = default_action_id,
-		@context_menu_id = CONTEXT_MENU_ID 
-	from 
-		ENTITY_TYPE 
+		@context_menu_id = CONTEXT_MENU_ID
+	from
+		ENTITY_TYPE
 	where
 		ID = dbo.qp_entity_type_id(@code)
 
 	set @id_str = CAST(@id as nvarchar(10))
-	
+
 	if @icon_field is null
 		set @icon_field = 'NULL'
 	if @icon_modifier_field is null
-		set @icon_modifier_field = 'NULL'	
-	
+		set @icon_modifier_field = 'NULL'
+
 
 	if @is_folder = 1 or @recurring_id_field is not null
 	begin
@@ -38889,18 +38889,18 @@ begin
 		if @has_item_nodes = 1
 		begin
 			set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-			
-			
+
+
 			-- process recurring --
 			if @recurring_id_field is not null
 			begin
-				if @is_folder = 1 
+				if @is_folder = 1
 				begin
 					if @parent_id_field is null
 						set @where = @recurring_id_field + ' is null '
 					else
 						set @where = @parent_id_field + ' = ' + @id_str + ' and ' + @recurring_id_field + ' is null '
-				end  
+				end
 				else
 					set @where = @recurring_id_field + ' = ' + @id_str
 			end
@@ -38910,15 +38910,15 @@ begin
 			end
 			else
 				set @where = '1 = 1'
-			
+
 			if @order_field is null
 				set @order = @title_field
 			else
-				set @order = @order_field  
-			
+				set @order = @order_field
+
 		end
-		
-		
+
+
 		if @source_sp is null
 			set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where + ' order by ' + @order
 		else
@@ -38930,75 +38930,75 @@ begin
 				if @is_folder = 1
 					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=0'
 				else
-					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str			
-				
-			
+					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str
+
+
 		end
-		
+
 		insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
 		exec sp_executesql @sql
-		
+
 		--PRINT @sql;
-		
-		
+
+
 		if @count_only = 0
 		begin
-			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-			update 
+			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+			update
 				@result
-			set 
-				PARENT_ID = @id, 
-				CODE = @code, 
-				IS_FOLDER = 0, 
-				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER), 
-				DEFAULT_ACTION_ID = @default_action_id, 
+			set
+				PARENT_ID = @id,
+				CODE = @code,
+				IS_FOLDER = 0,
+				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
+				DEFAULT_ACTION_ID = @default_action_id,
 				CONTEXT_MENU_ID = @context_menu_id,
 				IS_RECURRING = CASE WHEN @recurring_id_field is not null THEN 1 ELSE 0 END
 		end
 		else
-			select @count = COUNT(ID) from @result	
+			select @count = COUNT(ID) from @result
 	end
 	else begin
 		declare @entitySecQuery nvarchar(max);
 		EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-			@user_id = @user_id,	
+			@user_id = @user_id,
 			@SQLOut = @entitySecQuery OUTPUT
-		
+
 		CREATE TABLE #sectmp
 		(
 			PERMISSION_LEVEL int,
 			ENTITY_TYPE_ID int
-		);				
+		);
 		set @entitySecQuery = N'insert into #sectmp (PERMISSION_LEVEL, ENTITY_TYPE_ID) ' + @entitySecQuery;
 		exec sp_executesql @entitySecQuery;
-		
+
 		if @count_only = 0
 			if @code is not null
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select ID, @id, dbo.qp_translate(dbo.qp_pluralize(NAME), @language_id), CODE, 1, dbo.qp_get_icon(NULL, dbo.qp_pluralize(CODE), NULL), FOLDER_DEFAULT_ACTION_ID, FOLDER_CONTEXT_MENU_ID 
-				From ENTITY_TYPE 
+				select ID, @id, dbo.qp_translate(dbo.qp_pluralize(NAME), @language_id), CODE, 1, dbo.qp_get_icon(NULL, dbo.qp_pluralize(CODE), NULL), FOLDER_DEFAULT_ACTION_ID, FOLDER_CONTEXT_MENU_ID
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 				where PARENT_ID = dbo.qp_entity_type_id(@code) and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 order by [Order]
 			else
 				insert into @result(ID, PARENT_ID, TITLE, CODE, IS_FOLDER, ICON, DEFAULT_ACTION_ID, CONTEXT_MENU_ID)
-				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), DEFAULT_ACTION_ID, CONTEXT_MENU_ID 
-				From ENTITY_TYPE 
+				select ID, @id, NAME, CODE, 0, dbo.qp_get_icon(NULL, CODE, NULL), DEFAULT_ACTION_ID, CONTEXT_MENU_ID
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
 				where PARENT_ID is null and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 order by [Order]
 		else
 			if @code is not null
-				select @count = COUNT(ID) 
-				From ENTITY_TYPE 
+				select @count = COUNT(ID)
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
-				where PARENT_ID = dbo.qp_entity_type_id(@code) and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 	
+				where PARENT_ID = dbo.qp_entity_type_id(@code) and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0
 			else
-				select @count = COUNT(ID) 
-				From ENTITY_TYPE 
+				select @count = COUNT(ID)
+				From ENTITY_TYPE
 				JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID
-				where PARENT_ID is null and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0 	
+				where PARENT_ID is null and (@is_admin = 1 OR S.PERMISSION_LEVEL > 0) and disabled = 0
 
 	end
-	
+
 	if @count_only = 0
 	begin
 		declare @i numeric, @total numeric
@@ -39010,7 +39010,7 @@ begin
 		while @i <= @total
 		begin
 			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = is_folder, @local_is_recurring = is_recurring from @result where NUMBER = @i
-			
+
 			if @local_is_folder = 1
 				exec dbo.qp_expand @user_id, @local_code, @local_parent_id, 1, 1, @count = @children_count output
 			else
@@ -39024,32 +39024,32 @@ begin
 				update @result set has_children = 0 where NUMBER = @i
 			else
 				update @result set has_children = 1 where NUMBER = @i
-			
+
 			set @i = @i + 1
 		end
-		
-		select 
+
+		select
 			TREE_NODE.ID,
-			TREE_NODE.CODE, 			
+			TREE_NODE.CODE,
 			TREE_NODE.PARENT_ID as PARENT_ID,
-			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE, 
-			TREE_NODE.IS_FOLDER, 
-			TREE_NODE.ICON, 
-			TREE_NODE.TITLE, 
-			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE, 
+			dbo.qp_entity_type_code(TREE_NODE.PARENT_ID) as PARENT_CODE,
+			TREE_NODE.IS_FOLDER,
+			TREE_NODE.ICON,
+			TREE_NODE.TITLE,
+			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 			ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 			TREE_NODE.HAS_CHILDREN
 		from
 			@result AS TREE_NODE
 		left outer join
 			BACKEND_ACTION
 		on
-			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 		left outer join
 			ACTION_TYPE
 		on
-			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID	
+			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID
 	end
 end
 GO
@@ -39063,7 +39063,7 @@ GO
 PRINT '7.9.3.25 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.26
 -- relation security
@@ -39087,15 +39087,15 @@ PRINT '7.9.3.26 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- irill Zakirov
 -- version 7.9.3.27
 -- Yandex speller
 -- **************************************
 
 UPDATE [VE_COMMAND]
-   SET 
-      [ON] = 0      
+   SET
+      [ON] = 0
  WHERE [NAME] = 'SpellChecker' or [NAME] = 'Scayt'
 GO
 
@@ -39104,7 +39104,7 @@ GO
 
 INSERT INTO [dbo].[VE_PLUGIN]
            ([NAME]
-           ,[DESCRIPTION]           
+           ,[DESCRIPTION]
            ,[ORDER]
            ,[LAST_MODIFIED_BY])
      VALUES
@@ -39122,7 +39122,7 @@ INSERT INTO [dbo].[VE_PLUGIN]
            ,[GROUP_IN_TOOLBAR_ORDER]
            ,[COMMAND_IN_GROUP_ORDER]
            ,[ON]
-           ,[PLUGIN_ID]           
+           ,[PLUGIN_ID]
            ,[LAST_MODIFIED_BY])
      VALUES
            ('SpellCheck'
@@ -39147,14 +39147,14 @@ PRINT '7.9.3.27 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.28
 -- Fix_dbo bug fix
 -- **************************************
 
 UPDATE [BACKEND_ACTION]
-   SET [TYPE_ID] = dbo.qp_action_type_id('multiple_select')      
+   SET [TYPE_ID] = dbo.qp_action_type_id('multiple_select')
       ,[CONTROLLER_ACTION_URL] = '~/Workflow/MultipleSelectForWorkflow/'
  WHERE CODE = 'multiple_select_contents_for_workflow'
 GO
@@ -39169,7 +39169,7 @@ PRINT '7.9.3.28 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.29
 -- Multiple statuses support
@@ -39217,7 +39217,7 @@ DECLARE @statuses table
 	name nvarchar(255) primary key
 )
 
-set @insert_key ='<$_security_insert_$>' 
+set @insert_key ='<$_security_insert_$>'
 
 
 select @siteId = site_id from site where site_name = @SiteName
@@ -39233,7 +39233,7 @@ select top 1 @maxStatusId = status_type_id from status_type where site_id = @Sit
 if @StatusName <> '' begin
 	insert into @statuses
 	SELECT nstr from dbo.splitNew(@StatusName, ',')
-	
+
 	if not exists(select * from STATUS_TYPE where status_type_name in (select name from @statuses)) begin
 		return 3
 	end else begin
@@ -39253,7 +39253,7 @@ end
 
 if @WhereExpression = '' begin
 	set @fullWhereExpression = '1 = 1'
-end 
+end
 else begin
 	set @fullWhereExpression = @WhereExpression
 end
@@ -39274,11 +39274,11 @@ if @use_security>0
 begin
 	if @filter_records > 0
 	begin
-		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+		set @fromExpression = @fromExpression + ' INNER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 	end
 	else
 	begin
-        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id ' 
+        set @fromExpression = @fromExpression + ' LEFT OUTER JOIN (<$_security_insert_$>) as pi on c.content_item_id = pi.content_item_id '
 		set @Select = @Select + ', IsNull(pi.permission_level,0) as current_permission_level  '
 	end
 end
@@ -39313,7 +39313,7 @@ GO
 PRINT '7.9.3.29 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.30
 -- Ve Aspell Plugin fix
@@ -39332,7 +39332,7 @@ INSERT INTO [VE_COMMAND]
            ,[GROUP_IN_TOOLBAR_ORDER]
            ,[COMMAND_IN_GROUP_ORDER]
            ,[ON]
-           ,[PLUGIN_ID]           
+           ,[PLUGIN_ID]
            ,[LAST_MODIFIED_BY])
      VALUES
            ('SpellCheck'
@@ -39357,7 +39357,7 @@ GO
 PRINT '7.9.3.30 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.31
 -- Security fix
@@ -39371,31 +39371,31 @@ ALTER PROCEDURE [dbo].[qp_all_article_search]
 	@p_start_row int = 0,
 	@p_page_size int = 0,
 	@p_item_id int = null,
-	
+
 	@total_records int OUTPUT
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	
+
 	declare @is_admin bit
 	select @is_admin = dbo.qp_is_user_admin(@p_user_id)
-	
+
     -- Задаем номер начальной записи по умолчанию
 	IF (@p_start_row <= 0)
 		BEGIN
 			SET @p_start_row = 1
 		END
-		
+
 	-- Задаем номер конечной записи
 	DECLARE @p_end_row AS int
 	SET @p_end_row = @p_start_row + @p_page_size - 1
-	
-	-- свормировать запрос для подмножества контентов к которым есть доступ 
+
+	-- свормировать запрос для подмножества контентов к которым есть доступ
 	DECLARE @security_sql AS nvarchar(max)
 	SET @security_sql = ''
-	
+
 	if @is_admin = 0
 	begin
 		EXEC dbo.qp_GetPermittedItemsAsQuery
@@ -39405,97 +39405,97 @@ BEGIN
 				@end_level = 4,
 				@entity_name = 'content',
 				@parent_entity_name = 'site',
-				@parent_entity_id = @p_site_id,				
+				@parent_entity_id = @p_site_id,
 				@SQLOut = @security_sql OUTPUT
 	end
-		
-	-- посчитать общее кол-во записей					
+
+	-- посчитать общее кол-во записей
 	declare @paramdef nvarchar(4000);
 	declare @query nvarchar(4000);
-	
+
 	create table #temp
 	([rank] int, content_item_id numeric, attribute_id numeric, [priority] int)
-	
+
 	create table #temp2
-	([rank] int, content_item_id numeric, attribute_id numeric, [priority] int)	
-	
+	([rank] int, content_item_id numeric, attribute_id numeric, [priority] int)
+
 	declare @table_name nvarchar(10)
 	if @is_admin = 0
 		set @table_name = '#temp'
 	else
 		set @table_name = '#temp2'
-	
+
 	set @query = 'insert into ' + @table_name + CHAR(13)
 		+ ' select ft.[rank], cd.content_item_id, cd.attribute_id, 0 ' + CHAR(13)
 		+ ' from CONTAINSTABLE(content_data, *,  @searchparam) ft ' + CHAR(13)
 		+ ' inner join content_data cd on ft.[key] = cd.content_data_id ' + CHAR(13)
-		
-	IF @p_item_id is not null 	
-		set @query = @query + ' union select 0, ' + cast(@p_item_id as varchar(20)) + ', 0, 1 ' + CHAR(13)		
-	exec sp_executesql @query, N'@searchparam nvarchar(4000)', @searchparam = @p_searchparam	
-	
+
+	IF @p_item_id is not null
+		set @query = @query + ' union select 0, ' + cast(@p_item_id as varchar(20)) + ', 0, 1 ' + CHAR(13)
+	exec sp_executesql @query, N'@searchparam nvarchar(4000)', @searchparam = @p_searchparam
+
 	if @is_admin = 0
 	begin
 		set @query = 'insert into #temp2 ' + CHAR(13)
 			+ ' select cd.* from #temp cd ' + CHAR(13)
 			+ ' inner join content_item ci on cd.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID ' + CHAR(13)
-			+ ' inner join (' + @security_sql + ') c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)	
+			+ ' inner join (' + @security_sql + ') c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)
 		exec sp_executesql @query
 	end
-	
-	select @total_records = count(distinct content_item_id) from #temp2		
-		
+
+	select @total_records = count(distinct content_item_id) from #temp2
+
 	-- главный запрос
 	declare @query_template nvarchar(4000);
 	set @query_template = N'WITH PAGED_DATA_CTE AS ' + CHAR(13)
-		+ ' (select wrapper.*, ' + CHAR(13) 
+		+ ' (select wrapper.*, ' + CHAR(13)
 		+ ' 		ROW_NUMBER() OVER (ORDER BY wrapper.[priority] DESC, <$_order_by_$>) AS ROW ' + CHAR(13)
 		+ '  from ' + CHAR(13)
-		+ '  (select ' + CHAR(13) 
+		+ '  (select ' + CHAR(13)
 		+ ' 	ci.CONTENT_ID as ParentId, ' + CHAR(13)
 		+ ' 	data.CONTENT_ITEM_ID as Id, ' + CHAR(13)
 		+ ' 	data.ATTRIBUTE_ID as FieldId, ' + CHAR(13)
 		+ ' 	attr.ATTRIBUTE_TYPE_ID as FieldTypeId, ' + CHAR(13)
-		+ ' 	c.CONTENT_NAME as ParentName, ' + CHAR(13) 	
+		+ ' 	c.CONTENT_NAME as ParentName, ' + CHAR(13)
 		+ ' 	st.STATUS_TYPE_NAME as StatusName, ' + CHAR(13)
 		+ ' 	ci.CREATED as Created, ' + CHAR(13)
 		+ ' 	ci.MODIFIED as Modified, ' + CHAR(13)
-		+ ' 	usr.[LOGIN] as LastModifiedByUser, ' + CHAR(13)	
+		+ ' 	usr.[LOGIN] as LastModifiedByUser, ' + CHAR(13)
 		+ ' 	data.[rank] as Rank, ' + CHAR(13)
 		+ ' 	data.[priority] as [priority], ' + CHAR(13)
 		+ ' 	ROW_NUMBER() OVER (PARTITION BY data.CONTENT_ITEM_ID ORDER BY data.[rank] DESC) AS SIMILAR_ITEM_ROW ' + CHAR(13)
 		+ '   from #temp2 data ' + CHAR(13)
 		+ '   left join dbo.CONTENT_ATTRIBUTE attr on data.ATTRIBUTE_ID = attr.ATTRIBUTE_ID ' + CHAR(13)
 		+ '   inner join dbo.CONTENT_ITEM ci on data.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID ' + CHAR(13)
-		+ '	  inner join dbo.CONTENT c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)	
+		+ '	  inner join dbo.CONTENT c on c.CONTENT_ID = ci.CONTENT_ID ' + CHAR(13)
 		+ '   inner join dbo.STATUS_TYPE st on st.STATUS_TYPE_ID = ci.STATUS_TYPE_ID ' + CHAR(13)
 		+ '   inner join dbo.USERS usr on usr.[USER_ID] = ci.LAST_MODIFIED_BY ' + CHAR(13)
 		+ '   ) as wrapper ' + CHAR(13)
 		+ '   where wrapper.SIMILAR_ITEM_ROW = 1 ' + CHAR(13)
 		+ ' ) ' + CHAR(13)
-		+ ' select ' + CHAR(13)  
+		+ ' select ' + CHAR(13)
 		+ ' 	ParentId, ' + CHAR(13)
 		+ ' 	ParentName, ' + CHAR(13)
 		+ ' 	Id, ' + CHAR(13)
 		+ ' 	FieldId, ' + CHAR(13)
-		+ '		(case when FieldTypeId in (9, 10) THEN cd.BLOB_DATA ELSE cd.DATA END) as Text, ' + CHAR(13)		
-		+ ' 	dbo.qp_get_article_title_func(Id, ParentId) as Name, ' + CHAR(13)	
+		+ '		(case when FieldTypeId in (9, 10) THEN cd.BLOB_DATA ELSE cd.DATA END) as Text, ' + CHAR(13)
+		+ ' 	dbo.qp_get_article_title_func(Id, ParentId) as Name, ' + CHAR(13)
 		+ ' 	StatusName, ' + CHAR(13)
 		+ ' 	pdc.Created, ' + CHAR(13)
 		+ ' 	pdc.Modified, ' + CHAR(13)
-		+ ' 	LastModifiedByUser, ' + CHAR(13)	
+		+ ' 	LastModifiedByUser, ' + CHAR(13)
 		+ ' 	Rank ' + CHAR(13)
 		+ ' from PAGED_DATA_CTE pdc ' + CHAR(13)
 		+ ' left join content_data cd on pdc.Id = cd.content_item_id and pdc.FieldId = cd.attribute_id ' + CHAR(13)
 		+ ' where ROW between @start_row and @end_row';
-		
-	
+
+
 	declare @sortExp nvarchar(4000);
-	set @sortExp = case when @p_order_by is null or @p_order_by = '' then N'Rank DESC' else @p_order_by end;	
-	set @query = REPLACE(@query_template, '<$_order_by_$>', @sortExp);	
+	set @sortExp = case when @p_order_by is null or @p_order_by = '' then N'Rank DESC' else @p_order_by end;
+	set @query = REPLACE(@query_template, '<$_order_by_$>', @sortExp);
 	set @paramdef = '@searchparam nvarchar(4000), @site_id int, @start_row int, @end_row int';
 	EXECUTE sp_executesql @query, @paramdef, @searchparam = @p_searchparam, @site_id = @p_site_id, @start_row = @p_start_row, @end_row = @p_end_row;
-	
+
 	drop table #temp
 	drop table #temp2
 END
@@ -39511,7 +39511,7 @@ GO
 PRINT '7.9.3.31 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.3.32
 -- XAML Validation
@@ -39538,7 +39538,7 @@ GO
 PRINT '7.9.3.32 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.3.33
 -- String Enum Field
@@ -39561,17 +39561,17 @@ PRINT '7.9.3.33 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.34
 -- Fix Multiple Contents Operation
 -- **************************************
 
 ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
-	
+
 	if object_id('tempdb..#disable_td_delete_item') is null
 	begin
-	
+
 		declare @content_id numeric, @virtual_type numeric
 		declare @sql nvarchar(max)
 		declare @ids_list nvarchar(max)
@@ -39581,19 +39581,19 @@ ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGI
 			id numeric primary key,
 			virtual_type numeric
 		)
-		
+
 		insert into @c
 		select distinct d.content_id, c.virtual_type
-		from deleted d inner join content c 
+		from deleted d inner join content c
 		on d.content_id = c.content_id
-		
+
 		declare @ids table
 		(
 			id numeric primary key,
 			char_id nvarchar(30)
 		)
-		
-					
+
+
 		declare @attr_ids table
 		(
 			id numeric primary key
@@ -39601,50 +39601,50 @@ ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGI
 
 		while exists(select id from @c)
 		begin
-			
+
 			select @content_id = id, @virtual_type = virtual_type from @c
-			
+
 			insert into @ids
 			select content_item_id, CONVERT(nvarchar, content_item_id) from deleted where content_id = @content_id
 
 			insert into @attr_ids
-			select ca1.attribute_id from CONTENT_ATTRIBUTE ca1 
-			inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID 
+			select ca1.attribute_id from CONTENT_ATTRIBUTE ca1
+			inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID
 			where ca2.CONTENT_ID = @content_id
-			
+
 			set @ids_list = null
 			select @ids_list = coalesce(@ids_list + ', ', '') + char_id from @ids
-		
-		
+
+
 			/* Drop relations to current item */
 			if exists(select id from @attr_ids)
 			begin
-				UPDATE content_attribute SET default_value = null 
-					WHERE attribute_id IN (select id from @attr_ids) 
+				UPDATE content_attribute SET default_value = null
+					WHERE attribute_id IN (select id from @attr_ids)
 					AND default_value IN (select char_id from @ids)
-			
-				UPDATE content_data SET data = NULL, blob_data = NULL 
+
+				UPDATE content_data SET data = NULL, blob_data = NULL
 					WHERE attribute_id IN (select id from @attr_ids)
 					AND data IN (select char_id from @ids)
-					
+
 				DELETE from VERSION_CONTENT_DATA
 					where ATTRIBUTE_ID in (select id from @attr_ids)
-					AND data IN (select char_id from @ids)	
+					AND data IN (select char_id from @ids)
 			end
-			
-			if @virtual_type = 0 
-			begin 		
+
+			if @virtual_type = 0
+			begin
 				exec qp_get_delete_items_sql @content_id, @ids_list, 0, @sql = @sql out
 				exec sp_executesql @sql
-			
+
 				exec qp_get_delete_items_sql @content_id, @ids_list, 1, @sql = @sql out
 				exec sp_executesql @sql
 			end
 
 			delete from @c where id = @content_id
-			
+
 			delete from @ids
-			
+
 			delete from @attr_ids
 		end
 	end
@@ -39657,43 +39657,43 @@ BEGIN
 	declare @ids_list nvarchar(max)
 
 	declare @table_name varchar(50), @sql nvarchar(max)
-	
+
 	declare @contents table
 	(
 		id numeric primary key
 	)
-		
+
 	insert into @contents
 	select distinct content_id from inserted
-	where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0) 
-	
+	where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0)
+
 	declare @ids table
 	(
 		id numeric primary key
 	)
 
-	
+
 	while exists (select id from @contents)
 	begin
 		select @content_id = id from @contents
-		
+
 		insert into @ids
-		select i.content_item_id from inserted i 
+		select i.content_item_id from inserted i
 		where i.CONTENT_ID = @content_id and i.not_for_replication = 0
-		
+
 		set @ids_list = null
 		select @ids_list = coalesce(@ids_list + ',', '') + convert(nvarchar, id) from @ids
 		set @table_name = 'content_' + convert(nvarchar, @content_id)
-		
+
 		exec qp_get_upsert_items_sql @table_name, @ids_list, @sql = @sql out
 		print @sql
 		exec sp_executesql @sql
-		
+
 		delete from @contents where id = @content_id
-		
+
 		delete from @ids
 	end
- 
+
 END
 GO
 
@@ -39705,51 +39705,51 @@ begin
 		declare @content_id numeric
 		declare @sql nvarchar(max), @table_name varchar(50), @async_table_name varchar(50)
 		declare @ids_list nvarchar(max), @async_ids_list nvarchar(max), @sync_ids_list nvarchar(max)
-		
+
 		declare @contents table
 		(
 			id numeric primary key
 		)
-		
+
 		insert into @contents
 		select distinct content_id from inserted
-		where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0) 
-		
+		where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0)
+
 		create table #ids_with_splitted
 		(
 			id numeric primary key,
 			new_splitted bit
 		)
-		
+
 		declare @ids table
 		(
 			id numeric primary key,
 			splitted bit,
 			not_for_replication bit
 		)
-		
+
 		while exists (select id from @contents)
 		begin
 			select @content_id = id from @contents
-			
+
 			insert into @ids
-			select i.content_item_id, i.SPLITTED, i.not_for_replication from inserted i 
-			inner join content_item ci on i.content_item_id = ci.content_item_id 
+			select i.content_item_id, i.SPLITTED, i.not_for_replication from inserted i
+			inner join content_item ci on i.content_item_id = ci.content_item_id
 			where ci.CONTENT_ID = @content_id
-			
+
 			set @ids_list = null
 			select @ids_list = coalesce(@ids_list + ',', '') + convert(nvarchar, id) from @ids
-						
-			set @sql = 'insert into #ids_with_splitted ' 
+
+			set @sql = 'insert into #ids_with_splitted '
 			set @sql = @sql + ' select content_item_id,'
-			set @sql = @sql + ' case' 
+			set @sql = @sql + ' case'
 			set @sql = @sql + ' when curr_weight < front_weight and is_workflow_async = 1 then 1'
 			set @sql = @sql + ' when curr_weight = workflow_max_weight and delayed = 1 then 1'
 			set @sql = @sql + ' else 0'
 			set @sql = @sql + ' end'
 			set @sql = @sql + ' as new_splitted from ('
 			set @sql = @sql + ' select distinct ci.content_item_id, st1.WEIGHT as curr_weight, st2.WEIGHT as front_weight, '
-			set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, ciw.is_async as is_workflow_async, ' 
+			set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, ciw.is_async as is_workflow_async, '
 			set @sql = @sql + ' ci.SCHEDULE_NEW_VERSION_PUBLICATION as delayed '
 			set @sql = @sql + ' from content_item ci'
 			set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
@@ -39761,49 +39761,49 @@ begin
 			set @sql = @sql + ' where ci.content_item_id in (' + @ids_list + ')) as main'
 			print @sql
 			exec sp_executesql @sql
-			
-			update base set base.splitted = i.new_splitted from @ids base inner join #ids_with_splitted i on base.id = i.id 
+
+			update base set base.splitted = i.new_splitted from @ids base inner join #ids_with_splitted i on base.id = i.id
 			update base set base.splitted = i.splitted from content_item base inner join @ids i on base.CONTENT_ITEM_ID = i.id
-			
+
 			set @sync_ids_list = null
 			select @sync_ids_list = coalesce(@sync_ids_list + ',', '') + convert(nvarchar, id) from @ids where splitted = 0 and not_for_replication = 0
 			set @async_ids_list = null
 			select @async_ids_list = coalesce(@async_ids_list + ',', '') + convert(nvarchar, id) from @ids where splitted = 1 and not_for_replication = 0
-			
+
 			set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
 			set @async_table_name = @table_name + '_async'
-			
+
 			if @sync_ids_list <> ''
 			begin
 				exec qp_get_upsert_items_sql @table_name, @sync_ids_list, @sql = @sql out
 				print @sql
 				exec sp_executesql @sql
-				
+
 				exec qp_get_delete_items_sql @content_id, @sync_ids_list, 1, @sql = @sql out
 				print @sql
-				exec sp_executesql @sql		
+				exec sp_executesql @sql
 			end
-			
+
 			if @async_ids_list <> ''
 			begin
 				exec qp_get_upsert_items_sql @async_table_name, @async_ids_list, @sql = @sql out
 				print @sql
 				exec sp_executesql @sql
-				
+
 				exec qp_get_update_items_flags_sql @table_name, @async_ids_list, @sql = @sql out
 				print @sql
-				exec sp_executesql @sql					
+				exec sp_executesql @sql
 			end
-			
+
 			delete from #ids_with_splitted
-									
+
 			delete from @contents where id = @content_id
-			
+
 			delete from @ids
 		end
-		
+
 		drop table #ids_with_splitted
-		
+
 	end
 end
 GO
@@ -39818,10 +39818,10 @@ PRINT '7.9.3.34 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.35
--- 
+--
 -- **************************************
 
 insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTION_URL, IS_INTERFACE, DEFAULT_VIEW_TYPE_ID)
@@ -39857,7 +39857,7 @@ values('Template Objects', 'list_template_object', dbo.qp_action_type_id('list')
 go
 
 update ENTITY_TYPE
-set 
+set
 	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_template')
 where CODE = 'template'
 GO
@@ -39882,13 +39882,13 @@ insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_
 values (dbo.qp_action_id('list_template'), dbo.qp_action_id('refresh_templates'), 'Refresh', 'refresh.gif', NULL, 3, 0)
 
 UPDATE [ENTITY_TYPE]
-   SET 
+   SET
       [DISABLED] = 0
  WHERE CODE = 'page'
 GO
 
 UPDATE [ENTITY_TYPE]
-   SET 
+   SET
        [FOLDER_DEFAULT_ACTION_ID] = dbo.qp_action_id('list_page')
  WHERE CODE = 'page'
 GO
@@ -39902,28 +39902,28 @@ values (dbo.qp_action_id('list_page'), dbo.qp_action_id('refresh_pages'), 'Refre
 
 
 update ENTITY_TYPE
-set 
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('list_page')
 where CODE = 'template'
 
 UPDATE [ENTITY_TYPE]
-   SET 
+   SET
       [DISABLED] = 0
  WHERE CODE = 'page_object'
 GO
 
 update ENTITY_TYPE
-set 
+set
 	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_template_object')
 where CODE = 'template_object'
 
 update ENTITY_TYPE
-set 
+set
 	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_template_object')
 where CODE = 'template_object'
 
 update ENTITY_TYPE
-set 
+set
 	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_page_object')
 where CODE = 'page_object'
 
@@ -39934,12 +39934,12 @@ insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTIO
 values('New Page Object', 'new_page_object', dbo.qp_action_type_id('new'), dbo.qp_entity_type_id('page_object'), '~/PageTemplate/NewPageObject/', 1)
 
 update ENTITY_TYPE
-set 
+set
 	FOLDER_DEFAULT_ACTION_ID = dbo.qp_action_id('list_page_object')
 where CODE = 'template_object'
 
 update ENTITY_TYPE
-set 
+set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('list_page_object')
 where CODE = 'page'
 
@@ -39961,7 +39961,7 @@ PRINT '7.9.3.35 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.36
 -- One-Way Link
@@ -39988,17 +39988,17 @@ CREATE FUNCTION [dbo].[qp_is_link_symmetric](@link_id numeric) returns bit
 AS
 BEGIN
 	declare @result bit
-	select @result = [symmetric] from content_to_content where link_id = @link_id 
-	return @result	
+	select @result = [symmetric] from content_to_content where link_id = @link_id
+	return @result
 END
 GO
 
 ALTER TRIGGER [dbo].[td_item_to_item] ON [dbo].[item_to_item] AFTER DELETE
-AS 
+AS
 BEGIN
 	if object_id('tempdb..#disable_td_item_to_item') is null
 	begin
-		delete item_to_item from item_to_item ii 
+		delete item_to_item from item_to_item ii
 			inner join deleted d on ii.link_id = d.link_id and ii.l_item_id = d.r_item_id and ii.r_item_id = d.l_item_id
 			inner join content_to_content c2c on d.link_id = c2c.link_id
 			where c2c.[symmetric] = 1
@@ -40007,14 +40007,14 @@ END
 GO
 
 ALTER TRIGGER [dbo].[ti_item_to_item] ON [dbo].[item_to_item] AFTER INSERT
-AS 
+AS
 BEGIN
 
 with items (link_id, item_id, linked_item_id)
 AS
 (
 	select i1.link_id, i1.l_item_id, i1.r_item_id From inserted i1
-	inner join content_to_content c2c on i1.link_id = c2c.link_id 
+	inner join content_to_content c2c on i1.link_id = c2c.link_id
 	where c2c.[symmetric] = 1 and not exists (select * from item_to_item i2 where i1.link_id = i2.link_id and i1.r_item_id = i2.l_item_id and i2.r_item_id = i1.l_item_id)
 )
 insert into item_to_item(link_id, l_item_id, r_item_id)
@@ -40064,16 +40064,16 @@ BEGIN
 		while exists (select * from @newIds)
 		begin
 			select @currentId = id from @newIds
-			
+
 			exec qp_apply_link_id_to_data @linkId, @currentId
-			
-			IF @splitted = 0 
-				and exists (select * from content_item where content_item_id = @currentId and splitted = 1) 
-				and not exists (select * from item_link_async where link_id = @linkId and item_id = @currentId and linked_item_id = @id) 
-				begin	
+
+			IF @splitted = 0
+				and exists (select * from content_item where content_item_id = @currentId and splitted = 1)
+				and not exists (select * from item_link_async where link_id = @linkId and item_id = @currentId and linked_item_id = @id)
+				begin
 					insert into item_link_async with(rowlock) values(@linkId, @currentId, @id)
 				end
-				
+
 			delete from @newIds where id = @currentId
 		end
 	end
@@ -40082,24 +40082,24 @@ GO
 
 ALTER TRIGGER [dbo].[td_item_link_united_full] ON [dbo].[item_link_united_full] INSTEAD OF DELETE
 AS BEGIN
-  
-  delete item_link_async from item_link_async ii 
+
+  delete item_link_async from item_link_async ii
   inner join deleted d on d.link_id = ii.link_id and d.item_id = ii.item_id and d.linked_item_id = ii.linked_item_id
 
-  delete item_link_async from item_link_async ii 
+  delete item_link_async from item_link_async ii
   inner join deleted d on d.link_id = ii.link_id and d.item_id = ii.linked_item_id and d.linked_item_id = ii.item_id
   inner join content_to_content c2c on ii.link_id = c2c.link_id
   where c2c.[symmetric] = 1
-   
-  delete item_to_item from item_to_item ii 
+
+  delete item_to_item from item_to_item ii
   inner join deleted d on d.link_id = ii.link_id and d.item_id = ii.l_item_id and d.linked_item_id = ii.r_item_id
 END
 GO
 
 
-ALTER PROCEDURE [dbo].[qp_merge_links] 
+ALTER PROCEDURE [dbo].[qp_merge_links]
 @content_item_id numeric
-AS 
+AS
 declare @splitted bit
 BEGIN
 	select @splitted = splitted from content_item with(nolock) where content_item_id = @content_item_id
@@ -40107,15 +40107,15 @@ BEGIN
 	BEGIN
 		DELETE item_to_item with(rowlock)
 		WHERE link_id in (
-			select link_id from content_attribute ca with(nolock) 
-			inner join content_item ci with(nolock) on ca.content_id = ci.content_id 
+			select link_id from content_attribute ca with(nolock)
+			inner join content_item ci with(nolock) on ca.content_id = ci.content_id
 			where ci.content_item_id = @content_item_id
-		) 
-		AND l_item_id = @content_item_id 
-		
-		insert into item_to_item with(rowlock) (link_id, l_item_id, r_item_id) 
+		)
+		AND l_item_id = @content_item_id
+
+		insert into item_to_item with(rowlock) (link_id, l_item_id, r_item_id)
 		select link_id, item_id, linked_item_id from item_link_async with(nolock) where item_id = @content_item_id
-		
+
 		delete from item_link_async with(rowlock) where item_id = @content_item_id
 	END
 END
@@ -40123,13 +40123,13 @@ GO
 
 ALTER TRIGGER [dbo].[td_site_item_link] ON [dbo].[site_item_link] INSTEAD OF DELETE
 AS BEGIN
-  delete item_to_item from item_to_item ii 
+  delete item_to_item from item_to_item ii
   inner join deleted d on d.link_id = ii.link_id and d.l_item_id = ii.l_item_id and d.r_item_id = ii.r_item_id
-  
-  delete item_link_async from item_link_async ii 
+
+  delete item_link_async from item_link_async ii
   inner join deleted d on d.link_id = ii.link_id and ii.item_id = d.l_item_id and ii.linked_item_id = d.r_item_id
 
-  delete item_link_async from item_link_async ii 
+  delete item_link_async from item_link_async ii
   inner join deleted d on d.link_id = ii.link_id and ii.item_id = d.r_item_id and ii.linked_item_id = d.l_item_id
   inner join content_to_content c2c on ii.link_id = c2c.link_id
   where c2c.[symmetric] = 1
@@ -40137,7 +40137,7 @@ END
 GO
 
 ALTER TRIGGER [dbo].[ti_site_item_link] ON [dbo].[site_item_link] INSTEAD OF INSERT
-AS 
+AS
 BEGIN
 	insert into item_to_item(link_id, l_item_id, r_item_id)
 	select i.link_id, i.l_item_id, i.r_item_id from inserted i
@@ -40159,9 +40159,9 @@ BEGIN
 		)
 
 		insert into @links (link_id, attribute_id)
-			select i.link_id, i.attribute_id from inserted i 
-			inner join deleted d on d.attribute_id = i.attribute_id 
-			where i.link_id IS NOT NULL AND (d.link_id IS NULL OR d.link_id <> i.link_id) 
+			select i.link_id, i.attribute_id from inserted i
+			inner join deleted d on d.attribute_id = i.attribute_id
+			where i.link_id IS NOT NULL AND (d.link_id IS NULL OR d.link_id <> i.link_id)
 
 		set @i = 1
 		select @count = count(id) from @links
@@ -40187,7 +40187,7 @@ PRINT '7.9.3.36 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.37
 -- Many-to-Many update
@@ -40234,13 +40234,13 @@ BEGIN
 
 	if dbo.qp_is_link_symmetric(@linkId) = 1
 	begin
-	
+
 		with newItems (id, attribute_id, has_data, splitted, has_async) as
 		(
-		select 
-			n.id, ca.attribute_id, 
-			case when cd.content_item_id is null then 0 else 1 end as has_data, 
-			ci.splitted, 
+		select
+			n.id, ca.attribute_id,
+			case when cd.content_item_id is null then 0 else 1 end as has_data,
+			ci.splitted,
 			case when ila.link_id is null then 0 else 1 end as has_async
 		from @newIds n
 			inner join content_item ci on ci.CONTENT_ITEM_ID = n.id
@@ -40249,40 +40249,40 @@ BEGIN
 			left join content_data cd on cd.ATTRIBUTE_ID = ca.ATTRIBUTE_ID and cd.CONTENT_ITEM_ID = ci.content_item_id
 			left join item_link_async ila on @linkId = ila.link_id and n.id = ila.item_id and ila.linked_item_id = @id
 		)
-		update @newIds 
+		update @newIds
 		set attribute_id = ext.attribute_id, has_data = ext.has_data, splitted = ext.splitted, has_async = ext.has_async
 		from @newIds n inner join newItems ext on n.id = ext.id
-		
+
 		if @splitted = 0
 		begin
-			update content_data set data = @linkId 
-			from content_data cd 
+			update content_data set data = @linkId
+			from content_data cd
 			inner join @newIds n on cd.ATTRIBUTE_ID = n.attribute_id and cd.CONTENT_ITEM_ID = n.id
 			where n.has_data = 1
-			
+
 			insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
 			select n.id, n.attribute_id, @linkId
-			from @newIds n 
+			from @newIds n
 			where n.has_data = 0 and n.attribute_id is not null
-			
+
 			insert into item_link_async(link_id, item_id, linked_item_id)
 			select @linkId, n.id, @id
-			from @newIds n 
+			from @newIds n
 			where n.splitted = 1 and n.has_async = 0 and n.attribute_id is not null
 		end
 	end
 END
 GO
 
-ALTER PROCEDURE [dbo].[qp_merge_article] 
+ALTER PROCEDURE [dbo].[qp_merge_article]
 @item_id numeric
 AS
 BEGIN
 	if exists (select * from content_item where content_item_id = @item_id and SCHEDULE_NEW_VERSION_PUBLICATION = 1)
 	begin
-	exec qp_merge_links @item_id 
+	exec qp_merge_links @item_id
 	UPDATE content_item with(rowlock) set not_for_replication = 1 WHERE content_item_id = @item_id
-	UPDATE content_item with(rowlock) set SCHEDULE_NEW_VERSION_PUBLICATION = 0, MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1, CANCEL_SPLIT = 0 where CONTENT_ITEM_ID = @item_id 
+	UPDATE content_item with(rowlock) set SCHEDULE_NEW_VERSION_PUBLICATION = 0, MODIFIED = GETDATE(), LAST_MODIFIED_BY = 1, CANCEL_SPLIT = 0 where CONTENT_ITEM_ID = @item_id
 	exec qp_replicate @item_id
 	UPDATE content_item_schedule with(rowlock) set delete_job = 0 WHERE content_item_id = @item_id
 	DELETE FROM content_item_schedule with(rowlock) WHERE content_item_id = @item_id
@@ -40292,15 +40292,15 @@ BEGIN
 END
 GO
 
-ALTER PROCEDURE [dbo].[qp_merge_links] 
+ALTER PROCEDURE [dbo].[qp_merge_links]
 @content_item_id numeric
-AS 
+AS
 declare @splitted bit
 BEGIN
 	select @splitted = splitted from content_item with(nolock) where content_item_id = @content_item_id
 	if @splitted = 1
 	BEGIN
-		
+
 		declare @newIds table (link_id numeric, id numeric, attribute_id numeric null, has_data bit null, splitted bit null, has_async bit null, primary key (link_id, id))
 		declare @oldIds table (link_id numeric, id numeric, primary key (link_id, id))
 		declare @crossIds table (link_id numeric, id numeric, primary key (link_id, id))
@@ -40308,22 +40308,22 @@ BEGIN
 		insert into @newIds (link_id, id) select link_id, linked_item_id from item_link_async where item_id = @content_item_id
 		insert into @oldIds select link_id, linked_item_id from item_link where item_id = @content_item_id
 		insert into @crossIds select t1.link_id, t1.id from @oldIds t1 inner join @newIds t2 on t1.id = t2.id and t1.link_id = t2.link_id
-		
-		delete @oldIds from @oldIds i inner join @crossIds ci on i.link_id = ci.link_id and i.id = ci.id 
+
+		delete @oldIds from @oldIds i inner join @crossIds ci on i.link_id = ci.link_id and i.id = ci.id
 		delete @newIds from @newIds i inner join @crossIds ci on i.link_id = ci.link_id and i.id = ci.id
-		
+
 		delete item_to_item from item_to_item ii inner join @oldIds i on i.link_id = ii.link_id and i.id = ii.r_item_id
 		where ii.l_item_id = @content_item_id
-		
+
 		insert into item_to_item (link_id, l_item_id, r_item_id)
 		select link_id, @content_item_id, id from @newIds;
-		
+
 		with newItems (link_id, id, attribute_id, has_data, splitted, has_async) as
 		(
-		select 
-			n.link_id, n.id, ca.attribute_id, 
-			case when cd.content_item_id is null then 0 else 1 end as has_data, 
-			ci.splitted, 
+		select
+			n.link_id, n.id, ca.attribute_id,
+			case when cd.content_item_id is null then 0 else 1 end as has_data,
+			ci.splitted,
 			case when ila.link_id is null then 0 else 1 end as has_async
 		from @newIds n
 			inner join content_item ci on ci.CONTENT_ITEM_ID = n.id
@@ -40334,24 +40334,24 @@ BEGIN
 			left join item_link_async ila on n.link_id = ila.link_id and n.id = ila.item_id and ila.linked_item_id = @content_item_id
 			where c2c.symmetric = 1
 		)
-		update @newIds 
+		update @newIds
 		set attribute_id = ext.attribute_id, has_data = ext.has_data, splitted = ext.splitted, has_async = ext.has_async
 		from @newIds n inner join newItems ext on n.link_id = ext.link_id and n.id = ext.id
-		
-		update content_data set data = n.link_id 
-		from content_data cd 
+
+		update content_data set data = n.link_id
+		from content_data cd
 		inner join @newIds n on cd.ATTRIBUTE_ID = n.attribute_id and cd.CONTENT_ITEM_ID = n.id
 		where n.has_data = 1
-		
+
 		insert into content_data(CONTENT_ITEM_ID, ATTRIBUTE_ID, DATA)
 		select n.id, n.attribute_id, n.link_id
 		from @newIds n where n.has_data = 0 and n.attribute_id is not null
-		
+
 		insert into item_link_async(link_id, item_id, linked_item_id)
 		select n.link_id, n.id, @content_item_id
-		from @newIds n 
+		from @newIds n
 		where n.splitted = 1 and n.has_async = 0 and n.attribute_id is not null
-		
+
 		delete from item_link_async with(rowlock) where item_id = @content_item_id
 	END
 END
@@ -40366,7 +40366,7 @@ GO
 PRINT '7.9.3.37 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.38
 -- Cancel Split
@@ -40380,22 +40380,22 @@ begin
 		declare @content_id numeric
 		declare @sql nvarchar(max), @table_name varchar(50), @async_table_name varchar(50)
 		declare @ids_list nvarchar(max), @async_ids_list nvarchar(max), @sync_ids_list nvarchar(max)
-		
+
 		declare @contents table
 		(
 			id numeric primary key
 		)
-		
+
 		insert into @contents
 		select distinct content_id from inserted
-		where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0) 
-		
+		where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0)
+
 		create table #ids_with_splitted
 		(
 			id numeric primary key,
 			new_splitted bit
 		)
-		
+
 		declare @ids table
 		(
 			id numeric primary key,
@@ -40403,29 +40403,29 @@ begin
 			not_for_replication bit,
 			cancel_split bit
 		)
-		
+
 		while exists (select id from @contents)
 		begin
 			select @content_id = id from @contents
-			
+
 			insert into @ids
-			select i.content_item_id, i.SPLITTED, i.not_for_replication, i.cancel_split from inserted i 
-			inner join content_item ci on i.content_item_id = ci.content_item_id 
+			select i.content_item_id, i.SPLITTED, i.not_for_replication, i.cancel_split from inserted i
+			inner join content_item ci on i.content_item_id = ci.content_item_id
 			where ci.CONTENT_ID = @content_id
-			
+
 			set @ids_list = null
 			select @ids_list = coalesce(@ids_list + ',', '') + convert(nvarchar, id) from @ids
-						
-			set @sql = 'insert into #ids_with_splitted ' 
+
+			set @sql = 'insert into #ids_with_splitted '
 			set @sql = @sql + ' select content_item_id,'
-			set @sql = @sql + ' case' 
+			set @sql = @sql + ' case'
 			set @sql = @sql + ' when curr_weight < front_weight and is_workflow_async = 1 then 1'
 			set @sql = @sql + ' when curr_weight = workflow_max_weight and delayed = 1 then 1'
 			set @sql = @sql + ' else 0'
 			set @sql = @sql + ' end'
 			set @sql = @sql + ' as new_splitted from ('
 			set @sql = @sql + ' select distinct ci.content_item_id, st1.WEIGHT as curr_weight, st2.WEIGHT as front_weight, '
-			set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, case when ci.cancel_split = 1 then 0 else ciw.is_async end as is_workflow_async, ' 
+			set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, case when ci.cancel_split = 1 then 0 else ciw.is_async end as is_workflow_async, '
 			set @sql = @sql + ' ci.SCHEDULE_NEW_VERSION_PUBLICATION as delayed '
 			set @sql = @sql + ' from content_item ci'
 			set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
@@ -40437,49 +40437,49 @@ begin
 			set @sql = @sql + ' where ci.content_item_id in (' + @ids_list + ')) as main'
 			print @sql
 			exec sp_executesql @sql
-			
+
 			update base set base.splitted = i.new_splitted from @ids base inner join #ids_with_splitted i on base.id = i.id
 			update base set base.splitted = i.splitted from content_item base inner join @ids i on base.CONTENT_ITEM_ID = i.id
-			
+
 			set @sync_ids_list = null
 			select @sync_ids_list = coalesce(@sync_ids_list + ',', '') + convert(nvarchar, id) from @ids where splitted = 0 and not_for_replication = 0
 			set @async_ids_list = null
 			select @async_ids_list = coalesce(@async_ids_list + ',', '') + convert(nvarchar, id) from @ids where splitted = 1 and not_for_replication = 0
-			
+
 			set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
 			set @async_table_name = @table_name + '_async'
-			
+
 			if @sync_ids_list <> ''
 			begin
 				exec qp_get_upsert_items_sql @table_name, @sync_ids_list, @sql = @sql out
 				print @sql
 				exec sp_executesql @sql
-				
+
 				exec qp_get_delete_items_sql @content_id, @sync_ids_list, 1, @sql = @sql out
 				print @sql
-				exec sp_executesql @sql		
+				exec sp_executesql @sql
 			end
-			
+
 			if @async_ids_list <> ''
 			begin
 				exec qp_get_upsert_items_sql @async_table_name, @async_ids_list, @sql = @sql out
 				print @sql
 				exec sp_executesql @sql
-				
+
 				exec qp_get_update_items_flags_sql @table_name, @async_ids_list, @sql = @sql out
 				print @sql
-				exec sp_executesql @sql					
+				exec sp_executesql @sql
 			end
-			
+
 			delete from #ids_with_splitted
-									
+
 			delete from @contents where id = @content_id
-			
+
 			delete from @ids
 		end
-		
+
 		drop table #ids_with_splitted
-		
+
 	end
 end
 GO
@@ -40494,12 +40494,12 @@ PRINT '7.9.3.38 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.39
 -- Templates etc.
 -- **************************************
-update backend_action 
+update backend_action
 set name = 'Templates'
 where code = 'list_template'
 go
@@ -40530,10 +40530,10 @@ go
 
 
 
-update ENTITY_TYPE 
-set 	
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_template'), 
-	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_templates')	
+update ENTITY_TYPE
+set
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_template'),
+	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_templates')
 where CODE = 'template'
 
 GO
@@ -40559,7 +40559,7 @@ insert into ACTION_TOOLBAR_BUTTON(PARENT_ACTION_ID, ACTION_ID, NAME, ICON, ICON_
 values (dbo.qp_action_id('list_template'), dbo.qp_action_id('edit_template'), 'Properties', 'properties.gif', NULL, 2, 1)
 go
 
-if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'PERMANENT_LOCK') 
+if not exists (select * From information_schema.columns where table_name = 'page_template' and column_name = 'PERMANENT_LOCK')
 begin
 	alter table page_template
 	add PERMANENT_LOCK bit NULL
@@ -40567,7 +40567,7 @@ end
 GO
 
 update page_template
-set permanent_lock = 0 
+set permanent_lock = 0
 go
 
 
@@ -40618,7 +40618,7 @@ insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 values(dbo.qp_context_menu_id('page'), dbo.qp_action_id('edit_page'), 'Properties', 3, 'properties.gif')
 GO
 
-update ENTITY_TYPE 
+update ENTITY_TYPE
 set
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('page'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('pages')
@@ -40635,7 +40635,7 @@ PRINT '7.9.3.39 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.3.40
 -- Templates etc.
@@ -40666,10 +40666,10 @@ values(dbo.qp_context_menu_id('page_template'), dbo.qp_action_id('edit_template'
 GO
 
 
-update ENTITY_TYPE 
-set 	
-	CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_template'), 
-	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_templates')	
+update ENTITY_TYPE
+set
+	CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_template'),
+	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_templates')
 where CODE = 'template'
 
 GO
@@ -40684,7 +40684,7 @@ PRINT '7.9.3.40 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.41
 -- Confirmations
@@ -40773,7 +40773,7 @@ GO
 PRINT '7.9.3.41 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.42
 -- Upload action type
@@ -40802,7 +40802,7 @@ GO
 PRINT '7.9.3.42 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.3.43
 -- Upload action type
@@ -40839,13 +40839,13 @@ PRINT '7.9.3.43 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.3.44
 -- Page Templates etc
 -- **************************************
 
-if not exists (select * From information_schema.columns where table_name = 'page' and column_name = 'PERMANENT_LOCK') 
+if not exists (select * From information_schema.columns where table_name = 'page' and column_name = 'PERMANENT_LOCK')
 begin
 	alter table page
 	add PERMANENT_LOCK bit NULL
@@ -40853,7 +40853,7 @@ end
 GO
 
 update page
-set permanent_lock = 0 
+set permanent_lock = 0
 go
 
 ALTER TABLE page ALTER COLUMN permanent_lock bit NOT NULL
@@ -40878,18 +40878,18 @@ values('Cancel', 'cancel_template', dbo.qp_action_type_id('cancel'), dbo.qp_enti
 
 UPDATE ENTITY_TYPE
    SET [CANCEL_ACTION_ID] = dbo.qp_action_id('cancel_page')
-      
- WHERE CODE = 'page' 
+
+ WHERE CODE = 'page'
 GO
 
 UPDATE ENTITY_TYPE
    SET [CANCEL_ACTION_ID] = dbo.qp_action_id('cancel_template')
-      
+
  WHERE CODE = 'template'
  go
 
 UPDATE ENTITY_TYPE
-   SET [CANCEL_ACTION_ID] = dbo.qp_action_id('cancel_template')      
+   SET [CANCEL_ACTION_ID] = dbo.qp_action_id('cancel_template')
  WHERE CODE = 'template'
  go
 
@@ -40930,14 +40930,14 @@ insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 values(dbo.qp_context_menu_id('page_object'), dbo.qp_action_id('edit_page_object'), 'Properties', 3, 'properties.gif')
 GO
 
-update ENTITY_TYPE 
+update ENTITY_TYPE
 set
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_object'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_objects')
 where CODE = 'page_object'
 go
 
-if not exists (select * From information_schema.columns where table_name = 'object' and column_name = 'PERMANENT_LOCK') 
+if not exists (select * From information_schema.columns where table_name = 'object' and column_name = 'PERMANENT_LOCK')
 begin
 	alter table object
 	add PERMANENT_LOCK bit NULL
@@ -40946,7 +40946,7 @@ end
 GO
 
 update [object]
-set permanent_lock = 0 
+set permanent_lock = 0
 go
 
 ALTER TABLE [object] ALTER COLUMN permanent_lock bit NOT NULL
@@ -40966,13 +40966,13 @@ values('Cancel', 'cancel_page_object', dbo.qp_action_type_id('cancel'), dbo.qp_e
 go
 
 UPDATE ENTITY_TYPE
-   SET [CANCEL_ACTION_ID] = dbo.qp_action_id('cancel_page_object')      
- WHERE CODE = 'page_object' 
+   SET [CANCEL_ACTION_ID] = dbo.qp_action_id('cancel_page_object')
+ WHERE CODE = 'page_object'
 GO
 
 UPDATE ENTITY_TYPE
-   SET [CANCEL_ACTION_ID] = dbo.qp_action_id('cancel_template_object')      
- WHERE CODE = 'template_object' 
+   SET [CANCEL_ACTION_ID] = dbo.qp_action_id('cancel_template_object')
+ WHERE CODE = 'template_object'
 GO
 
 
@@ -41004,7 +41004,7 @@ PRINT '7.9.3.44 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.4.0
 -- Internal Release
@@ -41019,15 +41019,15 @@ GO
 PRINT '7.9.4.0 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Maxim Tertyshnyy
 -- version 7.9.4.1
 -- USER DEFAULT FILTER
 -- **************************************
 
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[USER_DEFAULT_FILTER]') AND type in (N'U'))
-BEGIN		
-	DROP TABLE [dbo].[USER_DEFAULT_FILTER]		
+BEGIN
+	DROP TABLE [dbo].[USER_DEFAULT_FILTER]
 END
 GO
 CREATE TABLE dbo.USER_DEFAULT_FILTER
@@ -41038,52 +41038,52 @@ CREATE TABLE dbo.USER_DEFAULT_FILTER
 	)  ON [PRIMARY]
 GO
 ALTER TABLE dbo.USER_DEFAULT_FILTER ADD CONSTRAINT
-	PK_USER_DEFAULT_FILTER PRIMARY KEY CLUSTERED 
+	PK_USER_DEFAULT_FILTER PRIMARY KEY CLUSTERED
 	(
 	[USER_ID],
 	CONTENT_ID,
 	CONTENT_ITEM_ID
 	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 GO
-ALTER TABLE dbo.USER_DEFAULT_FILTER ADD CONSTRAINT FK_USER_DEFAULT_FILTER_USERS FOREIGN KEY ([USER_ID]) REFERENCES dbo.USERS([USER_ID]) 	
+ALTER TABLE dbo.USER_DEFAULT_FILTER ADD CONSTRAINT FK_USER_DEFAULT_FILTER_USERS FOREIGN KEY ([USER_ID]) REFERENCES dbo.USERS([USER_ID])
 GO
-ALTER TABLE dbo.USER_DEFAULT_FILTER ADD CONSTRAINT FK_USER_DEFAULT_FILTER_CONTENT FOREIGN KEY (CONTENT_ID) REFERENCES dbo.[CONTENT](CONTENT_ID)	
+ALTER TABLE dbo.USER_DEFAULT_FILTER ADD CONSTRAINT FK_USER_DEFAULT_FILTER_CONTENT FOREIGN KEY (CONTENT_ID) REFERENCES dbo.[CONTENT](CONTENT_ID)
 GO
-ALTER TABLE dbo.USER_DEFAULT_FILTER ADD CONSTRAINT FK_USER_DEFAULT_FILTER_CONTENT_ITEM FOREIGN KEY (CONTENT_ITEM_ID) REFERENCES dbo.CONTENT_ITEM(CONTENT_ITEM_ID) ON DELETE  CASCADE	
+ALTER TABLE dbo.USER_DEFAULT_FILTER ADD CONSTRAINT FK_USER_DEFAULT_FILTER_CONTENT_ITEM FOREIGN KEY (CONTENT_ITEM_ID) REFERENCES dbo.CONTENT_ITEM(CONTENT_ITEM_ID) ON DELETE  CASCADE
 GO
 
 exec qp_drop_existing 'tbd_user', 'IsTrigger'
 GO
-CREATE TRIGGER [dbo].[tbd_user] ON [dbo].[USERS] 
+CREATE TRIGGER [dbo].[tbd_user] ON [dbo].[USERS]
 INSTEAD OF DELETE
 AS
 BEGIN
-	
+
 	DELETE USER_GROUP_BIND FROM USER_GROUP_BIND c inner join deleted d on c.user_id = d.user_id
 	DELETE USER_DEFAULT_FILTER FROM USER_DEFAULT_FILTER f inner join deleted d on f.user_id = d.user_id
-		 
-	UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id  
-	UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id  
-	UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id  
-	UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id  
-	UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id  
-	UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id  
-	UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id  
-	UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id 
-	
-	UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id  
+
+	UPDATE CONTAINER SET locked = NULL, locked_by = NULL FROM CONTAINER c inner join deleted d on c.locked_by = d.user_id
+	UPDATE CONTENT_FORM SET locked = NULL, locked_by = NULL FROM CONTENT_FORM c inner join deleted d on c.locked_by = d.user_id
+	UPDATE CONTENT_ITEM SET locked = NULL, locked_by = NULL FROM CONTENT_ITEM c inner join deleted d on c.locked_by = d.user_id
+	UPDATE [OBJECT] SET locked = NULL, locked_by = NULL FROM [OBJECT] c inner join deleted d on c.locked_by = d.user_id
+	UPDATE OBJECT_FORMAT SET locked = NULL, locked_by = NULL FROM OBJECT_FORMAT c inner join deleted d on c.locked_by = d.user_id
+	UPDATE PAGE SET locked = NULL, locked_by = NULL FROM PAGE c inner join deleted d on c.locked_by = d.user_id
+	UPDATE PAGE_TEMPLATE SET locked = NULL, locked_by = NULL FROM PAGE_TEMPLATE c inner join deleted d on c.locked_by = d.user_id
+	UPDATE [SITE] SET locked = NULL, locked_by = NULL FROM [SITE] c inner join deleted d on c.locked_by = d.user_id
+
+	UPDATE [SITE] SET last_modified_by = 1 FROM [SITE] c inner join deleted d on c.last_modified_by = d.user_id
 
 	UPDATE CONTENT SET last_modified_by = 1 FROM CONTENT c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM SET last_modified_by = 1 FROM CONTENT_ITEM c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_SCHEDULE SET last_modified_by = 1 FROM CONTENT_ITEM_SCHEDULE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_VERSION SET created_by = 1 FROM CONTENT_ITEM_VERSION c inner join deleted d on c.created_by = d.user_id
 	UPDATE CONTENT_ITEM_VERSION SET last_modified_by = 1 FROM CONTENT_ITEM_VERSION c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE CONTENT_ATTRIBUTE SET last_modified_by = 1 FROM CONTENT_ATTRIBUTE c inner join deleted d on c.last_modified_by = d.user_id
 
 	UPDATE PAGE_TEMPLATE SET last_modified_by = 1 FROM PAGE_TEMPLATE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE PAGE SET last_modified_by = 1 FROM PAGE c inner join deleted d on c.last_modified_by = d.user_id
-	UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id 
+	UPDATE PAGE SET last_assembled_by = 1 FROM PAGE c inner join deleted d on c.last_assembled_by  = d.user_id
 	UPDATE OBJECT SET last_modified_by = 1 FROM OBJECT c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE OBJECT_FORMAT SET last_modified_by = 1 FROM OBJECT_FORMAT c inner join deleted d on c.last_modified_by = d.user_id
 
@@ -41094,10 +41094,10 @@ BEGIN
 
 	UPDATE CODE_SNIPPET SET last_modified_by = 1 FROM CODE_SNIPPET c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE STYLE SET last_modified_by = 1 FROM STYLE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE STATUS_TYPE SET last_modified_by = 1 FROM STATUS_TYPE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE WORKFLOW SET last_modified_by = 1 FROM WORKFLOW c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE SITE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE CONTENT_ITEM_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
@@ -41106,17 +41106,17 @@ BEGIN
 	UPDATE USER_GROUP SET last_modified_by = 1 FROM USER_GROUP c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE USERS SET last_modified_by = 1 FROM USERS c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE NOTIFICATIONS SET last_modified_by = 1 FROM NOTIFICATIONS c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE CONTENT_ITEM_STATUS_HISTORY SET user_id = 1 WHERE user_id in (select user_id from deleted)
 	UPDATE DOC SET last_modified_by = 1 FROM DOC c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	UPDATE CUSTOM_ACTION SET LAST_MODIFIED_BY = 1 FROM CUSTOM_ACTION c INNER JOIN deleted d on c.LAST_MODIFIED_BY = d.[USER_ID]
-	
+
 	UPDATE NOTIFICATIONS SET FROM_BACKENDUSER_ID = 1 FROM NOTIFICATIONS c inner join deleted d on c.FROM_BACKENDUSER_ID = d.user_id
-	
+
 	UPDATE ENTITY_TYPE_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
 	UPDATE ACTION_ACCESS SET last_modified_by = 1 FROM SITE c inner join deleted d on c.last_modified_by = d.user_id
-	
+
 	delete users from users c inner join deleted d on c.user_id = d.user_id
 END
 GO
@@ -41124,7 +41124,7 @@ GO
 exec qp_drop_existing 'tbd_delete_content', 'IsTrigger'
 GO
 CREATE TRIGGER [dbo].[tbd_delete_content] ON [dbo].[CONTENT] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	create table #disable_td_delete_item(id numeric)
 
@@ -41144,10 +41144,10 @@ BEGIN
 	inner join deleted d on d.content_id = cc.r_content_id or d.content_id = cc.l_content_id
 
 	delete container from container c
-	inner join deleted d on d.content_id = c.content_id 
+	inner join deleted d on d.content_id = c.content_id
 
 	delete content_form from content_form cf
-	inner join deleted d on d.content_id = cf.content_id 
+	inner join deleted d on d.content_id = cf.content_id
 
 	delete content_item from content_item ci
 	inner join deleted d on d.content_id = ci.content_id
@@ -41157,7 +41157,7 @@ BEGIN
 
 	delete [ACTION_CONTENT_BIND] from [ACTION_CONTENT_BIND] acb
 	inner join deleted d on d.content_id = acb.content_id
-	
+
 	delete ca from CONTENT_ATTRIBUTE ca
 	inner join CONTENT_ATTRIBUTE cad on ca.BACK_RELATED_ATTRIBUTE_ID = cad.ATTRIBUTE_ID
 	inner join deleted c on cad.CONTENT_ID = c.CONTENT_ID
@@ -41177,10 +41177,10 @@ GO
 PRINT '7.9.4.1 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Maxim Tertyshnyy
 -- version 7.9.4.2
--- USER DEFAULT FILTER: change qp_copy_user 
+-- USER DEFAULT FILTER: change qp_copy_user
 -- **************************************
 exec qp_drop_existing 'qp_copy_user', 'IsProcedure'
 GO
@@ -41193,7 +41193,7 @@ AS
 BEGIN
 	declare @now datetime;
 	set @now = getdate();
-	
+
 	INSERT INTO [USERS]
 		([PASSWORD]
 		,[DISABLED]
@@ -41247,7 +41247,7 @@ BEGIN
 	delete from [USER_GROUP_BIND] where [USER_ID] = @new_user_id
 	INSERT INTO [USER_GROUP_BIND] ([GROUP_ID],[USER_ID])
 	select [GROUP_ID], @new_user_id from [USER_GROUP_BIND] where [USER_ID] = @user_id
-		
+
 	INSERT INTO [TAB_ACCESS]([TAB_ID],[USER_ID],[GROUP_ID],[PERMISSION_LEVEL_ID])
 	select [TAB_ID],@new_user_id,[GROUP_ID],[PERMISSION_LEVEL_ID] from [TAB_ACCESS] where [USER_ID] = @user_id
 
@@ -41326,7 +41326,7 @@ BEGIN
 		  ,@create_by_id
 	FROM FOLDER_ACCESS
 	where [USER_ID] = @user_id
-	
+
 	INSERT INTO ENTITY_TYPE_ACCESS
 		   (ENTITY_TYPE_ID
 		   ,[USER_ID]
@@ -41344,7 +41344,7 @@ BEGIN
 		  ,@create_by_id
 	FROM ENTITY_TYPE_ACCESS
 	where [USER_ID] = @user_id
-	
+
 	INSERT INTO ACTION_ACCESS
 		   (ACTION_ID
 		   ,[USER_ID]
@@ -41362,7 +41362,7 @@ BEGIN
 		  ,@create_by_id
 	FROM ACTION_ACCESS
 	where [USER_ID] = @user_id
-	
+
 	insert into USER_DEFAULT_FILTER ([USER_ID], CONTENT_ID, CONTENT_ITEM_ID)
 	select @new_user_id, CONTENT_ID, CONTENT_ITEM_ID from USER_DEFAULT_FILTER where [USER_ID] = @user_id
 END
@@ -41379,7 +41379,7 @@ GO
 
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.4.3
 -- Templates
@@ -41538,28 +41538,28 @@ insert into CONTEXT_MENU_ITEM(CONTEXT_MENU_ID, ACTION_ID, NAME, [ORDER], ICON)
 values(dbo.qp_context_menu_id('page_object_format'), dbo.qp_action_id('edit_page_object_format'), 'Properties', 3, 'properties.gif')
 GO
 --
-update ENTITY_TYPE 
+update ENTITY_TYPE
 set
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('template_object'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('template_objects')
 where CODE = 'template_object'
 go
 
-update ENTITY_TYPE 
+update ENTITY_TYPE
 set
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('template_object_format'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('template_object_formats')
 where CODE = 'template_object_format'
 go
 
-update ENTITY_TYPE 
+update ENTITY_TYPE
 set
 	CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_object_format'),
 	FOLDER_CONTEXT_MENU_ID = dbo.qp_context_menu_id('page_object_formats')
 where CODE = 'page_object_format'
 go
 
-update ENTITY_TYPE 
+update ENTITY_TYPE
 set
 	DEFAULT_ACTION_ID = dbo.qp_action_id('list_page_object_format')
 where CODE = 'page_object'
@@ -41618,7 +41618,7 @@ GO
 PRINT '7.9.4.3 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.4.4
 -- Templates
@@ -41682,7 +41682,7 @@ go
 --
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'PERMANENT_LOCK' and TABLE_NAME = 'OBJECT_FORMAT')
-ALTER TABLE OBJECT_FORMAT 
+ALTER TABLE OBJECT_FORMAT
 	ADD PERMANENT_LOCK BIT NOT NULL CONSTRAINT DF_OBJECT_FORMAT_PERMANENT_LOCK DEFAULT (0)
 GO
 
@@ -41756,7 +41756,7 @@ GO
 PRINT '7.9.4.4 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.4.5
 -- Locked Articles
@@ -41779,7 +41779,7 @@ GO
 PRINT '7.9.4.5 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.4.6
 -- Locked Articles Refresh
@@ -41801,7 +41801,7 @@ GO
 PRINT '7.9.4.6 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.4.7
 -- Multiple Unlock, Articles waiting for approval
@@ -41842,14 +41842,14 @@ PRINT '7.9.4.7 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.4.8
 -- Add USE_FOR_DEFAULT_FILTRATION column to CONTENT_ATTRIBUTE table
 -- **************************************
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'USE_FOR_DEFAULT_FILTRATION' and TABLE_NAME = 'CONTENT_ATTRIBUTE')
-ALTER TABLE CONTENT_ATTRIBUTE 
+ALTER TABLE CONTENT_ATTRIBUTE
 	ADD USE_FOR_DEFAULT_FILTRATION BIT NOT NULL CONSTRAINT DF_CONTENT_ATTRIBUTE_USE_FOR_DEFAULT_FILTRATION DEFAULT (0)
 GO
 
@@ -41863,7 +41863,7 @@ PRINT '7.9.4.8 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.4.9
 -- Add new child article
@@ -41895,7 +41895,7 @@ GO
 PRINT '7.9.4.9 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.4.10
 -- Add refresh button to context menu of virtual field
@@ -41913,7 +41913,7 @@ GO
 PRINT '7.9.4.10 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.4.11
 -- Add remove buttons to user and group properties page
@@ -41934,7 +41934,7 @@ GO
 PRINT '7.9.4.11 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.4.12
 -- Templates
@@ -41971,7 +41971,7 @@ GO
 PRINT '7.9.4.12 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.4.13
 -- Templates
@@ -42046,7 +42046,7 @@ PRINT '7.9.4.13 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.4.14
 -- Templates
@@ -42122,7 +42122,7 @@ PRINT '7.9.4.14 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.4.15
 -- Add icon for add new child article and translation for new child article
@@ -42147,7 +42147,7 @@ GO
 PRINT '7.9.4.15 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.5.0
 -- Release
@@ -42164,14 +42164,14 @@ GO
 PRINT '7.9.5.0 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Max Tertyshnyy
 -- version 7.9.5.1
 -- Add DISABLE_CHANGING_ACTIONS attribute to Content
 -- **************************************
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'DISABLE_CHANGING_ACTIONS' and TABLE_NAME = 'CONTENT')
-ALTER TABLE CONTENT 
+ALTER TABLE CONTENT
 	ADD DISABLE_CHANGING_ACTIONS BIT NOT NULL CONSTRAINT DF_CONTENT_DISABLE_CHANGING_ACTIONS DEFAULT (0)
 GO
 
@@ -42184,7 +42184,7 @@ GO
 PRINT '7.9.5.1 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.5.2
 -- Template Tables FKS
@@ -42230,7 +42230,7 @@ GO
 PRINT '7.9.5.2 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.5.3
 -- Fix URL
@@ -42247,13 +42247,13 @@ GO
 PRINT '7.9.5.3 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.5.4
--- Fix SpellChecker Order 
+-- Fix SpellChecker Order
 -- **************************************
 
-update ve_command set alias = 'Yandex Spell Checking', row_order = 0, TOOLBAR_IN_ROW_ORDER = 1, GROUP_IN_TOOLBAR_ORDER = 1, COMMAND_IN_GROUP_ORDER = 2 where NAME = 'SpellCheck' 
+update ve_command set alias = 'Yandex Spell Checking', row_order = 0, TOOLBAR_IN_ROW_ORDER = 1, GROUP_IN_TOOLBAR_ORDER = 1, COMMAND_IN_GROUP_ORDER = 2 where NAME = 'SpellCheck'
 
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
@@ -42265,7 +42265,7 @@ PRINT '7.9.5.4 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.5.5
 -- Templates
@@ -42277,7 +42277,7 @@ GO
 
 UPDATE [CONTEXT_MENU]
 	SET CODE = 'templates'
-Where CODE = 'page_templates'	
+Where CODE = 'page_templates'
 GO
 
 UPDATE [CONTEXT_MENU_ITEM]
@@ -42290,7 +42290,7 @@ insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTIO
 values('Multiple Remove Page', 'multiple_remove_page', dbo.qp_action_type_id('multiple_remove'),
  dbo.qp_entity_type_id('page'), '~/PageTemplate/MultipleRemovePage/', 0, 'Do you really want to remove the following pages: {0}?')
 
-update ACTION_TOOLBAR_BUTTON 
+update ACTION_TOOLBAR_BUTTON
 SET ACTION_ID = dbo.qp_action_id('multiple_remove_page')
 where ACTION_ID = dbo.qp_action_id('remove_page') and PARENT_ACTION_ID = dbo.qp_action_id('list_page')
 
@@ -42300,7 +42300,7 @@ insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTIO
 values('Multiple Remove Page Object', 'multiple_remove_page_object', dbo.qp_action_type_id('multiple_remove'),
  dbo.qp_entity_type_id('page_object'), '~/PageTemplate/MultipleRemovePageObject/', 0, 'Do you really want to remove the following objects: {0}?')
 
-update ACTION_TOOLBAR_BUTTON 
+update ACTION_TOOLBAR_BUTTON
 SET ACTION_ID = dbo.qp_action_id('multiple_remove_page_object')
 where ACTION_ID = dbo.qp_action_id('remove_page_object') and PARENT_ACTION_ID = dbo.qp_action_id('list_page_object')
 
@@ -42310,14 +42310,14 @@ insert into BACKEND_ACTION(NAME, CODE, TYPE_ID, ENTITY_TYPE_ID, CONTROLLER_ACTIO
 values('Multiple Remove Template Object', 'multiple_remove_template_object', dbo.qp_action_type_id('multiple_remove'),
  dbo.qp_entity_type_id('page_object'), '~/PageTemplate/MultipleRemoveTemplateObject/', 0, 'Do you really want to remove the following objects: {0}?')
 
-update ACTION_TOOLBAR_BUTTON 
+update ACTION_TOOLBAR_BUTTON
 SET ACTION_ID = dbo.qp_action_id('multiple_remove_template_object')
 where ACTION_ID = dbo.qp_action_id('remove_template_object') and PARENT_ACTION_ID = dbo.qp_action_id('list_template_object')
 
 go
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET [ORDER] = 10 
+   SET [ORDER] = 10
    WHERE [NAME] = 'Save'
    and (PARENT_ACTION_ID = dbo.qp_action_id('edit_template') or PARENT_ACTION_ID = dbo.qp_action_id('edit_page') or
 		PARENT_ACTION_ID = dbo.qp_action_id('edit_template_object') or PARENT_ACTION_ID = dbo.qp_action_id('edit_page_obect')
@@ -42325,14 +42325,14 @@ UPDATE [ACTION_TOOLBAR_BUTTON]
 
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET [ORDER] = 20 
+   SET [ORDER] = 20
    WHERE [NAME] = 'Remove'
    and (PARENT_ACTION_ID = dbo.qp_action_id('edit_template') or PARENT_ACTION_ID = dbo.qp_action_id('edit_page') or
 		PARENT_ACTION_ID = dbo.qp_action_id('edit_template_object') or PARENT_ACTION_ID = dbo.qp_action_id('edit_page_obect')
-		or PARENT_ACTION_ID = dbo.qp_action_id('edit_page_object_format') or PARENT_ACTION_ID = dbo.qp_action_id('edit_template_object_format'))		
-	
+		or PARENT_ACTION_ID = dbo.qp_action_id('edit_page_object_format') or PARENT_ACTION_ID = dbo.qp_action_id('edit_template_object_format'))
+
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET [ORDER] = 30 
+   SET [ORDER] = 30
    WHERE [NAME] = 'Refresh'
    and (PARENT_ACTION_ID = dbo.qp_action_id('edit_template') or PARENT_ACTION_ID = dbo.qp_action_id('edit_page') or
 		PARENT_ACTION_ID = dbo.qp_action_id('edit_template_object') or PARENT_ACTION_ID = dbo.qp_action_id('edit_page_obect')
@@ -42350,7 +42350,7 @@ PRINT '7.9.5.5 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.5.6
 -- Templates
@@ -42377,7 +42377,7 @@ GO
 PRINT '7.9.5.6 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.5.7
 -- Status History
@@ -42407,15 +42407,15 @@ PRINT '7.9.5.7 completed'
 GO
 
 
--- ************************************** 
--- Kirill Zakirov 
+-- **************************************
+-- Kirill Zakirov
 -- version 7.9.5.8
 -- Templates
 -- **************************************
 
 UPDATE [BACKEND_ACTION]
    SET [NAME] = 'Select Page For Object Form'
-      ,[CODE] = 'select_page_for_object_form'      
+      ,[CODE] = 'select_page_for_object_form'
  WHERE code = 'select_page'
 GO
 
@@ -42430,8 +42430,8 @@ PRINT '7.9.5.8 completed'
 GO
 
 
--- ************************************** 
--- Kirill Zakirov 
+-- **************************************
+-- Kirill Zakirov
 -- version 7.9.5.9
 -- Templates
 -- **************************************
@@ -42451,7 +42451,7 @@ GO
 PRINT '7.9.5.9 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.6.0
 -- Articles Export
@@ -42477,7 +42477,7 @@ GO
 
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.1
 -- Assembling Templates
@@ -42613,7 +42613,7 @@ GO
 PRINT '7.9.6.1 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.2
 -- VE Styles
@@ -42633,7 +42633,7 @@ GO
 PRINT '7.9.6.2 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.3
 -- Templates
@@ -42654,7 +42654,7 @@ PRINT '7.9.6.3 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.4
 -- Templates
@@ -42689,18 +42689,18 @@ PRINT '7.9.6.4 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.5
 -- Proper Assembling Templates
 -- **************************************
 update [BACKEND_ACTION]
 set [IS_MULTISTEP] = 1, CONTROLLER_ACTION_URL  = '~/AssembleTemplate/'
-where code = 'assemble_template' 
+where code = 'assemble_template'
 GO
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET 
+   SET
       [ACTION_ID] = dbo.qp_action_id('assemble_template')
       where [ACTION_ID] = dbo.qp_action_id('assemble_template_from_template_object')
       or [ACTION_ID] = dbo.qp_action_id('assemble_template_from_template_object_format')
@@ -42709,7 +42709,7 @@ UPDATE [ACTION_TOOLBAR_BUTTON]
 GO
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET 
+   SET
       [ACTION_ID] = dbo.qp_action_id('assemble_page')
       where [ACTION_ID] = dbo.qp_action_id('assemble_page_from_page_object_format')
       or [ACTION_ID] = dbo.qp_action_id('assemble_page_from_page_object')
@@ -42717,29 +42717,29 @@ UPDATE [ACTION_TOOLBAR_BUTTON]
 GO
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET 
+   SET
       [ACTION_ID] = dbo.qp_action_id('assemble_page')
       where [ACTION_ID] = dbo.qp_action_id('assemble_page_from_page_object_format')
       or [ACTION_ID] = dbo.qp_action_id('assemble_page_from_page_object')
-      
+
 GO
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET 
+   SET
       [ACTION_ID] = dbo.qp_action_id('assemble_page_object')
-      where [ACTION_ID] = dbo.qp_action_id('assemble_page_object_from_page_object_format')            
+      where [ACTION_ID] = dbo.qp_action_id('assemble_page_object_from_page_object_format')
 GO
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET 
+   SET
       [ACTION_ID] = dbo.qp_action_id('assemble_page_object')
-      where [ACTION_ID] = dbo.qp_action_id('assemble_page_object_from_page_object_format')            
+      where [ACTION_ID] = dbo.qp_action_id('assemble_page_object_from_page_object_format')
 GO
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET 
+   SET
       [ACTION_ID] = dbo.qp_action_id('assemble_template_object')
-      where [ACTION_ID] = dbo.qp_action_id('assemble_template_object_from_template_ob_format')            
+      where [ACTION_ID] = dbo.qp_action_id('assemble_template_object_from_template_ob_format')
 GO
 
 delete from [BACKEND_ACTION]
@@ -42761,7 +42761,7 @@ PRINT '7.9.6.5 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.6
 -- Proper Assembling Templates
@@ -42811,7 +42811,7 @@ UPDATE [ACTION_TOOLBAR_BUTTON]
    SET [ACTION_ID] = dbo.qp_action_id('assemble_template_from_template_object_list')
   where PARENT_ACTION_ID = dbo.qp_action_id('list_template_object')
   and NAME = 'Assemble Template'
-  
+
 UPDATE [ACTION_TOOLBAR_BUTTON]
    SET [ACTION_ID] = dbo.qp_action_id('assemble_page_from_page_object')
   where PARENT_ACTION_ID = dbo.qp_action_id('edit_page_object')
@@ -42854,22 +42854,22 @@ GO
 
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.7
 -- Proper Assembling Templates
 -- **************************************
-delete from [ACTION_TOOLBAR_BUTTON]  
+delete from [ACTION_TOOLBAR_BUTTON]
 where PARENT_ACTION_ID = dbo.qp_action_id('list_template_object_format')
 and NAME = 'Assemble Object'
 go
 
-delete from [ACTION_TOOLBAR_BUTTON]  
+delete from [ACTION_TOOLBAR_BUTTON]
 where PARENT_ACTION_ID = dbo.qp_action_id('list_page_object_format')
 and NAME = 'Assemble Object'
 go
-  
-delete from [ACTION_TOOLBAR_BUTTON]  
+
+delete from [ACTION_TOOLBAR_BUTTON]
 where PARENT_ACTION_ID = dbo.qp_action_id('list_page_object_format')
 and NAME = 'Assemble Page'
 go
@@ -42884,7 +42884,7 @@ PRINT '7.9.6.7 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.8
 -- Proper Assembling Templates
@@ -42911,7 +42911,7 @@ UPDATE [BACKEND_ACTION]
 GO
 
 UPDATE [BACKEND_ACTION]
-   SET 
+   SET
       [IS_MULTISTEP] = 1
  where CODE like 'assemble_template_from%'
 GO
@@ -42926,7 +42926,7 @@ PRINT '7.9.6.8 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.9
 -- Promoting page objects
@@ -42960,7 +42960,7 @@ GO
 PRINT '7.9.6.9 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.10
 -- DB-level settings table
@@ -42974,7 +42974,7 @@ if not exists (select * from sys.tables where name = 'db')
 		[SINGLE_USER_ID] [numeric](18, 0) NULL,
 		CONSTRAINT [PK_DB] PRIMARY KEY CLUSTERED ( [ID] ASC ),
 		CONSTRAINT [FK_DB_USER] FOREIGN KEY(SINGLE_USER_ID) REFERENCES [dbo].[USERS] ([USER_ID])
-	)	
+	)
 GO
 
 if not exists(select * from db where ID = 1)
@@ -42990,7 +42990,7 @@ GO
 PRINT '7.9.6.10 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Zakirov Kirill
 -- version 7.9.6.11
 -- Templates: search
@@ -43076,8 +43076,8 @@ GO
 
 PRINT '7.9.6.11 completed'
 GO
-	
--- ************************************** 
+
+-- **************************************
 -- Aksenov Alexei
 -- version 7.9.6.12
 -- Articles Import
@@ -43093,7 +43093,7 @@ VALUES (dbo.qp_action_type_id('import'), dbo.qp_entity_type_id('content'), N'Imp
 INSERT INTO [dbo].[CONTEXT_MENU_ITEM] ([CONTEXT_MENU_ID], [ACTION_ID], [Name], [ORDER], [BOTTOM_SEPARATOR])
 VALUES (dbo.qp_context_menu_id('content'), dbo.qp_action_id('import_articles'), N'Import Articles', 66, 0)
 
-exec qp_update_translations 'Import Articles', 'Импорт статей'; 
+exec qp_update_translations 'Import Articles', 'Импорт статей';
 
 INSERT INTO SYSTEM_INFO
   (field_name, field_value, copyright)
@@ -43104,7 +43104,7 @@ GO
 PRINT '7.9.6.12 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.13
 -- Disable Create Content Trigger
@@ -43133,7 +43133,7 @@ PRINT '7.9.6.13 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Aksenov Alexei
 -- version 7.9.6.14
 -- Multiple article save for import
@@ -43151,7 +43151,7 @@ PRINT '7.9.6.14 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.6.15
 -- Format Versions
@@ -43193,7 +43193,7 @@ PRINT '7.9.6.15 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.6.16
 -- Format Version properties
@@ -43240,7 +43240,7 @@ GO
 PRINT '7.9.6.16 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Aksenov Alexei
 -- version 7.9.6.17
 -- Passing article values through xml parameter
@@ -43249,7 +43249,7 @@ GO
 CREATE PROCEDURE qp_insert_articles_id
 	@articlesCount int,
 	@contentId int,
-	@statusTypeId int, 
+	@statusTypeId int,
 	@visibleId int,
 	@lastModifiedBy int
 AS
@@ -43266,9 +43266,9 @@ BEGIN
                      ,[LAST_MODIFIED_BY])
                      OUTPUT inserted.[content_item_id] INTO @NewArticles
              VALUES (@visibleId, @statusTypeId, @contentId, @lastModifiedBy)
-             
-             SET @articlesCount = @articlesCount - 1 
-                                      
+
+             SET @articlesCount = @articlesCount - 1
+
 	END
 	SELECT * FROM @NewArticles
 END
@@ -43280,9 +43280,9 @@ AS
 BEGIN
 	DECLARE @idoc int
 	EXEC sp_xml_preparedocument @idoc OUTPUT, @xmlParameter;
-	
-	DECLARE @NewArticles TABLE ([ROW_NUMBER] int, CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))	
-	
+
+	DECLARE @NewArticles TABLE ([ROW_NUMBER] int, CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))
+
 	INSERT INTO @NewArticles
 		SELECT * FROM OPENXML(@idoc, '/PARAMETERS/FIELDVALUE')
 		WITH(
@@ -43290,7 +43290,7 @@ BEGIN
 				,CONTENT_ITEM_ID int './CONTENT_ITEM_ID'
 				,ATTRIBUTE_ID int './ATTRIBUTE_ID'
 				,DATA nvarchar(3500) './DATA'
-				,BLOB_DATA nvarchar(max) './BLOB_DATA') 
+				,BLOB_DATA nvarchar(max) './BLOB_DATA')
 
 	DECLARE @RowsCount INT
 	SET @RowsCount = (SELECT COUNT(*) FROM @NewArticles)
@@ -43299,8 +43299,8 @@ BEGIN
 	SET @Iter = 1
 
 	WHILE @Iter <= @RowsCount
-		BEGIN  
-   
+		BEGIN
+
 		   DECLARE @val TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))
 		   INSERT INTO @val
 			   SELECT CONTENT_ITEM_ID
@@ -43308,14 +43308,14 @@ BEGIN
 						,DATA
 						,BLOB_DATA
 			   FROM @NewArticles where [ROW_NUMBER] = @Iter
-   
+
 		   UPDATE [dbo].[CONTENT_DATA]
 		   SET [DATA] = (SELECT DATA FROM @val)
 			  ,[BLOB_DATA] = (SELECT BLOB_DATA FROM @val)
 		 WHERE attribute_Id = (SELECT ATTRIBUTE_ID FROM @val) AND CONTENT_ITEM_ID = (SELECT CONTENT_ITEM_ID FROM @val)
-		 SET @Iter = @Iter + 1 
+		 SET @Iter = @Iter + 1
 		 SELECT * FROM @val
-		 
+
 		 DELETE FROM @val
 		END
 END
@@ -43330,7 +43330,7 @@ GO
 PRINT '7.9.6.17 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Aksenov Alexei
 -- version 7.9.6.18
 -- Passing article values through xml parameter
@@ -43342,18 +43342,18 @@ AS
 BEGIN
 	DECLARE @idoc int
 	EXEC sp_xml_preparedocument @idoc OUTPUT, @xmlParameter;
-	
-	DECLARE @NewArticles TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))	
-	
+
+	DECLARE @NewArticles TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))
+
 	INSERT INTO @NewArticles
 		SELECT * FROM OPENXML(@idoc, '/PARAMETERS/FIELDVALUE')
 		WITH(
 				CONTENT_ITEM_ID int './CONTENT_ITEM_ID'
 				,ATTRIBUTE_ID int './ATTRIBUTE_ID'
 				,DATA nvarchar(3500) './DATA'
-				,BLOB_DATA nvarchar(max) './BLOB_DATA') 
+				,BLOB_DATA nvarchar(max) './BLOB_DATA')
 
-		BEGIN  
+		BEGIN
 		   UPDATE
 			[dbo].[CONTENT_DATA]
 		SET
@@ -43385,7 +43385,7 @@ GO
 PRINT '7.9.6.18 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.19
 -- Simple Remove Content
@@ -43407,7 +43407,7 @@ GO
 PRINT '7.9.6.19 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.6.20
 -- Settings for export
@@ -43427,13 +43427,13 @@ GO
 PRINT '7.9.6.20 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.6.21
 -- Format Version properties
 -- **************************************
 UPDATE [ENTITY_TYPE]
-   SET [DEFAULT_ACTION_ID] = dbo.qp_action_id('edit_page_object_format_version')      
+   SET [DEFAULT_ACTION_ID] = dbo.qp_action_id('edit_page_object_format_version')
  WHERE CODE = 'page_object_format_version'
 GO
 
@@ -43483,7 +43483,7 @@ GO
 
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.6.22
 -- Format Versions
@@ -43516,7 +43516,7 @@ GO
 
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.6.23
 -- Format Versions
@@ -43549,7 +43549,7 @@ GO
 PRINT '7.9.6.23 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Aksenov Alexei
 -- version 7.9.6.24
 -- Styles for import and export + some features
@@ -43576,13 +43576,13 @@ AS
 BEGIN
 	DECLARE @idoc int
 	EXEC sp_xml_preparedocument @idoc OUTPUT, @xmlParameter;
-	
+
 INSERT INTO [dbo].[item_to_item] (link_id, l_item_id, r_item_id)
 SELECT * FROM OPENXML(@idoc, '/items/item', 1)
 		WITH(
 				linkId int
 				,id int
-				,linkedId int) 
+				,linkedId int)
 END
 GO
 
@@ -43596,7 +43596,7 @@ PRINT '7.9.6.24 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.25
 -- Simple Remove Site
@@ -43609,7 +43609,7 @@ INSERT INTO [dbo].[BACKEND_ACTION] ([TYPE_ID],[ENTITY_TYPE_ID],[NAME],[SHORT_NAM
 VALUES (dbo.qp_action_type_id('remove'), dbo.qp_entity_type_id('site'), N'Simple Remove Site', 'Remove Site', N'simple_remove_site', N'~/Site/SimpleRemove/', 'Do you really want to remove the following site: {0}?')
 GO
 
-if not exists (select * From information_schema.columns where table_name = 'db' and column_name = 'fp_settings') 
+if not exists (select * From information_schema.columns where table_name = 'db' and column_name = 'fp_settings')
 begin
 	alter table db add fp_settings nvarchar(max) NULL
 end
@@ -43624,7 +43624,7 @@ GO
 PRINT '7.9.6.25 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.6.26
 -- Update articles modified and modifiedBy on import
@@ -43636,9 +43636,9 @@ AS
 BEGIN
 	DECLARE @idoc int
 	EXEC sp_xml_preparedocument @idoc OUTPUT, @xmlParameter;
-	
-	DECLARE @ModifiedArticles TABLE (CONTENT_ITEM_ID int, MODIFIED datetime, LAST_MODIFIED_BY int)	
-	
+
+	DECLARE @ModifiedArticles TABLE (CONTENT_ITEM_ID int, MODIFIED datetime, LAST_MODIFIED_BY int)
+
 INSERT INTO @ModifiedArticles
 		SELECT * FROM OPENXML(@idoc, '/items/item')
 		WITH(
@@ -43646,7 +43646,7 @@ INSERT INTO @ModifiedArticles
 				,MODIFIED datetime '@modified'
 				,LAST_MODIFIED_BY int '@modifiedBy')
 
-		BEGIN  
+		BEGIN
 		   UPDATE
 			[dbo].[CONTENT_ITEM]
 		SET
@@ -43673,7 +43673,7 @@ PRINT '7.9.6.26 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.27
 -- DB Settings
@@ -43706,14 +43706,14 @@ exec qp_update_translations 'Update Database Settings', 'Изменить нас
 exec qp_update_translations 'Refresh Database Settings', 'Обновить настройки базы данных'
 GO
 
-ALTER TABLE [dbo].[DB] 
-ADD 
+ALTER TABLE [dbo].[DB]
+ADD
 	[CREATED] [datetime] NOT NULL CONSTRAINT [DF_DB_CREATED] DEFAULT (getdate()),
 	[MODIFIED] [datetime] NOT NULL CONSTRAINT [DF_DB_MODIFIED]  DEFAULT (getdate()),
 	[LAST_MODIFIED_BY] [numeric](18, 0) NOT NULL CONSTRAINT [DF_DB_LAST_MODIFIED_BY]  DEFAULT (1)
 GO
 
-ALTER TABLE [dbo].[DB] ADD  
+ALTER TABLE [dbo].[DB] ADD
 CONSTRAINT [FK_DB_LAST_MODIFIED_BY] FOREIGN KEY([LAST_MODIFIED_BY]) REFERENCES [dbo].[USERS] ([USER_ID])
 GO
 
@@ -43726,7 +43726,7 @@ GO
 PRINT '7.9.6.27 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.28
 -- DB Settings
@@ -43759,7 +43759,7 @@ PRINT '7.9.6.28 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.6.29
 -- Templates fixes
@@ -43771,16 +43771,16 @@ go
 update OBJECT_FORMAT_VERSION set LAST_MODIFIED_BY = 1 where LAST_MODIFIED_BY not in (select USER_ID from USERS)
 GO
 
-ALTER TABLE [dbo].[OBJECT_FORMAT_VERSION] ADD  
+ALTER TABLE [dbo].[OBJECT_FORMAT_VERSION] ADD
 CONSTRAINT [FK_OBJECT_FORMAT_VERSION_LAST_MODIFIED_BY] FOREIGN KEY([LAST_MODIFIED_BY]) REFERENCES [dbo].[USERS] ([USER_ID])
 GO
 
 
 UPDATE [CONTEXT_MENU_ITEM]
-   SET       
-      [NAME] = 'Versions'      
+   SET
+      [NAME] = 'Versions'
       ,[ICON] = 'version.gif'
-      
+
 where  ACTION_ID = dbo.qp_action_id('list_template_object_format_version')
 or  ACTION_ID = dbo.qp_action_id('list_page_object_format_version')
 
@@ -43828,7 +43828,7 @@ values (dbo.qp_action_id('list_template_object_format_version'), dbo.qp_action_i
 go
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET [ORDER] = 60      
+   SET [ORDER] = 60
  WHERE
 	(PARENT_ACTION_ID = dbo.qp_action_id('list_template') and ICON = 'refresh.gif')
 	or
@@ -43847,7 +43847,7 @@ GO
 PRINT '7.9.6.29 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.30
 -- Refresh for Custom Actions
@@ -43860,63 +43860,63 @@ BEGIN
 	SET @action_id = dbo.qp_action_id(@action_code)
 
 	DECLARE @language_id numeric(18, 0)
-	SET @language_id = dbo.qp_language(@user_id)	
-	
+	SET @language_id = dbo.qp_language(@user_id)
+
 	if EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1 BEGIN
 		SELECT
-		ba.ID AS ACTION_ID,		
+		ba.ID AS ACTION_ID,
 		ba.CODE AS ACTION_CODE,
 		bat.CODE AS ACTION_TYPE_CODE,
 		ba2.ID AS PARENT_ACTION_ID,
-		ba2.CODE AS PARENT_ACTION_CODE, 
+		ba2.CODE AS PARENT_ACTION_CODE,
 		dbo.qp_translate(atb.NAME, @language_id) AS NAME,
 		bat.ITEMS_AFFECTED,
-		atb.[ORDER], 
+		atb.[ORDER],
 		ISNULL(ca.ICON_URL, atb.ICON) AS ICON,
 		atb.ICON_DISABLED,
 		atb.IS_COMMAND
-	FROM 
+	FROM
 		ACTION_TOOLBAR_BUTTON AS atb
 		INNER JOIN BACKEND_ACTION AS ba ON atb.ACTION_ID = ba.ID
 		LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
 		INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
-		INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID		
+		INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
 	WHERE
-		atb.PARENT_ACTION_ID = @action_id		
+		atb.PARENT_ACTION_ID = @action_id
 	ORDER BY
 		[ORDER]
 	END
 	ELSE BEGIN
 		DECLARE @entity_code nvarchar(50)
 		select @entity_code = dbo.qp_entity_type_code(entity_type_id) from backend_action where code = @action_code
-		
+
 		declare @seqQuery nvarchar(max);
 		EXEC [dbo].[qp_GetActionPermissionAsQuery]
 			@user_id = @user_id,
 			@result = @seqQuery OUTPUT
-		
+
 		declare @fullQuery nvarchar(max);
-		
+
 		select @fullQuery = REPLACE (N'SELECT
-			ba.ID AS ACTION_ID,		
+			ba.ID AS ACTION_ID,
 			ba.CODE AS ACTION_CODE,
 			bat.CODE AS ACTION_TYPE_CODE,
 			ba2.ID AS PARENT_ACTION_ID,
-			ba2.CODE AS PARENT_ACTION_CODE, 
+			ba2.CODE AS PARENT_ACTION_CODE,
 			dbo.qp_translate(atb.NAME, @p0) AS NAME,
 			bat.ITEMS_AFFECTED,
-			atb.[ORDER], 
+			atb.[ORDER],
 			ISNULL(ca.ICON_URL, atb.ICON) AS ICON,
 			atb.ICON_DISABLED,
 			atb.IS_COMMAND
-		FROM 
+		FROM
 			ACTION_TOOLBAR_BUTTON AS atb
 			INNER JOIN BACKEND_ACTION AS ba ON atb.ACTION_ID = ba.ID
 			LEFT OUTER JOIN CUSTOM_ACTION AS ca ON ca.ACTION_ID = ba.ID
 			INNER JOIN ACTION_TYPE AS bat ON bat.ID = ba.TYPE_ID
 			INNER JOIN PERMISSION_LEVEL PL ON PL.PERMISSION_LEVEL_ID = bat.REQUIRED_PERMISSION_LEVEL_ID
 			INNER JOIN BACKEND_ACTION AS ba2 ON atb.PARENT_ACTION_ID = ba2.ID
-			INNER JOIN 
+			INNER JOIN
 			(<$_security_insert_$>) SEC ON SEC.BACKEND_ACTION_ID = ba.ID
 		WHERE
 			atb.PARENT_ACTION_ID = @p1
@@ -43924,9 +43924,9 @@ BEGIN
 			AND dbo.qp_action_visible(@p2, @p3, @p4, ba.CODE) = 1
 		ORDER BY
 			[ORDER]', N'<$_security_insert_$>', @seqQuery)
-			
-		EXEC sp_executesql @fullQuery, 
-			N'@p0 numeric(18, 0), @p1 int, @p2 int, @p3 nvarchar(50), @p4 int', 
+
+		EXEC sp_executesql @fullQuery,
+			N'@p0 numeric(18, 0), @p1 int, @p2 int, @p3 nvarchar(50), @p4 int',
 			@p0 = @language_id, @p1 = @action_id, @p2 = @user_id, @p3 = @entity_code, @p4 = @entity_id;
 	END
 END
@@ -43944,7 +43944,7 @@ GO
 PRINT '7.9.6.30 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.6.31
 -- Templates
@@ -43966,7 +43966,7 @@ PRINT '7.9.6.31 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Alexei Aksenov
 -- version 7.9.6.32
 -- Export/import features, fixes
@@ -43978,18 +43978,18 @@ AS
 BEGIN
 	DECLARE @idoc int
 	EXEC sp_xml_preparedocument @idoc OUTPUT, @xmlParameter;
-	
-	DECLARE @NewArticles TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))	
-	
+
+	DECLARE @NewArticles TABLE (CONTENT_ITEM_ID int, ATTRIBUTE_ID int, DATA nvarchar(3500), BLOB_DATA nvarchar(max))
+
 	INSERT INTO @NewArticles
 		SELECT * FROM OPENXML(@idoc, '/PARAMETERS/FIELDVALUE')
 		WITH(
 				CONTENT_ITEM_ID int './CONTENT_ITEM_ID'
 				,ATTRIBUTE_ID int './ATTRIBUTE_ID'
 				,DATA nvarchar(3500) './DATA'
-				,BLOB_DATA nvarchar(max) './BLOB_DATA') 
+				,BLOB_DATA nvarchar(max) './BLOB_DATA')
 
-		BEGIN  
+		BEGIN
 		   UPDATE
 			[dbo].[CONTENT_DATA]
 		SET
@@ -44007,17 +44007,17 @@ BEGIN
 END
 GO
 
-  update [dbo].[context_menu_item] 
+  update [dbo].[context_menu_item]
   SET [ORDER] = 150
   WHERE action_id = dbo.qp_action_id('export_articles')
   GO
-  
-  update [dbo].[context_menu_item] 
+
+  update [dbo].[context_menu_item]
   SET [ORDER] = 155
   WHERE action_id = dbo.qp_action_id('import_articles')
   GO
 
-  update [dbo].[context_menu_item] 
+  update [dbo].[context_menu_item]
   SET [BOTTOM_SEPARATOR] = 1
   WHERE action_id = dbo.qp_action_id('list_child_article_permission')
   GO
@@ -44032,7 +44032,7 @@ PRINT '7.9.6.32 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.33
 -- Grouped Contents, explicit default group
@@ -44051,7 +44051,7 @@ update ENTITY_TYPE set GROUP_PARENT_ID_FIELD = 'CONTENT_GROUP_ID', GROUP_PARENT_
 update ENTITY_TYPE set SOURCE_SP = null where CODE = 'content_group'
 GO
 
-ALTER TABLE [dbo].[CONTENT_GROUP] ADD CONSTRAINT [UNIQUE_CONTENT_GROUP_NAME] UNIQUE NONCLUSTERED 
+ALTER TABLE [dbo].[CONTENT_GROUP] ADD CONSTRAINT [UNIQUE_CONTENT_GROUP_NAME] UNIQUE NONCLUSTERED
 (
 	[SITE_ID] ASC,
 	[NAME] ASC
@@ -44071,15 +44071,15 @@ go
 
 
 ALTER procedure [dbo].[qp_expand](
-	@user_id numeric = 0, 
-	@code nvarchar(50) = null, 
-	@id bigint = 0, 
-	@is_folder bit = 0, 
-	@is_group bit = 0, 
+	@user_id numeric = 0,
+	@code nvarchar(50) = null,
+	@id bigint = 0,
+	@is_folder bit = 0,
+	@is_group bit = 0,
 	@group_item_code nvarchar(50) = null,
 	@filter_id bigint = 0,
-	@count_only bit = 0, 
-	@count int = 0 output 
+	@count_only bit = 0,
+	@count int = 0 output
 )
 as
 begin
@@ -44103,7 +44103,7 @@ begin
 		HAS_CHILDREN bit null,
 		IS_RECURRING bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @source nvarchar(50), @id_field nvarchar(50), @title_field nvarchar(50)
 	declare @parent_id_field nvarchar(50), @icon_field nvarchar(50), @group_parent_id_field nvarchar(50)
@@ -44115,16 +44115,16 @@ begin
 	declare @is_admin bit, @current_is_group bit
 	declare @parent_group_code nvarchar(50), @child_group_code nvarchar(50), @current_group_item_code nvarchar(50)
 	declare @real_parent_id bigint, @real_parent_id_field nvarchar(50), @real_id_str nvarchar(10)
-	
+
 	set @id_str = CAST(@id as nvarchar(10))
-	
+
 	if (@filter_id = 0)
 		set @filter_id_str = ''
 	else
 		set @filter_id_str = CAST(@filter_id as nvarchar(10))
-	
+
 	select @parent_group_code = ET1.CODE from ENTITY_TYPE ET2 INNER JOIN ENTITY_TYPE ET1 ON ET2.GROUP_PARENT_ID = ET1.ID where ET2.CODE = @code
-	
+
 	if @is_group = 1
 	begin
 		exec dbo.qp_get_parent_entity_id @id, @code, @parent_entity_id = @real_parent_id output
@@ -44132,9 +44132,9 @@ begin
 	end
 	else begin
 		set @real_parent_id = @id
-		set @real_id_str = @id_str	
+		set @real_id_str = @id_str
 	end
-	
+
 	set @current_is_group = 0
 	if @parent_group_code is not null begin
 		if @is_folder = 1 begin
@@ -44151,42 +44151,42 @@ begin
 	End
 
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	set @is_admin = 0;
 	IF EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1
 		set @is_admin = 1;
-	
-	select 
+
+	select
 		@source = source,
 		@source_sp = source_sp,
 		@id_field = id_field,
-		@title_field = TITLE_FIELD, 
+		@title_field = TITLE_FIELD,
 		@parent_id_field = PARENT_ID_FIELD,
 		@group_parent_id_field = GROUP_PARENT_ID_FIELD,
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = default_action_id,
 		@context_menu_id = CONTEXT_MENU_ID
-	from 
+	from
 		ENTITY_TYPE ET
 	where
 		ID = dbo.qp_entity_type_id(@code)
-		
-	if @is_group = 1 
+
+	if @is_group = 1
 	begin
 		set @real_parent_id_field = @parent_id_field
 		set @parent_id_field = @group_parent_id_field
 	end
-	
+
 	if @icon_field is null
 		set @icon_field = 'NULL'
 	if @icon_modifier_field is null
-		set @icon_modifier_field = 'NULL'	
-	
+		set @icon_modifier_field = 'NULL'
+
 
 	if @is_folder = 1 or @recurring_id_field is not null
 	begin
@@ -44195,30 +44195,30 @@ begin
 		if @has_item_nodes = 1
 		begin
 			set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-			
+
 			set @where = '1 = 1'
 			if @parent_id_field is not null and @id_str <> '0' and  @id_str <> ''
 				set @where = @where + ' AND ' + @parent_id_field + ' = ' + @id_str
-			
+
 			if @recurring_id_field is not null
 			begin
-				if @is_folder = 1 
-					set @where = @where + ' AND ' + @recurring_id_field + ' is null ' 
+				if @is_folder = 1
+					set @where = @where + ' AND ' + @recurring_id_field + ' is null '
 				else
 					set @where = @where + ' AND ' + @recurring_id_field + ' = ' + @id_str
 			end
-			
+
 			if @filter_id_str <> '0' and @filter_id_str <> ''
 				set @where = @where + ' AND ' + @id_field + ' = ' + @filter_id_str
-			
+
 			if @order_field is null
 				set @order = @title_field
 			else
-				set @order = @order_field  
-			
+				set @order = @order_field
+
 		end
-		
-		
+
+
 		if @source_sp is null
 			set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where + ' order by ' + @order
 		else
@@ -44232,84 +44232,84 @@ begin
 				if @is_folder = 1
 					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=0'
 				else
-					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str			
-				
-			
+					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str
+
+
 		end
 		print @sql
 		insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
 		exec sp_executesql @sql
-		
+
 		--PRINT @sql;
-		
-		
+
+
 		if @count_only = 0
 		begin
-			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-			update 
+			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+			update
 				@result
-			set 
+			set
 				PARENT_ID = @real_parent_id,
 				PARENT_GROUP_ID = CASE WHEN @is_group = 1 THEN @id ELSE NULL END,
-				CODE = @code, 
+				CODE = @code,
 				IS_FOLDER = 0,
 				IS_GROUP = @current_is_group,
 				GROUP_ITEM_CODE = @current_group_item_code,
-				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER), 
-				DEFAULT_ACTION_ID = @default_action_id, 
+				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
+				DEFAULT_ACTION_ID = @default_action_id,
 				CONTEXT_MENU_ID = @context_menu_id,
 				IS_RECURRING = CASE WHEN @recurring_id_field is not null THEN 1 ELSE 0 END
 		end
 		else
-			select @count = COUNT(ID) from @result	
+			select @count = COUNT(ID) from @result
 	end
 	else begin
 		if @is_admin = 0
 		begin
 			declare @entitySecQuery nvarchar(max);
 			EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-				@user_id = @user_id,	
+				@user_id = @user_id,
 				@SQLOut = @entitySecQuery OUTPUT
-			
+
 			CREATE TABLE #sectmp
 			(
 				PERMISSION_LEVEL int,
 				ENTITY_TYPE_ID int
-			);				
+			);
 			set @entitySecQuery = N'insert into #sectmp (PERMISSION_LEVEL, ENTITY_TYPE_ID) ' + @entitySecQuery;
 			exec sp_executesql @entitySecQuery;
 		end
-		
+
 		declare @entitySql nvarchar(max), @condition nvarchar(max)
 		set @condition = ' ET.DISABLED = 0 '
 		if @code is null
 			set @condition = @condition + ' AND ET.PARENT_ID is null '
 		else
 			set @condition = @condition + ' AND ET.PARENT_ID = dbo.qp_entity_type_id(''' + @code + ''') '
-			
+
 		if @is_admin = 0
 			set @condition = @condition + ' AND S.PERMISSION_LEVEL > 0 '
-			
+
 		if @filter_id_str <> '0' and @filter_id_str <> ''
 			set @condition = @condition + ' AND ET.ID = ' + @filter_id_str
-			
+
 		if @count_only = 0
 		begin
-			if @code is not null 
-				set @entitySql = ' select ET.ID, ' + @id_str + ', dbo.qp_translate(dbo.qp_pluralize(ET.NAME), ' + cast(@language_id as nvarchar(10)) + '), ET.CODE, 1, 0, dbo.qp_get_icon(NULL, dbo.qp_pluralize(ET.CODE), NULL), ET.FOLDER_DEFAULT_ACTION_ID, ET.FOLDER_CONTEXT_MENU_ID ' + CHAR(13) 
+			if @code is not null
+				set @entitySql = ' select ET.ID, ' + @id_str + ', dbo.qp_translate(dbo.qp_pluralize(ET.NAME), ' + cast(@language_id as nvarchar(10)) + '), ET.CODE, 1, 0, dbo.qp_get_icon(NULL, dbo.qp_pluralize(ET.CODE), NULL), ET.FOLDER_DEFAULT_ACTION_ID, ET.FOLDER_CONTEXT_MENU_ID ' + CHAR(13)
 			else
-				set @entitySql = ' select ET.ID, ' + @id_str + ', ET.NAME, ET.CODE, 0, 0, dbo.qp_get_icon(NULL, ET.CODE, NULL), ET.DEFAULT_ACTION_ID, ET.CONTEXT_MENU_ID ' + CHAR(13) 
+				set @entitySql = ' select ET.ID, ' + @id_str + ', ET.NAME, ET.CODE, 0, 0, dbo.qp_get_icon(NULL, ET.CODE, NULL), ET.DEFAULT_ACTION_ID, ET.CONTEXT_MENU_ID ' + CHAR(13)
 		end
 		else
-			set @entitySql = ' select @count = COUNT(ET.ID) ' + CHAR(13) 
-		
+			set @entitySql = ' select @count = COUNT(ET.ID) ' + CHAR(13)
+
 		set @entitySql = @entitySql + ' From ENTITY_TYPE ET ' + CHAR(13)
-		
+
 		if @is_admin = 0
 			set @entitySql = @entitySql + ' INNER JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID ' + CHAR(13)
-			
+
 		set @entitySql = @entitySql + ' WHERE ' + @condition  + CHAR(13)
-		
+
 		if @count_only = 0
 		begin
 			set @entitySql = @entitySql + ' order by ET.[ORDER] ' + CHAR(13)
@@ -44322,7 +44322,7 @@ begin
 			exec sp_executesql @entitySql, N'@count int output', @count = @count output
 		end
 	end
-	
+
 	if @count_only = 0
 	begin
 		declare @i numeric, @total numeric
@@ -44334,9 +44334,9 @@ begin
 		select @total = COUNT(NUMBER) from @result
 		while @i <= @total
 		begin
-			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = is_folder, 
+			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = is_folder,
 			@local_is_group = is_group, @local_is_recurring = is_recurring, @local_group_item_code = GROUP_ITEM_CODE from @result where NUMBER = @i
-			
+
 			if @local_is_folder = 1
 				exec dbo.qp_expand @user_id, @local_code, @local_parent_id, 1, @local_is_group, @local_group_item_code, 0, 1, @count = @children_count output
 			else
@@ -44350,34 +44350,34 @@ begin
 				update @result set has_children = 0 where NUMBER = @i
 			else
 				update @result set has_children = 1 where NUMBER = @i
-			
+
 			set @i = @i + 1
 		end
-		
-		select 
+
+		select
 			TREE_NODE.ID,
-			TREE_NODE.CODE, 			
+			TREE_NODE.CODE,
 			TREE_NODE.PARENT_ID,
 			TREE_NODE.PARENT_GROUP_ID,
 			TREE_NODE.IS_FOLDER,
 			TREE_NODE.IS_GROUP,
-			TREE_NODE.GROUP_ITEM_CODE, 
-			TREE_NODE.ICON, 
-			TREE_NODE.TITLE, 
-			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE, 
+			TREE_NODE.GROUP_ITEM_CODE,
+			TREE_NODE.ICON,
+			TREE_NODE.TITLE,
+			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 			ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 			TREE_NODE.HAS_CHILDREN
 		from
 			@result AS TREE_NODE
 		left outer join
 			BACKEND_ACTION
 		on
-			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 		left outer join
 			ACTION_TYPE
 		on
-			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID	
+			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID
 	end
 end
 GO
@@ -44398,7 +44398,7 @@ GO
 PRINT '7.9.6.33 completed'
 GO
 
--- ************************************** 
+-- **************************************
 -- Kirill Zakirov
 -- version 7.9.6.34
 -- templates bug fixes
@@ -44413,7 +44413,7 @@ exec qp_update_translations 'Search in templates', 'Искать в шаблон
 exec qp_update_translations 'Search in objects', 'Искать в объектах';
 
 UPDATE [ACTION_TOOLBAR_BUTTON]
-   SET [ORDER] = 60      
+   SET [ORDER] = 60
  WHERE
 	(PARENT_ACTION_ID = dbo.qp_action_id('edit_template') and ICON = 'refresh.gif')
 	or
@@ -44447,9 +44447,9 @@ UPDATE [BACKEND_ACTION]
    SET [CONFIRM_PHRASE] = 'Do you really want to remove the following format: {0}?'
  WHERE CODE = 'remove_template_object_format'
 GO
-							 
+
 exec qp_update_translations 'Do you really want to remove the following object: {0}?', 'Вы действительно хотите удалить объект {0}?';
-							 
+
 exec qp_update_translations 'Do you really want to remove the following format: {0}?', 'Вы действительно хотите удалить формат {0}?';
 
 INSERT INTO SYSTEM_INFO
@@ -44462,14 +44462,14 @@ PRINT '7.9.6.34 completed'
 GO
 
 
--- ************************************** 
+-- **************************************
 -- Pavel Celut
 -- version 7.9.6.35
 -- personalize content grouping
 -- **************************************
 
 if not exists(select * from INFORMATION_SCHEMA.COLUMNS where COLUMN_NAME = 'ENABLE_CONTENT_GROUPING_IN_TREE' and TABLE_NAME = 'USERS')
-ALTER TABLE dbo.[USERS] 
+ALTER TABLE dbo.[USERS]
 	ADD ENABLE_CONTENT_GROUPING_IN_TREE BIT NOT NULL CONSTRAINT DF_ENABLE_CONTENT_GROUPING_IN_TREE DEFAULT (1)
 GO
 
@@ -44488,15 +44488,15 @@ GO
 
 
 ALTER procedure [dbo].[qp_expand](
-	@user_id numeric = 0, 
-	@code nvarchar(50) = null, 
-	@id bigint = 0, 
-	@is_folder bit = 0, 
-	@is_group bit = 0, 
+	@user_id numeric = 0,
+	@code nvarchar(50) = null,
+	@id bigint = 0,
+	@is_folder bit = 0,
+	@is_group bit = 0,
 	@group_item_code nvarchar(50) = null,
 	@filter_id bigint = 0,
-	@count_only bit = 0, 
-	@count int = 0 output 
+	@count_only bit = 0,
+	@count int = 0 output
 )
 as
 begin
@@ -44520,7 +44520,7 @@ begin
 		HAS_CHILDREN bit null,
 		IS_RECURRING bit null
 	)
-	
+
 	declare @language_id numeric(18, 0)
 	declare @source nvarchar(50), @id_field nvarchar(50), @title_field nvarchar(50)
 	declare @parent_id_field nvarchar(50), @icon_field nvarchar(50), @group_parent_id_field nvarchar(50)
@@ -44532,17 +44532,17 @@ begin
 	declare @is_admin bit, @current_is_group bit
 	declare @parent_group_code nvarchar(50), @child_group_code nvarchar(50), @current_group_item_code nvarchar(50)
 	declare @real_parent_id bigint, @real_parent_id_field nvarchar(50), @real_id_str nvarchar(10)
-	
+
 	set @id_str = CAST(@id as nvarchar(10))
-	
+
 	if (@filter_id = 0)
 		set @filter_id_str = ''
 	else
 		set @filter_id_str = CAST(@filter_id as nvarchar(10))
-	
+
 	select @parent_group_code = ET1.CODE from ENTITY_TYPE ET2 INNER JOIN ENTITY_TYPE ET1 ON ET2.GROUP_PARENT_ID = ET1.ID where ET2.CODE = @code
 	and dbo.qp_check_entity_grouping(@user_id, @code) = 1
-	
+
 	if @is_group = 1
 	begin
 		exec dbo.qp_get_parent_entity_id @id, @code, @parent_entity_id = @real_parent_id output
@@ -44550,9 +44550,9 @@ begin
 	end
 	else begin
 		set @real_parent_id = @id
-		set @real_id_str = @id_str	
+		set @real_id_str = @id_str
 	end
-	
+
 	set @current_is_group = 0
 	if @parent_group_code is not null begin
 		if @is_folder = 1 begin
@@ -44569,42 +44569,42 @@ begin
 	End
 
 	set @language_id = dbo.qp_language(@user_id)
-	
+
 	set @is_admin = 0;
 	IF EXISTS (select * from user_group_bind where group_id = 1 and user_id = @user_Id) OR @user_id = 1
 		set @is_admin = 1;
-	
-	select 
+
+	select
 		@source = source,
 		@source_sp = source_sp,
 		@id_field = id_field,
-		@title_field = TITLE_FIELD, 
+		@title_field = TITLE_FIELD,
 		@parent_id_field = PARENT_ID_FIELD,
 		@group_parent_id_field = GROUP_PARENT_ID_FIELD,
-		@icon_field = ICON_FIELD, 
-		@icon_modifier_field = ICON_MODIFIER_FIELD, 
-		@folder_icon = FOLDER_ICON, 
-		@has_item_nodes = HAS_ITEM_NODES, 
-		@recurring_id_field = RECURRING_ID_FIELD, 
-		@order_field = order_field, 
+		@icon_field = ICON_FIELD,
+		@icon_modifier_field = ICON_MODIFIER_FIELD,
+		@folder_icon = FOLDER_ICON,
+		@has_item_nodes = HAS_ITEM_NODES,
+		@recurring_id_field = RECURRING_ID_FIELD,
+		@order_field = order_field,
 		@default_action_id = default_action_id,
 		@context_menu_id = CONTEXT_MENU_ID
-	from 
+	from
 		ENTITY_TYPE ET
 	where
 		ID = dbo.qp_entity_type_id(@code)
-		
-	if @is_group = 1 
+
+	if @is_group = 1
 	begin
 		set @real_parent_id_field = @parent_id_field
 		set @parent_id_field = @group_parent_id_field
 	end
-	
+
 	if @icon_field is null
 		set @icon_field = 'NULL'
 	if @icon_modifier_field is null
-		set @icon_modifier_field = 'NULL'	
-	
+		set @icon_modifier_field = 'NULL'
+
 
 	if @is_folder = 1 or @recurring_id_field is not null
 	begin
@@ -44613,30 +44613,30 @@ begin
 		if @has_item_nodes = 1
 		begin
 			set @select = @source + '.' + @id_field + ' AS ID, ' + @title_field + ' AS TITLE,  '  + @icon_field + ' AS ICON,  ' + @icon_modifier_field + ' AS ICON_MODIFIER'
-			
+
 			set @where = '1 = 1'
 			if @parent_id_field is not null and @id_str <> '0' and  @id_str <> ''
 				set @where = @where + ' AND ' + @parent_id_field + ' = ' + @id_str
-			
+
 			if @recurring_id_field is not null
 			begin
-				if @is_folder = 1 
-					set @where = @where + ' AND ' + @recurring_id_field + ' is null ' 
+				if @is_folder = 1
+					set @where = @where + ' AND ' + @recurring_id_field + ' is null '
 				else
 					set @where = @where + ' AND ' + @recurring_id_field + ' = ' + @id_str
 			end
-			
+
 			if @filter_id_str <> '0' and @filter_id_str <> ''
 				set @where = @where + ' AND ' + @id_field + ' = ' + @filter_id_str
-			
+
 			if @order_field is null
 				set @order = @title_field
 			else
-				set @order = @order_field  
-			
+				set @order = @order_field
+
 		end
-		
-		
+
+
 		if @source_sp is null
 			set @sql = 'select ' + @select + ' from ' +  @source + ' where ' + @where + ' order by ' + @order
 		else
@@ -44650,84 +44650,84 @@ begin
 				if @is_folder = 1
 					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=0'
 				else
-					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str			
-				
-			
+					set @sql = @sql + ', @' + LOWER(@recurring_id_field) + '=' + @id_str
+
+
 		end
 		print @sql
 		insert into @result (ID, TITLE, ICON, ICON_MODIFIER)
 		exec sp_executesql @sql
-		
+
 		--PRINT @sql;
-		
-		
+
+
 		if @count_only = 0
 		begin
-			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result 
-			update 
+			--select ID, @id AS PARENT_ID, TITLE, @code AS CODE, 0 AS IS_FOLDER,  AS ICON, @default_action_id AS DEFAULT_ACTION_ID,  AS , dbo.qp_expand_count(@user_id, @code, ID, 0) AS CHILDREN_COUNT  from @result
+			update
 				@result
-			set 
+			set
 				PARENT_ID = @real_parent_id,
 				PARENT_GROUP_ID = CASE WHEN @is_group = 1 THEN @id ELSE NULL END,
-				CODE = @code, 
+				CODE = @code,
 				IS_FOLDER = 0,
 				IS_GROUP = @current_is_group,
 				GROUP_ITEM_CODE = @current_group_item_code,
-				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER), 
-				DEFAULT_ACTION_ID = @default_action_id, 
+				ICON = dbo.qp_get_icon(ICON, @code, ICON_MODIFIER),
+				DEFAULT_ACTION_ID = @default_action_id,
 				CONTEXT_MENU_ID = @context_menu_id,
 				IS_RECURRING = CASE WHEN @recurring_id_field is not null THEN 1 ELSE 0 END
 		end
 		else
-			select @count = COUNT(ID) from @result	
+			select @count = COUNT(ID) from @result
 	end
 	else begin
 		if @is_admin = 0
 		begin
 			declare @entitySecQuery nvarchar(max);
 			EXEC [dbo].[qp_GetEntityPermissionAsQuery]
-				@user_id = @user_id,	
+				@user_id = @user_id,
 				@SQLOut = @entitySecQuery OUTPUT
-			
+
 			CREATE TABLE #sectmp
 			(
 				PERMISSION_LEVEL int,
 				ENTITY_TYPE_ID int
-			);				
+			);
 			set @entitySecQuery = N'insert into #sectmp (PERMISSION_LEVEL, ENTITY_TYPE_ID) ' + @entitySecQuery;
 			exec sp_executesql @entitySecQuery;
 		end
-		
+
 		declare @entitySql nvarchar(max), @condition nvarchar(max)
 		set @condition = ' ET.DISABLED = 0 '
 		if @code is null
 			set @condition = @condition + ' AND ET.PARENT_ID is null '
 		else
 			set @condition = @condition + ' AND ET.PARENT_ID = dbo.qp_entity_type_id(''' + @code + ''') '
-			
+
 		if @is_admin = 0
 			set @condition = @condition + ' AND S.PERMISSION_LEVEL > 0 '
-			
+
 		if @filter_id_str <> '0' and @filter_id_str <> ''
 			set @condition = @condition + ' AND ET.ID = ' + @filter_id_str
-			
+
 		if @count_only = 0
 		begin
-			if @code is not null 
-				set @entitySql = ' select ET.ID, ' + @id_str + ', dbo.qp_translate(dbo.qp_pluralize(ET.NAME), ' + cast(@language_id as nvarchar(10)) + '), ET.CODE, 1, 0, dbo.qp_get_icon(NULL, dbo.qp_pluralize(ET.CODE), NULL), ET.FOLDER_DEFAULT_ACTION_ID, ET.FOLDER_CONTEXT_MENU_ID ' + CHAR(13) 
+			if @code is not null
+				set @entitySql = ' select ET.ID, ' + @id_str + ', dbo.qp_translate(dbo.qp_pluralize(ET.NAME), ' + cast(@language_id as nvarchar(10)) + '), ET.CODE, 1, 0, dbo.qp_get_icon(NULL, dbo.qp_pluralize(ET.CODE), NULL), ET.FOLDER_DEFAULT_ACTION_ID, ET.FOLDER_CONTEXT_MENU_ID ' + CHAR(13)
 			else
-				set @entitySql = ' select ET.ID, ' + @id_str + ', ET.NAME, ET.CODE, 0, 0, dbo.qp_get_icon(NULL, ET.CODE, NULL), ET.DEFAULT_ACTION_ID, ET.CONTEXT_MENU_ID ' + CHAR(13) 
+				set @entitySql = ' select ET.ID, ' + @id_str + ', ET.NAME, ET.CODE, 0, 0, dbo.qp_get_icon(NULL, ET.CODE, NULL), ET.DEFAULT_ACTION_ID, ET.CONTEXT_MENU_ID ' + CHAR(13)
 		end
 		else
-			set @entitySql = ' select @count = COUNT(ET.ID) ' + CHAR(13) 
-		
+			set @entitySql = ' select @count = COUNT(ET.ID) ' + CHAR(13)
+
 		set @entitySql = @entitySql + ' From ENTITY_TYPE ET ' + CHAR(13)
-		
+
 		if @is_admin = 0
 			set @entitySql = @entitySql + ' INNER JOIN #sectmp S ON S.ENTITY_TYPE_ID = ID ' + CHAR(13)
-			
+
 		set @entitySql = @entitySql + ' WHERE ' + @condition  + CHAR(13)
-		
+
 		if @count_only = 0
 		begin
 			set @entitySql = @entitySql + ' order by ET.[ORDER] ' + CHAR(13)
@@ -44740,7 +44740,7 @@ begin
 			exec sp_executesql @entitySql, N'@count int output', @count = @count output
 		end
 	end
-	
+
 	if @count_only = 0
 	begin
 		declare @i numeric, @total numeric
@@ -44752,9 +44752,9 @@ begin
 		select @total = COUNT(NUMBER) from @result
 		while @i <= @total
 		begin
-			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = is_folder, 
+			select @local_code = code, @local_id = id, @local_parent_id = parent_id, @local_is_folder = is_folder,
 			@local_is_group = is_group, @local_is_recurring = is_recurring, @local_group_item_code = GROUP_ITEM_CODE from @result where NUMBER = @i
-			
+
 			if @local_is_folder = 1
 				exec dbo.qp_expand @user_id, @local_code, @local_parent_id, 1, @local_is_group, @local_group_item_code, 0, 1, @count = @children_count output
 			else
@@ -44768,39 +44768,39 @@ begin
 				update @result set has_children = 0 where NUMBER = @i
 			else
 				update @result set has_children = 1 where NUMBER = @i
-			
+
 			set @i = @i + 1
 		end
-		
-		select 
+
+		select
 			TREE_NODE.ID,
-			TREE_NODE.CODE, 			
+			TREE_NODE.CODE,
 			TREE_NODE.PARENT_ID,
 			TREE_NODE.PARENT_GROUP_ID,
 			TREE_NODE.IS_FOLDER,
 			TREE_NODE.IS_GROUP,
-			TREE_NODE.GROUP_ITEM_CODE, 
-			TREE_NODE.ICON, 
-			TREE_NODE.TITLE, 
-			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE, 
+			TREE_NODE.GROUP_ITEM_CODE,
+			TREE_NODE.ICON,
+			TREE_NODE.TITLE,
+			dbo.qp_action_code(TREE_NODE.DEFAULT_ACTION_ID) AS DEFAULT_ACTION_CODE,
 			ACTION_TYPE.CODE AS DEFAULT_ACTION_TYPE_CODE,
-			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE, 
+			dbo.qp_context_menu_code(TREE_NODE.CONTEXT_MENU_ID) AS CONTEXT_MENU_CODE,
 			TREE_NODE.HAS_CHILDREN
 		from
 			@result AS TREE_NODE
 		left outer join
 			BACKEND_ACTION
 		on
-			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID	
+			TREE_NODE.DEFAULT_ACTION_ID = BACKEND_ACTION.ID
 		left outer join
 			ACTION_TYPE
 		on
-			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID	
+			BACKEND_ACTION.TYPE_ID = ACTION_TYPE.ID
 	end
 end
 GO
 
-ALTER TRIGGER [dbo].[tiud_remove_empty_content_groups] ON [dbo].[CONTENT] FOR INSERT, UPDATE, DELETE 
+ALTER TRIGGER [dbo].[tiud_remove_empty_content_groups] ON [dbo].[CONTENT] FOR INSERT, UPDATE, DELETE
 AS BEGIN
   DELETE FROM content_group
   WHERE NAME <> 'Default Group'

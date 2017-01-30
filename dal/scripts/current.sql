@@ -303,20 +303,21 @@ GO
 GO
 
 exec qp_drop_existing 'qp_get_m2o_ids_multiple', 'IsProcedure'
-GO
+਍䜀伀ഀഀ
 
-CREATE PROCEDURE [dbo].[qp_get_m2o_ids_multiple]
+਍䌀刀䔀䄀吀䔀 倀刀伀䌀䔀䐀唀刀䔀 嬀搀戀漀崀⸀嬀焀瀀开最攀琀开洀㈀漀开椀搀猀开洀甀氀琀椀瀀氀攀崀ഀഀ
 @contentId numeric, 
-@fieldName nvarchar(255), 
+਍䀀昀椀攀氀搀一愀洀攀 渀瘀愀爀挀栀愀爀⠀㈀㔀㔀⤀Ⰰ ഀഀ
 @ids [Ids] READONLY
-AS 
+਍䄀匀 ഀഀ
 BEGIN
-	declare @sql nvarchar(max)
+਍ऀ搀攀挀氀愀爀攀 䀀猀焀氀 渀瘀愀爀挀栀愀爀⠀洀愀砀⤀ഀഀ
 	set @sql = 'select [' + @fieldName + '], content_item_id from content_' + CAST(@contentId as nvarchar(255)) + '_united where [' + @fieldName + '] in (select id from @ids)'
-	exec sp_executesql @sql, N'@ids [Ids] READONLY', @ids = @ids
+਍ऀ攀砀攀挀 猀瀀开攀砀攀挀甀琀攀猀焀氀 䀀猀焀氀Ⰰ 一✀䀀椀搀猀 嬀䤀搀猀崀 刀䔀䄀䐀伀一䰀夀✀Ⰰ 䀀椀搀猀 㴀 䀀椀搀猀ഀഀ
 END
-
+਍ഀഀ
 GO
+਍
 exec qp_drop_existing 'qp_create_content_item_versions', 'IsProcedure'
 GO
 
@@ -815,29 +816,41 @@ GO
 
 
 if not exists (select * From VE_COMMAND where name = 'autoFormat')
-	insert into VE_COMMAND (NAME, ALIAS, ROW_ORDER, TOOLBAR_IN_ROW_ORDER, GROUP_IN_TOOLBAR_ORDER, COMMAND_IN_GROUP_ORDER, [ON], LAST_MODIFIED_BY)
-	values ('autoFormat', 'Format Selection', 0, 3, 0, 0, 1, 1)
+  insert into VE_COMMAND (NAME, ALIAS, ROW_ORDER, TOOLBAR_IN_ROW_ORDER, GROUP_IN_TOOLBAR_ORDER, COMMAND_IN_GROUP_ORDER, [ON], LAST_MODIFIED_BY)
+  values ('autoFormat', 'Format Selection', 0, 3, 0, 0, 1, 1)
 
 if not exists (select * From VE_COMMAND where name = 'CommentSelectedRange')
-	insert into VE_COMMAND (NAME, ALIAS, ROW_ORDER, TOOLBAR_IN_ROW_ORDER, GROUP_IN_TOOLBAR_ORDER, COMMAND_IN_GROUP_ORDER, [ON], LAST_MODIFIED_BY)
-	values ('CommentSelectedRange', 'Comment Selection', 0, 3, 0, 1, 1, 1)
+  insert into VE_COMMAND (NAME, ALIAS, ROW_ORDER, TOOLBAR_IN_ROW_ORDER, GROUP_IN_TOOLBAR_ORDER, COMMAND_IN_GROUP_ORDER, [ON], LAST_MODIFIED_BY)
+  values ('CommentSelectedRange', 'Comment Selection', 0, 3, 0, 1, 1, 1)
 
 if not exists (select * From VE_COMMAND where name = 'UncommentSelectedRange')
-	insert into VE_COMMAND (NAME, ALIAS, ROW_ORDER, TOOLBAR_IN_ROW_ORDER, GROUP_IN_TOOLBAR_ORDER, COMMAND_IN_GROUP_ORDER, [ON], LAST_MODIFIED_BY)
-	values ('UncommentSelectedRange', 'Uncomment Selection', 0, 3, 0, 2, 1, 1)
+  insert into VE_COMMAND (NAME, ALIAS, ROW_ORDER, TOOLBAR_IN_ROW_ORDER, GROUP_IN_TOOLBAR_ORDER, COMMAND_IN_GROUP_ORDER, [ON], LAST_MODIFIED_BY)
+  values ('UncommentSelectedRange', 'Uncomment Selection', 0, 3, 0, 2, 1, 1)
 
 if not exists (select * From VE_COMMAND where name = 'AutoComplete')
-	insert into VE_COMMAND (NAME, ALIAS, ROW_ORDER, TOOLBAR_IN_ROW_ORDER, GROUP_IN_TOOLBAR_ORDER, COMMAND_IN_GROUP_ORDER, [ON], LAST_MODIFIED_BY)
-	values ('AutoComplete', 'Enable\Disable HTML Tag Autocomplete', 0, 3, 0, 3, 1, 1)
+  insert into VE_COMMAND (NAME, ALIAS, ROW_ORDER, TOOLBAR_IN_ROW_ORDER, GROUP_IN_TOOLBAR_ORDER, COMMAND_IN_GROUP_ORDER, [ON], LAST_MODIFIED_BY)
+  values ('AutoComplete', 'Enable\Disable HTML Tag Autocomplete', 0, 3, 0, 3, 1, 1)
 
 GO
 
-exec qp_update_translations 'Show Blocks', 'Отображать блоки'
-exec qp_update_translations 'Format Selection', 'Форматировать выбранное'
-exec qp_update_translations 'Comment Selection', 'Комментировать выбранное'
-exec qp_update_translations 'Uncomment Selection', 'Раскомментировать выбранное'
-exec qp_update_translations 'Enable\Disable HTML Tag Autocomplete', 'Включить/Выключить автозавершение HTML-тегов'
+exec qp_update_translations 'Show Blocks', 'РћС‚РѕР±СЂР°Р¶Р°С‚СЊ Р±Р»РѕРєРё'
+exec qp_update_translations 'Format Selection', 'Р¤РѕСЂРјР°С‚РёСЂРѕРІР°С‚СЊ РІС‹Р±СЂР°РЅРЅРѕРµ'
+exec qp_update_translations 'Comment Selection', 'РљРѕРјРјРµРЅС‚РёСЂРѕРІР°С‚СЊ РІС‹Р±СЂР°РЅРЅРѕРµ'
+exec qp_update_translations 'Uncomment Selection', 'Р Р°СЃРєРѕРјРјРµРЅС‚РёСЂРѕРІР°С‚СЊ РІС‹Р±СЂР°РЅРЅРѕРµ'
+exec qp_update_translations 'Enable\Disable HTML Tag Autocomplete', 'Р’РєР»СЋС‡РёС‚СЊ/Р’С‹РєР»СЋС‡РёС‚СЊ Р°РІС‚РѕР·Р°РІРµСЂС€РµРЅРёРµ HTML-С‚РµРіРѕРІ'
 
+GO
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[SITE]') AND name = 'DISABLE_LIST_AUTO_WRAP')
+  ALTER TABLE [dbo].[SITE]
+  ADD DISABLE_LIST_AUTO_WRAP BIT NOT NULL DEFAULT(0)
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[CONTENT_ATTRIBUTE]') AND name = 'DISABLE_LIST_AUTO_WRAP')
+  ALTER TABLE [dbo].[CONTENT_ATTRIBUTE]
+  ADD DISABLE_LIST_AUTO_WRAP BIT NOT NULL DEFAULT(0)
+GO
+
+EXEC qp_update_translations 'Disable list auto wrapping (ul, ol, dl)', 'РћС‚РєР»СЋС‡РёС‚СЊ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРѕРµ РѕР±РѕСЂР°С‡РёРІР°РЅРёРµ СЃРїРёСЃРєРѕРІ (ul, ol, dl)'
 GO
 
 GO
