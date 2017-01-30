@@ -1,4 +1,4 @@
-Quantumart.QP8.BackendDocumentContext.prototype.notifyCustomButtonExistence = false;
+﻿Quantumart.QP8.BackendDocumentContext.prototype.notifyCustomButtonExistence = false;
 
 Quantumart.QP8.BackendDocumentContext.setGlobal('Transliterator',
       {
@@ -82,6 +82,7 @@ Quantumart.QP8.BackendDocumentContext.setGlobal('Transliterator',
 
 Quantumart.QP8.BackendDocumentContext.prototype.addTransliterateButton = function (srcInputName, dstInputName)
 {
+    var self = this;
     this.addCustomLinkButton({
       name: dstInputName,
       title: "Transliterate",
@@ -90,7 +91,7 @@ Quantumart.QP8.BackendDocumentContext.prototype.addTransliterateButton = functio
       url: "/Backend/Content/QP8/icons/16x16/insert_call.gif",
       onClick: function (evt) {
 		var resultInput = evt.data.$input;
-		var textToProcess = evt.data.$form.find("[name=" + srcInputName + "]").val();
+		var textToProcess = self.getValue(evt.data.$form, srcInputName);
 		resultInput.val($ctx.getGlobal('Transliterator').transliterate(textToProcess)).trigger("change");
       }
     });

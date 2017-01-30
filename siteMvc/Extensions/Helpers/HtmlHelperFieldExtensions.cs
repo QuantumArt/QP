@@ -25,7 +25,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static readonly Regex WindowIdRegExp = new Regex(@"^win[0-9]+$");
 
-        public static string FieldTemplate(this HtmlHelper html, string id, string title, bool forCheckbox = false, string example = null, bool required = false, string description = null)
+        public static string FieldTemplate(this HtmlHelper html, string id, string title, bool forCheckbox = false, string example = null, bool required = false, string description = null, string fieldName = null)
         {
             var label = html.QpLabel(html.UniqueId(id), title, !forCheckbox).ToString();
             if (!string.IsNullOrWhiteSpace(description))
@@ -62,8 +62,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var fieldCell = new TagBuilder("dd");
             fieldCell.AddCssClass(FieldClassName);
             fieldCell.InnerHtml = "{0}" + (forCheckbox ? " " + label : exampleCode) + validatorWrapper;
+            fieldName = fieldName?.Replace("\"", "") ?? "";
+            if (!string.IsNullOrEmpty(fieldName))
+                fieldName = $"data-field_name=\"{fieldName}\"";
 
-            return $"<dl class=\"{RowClassName}\" data-field_form_name=\"{id}\">{labelCell}{fieldCell}</dl>";
+
+            return $"<dl class=\"{RowClassName}\" data-field_form_name=\"{id}\" {fieldName}>{labelCell}{fieldCell}</dl>";
         }
 
         private static MvcHtmlString Editor(this HtmlHelper html, FieldValue pair, bool articleIsAgregated = false, bool forceReadonly = false)
@@ -101,7 +105,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var readOnly = forceReadonly || pair.Article.IsReadOnly || field.IsReadOnly || !articleIsAgregated && pair.Article.Content.HasAggregatedFields;
-            var htmlAttributes = html.QpHtmlProperties(id, field, readOnly);
+            var htmlAttributes = html.QpHtmlProperties(id, field, readOnly, pair.Field.Name);
 
             switch (field.ExactType)
             {
@@ -320,7 +324,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 fieldDescription = fieldDescription.Replace("{", "{{").Replace("}", "}}");
             }
 
-            var fieldTemplate = html.FieldTemplate(pair.Field.FormName, pair.Field.DisplayName, required: required, description: fieldDescription);
+            var fieldTemplate = html.FieldTemplate(pair.Field.FormName, pair.Field.DisplayName, required: required, description: fieldDescription, fieldName: pair.Field.Name);
             var fieldHtmlString = string.Format(fieldTemplate, html.Editor(pair, articleIsAgregated, forceReadonly));
             if (pair.Field.IsClassifier && pair.Article.ViewType != ArticleViewType.Virtual)
             {
@@ -722,11 +726,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 var classifierContent = ArticleViewModel.GetContentById(Converter.ToNullableInt32(value));
                 var classifierContentName = classifierContent?.Name;
-                sb.Append(source.QpTextBox(name, classifierContentName, new Dictionary<string, object> { { "class", HtmlHelpersExtensions.ArticleTextboxClassName }, { "disabled", "disabled" } }));
+                var htmlAttributes = new Dictionary<string, object> { { "class", HtmlHelpersExtensions.ArticleTextboxClassName }, { "disabled", "disabled" }, { HtmlHelpersExtensions.DataContentFieldName, field.Name } };
+                sb.Append(source.QpTextBox(name, classifierContentName, htmlAttributes));
             }
             else
             {
-                var contentListHtmlAttrs = new Dictionary<string, object> { { "class", "dropDownList classifierContentList" } };
+                var contentListHtmlAttrs = new Dictionary<string, object> { { "class", "dropDownList classifierContentList" }, { HtmlHelpersExtensions.DataContentFieldName, field.Name } };
                 sb.Append(source.DropDownList(name, source.List(ArticleViewModel.GetAggregatableContentsForClassifier(field, value)), FieldStrings.SelectContent, contentListHtmlAttrs).ToHtmlString());
             }
 
@@ -816,6 +821,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 var htmlAttributes = new Dictionary<string, object>();
                 htmlAttributes.AddCssClass(specClass);
+                htmlAttributes.Add(HtmlHelpersExtensions.DataContentFieldName, field.Name);
                 return html.QpRadioButtonList(name, items, RepeatDirection.Horizontal, new ControlOptions { HtmlAttributes = htmlAttributes, Enabled = !forceReadOnly });
             }
 

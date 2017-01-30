@@ -1015,7 +1015,7 @@ Quantumart.QP8.ControlHelpers.initDateTimePicker = function Quantumart$QP8$Contr
         else if ($t.hasClass("date")) {
             value = $t.data('tDatePicker').value();
         }
-        $t.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $t.attr("name"), "value": value });
+        $t.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $t.attr("name"), "value": value, "contentFieldName": $t.closest("dl").data("field_name") });
         $t = null;
     });
 
@@ -1137,7 +1137,7 @@ Quantumart.QP8.ControlHelpers.initNumericTextBox = function Quantumart$QP8$Contr
     .bind("valueChange", function () {
         var $t = jQuery(this);
         $t.addClass(CHANGED_FIELD_CLASS_NAME);
-        $t.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $t.attr("name"), "value": $t.data("tTextBox").value() });
+        $t.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $t.attr("name"), "value": $t.data("tTextBox").value(), "contentFieldName": $t.closest("dl").data("field_name") });
         $t = null;
     })
     .parent().find(".t-formatted-value")
