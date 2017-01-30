@@ -286,7 +286,6 @@ namespace Quantumart.QP8.BLL
             _childContents = new InitPropertyValue<IEnumerable<Content>>(() => ContentRepository.GetChildList(Id));
 
             _contentGroup = new InitPropertyValue<ContentGroup>(() => ContentRepository.GetGroupById(GroupId));
-
         }
 
         public Content(Site site)

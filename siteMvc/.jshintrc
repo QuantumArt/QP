@@ -6,7 +6,7 @@
   // TODO: REVISIT ALL OPTIONS
   // TODO: ORDER ALL OPTIONS VIA http://jshint.com/docs/options/ list
 
-  // Version 2.9.1
+  // Version 2.9.4
   // Rules: http://jshint.com/docs/options/
   // Releases: https://github.com/jshint/jshint/releases/
   // Sources: https://gist.github.com/AuthorProxy/bffb5f9aa733e3ca6279#file-jshintrc
@@ -23,6 +23,7 @@
   "plusplus": false,
   "undef": true,
   "strict": true,
+  "globalstrict": true,
   "maxparams": 4,
   "maxdepth": 4,
   "maxstatements": 25,
@@ -44,7 +45,7 @@
   // LIBRARIES
   "jquery": true,
   "mocha": false,
-  "qunit": true,
+  "qunit": false,
 
   // CUSTOM GLOBALS
   "globals": {
@@ -60,7 +61,6 @@
     "require": false,
     "define": false,
     "JSON": false,
-    "CKEDITOR": false,
 
     // WORK PROJECTS
     "Url": false,

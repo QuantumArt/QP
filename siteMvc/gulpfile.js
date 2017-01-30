@@ -253,7 +253,7 @@ var paths = {
     'Content/codemirror/lib/codemirror.css',
     'Content/codemirrorTheme.css',
     'Content/QpCodemirror.css',
-    'Content/Quantumart/**/.{sass, css}',
+    'Content/custom/**/*.{css,sass,scss}',
     '!Content/build/**/*.css'
   ],
   images: [
@@ -263,8 +263,8 @@ var paths = {
     '!Content/build/**/*.{jpg,jpeg,png,gif}'
   ],
   clean: [
-    'Scripts/Quantumart/**/*.{min.js, map}',
-    'Content/Quantumart/**/*.{min.css, map}',
+    'Scripts/Quantumart/**/*.{min.js,map}',
+    'Content/custom/**/*.{min.css,map}',
     destPaths.scripts,
     destPaths.styles,
     destPaths.images

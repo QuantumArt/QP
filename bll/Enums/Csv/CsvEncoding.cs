@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace Quantumart.QP8.BLL.Enums.Csv
 {
@@ -17,6 +17,6 @@ namespace Quantumart.QP8.BLL.Enums.Csv
         Koi8R,
 
         [Description("cp866")]
-        Cp866,
+        Cp866
     }
 }

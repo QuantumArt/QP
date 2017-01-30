@@ -191,35 +191,31 @@ a.html:hover
 /*#endregion*/
 
 /*#region Forms*/
-.editingForm
+.formLayout input.textbox,
+.formLayout textarea.textbox,
+.formLayout .versionText
 {
+  width: 350px;
 }
 
-.editingForm .formLayout input.textbox,
-.editingForm .formLayout textarea.textbox,
-.editingForm .formLayout .versionText
+.formLayout input.textbox.article,
+.formLayout textarea.textbox.article,
+.formLayout textarea.textbox.sqlQuery,
+.formLayout textarea.textbox.codeBehind,
+.formLayout input.textbox.directLink
 {
-  width: 350px !important;
+  width: 100%;
 }
 
-.editingForm .formLayout input.textbox.article,
-.editingForm .formLayout textarea.textbox.article,
-.editingForm .formLayout textarea.textbox.sqlQuery,
-.editingForm .formLayout textarea.textbox.codeBehind,
-.editingForm .formLayout input.textbox.directLink
+.formLayout select.dropDownList
 {
-  width: 100% !important;
+  width: 352px;
 }
 
-.editingForm .formLayout select.dropDownList
+.formLayout select.listBox
 {
-  width: 352px !important;
-}
-
-.editingForm .formLayout select.listBox
-{
-  width: 352px !important;
-  height: 100px !important;
+  width: 352px;
+  height: 100px;
 }
 
 .formLayout fieldset
@@ -1118,8 +1114,8 @@ input[type="text"].readonly, textarea.readonly
   height: 3px;
   background: transparent url('QP8/context_menu/separator.png') no-repeat 0 0;
   list-style: none none outside;
-  line-height: 0px;
-  font-size: 0px;
+  line-height: 0;
+  font-size: 0;
 }
 
 /* IE8 */
@@ -1731,39 +1727,36 @@ div.fieldSearchContainerContent
     {
       margin-left: 5.0em;
     }
-        .fieldSearchContainerContent input.textbox,
-        .fieldSearchContainerContent .t-numerictextbox .t-input,
-        .fieldSearchContainerContent select.dropDownList
-        {
+    .fieldSearchContainerContent input.textbox,
+    .fieldSearchContainerContent .t-numerictextbox .t-input,
+    .fieldSearchContainerContent select.dropDownList
+    {
       width: 250px;
       vertical-align: middle;
-        }
+    }
 
-        .fieldSearchContainerContent input.identifier,
-        .fieldSearchContainerContent textarea.identifier-list
-        {
-            width: 265px !important;
+    .fieldSearchContainerContent input.identifier,
+    .fieldSearchContainerContent textarea.identifier-list
+    {
+      width: 265px;
       vertical-align: middle;
-        }
+    }
 
-        .fieldSearchContainerContent textarea.identifier-list
-        {
-            height: 44px;
-        }
+    .fieldSearchContainerContent textarea.identifier-list
+    {
+      height: 44px;
+    }
 
-        .fieldSearchContainerContent textarea.numbers-list
-        {
-            width: 98%;
-            height: 60px;
-        }
+    .fieldSearchContainerContent textarea.numbers-list
+    {
+      width: 98%;
+      height: 60px;
+    }
     .formLayout input.button.closeFilter, .formLayout input.button.closeAndApplyFilter
     {
       margin: 0.3em 0.5em;
     }
 
-    .searchBlock div.articleSearchRegion
-    {
-    }
     .searchBlock div.articleSearchRegion fieldset
     {
       padding: 0 0.8em 0.8em 0.8em;
@@ -1962,20 +1955,15 @@ div.fieldSearchContainerContent
 }
 
 .popupWindow .area .documentWrapper.libraryWrapper
-  {
-    padding-top: 0;
-    overflow:hidden;
-    height: 100%;
-  }
-    .popupWindow .area .documentWrapper.ImportWrapper .relatedFieldsArray
-    {
-        padding-left:25px;
-        background: transparent url('QP8/bread_crumbs/arrow.gif') no-repeat 9px 50%;
-    }
-    .popupWindow .area .documentWrapper.ImportWrapper .noPaddingForCheckbox .field
-    {
-        margin-left:0;
-    }
+{
+  padding-top: 0;
+  overflow:hidden;
+  height: 100%;
+}
+.popupWindow .area .documentWrapper.ImportWrapper .noPaddingForCheckbox .field
+{
+  margin-left:0;
+}
 /*#endregion*/
 
 /*#region Search  */
@@ -2392,10 +2380,6 @@ span.seachResultHighlight
 /*#endregion*/
 
 /*#region Tree */
-.tree__leaf--fts-founded {
-  background-color: yellowgreen;
-}
-
 .t-treeview.checkboxTree .t-in.t-state-selected
 {
   background-color: inherit;
@@ -2432,7 +2416,7 @@ span.seachResultHighlight
 .l-pl-uploader-container .lop-pbar-container {
     display:none;
     width:200px;
-    margin-top: 0!important;
+    margin-top: 0;
 }
 
 .l-pl-uploader-container .pl_upload_button {
@@ -2447,7 +2431,7 @@ span.seachResultHighlight
 .progressbar-value
 {
   background: green;
-  width: 0px;
+  width: 0;
 }
 
 
@@ -2521,7 +2505,7 @@ span.seachResultHighlight
     white-space: nowrap;
     overflow: hidden;
     width: 310px;
-    height: 14px !important;
+    height: 14px;
 }
 
 .brief:hover .tooltip {
@@ -2532,7 +2516,7 @@ span.seachResultHighlight
     display: none;
     white-space: normal;
     background-color: whitesmoke;
-    margin-left: 0px;
+    margin-left: 0;
     padding: 10px;
     position: absolute;
     z-index: 1000;
@@ -2553,16 +2537,3 @@ span.mapped
     color:#0066d5;
 }
 /*#endregion*/
-
-.doctab-title__articles-count-label {
-  float: left !important;
-}
-
-.doctab-title__articles-count-label--selected {
-  float: right !important;
-}
-
-.doctab-title__articles-count-label span, .doctab-title__articles-count-label--selected span {
-  color: #283C52;
-  font-weight: bold;
-}
