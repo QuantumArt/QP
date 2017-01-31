@@ -1,8 +1,9 @@
-﻿@model FieldViewModel
+﻿@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Constants
-@using Quantumart.QP8.BLL
 @using Quantumart.QP8.Resources
 @using Quantumart.QP8.WebMvc.ViewModels.Field
+
+@model FieldViewModel
 
 <script type="text/html" id="@Html.UniqueId("Data_ExternalCssItems_template")">
     <span data-bind="click: addItem">
@@ -19,8 +20,8 @@
         <tbody data-bind="foreach: items">
             <tr>
                 <td data-bind="text: $index() + 1"></td>
-                <td> <input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}" /></td>
-                <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" /></td>
+                <td><input class="textbox" data-bind="value: Url, event: { change: $root.onItemChanged }, css: { 'input-validation-error': Invalid}" /></td>
+                <td><img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" /></td>
             </tr>
         </tbody>
     </table>
@@ -48,17 +49,17 @@
                 <td style="text-align:center; padding-right:0.7em;">
                     <input class="checkbox enum-default" title="@FieldStrings.EnumValueIsDefault" type="checkbox" data-bind="checked: IsDefault, event: { click: $root.onItemChanged }, attr: { 'data-index': $index }" />
                 </td>
-                <td> <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" /></td>
+                <td>
+                    <img src="@Url.Content("~/Content/qp8/icons/16x16/delete.gif")" data-bind="click: $root.removeItem" />
+                </td>
             </tr>
         </tbody>
     </table>
 </script>
 
-
 @using (Html.BeginTabForm(Model))
 {
     @Html.HiddenFor(s => s.Data.Id, new { id = Model.CurrentFieldIdHiddenElementId })
-
     using (Html.BeginFieldGroup(SiteStrings.Legend_Parameters))
     {
         @Html.TextBoxFieldFor(s => s.Data.Name)
@@ -67,11 +68,9 @@
 
         @Html.SelectFieldFor(s => s.Data.ExactType, Html.List(Model.GetAcceptableExactFieldTypes()), new Dictionary<string, object> { { "id", Model.ExactSelectElementId } })
         @Html.SelectFieldFor(s => s.Data.Order, Html.List(Model.GetOrderOptions()))
-        ;
+
         @Html.CheckBoxFieldFor(s => s.Data.UseInChildContentFilter)
         @Html.CheckBoxFieldFor(s => s.Data.IsLocalization)
-
-
 
         //--------------------
         using (Html.BeginPanel("Required"))
@@ -107,45 +106,35 @@
         using (Html.BeginPanel("Indexed"))
         {
             @Html.CheckBoxFieldFor(s => s.Data.Indexed, htmlAttributes: new Dictionary<string, object> { { "id", Model.IndexedElementId } })
-            ;
         }
 
         using (Html.BeginPanel("ViewInList"))
         {
             @Html.CheckBoxFieldFor(s => s.Data.ViewInList)
-            ;
         }
 
         if (Model.Data.ParentField != null)
         {
             @Html.TextBoxFieldFor(s => s.ParentFieldName, new Dictionary<string, object> { { "disabled", "disabled" } })
-            ;
             @Html.CheckBoxFieldFor(s => s.Data.Override, null, false, new Dictionary<string, object> { { "disabled", "disabled" } })
-            ;
             @Html.CheckBoxFieldFor(s => s.Data.Hide)
-            ;
         }
 
         using (Html.BeginPanel("OnScreen"))
         {
             @Html.CheckBoxFieldFor(s => s.Data.OnScreen, htmlAttributes: new Dictionary<string, object> { { "id", Model.OnScreenElementId } })
-            ;
-
             @Html.CheckBoxFieldFor(s => s.Data.RebuildVirtualContents, "RebuildVirtualContents", true)
-            ;
             using (Html.BeginPanel("RebuildVirtualContents"))
             {
                 @Html.Warning(FieldStrings.DisablingRebuildIsDangerous)
             }
         }
 
-        using (Html.BeginPanel("LinqGroup", Model.Data.Content.Site.AssemblingType == Quantumart.QP8.Constants.AssemblingType.AspDotNet, false))
+        using (Html.BeginPanel("LinqGroup", Model.Data.Content.Site.AssemblingType == AssemblingType.AspDotNet, false))
         {
             using (Html.BeginFieldGroup(FieldStrings.LinqParamsGroup))
             {
-
                 @Html.CheckBoxFieldFor(s => s.Data.MapAsProperty, "MapAsPropertyIsTrue")
-
                 using (Html.BeginPanel("MapAsPropertyIsTrue", true))
                 {
                     @Html.TextBoxFieldFor(s => s.Data.LinqPropertyName)
@@ -173,6 +162,7 @@
                         @Html.TextBoxFieldFor(s => s.Data.ContentLink.NetLinkName)
                         @Html.TextBoxFieldFor(s => s.Data.ContentLink.NetPluralLinkName)
                     }
+
                     @Html.CheckBoxFieldFor(s => s.Data.UseSeparateReverseViews)
                 }
             }
@@ -191,23 +181,23 @@
 
             using (Html.BeginPanel("RelateTo", true))
             {
-                @Html.SingleItemPickerFieldFor(m => m.Data.RelateToContentId, Model.RelateToListItem,
-                    new EntityDataListArgs
-                    {
-                        EntityTypeCode = EntityTypeCode.Content,
-                        ParentEntityId = Model.Data.Content.SiteId,
-                        SelectActionCode = ActionCode.SelectContentForField,
-                        ReadActionCode = Model.RelatedReadActionCode,
-                        ListId = -1 * System.DateTime.Now.Millisecond,
-                        ShowIds = true
-                    },
-                    new ControlOptions
-                    {
-                        HtmlAttributes = new Dictionary<string, object> { { "id", Model.RelateToSelectElementId } }
-                    }
+              @Html.SingleItemPickerFieldFor(m => m.Data.RelateToContentId, Model.RelateToListItem,
+                new EntityDataListArgs
+                {
+                  EntityTypeCode = EntityTypeCode.Content,
+                  ParentEntityId = Model.Data.Content.SiteId,
+                  SelectActionCode = ActionCode.SelectContentForField,
+                  ReadActionCode = Model.RelatedReadActionCode,
+                  ListId = -1 * DateTime.Now.Millisecond,
+                  ShowIds = true
+                },
+                new ControlOptions
+                {
+                  HtmlAttributes = new Dictionary<string, object> { { "id", Model.RelateToSelectElementId } }
+                }
                 )
 
-                using (Html.BeginPanel("O2MMainProps"))
+              using (Html.BeginPanel("O2MMainProps"))
                 {
                     using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.RelationFieldPanelElementId } }))
                     {
@@ -221,6 +211,7 @@
                         {
                             @Html.SelectFieldFor(s => s.Data.ClassifierId, Html.List(Model.GetAcceptableClassifierFields()), new Dictionary<string, object> { { "id", Model.ClassifierSelectElementId } })
                         }
+
                         @Html.CheckBoxFieldFor(s => s.Data.UseForContext)
                     }
 
@@ -234,7 +225,6 @@
                         @Html.NumericFieldFor(s => s.Data.TreeFieldTitleCount)
                         @Html.CheckBoxFieldFor(s => s.Data.TreeIncludeRelationsInTitle)
                         @Html.CheckBoxFieldFor(s => s.Data.UseForVariations)
-
                     }
                 }
 
@@ -254,22 +244,20 @@
                     using (Html.BeginPanel(new Dictionary<string, object> { { "id", Model.O2MDefaultPanelElementId } }))
                     {
                         @Html.SingleItemPickerFieldFor(s => s.Data.O2MDefaultValue, Model.O2MDefaultValueListItem, new EntityDataListArgs
-                   {
-                       EntityTypeCode = EntityTypeCode.Article,
-                       ParentEntityId = Model.Data.RelateToContentId,
-                       SelectActionCode = ActionCode.SelectArticle,
-                       ReadActionCode = ActionCode.EditArticle,
-                       AddNewActionCode = ActionCode.AddNewArticle,
-                       ListId = -1 * System.DateTime.Now.Millisecond,
-                       ShowIds = true,
-                       Filter = Model.Data.RelationFilter,
-                   }, new ControlOptions
-                   {
-                       Enabled = true,
-                       HtmlAttributes = new Dictionary<string, object> { { "id", Model.O2MDefaultElementId } }
-                   }
-                        )
-                        ;
+                        {
+                            EntityTypeCode = EntityTypeCode.Article,
+                            ParentEntityId = Model.Data.RelateToContentId,
+                            SelectActionCode = ActionCode.SelectArticle,
+                            ReadActionCode = ActionCode.EditArticle,
+                            AddNewActionCode = ActionCode.AddNewArticle,
+                            ListId = -1 * DateTime.Now.Millisecond,
+                            ShowIds = true,
+                            Filter = Model.Data.RelationFilter
+                        }, new ControlOptions
+                        {
+                            Enabled = true,
+                            HtmlAttributes = new Dictionary<string, object> { { "id", Model.O2MDefaultElementId } }
+                        })
                     }
                 }
 
@@ -365,12 +353,10 @@
                 @Html.VisualEditorFieldFor(s => s.Data.VisualEditDefaultValue, Model.Data)
                 @Html.NumericFieldFor(s => s.Data.VisualEditorHeight)
                 @Html.CheckBoxFieldFor(s => s.Data.AutoExpand, "AutoExpand", true)
-
                 using (Html.BeginPanel("AutoExpand"))
                 {
                     @Html.CheckBoxFieldFor(s => s.Data.AutoLoad)
                 }
-
 
                 @Html.CheckBoxFieldFor(s => s.Data.FullPage)
                 @Html.TextBoxFieldFor(s => s.Data.DocType, new Dictionary<string, object> { { "style", "width:100% !important;" } })
@@ -380,27 +366,25 @@
                 @Html.CheckboxListFieldFor(
                     model => model.ActiveVeCommands,
                     Html.List(Model.DefaultCommandsListItems),
-                    new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
+                    new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
                     new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeCommands") } }
                 )
 
                 @Html.TextBoxFieldFor(s => s.Data.RootElementClass)
                 @Html.AggregationListFieldFor(s => s.Data.ExternalCssItems, Model.Data.ExternalCssItems, "Url")
-
                 @Html.CheckboxListFieldFor(
                     model => model.ActiveVeStyles,
                     Html.List(Model.AllStylesListItems),
-                    new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
+                    new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
                     new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeStyles") } }
                 )
 
                 @Html.CheckboxListFieldFor(
                     model => model.ActiveVeFormats,
                     Html.List(Model.AllFormatsListItems),
-                    new EntityDataListArgs() { MaxListHeight = 200, IsCollapsable = true },
+                    new EntityDataListArgs { MaxListHeight = 200, IsCollapsable = true },
                     new Dictionary<string, object> { { "id", Model.UniqueId("ActiveVeFormats") } }
                 )
-
             }
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.String, true))
@@ -420,7 +404,6 @@
                     using (Html.BeginPanel(s => s.InputMaskType, InputMaskTypes.Custom))
                     {
                         @Html.TextBoxFieldFor(s => s.Data.InputMask)
-                        ;
                     }
                 }
             }
@@ -438,18 +421,14 @@
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.DynamicImage, true))
             {
                 @Html.SelectFieldFor(s => s.Data.BaseImageId, Html.List(Model.GetContentImageFields()))
-
                 @Html.RadioFieldFor(s => s.DynamicImageSizeMode, Html.List(Model.GetDynamicImageModes()))
-
                 using (Html.BeginPanel("HeightModePanel"))
                 {
                     @Html.NumericFieldFor(s => s.Data.DynamicImage.Height)
-                    ;
                 }
                 using (Html.BeginPanel("WidthModePanel"))
                 {
                     @Html.NumericFieldFor(s => s.Data.DynamicImage.Width)
-                    ;
                 }
 
                 @Html.RadioFieldFor(s => s.Data.DynamicImage.Type, Html.List(Model.GetDynamicImageFileTypes()))
@@ -457,16 +436,13 @@
                 using (Html.BeginPanel(s => s.Data.DynamicImage.Type, DynamicImage.JPG_EXTENSION))
                 {
                     @Html.NumericFieldFor(s => s.Data.DynamicImage.Quality)
-                    ;
                 }
             }
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.Classifier, true))
             {
                 @Html.CheckBoxFieldFor(s => s.Data.Changeable)
-                ;
                 @Html.CheckBoxFieldFor(s => s.Data.UseTypeSecurity)
-                ;
                 @Html.SelectFieldFor(s => s.Data.ClassifierDefaultValue, Html.List(Model.GetAggregetableContentsForClassifier()), new SelectOptions { DefaultOption = FieldStrings.ClassifierDefaultIsUndefined })
             }
 
@@ -507,6 +483,7 @@
             if(i !== chIndex){
               this.IsDefault = false;
             }
+
             i++;
           });
         }

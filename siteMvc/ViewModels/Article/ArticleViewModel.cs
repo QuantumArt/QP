@@ -63,8 +63,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Article
             return model;
         }
 
-        public string ContentName => Data.DisplayContentName;
-
         public bool IsReadOnly => Data.ViewType != Constants.ArticleViewType.Normal && Data.ViewType != Constants.ArticleViewType.PreviewVersion || Data.IsAggregated || IsChangingActionsProhibited;
 
         public bool IsChangingActionsProhibited => !Data.IsArticleChangingActionsAllowed(BoundToExternal);

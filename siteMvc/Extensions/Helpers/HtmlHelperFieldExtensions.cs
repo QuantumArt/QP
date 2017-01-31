@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -101,7 +101,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var readOnly = forceReadonly || pair.Article.IsReadOnly || field.IsReadOnly || !articleIsAgregated && pair.Article.Content.HasAggregatedFields;
-            var htmlAttributes = html.QpHtmlProperties(id, field, readOnly);
+            var htmlAttributes = html.QpHtmlProperties(id, field, -1, readOnly);
 
             switch (field.ExactType)
             {
@@ -122,7 +122,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 case FieldExactTypes.Boolean:
                     return html.QpCheckBox(id, null, Converter.ToBoolean(value), htmlAttributes);
                 case FieldExactTypes.Numeric:
-                    return html.NumericTextBox(id, value, htmlAttributes, field);
+                    return html.NumericTextBox(id, value, htmlAttributes, field.DecimalPlaces);
                 case FieldExactTypes.Classifier:
                     if (pair.Version != null)
                     {
@@ -396,13 +396,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var data = html.GetMetaData(expression);
             return MvcHtmlString.Create(
                 string.Format(
-                    html.FieldTemplate(fieldName,
-                    data.DisplayName,
-                    false,
-                    HtmlHelpersExtensions.GetExampleText(data.ContainerType, data.PropertyName)),
+                    html.FieldTemplate(fieldName, data.DisplayName, false, HtmlHelpersExtensions.GetExampleText(data.ContainerType, data.PropertyName)),
                     html.QpTextBox(fieldName, defaultValue, htmlAttributes).ToHtmlString()
                 )
             );
+        }
+
+        public static MvcHtmlString TextBoxField<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, string defaultValue, bool forceReadonly)
+        {
+            var htmlAttributes = forceReadonly ? new Dictionary<string, object> { { "readonly", "readonly" } } : null;
+            return html.TextBoxField(expression, defaultValue, htmlAttributes);
         }
 
         public static MvcHtmlString TextBoxFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
@@ -410,10 +413,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var data = html.GetMetaData(expression);
             return MvcHtmlString.Create(
                 string.Format(
-                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression),
-                    data.DisplayName,
-                    false,
-                    HtmlHelpersExtensions.GetExampleText(data.ContainerType, data.PropertyName)),
+                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName, false, HtmlHelpersExtensions.GetExampleText(data.ContainerType, data.PropertyName)),
                     html.QpTextBoxFor(expression, htmlAttributes).ToHtmlString()
                 )
             );
@@ -551,9 +551,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return MvcHtmlString.Create(
                 string.Format(
                     html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName),
-                    html.PasswordFor(expression,
-                    html.QpHtmlProperties(expression,
-                    EditorType.Password))
+                    html.PasswordFor(expression, html.QpHtmlProperties(expression, EditorType.Password))
                 )
             );
         }
