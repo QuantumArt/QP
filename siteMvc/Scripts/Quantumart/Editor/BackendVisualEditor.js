@@ -48,7 +48,7 @@
       resize_minWidth: 640,
       resize_maxHeight: 1024,
       bodyClass: opts.bodyClass,
-      docType: opts.docType,
+      docType: opts.docType || defaultConfig.docType,
       fullPage: opts.fullPage,
       enterMode: opts.enterMode || defaultConfig.enterMode,
       shiftEnterMode: opts.shiftEnterMode || defaultConfig.shiftEnterMode,
@@ -193,8 +193,6 @@
     _fieldId: null,
     _isExpanded: null,
     _isTextEditor: null,
-    _storedTempValue: '',
-    _checkIntervalID: null,
 
     initialize: function() {
       var self = this;
@@ -287,10 +285,6 @@
     disposeCKEditor: function(noUpdate) {
       var editor, $editor, windowsToDipose, listenersToRemove;
 
-      if (this._checkIntervalID) {
-        clearInterval(this._checkIntervalID);
-      }
-
       $editor = $(this._editorElem);
       windowsToDipose = ['imageWindow', 'linkWindow', 'flashWindow'];
       listenersToRemove = ['afterCommandExec', 'loadSnapshot'];
@@ -335,25 +329,6 @@
       $('#' + this.getCkEditor().name).addClass(window.CHANGED_FIELD_CLASS_NAME);
     },
 
-    _onCheckChangesIntervalHandler: function() {
-      var $field;
-      var editor = this.getCkEditor();
-
-      if (editor) {
-        if (this._storedTempValue !== editor.getData()) {
-          this._storedTempValue = editor.getData();
-          if (editor.element && editor.element.$) {
-            $field = $(editor.element.$);
-            $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
-            $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, {
-              fieldName: $field.attr('name'),
-              value: editor.getData()
-            });
-          }
-        }
-      }
-    },
-
     _destroyVisualEditorWindow: function($editor, name) {
       if ($editor.data(name)) {
         $editor.data(name).dispose();
@@ -362,12 +337,6 @@
 
     _onCKEEditorInitialized: function(sender) {
       var self = this;
-
-      if (sender) {
-        this._storedTempValue = sender.getData();
-      }
-
-      this._checkIntervalID = setInterval(this._onCheckChangesIntervalHandler.bind(this), 10000);
       this._$containerElem.show();
       this._$expandLink.off('click').on('click', function(e) {
         $(this).hide();
