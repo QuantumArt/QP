@@ -1,14 +1,14 @@
 ﻿@using Quantumart.QP8.Resources
 @{
-    string numberFromElementId = (string)ViewBag.NumberFromElementID;
-    string numberToElementId = (string)ViewBag.NumberToElementID;
-    string isNullCheckBoxElementId = (string)ViewBag.IsNullCheckBoxElementID;
+    var numberFromElementId = (string)ViewBag.NumberFromElementID;
+    var numberToElementId = (string)ViewBag.NumberToElementID;
+    var isNullCheckBoxElementId = (string)ViewBag.IsNullCheckBoxElementID;
 }
 
 <dl class="row">
 	<dd>
 		@Html.QpRadioButtonList((string)ViewBag.ByValueElementID,
-		new[] 
+		new[]
 		{
 			new QPSelectListItem
 			{
@@ -30,12 +30,12 @@
 
 <dl class="row">
 	<dt class="label">
-		@Html.QpLabel(numberFromElementId, ArticleStrings.SearchBlock_Value, true)
+		@Html.QpLabel(numberFromElementId, ArticleStrings.SearchBlock_Value)
 	</dt>
 	<dd class="field">
 		@Html.NumericTextBox(numberFromElementId, null,
-			new Dictionary<string, object> 
-			{ 
+			new Dictionary<string, object>
+			{
 				{ "id", numberFromElementId},
 				{ "class", "textbox"}
 			})
@@ -44,12 +44,12 @@
 
 <dl class="row" style="display:none;">
 	<dt class="label">
-		@Html.QpLabel(numberToElementId, ArticleStrings.SearchBlock_RangeToText, true)
+		@Html.QpLabel(numberToElementId, ArticleStrings.SearchBlock_RangeToText)
 	</dt>
 	<dd class="field">
-		@Html.NumericTextBox(numberToElementId, null, 
-			new Dictionary<string, object> 
-			{ 
+		@Html.NumericTextBox(numberToElementId, null,
+			new Dictionary<string, object>
+			{
 				{ "id", numberToElementId },
 				{ "class", "textbox"}
 			})

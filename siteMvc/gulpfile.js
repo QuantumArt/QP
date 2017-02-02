@@ -419,6 +419,8 @@ gulp.task('default', ['clean'], function() {
   gulp.start('assets:js', 'assets:css', 'assets:img');
 });
 
+module.exports = gulp;
+
 // Install Steps:
 // 1. Install external node js and npm from official site
 // 2. Install global packages for npm runner: gulp, cross-env

@@ -7,7 +7,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
-using Quantumart.QP8.WebMvc.ViewModels;
+using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -66,7 +66,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var model = new ExportViewModel();
             TryUpdateModel(model);
-            var settings = new ExportSettings(parentId, null)
+            var settings = new ExportSettings
             {
                 Culture = MultistepActionHelper.GetCulture(model.Culture),
                 Delimiter = MultistepActionHelper.GetDelimiter(model.Delimiter),
@@ -75,6 +75,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 AllFields = model.AllFields,
                 OrderByField = model.OrderByField
             };
+
             if (!settings.AllFields)
             {
                 settings.CustomFieldIds = model.CustomFields.ToArray();

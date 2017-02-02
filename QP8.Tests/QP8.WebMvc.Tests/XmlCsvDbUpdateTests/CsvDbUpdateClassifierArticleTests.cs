@@ -38,7 +38,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             // Fixture setup
             var contentRepository = _fixture.Freeze<Mock<IContentRepository>>();
             var fieldRepository = _fixture.Freeze<Mock<IFieldRepository>>();
-            var articleService = _fixture.Freeze<Mock<IArticleService>>();
+            var articleService = _fixture.Freeze<Mock<IBatchUpdateService>>();
             var sut = _fixture.Create<CsvDbUpdateService>();
 
             var dbFields = _fixture.CreateMany<Field>().ToList();
@@ -115,7 +115,7 @@ namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
             // Fixture setup
             var contentRepository = _fixture.Freeze<Mock<IContentRepository>>();
             var fieldRepository = _fixture.Freeze<Mock<IFieldRepository>>();
-            var articleService = _fixture.Freeze<Mock<IArticleService>>();
+            var articleService = _fixture.Freeze<Mock<IBatchUpdateService>>();
             var sut = _fixture.Create<CsvDbUpdateService>();
 
             var dbFields = _fixture.CreateMany<Field>().ToList();

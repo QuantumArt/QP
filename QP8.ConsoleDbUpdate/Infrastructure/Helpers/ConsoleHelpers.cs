@@ -94,19 +94,32 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
 
         internal static void ExitProgram(ExitCode exitCode)
         {
-            if (exitCode == ExitCode.Success)
+            const string successMsg = "Processing successfuly finished...";
+            const string warningMsg = "Some data already exists at database. Check logs for detailed information...";
+            const string errorMsg = "There was an exception in xml db updater. Check logs for detailed information...";
+            Console.WriteLine();
+
+            switch (exitCode)
             {
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Processing successfuly finished...");
-                Console.ForegroundColor = ConsoleColor.White;
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("There was an exception in xml db updater...");
-                Console.ForegroundColor = ConsoleColor.White;
+                case ExitCode.Success:
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine(successMsg);
+                    break;
+                case ExitCode.DbUpdateError:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(warningMsg);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine(successMsg);
+                    break;
+                case ExitCode.Error:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine(errorMsg);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(exitCode), exitCode, "Unknown exit code");
             }
 
+            Console.ResetColor();
             Program.Logger.Dispose();
             Environment.Exit((int)exitCode);
         }

@@ -2,34 +2,38 @@
 {
 	public static class FieldName
 	{
-        public const string CONTENT_ITEM_ID = "CONTENT_ITEM_ID";
-        public const string STATUS_TYPE_NAME = "STATUS_TYPE_NAME";
-        public const string STATUS_TYPE_ID = "STATUS_TYPE_ID";
-        public const string LOCKED_BY = "LOCKED_BY";
-        public const string LOCKER_FIRST_NAME = "LOCKER_FIRST_NAME";
-        public const string LOCKER_LAST_NAME = "LOCKER_LAST_NAME";
-        public const string CREATED = "CREATED";
-        public const string MODIFIED = "MODIFIED";
-        public const string LAST_MODIFIED_BY = "LAST_MODIFIED_BY";
-        public const string MODIFIER_LOGIN = "MODIFIER_LOGIN";
+	    public const string Id = "ID";
 
-		public const string SPLITTED = "SPLITTED";
-		public const string SPLITTED_ICON = "SPLITTED_ICON";
-		public const string SPLITTED_TOOLTIP = "SPLITTED_TOOLTIP";
+        public const string ContentItemId = "CONTENT_ITEM_ID";
+        public const string StatusTypeName = "STATUS_TYPE_NAME";
+        public const string StatusTypeId = "STATUS_TYPE_ID";
+        public const string LockedBy = "LOCKED_BY";
+        public const string LockerFirstName = "LOCKER_FIRST_NAME";
+        public const string LockerLastName = "LOCKER_LAST_NAME";
 
-		public const string VISIBLE = "VISIBLE";
-		public const string VISIBLE_ICON = "VISIBLE_ICON";
-		public const string VISIBLE_TOOLTIP = "VISIBLE_TOOLTIP";
+        public const string Created = "CREATED";
+        public const string Modified = "MODIFIED";
+        public const string IsChanged = "IS_CHANGED";
+        public const string UniqueId = "UNIQUE_ID";
 
-		public const string SCHEDULED = "SCHEDULED";
-		public const string SCHEDULED_ICON = "SCHEDULED_ICON";
-		public const string SCHEDULED_TOOLTIP = "SCHEDULED_TOOLTIP";
+        public const string LastModifiedBy = "LAST_MODIFIED_BY";
+        public const string ModifierLogin = "MODIFIER_LOGIN";
 
-        public const string LOCKED_BY_ICON = "LOCKED_BY_ICON";
-        public const string LOCKED_BY_TOOLTIP = "LOCKED_BY_TOOLTIP";
+		public const string Splitted = "SPLITTED";
+		public const string SplittedIcon = "SPLITTED_ICON";
+		public const string SplittedTooltip = "SPLITTED_TOOLTIP";
 
-        public const string DISPLAY_COLUMN_SUFFIX = "_TO_DISPLAY";
+		public const string Visible = "VISIBLE";
+		public const string VisibleIcon = "VISIBLE_ICON";
+		public const string VisibleTooltip = "VISIBLE_TOOLTIP";
 
-        public const string IS_CHANGED = "IsChanged";
+		public const string Scheduled = "SCHEDULED";
+		public const string ScheduledIcon = "SCHEDULED_ICON";
+		public const string ScheduledTooltip = "SCHEDULED_TOOLTIP";
+
+        public const string LockedByIcon = "LOCKED_BY_ICON";
+        public const string LockedByTooltip = "LOCKED_BY_TOOLTIP";
+
+        public const string DisplayColumnSuffix = "_TO_DISPLAY";
     }
 }

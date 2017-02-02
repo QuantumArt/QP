@@ -1,8 +1,8 @@
-﻿using Quantumart.QP8.DAL.DTO;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.DAL.DTO;
 
 namespace Quantumart.QP8.BLL.Repository.Articles
 {
@@ -15,118 +15,113 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
         public ArticleLinkSearchQueryParser(IArticleSearchRepository articleSearchRepository)
         {
-            Contract.Requires(articleSearchRepository != null);
+            Ensure.NotNull(articleSearchRepository);
             _articleSearchRepository = articleSearchRepository;
         }
 
         public IEnumerable<ArticleLinkSearchParameter> Parse(IEnumerable<ArticleSearchQueryParam> searchQueryParams)
         {
             if (searchQueryParams == null)
+            {
                 return null;
+            }
 
             if (!searchQueryParams.Any())
+            {
                 return null;
+            }
 
             // оставляем параметры только тех типов которые обрабатываються данным методом
-            var processedSQParams = searchQueryParams.Where(p => p.SearchType == ArticleFieldSearchType.M2MRelation || p.SearchType == ArticleFieldSearchType.M2ORelation);
+            var processedSqParams = searchQueryParams.Where(p => p.SearchType == ArticleFieldSearchType.M2MRelation || p.SearchType == ArticleFieldSearchType.M2ORelation).ToList();
+
             // если нет обрабатываемых параметров - то возвращаем null
-            if (!processedSQParams.Any())
+            if (!processedSqParams.Any())
+            {
                 return null;
+            }
 
-            return processedSQParams
-				.Select(ParseParam)
-				.Where(p => p != null)
-				.ToArray();
-          }
+            return processedSqParams
+                .Select(ParseParam)
+                .Where(p => p != null)
+                .ToArray();
+        }
 
-		private ArticleLinkSearchParameter ParseParam(ArticleSearchQueryParam p)
+        private ArticleLinkSearchParameter ParseParam(ArticleSearchQueryParam p)
         {
-			//Contract.Requires(p != null);
-			//Contract.Requires(p.SearchType == ArticleFieldSearchType.M2MRelation || p.SearchType == ArticleFieldSearchType.M2ORelation);
+            Ensure.NotNull(p);
+            Ensure.That(p.SearchType == ArticleFieldSearchType.M2MRelation || p.SearchType == ArticleFieldSearchType.M2ORelation);
 
-			if (p == null)
-				throw new ArgumentException("p");
-			if (p.SearchType != ArticleFieldSearchType.M2MRelation && p.SearchType != ArticleFieldSearchType.M2ORelation)
-				throw new ArgumentException("Undefined search paramenter type: " + p.SearchType);
+            if (p == null)
+            {
+                throw new ArgumentException("p");
+            }
 
-            if (String.IsNullOrWhiteSpace(p.FieldID))
-                throw new ArgumentException("FieldID");
-            // Парсим FieldID
-            // тут может быть FormatException - это нормально
-            var fieldID = Int32.Parse(p.FieldID);
+            if (p.SearchType != ArticleFieldSearchType.M2MRelation && p.SearchType != ArticleFieldSearchType.M2ORelation)
+            {
+                throw new ArgumentException("Undefined search paramenter type: " + p.SearchType);
+            }
 
-            // параметры не пустые и их не меньше 2х (используем 1й и 2й - остальные отбрасываем)
-            if (p.QueryParams == null || p.QueryParams.Length < 3)
-                throw new ArgumentException();
+            Ensure.NotNullOrWhiteSpace(p.FieldID, "FieldId");
 
-			// первый параметр должен быть null или object[]
-            if (p.QueryParams[0] != null && !(p.QueryParams[0] is object[]))
-                throw new InvalidCastException();
+            var fieldId = int.Parse(p.FieldID);
+            Ensure.That<InvalidCastException>(p.QueryParams[0] is object[]);
+            Ensure.That<InvalidCastException>(p.QueryParams[1] is bool);
+            Ensure.That<InvalidCastException>(p.QueryParams[2] is bool);
+            Ensure.That<InvalidCastException>(p.QueryParams[3] is bool);
 
-			// второй параметр должен быть bool
-			if (p.QueryParams[1] == null || !(p.QueryParams[1] is bool))
-				throw new InvalidCastException();
+            var isNull = (bool)p.QueryParams[1];
+            var inverse = (bool)p.QueryParams[2];
+            var unionAll = (bool)p.QueryParams[3];
+            var values = Enumerable.Empty<int>();
+            if (!isNull)
+            {
+                if (p.QueryParams[0] == null || ((object[])p.QueryParams[0]).Length == 0)
+                {
+                    return null;
+                }
 
-			if (p.QueryParams[2] == null || !(p.QueryParams[2] is bool))
-				throw new InvalidCastException();
+                values = ((object[])p.QueryParams[0]).Cast<int>().ToArray();
+            }
 
-			bool isNull = (bool)p.QueryParams[1];
-			bool inverse = (bool)p.QueryParams[2];
+            var field = _articleSearchRepository.GetFieldByID(fieldId);
+            var linkedId = field.LinkId ?? field.BackRelationId;
+            if (!linkedId.HasValue)
+            {
+                throw new ApplicationException("Не удалость получить LinkedId для поля с id = " + fieldId);
+            }
 
-			IEnumerable<int> values = Enumerable.Empty<int>();
+            int extensionContentId;
+            int referenceFieldId;
+            if (!int.TryParse(p.ContentID, out extensionContentId))
+            {
+                extensionContentId = 0;
+            }
 
-			if (!isNull)
-			{
-				// Если массив null или пустой - то возвращаем null
-				if (p.QueryParams[0] == null || ((object[])p.QueryParams[0]).Length == 0)
-					return null;
-				// Преобразуем массив к массиву int[]
-				// тут возможен InvalidCastException, но это нормально, так как в этом случае действительно переданы некорректные данные
-				values = ((object[])p.QueryParams[0]).Cast<int>().ToArray();
-			}
-
-			Field field = _articleSearchRepository.GetFieldByID(fieldID);
-			int? linkedID = (field.LinkId.HasValue) ? field.LinkId.Value : (field.BackRelationId.HasValue) ? field.BackRelationId.Value : (int?)null;
-
-			if (!linkedID.HasValue)
-				throw new ApplicationException("Не удалость получить LinkedId для поля с id = " + fieldID);
-
-			int exstensionContentId;
-			int referenceFieldId;
-
-			if (!int.TryParse(p.ContentID, out exstensionContentId))
-			{
-				exstensionContentId = 0;
-			}
-
-			if (!int.TryParse(p.ReferenceFieldID, out referenceFieldId))
-			{
-				referenceFieldId = 0;
-			}
+            if (!int.TryParse(p.ReferenceFieldID, out referenceFieldId))
+            {
+                referenceFieldId = 0;
+            }
 
             var result = new ArticleLinkSearchParameter
-			{
-				LinkId = linkedID.Value,
-				ExstensionContentId = exstensionContentId,
-				ReferenceFieldId = referenceFieldId,
-				Ids = values.ToArray(),
-				IsManyToMany = p.SearchType == ArticleFieldSearchType.M2MRelation,
- 				IsNull = isNull,
-				Inverse = inverse
-			};
+            {
+                LinkId = linkedId.Value,
+                ExtensionContentId = extensionContentId,
+                ReferenceFieldId = referenceFieldId,
+                Ids = values.ToArray(),
+                IsManyToMany = p.SearchType == ArticleFieldSearchType.M2MRelation,
+                IsNull = isNull,
+                Inverse = inverse,
+                UnionAll = unionAll
+            };
 
-			if (!result.IsManyToMany)
-			{
-			    if (field.BackRelation == null)
-			    {
-			        throw new ApplicationException("Не удалость получить BackRelation для поля с id = " + fieldID);
-			    }
+            if (!result.IsManyToMany)
+            {
+                Ensure.NotNull(field.BackRelation, $"Не удалость получить BackRelation для поля с id = {fieldId}");
+                result.FieldName = field.BackRelation.Name;
+                result.ContentId = field.BackRelation.ContentId;
+            }
 
-			    result.FieldName = field.BackRelation.Name;
-				result.ContentId = field.BackRelation.ContentId;
-			}
-
-			return result;
+            return result;
         }
     }
 }

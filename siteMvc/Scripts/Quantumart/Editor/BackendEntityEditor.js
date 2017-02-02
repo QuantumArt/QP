@@ -632,7 +632,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       settings = jQuery.extend(defaultSettings, settings);
       var $form = $parent || jQuery(this._formElement);
-      var $input = $form.find("[name='" + settings.name + "']");
+      var $input = $form.find("[name='" + settings.name + "'],[data-content_field_name='" + settings.name + "']");
 
       if ($input.length == 0) {
         if (this._notifyCustomButtonExistence) alert('Input ' + settings.name + ' is not found');
@@ -694,7 +694,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
       settings = jQuery.extend(defaultSettings, settings);
       $form = $parent || jQuery(this._formElement);
-      var $input = $form.find("[name='" + settings.name + "']");
+      var $input = $form.find("[name='" + settings.name + "'],[data-content_field_name='" + settings.name + "']");
 
       if ($input.length == 0) {
         if (this._notifyCustomButtonExistence) {
@@ -889,7 +889,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
         value = $field.val();
       }
 
-      $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr('name'), value: value });
+      $field.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { fieldName: $field.attr('name'), value: value, contentFieldName: $field.data('content_field_name') });
       $field = null;
     }
   },

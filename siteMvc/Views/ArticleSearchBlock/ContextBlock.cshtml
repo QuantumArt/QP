@@ -1,23 +1,20 @@
 ﻿@model Quantumart.QP8.WebMvc.ViewModels.Article.ContextBlockViewModel
-
-@using Quantumart.QP8.WebMvc.ViewModels.Content
-@using Quantumart.QP8.Resources
 @using Quantumart.QP8.Constants
 @using Quantumart.QP8.BLL
 
 <div class="contextBlock">
     @foreach (var item in Model.RelatedContents)
-    { 
+    {
 	    <fieldset>
-		    <legend>@item.ContentName</legend>	
+		    <legend>@item.ContentName</legend>
 		    <div>
                 @Html.QpSingleItemPicker("content_" + item.ContentId, null
                     , new ControlOptions
                         {
                             Enabled = true,
-                            HtmlAttributes = new Dictionary<string, object> { 
+                            HtmlAttributes = new Dictionary<string, object> {
                                 { "id", Model.UniqueId("content_" + item.ContentId) },
-                                { "class", "contextSwitcher" } 
+                                { "class", "contextSwitcher" }
                             }
                         }
                     , new EntityDataListArgs
@@ -30,8 +27,6 @@
                         }
                     )
 		    </div>
-	</fieldset>	    
+	</fieldset>
     }
-
 </div>
-

@@ -2,7 +2,7 @@
 
 namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
-    public class ExstendedListItem : SimpleListItem
+    public class ExtendedListItem : SimpleListItem
     {
         public string Description { get; set; }
 

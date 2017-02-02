@@ -49,6 +49,26 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             htmlAttributes["data-" + dataKey] = Converter.ToString(dataValue);
         }
 
+        public static void CopyValueIfExists(this Dictionary<string, object> htmlAttributes, Dictionary<string, object> fromHtmlAttributes, string dataKey)
+        {
+            if (fromHtmlAttributes.ContainsKey(dataKey))
+            {
+                htmlAttributes[dataKey] = fromHtmlAttributes[dataKey];
+            }
+        }
+
+        public static object GetAndRemove(this Dictionary<string, object> htmlAttributes, string dataKey)
+        {
+            if (!htmlAttributes.ContainsKey(dataKey))
+            {
+                return null;
+            }
+
+            var result = htmlAttributes[dataKey];
+            htmlAttributes.Remove(dataKey);
+            return result;
+        }
+
         /// <summary>
         /// Добавляет CSS-класс в атрибут class
         /// </summary>

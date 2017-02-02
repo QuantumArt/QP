@@ -1,7 +1,7 @@
 ﻿@model Quantumart.QP8.WebMvc.ViewModels.Article.ArticleListViewModel
 
+@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-@using Quantumart.QP8.WebMvc.ViewModels
 
 @using (Html.BeginDocumentPadding())
 {
@@ -12,7 +12,8 @@
             @Html.AddNewItemLink(Model)
         }
 
-        <li class="doctab-title__element doctab-title__articles-count-label">@ArticleStrings.TotalSelectedArticles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
+        <li class="doctab-title__element doctab-title__articles-count-label--selected">@ArticleStrings.TotalSelectedArticles: <span id="@Model.ArticlesCountId" class="selected-articles-count">0</span></li>
+        <li class="doctab-title__element doctab-title__articles-count-label">@ArticleStrings.SearchBlock_FullTextBlockSearchResultLimitTitle: <span class="total-articles-count">@ArticleFullTextSearchSettings.SearchResultLimit</span></li>
     }
 
     @Html.Telerik().TreeView().Name(Model.MainComponentId).HtmlAttributes(Model.TreeHthmlAttributes);

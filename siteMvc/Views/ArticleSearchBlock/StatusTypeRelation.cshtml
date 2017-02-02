@@ -1,15 +1,14 @@
-﻿@using Quantumart.QP8.Constants
-@using Quantumart.QP8.BLL
+﻿@using Quantumart.QP8.BLL
+@using Quantumart.QP8.Constants
 @using Quantumart.QP8.Resources
-
 <div class="row">
-	@Html.Relation((string)ViewBag.RelationElementID, (IEnumerable<QPSelectListItem>)ViewBag.StatusTypes, new ControlOptions(), RelationType.OneToMany, false, 
-		new EntityDataListArgs()
+	@Html.Relation((string)ViewBag.RelationElementID, (IEnumerable<QPSelectListItem>)ViewBag.StatusTypes, new ControlOptions(), RelationType.OneToMany, false,
+		new EntityDataListArgs
 		{
 			EntityTypeCode = EntityTypeCode.User,
 			ParentEntityId = null,
 			EntityId = 0,
-			ListId = 0,			
+			ListId = 0,
 			AddNewActionCode = ActionCode.None,
 			ReadActionCode = ActionCode.None,
 			SelectActionCode = ActionCode.None,

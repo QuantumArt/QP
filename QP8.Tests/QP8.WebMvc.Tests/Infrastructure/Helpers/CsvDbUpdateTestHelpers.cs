@@ -52,7 +52,7 @@ namespace QP8.WebMvc.Tests.Infrastructure.Helpers
             {
                 new CsvDbUpdateFieldModel
                 {
-                    Name = $"{externalPrefix}{FieldName.CONTENT_ITEM_ID}",
+                    Name = $"{externalPrefix}{FieldName.ContentItemId}",
                     Value = $"{articleId}"
                 }
             };

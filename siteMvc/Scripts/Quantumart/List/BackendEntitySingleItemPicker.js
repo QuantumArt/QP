@@ -133,7 +133,7 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 		    $stateField.addClass(CHANGED_FIELD_CLASS_NAME)
 		    var operation = (refreshOnly) ? "addClass" : "removeClass";
 		    $stateField[operation](REFRESHED_FIELD_CLASS_NAME);
-		    $stateField.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $stateField.attr("name"), "value": value });
+		    $stateField.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $stateField.attr("name"), "value": value, contentFieldName: $stateField.data('content_field_name') });
 		    $stateField.change();
 		}
 

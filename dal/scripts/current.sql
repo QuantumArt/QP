@@ -1,4 +1,308 @@
-﻿exec qp_drop_existing 'qp_get_m2o_ids_multiple', 'IsProcedure'
+﻿ALTER  TRIGGER [dbo].[td_delete_item] ON [dbo].[CONTENT_ITEM] FOR DELETE AS BEGIN
+    
+    if object_id('tempdb..#disable_td_delete_item') is null
+    begin
+    
+        declare @content_id numeric, @virtual_type numeric, @published_id numeric
+        declare @sql nvarchar(max)
+        declare @ids_list nvarchar(max)
+
+
+        declare @c table (
+            id numeric primary key,
+            virtual_type numeric
+        )
+        
+        insert into @c
+        select distinct d.content_id, c.virtual_type
+        from deleted d inner join content c 
+        on d.content_id = c.content_id
+        
+        declare @ids table
+        (
+            id numeric primary key,
+            char_id nvarchar(30),
+            status_type_id numeric,
+            splitted bit
+        )
+        
+                    
+        declare @attr_ids table
+        (
+            id numeric primary key
+        )
+
+        while exists(select id from @c)
+        begin
+            
+            select @content_id = id, @virtual_type = virtual_type from @c
+            
+            insert into @ids
+            select content_item_id, CONVERT(nvarchar, content_item_id), status_type_id, splitted from deleted where content_id = @content_id
+
+            insert into @attr_ids
+            select ca1.attribute_id from CONTENT_ATTRIBUTE ca1 
+            inner join content_attribute ca2 on ca1.RELATED_ATTRIBUTE_ID = ca2.ATTRIBUTE_ID 
+            where ca2.CONTENT_ID = @content_id
+            
+            set @ids_list = null
+            select @ids_list = coalesce(@ids_list + ', ', '') + char_id from @ids
+            
+            select @published_id = status_type_id from STATUS_TYPE where status_type_name = 'Published' and SITE_ID in (select SITE_ID from content where CONTENT_ID = @content_id)
+            if exists (select * from @ids where status_type_id = @published_id and splitted = 0)
+                update content_modification set live_modified = GETDATE(), stage_modified = GETDATE() where content_id = @content_id
+            else
+                update content_modification set stage_modified = GETDATE() where content_id = @content_id	
+        
+            /* Drop relations to current item */
+            if exists(select id from @attr_ids) and object_id('tempdb..#disable_td_delete_item_o2m_nullify') is null
+            begin
+                UPDATE content_attribute SET default_value = null 
+                    WHERE attribute_id IN (select id from @attr_ids) 
+                    AND default_value IN (select char_id from @ids)
+            
+                UPDATE content_data SET data = NULL, blob_data = NULL 
+                    WHERE attribute_id IN (select id from @attr_ids)
+                    AND data IN (select char_id from @ids)
+                    
+                DELETE from VERSION_CONTENT_DATA
+                    where ATTRIBUTE_ID in (select id from @attr_ids)
+                    AND data IN (select char_id from @ids)	
+            end
+            
+            if @virtual_type = 0 
+            begin 		
+                exec qp_get_delete_items_sql @content_id, @ids_list, 0, @sql = @sql out
+                exec sp_executesql @sql
+            
+                exec qp_get_delete_items_sql @content_id, @ids_list, 1, @sql = @sql out
+                exec sp_executesql @sql
+            end
+
+            delete from @c where id = @content_id
+            
+            delete from @ids
+            
+            delete from @attr_ids
+        end
+    end
+END
+GO
+exec qp_drop_existing 'qp_get_upsert_items_sql_new', 'IsProcedure'
+GO
+
+CREATE PROCEDURE [dbo].[qp_get_upsert_items_sql_new]
+@table_name nvarchar(25), 
+@sql nvarchar(max) output 
+as
+BEGIN
+    set @sql = 'update base set '
+    set @sql = @sql + ' base.modified = ci.modified, base.last_modified_by = ci.last_modified_by, base.status_type_id = ci.status_type_id, '
+    set @sql = @sql + ' base.visible = ci.visible, base.archive = ci.archive '
+    set @sql = @sql + ' from ' + @table_name + ' base with(rowlock) '
+    set @sql = @sql + ' inner join content_item ci with(rowlock) on base.content_item_id = ci.content_item_id '
+    set @sql = @sql + ' inner join @ids i on ci.content_item_id = i.id'
+    set @sql = @sql + ';' + CHAR(13) + CHAR(10) 
+    
+    set @sql = @sql + 'insert into ' + @table_name + ' (content_item_id, created, modified, last_modified_by, status_type_id, visible, archive)'
+    set @sql = @sql + ' select ci.content_item_id, ci.created, ci.modified, ci.last_modified_by, '
+    set @sql = @sql + ' case when i2.id is not null then @noneId else ci.status_type_id end as status_type_id, '
+    set @sql = @sql + ' ci.visible, ci.archive '
+    set @sql = @sql + ' from content_item ci left join ' + @table_name + ' base on ci.content_item_id = base.content_item_id '
+    set @sql = @sql + ' inner join @ids i on ci.content_item_id = i.id '
+    set @sql = @sql + ' left join @ids2 i2 on ci.content_item_id = i2.id '
+    set @sql = @sql + ' where base.content_item_id is null'
+END
+GO
+
+ALTER TRIGGER [dbo].[tu_update_item] ON [dbo].[CONTENT_ITEM] FOR UPDATE
+AS
+begin
+    if not update(locked_by) and not update(splitted) and not UPDATE(not_for_replication)
+    begin
+        declare @content_id numeric
+        declare @sql nvarchar(max), @table_name varchar(50), @async_table_name varchar(50)
+        declare @items_list nvarchar(max), @async_ids_list nvarchar(max), @sync_ids_list nvarchar(max)
+        
+        declare @contents table
+        (
+            id numeric primary key
+        )
+        
+        insert into @contents
+        select distinct content_id from inserted
+        where CONTENT_ID in (select CONTENT_ID from content where virtual_type = 0) 
+        
+        create table #ids_with_splitted
+        (
+            id numeric primary key,
+            new_splitted bit
+        )
+        
+        declare @items table
+        (
+            id numeric primary key,
+            splitted bit,
+            not_for_replication bit,
+            cancel_split bit
+        )
+
+        declare @ids [Ids], @ids2 [Ids]
+        
+        while exists (select id from @contents)
+        begin
+            select @content_id = id from @contents
+            
+            insert into @items
+            select i.content_item_id, i.SPLITTED, i.not_for_replication, i.cancel_split from inserted i 
+            inner join content_item ci on i.content_item_id = ci.content_item_id 
+            where ci.CONTENT_ID = @content_id
+
+            insert into @ids
+            select id from @items
+
+            insert into @ids2
+            select id from @items where cancel_split = 1
+            
+            set @items_list = null
+            select @items_list = coalesce(@items_list + ',', '') + convert(nvarchar, id) from @items
+                        
+            set @sql = 'insert into #ids_with_splitted ' 
+            set @sql = @sql + ' select content_item_id,'
+            set @sql = @sql + ' case' 
+            set @sql = @sql + ' when curr_weight < front_weight and is_workflow_async = 1 then 1'
+            set @sql = @sql + ' when curr_weight = workflow_max_weight and delayed = 1 then 1'
+            set @sql = @sql + ' else 0'
+            set @sql = @sql + ' end'
+            set @sql = @sql + ' as new_splitted from ('
+            set @sql = @sql + ' select distinct ci.content_item_id, st1.WEIGHT as curr_weight, st2.WEIGHT as front_weight, '
+            set @sql = @sql + ' max(st3.WEIGHT) over (partition by ci.content_item_id) as workflow_max_weight, case when i2.id is not null then 0 else ciw.is_async end as is_workflow_async, ' 
+            set @sql = @sql + ' ci.SCHEDULE_NEW_VERSION_PUBLICATION as delayed '
+            set @sql = @sql + ' from content_item ci'
+            set @sql = @sql + ' inner join @ids i on i.id = ci.content_item_id'
+            set @sql = @sql + ' left join @ids2 i2 on i.id = ci.content_item_id'
+            set @sql = @sql + ' inner join content_' + CONVERT(nvarchar, @content_id) + ' c on ci.CONTENT_ITEM_ID = c.CONTENT_ITEM_ID'
+            set @sql = @sql + ' inner join STATUS_TYPE st1 on ci.STATUS_TYPE_ID = st1.STATUS_TYPE_ID'
+            set @sql = @sql + ' inner join STATUS_TYPE st2 on c.STATUS_TYPE_ID = st2.STATUS_TYPE_ID'
+            set @sql = @sql + ' left join content_item_workflow ciw on ci.content_item_id = ciw.content_item_id'
+            set @sql = @sql + ' left join workflow_rules wr on ciw.WORKFLOW_ID = wr.WORKFLOW_ID'
+            set @sql = @sql + ' left join STATUS_TYPE st3 on st3.STATUS_TYPE_ID = wr.SUCCESSOR_STATUS_ID'
+            set @sql = @sql + ' ) as main'
+            print @sql
+            exec sp_executesql @sql, N'@ids [Ids] READONLY, @ids2 [Ids] READONLY', @ids = @ids, @ids2 = @ids2
+            
+            update base set base.splitted = i.new_splitted from @items base inner join #ids_with_splitted i on base.id = i.id
+            update base set base.splitted = i.splitted from content_item base inner join @items i on base.CONTENT_ITEM_ID = i.id
+
+            insert into content_item_splitted(content_item_id)
+            select id from @items base where splitted = 1 and not exists (select * from content_item_splitted cis where cis.content_item_id = base.id)
+
+            delete from content_item_splitted where content_item_id in (
+                select id from @items base where splitted = 0 
+            )
+            
+            set @sync_ids_list = null
+            select @sync_ids_list = coalesce(@sync_ids_list + ',', '') + convert(nvarchar, id) from @items where splitted = 0 and not_for_replication = 0
+            set @async_ids_list = null
+            select @async_ids_list = coalesce(@async_ids_list + ',', '') + convert(nvarchar, id) from @items where splitted = 1 and not_for_replication = 0
+            
+            set @table_name = 'content_' + CONVERT(nvarchar, @content_id)
+            set @async_table_name = @table_name + '_async'
+            
+            if @sync_ids_list <> ''
+            begin
+                exec qp_get_upsert_items_sql @table_name, @sync_ids_list, @sql = @sql out
+                print @sql
+                exec sp_executesql @sql
+                
+                exec qp_get_delete_items_sql @content_id, @sync_ids_list, 1, @sql = @sql out
+                print @sql
+                exec sp_executesql @sql		
+            end
+            
+            if @async_ids_list <> ''
+            begin
+                exec qp_get_upsert_items_sql @async_table_name, @async_ids_list, @sql = @sql out
+                print @sql
+                exec sp_executesql @sql
+                
+                exec qp_get_update_items_flags_sql @table_name, @async_ids_list, @sql = @sql out
+                print @sql
+                exec sp_executesql @sql					
+            end
+            
+            delete from #ids_with_splitted
+                                    
+            delete from @contents where id = @content_id
+            
+            delete from @items
+            delete from @ids
+            delete from @ids2
+        end
+        
+        drop table #ids_with_splitted
+        
+    end
+end
+GO
+ALTER TRIGGER [dbo].[ti_insert_item] ON [dbo].[CONTENT_ITEM] FOR INSERT AS
+BEGIN
+    declare @content_id numeric
+    declare @ids_list nvarchar(max)
+
+    declare @table_name varchar(50), @sql nvarchar(max)
+    
+    declare @contents table
+    (
+        id numeric primary key,
+        none_id numeric
+    )
+        
+    insert into @contents
+    select distinct i.content_id, st.STATUS_TYPE_ID from inserted i 
+    inner join content c on i.CONTENT_ID = c.CONTENT_ID and c.virtual_type = 0
+    inner join STATUS_TYPE st on st.STATUS_TYPE_NAME = 'None' and st.SITE_ID = c.SITE_ID
+    
+    declare @ids [Ids]
+    declare @ids2 [Ids]
+    declare @noneId numeric
+
+    while exists (select id from @contents)
+    begin
+        select @content_id = id, @noneId = none_id from @contents
+        
+        insert into @ids
+        select i.content_item_id from inserted i 
+        where i.CONTENT_ID = @content_id and i.not_for_replication = 0
+
+        if exists (select id from @ids)
+        begin
+
+            insert into @ids2
+            select i.content_item_id from inserted i 
+            where i.CONTENT_ID = @content_id and i.not_for_replication = 0 and i.SCHEDULE_NEW_VERSION_PUBLICATION = 1
+
+            set @table_name = 'content_' + convert(nvarchar, @content_id)
+        
+            exec qp_get_upsert_items_sql_new @table_name, @sql = @sql out
+            print @sql
+            exec sp_executesql @sql, N'@ids [Ids] READONLY, @ids2 [Ids] READONLY, @noneId numeric', @ids = @ids, @ids2 = @ids2, @noneId = @noneId
+
+            delete from @ids2
+            delete from @ids
+
+        end
+        
+        delete from @contents where id = @content_id
+
+    end
+ 
+END
+GO
+
+GO
+
+exec qp_drop_existing 'qp_get_m2o_ids_multiple', 'IsProcedure'
 GO
 
 CREATE PROCEDURE [dbo].[qp_get_m2o_ids_multiple]

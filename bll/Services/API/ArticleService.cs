@@ -10,7 +10,7 @@ using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.API
 {
-    public class ArticleService : ServiceBase, IArticleService
+    public class ArticleService : ServiceBase, IBatchUpdateService
     {
         public ArticleService(int userId)
             : base(userId)
@@ -290,6 +290,16 @@ namespace Quantumart.QP8.BLL.Services.API
             {
                 var treeField = FieldRepository.GetById(fieldId);
                 return ArticleRepository.GetParentIds(ids, treeField.Id, treeField.Name);
+            }
+        }
+
+        public RulesException ValidateXamlById(int articleId)
+        {
+            using (new QPConnectionScope(ConnectionString))
+            {
+                var errors = new RulesException();
+                Article.ValidateXamlById(articleId, errors);
+                return errors;
             }
         }
     }

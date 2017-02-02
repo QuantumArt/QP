@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationExstension.cs" />
+    <Compile Include="ConfigurationExtension.cs" />
     <Compile Include="ConnectionStrings.cs" />
     <Compile Include="EventIdentificators.cs" />
     <Compile Include="Extensions\Grouping.cs" />

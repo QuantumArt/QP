@@ -5,12 +5,13 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services.MultistepActions.Import;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.WebMvc.ViewModels.MultistepSettings;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
     public class ImportViewModel : ExportImportModel
     {
@@ -53,34 +54,35 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             get
             {
                 var content = ContentService.Read(ContentId);
-                return
-                    new[] { new ListItem(string.Empty, ArticleStrings.CONTENT_ITEM_ID) }
-                    .Concat(
-                    content.Fields
-                    .Where(f => f.ExactType != Constants.FieldExactTypes.M2ORelation && f.IsUnique)
-                    .Select(f => new ListItem(f.Id.ToString(), f.Name))
-                    ).ToList();
+                return new[]
+                {
+                    new ListItem(string.Empty, FieldName.ContentItemId)
+                }
+                .Concat(content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation && f.IsUnique)
+                .Select(f => new ListItem(f.Id.ToString(), f.Name)))
+                .ToList();
             }
         }
+
         public BLL.Field UniqueContentField { get; set; }
 
         [LocalizedDisplayName("DownloadedFile", NameResourceType = typeof(MultistepActionStrings))]
         public string FileName { get; set; } = MultistepActionStrings.NoFile;
 
         public List<KeyValuePair<string, BLL.Field>> NewFieldsList { get; set; }
+
         public Dictionary<int, string> UniqueAggregatedFieldsToUpdate { get; set; }
 
         public void SetCorrespondingFieldName(FormCollection collection)
         {
             NewFieldsList = new List<KeyValuePair<string, BLL.Field>>();
             UniqueAggregatedFieldsToUpdate = new Dictionary<int, string>();
-
             foreach (var key in collection.AllKeys.Where(s => s.StartsWith(FieldPrefix)))
             {
                 if (key.StartsWith(IdPrefix))
                 {
                     int contentId;
-                    if (int.TryParse(key.Replace(IdPrefix, ""), out contentId))
+                    if (int.TryParse(key.Replace(IdPrefix, string.Empty), out contentId))
                     {
                         UniqueAggregatedFieldsToUpdate[contentId] = collection[key];
                     }
@@ -88,7 +90,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
                 else if (key.StartsWith(FieldPrefix))
                 {
                     int fieldId;
-                    if (int.TryParse(key.Replace(FieldPrefix, ""), out fieldId))
+                    if (int.TryParse(key.Replace(FieldPrefix, string.Empty), out fieldId))
                     {
                         var field = FieldRepository.GetById(fieldId);
                         if (field != null)
@@ -106,9 +108,9 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             }
         }
 
-        public BLL.Services.MultistepActions.Import.ImportSettings GetImportSettingsObject(int parentId, int id)
+        public ImportSettings GetImportSettingsObject(int parentId, int id)
         {
-            return new BLL.Services.MultistepActions.Import.ImportSettings(parentId, id)
+            return new ImportSettings(parentId, id)
             {
                 Culture = MultistepActionHelper.GetCulture(Culture),
                 Delimiter = MultistepActionHelper.GetDelimiter(Delimiter),
@@ -124,40 +126,28 @@ namespace Quantumart.QP8.WebMvc.ViewModels
             };
         }
 
-        public int BlockedFieldId { get; set; }
-
-        public IEnumerable<ListItem> FieldsList
-        {
-            get
-            {
-                return ArticleService.GetListOfFieldsForImport(ContentId).Where(n => n.Value != BlockedFieldId.ToString());
-            }
-        }
-
         public ImportFieldGroupViewModel FieldGroup
         {
             get
             {
                 var rootGroup = new ImportFieldGroupViewModel(MultistepActionStrings.MappingFields);
                 var content = ContentService.Read(ContentId);
-                var fields = content.Fields.Where(f => f.ExactType != Constants.FieldExactTypes.M2ORelation).ToList();
+                var fields = content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation).ToList();
                 Update(rootGroup, fields, false);
-
                 return rootGroup;
             }
         }
 
-        private static void Update(ImportFieldGroupViewModel groupModel, IList<BLL.Field> fields, bool exstension)
+        private static void Update(ImportFieldGroupViewModel groupModel, IList<BLL.Field> fields, bool extension)
         {
-            if (exstension)
+            if (extension)
             {
                 var content = fields.Select(f => f.Content).FirstOrDefault();
-
                 if (content != null)
                 {
-                    groupModel.Fields.Add(new ExstendedListItem
+                    groupModel.Fields.Add(new ExtendedListItem
                     {
-                        Text = content.Name + ".CONTENT_ITEM_ID",
+                        Text = content.Name + "." + FieldName.ContentItemId,
                         Value = "Id_" + content.Id,
                         Description = "Id",
                         Required = false,
@@ -169,15 +159,15 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
             foreach (var field in fields)
             {
-                var text = exstension ? $"{field.Content.Name}.{field.Name}" : field.Name;
-                var item = new ExstendedListItem
+                var text = extension ? $"{field.Content.Name}.{field.Name}" : field.Name;
+                var item = new ExtendedListItem
                 {
                     Text = text,
                     Value = field.Id.ToString(),
                     Description = field.Name,
                     Required = field.Required,
                     IsIdentifier = false,
-                    IsAggregated = exstension,
+                    IsAggregated = extension,
                     Unique = field.IsUnique,
                     BrokenDataIntegrity = !CheckFieldForDataIntegrity(field)
                 };
@@ -189,8 +179,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels
                     foreach (var content in contents)
                     {
                         var contentGroup = new ImportFieldGroupViewModel(content.Name);
-                        var exstensionFields = content.Fields.Where(f => f.ExactType != Constants.FieldExactTypes.M2ORelation).ToList();
-                        Update(contentGroup, exstensionFields, true);
+                        var extensionFields = content.Fields.Where(f => f.ExactType != FieldExactTypes.M2ORelation).ToList();
+                        Update(contentGroup, extensionFields, true);
                         classifierGroup.Groups.Add(contentGroup);
                     }
 
@@ -224,13 +214,13 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public ImportFieldGroupViewModel(string name)
         {
             Name = name;
-            Fields = new List<ExstendedListItem>();
+            Fields = new List<ExtendedListItem>();
             Groups = new List<ImportFieldGroupViewModel>();
         }
 
         public string Name { get; private set; }
 
-        public List<ExstendedListItem> Fields { get; }
+        public List<ExtendedListItem> Fields { get; }
 
         public List<ImportFieldGroupViewModel> Groups { get; }
     }

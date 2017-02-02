@@ -323,6 +323,7 @@
             $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
             $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, {
               fieldName: $field.attr('name'),
+              contentFieldName: $field.closest("dl").data("field_name"),
               value: editor.getData()
             });
           }

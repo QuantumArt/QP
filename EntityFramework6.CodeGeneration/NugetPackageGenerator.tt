@@ -1,0 +1,47 @@
+﻿<#@ template  debug="true" hostSpecific="true" language="C#" #>
+<#@ output extension=".log" #>
+
+<#@ assembly name="System.Core"#>
+<#@ assembly name="System.Data" #>
+<#@ assembly name="System.Data.Entity" #>
+<#@ assembly name="System.Data.Entity.Design"#>
+<#@ assembly name="System.Data.Linq"#>
+<#@ assembly name="EnvDTE"#>
+<#@ assembly name="System.Xml"#>
+<#@ assembly name="System.Xml.Linq"#>
+<#@ assembly name="$(TargetDir)Quantumart.QP8.CodeGeneration.dll"#>
+
+<#@ import namespace="System"#>
+<#@ import namespace="System.CodeDom"#>
+<#@ import namespace="System.CodeDom.Compiler"#>
+<#@ import namespace="System.Collections.Generic"#>
+<#@ import namespace="System.Data.Linq"#>
+<#@ import namespace="System.Data.Linq.Mapping"#>
+<#@ import namespace="System.IO"#>
+<#@ import namespace="System.ComponentModel"#>
+<#@ import namespace="System.Linq"#>
+<#@ import namespace="System.Xml"#>
+<#@ import namespace="System.Linq"#>
+<#@ import namespace="System.Reflection"#>
+<#@ import namespace="System.Text"#>
+<#@ import namespace="Microsoft.VisualStudio.TextTemplating"#>
+<#@ import namespace="System.Xml.Linq"#>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="Quantumart.QP8.CodeGeneration.Services" #>
+
+<#@ include file="$(SolutionDir)\CodeGeneration\Templates\Manager.ttinclude" #>
+<#@ include file="NugetPackageNuspec.ttinclude" #>
+<#@ include file="NugetPackagePublication.ttinclude" #>
+
+<#
+	using (var context = new NugetContext(Host, GenerationEnvironment))
+    {
+		context.Version = "1.1.2";
+		context.PackageName = "QP8.EntityFramework6";
+		context.PackageSource = "file://mscbuild01.artq.com/Packages/";
+
+		context.FlatternTemplate(@"..\EntityFramework6.DevData\QPDataContextGenerator.tt");
+		context.AddTemplateFile("NugetPackage.nuspec", AddNuspec);
+		context.AddTemplateFile("PublishNugetPackage.cmd", AddPublicationScript);
+    }
+#>

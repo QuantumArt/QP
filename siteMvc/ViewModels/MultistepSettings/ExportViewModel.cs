@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
     public class ExportViewModel : ExportImportModel
     {
@@ -42,16 +41,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels
 
         [LocalizedDisplayName("FieldsToExpand", NameResourceType = typeof(ImportStrings))]
         public IEnumerable<int> FieldsToExpand { get; set; }
-
-        public new IEnumerable<ListItem> GetList(IEnumerable<int> ids)
-        {
-            var result = Enumerable.Empty<ListItem>();
-            if (ids != null && ids.Any())
-            {
-                result = FieldService.GetList(ids.ToArray()).Select(s => new ListItem(s.Id.ToString(), s.Name)).ToArray();
-            }
-
-            return result;
-        }
     }
 }

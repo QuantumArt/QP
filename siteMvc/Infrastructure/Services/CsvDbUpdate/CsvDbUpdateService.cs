@@ -19,9 +19,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
         private readonly IContentRepository _contentRepository;
         private readonly IFieldRepository _fieldRepository;
         private readonly IArticleRepository _articleRepository;
-        private readonly IArticleService _articleService;
+        private readonly IBatchUpdateService _articleService;
 
-        public CsvDbUpdateService(IArticleService articleService, IFieldRepository fieldRepository, IContentRepository contentRepository, IArticleRepository articleRepository)
+        public CsvDbUpdateService(IBatchUpdateService articleService, IFieldRepository fieldRepository, IContentRepository contentRepository, IArticleRepository articleRepository)
         {
             _contentRepository = contentRepository;
             _articleRepository = articleRepository;
@@ -128,13 +128,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.CsvDbUpdate
         private int CreateExtensionArticleId(int extensionContentId, IEnumerable<CsvDbUpdateFieldModel> csvRowFields)
         {
             var contentName = _contentRepository.GetById(extensionContentId).Name;
-            var getExtensionContentId = StringFilter($"{contentName}.{FieldName.CONTENT_ITEM_ID}");
+            var getExtensionContentId = StringFilter($"{contentName}.{FieldName.ContentItemId}");
             return -Convert.ToInt32(csvRowFields.Single(getExtensionContentId).Value);
         }
 
         private static int CreateSimpleArticleId(IEnumerable<CsvDbUpdateFieldModel> csvRowFields)
         {
-            return -Convert.ToInt32(csvRowFields.Single(StringFilter(FieldName.CONTENT_ITEM_ID)).Value);
+            return -Convert.ToInt32(csvRowFields.Single(StringFilter(FieldName.ContentItemId)).Value);
         }
 
         private static IList<ArticleData> InsertFields(int contentId, IList<ArticleData> dataToAdd, IEnumerable<Field> dbFields, IList<CsvDbUpdateFieldModel> csvRowFields, string contentNameFieldPrefix = "")

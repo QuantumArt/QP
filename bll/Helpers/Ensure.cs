@@ -42,7 +42,6 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </summary>
         /// <typeparam name="TException">Type of exception to throw</typeparam>
         /// <param name="condition">Condition to test/ensure</param>
-        /// <param name="message">Message for the exception</param>
         /// <param name="args">args for TException constructor></param>
         /// <exception>Thrown when <cref>TException</cref><paramref name="condition"/> is false</exception>
         /// <remarks><see cref="TException"/> must have a constructor that takes a single string</remarks>
@@ -102,7 +101,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <remarks>Null values will cause an exception to be thrown</remarks>
         public static void Equal<T>(T left, T right, string message = "Values must be equal")
         {
-            That((left != null) && (right != null) && left.Equals(right), message);
+            That(left != null && right != null && left.Equals(right), message);
         }
 
         /// <summary>
@@ -116,7 +115,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// <remarks>Null values will cause an exception to be thrown</remarks>
         public static void NotEqual<T>(T left, T right, string message = "Values must not be equal")
         {
-            That((left != null) && (right != null) && !left.Equals(right), message);
+            That(left != null && right != null && !left.Equals(right), message);
         }
 
         /// <summary>
@@ -131,7 +130,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </exception>
         public static void Contains<T>(IEnumerable<T> collection, Func<T, bool> predicate, string message = "")
         {
-            That((collection != null) && collection.Any(predicate), message);
+            That(collection != null && collection.Any(predicate), message);
         }
 
         /// <summary>
@@ -146,7 +145,7 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </exception>
         public static void Items<T>(IEnumerable<T> collection, Func<T, bool> predicate, string message = "")
         {
-            That((collection != null) && collection.All(predicate));
+            That(collection != null && collection.All(predicate));
         }
 
         /// <summary>
