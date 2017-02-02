@@ -1,7 +1,7 @@
 FixContentItemTriggers
 MultipleUpdate
 OptimizeHierarchy
-VeButtons
+VisualEditor
 HierarchyContextMenu
 ConsoleDbUpdate
 ExternalNotifications

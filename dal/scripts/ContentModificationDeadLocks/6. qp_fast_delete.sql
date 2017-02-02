@@ -1,7 +1,7 @@
-﻿exec qp_drop_existing 'qp_fast_delete', 'IsProcedure'
+exec qp_drop_existing 'qp_fast_delete', 'IsProcedure'
 GO
 
-CREATE PROCEDURE [dbo].[qp_fast_delete] 
+CREATE PROCEDURE [dbo].[qp_fast_delete]
     @ids Ids READONLY
 AS
 BEGIN
@@ -10,7 +10,7 @@ BEGIN
     declare @ids2 table (id numeric primary key)
     declare @ids3 table (id numeric primary key)
 
-    insert into @ids2 
+    insert into @ids2
     select id from @ids
 
     while exists(select * from @ids2)

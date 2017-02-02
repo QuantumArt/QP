@@ -1181,15 +1181,11 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_SHOWING, this._onRowContextMenuShowingHandler);
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_ITEM_CLICKING, this._onRowContextMenuItemClickingHandler);
         this._contextMenuComponent.detachObserver(window.EVENT_TYPE_CONTEXT_MENU_HIDDEN, this._onRowContextMenuHiddenHandler);
-
         this._contextMenuComponent.dispose();
-        this._contextMenuComponent = null;
       }
 
       gridComponent.element = null;
       gridComponent = null;
-
-      this._gridComponent = null;
     }
 
     $grid.removeData('tGrid').empty();
@@ -1204,6 +1200,8 @@ Quantumart.QP8.BackendEntityGrid.prototype = {
     }
 
     $q.dispose.call(this, [
+      '_gridComponent',
+      '_contextMenuComponent',
       '_gridElement',
       '_onDataBindingHandler',
       '_onDataBoundHandler',

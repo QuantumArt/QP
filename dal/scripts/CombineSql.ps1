@@ -12,22 +12,26 @@ if ([string]::IsNullOrEmpty($name))
 
 if (-not([string]::IsNullOrEmpty($name)))
 {
-	$path = Join-Path $dir $name
-
-	if (Test-Path($path))
-	{
-		$in = Join-Path $path "*.sql"
-		$out = Join-Path $dir "$name.sql"
-        if ($outputToFile)
-        {
-		    Get-ChildItem $in | Sort Name | Get-Content | Set-Content -Encoding UTF8 -Path $out	
-        }
-        else
-        {
-		    Get-ChildItem $in | Sort Name | Get-Content | Write-Output	
-        }
-
-	}
-	else { throw "Folder $name not found" }
+  $path = Join-Path $dir $name
+  if (Test-Path($path))
+  {
+    $in = Join-Path $path "*.sql"
+    $out = Join-Path $dir "$name.sql"
+    if ($outputToFile)
+    {
+      Get-ChildItem $in | Sort Name | Get-Content -Encoding UTF8 | Set-Content -Encoding UTF8 -Path $out
+    }
+    else
+    {
+      Get-ChildItem $in | Sort Name | Get-Content -Encoding UTF8 | Write-Output
+    }
+  }
+  else
+  {
+    throw "Folder $name not found"
+  }
 }
-else { throw "folder name is empty" }
+else
+{
+  throw "folder name is empty"
+}

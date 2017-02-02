@@ -5,7 +5,6 @@
 
   Quantumart.QP8.BackendVisualEditor = function(componentElem) {
     var $componentElem = $(componentElem);
-
     this._$containerElem = $('.visualEditorContainer', $componentElem);
     this._componentElem = $componentElem.get(0);
     this._editorElem = $('.visualEditor', $componentElem).get(0);
@@ -49,15 +48,16 @@
       resize_minWidth: 640,
       resize_maxHeight: 1024,
       bodyClass: opts.bodyClass,
-      docType: opts.docType,
+      docType: opts.docType || defaultConfig.docType,
       fullPage: opts.fullPage,
       enterMode: opts.enterMode || defaultConfig.enterMode,
       shiftEnterMode: opts.shiftEnterMode || defaultConfig.shiftEnterMode,
       useEnglishQuotes: opts.useEnglishQuotes,
+      disableListAutoWrap: opts.disableListAutoWrap,
       contentsCss: opts.contentsCss,
       stylesSet: opts.stylesSet,
       toolbar: opts.toolbar,
-      specialChars: CKEDITOR.config.specialChars.concat([
+      specialChars: window.CKEDITOR.config.specialChars.concat([
         ['&#36;', 'Доллар США'],
         ['&#8364;', 'Евро'],
         ['&#8381;', 'Российский рубль'],
@@ -76,7 +76,7 @@
     opts.extraPlugins.forEach(function(pl) {
       config.extraPlugins += ',' + pl.name;
       if (pl.url) {
-        CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
+        window.CKEDITOR.plugins.addExternal(pl.name, pl.url, 'plugin.js');
       }
     });
 
@@ -84,20 +84,41 @@
       config['format_' + fs.element] = fs;
     });
 
+    opts.listItems = Object.assign({}, window.CKEDITOR.dtd.$listItem, {
+      dd: 1,
+      dt: 1,
+      li: 1
+    });
+
+    window.CKEDITOR.on('instanceCreated', function (ev) {
+      Object.keys(Object.assign({},
+        opts.listItems
+      )).forEach(function(key) {
+        if (opts.disableListAutoWrap) {
+          delete window.CKEDITOR.dtd.$listItem[key];
+          delete window.CKEDITOR.dtd.$intermediate[key];
+        } else {
+          window.CKEDITOR.dtd.$listItem[key] = 1;
+          window.CKEDITOR.dtd.$intermediate[key] = 1;
+        }
+      });
+    });
+
     config.on = {
       instanceReady: function(ev) {
         ev.editor.filter.addElementCallback(function(el) {
           // disable attributes to/from style transformations
           if (el.name === 'table' || el.name === 'img') {
-            return CKEDITOR.FILTER_SKIP_TREE;
+            return window.CKEDITOR.FILTER_SKIP_TREE;
           }
         });
 
-        Object.keys(CKEDITOR.tools.extend({},
-          CKEDITOR.dtd.$nonBodyContent,
-          CKEDITOR.dtd.$block,
-          CKEDITOR.dtd.$listItem,
-          CKEDITOR.dtd.$tableContent)).forEach(function(key) {
+        Object.keys(Object.assign({},
+          window.CKEDITOR.dtd.$nonBodyContent,
+          window.CKEDITOR.dtd.$block,
+          window.CKEDITOR.dtd.$tableContent,
+          opts.listItems
+        )).forEach(function(key) {
           this.dataProcessor.writer.setRules(key, {
             indent: false,
             breakBeforeOpen: true,
@@ -172,8 +193,6 @@
     _fieldId: null,
     _isExpanded: null,
     _isTextEditor: null,
-    _storedTempValue: '',
-    _checkIntervalID: null,
 
     initialize: function() {
       var self = this;
@@ -198,7 +217,7 @@
             siteId: self._siteId,
             fieldId: self._fieldId
           }, function(data) {
-            CKEDITOR.replace(self._editorElem.id, getCkEditorConfig(self, data));
+            window.CKEDITOR.replace(self._editorElem.id, getCkEditorConfig(self, data));
           });
         }
 
@@ -207,15 +226,15 @@
 
       if (this._isTextEditor) {
         this._$textEditorLink.off('click').on('click', function(e) {
-        self.disposeCKEditor(false);
-        self._$containerElem.show();
-        self._$visualEditorLink.show();
-        self._$textEditorLink.hide();
-        self._$collapseLink.hide();
-        self._$expandLink.hide();
-        self._isInitialized = false;
-        e.preventDefault();
-      });
+          self.disposeCKEditor(false);
+          self._$containerElem.show();
+          self._$visualEditorLink.show();
+          self._$textEditorLink.hide();
+          self._$collapseLink.hide();
+          self._$expandLink.hide();
+          self._isInitialized = false;
+          e.preventDefault();
+        });
 
         this._$containerElem.show();
       } else if (this._isExpanded) {
@@ -224,7 +243,7 @@
     },
 
     getCkEditor: function() {
-      return CKEDITOR.instances[this._editorElem.id];
+      return window.CKEDITOR.instances[this._editorElem.id];
     },
 
     saveVisualEditorData: function() {
@@ -244,28 +263,27 @@
 
     dispose: function() {
       this.disposeCKEditor(false);
-      this._onChangeVisualEditorDataInDesignModeHandlerProxy = null;
-      this._editorElem = null;
-      this._componentElem = null;
       this._$expandLink.off();
-      this._$expandLink = null;
       this._$collapseLink.off();
-      this._$collapseLink = null;
       this._$textEditorLink.off();
-      this._$textEditorLink = null;
       this._$visualEditorLink.off();
-      this._$visualEditorLink = null;
-      this._$containerElem = null;
-      this._siteId = null;
-      this._fieldId = null;
+
+      $q.dispose.call(this, [
+        '_siteId',
+        '_fieldId',
+        '_editorElem',
+        '_componentElem',
+        '_onChangeVisualEditorDataInDesignModeHandlerProxy',
+        '_$expandLink',
+        '_$collapseLink',
+        '_$textEditorLink',
+        '_$visualEditorLink',
+        '_$containerElem'
+      ]);
     },
 
     disposeCKEditor: function(noUpdate) {
       var editor, $editor, windowsToDipose, listenersToRemove;
-
-      if (this._checkIntervalID) {
-        clearInterval(this._checkIntervalID);
-      }
 
       $editor = $(this._editorElem);
       windowsToDipose = ['imageWindow', 'linkWindow', 'flashWindow'];
@@ -299,8 +317,8 @@
 
       if (editor) {
         if (editor.textarea) {
-          editor.textarea.on('keyup', this._onChangeVisualEditorDataInSourceModeHandler, this);
-          editor.textarea.on('paste', this._onChangeVisualEditorDataInSourceModeHandler, this);
+          editor.textarea.off('keyup').on('keyup', this._onChangeVisualEditorDataInSourceModeHandler, this);
+          editor.textarea.off('paste').on('paste', this._onChangeVisualEditorDataInSourceModeHandler, this);
         }
 
         $('#' + editor.name).addClass(window.CHANGED_FIELD_CLASS_NAME);
@@ -311,25 +329,6 @@
       $('#' + this.getCkEditor().name).addClass(window.CHANGED_FIELD_CLASS_NAME);
     },
 
-    _onCheckChangesIntervalHandler: function() {
-      var $field;
-      var editor = this.getCkEditor();
-
-      if (editor) {
-        if (this._storedTempValue !== editor.getData()) {
-          this._storedTempValue = editor.getData();
-          if (editor.element && editor.element.$) {
-            $field = $(editor.element.$);
-            $field.addClass(window.CHANGED_FIELD_CLASS_NAME);
-            $field.trigger(window.JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, {
-              fieldName: $field.attr('name'),
-              value: editor.getData()
-            });
-          }
-        }
-      }
-    },
-
     _destroyVisualEditorWindow: function($editor, name) {
       if ($editor.data(name)) {
         $editor.data(name).dispose();
@@ -338,12 +337,6 @@
 
     _onCKEEditorInitialized: function(sender) {
       var self = this;
-
-      if (sender) {
-        this._storedTempValue = sender.getData();
-      }
-
-      this._checkIntervalID = setInterval(this._onCheckChangesIntervalHandler.bind(this), 10000);
       this._$containerElem.show();
       this._$expandLink.off('click').on('click', function(e) {
         $(this).hide();

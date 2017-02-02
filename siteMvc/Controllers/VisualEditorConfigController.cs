@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Extensions;
@@ -19,7 +19,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var result = new JSendResponse { Status = JSendStatus.Success };
 
-            Func<VisualEditorStyle, VisualEditorStyleVm> styleselect = entry => new VisualEditorStyleVm
+            Func<VisualEditorStyle, VisualEditorStyleVm> styleMapFn = entry => new VisualEditorStyleVm
             {
                 Name = entry.Name,
                 Element = entry.Tag,
@@ -28,7 +28,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 Attributes = entry.AttributeItems.Any() ? entry.AttributeItems.ToDictionary(k => k.Name, v => v.ItemValue) : null
             };
 
-            Func<VisualEditorPlugin, VisualEditorPluginVm> pluginselect = entry => new VisualEditorPluginVm
+            Func<VisualEditorPlugin, VisualEditorPluginVm> pluginMapFn = entry => new VisualEditorPluginVm
             {
                 Name = entry.Name,
                 Url = entry.Url
@@ -38,9 +38,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var includedStyles = FieldService.GetResultStyles(fieldId, siteId).Where(ves => ves.On).OrderBy(ves => ves.Order);
             var model = new VisualEditorConfigVm
             {
-                StylesSet = includedStyles.Where(ves => !ves.IsFormat).Select(styleselect),
-                FormatsSet = includedStyles.Where(ves => ves.IsFormat).Select(styleselect).EmptyIfNull(),
-                ExtraPlugins = VisualEditorHelpers.GetVisualEditorPlugins(veCommands).Select(pluginselect).EmptyIfNull(),
+                StylesSet = includedStyles.Where(ves => !ves.IsFormat).Select(styleMapFn),
+                FormatsSet = includedStyles.Where(ves => ves.IsFormat).Select(styleMapFn).EmptyIfNull(),
+                ExtraPlugins = VisualEditorHelpers.GetVisualEditorPlugins(veCommands).Select(pluginMapFn).EmptyIfNull(),
                 Toolbar = VisualEditorHelpers.GenerateToolbar(veCommands)
             };
 
@@ -53,6 +53,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 model.EnterMode = field.VisualEditor.EnterMode;
                 model.ShiftEnterMode = field.VisualEditor.ShiftEnterMode;
                 model.UseEnglishQuotes = field.VisualEditor.UseEnglishQuotes;
+                model.DisableListAutoWrap = field.VisualEditor.DisableListAutoWrap;
                 model.Height = field.VisualEditor.Height;
                 model.BodyClass = field.RootElementClass;
                 model.ContentsCss = field.ExternalCssItems.Select(css => css.Url);

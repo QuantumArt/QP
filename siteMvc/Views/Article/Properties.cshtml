@@ -16,49 +16,49 @@
 
 @using (Html.BeginTabForm(Model))
 {
-    if (Model.ShowLockInfo)
-    {
+  if (Model.ShowLockInfo)
+  {
         @Html.Partial("Locking", Model)
-    }
+  }
 
+  if (Model.Data.UseVariations)
+  {
+    using (Html.BeginFieldGroup(ArticleStrings.VariationGroup))
+    {
+            <div class="variationInfo">
+              <div class="variationInfoItem currentInfo"></div>
+              <div class="variationInfoItem totalInfo">@Html.Raw(ArticleStrings.TotalVariationsMessage)</div>
+              <div style="display:none" class="variationInfoItem removeItem">@Html.Raw(Model.RemoveVariationCode)</div>
+            </div>
+    }
+  }
+
+  using (Html.BeginFieldGroup(ArticleStrings.CustomFieldsGroup))
+  {
     if (Model.Data.UseVariations)
     {
-        using (Html.BeginFieldGroup(ArticleStrings.VariationGroup))
-        {
-            <div class="variationInfo">
-                <div class="variationInfoItem currentInfo"></div>
-                <div class="variationInfoItem totalInfo">@Html.Raw(ArticleStrings.TotalVariationsMessage)</div>
-                <div style="display:none" class="variationInfoItem removeItem">@Html.Raw(Model.RemoveVariationCode)</div>
-            </div>
-        }
-    }
-
-    using (Html.BeginFieldGroup(ArticleStrings.CustomFieldsGroup))
-    {
-        if (Model.Data.UseVariations)
-        {
             @Html.HiddenFor(n => n.VariationModel, new { id = Html.UniqueId("VariationModel"), @class = "variationModel textbox simple-text" })
             @Html.HiddenFor(n => n.CurrentContext, new { id = Html.UniqueId("CurrentContext"), @class = "currentContext qp-notChangeTrack textbox simple-text" })
             @Html.HiddenFor(n => n.ContextModel, new { id = Html.UniqueId("ContextModel"), @class = "contextModel qp-notChangeTrack" })
             @Html.HiddenFor(n => n.ErrorModel, new { id = Html.UniqueId("ErrorModel"), @class = "errorModel qp-notChangeTrack textbox simple-text" })
-        }
+    }
 
-        foreach (var pair in Model.Data.VariationEditableFieldValues)
-        {
+    foreach (var pair in Model.Data.VariationEditableFieldValues)
+    {
             @Html.Field(pair, forceReadonly: Model.IsChangingActionsProhibited)
-        }
     }
+  }
 
-    using (Html.BeginFieldGroup(ArticleStrings.UniqueId))
-    {
-        @Html.TextBoxField(s => s.Data.UniqueId, Model.Data.UniqueId?.ToString())
-    }
+  using (Html.BeginFieldGroup(ArticleStrings.UniqueId))
+  {
+        @Html.TextBoxField(s => s.Data.UniqueId, Model.Data.UniqueId?.ToString(), Model.IsReadOnly)
+  }
 
-    if (!Model.IsReadOnly)
-    {
+  if (!Model.IsReadOnly)
+  {
         @Html.Partial("Schedule", Model)
         @Html.Partial("Workflow", Model)
-    }
+  }
 
     @Html.Partial("Version", Model.Data)
     @Html.Partial("EntityDirectLink", Model)

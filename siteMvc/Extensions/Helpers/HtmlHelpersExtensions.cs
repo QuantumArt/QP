@@ -73,113 +73,102 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var data = source.GetMetaData(expression);
             var name = ExpressionHelper.GetExpressionText(expression);
             var maxlength = GetMaxLength(data.ContainerType, data.PropertyName);
-
             return source.QpHtmlProperties(name, maxlength, type, index);
-        }
-
-        internal static Dictionary<string, object> QpHtmlProperties(this HtmlHelper source, string name, EditorType type, int index = -1)
-        {
-            return source.QpHtmlProperties(name, 0, type, index);
         }
 
         internal static Dictionary<string, object> QpHtmlProperties(this HtmlHelper source, string name, int maxlength, EditorType type, int index = -1)
         {
-            var htmlProperties = new Dictionary<string, object> { { "id", source.UniqueId(name, index) } };
+            var htmlAttributes = new Dictionary<string, object> { { "id", source.UniqueId(name, index) } };
             switch (type)
             {
                 case EditorType.Checkbox:
-                    htmlProperties.Add("class", CheckboxClassName);
-                    htmlProperties.AddCssClass(SimpleCheckboxClassName);
+                    htmlAttributes.Add("class", CheckboxClassName);
+                    htmlAttributes.AddCssClass(SimpleCheckboxClassName);
                     break;
                 case EditorType.Select:
-                    htmlProperties.Add("class", DropDownListClassName);
+                    htmlAttributes.Add("class", DropDownListClassName);
                     break;
                 case EditorType.ListBox:
-                    htmlProperties.Add("class", ListboxClassName);
+                    htmlAttributes.Add("class", ListboxClassName);
                     break;
                 case EditorType.TextArea:
-                    htmlProperties.Add("class", TextboxClassName);
-                    htmlProperties.Add("rows", 5);
+                    htmlAttributes.Add("class", TextboxClassName);
+                    htmlAttributes.Add("rows", 5);
                     break;
                 case EditorType.VisualEditor:
-                    htmlProperties.Add("class", VisualEditorClassName);
+                    htmlAttributes.Add("class", VisualEditorClassName);
                     break;
                 case EditorType.Textbox:
                 case EditorType.Password:
-                    htmlProperties.Add("class", TextboxClassName);
+                    htmlAttributes.Add("class", TextboxClassName);
                     break;
                 case EditorType.Numeric:
-                    htmlProperties.Add("class", NumericTextboxClassName);
+                    htmlAttributes.Add("class", NumericTextboxClassName);
                     break;
                 case EditorType.File:
-                    htmlProperties.Add("class", TextboxClassName);
+                    htmlAttributes.Add("class", TextboxClassName);
                     break;
             }
 
             if (maxlength != 0)
             {
-                htmlProperties.Add("maxlength", maxlength);
+                htmlAttributes.Add("maxlength", maxlength);
             }
 
             if (source.IsReadOnly())
             {
-                htmlProperties.Add("disabled", string.Empty);
+                htmlAttributes = AddReadOnlyToHtmlAttributes(type, htmlAttributes);
             }
 
-            return htmlProperties;
+            return htmlAttributes;
         }
 
-        internal static Dictionary<string, object> QpHtmlProperties(this HtmlHelper source, string id, Field field, bool readOnly)
+        internal static Dictionary<string, object> QpHtmlProperties(this HtmlHelper source, string id, Field field, int index, bool isReadOnly)
         {
-            return source.QpHtmlProperties(id, field, -1, readOnly);
-        }
-
-        internal static Dictionary<string, object> QpHtmlProperties(this HtmlHelper source, string id, Field field, int index, bool readOnly)
-        {
-            var htmlProperties = new Dictionary<string, object> { { "id", source.UniqueId(id, index) } };
-            htmlProperties.AddData("exact_type", field.ExactType.ToString());
+            var htmlAttributes = new Dictionary<string, object> { { "id", source.UniqueId(id, index) } };
+            htmlAttributes.AddData("exact_type", field.ExactType.ToString());
             switch (field.Type.Name)
             {
                 case FieldTypeName.Boolean:
-                    htmlProperties.Add("class", CheckboxClassName);
-                    htmlProperties.AddCssClass(SimpleCheckboxClassName);
+                    htmlAttributes.Add("class", CheckboxClassName);
+                    htmlAttributes.AddCssClass(SimpleCheckboxClassName);
                     break;
                 case FieldTypeName.Numeric:
-                    htmlProperties.Add("class", NumericTextboxClassName);
+                    htmlAttributes.Add("class", NumericTextboxClassName);
                     break;
                 default:
                     if (field.ExactType == FieldExactTypes.Textbox)
                     {
-                        htmlProperties.Add("class", ArticleTextboxClassName);
-                        htmlProperties.Add("rows", field.TextBoxRows >= 255 ? 5 : field.TextBoxRows);
+                        htmlAttributes.Add("class", ArticleTextboxClassName);
+                        htmlAttributes.Add("rows", field.TextBoxRows >= 255 ? 5 : field.TextBoxRows);
                     }
                     else if (field.ExactType == FieldExactTypes.VisualEdit)
                     {
-                        htmlProperties.Add("class", ArticleVisualEditorTextboxClassName);
-                        htmlProperties.Add("style", $"height: {field.VisualEditorHeight}px");
+                        htmlAttributes.Add("class", ArticleVisualEditorTextboxClassName);
+                        htmlAttributes.Add("style", $"height: {field.VisualEditorHeight}px");
                     }
 
                     else if (!(field.RelationType == RelationType.OneToMany || field.RelationType == RelationType.ManyToMany || field.RelationType == RelationType.ManyToOne))
                     {
                         if (field.Type.Name == FieldTypeName.String)
                         {
-                            htmlProperties.Add("maxlength", field.StringSize);
-                            htmlProperties.Add("class", ArticleTextboxClassName);
+                            htmlAttributes.Add("maxlength", field.StringSize);
+                            htmlAttributes.Add("class", ArticleTextboxClassName);
                         }
                         else
                         {
-                            htmlProperties.Add("class", TextboxClassName);
+                            htmlAttributes.Add("class", TextboxClassName);
                         }
                     }
                     break;
             }
 
-            if (readOnly && (field.Type.Name != FieldTypeName.Relation || field.Type.Name != FieldTypeName.M2ORelation))
+            if (isReadOnly && (field.Type.Name != FieldTypeName.Relation || field.Type.Name != FieldTypeName.M2ORelation))
             {
-                htmlProperties.Add("readonly", "readonly");
+                htmlAttributes = AddReadOnlyToHtmlAttributes(field, htmlAttributes);
             }
 
-            return htmlProperties;
+            return htmlAttributes;
         }
 
         private static int GetMaxLength(Type sourceType, string propertyName)
@@ -324,34 +313,20 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return MvcHtmlString.Create(tb.ToString());
         }
 
-        public static MvcHtmlString NumericTextBox(this HtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, Field field)
-        {
-            return source.NumericTextBox(name, value, htmlAttributes, field.DecimalPlaces);
-        }
-
         public static MvcHtmlString NumericTextBox(this HtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, int decimalDigits = 0, double? minValue = null, double? maxValue = null)
         {
-            object newHtmlAttributes;
-            if (CheckReadOnly(htmlAttributes))
-            {
-                newHtmlAttributes = new { id = htmlAttributes["id"], @class = htmlAttributes["class"], @readonly = "readonly" };
-            }
-            else
-            {
-                newHtmlAttributes = new { id = htmlAttributes["id"], @class = htmlAttributes["class"] };
-            }
-
             return MvcHtmlString.Create(source.Telerik().NumericTextBox()
                 .MinValue(minValue)
                 .MaxValue(maxValue)
                 .ButtonTitleDown(GlobalStrings.DecreaseValue)
                 .ButtonTitleUp(GlobalStrings.IncreaseValue)
                 .Name(name)
-                .InputHtmlAttributes(newHtmlAttributes)
+                .InputHtmlAttributes(new { id = htmlAttributes["id"], @class = htmlAttributes["class"] })
                 .Value(Converter.ToNullableDouble(value))
                 .DecimalDigits(decimalDigits)
                 .Spinners(true)
                 .EmptyMessage(string.Empty)
+                .Enable(!ContainsReadOnly(htmlAttributes))
                 .ToHtmlString());
         }
 
@@ -433,7 +408,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 messageSpans.Add(text);
             }
 
-            wrapper.InnerHtml = img.ToString(TagRenderMode.SelfClosing) + string.Join("", messageSpans);
+            wrapper.InnerHtml = img.ToString(TagRenderMode.SelfClosing) + string.Join(string.Empty, messageSpans);
             return MvcHtmlString.Create(wrapper.ToString());
         }
 
@@ -581,26 +556,26 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var itemIndex = 0;
             foreach (var item in list)
             {
-                var checkBoxHtmlAttributes = source.QpHtmlProperties(name, EditorType.Checkbox, itemIndex);
-                if (!options.Enabled && !checkBoxHtmlAttributes.ContainsKey("disabled"))
+                var htmlAttributes = source.QpHtmlProperties(name, 0, EditorType.Checkbox, itemIndex);
+                if (!options.Enabled)
                 {
-                    checkBoxHtmlAttributes.Add("disabled", "disabled");
+                    AddReadOnlyToHtmlAttributes(EditorType.Checkbox, htmlAttributes);
                 }
-                checkBoxHtmlAttributes.RemoveCssClass(SimpleCheckboxClassName);
-                checkBoxHtmlAttributes.AddCssClass(CheckboxListItemClassName);
-                checkBoxHtmlAttributes.AddCssClass(NoTrackChangeInputClass);
+
+                htmlAttributes.RemoveCssClass(SimpleCheckboxClassName);
+                htmlAttributes.AddCssClass(CheckboxListItemClassName);
+                htmlAttributes.AddCssClass(NoTrackChangeInputClass);
 
                 sb.Append("<li>");
-                sb.Append(source.QpCheckBox(asArray ? string.Concat(name, "[", itemIndex, "]") : name,
-                    item.Value, item.Selected, checkBoxHtmlAttributes));
+                sb.Append(source.QpCheckBox(asArray ? string.Concat(name, "[", itemIndex, "]") : name, item.Value, item.Selected, htmlAttributes));
                 sb.Append(" ");
                 if (entityDataListArgs != null && entityDataListArgs.ShowIds)
                 {
                     sb.Append(GetIdLink(item.Value));
                 }
+
                 sb.Append(source.QpLabel(source.UniqueId(name, itemIndex), item.Text, false));
                 sb.AppendLine("</li>");
-
                 itemIndex++;
             }
 
@@ -689,7 +664,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return idBuilder.ToString();
         }
 
-        private static MvcHtmlString QpMultipleItemPicker(this HtmlHelper source, string name, IList<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs)
+        private static MvcHtmlString QpMultipleItemPicker(this HtmlHelper source, string name, ICollection<QPSelectListItem> list, ControlOptions options, EntityDataListArgs entityDataListArgs)
         {
             var wrapper = new TagBuilder("div");
             options.SetMultiplePickerOptions(name, source.UniqueId(name), entityDataListArgs);
@@ -708,18 +683,18 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 var itemIndex = 0;
                 foreach (var item in list)
                 {
-                    var checkBoxHtmlAttributes = source.QpHtmlProperties(name, EditorType.Checkbox, itemIndex);
-                    if (!options.Enabled && !checkBoxHtmlAttributes.ContainsKey("disabled"))
+                    var htmlAttributes = source.QpHtmlProperties(name, 0, EditorType.Checkbox, itemIndex);
+                    if (!options.Enabled)
                     {
-                        checkBoxHtmlAttributes.Add("disabled", "disabled");
+                        AddReadOnlyToHtmlAttributes(EditorType.Checkbox, htmlAttributes);
                     }
 
-                    checkBoxHtmlAttributes.RemoveCssClass(SimpleCheckboxClassName);
-                    checkBoxHtmlAttributes.AddCssClass(MultiplePickerItemCheckboxClassName);
-                    checkBoxHtmlAttributes.AddCssClass(NoTrackChangeInputClass);
+                    htmlAttributes.RemoveCssClass(SimpleCheckboxClassName);
+                    htmlAttributes.AddCssClass(MultiplePickerItemCheckboxClassName);
+                    htmlAttributes.AddCssClass(NoTrackChangeInputClass);
 
                     sb.Append("<li>");
-                    sb.Append(source.QpCheckBox(name, item.Value, item.Selected, checkBoxHtmlAttributes));
+                    sb.Append(source.QpCheckBox(name, item.Value, item.Selected, htmlAttributes));
                     sb.Append(" ");
                     if (entityDataListArgs.ShowIds)
                     {
@@ -728,7 +703,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
                     sb.Append(source.QpLabel(source.UniqueId(name, itemIndex), item.Text, false));
                     sb.AppendLine("</li>");
-
                     itemIndex++;
                 }
             }
@@ -822,7 +796,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
         }
 
-        private static bool CheckReadOnly(IReadOnlyDictionary<string, object> htmlAttributes)
+        private static bool ContainsReadOnly(IReadOnlyDictionary<string, object> htmlAttributes)
         {
             return htmlAttributes != null && (htmlAttributes.ContainsKey("readonly") || htmlAttributes.ContainsKey("disabled"));
         }
@@ -842,33 +816,32 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.DateTimePicker(id, value, htmlAttributes, DateTimePickerMode.Time, readOnly);
         }
 
-        private static MvcHtmlString DateTimePicker(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, int mode, bool readOnly)
+        private static MvcHtmlString DateTimePicker(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, int mode, bool isReadOnly)
         {
             var inputId = htmlAttributes["id"].ToString();
             var stringValue = value?.ToString();
-
             switch (mode)
             {
                 case DateTimePickerMode.DateTime:
                     return MvcHtmlString.Create(source.Telerik().DateTimePicker()
                         .Name(id)
                         .Value(stringValue)
-                        .Enable(!readOnly)
                         .InputHtmlAttributes(new { id = inputId, @class = "datetime" })
+                        .Enable(!isReadOnly)
                         .ToHtmlString());
                 case DateTimePickerMode.Date:
                     return MvcHtmlString.Create(source.Telerik().DatePicker()
                         .Name(id)
                         .Value(stringValue)
-                        .Enable(!readOnly)
                         .InputHtmlAttributes(new { id = inputId, @class = "date" })
+                        .Enable(!isReadOnly)
                         .ToHtmlString());
                 case DateTimePickerMode.Time:
                     return MvcHtmlString.Create(source.Telerik().TimePicker()
                         .Name(id)
                         .Value(stringValue)
-                        .Enable(!readOnly)
                         .InputHtmlAttributes(new { id = inputId, @class = "time" })
+                        .Enable(!isReadOnly)
                         .ToHtmlString());
                 default:
                     throw new NotSupportedException();
@@ -877,7 +850,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString File(this HtmlHelper source, string id, object value, Dictionary<string, object> htmlAttributes, Field field, int? entityId, ArticleVersion version, bool? isReadOnly = null, bool? allowUpload = null, bool allowPreview = true, bool allowDownload = true)
         {
-            var readOnly = isReadOnly ?? field.ExactType == FieldExactTypes.DynamicImage || CheckReadOnly(htmlAttributes);
+            var readOnly = isReadOnly ?? field.ExactType == FieldExactTypes.DynamicImage || ContainsReadOnly(htmlAttributes);
             var shouldAllowUpload = allowUpload ?? !readOnly;
             var allowLibrary = !readOnly && version == null;
 
@@ -936,7 +909,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             if (!readOnly)
             {
-                var useSiteLibrary = isVersion ? false : field.UseSiteLibrary;
+                var useSiteLibrary = !isVersion && field.UseSiteLibrary;
                 var repository = FolderFactory.Create(useSiteLibrary ? EntityTypeCode.SiteFolder : EntityTypeCode.ContentFolder).CreateRepository();
                 var folder = repository.GetRoot(useSiteLibrary ? field.Content.SiteId : field.Content.Id);
                 var subFolder = isVersion ? string.Empty : field.SubFolder;
@@ -944,7 +917,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 var libraryParentEntityId = isVersion ? string.Empty : field.LibraryParentEntityId.ToString();
                 var libraryPath = isVersion ? version.PathInfo.Path : field.PathInfo.Path;
                 var libraryUrl = isVersion ? version.PathInfo.Url : field.PathInfo.Url;
-                var renameMatched = isVersion ? false : field.RenameMatched;
+                var renameMatched = !isVersion && field.RenameMatched;
                 tb.MergeDataAttribute("use_site_library", Converter.ToJsString(useSiteLibrary));
                 tb.MergeDataAttribute("subfolder", subFolder);
                 tb.MergeDataAttribute("library_entity_id", libraryEntityId);
@@ -955,7 +928,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 tb.MergeDataAttribute("is_image", Converter.ToJsString(field.ExactType == FieldExactTypes.Image));
                 tb.MergeDataAttribute("allow_file_upload", Converter.ToJsString(allowUpload));
                 tb.MergeDataAttribute("uploader_type", ((int)UploaderTypeHelper.UploaderType).ToString());
-                tb.MergeDataAttribute("folder_Id", folder == null ? string.Empty : folder.Id.ToString());
+                tb.MergeDataAttribute("folder_Id", folder?.Id.ToString() ?? string.Empty);
             }
 
             return tb;
@@ -984,11 +957,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static MvcHtmlString AddNewItemLink(this HtmlHelper source, ListViewModel model)
         {
             return source.BackendActionLink(model.AddNewItemLinkId, model.AddNewItemText, 0, string.Empty, model.ParentEntityId, ActionTypeCode.AddNew, model.AddNewItemActionCode, ActionTargetType.NewTab, true);
-        }
-
-        public static MvcHtmlString BackendActionLink(this HtmlHelper source, string id, string text, int entityId, string entityName, int parentEntityId, string actionTypeCode, string actionCode)
-        {
-            return source.BackendActionLink(id, text, entityId, entityName, parentEntityId, actionTypeCode, actionCode, ActionTargetType.NewTab);
         }
 
         public static MvcHtmlString SimpleAddActionLink(this HtmlHelper source, string text)
@@ -1099,22 +1067,22 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString QpTextBox<TModel>(this HtmlHelper<TModel> source, string fieldName, string fieldValue, Dictionary<string, object> htmlAttributes = null)
         {
-            var options = source.QpHtmlProperties(fieldName, EditorType.Textbox);
-            options.Merge(htmlAttributes, true);
-            return source.TextBox(fieldName, fieldValue, options);
+            var htmlProperties = source.QpHtmlProperties(fieldName, 0, EditorType.Textbox);
+            htmlProperties.Merge(htmlAttributes, true);
+            return source.TextBox(fieldName, fieldValue, htmlProperties);
         }
 
         public static MvcHtmlString QpTextBoxFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
         {
-            var options = source.QpHtmlProperties(expression, EditorType.Textbox);
-            options.Merge(htmlAttributes, true);
-            return source.TextBoxFor(expression, options);
+            var htmlProperties = source.QpHtmlProperties(expression, EditorType.Textbox);
+            htmlProperties.Merge(htmlAttributes, true);
+            return source.TextBoxFor(expression, htmlProperties);
         }
 
         public static MvcHtmlString QpTextAreaFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Dictionary<string, object> htmlAttributes = null)
         {
-            var attrs = source.QpHtmlProperties(expression, EditorType.TextArea).Merge(htmlAttributes, true);
-            return source.TextAreaFor(expression, attrs);
+            var htmlProperties = source.QpHtmlProperties(expression, EditorType.TextArea).Merge(htmlAttributes, true);
+            return source.TextAreaFor(expression, htmlProperties);
         }
 
         public static MvcHtmlString DateTimeFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression)
@@ -1144,41 +1112,30 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static MvcHtmlString FileFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, Field field, Dictionary<string, object> htmlAttributes)
         {
             var name = ExpressionHelper.GetExpressionText(expression);
-            var options = source.QpHtmlProperties(expression, EditorType.File);
-            options.Merge(htmlAttributes, true);
-
-            return source.File(name, null, options, field, null, null, false, true, false, false);
+            var htmlProperties = source.QpHtmlProperties(expression, EditorType.File);
+            htmlProperties.Merge(htmlAttributes, true);
+            return source.File(name, null, htmlProperties, field, null, null, false, true, false, false);
         }
 
         public static MvcHtmlString QpCheckBoxFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, bool>> expression, string toggleId = null, bool reverseToggle = false, Dictionary<string, object> htmlAttributes = null)
         {
-            var options = source.QpHtmlProperties(expression, EditorType.Checkbox);
+            var htmlProperties = source.QpHtmlProperties(expression, EditorType.Checkbox);
             if (!string.IsNullOrWhiteSpace(toggleId))
             {
-                options.AddData("toggle_for", source.UniqueId(toggleId));
-                options.AddData("reverse", reverseToggle.ToString().ToLowerInvariant());
+                htmlProperties.AddData("toggle_for", source.UniqueId(toggleId));
+                htmlProperties.AddData("reverse", reverseToggle.ToString().ToLowerInvariant());
             }
 
-            options.Merge(htmlAttributes, true);
-            return source.CheckBoxFor(expression, options);
+            htmlProperties.Merge(htmlAttributes, true);
+            return source.CheckBoxFor(expression, htmlProperties);
         }
 
-        /// <summary>
-        /// Генерирует код раскрывающегося списка
-        /// </summary>
-        /// <param name="source">HTML-хелпер</param>
-        /// <param name="expression">выражение</param>
-        /// <param name="list">список элементов списка</param>
-        /// <param name="htmlAttributes"></param>
-        /// <param name="dropDownOptions">дополнительные опции</param>
-        /// <returns>код раскрывающегося списка</returns>
         public static MvcHtmlString QpDropDownListFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes, SelectOptions dropDownOptions)
         {
+            var showedList = list;
             var options = new ControlOptions { Enabled = !source.IsReadOnly() && !dropDownOptions.ReadOnly };
             var name = ExpressionHelper.GetExpressionText(expression);
-
-            var showedList = list;
-            if (dropDownOptions != null && !string.IsNullOrEmpty(dropDownOptions.DefaultOption))
+            if (!string.IsNullOrEmpty(dropDownOptions?.DefaultOption))
             {
                 showedList = new[] { new QPSelectListItem { Value = "", Text = dropDownOptions.DefaultOption } }.Concat(list).ToArray();
             }
@@ -1188,15 +1145,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.DropDownListFor(expression, showedList, options.HtmlAttributes);
         }
 
-        /// <summary>
-        /// Генерирует код списка радио-кнопок
-        /// </summary>
-        /// <param name="source">HTML-хелпер</param>
-        /// <param name="expression">выражение</param>
-        /// <param name="list">список элементов списка</param>
-        /// <param name="repeatDirection">направление списка</param>
-        /// <param name="entityDataListArgs">свойства списка сущностей</param>
-        /// <returns>код списка радио-кнопок</returns>
         public static MvcHtmlString QpRadioButtonListFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list = null, RepeatDirection repeatDirection = RepeatDirection.Horizontal, EntityDataListArgs entityDataListArgs = null, ControlOptions options = null)
         {
             var name = ExpressionHelper.GetExpressionText(expression);
@@ -1214,18 +1162,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var itemIndex = 0;
             foreach (var item in list)
             {
-                var radioButtonHtmlAttributes = source.QpHtmlProperties(expression, EditorType.RadioButton, itemIndex);
-                if (!localOptions.Enabled && !radioButtonHtmlAttributes.ContainsKey("disabled"))
+                var htmlAttributes = source.QpHtmlProperties(expression, EditorType.RadioButton, itemIndex);
+                if (!localOptions.Enabled)
                 {
-                    radioButtonHtmlAttributes.Add("disabled", "disabled");
+                    htmlAttributes = AddReadOnlyToHtmlAttributes(EditorType.RadioButton, htmlAttributes);
                 }
 
                 sb.Append("<li>");
-                sb.Append(source.RadioButtonFor(expression, item.Value, radioButtonHtmlAttributes));
+                sb.Append(source.RadioButtonFor(expression, item.Value, htmlAttributes));
                 sb.Append(" ");
                 sb.Append(source.QpLabelFor(expression, item.Text, false, itemIndex));
                 sb.AppendLine("</li>");
-
                 itemIndex++;
             }
 
@@ -1234,9 +1181,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return MvcHtmlString.Create(div.ToString());
         }
 
-        /// <summary>
-        /// Генерирует код списка чекбоксов
-        /// </summary>
         public static MvcHtmlString QpCheckBoxListFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IList<QPCheckedItem>>> expression, IEnumerable<QPSelectListItem> list, EntityDataListArgs entityDataListArgs, Dictionary<string, object> htmlAttributes, RepeatDirection repeatDirection = RepeatDirection.Vertical)
         {
             var name = ExpressionHelper.GetExpressionText(expression);
@@ -1251,6 +1195,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 item.Selected = false;
             }
+
             var propertyValue = source.GetMetaData(expression).Model as IList<QPCheckedItem>;
             if (propertyValue != null && propertyValue.Count > 0)
             {
@@ -1284,9 +1229,11 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             options.Merge(htmlAttributes, true);
-            var htmlString = source.Telerik().TreeView().Name(name).HtmlAttributes(options).ToHtmlString();
-
-            return MvcHtmlString.Create(htmlString);
+            return MvcHtmlString.Create(source.Telerik().TreeView()
+                    .Name(name)
+                    .HtmlAttributes(options)
+                    .ToHtmlString()
+            );
         }
 
         public static MvcHtmlString VirtualFieldTreeFor<TModel>(this HtmlHelper<TModel> source, Expression<Func<TModel, IEnumerable<QPTreeCheckedNode>>> expression, int? parentEntityId, int virtualContentId, Dictionary<string, object> htmlAttributes = null)
@@ -1294,7 +1241,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var options = new Dictionary<string, object>();
             options.AddData("virtual_content_id", virtualContentId);
             options.Merge(htmlAttributes, true);
-
             return source.CheckBoxTreeFor(expression, EntityTypeCode.Field, parentEntityId, ActionCode.Fields, false, options);
         }
 
@@ -1326,9 +1272,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.MultipleItemPickerFor(expression, selectedItemList, entityDataListArgs, htmlAttributes);
         }
 
-        /// <summary>
-        /// Преобразует список ListItem(BLL) в список SelectListItem(Web)
-        /// </summary>
         public static IEnumerable<QPSelectListItem> List(this HtmlHelper source, IEnumerable<ListItem> list)
         {
             var src = source;
@@ -1339,22 +1282,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 HasDependentItems = n.HasDependentItems,
                 DependentItemIDs = n.DependentItemIDs?.Select(s => src.UniqueId(s)).ToArray(),
                 Selected = n.Selected
-            });
-        }
-
-        /// <summary>
-        /// Преобразует список ListItem(BLL) в список SelectListItem(Web)
-        /// </summary>
-        /// TODO: CHECK UNUSED
-        public static IEnumerable<QPSelectListItem> List(this HtmlHelper source, IEnumerable<ListItem> list, string value)
-        {
-            var values = value.Split(',');
-            return list.Select(n => new QPSelectListItem
-            {
-                Text = n.Text,
-                Value = n.Value,
-                Selected = values.Contains(n.Value),
-                HasDependentItems = n.HasDependentItems
             });
         }
 
@@ -1371,6 +1298,35 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static string FormatAsDateTime(this HtmlHelper source, object value, DateTime? defaultValue = null)
         {
             return DateTimePart(value, "G", defaultValue);
+        }
+
+        private static Dictionary<string, object> AddReadOnlyToHtmlAttributes(EditorType type, Dictionary<string, object> htmlAttributes)
+        {
+            if (type == EditorType.TextArea ||
+                type == EditorType.Textbox ||
+                type == EditorType.Password ||
+                type == EditorType.VisualEditor)
+            {
+                return htmlAttributes.Merge(new Dictionary<string, object> { { "readonly", "readonly" } });
+            }
+
+            return htmlAttributes.Merge(new Dictionary<string, object> { { "disabled", "disabled" } });
+        }
+
+        private static Dictionary<string, object> AddReadOnlyToHtmlAttributes(Field field, Dictionary<string, object> htmlAttributes)
+        {
+            if (field.ExactType == FieldExactTypes.Textbox ||
+                field.ExactType == FieldExactTypes.VisualEdit ||
+                field.ExactType == FieldExactTypes.String ||
+                field.Type.Name == FieldTypeName.Textbox ||
+                field.Type.Name == FieldTypeName.VisualEdit ||
+                field.Type.Name == FieldTypeName.String)
+            {
+                return htmlAttributes.Merge(new Dictionary<string, object> { { "readonly", "readonly" } });
+
+            }
+
+            return htmlAttributes.Merge(new Dictionary<string, object> { { "disabled", "disabled" } });
         }
     }
 }

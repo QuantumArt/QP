@@ -16,6 +16,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.VisualEditor
 
         public bool UseEnglishQuotes { get; set; }
 
+        public bool DisableListAutoWrap { get; set; }
+
         public int Height { get; set; }
 
         public string BodyClass { get; set; }

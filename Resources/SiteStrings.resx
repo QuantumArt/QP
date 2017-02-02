@@ -585,4 +585,7 @@
   <data name="ExternalDevelopment" xml:space="preserve">
     <value>External Development</value>
   </data>
+  <data name="DisableListAutoWrap" xml:space="preserve">
+    <value>Disable list auto wrapping (ul, ol, dl)</value>
+  </data>
 </root>

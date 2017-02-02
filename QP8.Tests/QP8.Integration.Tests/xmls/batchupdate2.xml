@@ -1007,6 +1007,7 @@
     <field name="Data.DocType"></field>
     <field name="Data.PEnterMode">false</field>
     <field name="Data.UseEnglishQuotes">false</field>
+    <field name="Data.DisableListAutoWrap">true</field>
     <field name="ActiveVeCommands[0]">1</field>
     <field name="ActiveVeCommands[0]">false</field>
     <field name="ActiveVeCommands[1]">2</field>
