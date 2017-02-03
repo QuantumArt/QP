@@ -3,40 +3,40 @@
 // MergeEngine.cs
 //
 // This file contains the implementation of the functionality to compare
-// and merge two Html strings. 
+// and merge two Html strings.
 //
-// The comparison is word-wise, not character wise. Thus, the process 
-// consists of two steps. 
+// The comparison is word-wise, not character wise. Thus, the process
+// consists of two steps.
 //
-// The first step is to parse the html string into collection of English 
-// words(strong typed collection WordsCollection is defined for this) in 
+// The first step is to parse the html string into collection of English
+// words(strong typed collection WordsCollection is defined for this) in
 // such a way that:
-//    1) anything starts with '<' and ends with '>' is treated as Html 
+//    1) anything starts with '<' and ends with '>' is treated as Html
 //       tag.
-//    2) Html tags and whitespaces are treated as prefix or suffix to 
-//       adjacent word and be put in the prefix or suffix fileds of the 
+//    2) Html tags and whitespaces are treated as prefix or suffix to
+//       adjacent word and be put in the prefix or suffix fileds of the
 //       Word object.
-//    3) English words separated by space(s), "&nbsp;", "&#xxx", 
-//       tailing punctuation are treated as words and be put in the 
+//    3) English words separated by space(s), "&nbsp;", "&#xxx",
+//       tailing punctuation are treated as words and be put in the
 //       word field of Word class.
 //    4) Whitespaces immediately after or before Html tags are ignored.
 //      ( whitespaces == {' ', '\t', '\n'} )
 //
-// The second step is to compare and merge the two words collections by 
-// the algorithm proposed by [1]. The follwoing are the basic steps of 
+// The second step is to compare and merge the two words collections by
+// the algorithm proposed by [1]. The follwoing are the basic steps of
 // the algorithm (read [1] for details):
-//    1) Find the middle snake of the two sequences by searching from 
-//       both the left-up and right-bottom corners of the edit graph at 
-//       the same time. When the furthest reaching paths of the two 
-//       searches first meet, the snake is reported as middle snake. It 
+//    1) Find the middle snake of the two sequences by searching from
+//       both the left-up and right-bottom corners of the edit graph at
+//       the same time. When the furthest reaching paths of the two
+//       searches first meet, the snake is reported as middle snake. It
 //       may be empty sequence(or most likely be?).
-//    2) For the sub-sequences before the middle snake and the 
+//    2) For the sub-sequences before the middle snake and the
 //       sub-sequences after the middle snake, do recursion on them.
 //    3) Some key nomenclature:
-//       Edit Graph -- for sequences A(N) and B(M), construct graph in 
-//                     such a way that there is always edge from (A(i-1), B) 
-//                     to (A(i), B) and edge from (A, B(j-1)) to 
-//                     (A, B(j)) (vertical or parallel edge). If A(i) 
+//       Edit Graph -- for sequences A(N) and B(M), construct graph in
+//                     such a way that there is always edge from (A(i-1), B)
+//                     to (A(i), B) and edge from (A, B(j-1)) to
+//                     (A, B(j)) (vertical or parallel edge). If A(i)
 //                     == B(j) then there is edge from (A(i-1), B(j-1))
 //                     to (A(i), B(j)) (diagonal edge).
 //       Snake -- not the kind of animal here ..). a sequence of diagonal
@@ -45,30 +45,30 @@
 //                the right-bottom corner, the path that goes closest to
 //                the right-bottom corner(in other words, there are more
 //                disgonal edges on this path).
-//       LCS / SES -- Longest Common Sequence and Shortest Edit Script. 
+//       LCS / SES -- Longest Common Sequence and Shortest Edit Script.
 //                Simple say, the shortest path between left-up and right-bottom
-//                corners of the edit graph. 
-// 
+//                corners of the edit graph.
+//
 // [1] Eugene W. Myers, "An O(ND) Difference Algorithm and Its Variations"
 //     A copy of the file can be found at:
 //     http://www.xmailserver.org/diff2.pdf
-// [2] http://cvs.sourceforge.net/viewcvs.py/*checkout*/cvsgui/cvsgui/cvs-1.10/diff/analyze.c?&rev=1.1.1.3     
+// [2] http://cvs.sourceforge.net/viewcvs.py/*checkout*/cvsgui/cvsgui/cvs-1.10/diff/analyze.c?&rev=1.1.1.3
 //
 // The file is created to be used inside Rainbow(www.Rainbowportal.net)
 // to compare the staging and production contents of HtmlDocument module
-// while working in Workflow mode. However, this file can be easily 
+// while working in Workflow mode. However, this file can be easily
 // modified to be used in other senario.
 //
-// All of the code in this file are implemented from scratch by the 
+// All of the code in this file are implemented from scratch by the
 // author, with reference to the Unix Diff implementation in [2].
 //
-// This program is free and can be distributed or used for any purpose 
-// with no restriction.  
-// 
+// This program is free and can be distributed or used for any purpose
+// with no restriction.
+//
 // The author would like to thank Matt Cowan(mcowan@county.oxford.on.ca)
 // for pushing this work and undertaking lots of testings.
 //
-// Author: Hongwei Shen 
+// Author: Hongwei Shen
 // Email:  hongwei.shen@gmail.com
 // Date:   June 22, 2005
 
@@ -83,36 +83,36 @@ namespace Quantumart.QP8.Merger
     #region Data types
 
     /// <summary>
-    /// When we compare two files, we say we delete or add 
-    /// some sub sequences in the original file to result 
-    /// in the modified file. This is to define the strong 
-    /// type for identifying the status of a such sequence. 
+    /// When we compare two files, we say we delete or add
+    /// some sub sequences in the original file to result
+    /// in the modified file. This is to define the strong
+    /// type for identifying the status of a such sequence.
     /// </summary>
     internal enum SequenceStatus
     {
         /// <summary>
         /// The sequence is inside the original
-        /// file but not in the modified file 
+        /// file but not in the modified file
         /// </summary>
         Deleted = 0,
 
         /// <summary>
         /// The sequence is inside the modifed
-        /// file but not in the original file 
+        /// file but not in the original file
         /// </summary>
         Inserted,
 
         /// <summary>
-        /// The sequence is in both the origianl 
+        /// The sequence is in both the origianl
         /// and the modified files
         /// </summary>
         NoChange
     }
 
     /// <summary>
-    /// The class defines the begining and end html tag 
+    /// The class defines the begining and end html tag
     /// for marking up the deleted words in the merged
-    /// file. 
+    /// file.
     /// </summary>
     internal class CommentOff
     {
@@ -121,9 +121,9 @@ namespace Quantumart.QP8.Merger
     }
 
     /// <summary>
-    /// The class defines the begining and end html tag 
+    /// The class defines the begining and end html tag
     /// for marking up the added words in the merged
-    /// file. 
+    /// file.
     /// </summary>
     internal class Added
     {
@@ -132,7 +132,7 @@ namespace Quantumart.QP8.Merger
     }
 
     /// <summary>
-    /// Data structure for marking start and end indexes of a 
+    /// Data structure for marking start and end indexes of a
     /// sequence
     /// </summary>
     internal class Sequence
@@ -146,7 +146,7 @@ namespace Quantumart.QP8.Merger
 
         /// <summary>
         /// Overloaded Constructor that takes the start
-        /// and end indexes of the sequence. Note that 
+        /// and end indexes of the sequence. Note that
         /// the interval is open on right hand side, say,
         /// it is like [startIndex, endIndex).
         /// </summary>
@@ -167,19 +167,19 @@ namespace Quantumart.QP8.Merger
         public int StartIndex;
 
         /// <summary>
-        /// The end index of the sequence. It is 
+        /// The end index of the sequence. It is
         /// open end.
         /// </summary>
         public int EndIndex;
     }
 
     /// <summary>
-    /// This class defines middle common sequence in the original 
-    /// file and the modified file. It is called middle in the 
-    /// sense that it is the common sequence when the furthest 
-    /// forward reaching path in the top-down seaching first overlaps 
+    /// This class defines middle common sequence in the original
+    /// file and the modified file. It is called middle in the
+    /// sense that it is the common sequence when the furthest
+    /// forward reaching path in the top-down seaching first overlaps
     /// the furthest backward reaching path in the bottom up search.
-    /// See the listed reference at the top for more details. 
+    /// See the listed reference at the top for more details.
     /// </summary>
     internal class MiddleSnake
     {
@@ -194,13 +194,13 @@ namespace Quantumart.QP8.Merger
         public Sequence Source;
 
         /// <summary>
-        /// The indexes of middle snake in the destination 
+        /// The indexes of middle snake in the destination
         /// sequence
         /// </summary>
         public Sequence Destination;
 
         /// <summary>
-        /// The length of the Shortest Edit Script for the 
+        /// The length of the Shortest Edit Script for the
         /// path this snake is found.
         /// </summary>
         public int SesLength;
@@ -208,7 +208,7 @@ namespace Quantumart.QP8.Merger
 
 
     /// <summary>
-    /// An array indexer class that maps the index of an integer 
+    /// An array indexer class that maps the index of an integer
     /// array from -N ~ +N to 0 ~ 2N.
     /// </summary>
     internal class IntVector
@@ -235,9 +235,9 @@ namespace Quantumart.QP8.Merger
     #region Word and Words Collection
 
     /// <summary>
-    /// This class defines the data type for representing a 
-    /// word. The word may have leading or tailing html tags 
-    /// or other special characters. Those prefix or suffix 
+    /// This class defines the data type for representing a
+    /// word. The word may have leading or tailing html tags
+    /// or other special characters. Those prefix or suffix
     /// are not compared.
     /// </summary>
     internal class Word : IComparable
@@ -253,7 +253,7 @@ namespace Quantumart.QP8.Merger
         }
 
         /// <summary>
-        /// Overloaded constructor 
+        /// Overloaded constructor
         /// </summary>
         /// <param name="value">
         /// The word
@@ -272,7 +272,7 @@ namespace Quantumart.QP8.Merger
         }
 
         /// <summary>
-        /// The word itself 
+        /// The word itself
         /// </summary>
         public string Value { get; set; }
 
@@ -299,8 +299,8 @@ namespace Quantumart.QP8.Merger
 
         /// <summary>
         /// Overloaded function reconstructing the text
-        /// string with additional decoration around the 
-        /// _word.  
+        /// string with additional decoration around the
+        /// _word.
         /// </summary>
         /// <param name="beginTag">
         /// The begining html tag to mark the _word
@@ -317,7 +317,6 @@ namespace Quantumart.QP8.Merger
         }
 
         #region IComparable Members
-
         /// <summary>
         /// Implementation of the CompareTo. It compares
         /// the _word field.
@@ -328,11 +327,12 @@ namespace Quantumart.QP8.Merger
         {
             var word1 = obj as Word;
             if (word1 != null)
-                return String.Compare(Value, word1.Value, StringComparison.Ordinal);
-            else
-                throw new ArgumentException("The obj is not a Word", obj.ToString());
-        }
+            {
+                return string.Compare(Value, word1.Value, StringComparison.Ordinal);
+            }
 
+            throw new ArgumentException("The obj is not a Word", obj.ToString());
+        }
         #endregion
     }
 
@@ -355,12 +355,14 @@ namespace Quantumart.QP8.Merger
         /// <param name="list" type="ArrayList">
         /// ArrayList of Words
         /// </param>
-        public WordsCollection(ArrayList list)
+        public WordsCollection(IEnumerable list)
         {
             foreach (var item in list)
             {
                 if (item is Word)
+                {
                     List.Add(item);
+                }
             }
         }
 
@@ -371,7 +373,7 @@ namespace Quantumart.QP8.Merger
         /// Word object
         /// </param>
         /// <returns type="integer">
-        /// Zero based index of the added Word object in 
+        /// Zero based index of the added Word object in
         /// the colleciton
         /// </returns>
         public int Add(Word item)
@@ -419,7 +421,7 @@ namespace Quantumart.QP8.Merger
         }
 
         /// <summary>
-        /// Returns zero based index of the Word object in 
+        /// Returns zero based index of the Word object in
         /// the collection
         /// </summary>
         /// <param name="item" type="Word">
@@ -434,7 +436,7 @@ namespace Quantumart.QP8.Merger
         }
 
         /// <summary>
-        /// Array indexing operator -- get Word object at 
+        /// Array indexing operator -- get Word object at
         /// the index
         /// </summary>
         public Word this[int index]
@@ -444,7 +446,7 @@ namespace Quantumart.QP8.Merger
         }
 
         /// <summary>
-        /// Copy this WordsCollection to another one 
+        /// Copy this WordsCollection to another one
         /// starting at the specified index position
         /// </summary>
         /// <param name="col" type="WordsCollection">
@@ -462,7 +464,7 @@ namespace Quantumart.QP8.Merger
         }
 
         /// <summary>
-        /// Overloaded. Copy this WordsCollection to another one 
+        /// Overloaded. Copy this WordsCollection to another one
         /// starting at the index zero
         /// </summary>
         /// <param name="col" type="WordCollection">
@@ -479,14 +481,14 @@ namespace Quantumart.QP8.Merger
 
     /// <summary>
     /// The class defines static method that processes html text
-    /// string in such a way that the text is striped out into 
-    /// separate english words with html tags and some special 
+    /// string in such a way that the text is striped out into
+    /// separate english words with html tags and some special
     /// characters as the prefix or suffix of the words. This way,
-    /// the original html text string can be reconstructed to 
-    /// retain the original appearance by concating each word 
-    /// object in the collection in such way as word.prefix + 
+    /// the original html text string can be reconstructed to
+    /// retain the original appearance by concating each word
+    /// object in the collection in such way as word.prefix +
     /// word.word + word.suffix.
-    ///  
+    ///
     /// The generated words collection will be used to compare
     /// the difference with another html text string in such format.
     /// </summary>
@@ -494,7 +496,7 @@ namespace Quantumart.QP8.Merger
     {
         /// <summary>
         /// Static method that parses the passed-in string into
-        /// Words collection 
+        /// Words collection
         /// </summary>
         /// <param name="s">
         /// String
@@ -511,7 +513,7 @@ namespace Quantumart.QP8.Merger
 
             while (curPos < s.Length)
             {
-                // eat the leading or tailing white spaces 
+                // eat the leading or tailing white spaces
                 var prevPos = curPos;
                 while (curPos < s.Length &&
                    (char.IsControl(s[curPos]) ||
@@ -533,22 +535,22 @@ namespace Quantumart.QP8.Merger
                     break;
                 }
 
-                // we have 3 different cases here, 
-                // 1) if the string starts with '<', we assume 
-                //    that it is a html tag which will be put 
+                // we have 3 different cases here,
+                // 1) if the string starts with '<', we assume
+                //    that it is a html tag which will be put
                 //    into prefix.
-                // 2) starts with '&', we need to check if it is 
-                //    "&nbsp;" or "&#xxx;". If it is the former, 
-                //    we treat it as prefix and if it is latter, 
+                // 2) starts with '&', we need to check if it is
+                //    "&nbsp;" or "&#xxx;". If it is the former,
+                //    we treat it as prefix and if it is latter,
                 //    we treat it as a word.
-                // 3) a string that may be a real word or a set 
+                // 3) a string that may be a real word or a set
                 //    of words separated by "&nbsp;" or may have
-                //    leading special character or tailing 
-                //    punctuation. 
-                // 
+                //    leading special character or tailing
+                //    punctuation.
+                //
                 // Another possible case that is too complicated
                 // or expensive to handle is that some special
-                // characters are embeded inside the word with 
+                // characters are embeded inside the word with
                 // no space separation
                 if (s[curPos] == '<')
                 {
@@ -565,7 +567,7 @@ namespace Quantumart.QP8.Merger
                     {
                         // if we come to this point, it means
                         // the html tag is not closed. Anyway,
-                        // we are not validating html, so just 
+                        // we are not validating html, so just
                         // report a empty word with prefix.
                         words.Add(new Word("", prefix, ""));
                         break;
@@ -575,7 +577,7 @@ namespace Quantumart.QP8.Merger
                     curPos++;
                     if (curPos == s.Length)
                     {
-                        // the html tag is closed but nothing more 
+                        // the html tag is closed but nothing more
                         // behind, so report a empty word with prefix.
                         words.Add(new Word("", prefix, ""));
                         break;
@@ -623,7 +625,7 @@ namespace Quantumart.QP8.Merger
                         }
 
                         // can't think of anything else that is special,
-                        // have to treat it as a '&' leaded word. Hope 
+                        // have to treat it as a '&' leaded word. Hope
                         // it is just single '&' for and in meaning.
                         prevPos = curPos;
                         while (curPos < s.Length &&
@@ -689,10 +691,10 @@ namespace Quantumart.QP8.Merger
         /// Collection that new word(s) will be added in
         /// </param>
         /// <param name="prefix">
-        /// prefix come with the string 
+        /// prefix come with the string
         /// </param>
         /// <param name="word">
-        /// A string that may be a real word or have leading or tailing 
+        /// A string that may be a real word or have leading or tailing
         /// special character
         /// </param>
         /// <param name="suffix">
@@ -702,7 +704,7 @@ namespace Quantumart.QP8.Merger
             string prefix, string word, string suffix)
         {
             // the passed in word may have leading special
-            // characters such as '(', '"' etc or tailing 
+            // characters such as '(', '"' etc or tailing
             // punctuations. We need to sort this out.
             var length = word.Length;
 
@@ -736,7 +738,7 @@ namespace Quantumart.QP8.Merger
     #region Merge Engine
 
     /// <summary>
-    /// The class provides functionality to compare two html 
+    /// The class provides functionality to compare two html
     /// files and merge them into a new file with differences
     /// highlighted
     /// </summary>
@@ -755,7 +757,7 @@ namespace Quantumart.QP8.Merger
 
         public MergeProcessor(string original, string modified)
         {
-            // parse the passed in string to words 
+            // parse the passed in string to words
             // collections
             _original = HtmlTextParser.Parse(original);
             _modified = HtmlTextParser.Parse(modified);
@@ -781,19 +783,19 @@ namespace Quantumart.QP8.Merger
 
         /// <summary>
         /// In the edit graph for the sequences src and des, search for the
-        /// optimal(shortest) path from (src.StartIndex, des.StartIndex) to 
-        /// (src.EndIndex, des.EndIndex). 
-        /// 
-        /// The searching starts from both ends of the graph and when the 
+        /// optimal(shortest) path from (src.StartIndex, des.StartIndex) to
+        /// (src.EndIndex, des.EndIndex).
+        ///
+        /// The searching starts from both ends of the graph and when the
         /// furthest forward reaching overlaps with the furthest backward
         /// reaching, the overlapped point is reported as the middle point
-        /// of the shortest path. 
-        /// 
-        /// See the listed reference for the detailed description of the 
-        /// algorithm  
+        /// of the shortest path.
+        ///
+        /// See the listed reference for the detailed description of the
+        /// algorithm
         /// </summary>
         /// <param name="src">
-        /// Represents a (sub)sequence of _original 
+        /// Represents a (sub)sequence of _original
         /// </param>
         /// <param name="des"></param>
         /// <returns>
@@ -813,35 +815,43 @@ namespace Quantumart.QP8.Merger
             // middle point of backward searching
             var bwdMid = src.EndIndex - des.EndIndex;
 
-            // forward seaching range 
+            // forward seaching range
             var fwdMin = fwdMid;
             var fwdMax = fwdMid;
 
-            // backward seaching range 
+            // backward seaching range
             var bwdMin = bwdMid;
             var bwdMax = bwdMid;
 
-            var odd = ((fwdMin - bwdMid) & 1) == 1;
+            var odd = (fwdMin - bwdMid & 1) == 1;
 
             _fwdVector[fwdMid] = src.StartIndex;
             _bwdVector[bwdMid] = src.EndIndex;
 
-#if (MyDEBUG) 
+#if (MyDEBUG)
             Debug.WriteLine("-- Entering Function findMiddleSnake(src, des) --");
 #endif
             for (d = 1; ; d++)
             {
                 // extend or shrink the search range
                 if (fwdMin > minDiag)
+                {
                     _fwdVector[--fwdMin - 1] = -1;
+                }
                 else
+                {
                     ++fwdMin;
+                }
 
                 if (fwdMax < maxDiag)
+                {
                     _fwdVector[++fwdMax + 1] = -1;
+                }
                 else
+                {
                     --fwdMax;
-#if (MyDEBUG) 
+                }
+#if (MyDEBUG)
                 Debug.WriteLine(d, "  D path");
 #endif
                 // top-down search
@@ -881,11 +891,11 @@ namespace Quantumart.QP8.Merger
                     if (odd && k >= bwdMin && k <= bwdMax && x >= _bwdVector[k])
                     {
                         // this is the snake we are looking for
-                        // and set the end indeses of the snake 
+                        // and set the end indeses of the snake
                         midSnake.Source.EndIndex = x;
                         midSnake.Destination.EndIndex = y;
                         midSnake.SesLength = 2 * d - 1;
-#if (MyDEBUG)      
+#if (MyDEBUG)
                         Debug.WriteLine("!!!Report snake from forward search");
                         Debug.WriteLine(midSnake.Source.StartIndex, "  middle snake source start index");
                         Debug.WriteLine(midSnake.Source.EndIndex, "  middle snake source end index");
@@ -898,14 +908,22 @@ namespace Quantumart.QP8.Merger
 
                 // extend the search range
                 if (bwdMin > minDiag)
+                {
                     _bwdVector[--bwdMin - 1] = int.MaxValue;
+                }
                 else
+                {
                     ++bwdMin;
+                }
 
                 if (bwdMax < maxDiag)
+                {
                     _bwdVector[++bwdMax + 1] = int.MaxValue;
+                }
                 else
+                {
                     --bwdMax;
+                }
 
                 // bottom-up search
                 for (k = bwdMax; k >= bwdMin; k -= 2)
@@ -941,7 +959,7 @@ namespace Quantumart.QP8.Merger
                     if (!odd && k >= fwdMin && k <= fwdMax && x <= _fwdVector[k])
                     {
                         // this is the snake we are looking for
-                        // and set the start indexes of the snake 
+                        // and set the start indexes of the snake
                         midSnake.Source.StartIndex = x;
                         midSnake.Destination.StartIndex = y;
                         midSnake.SesLength = 2 * d;
@@ -959,9 +977,9 @@ namespace Quantumart.QP8.Merger
         }
 
         /// <summary>
-        /// The function merges the two sequences and returns the merged 
-        /// html text string with deleted(exists in source sequence but 
-        /// not in destination sequence) and added(exists in destination 
+        /// The function merges the two sequences and returns the merged
+        /// html text string with deleted(exists in source sequence but
+        /// not in destination sequence) and added(exists in destination
         /// but not in source) decorated extra html tags defined in class
         /// commentoff and class added.
         /// </summary>
@@ -1019,11 +1037,12 @@ namespace Quantumart.QP8.Merger
             // Special cases
             if (n < 1 && m < 1)
             {
-                // both source and destination are 
+                // both source and destination are
                 // empty
-                return (result.Append(tail)).ToString();
+                return result.Append(tail).ToString();
             }
-            else if (n < 1)
+
+            if (n < 1)
             {
                 // source is already empty, report
                 // destination as added
@@ -1031,7 +1050,8 @@ namespace Quantumart.QP8.Merger
                 result.Append(tail);
                 return result.ToString();
             }
-            else if (m < 1)
+
+            if (m < 1)
             {
                 // destination is empty, report source as
                 // deleted
@@ -1039,9 +1059,10 @@ namespace Quantumart.QP8.Merger
                 result.Append(tail);
                 return result.ToString();
             }
-            else if (m == 1 && n == 1)
+
+            if (m == 1 && n == 1)
             {
-                // each of source and destination has only 
+                // each of source and destination has only
                 // one word left. At this point, we are sure
                 // that they are not equal.
                 result.Append(ConstructText(src, SequenceStatus.Deleted));
@@ -1049,95 +1070,91 @@ namespace Quantumart.QP8.Merger
                 result.Append(tail);
                 return result.ToString();
             }
-            else
+
+            // find the middle snake
+            var snake = FindMiddleSnake(src, des);
+
+            if (snake.SesLength > 1)
             {
-                // find the middle snake
-                var snake = FindMiddleSnake(src, des);
+                // prepare the parameters for recursion
+                var leftSrc = new Sequence(src.StartIndex, snake.Source.StartIndex);
+                var leftDes = new Sequence(des.StartIndex, snake.Destination.StartIndex);
+                var rightSrc = new Sequence(snake.Source.EndIndex, src.EndIndex);
+                var rightDes = new Sequence(snake.Destination.EndIndex, des.EndIndex);
 
-                if (snake.SesLength > 1)
+                result.Append(DoMerge(leftSrc, leftDes));
+                if (snake.Source.StartIndex < snake.Source.EndIndex)
                 {
-                    // prepare the parameters for recursion
-                    var leftSrc = new Sequence(src.StartIndex, snake.Source.StartIndex);
-                    var leftDes = new Sequence(des.StartIndex, snake.Destination.StartIndex);
-                    var rightSrc = new Sequence(snake.Source.EndIndex, src.EndIndex);
-                    var rightDes = new Sequence(snake.Destination.EndIndex, des.EndIndex);
+                    // the snake is not empty, report it as common
+                    // sequence
+                    result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
+                }
+                result.Append(DoMerge(rightSrc, rightDes));
+                result.Append(tail);
+                return result.ToString();
+            }
 
-                    result.Append(DoMerge(leftSrc, leftDes));
-                    if (snake.Source.StartIndex < snake.Source.EndIndex)
-                    {
-                        // the snake is not empty, report it as common 
-                        // sequence
-                        result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
-                    }
-                    result.Append(DoMerge(rightSrc, rightDes));
-                    result.Append(tail);
-                    return result.ToString();
+            // Separating this case out can at least save one
+            // level of recursion.
+            //
+            // Only one edit edge suggests the 4 possible cases.
+            // if N > M, it will be either:
+            //    -              or    \
+            //      \   (case 1)        \   (case 2)
+            //       \                   -
+            // if N < M, it will be either:
+            //    |              or    \
+            //     \    (case 3)        \   (case 4)
+            //      \                    |
+            // N and M can't be equal!
+            if (n > m)
+            {
+                if (src.StartIndex != snake.Source.StartIndex)
+                {
+                    // case 1
+                    var leftSrc = new Sequence(src.StartIndex, snake.Source.StartIndex);
+                    result.Append(ConstructText(leftSrc, SequenceStatus.Deleted));
+                    result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
                 }
                 else
                 {
-                    // Separating this case out can at least save one
-                    // level of recursion.
-                    //
-                    // Only one edit edge suggests the 4 possible cases.
-                    // if N > M, it will be either:
-                    //    -              or    \     
-                    //      \   (case 1)        \   (case 2)
-                    //       \                   -
-                    // if N < M, it will be either:
-                    //    |              or    \     
-                    //     \    (case 3)        \   (case 4)
-                    //      \                    |
-                    // N and M can't be equal!
-                    if (n > m)
-                    {
-                        if (src.StartIndex != snake.Source.StartIndex)
-                        {
-                            // case 1
-                            var leftSrc = new Sequence(src.StartIndex, snake.Source.StartIndex);
-                            result.Append(ConstructText(leftSrc, SequenceStatus.Deleted));
-                            result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
-                        }
-                        else
-                        {
-                            // case 2
-                            var rightSrc = new Sequence(snake.Source.StartIndex, src.EndIndex);
-                            result.Append(ConstructText(rightSrc, SequenceStatus.Deleted));
-                            result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
-                        }
-                    }
-                    else
-                    {
-                        if (des.StartIndex != snake.Destination.StartIndex)
-                        {
-                            // case 3
-                            var upDes = new Sequence(des.StartIndex, snake.Destination.StartIndex);
-                            result.Append(ConstructText(upDes, SequenceStatus.Inserted));
-                            result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
-                        }
-                        else
-                        {
-                            // case 4
-                            var bottomDes = new Sequence(snake.Destination.EndIndex, des.EndIndex);
-                            result.Append(ConstructText(bottomDes, SequenceStatus.Inserted));
-                            result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
-                        }
-                    }
-                    result.Append(tail);
-                    return result.ToString();
+                    // case 2
+                    var rightSrc = new Sequence(snake.Source.StartIndex, src.EndIndex);
+                    result.Append(ConstructText(rightSrc, SequenceStatus.Deleted));
+                    result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
                 }
             }
+            else
+            {
+                if (des.StartIndex != snake.Destination.StartIndex)
+                {
+                    // case 3
+                    var upDes = new Sequence(des.StartIndex, snake.Destination.StartIndex);
+                    result.Append(ConstructText(upDes, SequenceStatus.Inserted));
+                    result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
+                }
+                else
+                {
+                    // case 4
+                    var bottomDes = new Sequence(snake.Destination.EndIndex, des.EndIndex);
+                    result.Append(ConstructText(bottomDes, SequenceStatus.Inserted));
+                    result.Append(ConstructText(snake.Destination, SequenceStatus.NoChange));
+                }
+            }
+            result.Append(tail);
+            return result.ToString();
         }
 
         /// <summary>
         /// The function returns a html text string reconstructed
-        /// from the sub collection of words its starting and ending 
+        /// from the sub collection of words its starting and ending
         /// indexes are marked by parameter seq and its collection is
-        /// denoted by parameter status. If the status is "deleted", 
+        /// denoted by parameter status. If the status is "deleted",
         /// then the _original collection is used, otherwise, _modified
-        /// is used. 
+        /// is used.
         /// </summary>
         /// <param name="seq">
-        /// Sequence object that marks the start index and end 
+        /// Sequence object that marks the start index and end
         /// index of the sub sequence
         /// </param>
         /// <param name="status">
@@ -1178,7 +1195,7 @@ namespace Quantumart.QP8.Merger
                 case SequenceStatus.NoChange:
                     // the sequence exists in both _original and
                     // _modified and will be left as what it is in
-                    // the merged file. We chose to reconstruct from 
+                    // the merged file. We chose to reconstruct from
                     // _modified collection
                     BlocksSame++;
                     for (var i = seq.StartIndex; i < seq.EndIndex; i++)
@@ -1186,19 +1203,19 @@ namespace Quantumart.QP8.Merger
                         result.Append(_modified[i].Reconstruct());
                     }
                     break;
-                // this will not happen (hope)
+                    // this will not happen (hope)
             }
             return result.ToString();
         }
 
         /// <summary>
         /// The public function merges the two copies of
-        /// files stored inside this class. The html tags 
-        /// of the destination file is used in the merged 
+        /// files stored inside this class. The html tags
+        /// of the destination file is used in the merged
         /// file.
         /// </summary>
         /// <returns>
-        /// The merged file 
+        /// The merged file
         /// </returns>
         public string Merge()
         {
