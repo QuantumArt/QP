@@ -1,0 +1,12 @@
+﻿.doctab-title__articles-count-label {
+  float: left !important;
+}
+
+.doctab-title__articles-count-label--selected {
+  float: right !important;
+}
+
+.doctab-title__articles-count-label span, .doctab-title__articles-count-label--selected span {
+  color: #283C52;
+  font-weight: bold;
+}

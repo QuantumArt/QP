@@ -19,7 +19,6 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   _uniqueFieldToUpdatePredicate: null,
   _identifiersPredicate: null,
 
-  //Settings for file upload
   _renameMatch: true,
   _useSiteLibrary: false,
   _uploaderType: Quantumart.QP8.Enums.UploaderType.PlUpload,
@@ -28,7 +27,6 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   _noHeadersId: 'NoHeaders',
   options: null,
 
-  //Private Methods
   _initFileUploader: function(context, uploadPath) {
     this._fileWrapperElementId = context._popupWindowId + '_upload_pl_cont_import';
     this._fileWrapperElement = document.getElementById(this._fileWrapperElementId);
@@ -75,10 +73,8 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
 
     this._fieldsPredicate = function($select) {
       var identifierSelected = true;
-
       if ($select) {
-        var $identifier = $select.parent().children().first().filter("select[data-identifier='True']");
-
+        var $identifier = $select.closest('.import-field-group-container').find('select:first').filter("[data-identifier='True']");
         if ($identifier.length == 1) {
           identifierSelected = $identifier.val() != '-1';
         }
@@ -88,29 +84,29 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     };
 
     this._identifiersPredicate = function($select) {
-      return $select.parent().find('[data-identifier="False"]select[value!="-1"]').length > 0;
+      return $select.closest('.import-field-group-container').find('[data-identifier="False"]select[value!="-1"]').length > 0;
     };
 
     this._$uniqueFieldToUpdate.on('change', this._validateSelect(this._uniqueFieldToUpdatePredicate));
     this._$fieldGroup
-            .on('change', "select[data-identifier='True']", function() {
-              that._validateSelect(that._identifiersPredicate).call(this);
-              var $fields = $(this).parent().find("select[data-required='True']");
+      .on('change', "select[data-identifier='True']", function() {
+        that._validateSelect(that._identifiersPredicate).call(this);
+        var $fields = $(this).closest('.import-field-group-container').find("select[data-required='True']");
 
-              that._showValidationSigns($fields, that._fieldsPredicate);
-              $fields.each(function() {
-                that._validateSelect(that._fieldsPredicate).call(this);
-              });
-            })
-            .on('change', "select[data-required='True']", this._validateSelect(this._fieldsPredicate))
-            .on('change', 'select[data-required]', function() {
-              var $identifiers = that._$identifiers;
+        that._showValidationSigns($fields, that._fieldsPredicate);
+        $fields.each(function() {
+          that._validateSelect(that._fieldsPredicate).call(this);
+        });
+      })
+      .on('change', "select[data-required='True']", this._validateSelect(this._fieldsPredicate))
+      .on('change', 'select[data-required]', function() {
+        var $identifiers = that._$identifiers;
 
-              that._showValidationSigns($identifiers, that._identifiersPredicate);
-              $identifiers.each(function() {
-                that._validateSelect(that._identifiersPredicate).call(this);
-              });
-            });
+        that._showValidationSigns($identifiers, that._identifiersPredicate);
+        $identifiers.each(function() {
+          that._validateSelect(that._identifiersPredicate).call(this);
+        });
+      });
 
     if (this._$uniqueContentFieldId.length == 1) {
       this._$uniqueContentFieldId.on('change', function() {
@@ -141,19 +137,14 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       $(this._$uniqueFieldToUpdate).addClass('mapped');
       $(this._$uniqueContentFieldId).addClass('mapped');
 
-      var $fieldDescription = $('span.relatedFieldsArray').filter(function() {
+      var $fieldDescription = $('.select-block-container').filter(function() {
         return $(this).text() === that._$uniqueContentFieldId.find('option:selected').text();
       });
 
       $fieldDescription.addClass('mapped');
       var $select = $fieldDescription.prev().prev();
-
       $select.addClass('mapped');
       $select.find("option[value!='-1']option[value!='" + this._$uniqueFieldToUpdate.val() + "']").hide();
-
-      if ($select.attr('data-broken-integrity') == 'True') {
-        $(this._$uniqueContentFieldId).addClass('input-validation-error');
-      }
 
       if (this._$uniqueFieldToUpdate.val() != $select.val()) {
         $select.val('-1');
@@ -228,7 +219,6 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     }
   },
 
-  //Public Methods
   AddButtons: function(dataItems) {
     var importButton = {
       Type: TOOLBAR_ITEM_TYPE_BUTTON,
@@ -259,20 +249,14 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       errorMessage = $l.MultistepAction.UniqueFieldToUpdate;
     }
 
-    var $select = $('span.relatedFieldsArray').filter(function() {
+    var $select = $('.select-block-container').filter(function() {
       return $(this).text() === that._$uniqueContentFieldId.find('option:selected').text();
     });
 
-    if ($select.prev().prev().attr('data-broken-integrity') == 'True') {
-      errorMessage = that._addMessageLine(errorMessage);
-      errorMessage = $l.MultistepAction.BrokenDataIntegrity + $select.text();
-    }
-
     $('select[data-identifier="True"]select[value="-1"]').each(function() {
-      $(this).parent().find("select[data-required='True']").each(function() {
+      $(this).closest('.import-field-group-container').find("select[data-required='True']").each(function() {
         if (that._identifiersPredicate($(this))) {
           var content = $(this).parents('fieldset:first').find('legend').text();
-
           errorMessage = that._addMessageLine(errorMessage);
           errorMessage += $l.MultistepAction.UniqueExtensionFieldToUpdate + ' ' + content;
         }
@@ -282,7 +266,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     this._$fields.each(function() {
       if (that._fieldsPredicate($(this)) && +$(this).val() == -1) {
         errorMessage = that._addMessageLine(errorMessage);
-        errorMessage += $(this).nextAll('.relatedFieldsArray').html() + $l.MultistepAction.RequiredField;
+        errorMessage += $(this).nextAll('.select-block-container').html() + $l.MultistepAction.RequiredField;
       }
     });
 
@@ -302,6 +286,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     $(documentId + 'input[name="Delimiter"]').on('click', function() {
       that.loadFromFile(options, this.value);
     });
+
     $('#' + options._popupWindowId + '_Encoding, #' + options._popupWindowId + '_LineSeparator').on('change', function() {
       that.loadFromFile(options);
     });
@@ -310,6 +295,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       that.loadFromFile(options);
     }
   },
+
   loadFromFile: function(options) {
     var that = this;
     var prms = $('#' + options._popupWindowComponent._documentWrapperElementId + ' form input, #' + options._popupWindowComponent._documentWrapperElementId + ' form select').serialize();
@@ -321,9 +307,9 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
       data: prms,
       type: 'POST',
       success: function(fieldsFromFile) {
-        if (fieldsFromFile.Type == 'Error') {
+        if (fieldsFromFile.Type === 'Error') {
           $('#' + that.options._popupWindowId + '_mapping_fields_selects').hide();
-          alert(fieldsFromFile.Text);
+          window.alert(fieldsFromFile.Text);
         } else {
           if (fieldsFromFile) {
             that._fillOptionsFromFile(fieldsFromFile);
@@ -335,11 +321,10 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
   },
 
   _fillOptionsFromFile: function(fields) {
-    var options = new Array();
     var fieldsClass = ' .dropDownList.dataList.fields';
     var documentId = '#' + this.options._popupWindowComponent._documentWrapperElementId + ' ';
-    $(documentId + fieldsClass).html('');
     $.each($(documentId + fieldsClass), function(index, item) {
+      $(item).html('');
       $(item).append($('<option>', {
         value: -1,
         text: ''

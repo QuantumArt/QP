@@ -4,13 +4,13 @@
     {
         Textbox,
         TextArea,
-		Numeric,
-		VisualEditor,
+        Numeric,
+        VisualEditor,
         Checkbox,
         Select,
-		ListBox,
+        ListBox,
         RadioButton,
         Password,
-		File
+        File
     }
 }

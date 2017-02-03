@@ -1,8 +1,9 @@
-﻿using AutoMapper;
-using Quantumart.QP8.BLL.Services.VisualEditor;
-using Quantumart.QP8.Utils;
 using System;
 using System.Data;
+using AutoMapper;
+using Quantumart.QP8.BLL.Services.VisualEditor;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.BLL.Mappers.VisualEditor
 {
@@ -21,8 +22,8 @@ namespace Quantumart.QP8.BLL.Mappers.VisualEditor
                 .ForMember(biz => biz.IsSystem, opt => opt.MapFrom(row => row.Field<bool>("IS_SYSTEM")))
                 .ForMember(biz => biz.Attributes, opt => opt.MapFrom(row => row.Field<string>("ATTRIBUTES")))
                 .ForMember(biz => biz.Styles, opt => opt.MapFrom(row => row.Field<string>("STYLES")))
-                .ForMember(biz => biz.Created, opt => opt.MapFrom(row => row.Field<DateTime>("CREATED")))
-                .ForMember(biz => biz.Modified, opt => opt.MapFrom(row => row.Field<DateTime>("MODIFIED")))
+                .ForMember(biz => biz.Created, opt => opt.MapFrom(row => row.Field<DateTime>(FieldName.Created)))
+                .ForMember(biz => biz.Modified, opt => opt.MapFrom(row => row.Field<DateTime>(FieldName.Modified)))
                 .ForMember(biz => biz.On, opt => opt.MapFrom(row => row.Field<bool>("ON")));
         }
     }

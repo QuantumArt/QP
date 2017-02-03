@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Quantumart.QP8.Constants
+﻿namespace Quantumart.QP8.Constants
 {
     /// <summary>
     /// Шаблоны регулярных выражений

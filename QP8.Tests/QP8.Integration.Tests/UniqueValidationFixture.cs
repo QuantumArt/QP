@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
@@ -50,14 +51,14 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["abc"] = "Name3"
             };
 
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
                 ["abc"] = "Name3"
             };
 
@@ -71,14 +72,14 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "Name3"
             };
 
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0",
+                [FieldName.ContentItemId] = "0",
                 ["Title"] = "Name3"
             };
 
@@ -97,7 +98,7 @@ namespace QP8.Integration.Tests
             var id = (decimal)Cnn.GetRealScalarData(new SqlCommand($"select content_item_id from content_{ContentId}_united where [Title] <> 'Name2'"));
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = id.ToString(CultureInfo.InvariantCulture),
+                [FieldName.ContentItemId] = id.ToString(CultureInfo.InvariantCulture),
                 ["Title"] = "Name2",
                 ["Number"] = "9,5"
             };
@@ -128,14 +129,14 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Title"] = "Name5"
             };
 
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
                 ["Title"] = "Name5"
             };
 
@@ -159,7 +160,7 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Title"] = "Name5",
                 ["Number"] = "10"
             };
@@ -167,7 +168,7 @@ namespace QP8.Integration.Tests
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
                 ["Title"] = "Name5"
             };
 
@@ -175,7 +176,7 @@ namespace QP8.Integration.Tests
             var values2 = new List<Dictionary<string, string>>();
             var article3 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0"
+                [FieldName.ContentItemId] = "0"
             };
 
             values2.Add(article3);
@@ -210,7 +211,7 @@ namespace QP8.Integration.Tests
 
             var article3 = new Hashtable
             {
-                [SystemColumnNames.Id] = "0"
+                [FieldName.ContentItemId] = "0"
             };
 
             using (var conn = new SqlConnection(Global.ConnectionString))
@@ -243,7 +244,7 @@ namespace QP8.Integration.Tests
             var second = ContentItem.Read(BaseArticlesIds[1], Cnn);
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Title"] = first.FieldValues["Title"].Data,
                 ["Number"] = first.FieldValues["Number"].Data
             };
@@ -251,12 +252,12 @@ namespace QP8.Integration.Tests
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
                 ["Title"] = second.FieldValues["Title"].Data,
                 ["Number"] = second.FieldValues["Number"].Data
             };
-            values.Add(article2);
 
+            values.Add(article2);
             var modified = Global.GetModified(Cnn, ContentId);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1), "Update existing data");
 
@@ -303,7 +304,7 @@ namespace QP8.Integration.Tests
             var second = ContentItem.Read(BaseArticlesIds[1], Cnn);
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Title"] = second.FieldValues["Title"].Data,
                 ["Number"] = second.FieldValues["Number"].Data
             };
@@ -311,7 +312,7 @@ namespace QP8.Integration.Tests
             values.Add(article1);
             var article2 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[1].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[1].ToString(),
                 ["Title"] = first.FieldValues["Title"].Data,
                 ["Number"] = first.FieldValues["Number"].Data
 
@@ -330,19 +331,17 @@ namespace QP8.Integration.Tests
             Assert.That(second2.FieldValues["Title"].Data, Is.EqualTo(first.FieldValues["Title"].Data), "Data should be swapped");
         }
 
-
         [Test]
         public void MassUpdate_ThrowsException_ValidateAttributeValueMissedData()
         {
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = "0"
+                [FieldName.ContentItemId] = "0"
             };
 
             values.Add(article1);
-            Assert.That(
-                () => Cnn.MassUpdate(ContentId, values, 1),
+            Assert.That(() => Cnn.MassUpdate(ContentId, values, 1),
                 Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("is required"),
                 "Validate required fields"
             );
@@ -353,15 +352,13 @@ namespace QP8.Integration.Tests
         {
             var article1 = new Hashtable
             {
-                [SystemColumnNames.Id] = "0"
+                [FieldName.ContentItemId] = "0"
             };
 
             Assert.That(() =>
             {
                 Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
-            },
-            Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("is required"),
-            "Validate required fields");
+            }, Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("is required"), "Validate required fields");
         }
 
         [Test]
@@ -370,7 +367,7 @@ namespace QP8.Integration.Tests
             var values = new List<Dictionary<string, string>>();
             var article1 = new Dictionary<string, string>
             {
-                [SystemColumnNames.Id] = BaseArticlesIds[0].ToString(),
+                [FieldName.ContentItemId] = BaseArticlesIds[0].ToString(),
                 ["Title"] = new string('*', 1000)
             };
 
@@ -391,13 +388,7 @@ namespace QP8.Integration.Tests
                 [titleName] = new string('*', 1000)
             };
 
-            Assert.That(() =>
-                {
-                    Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]);
-                },
-                Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("too long"),
-                "Validate string size"
-            );
+            Assert.That(() => { Cnn.AddFormToContent(Global.SiteId, ContentName, "Published", ref article1, BaseArticlesIds[0]); }, Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("too long"), "Validate string size");
         }
 
         [OneTimeTearDown]

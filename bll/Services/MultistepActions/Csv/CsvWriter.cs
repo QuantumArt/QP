@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Quantumart.QP8.BLL.Enums.Csv;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
@@ -16,7 +18,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
     public class CsvWriter
     {
         private const string FolderForUpload = "temp";
-        private const string IdentifierFieldName = "CONTENT_ITEM_ID";
+        private const string IdentifierFieldName = FieldName.ContentItemId;
         private const string ExtensionQueryTemplate = " LEFT JOIN CONTENT_{0} [ex{1}] ON [ex{1}].[{2}] = base.CONTENT_ITEM_ID ";
         private const string FieldNameQueryTemplate = "[ex{0}].[{1}] [{0}.{1}]";
         private const string FieldNameHeaderTemplate = "{0}.{1}";
@@ -97,7 +99,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private void WriteFieldNames()
         {
-            if (_settings.Delimiter != '\t')
+            if (_settings.Delimiter.ToString() != CsvDelimiter.Tab.Description())
             {
                 _sb.AppendFormat("sep={0}", _settings.Delimiter);
                 _sb.Append(_settings.LineSeparator);
@@ -136,69 +138,71 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             var articles = GetArticlesForExport(_settings.FieldsToExpandSettings);
             var aliases = _settings.FieldsToExpandSettings.Select(n => n.Alias).ToArray();
-            using (var sw = new StreamWriter(_settings.UploadFilePath, true, Encoding.GetEncoding(_settings.Encoding)))
+
+            var fields = ExtensionContents.SelectMany(c => c.Fields).Concat(FieldRepository.GetFullList(_contentId)).ToList();
+            var ids = articles.AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_id")).ToArray();
+            var extensionIdsMap = ExtensionContents.ToDictionary(c => c.Id, c => articles
+                .AsEnumerable()
+                .Select(n => n.Field<decimal?>(string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName)))
+                .Where(n => n.HasValue)
+                .Select(n => (int)n.Value)
+                .ToArray()
+            );
+
+            if (articles.Any())
             {
-                var fields = ExtensionContents.SelectMany(c => c.Fields).Concat(FieldRepository.GetFullList(_contentId)).ToList();
-                var ids = articles.AsEnumerable().Select(n => (int)n.Field<decimal>("content_item_id")).ToArray();
-                var extensionIdsMap = ExtensionContents.ToDictionary(c => c.Id, c => articles
-                    .AsEnumerable()
-                    .Select(n => n.Field<decimal?>(string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName)))
-                    .Where(n => n.HasValue)
-                    .Select(n => (int)n.Value)
-                    .ToArray()
-                );
+                var dict = fields
+                    .Where(n => n.ExactType == FieldExactTypes.M2MRelation && articles[0].Table.Columns.Contains(n.ContentId == _contentId ? n.Name : string.Format(FieldNameHeaderTemplate, n.Content.Name, n.Name)))
+                    .Select(n => new { LinkId = n.LinkId.Value, n.ContentId })
+                    .ToDictionary(n => n.LinkId, m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : extensionIdsMap[m.ContentId]));
 
-                if (articles.Any())
+                foreach (var article in articles)
                 {
-                    var dict = fields
-                        .Where(n => n.ExactType == FieldExactTypes.M2MRelation && articles[0].Table.Columns.Contains(n.ContentId == _contentId ? n.Name : string.Format(FieldNameHeaderTemplate, n.Content.Name, n.Name)))
-                        .Select(n => new { LinkId = n.LinkId.Value, n.ContentId })
-                        .ToDictionary(n => n.LinkId, m => ArticleRepository.GetLinkedItemsMultiple(m.LinkId, m.ContentId == _contentId ? ids : extensionIdsMap[m.ContentId]));
-
-                    foreach (var article in articles)
+                    _sb.AppendFormat("{0}{1}", article["content_item_id"], _settings.Delimiter);
+                    foreach (DataColumn column in article.Table.Columns)
                     {
-                        _sb.AppendFormat("{0}{1}", article["content_item_id"], _settings.Delimiter);
-                        foreach (DataColumn column in article.Table.Columns)
+                        var value = article[column.ColumnName].ToString();
+                        var field = fields.FirstOrDefault(f => f.ContentId == _contentId ? f.Name == column.ColumnName : string.Format(FieldNameHeaderTemplate, f.Content.Name, f.Name) == column.ColumnName);
+                        var alias = aliases.FirstOrDefault(n => aliases.Contains(column.ColumnName));
+                        if (!string.IsNullOrEmpty(alias))
                         {
-                            var value = article[column.ColumnName].ToString();
-                            var field = fields.FirstOrDefault(f => f.ContentId == _contentId ? f.Name == column.ColumnName : string.Format(FieldNameHeaderTemplate, f.Content.Name, f.Name) == column.ColumnName);
-                            var alias = aliases.FirstOrDefault(n => aliases.Contains(column.ColumnName));
-                            if (!string.IsNullOrEmpty(alias))
-                            {
-                                _sb.AppendFormat("{0}{1}", FormatFieldValue(value), _settings.Delimiter);
-                            }
-                            else if (field != null)
-                            {
-                                _sb.AppendFormat("{0}{1}", FormatFieldValue(article, value, field, dict), _settings.Delimiter);
-                            }
-                            else if (ExtensionContents.Any(c => string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName) == column.ColumnName))
-                            {
-                                _sb.AppendFormat("{0}{1}", string.IsNullOrEmpty(value) ? "NULL" : value, _settings.Delimiter);
-                            }
+                            _sb.AppendFormat("{0}{1}", FormatFieldValue(value), _settings.Delimiter);
                         }
-
-                        if (!_settings.ExcludeSystemFields)
+                        else if (field != null)
                         {
-                            foreach (var fieldValue in new[]
-                            {
-                                MultistepActionHelper.DateCultureFormat(article["CREATED"].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                                MultistepActionHelper.DateCultureFormat(article["MODIFIED"].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
-                                article["UNIQUE_ID"].ToString(),
+                            _sb.AppendFormat("{0}{1}", FormatFieldValue(article, value, field, dict), _settings.Delimiter);
+                        }
+                        else if (ExtensionContents.Any(c => string.Format(FieldNameHeaderTemplate, c.Name, IdentifierFieldName) == column.ColumnName))
+                        {
+                            _sb.AppendFormat("{0}{1}", string.IsNullOrEmpty(value) ? "NULL" : value, _settings.Delimiter);
+                        }
+                    }
+
+                    if (!_settings.ExcludeSystemFields)
+                    {
+                        foreach (var fieldValue in new[]
+                        {
+                                MultistepActionHelper.DateCultureFormat(article[FieldName.Created].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                                MultistepActionHelper.DateCultureFormat(article[FieldName.Modified].ToString(), CultureInfo.CurrentCulture.Name, _settings.Culture),
+                                article[FieldName.UniqueId].ToString(),
                                 "0"
                             })
-                            {
-                                _sb.Append(fieldValue);
-                                _sb.Append(_settings.Delimiter);
-                            }
+                        {
+                            _sb.Append(fieldValue);
+                            _sb.Append(_settings.Delimiter);
                         }
-
-                        _sb.Append(_settings.LineSeparator);
                     }
-                }
 
-                sw.Write(_sb.ToString());
-                _processedItemsCount = articles.Count;
+                    _sb.Append(_settings.LineSeparator);
+                }
             }
+
+            using (var sw = new StreamWriter(_settings.UploadFilePath, true, Encoding.GetEncoding(_settings.Encoding)))
+            {
+                sw.Write(_sb.ToString());
+            }
+
+            _processedItemsCount = articles.Count;
         }
 
         private List<DataRow> GetArticlesForExport(IEnumerable<ExportSettings.FieldSetting> fieldsToExpand)
