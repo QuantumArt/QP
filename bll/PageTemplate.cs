@@ -97,8 +97,8 @@ namespace Quantumart.QP8.BLL
                 MaxNumOfFormatStoredVersions = 100,
                 SendNocacheHeaders = true,
                 EnableViewstate = true,
-                Charset = PageTemplateRepository.GetCharsetByName(Constants.Charset.Utf8).Subj,
-                Locale = PageTemplateRepository.GetLocaleByName(Constants.Locale.Russian).Id
+                Charset = PageTemplateRepository.GetCharsetByName("utf-8").Subj,
+                Locale = PageTemplateRepository.GetLocaleByName("Russian").Id
             };
         }
 
