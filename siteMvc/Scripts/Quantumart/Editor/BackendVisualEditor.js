@@ -58,12 +58,12 @@
       stylesSet: opts.stylesSet,
       toolbar: opts.toolbar,
       specialChars: window.CKEDITOR.config.specialChars.concat([
-        ['&#36;', 'Доллар США'],
-        ['&#8364;', 'Евро'],
-        ['&#8381;', 'Российский рубль'],
-        ['&#8372;', 'Украинская гривна'],
-        ['Br', 'Белорусский рубль'],
-        ['&#8382;', 'Грузинский лари']
+        ['&#36;', 'Р”РѕР»Р»Р°СЂ РЎРЁРђ'],
+        ['&#8364;', 'Р•РІСЂРѕ'],
+        ['&#8381;', 'Р РѕСЃСЃРёР№СЃРєРёР№ СЂСѓР±Р»СЊ'],
+        ['&#8372;', 'РЈРєСЂР°РёРЅСЃРєР°СЏ РіСЂРёРІРЅР°'],
+        ['Br', 'Р‘РµР»РѕСЂСѓСЃСЃРєРёР№ СЂСѓР±Р»СЊ'],
+        ['&#8382;', 'Р“СЂСѓР·РёРЅСЃРєРёР№ Р»Р°СЂРё']
       ]),
       protectedSource: [/<a[^>]*><\/a>/g, /<i[^>]*><\/i>/g, /<b[^>]*><\/b>/g, /<span[^>]*><\/span>/g],
       extraPlugins: 'Spellchecker,Typographer,codemirror',
@@ -257,7 +257,6 @@
     getZIndex: function() {
       var $window = $(this._componentElem).closest('.t-window');
       var zIndex = ($window.length > 0) ? parseInt($window.css('zIndex'), 10) : 0;
-
       return zIndex + 10000;
     },
 

@@ -5,22 +5,25 @@ using System.Web;
 
 namespace Quantumart.QP8.BLL
 {
-	/// <summary>
-	/// Строка результата поиска по всем статьям
-	/// </summary>
-	public class SearchInArticlesResultItem
-	{
-		public decimal Id { get; set; }
-		public string Name { get; set; }
-		public DateTime Created { get; set; }
-		public DateTime Modified { get; set; }
-		public string LastModifiedByUser { get; set; }
-		public string StatusName { get; set; }
+    /// <summary>
+    /// Строка результата поиска по всем статьям
+    /// </summary>
+    public class SearchInArticlesResultItem
+    {
+        public decimal Id { get; set; }
+        public string Name { get; set; }
+        public DateTime Created { get; set; }
+        public DateTime Modified { get; set; }
+        public string LastModifiedByUser { get; set; }
+        public string StatusName { get; set; }
 
-		public decimal ParentId { get; set; }
-		public string ParentName { get; set; }
+        public decimal ParentId { get; set; }
+        public string ParentName { get; set; }
 
-		public string Text { get; set; }
-		public int Rank { get; set; }
-	}
+        public string Text { get; set; }
+        public int Rank { get; set; }
+        public decimal Archive { get; set; }
+        public string ActionCode => Archive == 0 ? Constants.ActionCode.EditArticle : Constants.ActionCode.ViewArchiveArticle;
+        public string EntityTypeCode => Archive == 0 ? Constants.EntityTypeCode.Article : Constants.EntityTypeCode.ArchiveArticle;
+    }
 }

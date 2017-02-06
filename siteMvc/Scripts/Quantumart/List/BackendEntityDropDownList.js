@@ -114,7 +114,7 @@ Quantumart.QP8.BackendEntityDropDownList.prototype = {
 		    $list.addClass(CHANGED_FIELD_CLASS_NAME)
 		    var operation = (refreshOnly) ? "addClass" : "removeClass";
 		    $list[operation](REFRESHED_FIELD_CLASS_NAME)
-		    $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $list.data("list_item_name"), "value": value });
+		    $list.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": $list.data("list_item_name"), "value": value, contentFieldName: $list.data('content_field_name') });
 		}
 
 

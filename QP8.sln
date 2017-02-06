@@ -73,6 +73,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.WebMvc.NUnit.Tests", "Q
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.WebMvc.Tests", "QP8.Tests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{42BD44AF-78C8-4799-9EC5-113923D18639}"
+	ProjectSection(SolutionItems) = preProject
+		package.json = package.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug MVC2 NET35|Any CPU = Debug MVC2 NET35|Any CPU

@@ -22,10 +22,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         private const string ValidatorsClassName = "validators";
         private const string RowClassName = "row";
         private const string DescriptionClassName = "description";
-
         private static readonly Regex WindowIdRegExp = new Regex(@"^win[0-9]+$");
 
-        public static string FieldTemplate(this HtmlHelper html, string id, string title, bool forCheckbox = false, string example = null, bool required = false, string description = null)
+        public static string FieldTemplate(this HtmlHelper html, string id, string title, bool forCheckbox = false, string example = null, bool required = false, string description = null, string fieldName = null)
         {
             var label = html.QpLabel(html.UniqueId(id), title, !forCheckbox).ToString();
             if (!string.IsNullOrWhiteSpace(description))
@@ -45,7 +44,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             labelCell.AddCssClass(LabelClassName);
             labelCell.InnerHtml = forCheckbox ? string.Empty : label;
 
-
             var validatorWrapper = new TagBuilder("em");
             validatorWrapper.AddCssClass(ValidatorsClassName);
 
@@ -62,8 +60,13 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             var fieldCell = new TagBuilder("dd");
             fieldCell.AddCssClass(FieldClassName);
             fieldCell.InnerHtml = "{0}" + (forCheckbox ? " " + label : exampleCode) + validatorWrapper;
+            fieldName = fieldName?.Replace("\"", "") ?? "";
+            if (!string.IsNullOrEmpty(fieldName))
+            {
+                fieldName = $"data-field_name=\"{fieldName}\"";
+            }
 
-            return $"<dl class=\"{RowClassName}\" data-field_form_name=\"{id}\">{labelCell}{fieldCell}</dl>";
+            return $"<dl class=\"{RowClassName}\" data-field_form_name=\"{id}\" {fieldName}>{labelCell}{fieldCell}</dl>";
         }
 
         private static MvcHtmlString Editor(this HtmlHelper html, FieldValue pair, bool articleIsAgregated = false, bool forceReadonly = false)
@@ -101,8 +104,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
 
             var readOnly = forceReadonly || pair.Article.IsReadOnly || field.IsReadOnly || !articleIsAgregated && pair.Article.Content.HasAggregatedFields;
-            var htmlAttributes = html.QpHtmlProperties(id, field, -1, readOnly);
-
+            var htmlAttributes = html.QpHtmlProperties(id, field, -1, readOnly, pair.Field.Name);
             switch (field.ExactType)
             {
                 case FieldExactTypes.Textbox:
@@ -251,9 +253,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return source.VersionText(id, resultValue);
         }
 
-        /// <summary>
-        /// Генерирует ID, уникальный для текущего таба (id таба берется из RouteData)
-        /// </summary>
         public static string UniqueId(this HtmlHelper html, string id, int index = -1)
         {
             return UniqueId(id, html.ViewContext.RouteData.Values[SpecialKeys.TabId], index);
@@ -275,22 +274,15 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return html.ViewContext.RouteData.Values[SpecialKeys.TabId].ToString();
         }
 
-        /// <summary>
-        /// Проверяет, является ли текущий контекст ReadOnly (по ViewData)
-        /// </summary>
         public static bool IsReadOnly(this HtmlHelper html)
         {
             var obj = html.ViewData[SpecialKeys.IsEntityReadOnly];
             return obj != null && (bool)obj;
         }
 
-        /// <summary>
-        /// Определяет на основе идентификатора таба является ли контейнер всплывающим окном
-        /// </summary>
         public static bool IsWindow(string tabId)
         {
             var isWindow = false;
-
             if (!string.IsNullOrWhiteSpace(tabId))
             {
                 isWindow = WindowIdRegExp.IsMatch(tabId);
@@ -320,7 +312,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 fieldDescription = fieldDescription.Replace("{", "{{").Replace("}", "}}");
             }
 
-            var fieldTemplate = html.FieldTemplate(pair.Field.FormName, pair.Field.DisplayName, required: required, description: fieldDescription);
+            var fieldTemplate = html.FieldTemplate(pair.Field.FormName, pair.Field.DisplayName, required: required, description: fieldDescription, fieldName: pair.Field.Name);
             var fieldHtmlString = string.Format(fieldTemplate, html.Editor(pair, articleIsAgregated, forceReadonly));
             if (pair.Field.IsClassifier && pair.Article.ViewType != ArticleViewType.Virtual)
             {
@@ -506,15 +498,14 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public static MvcHtmlString SelectFieldFor<TModel, TValue>(this HtmlHelper<TModel> html, Expression<Func<TModel, TValue>> expression, IEnumerable<QPSelectListItem> list, Dictionary<string, object> htmlAttributes = null, SelectOptions options = null, bool required = false)
         {
             var data = GetMetaData(html, expression);
-
             return MvcHtmlString.Create(
                 string.Format(
-                html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName, required: required),
+                    html.FieldTemplate(ExpressionHelper.GetExpressionText(expression), data.DisplayName, required: required),
                     html.QpDropDownListFor(
-                                            expression, list,
-                                            htmlAttributes,
-                                            options ?? new SelectOptions()
-                                          ).ToHtmlString()
+                        expression, list,
+                        htmlAttributes,
+                        options ?? new SelectOptions()
+                    ).ToHtmlString()
                 )
             );
         }
@@ -578,9 +569,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             );
         }
 
-        /// <summary>
-        /// Single Item Picker для выбора Entity
-        /// </summary>
         public static MvcHtmlString SingleItemPickerFieldFor<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, QPSelectListItem selected, EntityDataListArgs entityDataListArgs, ControlOptions options)
         {
             var data = GetMetaData(source, expression);
@@ -704,7 +692,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static MvcHtmlString ClassifierField(this HtmlHelper source, string name, string value, Field field, Article article, bool forceReadOnly)
         {
-            // Получить агрегированную статью
             Article aggregatedArticle = null;
             var classifierValue = Converter.ToInt32(value, 0);
             if (article.ViewType != ArticleViewType.Virtual)
@@ -715,16 +702,16 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             string acticleHtmlElemId;
             var sb = new StringBuilder(source.BeginClassifierFieldComponent(name, value, field, article, aggregatedArticle, out acticleHtmlElemId));
 
-            // Агрегированный контент
             if (forceReadOnly)
             {
                 var classifierContent = ArticleViewModel.GetContentById(Converter.ToNullableInt32(value));
                 var classifierContentName = classifierContent?.Name;
-                sb.Append(source.QpTextBox(name, classifierContentName, new Dictionary<string, object> { { "class", HtmlHelpersExtensions.ArticleTextboxClassName }, { "disabled", "disabled" } }));
+                var htmlAttributes = new Dictionary<string, object> { { "class", HtmlHelpersExtensions.ArticleTextboxClassName }, { "disabled", "disabled" }, { HtmlHelpersExtensions.DataContentFieldName, field.Name } };
+                sb.Append(source.QpTextBox(name, classifierContentName, htmlAttributes));
             }
             else
             {
-                var contentListHtmlAttrs = new Dictionary<string, object> { { "class", "dropDownList classifierContentList" } };
+                var contentListHtmlAttrs = new Dictionary<string, object> { { "class", "dropDownList classifierContentList" }, { HtmlHelpersExtensions.DataContentFieldName, field.Name } };
                 sb.Append(source.DropDownList(name, source.List(ArticleViewModel.GetAggregatableContentsForClassifier(field, value)), FieldStrings.SelectContent, contentListHtmlAttrs).ToHtmlString());
             }
 
@@ -732,9 +719,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return MvcHtmlString.Create(sb.ToString());
         }
 
-        /// <summary>
-        /// Поле-классификатор в версии статьи
-        /// </summary>
         private static MvcHtmlString VersionClassifierField(this HtmlHelper source, string name, string value, Field field, Article article, ArticleVersion version = null, bool forceReadOnly = true, string valueToMerge = null)
         {
             var name1 = version?.GetAggregatedContent(value)?.Name;
@@ -745,7 +729,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 return source.VersionText(name, mergedValue);
             }
 
-            // Получить агрегированную статью
             Article aggregatedArticle = null;
             var classifierValue = Converter.ToInt32(value, 0);
             if (article.ViewType != ArticleViewType.Virtual)
@@ -795,9 +778,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return MvcHtmlString.Create(sb.ToString());
         }
 
-        /// <summary>
-        /// Редактор строкового перечисления
-        /// </summary>
         private static MvcHtmlString StringEnumEditor(this HtmlHelper html, string name, string value, Field field, bool forceReadOnly, bool isNew)
         {
             const string specClass = "qp-stringEnumEditor";
@@ -814,6 +794,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             {
                 var htmlAttributes = new Dictionary<string, object>();
                 htmlAttributes.AddCssClass(specClass);
+                htmlAttributes.Add(HtmlHelpersExtensions.DataContentFieldName, field.Name);
                 return html.QpRadioButtonList(name, items, RepeatDirection.Horizontal, new ControlOptions { HtmlAttributes = htmlAttributes, Enabled = !forceReadOnly });
             }
 
@@ -822,7 +803,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 Enabled = !forceReadOnly,
                 HtmlAttributes = new Dictionary<string, object>
                 {
-                    {"class", specClass}
+                    { "class", specClass }
                 }
             });
         }
