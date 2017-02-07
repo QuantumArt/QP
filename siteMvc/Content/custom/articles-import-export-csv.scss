@@ -1,0 +1,12 @@
+﻿.popupWindow .select-block-container select.dropDownList {
+    width: 60%;
+}
+
+.popupWindow .select-block-container span.select-description {
+    width: 30%;
+    overflow: hidden;
+    display: inline-block;
+    text-overflow: ellipsis;
+    padding-left: 20px;
+    background: transparent url('QP8/bread_crumbs/arrow.gif') no-repeat 9px 50%;
+}

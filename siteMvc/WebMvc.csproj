@@ -1488,10 +1488,17 @@
     <Content Include="Content\codemirror\package.json" />
     <Content Include="Content\codemirror\README.md" />
     <Content Include="Content\ckeditor\skins\moonocolor\readme.md" />
+    <Content Include="Content\custom\articles-import-export-csv.scss" />
+    <Content Include="Content\custom\articles-search-toolbar.scss" />
+    <Content Include="Content\custom\articles-tree.scss" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
+    <None Include=".jscsrc" />
+    <None Include=".jshintrc" />
+    <Content Include="Scripts\immutablejs\immutable.js" />
+    <Content Include="Scripts\immutablejs\immutable.min.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
     <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
     <Content Include="Scripts\polyfills\array.find.polyfill.js" />
@@ -2052,7 +2059,6 @@
     <Content Include="Scripts\telerik\telerik.treeview.js" />
     <Content Include="Scripts\telerik\telerik.upload.js" />
     <Content Include="Scripts\telerik\telerik.window.js" />
-    <Content Include="ToCopy\bin\Quantumart.dll" />
     <Content Include="ToCopy\App_Data\Extensions.xslt">
       <SubType>Designer</SubType>
     </Content>
@@ -2063,7 +2069,6 @@
     <Content Include="ToCopy\App_Data\Modifications.xslt">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="ToCopy\bin\Quantumart.pdb" />
     <Content Include="Views\ArticleVersion\Compare.cshtml">
       <LastGenOutput>Compare.generated.cs</LastGenOutput>
     </Content>
@@ -2342,10 +2347,6 @@
     <Content Include="Scripts\Quantumart\JsLanguage.ashx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)Assembling\Assembling.csproj">
-      <Project>{aba32eeb-7b9a-4bd8-973b-cd483f076237}</Project>
-      <Name>Assembling</Name>
-    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)bll\BLL.csproj">
       <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
       <Name>BLL</Name>
@@ -2378,10 +2379,6 @@
       <Project>{cc2a4eab-777f-4b3c-8898-6fa1d00b2f7c}</Project>
       <Name>Merger</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Quantumart\Quantumart.csproj">
-      <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
-      <Name>Quantumart</Name>
-    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj">
       <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>
       <Name>Resources</Name>
@@ -2409,7 +2406,6 @@
     <Content Include="Scripts\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Content\imgareaselectcss\" />
     <Folder Include="Views\Shared\EditorTemplates\" />
   </ItemGroup>
   <ItemGroup>

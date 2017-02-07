@@ -56,7 +56,6 @@
     <Compile Include="ArticleSelectionMode.cs" />
     <Compile Include="ArticleSelectionIncludeMode.cs" />
     <Compile Include="ArticleViewType.cs" />
-    <Compile Include="Charset.cs" />
     <Compile Include="ContentSelectMode.cs" />
     <Compile Include="ContextMenuCodes.cs" />
     <Compile Include="CsvExport.cs" />
@@ -78,7 +77,6 @@
     <Compile Include="ActionMessageType.cs" />
     <Compile Include="GroupItemCodes.cs" />
     <Compile Include="ListSelectionMode.cs" />
-    <Compile Include="Locale.cs" />
     <Compile Include="MainComponentType.cs" />
     <Compile Include="NotificationCode.cs" />
     <Compile Include="ObjectSecurityMode.cs" />

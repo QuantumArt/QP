@@ -7,7 +7,7 @@ namespace Quantumart.QP8.BLL
 {
     public class FieldType
     {
-        private static readonly Lazy<IEnumerable<FieldType>> allFieldTypes = new Lazy<IEnumerable<FieldType>>(FieldRepository.GetAllFieldTypes, true);
+        private static readonly Lazy<IEnumerable<FieldType>> AllFieldTypesLazy = new Lazy<IEnumerable<FieldType>>(FieldRepository.GetAllFieldTypes, true);
 
         public int Id { get; set; }
 
@@ -21,25 +21,20 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                if (DatabaseType == "NUMERIC")
+                switch (DatabaseType)
                 {
-                    return DbType.Decimal;
-                }
-
-                if (DatabaseType == "NTEXT")
-                {
-                    return DbType.String;
-                }
-
-                if (DatabaseType == "DATETIME")
-                {
-                    return DbType.DateTime;
+                    case "NUMERIC":
+                        return DbType.Decimal;
+                    case "NTEXT":
+                        return DbType.String;
+                    case "DATETIME":
+                        return DbType.DateTime;
                 }
 
                 return DbType.String;
             }
         }
 
-        public static IEnumerable<FieldType> AllFieldTypes => allFieldTypes.Value;
+        public static IEnumerable<FieldType> AllFieldTypes => AllFieldTypesLazy.Value;
     }
 }

@@ -19,21 +19,21 @@ declare @link2_id numeric, @attr2_id numeric
 select @link_id = link_id, @attr_id = ATTRIBUTE_ID from content_attribute where content_id = 288 and attribute_name = 'Parameters'
 select @link2_id = link_id, @attr2_id = ATTRIBUTE_ID from content_attribute where content_id = 287 and attribute_name = 'Products'
 
-select @count1 = count(*) from 
+select @count1 = count(*) from
 
 (
-	select content_item_id from content_291 where [PRoduct] in (select id from @ids)
-	union all
-	select content_item_id from content_288 where [MarketingProduct] in (select id from @ids)
+  select content_item_id from content_291 where [PRoduct] in (select id from @ids)
+  union all
+  select content_item_id from content_288 where [MarketingProduct] in (select id from @ids)
 
 ) c
 
 
-select @count2 = count(*) from item_to_item_version ii 
+select @count2 = count(*) from item_to_item_version ii
 inner join
 (
-	select max(content_item_version_id) as id, content_item_id from content_item_version where content_item_id in (select id from @ids) group by content_item_id
-	
+  select max(content_item_version_id) as id, content_item_id from content_item_version where content_item_id in (select id from @ids) group by content_item_id
+
 ) v on v.id = ii.content_item_version_id and attribute_id in (@attr_id, @attr2_id)
 
 exec qp_assert_num_equal @count1, @count2, 'M2O'
@@ -47,8 +47,8 @@ select @count1 = count(*) from item_link where item_id in (select id from @ids) 
 select @count2 = count(*) from item_to_item_version ii
 inner join
 (
-	select max(content_item_version_id) as id, content_item_id from content_item_version where content_item_id in (select id from @ids) group by content_item_id
-	
+  select max(content_item_version_id) as id, content_item_id from content_item_version where content_item_id in (select id from @ids) group by content_item_id
+
 ) v on v.id = ii.content_item_version_id and attribute_id = @attr_id
 
 
@@ -59,8 +59,8 @@ select @count1 = count(*) from content_data where content_item_id in (select con
 select @count2 = count(*) from version_content_data vcd
 inner join
 (
-	select max(content_item_version_id) as id, content_item_id from content_item_version where content_item_id in (select id from @ids) group by content_item_id
-	
+  select max(content_item_version_id) as id, content_item_id from content_item_version where content_item_id in (select id from @ids) group by content_item_id
+
 ) v on v.id = vcd.content_item_version_id and attribute_id in (select attribute_id from content_attribute where content_id = 305)
 
 exec qp_assert_num_equal @count1, @count2, 'Extensions'
@@ -70,10 +70,8 @@ select @count1 = count(*) from content_data where content_item_id in (select id 
 select @count2 = count(*) from version_content_data vcd
 inner join
 (
-	select max(content_item_version_id) as id, content_item_id from content_item_version where content_item_id in (select id from @ids) group by content_item_id
-	
+  select max(content_item_version_id) as id, content_item_id from content_item_version where content_item_id in (select id from @ids) group by content_item_id
+
 ) v on v.id = vcd.content_item_version_id and attribute_id in (select attribute_id from content_attribute where content_id in (287, 288))
 
 exec qp_assert_num_equal @count1, @count2, 'Main data'
-
-

@@ -6,6 +6,8 @@
 
         public bool UseEnglishQuotes { get; set; }
 
+        public bool DisableListAutoWrap { get; set; }
+
         public string ExternalCss { get; set; }
 
         public string RootElementClass { get; set; }
@@ -16,6 +18,7 @@
         {
             PEnterMode = site.PEnterMode;
             UseEnglishQuotes = site.UseEnglishQuotes;
+            DisableListAutoWrap = site.DisableListAutoWrap;
             ExternalCss = site.ExternalCss;
             RootElementClass = site.RootElementClass;
         }

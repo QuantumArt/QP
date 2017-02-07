@@ -448,8 +448,8 @@ namespace Quantumart.QP8.BLL
                 .Where(v => !v.Field.Aggregated)
                 .ToDictionary(v => v.Field.FormName, v => v.Field.ExactType == FieldExactTypes.Boolean ? Converter.ToBoolean(v.Value).ToString() : v.Value);
 
-            values[Content.ContentItemIdPropertyName] = Id.ToString();
-            values[Content.StatusTypeIdPropertyName] = StatusTypeId.ToString();
+            values[FieldName.ContentItemId] = Id.ToString();
+            values[FieldName.StatusTypeId] = StatusTypeId.ToString();
 
             var aggregatedXamlValidators = AggregatedArticles
                 .Where(a => !a.Content.DisableXamlValidation && !string.IsNullOrWhiteSpace(a.Content.XamlValidation))

@@ -762,4 +762,7 @@
   <data name="UseSeparateReverseViews" xml:space="preserve">
     <value>Использовать отдельные обратные представления</value>
   </data>
+  <data name="DisableListAutoWrap" xml:space="preserve">
+    <value>Отключить автоматическое оборачивание списков (ul, ol, dl)</value>
+  </data>
 </root>

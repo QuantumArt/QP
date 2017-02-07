@@ -153,10 +153,21 @@ namespace Quantumart.QP8.BLL.Helpers
         /// </summary>
         /// <param name="value">String value to compare</param>
         /// <param name="message">Message of the exception if value is null or empty</param>
-        /// <exception cref="Exception">string value is null or empty</exception>
+        /// <exception cref="Exception">String value is null or empty</exception>
         public static void NotNullOrWhiteSpace(string value, string message = "String cannot be null or empty")
         {
             That(!string.IsNullOrWhiteSpace(value), message);
+        }
+
+        /// <summary>
+        /// Ensures given type is <see cref="Enum"/>
+        /// </summary>
+        /// <exception cref="ArgumentException">
+        ///     Given <paramref cref="T"/> is not <see cref="Enum"/>
+        /// </exception>
+        public static void IsEnum<T>()
+        {
+            That<ArgumentException>(typeof(T).IsEnum, "Should be enumerated type");
         }
 
         /// <summary>

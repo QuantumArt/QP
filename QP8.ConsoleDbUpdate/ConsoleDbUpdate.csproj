@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -151,12 +151,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\QA.Validation.Xaml.dll">
       <Link>References\QA.Validation.Xaml.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Assembling.dll">
-      <Link>References\Quantumart.QP8.Assembling.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\siteMvc\bin\Quantumart.dll">
-      <Link>References\Quantumart.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.BLL.dll">
       <Link>References\Quantumart.QP8.BLL.dll</Link>

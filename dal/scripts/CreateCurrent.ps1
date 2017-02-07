@@ -1,22 +1,24 @@
-﻿$dir = split-path -parent $MyInvocation.MyCommand.Definition
+$pathToSourceDir = split-path -parent $MyInvocation.MyCommand.Definition
 
-$out = Join-Path $dir "current.sql"
-$list = Join-Path $dir "current.txt"
+$pathToResultFileSql = Join-Path $pathToSourceDir "current.sql"
+$pathToFoldersListTxt = Join-Path $pathToSourceDir "current.txt"
+$pathToCombineSqlPs = Join-Path $pathToSourceDir "CombineSql.ps1"
 
-if (Test-Path $out) { Remove-Item $out -Force }
-
-ForEach ($elem in Get-Content $list)
+if (Test-Path $pathToResultFileSql)
 {
-    $folderToCombine = Join-Path $dir $elem
-	if (Test-Path($folderToCombine))
-	{
-        $script = Join-Path $dir "CombineSql.ps1"
-        if (-not([string]::IsNullOrEmpty($elem)))
-        {
-            $command = $script + " -name ""$elem"" -outputToFile " + '$false'
-            Invoke-Expression -command $command | Add-Content -Encoding UTF8 -Path $out
-			Add-Content -Value "`nGO`n" -Encoding UTF8 -Path $out
-        }   
-	}    
+  Remove-Item $pathToResultFileSql -Force
 }
 
+$resultSql = ""
+$sqlData = ""
+ForEach ($pathToFolder in Get-Content $pathToFoldersListTxt)
+{
+  $folderToCombine = Join-Path $pathToSourceDir $pathToFolder
+  if ((Test-Path($folderToCombine)) -and (-not([string]::IsNullOrEmpty($pathToFolder))))
+  {
+    $command = $pathToCombineSqlPs + " -name ""$pathToFolder"" -outputToFile " + '$false'
+    Invoke-Expression -command $command | Out-String | % { $resultSql += $_ + "`r`nGO`r`n" }
+  }
+}
+
+[IO.File]::WriteAllLines($pathToResultFileSql, $resultSql)

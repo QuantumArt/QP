@@ -747,4 +747,7 @@
   <data name="UseSeparateReverseViews" xml:space="preserve">
     <value>Use separate reverse views</value>
   </data>
+  <data name="DisableListAutoWrap" xml:space="preserve">
+    <value>Disable list auto wrapping (ul, ol, dl)</value>
+  </data>
 </root>

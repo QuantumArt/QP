@@ -26,5 +26,3 @@ exec qp_assert_num_equal @count, @count2, 'Month from date'
 set @count = year(@date)
 set @count2 = year(getdate())
 exec qp_assert_num_equal @count, @count2, 'Year from date'
-
-

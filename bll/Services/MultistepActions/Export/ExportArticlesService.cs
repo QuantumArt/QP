@@ -103,8 +103,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         private static int[] GetArticleIds(int[] ids, int contentId)
         {
-            var setts = HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] as ExportSettings;
-            var orderBy = string.IsNullOrEmpty(setts.OrderByField) ? FieldName.ContentItemId : setts.OrderByField;
+            var settings = HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] as ExportSettings;
+            var orderBy = string.IsNullOrEmpty(settings.OrderByField) ? FieldName.ContentItemId : settings.OrderByField;
             return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy);
         }
     }

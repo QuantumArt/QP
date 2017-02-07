@@ -520,6 +520,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disable list auto wrapping (ul, ol, dl).
+        /// </summary>
+        public static string DisableListAutoWrap {
+            get {
+                return ResourceManager.GetString("DisableListAutoWrap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disable Version Control.
         /// </summary>
         public static string DisableVersionControl {

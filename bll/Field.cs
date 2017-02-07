@@ -343,6 +343,19 @@ namespace Quantumart.QP8.BLL
             }
         }
 
+        [LocalizedDisplayName("DisableListAutoWrap", NameResourceType = typeof(FieldStrings))]
+        public bool DisableListAutoWrap
+        {
+            get
+            {
+                return VisualEditFieldParams.DisableListAutoWrap;
+            }
+            set
+            {
+                VisualEditFieldParams.DisableListAutoWrap = value;
+            }
+        }
+
         [LocalizedDisplayName("DisableVersionControl", NameResourceType = typeof(FieldStrings))]
         public bool DisableVersionControl { get; set; }
 
@@ -418,9 +431,6 @@ namespace Quantumart.QP8.BLL
 
         internal bool HasAnyAggregators => _hasAnyAggregators.Value;
 
-        /// <summary>
-        /// Значения строкового перечисления
-        /// </summary>
         [LocalizedDisplayName("EnumValues", NameResourceType = typeof(FieldStrings))]
         public IEnumerable<StringEnumItem> StringEnumItems { get; set; }
 

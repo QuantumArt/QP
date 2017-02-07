@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
@@ -21,7 +21,7 @@ namespace Quantumart.QP8.BLL.Helpers
 
         internal static IEnumerable<SimpleDataRow> GetResult(IEnumerable<DataRow> rows, IEnumerable<Field> fieldList, bool? onlyIds)
         {
-            var articleIds = rows.Select(x => (int)x.Field<decimal>("CONTENT_ITEM_ID"));
+            var articleIds = rows.Select(x => (int)x.Field<decimal>(FieldName.ContentItemId));
             if (onlyIds.HasValue && onlyIds.Value)
             {
                 foreach (var id in articleIds)
@@ -75,7 +75,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     AddSplittedIcon(dr, row);
                     AddInvisibleIcon(dr, row);
                     AddScheduledIcon(dr, row);
-                    var currentArticleId = (int)row.Field<decimal>("CONTENT_ITEM_ID");
+                    var currentArticleId = (int)row.Field<decimal>(FieldName.ContentItemId);
 
                     var relationCounters = new Dictionary<int, int>();
                     foreach (var field in fieldList)
