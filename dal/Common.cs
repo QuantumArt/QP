@@ -388,7 +388,7 @@ namespace Quantumart.QP8.DAL
 
                 var dt = new DataTable();
                 new SqlDataAdapter(cmd).Fill(dt);
-                return IdCommaList(dt, "CONTENT_ITEM_ID");
+                return IdCommaList(dt, FieldName.ContentItemId);
             }
         }
 
@@ -1377,6 +1377,7 @@ namespace Quantumart.QP8.DAL
         private const string GetVisualEditorConfigQuery =
             "select ISNULL(A.P_ENTER_MODE, S.P_ENTER_MODE) AS PEnterMode, " +
             "ISNULL(A.USE_ENGLISH_QUOTES, S.USE_ENGLISH_QUOTES) AS UseEnglishQuotes,   " +
+            "ISNULL(A.DISABLE_LIST_AUTO_WRAP, S.DISABLE_LIST_AUTO_WRAP) AS DisableListAutoWrap,   " +
             "ISNULL(A.ROOT_ELEMENT_CLASS, S.ROOT_ELEMENT_CLASS) AS RootElementClass,   " +
             "ISNULL(A.EXTERNAL_CSS, S.EXTERNAL_CSS) AS ExternalCss   " +
             "from CONTENT_ATTRIBUTE A  " +
@@ -1754,7 +1755,7 @@ namespace Quantumart.QP8.DAL
                     result = ds.Tables[0];
                     totalRecords = forceCountQuery
                         ? (int)cmd.Parameters["total_records"].Value
-                        : (result.Rows.Count != 0 ? (int)result.Rows[0][QP8Entities.COUNT_COLUMN] : 0);
+                        : (result.Rows.Count != 0 ? (int)result.Rows[0][QP8Entities.CountColumn] : 0);
                 }
                 else if (countOnly)
                 {
@@ -1942,7 +1943,7 @@ namespace Quantumart.QP8.DAL
                         result = ds.Tables[0];
                         if (!forceCountQuery)
                         {
-                            totalRecords = result.Rows.Count != 0 ? (int)result.Rows[0][QP8Entities.COUNT_COLUMN] : 0;
+                            totalRecords = result.Rows.Count != 0 ? (int)result.Rows[0][QP8Entities.CountColumn] : 0;
                         }
                     }
                 }
@@ -3748,7 +3749,7 @@ namespace Quantumart.QP8.DAL
         public static DataRow GetChildArticlePermissionForUser(SqlConnection sqlConnection, int contentId, int articleId, int userId)
         {
             int totalRecords;
-            var rows = GetChildArticlePermissionsForUser(sqlConnection, contentId, userId, "CONTENT_ITEM_ID", "ID asc", 1, 1, out totalRecords, articleId);
+            var rows = GetChildArticlePermissionsForUser(sqlConnection, contentId, userId, FieldName.ContentItemId, "ID asc", 1, 1, out totalRecords, articleId);
             return rows.FirstOrDefault();
         }
 
@@ -3779,7 +3780,7 @@ namespace Quantumart.QP8.DAL
         public static DataRow GetChildArticlePermissionForGroup(SqlConnection sqlConnection, int contentId, int articleId, int groupId)
         {
             int totalRecords;
-            var rows = GetChildArticlePermissionsForGroup(sqlConnection, contentId, groupId, "CONTENT_ITEM_ID", "ID asc", 1, 1, out totalRecords, articleId);
+            var rows = GetChildArticlePermissionsForGroup(sqlConnection, contentId, groupId, FieldName.ContentItemId, "ID asc", 1, 1, out totalRecords, articleId);
             return rows.FirstOrDefault();
         }
 
@@ -5851,7 +5852,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.Text;
                 var dt = new DataTable();
                 new SqlDataAdapter(cmd).Fill(dt);
-                totalRecords = dt.Rows.Count != 0 ? (int)dt.Rows[0][QP8Entities.COUNT_COLUMN] : 0;
+                totalRecords = dt.Rows.Count != 0 ? (int)dt.Rows[0][QP8Entities.CountColumn] : 0;
                 return dt.AsEnumerable().ToArray();
             }
         }
@@ -6025,7 +6026,7 @@ namespace Quantumart.QP8.DAL
                     var dr = resultDt.Rows[0];
                     var title = dr.Field<string>("ATTRIBUTE_NAME");
                     var data = dr.Field<string>("DATA");
-                    var id = dr.Field<int>("CONTENT_ITEM_ID").ToString();
+                    var id = dr.Field<int>(FieldName.ContentItemId).ToString();
                     throw new ArgumentException(string.Format(message, id, title, data));
                 }
             }

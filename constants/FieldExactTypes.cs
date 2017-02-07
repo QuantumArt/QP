@@ -1,6 +1,6 @@
 ﻿namespace Quantumart.QP8.Constants
 {
-    // TODO: check
+    // TODO: check for remove FieldTypeCodes
     public enum FieldExactTypes
     {
         Undefined = FieldTypeCodes.Undefined,
@@ -16,9 +16,9 @@
         VisualEdit = FieldTypeCodes.VisualEdit,
         DynamicImage = FieldTypeCodes.DynamicImage,
         M2ORelation = FieldTypeCodes.M2ORelation,
-        O2MRelation = 14,
-        M2MRelation = 15,
-        Classifier = 16,
-        StringEnum = 17
+        O2MRelation = FieldTypeCodes.O2MRelation,
+        M2MRelation = FieldTypeCodes.M2MRelation,
+        Classifier = FieldTypeCodes.Classifier,
+        StringEnum = FieldTypeCodes.StringEnum
     }
 }

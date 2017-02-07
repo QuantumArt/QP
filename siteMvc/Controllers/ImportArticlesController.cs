@@ -59,6 +59,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var model = new ImportViewModel();
             TryUpdateModel(model);
+
             model.SetCorrespondingFieldName(collection);
             var settings = model.GetImportSettingsObject(parentId, id);
             return Json(MultistepActionHelper.GetFileFields(settings, new FileReader(settings)));
@@ -83,6 +84,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var model = new ImportViewModel();
             TryUpdateModel(model);
+
             model.SetCorrespondingFieldName(collection);
             IMultistepActionParams settings = model.GetImportSettingsObject(parentId, id);
             _service.SetupWithParams(parentId, id, settings);

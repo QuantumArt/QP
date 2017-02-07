@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Objects;
@@ -76,11 +76,10 @@ namespace Quantumart.QP8.BLL.Repository
             }
 
             DefaultRepository.TurnIdentityInsertOn(EntityTypeCode.ContentLink);
-
             var result = MapperFacade.ContentLinkMapper.GetBizObject(DefaultRepository.SimpleSave(MapperFacade.ContentLinkMapper.GetDalObject(link)));
             DefaultRepository.TurnIdentityInsertOff(EntityTypeCode.ContentLink);
-            result.WasNew = true;
 
+            result.WasNew = true;
             return result;
         }
 
@@ -124,9 +123,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        /// <summary>
-        /// Возвращает список контентов по спику id
-        /// </summary>
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         internal static IEnumerable<Content> GetList(IEnumerable<int> ids, bool loadSite = false, bool loadFields = false)
         {
@@ -160,31 +156,16 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.ContentMapper.GetBizList(QPContext.EFContext.ContentSet.Include("WorkflowBinding").Where(c => c.SiteId == siteId).ToList());
         }
 
-        /// <summary>
-        /// Простой список контентов сайта
-        /// </summary>
-        /// <param name="currentSiteId">сайт</param>
-        /// <param name="id">id текущего контента</param>
-        /// <returns></returns>
         internal static IEnumerable<ListItem> GetSimpleList(int currentSiteId, int id)
         {
             return GetListBySiteId(currentSiteId).Select(c => new ListItem(c.Id.ToString(), c.Name));
         }
 
-        /// <summary>
-        /// Простой список контентов по выбранному списку ID (для MultipeItemPicker)
-        /// </summary>
-        /// <param name="currentSiteId">текущий сайт (если контент не с текущего сайта, то возвращается полное имя)</param>
-        /// <param name="ids">список выбранных ID</param>
         internal static IEnumerable<ListItem> GetSimpleList(int currentSiteId, IEnumerable<int> ids)
         {
             return GetList(ids, true).Select(c => new ListItem(c.Id.ToString(), c.SiteId == currentSiteId ? c.Name : $"{c.Site.Name}.{c.Name}"));
         }
 
-        /// <summary>
-        /// Возвращает ID контентов для которых запрещены операции редактирования
-        /// у которых DisableChangingActions == true
-        /// </summary>
         internal static IEnumerable<int> GetChangeDisabledIDs()
         {
             return Converter.ToInt32Collection(QPContext.EFContext.ContentSet.Where(c => c.DisableChangingActions).Select(c => c.Id).ToArray());
@@ -202,11 +183,6 @@ namespace Quantumart.QP8.BLL.Repository
             return result;
         }
 
-        /// <summary>
-        /// Возвращает контент по идентификатору
-        /// </summary>
-        /// <param name="id">идентификатор контента</param>
-        /// <returns>информация о контенте</returns>
         internal static Content GetByIdWithFields(int id)
         {
             return MapperFacade.ContentMapper.GetBizObject(QPContext.EFContext.ContentSet.Include("LastModifiedByUser").Include("Fields").SingleOrDefault(n => n.Id == id));
@@ -217,12 +193,6 @@ namespace Quantumart.QP8.BLL.Repository
             return (int)QPContext.EFContext.ContentSet.Where(n => n.Id == (decimal)id).Select(n => n.SiteId).Single();
         }
 
-        /// <summary>
-        /// Добавляет новый контент
-        /// </summary>
-        /// <param name="content">информация о контенте</param>
-        /// <param name="createDefaultField"></param>
-        /// <returns>информация о контенте</returns>
         internal static Content Save(Content content, bool createDefaultField)
         {
             var binding = content.WorkflowBinding;
@@ -262,11 +232,6 @@ namespace Quantumart.QP8.BLL.Repository
             field.PersistWithVirtualRebuild(true);
         }
 
-        /// <summary>
-        /// Обновляет информацию о контенте
-        /// </summary>
-        /// <param name="content">информация о контенте</param>
-        /// <returns>информация о контенте</returns>
         internal static Content Update(Content content)
         {
             var binding = content.WorkflowBinding;
@@ -288,18 +253,11 @@ namespace Quantumart.QP8.BLL.Repository
             return GetById(newContent.Id);
         }
 
-        /// <summary>
-        /// Удаляет контент по его идентификатору
-        /// </summary>
-        /// <param name="id">идентификатор контента</param>
         internal static void Delete(int id)
         {
             DefaultRepository.Delete<ContentDAL>(id);
         }
 
-        /// <summary>
-        /// Копирует контент
-        /// </summary>
         internal static Content Copy(Content content, int? forceId, int[] forceFieldIds, int[] forceLinkIds, bool forHierarchy)
         {
             var oldId = content.Id;
@@ -328,11 +286,6 @@ namespace Quantumart.QP8.BLL.Repository
             return GetById(newId);
         }
 
-        /// <summary>
-        /// Получить список групп контентов для сайта
-        /// </summary>
-        /// <param name="siteId"></param>
-        /// <returns></returns>
         public static IEnumerable<ContentGroup> GetSiteContentGroups(int siteId)
         {
             var defaultGroupId = GetDefaultGroupId(siteId);
@@ -537,11 +490,6 @@ namespace Quantumart.QP8.BLL.Repository
             return QPContext.EFContext.NotificationsSet.Any(n => n.ContentId == contentId);
         }
 
-        /// <summary>
-        /// Вернуть список контентов доступных для связи с текущим контентом
-        /// </summary>
-        /// <param name="contentId"></param>
-        /// <returns></returns>
         internal static IEnumerable<ListItem> GetAcceptableContentForRelation(int contentId)
         {
             var content = QPContext.EFContext.ContentSet.SingleOrDefault(n => n.Id == contentId);
@@ -567,9 +515,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        /// <summary>
-        /// Возвращает контенты у которых хотя бы одно поле ссылается на контент через M2M
-        /// </summary>
         public static IEnumerable<Content> GetRelatedM2MContents(Content content)
         {
             if (!content.IsNew)
@@ -610,9 +555,6 @@ namespace Quantumart.QP8.BLL.Repository
             return FieldRepository.GetList(fieldIds);
         }
 
-        /// <summary>
-        /// Возвращает контенты у которых хотя бы одно поле ссылается на контент через O2M
-        /// </summary>
         public static IEnumerable<Content> GetRelatedO2MContents(Content content)
         {
             if (!content.IsNew)
@@ -653,11 +595,6 @@ namespace Quantumart.QP8.BLL.Repository
             return FieldRepository.GetList(fieldIds);
         }
 
-        /// <summary>
-        /// Возвращает список имен контентов сайта, которые являются базовыми для union-контентов други сайтов
-        /// </summary>
-        /// <param name="siteId"></param>
-        /// <returns></returns>
         internal static IEnumerable<string> GetSharedUnionBaseContentNames(int siteId)
         {
             using (new QPConnectionScope())
@@ -667,9 +604,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        /// <summary>
-        /// Возвращает имен список контентов сайта, на которые есть O2M-ссылки из контентов других сайтов
-        /// </summary>
         internal static IEnumerable<string> GetSharedRelatedContentNames(int siteId)
         {
             using (new QPConnectionScope())
@@ -687,11 +621,6 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
-        /// <summary>
-        /// Получить список дочерних виртуальных контентов
-        /// </summary>
-        /// <param name="contentId"></param>
-        /// <returns></returns>
         public static IEnumerable<Content> GetVirtualSubContents(int contentId)
         {
             if (contentId > 0)
@@ -715,8 +644,7 @@ namespace Quantumart.QP8.BLL.Repository
                 return MapperFacade.ContentMapper.GetBizList(QPContext.EFContext.FieldSet
                     .Where(f => f.Classifier.ContentId == contentId)
                     .Select(f => f.Content)
-                    .ToList()
-                );
+                    .ToList());
             }
 
             return Enumerable.Empty<Content>();
@@ -736,10 +664,6 @@ namespace Quantumart.QP8.BLL.Repository
             return groups;
         }
 
-        /// <summary>
-        /// Есть ли у контента агрегированные статьи
-        /// </summary>
-        /// <returns></returns>
         internal static bool IsAnyAggregatedFields(int contentId)
         {
             return QPContext.EFContext.FieldSet.Any(f => f.ContentId == contentId && f.Aggregated);

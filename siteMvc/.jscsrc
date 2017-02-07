@@ -2,24 +2,24 @@
   // JSCS rules via AuthorProxy
   // All rules are presented explicitly (except contradictory) and ordered the same as on http://jscs.info/rules
 
-  // Version 2.11.0
+  // Version 3.0.7
   // Rules: http://jscs.info/rules
   // Releases: https://github.com/jscs-dev/node-jscs/releases/
   // Sources: https://gist.github.com/AuthorProxy/bffb5f9aa733e3ca6279#file-jscsrc
 
   "disallowArrayDestructuringReturn": true,
-  "disallowCapitalizedComments": true, // todo: check other presets
+  "disallowCapitalizedComments": true,
   "disallowDanglingUnderscores": {
-    "allExcept": ["_jQuery", "_this"]
+    "allExcept": [ "_jQuery", "_this" ]
   },
   "disallowEmptyBlocks": {
-    "allExcept": ["comments"]
+    "allExcept": [ "comments" ]
   },
   "disallowIdenticalDestructuringNames": true,
-  "disallowImplicitTypeConversion": ["binary"],
+  "disallowImplicitTypeConversion": [ "binary" ],
   "disallowKeywordsInComments": "\\b(todo|fix|fixme)\\b",
-  "disallowKeywordsOnNewLine": ["else", "catch"],
-  "disallowKeywords": ["with"],
+  "disallowKeywordsOnNewLine": [ "else", "catch" ],
+  "disallowKeywords": [ "with" ],
   "disallowMixedSpacesAndTabs": true,
   "disallowMultipleLineBreaks": true,
   "disallowMultipleLineStrings": true,
@@ -32,8 +32,8 @@
   },
   "disallowNestedTernaries": true,
   "disallowNewlineBeforeBlockStatements": true,
-  "disallowNodeTypes": ["LabeledStatement"],
-  "disallowOperatorBeforeLineBreak": ["+", "."],
+  "disallowNodeTypes": [ "LabeledStatement" ],
+  "disallowOperatorBeforeLineBreak": [ "+", "." ],
   "disallowPaddingNewlinesInBlocks": true,
   "disallowParenthesesAroundArrowParam": true,
   "disallowQuotedKeysInObjects": true,
@@ -71,7 +71,8 @@
   "disallowTrailingComma": true,
   "disallowTrailingWhitespace": true,
   "disallowUnusedParams": true,
-  // "disallowVar": true, // ES6 only
+  "disallowUnusedVariables": true,
+  "disallowVar": true, // ES6
   "disallowYodaConditions": true,
   "maximumLineLength": {
     "value": 120,
@@ -80,23 +81,23 @@
     "allowUrlComments": true
   },
   "maximumNumberOfLines": {
-    "value": 500,
-    "allExcept": ["comments"]
+    "value": 200,
+    "allExcept": [ "comments" ]
   },
-  "requireAlignedMultilineParams": true, // check
+  "requireAlignedMultilineParams": true,
   "requireAnonymousFunctions": {
-    "allExcept": ["declarations"]
+    "allExcept": [ "declarations" ]
   },
-  // "requireArrayDestructuring": true, // ES6 only
+  "requireArrayDestructuring": true, // ES6
   "requireBlocksOnNewline": {
-     "includeComments": true
+    "includeComments": true
   },
   "requireCamelCaseOrUpperCaseIdentifiers": true,
   "requireCapitalizedConstructorsNew": true,
   "requireCapitalizedConstructors": true,
   "requireCommaBeforeLineBreak": true,
   "requireCurlyBraces": {
-    "allExcept": ["return", "continue", "break"],
+    "allExcept": [ "return", "continue", "break" ],
     "keywords": [
       "if",
       "else",
@@ -110,41 +111,41 @@
   "requireDollarBeforejQueryAssignment": true,
   "requireDotNotation": true,
   "requireEarlyReturn": true,
-  // "requireEnhancedObjectLiterals": true, // ES6 only
-  // "requireFunctionDeclarations": true, // todo: check other presets. should be deleted
-  // "requireImportAlphabetized": true, // todo: check in production
+  "requireEnhancedObjectLiterals": true, // ES6
+  "requireFunctionDeclarations": true,
+  "requireImportAlphabetized": true,
   "requireLineBreakAfterVariableAssignment": true,
   "requireLineFeedAtFileEnd": true,
   "requireMatchingFunctionName": {
     "includeModuleExports": true
   },
   "requireNewlineBeforeSingleStatementsInIf": true,
-  // "requireNumericLiterals": true, // ES6 only
-  // "requireObjectDestructuring": true, // ES6 only
+  "requireNumericLiterals": true, // ES6
+  "requireObjectDestructuring": true, // ES6
   "requireObjectKeysOnNewLine": {
-    "allExcept": ["sameLine"]
+    "allExcept": [ "sameLine" ]
   },
-  "requirePaddingNewLineAfterVariableDeclaration": true, // todo: report about { "allExcept": singleVar } option
+  "requirePaddingNewLineAfterVariableDeclaration": true, // todo: request { "allExcept": singleVar } option
   "requirePaddingNewLinesBeforeExport": true,
   "requirePaddingNewLinesAfterBlocks": {
-      "allExcept": [
-        "inCallExpressions",
-        "inNewExpressions",
-        "inArrayExpressions",
-        "inProperties"
-      ]
+    "allExcept": [
+      "inCallExpressions",
+      "inNewExpressions",
+      "inArrayExpressions",
+      "inProperties"
+    ]
   },
   "requirePaddingNewLinesAfterUseStrict": true,
-  "requirePaddingNewlinesBeforeKeywords": ["try", "do"],
+  "requirePaddingNewlinesBeforeKeywords": [ "try", "do" ],
   "requirePaddingNewLinesBeforeLineComments": {
-    "allExcept": "firstAfterCurly" // todo: report about VS2015 warning
+    "allExcept": "firstAfterCurly" // todo: VS2015 warning
   },
   "requireParenthesesAroundIIFE": true,
   "requireSemicolons": true,
   "requireShorthandArrowFunctions": true,
   "requireSpaceAfterBinaryOperators": true,
   "requireSpaceAfterComma": {
-    "allExcept": ["sparseArrays"] // todo: report about VS2015 warning
+    "allExcept": [ "sparseArrays" ] // todo: VS2015 warning
   },
   "requireSpaceAfterKeywords": [
     "do",
@@ -192,28 +193,30 @@
   "requireSpacesInNamedFunctionExpression": {
     "beforeOpeningCurlyBrace": true
   },
+  "requireSpacesInsideImportedObjectBraces": true,
   "requireSpacesInsideObjectBrackets": "allButNested",
   "requireSpread": true,
-  // "requireTemplateStrings": true, // ES6 only
+  "requireTemplateStrings": true, // ES6
+  "requireUseStrict": true,
   "requireVarDeclFirst": true,
-  "safeContextKeyword": "self",
+  "safeContextKeyword": "safe",
   "validateAlignedFunctionParameters": true,
+  "validateCommentPosition": {
+    "position": "above"
+  },
   "validateIndentation": {
     "value": 2,
-    "allExcept": ["comments"]
+    "allExcept": [ "comments" ]
   },
-  // "validateLineBreaks": "LF", // check (shouldn't be hardcoded and don't pass any test)
-  "validateNewlineAfterArrayElements": {
-    "maximum": 999,
-    "ignoreBrackets": true
+  "validateLineBreaks": {
+    "character": "CRLF",
+    "reportOncePerFile": true
   },
+  "validateNewlineAfterArrayElements": true,
   "validateParameterSeparator": ", ",
   "validateQuoteMarks": {
-    "mark": "'", // todo: report about VS2015 warning
+    "mark": "'", // todo: VS2015 warning
     "escape": true,
     "ignoreJSX": true
-  },
-  "esprima" : "esprima-fb",
-  "esnext": true,
-  "maxErrors": 20
+  }
 }

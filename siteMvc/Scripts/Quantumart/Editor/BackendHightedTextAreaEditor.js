@@ -24,8 +24,6 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
     _insertWindowInitialized: false,
     _insertWindowHtml: null,
     _insertWindowComponent: null,
-    _storedTempValue: "",
-    _checkIntervalID: null,
 
     _editorWidth: null,
     _editorHeight: null,
@@ -34,7 +32,7 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
         var eventArgs = new Quantumart.QP8.BackendEventArgs();
         eventArgs.set_entityId(this._libraryEntityId);
         eventArgs.set_parentEntityId(this._libraryParentEntityId);
-        eventArgs.set_entityName("");
+        eventArgs.set_entityName('');
         eventArgs.set_entityTypeCode(ENTITY_TYPE_CODE_SITE);
         eventArgs.set_actionCode(ACTION_CODE_POPUP_SITE_LIBRARY);
         if (!this._selectPopupWindowComponent) {
@@ -43,9 +41,8 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
             this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_RESULT_SELECTED, jQuery.proxy(this._librarySelectedHandler, this));
             this._selectPopupWindowComponent.attachObserver(EVENT_TYPE_SELECT_POPUP_WINDOW_CLOSED, jQuery.proxy(this._libraryClosedHandler, this));
         }
+
         this._selectPopupWindowComponent.openWindow();
-        eventArgs = null;
-        options = null;
     },
 
     _closeLibrary: function () {
@@ -73,18 +70,6 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
             if (entities.length > 0) {
                 url = url + entities[0].Name;
                 jQuery.proxy(this._insertLibraryTag(url), this);
-            }
-        }
-    },
-
-    _onCheckChangesIntervalHandler: function () {
-        if (!$q.isNull(this._componentElem.data('codeMirror')))
-        {
-            var curVal = this._componentElem.data('codeMirror').getValue();
-            if (this._storedTempValue !== curVal) {
-                this._storedTempValue = curVal;
-                this._componentElem.addClass(CHANGED_FIELD_CLASS_NAME);
-                this._componentElem.trigger(JQ_CUSTOM_EVENT_ON_FIELD_CHANGED, { "fieldName": this._componentElem.attr("name"), "value": this._componentElem.data('codeMirror').getValue(), "contentFieldName": this._componentElem.closest("dl").data("field_name") });
             }
         }
     },
@@ -168,219 +153,202 @@ Quantumart.QP8.BackendHighlightedTextArea.prototype = {
                 cm.setSize(tArea.data('width'));
             }
 
-            this._storedTempValue = cm.getValue();
             tArea.data('codeMirror', cm);
-            this._checkIntervalID = setInterval(jQuery.proxy(this._onCheckChangesIntervalHandler, this), 10000);
-            cm = null;
         }
     },
 
     _onLibraryButtonClick: function () {
-        this._openLibrary();
+      this._openLibrary();
     },
 
     _onRestoreButtonClick: function () {
-        $q.getJsonFromUrl('POST', CONTROLLER_URL_PAGE_TEMPLATE + (this._presentationOrCodeBehind ? "GetDefaultPresentation" : "GetDefaultCode"),
-		{
-		    formatId: this._formatId
-		},
-		true, false).done(jQuery.proxy(function (data) {
-		    if (confirm(HTA_DEFAULT_CONFIRM)) {
-		        this._componentElem.data('codeMirror').replaceRange(data.code, { line: 0, ch: 0 }, { line: this._componentElem.data('codeMirror').lastLine() + 1, ch: 0 });
-		        this._componentElem.addClass(CHANGED_FIELD_CLASS_NAME);
-		    }
-		}, this));
+      $q.getJsonFromUrl('POST', CONTROLLER_URL_PAGE_TEMPLATE + (this._presentationOrCodeBehind ? 'GetDefaultPresentation' : 'GetDefaultCode'), {
+        formatId: this._formatId
+      }, true, false).done($.proxy(function (data) {
+        if (confirm(HTA_DEFAULT_CONFIRM)) {
+          this._componentElem.data('codeMirror').replaceRange(data.code, { line: 0, ch: 0 }, { line: this._componentElem.data('codeMirror').lastLine() + 1, ch: 0 });
+          this._componentElem.addClass(CHANGED_FIELD_CLASS_NAME);
+        }
+      }, this));
     },
 
     _onInsertButtonClick: function () {
-        if (!this._insertWindowInitialized) {
-            this.createInsertPopupWindow();
-            this._insertWindowInitialized = true;
-        }
-        else {
-            this._insertWindowComponent.open();
-        }
+      if (!this._insertWindowInitialized) {
+        this.createInsertPopupWindow();
+        this._insertWindowInitialized = true;
+      } else {
+        this._insertWindowComponent.open();
+      }
     },
 
     _onInsertCall: function () {
-        if (!this._insertPopUp.data('valToInsert') == '') {
-            if (this._insertPopUp.data('valType') == 'object') {
-                this._insertObjectFunc(this._insertPopUp.data('valToInsert'), this._netLanguageId, !this._presentationOrCodeBehind)
-            }
-            else if (this._insertPopUp.data('valType') == 'function') {
-                this._insertFunc(this._insertPopUp.data('valToInsert'), this._netLanguageId, !this._presentationOrCodeBehind);
-            }
-
-            else if (this._insertPopUp.data('valType') == 'field') {
-                this._insertFieldFunc(this._insertPopUp.data('valToInsert'), this._netLanguageId, !this._presentationOrCodeBehind);
-            }
-            this._componentElem.addClass(CHANGED_FIELD_CLASS_NAME);
+      if (!this._insertPopUp.data('valToInsert') == '') {
+        if (this._insertPopUp.data('valType') == 'object') {
+          this._insertObjectFunc(this._insertPopUp.data('valToInsert'), this._netLanguageId, !this._presentationOrCodeBehind)
+        } else if (this._insertPopUp.data('valType') == 'function') {
+          this._insertFunc(this._insertPopUp.data('valToInsert'), this._netLanguageId, !this._presentationOrCodeBehind);
+        } else if (this._insertPopUp.data('valType') == 'field') {
+          this._insertFieldFunc(this._insertPopUp.data('valToInsert'), this._netLanguageId, !this._presentationOrCodeBehind);
         }
+
+        this._componentElem.addClass(CHANGED_FIELD_CLASS_NAME);
+      }
     },
 
-    _insertObjectFunc: function(objectName, netLanguage, isCodeBehind){
-	    if (netLanguage != '')
-        {
-            if (isCodeBehind)
-            { var strIns = (netLanguage == '2') ? 'ShowObject("'+objectName+'", Me)' : 'ShowObject("'+objectName+'", this);'; }
-            else
-            { var strIns = '<'+'qp:placeholder calls="'+objectName+'" runat="server"  /'+'>'; }
+    _insertObjectFunc: function(objectName, netLanguage, isCodeBehind) {
+      if (netLanguage != '') {
+        if (isCodeBehind) {
+          var strIns = (netLanguage == '2') ? 'ShowObject("'+objectName+'", Me)' : 'ShowObject("'+objectName+'", this);';
+        } else {
+          var strIns = '<'+'qp:placeholder calls="'+objectName+'" runat="server"  /'+'>';
         }
-        else
-		        var strIns = '<'+'%Object("'+objectName+'")%'+'>'
-	    this._insertCallText(strIns);
+      } else {
+        var strIns = '<'+'%Object("'+objectName+'")%'+'>'
+      }
+
+      this._insertCallText(strIns);
     },
 
-    _insertFunc: function(fieldName, netLanguage, isCodeBehind)
-    {
-	    if (netLanguage == '')
-            var strIns = '<'+'%=' + fieldName + '%'+'>';
-        else
-        {
-		    if (isCodeBehind == '0')
-                var strIns = '<'+'%# ' + fieldName + '%'+'>';
-            else
-            {
-			    if (netLanguage == '1') //fieldName += ";";
-                    strIns = fieldName;
-            }
+    _insertFunc: function(fieldName, netLanguage, isCodeBehind) {
+      if (netLanguage == '') {
+        var strIns = '<'+'%=' + fieldName + '%'+'>';
+      } else {
+        if (isCodeBehind == '0') {
+          var strIns = '<'+'%# ' + fieldName + '%'+'>';
+        } else {
+          if (netLanguage == '1') {
+            strIns = fieldName;
+          }
         }
-	    this._insertCallText(strIns);
+      }
+
+      this._insertCallText(strIns);
     },
 
-    _insertFieldFunc: function(fieldName,  netLanguage, isCodeBehind)
-    {
-       var strIns = 'Field("' + fieldName  + '")';
-        if (netLanguage == '1')
-        {
-            if (isCodeBehind == '0')
-                strIns = 'Field(((DataRowView)(Container.DataItem)), "' + fieldName  + '")';
-            else
-                strIns = 'Field(Data.Rows[e.Item.ItemIndex], "' + fieldName  + '")';
+    _insertFieldFunc: function(fieldName, netLanguage, isCodeBehind) {
+     var strIns = 'Field("' + fieldName  + '")';
+      if (netLanguage == '1') {
+        if (isCodeBehind == '0') {
+          strIns = 'Field(((DataRowView)(Container.DataItem)), "' + fieldName  + '")';
+        } else {
+          strIns = 'Field(Data.Rows[e.Item.ItemIndex], "' + fieldName  + '")';
         }
-        if (netLanguage == '2')
-        {
-            if (isCodeBehind == '0')
-                strIns = 'Field(CType(Container.DataItem, DataRowView), "' + fieldName  + '")';
-            else
-                strIns = 'Field(Data.Rows(e.Item.ItemIndex), "' + fieldName  + '")';
+      }
+
+      if (netLanguage == '2') {
+        if (isCodeBehind == '0') {
+          strIns = 'Field(CType(Container.DataItem, DataRowView), "' + fieldName  + '")';
+        } else {
+          strIns = 'Field(Data.Rows(e.Item.ItemIndex), "' + fieldName  + '")';
         }
-        this._insertFunc(strIns, netLanguage, isCodeBehind);
+      }
+
+      this._insertFunc(strIns, netLanguage, isCodeBehind);
     },
 
     createInsertPopupWindow: function () {
-        this._insertWindowHtml = '';
-        $q.getJsonFromUrl('POST', CONTROLLER_URL_PAGE_TEMPLATE + "GetInsertPopUpMarkUp",
-		{
-		    presentationOrCodeBehind: this._presentationOrCodeBehind,
-		    formatId: this._formatId,
-            templateId: this._templateId
-		},
-		true, false).done(jQuery.proxy(function (data) {
-		    this._insertWindowHtml = data.html;
-		    this._insertWindowComponent = $.telerik.window.create({
-		        title: HTA_INSERT_CALL,
-		        html: this._insertWindowHtml,
-		        modal: true,
-		        width: 700,
-		        resizable: false,
-		        draggable: false,
-		        actions: ["Close"],
-		        effects: { list: [{ name: "toggle" }, { name: "property", properties: ["opacity"] }], openDuration: "fast", closeDuration: "fast" }
-		    }).data("tWindow").center();
+      this._insertWindowHtml = '';
+      $q.getJsonFromUrl('POST', CONTROLLER_URL_PAGE_TEMPLATE + "GetInsertPopUpMarkUp", {
+        presentationOrCodeBehind: this._presentationOrCodeBehind,
+        formatId: this._formatId,
+        templateId: this._templateId
+      }, true, false).done($.proxy(function (data) {
+        this._insertWindowHtml = data.html;
+        this._insertWindowComponent = $.telerik.window.create({
+          title: HTA_INSERT_CALL,
+          html: this._insertWindowHtml,
+          modal: true,
+          width: 700,
+          resizable: false,
+          draggable: false,
+          actions: ["Close"],
+          effects: { list: [{ name: "toggle" }, { name: "property", properties: ["opacity"] }], openDuration: "fast", closeDuration: "fast" }
+        }).data("tWindow").center();
 
-		    this._insertPopUp = jQuery(this._insertWindowComponent.element).addClass('popupWindow');
-		    this._onInsertCallHandler = jQuery.proxy(this._onInsertCall, this);
-		    this._insertPopUp.find('.insertButton').parent('span').bind("click", this._onInsertCallHandler);
+        this._insertPopUp = $(this._insertWindowComponent.element).addClass('popupWindow');
+        this._onInsertCallHandler = $.proxy(this._onInsertCall, this);
+        this._insertPopUp.find('.insertButton').parent('span').bind("click", this._onInsertCallHandler);
+        this._insertPopUp.find('select').change($.proxy (function (sender) {
 
-		    this._insertPopUp.find('select').change( jQuery.proxy (function (sender) {
-		        jQuery(sender.target).closest('.row').siblings().find('select option:first-child').attr("selected", "selected");
-		        this._insertPopUp.data('valToInsert', jQuery(sender.target).val());
-		        this._insertPopUp.data('valType', this.computeInsertType(jQuery(sender.target)));
-		    }, this));
-
-		}, this));
+        $(sender.target).closest('.row').siblings().find('select option:first-child').attr("selected", "selected");
+        this._insertPopUp.data('valToInsert', $(sender.target).val());
+        this._insertPopUp.data('valType', this.computeInsertType($(sender.target)));
+      }, this));
+    }, this));
     },
 
-    computeInsertType: function(elem)
-    {
-        var $elem = jQuery(elem);
-        if ($elem.hasClass('ht-toolbar-container-selector') || $elem.hasClass('ht-toolbar-function-selector')) {
-            return 'function';
-        }
-
-        else if ($elem.hasClass('ht-toolbar-template-obj-selector') || $elem.hasClass('ht-toolbar-page-obj-selector')) {
-            return 'object';
-        }
-
-        else if ($elem.hasClass('ht-toolbar-field-selector')) {
-            return 'field';
-        }
+    computeInsertType: function(elem) {
+      var $elem = $(elem);
+      if ($elem.hasClass('ht-toolbar-container-selector') || $elem.hasClass('ht-toolbar-function-selector')) {
+        return 'function';
+      } else if ($elem.hasClass('ht-toolbar-template-obj-selector') || $elem.hasClass('ht-toolbar-page-obj-selector')) {
+        return 'object';
+      } else if ($elem.hasClass('ht-toolbar-field-selector')) {
+        return 'field';
+      }
     },
 
     saveData: function () {
-    	var codeMirror = this._componentElem.data('codeMirror');
-    	if (codeMirror) {
-    		if (this._componentElem.val() != codeMirror.getValue())
-    			this._componentElem.change()
-    		codeMirror.save();
+      var codeMirror = this._componentElem.data('codeMirror');
+      if (codeMirror) {
+        if (this._componentElem.val() != codeMirror.getValue()) {
+          this._componentElem.change()
         }
+
+        codeMirror.save();
+      }
     },
 
     getMode: function () {
-        var tArea = this._componentElem;
-        if (tArea.hasClass("hta-htmlTextArea"))
-            return "application/x-aspx";
-        else if (tArea.hasClass("hta-cSharpTextArea"))
-            return "text/x-csharp";
-        else if (tArea.hasClass("hta-VBSTextArea"))
-            return "text/vbscript";
-        else if (tArea.hasClass("hta-VBTextArea"))
-            return "text/x-vb";
-        else if (tArea.hasClass("hta-XmlTextArea"))
-        	return "application/xml";
-        else if (tArea.hasClass("hta-JsTextArea"))
-        	return "text/javascript";
-        else if (tArea.hasClass("hta-SqlTextArea"))
-            return "text/x-sql";
-        else
-            return null;
+      var tArea = this._componentElem;
+      if (tArea.hasClass("hta-htmlTextArea")) {
+        return "application/x-aspx";
+      } else if (tArea.hasClass("hta-cSharpTextArea")) {
+        return "text/x-csharp";
+      } else if (tArea.hasClass("hta-VBSTextArea")) {
+        return "text/vbscript";
+      } else if (tArea.hasClass("hta-VBTextArea")) {
+        return "text/x-vb";
+      } else if (tArea.hasClass("hta-XmlTextArea")) {
+        return "application/xml";
+      } else if (tArea.hasClass("hta-JsTextArea")) {
+        return "text/javascript";
+      } else if (tArea.hasClass("hta-SqlTextArea")) {
+        return "text/x-sql";
+      }
+
+      return null;
     },
 
     initTemplateToolbar: function (cm) {
-        $q.getJsonFromUrl('POST', CONTROLLER_URL_PAGE_TEMPLATE + "GetHTAToolbarMarkUp",
-		{
-		    presentationOrCodeBehind: this._presentationOrCodeBehind,
-		    formatId: this._formatId,
-		    templateId: this._templateId
-		},
-		true, false).done(jQuery.proxy(function (data) {
-		    this._componentElem.parent().prepend(data.html);
-		    this._libraryButton = this._componentElem.siblings('.codeMirrorToolbar').find('.libraryButton');
-		    this._restoreButton = this._componentElem.siblings('.codeMirrorToolbar').find('.restoreButton');
-		    this._insertButton = this._componentElem.siblings('.codeMirrorToolbar').find('.insertButton');
-		    if (this._libraryButton) {
-		        this._onLibraryButtonClickHandler = jQuery.proxy(this._onLibraryButtonClick, this);
-		        this._libraryButton.bind("click", this._onLibraryButtonClickHandler);
-		    }
+      $q.getJsonFromUrl('POST', CONTROLLER_URL_PAGE_TEMPLATE + "GetHTAToolbarMarkUp", {
+        presentationOrCodeBehind: this._presentationOrCodeBehind,
+        formatId: this._formatId,
+        templateId: this._templateId
+      }, true, false).done(jQuery.proxy(function (data) {
+        this._componentElem.parent().prepend(data.html);
+        this._libraryButton = this._componentElem.siblings('.codeMirrorToolbar').find('.libraryButton');
+        this._restoreButton = this._componentElem.siblings('.codeMirrorToolbar').find('.restoreButton');
+        this._insertButton = this._componentElem.siblings('.codeMirrorToolbar').find('.insertButton');
+        if (this._libraryButton) {
+          this._onLibraryButtonClickHandler = jQuery.proxy(this._onLibraryButtonClick, this);
+          this._libraryButton.bind("click", this._onLibraryButtonClickHandler);
+        }
 
-		    if (this._restoreButton) {
-		        this._onRestoreButtonClickHandler = jQuery.proxy(this._onRestoreButtonClick, this);
-		        this._restoreButton.bind("click", this._onRestoreButtonClickHandler);
-		    }
+        if (this._restoreButton) {
+          this._onRestoreButtonClickHandler = jQuery.proxy(this._onRestoreButtonClick, this);
+          this._restoreButton.bind("click", this._onRestoreButtonClickHandler);
+        }
 
-		    if (this._insertButton) {
-		        this._onInsertButtonClickHandler = jQuery.proxy(this._onInsertButtonClick, this);
-		        this._insertButton.bind("click", this._onInsertButtonClickHandler);
-		    }
-		}, this));
+        if (this._insertButton) {
+          this._onInsertButtonClickHandler = jQuery.proxy(this._onInsertButtonClick, this);
+          this._insertButton.bind("click", this._onInsertButtonClickHandler);
+        }
+      }, this));
     },
 
     destroy: function () {
-        if (this._checkIntervalID) {
-            clearInterval(this._checkIntervalID);
-        }
-        this._destroyLibrary();
-        this._componentElem = null;
+      this._destroyLibrary();
+      this._componentElem = null;
     }
 };

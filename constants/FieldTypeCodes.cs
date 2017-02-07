@@ -16,5 +16,9 @@
         public const int Relation = 11;
         public const int DynamicImage = 12;
         public const int M2ORelation = 13;
+        public const int O2MRelation = 14;
+        public const int M2MRelation = 15;
+        public const int Classifier = 16;
+        public const int StringEnum = 17;
     }
 }

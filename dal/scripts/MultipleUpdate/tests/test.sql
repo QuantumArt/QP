@@ -7,7 +7,7 @@ set nocount on
 declare @links [Links]
 
 insert into @links
-values 
+values
  (699603, 2096),
  (699604, 2096),
  (2096, 699605)
@@ -29,7 +29,7 @@ GO
 declare @links [Links]
 
 insert into @links
-values 
+values
  (699603, 2096),
  (699604, 2096),
  (2096, 699605)
@@ -52,7 +52,7 @@ GO
 declare @links [Links]
 
 insert into @links
-values 
+values
  (1704, 2000),
  (1705, 2001),
  (2002, 1706)
@@ -79,5 +79,3 @@ select il.* from item_link_71 il inner join @links il2 on il.id = il2.id and il.
 select il.* from item_link_71_rev il inner join @links il2 on il.id = il2.linked_id and il.linked_id = il2.id
 
 GO
-
-

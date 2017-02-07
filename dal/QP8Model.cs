@@ -17101,7 +17101,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="optimizeForHierarchy">Initial value of the OptimizeForHierarchy property.</param>
         /// <param name="isLocalization">Initial value of the IsLocalization property.</param>
         /// <param name="useSeparateReverseViews">Initial value of the UseSeparateReverseViews property.</param>
-        public static FieldDAL CreateFieldDAL(global::System.Decimal id, global::System.Decimal contentId, global::System.String name, global::System.Decimal size, global::System.Decimal typeId, global::System.Decimal indexFlag, global::System.DateTime modified, global::System.DateTime created, global::System.Decimal lastModifiedBy, global::System.Decimal order, global::System.Decimal required, global::System.Decimal permanentFlag, global::System.Decimal primaryFlag, global::System.Decimal displayAsRadioButton, global::System.Boolean viewInList, global::System.Boolean readonlyFlag, global::System.Decimal allowStageEdit, global::System.Boolean autoLoad, global::System.Boolean useSiteLibrary, global::System.Boolean useArchiveArticles, global::System.Boolean autoExpand, global::System.Boolean fullPage, global::System.Boolean renameMatched, global::System.Boolean disableVersionControl, global::System.Boolean mapAsProperty, global::System.Boolean isLong, global::System.Boolean useForTree, global::System.Boolean autoCheckChildren, global::System.Boolean aggregated, global::System.Boolean isClassifier, global::System.Boolean changeable, global::System.Boolean useRelationSecurity, global::System.Boolean copyPermissionsToChildren, global::System.Boolean showAsRadioButtons, global::System.Boolean useForDefaultFiltration, global::System.Boolean hide, global::System.Boolean @override, global::System.Boolean useForContext, global::System.Boolean useForVariations, global::System.Boolean orderByTitle, global::System.Int32 fieldTitleCount, global::System.Boolean includeRelationsInTitle, global::System.Boolean useInChildContentFilter, global::System.Boolean optimizeForHierarchy, global::System.Boolean isLocalization, global::System.Boolean useSeparateReverseViews)
+        /// <param name="disableListAutoWrap">Initial value of the DisableListAutoWrap property.</param>
+        public static FieldDAL CreateFieldDAL(global::System.Decimal id, global::System.Decimal contentId, global::System.String name, global::System.Decimal size, global::System.Decimal typeId, global::System.Decimal indexFlag, global::System.DateTime modified, global::System.DateTime created, global::System.Decimal lastModifiedBy, global::System.Decimal order, global::System.Decimal required, global::System.Decimal permanentFlag, global::System.Decimal primaryFlag, global::System.Decimal displayAsRadioButton, global::System.Boolean viewInList, global::System.Boolean readonlyFlag, global::System.Decimal allowStageEdit, global::System.Boolean autoLoad, global::System.Boolean useSiteLibrary, global::System.Boolean useArchiveArticles, global::System.Boolean autoExpand, global::System.Boolean fullPage, global::System.Boolean renameMatched, global::System.Boolean disableVersionControl, global::System.Boolean mapAsProperty, global::System.Boolean isLong, global::System.Boolean useForTree, global::System.Boolean autoCheckChildren, global::System.Boolean aggregated, global::System.Boolean isClassifier, global::System.Boolean changeable, global::System.Boolean useRelationSecurity, global::System.Boolean copyPermissionsToChildren, global::System.Boolean showAsRadioButtons, global::System.Boolean useForDefaultFiltration, global::System.Boolean hide, global::System.Boolean @override, global::System.Boolean useForContext, global::System.Boolean useForVariations, global::System.Boolean orderByTitle, global::System.Int32 fieldTitleCount, global::System.Boolean includeRelationsInTitle, global::System.Boolean useInChildContentFilter, global::System.Boolean optimizeForHierarchy, global::System.Boolean isLocalization, global::System.Boolean useSeparateReverseViews, global::System.Boolean disableListAutoWrap)
         {
             FieldDAL fieldDAL = new FieldDAL();
             fieldDAL.Id = id;
@@ -17150,6 +17151,7 @@ namespace Quantumart.QP8.DAL
             fieldDAL.OptimizeForHierarchy = optimizeForHierarchy;
             fieldDAL.IsLocalization = isLocalization;
             fieldDAL.UseSeparateReverseViews = useSeparateReverseViews;
+            fieldDAL.DisableListAutoWrap = disableListAutoWrap;
             return fieldDAL;
         }
 
@@ -18911,6 +18913,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseSeparateReverseViews;
         partial void OnUseSeparateReverseViewsChanging(global::System.Boolean value);
         partial void OnUseSeparateReverseViewsChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean DisableListAutoWrap
+        {
+            get
+            {
+                return _DisableListAutoWrap;
+            }
+            set
+            {
+                OnDisableListAutoWrapChanging(value);
+                ReportPropertyChanging("DisableListAutoWrap");
+                _DisableListAutoWrap = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DisableListAutoWrap");
+                OnDisableListAutoWrapChanged();
+            }
+        }
+        private global::System.Boolean _DisableListAutoWrap;
+        partial void OnDisableListAutoWrapChanging(global::System.Boolean value);
+        partial void OnDisableListAutoWrapChanged();
 
         #endregion
 
@@ -29325,7 +29351,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="sendNotifications">Initial value of the SendNotifications property.</param>
         /// <param name="externalDevelopment">Initial value of the ExternalDevelopment property.</param>
         /// <param name="downloadEfSource">Initial value of the DownloadEfSource property.</param>
-        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String liveDirectory, global::System.String liveVirtualRoot, global::System.String stageDirectory, global::System.String stageVirtualRoot, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications, global::System.Boolean externalDevelopment, global::System.Boolean downloadEfSource)
+        /// <param name="disableListAutoWrap">Initial value of the DisableListAutoWrap property.</param>
+        public static SiteDAL CreateSiteDAL(global::System.Decimal id, global::System.String name, global::System.String dns, global::System.String liveDirectory, global::System.String liveVirtualRoot, global::System.String stageDirectory, global::System.String stageVirtualRoot, global::System.String isLive, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.String uploadDir, global::System.String uploadUrl, global::System.Decimal allowUserSessions, global::System.Decimal useAbsoluteUploadUrl, global::System.String scriptLanguage, global::System.Decimal onScreenFieldBorder, global::System.Decimal onScreenObjectBorder, global::System.Decimal onScreenObjectTypeMask, global::System.Decimal forceAssemble, global::System.Boolean assembleFormatsInLive, global::System.Boolean forceTestDirectory, global::System.Boolean importMappingToDb, global::System.Boolean proceedMappingWithDb, global::System.Boolean replaceUrls, global::System.Boolean useLongUrls, global::System.Boolean pEnterMode, global::System.Boolean proceedDbIndependentGeneration, global::System.Boolean generateMapFileOnly, global::System.Boolean enableOnScreen, global::System.Boolean permanentLock, global::System.Boolean useEnglishQuotes, global::System.Boolean sendNotifications, global::System.Boolean externalDevelopment, global::System.Boolean downloadEfSource, global::System.Boolean disableListAutoWrap)
         {
             SiteDAL siteDAL = new SiteDAL();
             siteDAL.Id = id;
@@ -29363,6 +29390,7 @@ namespace Quantumart.QP8.DAL
             siteDAL.SendNotifications = sendNotifications;
             siteDAL.ExternalDevelopment = externalDevelopment;
             siteDAL.DownloadEfSource = downloadEfSource;
+            siteDAL.DisableListAutoWrap = disableListAutoWrap;
             return siteDAL;
         }
 
@@ -30596,6 +30624,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DownloadEfSource;
         partial void OnDownloadEfSourceChanging(global::System.Boolean value);
         partial void OnDownloadEfSourceChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean DisableListAutoWrap
+        {
+            get
+            {
+                return _DisableListAutoWrap;
+            }
+            set
+            {
+                OnDisableListAutoWrapChanging(value);
+                ReportPropertyChanging("DisableListAutoWrap");
+                _DisableListAutoWrap = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("DisableListAutoWrap");
+                OnDisableListAutoWrapChanged();
+            }
+        }
+        private global::System.Boolean _DisableListAutoWrap;
+        partial void OnDisableListAutoWrapChanging(global::System.Boolean value);
+        partial void OnDisableListAutoWrapChanged();
 
         #endregion
 

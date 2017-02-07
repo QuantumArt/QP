@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Quantumart.QP8.Utils;
@@ -9,11 +9,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
     {
         private static readonly Regex SpacesRegExp = new Regex(@"\s", RegexOptions.Compiled);
 
-        /// <summary>
-        /// Возвращает список названий CSS-классов из строкового значения атрибута class
-        /// </summary>
-        /// <param name="cssClassesRawString">строковое значение атрибута class</param>
-        /// <returns>список названий CSS-классов</returns>
         private static List<string> GetCssClasses(string cssClassesRawString)
         {
             var cssClassesString = SpacesRegExp.Replace(Converter.ToString(cssClassesRawString).Trim(), " ");
@@ -26,12 +21,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             return cssClasses;
         }
 
-        /// <summary>
-        /// Проверяет наличие CSS-класса в атрибуте class
-        /// </summary>
-        /// <param name="htmlAttributes">HTML-атрибуты</param>
-        /// <param name="cssClassName">название CSS-класса</param>
-        /// <returns>результат проверки (true - есть; false - нет)</returns>
         public static bool ContainsCssClass(this Dictionary<string, object> htmlAttributes, string cssClassName)
         {
             var result = false;
@@ -66,14 +55,10 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
             var result = htmlAttributes[dataKey];
             htmlAttributes.Remove(dataKey);
+
             return result;
         }
 
-        /// <summary>
-        /// Добавляет CSS-класс в атрибут class
-        /// </summary>
-        /// <param name="htmlAttributes">HTML-атрибуты</param>
-        /// <param name="cssClassName">название CSS-класса</param>
         public static void AddCssClass(this Dictionary<string, object> htmlAttributes, string cssClassName)
         {
             if (htmlAttributes.ContainsKey("class"))
@@ -99,11 +84,6 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
             }
         }
 
-        /// <summary>
-        /// Удаляет CSS-класс из атрибута class
-        /// </summary>
-        /// <param name="htmlAttributes">HTML-атрибуты</param>
-        /// <param name="cssClassName">название CSS-класса</param>
         public static void RemoveCssClass(this Dictionary<string, object> htmlAttributes, string cssClassName)
         {
             if (htmlAttributes.ContainsKey("class"))
@@ -128,6 +108,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                     }
                 }
             }
+
             return htmlAttributes;
         }
     }

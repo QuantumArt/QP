@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.BLL.Services.VisualEditor
+namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
     public class VisualEditorConfig
     {
@@ -18,6 +18,8 @@
         public int ShiftEnterMode => _field.PEnterMode ? CkeditorEnterBr : CkeditorEnterP;
 
         public bool UseEnglishQuotes => _field.UseEnglishQuotes;
+
+        public bool DisableListAutoWrap => _field.DisableListAutoWrap;
 
         public int Height => _field.VisualEditorHeight - ToolbarsHeight;
 

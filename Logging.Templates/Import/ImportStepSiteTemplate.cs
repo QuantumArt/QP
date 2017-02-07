@@ -13,7 +13,7 @@ namespace Quantumart.QP8.Logging.Templates.Import
     using Quantumart.QP8.Logging.Templates.Default;
     using Quantumart.QP8.Resources;
     using Quantumart.QP8.BLL.Services.MultistepActions.Import;
-    using Quantumart.QP8.BLL.Enums;
+    using Quantumart.QP8.BLL.Enums.Csv;
     using System;
     
     /// <summary>
@@ -35,11 +35,11 @@ namespace Quantumart.QP8.Logging.Templates.Import
             
             #line 13 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
 
-var setts = Model.Settings;
-if (setts.ImportAction == (int)ImportActions.InsertAndUpdate || setts.ImportAction == (int)ImportActions.InsertNew || setts.ImportAction == (int)ImportActions.UpdateIfChanged)
+var settings = Model.Settings;
+if (settings.ImportAction == (int)CsvImportMode.InsertAndUpdate || settings.ImportAction == (int)CsvImportMode.InsertNew || settings.ImportAction == (int)CsvImportMode.UpdateIfChanged)
     {
-        string inserted = String.Format(MultistepActionStrings.InsertedArticlesCount, setts.InsertedArticleIds.Count);
-        string updated = String.Format(MultistepActionStrings.UpdatedArticlesCount, setts.UpdatedArticleIds.Count);
+        string inserted = String.Format(MultistepActionStrings.InsertedArticlesCount, settings.InsertedArticleIds.Count);
+        string updated = String.Format(MultistepActionStrings.UpdatedArticlesCount, settings.UpdatedArticleIds.Count);
         Write("{0}; {1}.", inserted, updated);
     }
 

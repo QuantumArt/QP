@@ -1160,12 +1160,12 @@ Quantumart.QP8.Utils.collectGarbageInIE = function Quantumart$QP8$Utils$collectG
   }
 };
 
-Quantumart.QP8.Utils.addRemoveToArrUniq = function Quantumart$QP8$Utils$addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
+$q.addRemoveToArrUniq = function Quantumart$QP8$Utils$addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
   var underscoreMethod = shouldBeExcluded ? 'difference' : 'union';
   return _[underscoreMethod](arrToModify, valToAddRemove);
 };
 
-Quantumart.QP8.Utils.bindProxies = function Quantumart$QP8$Utils$bindProxies(listOfFnNames, fnPostfix) {
+$q.bindProxies = function Quantumart$QP8$Utils$bindProxies(listOfFnNames, fnPostfix) {
   var postfix = fnPostfix || 'Handler';
   [].forEach.call(listOfFnNames, function(fnName) {
     try {
@@ -1176,7 +1176,7 @@ Quantumart.QP8.Utils.bindProxies = function Quantumart$QP8$Utils$bindProxies(lis
   }, this);
 };
 
-Quantumart.QP8.Utils.dispose = function Quantumart$QP8$Utils$dispose(listOfObjs) {
+$q.dispose = function Quantumart$QP8$Utils$dispose(listOfObjs) {
   [].forEach.call(listOfObjs, function(obj) {
     try {
       if(this[obj]) {

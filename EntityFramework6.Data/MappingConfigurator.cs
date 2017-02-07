@@ -27,19 +27,19 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
-           
+
 		    modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.LastModifiedBy)
-                .HasColumnName("LAST_MODIFIED_BY");
-            
+                .HasColumnName(FieldName.LastModifiedBy);
+
             modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.StatusTypeId)
-                .HasColumnName("STATUS_TYPE_ID");
+                .HasColumnName(FieldName.StatusTypeId);
 
 			modelBuilder.Entity<MarketingProduct>()
                 .HasRequired<StatusType>(x => x.StatusType)
                 .WithMany()
-                .HasForeignKey(x => x.StatusTypeId); 
+                .HasForeignKey(x => x.StatusTypeId);
 
             modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.Family_ID)
@@ -47,7 +47,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
             modelBuilder.Entity<MarketingProduct>()
                 .Property(x => x.MarketingSign_ID)
                 .HasColumnName(GetFieldName("MarketingProduct", "MarketingSign_ID"));
- 
+
             #endregion
 
             #region Product mappings
@@ -56,19 +56,19 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
-           
+
 		    modelBuilder.Entity<Product>()
                 .Property(x => x.LastModifiedBy)
-                .HasColumnName("LAST_MODIFIED_BY");
-            
+                .HasColumnName(FieldName.LastModifiedBy);
+
             modelBuilder.Entity<Product>()
                 .Property(x => x.StatusTypeId)
-                .HasColumnName("STATUS_TYPE_ID");
+                .HasColumnName(FieldName.StatusTypeId);
 
 			modelBuilder.Entity<Product>()
                 .HasRequired<StatusType>(x => x.StatusType)
                 .WithMany()
-                .HasForeignKey(x => x.StatusTypeId); 
+                .HasForeignKey(x => x.StatusTypeId);
 
             modelBuilder.Entity<Product>()
                 .Property(x => x.MarketingSign_ID)
@@ -92,7 +92,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Region>().HasMany<Product>(p => p.BackwardForRegions).WithMany()
                 .Map(rp =>
-                { 
+                {
                     rp.MapLeftKey("id"); // !+
                     rp.MapRightKey("linked_id");
                     rp.ToTable(GetReversedLinkTableName("Product", "Regions"));
@@ -100,7 +100,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Product>().Ignore(p => p.PDFUrl);
             modelBuilder.Entity<Product>().Ignore(p => p.PDFUploadPath);
- 
+
             #endregion
 
             #region ProductParameter mappings
@@ -109,19 +109,19 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
-           
+
 		    modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.LastModifiedBy)
-                .HasColumnName("LAST_MODIFIED_BY");
-            
+                .HasColumnName(FieldName.LastModifiedBy);
+
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.StatusTypeId)
-                .HasColumnName("STATUS_TYPE_ID");
+                .HasColumnName(FieldName.StatusTypeId);
 
 			modelBuilder.Entity<ProductParameter>()
                 .HasRequired<StatusType>(x => x.StatusType)
                 .WithMany()
-                .HasForeignKey(x => x.StatusTypeId); 
+                .HasForeignKey(x => x.StatusTypeId);
 
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Group_ID)
@@ -149,7 +149,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
             modelBuilder.Entity<ProductParameter>()
                 .Property(x => x.Product_ID)
                 .HasColumnName(GetFieldName("ProductParameter", "Product"));
- 
+
             #endregion
 
             #region Region mappings
@@ -158,19 +158,19 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
-           
+
 		    modelBuilder.Entity<Region>()
                 .Property(x => x.LastModifiedBy)
-                .HasColumnName("LAST_MODIFIED_BY");
-            
+                .HasColumnName(FieldName.LastModifiedBy);
+
             modelBuilder.Entity<Region>()
                 .Property(x => x.StatusTypeId)
-                .HasColumnName("STATUS_TYPE_ID");
+                .HasColumnName(FieldName.StatusTypeId);
 
 			modelBuilder.Entity<Region>()
                 .HasRequired<StatusType>(x => x.StatusType)
                 .WithMany()
-                .HasForeignKey(x => x.StatusTypeId); 
+                .HasForeignKey(x => x.StatusTypeId);
 
             modelBuilder.Entity<Region>()
                 .HasOptional<Region>(mp => mp.Parent)
@@ -191,7 +191,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.BackwardForAllowedRegions).WithMany()
                 .Map(rp =>
-                { 
+                {
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
                     rp.ToTable(GetReversedLinkTableName("Region", "AllowedRegions"));
@@ -208,13 +208,13 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Region>().HasMany<Region>(p => p.BackwardForDeniedRegions).WithMany()
                 .Map(rp =>
-                { 
+                {
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
                     rp.ToTable(GetReversedLinkTableName("Region", "DeniedRegions"));
                 });
 
- 
+
             #endregion
 
             #region MobileTariff mappings
@@ -223,19 +223,19 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
-           
+
 		    modelBuilder.Entity<MobileTariff>()
                 .Property(x => x.LastModifiedBy)
-                .HasColumnName("LAST_MODIFIED_BY");
-            
+                .HasColumnName(FieldName.LastModifiedBy);
+
             modelBuilder.Entity<MobileTariff>()
                 .Property(x => x.StatusTypeId)
-                .HasColumnName("STATUS_TYPE_ID");
+                .HasColumnName(FieldName.StatusTypeId);
 
 			modelBuilder.Entity<MobileTariff>()
                 .HasRequired<StatusType>(x => x.StatusType)
                 .WithMany()
-                .HasForeignKey(x => x.StatusTypeId); 
+                .HasForeignKey(x => x.StatusTypeId);
 
             modelBuilder.Entity<MobileTariff>()
                 .HasOptional<Product>(mp => mp.Product)
@@ -245,7 +245,7 @@ namespace Quantumart.QP8.EntityFramework6.Data
             modelBuilder.Entity<MobileTariff>()
                 .Property(x => x.Product_ID)
                 .HasColumnName(GetFieldName("MobileTariff", "Product"));
- 
+
             #endregion
 
             #region Setting mappings
@@ -254,19 +254,19 @@ namespace Quantumart.QP8.EntityFramework6.Data
                 .Property(x => x.Id)
                 .HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity)
                 .HasColumnName("CONTENT_ITEM_ID");
-           
+
 		    modelBuilder.Entity<Setting>()
                 .Property(x => x.LastModifiedBy)
-                .HasColumnName("LAST_MODIFIED_BY");
-            
+                .HasColumnName(FieldName.LastModifiedBy);
+
             modelBuilder.Entity<Setting>()
                 .Property(x => x.StatusTypeId)
-                .HasColumnName("STATUS_TYPE_ID");
+                .HasColumnName(FieldName.StatusTypeId);
 
 			modelBuilder.Entity<Setting>()
                 .HasRequired<StatusType>(x => x.StatusType)
                 .WithMany()
-                .HasForeignKey(x => x.StatusTypeId); 
+                .HasForeignKey(x => x.StatusTypeId);
 
             modelBuilder.Entity<Setting>()
                 .Property(x => x.ValueMapped)
@@ -282,13 +282,11 @@ namespace Quantumart.QP8.EntityFramework6.Data
 
             modelBuilder.Entity<Setting>().HasMany<Setting>(p => p.BackwardForRelatedSettings).WithMany()
                 .Map(rp =>
-                { 
+                {
                     rp.MapLeftKey("linked_id"); // ===
                     rp.MapRightKey("id");
                     rp.ToTable(GetReversedLinkTableName("Setting", "RelatedSettings"));
                 });
-
- 
             #endregion
         }
     }

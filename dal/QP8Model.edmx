@@ -338,6 +338,7 @@
           <Property Name="OPTIMIZE_FOR_HIERARCHY" Type="bit" Nullable="false" />
           <Property Name="IS_LOCALIZATION" Type="bit" Nullable="false" />
           <Property Name="USE_SEPARATE_REVERSE_VIEWS" Type="bit" Nullable="false" />
+          <Property Name="DISABLE_LIST_AUTO_WRAP" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="content_constraint">
           <Key>
@@ -1125,6 +1126,7 @@
           <Property Name="CONTENT_FORM_SCRIPT" Type="ntext" />
           <Property Name="EXTERNAL_DEVELOPMENT" Type="bit" Nullable="false" />
           <Property Name="DOWNLOAD_EF_SOURCE" Type="bit" Nullable="false" />
+          <Property Name="DISABLE_LIST_AUTO_WRAP" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="SITE_ACCESS">
           <Key>
@@ -6376,6 +6378,7 @@
           <Property Name="OptimizeForHierarchy" Type="Boolean" Nullable="false" />
           <Property Name="IsLocalization" Type="Boolean" Nullable="false" />
           <Property Name="UseSeparateReverseViews" Type="Boolean" Nullable="false" />
+          <Property Name="DisableListAutoWrap" Type="Boolean" Nullable="false" />
 				</EntityType>
         <EntityType Name="ContentConstraintDAL">
           <Key>
@@ -7233,6 +7236,7 @@
           <Property Type="String" Name="ContentFormScript" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="ExternalDevelopment" Type="Boolean" Nullable="false" />
           <Property Name="DownloadEfSource" Type="Boolean" Nullable="false" />
+          <Property Name="DisableListAutoWrap" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="SitePermissionDAL">
           <Key>
@@ -10596,7 +10600,8 @@
           <EntitySetMapping Name="FieldSet">
             <EntityTypeMapping TypeName="QP8Model.FieldDAL">
               <MappingFragment StoreEntitySet="CONTENT_ATTRIBUTE">
-								<ScalarProperty Name="UseSeparateReverseViews" ColumnName="USE_SEPARATE_REVERSE_VIEWS" />
+								<ScalarProperty Name="DisableListAutoWrap" ColumnName="DISABLE_LIST_AUTO_WRAP" />
+                <ScalarProperty Name="UseSeparateReverseViews" ColumnName="USE_SEPARATE_REVERSE_VIEWS" />
                 <ScalarProperty Name="IsLocalization" ColumnName="IS_LOCALIZATION" />
                 <ScalarProperty Name="OptimizeForHierarchy" ColumnName="OPTIMIZE_FOR_HIERARCHY" />
                 <ScalarProperty Name="UseInChildContentFilter" ColumnName="USE_IN_CHILD_CONTENT_FILTER" />
@@ -11339,6 +11344,7 @@
           <EntitySetMapping Name="SiteSet">
             <EntityTypeMapping TypeName="QP8Model.SiteDAL">
               <MappingFragment StoreEntitySet="SITE">
+                <ScalarProperty Name="DisableListAutoWrap" ColumnName="DISABLE_LIST_AUTO_WRAP" />
                 <ScalarProperty Name="DownloadEfSource" ColumnName="DOWNLOAD_EF_SOURCE" />
                 <ScalarProperty Name="ExternalDevelopment" ColumnName="EXTERNAL_DEVELOPMENT" />
                 <ScalarProperty Name="ContentFormScript" ColumnName="CONTENT_FORM_SCRIPT" />
@@ -11963,7 +11969,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="75">
+      <Diagram Name="QP8Model" ZoomLevel="61">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -12068,7 +12074,7 @@
           <ConnectorPoint PointX="8.88076923076923" PointY="12.316793619791667" />
           <ConnectorPoint PointX="8.88076923076923" PointY="12.066793619791666" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="QP8Model.FieldDAL" Width="1.5" PointX="11.75" PointY="10" Height="13.133769531250003" />
+        <EntityTypeShape EntityType="QP8Model.FieldDAL" Width="4" PointX="11.75" PointY="10" Height="13.133769531250003" />
         <EntityTypeShape EntityType="QP8Model.ContentDAL" Width="1.5" PointX="7.5" PointY="13.625" Height="5.2079475911458353" />
         <AssociationConnector Association="QP8Model.ContentDALSiteDAL">
           <ConnectorPoint PointX="7.5" PointY="16.228973795572919" />
@@ -14473,7 +14479,7 @@
           <ConnectorPoint PointX="19.75" PointY="54.634348958333334" />
           <ConnectorPoint PointX="19.75" PointY="37.576233723958325" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="QP8Model.ArticleDAL" Width="1.5" PointX="17.875" PointY="16.125" Height="6.4032194010416674" />
+        <EntityTypeShape EntityType="QP8Model.ArticleDAL" Width="1.5" PointX="19.5" PointY="15.375" Height="6.4032194010416674" />
         <AssociationConnector Association="QP8Model.FK_CONTENT_ITEM_VERSION_CREATED_BY">
           <ConnectorPoint PointX="4.160158" PointY="0.5" />
           <ConnectorPoint PointX="4.160158" PointY="0.40625000000000089" />
@@ -14755,7 +14761,7 @@
           <ConnectorPoint PointX="11.207692307692309" PointY="27.777975260416667" />
           <ConnectorPoint PointX="11.207692307692309" PointY="27.527975260416664" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="QP8Model.CustomActionDAL" Width="2" PointX="14.375" PointY="21.875" Height="3.9033007812499818" />
+        <EntityTypeShape EntityType="QP8Model.CustomActionDAL" Width="2" PointX="17.5" PointY="23" Height="3.9033007812499818" />
         <AssociationConnector Association="QP8Model.FK_CUSTOM_ACTION_BACKEND_ACTION">
           <ConnectorPoint PointX="1.3099183971557618" PointY="16.883932291666667" />
           <ConnectorPoint PointX="1.3099183971557618" PointY="27.601298828125" />
@@ -14889,7 +14895,7 @@
           <ConnectorPoint PointX="14.35173051923077" PointY="22.125" />
         </AssociationConnector>
         <EntityTypeShape EntityType="QP8Model.ToolbarButtonDAL" Width="1.5" PointX="2" PointY="19.25" Height="2.7494921874999818" />
-        <EntityTypeShape EntityType="QP8Model.ContextMenuDAL" Width="2.75" PointX="12.375" PointY="28.875" Height="1.5956835937500031" />
+        <EntityTypeShape EntityType="QP8Model.ContextMenuDAL" Width="2.75" PointX="21.375" PointY="30.75" Height="1.5956835937500031" />
         <EntityTypeShape EntityType="QP8Model.ContextMenuItemDAL" Width="1.5" PointX="19.625" PointY="24.625" Height="2.7494921874999996" />
         <AssociationConnector Association="QP8Model.FK_CONTEXT_MENU_ITEM_CONTEXT_MENU_ITEM">
           <ConnectorPoint PointX="13.09375" PointY="27.7710986328125" />
@@ -15457,7 +15463,7 @@
         <AssociationConnector Association="QP8Model.FK_CONTENT_ATTRIBUTE_TREE_ORDER_FIELD" />
         <AssociationConnector Association="QP8Model.FK_BACKEND_ACTION_EXCLUDED_BY_ACTION" />
         <AssociationConnector Association="QP8Model.ACTION_EXCLUSIONS" />
-        <EntityTypeShape EntityType="QP8Model.AppSettingsDAL" Width="1.5" PointX="13.75" PointY="14.375" />
+        <EntityTypeShape EntityType="QP8Model.AppSettingsDAL" Width="1.5" PointX="17.25" PointY="14.25" />
         <EntityTypeShape EntityType="QP8Model.ExternalNotificationDAL" Width="1.5" PointX="8.375" PointY="0.75" />
         <EntityTypeShape EntityType="QP8Model.XmlDbUpdateLogEntity" Width="1.5" PointX="15.25" PointY="1" />
         <EntityTypeShape EntityType="QP8Model.XmlDbUpdateActionsLogEntity" Width="3" PointX="12.125" PointY="1" />

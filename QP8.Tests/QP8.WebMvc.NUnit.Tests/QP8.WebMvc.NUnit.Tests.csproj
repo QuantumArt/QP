@@ -191,10 +191,6 @@
       <Project>{BD9A445E-8510-489D-8001-409B777C46CD}</Project>
       <Name>Quantumart.QP8.ArticleScheduler</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Quantumart\Quantumart.csproj">
-      <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
-      <Name>Quantumart</Name>
-    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj">
       <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>
       <Name>Resources</Name>
