@@ -1,10 +1,18 @@
-window.$q = Quantumart.QP8.Utils = function() {};
+/* global _ */
 
-$q.trace = function() {
+/* eslint no-extend-native: 'off' */
+/* eslint max-params: 'off' */
+/* eslint max-lines: 'off' */
+/* eslint no-alert: 'off' */
+/* eslint no-sync: 'off' */
+
+window.$q = {};
+$q.trace = function trace() {
+  var args, firstArg, otherArgs;
   if (window.Sys.Debug.isDebug) {
-    var args = [].slice.call(arguments);
-    var firstArg = args.slice(0, 1)[0];
-    var otherArgs = args.slice(1);
+    args = [].slice.call(arguments);
+    firstArg = args.slice(0, 1)[0];
+    otherArgs = args.slice(1);
 
     if ($.isFunction(window.console.groupCollapsed)
       && $.isFunction(window.console.groupEnd)
@@ -19,23 +27,32 @@ $q.trace = function() {
   }
 };
 
-$q.alertSuccess = function(msg) {
+$q.alertSuccess = function alertSuccess(msg) {
   window.alert(msg);
   if (window.Sys.Debug.isDebug) {
     window.console.log.apply(window.console, Array.prototype.slice.call(arguments));
   }
 };
 
-$q.alertFail = function(msg) {
+$q.alertWarn = function alertWarn(msg) {
+  window.alert(msg);
+  $q.trace(msg);
+};
+
+$q.alertError = function alertError(msg) {
+  window.alert(msg);
+  $q.trace(msg);
+};
+
+$q.alertFail = function alertFail(msg) {
   window.alert(msg);
   if (window.Sys.Debug.isDebug) {
     window.console.warn.apply(window.console, Array.prototype.slice.call(arguments));
   }
 };
 
-$q.alertError = function(msg) {
-  window.alert(msg);
-  $q.trace(msg);
+$q.confirmMessage = function confirmMessage(msg) {
+  return window.confirm(msg);
 };
 
 /**
@@ -43,7 +60,7 @@ $q.alertError = function(msg) {
  * @param  {Object} opts jQuery options for ajax request
  * @return {Object}      jQuery XHR deffered
  */
-$q.sendAjax = function(opts) {
+$q.sendAjax = function sendAjax(opts) {
   var defaultOptions = {
     type: 'GET',
     dataType: 'json',
@@ -54,10 +71,6 @@ $q.sendAjax = function(opts) {
   };
 
   var options = Object.assign({}, defaultOptions, opts);
-  if (options.dataType.toLowerCase() === 'jsonp' && !options.async) {
-    window.console.error('Sync requests cannot be combined with jsonp');
-  }
-
   var maxLogDataLengthToLog = 300;
   var logData = JSON.stringify(options.data || {});
   var logDataLength = logData.length;
@@ -66,32 +79,34 @@ $q.sendAjax = function(opts) {
     : logData;
 
   var debugMessage = 'ajax: ' + options.type + ' ' + options.url + '. Data: ' + cuttedLogData;
+  if (options.dataType.toLowerCase() === 'jsonp' && !options.async) {
+    window.console.error('Sync requests cannot be combined with jsonp');
+  }
+
   $q.trace('Sending ' + debugMessage, 'Request object: ', options);
-  return $.ajax(options).done(function(response) {
+  return $.ajax(options).done(function ajaxDone(response) {
     $q.trace('Parsing ' + debugMessage, 'Response object: ', response);
     if (response.status.toUpperCase() === 'SUCCESS') {
-      if(options.jsendSuccess) {
+      if (options.jsendSuccess) {
         options.jsendSuccess(response.data, response);
       }
     } else if (response.status.toUpperCase() === 'FAIL') {
-      if(options.jsendFail) {
+      if (options.jsendFail) {
         options.jsendFail(response.data, response);
       } else {
         $q.alertFail(response.message || 'There was an errors at request');
       }
+    } else if (options.jsendError) {
+      options.jsendError(response.data, response);
     } else {
-      if(options.jsendError) {
-        options.jsendError(response.data, response);
-      } else {
-        $q.alertError(response.message || 'Unknown server error');
-      }
+      $q.alertError(response.message || 'Unknown server error');
     }
-  }).done(function() {
+  }).done(function ajaxDone() {
     $q.hideLoader();
   });
 };
 
-$q.getAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
+$q.getAjax = function getAjax(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
     url: url,
     data: data,
@@ -101,7 +116,7 @@ $q.getAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
   });
 };
 
-$q.postAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
+$q.postAjax = function postAjax(url, data, jsendSuccess, jsendFail, jsendError) {
   return $q.sendAjax({
     url: url,
     type: 'POST',
@@ -112,23 +127,23 @@ $q.postAjax = function(url, data, jsendSuccess, jsendFail, jsendError) {
   });
 };
 
-$q.showLoader = function() {
+$q.showLoader = function showLoader() {
   if ($ctx) {
     $ctx.getArea().showAjaxLoadingLayer();
   }
-}
+};
 
-$q.hideLoader = function() {
+$q.hideLoader = function hideLoader() {
   if ($ctx) {
     $ctx.getArea().hideAjaxLoadingLayer();
   }
-}
-
-$q.isBoolean = function Quantumart$QP8$Utils$isBoolean(value) {
-  return typeof value === 'boolean' || value && ['true', 'false'].includes(value.toString().toLowerCase().trim());
 };
 
-$q.toBoolean = function Quantumart$QP8$Utils$toBoolean(value, defaultValue) {
+$q.isBoolean = function isBoolean(value) {
+  return typeof value === 'boolean' || (value && ['true', 'false'].includes(value.toString().toLowerCase().trim()));
+};
+
+$q.toBoolean = function toBoolean(value, defaultValue) {
   if ($q.isBoolean(value)) {
     return value.toString().toLowerCase().trim() === 'true';
   }
@@ -140,125 +155,77 @@ $q.toBoolean = function Quantumart$QP8$Utils$toBoolean(value, defaultValue) {
   return false;
 };
 
-Quantumart.QP8.Utils.isNull = function Quantumart$QP8$Utils$isNull(value) {
-  /// <summary>
-  /// Проверяет переменную на Null-значения
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <returns type="Boolean">результат проверки (true - Null; false - не Null)</returns>
+$q.isNull = function isNull(value) {
   var result = false;
-  if (value == undefined || value == null || typeof (value) == 'undefined') {
+  if (value === undefined || value === null || typeof value === 'undefined') {
     result = true;
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.isNullOrEmpty = function Quantumart$QP8$Utils$isNullOrEmpty(value) {
-  /// <summary>
-  /// Проверяет переменную на пустые значения
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <returns type="Boolean">результат проверки (true - пусто; false - не пусто)</returns>
+$q.isNullOrEmpty = function isNullOrEmpty(value) {
   var result = false;
-
-  if (Quantumart.QP8.Utils.isNull(value)) {
+  if ($q.isNull(value)) {
     result = true;
-  } else {
-    if (Quantumart.QP8.Utils.isArray(value) || (Quantumart.QP8.Utils.isObject(value) && value.jquery)) {
-      if (value.length == 0) {
-        result = true;
-      }
-    } else {
-      if (value.toString().length == 0) {
-        result = true;
-      }
+  } else if ($q.isArray(value) || ($q.isObject(value) && value.jquery)) {
+    if (!value.length) {
+      result = true;
     }
-  }
-
-  return result;
-};
-
-Quantumart.QP8.Utils.isNullOrWhiteSpace = function Quantumart$QP8$Utils$isNullOrWhiteSpace(value) {
-  /// <summary>
-  /// Проверяет переменную на пустые значения
-  // с предварительным удалением оконечных пробелов
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <returns type="Boolean">результат проверки (true - пусто; false - не пусто)</returns>
-  var result = false;
-
-  if (Quantumart.QP8.Utils.isNull(value)) {
+  } else if (!value.toString().length) {
     result = true;
-  } else {
-    if (Quantumart.QP8.Utils.isArray(value) || (Quantumart.QP8.Utils.isObject(value) && value.jquery)) {
-      if (value.length == 0) {
-        result = true;
-      }
-    } else {
-      if (value.toString().trim().length == 0) {
-        result = true;
-      }
-    }
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.toString = function Quantumart$QP8$Utils$toString(value, defaultValue) {
-  /// <summary>
-  /// Преобразует значение в строку
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="defaultValue" type="String">значение по умолчанию</param>
+$q.isNullOrWhiteSpace = function isNullOrWhiteSpace(value) {
+  var result = false;
+  if ($q.isNull(value)) {
+    result = true;
+  } else if ($q.isArray(value) || ($q.isObject(value) && value.jquery)) {
+    if (!value.length) {
+      result = true;
+    }
+  } else if (!value.toString().trim().length) {
+    result = true;
+  }
+
+  return result;
+};
+
+$q.toString = function convertToString(value, defaultValue) {
   var string = null;
-
-  if (Quantumart.QP8.Utils.isNull(defaultValue)) {
-    defaultValue = null;
-  }
-
-  if (!Quantumart.QP8.Utils.isNull(value)) {
-    string = value.toString();
+  if ($q.isNull(value)) {
+    string = $q.isNull(defaultValue) ? null : defaultValue;
   } else {
-    string = defaultValue;
+    string = value.toString();
   }
 
   return string;
 };
 
-Quantumart.QP8.Utils.isString = function Quantumart$QP8$Utils$isString(value) {
-  /// <summary>
-  /// Проверяет является ли значение строкой
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
+$q.isString = function isString(value) {
   var result = false;
-
-  if (!Quantumart.QP8.Utils.isNull(value)) {
-    result = (typeof (value.valueOf()) == 'string');
+  if (!$q.isNull(value)) {
+    result = typeof value.valueOf() === 'string';
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils._prepareNumber = function Quantumart$QP8$Utils$_prepareNumber(value, forCheck) {
-  /// <summary>
-  /// Подготавливает значение к преобразованию в число
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="forCheck" type="Boolean">признак, указывающий что преобразование используется при проверки типа</param>
+// Подготавливает значение к преобразованию в число
+// forCheck - признак, указывающий что преобразование используется при проверки типа</param>
+$q._prepareNumber = function _prepareNumber(value, forCheck) {
+  var processedValue;
   var number = null;
-
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(value)) {
-    var processedValue = value.toString()
-    .replace(/\s/igm, '')
-    .replace(',', '.')
-    .toLowerCase();
-
+  if (!$q.isNullOrEmpty(value)) {
+    processedValue = value.toString().replace(/\s/igm, '').replace(',', '.').toLowerCase();
     if (!forCheck) {
-      if (processedValue == 'true') {
+      if (processedValue === 'true') {
         number = 1;
         return number;
-      } else if (processedValue == 'false') {
+      } else if (processedValue === 'false') {
         number = 0;
         return number;
       }
@@ -270,21 +237,11 @@ Quantumart.QP8.Utils._prepareNumber = function Quantumart$QP8$Utils$_prepareNumb
   return number;
 };
 
-Quantumart.QP8.Utils.toInt = function Quantumart$QP8$Utils$toInt(value, defaultValue) {
-  /// <summary>
-  /// Преобразует значение в целое число
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="defaultValue" type="Number" integer="true">значение по умолчанию</param>
-  if (Quantumart.QP8.Utils.isNullOrEmpty(defaultValue)) {
-    defaultValue = null;
-  }
-
+$q.toInt = function toInt(value, defaultValue) {
   var number = null;
-
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(value)) {
-    number = Quantumart.QP8.Utils._prepareNumber(value, false);
-    if (!Quantumart.QP8.Utils.isNullOrEmpty(number)) {
+  if (!$q.isNullOrEmpty(value)) {
+    number = $q._prepareNumber(value, false);
+    if (!$q.isNullOrEmpty(number)) {
       number = parseInt(number, 10);
       if (isNaN(number)) {
         number = null;
@@ -293,46 +250,21 @@ Quantumart.QP8.Utils.toInt = function Quantumart$QP8$Utils$toInt(value, defaultV
   }
 
   if (number == null) {
-    number = defaultValue;
+    return defaultValue;
   }
 
   return number;
 };
 
-Quantumart.QP8.Utils.isInt = function Quantumart$QP8$Utils$isInt(value) {
-  /// <summary>
-  /// Проверяет является ли значение целым числом
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  var result = false;
-  var number = Quantumart.QP8.Utils._prepareNumber(value, true);
-
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(number)) {
-    if (!isNaN(number)) {
-      if (number.toString().indexOf('.') == -1) {
-        result = true;
-      }
-    }
-  }
-
-  return result;
+$q.isInt = function isInt(value) {
+  return $.isNumeric(value) && Math.floor(value) === value;
 };
 
-Quantumart.QP8.Utils.toFloat = function Quantumart$QP8$Utils$toFloat(value, defaultValue) {
-  /// <summary>
-  /// Преобразует значение в число двойной точности
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="defaultValue" type="Number">значение по умолчанию</param>
-  if (Quantumart.QP8.Utils.isNullOrEmpty(defaultValue)) {
-    defaultValue = null;
-  }
-
+$q.toFloat = function toFloat(value, defaultValue) {
   var number = null;
-
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(value)) {
-    number = Quantumart.QP8.Utils._prepareNumber(value, false);
-    if (!Quantumart.QP8.Utils.isNullOrEmpty(number)) {
+  if (!$q.isNullOrEmpty(value)) {
+    number = $q._prepareNumber(value, false);
+    if (!$q.isNullOrEmpty(number)) {
       number = parseFloat(number);
       if (isNaN(number)) {
         number = null;
@@ -341,63 +273,28 @@ Quantumart.QP8.Utils.toFloat = function Quantumart$QP8$Utils$toFloat(value, defa
   }
 
   if (number == null) {
-    number = defaultValue;
+    return defaultValue;
   }
 
   return number;
 };
 
-Quantumart.QP8.Utils.isFloat = function Quantumart$QP8$Utils$isFloat(value) {
-  /// <summary>
-  /// Проверяет является ли значение числом двойной точности
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  var result = false;
-  var number = Quantumart.QP8.Utils._prepareNumber(value, true);
 
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(number)) {
-    if (!isNaN(number)) {
-      result = true;
-    }
-  }
-
-  return result;
-};
-
-Quantumart.QP8.Utils.toDate = function Quantumart$QP8$Utils$toDate(value, defaultValue) {
-  /// <summary>
-  /// Проверяет значение в дату
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="defaultValue" type="Date">значение по умолчанию</param>
-
-  if (Quantumart.QP8.Utils.isNullOrEmpty(defaultValue)) {
-    defaultValue = null;
-  }
-
+$q.toDate = function toDate(value, defaultValue) {
   var date = null;
-
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(value)) {
+  if (!$q.isNullOrEmpty(value)) {
     date = Date.parseLocale(value);
   }
 
-  if (date == null) {
-    date = defaultValue;
-  }
-
-  return date;
+  return date || defaultValue || null;
 };
 
-Quantumart.QP8.Utils.isDate = function Quantumart$QP8$Utils$isDate(value) {
-  /// <summary>
-  /// Проверяет является ли значение датой
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
+$q.isDate = function isDate(value) {
+  var localDate;
   var result = false;
-
-  if (!Quantumart.QP8.Utils.isNullOrEmpty(value)) {
-    date = Date.parseLocale(value);
-    if (date != null) {
+  if (!$q.isNullOrEmpty(value)) {
+    localDate = Date.parseLocale(value);
+    if (localDate !== null) {
       result = true;
     }
   }
@@ -405,129 +302,84 @@ Quantumart.QP8.Utils.isDate = function Quantumart$QP8$Utils$isDate(value) {
   return result;
 };
 
-Quantumart.QP8.Utils.isArray = function Quantumart$QP8$Utils$isArray(value) {
-    /// <summary>
-    /// Проверяет является ли значение массивом
-    /// </summary>
-    /// <param name="value" type="Object">значение</param>
+$q.isArray = function isArray(value) {
   var result = false;
-
-  if (!Quantumart.QP8.Utils.isNull(value)) {
-    result = (typeof (value) == 'array' || (typeof (value) == 'object' && value.join));
+  if (!$q.isNull(value)) {
+    result = typeof value === 'object' && value.join;
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.isObject = function Quantumart$QP8$Utils$isObject(value) {
-    /// <summary>
-    /// Проверяет является ли значение объектом
-    /// </summary>
-    /// <param name="value" type="Object">значение</param>
+$q.isObject = function isObject(value) {
   var result = false;
-
-  if (!Quantumart.QP8.Utils.isNull(value)) {
-    result = (typeof (value) == 'object');
+  if (!$q.isNull(value)) {
+    result = typeof value === 'object';
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.isFunction = function Quantumart$QP8$Utils$isFunction(value) {
-  /// <summary>
-  /// Проверяет является ли значение функцией
-  /// </summary>
-  /// <param name="value" type="Object">значение</param>
+$q.isFunction = function isFunction(value) {
   var result = false;
-
-  if (!Quantumart.QP8.Utils.isNull(value)) {
-    result = (typeof (value.valueOf()) == 'function');
+  if (!$q.isNull(value)) {
+    result = typeof value.valueOf() === 'function';
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.toJQuery = function Quantumart$QP8$Utils$toJQuery(value) {
-  /// <summary>
-  /// Преобразует DOM-элемент или массив DOM-элементов в объект jQuery
-  /// </summary>
-  /// <param name="value">значение</param>
-  /// <returns type="Object">объект jQuery</returns>
-  var result = null;
-
-  if (Quantumart.QP8.Utils.isObject(value)) {
-    if (!value.jquery) {
-      result = jQuery(value);
-    } else {
-      result = value;
+$q.toJQuery = function toJQuery(value) {
+  if ($q.isObject(value)) {
+    if (value.jquery) {
+      return value;
     }
-  } else if (Quantumart.QP8.Utils.isArray(value)) {
-    result = jQuery(value);
+
+    return $(value);
+  } else if ($q.isArray(value)) {
+    return $(value);
   }
 
-  return result;
+  return null;
 };
 
-Quantumart.QP8.Utils.isJQuery = function Quantumart$QP8$Utils$isJQuery(value) {
-  /// <summary>
-  /// Проверяет является ли значение jQuery-объектом
-  /// </summary>
-  /// <param name="value">значение</param>
-  /// <returns type="Boolean">результат проверки (true - jQuery; false - не jQuery)</returns>
-  var result = (Quantumart.QP8.Utils.isObject(value) && value.jquery);
-
-  return result;
+$q.isJQuery = function isJQuery(value) {
+  return $q.isObject(value) && value.jquery;
 };
 
-Quantumart.QP8.Utils.changeType = function Quantumart$QP8$Utils$changeType(value, typeCode) {
-  /// <summary>
-  /// Преобразует значение к указанному типу данных
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="typeCode" type="String">код типа данных в JavaScript</param>
-  /// <returns>преобразованное значение</returns>
+$q.changeType = function changeType(value, typeCode) {
   var convertedValue = value;
-
-  if (typeCode == JS_TYPE_CODE_STRING) {
-    convertedValue = Quantumart.QP8.Utils.toString(value);
-  } else if (typeCode == JS_TYPE_CODE_INT) {
-    convertedValue = Quantumart.QP8.Utils.toInt(value);
-  } else if (typeCode == JS_TYPE_CODE_FLOAT) {
-    convertedValue = Quantumart.QP8.Utils.toFloat(value);
-  } else if (typeCode == JS_TYPE_CODE_BOOLEAN) {
-    convertedValue = Quantumart.QP8.Utils.toBoolean(value);
-  } else if (typeCode == JS_TYPE_CODE_DATE) {
-    convertedValue = Quantumart.QP8.Utils.toDate(value);
+  if (typeCode === window.JS_TYPE_CODE_STRING) {
+    convertedValue = $q.toString(value);
+  } else if (typeCode === window.JS_TYPE_CODE_INT) {
+    convertedValue = $q.toInt(value);
+  } else if (typeCode === window.JS_TYPE_CODE_FLOAT) {
+    convertedValue = $q.toFloat(value);
+  } else if (typeCode === window.JS_TYPE_CODE_BOOLEAN) {
+    convertedValue = $q.toBoolean(value);
+  } else if (typeCode === window.JS_TYPE_CODE_DATE) {
+    convertedValue = $q.toDate(value);
   }
 
   return convertedValue;
 };
 
-Quantumart.QP8.Utils.isInRange = function Quantumart$QP8$Utils$isInRange(value, lowerBound, lowerBoundType, upperBound, upperBoundType) {
-  /// <summary>
-  /// Проверяет попадание значения в диапазон
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="lowerBound" type="Number" integer="true">нижняя границы</param>
-  /// <param name="lowerBoundType" type="Quantumart.QP8.Enums.RangeBoundaryType">тип вхожения в нижнюю границу</param>
-  /// <param name="upperBound" type="Number" integer="true">верхняя граница</param>
-  /// <param name="upperBoundType" type="Quantumart.QP8.Enums.RangeBoundaryType">тип вхождения в верхнюю границу</param>
-  /// <returns type="Boolean">результат проверки (true - входит; false - не входит)</returns>
-  if (lowerBoundType == Quantumart.QP8.Enums.RangeBoundaryType.Inclusive) {
+$q.isInRange = function isInRange(value, lowerBound, lowerBoundType, upperBound, upperBoundType) {
+  if (lowerBoundType === Quantumart.QP8.Enums.RangeBoundaryType.Inclusive) {
     if (value < lowerBound) {
       return false;
     }
-  } else if (lowerBoundType == Quantumart.QP8.Enums.RangeBoundaryType.Exclusive) {
+  } else if (lowerBoundType === Quantumart.QP8.Enums.RangeBoundaryType.Exclusive) {
     if (value <= lowerBound) {
       return false;
     }
   }
 
-  if (upperBoundType == Quantumart.QP8.Enums.RangeBoundaryType.Inclusive) {
+  if (upperBoundType === Quantumart.QP8.Enums.RangeBoundaryType.Inclusive) {
     if (value > upperBound) {
       return false;
     }
-  } else if (upperBoundType == Quantumart.QP8.Enums.RangeBoundaryType.Exclusive) {
+  } else if (upperBoundType === Quantumart.QP8.Enums.RangeBoundaryType.Exclusive) {
     if (value >= upperBound) {
       return false;
     }
@@ -536,50 +388,28 @@ Quantumart.QP8.Utils.isInRange = function Quantumart$QP8$Utils$isInRange(value, 
   return true;
 };
 
-Quantumart.QP8.Utils.compareValues = function Quantumart$QP8$Utils$compareValues(firstValue, secondValue, comparisonOperator) {
-  /// <summary>
-  /// Сравнивает два значения
-  /// </summary>
-  /// <param name="firstValue" type="String">первое значение</param>
-  /// <param name="secondValue" type="String">второе значение</param>
-  /// <param name="comparisonOperator" type="Quantumart.QP8.Enums.ComparisonOperator">оператор сравнения</param>
+$q.compareValues = function compareValues(firstValue, secondValue, comparisonOperator) {
   var result = false;
-
-  if (comparisonOperator == Quantumart.QP8.Enums.ComparisonOperator.Equal) {
-    result = (firstValue == secondValue);
-  } else if (comparisonOperator == Quantumart.QP8.Enums.ComparisonOperator.NotEqual) {
-    result = (firstValue != secondValue);
-  } else if (comparisonOperator == Quantumart.QP8.Enums.ComparisonOperator.GreaterThan) {
-    result = (firstValue > secondValue);
-  } else if (comparisonOperator == Quantumart.QP8.Enums.ComparisonOperator.GreaterThanEqual) {
-    result = (firstValue >= secondValue);
-  } else if (comparisonOperator == Quantumart.QP8.Enums.ComparisonOperator.LessThan) {
-    result = (firstValue < secondValue);
-  } else if (comparisonOperator == Quantumart.QP8.Enums.ComparisonOperator.LessThanEqual) {
-    result = (firstValue <= secondValue);
+  if (comparisonOperator === Quantumart.QP8.Enums.ComparisonOperator.Equal) {
+    result = firstValue === secondValue;
+  } else if (comparisonOperator === Quantumart.QP8.Enums.ComparisonOperator.NotEqual) {
+    result = firstValue !== secondValue;
+  } else if (comparisonOperator === Quantumart.QP8.Enums.ComparisonOperator.GreaterThan) {
+    result = firstValue > secondValue;
+  } else if (comparisonOperator === Quantumart.QP8.Enums.ComparisonOperator.GreaterThanEqual) {
+    result = firstValue >= secondValue;
+  } else if (comparisonOperator === Quantumart.QP8.Enums.ComparisonOperator.LessThan) {
+    result = firstValue < secondValue;
+  } else if (comparisonOperator === Quantumart.QP8.Enums.ComparisonOperator.LessThanEqual) {
+    result = firstValue <= secondValue;
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.getJsonFromUrl = function Quantumart$QP8$Utils$getJsonFromUrl(method, url, params, async, allowCaching, callbackSuccess, callbackError) {
-  /// <summary>
-  /// Получает JSON-контент, который расположен по указанному URL
-  /// </summary>
-  /// <param name="method" type="String">HTTP-метод (GET или POST)</param>
-  /// <param name="url" type="String">URL веб-сервиса</param>
-  /// <param name="params" type="Object">параметры, передаваемые методу веб-сервиса</param>
-  /// <param name="async" type="Boolean">признак, асинхронного запроса</param>
-  /// <param name="allowCaching" type="Boolean">признак, разрешающий кэширование запроса</param>
-  /// <param name="callbackSuccess" type="Function">обработчик успешного вызова веб-сервиса</param>
-  /// <param name="callbackError" type="Function">обработчик ошибок</param>
+$q.getJsonFromUrl = function getJsonFromUrl(method, url, params, async, allowCaching, callbackSuccess, callbackError) {
   var methodName = method.toUpperCase();
-  var data = params;
-
-  if (methodName.toUpperCase() === 'POST') {
-    data = JSON.stringify(params);
-  }
-
+  var data = methodName === 'POST' ? JSON.stringify(params) : params;
   var settings = {
     type: methodName,
     contentType: 'application/json; charset=utf-8',
@@ -592,29 +422,25 @@ Quantumart.QP8.Utils.getJsonFromUrl = function Quantumart$QP8$Utils$getJsonFromU
   };
 
   settings.success = $q.ajaxCallbackDecorator(callbackSuccess, settings);
-  var result = jQuery.ajax(settings);
-
-  return $q.decorateDeferred(result, $q.ajaxCallbackDecorator, settings);
+  return $q.decorateDeferred($.ajax(settings), $q.ajaxCallbackDecorator, settings);
 };
 
-Quantumart.QP8.Utils.getJsonPFromUrl = function Quantumart$QP8$Utils$getJsonPFromUrl(method, url, params, allowCaching, timeout, callbackSuccess, callbackError) {
-  /// <summary>
-  /// Получает JSON-контент, который расположен по указанному URL
-  /// </summary>
-  /// <param name="method" type="String">HTTP-метод (GET или POST)</param>
-  /// <param name="url" type="String">URL веб-сервиса</param>
-  /// <param name="params" type="Object">параметры, передаваемые методу веб-сервиса</param>
-  /// <param name="allowCaching" type="Boolean">признак, разрешающий кэширование запроса</param>
-  /// <param name="callbackSuccess" type="Function">обработчик успешного вызова веб-сервиса</param>
-  /// <param name="callbackError" type="Function">обработчик ошибок</param>
+$q.getJsonPFromUrl = function getJsonPFromUrl(
+  method,
+  url,
+  params,
+  allowCaching,
+  timeout,
+  callbackSuccess,
+  callbackError
+) {
   var methodName = method.toUpperCase();
   var data = params;
-
   if (methodName.toUpperCase() === 'POST') {
     data = JSON.stringify(params);
   }
 
-  return jQuery.ajax({
+  return $.ajax({
     type: methodName,
     contentType: 'application/json; charset=utf-8',
     dataType: 'jsonp',
@@ -627,28 +453,30 @@ Quantumart.QP8.Utils.getJsonPFromUrl = function Quantumart$QP8$Utils$getJsonPFro
   });
 };
 
-Quantumart.QP8.Utils.getCustomActionJson = function Quantumart$QP8$UtilsQuantumart$QP8$Utils$getCustomActionJson(url, params, callbackSuccess, callbackError) {
-  Quantumart.QP8.Utils.getJsonFromUrl('POST', CONTROLLER_URL_CUSTOM_ACTION + 'Proxy', _.extend(params, { url: url }), false, false, callbackSuccess, callbackError);
+$q.getCustomActionJson = function Quantumart$QP8$UtilsgetCustomActionJson(url, params, callbackSuccess, callbackError) {
+  $q.getJsonFromUrl(
+    'POST',
+    window.CONTROLLER_URL_CUSTOM_ACTION + 'Proxy',
+    Object.assign(params, { url: url }),
+    false,
+    false,
+    callbackSuccess,
+    callbackError);
 };
 
-Quantumart.QP8.Utils.getTextContentFromUrl = function Quantumart$QP8$Utils$getTextContentFromUrl(url, allowCaching) {
-  /// <summary>
-  /// Получает текстовый контент, который расположен по указанному URL
-  /// </summary>
-  /// <param name="url" type="String">URL веб-сервиса</param>
-  /// <param name="allowCaching" type="Boolean">признак, разрешающий кэширование запроса</param>
+$q.getTextContentFromUrl = function getTextContentFromUrl(url, allowCaching) {
   var textContent = '';
 
-  jQuery.ajax({
+  $.ajax({
     type: 'GET',
     dataType: 'text',
     url: url,
     async: false,
     cache: allowCaching,
-    success: function(data) {
+    success: function (data) {
       textContent = data;
     },
-    error: function() {
+    error: function () {
       textContent = '';
     }
   });
@@ -656,24 +484,18 @@ Quantumart.QP8.Utils.getTextContentFromUrl = function Quantumart$QP8$Utils$getTe
   return textContent;
 };
 
-Quantumart.QP8.Utils.getHtmlContentFromUrl = function Quantumart$QP8$Utils$getHtmlContentFromUrl(url, allowCaching) {
-  /// <summary>
-  /// Получает HTML-контент, который расположен по указанному URL
-  /// </summary>
-  /// <param name="url" type="String">URL веб-сервиса</param>
-  /// <param name="allowCaching" type="Boolean">признак, разрешающий кэширование запроса</param>
+$q.getHtmlContentFromUrl = function getHtmlContentFromUrl(url, allowCaching) {
   var htmlContent = '';
-
-  jQuery.ajax({
+  $.ajax({
     type: 'GET',
     dataType: 'html',
     url: url,
     async: false,
     cache: allowCaching,
-    success: function(data) {
+    success: function (data) {
       htmlContent = data;
     },
-    error: function() {
+    error: function () {
       htmlContent = '';
     }
   });
@@ -681,17 +503,8 @@ Quantumart.QP8.Utils.getHtmlContentFromUrl = function Quantumart$QP8$Utils$getHt
   return htmlContent;
 };
 
-Quantumart.QP8.Utils.postDataToUrl = function Quantumart$QP8$Utils$postDataToUrl(url, data, async, callbackSuccess, callbackError) {
-  /// <summary>
-  /// Отправляет данные на указанный URL
-  /// </summary>
-  /// <param name="url" type="String">URL веб-сервиса</param>
-  /// <param name="data" type="String">данные</param>
-  /// <param name="async" type="Boolean">признак, асинхронного запроса</param>
-  /// <param name="callbackSuccess" type="Function">обработчик успешного вызова веб-сервиса</param>
-  /// <param name="callbackError" type="Function">обработчик ошибок</param>
-
-  return jQuery.ajax({
+$q.postDataToUrl = function postDataToUrl(url, data, async, callbackSuccess, callbackError) {
+  return $.ajax({
     type: 'POST',
     contentType: 'application/x-www-form-urlencoded',
     dataType: 'json',
@@ -704,8 +517,8 @@ Quantumart.QP8.Utils.postDataToUrl = function Quantumart$QP8$Utils$postDataToUrl
   });
 };
 
-Quantumart.QP8.Utils.getJsonSync = function Quantumart$QP8$Utils$getJsonSync(url, params) {
-  return jQuery.parseJSON(jQuery.ajax({
+$q.getJsonSync = function getJsonSync(url, params) {
+  return $.parseJSON($.ajax({
     type: 'GET',
     contentType: 'application/json; charset=utf-8',
     dataType: 'json',
@@ -714,37 +527,32 @@ Quantumart.QP8.Utils.getJsonSync = function Quantumart$QP8$Utils$getJsonSync(url
     async: false,
     cache: false,
     success: null,
-    error: Quantumart.QP8.Utils.processGenericAjaxError
+    error: $q.processGenericAjaxError
   }).responseText);
 };
 
-Quantumart.QP8.Utils.getTypeNameForJson = function Quantumart$QP8$Utils$getTypeNameForJson(typeName) {
-  /// <summary>
-  /// Преобразует название типа данных в название JSON-типа данных (для передачи объекта WCF-сервису)
-  /// </summary>
-  /// <param name="typeName" type="String">название типа данных</param>
-  /// <returns type="String">название JSON-типа данных</returns>
+// Преобразует название типа данных в название JSON-типа данных (для передачи объекта WCF-сервису)
+// typeName - название типа данных
+// Возвращает название JSON-типа данных
+$q.getTypeNameForJson = function getTypeNameForJson(typeName) {
+  var type, namespace, part, parts, partCount, partIndex;
   var jsonTypeName = typeName;
-
   if (typeName.length > 0) {
-    if (typeName.indexOf('.') != -1) {
-      var type = '';
-      var namespace = '';
-      var parts = typeName.split('.');
-      var partCount = parts.length;
+    if (typeName.indexOf('.') !== -1) {
+      type = '';
+      namespace = '';
+      parts = typeName.split('.');
+      partCount = parts.length;
 
-      for (var partIndex = 0; partIndex < partCount; partIndex++) {
-        var part = parts[partIndex];
-
-        if (partIndex == (partCount - 1)) {
+      for (partIndex = 0; partIndex < partCount; partIndex++) {
+        part = parts[partIndex];
+        if (partIndex === partCount - 1) {
           type = part;
-        } else {
-          if (partIndex > 0) {
-            namespace += '.';
-          }
-
-          namespace += part;
+        } else if (partIndex > 0) {
+          namespace += '.';
         }
+
+        namespace += part;
       }
 
       jsonTypeName = String.format('{0}:#{1}', type, namespace);
@@ -754,13 +562,8 @@ Quantumart.QP8.Utils.getTypeNameForJson = function Quantumart$QP8$Utils$getTypeN
   return jsonTypeName;
 };
 
-/// <summary>
-/// Обрабатывает ошибку, возникшую при AJAX-запросе
-/// </summary>
-/// <param name="status" type="Number" integer="true">HTTP-статус</param>
-Quantumart.QP8.Utils.processGenericAjaxError = function Quantumart$QP8$Utils$processGenericAjaxError(jqXHR) {
+$q.processGenericAjaxError = function processGenericAjaxError(jqXHR) {
   var errorMessage = String.format($l.Common.ajaxGenericErrorMessage, status);
-
   if (status === 401 || jqXHR.getResponseHeader('QP-Not-Authenticated')) {
     errorMessage = $l.Common.ajaxUserSessionExpiredErrorMessage;
   } else if (status === 500) {
@@ -770,27 +573,30 @@ Quantumart.QP8.Utils.processGenericAjaxError = function Quantumart$QP8$Utils$pro
   window.alert(errorMessage);
 };
 
-Quantumart.QP8.Utils.generateErrorMessageText = function Quantumart$QP8$Utils$generateErrorMessageText(status) {
-  /// <summary>
-  /// Генерирует сообщение об ошибке
-  /// </summary>
-  /// <param name="status" type="Number" integer="true">HTTP-статус</param>
+$q.generateErrorMessageText = function generateErrorMessageText(httpStatus) {
   var html = new $.telerik.stringBuilder();
-
-  if (status === 500 || status === 404) {
+  if (httpStatus === 500 || httpStatus === 404) {
     html.cat('<div class="alignCenter" style="margin-top: 1.0em;">');
     html.cat('  <div class="alignCenterToLeft">');
     html.cat('    <div class="alignCenterToRight">');
     html.cat('      <table cellpadding="0" cellspacing="0" border="0" style="margin: 0 120px;">');
     html.cat('        <tr class="top">');
-    if (status === 500) {
-      html.cat('          <td style="width: 110px;"><img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/errors/bug.gif" width="100" height="118" border="0" style="margin: 0 5px;" /></td>');
+    if (httpStatus === 500) {
+      html.cat(
+        '          <td style="width: 110px;"><img src="'
+        + window.COMMON_IMAGE_FOLDER_URL_ROOT
+        + '/errors/bug.gif" width="100" height="118" border="0" style="margin: 0 5px;" /></td>');
+
       html.cat('          <td style="padding: 0 10px;">');
       html.cat('            <h1>' + $l.EditingArea.error500Title + '</h1>');
       html.cat($l.EditingArea.error500Text);
       html.cat('          </td>');
-    } else if (status === 404) {
-      html.cat('          <td style="width: 110px;"><img src="' + COMMON_IMAGE_FOLDER_URL_ROOT + '/errors/compass.png" width="100" height="115" border="0" alt="Компас" style="margin: 0 5px;" /></td>');
+    } else if (httpStatus === 404) {
+      html.cat(
+        '          <td style="width: 110px;"><img src="'
+        + window.COMMON_IMAGE_FOLDER_URL_ROOT
+        + '/errors/compass.png" width="100" height="115" border="0" alt="Компас" style="margin: 0 5px;" /></td>');
+
       html.cat('          <td style="padding: 0 10px;">');
       html.cat('            <h1>' + $l.EditingArea.error404Title + '</h1>');
       html.cat($l.EditingArea.error404Text);
@@ -807,83 +613,72 @@ Quantumart.QP8.Utils.generateErrorMessageText = function Quantumart$QP8$Utils$ge
   return html.string();
 };
 
-Quantumart.QP8.Utils.ajaxCallbackDecorator = function Quantumart$QP8$Utils$ajaxCallbackDecorator(callback, settings) {
+$q.ajaxCallbackDecorator = function ajaxCallbackDecorator(callback, settings) {
   if (callback) {
-    return function(data, textStatus, jqXHR) {
+    return function ajaxDecorator(data, textStatus, jqXHR) {
       if (!Quantumart.QP8.BackendLogOnWindow.deferredExecution(data, jqXHR, callback, settings)) {
         return callback(data, textStatus, jqXHR);
       }
+
+      return undefined;
     };
-  } else {
-    return callback;
   }
+
+  return callback;
 };
 
-Quantumart.QP8.Utils.decorateDeferred = function Quantumart$QP8$Utils$decorateDeferred(deferred, decorator, settings) {
-  deferred._doneBase = deferred.done;
-
-  deferred.done = function(callback) {
+$q.decorateDeferred = function decorateDeferred(deferred, decorator, settings) {
+  var result = deferred;
+  result._doneBase = deferred.done;
+  result.done = function doneCb(callback) {
     var currentCallback = decorator(callback, settings);
     var currentDeferred = this._doneBase(currentCallback);
 
-    return Quantumart.QP8.Utils.decorateDeferred(currentDeferred);
+    return $q.decorateDeferred(currentDeferred);
   };
 
-  return deferred;
+  return result;
 };
 
-/*Возвращает строковое представление числа без использования экспоненциальной записи, и ровно с digits цифр после запятой.
-Число округляется при необходимости, и дробная часть добивается нулями до нужной длины.
-Если число целое, то дробная часть отбрасывается*/
-Quantumart.QP8.Utils.toFixed = function(n, digits) {
-  digits = digits || 0;
-  return n.toFixed(digits).replace(new RegExp('\\.0{' + digits + '}'), '');
+/* Возвращает строковое представление числа без использования экспоненциальной записи,
+ * и ровно с digits цифр после запятой. Число округляется при необходимости,
+ * и дробная часть добивается нулями до нужной длины.
+ * Если число целое, то дробная часть отбрасывается */
+$q.toFixed = function toFixed(number, digits) {
+  var defaultDigits = digits || 0;
+  return number.toFixed(defaultDigits).replace(new RegExp('\\.0{' + defaultDigits + '}'), '');
 };
 
 if (typeof String.prototype.left !== 'function') {
-  String.prototype.left = function(length) {
-  /// <summary>
-  /// Возвращает указанное число символов с левого конца строки
-  /// </summary>
-    if (!/\d+/.test(length)) {
+  String.prototype.left = function trimLeft(strLength) {
+    if (!/\d+/.test(strLength)) {
       return this;
     }
 
-    var result = this.substr(0, length);
-
-    return result;
+    return this.substr(0, strLength);
   };
 }
 
 if (typeof String.prototype.right !== 'function') {
-  String.prototype.right = function(length) {
-  /// <summary>
-  /// Возвращает указанное число символов с правого конца строки
-  /// </summary>
-    if (!/\d+/.test(length)) {
+  String.prototype.right = function trimRight(strLength) {
+    if (!/\d+/.test(strLength)) {
       return this;
     }
 
-    var result = this.substr(this.length - length);
-
-    return result;
+    return this.substr(this.length - strLength);
   };
 }
 
-Quantumart.QP8.Utils.generateRandomString = function Quantumart$QP8$Utils$generateRandomString(stringLength) {
-  /// <summary>
-  /// Генерирует из случайных символов строку заданной длины
-  /// </summary>
-  /// <param name="stringLength" type="Number">длина строки</param>
-  /// <returns>случайная строка</returns>
-  var symbolString = 'QuantumArt98BCDEFGHIJKLMNOPRSTUVWXYZbcdefghijklopqsvwxyz01234567'; // строка символов
-  var symbolStringLength = symbolString.length; // длина строки символов
-  var randomNumber = 0; // случайное число
-  var randomSymbol = ''; // случайный символ
-  var result = ''; // результирующая переменная
+$q.generateRandomString = function generateRandomString(stringLength) {
+  var symbolString = 'QuantumArt98BCDEFGHIJKLMNOPRSTUVWXYZbcdefghijklopqsvwxyz01234567';
+  var symbolStringLength = symbolString.length;
+  var randomNumber = 0;
+  var randomSymbol = '';
+  var result = '';
+  var i;
 
-  for (var i = 0; i < stringLength; i++) {
-    randomNumber = parseInt(symbolStringLength * Math.random());
+  for (i = 0; i < stringLength; i++) {
+    randomNumber = parseInt(symbolStringLength * Math.random(), 10);
     randomSymbol = symbolString.substr(randomNumber, 1);
 
     result += randomSymbol;
@@ -892,168 +687,114 @@ Quantumart.QP8.Utils.generateRandomString = function Quantumart$QP8$Utils$genera
   return result;
 };
 
-Quantumart.QP8.Utils.htmlEncode = function Quantumart$QP8$Utils$htmlEncode(htmlContent, allowFormatText) {
-  /// <summary>
-  /// Преобразует строку в HTML-строку
-  /// </summary>
-  /// <param name="htmlContent" type="String">HTML-код</param>
-  /// <param name="allowFormatText" type="Boolean">разрешает форматирование кода</param>
-  /// <returns>HTML-строка</returns>
-  if (Quantumart.QP8.Utils.isNull(allowFormatText)) {
-    allowFormatText = false;
-  }
-
+$q.htmlEncode = function htmlEncode(htmlContent, allowFormatText) {
   var processedContent = htmlContent;
-
-  if (!Quantumart.QP8.Utils.isNullOrWhiteSpace(htmlContent)) {
+  if (!$q.isNullOrWhiteSpace(htmlContent)) {
     processedContent = processedContent.toString()
       .replace(/&/igm, '&amp;')
-      .replace(/\"/igm, '&quot;')
+      .replace(/"/igm, '&quot;')
       .replace(/</igm, '&lt;')
       .replace(/>/igm, '&gt;');
 
-    if (allowFormatText) {
+    if (!$q.isNull(allowFormatText) || allowFormatText) {
       processedContent = processedContent
         .replace(/\n/igm, '<br />\n')
-      .replace(/\t/igm, '&nbsp;&nbsp;&nbsp;&nbsp;');;
+      .replace(/\t/igm, '&nbsp;&nbsp;&nbsp;&nbsp;');
     }
   }
 
   return processedContent;
 };
 
-Quantumart.QP8.Utils.cutShort = function Quantumart$QP8$Utils$cutShort(value, maxLength, endSymbol) {
-  /// <summary>
-  /// Обрезает строку до указанного количества символов
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="maxLength" type="Number">максимальная длина строки</param>
-  /// <param name="endSymbol" type="String" integer="true">символ, который ставится в конце обрезанной строки</param>
-  /// <returns>обрезанная строка</returns>
-
-  if (!endSymbol) {
-    endSymbol = '…';
-  }
-
-  var result = Quantumart.QP8.Utils.toString(value, '').trim();
-
+$q.cutShort = function cutShort(value, maxLength, endSymbol) {
+  var result = $q.toString(value, '').trim();
   if (result.length > maxLength) {
-    result = result.left(maxLength).trim() + endSymbol;
+    result = result.left(maxLength).trim() + endSymbol || '…';
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.middleCutShort = function Quantumart$QP8$Utils$middleCutShort(value, maxLength, dividingSymbol) {
-  /// <summary>
-  /// Обрезает строку до указанного количества символов из середины
-  /// </summary>
-  /// <param name="value" type="String">значение</param>
-  /// <param name="maxLength" type="Number">максимальная длина строки</param>
-  /// <param name="dividingSymbol" type="String" integer="true">символ, который ставится по середине обрезанной строки</param>
-  /// <returns>обрезанная строка</returns>
-
-  if (!dividingSymbol) {
-    dividingSymbol = '…';
-  }
-
-  var result = Quantumart.QP8.Utils.toString(value, '').trim();
-
+$q.middleCutShort = function middleCutShort(value, maxLength, dividingSymbol) {
+  var divSymbol = dividingSymbol || '…';
+  var halfMaxLength, leftPart, rightPart;
+  var result = $q.toString(value, '').trim();
   if (result.length > maxLength) {
-    var halfMaxLength = Math.floor((maxLength - dividingSymbol.length) / 2);
-    var leftPart = value.left(halfMaxLength).trim();
-    var rightPart = value.right(halfMaxLength).trim();
-
-    result = leftPart + dividingSymbol + rightPart;
+    halfMaxLength = Math.floor((maxLength - divSymbol.length) / 2);
+    leftPart = value.left(halfMaxLength).trim();
+    rightPart = value.right(halfMaxLength).trim();
+    result = leftPart + divSymbol + rightPart;
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.setPropertyValue = function Quantumart$QP8$Utils$setPropertyValue(object, propertyName, value) {
-  /// <summary>
-  /// Задает значение свойству объекта
-  /// </summary>
-  /// <param name="object" type="Object">объект</param>
-  /// <param name="propertyName" type="String">название свойства</param>
-  /// <param name="value" type="String">значение</param>
-  if (propertyName.indexOf('.') != -1) {
-    var parts = propertyName.split('.');
-    var partCount = parts.length;
-    var newObject = object;
-
-    for (var partIndex = 0; partIndex < partCount; partIndex++) {
-      var part = parts[partIndex];
-
-      if (partIndex == (partCount - 1)) {
+$q.setPropertyValue = function setPropertyValue(object, propertyName, value) {
+  var part, parts, partCount, newObject, partIndex;
+  if (propertyName.indexOf('.') === -1) {
+    // eslint-disable-next-line no-param-reassign
+    object[propertyName] = value;
+  } else {
+    parts = propertyName.split('.');
+    partCount = parts.length;
+    newObject = object;
+    for (partIndex = 0; partIndex < partCount; partIndex++) {
+      part = parts[partIndex];
+      if (partIndex === partCount - 1) {
         newObject[part] = value;
       } else {
-        if (Quantumart.QP8.Utils.isNull(newObject[part])) {
+        if ($q.isNull(newObject[part])) {
           newObject[part] = {};
         }
 
         newObject = newObject[part];
       }
     }
-  } else {
-    object[propertyName] = value;
   }
 };
 
-Quantumart.QP8.Utils.removeProperty = function Quantumart$QP8$Utils$removeProperty(object, propertyName) {
-  /// <summary>
-  /// Удаляет свойство объекта
-  /// </summary>
-  /// <param name="object" type="Object">объект</param>
-  /// <param name="propertyName" type="String">название свойства</param>
+$q.removeProperty = function removeProperty(object, propertyName) {
   if (object && object[propertyName]) {
-    if (jQuery.browser.msie && jQuery.browser.version < 8) {
+    if ($.browser.msie && $.browser.version < 8) {
       jQuery(object).removeAttr(propertyName);
     } else {
+      // eslint-disable-next-line no-param-reassign
       delete object[propertyName];
     }
   }
 };
 
-Quantumart.QP8.Utils.hashToString = function Quantumart$QP8$Utils$hashToString(obj) {
+$q.hashToString = function hashToString(obj) {
+  var key;
   var result = '';
 
-  for (var key in obj) {
+  // eslint-disable-next-line guard-for-in, no-restricted-syntax
+  for (key in obj) {
     result = result + key + '=' + obj[key] + ',';
   }
 
   return result.substr(0, result.length - 1);
 };
 
-Quantumart.QP8.Utils.getHashKeysCount = function Quantumart$QP8$Utils$getHashKeysCount(hash) {
-  /// <summary>
-  /// Возвращает количество ключей в хэше
-  /// </summary>
-  /// <param name="hash" type="Object">хэш</param>
-  /// <returns type="Number" integer="true">количество ключей в хэше</returns>
+$q.getHashKeysCount = function getHashKeysCount(hash) {
+  var key; // eslint-disable-line no-unused-vars
   var keysCount = 0;
-
   if (hash) {
-    for (var key in hash) {
-      keysCount++;
+    // eslint-disable-next-line guard-for-in, no-restricted-syntax
+    for (key in hash) {
+      keysCount += 1;
     }
   }
 
   return keysCount;
 };
 
-Array.distinct = function Array$distinct(array) {
-  /// <summary>
-  /// Возвращает массив, состоящий из уникальных элементов
-  /// </summary>
-  /// <param name="array" type="Array" elementMayBeNull="true">исходный массив</param>
-  /// <returns type="Array">массив уникальных элементов</returns>
+Array.distinct = function distinct(array) {
+  var itemIndex, item;
   var uniqueArray = [];
-
-  if (Quantumart.QP8.Utils.isArray(array)) {
-    for (var itemIndex = 0; itemIndex < array.length; itemIndex++) {
-      var item = array[itemIndex];
-
+  if ($q.isArray(array)) {
+    for (itemIndex = 0; itemIndex < array.length; itemIndex++) {
+      item = array[itemIndex];
       if (!Array.contains(uniqueArray, item)) {
         Array.add(uniqueArray, item);
       }
@@ -1063,76 +804,58 @@ Array.distinct = function Array$distinct(array) {
   return uniqueArray;
 };
 
-Quantumart.QP8.Utils.clearArray = function(array) {
-  if (Quantumart.QP8.Utils.isArray(array)) {
+$q.clearArray = function clearArray(array) {
+  if ($q.isArray(array)) {
     Array.clear(array);
   }
 
+  // eslint-disable-next-line no-param-reassign
   array = null;
 };
 
-Quantumart.QP8.Utils.callFunction = function Quantumart$QP8$Utils$callFunction(callback, context) {
-  /// <summary>
-  /// Вызывает функцию
-  /// </summary>
-  /// <param name="callback" type="Function">функция обратного вызова</param>
-  if (Quantumart.QP8.Utils.isFunction(callback)) {
+$q.callFunction = function callFunction(callback, context) {
+  if ($q.isFunction(callback)) {
     if (context) {
-      callback.call(context);
-    } else {
-      callback();
+      return callback.call(context);
     }
+
+    return callback();
   }
+
+  return undefined;
 };
 
-Quantumart.QP8.Utils.preventDefaultFunction = function Quantumart$QP8$Utils$preventDefaultFunction(e) {
-  /// <summary>
-  /// Отменяет поведение по умолчанию
-  /// </summary>
-  /// <param name="e" type="Object">событие</param>
+$q.preventDefaultFunction = function preventDefaultFunction(e) {
   e.preventDefault();
 };
 
-Quantumart.QP8.Utils.hashToQueryString = function Quantumart$QP8$Utils$hashToQueryString(hash) {
-  /// <summary>
-  /// Возвращает строку запроса
-  /// </summary>
-  /// <param name="hash" type="Object" elementMayBeNull="true">хэш</param>
-  /// <returns type="String">строка запроса</returns>
+$q.hashToQueryString = function hashToQueryString(hash) {
+  var param, value;
+  var counter = 0;
   var result = '';
-
   if (hash) {
-    var index = 0;
-
-    for (var parameterName in hash) {
-      var value = Quantumart.QP8.Utils.toString(hash[parameterName], '');
-
-      if (index > 0) {
+    // eslint-disable-next-line guard-for-in, no-restricted-syntax
+    for (param in hash) {
+      value = $q.toString(hash[param], '');
+      if (counter > 0) {
         result += '&';
       }
 
-      result += parameterName + '=' + escape(value);
-      index++;
+      result += param + '=' + escape(value);
+      counter += 1;
     }
   }
 
   return result;
 };
 
-Quantumart.QP8.Utils.arrayToQueryString = function Quantumart$QP8$Utils$arrayToQueryString(parameterName, array) {
-  /// <summary>
-  /// Возвращает строку запроса
-  /// </summary>
-  /// <param name="parameterName" type="String">название параметра</param>
-  /// <param name="array" type="Array" elementMayBeNull="true">массив значений</param>
-  /// <returns type="String">строка запроса</returns>
+$q.arrayToQueryString = function arrayToQueryString(parameterName, array) {
+  var i, value;
   var result = '';
-
-  if (!Quantumart.QP8.Utils.isNullOrWhiteSpace(parameterName) && !Quantumart.QP8.Utils.isNullOrEmpty(array)) {
-    for (var index = 0; index < array.length; index++) {
-      var value = Quantumart.QP8.Utils.toString(array[index], '');
-
-      if (index > 0) {
+  if (!$q.isNullOrWhiteSpace(parameterName) && !$q.isNullOrEmpty(array)) {
+    for (i = 0; i < array.length; i++) {
+      value = $q.toString(array[i], '');
+      if (i > 0) {
         result += '&';
       }
 
@@ -1143,49 +866,46 @@ Quantumart.QP8.Utils.arrayToQueryString = function Quantumart$QP8$Utils$arrayToQ
   return result;
 };
 
-Quantumart.QP8.Utils.updateQueryStringParameter = function Quantumart$QP8$Utils$updateQueryStringParameter(uri, key, value) {
+$q.updateQueryStringParameter = function updateQueryStringParameter(uri, key, value) {
   var re = new RegExp('([?|&])' + key + '=.*?(&|$)', 'i');
-
-  separator = uri.indexOf('?') !== -1 ? '&' : '?';
+  var separator = uri.indexOf('?') === -1 ? '?' : '&';
   if (uri.match(re)) {
     return uri.replace(re, '$1' + key + '=' + value + '$2');
-  } else {
-    return uri + separator + key + '=' + value;
+  }
+
+  return uri + separator + key + '=' + value;
+};
+
+$q.collectGarbageInIE = function collectGarbageInIE() {
+  if ($.browser.msie) {
+    window.CollectGarbage();
   }
 };
 
-Quantumart.QP8.Utils.collectGarbageInIE = function Quantumart$QP8$Utils$collectGarbageInIE() {
-  if (jQuery.browser.msie) {
-    CollectGarbage();
-  }
-};
-
-$q.addRemoveToArrUniq = function Quantumart$QP8$Utils$addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
+$q.addRemoveToArrUniq = function addRemoveToArrUniq(arrToModify, valToAddRemove, shouldBeExcluded) {
   var underscoreMethod = shouldBeExcluded ? 'difference' : 'union';
   return _[underscoreMethod](arrToModify, valToAddRemove);
 };
 
-$q.bindProxies = function Quantumart$QP8$Utils$bindProxies(listOfFnNames, fnPostfix) {
+$q.bindProxies = function bindProxies(listOfFnNames, fnPostfix) {
   var postfix = fnPostfix || 'Handler';
-  [].forEach.call(listOfFnNames, function(fnName) {
+  [].forEach.call(listOfFnNames, function eachFn(fnName) {
     try {
       this[fnName + postfix] = this[fnName].bind(this);
-    } catch(e) {
-      console.error('Failed to register: ' + fnName, e);
+    } catch (e) {
+      window.console.error('Failed to register: ' + fnName, e);
     }
   }, this);
 };
 
-$q.dispose = function Quantumart$QP8$Utils$dispose(listOfObjs) {
-  [].forEach.call(listOfObjs, function(obj) {
+$q.dispose = function dispose(listOfObjs) {
+  [].forEach.call(listOfObjs, function eachOb(obj) {
     try {
-      if(this[obj]) {
+      if (this[obj]) {
         this[obj] = null;
       }
-    } catch(e) {
-      console.error('Failed to dispose: ' + obj, e);
+    } catch (e) {
+      window.console.error('Failed to dispose: ' + obj, e);
     }
   }, this);
 };
-
-Quantumart.QP8.Utils.registerClass('Quantumart.QP8.Utils');

@@ -2,6 +2,10 @@
 // Copyright (c) 2017 Alex Kostyukov
 // https://github.com/AuthorProxy/dotfiles
 
+/* eslint-env node */
+/* eslint max-lines: 'off' */
+/* eslint no-magic-numbers: 'off' */
+
 module.exports = {
   root: true,
   env: {
@@ -9,9 +13,6 @@ module.exports = {
     es6: true,
     jquery: true
   },
-  extends: [
-    // 'plugin:react/recommended'
-  ],
   parser: 'espree',
   parserOptions: {
     ecmaVersion: 6,
@@ -22,14 +23,6 @@ module.exports = {
       experimentalObjectRestSpread: true
     }
   },
-  globals: {
-    $q: false,
-    $c: false,
-    $ctx: false
-  },
-  plugins: [
-    // 'react'
-  ],
   rules: {
     /* Possible Errors: http://eslint.org/docs/rules/#possible-errors */
     // disallow await inside of loops
@@ -132,7 +125,6 @@ module.exports = {
     'valid-typeof': ['error', { requireStringLiterals: true }],
 
 
-
     /* Best Practices: http://eslint.org/docs/rules/#best-practices */
     // enforces getter/setter pairs in objects
     'accessor-pairs': 'error',
@@ -147,13 +139,13 @@ module.exports = {
     'class-methods-use-this': 'error',
 
     // limit cyclomatic complexity
-    'complexity': ['error', 10],
+    complexity: ['warn', 20],
 
     // require return statements to either always or never specify values
     'consistent-return': 'error',
 
     // require following curly brace conventions
-    'curly': 'error',
+    curly: 'error',
 
     // require default case in switch statements
     'default-case': 'error',
@@ -165,7 +157,7 @@ module.exports = {
     'dot-notation': 'error',
 
     // require === and !==
-    'eqeqeq': 'error',
+    eqeqeq: 'error',
 
     // require guarding for-in
     'guard-for-in': 'error',
@@ -240,9 +232,7 @@ module.exports = {
     'no-loop-func': 'error',
 
     // disallow magic numbers
-    // TODO: revisit later
-    'no-magic-numbers': ['error', { ignore: [-1, 0, 1], enforceConst: true }],
-    // 'no-magic-numbers': ['error', { ignoreArrayIndexes: true, enforceConst: true }],
+    'no-magic-numbers': ['off', { ignoreArrayIndexes: true, enforceConst: true }],
 
     // disallow multiple spaces
     'no-multi-spaces': 'error',
@@ -277,20 +267,20 @@ module.exports = {
     // disallow certain object properties
     'no-restricted-properties': ['error', {
       object: 'arguments',
-      message: 'Any arguments props are deprecated, use ES6 syntax instead',
+      message: 'Any arguments props are deprecated, use ES6 syntax instead'
     }, {
       property: 'extend',
-      message: 'Use Object.assign instead.',
+      message: 'Use Object.assign instead.'
     }, {
       property: '__defineGetter__',
-      message: 'Use Object.defineProperty instead.',
+      message: 'Use Object.defineProperty instead.'
     }, {
       property: '__defineSetter__',
-      message: 'Use Object.defineProperty instead.',
+      message: 'Use Object.defineProperty instead.'
     }, {
       object: 'Math',
       property: 'pow',
-      message: 'Use the exponentiation operator (**) instead.',
+      message: 'Use the exponentiation operator (**) instead.'
     }],
 
     // disallow assignment in return statement
@@ -348,7 +338,7 @@ module.exports = {
     'prefer-promise-reject-errors': 'error',
 
     // require radix parameter
-    'radix': 'error',
+    radix: 'error',
 
     // disallow async functions which have no await expression
     'require-await': 'error',
@@ -360,15 +350,12 @@ module.exports = {
     'wrap-iife': 'error',
 
     // require or disallow yoda conditions
-    'yoda': 'error',
-
+    yoda: 'error',
 
 
     /* Strict Mode: http://eslint.org/docs/rules/#strict-mode */
     // require or disallow strict mode directives
-    // 'strict': ['error', 'never'], // enable with babel that inserts [[use strict]]
-    'strict': ['error'],
-
+    strict: ['error', 'never'],
 
 
     /* Variables: http://eslint.org/docs/rules/#variables */
@@ -391,7 +378,7 @@ module.exports = {
     'no-shadow-restricted-names': 'error',
 
     // disallow declaration of variables already declared in the outer scope
-    'no-shadow': ['error', { 'builtinGlobals': true }],
+    'no-shadow': ['error', { builtinGlobals: true }],
 
     // disallow initializing to undefined
     'no-undef-init': 'error',
@@ -407,7 +394,6 @@ module.exports = {
 
     // disallow early use
     'no-use-before-define': 'error',
-
 
 
     /* Node.js and CommonJS: http://eslint.org/docs/rules/#nodejs-and-commonjs */
@@ -442,7 +428,6 @@ module.exports = {
     'no-sync': 'warn',
 
 
-
     /* Stylistic Issues: http://eslint.org/docs/rules/#stylistic-issues */
     // disallow or enforce spaces inside of brackets
     'array-bracket-spacing': 'error',
@@ -454,10 +439,10 @@ module.exports = {
     'brace-style': 'error',
 
     // require camelcase
-    'camelcase': 'error',
+    camelcase: 'error',
 
     // enforce or disallow capitalization of the first letter of a comment
-    'capitalized-comments': 'error',
+    'capitalized-comments': 'off',
 
     // require or disallow trailing commas
     'comma-dangle': 'error',
@@ -487,20 +472,17 @@ module.exports = {
     'func-names': ['warn', 'as-needed'],
 
     // enforce the consistent use of either function declarations or expressions
-    // TODO: revisit later
-    'func-style': 'warn',
+    'func-style': ['warn', 'expression', { allowArrowFunctions: true }],
 
     // disallow specified identifiers
     // TODO: check codebase for any ugly repeated identifiers
     'id-blacklist': 'error',
 
     // enforce minimum and maximum identifier lengths
-    // TODO: check later for loops, that can be a problem
-    'id-length': 'warn',
+    'id-length': ['warn', { exceptions: ['e', 'i'] }],
 
     // require identifiers to match a specified regular expression
-    // TODO: should be turned off if will be any problems with default rule
-    'id-match': 'warn',
+    'id-match': 'off',
 
     // enforce consistent indentation
     indent: ['error', 2, {
@@ -534,7 +516,7 @@ module.exports = {
     'line-comment-position': 'error',
 
     // enforce consistent linebreak style
-    'linebreak-style': ['error', 'windows'],
+    'linebreak-style': ['off', 'windows'],
 
     // require empty lines around comments
     'lines-around-comment': ['error', {
@@ -546,7 +528,7 @@ module.exports = {
 
     // require or disallow newlines around directives
     // TODO: check on code for default rule settings
-    'lines-around-directive': ['error', { before: 'never', after: 'always', }],
+    'lines-around-directive': ['error', { before: 'never', after: 'always' }],
 
     // enforce a maximum depth that blocks can be nested
     'max-depth': 'warn',
@@ -566,19 +548,19 @@ module.exports = {
     }],
 
     // enforce a maximum file length
-    'max-lines': ['warn', { max: 300, skipComments: true }],
+    'max-lines': ['warn', { max: 500, skipComments: true }],
 
     // enforce a maximum depth that callbacks can be nested
     'max-nested-callbacks': 'warn',
 
     // enforce a maximum number of parameters in function definitions
-    'max-params': 'warn',
+    'max-params': ['warn', 5],
 
     // enforce a maximum number of statements allowed per line
     'max-statements-per-line': 'error',
 
     // enforce a maximum number of statements allowed in function blocks
-    'max-statements': 'warn',
+    'max-statements': ['warn', 30],
 
     // enforce or disallow newlines between operands of ternary expressions
     // REMARK: should be added some options, like 'always-if-any-operand-is-expression' or 'longer-than-n-symbols'
@@ -586,18 +568,22 @@ module.exports = {
 
     // require constructor names to begin with a capital letter
     'new-cap': ['error', {
+      newIsCapExceptions: ['$.telerik.stringBuilder'],
       capIsNewExceptions: [
+        'window.CollectGarbage',
         'Immutable.Map',
         'Immutable.Set',
         'Immutable.List'
-      ],
+      ]
     }],
 
     // require parentheses when invoking a constructor with no arguments
     'new-parens': 'error',
 
     // require or disallow an empty line after variable declarations
-    'newline-after-var': 'error',
+    // REMARK: should be added 'ignore' option for some cases,
+    // such as single line var
+    'newline-after-var': 'off',
 
     // require an empty line before return statements
     // REMARK: should be added 'ignore' option for some cases,
@@ -662,7 +648,7 @@ module.exports = {
       'ForInStatement',
       'ForOfStatement',
       'LabeledStatement',
-      'WithStatement',
+      'WithStatement'
     ],
 
     // disallow all tabs
@@ -694,13 +680,13 @@ module.exports = {
     'object-curly-spacing': ['error', 'always'],
 
     // enforce placing object properties on separate lines
-    'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true, }],
+    'object-property-newline': ['error', { allowMultiplePropertiesPerLine: true }],
 
     // require or disallow newlines around variable declarations
     'one-var-declaration-per-line': 'error',
 
     // enforce variables to be declared either together or separately in functions
-    'one-var': ['error', { 'initialized': 'never', 'uninitialized': 'always' }],
+    'one-var': ['error', { initialized: 'never', uninitialized: 'always' }],
 
     // require or disallow assignment operator shorthand where possible
     'operator-assignment': 'error',
@@ -717,7 +703,7 @@ module.exports = {
 
     // enforce the consistent use of either backticks, double, or single quotes
     // TODO: check airbnb style guide for ignoring 'allowTemplateLiterals'
-    'quotes': ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
+    quotes: ['error', 'single', { avoidEscape: true, allowTemplateLiterals: true }],
 
     // require jsdoc comments
     'require-jsdoc': 'off',
@@ -786,7 +772,6 @@ module.exports = {
 
     // require regex literals to be wrapped
     'wrap-regex': 'off',
-
 
 
     /* ECMAScript 6: http://eslint.org/docs/rules/#ecmascript-6 */

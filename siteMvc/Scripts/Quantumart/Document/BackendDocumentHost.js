@@ -666,7 +666,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
     false,
       function(data) {
         self.loadReadyHtmlContent(data);
-        if (Quantumart.QP8.Utils.isFunction(callback)) {
+        if ($q.isFunction(callback)) {
           callback(data.success);
         }
 
@@ -675,7 +675,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
       function(jqXHR) {
         // Оповещаем об ошибке при загрузке документа
         self.onDocumentError();
-        if (Quantumart.QP8.Utils.isFunction(callback)) {
+        if ($q.isFunction(callback)) {
           callback(false);
         }
 
