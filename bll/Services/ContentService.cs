@@ -54,6 +54,7 @@ namespace Quantumart.QP8.BLL.Services
             {
                 content.IsReadOnly = true;
             }
+
             return content;
         }
 

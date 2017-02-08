@@ -19,7 +19,7 @@ select top 2 content_item_id from content_287 c where status_type_id = 125 and n
 and exists (select * from item_link i where c.CONTENT_ITEM_ID = i.item_id and i.link_id = @link_id)
 
 insert into @modifiers
-select top 3 content_item_id from content_300 c 
+select top 3 content_item_id from content_300 c
 where not exists (select * from item_link il where link_id = @link_id and item_id in (select id from @ids) and linked_item_id = c.CONTENT_ITEM_ID)
 
 if @clear = 1

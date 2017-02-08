@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Web.Script.Serialization;
 using AutoMapper;
 using Quantumart.QP8.BLL.Helpers;
@@ -27,6 +27,7 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(biz => biz.Size, opt => opt.Ignore())
                 .ForMember(biz => biz.PEnterMode, opt => opt.Ignore())
                 .ForMember(biz => biz.UseEnglishQuotes, opt => opt.Ignore())
+                .ForMember(biz => biz.DisableListAutoWrap, opt => opt.Ignore())
                 .ForMember(biz => biz.ExternalCss, opt => opt.Ignore())
                 .ForMember(biz => biz.RootElementClass, opt => opt.Ignore())
                 .ForMember(biz => biz.ParentField, opt => opt.Ignore())
@@ -106,6 +107,7 @@ namespace Quantumart.QP8.BLL.Mappers
               .ForMember(data => data.LastModifiedByUser, opt => opt.Ignore())
               .ForMember(data => data.PEnterMode, opt => opt.Ignore())
               .ForMember(data => data.UseEnglishQuotes, opt => opt.Ignore())
+              .ForMember(data => data.DisableListAutoWrap, opt => opt.Ignore())
               .ForMember(data => data.ExternalCss, opt => opt.Ignore())
               .ForMember(data => data.RootElementClass, opt => opt.Ignore())
               .ForMember(data => data.Aggregators, opt => opt.Ignore())
@@ -140,7 +142,6 @@ namespace Quantumart.QP8.BLL.Mappers
                     }
 
                     break;
-
                 case FieldTypeCodes.String:
                     dataObject.Size = bizObject.StringSize;
                     break;
@@ -160,14 +161,22 @@ namespace Quantumart.QP8.BLL.Mappers
                 {
                     dataObject.PEnterMode = bizObject.PEnterMode;
                 }
+
                 if (bizObject.UseEnglishQuotes != bizObject.Content.Site.UseEnglishQuotes)
                 {
                     dataObject.UseEnglishQuotes = bizObject.UseEnglishQuotes;
                 }
+
+                if (bizObject.DisableListAutoWrap != bizObject.Content.Site.DisableListAutoWrap)
+                {
+                    dataObject.DisableListAutoWrap = bizObject.DisableListAutoWrap;
+                }
+
                 if (bizObject.RootElementClass != bizObject.Content.Site.RootElementClass)
                 {
                     dataObject.RootElementClass = bizObject.RootElementClass;
                 }
+
                 if (bizObject.ExternalCss != bizObject.Content.Site.ExternalCss)
                 {
                     dataObject.ExternalCss = !string.IsNullOrEmpty(bizObject.ExternalCss) ? bizObject.ExternalCss : ExternalCssHelper.Delimiter;
@@ -177,6 +186,7 @@ namespace Quantumart.QP8.BLL.Mappers
             {
                 dataObject.PEnterMode = null;
                 dataObject.UseEnglishQuotes = null;
+                dataObject.DisableListAutoWrap = false;
                 dataObject.RootElementClass = null;
                 dataObject.ExternalCss = null;
             }

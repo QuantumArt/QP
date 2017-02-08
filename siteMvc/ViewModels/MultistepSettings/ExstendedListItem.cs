@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 {
@@ -13,7 +13,5 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
         public bool IsAggregated { get; set; }
 
         public bool Unique { get; set; }
-
-        public bool BrokenDataIntegrity { get; set; }
     }
 }

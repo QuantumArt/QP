@@ -117,7 +117,8 @@
 	using (Html.BeginFieldGroup(SiteStrings.Legend_VisualEditor))
 	{
 		@Html.CheckBoxFieldFor(s => s.Data.PEnterMode)
-		@Html.CheckBoxFieldFor(s => s.Data.UseEnglishQuotes)
+    @Html.CheckBoxFieldFor(s => s.Data.UseEnglishQuotes)
+		@Html.CheckBoxFieldFor(s => s.Data.DisableListAutoWrap)
 
 		@Html.CheckboxListFieldFor(
 			model => model.ActiveVeCommands,

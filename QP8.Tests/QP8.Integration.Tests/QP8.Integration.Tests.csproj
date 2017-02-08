@@ -42,6 +42,14 @@
       <HintPath>$(SolutionDir)packages\NUnit.3.5.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Quantumart, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Quantumart.2.0.5.0\lib\net45\Quantumart.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Quantumart.QP8.Assembling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Quantumart.2.0.5.0\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web" />
@@ -102,10 +110,6 @@
     <ProjectReference Include="$(SolutionDir)constants\Constants.csproj">
       <Project>{634f0da9-9351-40fc-b558-da8babc9b2e0}</Project>
       <Name>Constants</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Quantumart\Quantumart.csproj">
-      <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
-      <Name>Quantumart</Name>
     </ProjectReference>
     <ProjectReference Include="$(SolutionDir)siteMvc\WebMvc.csproj">
       <Project>{8be1bb60-1938-45e8-bafb-1d008d62059c}</Project>

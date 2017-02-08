@@ -12,7 +12,7 @@ namespace Quantumart.QP8.Logging.Templates.Import
     using Quantumart.QP8.Logging.Transformers;
     using Quantumart.QP8.Logging.Templates.Default;
     using Quantumart.QP8.BLL.Services.MultistepActions.Import;
-    using Quantumart.QP8.BLL.Enums;
+    using Quantumart.QP8.BLL.Enums.Csv;
     using System;
     
     /// <summary>
@@ -47,7 +47,7 @@ namespace Quantumart.QP8.Logging.Templates.Import
             this.Write("\r\n    ImportAction: ");
             
             #line 14 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepLogTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture((ImportActions)Model.Settings.ImportAction));
+            this.Write(this.ToStringHelper.ToStringWithCulture((CsvImportMode)Model.Settings.ImportAction));
             
             #line default
             #line hidden

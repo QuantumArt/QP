@@ -108,6 +108,14 @@
       <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.0.2.0\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Quantumart, Version=2.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quantumart.2.0.5.0\lib\net45\Quantumart.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Quantumart.QP8.Assembling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quantumart.2.0.5.0\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.configuration" />
@@ -136,9 +144,14 @@
     <Compile Include="ArticleContextSearchBlockItem.cs" />
     <Compile Include="ArticleFieldSearchType.cs" />
     <Compile Include="Db.cs" />
-    <Compile Include="Enums\ImportActions.cs" />
+    <Compile Include="Enums\Csv\CsvCulture.cs" />
+    <Compile Include="Enums\Csv\CsvDelimiter.cs" />
+    <Compile Include="Enums\Csv\CsvEncoding.cs" />
+    <Compile Include="Enums\Csv\CsvLineSeparator.cs" />
+    <Compile Include="Enums\Csv\CsvImportMode.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="Factories\Logging\NullLogFactory.cs" />
@@ -147,6 +160,7 @@
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
     <Compile Include="Helpers\Ensure.cs" />
+    <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />
@@ -701,10 +715,6 @@
     <Compile Include="Models\XmlDbUpdate\XmlDbUpdateLogModel.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)Assembling\Assembling.csproj">
-      <Project>{aba32eeb-7b9a-4bd8-973b-cd483f076237}</Project>
-      <Name>Assembling</Name>
-    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
@@ -724,10 +734,6 @@
     <ProjectReference Include="$(SolutionDir)Merger\Merger.csproj">
       <Project>{cc2a4eab-777f-4b3c-8898-6fa1d00b2f7c}</Project>
       <Name>Merger</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Quantumart\Quantumart.csproj">
-      <Project>{4936635f-9151-49f8-9017-615b9c828491}</Project>
-      <Name>Quantumart</Name>
     </ProjectReference>
     <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj">
       <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>

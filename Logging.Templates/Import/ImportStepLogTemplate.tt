@@ -2,7 +2,7 @@
 <#@ import namespace="Quantumart.QP8.Logging.Transformers" #>
 <#@ import namespace="Quantumart.QP8.Logging.Templates.Default" #>
 <#@ import namespace="Quantumart.QP8.BLL.Services.MultistepActions.Import" #>
-<#@ import namespace="Quantumart.QP8.BLL.Enums" #>
+<#@ import namespace="Quantumart.QP8.BLL.Enums.Csv" #>
 
 <#@ parameter name="Model" type="Quantumart.QP8.Logging.Loggers.ImportStepSettings" #>
 <#@ parameter name="Context" type="Quantumart.QP8.Logging.Loggers.LoggerContext" #>
@@ -11,7 +11,7 @@
 
 <#= TemplateTransformer.Transform<DefaultTextTemplate>(LogEntry, TraceOptions) #>ImportSettings:
     Id: <#= Model.Settings.Id #>
-    ImportAction: <#= (ImportActions)Model.Settings.ImportAction #>
+    ImportAction: <#= (CsvImportMode)Model.Settings.ImportAction #>
     Step: <#= Model.Step #>
     Inserted: <#= Model.Settings.InsertedArticleIds.Count #>
     Updated: <#= Model.Settings.UpdatedArticleIds.Count #>

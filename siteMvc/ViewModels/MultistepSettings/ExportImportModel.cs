@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
@@ -25,31 +26,31 @@ namespace Quantumart.QP8.WebMvc.ViewModels.MultistepSettings
 
         public List<ListItem> Locales => new List<ListItem>
         {
-            new ListItem("0", UserStrings.Russian),
-            new ListItem("1", UserStrings.English)
+            new ListItem(((int)CsvCulture.RuRu).ToString(), UserStrings.Russian),
+            new ListItem(((int)CsvCulture.EnUs).ToString(), UserStrings.English)
         };
 
         public List<ListItem> Charsets => new List<ListItem>
         {
-            new ListItem("0", "Windows-1251"),
-            new ListItem("1", "UTF-8"),
-            new ListItem("2", "UTF-16"),
-            new ListItem("3", "KOI8-R"),
-            new ListItem("4", "DOS (Cyrillic)")
+            new ListItem(((int)CsvEncoding.Windows1251).ToString(), "Windows-1251"),
+            new ListItem(((int)CsvEncoding.Utf8).ToString(), "UTF-8"),
+            new ListItem(((int)CsvEncoding.Utf16).ToString(), "UTF-16"),
+            new ListItem(((int)CsvEncoding.Koi8R).ToString(), "KOI8-R"),
+            new ListItem(((int)CsvEncoding.Cp866).ToString(), "DOS (Cyrillic)")
         };
 
         public List<ListItem> Delimiters => new List<ListItem>
         {
-            new ListItem("0", MultistepActionStrings.ImportComma),
-            new ListItem("1", MultistepActionStrings.ImportSemicolon),
-            new ListItem("2", MultistepActionStrings.ImportTab)
+            new ListItem(((int)CsvDelimiter.Comma).ToString(), MultistepActionStrings.ImportComma),
+            new ListItem(((int)CsvDelimiter.Semicolon).ToString(), MultistepActionStrings.ImportSemicolon),
+            new ListItem(((int)CsvDelimiter.Tab).ToString(), MultistepActionStrings.ImportTab)
         };
 
         public List<ListItem> LineSeparators => new List<ListItem>
         {
-            new ListItem("0", MultistepActionStrings.CRLF),
-            new ListItem("1", MultistepActionStrings.CR),
-            new ListItem("2", MultistepActionStrings.LF)
+            new ListItem(((int)CsvLineSeparator.Windows).ToString(), MultistepActionStrings.CRLF),
+            new ListItem(((int)CsvLineSeparator.MacOs).ToString(), MultistepActionStrings.CR),
+            new ListItem(((int)CsvLineSeparator.Unix).ToString(), MultistepActionStrings.LF)
         };
 
         public override string EntityTypeCode

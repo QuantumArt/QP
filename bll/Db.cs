@@ -30,10 +30,10 @@ namespace Quantumart.QP8.BLL
             base.Validate(errors);
 
             var duplicateNames = AppSettings.GroupBy(c => c.Key).Where(g => g.Count() > 1).Select(x => x.Key).ToArray();
-            var setts = AppSettings.ToArray();
-            for (var i = 0; i < setts.Length; i++)
+            var settings = AppSettings.ToArray();
+            for (var i = 0; i < settings.Length; i++)
             {
-                setts[i].Validate(errors, i + 1, duplicateNames);
+                settings[i].Validate(errors, i + 1, duplicateNames);
             }
 
             if (!errors.IsEmpty)
