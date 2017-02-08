@@ -256,7 +256,6 @@
     <Compile Include="Exceptions\UserQueryContentCreateViewException.cs" />
     <Compile Include="Exceptions\VirtualContentProcessingException.cs" />
     <Compile Include="Helpers\AdditionalNamespace.cs" />
-    <Compile Include="Helpers\ApplicationInfoHelpers.cs" />
     <Compile Include="Helpers\ArticleListHelper.cs" />
     <Compile Include="Helpers\ContentCopyHelper.cs" />
     <Compile Include="Helpers\DefaultValue.cs" />

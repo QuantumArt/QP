@@ -1,4 +1,4 @@
-﻿using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -65,22 +65,6 @@ namespace Quantumart.QP8.BLL
                 {
                     errors.ErrorFor(n => n.CustomerCode, LogOnStrings.ErrorMessage_CustomerCodeNotExist);
                 }
-            }
-
-            if (errors.IsEmpty)
-            {
-                QPContext.CurrentCustomerCode = CustomerCode;
-                using (new QPConnectionScope())
-                {
-                    var dbVer = new ApplicationInfoRepository().GetCurrentDbVersion();
-                    var appVer = ApplicationInfoHelpers.GetCurrentBackendVersion();
-                    if (!ApplicationInfoHelpers.VersionsEqual(dbVer, appVer))
-                    {
-                        errors.ErrorForModel(string.Format(LogOnStrings.VersionsAreDifferent, dbVer, appVer));
-                    }
-                }
-
-                QPContext.CurrentCustomerCode = null;
             }
 
             if (errors.IsEmpty)

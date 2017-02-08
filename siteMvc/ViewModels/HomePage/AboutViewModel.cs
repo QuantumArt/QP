@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
@@ -20,12 +20,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 
         [LocalizedDisplayName("ProductName", NameResourceType = typeof(HomeStrings))]
         public string Product => string.Format(HomeStrings.ProductValue, Default.ReleaseNumber, DateTime.Now.Year);
-
-        [LocalizedDisplayName("DBVersion", NameResourceType = typeof(HomeStrings))]
-        public string DbVersion => new ApplicationInfoRepository().GetCurrentDbVersion();
-
-        [LocalizedDisplayName("BackendVersion", NameResourceType = typeof(HomeStrings))]
-        public string BackendVersion => ApplicationInfoHelpers.GetCurrentBackendVersion();
 
         [LocalizedDisplayName("DBName", NameResourceType = typeof(HomeStrings))]
         public string DbName => DbRepository.GetDbName();
