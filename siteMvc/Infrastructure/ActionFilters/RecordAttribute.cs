@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web.Mvc;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL;
@@ -9,7 +9,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
+namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class RecordAttribute : ActionFilterAttribute

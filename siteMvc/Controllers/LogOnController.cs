@@ -1,14 +1,15 @@
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Extensions.Exceptions;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
+using Logger = Quantumart.QP8.BLL.Services.Logger;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
@@ -38,13 +39,14 @@ namespace Quantumart.QP8.WebMvc.Controllers
             }
             catch (RulesException ex)
             {
-                ex.CopyTo(ModelState);
+                ex.Extend(ModelState);
             }
 
             if (ModelState.IsValid && data.User != null)
             {
                 AuthenticationHelper.CompleteAuthentication(data.User);
                 Logger.Log.Debug($"User successfully authenticated: {data.User.ToJsonLog()}");
+
                 if (Request.IsAjaxRequest())
                 {
                     return Json(new

@@ -12,21 +12,11 @@ namespace Quantumart.QP8.Security
 {
     public static class AuthenticationHelper
     {
-        /// <summary>
-        /// Создает пользовательский билет аутентификации
-        /// </summary>
-        /// <param name="userName">логин пользователя</param>
-        /// <returns>билет аутентификации</returns>
         public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName)
         {
             return CreateAuthenticationTicket(userName, string.Empty);
         }
 
-        /// <summary>
-        /// Создает пользовательский билет аутентификации на основе сериализованной информации о пользователе
-        /// </summary>
-        /// <param name="userName">логин пользователя</param>
-        /// <param name="userData">серилизованная информация о пользователе</param>
         public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, string userData)
         {
             var config = (AuthenticationSection)HttpContext.Current.GetSection("system.web/authentication");
@@ -41,20 +31,11 @@ namespace Quantumart.QP8.Security
                 FormsAuthentication.FormsCookiePath); // путь действия Cookie
         }
 
-        /// <summary>
-        /// Создает пользовательский билет аутентификации на основе несериализованной информации о пользователе
-        /// </summary>
-        /// <param name="userName">логин пользователя</param>
-        /// <param name="userInformation">серилизованная информация о пользователе</param>
         public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, QpUser userInformation)
         {
             return CreateAuthenticationTicket(userName, SerializeUserInformation(userInformation));
         }
 
-        /// <summary>
-        /// Сохраняет аутентификационный билет в Cookie
-        /// </summary>
-        /// <param name="ticket">аутентификационный билет</param>
         public static void SetAuthenticationCookie(FormsAuthenticationTicket ticket)
         {
             var ctx = HttpContext.Current;
@@ -73,11 +54,6 @@ namespace Quantumart.QP8.Security
             });
         }
 
-        /// <summary>
-        /// Сохраняет атентификационный билет в строке запроса
-        /// </summary>
-        /// <param name="ticket">аутентификационный билет</param>
-        /// <param name="url">текущий Url</param>
         public static void SetQueryStringRedirect(FormsAuthenticationTicket ticket, string url)
         {
             var context = HttpContext.Current;
@@ -90,11 +66,6 @@ namespace Quantumart.QP8.Security
             context.Response.Redirect($"{url}?{FormsAuthentication.FormsCookieName}={authCookie}");
         }
 
-        /// <summary>
-        /// Сериализует информацию о пользователе
-        /// </summary>
-        /// <param name="userInformation">несериализованная информация о пользователе</param>
-        /// <returns>сериализованная информация о пользователе</returns>
         public static string SerializeUserInformation(QpUser userInformation)
         {
             var userData = string.Empty; // сериализованная информация о пользователе
@@ -112,12 +83,6 @@ namespace Quantumart.QP8.Security
             return userData;
         }
 
-        /// <summary>
-        /// Десериализует информацию о пользователе
-        /// </summary>
-        /// <param name="userName">логин пользователя</param>
-        /// <param name="userData">сериализованная информация о пользователе</param>
-        /// <returns>десериализованная информация о пользователе</returns>
         public static QpUser DeserializeUserInformation(string userName, string userData)
         {
             QpUser userInformation = null;
@@ -141,9 +106,6 @@ namespace Quantumart.QP8.Security
             return userInformation;
         }
 
-        /// <summary>
-        /// Возвращает информацию о пользователе из атентификационного Cookie
-        /// </summary>
         public static QpUser GetUserInformationFromAuthenticationCookie(string userName)
         {
             var context = HttpContext.Current;
@@ -158,26 +120,14 @@ namespace Quantumart.QP8.Security
             return userInformation;
         }
 
-        /// <summary>
-        /// Возвращает информацию о пользователе из хранилища
-        /// </summary>
-        /// <param name="userName">логин пользователя</param>
-        /// <returns>информация о пользователе</returns>
         public static QpUser GetUserInformationFromStorage(string userName)
         {
-            var context = HttpContext.Current;
-            return context.Cache[userName] as QpUser;
+            return HttpContext.Current.Cache[userName] as QpUser;
         }
 
-        /// <summary>
-        /// Добавляет информацию о пользователе в хранилище
-        /// </summary>
-        /// <param name="userInformartion">информация о пользователе</param>
         public static void AddUserInformationToStorage(QpUser userInformartion)
         {
             var context = HttpContext.Current;
-
-            // Кэшируем информацию о пользователе
             context.Cache.Insert(userInformartion.Name, userInformartion, null, DateTime.Now.AddMinutes(30), Cache.NoSlidingExpiration);
         }
 
@@ -214,11 +164,6 @@ namespace Quantumart.QP8.Security
             return result;
         }
 
-        /// <summary>
-        /// Завершает процедуру аутентификации
-        /// </summary>
-        /// <param name="user">данные пользователя для сохранения</param>
-        /// <returns>URL для редиректа</returns>
         public static string CompleteAuthentication(QpUser user)
         {
             FormsAuthenticationTicket ticket;

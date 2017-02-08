@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Repository;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
+namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class BackendActionLogAttribute : ActionFilterAttribute

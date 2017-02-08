@@ -3,16 +3,11 @@ using System.Linq;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 
-namespace Quantumart.QP8.WebMvc.Extensions.Controllers
+namespace Quantumart.QP8.WebMvc.Extensions.Exceptions
 {
-    public static class RulesViolationExceptionExtensions
+    public static class RulesExceptionExtensions
     {
-        public static void CopyTo(this RulesException ex, ModelStateDictionary modelState)
-        {
-            CopyTo(ex, modelState, null);
-        }
-
-        public static void CopyTo(this RulesException ex, ModelStateDictionary modelState, string prefix)
+        public static void Extend(this RulesException ex, ModelStateDictionary modelState, string prefix = null)
         {
             prefix = string.IsNullOrEmpty(prefix) ? string.Empty : prefix + ".";
             var criticalErrors = ex.Errors.Where(n => n.Critical).ToList();

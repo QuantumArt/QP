@@ -3,6 +3,7 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Extensions.Exceptions;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
@@ -103,7 +104,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             }
             catch (RulesException ex)
             {
-                ex.CopyTo(modelState, "Data");
+                ex.Extend(modelState, "Data");
                 IsValid = false;
             }
         }

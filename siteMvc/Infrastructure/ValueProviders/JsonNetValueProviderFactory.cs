@@ -9,7 +9,7 @@ using System.Web.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ValueProviders
+namespace Quantumart.QP8.WebMvc.Infrastructure.ValueProviders
 {
     public class JsonNetValueProviderFactory : ValueProviderFactory
     {

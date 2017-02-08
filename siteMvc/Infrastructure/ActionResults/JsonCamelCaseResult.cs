@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ActionResults
+namespace Quantumart.QP8.WebMvc.Infrastructure.ActionResults
 {
     public class JsonCamelCaseResult<T> : JsonNetResult<T>
     {

@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Web;
 using System.Web.Mvc;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
+namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
     public class DisableBrowserCache : ActionFilterAttribute
     {

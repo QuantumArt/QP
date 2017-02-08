@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Web.Mvc;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
+namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class ResponseHeaderAttribute : ActionFilterAttribute

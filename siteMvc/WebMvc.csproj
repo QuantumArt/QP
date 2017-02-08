@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(SolutionDir)packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('$(SolutionDir)packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
@@ -281,26 +281,26 @@
     <Compile Include="Controllers\ToolbarController.cs" />
     <Compile Include="Controllers\TreeMenuController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Extensions\ActionFilters\ActionAuthorizeAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\BackendActionContextAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\BackendActionLogAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\ConnectionScopeAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\ActionAuthorizeAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\BackendActionContextAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\BackendActionLogAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
     <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
-    <Compile Include="Extensions\ActionFilters\DisableBrowserCache.cs" />
-    <Compile Include="Extensions\ActionFilters\EntityAuthorizeAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\ExceptionResultAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\NoTransactionConnectionScopeAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\RecordAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\RequestHeaderAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\ResponseHeaderAttribute.cs" />
-    <Compile Include="Extensions\ActionResults\FileUploadJsonResult.cs" />
-    <Compile Include="Extensions\ActionResults\JsonpResult.cs" />
-    <Compile Include="Extensions\ActionResults\JsonNetResult.cs" />
-    <Compile Include="Extensions\ActionResults\JsonCamelCaseResult.cs" />
+    <Compile Include="Infrastructure\ActionFilters\DisableBrowserCache.cs" />
+    <Compile Include="Infrastructure\ActionFilters\EntityAuthorizeAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\ExceptionResultAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\NoTransactionConnectionScopeAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\RecordAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\RequestHeaderAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\ResponseHeaderAttribute.cs" />
+    <Compile Include="Infrastructure\ActionResults\FileUploadJsonResult.cs" />
+    <Compile Include="Infrastructure\ActionResults\JsonpResult.cs" />
+    <Compile Include="Infrastructure\ActionResults\JsonNetResult.cs" />
+    <Compile Include="Infrastructure\ActionResults\JsonCamelCaseResult.cs" />
     <Compile Include="Extensions\Controllers\QPController.cs" />
-    <Compile Include="Extensions\Controllers\RulesViolationExceptionExtensions.cs" />
+    <Compile Include="Infrastructure\Extensions\RulesExceptionExtensions.cs" />
     <Compile Include="Extensions\Helpers\AggregationListTemplateField.cs" />
     <Compile Include="Infrastructure\Extensions\HttpContextBaseExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\UnityContainerExtensions.cs" />
@@ -384,11 +384,11 @@
     <Compile Include="Extensions\ModelBinders\VisualEditorPluginViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\VisualEditorStyleViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\WorkflowModelBinder.cs" />
-    <Compile Include="Extensions\SignalRUnityDependencyResolver.cs" />
+    <Compile Include="Infrastructure\UnityExtensions\SignalRUnityDependencyResolver.cs" />
     <Compile Include="App_Start\UnityDependencyResolver.cs" />
     <Compile Include="Extensions\ValidatorProviders\EntLibValidatorProvider.cs" />
     <Compile Include="Extensions\ValidatorProviders\EntLibValidatorWrapper.cs" />
-    <Compile Include="Extensions\ValueProviders\JsonNetValueProviderFactory.cs" />
+    <Compile Include="Infrastructure\ValueProviders\JsonNetValueProviderFactory.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -402,7 +402,7 @@
     <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateXDocumentConstants.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
     <Compile Include="Infrastructure\Utf8StringWriter.cs" />
-    <Compile Include="Infrastructure\Configuration\NLogConfiguration.cs" />
+    <Compile Include="Infrastructure\UnityExtensions\NLogContainerExtension.cs" />
     <Compile Include="Scripts\Quantumart\JsLanguage.ashx.cs">
       <DependentUpon>JsLanguage.ashx</DependentUpon>
     </Compile>

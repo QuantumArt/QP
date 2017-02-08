@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Practices.Unity;
 
-namespace Quantumart.QP8.WebMvc.Extensions
+namespace Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions
 {
     public class SignalRUnityDependencyResolver : DefaultDependencyResolver
     {

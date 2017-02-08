@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
@@ -7,7 +7,7 @@ using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
+namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class)]
     public class ConnectionScopeAttribute : ActionFilterAttribute

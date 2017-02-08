@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web.Mvc;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ActionResults
+namespace Quantumart.QP8.WebMvc.Infrastructure.ActionResults
 {
     public class JsonpResult : JsonResult
     {

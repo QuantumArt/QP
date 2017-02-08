@@ -3,9 +3,9 @@ using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Interfaces.Logging;
 using Quantumart.QP8.BLL.Services;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure.Configuration
+namespace Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions
 {
-    public class NLogConfiguration : UnityContainerExtension
+    public class NLogContainerExtension : UnityContainerExtension
     {
         protected override void Initialize()
         {

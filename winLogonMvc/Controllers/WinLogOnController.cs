@@ -3,9 +3,10 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Extensions.Exceptions;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.WinLogOn.Controllers
@@ -41,7 +42,7 @@ namespace Quantumart.QP8.WebMvc.WinLogOn.Controllers
             }
             catch (RulesException ex)
             {
-                ex.CopyTo(ModelState);
+                ex.Extend(ModelState);
             }
 
             if (ModelState.IsValid && data.User != null)

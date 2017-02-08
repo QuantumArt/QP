@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Security;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Security;
 
-namespace Quantumart.QP8.WebMvc.Extensions.ActionFilters
+namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 {
     public class EntityAuthorizeAttribute : FilterAttribute, IAuthorizationFilter
     {
