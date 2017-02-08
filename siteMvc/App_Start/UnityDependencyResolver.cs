@@ -27,9 +27,9 @@ using Quantumart.QP8.Logging.Web;
 using Quantumart.QP8.Utils.FullTextSearch;
 using Quantumart.QP8.WebMvc.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
-using Quantumart.QP8.WebMvc.Infrastructure.Configuration;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
+using Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -111,11 +111,11 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<ICommunicationService, CommunicationService>()
                 .RegisterType<SingleUserModeHub>();
 
-            UnityContainer.AddNewExtension<LoggersContainerConfiguration>();
-            UnityContainer.AddNewExtension<LogServicesContainerConfigutation>();
-            UnityContainer.AddNewExtension<NLogConfiguration>();
-
             RegisterMultistepActionServices(UnityContainer);
+
+            UnityContainer.AddNewExtension<ImportLogContainerExtension>();
+            UnityContainer.AddNewExtension<LogServicesContainerExtension>();
+            UnityContainer.AddNewExtension<NLogContainerExtension>();
         }
 
         private static void RegisterMultistepActionServices(IUnityContainer container)

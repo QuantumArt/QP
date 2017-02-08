@@ -10,16 +10,16 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.WebMvc.Extensions;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Extensions.ValidatorProviders;
-using Quantumart.QP8.WebMvc.Extensions.ValueProviders;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions;
+using Quantumart.QP8.WebMvc.Infrastructure.ValueProviders;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
@@ -34,6 +34,7 @@ using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
+using Logger = Quantumart.QP8.BLL.Services.Logger;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -177,11 +178,15 @@ namespace Quantumart.QP8.WebMvc
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            var ex = Server.GetLastError();
-            if (ex != null)
+            var exeption = Server.GetLastError();
+            if (exeption != null)
             {
-                Logger.Log.Error(ex);
-                EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, "Policy");
+                Logger.Log.SetContext("httpErrorCode", new HttpException(null, exeption).GetHttpCode());
+                Logger.Log.Fatal(exeption);
+                if (exeption is ImportException)
+                {
+                    EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(exeption, "Policy");
+                }
             }
         }
 

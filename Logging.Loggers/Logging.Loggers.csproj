@@ -89,9 +89,8 @@
     <Compile Include="Listeners\FlatFileSplittedByCustomerCodeTraceListener.cs" />
     <Compile Include="Listeners\FlatFileSplittedByCustomerCodeTraceListenerData.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="LoggersContainerConfiguration.cs" />
+    <Compile Include="ImportLogContainerExtension.cs" />
     <Compile Include="LoggerContext.cs" />
-    <Compile Include="LoggersContainerExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

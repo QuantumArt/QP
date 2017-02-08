@@ -6,7 +6,7 @@ using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 
 namespace Quantumart.QP8.Logging.Loggers
 {
-    public class LoggersContainerConfiguration : UnityContainerExtension
+    public class ImportLogContainerExtension : UnityContainerExtension
     {
         protected override void Initialize()
         {

@@ -150,6 +150,36 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
             System.Diagnostics.Debug.WriteLine($"{string.Format(format, args)}. Exception: {ex.Message}", logLevel);
         }
 
+        public void SetContext(string item, string value)
+        {
+            System.Diagnostics.Debug.WriteLine($"Set param for thread context [item: {item}, value: {value}]");
+        }
+
+        public void SetContext(string item, object value)
+        {
+            SetGlobalContext(item, value?.ToString());
+        }
+
+        public void SetAsyncContext(string item, string value)
+        {
+            System.Diagnostics.Debug.WriteLine($"Set param for async context [item: {item}, value: {value}]");
+        }
+
+        public void SetAsyncContext(string item, object value)
+        {
+            SetGlobalContext(item, value?.ToString());
+        }
+
+        public void SetGlobalContext(string item, string value)
+        {
+            System.Diagnostics.Debug.WriteLine($"Set param for global context [item: {item}, value: {value}]");
+        }
+
+        public void SetGlobalContext(string item, object value)
+        {
+            SetGlobalContext(item, value?.ToString());
+        }
+
         public void Flush()
         {
             System.Diagnostics.Debug.Flush();

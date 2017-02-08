@@ -8,144 +8,186 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
     public interface ILog : IDisposable
     {
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is debug enabled.
+        /// Gets or sets a value indicating whether this instance is debug enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
         /// </value>
         bool IsDebugEnabled { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is info enabled.
+        /// Gets or sets a value indicating whether this instance is info enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
         /// </value>
         bool IsInfoEnabled { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is warn enabled.
+        /// Gets or sets a value indicating whether this instance is warn enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
         /// </value>
         bool IsWarnEnabled { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is error enabled.
+        /// Gets or sets a value indicating whether this instance is error enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
         /// </value>
         bool IsErrorEnabled { get; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether this instance is fatal enabled.
+        /// Gets or sets a value indicating whether this instance is fatal enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>.
+        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
         /// </value>
         bool IsFatalEnabled { get; }
 
         /// <summary>
-        /// Logs a Debug message.
+        /// Logs a Debug message
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="message">The message</param>
         void Debug(object message);
 
         /// <summary>
-        /// Logs a Debug message and exception.
+        /// Logs a Debug message and exception
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
+        /// <param name="message">The message</param>
+        /// <param name="exception">The exception</param>
         void Debug(object message, Exception exception);
 
         /// <summary>
         /// Logs a Debug format message.
         /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="args">The args.</param>
+        /// <param name="format">The format</param>
+        /// <param name="args">The args</param>
         void DebugFormat(string format, params object[] args);
 
         /// <summary>
-        /// Logs an Info message and exception.
+        /// Logs an Info message and exception
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="message">The message</param>
         void Info(object message);
 
         /// <summary>
-        /// Logs an Info message and exception.
+        /// Logs an Info message and exception
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
+        /// <param name="message">The message</param>
+        /// <param name="exception">The exception</param>
         void Info(object message, Exception exception);
 
         /// <summary>
-        /// Logs an Info format message.
+        /// Logs an Info format message
         /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="args">The args.</param>
+        /// <param name="format">The format</param>
+        /// <param name="args">The args</param>
         void InfoFormat(string format, params object[] args);
 
         /// <summary>
-        /// Logs a Warning message.
+        /// Logs a Warning message
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="message">The message</param>
         void Warn(object message);
 
         /// <summary>
-        /// Logs a Warning message and exception.
+        /// Logs a Warning message and exception
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
+        /// <param name="message">The message</param>
+        /// <param name="exception">The exception</param>
         void Warn(object message, Exception exception);
 
         /// <summary>
-        /// Logs a Warning format message.
+        /// Logs a Warning format message
         /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="args">The args.</param>
+        /// <param name="format">The format</param>
+        /// <param name="args">The args</param>
         void WarnFormat(string format, params object[] args);
 
         /// <summary>
-        /// Logs a Error message.
+        /// Logs a Error message
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="message">The message</param>
         void Error(object message);
 
         /// <summary>
-        /// Logs a Error message and exception.
+        /// Logs a Error message and exception
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
+        /// <param name="message">The message</param>
+        /// <param name="exception">The exception</param>
         void Error(object message, Exception exception);
 
         /// <summary>
-        /// Logs a Error format message.
+        /// Logs a Error format message
         /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="args">The args.</param>
+        /// <param name="format">The format</param>
+        /// <param name="args">The args</param>
         void ErrorFormat(string format, params object[] args);
 
         /// <summary>
-        /// Logs a Fatal message.
+        /// Logs a Fatal message
         /// </summary>
-        /// <param name="message">The message.</param>
+        /// <param name="message">The message</param>
         void Fatal(object message);
 
         /// <summary>
-        /// Logs a Fatal message and exception.
+        /// Logs a Fatal message and exception
         /// </summary>
-        /// <param name="message">The message.</param>
-        /// <param name="exception">The exception.</param>
+        /// <param name="message">The message</param>
+        /// <param name="exception">The exception</param>
         void Fatal(object message, Exception exception);
 
         /// <summary>
-        /// Logs a Error format message.
+        /// Logs a Error format message
         /// </summary>
-        /// <param name="format">The format.</param>
-        /// <param name="args">The args.</param>
+        /// <param name="format">The format</param>
+        /// <param name="args">The args</param>
         void FatalFormat(string format, params object[] args);
+
+        /// <summary>
+        /// Set the param for current thread context
+        /// </summary>
+        /// <param name="item">Param name</param>
+        /// <param name="value">Param Value</param>
+        void SetContext(string item, string value);
+
+        /// <summary>
+        /// Set the param for current thread context
+        /// </summary>
+        /// <param name="item">Param name</param>
+        /// <param name="value">Param Value</param>
+        void SetContext(string item, object value);
+
+        /// <summary>
+        /// Set the param for current logical context
+        /// </summary>
+        /// <param name="item">Param name</param>
+        /// <param name="value">Param Value</param>
+        void SetAsyncContext(string item, string value);
+
+        /// <summary>
+        /// Set the param for current logical context
+        /// </summary>
+        /// <param name="item">Param name</param>
+        /// <param name="value">Param Value</param>
+        void SetAsyncContext(string item, object value);
+
+        /// <summary>
+        /// Set the param for current thread context
+        /// </summary>
+        /// <param name="item">Param name</param>
+        /// <param name="value">Param Value</param>
+        void SetGlobalContext(string item, string value);
+
+        /// <summary>
+        /// Set the param for current thread context
+        /// </summary>
+        /// <param name="item">Param name</param>
+        /// <param name="value">Param Value</param>
+        void SetGlobalContext(string item, object value);
 
         /// <summary>
         /// Flush log data

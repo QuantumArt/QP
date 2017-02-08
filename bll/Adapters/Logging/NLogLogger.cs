@@ -177,6 +177,36 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
             _log.Log(typeof(NLogLogger), new LogEventInfo(logLevel, _log.Name, null, format, args, ex));
         }
 
+        public void SetContext(string item, string value)
+        {
+            MappedDiagnosticsContext.Set(item, value);
+        }
+
+        public void SetContext(string item, object value)
+        {
+            MappedDiagnosticsContext.Set(item, value);
+        }
+
+        public void SetAsyncContext(string item, string value)
+        {
+            MappedDiagnosticsLogicalContext.Set(item, value);
+        }
+
+        public void SetAsyncContext(string item, object value)
+        {
+            MappedDiagnosticsLogicalContext.Set(item, value);
+        }
+
+        public void SetGlobalContext(string item, string value)
+        {
+            GlobalDiagnosticsContext.Set(item, value);
+        }
+
+        public void SetGlobalContext(string item, object value)
+        {
+            GlobalDiagnosticsContext.Set(item, value);
+        }
+
         public void Flush()
         {
             LogManager.Flush();

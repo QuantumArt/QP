@@ -67,6 +67,10 @@
       <HintPath>$(SolutionDir)packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
       <Private>True</Private>
@@ -142,6 +146,14 @@
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.2\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog.Web, Version=0.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.Web.4.3.0\lib\net35\NLog.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -2359,22 +2371,6 @@
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Logging.Loggers\Logging.Loggers.csproj">
-      <Project>{16422a3a-e435-4d6b-b0e0-f47ec0cfc705}</Project>
-      <Name>Logging.Loggers</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Logging.Templates\Logging.Templates.csproj">
-      <Project>{8933767b-4925-469c-92bc-1c6c37ed7ea8}</Project>
-      <Name>Logging.Templates</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Logging.Web\Logging.Web.csproj">
-      <Project>{bca701fb-1883-4831-8e11-ec55e67e3d31}</Project>
-      <Name>Logging.Web</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Logging\Logging.csproj">
-      <Project>{2376f4db-61df-4440-bab7-5740e06cd945}</Project>
-      <Name>Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)Merger\Merger.csproj">
       <Project>{cc2a4eab-777f-4b3c-8898-6fa1d00b2f7c}</Project>
       <Name>Merger</Name>
@@ -2394,6 +2390,22 @@
     <ProjectReference Include="$(SolutionDir)validators\Validators.csproj">
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging.Loggers\Logging.Loggers.csproj">
+      <Project>{16422A3A-E435-4D6B-B0E0-F47EC0CFC705}</Project>
+      <Name>Logging.Loggers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging.Templates\Logging.Templates.csproj">
+      <Project>{8933767b-4925-469c-92bc-1c6c37ed7ea8}</Project>
+      <Name>Logging.Templates</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging.Web\Logging.Web.csproj">
+      <Project>{BCA701FB-1883-4831-8E11-EC55E67E3D31}</Project>
+      <Name>Logging.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{2376F4DB-61DF-4440-BAB7-5740E06CD945}</Project>
+      <Name>Logging</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

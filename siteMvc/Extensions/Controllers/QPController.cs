@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Web.WebPages;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Services;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -28,6 +30,12 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         public QPController(IArticleService dbArticleService)
         {
             DbArticleService = dbArticleService;
+        }
+
+        protected override void Initialize(RequestContext requestContext)
+        {
+            base.Initialize(requestContext);
+            Logger.Log.SetContext("customerCode", QPContext.CurrentCustomerCode ?? string.Empty);
         }
 
         public string RenderPartialView(string partialViewName, object model)

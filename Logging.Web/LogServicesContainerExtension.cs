@@ -4,7 +4,7 @@ using Quantumart.QP8.Logging.Web.Services;
 
 namespace Quantumart.QP8.Logging.Web
 {
-    public class LogServicesContainerConfigutation : UnityContainerExtension
+    public class LogServicesContainerExtension : UnityContainerExtension
     {
         protected override void Initialize()
         {

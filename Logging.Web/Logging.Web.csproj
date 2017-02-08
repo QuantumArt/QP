@@ -110,7 +110,7 @@
   <ItemGroup>
     <Compile Include="Extensions\ViewExtensions.cs" />
     <Compile Include="Listeners\HttpContextTraceListener.cs" />
-    <Compile Include="LoggingContainerConfigutation.cs" />
+    <Compile Include="LogServicesContainerExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\HttpContextRepository.cs" />
     <Compile Include="Repository\LogItem.cs" />
