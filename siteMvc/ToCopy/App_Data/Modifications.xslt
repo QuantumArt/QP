@@ -142,11 +142,13 @@ public partial class <xsl:value-of select="@class" />
             <xsl:otherwise>"<xsl:value-of select="@name" />"</xsl:otherwise>
         </xsl:choose> 
     </xsl:variable>
-        if (instance.<xsl:value-of select="$name" /> != null)  { values[<xsl:value-of select="$form_name" />] = <xsl:choose>
-        <xsl:when test="@type='Boolean'">instance.<xsl:value-of select="$name" />.Value ? "1" : "0"</xsl:when>
-        <xsl:when test="@type='O2M' or @type='Numeric' or @type='Date' or @type='Time' or @type='DateTime'" >instance.<xsl:value-of select="$name" />.ToString()</xsl:when>
+        values[<xsl:value-of select="$form_name" />] = <xsl:choose>
+        <xsl:when test="@type='Boolean'"
+                  >(instance.<xsl:value-of select="$name" />.HasValue) ? (instance.<xsl:value-of select="$name" />.Value ? "1" : "0") : null;</xsl:when>
+        <xsl:when test="@type='O2M' or @type='Numeric' or @type='Date' or @type='Time' or @type='DateTime'" 
+                  >(instance.<xsl:value-of select="$name" /> != null) ? instance.<xsl:value-of select="$name" />.ToString() : null</xsl:when>
         <xsl:when test="@type='M2M'">instance.<xsl:value-of select="$name" />String</xsl:when>
         <xsl:otherwise>instance.<xsl:value-of select="$name" /></xsl:otherwise>
-        </xsl:choose>; }
+        </xsl:choose>;
 </xsl:template>
 </xsl:stylesheet>
