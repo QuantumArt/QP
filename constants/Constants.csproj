@@ -101,6 +101,7 @@
     <Compile Include="StatusName.cs" />
     <Compile Include="SpecialKeys.cs" />
     <Compile Include="SystemStatusType.cs" />
+    <Compile Include="TextAreaHighlightTypes.cs" />
     <Compile Include="ValidFieldColumnDbTypes.cs" />
     <Compile Include="ViewTypeCode.cs" />
     <Compile Include="VirtualType.cs" />

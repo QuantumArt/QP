@@ -18937,6 +18937,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _DisableListAutoWrap;
         partial void OnDisableListAutoWrapChanging(global::System.Boolean value);
         partial void OnDisableListAutoWrapChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String TaHighlightType
+        {
+            get
+            {
+                return _TaHighlightType;
+            }
+            set
+            {
+                OnTaHighlightTypeChanging(value);
+                ReportPropertyChanging("TaHighlightType");
+                _TaHighlightType = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("TaHighlightType");
+                OnTaHighlightTypeChanged();
+            }
+        }
+        private global::System.String _TaHighlightType;
+        partial void OnTaHighlightTypeChanging(global::System.String value);
+        partial void OnTaHighlightTypeChanged();
 
         #endregion
 

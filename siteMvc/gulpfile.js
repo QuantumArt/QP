@@ -192,7 +192,7 @@ var paths = {
     'Scripts/Quantumart/Editor/BackendVisualEditor.js',
     'Scripts/Quantumart/Editor/BackendAggregationList.js',
     'Scripts/Quantumart/Editor/BackendWorkflowEditor.js',
-    'Scripts/Quantumart/Editor/BackendHightedTextAreaEditor.js',
+    'Scripts/Quantumart/Editor/BackendTextAreaEditor.js',
     'Scripts/Quantumart/Editor/BackendEditorsAutoSaver.js',
     'Scripts/Quantumart/Editor/BackendClassifierField.js',
     'Scripts/Quantumart/Uploader/IBackendUploader.js',

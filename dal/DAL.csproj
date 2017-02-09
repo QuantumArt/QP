@@ -165,6 +165,7 @@
     <Content Include="scripts\MultipleUpdate\tests\test3.sql" />
     <Content Include="scripts\MultipleUpdate\tests\test4.sql" />
     <Content Include="scripts\schema.sql" />
+    <Content Include="scripts\TaHighlight\1_adding_column_to_content_attribute.sql" />
     <Content Include="scripts\undo_to_previous.sql" />
   </ItemGroup>
   <ItemGroup>

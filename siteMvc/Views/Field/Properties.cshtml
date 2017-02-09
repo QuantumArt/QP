@@ -346,6 +346,7 @@
             {
                 @Html.TextAreaFieldFor(s => s.Data.TextBoxDefaultValue)
                 @Html.NumericFieldFor(s => s.Data.TextBoxRows)
+                @Html.SelectFieldFor(s => s.Data.HighlightType, Html.List(Model.GetHighLightVariants()))
             }
 
             using (Html.BeginPanel(s => s.Data.ExactType, FieldExactTypes.VisualEdit, true))
