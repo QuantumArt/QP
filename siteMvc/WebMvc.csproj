@@ -410,7 +410,6 @@
       <DependentUpon>JsConstants.ashx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Content Include=".eslintrc.js" />
     <Content Include="Content\ckeditor\adapters\jquery.js" />
     <Content Include="Content\ckeditor\build-config.js" />
     <Content Include="Content\ckeditor\ckeditor.js" />

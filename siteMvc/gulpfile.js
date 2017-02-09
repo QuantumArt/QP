@@ -49,7 +49,6 @@ var destPaths = {
 
 var paths = {
   scripts1: [
-    //'Scripts/Quantumart/**/*.js',
     'Scripts/es5-shim.js',
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/telerik/telerik.common.js',
@@ -333,34 +332,34 @@ gulp.task('assets:revisions', function() {
     .pipe(gulp.dest('Views/Home/'));
 });
 
-gulp.task('assets:js', ['assets:js1', 'assets:js2'], function() {
+gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], function() {
   return gulp.src(destPaths.scripts)
     .pipe($.notify({ title: 'Task was completed', message: 'assets:js task complete', onLast: true }));
 });
 
-gulp.task('assets:js1', ['assets:revisions'], function() {
+gulp.task('assets:vendorsjs', ['assets:revisions'], function() {
   return gulp.src(paths.scripts1, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
     .pipe($.rename({ suffix: '.min' }))
     // .pipe($.uglify())
-    .pipe($.concat('app1.min.js'))
+    .pipe($.concat('vendors.js'))
     .pipe($.sourcemaps.write('maps'))
     .pipe(gulp.dest(destPaths.scripts))
     .pipe($.size({ title: 'assets:js', showFiles: true }))
-    .pipe($.notify({ title: 'Part task was completed', message: 'assets:js1 task complete', onLast: true }));
+    .pipe($.notify({ title: 'Part task was completed', message: 'assets:vendorsjs task complete', onLast: true }));
 });
 
-gulp.task('assets:js2', ['assets:revisions'], function() {
+gulp.task('assets:qpjs', ['assets:revisions'], function() {
   return gulp.src(paths.scripts2, { base: './' })
     .pipe($.plumber({ errorHandler: reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
     // .pipe($.uglify())
-    .pipe($.concat('app2.min.js'))
+    .pipe($.concat('app.js'))
     .pipe($.sourcemaps.write('maps'))
     .pipe(gulp.dest(destPaths.scripts))
     .pipe($.size({ title: 'assets:js', showFiles: true }))
-    .pipe($.notify({ title: 'Part task was completed', message: 'assets:js2 task complete', onLast: true }));
+    .pipe($.notify({ title: 'Part task was completed', message: 'assets:qpjs task complete', onLast: true }));
 });
 
 gulp.task('assets:img', function() {
@@ -380,7 +379,7 @@ gulp.task('assets:css', ['assets:revisions'], function() {
     .pipe($.replace(/url\(\'/g, 'url(\'images/'))
     .pipe($.autoprefixer({ browsers: AUTOPREFIXER_BROWSERS }))
     .pipe($.cssnano({ zindex: false }))
-    .pipe($.concat('app.min.css'))
+    .pipe($.concat('app.css'))
     .pipe($.sourcemaps.write('maps'))
     .pipe(gulp.dest(destPaths.styles))
     .pipe(bs.stream({ match: '**/*.css' }))
