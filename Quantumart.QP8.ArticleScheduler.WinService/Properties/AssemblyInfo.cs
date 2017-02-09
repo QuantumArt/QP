@@ -36,5 +36,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("0.1.0.0")]
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("QP8.WebMvc.NUnit.Tests")]
-
-[assembly: AssemblyInformationalVersion("0.1.0-ci.511+Branch.master.Sha.590c2e20e88d373f193bd2a468a625adef6d814b")]

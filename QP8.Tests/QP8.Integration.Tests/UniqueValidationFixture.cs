@@ -108,6 +108,51 @@ namespace QP8.Integration.Tests
         }
 
         [Test]
+        public void MassUpdate_ThrowsNothing_NullifyField()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [FieldName.ContentItemId] = "0",
+                ["Title"] = "Name2",
+                ["Number"] = ""
+            };
+
+            values.Add(article1);
+            Assert.That(() => Cnn.MassUpdate(ContentId, values, 1), Throws.Nothing);
+            Cnn.DeleteContentItem(int.Parse(article1[FieldName.ContentItemId]));
+        }
+
+        [Test]
+        public void MassUpdate_ThrowsException_ValidateConstraintForNull()
+        {
+            var values = new List<Dictionary<string, string>>();
+            var article1 = new Dictionary<string, string>
+            {
+                [FieldName.ContentItemId] = "0",
+                ["Title"] = "Name2",
+                ["Number"] = ""
+            };
+
+            values.Add(article1);
+            Assert.That(() => Cnn.MassUpdate(ContentId, values, 1), Throws.Nothing);
+
+            values.Clear();
+            var article2 = new Dictionary<string, string>
+            {
+                [FieldName.ContentItemId] = "0",
+                ["Title"] = "Name2",
+                ["Number"] = ""
+            };
+            values.Add(article2);
+            Assert.That(() => Cnn.MassUpdate(ContentId, values, 1), Throws.Exception.TypeOf<QpInvalidAttributeException>().And.Message.Contains("Unique constraint violation"));
+
+            Cnn.DeleteContentItem(int.Parse(article1[FieldName.ContentItemId]));
+            Cnn.DeleteContentItem(int.Parse(article2[FieldName.ContentItemId]));
+        }
+
+
+        [Test]
         public void AddFormToContent_ThrowsException_ValidateConstraintForDataConflict()
         {
             var titleName = Cnn.FieldName(Global.SiteId, ContentName, "Title");
