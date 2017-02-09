@@ -1233,7 +1233,7 @@ Quantumart.QP8.BackendDocumentHost.prototype = {
 
         if (!$q.isNullOrEmpty($link) && $q.isNull($link.data('action_link_component'))) {
           var linkId = $link.attr('id');
-          var entityId = $q.toInt($link.data('entity_id'), 0);
+          var entityId = +$link.data('entity_id') || 0;
           var entityName = $link.data('entity_name');
           var parentEntityId = $q.toInt($link.data('parent_entity_id'), null);
           var actionTypeCode = $link.data('action_type_code');
@@ -1474,7 +1474,7 @@ Quantumart.QP8.BackendDocumentHost.generateTitle = function(eventArgs, options) 
       isTab = options.isTab;
     }
 
-    if ($q.isInt(options.tabNumber)) {
+    if ($.isNumeric(options.tabNumber)) {
       tabNumber = options.tabNumber;
     }
   }

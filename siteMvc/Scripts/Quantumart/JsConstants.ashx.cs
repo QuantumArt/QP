@@ -178,16 +178,6 @@ namespace Quantumart.QP8.WebMvc.Backend
             constants.AppendLine(GenerateStringConstant("VIEW_TYPE_CODE_THUMBNAILS", ViewTypeCode.Thumbnails));
             constants.AppendLine();
 
-            // Конcтанты кодов типов данных JavaScript
-            constants.AppendLine("// Конcтанты кодов типов данных JavaScript");
-            constants.AppendLine(GenerateStringConstant("JS_TYPE_CODE_UNDEFINED", Utils.Constants.JsTypeCode.Undefined));
-            constants.AppendLine(GenerateStringConstant("JS_TYPE_CODE_STRING", Utils.Constants.JsTypeCode.String));
-            constants.AppendLine(GenerateStringConstant("JS_TYPE_CODE_INT", Utils.Constants.JsTypeCode.Int));
-            constants.AppendLine(GenerateStringConstant("JS_TYPE_CODE_FLOAT", Utils.Constants.JsTypeCode.Float));
-            constants.AppendLine(GenerateStringConstant("JS_TYPE_CODE_BOOLEAN", Utils.Constants.JsTypeCode.Boolean));
-            constants.AppendLine(GenerateStringConstant("JS_TYPE_CODE_DATE", Utils.Constants.JsTypeCode.Date));
-            constants.AppendLine();
-
             // Константы типов сообщений, возвращаемых Actions
             constants.AppendLine(GenerateStringConstant("ACTION_MESSAGE_TYPE_INFO", ActionMessageType.Info));
             constants.AppendLine(GenerateStringConstant("ACTION_MESSAGE_TYPE_WARNING", ActionMessageType.Warning));
@@ -195,19 +185,6 @@ namespace Quantumart.QP8.WebMvc.Backend
             constants.AppendLine(GenerateStringConstant("ACTION_MESSAGE_TYPE_CONFIRM", ActionMessageType.Confirm));
             constants.AppendLine(GenerateStringConstant("ACTION_MESSAGE_TYPE_DOWNLOAD", ActionMessageType.Download));
             constants.AppendLine();
-
-            // Константы типов валидации
-            //constants.AppendLine("// Константы типов валидации");
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_UNKNOWN", Validators.Constants.ValidationType.None));
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_REQUIRED", Validators.Constants.ValidationType.Required));
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_STRING_LENGTH", Validators.Constants.ValidationType.StringLength));
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_CONTAINS_CHARACTERS", Validators.Constants.ValidationType.ContainsCharacters));
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_REGEX", Validators.Constants.ValidationType.Regex));
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_TYPE_CONVERSION", Validators.Constants.ValidationType.TypeConversion));
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_VALUE_COMPARISON", Validators.Constants.ValidationType.ValueComparison));
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_PROPERTY_COMPARISON", Validators.Constants.ValidationType.PropertyComparison));
-            //constants.AppendLine(GenerateStringConstant("VALIDATION_TYPE_RANGE", Validators.Constants.ValidationType.Range));
-            //constants.AppendLine();
 
             // Костанты URL`ов
             constants.AppendLine(GenerateStringConstant("APPLICATION_ROOT_URL", Utils.Url.ToAbsolute("~/")));

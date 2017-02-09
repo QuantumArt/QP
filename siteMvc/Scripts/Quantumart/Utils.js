@@ -238,47 +238,16 @@ $q._prepareNumber = function _prepareNumber(value, forCheck) {
 };
 
 $q.toInt = function toInt(value, defaultValue) {
-  var number = null;
-  if (!$q.isNullOrEmpty(value)) {
-    number = $q._prepareNumber(value, false);
-    if (!$q.isNullOrEmpty(number)) {
-      number = parseInt(number, 10);
-      if (isNaN(number)) {
-        number = null;
-      }
-    }
+  if (value === 'true' || value === 'false') {
+    value = value === 'true' || 0;
   }
 
-  if (number == null) {
-    return defaultValue;
+  if (value === 0) {
+    return 0;
   }
 
-  return number;
+  return +value || defaultValue;
 };
-
-$q.isInt = function isInt(value) {
-  return $.isNumeric(value) && Math.floor(value) === value;
-};
-
-$q.toFloat = function toFloat(value, defaultValue) {
-  var number = null;
-  if (!$q.isNullOrEmpty(value)) {
-    number = $q._prepareNumber(value, false);
-    if (!$q.isNullOrEmpty(number)) {
-      number = parseFloat(number);
-      if (isNaN(number)) {
-        number = null;
-      }
-    }
-  }
-
-  if (number == null) {
-    return defaultValue;
-  }
-
-  return number;
-};
-
 
 $q.toDate = function toDate(value, defaultValue) {
   var date = null;
@@ -341,27 +310,6 @@ $q.toJQuery = function toJQuery(value) {
   }
 
   return null;
-};
-
-$q.isJQuery = function isJQuery(value) {
-  return $q.isObject(value) && value.jquery;
-};
-
-$q.changeType = function changeType(value, typeCode) {
-  var convertedValue = value;
-  if (typeCode === window.JS_TYPE_CODE_STRING) {
-    convertedValue = $q.toString(value);
-  } else if (typeCode === window.JS_TYPE_CODE_INT) {
-    convertedValue = $q.toInt(value);
-  } else if (typeCode === window.JS_TYPE_CODE_FLOAT) {
-    convertedValue = $q.toFloat(value);
-  } else if (typeCode === window.JS_TYPE_CODE_BOOLEAN) {
-    convertedValue = $q.toBoolean(value);
-  } else if (typeCode === window.JS_TYPE_CODE_DATE) {
-    convertedValue = $q.toDate(value);
-  }
-
-  return convertedValue;
 };
 
 $q.isInRange = function isInRange(value, lowerBound, lowerBoundType, upperBound, upperBoundType) {

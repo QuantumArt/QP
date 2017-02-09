@@ -78,9 +78,9 @@ Quantumart.QP8.BackendClassifierField.prototype = {
     }
   },
 
-  selectContent: function (contentID) {
-    if (!$q.isNull(contentID) && $q.isInt(contentID)) {
-      this._$contentList.find('OPTION[value="' + contentID + '"]').prop('selected', true).change();
+  selectContent: function (contentId) {
+    if (!$q.isNull(contentId) && $.isNumeric(contentId)) {
+      this._$contentList.find('OPTION[value="' + contentId + '"]').prop('selected', true).change();
     } else {
       this._$contentList.find('OPTION:selected').prop('selected', false).change();
     }
@@ -106,9 +106,9 @@ Quantumart.QP8.BackendClassifierField.prototype = {
 
   _onContentSelected: function(e) {
     var tabId = this._$componentElem.data('host_id');
-    var rootContentId = $q.toInt(this._$componentElem.data('root_content_id'), 0);
-    var rootArticleId = $q.toInt(this._$componentElem.data('root_article_id'), 0);
-    var aggregatedContentId = $q.toInt(this._$contentList.find('option:selected').val(), 0);
+    var rootContentId = +this._$componentElem.data('root_content_id') || 0;
+    var rootArticleId = +this._$componentElem.data('root_article_id') || 0;
+    var aggregatedContentId = +this._$contentList.find('option:selected').val() || 0;
 
     if(aggregatedContentId) {
       $q.showLoader();

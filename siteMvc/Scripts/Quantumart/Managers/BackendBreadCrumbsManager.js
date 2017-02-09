@@ -60,7 +60,7 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
   },
 
   generateItemCode: function (entityTypeCode, parentEntityId, entityId) {
-    return String.format('{0}_{1}_{2}', entityTypeCode, $q.toInt(parentEntityId, 0), entityId);
+    return String.format('{0}_{1}_{2}', entityTypeCode, +parentEntityId || 0, entityId);
   },
 
   _getBreadCrumbsElementIdByItem: function (itemElem) {
@@ -121,7 +121,7 @@ Quantumart.QP8.BackendBreadCrumbsManager.prototype = {
 
     if (actionTypeCode == ACTION_TYPE_CODE_RESTORE && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
       var newEntityTypeCode = ENTITY_TYPE_CODE_ARTICLE;
-      var newParentEntityId = $q.toInt($o.getParentEntityId(newEntityTypeCode, parentEntityId), 0);
+      var newParentEntityId = +$o.getParentEntityId(newEntityTypeCode, parentEntityId) || 0;
       this.refreshBreadCrumbsList(newEntityTypeCode, newParentEntityId, parentEntityId);
     }
   },
