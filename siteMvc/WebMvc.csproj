@@ -1495,8 +1495,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-    <None Include=".jscsrc" />
-    <None Include=".jshintrc" />
     <Content Include="Scripts\immutablejs\immutable.js" />
     <Content Include="Scripts\immutablejs\immutable.min.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />

@@ -4,14 +4,11 @@
 @using Quantumart.QP8.Constants
 @using Quantumart.QP8.WebMvc.ViewModels.HomePage
 
-
 @using (Html.BeginTabForm(Model))
 {
     using (Html.BeginFieldGroup(HomeStrings.About))
     {
         @Html.DisplayFieldFor(e => e.Product, "Raw")
-        @Html.DisplayFieldFor(e => e.BackendVersion)
-        @Html.DisplayFieldFor(e => e.DbVersion)
         if (Model.IsAdmin)
         {
             @Html.DisplayFieldFor(e => e.DbName)
