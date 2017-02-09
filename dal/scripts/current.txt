@@ -10,3 +10,4 @@ UID
 FixEfClean
 ContentModificationDeadLocks
 Assembling
+ArchiveArticleSearch
