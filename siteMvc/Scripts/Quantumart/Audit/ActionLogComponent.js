@@ -95,7 +95,6 @@ Quantumart.QP8.ActionLogComponent.prototype = {
       var ft = +options.value || 0;
       var tileComponent = new Quantumart.QP8.ActionLogFilterTile(this.$tilesContainer,
         {
-          type: options.value,
           title: options.text,
           type: ft,
           windowSize: (function () {

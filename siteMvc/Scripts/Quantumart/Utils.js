@@ -157,7 +157,7 @@ $q.toBoolean = function toBoolean(value, defaultValue) {
 
 $q.isNull = function isNull(value) {
   var result = false;
-  if (value === undefined || value === null || typeof value === 'undefined') {
+  if (value === undefined || value === null) {
     result = true;
   }
 
@@ -195,7 +195,7 @@ $q.isNullOrWhiteSpace = function isNullOrWhiteSpace(value) {
 };
 
 $q.toString = function convertToString(value, defaultValue) {
-  var string = null;
+  var string;
   if ($q.isNull(value)) {
     string = $q.isNull(defaultValue) ? null : defaultValue;
   } else {
@@ -216,7 +216,7 @@ $q.isString = function isString(value) {
 
 // Подготавливает значение к преобразованию в число
 // forCheck - признак, указывающий что преобразование используется при проверки типа</param>
-$q._prepareNumber = function _prepareNumber(value, forCheck) {
+$q._prepareNumber = function prepareNumber(value, forCheck) {
   var processedValue;
   var number = null;
   if (!$q.isNullOrEmpty(value)) {
@@ -273,7 +273,7 @@ $q.isDate = function isDate(value) {
 
 $q.isArray = function isArray(value) {
   var result = false;
-  if (!$q.isNull(value)) {
+  if (value) {
     result = typeof value === 'object' && value.join;
   }
 
@@ -401,7 +401,7 @@ $q.getJsonPFromUrl = function getJsonPFromUrl(
   });
 };
 
-$q.getCustomActionJson = function Quantumart$QP8$UtilsgetCustomActionJson(url, params, callbackSuccess, callbackError) {
+$q.getCustomActionJson = function getCustomActionJson(url, params, callbackSuccess, callbackError) {
   $q.getJsonFromUrl(
     'POST',
     window.CONTROLLER_URL_CUSTOM_ACTION + 'Proxy',
@@ -618,12 +618,10 @@ if (typeof String.prototype.right !== 'function') {
 }
 
 $q.generateRandomString = function generateRandomString(stringLength) {
+  var i, randomNumber, randomSymbol;
   var symbolString = 'QuantumArt98BCDEFGHIJKLMNOPRSTUVWXYZbcdefghijklopqsvwxyz01234567';
   var symbolStringLength = symbolString.length;
-  var randomNumber = 0;
-  var randomSymbol = '';
   var result = '';
-  var i;
 
   for (i = 0; i < stringLength; i++) {
     randomNumber = parseInt(symbolStringLength * Math.random(), 10);
