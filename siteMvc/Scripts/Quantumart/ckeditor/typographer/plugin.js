@@ -39,12 +39,12 @@
 
     // kavychking
     // eslint-disable-next-line no-control-regex
-    result = result.replace(/([\x01-(\s\"])(\")([^\"]{1,})([^\s\"(])(\")/g, '$1«$3$4»');
+    result = result.replace(/([\x01-(\s"])(")([^"]{1,})([^\s"(])(")/g, '$1«$3$4»');
 
     // kavychking in kavychking
     if (/"/.test(result)) {
       // eslint-disable-next-line no-control-regex
-      result = result.replace(/([\x01(\s\"])(\")([^\"]{1,})([^\s\"(])(\")/g, '$1«$3$4»');
+      result = result.replace(/([\x01(\s"])(")([^"]{1,})([^\s"(])(")/g, '$1«$3$4»');
       while (/(«)([^»]*)(«)/.test(result)) {
         result = result.replace(/(«)([^»]*)(«)([^»]*)(»)/g, '$1$2' + intLeft + '$4' + intRight);
       }
@@ -71,12 +71,12 @@
     // а.C. Пушкин
     // пушкин А. С.
     result = result.replace(
-      /([А-ЯA-Z])([\. ]{1})[ ]{0,1}([А-ЯA-Z])([\. ]{1})[ ]{0,1}([А-ЯA-Z][А-Яа-яA-Za-z]*)/g,
+      /([А-ЯA-Z])([. ]{1})[ ]{0,1}([А-ЯA-Z])([. ]{1})[ ]{0,1}([А-ЯA-Z][А-Яа-яA-Za-z]*)/g,
       '$1.&nbsp;$3.&nbsp;$5'
     );
 
     result = result.replace(
-      /([А-ЯA-Z][А-Яа-яA-Za-z]*) ([А-ЯA-Z])[\. ]{1}[ ]{0,1}([А-ЯA-Z])\.([,\ )]{1})/g,
+      /([А-ЯA-Z][А-Яа-яA-Za-z]*) ([А-ЯA-Z])[. ]{1}[ ]{0,1}([А-ЯA-Z])\.([, )]{1})/g,
       '$1&nbsp;$2.&nbsp;$3.$4'
     );
 
