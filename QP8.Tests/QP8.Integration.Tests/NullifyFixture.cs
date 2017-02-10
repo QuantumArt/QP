@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Globalization;
 using Moq;
 using NUnit.Framework;
@@ -13,7 +10,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 using Quantumart.QPublishing.Database;
-using Quantumart.QPublishing.Info;
 using ContentService = Quantumart.QP8.BLL.Services.API.ContentService;
 
 namespace QP8.Integration.Tests
@@ -64,7 +60,7 @@ namespace QP8.Integration.Tests
             values.Add(article2);
             Assert.DoesNotThrow(() => Cnn.MassUpdate(ContentId, values, 1));
             var id2 = int.Parse(article2[FieldName.ContentItemId]);
-            var ids = new[] {id2};
+            var ids = new[] { id2 };
 
             var titleBefore = Global.GetFieldValues<string>(Cnn, ContentId, "Title", ids)[0];
             var numBefore = Global.GetFieldValues<decimal?>(Cnn, ContentId, "Number", ids)[0];
