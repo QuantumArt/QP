@@ -117,6 +117,7 @@ var paths = {
     'Content/ckeditor/ckeditor.js',
     'Scripts/Quantumart/ckeditor/aspell/plugin.js',
     'Scripts/Quantumart/ckeditor/typographer/plugin.js',
+    'Scripts/Quantumart/ckeditor/codemirror/plugin.js',
     'Scripts/Quantumart/ckeditor/globalSettings.js',
 
     'Scripts/Quantumart/Utils.js',
