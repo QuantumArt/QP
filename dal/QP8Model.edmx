@@ -339,6 +339,7 @@
           <Property Name="IS_LOCALIZATION" Type="bit" Nullable="false" />
           <Property Name="USE_SEPARATE_REVERSE_VIEWS" Type="bit" Nullable="false" />
           <Property Name="DISABLE_LIST_AUTO_WRAP" Type="bit" Nullable="false" />
+          <Property Name="TA_HIGHLIGHT_TYPE" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="content_constraint">
           <Key>
@@ -5124,9 +5125,9 @@
           <EntitySet Name="DangerousActionsSet" EntityType="QP8Model.DangerousActionsDAL" />
           <EntitySet Name="DeveloperSet" EntityType="QP8Model.DeveloperDAL" />
           <EntitySet Name="DynamicImageFieldSet" EntityType="QP8Model.DynamicImageFieldDAL" />
-		  
+
           <EntitySet Name="EntityTypeSet" EntityType="QP8Model.EntityTypeDAL" />
-		  
+
           <EntitySet Name="SiteFolderSet" EntityType="QP8Model.SiteFolderDAL" />
           <EntitySet Name="SiteFolderPermissionSet" EntityType="QP8Model.SiteFolderPermissionDAL" />
           <EntitySet Name="ItemToItemSet" EntityType="QP8Model.ItemToItemDAL" />
@@ -5174,7 +5175,7 @@
           <EntitySet Name="ActionViewSet" EntityType="QP8Model.ActionViewDAL" />
           <EntitySet Name="ViewTypeSet" EntityType="QP8Model.ViewTypeDAL" />
 		  <EntitySet Name="ToolbarButtonSet" EntityType="QP8Model.ToolbarButtonDAL" />
-		  
+
 		   <AssociationSet Name="FK_ACTION_TOOLBAR_BUTTON_BACKEND_ACTION" Association="QP8Model.FK_ACTION_TOOLBAR_BUTTON_BACKEND_ACTION">
              <End Role="BackendActionDAL" EntitySet="BackendActionSet" />
              <End Role="ACTION_TOOLBAR_BUTTON" EntitySet="ToolbarButtonSet" />
@@ -5183,7 +5184,7 @@
              <End Role="BackendActionDAL" EntitySet="BackendActionSet" />
              <End Role="ACTION_TOOLBAR_BUTTON" EntitySet="ToolbarButtonSet" />
            </AssociationSet>
-		  
+
 		  <AssociationSet Name="FK_BACKEND_ACTION_ENTITY_TYPE1" Association="QP8Model.FK_BACKEND_ACTION_ENTITY_TYPE1">
             <End Role="ENTITY_TYPE" EntitySet="EntityTypeSet" />
             <End Role="BackendActionDAL" EntitySet="BackendActionSet" />
@@ -5225,15 +5226,15 @@
           <AssociationSet Name="FK_BACKEND_ACTION_BACKEND_ACTION1" Association="QP8Model.FK_BACKEND_ACTION_BACKEND_ACTION1">
             <End Role="BACKEND_ACTION" EntitySet="BackendActionSet" />
             <End Role="BACKEND_ACTION1" EntitySet="BackendActionSet" />
-          </AssociationSet>		  
+          </AssociationSet>
           <AssociationSet Name="FK_BACKEND_ACTION_ENTITY_TYPE" Association="QP8Model.FK_BACKEND_ACTION_ENTITY_TYPE">
             <End Role="ENTITY_TYPE" EntitySet="EntityTypeSet" />
             <End Role="BACKEND_ACTION" EntitySet="BackendActionSet" />
-          </AssociationSet>		  
+          </AssociationSet>
           <AssociationSet Name="FK_BACKEND_ACTION_VIEW_TYPE" Association="QP8Model.FK_BACKEND_ACTION_VIEW_TYPE">
             <End Role="VIEW_TYPE" EntitySet="ViewTypeSet" />
             <End Role="BACKEND_ACTION" EntitySet="BackendActionSet" />
-          </AssociationSet>		  
+          </AssociationSet>
           <AssociationSet Name="FK_CODE_SNIPPET_SITE" Association="QP8Model.FK_CODE_SNIPPET_SITE">
             <End Role="SITE" EntitySet="SiteSet" />
             <End Role="CODE_SNIPPET" EntitySet="CodeSnippetSet" />
@@ -5498,7 +5499,7 @@
             <End Role="content_to_content" EntitySet="ContentToContentSet" />
             <End Role="item_to_item" EntitySet="ItemToItemSet" />
           </AssociationSet>
-          
+
           <AssociationSet Name="FK_FLD_ACC_FOLDER" Association="QP8Model.FK_FLD_ACC_FOLDER">
             <End Role="FOLDER" EntitySet="SiteFolderSet" />
             <End Role="FOLDER_ACCESS" EntitySet="SiteFolderPermissionSet" />
@@ -5734,7 +5735,7 @@
           <AssociationSet Name="CONTAINER_STATUSES" Association="QP8Model.CONTAINER_STATUSES">
             <End Role="OBJECT" EntitySet="ObjectSet" />
             <End Role="STATUS_TYPE" EntitySet="StatusTypeSet" />
-          </AssociationSet>          
+          </AssociationSet>
           <AssociationSet Name="USER_GROUP_BIND" Association="QP8Model.USER_GROUP_BIND">
             <End Role="USER_GROUP" EntitySet="UserGroupSet" />
             <End Role="USERS" EntitySet="UserSet" />
@@ -5743,7 +5744,7 @@
             <End Role="BACKEND_ACTION" EntitySet="BackendActionSet" />
             <End Role="ACTION_VIEW" EntitySet="ActionViewSet" />
           </AssociationSet>
-		  
+
 		  <AssociationSet Name="FK_BACKEND_ACTION_NEXT_FAILED_ACTION" Association="QP8Model.FK_BACKEND_ACTION_NEXT_FAILED_ACTION">
              <End Role="BackendActionDAL" EntitySet="BackendActionSet" />
              <End Role="BackendActionDAL1" EntitySet="BackendActionSet" />
@@ -5752,12 +5753,12 @@
              <End Role="BackendActionDAL" EntitySet="BackendActionSet" />
              <End Role="BackendActionDAL1" EntitySet="BackendActionSet" />
            </AssociationSet>
-		   
+
            <!--<AssociationSet Name="union_attrs" Association="QP8Model.union_attrs">
              <End Role="FieldDAL" EntitySet="FieldSet" />
              <End Role="FieldDAL1" EntitySet="FieldSet" />
            </AssociationSet>-->
-		  
+
           <AssociationSet Name="FK_ACTION_VIEW_VIEW_TYPE" Association="QP8Model.FK_ACTION_VIEW_VIEW_TYPE">
             <End Role="VIEW_TYPE" EntitySet="ViewTypeSet" />
             <End Role="ACTION_VIEW" EntitySet="ActionViewSet" />
@@ -6030,13 +6031,13 @@
             <End Role="BackendActionDAL1" EntitySet="BackendActionSet" />
           </AssociationSet>
           <EntitySet Name="AppSettingsSet" EntityType="QP8Model.AppSettingsDAL" />
-          <EntitySet Name="ExternalNotificationSet" EntityType="QP8Model.ExternalNotificationDAL" />					
+          <EntitySet Name="ExternalNotificationSet" EntityType="QP8Model.ExternalNotificationDAL" />
           <EntitySet Name="XML_DB_UPDATE" EntityType="QP8Model.XmlDbUpdateLogEntity" />
           <EntitySet Name="XML_DB_UPDATE_ACTIONS" EntityType="QP8Model.XmlDbUpdateActionsLogEntity" />
           <AssociationSet Name="FK_XML_DB_UPDATE_ACTIONS_UpdateId1" Association="QP8Model.FK_XML_DB_UPDATE_ACTIONS_UpdateId1">
             <End Role="XmlDbUpdateLogEntity" EntitySet="XML_DB_UPDATE" />
             <End Role="XmlDbUpdateActionsLogEntity" EntitySet="XML_DB_UPDATE_ACTIONS" />
-          </AssociationSet>					
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="ActionTypeDAL">
           <Key>
@@ -6084,7 +6085,7 @@
 					<Property Name="ShortName" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="Code" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="UserControlFile" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
-		  <Property Name="ControllerActionUrl" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />		  
+		  <Property Name="ControllerActionUrl" Type="String" MaxLength="255" Unicode="true" FixedLength="false" />
           <Property Name="ConfirmPhrase" Type="String" MaxLength="1000" Unicode="true" FixedLength="false" />
           <Property Name="IsInterface" Type="Boolean" Nullable="false" />
 					<Property Name="HasPreAction" Type="Boolean" Nullable="false" />
@@ -6092,7 +6093,7 @@
           <Property Type="Boolean" Name="IsWindow" Nullable="false" />
           <Property Type="Int32" Name="WindowWidth" />
           <Property Type="Int32" Name="WindowHeight" />
-		  <Property Type="Int32" Name="DefaultViewTypeId" Nullable="true" />		  
+		  <Property Type="Int32" Name="DefaultViewTypeId" Nullable="true" />
 		  <Property Type="Boolean" Name="AllowSearch" Nullable="false" />
 		  <Property Type="Boolean" Name="AllowPreview" Nullable="false" />
           <Property Name="NextSuccessfulActionId" Type="Int32" Nullable="true" />
@@ -6101,7 +6102,7 @@
           <NavigationProperty Name="ChildActions" Relationship="QP8Model.FK_BACKEND_ACTION_BACKEND_ACTION1" FromRole="BACKEND_ACTION" ToRole="BACKEND_ACTION1" />
           <NavigationProperty Name="ParentAction" Relationship="QP8Model.FK_BACKEND_ACTION_BACKEND_ACTION1" FromRole="BACKEND_ACTION1" ToRole="BACKEND_ACTION" />
           <NavigationProperty Name="EntityType" Relationship="QP8Model.FK_BACKEND_ACTION_ENTITY_TYPE" FromRole="BACKEND_ACTION" ToRole="ENTITY_TYPE" />
-		  <NavigationProperty Name="DefaultViewType" Relationship="QP8Model.FK_BACKEND_ACTION_VIEW_TYPE" FromRole="BACKEND_ACTION" ToRole="VIEW_TYPE" />		  
+		  <NavigationProperty Name="DefaultViewType" Relationship="QP8Model.FK_BACKEND_ACTION_VIEW_TYPE" FromRole="BACKEND_ACTION" ToRole="VIEW_TYPE" />
           <NavigationProperty Name="Views" Relationship="QP8Model.FK_ACTION_VIEW_BACKEND_ACTION" FromRole="BACKEND_ACTION" ToRole="ACTION_VIEW" />
 		  <NavigationProperty Name="ParentPreFailedActions" Relationship="QP8Model.FK_BACKEND_ACTION_NEXT_FAILED_ACTION" FromRole="BackendActionDAL" ToRole="BackendActionDAL1" />
           <NavigationProperty Name="NextFailedAction" Relationship="QP8Model.FK_BACKEND_ACTION_NEXT_FAILED_ACTION" FromRole="BackendActionDAL1" ToRole="BackendActionDAL" />
@@ -6340,7 +6341,7 @@
           <NavigationProperty Name="DynamicImageSettings" Relationship="QP8Model.FK_DYNAMIC_IMAGE_ATTRIBUTE_CONTENT_ATTRIBUTE" FromRole="CONTENT_ATTRIBUTE" ToRole="DYNAMIC_IMAGE_ATTRIBUTE" />
           <NavigationProperty Name="ItemToItemVersion" Relationship="QP8Model.FK_ITEM_TO_ITEM_VERSION_ATTRIBUTE_ID" FromRole="CONTENT_ATTRIBUTE" ToRole="item_to_item_version" />
           <NavigationProperty Name="DependentNotifications" Relationship="QP8Model.FK_NOTIFICATIONS_EMAIL_ATTRIBUTE_ID" FromRole="CONTENT_ATTRIBUTE" ToRole="NOTIFICATIONS" />
-          <NavigationProperty Name="VersionContentData" Relationship="QP8Model.FK_VERSION_CONTENT_DATA_ATTRIBUTE_ID" FromRole="CONTENT_ATTRIBUTE" ToRole="VERSION_CONTENT_DATA" />          
+          <NavigationProperty Name="VersionContentData" Relationship="QP8Model.FK_VERSION_CONTENT_DATA_ATTRIBUTE_ID" FromRole="CONTENT_ATTRIBUTE" ToRole="VERSION_CONTENT_DATA" />
           <NavigationProperty Name="ConstraintRule" Relationship="QP8Model.FK_content_constraint_rule_CONTENT_ATTRIBUTE" FromRole="FieldDAL" ToRole="ContentConstraintRuleDAL" />
           <Property Type="Decimal" Name="BackRelationId" Precision="18" Scale="0" />
           <NavigationProperty Name="BackRelations" Relationship="QP8Model.FK_CONTENT_ATTRIBUTE_BACK_RELATED_ATTRIBUTE_ID" FromRole="FieldDAL" ToRole="FieldDAL1" />
@@ -6379,6 +6380,7 @@
           <Property Name="IsLocalization" Type="Boolean" Nullable="false" />
           <Property Name="UseSeparateReverseViews" Type="Boolean" Nullable="false" />
           <Property Name="DisableListAutoWrap" Type="Boolean" Nullable="false" />
+          <Property Name="TaHighlightType" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
 				</EntityType>
         <EntityType Name="ContentConstraintDAL">
           <Key>
@@ -6551,7 +6553,7 @@
           <Property Name="Deactivate" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Article" Relationship="QP8Model.FK_CONTENT_ITEM_SCHEDULE_CONTENT_ITEM_ID" FromRole="CONTENT_ITEM_SCHEDULE" ToRole="CONTENT_ITEM" />
           <Property Type="Boolean" Name="DeleteJob" Nullable="false" />
-					<Property Type="Boolean" Name="UseService" Nullable="false" />					
+					<Property Type="Boolean" Name="UseService" Nullable="false" />
 				</EntityType>
         <EntityType Name="ArticleStatusHistoryDAL">
           <Key>
@@ -6647,7 +6649,7 @@
           <Property Name="MaxSize" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Field" Relationship="QP8Model.FK_DYNAMIC_IMAGE_ATTRIBUTE_CONTENT_ATTRIBUTE" FromRole="DYNAMIC_IMAGE_ATTRIBUTE" ToRole="CONTENT_ATTRIBUTE" />
         </EntityType>
-        
+
          <EntityType Name="EntityTypeDAL">
            <Key>
              <PropertyRef Name="Id" />
@@ -6691,7 +6693,7 @@
           <NavigationProperty Name="ENTITY_TYPE11" Relationship="QP8Model.FK_ENTITY_TYPE_GROUP_PARENT_ID" FromRole="EntityTypeDAL" ToRole="EntityTypeDAL1" />
           <NavigationProperty Name="ENTITY_TYPE3" Relationship="QP8Model.FK_ENTITY_TYPE_GROUP_PARENT_ID" FromRole="EntityTypeDAL1" ToRole="EntityTypeDAL" />
          </EntityType>
-		
+
         <EntityType Name="SiteFolderDAL">
           <Key>
             <PropertyRef Name="Id" />
@@ -7591,7 +7593,7 @@
           <NavigationProperty Name="VirtualField" Relationship="QP8Model.FK_UNION_ATTRS_VIRTUAL_ATTR_ID" FromRole="UnionAttrDAL" ToRole="FieldDAL" />
           <Property Type="Boolean" Name="EF_FIX" />
           </EntityType>
-				
+
 		<Association Name="FK_BACKEND_ACTION_ENTITY_TYPE1">
           <End Type="QP8Model.EntityTypeDAL" Role="ENTITY_TYPE" Multiplicity="1" />
           <End Type="QP8Model.BackendActionDAL" Role="BackendActionDAL" Multiplicity="*" />
@@ -9241,7 +9243,7 @@
         <Association Name="CONTAINER_STATUSES">
           <End Role="OBJECT" Type="QP8Model.ObjectDAL" Multiplicity="*" />
           <End Role="STATUS_TYPE" Type="QP8Model.StatusTypeDAL" Multiplicity="*" />
-        </Association>        
+        </Association>
         <Association Name="USER_GROUP_BIND">
           <End Role="USER_GROUP" Type="QP8Model.UserGroupDAL" Multiplicity="*" />
           <End Role="USERS" Type="QP8Model.UserDAL" Multiplicity="*" />
@@ -9253,7 +9255,7 @@
           </Key>
           <Property Type="Int32" Name="ActionId" Nullable="false" />
           <Property Type="Int32" Name="ViewTypeId" Nullable="false" />
-		  <Property Type="Boolean" Name="PreventDefaultBehavior" Nullable="false" />		  
+		  <Property Type="Boolean" Name="PreventDefaultBehavior" Nullable="false" />
           <Property Type="String" Name="ControllerActionUrl" MaxLength="255" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="Order" Nullable="false" />
           <NavigationProperty Name="BackendAction" Relationship="QP8Model.FK_ACTION_VIEW_BACKEND_ACTION" FromRole="ACTION_VIEW" ToRole="BACKEND_ACTION" />
@@ -9316,7 +9318,7 @@
               <PropertyRef Name="EntityTypeId" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>		
+        </Association>
         <Association Name="FK_BACKEND_ACTION_VIEW_TYPE">
           <End Type="QP8Model.ViewTypeDAL" Role="VIEW_TYPE" Multiplicity="0..1" />
           <End Type="QP8Model.BackendActionDAL" Role="BACKEND_ACTION" Multiplicity="*" />
@@ -9328,8 +9330,8 @@
               <PropertyRef Name="DefaultViewTypeId" />
             </Dependent>
           </ReferentialConstraint>
-        </Association>		
-        
+        </Association>
+
         <Association Name="FK_ACTION_VIEW_BACKEND_ACTION">
           <End Type="QP8Model.BackendActionDAL" Role="BACKEND_ACTION" Multiplicity="1" />
           <End Type="QP8Model.ActionViewDAL" Role="ACTION_VIEW" Multiplicity="*" />
@@ -9354,7 +9356,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-		
+
 		<Association Name="FK_BACKEND_ACTION_NEXT_FAILED_ACTION">
           <End Type="QP8Model.BackendActionDAL" Role="BackendActionDAL" Multiplicity="0..1" />
           <End Type="QP8Model.BackendActionDAL" Role="BackendActionDAL1" Multiplicity="*" />
@@ -9379,8 +9381,8 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-		
-		
+
+
          <EntityType Name="ToolbarButtonDAL">
            <Key>
              <PropertyRef Name="ParentActionId" />
@@ -9425,8 +9427,8 @@
           <End Type="QP8Model.FieldDAL" Role="FieldDAL" Multiplicity="*" />
           <End Type="QP8Model.FieldDAL" Role="FieldDAL1" Multiplicity="*" />
         </Association>-->
-		
-		
+
+
         <Association Name="FK_CONTENT_ITEM_LAST_MODIFIED_BY">
           <End Type="QP8Model.UserDAL" Role="UserDAL" Multiplicity="1" />
           <End Type="QP8Model.ArticleDAL" Role="ArticleDAL" Multiplicity="*" />
@@ -10457,7 +10459,7 @@
 								<ScalarProperty Name="ShortName" ColumnName="SHORT_NAME" />
                 <ScalarProperty Name="Code" ColumnName="CODE" />
                 <ScalarProperty Name="UserControlFile" ColumnName="USER_CONTROL_FILE" />
-				<ScalarProperty Name="ControllerActionUrl" ColumnName="CONTROLLER_ACTION_URL" />				
+				<ScalarProperty Name="ControllerActionUrl" ColumnName="CONTROLLER_ACTION_URL" />
                 <ScalarProperty Name="ConfirmPhrase" ColumnName="CONFIRM_PHRASE" />
                 <ScalarProperty Name="IsInterface" ColumnName="IS_INTERFACE" />
 								<ScalarProperty Name="HasPreAction" ColumnName="HAS_PRE_ACTION" />
@@ -10465,7 +10467,7 @@
                 <ScalarProperty Name="WindowWidth" ColumnName="WINDOW_WIDTH" />
                 <ScalarProperty Name="IsWindow" ColumnName="IS_WINDOW" />
                 <ScalarProperty Name="ParentId" ColumnName="PARENT_ID" />
-				<ScalarProperty Name="DefaultViewTypeId" ColumnName="DEFAULT_VIEW_TYPE_ID" />				
+				<ScalarProperty Name="DefaultViewTypeId" ColumnName="DEFAULT_VIEW_TYPE_ID" />
 				<ScalarProperty Name="AllowSearch" ColumnName="ALLOW_SEARCH" />
 				<ScalarProperty Name="AllowPreview" ColumnName="ALLOW_PREVIEW" />
 				<ScalarProperty Name="NextSuccessfulActionId" ColumnName="NEXT_SUCCESSFUL_ACTION_ID" />
@@ -10602,6 +10604,7 @@
               <MappingFragment StoreEntitySet="CONTENT_ATTRIBUTE">
 								<ScalarProperty Name="DisableListAutoWrap" ColumnName="DISABLE_LIST_AUTO_WRAP" />
                 <ScalarProperty Name="UseSeparateReverseViews" ColumnName="USE_SEPARATE_REVERSE_VIEWS" />
+								<ScalarProperty Name="TaHighlightType" ColumnName="TA_HIGHLIGHT_TYPE" />
                 <ScalarProperty Name="IsLocalization" ColumnName="IS_LOCALIZATION" />
                 <ScalarProperty Name="OptimizeForHierarchy" ColumnName="OPTIMIZE_FOR_HIERARCHY" />
                 <ScalarProperty Name="UseInChildContentFilter" ColumnName="USE_IN_CHILD_CONTENT_FILTER" />
@@ -10770,7 +10773,7 @@
                 <ScalarProperty Name="Archived" ColumnName="ARCHIVE" />
                 <ScalarProperty Name="NotForReplication" ColumnName="not_for_replication" />
                 <ScalarProperty Name="Delayed" ColumnName="SCHEDULE_NEW_VERSION_PUBLICATION" />
-                
+
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -10905,7 +10908,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-		  
+
           <EntitySetMapping Name="EntityTypeSet">
              <EntityTypeMapping TypeName="QP8Model.EntityTypeDAL">
                <MappingFragment StoreEntitySet="ENTITY_TYPE">
@@ -11604,7 +11607,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-		  
+
 		  <EntitySetMapping Name="ToolbarButtonSet">
              <EntityTypeMapping TypeName="QP8Model.ToolbarButtonDAL">
                <MappingFragment StoreEntitySet="ACTION_TOOLBAR_BUTTON">
@@ -11618,7 +11621,7 @@
                </MappingFragment>
              </EntityTypeMapping>
            </EntitySetMapping>
-		  
+
           <EntitySetMapping Name="WorkflowSet">
             <EntityTypeMapping TypeName="QP8Model.WorkflowDAL">
               <MappingFragment StoreEntitySet="workflow">
@@ -11670,7 +11673,7 @@
             <EndProperty Name="STATUS_TYPE">
               <ScalarProperty Name="Id" ColumnName="STATUS_TYPE_ID" />
             </EndProperty>
-          </AssociationSetMapping>          
+          </AssociationSetMapping>
           <AssociationSetMapping Name="USER_GROUP_BIND" TypeName="QP8Model.USER_GROUP_BIND" StoreEntitySet="USER_GROUP_BIND">
             <EndProperty Name="USER_GROUP">
               <ScalarProperty Name="Id" ColumnName="GROUP_ID" />
@@ -11684,7 +11687,7 @@
               <MappingFragment StoreEntitySet="ACTION_VIEW">
                 <ScalarProperty Name="ActionId" ColumnName="ACTION_ID" />
                 <ScalarProperty Name="ViewTypeId" ColumnName="TYPE_ID" />
-				<ScalarProperty Name="PreventDefaultBehavior" ColumnName="PREVENT_DEFAULT_BEHAVIOR" />				
+				<ScalarProperty Name="PreventDefaultBehavior" ColumnName="PREVENT_DEFAULT_BEHAVIOR" />
                 <ScalarProperty Name="ControllerActionUrl" ColumnName="CONTROLLER_ACTION_URL" />
                 <ScalarProperty Name="Order" ColumnName="ORDER" />
               </MappingFragment>
@@ -11969,7 +11972,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="61">
+      <Diagram Name="QP8Model" ZoomLevel="66">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />
@@ -14280,7 +14283,7 @@
           <ConnectorPoint PointX="24.381666666666668" PointY="9.73991455078125" />
           <ConnectorPoint PointX="24.548333333333332" PointY="9.73991455078125" />
           <ConnectorPoint PointX="24.625" PointY="9.73991455078125" />
-        </AssociationConnector>        
+        </AssociationConnector>
         <AssociationConnector Association="QP8Model.FK_ITEM_TO_ITEM_VERSION_CONTENT_ITEM_VERSION_ID">
           <ConnectorPoint PointX="24.625" PointY="17.5312505" />
           <ConnectorPoint PointX="25.128574434901122" PointY="17.027676065098877" />

@@ -1574,7 +1574,7 @@
     <Content Include="Scripts\Quantumart\Editor\BackendClassifierField.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendAggregationList.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendEditorsAutoSaver.js" />
-    <Content Include="Scripts\Quantumart\Editor\BackendHightedTextAreaEditor.js" />
+    <Content Include="Scripts\Quantumart\Editor\BackendTextAreaEditor.js" />
     <Content Include="Scripts\Quantumart\List\BackendSettingsPopupWindow.js" />
     <Content Include="Scripts\Quantumart\Mediators\BackendNotificationProperties.js" />
     <Content Include="Scripts\Quantumart\Editor\BackendVisualEditor.js" />

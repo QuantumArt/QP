@@ -582,6 +582,9 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("TextBoxRows", NameResourceType = typeof(FieldStrings))]
         public int TextBoxRows { get; set; }
 
+        [LocalizedDisplayName("HighlightType", NameResourceType = typeof(FieldStrings))]
+        public string HighlightType { get; set; }
+
         [LocalizedDisplayName("VisualEditorHeight", NameResourceType = typeof(FieldStrings))]
         public int VisualEditorHeight { get; set; }
 

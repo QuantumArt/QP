@@ -145,7 +145,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
                 default:
                     if (field.ExactType == FieldExactTypes.Textbox)
                     {
-                        htmlAttributes.Add("class", ArticleTextboxClassName);
+                        htmlAttributes.Add("class", ArticleTextboxClassName + HighlightModeSelectHelper.SelectHighlightType(field.HighlightType));
                         htmlAttributes.Add("rows", field.TextBoxRows >= 255 ? 5 : field.TextBoxRows);
                     }
                     else if (field.ExactType == FieldExactTypes.VisualEdit)
