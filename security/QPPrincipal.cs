@@ -12,7 +12,7 @@ namespace Quantumart.QP8.Security
         /// </summary>
         /// <param name="identity">объект типа QPIdentity</param>
         /// <param name="roles">список ролей, в которые входит пользователь</param>
-        public QPPrincipal(QPIdentity identity, string[] roles)
+        public QPPrincipal(QpIdentity identity, string[] roles)
             : base(identity, roles)
         {
         }
