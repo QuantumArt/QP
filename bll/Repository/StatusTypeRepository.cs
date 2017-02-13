@@ -77,7 +77,7 @@ namespace Quantumart.QP8.BLL.Repository
 					else
 						result.Add(GetRealById(id));
 				}
-				
+
 			}
 			else
 			{
@@ -183,7 +183,7 @@ namespace Quantumart.QP8.BLL.Repository
 		internal static List<StatusTypeListItem> GetAllForWorkflow(int workflowId)
 		{
 			using (var scope = new QPConnectionScope())
-			{				
+			{
 				IEnumerable<DataRow> rows = Common.GetAllStatusesForWorkflow(scope.DbConnection, workflowId);
 				return MapperFacade.StatusTypeListItemRowMapper.GetBizList(rows.ToList());
 			}
@@ -202,7 +202,11 @@ namespace Quantumart.QP8.BLL.Repository
 
 		internal static int GetPublishedStatusIdBySiteId(int siteId)
 		{
-			return (int)QPContext.EFContext.StatusTypeSet.SingleOrDefault(x => x.SiteId == siteId && x.Name == Constants.StatusName.Published).Id;				
+			return (int)QPContext.EFContext.StatusTypeSet.SingleOrDefault(x => x.SiteId == siteId && x.Name == Constants.StatusName.Published).Id;
 		}
-	}
+        internal static int GetNoneStatusIdBySiteId(int siteId)
+        {
+            return (int)QPContext.EFContext.StatusTypeSet.SingleOrDefault(x => x.SiteId == siteId && x.Name == Constants.StatusName.None).Id;
+        }
+    }
 }

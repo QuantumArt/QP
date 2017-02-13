@@ -33,6 +33,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
             }
 
+            if (importSettings != null)
+            {
+                importSettings.IsWorkflowAssigned = content.WorkflowBinding.IsAssigned;
+            }
             HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] = importSettings;
         }
 

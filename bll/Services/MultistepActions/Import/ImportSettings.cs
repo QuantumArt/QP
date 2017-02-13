@@ -94,5 +94,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
             return HttpUtility.UrlDecode($"{currentSite.UploadDir}\\contents\\{ContentId}\\{FileName}");
         }
+
+        public bool IsWorkflowAssigned { get; set; }
     }
 }
