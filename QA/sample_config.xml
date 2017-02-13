@@ -19,7 +19,7 @@
 	</app_vars>
 	<customers>
 		<customer customer_name="publishing">
-			<db>Provider=Initial Catalog=publishing;Data Source=dbserver;Workstation ID=webserver;User ID=login;Password=password</db>
+			<db>Initial Catalog=publishing;Data Source=dbserver;Workstation ID=webserver;User ID=login;Password=password</db>
 		</customer>
 	</customers>
 </configuration>

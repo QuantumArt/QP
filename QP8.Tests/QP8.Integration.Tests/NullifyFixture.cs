@@ -53,7 +53,7 @@ namespace QP8.Integration.Tests
                 ["Title"] = "Test,Test",
                 ["Number"] = "5",
                 ["Parent"] = BaseArticlesIds[0].ToString(),
-                ["Date"] = DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                ["Date"] = DateTime.Now.ToString(CultureInfo.CurrentCulture),
                 ["Flag"] = "1"
             };
 
@@ -111,7 +111,7 @@ namespace QP8.Integration.Tests
                 ["Title"] = "Test,Test",
                 ["Number"] = "5",
                 ["Parent"] = BaseArticlesIds[0].ToString(),
-                ["Date"] = DateTime.Now.ToString(CultureInfo.InvariantCulture),
+                ["Date"] = DateTime.Now.ToString(CultureInfo.CurrentCulture),
                 ["Flag"] = "1"
             };
 
