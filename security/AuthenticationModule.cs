@@ -43,18 +43,18 @@ namespace Quantumart.QP8.Security
 				}
 
 				// Создание нового QP8Identity
-				QPIdentity identity;
+				QpIdentity identity;
 				if (userInformation != null)
 				{
 
-					identity = new QPIdentity(userInformation.Id, userInformation.Name,
+					identity = new QpIdentity(userInformation.Id, userInformation.Name,
 						userInformation.CustomerCode, "QP", true,
 						userInformation.LanguageId, userInformation.CultureName, userInformation.IsSilverlightInstalled);
 					roles = userInformation.Roles;
 				}
 				else
 				{
-					identity = new QPIdentity(0, userName, "", "QP", false, 0, "neutral", false);
+					identity = new QpIdentity(0, userName, "", "QP", false, 0, "neutral", false);
 				}
 
 				// Создание нового QP8Principal
@@ -62,7 +62,7 @@ namespace Quantumart.QP8.Security
 
 				// Новый принципал становится доступен для остальной части запроса
 				context.User = Thread.CurrentPrincipal = principal;
-			}			
+			}
         }
 
         public void Dispose()

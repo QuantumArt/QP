@@ -22,11 +22,6 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для пользователя по entity_type_code, action_type_code, userId
         /// </summary>
-        /// <param name="userId"></param>
-        /// <param name="entityTypeCode"></param>
-        /// <param name="entityId"></param>
-        /// <param name="actionTypeCode"></param>
-        /// <returns></returns>
         internal static bool IsEntityAccessible(string entityTypeCode, int entityId, string actionTypeCode, int userId)
         {
             using (new QPConnectionScope())
@@ -38,11 +33,6 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Определяет есть ли доступ к действию над конкретнам экземпляром сущности для группы пользователей по entity_type_code, action_type_code, userGroupId
         /// </summary>
-        /// <param name="userGroupId"></param>
-        /// <param name="entityTypeCode"></param>
-        /// <param name="entityId"></param>
-        /// <param name="actionTypeCode"></param>
-        /// <returns></returns>
         internal static bool IsEntityAccessibleForUserGroup(string entityTypeCode, int entityId, string actionTypeCode, int userGroupId)
         {
             using (new QPConnectionScope())
@@ -54,8 +44,6 @@ namespace Quantumart.QP8.BLL.Repository
         /// <summary>
         /// Определение доступа к действию для пользователя по action_code
         /// </summary>
-        /// <param name="actionCode"></param>
-        /// <returns></returns>
         internal static bool IsActionAccessible(string actionCode)
         {
             BackendAction action;
