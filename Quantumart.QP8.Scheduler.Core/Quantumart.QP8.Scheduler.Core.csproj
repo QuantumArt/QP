@@ -69,6 +69,10 @@
       <Project>{b35feb42-4052-493f-b4eb-328a50453208}</Project>
       <Name>Quantumart.QP8.Scheduler.API</Name>
     </ProjectReference>
+    <ProjectReference Include="..\bll\BLL.csproj">
+      <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
+      <Name>BLL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

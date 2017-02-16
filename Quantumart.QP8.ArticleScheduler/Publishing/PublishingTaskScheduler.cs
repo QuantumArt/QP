@@ -3,9 +3,6 @@ using Quantumart.QP8.BLL.Services.ArticleScheduler;
 
 namespace Quantumart.QP8.ArticleScheduler.Publishing
 {
-    /// <summary>
-    /// Выполняет публикацию статьи по расписанию
-    /// </summary>
     internal class PublishingTaskScheduler
     {
         private readonly IArticlePublishingSchedulerService _bllService;
@@ -17,6 +14,7 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             {
                 throw new ArgumentNullException(nameof(bllService));
             }
+
             if (operationsLogWriter == null)
             {
                 throw new ArgumentNullException(nameof(operationsLogWriter));

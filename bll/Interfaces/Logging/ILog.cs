@@ -8,6 +8,14 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
     public interface ILog : IDisposable
     {
         /// <summary>
+        /// Gets or sets a value indicating whether this instance is trace enabled
+        /// </summary>
+        /// <value>
+        /// 	<c>true</c> if this instance is trace enabled; otherwise, <c>false</c>
+        /// </value>
+        bool IsTraceEnabled { get; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether this instance is debug enabled
         /// </summary>
         /// <value>
@@ -19,7 +27,7 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         /// Gets or sets a value indicating whether this instance is info enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
+        /// 	<c>true</c> if this instance is info enabled; otherwise, <c>false</c>
         /// </value>
         bool IsInfoEnabled { get; }
 
@@ -27,7 +35,7 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         /// Gets or sets a value indicating whether this instance is warn enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
+        /// 	<c>true</c> if this instance is warn enabled; otherwise, <c>false</c>
         /// </value>
         bool IsWarnEnabled { get; }
 
@@ -35,7 +43,7 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         /// Gets or sets a value indicating whether this instance is error enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
+        /// 	<c>true</c> if this instance is error enabled; otherwise, <c>false</c>
         /// </value>
         bool IsErrorEnabled { get; }
 
@@ -43,9 +51,29 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         /// Gets or sets a value indicating whether this instance is fatal enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
+        /// 	<c>true</c> if this instance is fatal enabled; otherwise, <c>false</c>
         /// </value>
         bool IsFatalEnabled { get; }
+
+        /// <summary>
+        /// Logs a Trace message
+        /// </summary>
+        /// <param name="message">The message</param>
+        void Trace(object message);
+
+        /// <summary>
+        /// Logs a Trace message and exception
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="exception">The exception</param>
+        void Trace(object message, Exception exception);
+
+        /// <summary>
+        /// Logs a Trace format message.
+        /// </summary>
+        /// <param name="format">The format</param>
+        /// <param name="args">The args</param>
+        void TraceFormat(string format, params object[] args);
 
         /// <summary>
         /// Logs a Debug message

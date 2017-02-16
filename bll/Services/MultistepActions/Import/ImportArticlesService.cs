@@ -67,8 +67,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
         {
-            var commandState = _command.GetState();
-            return new MultistepActionServiceContext { CommandStates = new[] { commandState } };
+            return new MultistepActionServiceContext { CommandStates = new[] { _command.GetState() } };
         }
 
         protected override string ContextSessionKey => HttpContextSession.ImportContextSessionKey;

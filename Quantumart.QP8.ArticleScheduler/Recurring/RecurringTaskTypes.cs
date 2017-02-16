@@ -2,9 +2,6 @@
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
 {
-    /// <summary>
-    /// Типы расписаний циклических задач
-    /// </summary>
     public enum RecurringTaskTypes
     {
         Daily = ScheduleFreqTypes.RecurringDaily,

@@ -30,7 +30,9 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
             _log = LogManager.GetLogger(UseFullTypeNames ? type.FullName : type.Name);
         }
 
-        public static bool UseFullTypeNames { get; set; }
+        public static bool UseFullTypeNames { get; set; } = true;
+
+        public bool IsTraceEnabled => _log.IsTraceEnabled;
 
         public bool IsDebugEnabled => _log.IsDebugEnabled;
 
@@ -41,6 +43,30 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
         public bool IsErrorEnabled => _log.IsErrorEnabled;
 
         public bool IsFatalEnabled => _log.IsFatalEnabled;
+
+        public void Trace(object message)
+        {
+            if (IsTraceEnabled)
+            {
+                Log(LogLevel.Trace, message?.ToString());
+            }
+        }
+
+        public void Trace(object message, Exception exception)
+        {
+            if (IsTraceEnabled)
+            {
+                Log(LogLevel.Trace, message?.ToString(), exception);
+            }
+        }
+
+        public void TraceFormat(string format, params object[] args)
+        {
+            if (IsTraceEnabled)
+            {
+                Log(LogLevel.Trace, format, args);
+            }
+        }
 
         public void Debug(object message)
         {

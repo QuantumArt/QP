@@ -167,6 +167,7 @@
     <Compile Include="Factories\Logging\NLogFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
+    <Compile Include="Helpers\AssemblyHelpers.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
     <Compile Include="Helpers\Ensure.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
@@ -561,7 +562,6 @@
     <Compile Include="Services\API\ArticleScheduler\IArticleVisibleSchedulerService.cs" />
     <Compile Include="Services\Audit\BackendActionLogService.cs" />
     <Compile Include="Services\Audit\ButtonTraceService.cs" />
-    <Compile Include="Services\ContentInitListResult.cs" />
     <Compile Include="Services\CustomActionService.cs" />
     <Compile Include="ListItems\ContentListFilter.cs" />
     <Compile Include="ListItems\CustomActionListItem.cs" />
@@ -684,8 +684,8 @@
     <Compile Include="Services\TreeMenuService.cs" />
     <Compile Include="Services\UserGroupService.cs" />
     <Compile Include="Services\UserService.cs" />
-    <Compile Include="Services\UserSinchronization\IUserSynchronizationService.cs" />
-    <Compile Include="Services\UserSinchronization\UserSynchronizationService.cs" />
+    <Compile Include="Services\UserSynchronization\IUserSynchronizationService.cs" />
+    <Compile Include="Services\UserSynchronization\UserSynchronizationService.cs" />
     <Compile Include="Services\VirtualContentService.cs" />
     <Compile Include="Services\VirtualFieldService.cs" />
     <Compile Include="Services\IVisualEditorService.cs" />
@@ -699,6 +699,7 @@
     <Compile Include="StopWordList.cs" />
     <Compile Include="Translator.cs" />
     <Compile Include="UnionAttr.cs" />
+    <Compile Include="UnityExtensions\NLogContainerExtension.cs" />
     <Compile Include="UserDefaultFilter.cs" />
     <Compile Include="UserGroup.cs" />
     <Compile Include="UserQueryAttr.cs" />

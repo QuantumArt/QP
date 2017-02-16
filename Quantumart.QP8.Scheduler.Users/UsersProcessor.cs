@@ -1,24 +1,23 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Interfaces.Logging;
+using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.UserSynchronization;
 using Quantumart.QP8.Scheduler.API;
 
 namespace Quantumart.QP8.Scheduler.Users
 {
-    public class UsersProcessor : IProcessor
+    public class UsersProcessor : IProcessor, IDisposable
     {
         private const int DelayDuration = 100;
-        private readonly TraceSource _logger;
+
+        private readonly ILog _logger;
         private readonly IConnectionStrings _connectionStrings;
         private readonly Func<IUserSynchronizationService> _getSynchronizationService;
 
-        public UsersProcessor(
-            TraceSource logger,
-            IConnectionStrings connectionStrings,
-            Func<IUserSynchronizationService> getSynchronizationService)
+        public UsersProcessor(ILog logger, IConnectionStrings connectionStrings, Func<IUserSynchronizationService> getSynchronizationService)
         {
             _logger = logger;
             _connectionStrings = connectionStrings;
@@ -27,7 +26,7 @@ namespace Quantumart.QP8.Scheduler.Users
 
         public async Task Run(CancellationToken token)
         {
-            _logger.TraceInformation("Start users synchronization");
+            _logger.Info("Start users synchronization");
             foreach (var connection in _connectionStrings)
             {
                 using (new QPConnectionScope(connection))
@@ -35,7 +34,7 @@ namespace Quantumart.QP8.Scheduler.Users
                     var service = _getSynchronizationService();
                     if (service.NeedSynchronization())
                     {
-                        _logger.TraceInformation("Synchronization for: " + connection);
+                        _logger.Info($"Synchronization for: ${connection}");
                         service.Synchronize();
                     }
                 }
@@ -43,7 +42,12 @@ namespace Quantumart.QP8.Scheduler.Users
                 await Task.Delay(DelayDuration, token);
             }
 
-            _logger.TraceInformation("End users synchronization");
+            _logger.Info("End users synchronization");
+        }
+
+        public void Dispose()
+        {
+            Logger.Log.Dispose();
         }
     }
 }

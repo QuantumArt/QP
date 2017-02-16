@@ -412,7 +412,6 @@
     <Compile Include="Infrastructure\Constants\XmlDbUpdateXDocumentConstants.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
     <Compile Include="Infrastructure\Utf8StringWriter.cs" />
-    <Compile Include="Infrastructure\UnityExtensions\NLogContainerExtension.cs" />
     <Compile Include="Scripts\Quantumart\JsLanguage.ashx.cs">
       <DependentUpon>JsLanguage.ashx</DependentUpon>
     </Compile>

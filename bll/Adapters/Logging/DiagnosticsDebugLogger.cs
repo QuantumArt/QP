@@ -6,6 +6,8 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
 {
     public class DiagnosticsDebugLogger : ILog
     {
+        public bool IsTraceEnabled { get; set; }
+
         public bool IsDebugEnabled { get; set; }
 
         public bool IsInfoEnabled { get; set; }
@@ -15,6 +17,30 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
         public bool IsErrorEnabled { get; set; }
 
         public bool IsFatalEnabled { get; set; }
+
+        public void Trace(object message)
+        {
+            if (IsTraceEnabled)
+            {
+                Log("Trace", message?.ToString());
+            }
+        }
+
+        public void Trace(object message, Exception exception)
+        {
+            if (IsTraceEnabled)
+            {
+                Log("Trace", message?.ToString(), exception);
+            }
+        }
+
+        public void TraceFormat(string format, params object[] args)
+        {
+            if (IsTraceEnabled)
+            {
+                Log("Trace", format, args);
+            }
+        }
 
         public void Debug(object message)
         {

@@ -15,11 +15,9 @@ namespace Quantumart.QP8.Scheduler.API.Extensions
             {
                 var currentKey = keySelector(source.First());
                 var foundItems = new List<TElement>();
-
                 foreach (var item in source)
                 {
                     var key = keySelector(item);
-
                     if (!currentKey.Equals(key))
                     {
                         yield return new Grouping<TKey, TElement>(currentKey, foundItems);

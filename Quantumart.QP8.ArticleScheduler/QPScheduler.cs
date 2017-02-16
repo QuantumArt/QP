@@ -5,9 +5,6 @@ using Microsoft.Practices.Unity;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
-    /// <summary>
-    /// Класс выполняет задачи из всех БД
-    /// </summary>
     public class QpScheduler
     {
         private readonly IEnumerable<string> _connectionStrings;
@@ -24,9 +21,6 @@ namespace Quantumart.QP8.ArticleScheduler
             _unityContainer = unityContainer;
         }
 
-        /// <summary>
-        /// Выполняет расписания
-        /// </summary>
         public void ParallelRun()
         {
             _connectionStrings.AsParallel().ForAll(cs =>

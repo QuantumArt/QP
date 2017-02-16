@@ -86,10 +86,6 @@ else
     {
         throw "You should build service $projectName in Debug configuration first";
     }
-    
-    [xml]$config = Get-Content -Path $schedulerConfigPath
-    $add = $config.configuration.'system.diagnostics'.switches.add | where {$_.name -eq 'debug'}
-    $add.value = "All"
 
     Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
 }

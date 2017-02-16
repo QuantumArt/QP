@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.Practices.Unity;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Repository;
@@ -21,6 +22,7 @@ using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.BLL.Services.MultistepActions.Rebuild;
 using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
 using Quantumart.QP8.BLL.Services.VisualEditor;
+using Quantumart.QP8.BLL.UnityExtensions;
 using Quantumart.QP8.Logging.Loggers;
 using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Logging.Web;
@@ -29,7 +31,6 @@ using Quantumart.QP8.WebMvc.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
-using Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions;
 
 namespace Quantumart.QP8.WebMvc
 {
@@ -115,6 +116,8 @@ namespace Quantumart.QP8.WebMvc
 
             UnityContainer.AddNewExtension<ImportLogContainerExtension>();
             UnityContainer.AddNewExtension<LogServicesContainerExtension>();
+
+            NLogContainerExtension.LoggerTypeName = AssemblyHelpers.GetAssemblyName();
             UnityContainer.AddNewExtension<NLogContainerExtension>();
         }
 

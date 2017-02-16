@@ -11,7 +11,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
     {
         public MonthlyRelativeStartCalc(int interval, int relativeInterval, int recurrenceFactor, DateTime startDate, DateTime endDate, TimeSpan startTime)
         {
-            calc = (dateTime) =>
+            Calc = dateTime =>
             {
                 var allStarts = Optimize(new Tuple<DateTime, DateTime>(startDate.Date, endDate.Date), dateTime.Date)
                     .EveryMonths(recurrenceFactor) // получаем полные месяца, но только те, которые ограничены recurrenceFactor

@@ -8,7 +8,6 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
         /// <summary>
         /// Создать PublishingTask из ArticleScheduleTask
         /// </summary>
-        /// <param name="task"></param>
         public static PublishingTask Create(ArticleScheduleTask task)
         {
             if (task == null)

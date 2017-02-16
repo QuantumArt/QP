@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using Quantumart.QP8.BLL.Adapters.Logging;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Interfaces.Logging;
 
 namespace Quantumart.QP8.BLL.Factories.Logging
@@ -12,17 +12,17 @@ namespace Quantumart.QP8.BLL.Factories.Logging
     {
         public ILog GetLogger()
         {
-            return new NLogLogger((Assembly.GetEntryAssembly() ?? Assembly.GetCallingAssembly()).GetName().Name);
+            return GetLogger(AssemblyHelpers.GetAssemblyName());
         }
 
         public ILog GetLogger(Type type)
         {
-            return new NLogLogger(type);
+            return type == null ? GetLogger() : new NLogLogger(type);
         }
 
         public ILog GetLogger(string typeName)
         {
-            return new NLogLogger(typeName);
+            return string.IsNullOrWhiteSpace(typeName) ? GetLogger() : new NLogLogger(typeName);
         }
     }
 }

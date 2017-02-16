@@ -66,6 +66,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\bll\BLL.csproj">
+      <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
+      <Name>BLL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\configuration\Configuration.csproj">
       <Project>{eb18df82-a593-40ca-aa31-ef430a9e7f24}</Project>
       <Name>Configuration</Name>

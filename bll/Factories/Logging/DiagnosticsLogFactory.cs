@@ -9,20 +9,26 @@ namespace Quantumart.QP8.BLL.Factories.Logging
     /// </summary>
 	public class DiagnosticsLogFactory : ILogFactory
     {
+        private readonly bool _traceEnabled;
         private readonly bool _debugEnabled;
         private readonly bool _infoEnabled;
         private readonly bool _warnEnabled;
+        private readonly bool _errorEnabled;
         private readonly bool _fatalEnabled;
 
         public DiagnosticsLogFactory(
+            bool traceEnabled = true,
             bool debugEnabled = true,
             bool infoEnabled = true,
             bool warnEnabled = true,
+            bool errorEnabled = true,
             bool fatalEnabled = true)
         {
+            _traceEnabled = traceEnabled;
             _debugEnabled = debugEnabled;
             _infoEnabled = infoEnabled;
             _warnEnabled = warnEnabled;
+            _errorEnabled = errorEnabled;
             _fatalEnabled = fatalEnabled;
         }
 
@@ -30,9 +36,11 @@ namespace Quantumart.QP8.BLL.Factories.Logging
         {
             return new DiagnosticsDebugLogger
             {
+                IsTraceEnabled = _traceEnabled,
                 IsDebugEnabled = _debugEnabled,
                 IsInfoEnabled = _infoEnabled,
                 IsWarnEnabled = _warnEnabled,
+                IsErrorEnabled = _errorEnabled,
                 IsFatalEnabled = _fatalEnabled,
             };
         }

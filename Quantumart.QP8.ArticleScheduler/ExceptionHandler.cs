@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using System;
+using Quantumart.QP8.BLL.Factories.Logging;
+using Quantumart.QP8.BLL.Services;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
@@ -11,25 +11,26 @@ namespace Quantumart.QP8.ArticleScheduler
 
     internal class ExceptionHandler : IExceptionHandler
     {
-        public void HandleException(Exception exp)
+        public void HandleException(Exception ex)
         {
-            var agrExc = exp as AggregateException;
-            if (agrExc != null)
+            var aggregatedException = ex as AggregateException;
+            if (aggregatedException != null)
             {
-                HandleAggregateException(agrExc);
+                HandleAggregateException(aggregatedException);
             }
             else
             {
-                EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(exp, "Policy");
+                Logger.Log.Error(ex);
             }
+
+            LogProvider.GetLogger("prtg").Info("PRTG Error.");
         }
 
-        private static void HandleAggregateException(AggregateException aexp)
+        private static void HandleAggregateException(AggregateException aggregatedException)
         {
-            var exceptionManager = EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>();
-            foreach (var exp in aexp.Flatten().InnerExceptions)
+            foreach (var ex in aggregatedException.Flatten().InnerExceptions)
             {
-                exceptionManager.HandleException(exp, "Policy");
+                Logger.Log.Error(ex);
             }
         }
     }

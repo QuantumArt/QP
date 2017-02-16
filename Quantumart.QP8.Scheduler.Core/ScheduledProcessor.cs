@@ -28,6 +28,7 @@ namespace Quantumart.QP8.Scheduler.Core
             {
                 token.ThrowIfCancellationRequested();
                 _lastStartTime = DateTime.Now;
+
                 await _getProcessor().Run(token);
                 _lastEndTime = DateTime.Now;
             }
