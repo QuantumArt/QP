@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web;
 using Quantumart.QP8.Resources;
 
@@ -26,7 +26,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
         {
             var action = BackendActionService.GetByCode(ActionCode);
             var itemsPerStep = action.EntityLimit ?? 1;
-            var state = new MultistepActionStageCommandState() { ParentId = parentId, Id = id, Ids = ids, BoundToExternal = boundToExternal, ItemsPerStep = itemsPerStep };
+            var state = new MultistepActionStageCommandState { ParentId = parentId, Id = id, Ids = ids, BoundToExternal = boundToExternal, ItemsPerStep = itemsPerStep };
 
             Command = (TCommand)CreateCommand(state);
             return new MultistepActionServiceContext { CommandStates = new[] { Command.GetState() } };
@@ -44,7 +44,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             return command;
         }
 
-        protected override string ContextSessionKey => GetType().Name + ".Settings";
+        protected override string ContextSessionKey => $"{GetType().Name}.Settings";
 
         public override MultistepActionSettings Setup(int parentId, int id, int[] ids, bool? boundToExternal)
         {
@@ -56,8 +56,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Base
             var context = CreateContext(parentId, id, ids, boundToExternal);
             HttpContext.Current.Session[ContextSessionKey] = context;
 
-            var settings = CreateActionSettings(parentId, id);
-            return settings;
+            return CreateActionSettings(parentId, id);
         }
 
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)

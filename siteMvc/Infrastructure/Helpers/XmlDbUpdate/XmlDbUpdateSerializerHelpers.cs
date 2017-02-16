@@ -7,7 +7,7 @@ using System.Linq;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 

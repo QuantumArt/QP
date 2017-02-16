@@ -1,50 +1,51 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Web;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteArticlesCommand : IMultistepActionStageCommand
     {
-        private static readonly int ITEMS_PER_STEP = 20;
+        private const int ItemsPerStep = 20;
 
         public int CopyFromSiteId { get; set; }
+
         public int? NewSiteId { get; set; }
+
         public int SiteArticlesCount { get; set; }
+
         public string SiteName { get; set; }
-        private string fileNameForLinks { get; set; }
-        private string contentsToCopy { get; set; }
+
+        private string FileNameForLinks { get; }
+
+        private string ContentsToCopy { get; }
 
         public CopySiteArticlesCommand(MultistepActionStageCommandState state) : this(state.Id, null, 0) { }
 
         public CopySiteArticlesCommand(int copyFromSiteId, string siteName, int siteArticlesCount)
         {
-            CopySiteSettings prms = (CopySiteSettings)HttpContext.Current.Session["CopySiteService.Settings"];
-            this.NewSiteId = prms.DestinationSiteId;
-
-            this.CopyFromSiteId = copyFromSiteId;
-            this.fileNameForLinks = prms.PathForFileWithLinks;
-            this.SiteArticlesCount = siteArticlesCount;
-            this.SiteName = siteName;
-            this.contentsToCopy = prms.ContentsToCopy;
+            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            NewSiteId = prms.DestinationSiteId;
+            CopyFromSiteId = copyFromSiteId;
+            FileNameForLinks = prms.PathForFileWithLinks;
+            SiteArticlesCount = siteArticlesCount;
+            SiteName = siteName;
+            ContentsToCopy = prms.ContentsToCopy;
         }
 
         public MultistepActionStepResult Step(int step)
         {
-            MultistepActionStepResult result = new MultistepActionStepResult();
-            int startFrom = step * ITEMS_PER_STEP + 1;
-            int endOn = (startFrom-1) + ITEMS_PER_STEP;
-            IEnumerable<DataRow> articlesLinks = ContentService.CopyContentsData(this.CopyFromSiteId, this.NewSiteId.Value, this.contentsToCopy, startFrom, endOn);
+            var result = new MultistepActionStepResult();
+            var startFrom = step * ItemsPerStep + 1;
+            var endOn = (startFrom - 1) + ItemsPerStep;
+            var articlesLinks = ContentService.CopyContentsData(CopyFromSiteId, NewSiteId.Value, ContentsToCopy, startFrom, endOn);
             WriteToTempFile(articlesLinks);
             result.ProcessedItemsCount = articlesLinks.Count();
 
@@ -55,7 +56,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             try
             {
-                string pathForFile = this.fileNameForLinks;
+                var pathForFile = FileNameForLinks;
                 XDocument xDocument;
                 if (File.Exists(pathForFile))
                 {
@@ -64,18 +65,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
                 else
                 {
                     xDocument = new XDocument();
-                    XElement items = new XElement("items");
-                    items.Add(new XAttribute("oldSiteId", this.CopyFromSiteId));
-                    items.Add(new XAttribute("newSiteId", this.NewSiteId.Value));
+                    var items = new XElement("items");
+                    items.Add(new XAttribute("oldSiteId", CopyFromSiteId));
+                    items.Add(new XAttribute("newSiteId", NewSiteId.Value));
                     xDocument.Add(items);
                 }
 
-                foreach (DataRow row in articlesLinks)
+                foreach (var row in articlesLinks)
                 {
-                    XElement itemXML = new XElement("item");
-                    itemXML.Add(new XAttribute("sourceId", row["source_item_id"].ToString()));
-                    itemXML.Add(new XAttribute("destinationId", row["destination_item_id"].ToString()));
-                    xDocument.Root.Add(itemXML);
+                    var itemXml = new XElement("item");
+                    itemXml.Add(new XAttribute("sourceId", row["source_item_id"].ToString()));
+                    itemXml.Add(new XAttribute("destinationId", row["destination_item_id"].ToString()));
+                    xDocument.Root.Add(itemXml);
                 }
 
                 xDocument.Save(pathForFile);
@@ -100,9 +101,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             return new MultistepStageSettings
             {
-                ItemCount = this.SiteArticlesCount,
-                StepCount = MultistepActionHelper.GetStepCount(this.SiteArticlesCount, ITEMS_PER_STEP),
-                Name = String.Format(SiteStrings.CopySiteArticles, (SiteName ?? ""))
+                ItemCount = SiteArticlesCount,
+                StepCount = MultistepActionHelper.GetStepCount(SiteArticlesCount, ItemsPerStep),
+                Name = string.Format(SiteStrings.CopySiteArticles, (SiteName ?? string.Empty))
             };
         }
     }

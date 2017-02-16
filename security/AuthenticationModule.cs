@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Web;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.Security
 {
@@ -24,12 +25,12 @@ namespace Quantumart.QP8.Security
                 if (QPConfiguration.WebConfigSection.Authentication.AllowSaveUserInformationInCookie)
                 {
                     userInformation = AuthenticationHelper.GetUserInformationFromAuthenticationCookie(userName);
-                    context.Items["userDataStorageType"] = "cookie";
+                    context.Items[HttpContextItems.UserDataStorageType] = "cookie";
                 }
                 else
                 {
                     userInformation = AuthenticationHelper.GetUserInformationFromStorage(userName);
-                    context.Items["userDataStorageType"] = "cache";
+                    context.Items[HttpContextItems.UserDataStorageType] = "cache";
                 }
 
                 QPIdentity identity;
@@ -50,11 +51,10 @@ namespace Quantumart.QP8.Security
                 }
                 else
                 {
-                    identity = new QPIdentity(0, userName, "", "QP", false, 0, "neutral", false);
+                    identity = new QPIdentity(0, userName, string.Empty, "QP", false, 0, "neutral", false);
                 }
 
-                var principal = new QPPrincipal(identity, roles);
-                context.User = Thread.CurrentPrincipal = principal;
+                context.User = Thread.CurrentPrincipal = new QpPrincipal(identity, roles);
             }
         }
 

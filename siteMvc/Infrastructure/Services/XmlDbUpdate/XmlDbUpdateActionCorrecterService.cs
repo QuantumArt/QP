@@ -8,6 +8,7 @@ using System.Web.Script.Serialization;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
@@ -83,42 +84,42 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 case ActionCode.AddNewVirtualContents:
                 case ActionCode.VirtualContentProperties:
                 case ActionCode.VirtualFieldProperties:
-                    AddIdsToReplace(action.VirtualFieldIds, httpContext, "NEW_VIRTUAL_FIELD_IDS");
+                    AddIdsToReplace(action.VirtualFieldIds, httpContext, HttpContextItems.NewVirtualFieldIds);
                     break;
                 case ActionCode.AddNewContent:
                 case ActionCode.CreateLikeContent:
-                    AddIdsToReplace(action.ChildIds, httpContext, "FIELD_IDS");
-                    AddIdsToReplace(action.ChildLinkIds, httpContext, "LINK_IDS");
+                    AddIdsToReplace(action.ChildIds, httpContext, HttpContextItems.FieldIds);
+                    AddIdsToReplace(action.ChildLinkIds, httpContext, HttpContextItems.LinkIds);
                     break;
                 case ActionCode.AddNewField:
                 case ActionCode.FieldProperties:
                 case ActionCode.CreateLikeField:
-                    AddIdToReplace(EntityTypeCode.ContentLink, action.ChildId, httpContext, "NEW_LINK_ID");
-                    AddIdToReplace(EntityTypeCode.Field, action.BackwardId, httpContext, "NEW_BACKWARD_ID");
-                    AddIdsToReplace(action.VirtualFieldIds, httpContext, "NEW_VIRTUAL_FIELD_IDS");
-                    AddIdsToReplace(action.ChildIds, httpContext, "NEW_CHILD_FIELD_IDS");
-                    AddIdsToReplace(action.ChildLinkIds, httpContext, "NEW_CHILD_LINK_IDS");
+                    AddIdToReplace(EntityTypeCode.ContentLink, action.ChildId, httpContext, HttpContextItems.NewLinkId);
+                    AddIdToReplace(EntityTypeCode.Field, action.BackwardId, httpContext, HttpContextItems.NewBackwardId);
+                    AddIdsToReplace(action.VirtualFieldIds, httpContext, HttpContextItems.NewVirtualFieldIds);
+                    AddIdsToReplace(action.ChildIds, httpContext, HttpContextItems.NewChildFieldIds);
+                    AddIdsToReplace(action.ChildLinkIds, httpContext, HttpContextItems.NewChildLinkIds);
                     break;
                 case ActionCode.AddNewCustomAction:
-                    AddIdToReplace(EntityTypeCode.BackendAction, action.ChildId, httpContext, "ACTION_ID");
+                    AddIdToReplace(EntityTypeCode.BackendAction, action.ChildId, httpContext, HttpContextItems.ActionId);
                     break;
                 case ActionCode.AddNewVisualEditorPlugin:
                 case ActionCode.VisualEditorPluginProperties:
-                    AddIdsToReplace(action.ChildIds, httpContext, "NEW_COMMAND_IDS");
+                    AddIdsToReplace(action.ChildIds, httpContext, HttpContextItems.NewCommandIds);
                     break;
                 case ActionCode.AddNewWorkflow:
                 case ActionCode.WorkflowProperties:
-                    AddIdsToReplace(action.ChildIds, httpContext, "NEW_RULES_IDS");
+                    AddIdsToReplace(action.ChildIds, httpContext, HttpContextItems.NewRulesIds);
                     break;
                 case ActionCode.AddNewNotification:
                 case ActionCode.NotificationProperties:
-                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, httpContext, "NOTIFICATION_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, httpContext, HttpContextItems.NotificationFormatId);
                     break;
                 case ActionCode.AddNewPageObject:
-                    AddIdToReplace(EntityTypeCode.PageObjectFormat, action.ChildId, httpContext, "DEFAULT_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.PageObjectFormat, action.ChildId, httpContext, HttpContextItems.DefaultFormatId);
                     break;
                 case ActionCode.AddNewTemplateObject:
-                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, httpContext, "DEFAULT_FORMAT_ID");
+                    AddIdToReplace(EntityTypeCode.TemplateObjectFormat, action.ChildId, httpContext, HttpContextItems.DefaultFormatId);
                     break;
             }
 
@@ -540,10 +541,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             {
                 var entityTypeCode = action.BackendAction.EntityType.Code != EntityTypeCode.VirtualContent ? action.BackendAction.EntityType.Code : EntityTypeCode.Content;
                 var resultId = action.ResultId != default(int) ? action.ResultId : int.Parse(action.Ids.First());
-                AddIdToReplace(entityTypeCode, resultId, httpContext, "RESULT_ID");
+                AddIdToReplace(entityTypeCode, resultId, httpContext, HttpContextItems.ResultId);
 
                 var resultUniqueId = action.ResultUniqueId != Guid.Empty ? action.ResultUniqueId : action.UniqueId.First();
-                AddUniqueIdToReplace(entityTypeCode, resultUniqueId, httpContext, "RESULT_GUID");
+                AddUniqueIdToReplace(entityTypeCode, resultUniqueId, httpContext, HttpContextItems.ResultGuid);
             }
         }
 

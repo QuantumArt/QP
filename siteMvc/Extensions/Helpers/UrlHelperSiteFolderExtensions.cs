@@ -1,6 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 {
@@ -10,9 +11,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var themeName = "default";
             var session = HttpContext.Current.Session;
-            if (session["theme"] != null)
+            if (session[HttpContextSession.CurrentCssTheme] != null)
             {
-                themeName = session["theme"].ToString();
+                themeName = session[HttpContextSession.CurrentCssTheme].ToString();
             }
 
             return themeName;

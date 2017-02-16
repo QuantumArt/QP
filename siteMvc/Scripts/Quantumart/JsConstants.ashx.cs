@@ -9,6 +9,7 @@ using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Audit;
@@ -22,7 +23,7 @@ namespace Quantumart.QP8.WebMvc.Backend
 
         public void ProcessRequest(HttpContext context)
         {
-            var currentTheme = context.Session["theme"].ToString();
+            var currentTheme = context.Session[HttpContextSession.CurrentCssTheme].ToString();
             var constants = new StringBuilder();
 
             constants.AppendLine("Type.registerNamespace(\"Quantumart.QP8.Enums\");");

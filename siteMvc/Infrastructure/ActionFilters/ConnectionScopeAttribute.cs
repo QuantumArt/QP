@@ -3,6 +3,7 @@ using System.Transactions;
 using System.Web;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -14,15 +15,13 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
     {
         public static readonly int FilterOrder = 0;
 
-        private const string TransactionScopeKey = "ConnectionScopeAttribute.TransactionScope";
-
         private static TransactionScope TransactionScope
         {
             get
             {
-                if (HttpContext.Current.Items.Contains(TransactionScopeKey))
+                if (HttpContext.Current.Items.Contains(HttpContextItems.TransactionScopeKey))
                 {
-                    return (TransactionScope)HttpContext.Current.Items[TransactionScopeKey];
+                    return (TransactionScope)HttpContext.Current.Items[HttpContextItems.TransactionScopeKey];
                 }
 
                 return null;
@@ -31,24 +30,22 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 if (value != null)
                 {
-                    HttpContext.Current.Items[TransactionScopeKey] = value;
+                    HttpContext.Current.Items[HttpContextItems.TransactionScopeKey] = value;
                 }
                 else
                 {
-                    HttpContext.Current.Items.Remove(TransactionScopeKey);
+                    HttpContext.Current.Items.Remove(HttpContextItems.TransactionScopeKey);
                 }
             }
         }
-
-        private const string ConnectionScopeKey = "ConnectionScopeAttribute.ConnectionScope";
 
         private static QPConnectionScope ConnectionScope
         {
             get
             {
-                if (HttpContext.Current.Items.Contains(ConnectionScopeKey))
+                if (HttpContext.Current.Items.Contains(HttpContextItems.ConnectionScopeKey))
                 {
-                    return (QPConnectionScope)HttpContext.Current.Items[ConnectionScopeKey];
+                    return (QPConnectionScope)HttpContext.Current.Items[HttpContextItems.ConnectionScopeKey];
                 }
 
                 return null;
@@ -57,11 +54,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             {
                 if (value != null)
                 {
-                    HttpContext.Current.Items[ConnectionScopeKey] = value;
+                    HttpContext.Current.Items[HttpContextItems.ConnectionScopeKey] = value;
                 }
                 else
                 {
-                    HttpContext.Current.Items.Remove(ConnectionScopeKey);
+                    HttpContext.Current.Items.Remove(HttpContextItems.ConnectionScopeKey);
                 }
             }
         }

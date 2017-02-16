@@ -1,28 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Web;
-using Quantumart.QP8.BLL.Helpers;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Assembling;
+using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Constants.Mvc;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
     internal class AssemblePagesCommand : IMultistepActionStageCommand
     {
         private const string PageTemplate = "\"{0}/{1}\"";
-        private static readonly int ITEMS_PER_STEP = 5;
-        private static readonly string SESSION_KEY = "AssemblePagesCommand.ProcessingContext";
+        private const int ItemsPerStep = 5;
 
-        public int AssemblingEntityIdId { get; private set; }
-        public string AssemblingEntityName { get; private set; }
-        public bool SiteOrTemplate { get; private set; }
-        public bool IsDotNet { get; private set; }
-        public IQP7Service QP7Service { get; private set; }
+        public int AssemblingEntityIdId { get; }
 
-        private int itemCount = 0;
+        public string AssemblingEntityName { get; }
+
+        public bool SiteOrTemplate { get; }
+
+        public bool IsDotNet { get; }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
+        public IQP7Service QP7Service { get; }
+
+        private int _itemCount;
 
         public AssemblePagesCommand(MultistepActionStageCommandState state, bool siteOrTemplate, bool isDotNet) : this(state.Id, null, siteOrTemplate, isDotNet) { }
 
@@ -38,25 +44,25 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
         internal void Setup()
         {
             IEnumerable<PageInfo> pagesIds = SiteOrTemplate ? AssembleRepository.GetSitePages(AssemblingEntityIdId) : AssembleRepository.GetTemplatePages(AssemblingEntityIdId);
-            itemCount = pagesIds.Count();
-            QP7Token token = null;
+            _itemCount = pagesIds.Count();
 
+            QP7Token token = null;
             if (!IsDotNet)
             {
                 token = QP7Service.Authenticate();
             }
 
-            HttpContext.Current.Session[SESSION_KEY] = new AssemblePagesCommandContext
+            HttpContext.Current.Session[HttpContextSession.AssemblePagesCommandProcessingContext] = new AssemblePagesCommandContext
             {
                 Pages = pagesIds.ToArray(),
                 QP7Token = token,
                 MissedPages = new Dictionary<string, List<PageInfo>>()
             };
-        }    
+        }
 
         internal static void TearDown()
         {
-            HttpContext.Current.Session[SESSION_KEY] = null;
+            HttpContext.Current.Session[HttpContextSession.AssemblePagesCommandProcessingContext] = null;
         }
 
         public MultistepActionStageCommandState GetState()
@@ -73,21 +79,19 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
         {
             return new MultistepStageSettings
             {
-                ItemCount = itemCount,
-                StepCount = MultistepActionHelper.GetStepCount(itemCount, ITEMS_PER_STEP),
-                Name = SiteOrTemplate ? String.Format(SiteStrings.AssemblePagesStageName, (AssemblingEntityName ?? "")):
-                String.Format(TemplateStrings.AssemblePagesStageName, (AssemblingEntityName ?? ""))
+                ItemCount = _itemCount,
+                StepCount = MultistepActionHelper.GetStepCount(_itemCount, ItemsPerStep),
+                Name = SiteOrTemplate ? string.Format(SiteStrings.AssemblePagesStageName, AssemblingEntityName ?? string.Empty) :
+                string.Format(TemplateStrings.AssemblePagesStageName, AssemblingEntityName ?? string.Empty)
             };
         }
 
-        #region IMultistepActionStageCommand Members
-
         public MultistepActionStepResult Step(int step)
         {
-            AssemblePagesCommandContext context = HttpContext.Current.Session[SESSION_KEY] as AssemblePagesCommandContext;
+            var context = HttpContext.Current.Session[HttpContextSession.AssemblePagesCommandProcessingContext] as AssemblePagesCommandContext;
             var pages = context.Pages
-                .Skip(step * ITEMS_PER_STEP)
-                .Take(ITEMS_PER_STEP)
+                .Skip(step * ItemsPerStep)
+                .Take(ItemsPerStep)
                 .ToArray();
 
             if (pages.Any())
@@ -122,14 +126,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
                 }
             }
 
-            int pageCount = context.MissedPages.Sum(rp => rp.Value.Count);
+            var pageCount = context.MissedPages.Sum(rp => rp.Value.Count);
             var info = new StringBuilder();
-
             if (pageCount > 0)
             {
                 info.AppendFormat(SiteStrings.AssemblePagesResult, pageCount);
-
-                foreach(var item in context.MissedPages)
+                foreach (var item in context.MissedPages)
                 {
                     info.AppendFormat(" \"{0}\" : [{1}]", item.Key, string.Join(", ", item.Value.Select(p => string.Format(PageTemplate, p.Template, p.Name))));
                 }
@@ -137,17 +139,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 
             return new MultistepActionStepResult { ProcessedItemsCount = pages.Count(), AdditionalInfo = info.ToString() };
         }
-
-        #endregion
-
-        
     }
 
     [Serializable]
     public class AssemblePagesCommandContext
     {
         public PageInfo[] Pages { get; set; }
+
+        [SuppressMessage("ReSharper", "InconsistentNaming")]
         public QP7Token QP7Token { get; set; }
-        public Dictionary<string,List<PageInfo>> MissedPages;
+
+        public Dictionary<string, List<PageInfo>> MissedPages;
     }
 }

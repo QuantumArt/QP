@@ -12,9 +12,9 @@ using Moq;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
-using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
@@ -30,25 +30,25 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 Lcid = CultureInfo.CurrentCulture.LCID,
                 Executed = DateTime.Now,
                 ExecutedBy = (httpContext.User.Identity as QPIdentity)?.Name,
-                Ids = httpContext.Items.Contains("FROM_ID")
-                    ? new[] { httpContext.Items["FROM_ID"].ToString() }
+                Ids = httpContext.Items.Contains(HttpContextItems.FromId)
+                    ? new[] { httpContext.Items[HttpContextItems.FromId].ToString() }
                     : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
-                ResultId = GetContextData<int>(httpContext, "RESULT_ID"),
-                UniqueId = GetGuidsContextData(httpContext, "FROM_GUID"),
-                ResultUniqueId = GetGuidContextData(httpContext, "RESULT_GUID"),
-                VirtualFieldIds = GetContextData<string>(httpContext, "NEW_VIRTUAL_FIELD_IDS"),
-                FieldIds = GetContextData<string>(httpContext, "FIELD_IDS"),
-                LinkIds = GetContextData<string>(httpContext, "LINK_IDS"),
-                NewLinkId = GetContextData<int>(httpContext, "NEW_LINK_ID"),
-                BackwardId = GetContextData<int>(httpContext, "NEW_BACKWARD_ID"),
-                NewChildFieldIds = GetContextData<string>(httpContext, "NEW_CHILD_FIELD_IDS"),
-                NewChildLinkIds = GetContextData<string>(httpContext, "NEW_CHILD_LINK_IDS"),
-                ActionId = GetContextData<int>(httpContext, "ACTION_ID"),
-                ActionCode = GetContextData<string>(httpContext, "ACTION_CODE"),
-                NewCommandIds = GetContextData<string>(httpContext, "NEW_COMMAND_IDS"),
-                NewRulesIds = GetContextData<string>(httpContext, "NEW_RULES_IDS"),
-                NotificationFormatId = GetContextData<int>(httpContext, "NOTIFICATION_FORMAT_ID"),
-                DefaultFormatId = GetContextData<int>(httpContext, "DEFAULT_FORMAT_ID"),
+                ResultId = GetContextData<int>(httpContext, HttpContextItems.ResultId),
+                UniqueId = GetGuidsContextData(httpContext, HttpContextItems.FromGuid),
+                ResultUniqueId = GetGuidContextData(httpContext, HttpContextItems.ResultGuid),
+                VirtualFieldIds = GetContextData<string>(httpContext, HttpContextItems.NewVirtualFieldIds),
+                FieldIds = GetContextData<string>(httpContext, HttpContextItems.FieldIds),
+                LinkIds = GetContextData<string>(httpContext, HttpContextItems.LinkIds),
+                NewLinkId = GetContextData<int>(httpContext, HttpContextItems.NewLinkId),
+                BackwardId = GetContextData<int>(httpContext, HttpContextItems.NewBackwardId),
+                NewChildFieldIds = GetContextData<string>(httpContext, HttpContextItems.NewChildFieldIds),
+                NewChildLinkIds = GetContextData<string>(httpContext, HttpContextItems.NewChildLinkIds),
+                ActionId = GetContextData<int>(httpContext, HttpContextItems.ActionId),
+                ActionCode = GetContextData<string>(httpContext, HttpContextItems.ActionCode),
+                NewCommandIds = GetContextData<string>(httpContext, HttpContextItems.NewCommandIds),
+                NewRulesIds = GetContextData<string>(httpContext, HttpContextItems.NewRulesIds),
+                NotificationFormatId = GetContextData<int>(httpContext, HttpContextItems.NotificationFormatId),
+                DefaultFormatId = GetContextData<int>(httpContext, HttpContextItems.DefaultFormatId),
             };
 
             if (!ignoreForm)
@@ -56,10 +56,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 action.Form = new NameValueCollection
                 {
                     httpContext.Request.Form,
-                    GetDynamicFieldValuesFromHttpContext(httpContext, "field_uniqueid_"),
-                    GetStringValuesFromHttpContext(httpContext, "DefaultArticleUniqueIds"),
-                    GetStringValuesFromHttpContext(httpContext, "Data.O2MUniqueIdDefaultValue"),
-                    GetStringValuesFromHttpContext(httpContext, "ContentDefaultFilter.ArticleUniqueIDs")
+                    GetDynamicFieldValuesFromHttpContext(httpContext, HttpContextItems.FieldUniqueIdPrefix),
+                    GetStringValuesFromHttpContext(httpContext, HttpContextItems.DefaultArticleUniqueIds),
+                    GetStringValuesFromHttpContext(httpContext, HttpContextItems.DataO2MUniqueIdDefaultValue),
+                    GetStringValuesFromHttpContext(httpContext, HttpContextItems.ContentDefaultFilterArticleUniqueIDs)
                 };
             }
 
@@ -125,10 +125,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
         private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl)
         {
-            httpContext.Items.Add(XmlDbUpdateCommonConstants.IsReplayingXmlContext, true);
+            httpContext.Items.Add(HttpContextItems.IsReplayingXmlContext, true);
             if (!string.IsNullOrWhiteSpace(backendUrl))
             {
-                httpContext.Items.Add(XmlDbUpdateCommonConstants.BackendUrlContext, backendUrl);
+                httpContext.Items.Add(HttpContextItems.BackendUrlContext, backendUrl);
             }
 
             return httpContext;
@@ -137,7 +137,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl, Guid resultUniqueId)
         {
             httpContext = AddGlobalHttpContextVariables(httpContext, backendUrl);
-            httpContext.Items.Add(XmlDbUpdateCommonConstants.XmlContextGuidSubstitution, resultUniqueId);
+            httpContext.Items.Add(HttpContextItems.XmlContextGuidSubstitution, resultUniqueId);
             return httpContext;
         }
 
@@ -291,11 +291,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             }
         }
 
-        private static QPPrincipal GetQpPrincipal(int userId)
+        private static QpPrincipal GetQpPrincipal(int userId)
         {
             var user = new UserService().ReadProfile(userId);
             var identity = new QPIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false);
-            return new QPPrincipal(identity, new string[] { });
+            return new QpPrincipal(identity, new string[] { });
         }
 
         private static T GetContextData<T>(HttpContextBase httpContext, string key)

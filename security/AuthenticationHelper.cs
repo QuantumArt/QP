@@ -6,20 +6,16 @@ using System.Web.Configuration;
 using System.Web.Security;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Configuration.Authentication.WindowsAuthentication;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.Security
 {
     public static class AuthenticationHelper
     {
-        public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName)
+        public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, string userData = null)
         {
-            return CreateAuthenticationTicket(userName, string.Empty);
-        }
-
-        public static FormsAuthenticationTicket CreateAuthenticationTicket(string userName, string userData)
-        {
-            var config = (AuthenticationSection)HttpContext.Current.GetSection("system.web/authentication");
+            var config = (AuthenticationSection)HttpContext.Current.GetSection(WebConfigSections.SystemWebAuthentication);
             var expireAt = (int)config.Forms.Timeout.TotalMinutes;
             return new FormsAuthenticationTicket(
                 1,                                    // версия
@@ -178,6 +174,8 @@ namespace Quantumart.QP8.Security
             }
 
             SetAuthenticationCookie(ticket);
+
+            // TODO: Logger.Log.Debug($"User successfully authenticated: {user.ToJsonLog()}");
             return FormsAuthentication.GetRedirectUrl(string.Empty, false);
         }
 

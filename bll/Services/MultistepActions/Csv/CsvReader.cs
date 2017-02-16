@@ -13,6 +13,7 @@ using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
@@ -845,16 +846,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private static void SaveUpdatedArticleIdsToSettings(IEnumerable<int> articleIds)
         {
-            var settings = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
             settings?.UpdatedArticleIds.AddRange(articleIds);
-            HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] = settings;
+            HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = settings;
         }
 
         private static void SaveInsertedArticleIdsToSettings(IEnumerable<int> articleIds)
         {
-            var settings = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
             settings?.InsertedArticleIds.AddRange(articleIds);
-            HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] = settings;
+            HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = settings;
         }
 
         private List<int> GetExistingArticleIds(List<int> articlesIdList)

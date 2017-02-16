@@ -121,6 +121,10 @@
       <Project>{2376f4db-61df-4440-bab7-5740e06cd945}</Project>
       <Name>Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\constants\Constants.csproj">
+      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
+      <Name>Constants</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

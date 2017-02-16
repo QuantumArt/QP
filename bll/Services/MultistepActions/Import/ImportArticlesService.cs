@@ -4,7 +4,7 @@ using System.Web;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
-using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Resources;
 
@@ -33,12 +33,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
             }
 
-            HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] = importSettings;
+            HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = importSettings;
         }
 
         public override MultistepActionSettings Setup(int parentId, int id, bool? boundToExternal)
         {
-            var settings = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
             try
             {
                 var fileReader = new FileReader(settings);
@@ -71,7 +71,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             return new MultistepActionServiceContext { CommandStates = new[] { commandState } };
         }
 
-        protected override string ContextSessionKey => CsvExport.ImportContextSessionKey;
+        protected override string ContextSessionKey => HttpContextSession.ImportContextSessionKey;
 
         protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
         {
@@ -85,18 +85,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public override void TearDown()
         {
-            var settings = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
             RemoveFileFromTemp();
 
             _logger.LogEndImport(settings);
-            HttpContext.Current.Session.Remove(CsvExport.ImportSettingsSessionKey);
+            HttpContext.Current.Session.Remove(HttpContextSession.ImportSettingsSessionKey);
 
             base.TearDown();
         }
 
         private static void RemoveFileFromTemp()
         {
-            var settings = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
             RemoveTempFiles(settings);
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -13,6 +13,8 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
@@ -173,19 +175,19 @@ namespace Quantumart.QP8.WebMvc
 
         protected void Session_Start(object sender, EventArgs e)
         {
-            Session["theme"] = QPConfiguration.WebConfigSection.DefaultTheme;
+            Session[HttpContextSession.CurrentCssTheme] = QPConfiguration.WebConfigSection.DefaultTheme;
         }
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            var exeption = Server.GetLastError();
-            if (exeption != null)
+            var exсeption = Server.GetLastError();
+            if (exсeption != null)
             {
-                Logger.Log.SetContext("httpErrorCode", new HttpException(null, exeption).GetHttpCode());
-                Logger.Log.Fatal(exeption);
-                if (exeption is ImportException)
+                Logger.Log.SetContext(LoggingData.HttpErrorCodeCustomVariable, new HttpException(null, exсeption).GetHttpCode());
+                Logger.Log.Fatal("Application_Error", exсeption);
+                if (exсeption is ImportException)
                 {
-                    EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(exeption, "Policy");
+                    EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(exсeption, LoggingData.EnterpiseExceptionPolicyName);
                 }
             }
         }

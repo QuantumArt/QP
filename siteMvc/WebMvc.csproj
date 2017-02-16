@@ -326,11 +326,9 @@
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateHttpContextProcessor.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
-    <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateCommonConstants.cs" />
     <Compile Include="Infrastructure\Enums\ExceptionResultMode.cs" />
     <Compile Include="Infrastructure\Enums\JSendStatus.cs" />
     <Compile Include="Infrastructure\Extensions\ArrayExtensions.cs" />
-    <Compile Include="Infrastructure\Extensions\ObjectExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\CultureHelpers.cs" />
@@ -411,7 +409,7 @@
     <Compile Include="Infrastructure\Exceptions\XmlDbUpdateLoggingException.cs" />
     <Compile Include="Infrastructure\Extensions\XAttributeExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\HashHelpers.cs" />
-    <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateXDocumentConstants.cs" />
+    <Compile Include="Infrastructure\Constants\XmlDbUpdateXDocumentConstants.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
     <Compile Include="Infrastructure\Utf8StringWriter.cs" />
     <Compile Include="Infrastructure\UnityExtensions\NLogContainerExtension.cs" />

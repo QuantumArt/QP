@@ -2,6 +2,7 @@
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Exceptions;
@@ -15,7 +16,7 @@ namespace Quantumart.QP8.WebMvc.WinLogOn.Controllers
     public class WinLogOnController : QPController
     {
         [DisableBrowserCache]
-        [ResponseHeader("QP-Not-Authenticated", "True")]
+        [ResponseHeader(ResponseHeaders.QpNotAuthenticated, "True")]
         public ActionResult Index(bool? useAutoLogin, DirectLinkOptions directLinkOptions)
         {
             var data = new LogOnCredentials
@@ -38,7 +39,6 @@ namespace Quantumart.QP8.WebMvc.WinLogOn.Controllers
             try
             {
                 data.Validate();
-
             }
             catch (RulesException ex)
             {
@@ -71,13 +71,11 @@ namespace Quantumart.QP8.WebMvc.WinLogOn.Controllers
             return LogOnView(data);
         }
 
-        [NonAction]
         private string GetCurrentUser()
         {
-            return Request.ServerVariables["LOGON_USER"];
+            return Request.ServerVariables[RequestServerVariables.LogOnUser];
         }
 
-        [NonAction]
         private void InitViewBag(DirectLinkOptions directLinkOptions)
         {
             ViewBag.AllowSelectCustomerCode = QPConfiguration.AllowSelectCustomerCode;
@@ -89,7 +87,6 @@ namespace Quantumart.QP8.WebMvc.WinLogOn.Controllers
             }
         }
 
-        [NonAction]
         private ActionResult LogOnView(LogOnCredentials model)
         {
             return Request.IsAjaxRequest() ? JsonHtml("Popup", model) : View(model);

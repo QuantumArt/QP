@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate
+﻿namespace Quantumart.QP8.WebMvc.Infrastructure.Constants
 {
     internal class XmlDbUpdateXDocumentConstants
     {
