@@ -7,10 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -185,10 +182,6 @@ namespace Quantumart.QP8.WebMvc
             {
                 Logger.Log.SetContext(LoggingData.HttpErrorCodeCustomVariable, new HttpException(null, exсeption).GetHttpCode());
                 Logger.Log.Fatal("Application_Error", exсeption);
-                if (exсeption is ImportException)
-                {
-                    EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(exсeption, LoggingData.EnterpiseExceptionPolicyName);
-                }
             }
         }
 

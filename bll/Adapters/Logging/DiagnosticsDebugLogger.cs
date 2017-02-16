@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Quantumart.QP8.BLL.Interfaces.Logging;
 
 namespace Quantumart.QP8.BLL.Adapters.Logging
@@ -142,12 +143,32 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
 
         public void Log(string logLevel, string format, params object[] args)
         {
-            System.Diagnostics.Debug.WriteLine(string.Format(format, args), logLevel);
+            string message;
+            if (args == null || !args.Any())
+            {
+                message = format;
+            }
+            else
+            {
+                message = string.Format(format, args);
+            }
+
+            System.Diagnostics.Debug.WriteLine(message, logLevel);
         }
 
         public void Log(string logLevel, string format, object[] args, Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"{string.Format(format, args)}. Exception: {ex.Message}", logLevel);
+            string message;
+            if (args == null || !args.Any())
+            {
+                message = format;
+            }
+            else
+            {
+                message = string.Format(format, args);
+            }
+
+            System.Diagnostics.Debug.WriteLine($"{message}. Exception: {ex.Message}", logLevel);
         }
 
         public void SetContext(string item, string value)

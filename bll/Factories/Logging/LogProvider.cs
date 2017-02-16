@@ -4,15 +4,15 @@ using Quantumart.QP8.BLL.Interfaces.Logging;
 namespace Quantumart.QP8.BLL.Factories.Logging
 {
     /// <summary>
-    /// Provider to create logger from selected factory.
+    /// Provider to create logger from selected factory
     /// </summary>
     public class LogProvider
     {
         private static ILogFactory _logFactory;
 
         /// <summary>
-        /// Gets or sets the log factory.
-        /// Use this to override the factory that is used to create loggers.
+        /// Gets or sets the log factory
+        /// Use this to override the factory that is used to create loggers
         /// </summary>
         public static ILogFactory LogFactory
         {
@@ -27,7 +27,7 @@ namespace Quantumart.QP8.BLL.Factories.Logging
         }
 
         /// <summary>
-        /// Gets the logger with calling assembly name.
+        /// Gets the logger with calling assembly name
         /// </summary>
         public static ILog GetLogger()
         {
@@ -35,7 +35,7 @@ namespace Quantumart.QP8.BLL.Factories.Logging
         }
 
         /// <summary>
-        /// Gets the logger.
+        /// Gets the logger
         /// </summary>
         public static ILog GetLogger(Type type)
         {
@@ -43,7 +43,7 @@ namespace Quantumart.QP8.BLL.Factories.Logging
         }
 
         /// <summary>
-        /// Gets the logger.
+        /// Gets the logger
         /// </summary>
         public static ILog GetLogger(string typeName)
         {

@@ -1143,6 +1143,7 @@ namespace Quantumart.QP8.BLL
                         areQueriesCorrect = false;
                         errors.ErrorFor(c => c.UserQuery, string.Format(ContentStrings.UserQueryIsInvalid, userQueryErrorMsg));
                     }
+
                     if (!string.IsNullOrWhiteSpace(UserQueryAlternative) && !VirtualContentRepository.IsQueryQueryCorrect(UserQueryAlternative, out userQueryErrorMsg))
                     {
                         areQueriesCorrect = false;

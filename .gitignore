@@ -258,6 +258,7 @@ siteMvc/Scripts/Quantumart/**/*.min.js
 
 # QP Generated And Builded
 *.orig
+*.InstallLog
 *.sublime-workspace
 **/*.generated.cs
 npm-debug.log.*

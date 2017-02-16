@@ -13,18 +13,18 @@ namespace Quantumart.QP8.BLL.Adapters.Logging
         private readonly Logger _log;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogLogger"/> class.
+        /// Initializes a new instance of the <see cref="NLogLogger"/> class
         /// </summary>
-        /// <param name="typeName">The type name.</param>
+        /// <param name="typeName">The type name</param>
         public NLogLogger(string typeName)
         {
             _log = LogManager.GetLogger(typeName);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogLogger"/> class.
+        /// Initializes a new instance of the <see cref="NLogLogger"/> class
         /// </summary>
-        /// <param name="type">The type.</param>
+        /// <param name="type">The type</param>
         public NLogLogger(Type type)
         {
             _log = LogManager.GetLogger(UseFullTypeNames ? type.FullName : type.Name);

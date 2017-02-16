@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.BLL.Interfaces.Logging
 {
@@ -148,42 +148,42 @@ namespace Quantumart.QP8.BLL.Interfaces.Logging
         void FatalFormat(string format, params object[] args);
 
         /// <summary>
-        /// Set the param for current thread context
+        /// Set param for current thread context
         /// </summary>
         /// <param name="item">Param name</param>
         /// <param name="value">Param Value</param>
         void SetContext(string item, string value);
 
         /// <summary>
-        /// Set the param for current thread context
+        /// Set param for current thread context
         /// </summary>
         /// <param name="item">Param name</param>
         /// <param name="value">Param Value</param>
         void SetContext(string item, object value);
 
         /// <summary>
-        /// Set the param for current logical context
+        /// Set param for current logical context
         /// </summary>
         /// <param name="item">Param name</param>
         /// <param name="value">Param Value</param>
         void SetAsyncContext(string item, string value);
 
         /// <summary>
-        /// Set the param for current logical context
+        /// Set param for current logical context
         /// </summary>
         /// <param name="item">Param name</param>
         /// <param name="value">Param Value</param>
         void SetAsyncContext(string item, object value);
 
         /// <summary>
-        /// Set the param for current thread context
+        /// Set param for global context
         /// </summary>
         /// <param name="item">Param name</param>
         /// <param name="value">Param Value</param>
         void SetGlobalContext(string item, string value);
 
         /// <summary>
-        /// Set the param for current thread context
+        /// Set param for global context
         /// </summary>
         /// <param name="item">Param name</param>
         /// <param name="value">Param Value</param>

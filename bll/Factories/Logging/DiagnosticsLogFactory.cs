@@ -5,7 +5,7 @@ using Quantumart.QP8.BLL.Interfaces.Logging;
 namespace Quantumart.QP8.BLL.Factories.Logging
 {
     /// <summary>
-    /// Creates a System.Diagnostics logger, that logs all messages to: System.Diagnostics.Debug
+    /// Creates a System.Diagnostics logger, that logs all messages to System.Diagnostics.Debug
     /// </summary>
 	public class DiagnosticsLogFactory : ILogFactory
     {
