@@ -39,7 +39,6 @@ namespace Quantumart.QP8.BLL
         private const string BackendActionContextKey = "BackendActionContext";
         private const string CurrentDbConnectionStringKey = "CurrentDbConnectionString";
 
-
         private const string IsAdminKey = "IsAdmin";
         private const string CanUnlockItemsKey = "CanUnlockItems";
         private const string IsLiveKey = "IsLive";
@@ -70,11 +69,11 @@ namespace Quantumart.QP8.BLL
             return $"{QPConfiguration.TempDirectory}{CurrentCustomerCode}.xml";
         }
 
-        private static T GetValueFromStorage<T>(T threadStorage, string key, bool useThreadStorage = false)
+        private static T GetValueFromStorage<T>(T threadStorageData, string key)
         {
-            if (useThreadStorage)
+            if (UseThreadStorage)
             {
-                return threadStorage;
+                return threadStorageData;
             }
 
             if (_externalContextStorage != null && _externalContextStorageKeys != null && _externalContextStorageKeys.Contains(key))
@@ -84,15 +83,15 @@ namespace Quantumart.QP8.BLL
 
             if (HttpContext.Current == null)
             {
-                return threadStorage;
+                return threadStorageData;
             }
 
             return (T)HttpContext.Current.Items[key];
         }
 
-        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key, bool useThreadStorage = false)
+        private static void SetValueToStorage<T>(ref T threadStorage, T value, string key)
         {
-            if (useThreadStorage)
+            if (UseThreadStorage)
             {
                 threadStorage = value;
             }
@@ -300,7 +299,7 @@ namespace Quantumart.QP8.BLL
         private static BackendActionContext _backendActionContext;
 
         [ThreadStatic]
-        private static bool _useThreadStorageForConnectionScope;
+        private static bool _useThreadStorage;
 
         private static void SetCurrentUserIdValueToStorage(int? value)
         {
@@ -339,7 +338,7 @@ namespace Quantumart.QP8.BLL
                 var result = GetValueFromStorage(_currentUserId, CurrentUserIdKey);
                 if (result == null)
                 {
-                    result = (HttpContext.Current.User.Identity as QPIdentity)?.Id;
+                    result = (HttpContext.Current.User.Identity as QpIdentity)?.Id;
                     SetCurrentUserIdValueToStorage(result);
                 }
 
@@ -445,7 +444,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public static string CurrentUserName => (HttpContext.Current.User.Identity as QPIdentity)?.Name;
+        public static string CurrentUserName => (HttpContext.Current.User.Identity as QpIdentity)?.Name;
 
         public static string CurrentCustomerCode
         {
@@ -473,11 +472,11 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return GetValueFromStorage(_currentConnectionScope, CurrentConnectionScopeKey, UseThreadStorageForConnectionScope);
+                return GetValueFromStorage(_currentConnectionScope, CurrentConnectionScopeKey);
             }
             set
             {
-                SetValueToStorage(ref _currentConnectionScope, value, CurrentConnectionScopeKey, UseThreadStorageForConnectionScope);
+                SetValueToStorage(ref _currentConnectionScope, value, CurrentConnectionScopeKey);
             }
         }
 
@@ -515,8 +514,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public static QPIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QPIdentity : null;
-
+        public static QpIdentity CurrentUserIdentity => HttpContext.Current != null && HttpContext.Current.User != null ? HttpContext.Current.User.Identity as QpIdentity : null;
 
         public static string CurrentDbConnectionString
         {
@@ -528,6 +526,7 @@ namespace Quantumart.QP8.BLL
                     result = QPConfiguration.GetConnectionString(CurrentCustomerCode);
                     SetValueToStorage(ref _currentDbConnectionString, result, CurrentDbConnectionStringKey);
                 }
+
                 return result;
             }
             set
@@ -548,13 +547,6 @@ namespace Quantumart.QP8.BLL
             return QPConfiguration.XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name")?.Value).Contains(customerCode);
         }
 
-        /// <summary>
-        /// Возвращает информацию о пользователя по его логину и паролю
-        /// </summary>
-        /// <param name="data">данные логина</param>
-        /// <param name="errorCode">код ошибки</param>
-        /// <param name="message">сообщение</param>
-        /// <returns>информация о пользователе</returns>
         public static QpUser Authenticate(LogOnCredentials data, ref int errorCode, out string message)
         {
             QpUser resultUser = null;
@@ -620,9 +612,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Создать сессию при успешном логине
-        /// </summary>
         private static void CreateSuccessfulSession(User user, QP8Entities dbContext)
         {
             // сбросить sid и установить EndTime для всех сессий пользователя
@@ -649,9 +638,6 @@ namespace Quantumart.QP8.BLL
             dbContext.SaveChanges();
         }
 
-        /// <summary>
-        /// Закрыть открытые сессии пользователя
-        /// </summary>
         private static void CloseUserSessions(decimal userId, QP8Entities dbContext, DateTime currentDt)
         {
             var userSessions = dbContext.SessionsLogSet.Where(s => s.UserId == userId && !s.EndTime.HasValue && !s.IsQP7).ToArray();
@@ -662,9 +648,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Создать сессию при неудачном логине
-        /// </summary>
         private static void CreateFailedSession(LogOnCredentials data, QP8Entities dbContext)
         {
             var sessionsLog = new SessionsLog
@@ -695,11 +678,11 @@ namespace Quantumart.QP8.BLL
 
         private static HashSet<string> _externalContextStorageKeys;
 
-        public static bool UseThreadStorageForConnectionScope
+        public static bool UseThreadStorage
 
         {
-            get { return _useThreadStorageForConnectionScope; }
-            set { _useThreadStorageForConnectionScope = value; }
+            get { return _useThreadStorage; }
+            set { _useThreadStorage = value; }
         }
 
         public static IContextStorage ExternalContextStorage

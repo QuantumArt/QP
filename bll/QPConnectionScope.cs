@@ -18,7 +18,6 @@ namespace Quantumart.QP8.BLL
     [SuppressMessage("ReSharper", "InconsistentNaming")]
     public sealed class QPConnectionScope : IDisposable
     {
-
         private EntityConnection _efConnection;
 
         private int _scopeCount;

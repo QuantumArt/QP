@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -275,6 +275,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
       <Link>References\Microsoft.Web.Infrastructure.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Quantumart.2.0.6\lib\net45\Quantumart.dll">
+      <Link>References\Quantumart.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Quantumart.2.0.6\lib\net45\Quantumart.QP8.Assembling.dll">
+      <Link>References\Quantumart.QP8.Assembling.dll</Link>
     </EmbeddedResource>
     <Content Include="favicon.ico" />
   </ItemGroup>
