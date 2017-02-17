@@ -98,7 +98,6 @@
     var result = str;
     var regexp = /<([^>]*)>/;
     var matches = result.match(/<([^>]*)>/g);
-
     while (regexp.test(result)) {
       i += 1;
       result = result.replace(regexp, '\x01' + i + '\x02');
