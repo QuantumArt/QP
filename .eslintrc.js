@@ -7,6 +7,6 @@
 module.exports = {
   root: true,
   extends: [
-    './.eslint/qp.eslintrc'
+    './.eslint/.eslintrc'
   ].map(require.resolve)
 };
