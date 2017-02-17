@@ -317,7 +317,7 @@
       editor = null;
     },
 
-    _onCheckChangesIntervalHandler: function() {
+    _onCheckChangesIntervalHandler: function () {
       var $field;
       var editor = this.getCkEditor();
 
@@ -336,9 +336,8 @@
       }
     },
 
-    _onChangeVisualEditorDataInDesignModeHandler: function() {
+    _onChangeDataInDesignModeHandler: function () {
       var editor = this.getCkEditor();
-
       if (editor) {
         if (editor.textarea) {
           editor.textarea.off('keyup').on('keyup', this._onChangeDataInSourceModeHandler, this);
@@ -359,9 +358,8 @@
       }
     },
 
-    _onCKEEditorInitialized: function () {
+    _onCKEEditorInitialized: function (sender) {
       var that = this;
-
       if (sender) {
         this._storedTempValue = sender.getData();
       }
