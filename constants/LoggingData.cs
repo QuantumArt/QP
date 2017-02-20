@@ -6,5 +6,8 @@
         public const string HttpErrorCodeCustomVariable = "httpErrorCode";
         public const string EnterpiseBaseCategory = "Custom";
         public const string EnterpiseExceptionPolicyName = "Policy";
+
+        public const string XmlDbUpdateExceptionActionToReplayData = "ActionToReplay";
+        public const string XmlDbUpdateExceptionXmlActionStringData = "XmlActionString";
     }
 }

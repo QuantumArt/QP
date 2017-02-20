@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -89,11 +89,10 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var loginRequest = CreateHttpWebRequest(applicationPath + "login.asp");
-
             var loginCookies = new CookieContainer();
             using (var loginResponse = CallPage(loginRequest))
             {
-                loginCookies.SetCookies(loginRequest.RequestUri, loginResponse.Headers["Set-Cookie"]);
+                loginCookies.SetCookies(loginRequest.RequestUri, loginResponse.Headers[ResponseHeaders.SetCookie]);
             }
 
             var defaultRequest = CreateHttpWebRequest(applicationPath + "default.asp");
@@ -111,7 +110,7 @@ namespace Quantumart.QP8.BLL.Services
             var defaultCookies = defaultRequest.CookieContainer;
             using (var defaultResponse = CallPage(defaultRequest))
             {
-                defaultCookies.SetCookies(defaultRequest.RequestUri, defaultResponse.Headers["Set-Cookie"]);
+                defaultCookies.SetCookies(defaultRequest.RequestUri, defaultResponse.Headers[ResponseHeaders.SetCookie]);
             }
 
             return new QP7Token

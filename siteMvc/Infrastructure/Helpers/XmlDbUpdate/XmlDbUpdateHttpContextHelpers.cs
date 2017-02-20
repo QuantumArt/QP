@@ -15,6 +15,7 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Models;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
@@ -69,12 +70,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         internal static RouteData GetRouteData(XmlDbUpdateRecordedAction action, string controllerName, string controllerAction)
         {
             var data = new RouteData();
-            data.Values["controller"] = controllerName;
-            data.Values["action"] = controllerAction;
-            data.Values["tabId"] = "tab_virtual";
-            data.Values["parentId"] = action.ParentId;
-            data.Values["id"] = int.Parse(action.Ids.First());
-            data.Values["IDs"] = action.Ids.Select(int.Parse).ToArray();
+            data.Values[HttpRouteData.Id] = int.Parse(action.Ids.First());
+            data.Values[HttpRouteData.Ids] = action.Ids.Select(int.Parse).ToArray();
+            data.Values[HttpRouteData.TabId] = "tab_virtual";
+            data.Values[HttpRouteData.Action] = controllerAction;
+            data.Values[HttpRouteData.ParentId] = action.ParentId;
+            data.Values[HttpRouteData.Controller] = controllerName;
             return data;
         }
 
@@ -115,12 +116,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
             httpContext.Setup(c => c.User).Returns(principal);
             HttpContext.Current.User = principal;
 
-            if (useGuidSubstitution)
-            {
-                return AddGlobalHttpContextVariables(httpContext.Object, backendUrl, action.ResultUniqueId);
-            }
-
-            return AddGlobalHttpContextVariables(httpContext.Object, backendUrl);
+            return useGuidSubstitution
+                ? AddGlobalHttpContextVariables(httpContext.Object, backendUrl, action.ResultUniqueId)
+                : AddGlobalHttpContextVariables(httpContext.Object, backendUrl);
         }
 
         private static HttpContextBase AddGlobalHttpContextVariables(HttpContextBase httpContext, string backendUrl)
@@ -153,11 +151,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
 
             var actionTypeCode = action.BackendAction.ActionType.Code;
             httpRequest.SetForm(action.Form);
-            httpRequest.Form.Add("IDs", string.Join(",", action.Ids));
+            httpRequest.Form.Add(HttpContextFormConstants.Ids, string.Join(",", action.Ids));
 
             if (actionTypeCode == ActionTypeCode.AddNew && options.Contains(entityTypeCode))
             {
-                httpRequest.Form.Add("Data.ForceId", action.Ids.First());
+                httpRequest.Form.Add(HttpContextFormConstants.DataForceId, action.Ids.First());
             }
 
             switch (action.Code)
@@ -165,12 +163,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.AddNewContent:
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        AddListItem(httpRequest.Form, "Data.ForceFieldIds", action.ChildIds);
+                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceFieldIds, action.ChildIds);
                     }
 
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        AddListItem(httpRequest.Form, "Data.ForceLinkIds", action.ChildLinkIds);
+                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceLinkIds, action.ChildLinkIds);
                     }
 
                     break;
@@ -178,17 +176,17 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.CreateLikeContent:
                     if (options.Contains(EntityTypeCode.Content))
                     {
-                        httpRequest.Form.Add("forceId", action.ResultId.ToString());
+                        httpRequest.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
                     }
 
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        httpRequest.Form.Add("forceFieldIds", action.ChildIds);
+                        httpRequest.Form.Add(HttpContextFormConstants.ForceFieldIds, action.ChildIds);
                     }
 
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        httpRequest.Form.Add("forceLinkIds", action.ChildLinkIds);
+                        httpRequest.Form.Add(HttpContextFormConstants.ForceLinkIds, action.ChildLinkIds);
                     }
 
                     break;
@@ -196,27 +194,27 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.CreateLikeField:
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        httpRequest.Form.Add("forceId", action.ResultId.ToString());
+                        httpRequest.Form.Add(HttpContextFormConstants.ForceId, action.ResultId.ToString());
                     }
 
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        httpRequest.Form.Add("forceVirtualFieldIds", action.VirtualFieldIds);
+                        httpRequest.Form.Add(HttpContextFormConstants.ForceVirtualFieldIds, action.VirtualFieldIds);
                     }
 
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        httpRequest.Form.Add("forceChildFieldIds", action.ChildIds);
+                        httpRequest.Form.Add(HttpContextFormConstants.ForceChildFieldIds, action.ChildIds);
                     }
 
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        httpRequest.Form.Add("forceLinkId", action.ChildId.ToString());
+                        httpRequest.Form.Add(HttpContextFormConstants.ForceLinkId, action.ChildId.ToString());
                     }
 
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        httpRequest.Form.Add("forceChildLinkIds", action.ChildLinkIds);
+                        httpRequest.Form.Add(HttpContextFormConstants.ForceChildLinkIds, action.ChildLinkIds);
                     }
 
                     break;
@@ -226,7 +224,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.VirtualFieldProperties:
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        AddListItem(httpRequest.Form, "Data.ForceVirtualFieldIds", action.VirtualFieldIds);
+                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
                     }
 
                     break;
@@ -235,24 +233,24 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.FieldProperties:
                     if (options.Contains(EntityTypeCode.ContentLink))
                     {
-                        httpRequest.Form.Add("Data.ContentLink.ForceLinkId", action.ChildId.ToString());
-                        AddListItem(httpRequest.Form, "Data.ForceChildLinkIds", action.ChildIds);
+                        httpRequest.Form.Add(HttpContextFormConstants.DataContentLinkForceLinkId, action.ChildId.ToString());
+                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceChildLinkIds, action.ChildIds);
                     }
 
                     if (options.Contains(EntityTypeCode.Field))
                     {
-                        AddListItem(httpRequest.Form, "Data.ForceVirtualFieldIds", action.VirtualFieldIds);
-                        httpRequest.Form.Add("Data.ForceBackwardId", action.BackwardId.ToString());
-                        AddListItem(httpRequest.Form, "Data.ForceChildFieldIds", action.ChildIds);
+                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceVirtualFieldIds, action.VirtualFieldIds);
+                        httpRequest.Form.Add(HttpContextFormConstants.DataForceBackwardId, action.BackwardId.ToString());
+                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceChildFieldIds, action.ChildIds);
                     }
 
                     break;
 
                 case ActionCode.AddNewCustomAction:
-                    httpRequest.Form.Add("Data.ForceActionCode", action.CustomActionCode);
+                    httpRequest.Form.Add(HttpContextFormConstants.DataForceActionCode, action.CustomActionCode);
                     if (options.Contains(EntityTypeCode.BackendAction))
                     {
-                        httpRequest.Form.Add("Data.ForceActionId", action.ChildId.ToString());
+                        httpRequest.Form.Add(HttpContextFormConstants.DataForceActionId, action.ChildId.ToString());
                     }
 
                     break;
@@ -261,7 +259,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.VisualEditorPluginProperties:
                     if (options.Contains(EntityTypeCode.VisualEditorCommand))
                     {
-                        AddListItem(httpRequest.Form, "Data.ForceCommandIds", action.ChildIds);
+                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceCommandIds, action.ChildIds);
                     }
 
                     break;
@@ -270,7 +268,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 case ActionCode.WorkflowProperties:
                     if (options.Contains(EntityTypeCode.WorkflowRule))
                     {
-                        AddListItem(httpRequest.Form, "Data.ForceRulesIds", action.ChildIds);
+                        AddListItem(httpRequest.Form, HttpContextFormConstants.DataForceRulesIds, action.ChildIds);
                     }
 
                     break;

@@ -2,6 +2,7 @@ using System.Web;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
@@ -30,8 +31,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
             }
             else
             {
-                var controllerName = (string)filterContext.RouteData.Values["controller"];
-                var actionName = (string)filterContext.RouteData.Values["action"];
+                var controllerName = (string)filterContext.RouteData.Values[HttpRouteData.Controller];
+                var actionName = (string)filterContext.RouteData.Values[HttpRouteData.Action];
                 var model = new HandleErrorInfo(filterContext.Exception, controllerName, actionName);
                 filterContext.Result = new ViewResult
                 {
@@ -42,7 +43,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
                 };
             }
 
-            Logger.Log.Error($"Поймали exception со следующим URL: {HttpContext.Current.Request.RawUrl}", filterContext.Exception);
+            Logger.Log.Error($"РџРѕР№РјР°Р»Рё exception СЃРѕ СЃР»РµРґСѓСЋС‰РёРј URL: {HttpContext.Current.Request.RawUrl}", filterContext.Exception);
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.Clear();
@@ -52,7 +53,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         private static bool IsAjaxRequest(ControllerContext filterContext)
         {
-            return filterContext.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest";
+            return filterContext.HttpContext.Request.Headers[RequestHeaders.XRequestedWith] == "XMLHttpRequest";
         }
 
         private bool ShouldBeHandled(ExceptionContext filterContext)

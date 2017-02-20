@@ -8,6 +8,7 @@ using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
@@ -278,7 +279,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [RequestHeader("X-Requested-With", "XMLHttpRequest")]
+        [RequestHeader(RequestHeaders.XRequestedWith, "XMLHttpRequest")]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.EditArticle)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "id")]

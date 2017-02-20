@@ -79,8 +79,10 @@
     <Compile Include="MainComponentType.cs" />
     <Compile Include="Mvc\HttpContextItems.cs" />
     <Compile Include="Mvc\HttpContextSession.cs" />
+    <Compile Include="Mvc\HttpRouteData.cs" />
     <Compile Include="Mvc\MimeTypes.cs" />
     <Compile Include="Mvc\RequestServerVariables.cs" />
+    <Compile Include="Mvc\RequestHeaders.cs" />
     <Compile Include="Mvc\ResponseHeaders.cs" />
     <Compile Include="Mvc\WebConfigSections.cs" />
     <Compile Include="NotificationCode.cs" />

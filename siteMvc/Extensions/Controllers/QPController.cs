@@ -13,6 +13,7 @@ using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -43,7 +44,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         {
             if (string.IsNullOrEmpty(partialViewName))
             {
-                partialViewName = ControllerContext.RouteData.GetRequiredString("action");
+                partialViewName = ControllerContext.RouteData.GetRequiredString(HttpRouteData.Action);
             }
 
             ViewData.Model = model;
@@ -98,7 +99,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         public static bool IsError(HttpContextBase context)
         {
             var form = context.Request.Form;
-            var formResult = form != null && form.AllKeys.Contains("isError") && bool.Parse(form["isError"]);
+            var formResult = form != null && form.AllKeys.Contains(HttpContextFormConstants.IsError) && bool.Parse(form[HttpContextFormConstants.IsError]);
             return formResult || context.Items.Contains(HttpContextItems.IsError);
         }
 

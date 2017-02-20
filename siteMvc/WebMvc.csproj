@@ -299,6 +299,7 @@
     <Compile Include="Infrastructure\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
     <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
+    <Compile Include="Infrastructure\Constants\HttpContextFormConstants.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
     <Compile Include="Infrastructure\ActionFilters\DisableBrowserCache.cs" />
     <Compile Include="Infrastructure\ActionFilters\EntityAuthorizeAttribute.cs" />
