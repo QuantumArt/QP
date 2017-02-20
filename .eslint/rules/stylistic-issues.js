@@ -119,7 +119,7 @@ module.exports = {
      * All others should not be used in any case.
      */
     'max-len': ['error', 120, 2, {
-      ignoreUrls: false,
+      ignoreUrls: true,
       ignoreStrings: false,
       ignoreTemplateLiterals: false,
       ignoreRegExpLiterals: false
