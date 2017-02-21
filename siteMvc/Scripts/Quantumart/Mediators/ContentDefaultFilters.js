@@ -7,7 +7,7 @@ Quantumart.QP8.ContentDefaultFiltersMediator = function (parentElementId) {
 
 	$siteCombo.change(jQuery.proxy(function () {
 		contentPicker.deselectAllListItems();
-		contentPicker.set_parentEntityId($q.toInt($siteCombo.val(), 0));
+		contentPicker.set_parentEntityId(+$siteCombo.val() || 0);
 	}, this));
 
 	var onContentSelectedHandler = jQuery.proxy(function () {

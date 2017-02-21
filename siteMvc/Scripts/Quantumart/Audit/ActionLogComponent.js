@@ -92,14 +92,13 @@ Quantumart.QP8.ActionLogComponent.prototype = {
   _createTile: function (options) {
     var that = this;
     if (options && options.value && !this._tiles.hasOwnProperty(options.value)) {
-      var ft = $q.toInt(options.value, 0);
+      var ft = +options.value || 0;
       var tileComponent = new Quantumart.QP8.ActionLogFilterTile(this.$tilesContainer,
         {
-          type: options.value,
           title: options.text,
           type: ft,
           windowSize: (function () {
-            switch ($q.toInt(options.value, 0)) {
+            switch (+options.value || 0) {
               case $e.ActionLogFilteredColumns.EntityStringId:
               case $e.ActionLogFilteredColumns.EntityTitle:
               case $e.ActionLogFilteredColumns.ParentEntityId:

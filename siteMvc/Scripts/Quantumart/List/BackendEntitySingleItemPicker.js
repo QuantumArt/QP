@@ -81,10 +81,10 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 
 	getSelectedListItemCount: function () {
 		var selectedListItemCount = 0;
-		var $stateField = jQuery(this._stateFieldElement);
+		var $stateField = $(this._stateFieldElement);
 
 		if (!$q.isNullOrEmpty($stateField)) {
-			var itemValue = $q.toInt($stateField.val(), 0)
+			var itemValue = +$stateField.val() || 0
 			if (itemValue != 0) {
 				selectedListItemCount = 1;
 			}
@@ -95,15 +95,15 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 
 	getSelectedEntities: function () {
 		var entities = [];
-		var $stateField = jQuery(this._stateFieldElement);
-		var $displayField = jQuery(this._displayFieldElement);
+		var $stateField = $(this._stateFieldElement);
+		var $displayField = $(this._displayFieldElement);
 
 		if (!$q.isNullOrEmpty($stateField) && !$q.isNullOrEmpty($displayField)) {
-			var entityId = $q.toInt($stateField.val(), 0);
-			var entityName = $q.toString($displayField.find(".title").html(), "");
+			var entityId = +$stateField.val() || 0;
+			var entityName = $q.toString($displayField.find('.title').html(), '');
 
 			if (entityId != 0) {
-				Array.add(entities, { "Id": entityId, "Name": entityName });
+				Array.add(entities, { 'Id': entityId, 'Name': entityName });
 			}
 		}
 
@@ -147,18 +147,17 @@ Quantumart.QP8.BackendEntitySingleItemPicker.prototype = {
 	    this.notify(EVENT_TYPE_ENTITY_LIST_SELECTION_CHANGED, eventArgs);
 	},
 
-	selectEntities: function (entityID) {
+	selectEntities: function (entityId) {
 		this.deselectAllListItems();
-		if (!$q.isNullOrEmpty(entityID)) {
-			if ($q.isArray(entityID) && entityID.length > 0) {
-				this.selectEntities(entityID[0]);
-			}
-			else if ($q.isInt(entityID)) {
-				var selectedEntityIDs = jQuery.map([entityID], function (id) {
+		if (!$q.isNullOrEmpty(entityId)) {
+			if ($q.isArray(entityId) && entityId.length > 0) {
+				this.selectEntities(entityId[0]);
+			} else if ($.isNumeric(entityId)) {
+				var selectedEntityIds = $.map([entityId], function (id) {
 					return { Id: id };
 				});
-				this._loadSelectedItems(selectedEntityIDs);
-				selectedEntityIDs = null;
+
+				this._loadSelectedItems(selectedEntityIds);
 			}
 		}
 	},

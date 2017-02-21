@@ -154,7 +154,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   getNode: function(node, parentNodeElem) {
     if ($q.isObject(node)) {
       return $q.toJQuery(node);
-    } else if ($q.isString(node) || $q.isInt(node) || $q.isFloat(node)) {
+    } else if ($q.isString(node) || $.isNumeric(node)) {
       $parentNode = $(parentNodeElem);
       if ($q.isNullOrEmpty($parentNode)) {
         $parentNode = $('#' + this._treeElementId);
