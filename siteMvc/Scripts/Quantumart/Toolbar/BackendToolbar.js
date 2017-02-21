@@ -266,8 +266,8 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var $items = this.getToolbarItems();
     $items.each(
       function (index, elem) {
-        var $item = jQuery(elem);
-        var itemsAffected = $q.toInt($item.data("items_affected"), 0);
+        var $item = $(elem);
+        var itemsAffected = +$item.data('items_affected') || 0;
         var state = (selectedEntitiesCount == itemsAffected || (itemsAffected == MAX_ITEMS_AFFECTED_NUMBER && selectedEntitiesCount >= 1))
         self.setEnableState($item, state);
       }
@@ -280,7 +280,7 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var $item = this.getToolbarItem(item);
 
     if (!$q.isNullOrEmpty($item)) {
-      var $list = $item.find(".list:first");
+      var $list = $item.find('.list:first');
       if ($list.length == 0) {
         $item = null;
       }
@@ -294,19 +294,19 @@ Quantumart.QP8.BackendToolbar.prototype = {
     var $listItem = this._getToolbarDropDownListItem(listItemElem);
 
     if (!$q.isNullOrEmpty($item) && !$q.isNullOrEmpty($listItem)) {
-      var $icon = $item.find("SPAN.button > SPAN.icon");
-      var $text = $item.find("SPAN.button > SPAN.text");
+      var $icon = $item.find('SPAN.button > SPAN.icon');
+      var $text = $item.find('SPAN.button > SPAN.text');
 
-      var icon = $listItem.data("icon");
+      var icon = $listItem.data('icon');
       var text = this._getToolbarDropDownListItemText($listItem);
-      var showButtonText = $item.data("show_button_text");
+      var showButtonText = $item.data('show_button_text');
 
       $listItem
         .siblings().removeClass(this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME).end()
         .addClass(this.DROPDOWN_LIST_ITEM_SELECTED_CLASS_NAME)
         ;
-      $item.data("selected_sub_item_value", this._getToolbarDropDownListItemValue($listItem));
-      $icon.css("backgroundImage", String.format("url('{0}')", THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon));
+      $item.data('selected_sub_item_value', this._getToolbarDropDownListItemValue($listItem));
+      $icon.css('backgroundImage', String.format("url('{0}')", THEME_IMAGE_FOLDER_URL_SMALL_ICONS + icon));
       if (!$q.isNullOrWhiteSpace(text) && showButtonText) {
         $text.text(text);
       }

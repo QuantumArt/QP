@@ -31,7 +31,7 @@ Quantumart.QP8.DirectLinkExecutor.prototype = {
     if (e.key == this.LOCAL_STORAGE_KEY_OBSERVABLE_ITEM && $q.isString(e.newValue)) {
       var actionParams = jQuery.parseJSON(e.newValue);
       this._executeAction(actionParams, true);
-    } else if (e.key == this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG && $q.isInt(e.newValue)) {
+    } else if (e.key == this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_FLAG && $.isNumeric(e.newValue)) {
       if (e.newValue != this._uid) {
         this._send(this.LOCAL_STORAGE_KEY_INSTANCE_EXISTING_RESPONSE, 'true');
       }

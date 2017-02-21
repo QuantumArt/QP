@@ -857,7 +857,7 @@ Quantumart.QP8.BackendEntityEditor.prototype = {
 
     var $wrapper = jQuery('#' + this._documentWrapperElementId);
 
-    $wrapper.scrollTop((this._formHasErrors) ? 0 : $q.toInt($wrapper.data('scroll_position'), 0));
+    $wrapper.scrollTop((this._formHasErrors) ? 0 : +$wrapper.data('scroll_position') || 0);
     $wrapper = null;
 
     $form = null;

@@ -1,6 +1,7 @@
-; (function() {
-  'use strict';
+/* global CKEDITOR */
 
+// eslint-disable-next-line no-extra-semi
+; (function init() {
   CKEDITOR.aspellSettings = {
     pluginName: 'Spellchecker',
     pluginDesc: 'Проверка орфографии',
@@ -11,7 +12,7 @@
   };
 
   CKEDITOR.plugins.add(CKEDITOR.aspellSettings.pluginName, {
-    init: function(editor) {
+    init: function initPlugin(editor) {
       if (editor.contextMenu) {
         editor.addMenuGroup('qp8', 10);
         editor.addMenuItem(CKEDITOR.aspellSettings.pluginName, {
@@ -20,7 +21,7 @@
           group: 'qp8'
         });
 
-        editor.contextMenu.addListener(function() {
+        editor.contextMenu.addListener(function contextMenuListener() {
           return { typographer: CKEDITOR.TRISTATE_OFF };
         });
       }
@@ -38,4 +39,4 @@
       CKEDITOR.dialog.add(CKEDITOR.aspellSettings.pluginName, CKEDITOR.aspellSettings.spellcheckerDialogJsPath);
     }
   });
-})();
+}());

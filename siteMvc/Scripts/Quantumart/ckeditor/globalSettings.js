@@ -1,21 +1,20 @@
-; (function() {
-  'use strict';
+/* global CKEDITOR */
 
-  function onBrowseSiteLibrary(cb) {
+// eslint-disable-next-line no-extra-semi
+; (function init() {
+  var onBrowseSiteLibrary = function onBrowseSiteLibrary(cb) {
     var evArgs, options;
     var dialog = CKEDITOR.dialog.getCurrent();
     var $field = $(dialog.getParentEditor().element.$);
     var popup = $field.data('linkWindow-site');
 
     if (!popup) {
-      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       evArgs = new Quantumart.QP8.BackendEventArgs();
       evArgs.set_entityId(+$field.data('library_entity_id'));
       evArgs.set_parentEntityId(+$field.data('library_parent_entity_id'));
       evArgs.set_entityTypeCode(window.ENTITY_TYPE_CODE_SITE);
       evArgs.set_actionCode(window.ACTION_CODE_POPUP_SITE_LIBRARY);
 
-      // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
       options = {
         additionalUrlParameters: { subFolder: '' },
         zIndex: +$(dialog.getElement().$).find('.cke_dialog').css('zIndex') + 10,
@@ -28,26 +27,23 @@
 
     popup.setContentId(0);
     popup.setSelectCallback(cb);
-
     popup.openWindow();
-    $field = evArgs = options = null;
-  }
+    evArgs = null;
+  };
 
-  function onBrowseContentLibrary(cb) {
+  var onBrowseContentLibrary = function onBrowseContentLibrary(cb) {
     var evArgs, options;
     var dialog = CKEDITOR.dialog.getCurrent();
     var $field = $(dialog.getParentEditor().element.$);
     var popup = $field.data('linkWindow-content');
 
     if (!popup) {
-      // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
       evArgs = new Quantumart.QP8.BackendEventArgs();
       evArgs.set_entityId(+$field.data('content_id'));
       evArgs.set_parentEntityId(+$field.data('library_parent_entity_id'));
       evArgs.set_entityTypeCode(window.ENTITY_TYPE_CODE_CONTENT);
       evArgs.set_actionCode(window.ACTION_CODE_POPUP_CONTENT_LIBRARY);
 
-      // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
       options = {
         additionalUrlParameters: { subFolder: '' },
         zIndex: +$(dialog.getElement().$).find('.cke_dialog').css('zIndex') + 10,
@@ -60,15 +56,14 @@
 
     popup.setContentId(+$field.data('content_id'));
     popup.setSelectCallback(cb);
-
     popup.openWindow();
-    $field = evArgs = options = null;
-  }
+    evArgs = null;
+  };
 
-  function bindEvents() {
-    CKEDITOR.on('dialogDefinition', function(ev) {
+  var bindEvents = function bindEvents() {
+    CKEDITOR.on('dialogDefinition', function onDialogDefinition(ev) {
       var fieldlName, container;
-      var onSelectCb = function(url) {
+      var onSelectCb = function onSelectCb(url) {
         CKEDITOR.dialog.getCurrent().setValueOf('info', fieldlName, url);
       };
 
@@ -100,13 +95,12 @@
         });
       }
     });
-  }
+  };
 
   CKEDITOR.dtd.a.div = true;
-  CKEDITOR.dtd.$removeEmpty.a = false;
-  CKEDITOR.dtd.$removeEmpty.i = false;
-  CKEDITOR.dtd.$removeEmpty.b = false;
-  CKEDITOR.dtd.$removeEmpty.span = false;
+  ['a', 'i', 'b', 'span'].forEach(function allowEmptyTag(tag) {
+    CKEDITOR.dtd.$removeEmpty[tag] = false;
+  });
 
   bindEvents();
-})();
+}());

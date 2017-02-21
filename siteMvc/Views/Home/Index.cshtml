@@ -6,7 +6,7 @@
 @model IndexViewModel
 
 @{
-  Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <head>
@@ -15,7 +15,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=8;IE=9" />
   <link href="~/Content/QP8/favicon.ico" rel="shortcut icon" />
 
-  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.min.css?rel=0.1.0.0")" />
+  <link rel="stylesheet" href="@Url.Content("~/Content/build/app.css?rel=0.1.0.0")" />
   <link rel="stylesheet" href="@Url.Action("CustomCss", "Css")" />
 
   <script>
@@ -37,22 +37,22 @@
     </div>
 
     @{Html.Telerik().Splitter()
-        .Name("splitter")
-        .Orientation(SplitterOrientation.Horizontal)
-        .Panes(panes =>
-        {
-          panes.Add().Content(
-            @<div id="menuContainer" style="display:none;">
-              <div class="lineTop"></div>
-              <em class="tl"></em>
-              <em class="tr"></em>
-              <em class="bl"></em>
-              <em class="br"></em>
-              <div id="tree">
-                @(Html.Telerik().TreeView().Name("MainTreeMenu"))
-              </div>
-              <div class="lineBottom"></div>
-            </div>)
+                    .Name("splitter")
+                    .Orientation(SplitterOrientation.Horizontal)
+                    .Panes(panes =>
+                    {
+                    panes.Add().Content(
+                        @<div id="menuContainer" style="display:none;">
+                          <div class="lineTop"></div>
+                          <em class="tl"></em>
+                          <em class="tr"></em>
+                          <em class="bl"></em>
+                          <em class="br"></em>
+                          <div id="tree">
+                            @(Html.Telerik().TreeView().Name("MainTreeMenu"))
+                          </div>
+                          <div class="lineBottom"></div>
+                        </div>)
           .Size("270px")
           .MinSize("50px")
           .MaxSize("400px")
@@ -61,42 +61,45 @@
           .Scrollable(false)
           .HtmlAttributes(new { id = "leftMenu", @class = "corners" });
 
-          panes.Add().Content(
-            @<div>
-              <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
-              <div id="editingArea" class="corners"><div class="lineTop"></div>
-                <em class="tl"></em>
-                <em class="tr"></em>
-                <em class="bl"></em>
-                <em class="br"></em>
-                <div id="breadCrumbs"></div>
-                <div id="toolbar">
-                    <div id="actionToolbar"></div>
-                    <div id="viewToolbar"></div>
-                </div>
-                <div id="document">
-                    <div id="context"></div>
-                    <div id="search"></div>
-                </div>
-                <div class="lineBottom"></div>
-              </div>
-            </div>
+                    panes.Add().Content(
+                        @<div>
+                          <div id="tabs"><div class="tabStrip" id="MainTabStrip"></div></div>
+                          <div id="editingArea" class="corners">
+                            <div class="lineTop"></div>
+                            <em class="tl"></em>
+                            <em class="tr"></em>
+                            <em class="bl"></em>
+                            <em class="br"></em>
+                            <div id="breadCrumbs"></div>
+                            <div id="toolbar">
+                              <div id="actionToolbar"></div>
+                              <div id="viewToolbar"></div>
+                            </div>
+                            <div id="document">
+                              <div id="context"></div>
+                              <div id="search"></div>
+                            </div>
+                            <div class="lineBottom"></div>
+                          </div>
+                        </div>
           ).HtmlAttributes(new { id = "content", @class = "content" });
-        }).Render();
+                    }).Render();
     }
   </div>
 
-  <script src="@Url.Content("~/Scripts/build/app1.min.js?rel=0.1.0.0")"></script>
+  <script src="@Url.Content("~/Scripts/build/vendors.js?rel=0.1.0.0")"></script>
+
   <script src="@Url.Content("~/Scripts/Quantumart/JsConstants.ashx")"></script>
   <script src="@Url.Content("~/Scripts/Quantumart/JsLanguage.ashx")"></script>
   <script src="@Url.Content("~/signalr/hubs")"></script>
-  <script src="@Url.Content("~/Scripts/build/app2.min.js?rel=0.1.0.0")"></script>
+
+  <script src="@Url.Content("~/Scripts/build/app.js?rel=0.1.0.0")"></script>
   @(Html.Telerik().ScriptRegistrar().DefaultGroup(g => g.Enabled(false)).Globalization(true))
 
-    <script>
-    CKEDITOR.timestamp = '@DateTime.Now.Ticks';
-    var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
-    var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
-    Url.SetRootPath("@Url.Content("~/")");
+  <script>
+      CKEDITOR.timestamp = '@DateTime.Now.Ticks';
+      var isDebugMode = @Converter.ToJsString(HttpContext.Current.IsDebuggingEnabled);
+      var backend = Quantumart.QP8.Backend.getInstance(isDebugMode, @Model.BackendComponentOptions);
+      Url.SetRootPath("@Url.Content("~/")");
   </script>
 </body>

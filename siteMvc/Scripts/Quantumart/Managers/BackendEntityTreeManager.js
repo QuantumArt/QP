@@ -170,7 +170,7 @@ Quantumart.QP8.BackendEntityTreeManager.prototype = {
 			this.refreshNodes(ENTITY_TYPE_CODE_ARTICLE, parentEntityId, parentArticlesInTree, { "loadChildNodes": true, "saveNodesSelection": false });
 		}
 		else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-			var newParentEntityId = $q.toInt($o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId), 0);
+			var newParentEntityId = +$o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
 			this.refreshNode(ENTITY_TYPE_CODE_ARTICLE, newParentEntityId, entityId, { "loadChildNodes": true, "saveNodesSelection": false });
 		}
 	},

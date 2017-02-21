@@ -207,7 +207,7 @@ Quantumart.QP8.BackendEntityGridManager.prototype = {
       } else if (eventArgs.get_isRestoring() && entityTypeCode == ENTITY_TYPE_CODE_ARCHIVE_ARTICLE) {
         this.refreshGridGroup(ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
       } else if (eventArgs.get_isRestored() && entityTypeCode == ENTITY_TYPE_CODE_ARTICLE_VERSION) {
-        parentEntityId = $q.toInt($o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId), 0);
+        parentEntityId = +$o.getParentEntityId(ENTITY_TYPE_CODE_ARTICLE, entityId) || 0;
         this.refreshGridGroup(ENTITY_TYPE_CODE_ARTICLE, parentEntityId);
       } else if (actionTypeCode == ACTION_TYPE_CHILD_ENTITY_PERMISSION_SAVE ||
         actionTypeCode == ACTION_TYPE_CHILD_ENTITY_MULTIPLE_REMOVE ||
