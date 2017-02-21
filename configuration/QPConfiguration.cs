@@ -43,7 +43,7 @@ namespace Quantumart.QP8.Configuration
                 var customerElement = XmlConfig.Descendants("customer").SingleOrDefault(n => n.Attribute("customer_name").Value == customerCode);
                 if (customerElement == null)
                 {
-                    throw new Exception($"Данный customer code: {customerCode}, - отсутствует в конфиге");
+                    throw new Exception($"Данный customer code: {customerCode} - отсутствует в конфиге");
                 }
 
                 var dbConnectionString = customerElement.Element("db");
