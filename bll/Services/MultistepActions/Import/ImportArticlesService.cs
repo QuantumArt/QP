@@ -37,6 +37,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             {
                 importSettings.IsWorkflowAssigned = content.WorkflowBinding.IsAssigned;
             }
+
             HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] = importSettings;
         }
 
