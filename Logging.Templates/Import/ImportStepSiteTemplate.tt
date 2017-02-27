@@ -12,7 +12,7 @@
 
 <#
 var settings = Model.Settings;
-if (settings.ImportAction == (int)CsvImportMode.InsertAndUpdate || settings.ImportAction == (int)CsvImportMode.InsertNew || settings.ImportAction == (int)CsvImportMode.UpdateIfChanged)
+if (settings.ImportAction == (int)CsvImportMode.InsertAll || settings.ImportAction == (int)CsvImportMode.InsertAndUpdate || settings.ImportAction == (int)CsvImportMode.InsertNew || settings.ImportAction == (int)CsvImportMode.UpdateIfChanged || settings.ImportAction == (int)CsvImportMode.Update )
     {
         string inserted = String.Format(MultistepActionStrings.InsertedArticlesCount, settings.InsertedArticleIds.Count);
         string updated = String.Format(MultistepActionStrings.UpdatedArticlesCount, settings.UpdatedArticleIds.Count);

@@ -20,7 +20,7 @@ namespace Quantumart.QP8.Logging.Templates.Import
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
+    #line 1 "F:\Git\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "14.0.0.0")]
     public partial class ImportStepSiteTemplate : ImportStepSiteTemplateBase
     {
@@ -33,10 +33,10 @@ namespace Quantumart.QP8.Logging.Templates.Import
             this.Write("\r\n");
             this.Write("\r\n");
             
-            #line 13 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
+            #line 13 "F:\Git\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
 
 var settings = Model.Settings;
-if (settings.ImportAction == (int)CsvImportMode.InsertAndUpdate || settings.ImportAction == (int)CsvImportMode.InsertNew || settings.ImportAction == (int)CsvImportMode.UpdateIfChanged)
+if (settings.ImportAction == (int)CsvImportMode.InsertAll || settings.ImportAction == (int)CsvImportMode.InsertAndUpdate || settings.ImportAction == (int)CsvImportMode.InsertNew || settings.ImportAction == (int)CsvImportMode.UpdateIfChanged || settings.ImportAction == (int)CsvImportMode.Update )
     {
         string inserted = String.Format(MultistepActionStrings.InsertedArticlesCount, settings.InsertedArticleIds.Count);
         string updated = String.Format(MultistepActionStrings.UpdatedArticlesCount, settings.UpdatedArticleIds.Count);
@@ -49,7 +49,7 @@ if (settings.ImportAction == (int)CsvImportMode.InsertAndUpdate || settings.Impo
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 1 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
+        #line 1 "F:\Git\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
 
 private global::Quantumart.QP8.Logging.Loggers.ImportStepSettings _ModelField;
 
