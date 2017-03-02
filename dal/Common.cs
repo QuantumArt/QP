@@ -5218,7 +5218,7 @@ namespace Quantumart.QP8.DAL
                  sqlConnection,
                  EntityTypeCode.Article,
                  $"base.[content_item_id] {columns}, ci.unique_id, base.created, base.modified",
-                 $"[dbo].[content_{contentId}] base {extensions} INNER JOIN CONTENT_ITEM ci ON base.content_item_id = ci.content_item_id",
+                 $"[dbo].[content_{contentId}] base {extensions} LEFT JOIN CONTENT_ITEM ci ON base.content_item_id = ci.content_item_id",
                  string.IsNullOrEmpty(orderBy) ? "base.CONTENT_ITEM_ID DESC" : orderBy,
                  filter,
                  startRow,

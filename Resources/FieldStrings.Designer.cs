@@ -853,6 +853,24 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Type of highlight code.
+        /// </summary>
+        public static string HighlightType {
+            get {
+                return ResourceManager.GetString("HighlightType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to HTML.
+        /// </summary>
+        public static string HtmlHighlightMode {
+            get {
+                return ResourceManager.GetString("HtmlHighlightMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Indexed.
         /// </summary>
         public static string Indexed {
@@ -939,6 +957,15 @@ namespace Quantumart.QP8.Resources {
         public static string IsUnique {
             get {
                 return ResourceManager.GetString("IsUnique", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JSON.
+        /// </summary>
+        public static string JsonHighlightMode {
+            get {
+                return ResourceManager.GetString("JsonHighlightMode", resourceCulture);
             }
         }
         
@@ -1956,6 +1983,15 @@ namespace Quantumart.QP8.Resources {
         public static string VisualEditorHeight {
             get {
                 return ResourceManager.GetString("VisualEditorHeight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to XML.
+        /// </summary>
+        public static string XmlHighlightMode {
+            get {
+                return ResourceManager.GetString("XmlHighlightMode", resourceCulture);
             }
         }
     }

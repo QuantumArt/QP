@@ -433,6 +433,7 @@ Quantumart.QP8.ControlHelpers.setAllNumericBoxValues = function (parentElement, 
     if (!parentElement) {
         throw new Error($l.Common.parentDomElementNotSpecified);
     }
+
     if (!$q.isNullOrEmpty(fieldValues)) {
         var $boxes = Quantumart.QP8.ControlHelpers.getAllNumericTextBoxes(parentElement);
         $(fieldValues).each(function (i, v) {
@@ -440,11 +441,13 @@ Quantumart.QP8.ControlHelpers.setAllNumericBoxValues = function (parentElement, 
             if ($nbox.length > 0) {
                 var numericComponent = $nbox.data("tTextBox");
                 if (numericComponent) {
-                    numericComponent.value($q.toFloat(v.value));
+                    numericComponent.value($q.toInt(v.value));
                     $nbox.change();
                 };
+
                 numericComponent = null;
             }
+
             $c.setValidator($nbox, v.errors);
         });
     }
@@ -1209,27 +1212,27 @@ Quantumart.QP8.ControlHelpers.initFileField = function Quantumart$QP8$ControlHel
     /// <param name="fieldElem" type="Object" domElement="true">DOM-элемент, образующий файловое поле</param>
     var $field = $q.toJQuery(fieldElem);
     if (!$q.isNullOrEmpty($field)) {
-        var wrapperId = $field.attr("id");
-        var fieldId = $field.data("field_id");
-        var entityId = $q.toInt($field.data("entity_id"), 0);
-        var allowFileUpload = $q.toBoolean($field.data("allow_file_upload"), false);
+        var wrapperId = $field.attr('id');
+        var fieldId = $field.data('field_id');
+        var entityId = +$field.data('entity_id') || 0;
+        var allowFileUpload = $q.toBoolean($field.data('allow_file_upload'), false);
 
         var options = {};
         options.entityId = entityId;
         options.allowFileUpload = allowFileUpload;
-        options.isVersion = $q.toBoolean($field.data("is_version"), false);
+        options.isVersion = $q.toBoolean($field.data('is_version'), false);
 
-        options.useSiteLibrary = $q.toBoolean($field.data("use_site_library"), false);
-        options.libraryEntityId = $q.toInt($field.data("library_entity_id"), 0);
-        options.libraryParentEntityId = $q.toInt($field.data("library_parent_entity_id"), 0);
-        options.subFolder = $field.data("subfolder");
-        options.libraryPath = $q.toString($field.data("library_path"), "");
-        options.libraryUrl = $q.toString($field.data("library_url"), "");
-        options.renameMatched = $q.toBoolean($field.data("rename_matched"), false);
-        options.isImage = $q.toBoolean($field.data("is_image"), false);
+        options.useSiteLibrary = $q.toBoolean($field.data('use_site_library'), false);
+        options.libraryEntityId = +$field.data('library_entity_id') || 0;
+        options.libraryParentEntityId = +$field.data('library_parent_entity_id') || 0;
+        options.subFolder = $field.data('subfolder');
+        options.libraryPath = $q.toString($field.data('library_path'), '');
+        options.libraryUrl = $q.toString($field.data('library_url'), '');
+        options.renameMatched = $q.toBoolean($field.data('rename_matched'), false);
+        options.isImage = $q.toBoolean($field.data('is_image'), false);
 
         if (allowFileUpload) {
-            options.uploaderType = $q.toInt($field.data("uploader_type"), Quantumart.QP8.Enums.UploaderType.Silverlight);
+            options.uploaderType = $q.toInt($field.data('uploader_type'), Quantumart.QP8.Enums.UploaderType.Silverlight);
         }
 
         var fileField = new Quantumart.QP8.BackendFileField(fieldId, wrapperId, options);
@@ -1811,48 +1814,48 @@ Quantumart.QP8.ControlHelpers.initEntityDataList = function Quantumart$QP8$Contr
     var $dataList = $q.toJQuery(dataListElem);
     if (!$q.isNullOrEmpty($dataList)) {
         var listType = Quantumart.QP8.Enums.DataListType.None;
-        if ($dataList.hasClass("dropDownList")) {
+        if ($dataList.hasClass('dropDownList')) {
             listType = Quantumart.QP8.Enums.DataListType.DropDownList
         }
-        else if ($dataList.hasClass("radioButtonsList")) {
+        else if ($dataList.hasClass('radioButtonsList')) {
             listType = Quantumart.QP8.Enums.DataListType.RadioButtonList
         }
-        else if ($dataList.hasClass("checkboxsList")) {
+        else if ($dataList.hasClass('checkboxsList')) {
             listType = Quantumart.QP8.Enums.DataListType.CheckBoxList
         }
-        else if ($dataList.hasClass("singleItemPicker")) {
+        else if ($dataList.hasClass('singleItemPicker')) {
             listType = Quantumart.QP8.Enums.DataListType.SingleItemPicker;
         }
-        else if ($dataList.hasClass("multipleItemPicker")) {
+        else if ($dataList.hasClass('multipleItemPicker')) {
             listType = Quantumart.QP8.Enums.DataListType.MultipleItemPicker;
         }
 
         var options = {
-            listId: $q.toInt($dataList.data("list_id"), 0),
-            listItemName: $q.toString($dataList.data("list_item_name"), ""),
-            addNewActionCode: $q.toString($dataList.data("add_new_action_code"), ACTION_CODE_NONE),
-            readActionCode: $q.toString($dataList.data("read_action_code"), ACTION_CODE_NONE),
-            selectActionCode: $q.toString($dataList.data("select_action_code"), ACTION_CODE_NONE),
-            maxListWidth: $q.toInt($dataList.data("max_list_width"), 0),
-            maxListHeight: $q.toInt($dataList.data("max_list_height"), 0),
-            showIds: $q.toBoolean($dataList.data("show_ids"), false),
-            filter: $q.toString($dataList.data("filter"), ""),
+            listId: +$dataList.data('list_id') || 0,
+            listItemName: $q.toString($dataList.data('list_item_name'), ''),
+            addNewActionCode: $q.toString($dataList.data('add_new_action_code'), ACTION_CODE_NONE),
+            readActionCode: $q.toString($dataList.data('read_action_code'), ACTION_CODE_NONE),
+            selectActionCode: $q.toString($dataList.data('select_action_code'), ACTION_CODE_NONE),
+            maxListWidth: +$dataList.data('max_list_width') || 0,
+            maxListHeight: +$dataList.data('max_list_height') || 0,
+            showIds: $q.toBoolean($dataList.data('show_ids'), false),
+            filter: $q.toString($dataList.data('filter'), ''),
             hostIsWindow: $q.toBoolean((editorOptions) ? editorOptions.hostIsWindow : false, false),
-            isCollapsable: $q.toBoolean($dataList.data("is_collapsable"), false),
-            enableCopy: $q.toBoolean($dataList.data("enable_copy"), true),
-            readDataOnInsert: $q.toBoolean($dataList.data("read_data_on_insert"), false),
-          countLimit:  $q.toInt($dataList.data("count_limit"), 1)
+            isCollapsable: $q.toBoolean($dataList.data('is_collapsable'), false),
+            enableCopy: $q.toBoolean($dataList.data('enable_copy'), true),
+            readDataOnInsert: $q.toBoolean($dataList.data('read_data_on_insert'), false),
+          countLimit:  $q.toInt($dataList.data('count_limit'), 1)
         };
 
         var entityDataList = Quantumart.QP8.BackendEntityDataListManager.getInstance().createList(
-      $dataList.attr("id"),
-      $dataList.data("entity_type_code"),
-      $dataList.data("parent_entity_id"),
-      $dataList.data("entity_id"),
+      $dataList.attr('id'),
+      $dataList.data('entity_type_code'),
+      $dataList.data('parent_entity_id'),
+      $dataList.data('entity_id'),
       listType,
       options);
 
-        if ($q.toBoolean($dataList.data("list_enabled"), true)) {
+        if ($q.toBoolean($dataList.data('list_enabled'), true)) {
             entityDataList.enableList();
         }
         else {
@@ -1863,7 +1866,7 @@ Quantumart.QP8.ControlHelpers.initEntityDataList = function Quantumart$QP8$Contr
             entityDataList.attachObserver(EVENT_TYPE_ENTITY_LIST_ACTION_EXECUTING, actionExecutingHandler);
         }
 
-        $dataList.data("entity_data_list_component", entityDataList);
+        $dataList.data('entity_data_list_component', entityDataList);
     }
 };
 
@@ -1871,7 +1874,7 @@ Quantumart.QP8.ControlHelpers.fixAllEntityDataListsOverflow = function Quantumar
     var $dataLists = Quantumart.QP8.ControlHelpers.getAllEntityDataLists($container);
     $dataLists.each(function () {
         var $dataList = $q.toJQuery(this);
-        var component = $dataList.data("entity_data_list_component");
+        var component = $dataList.data('entity_data_list_component');
         if (component) {
             component._fixListOverflow();
         }
@@ -1882,7 +1885,7 @@ Quantumart.QP8.ControlHelpers._refreshAllHta = function Quantumart$QP8$ControlHe
     var $htas = Quantumart.QP8.ControlHelpers.getAllHighlightedTextAreas($container);
     $htas.each(function () {
         var $hta = $q.toJQuery(this);
-        var component = $hta.data("codeMirror");
+        var component = $hta.data('codeMirror');
         if (component) {
             component.refresh();
         }

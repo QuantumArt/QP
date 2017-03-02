@@ -48,6 +48,7 @@ namespace Quantumart.QP8.BLL.Mappers
             {
                 case FieldTypeCodes.Textbox:
                     bizObject.TextBoxRows = Converter.ToInt32(dataObject.Size);
+                    bizObject.HighlightType = dataObject.TaHighlightType ?? string.Empty;
                     break;
                 case FieldTypeCodes.VisualEdit:
                     bizObject.VisualEditorHeight = Converter.ToInt32(dataObject.Size);
@@ -125,6 +126,7 @@ namespace Quantumart.QP8.BLL.Mappers
             {
                 case FieldTypeCodes.Textbox:
                     dataObject.Size = bizObject.TextBoxRows;
+                    dataObject.TaHighlightType = bizObject.HighlightType;
                     break;
                 case FieldTypeCodes.VisualEdit:
                     dataObject.Size = bizObject.VisualEditorHeight;

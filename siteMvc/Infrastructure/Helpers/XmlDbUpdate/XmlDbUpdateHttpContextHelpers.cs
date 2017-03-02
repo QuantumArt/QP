@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Moq;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
@@ -30,7 +31,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 ParentId = BackendActionContext.Current.ParentEntityId.HasValue ? BackendActionContext.Current.ParentEntityId.Value : 0,
                 Lcid = CultureInfo.CurrentCulture.LCID,
                 Executed = DateTime.Now,
-                ExecutedBy = (httpContext.User.Identity as QPIdentity)?.Name,
+                ExecutedBy = (httpContext.User.Identity as QpIdentity)?.Name,
                 Ids = httpContext.Items.Contains(HttpContextItems.FromId)
                     ? new[] { httpContext.Items[HttpContextItems.FromId].ToString() }
                     : BackendActionContext.Current.Entities.Select(n => n.StringId).ToArray(),
@@ -292,7 +293,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
         private static QpPrincipal GetQpPrincipal(int userId)
         {
             var user = new UserService().ReadProfile(userId);
-            var identity = new QPIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false);
+            var identity = new QpIdentity(user.Id, user.Name, QPContext.CurrentCustomerCode, "QP", true, 1, "neutral", false);
             return new QpPrincipal(identity, new string[] { });
         }
 

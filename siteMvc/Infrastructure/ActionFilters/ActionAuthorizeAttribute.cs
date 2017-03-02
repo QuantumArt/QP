@@ -18,7 +18,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
         public void OnAuthorization(AuthorizationContext filterContext)
         {
-            var identity = filterContext.HttpContext.User.Identity as QPIdentity;
+            var identity = filterContext.HttpContext.User.Identity as QpIdentity;
             if (identity == null || !identity.IsAuthenticated)
             {
                 throw new SecurityException(GlobalStrings.YouAreNotAuthenticated);

@@ -445,7 +445,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
           entityTypeCode: $node.data('entity_type_code'),
           entityId: isFolder ? 0 : $node.data('entity_id'),
           entityName: $node.data('entity_name'),
-          parentEntityId: $q.toInt($node.data('parent_entity_id'), 0),
+          parentEntityId: +$node.data('parent_entity_id') || 0,
           isGroup: isGroup
         });
 

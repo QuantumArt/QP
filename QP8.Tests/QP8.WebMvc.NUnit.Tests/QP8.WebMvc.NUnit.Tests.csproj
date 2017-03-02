@@ -139,7 +139,6 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BLL\Services\ApplicationInfoServiceTest.cs" />
     <Compile Include="BLL\Repository\Articles\ArticleFilterSearchQueryParserTest.cs" />
     <Compile Include="BLL\Repository\Articles\ArticleFullTextSearchQueryParserTest.cs.cs" />
     <Compile Include="BLL\ArticleScheduleTest.cs" />

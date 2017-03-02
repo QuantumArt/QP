@@ -10,3 +10,5 @@ UID
 FixEfClean
 ContentModificationDeadLocks
 Assembling
+TaHighlight
+ArchiveArticleSearch

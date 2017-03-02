@@ -151,7 +151,7 @@ Quantumart.QP8.BackendEntityObject.getParentEntityId = function Quantumart$QP8$B
   var result = null;
   $q.getJsonFromUrl('GET', window.CONTROLLER_URL_ENTITY_OBJECT + 'GetParentId', {
     entityTypeCode: entityTypeCode,
-    entityId: $q.toInt(entityId, 0)
+    entityId: +entityId || 0
   }, false, false, function(data) {
     result = data;
   }, function(jqXHR) {

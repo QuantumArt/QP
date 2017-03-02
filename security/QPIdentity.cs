@@ -1,76 +1,45 @@
-﻿using System;
-using System.Text;
-using System.Security;
-using System.Security.Principal;
+﻿using System.Security.Principal;
 
 namespace Quantumart.QP8.Security
 {
-    public class QPIdentity : IIdentity
+    public class QpIdentity : IIdentity
     {
-        private int _id = 0;
         /// <summary>
         /// идентификатор пользователя
         /// </summary>
-        public int Id
-        {
-            get { return _id; }
-        }
+        public int Id { get; }
 
-        private string _name = "";
         /// <summary>
         /// логин пользователя
         /// </summary>
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; }
 
-        private string _customerCode = "";
         /// <summary>
         /// код клиента
         /// </summary>
-        public string CustomerCode
-        {
-            get { return _customerCode; }
-        }
+        public string CustomerCode { get; }
 
-        private string _authenticationType = "";
         /// <summary>
         /// название типа аутентификации
         /// </summary>
-        public string AuthenticationType
-        {
-            get { return _authenticationType; }
-        }
+        public string AuthenticationType { get; }
 
-        private bool _isAuthentificated = false;
         /// <summary>
         /// признак успешной атентификации
         /// </summary>
-        public bool IsAuthenticated
-        {
-            get { return _isAuthentificated; }
-        }
+        public bool IsAuthenticated { get; }
 
-		private int _languageId = 0;
-		/// <summary>
+        /// <summary>
 		/// идентификатор языка
 		/// </summary>
-		public int LanguageId
-		{
-			get { return _languageId; }
-		}
+		public int LanguageId { get; }
 
-		private string _cultureName = "";
-		/// <summary>
+        /// <summary>
 		/// название культуры
 		/// </summary>
-		public string CultureName
-		{
-			get { return _cultureName; }
-		}
+		public string CultureName { get; }
 
-		/// <summary>
+        /// <summary>
 		/// Установлен ли Silverlight у пользователя
 		/// </summary>
 		public bool IsSilverlightInstalled { get; private set; }
@@ -78,21 +47,16 @@ namespace Quantumart.QP8.Security
         /// <summary>
         /// Конструирует объект QPIdentity
         /// </summary>
-        /// <param name="name">логин пользователя</param>
-        /// <param name="type">тип аутентификации</param>
-        /// <param name="id">идентификатор пользователя</param>
-        /// <param name="customerCode">код клиента</param>
-		public QPIdentity(int id, string name, string customerCode, string type, bool isAuthentificated, 
-			int languageId, string cultureName, bool isSilverlightInstalled)
+		public QpIdentity(int id, string name, string customerCode, string type, bool isAuthentificated, int languageId, string cultureName, bool isSilverlightInstalled)
         {
-            _id = id;
-            _name = name;
-            _customerCode = customerCode;
-            _authenticationType = type;
-            _isAuthentificated = isAuthentificated;
-			_languageId = languageId;
-			_cultureName = cultureName;
-			IsSilverlightInstalled = isSilverlightInstalled;
+            Id = id;
+            Name = name;
+            CustomerCode = customerCode;
+            AuthenticationType = type;
+            IsAuthenticated = isAuthentificated;
+            LanguageId = languageId;
+            CultureName = cultureName;
+            IsSilverlightInstalled = isSilverlightInstalled;
         }
     }
 }

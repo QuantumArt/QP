@@ -7,12 +7,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Adapters
     {
         public ThreadStorageScopeContext()
         {
-            QPContext.UseThreadStorageForConnectionScope = true;
+            QPContext.UseThreadStorage = true;
         }
 
         public void Dispose()
         {
-            QPContext.UseThreadStorageForConnectionScope = false;
+            QPContext.UseThreadStorage = false;
         }
     }
 }

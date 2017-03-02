@@ -31,7 +31,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return Json(_service.MultistepActionSettings(parentId, id, null));
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]

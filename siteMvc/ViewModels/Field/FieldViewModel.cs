@@ -38,6 +38,21 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Field
             get { return (BLL.Field)EntityData; }
             set { EntityData = value; }
         }
+        private IEnumerable<ListItem> HighlightModes()
+        {
+            return new ListItem[]
+            {
+                new ListItem(TextAreaHighlightTypes.HtmlHighlightType, FieldStrings.HtmlHighlightMode),
+                new ListItem(TextAreaHighlightTypes.JsonHighlightType, FieldStrings.JsonHighlightMode),
+                new ListItem(TextAreaHighlightTypes.XmlHighlightType, FieldStrings.XmlHighlightMode)
+            };
+        }
+
+        public IEnumerable<ListItem> GetHighLightVariants()
+        {
+            return new[] { new ListItem("", "") }.Concat(HighlightModes());
+        }
+
 
         public bool OrderChanged { get; set; }
 

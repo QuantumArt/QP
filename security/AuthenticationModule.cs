@@ -33,11 +33,11 @@ namespace Quantumart.QP8.Security
                     context.Items[HttpContextItems.UserDataStorageType] = "cache";
                 }
 
-                QPIdentity identity;
+                QpIdentity identity;
                 if (userInformation != null)
                 {
 
-                    identity = new QPIdentity(
+                    identity = new QpIdentity(
                         userInformation.Id,
                         userInformation.Name,
                         userInformation.CustomerCode,
@@ -51,7 +51,7 @@ namespace Quantumart.QP8.Security
                 }
                 else
                 {
-                    identity = new QPIdentity(0, userName, string.Empty, "QP", false, 0, "neutral", false);
+                    identity = new QpIdentity(0, userName, string.Empty, "QP", false, 0, "neutral", false);
                 }
 
                 context.User = Thread.CurrentPrincipal = new QpPrincipal(identity, roles);

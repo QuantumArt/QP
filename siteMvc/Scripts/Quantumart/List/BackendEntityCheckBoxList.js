@@ -104,7 +104,7 @@ Quantumart.QP8.BackendEntityCheckBoxList.prototype = {
         var $checkbox = $listItem.find("INPUT:checkbox");
         var $label = $listItem.find("LABEL");
 
-        var entityId = $q.toInt($checkbox.val(), 0);
+        var entityId = +$checkbox.val() || 0;
         var entityName = $q.toString($label.text());
 
         Array.add(entities, { "Id": entityId, "Name": entityName });

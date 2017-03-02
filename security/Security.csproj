@@ -57,7 +57,7 @@
     <Compile Include="AuthenticationModule.cs" />
     <Compile Include="AuthenticationHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QPIdentity.cs" />
+    <Compile Include="QpIdentity.cs" />
     <Compile Include="QPPrincipal.cs" />
     <Compile Include="QpRolesManager.cs" />
     <Compile Include="QPUser.cs" />

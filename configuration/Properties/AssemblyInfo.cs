@@ -36,4 +36,3 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("0.1.0.0")]
 [assembly: InternalsVisibleTo("Quantumart.QP8.BLL")]
 
-[assembly: AssemblyInformationalVersion("0.1.0-ci.511+Branch.master.Sha.590c2e20e88d373f193bd2a468a625adef6d814b")]

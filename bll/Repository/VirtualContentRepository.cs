@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Repository.Results;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.DAL;

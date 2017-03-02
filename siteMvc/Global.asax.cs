@@ -160,7 +160,7 @@ namespace Quantumart.QP8.WebMvc
 
         protected void Application_AcquireRequestState(object sender, EventArgs e)
         {
-            var userIdentity = HttpContext.Current.User.Identity as QPIdentity;
+            var userIdentity = HttpContext.Current.User.Identity as QpIdentity;
             var cultureName = userIdentity != null
                 ? userIdentity.CultureName
                 : QPConfiguration.WebConfigSection.Globalization.DefaultCulture;

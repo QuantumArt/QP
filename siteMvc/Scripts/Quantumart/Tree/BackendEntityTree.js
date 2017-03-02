@@ -772,7 +772,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
     dataItem.Expanded = entity.Expanded;
     dataItem.Enabled = entity.Enabled;
 
-    if (entity.Checked === true || (!$q.isNullOrEmpty(this._selectedEntitiesIDs) && Array.contains(this._selectedEntitiesIDs, $q.toInt(entity.Id, 0)))) {
+    if (entity.Checked === true || (!$q.isNullOrEmpty(this._selectedEntitiesIDs) && Array.contains(this._selectedEntitiesIDs, +entity.Id || 0))) {
       dataItem.Checked = true;
       dataItem.Selected = true;
     }
