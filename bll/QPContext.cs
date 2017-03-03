@@ -541,7 +541,8 @@ namespace Quantumart.QP8.BLL
             QpUser resultUser = null;
             message = string.Empty;
 
-            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(QPConfiguration.GetConnectionString(data.CustomerCode))))
+            var sqlCn = QPConfiguration.GetConnectionString(data.CustomerCode);
+            using (var dbContext = new QP8Entities(PreparingDbConnectionStringForEntities(sqlCn)))
             {
                 try
                 {
@@ -549,20 +550,19 @@ namespace Quantumart.QP8.BLL
                     var user = MapperFacade.UserMapper.GetBizObject(dbUser);
                     if (user != null)
                     {
-                        bool isAdmin;
-                        using (new QPConnectionScope())
-                        {
-                            isAdmin = Common.IsAdmin(QPConnectionScope.Current.DbConnection, user.Id);
-                        }
-
                         resultUser = new QpUser
                         {
                             Id = user.Id,
                             Name = user.LogOn,
                             CustomerCode = data.CustomerCode,
                             LanguageId = user.LanguageId,
-                            Roles = QpRolesManager.GetRolesForUser(isAdmin)
                         };
+
+                        using (var cn = new SqlConnection(sqlCn))
+                        {
+                            cn.Open();
+                            resultUser.Roles = QpRolesManager.GetRolesForUser(Common.IsAdmin(cn, user.Id));
+                        }
 
                         dbUser.LastLogOn = DateTime.Now;
                         CreateSuccessfulSession(user, dbContext);
