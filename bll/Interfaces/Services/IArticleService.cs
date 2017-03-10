@@ -14,6 +14,8 @@ namespace Quantumart.QP8.BLL.Interfaces.Services
 
         Guid GetArticleGuidById(int id);
 
+        Guid[] GetArticleGuidsByIds(int[] ids);
+
         Guid? GetArticleGuidByIdOrDefault(int id);
     }
 }

@@ -68,6 +68,12 @@ namespace Quantumart.QP8.BLL.Services
             return articleGuid ?? Guid.Empty;
         }
 
+        public Guid[] GetArticleGuidsByIds(int[] ids)
+        {
+            var hash = _articleRepository.GetByIds(ids).ToDictionary(n => n.Id, m => m.UniqueId ?? Guid.Empty);
+            return ids.Select(id => hash.ContainsKey(id) ? hash[id] : Guid.Empty).ToArray();
+        }
+
         public Guid? GetArticleGuidByIdOrDefault(int id)
         {
             return _articleRepository.GetById(id)?.UniqueId;
