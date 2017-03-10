@@ -30,7 +30,7 @@ namespace Quantumart.QP8.BLL
 
         public static string SetIsolationLevelCommandText => "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED";
 
-        private string ConnectionString { get; }
+        public string ConnectionString { get; }
 
         public QPConnectionScope()
             : this(QPContext.CurrentDbConnectionString) { }
