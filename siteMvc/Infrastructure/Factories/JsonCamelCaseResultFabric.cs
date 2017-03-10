@@ -15,9 +15,19 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Factories
             if (ex is XmlDbUpdateLoggingException || ex is XmlDbUpdateReplayActionException)
             {
                 Logger.Log.Warn("There was an exception in XmlDbUpdateService: ", ex);
-                return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Fail, Message = ex.Message });
-            }
 
+                var message = ex.Message;
+                if (ex.InnerException != null)
+                {
+                    message = message + " " + ex.InnerException.Message;
+                    if (ex.InnerException.InnerException != null)
+                    {
+                        message = message + " " + ex.InnerException.InnerException.Message;
+                    }
+
+                }
+                return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Fail, Message = message });
+            }
             return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Error, Message = GlobalStrings._500Error });
         }
     }

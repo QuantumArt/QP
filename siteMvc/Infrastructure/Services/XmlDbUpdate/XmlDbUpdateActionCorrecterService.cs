@@ -154,6 +154,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 ? EntityTypeCode.Article
                 : action.BackendAction.EntityType.Code;
 
+            entityTypeCode = action.BackendAction.EntityType.Code == EntityTypeCode.VirtualContent
+                ? EntityTypeCode.Content
+                : entityTypeCode;
+
             action.Ids = CorrectIdsValue(entityTypeCode, action.Ids).ToArray();
             if (!string.IsNullOrEmpty(action.BackendAction.EntityType.ParentCode))
             {
