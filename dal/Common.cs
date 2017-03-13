@@ -1048,7 +1048,9 @@ namespace Quantumart.QP8.DAL
         public static void M2MtoO2MTranferData(SqlConnection сonnection, int fieldId, int linkId)
         {
             // перенести данные о связях из item_to_item в CONTENT_DATA.
-            using (var cmd = SqlCommandFactory.Create("update CONTENT_DATA SET DATA = LD.linked_item_id from dbo.item_link_united LD where LD.item_id = CONTENT_DATA.CONTENT_ITEM_ID and CONTENT_DATA.ATTRIBUTE_ID = @fid and LD.link_id = @linkid", сonnection))
+            const string cmdText = "update CONTENT_DATA SET DATA = LD.linked_item_id from dbo.item_link_united LD where LD.item_id = CONTENT_DATA.CONTENT_ITEM_ID and CONTENT_DATA.ATTRIBUTE_ID = @fid and LD.link_id = @linkid; " +
+                                   "update CONTENT_DATA SET DATA = NULL where CONTENT_DATA.ATTRIBUTE_ID = @fid and CONTENT_DATA.DATA = @linkid;";
+            using (var cmd = SqlCommandFactory.Create(cmdText, сonnection))
             {
                 cmd.Parameters.AddWithValue("@fid", fieldId);
                 cmd.Parameters.AddWithValue("@linkid", linkId);
