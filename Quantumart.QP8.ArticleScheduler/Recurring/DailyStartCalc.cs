@@ -10,7 +10,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
     {
         public DailyStartCalc(int interval, DateTime startDate, DateTime endDate, TimeSpan startTime)
         {
-            calc = (dateTime) =>
+            Calc = dateTime =>
             {
                 return Optimize(new Tuple<DateTime, DateTime>(startDate.Date, endDate.Date), dateTime.Date)
                 .EveryDays(interval) // получаем каждый n-й день

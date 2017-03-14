@@ -1,20 +1,29 @@
-﻿using System.ServiceProcess;
+using System;
+using System.ServiceProcess;
+using Quantumart.QP8.ArticleScheduler.WinService.Properties;
 
 namespace Quantumart.QP8.ArticleScheduler.WinService
 {
     internal static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         private static void Main()
         {
-            var ServicesToRun = new ServiceBase[]
+            var processor = new QpSchedulerProcessor(Settings.Default.RecurrentTimeout, Settings.SplitExceptCustomerCodes(Settings.Default.ExceptCustomerCodes));
+            if (Environment.UserInteractive)
             {
-                new ArticleSchedulerService()
-            };
+                Console.WriteLine("Starting...");
+                processor.Run();
 
-            ServiceBase.Run(ServicesToRun);
+                Console.WriteLine("Running...");
+                Console.ReadLine();
+            }
+            else
+            {
+                ServiceBase.Run(new ServiceBase[]
+                {
+                    new ArticleSchedulerService(processor)
+                });
+            }
         }
     }
 }

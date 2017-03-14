@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using System.Xml.Linq;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
-using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
@@ -85,7 +87,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     throw throwEx;
                 }
 
-                
                 var updateId = _dbLogService.InsertFileLogEntry(dbLogEntry);
                 ReplayActionsFromXml(filteredXmlDocument.Root.Elements(), currentDbVersion, filteredXmlDocument.Root.Attribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute).Value, updateId);
                 ts.Complete();
@@ -119,7 +120,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 catch (Exception ex)
                 {
                     var throwEx = new XmlDbUpdateReplayActionException("Error while deserializing xml action string.", ex);
-                    throwEx.Data.Add("XmlActionString", xmlActionString.ToJsonLog());
+                    throwEx.Data.Add(LoggingData.XmlDbUpdateExceptionXmlActionStringData, xmlActionString.ToJsonLog());
                     throw throwEx;
                 }
 
@@ -161,7 +162,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             catch (Exception ex)
             {
                 var throwEx = new XmlDbUpdateReplayActionException("Error while replaying xml action.", ex);
-                throwEx.Data.Add("ActionToReplay", xmlAction.ToJsonLog());
+                throwEx.Data.Add(LoggingData.XmlDbUpdateExceptionActionToReplayData, xmlAction.ToJsonLog());
                 throw throwEx;
             }
         }

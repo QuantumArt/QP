@@ -1,44 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
+﻿using System.Web;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteContentsCommand : IMultistepActionStageCommand
     {
-        private static readonly int ITEMS_PER_STEP = 10;
+        private const int ItemsPerStep = 10;
 
         public int SiteId { get; set; }
-        public int? NewSiteId { get; set; }
-        public string SiteName { get; set; }
-        public int ContentsCount { get; set; }
-        public CopySiteContentsCommand(MultistepActionStageCommandState state) : this(state.Id, null, 0) { }
 
-        public CopySiteContentsCommand(int siteId, string siteName, int contentsCount) {
-            this.SiteId = siteId;
-            this.SiteName = siteName;
-            this.ContentsCount = contentsCount;
-            CopySiteSettings prms = (CopySiteSettings)HttpContext.Current.Session["CopySiteService.Settings"];
-            this.NewSiteId = prms.DestinationSiteId;
+        public int? NewSiteId { get; set; }
+
+        public string SiteName { get; set; }
+
+        public int ContentsCount { get; set; }
+
+        public CopySiteContentsCommand(MultistepActionStageCommandState state)
+            : this(state.Id, null, 0) { }
+
+        public CopySiteContentsCommand(int siteId, string siteName, int contentsCount)
+        {
+            SiteId = siteId;
+            SiteName = siteName;
+            ContentsCount = contentsCount;
+
+            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            NewSiteId = prms.DestinationSiteId;
         }
         public MultistepActionStepResult Step(int step)
         {
-            MultistepActionStepResult result = new MultistepActionStepResult();
+            var result = new MultistepActionStepResult();
+            var startFrom = step * ItemsPerStep + 1;
+            var endOn = startFrom - 1 + ItemsPerStep;
 
-            int startFrom = step * ITEMS_PER_STEP + 1;
-            int endOn = (startFrom - 1) + ITEMS_PER_STEP;
-
-            result.ProcessedItemsCount = ContentService.CopyContents(this.SiteId, this.NewSiteId.Value, startFrom, endOn);
-
-            ContentsCount = SiteRepository.GetSiteRealContentCount(this.SiteId);
-
-            if (endOn >= ContentsCount) {
-                ContentService.UpdateContents(this.SiteId, this.NewSiteId.Value);
+            result.ProcessedItemsCount = ContentService.CopyContents(SiteId, NewSiteId.Value, startFrom, endOn);
+            ContentsCount = SiteRepository.GetSiteRealContentCount(SiteId);
+            if (endOn >= ContentsCount)
+            {
+                ContentService.UpdateContents(SiteId, NewSiteId.Value);
             }
 
             return result;
@@ -59,8 +61,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             return new MultistepStageSettings
             {
                 ItemCount = ContentsCount,
-                StepCount = MultistepActionHelper.GetStepCount(this.ContentsCount, ITEMS_PER_STEP),
-                Name = String.Format(SiteStrings.CopySiteContents, (SiteName ?? ""))
+                StepCount = MultistepActionHelper.GetStepCount(ContentsCount, ItemsPerStep),
+                Name = string.Format(SiteStrings.CopySiteContents, SiteName ?? string.Empty)
             };
         }
     }

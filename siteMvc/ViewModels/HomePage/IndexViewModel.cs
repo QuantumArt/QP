@@ -1,10 +1,10 @@
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
-using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 using System.Dynamic;
 using System.Web.Mvc;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Extensions;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.HomePage
 {

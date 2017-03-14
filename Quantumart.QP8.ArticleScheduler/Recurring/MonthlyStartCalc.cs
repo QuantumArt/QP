@@ -10,7 +10,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
     {
         public MonthlyStartCalc(int interval, int recurrenceFactor, DateTime startDate, DateTime endDate, TimeSpan startTime)
         {
-            calc = dateTime =>
+            Calc = dateTime =>
             {
                 return Optimize(new Tuple<DateTime, DateTime>(startDate.Date, endDate.Date), dateTime.Date)
                     .EveryMonths(recurrenceFactor) // получаем полные месяца, но только те, которые ограничены recurrenceFactor

@@ -3,16 +3,11 @@ using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.ArticleScheduler.Onetime
 {
-    /// <summary>
-    /// Задача единорозового расписания
-    /// </summary>
     public class OnetimeTask
     {
         /// <summary>
         /// Создать PublishingTask из ArticleScheduleTask
         /// </summary>
-        /// <param name="task"></param>
-        /// <returns></returns>
         public static OnetimeTask Create(ArticleScheduleTask task)
         {
             if (task == null)

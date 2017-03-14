@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,19 +7,19 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.AspNet.SignalR;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
-using Quantumart.QP8.WebMvc.Extensions;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 using Quantumart.QP8.WebMvc.Extensions.ValidatorProviders;
-using Quantumart.QP8.WebMvc.Extensions.ValueProviders;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.UnityExtensions;
+using Quantumart.QP8.WebMvc.Infrastructure.ValueProviders;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 using Quantumart.QP8.WebMvc.ViewModels.ArticleVersion;
@@ -172,16 +172,16 @@ namespace Quantumart.QP8.WebMvc
 
         protected void Session_Start(object sender, EventArgs e)
         {
-            Session["theme"] = QPConfiguration.WebConfigSection.DefaultTheme;
+            Session[HttpContextSession.CurrentCssTheme] = QPConfiguration.WebConfigSection.DefaultTheme;
         }
 
         protected void Application_Error(object sender, EventArgs e)
         {
-            var ex = Server.GetLastError();
-            if (ex != null)
+            var exсeption = Server.GetLastError();
+            if (exсeption != null)
             {
-                Logger.Log.Error(ex);
-                EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, "Policy");
+                Logger.Log.SetContext(LoggingData.HttpErrorCodeCustomVariable, new HttpException(null, exсeption).GetHttpCode());
+                Logger.Log.Fatal("Application_Error", exсeption);
             }
         }
 

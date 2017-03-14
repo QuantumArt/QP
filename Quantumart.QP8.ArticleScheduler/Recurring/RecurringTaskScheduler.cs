@@ -4,9 +4,6 @@ using Quantumart.QP8.BLL.Services.ArticleScheduler;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
 {
-    /// <summary>
-    /// Выполняет Recurring расписание
-    /// </summary>
     internal class RecurringTaskScheduler
     {
         private readonly IArticleRecurringSchedulerService _bllService;
@@ -18,6 +15,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             {
                 throw new ArgumentNullException(nameof(bllService));
             }
+
             if (operationsLogWriter == null)
             {
                 throw new ArgumentNullException(nameof(operationsLogWriter));
@@ -27,9 +25,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             _operationsLogWriter = operationsLogWriter;
         }
 
-        /// <summary>
-        /// Выполнить задачу
-        /// </summary>
         public void Run(RecurringTask task)
         {
             if (task == null)
@@ -44,48 +39,48 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             var calc = CreateRecuringStartCalc(task);
 
             // получить ближайшую дату начала показа статьи
-            var showRangeStartDT = calc.GetStart(currentDateTime);
-
-            // если вычислитель вернул null - значит ничего не делаем
-            if (!showRangeStartDT.HasValue)
+            var showRangeStartDt = calc.GetStart(currentDateTime);
+            if (!showRangeStartDt.HasValue)
             {
+                // если вычислитель вернул null - значит ничего не делаем
                 return;
             }
 
             // Определяем время окончания показа статьи
-            var showRangeEndDT = showRangeStartDT.Value + task.Duration;
-
-            // Если необходимо то ограничить время окончания показа статьи правой границей диапазона задачи
-            if (taskRange.Position(showRangeEndDT) > 0)
+            var showRangeEndDt = showRangeStartDt.Value + task.Duration;
+            if (taskRange.Position(showRangeEndDt) > 0)
             {
-                showRangeEndDT = taskRange.Item2;
+                // Если необходимо то ограничить время окончания показа статьи правой границей диапазона задачи
+                showRangeEndDt = taskRange.Item2;
             }
 
-            Article article;
-
             // диапазон показа статьи
-            var showRange = Tuple.Create(showRangeStartDT.Value, showRangeEndDT);
+            Article article;
+            var showRange = Tuple.Create(showRangeStartDt.Value, showRangeEndDt);
 
             // определить положение текущей даты относительно диапазона показа статьи
             var showRangePos = showRange.Position(currentDateTime);
-            if (showRangePos == 0) // внутри диапазона показа
+            if (showRangePos == 0)
             {
+                // внутри диапазона показа
                 article = _bllService.ShowArticle(task.ArticleId);
                 if (article != null && !article.Visible)
                 {
                     _operationsLogWriter.ShowArticle(article);
                 }
             }
-            else if (showRangePos > 0 && taskRangePos == 0) // за диапазоном показа но внутри диапазона задачи
+            else if (showRangePos > 0 && taskRangePos == 0)
             {
+                // за диапазоном показа но внутри диапазона задачи
                 article = _bllService.HideArticle(task.ArticleId);
                 if (article != null && article.Visible)
                 {
                     _operationsLogWriter.HideArticle(article);
                 }
             }
-            else if (showRangePos > 0 && taskRangePos > 0) // за диапазоном показа и за диапазоном задачи
+            else if (showRangePos > 0 && taskRangePos > 0)
             {
+                // за диапазоном показа и за диапазоном задачи
                 article = _bllService.HideAndCloseSchedule(task.Id);
                 if (article != null && article.Visible)
                 {

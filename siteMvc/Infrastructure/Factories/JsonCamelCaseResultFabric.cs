@@ -1,7 +1,7 @@
-﻿using System;
-using Quantumart.QP8.BLL.Services;
+using System;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -26,8 +26,10 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Factories
                     }
 
                 }
+
                 return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Fail, Message = message });
             }
+
             return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Error, Message = GlobalStrings._500Error });
         }
     }

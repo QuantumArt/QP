@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Scheduler.API;
 
 namespace Quantumart.QP8.Scheduler.Core
@@ -15,14 +15,13 @@ namespace Quantumart.QP8.Scheduler.Core
         private const string ServiceRepeatOnErrorIntervalKey = "ServiceRepeatOnErrorInterval";
 
         private readonly IEnumerable<IProcessor> _processors;
-        private readonly TraceSource _logger;
         private readonly CancellationTokenSource _cts;
         private readonly TimeSpan _repeatInterval;
         private readonly TimeSpan _repeatOnErrorInterval;
 
         private Task[] Tasks { get; set; }
 
-        public Scheduler(IEnumerable<IProcessor> processors, TraceSource logger)
+        public Scheduler(IEnumerable<IProcessor> processors)
         {
             if (!TimeSpan.TryParse(ConfigurationManager.AppSettings[ServiceRepeatIntervalKey], out _repeatInterval))
             {
@@ -35,54 +34,45 @@ namespace Quantumart.QP8.Scheduler.Core
             }
 
             _processors = processors;
-            _logger = logger;
             _cts = new CancellationTokenSource();
         }
 
         public void Start()
         {
             Tasks = RunProcessors(_cts.Token).ToArray();
-            _logger.TraceInformation($"Service is started RepeatInterval = {_repeatInterval}, RepeatOnErrorInterval = {_repeatOnErrorInterval}");
-            _logger.Flush();
+            Logger.Log.Info($"Service is started RepeatInterval = {_repeatInterval}, RepeatOnErrorInterval = {_repeatOnErrorInterval}");
         }
 
         private IEnumerable<Task> RunProcessors(CancellationToken cancellationToken)
         {
-            foreach (var p in _processors)
+            return _processors.Select(processor => Task.Run(async () =>
             {
-                var processor = p;
-
-                yield return Task.Run(async () =>
+                while (!cancellationToken.IsCancellationRequested)
                 {
                     TimeSpan interval;
-
-                    while (!cancellationToken.IsCancellationRequested)
+                    try
                     {
-                        try
-                        {
-                            await processor.Run(cancellationToken);
-                            interval = _repeatInterval;
-                        }
-                        catch (OperationCanceledException)
-                        {
-                            throw;
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.TraceData(TraceEventType.Error, EventIdentificators.Common, ex);
-                            interval = _repeatOnErrorInterval;
-                        }
-
-                        _logger.Flush();
-                        await Task.Delay(interval, cancellationToken);
+                        await processor.Run(cancellationToken);
+                        interval = _repeatInterval;
                     }
-                }, cancellationToken);
-            }
+                    catch (OperationCanceledException)
+                    {
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Log.Fatal("Sheduller task run error", ex);
+                        interval = _repeatOnErrorInterval;
+                    }
+
+                    await Task.Delay(interval, cancellationToken);
+                }
+            }, cancellationToken));
         }
 
         public void Stop()
         {
-            _logger.TraceInformation("Service is stoping...");
+            Logger.Log.Info("Service is stoping...");
             _cts.Cancel();
 
             try
@@ -93,13 +83,12 @@ namespace Quantumart.QP8.Scheduler.Core
             {
             }
 
-            _logger.TraceInformation("Service is stoped");
-            _logger.Flush();
+            Logger.Log.Info("Service is stoped");
         }
 
         public void Dispose()
         {
-            _logger.Close();
+            Logger.Log.Dispose();
             _cts.Dispose();
         }
     }

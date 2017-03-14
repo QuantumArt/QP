@@ -10,6 +10,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 
@@ -17,7 +18,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 {
     public class LibraryController : QPController
     {
-        private const string ContentDispositionKey = "Content-Disposition";
         private const string ContentDispositionTemplate = "attachment; filename=\"{0}\"; filename*=UTF-8''{0}";
         private const int DefaultSvgWidth = 800;
         private const int DefaultSvgHeight = 600;
@@ -55,7 +55,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         public JsonResult CheckSecurity(string path)
         {
             var result = PathInfo.CheckSecurity(path).Result && CheckFolderExistence(path);
-            Session[UploadSecuritySessionKey(path)] = result;
+            Session[$"upload_{path}"] = result;
             return Json(new { result }, JsonRequestBehavior.AllowGet);
         }
 
@@ -118,8 +118,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var path = (string)TempData[id];
             if (!string.IsNullOrEmpty(path))
             {
-                Response.AppendHeader(ContentDispositionKey, string.Format(ContentDispositionTemplate, Server.UrlPathEncode(fileName)));
-                return File(path, "application/octet-stream");
+                Response.AppendHeader(ResponseHeaders.ContentDispositionKey, string.Format(ContentDispositionTemplate, Server.UrlPathEncode(fileName)));
+                return File(path, MimeTypes.OctetStream);
             }
 
             return null;
@@ -246,7 +246,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private static EncoderParameters GetEncoderParameters(string extension)
         {
-            if (extension.Equals(".JPG", StringComparison.InvariantCultureIgnoreCase) || extension.Equals(".JPEG", StringComparison.InvariantCultureIgnoreCase))
+            if (extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase) || extension.Equals(".jpeg", StringComparison.InvariantCultureIgnoreCase))
             {
                 var parameters = new EncoderParameters(1)
                 {
@@ -261,19 +261,19 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private static string GetMimeType(string extension)
         {
-            if (extension.Equals(".JPG", StringComparison.InvariantCultureIgnoreCase) || extension.Equals(".JPEG", StringComparison.InvariantCultureIgnoreCase))
+            if (extension.Equals(".jpg", StringComparison.InvariantCultureIgnoreCase) || extension.Equals(".jpeg", StringComparison.InvariantCultureIgnoreCase))
             {
-                return "image/jpeg";
+                return MimeTypes.Jpeg;
             }
 
-            if (extension.Equals(".GIF", StringComparison.InvariantCultureIgnoreCase))
+            if (extension.Equals(".gif", StringComparison.InvariantCultureIgnoreCase))
             {
-                return "image/gif";
+                return MimeTypes.Gif;
             }
 
-            if (extension.Equals(".PNG", StringComparison.InvariantCultureIgnoreCase))
+            if (extension.Equals(".png", StringComparison.InvariantCultureIgnoreCase))
             {
-                return "image/png";
+                return MimeTypes.Png;
             }
 
             return string.Empty;
@@ -296,11 +296,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
             while (System.IO.File.Exists(Path.Combine(path, result)));
             return result;
-        }
-
-        private static string UploadSecuritySessionKey(string path)
-        {
-            return "upload_" + path;
         }
 
         private static bool CheckFolderExistence(string path)

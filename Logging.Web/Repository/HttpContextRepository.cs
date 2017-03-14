@@ -2,26 +2,24 @@
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Web;
+using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.Logging.Web.Repository
 {
     internal static class HttpContextRepository
     {
-        private const string LogKey = "Log";
-
         public static StringBuilder GetCurrentOld()
         {
-            var context = HttpContext.Current;
-            if (context == null)
+            if (HttpContext.Current == null)
             {
                 return null;
             }
 
-            var sb = context.Items[LogKey] as StringBuilder;
+            var sb = HttpContext.Current.Items[HttpContextItems.LogKey] as StringBuilder;
             if (sb == null)
             {
                 sb = new StringBuilder();
-                context.Items[LogKey] = sb;
+                HttpContext.Current.Items[HttpContextItems.LogKey] = sb;
             }
 
             return sb;
@@ -29,8 +27,7 @@ namespace Quantumart.QP8.Logging.Web.Repository
 
         public static ReadOnlyCollection<LogItem> GetCurrent()
         {
-            var list = GetCurrentInternal();
-            return list?.AsReadOnly() ?? new List<LogItem>().AsReadOnly();
+            return GetCurrentInternal()?.AsReadOnly() ?? new List<LogItem>().AsReadOnly();
         }
 
         public static void Add(string text, string listener)
@@ -52,11 +49,11 @@ namespace Quantumart.QP8.Logging.Web.Repository
                 return null;
             }
 
-            var list = context.Items[LogKey] as List<LogItem>;
+            var list = context.Items[HttpContextItems.LogKey] as List<LogItem>;
             if (list == null)
             {
                 list = new List<LogItem>();
-                context.Items[LogKey] = list;
+                context.Items[HttpContextItems.LogKey] = list;
             }
 
             return list;

@@ -3,7 +3,7 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL.Services.EntityPermissions;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Controllers.Base;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Telerik.Web.Mvc;
 

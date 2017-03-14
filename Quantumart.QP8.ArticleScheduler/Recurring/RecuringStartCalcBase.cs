@@ -7,7 +7,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         /// <summary>
         /// Вычисляет ближайшую дату старта
         /// </summary>
-        protected Func<DateTime, DateTime?> calc;
+        protected Func<DateTime, DateTime?> Calc;
 
         /// <summary>
         /// Оптимизирует размер диапазона
@@ -31,7 +31,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         /// </summary>
         public virtual DateTime? GetStart(DateTime dateTime)
         {
-            return calc(dateTime);
+            return Calc(dateTime);
         }
     }
 }

@@ -1,8 +1,8 @@
 using System;
-using Quantumart.QP8.BLL.Factories.Logging;
-using Quantumart.QP8.BLL.Interfaces.Logging;
+using QP8.Infrastructure.Logging.Factories;
+using QP8.Infrastructure.Logging.Interfaces;
+using QP8.Infrastucture.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
-using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
 {
@@ -42,80 +42,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
         public void DebugFormat(string format, params object[] args)
         {
             _logger.DebugFormat(format, args);
-        }
-
-        public void Error(object message)
-        {
-            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(message);
-                Console.ResetColor();
-            }
-
-            _logger.Error(message);
-        }
-
-        public void Error(object message, Exception exception)
-        {
-            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(message);
-                Console.WriteLine($"Exceptions:{Environment.NewLine}{exception.Dump()}");
-                Console.ResetColor();
-            }
-
-            _logger.Error(message, exception);
-        }
-
-        public void ErrorFormat(string format, params object[] args)
-        {
-            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(format, args);
-                Console.ResetColor();
-            }
-
-            _logger.ErrorFormat(format, args);
-        }
-
-        public void Fatal(object message)
-        {
-            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
-            {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine(message);
-                Console.ResetColor();
-            }
-
-            _logger.Fatal(message);
-        }
-
-        public void Fatal(object message, Exception exception)
-        {
-            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
-            {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine(message);
-                Console.WriteLine($"Exceptions:{Environment.NewLine}{exception.Dump()}");
-                Console.ResetColor();
-            }
-
-            _logger.Fatal(message, exception);
-        }
-
-        public void FatalFormat(string format, params object[] args)
-        {
-            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
-            {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine(format, args);
-                Console.ResetColor();
-            }
-
-            _logger.FatalFormat(format, args);
         }
 
         public void Info(object message)
@@ -190,6 +116,80 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
             }
 
             _logger.WarnFormat(format, args);
+        }
+
+        public void Error(object message)
+        {
+            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(message);
+                Console.ResetColor();
+            }
+
+            _logger.Error(message);
+        }
+
+        public void Error(object message, Exception exception)
+        {
+            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(message);
+                Console.WriteLine($"Exceptions:{Environment.NewLine}{exception.Dump()}");
+                Console.ResetColor();
+            }
+
+            _logger.Error(message, exception);
+        }
+
+        public void ErrorFormat(string format, params object[] args)
+        {
+            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Error))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(format, args);
+                Console.ResetColor();
+            }
+
+            _logger.ErrorFormat(format, args);
+        }
+
+        public void Fatal(object message)
+        {
+            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(message);
+                Console.ResetColor();
+            }
+
+            _logger.Fatal(message);
+        }
+
+        public void Fatal(object message, Exception exception)
+        {
+            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(message);
+                Console.WriteLine($"Exceptions:{Environment.NewLine}{exception.Dump()}");
+                Console.ResetColor();
+            }
+
+            _logger.Fatal(message, exception);
+        }
+
+        public void FatalFormat(string format, params object[] args)
+        {
+            if (_consoleLogLevel.HasFlag(ConsoleLogLevel.Fatal))
+            {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
+                Console.WriteLine(format, args);
+                Console.ResetColor();
+            }
+
+            _logger.FatalFormat(format, args);
         }
 
         public void SetLogLevel(int verboseLevel)

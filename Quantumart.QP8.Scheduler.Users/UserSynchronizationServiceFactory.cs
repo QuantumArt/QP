@@ -12,13 +12,12 @@ namespace Quantumart.QP8.Scheduler.Users
         public static UserSynchronizationService GetService(TraceSource logger)
         {
             int currentUserId;
-            int languageId;
-
             if (!int.TryParse(ConfigurationManager.AppSettings[CurrentUserIdKey], out currentUserId))
             {
                 currentUserId = 1;
             }
 
+            int languageId;
             if (!int.TryParse(ConfigurationManager.AppSettings[UserLanguageIdKey], out languageId))
             {
                 languageId = 1;

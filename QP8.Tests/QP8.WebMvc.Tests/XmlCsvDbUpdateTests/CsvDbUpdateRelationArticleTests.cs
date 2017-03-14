@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Moq;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using Ploeh.AutoFixture.Dsl;
 using Ploeh.AutoFixture.Xunit2;
+using QP8.Infrastructure.Logging.Factories;
 using QP8.WebMvc.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Factories.Logging;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
 using Quantumart.QP8.BLL.Services.API;
@@ -18,6 +19,7 @@ using Xunit;
 
 namespace QP8.WebMvc.Tests.XmlCsvDbUpdateTests
 {
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
     public class CsvDbUpdateRelationArticleTests
     {
         private readonly IFixture _fixture;

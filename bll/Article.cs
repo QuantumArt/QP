@@ -65,7 +65,8 @@ namespace Quantumart.QP8.BLL
             SetDefaultStatusAndVisibility();
         }
 
-        internal Article(Content content, Dictionary<string, string> predefinedValues) : this(content)
+        internal Article(Content content, Dictionary<string, string> predefinedValues)
+            : this(content)
         {
             PredefinedValues = predefinedValues;
         }

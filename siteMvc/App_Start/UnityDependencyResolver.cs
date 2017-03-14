@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.Practices.Unity;
+using QP8.Infrastructure.Logging.UnityExtensions;
+using QP8.Infrastucture.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Interfaces.Services;
@@ -27,7 +29,6 @@ using Quantumart.QP8.Logging.Web;
 using Quantumart.QP8.Utils.FullTextSearch;
 using Quantumart.QP8.WebMvc.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
-using Quantumart.QP8.WebMvc.Infrastructure.Configuration;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate;
 using Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate.Interfaces;
 
@@ -111,11 +112,13 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<ICommunicationService, CommunicationService>()
                 .RegisterType<SingleUserModeHub>();
 
-            UnityContainer.AddNewExtension<LoggersContainerConfiguration>();
-            UnityContainer.AddNewExtension<LogServicesContainerConfigutation>();
-            UnityContainer.AddNewExtension<NLogConfiguration>();
-
             RegisterMultistepActionServices(UnityContainer);
+
+            UnityContainer.AddNewExtension<ImportLogContainerExtension>();
+            UnityContainer.AddNewExtension<LogServicesContainerExtension>();
+
+            NLogContainerExtension.LoggerTypeName = AssemblyHelpers.GetAssemblyName();
+            UnityContainer.AddNewExtension<NLogContainerExtension>();
         }
 
         private static void RegisterMultistepActionServices(IUnityContainer container)

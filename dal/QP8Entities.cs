@@ -248,7 +248,6 @@ namespace Quantumart.QP8.DAL
         public UserDAL Authenticate(string login, string password, bool useNtLogin, bool checkAdminAccess)
         {
             UserDAL user;
-
             object[] parameters =
             {
                 new SqlParameter { ParameterName = "login", DbType = DbType.String, Size = 255, Value = login },
@@ -262,8 +261,7 @@ namespace Quantumart.QP8.DAL
                 user = _userMaterializer
                     .Materialize(dbCommand)
                     .Bind(UserSet)
-                    .SingleOrDefault()
-                    ;
+                    .SingleOrDefault();
             }
 
             return user;

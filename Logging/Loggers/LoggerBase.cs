@@ -4,14 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Logging.Loggers
 {
     public class LoggerBase
     {
-        private const string ExceptionPolicy = "Policy";
-        private const string BaseCategory = "Custom";
-
         private readonly LogWriter _logWriter;
         private readonly ExceptionManager _exceptionManager;
 
@@ -23,7 +21,7 @@ namespace Quantumart.QP8.Logging.Loggers
 
         protected void LogException(Exception ex)
         {
-            _exceptionManager.HandleException(ex, ExceptionPolicy);
+            _exceptionManager.HandleException(ex, LoggingData.EnterpiseExceptionPolicyName);
         }
 
         protected void Log(string message, TraceEventType severity, object model, object context)
@@ -36,7 +34,7 @@ namespace Quantumart.QP8.Logging.Loggers
                 Model = model,
                 Context = context,
                 Message = message,
-                Categories = new[] { BaseCategory, modelCategory, loggerCategory, modelLoggerCategory }.ToList(),
+                Categories = new[] { LoggingData.EnterpiseBaseCategory, modelCategory, loggerCategory, modelLoggerCategory }.ToList(),
                 Severity = severity
             };
 
@@ -50,7 +48,7 @@ namespace Quantumart.QP8.Logging.Loggers
             {
                 Context = context,
                 Message = message,
-                Categories = new[] { BaseCategory, loggerCategory }.ToList(),
+                Categories = new[] { LoggingData.EnterpiseBaseCategory, loggerCategory }.ToList(),
                 Severity = severity
             };
 

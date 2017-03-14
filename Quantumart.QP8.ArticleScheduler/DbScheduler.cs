@@ -11,9 +11,6 @@ using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
-    /// <summary>
-    /// Класс выполняет задачи (расписания) из указанной БД
-    /// </summary>
     public class DbScheduler
     {
         private readonly string _connectionString;
@@ -40,9 +37,7 @@ namespace Quantumart.QP8.ArticleScheduler
         /// </summary>
         public void ParallelRun()
         {
-            GetScheduleTaskActions()
-                .AsParallel()
-                .ForAll(action => action());
+            GetScheduleTaskActions().AsParallel().ForAll(action => action());
         }
 
         /// <summary>
@@ -97,9 +92,7 @@ namespace Quantumart.QP8.ArticleScheduler
         /// </summary>
         private void RunRecurringTaskAction(ArticleScheduleTask task)
         {
-            _unityContainer
-                .Resolve<RecurringTaskScheduler>(new ParameterOverride("connectionString", _connectionString))
-                .Run(RecurringTask.Create(task));
+            _unityContainer.Resolve<RecurringTaskScheduler>(new ParameterOverride("connectionString", _connectionString)).Run(RecurringTask.Create(task));
         }
 
         /// <summary>
@@ -107,9 +100,7 @@ namespace Quantumart.QP8.ArticleScheduler
         /// </summary>
         private void RunPublishingTaskAction(ArticleScheduleTask task)
         {
-            _unityContainer
-                .Resolve<PublishingTaskScheduler>(new ParameterOverride("connectionString", _connectionString))
-                .Run(PublishingTask.Create(task));
+            _unityContainer.Resolve<PublishingTaskScheduler>(new ParameterOverride("connectionString", _connectionString)).Run(PublishingTask.Create(task));
         }
 
         /// <summary>
@@ -117,9 +108,7 @@ namespace Quantumart.QP8.ArticleScheduler
         /// </summary>
         private void RunOnetimeTaskAction(ArticleScheduleTask task)
         {
-            _unityContainer
-                .Resolve<OnetimeTaskScheduler>(new ParameterOverride("connectionString", _connectionString))
-                .Run(OnetimeTask.Create(task));
+            _unityContainer.Resolve<OnetimeTaskScheduler>(new ParameterOverride("connectionString", _connectionString)).Run(OnetimeTask.Create(task));
         }
     }
 }

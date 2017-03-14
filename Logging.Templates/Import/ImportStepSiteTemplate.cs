@@ -32,16 +32,17 @@ namespace Quantumart.QP8.Logging.Templates.Import
         {
             this.Write("\r\n");
             this.Write("\r\n");
+            this.Write("\r\n");
             
-            #line 13 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
+            #line 14 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportStepSiteTemplate.tt"
 
 var settings = Model.Settings;
 if (settings.ImportAction == (int)CsvImportMode.InsertAndUpdate || settings.ImportAction == (int)CsvImportMode.InsertNew || settings.ImportAction == (int)CsvImportMode.UpdateIfChanged)
-    {
-        string inserted = String.Format(MultistepActionStrings.InsertedArticlesCount, settings.InsertedArticleIds.Count);
-        string updated = String.Format(MultistepActionStrings.UpdatedArticlesCount, settings.UpdatedArticleIds.Count);
-        Write("{0}; {1}.", inserted, updated);
-    }
+{
+	var inserted = String.Format(MultistepActionStrings.InsertedArticlesCount, settings.InsertedArticleIds.Count);
+	var updated = String.Format(MultistepActionStrings.UpdatedArticlesCount, settings.UpdatedArticleIds.Count);
+	Write("{0}; {1}.", inserted, updated);
+}
 
             
             #line default

@@ -11,16 +11,16 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         public WeeklyStartCalc(int interval, int recurrenceFactor,
             DateTime startDate, DateTime endDate, TimeSpan startTime)
         {
-            calc = dateTime =>
-                {
-                    return Optimize(new Tuple<DateTime, DateTime>(startDate.Date, endDate.Date), dateTime.Date)
-                        .EveryWeeks(recurrenceFactor) // получаем полные недели, но только те, которые ограничены recurrenceFactor
-                        .Days() // получаем дни
-                        .Where(d => IntervalPredicate(d, interval))
-                        .Where(d => startDate.Date <= d.Date && endDate.Date >= d.Date) // только те даты что в диапазоне
-                        .Select(d => d.Add(startTime)) // получаем точное время старта
-                        .Nearest(dateTime);
-                };
+            Calc = dateTime =>
+            {
+                return Optimize(new Tuple<DateTime, DateTime>(startDate.Date, endDate.Date), dateTime.Date)
+                    .EveryWeeks(recurrenceFactor) // получаем полные недели, но только те, которые ограничены recurrenceFactor
+                    .Days() // получаем дни
+                    .Where(d => IntervalPredicate(d, interval))
+                    .Where(d => startDate.Date <= d.Date && endDate.Date >= d.Date) // только те даты что в диапазоне
+                    .Select(d => d.Add(startTime)) // получаем точное время старта
+                    .Nearest(dateTime);
+            };
         }
 
         /// <summary>

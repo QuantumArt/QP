@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security;
-using System.Security.Principal;
 using System.Threading;
 using System.Web;
-using System.Web.Configuration;
-using System.Web.Security;
-using Quantumart.QP8;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.Security
 {
@@ -15,54 +10,52 @@ namespace Quantumart.QP8.Security
     {
         public void Init(HttpApplication context)
         {
-            // Регистрация события PostAuthenticateRequest
-            context.PostAuthenticateRequest += new EventHandler(OnPostAuthenticateRequest);
+            context.PostAuthenticateRequest += OnPostAuthenticateRequest;
         }
 
         protected void OnPostAuthenticateRequest(object sender, EventArgs e)
         {
-            HttpContext context = HttpContext.Current;
+            var context = HttpContext.Current;
+            if (context.Request.IsAuthenticated)
+            {
+                var userName = context.User.Identity.Name;
+                var roles = new string[0];
 
-            // Запускается толко в том случае, если пользователь аутентифицирован
-            // и используется аутентификация на основе форм
-			if (context.Request.IsAuthenticated)
-			{
-				string userName = context.User.Identity.Name; // логин пользователя
-				string[] roles = new string[0]; // роли, доступные пользоватею
+                QpUser userInformation;
+                if (QPConfiguration.WebConfigSection.Authentication.AllowSaveUserInformationInCookie)
+                {
+                    userInformation = AuthenticationHelper.GetUserInformationFromAuthenticationCookie(userName);
+                    context.Items[HttpContextItems.UserDataStorageType] = "cookie";
+                }
+                else
+                {
+                    userInformation = AuthenticationHelper.GetUserInformationFromStorage(userName);
+                    context.Items[HttpContextItems.UserDataStorageType] = "cache";
+                }
 
-				QpUser userInformation; // информация о пользователе
-				if (QPConfiguration.WebConfigSection.Authentication.AllowSaveUserInformationInCookie)
-				{
-					userInformation = AuthenticationHelper.GetUserInformationFromAuthenticationCookie(userName);
-					context.Items["userDataStorageType"] = "cookie";
-				}
-				else
-				{
-					userInformation = AuthenticationHelper.GetUserInformationFromStorage(userName);
-					context.Items["userDataStorageType"] = "cache";
-				}
+                QpIdentity identity;
+                if (userInformation != null)
+                {
 
-				// Создание нового QP8Identity
-				QpIdentity identity;
-				if (userInformation != null)
-				{
+                    identity = new QpIdentity(
+                        userInformation.Id,
+                        userInformation.Name,
+                        userInformation.CustomerCode,
+                        "QP",
+                        true,
+                        userInformation.LanguageId,
+                        userInformation.CultureName,
+                        userInformation.IsSilverlightInstalled);
 
-					identity = new QpIdentity(userInformation.Id, userInformation.Name,
-						userInformation.CustomerCode, "QP", true,
-						userInformation.LanguageId, userInformation.CultureName, userInformation.IsSilverlightInstalled);
-					roles = userInformation.Roles;
-				}
-				else
-				{
-					identity = new QpIdentity(0, userName, "", "QP", false, 0, "neutral", false);
-				}
+                    roles = userInformation.Roles;
+                }
+                else
+                {
+                    identity = new QpIdentity(0, userName, string.Empty, "QP", false, 0, "neutral", false);
+                }
 
-				// Создание нового QP8Principal
-				QPPrincipal principal = new QPPrincipal(identity, roles);
-
-				// Новый принципал становится доступен для остальной части запроса
-				context.User = Thread.CurrentPrincipal = principal;
-			}
+                context.User = Thread.CurrentPrincipal = new QpPrincipal(identity, roles);
+            }
         }
 
         public void Dispose()
