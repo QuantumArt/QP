@@ -6,9 +6,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.WebPages;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Services;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -272,6 +272,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                     .Where(g => g.IsInt())
                     .Select(int.Parse)
                     .ToArray();
+
                 if (validatedFormIds.Any() && validatedFormIds.Length <= (QPConfiguration.WebConfigSection?.RelationCountLimit ?? Default.RelationCountLimit))
                 {
                     var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)

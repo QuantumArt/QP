@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Interfaces.Logging;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.UserSynchronization;
 using Quantumart.QP8.Scheduler.API;
 

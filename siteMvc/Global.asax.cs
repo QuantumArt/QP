@@ -7,6 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Microsoft.AspNet.SignalR;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.Configuration;
@@ -33,7 +34,6 @@ using Quantumart.QP8.WebMvc.ViewModels.UserGroup;
 using Quantumart.QP8.WebMvc.ViewModels.VirtualContent;
 using Quantumart.QP8.WebMvc.ViewModels.VisualEditor;
 using Quantumart.QP8.WebMvc.ViewModels.Workflow;
-using Logger = Quantumart.QP8.BLL.Services.Logger;
 
 namespace Quantumart.QP8.WebMvc
 {

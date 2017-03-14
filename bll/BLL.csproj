@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.BLL</RootNamespace>
     <AssemblyName>Quantumart.QP8.BLL</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -96,14 +96,6 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.4.3\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.Web.4.4.0\lib\net35\NLog.Web.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="QA.Configuration, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\QA.Configuration.1.0.1.0\lib\net40\QA.Configuration.dll</HintPath>
       <Private>True</Private>
@@ -116,12 +108,12 @@
       <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.0.2.0\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Quantumart, Version=2.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quantumart.2.0.6\lib\net45\Quantumart.dll</HintPath>
+    <Reference Include="Quantumart, Version=2.0.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quantumart.2.0.7\lib\net45\Quantumart.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quantumart.2.0.6\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>..\packages\Quantumart.2.0.7\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -146,7 +138,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\Logging\NLogLogger.cs" />
     <Compile Include="Adapters\NonQpEnvironmentContext.cs" />
     <Compile Include="ArticleContextQueryParam.cs" />
     <Compile Include="ArticleContextSearchBlockItem.cs" />
@@ -163,11 +154,8 @@
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
-    <Compile Include="Factories\Logging\NullLogFactory.cs" />
-    <Compile Include="Factories\Logging\NLogFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
-    <Compile Include="Helpers\AssemblyHelpers.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
     <Compile Include="Helpers\Ensure.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
@@ -180,11 +168,6 @@
     <Compile Include="Interfaces\Db\IArticleRepository.cs" />
     <Compile Include="Interfaces\Db\IContentRepository.cs" />
     <Compile Include="Interfaces\Db\IFieldRepository.cs" />
-    <Compile Include="Interfaces\Logging\ILog.cs" />
-    <Compile Include="Interfaces\Logging\ILogFactory.cs" />
-    <Compile Include="Factories\Logging\LogProvider.cs" />
-    <Compile Include="Adapters\Logging\DiagnosticsDebugLogger.cs" />
-    <Compile Include="Factories\Logging\DiagnosticsLogFactory.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />
@@ -479,7 +462,6 @@
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
     <Compile Include="Interfaces\Services\IArticleService.cs" />
-    <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesCommand.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesService.cs" />
     <Compile Include="Services\MultistepActions\Archive\RestoreArticlesCommand.cs" />
@@ -698,7 +680,6 @@
     <Compile Include="StopWordList.cs" />
     <Compile Include="Translator.cs" />
     <Compile Include="UnionAttr.cs" />
-    <Compile Include="UnityExtensions\NLogContainerExtension.cs" />
     <Compile Include="UserDefaultFilter.cs" />
     <Compile Include="UserGroup.cs" />
     <Compile Include="UserQueryAttr.cs" />
@@ -760,8 +741,14 @@
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
+      <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UnityExtensions\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="BLL.nuspec">

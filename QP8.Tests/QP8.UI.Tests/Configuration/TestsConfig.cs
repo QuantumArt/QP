@@ -10,7 +10,7 @@ namespace QP8.UI.Tests.Configuration
             {
                 get
                 {
-                    var variations = Config.StringValue("SmokeVariations", string.Empty);
+                    var variations = StringValue("SmokeVariations", string.Empty);
                     return AvoidSpecialCharacters(variations).Split(' ');
                 }
             }
@@ -19,20 +19,20 @@ namespace QP8.UI.Tests.Configuration
             {
                 get
                 {
-                    var variations = Config.StringValue("FullVariations", string.Empty);
+                    var variations = StringValue("FullVariations", string.Empty);
                     return AvoidSpecialCharacters(variations).Split(' ');
                 }
             }
 
-            public static string BackendUrl => Config.StringValue("BackendUrl", "http://mscdev02:90/Backend/");
+            public static string BackendUrl => StringValue("BackendUrl", "http://mscdev02:90/Backend/");
 
-            public static string BackendLogin => Config.StringValue("BackendLogin", "AutotestQuantumart");
+            public static string BackendLogin => StringValue("BackendLogin", "AutotestQuantumart");
 
-            public static string BackendPassword => Config.StringValue("BackendPassword", "1q2w-p=[Password");
+            public static string BackendPassword => StringValue("BackendPassword", "1q2w-p=[Password");
 
-            public static string BackendCustomerCode => Config.StringValue("BackendCustomerCode", "qp_beeline_main");
+            public static string BackendCustomerCode => StringValue("BackendCustomerCode", "qp_beeline_main");
 
-            public static bool BackendCustomerCodeFieldIsDropdown => Config.BoolValue("BackendCustomerCodeFieldIsDropdown");
+            public static bool BackendCustomerCodeFieldIsDropdown => BoolValue("BackendCustomerCodeFieldIsDropdown");
 
             private static string AvoidSpecialCharacters(string inputString)
             {

@@ -1,6 +1,6 @@
 using System;
-using Quantumart.QP8.BLL.Factories.Logging;
-using Quantumart.QP8.BLL.Services;
+using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.Factories;
 
 namespace Quantumart.QP8.ArticleScheduler
 {

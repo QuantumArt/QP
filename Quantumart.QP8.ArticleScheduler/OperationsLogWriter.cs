@@ -1,7 +1,7 @@
 using System;
 using System.Data.SqlClient;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.ArticleScheduler

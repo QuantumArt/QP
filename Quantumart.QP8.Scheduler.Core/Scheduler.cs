@@ -4,7 +4,7 @@ using System.Configuration;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Quantumart.QP8.BLL.Services;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Scheduler.API;
 
 namespace Quantumart.QP8.Scheduler.Core

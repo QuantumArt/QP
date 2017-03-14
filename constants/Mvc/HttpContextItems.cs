@@ -30,6 +30,7 @@
 
         public const string BackendUrlContext = "BACKEND_URL";
         public const string IsReplayingXmlContext = "IS_REPLAYING_XML";
+        public const string HandleMvcExceptions = "HANDLE_MVC_EXCEPTIONS";
         public const string XmlContextGuidSubstitution = "GUID_SUBSTITUTION";
 
         public const string FieldUniqueIdPrefix = "field_uniqueid_";

@@ -477,7 +477,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
 
             if (!XmlDbUpdateQpActionHelpers.IsNewArticle(action.Code))
             {
-                
                 action.Ids = _dbActionService.GetArticleIdsByGuids(action.UniqueId)
                     .Select(g => g.ToString())
                     .ToArray();
@@ -587,7 +586,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private int GetArticleResultIdByGuidOrDefault(XmlDbUpdateRecordedAction action)
         {
             var articleIdByGuid = action.ResultUniqueId == Guid.Empty ? 0 : _dbActionService.GetArticleIdByGuidOrDefault(action.ResultUniqueId);
-            return (articleIdByGuid == 0) ? action.ResultId : articleIdByGuid;
+            return articleIdByGuid == 0 ? action.ResultId : articleIdByGuid;
         }
     }
 }

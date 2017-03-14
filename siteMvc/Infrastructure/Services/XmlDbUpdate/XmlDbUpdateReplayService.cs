@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
 using System.Xml.Linq;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Models.XmlDbUpdate;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Adapters;
 using Quantumart.QP8.WebMvc.Infrastructure.Constants;
@@ -87,7 +87,6 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     throw throwEx;
                 }
 
-                
                 var updateId = _dbLogService.InsertFileLogEntry(dbLogEntry);
                 ReplayActionsFromXml(filteredXmlDocument.Root.Elements(), currentDbVersion, filteredXmlDocument.Root.Attribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute).Value, updateId);
                 ts.Complete();

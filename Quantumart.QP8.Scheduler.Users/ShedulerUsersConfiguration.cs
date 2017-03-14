@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.Practices.Unity;
-using Quantumart.QP8.BLL.Factories.Logging;
+using QP8.Infrastructure.Logging.Factories;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.UserSynchronization;
 using Quantumart.QP8.Scheduler.API;

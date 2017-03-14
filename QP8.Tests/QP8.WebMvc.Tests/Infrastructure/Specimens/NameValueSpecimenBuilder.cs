@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
-using Castle.Core.Internal;
+using Microsoft.Data.Extensions;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Kernel;
 

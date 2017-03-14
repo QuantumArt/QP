@@ -4,7 +4,7 @@ using System.Configuration.Install;
 using System.Linq;
 using System.ServiceProcess;
 using Microsoft.Practices.Unity;
-using Quantumart.QP8.BLL.Services;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Scheduler.API;
 
 namespace Quantumart.QP8.Scheduler.Service

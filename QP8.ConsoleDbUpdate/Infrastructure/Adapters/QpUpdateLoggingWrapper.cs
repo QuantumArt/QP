@@ -1,8 +1,8 @@
 using System;
-using Quantumart.QP8.BLL.Factories.Logging;
-using Quantumart.QP8.BLL.Interfaces.Logging;
+using QP8.Infrastructure.Logging.Factories;
+using QP8.Infrastructure.Logging.Interfaces;
+using QP8.Infrastucture.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
-using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters
 {

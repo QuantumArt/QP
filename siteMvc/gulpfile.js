@@ -87,7 +87,7 @@ custom.paths = {
     'Scripts/jquery/jquery.imgareaselect.js',
     'Scripts/jquery/jquery.nouislider.link.js',
     'Scripts/jquery/jquery.nouislider.js',
-    'Scripts/jquery/jquery.signalR-2.2.0.js',
+    'Scripts/jquery/jquery.signalR-2.2.1.js',
 
     'Scripts/telerik/telerik.draganddrop.js',
     'Scripts/telerik/telerik.treeview.js',

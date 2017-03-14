@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ServiceProcess;
 using Microsoft.Practices.Unity;
+using QP8.Infrastructure.Logging.UnityExtensions;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.UnityExtensions;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.Core;
 using Quantumart.QP8.Scheduler.Notification;

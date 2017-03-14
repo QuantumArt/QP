@@ -2,9 +2,9 @@
 using System.IO;
 using AllureCSharpCommons;
 using NUnit.Framework;
+using QP8.UI.Tests.Configuration;
 using SeleniumExtension;
 using SeleniumExtension.Grid;
-using Config = QP8.UI.Tests.Configuration.Config;
 
 namespace QP8.UI.Tests.Tests
 {

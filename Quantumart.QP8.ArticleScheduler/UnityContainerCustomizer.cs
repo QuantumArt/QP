@@ -1,7 +1,7 @@
 ﻿using Microsoft.Practices.Unity;
+using QP8.Infrastructure.Logging.UnityExtensions;
 using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
-using Quantumart.QP8.BLL.UnityExtensions;
 
 namespace Quantumart.QP8.ArticleScheduler
 {

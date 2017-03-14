@@ -4,7 +4,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
-using Quantumart.QP8.BLL.Factories.Logging;
+using QP8.Infrastructure.Logging.Factories;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.Core;
 
