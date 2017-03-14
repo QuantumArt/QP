@@ -38,17 +38,17 @@ namespace Quantumart.QP8.BLL.Services
         public int GetArticleIdByGuid(Guid guid)
         {
             var articleId = GetArticleIdByGuidOrDefault(guid);
-            if (!articleId.HasValue)
+            if (articleId == 0)
             {
                 throw new Exception($"Не найдена статья с заданным Id: {guid}");
             }
 
-            return articleId.Value;
+            return articleId;
         }
 
-        public int? GetArticleIdByGuidOrDefault(Guid guid)
+        public int GetArticleIdByGuidOrDefault(Guid guid)
         {
-            return _articleRepository.GetByGuid(guid)?.Id;
+            return _articleRepository.GetIdByGuid(guid);
         }
 
         public Guid GetArticleGuidById(string rawId)
@@ -66,6 +66,16 @@ namespace Quantumart.QP8.BLL.Services
         {
             var articleGuid = GetArticleGuidByIdOrDefault(id);
             return articleGuid ?? Guid.Empty;
+        }
+
+        public Guid[] GetArticleGuidsByIds(int[] ids)
+        {
+            return _articleRepository.GetGuidsByIds(ids);
+        }
+
+        public int[] GetArticleIdsByGuids(Guid[] ids)
+        {
+            return _articleRepository.GetIdsByGuids(ids);
         }
 
         public Guid? GetArticleGuidByIdOrDefault(int id)

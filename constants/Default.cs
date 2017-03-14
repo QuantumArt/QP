@@ -10,5 +10,6 @@
         public static readonly string ActionCodeHiddenName = "backendActionCode";
         public static readonly int MaxViewInListFieldLength = 500;
         public static readonly int MaxViewInListArticleNumber = 4;
+        public const int RelationCountLimit = 500;
     }
 }

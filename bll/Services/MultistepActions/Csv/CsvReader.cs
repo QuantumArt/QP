@@ -945,8 +945,10 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             var article = new Article
             {
-                Status = StatusType.GetPublished(_siteId),
-                StatusTypeId = StatusTypeRepository.GetPublishedStatusIdBySiteId(_siteId),
+                Status = _importSettings.IsWorkflowAssigned ? StatusType.GetNone(_siteId) : StatusType.GetPublished(_siteId),
+                StatusTypeId = _importSettings.IsWorkflowAssigned
+                                ? StatusTypeRepository.GetNoneStatusIdBySiteId(_siteId)
+                                : StatusTypeRepository.GetPublishedStatusIdBySiteId(_siteId),
                 Visible = true,
                 ContentId = contentId,
                 FieldValues = new List<FieldValue>()

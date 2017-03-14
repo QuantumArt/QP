@@ -25,9 +25,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 {
     public class ArticleRepository : IArticleRepository
     {
-        Article IArticleRepository.GetByGuid(Guid guid)
+        int IArticleRepository.GetIdByGuid(Guid guid)
         {
-            return GetByGuid(guid);
+            return GetIdByGuid(guid);
         }
 
         List<Article> IArticleRepository.GetByIds(int[] ids)
@@ -56,15 +56,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             );
         }
 
-        internal static Article GetByGuid(Guid guid)
+        internal int GetIdByGuid(Guid guid)
         {
-            return MapperFacade.ArticleMapper.GetBizObject(QPContext.EFContext.ArticleSet
-                .Include("Status")
-                .Include("Content")
-                .Include("LastModifiedByUser")
-                .Include("LockedByUser")
-                .SingleOrDefault(n => n.UniqueId == guid)
-            );
+            return GetIdsByGuids(new[] {guid})[0];
         }
 
         public static List<Article> GetByIds(int[] ids)
@@ -1573,6 +1567,23 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             return doc.ToString(SaveOptions.None);
         }
+
+        public int[] GetIdsByGuids(Guid[] guids)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetArticleIdsByGuids(scope.DbConnection, guids);
+            }
+        }
+
+        public Guid[] GetGuidsByIds(int[] ids)
+        {
+            using (var scope = new QPConnectionScope())
+            {
+                return Common.GetArticleGuidsByIds(scope.DbConnection, ids);
+            }
+        }
+
         #endregion
     }
 }
