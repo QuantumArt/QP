@@ -10,6 +10,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
@@ -267,14 +268,19 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
             if (formIds != null)
             {
-                var substitutedGuids = formIds
-                    .Where(f => f.IsInt())
-                    .Select(DbArticleService.GetArticleGuidById)
-                    .Where(g => g != Guid.Empty)
-                    .Select(g => g.ToString())
+                var validatedFormIds = formIds
+                    .Where(g => g.IsInt())
+                    .Select(int.Parse)
                     .ToArray();
+                if (validatedFormIds.Any() && validatedFormIds.Length <= (QPConfiguration.WebConfigSection?.RelationCountLimit ?? Default.RelationCountLimit))
+                {
+                    var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)
+                       .Where(g => g != Guid.Empty)
+                       .Select(g => g.ToString())
+                       .ToArray();
 
-                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
+                    HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
+                }
             }
         }
     }

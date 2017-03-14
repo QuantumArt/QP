@@ -87,6 +87,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                     throw throwEx;
                 }
 
+                
                 var updateId = _dbLogService.InsertFileLogEntry(dbLogEntry);
                 ReplayActionsFromXml(filteredXmlDocument.Root.Elements(), currentDbVersion, filteredXmlDocument.Root.Attribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute).Value, updateId);
                 ts.Complete();
