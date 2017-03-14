@@ -262,7 +262,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
                     .Where(g => g.IsInt())
                     .Select(int.Parse)
                     .ToArray();
-                if (validatedFormIds.Any() && validatedFormIds.Length <= QPConfiguration.WebConfigSection.RelationCountLimit)
+                if (validatedFormIds.Any() && validatedFormIds.Length <= (QPConfiguration.WebConfigSection?.RelationCountLimit ?? Default.RelationCountLimit))
                 {
                     var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)
                        .Where(g => g != Guid.Empty)
