@@ -7,7 +7,11 @@ namespace Quantumart.QP8.BLL.Interfaces.Db
     {
         Article GetById(int id);
 
-        Article GetByGuid(Guid guid);
+        int GetIdByGuid(Guid guid);
+
+        int[] GetIdsByGuids(Guid[] guids);
+
+        Guid[] GetGuidsByIds(int[] ids);
 
         List<Article> GetByIds(int[] ids);
 

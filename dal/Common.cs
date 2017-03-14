@@ -10047,5 +10047,61 @@ namespace Quantumart.QP8.DAL
         {
             return GetDatatableResult(cn, queryBuilder.ToString(), @params);
         }
+
+        public static int[] GetArticleIdsByGuids(SqlConnection sqlConnection, Guid[] guids)
+        {
+            if (guids == null)
+            {
+                throw new ArgumentNullException(nameof(guids));
+            }
+
+            var xmlQuery = "SELECT doc.col.value('.[1]', 'nvarchar(max)') UNIQUE_ID FROM @xml.nodes('/guids/guid') doc(col)";
+            var query = $"select isnull(ci.content_item_id, 0), guids.unique_id from ({xmlQuery}) guids left join content_item ci with (nolock) on ci.unique_id = guids.unique_id";
+
+            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+
+                var doc = new XDocument(new XElement("guids"));
+                doc.Root.Add(guids.Select(n => new XElement("guid", n.ToString())));
+                cmd.Parameters.Add(new SqlParameter("@xml", SqlDbType.Xml) { Value = doc.ToString() });
+
+                var result = new Dictionary<Guid,int>();
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        result.Add(new Guid(dr.GetString(1)), (int)dr.GetDecimal(0));
+                    }
+                }
+                return guids.Select(n => result[n]).ToArray();
+            }
+        }
+
+        public static Guid[] GetArticleGuidsByIds(SqlConnection sqlConnection, int[] ids)
+        {
+            if (ids == null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
+
+            var query = @"select ci.unique_id, ids.Id from @ids ids left join content_item ci with (nolock) on ci.content_item_id = ids.Id";
+
+            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+
+                var result = new Dictionary<int, Guid>();
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        result.Add((int)dr.GetDecimal(1), dr.IsDBNull(0) ? Guid.Empty : dr.GetGuid(0));
+                    }
+                }
+                return ids.Select(n => result[n]).ToArray();
+            }
+        }
     }
 }
