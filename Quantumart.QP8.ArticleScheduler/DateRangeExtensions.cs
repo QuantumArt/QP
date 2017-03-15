@@ -31,9 +31,6 @@ namespace Quantumart.QP8.ArticleScheduler
         /// <summary>
         /// Возвращает полные неели, но только те, которые ограничены recurrenceFactor
         /// </summary>
-        /// <param name="range"></param>
-        /// <param name="recurrenceFactor"></param>
-        /// <returns></returns>
         public static IEnumerable<Tuple<DateTime, DateTime>> EveryWeeks(this Tuple<DateTime, DateTime> range, int recurrenceFactor)
         {
             var startRangeFirstDay = range.Item1.GetWeek();
@@ -192,12 +189,7 @@ namespace Quantumart.QP8.ArticleScheduler
                 return -1;
             }
 
-            if (range.Item2 < dt)
-            {
-                return 1;
-            }
-
-            return 0;
+            return range.Item2 < dt ? 1 : 0;
         }
     }
 }

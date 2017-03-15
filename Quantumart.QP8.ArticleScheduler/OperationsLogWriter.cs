@@ -1,31 +1,13 @@
-﻿using System;
+using System;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
-    /// <summary>
-    /// Бизнес-логгер
-    /// </summary>
-    internal interface IOperationsLogWriter
-    {
-        void ShowArticle(Article article);
-
-        void HideArticle(Article article);
-
-        void PublishArticle(Article article);
-    }
-
     internal class OperationsLogWriter : IOperationsLogWriter
     {
-        private const string OperationsCategoryName = "Operations";
-        private const string OperationsLogEntryTitle = "Article schedule operation report";
-
-        private readonly LogWriter _writer;
         private readonly string _connectionString;
 
         public OperationsLogWriter(string connectionString)
@@ -36,20 +18,6 @@ namespace Quantumart.QP8.ArticleScheduler
             }
 
             _connectionString = connectionString;
-            _writer = EnterpriseLibraryContainer.Current.GetInstance<LogWriter>();
-        }
-
-        private void Write(string message)
-        {
-            var logEntry = new LogEntry
-            {
-                Severity = TraceEventType.Information,
-                Title = OperationsLogEntryTitle,
-                Message = message
-            };
-
-            logEntry.Categories.Add(OperationsCategoryName);
-            _writer.Write(logEntry);
         }
 
         public void ShowArticle(Article article)
@@ -57,7 +25,7 @@ namespace Quantumart.QP8.ArticleScheduler
             if (article != null)
             {
                 var message = FormatMessage(ArticleSchedulerStrings.ArticleHasBeenShown, article);
-                Write(message);
+                Logger.Log.Info(message);
             }
         }
 
@@ -66,7 +34,7 @@ namespace Quantumart.QP8.ArticleScheduler
             if (article != null)
             {
                 var message = FormatMessage(ArticleSchedulerStrings.ArticleHasBeenHidden, article);
-                Write(message);
+                Logger.Log.Info(message);
             }
         }
 
@@ -75,11 +43,11 @@ namespace Quantumart.QP8.ArticleScheduler
             if (article != null)
             {
                 var message = FormatMessage(ArticleSchedulerStrings.ArticleHasBeenPublished, article);
-                Write(message);
+                Logger.Log.Info(message);
             }
         }
 
-        private string FormatMessage(string template, Article article)
+        private string FormatMessage(string template, EntityObject article)
         {
             var builder = new SqlConnectionStringBuilder(_connectionString);
             return string.Format(template, article.Id, article.Name, DateTime.Now, builder.DataSource, builder.InitialCatalog);

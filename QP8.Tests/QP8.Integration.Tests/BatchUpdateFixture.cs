@@ -283,12 +283,12 @@ namespace QP8.Integration.Tests
                         new FieldData
                         {
                             Id = DictionaryKeyId,
-                            Value = ""
+                            Value = string.Empty
                         },
                         new FieldData
                         {
                             Id = DictionaryValueId,
-                            Value = ""
+                            Value = string.Empty
                         },
                         new FieldData
                         {
@@ -303,9 +303,9 @@ namespace QP8.Integration.Tests
             };
 
             var result = ArticleService.BatchUpdate(data);
-
             Assert.That(result, Is.Not.Null, BatchUpdateResultIncorrect);
             Assert.That(result, Has.Length.EqualTo(1));
+
             var articleResult = result[0];
             Assert.That(articleResult.ContentId, Is.EqualTo(DictionaryContentId));
             Assert.That(articleResult.CreatedArticleId, Is.Not.EqualTo(articleResult.OriginalArticleId));
@@ -315,20 +315,16 @@ namespace QP8.Integration.Tests
             data[0].Fields[1].Value = value;
 
             Global.ClearContentData(Cnn, articleResult.CreatedArticleId);
-
             result = ArticleService.BatchUpdate(data);
-
             Assert.That(result, Is.Not.Null.And.Empty, BatchUpdateResultIncorrect);
 
             var contentData = Global.GetContentData(Cnn, articleResult.CreatedArticleId);
-
             Assert.That(contentData, Is.Not.Null);
             Assert.That(contentData, Has.Length.EqualTo(4), ContentDataIsEmpty);
 
             using (new QPConnectionScope(Global.ConnectionString))
             {
                 var article = ArticleService.Read(articleResult.CreatedArticleId);
-
                 Assert.That(article, Is.Not.Null, CantReadArticle);
 
                 var keyFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryKey);
@@ -347,6 +343,7 @@ namespace QP8.Integration.Tests
 
                 var mtmValue = GetFieldValue<decimal?>(DictionaryContentId, DictionaryFieldMtMBackward, articleResult.CreatedArticleId);
                 Assert.That(mtmValue, Is.Not.Null, WrongMtMRelation);
+
                 var mtmFv = article.FieldValues.Single(fv => fv.Field.Name == DictionaryFieldMtMBackward);
                 Assert.That(mtmFv, Is.Not.Null);
                 Assert.That(mtmFv.Field.Default, Is.EqualTo(mtmValue.Value.ToString(CultureInfo.InvariantCulture)), WrongMtMRelation);

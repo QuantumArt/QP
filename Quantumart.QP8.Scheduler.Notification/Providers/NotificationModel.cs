@@ -29,12 +29,16 @@ namespace Quantumart.QP8.Scheduler.Notification.Providers
                 };
 
                 list.AddRange(Ids.Select(n => new KeyValuePair<string, string>("id", n.ToString())));
-
                 if (ContentId.HasValue)
+                {
                     list.Add(new KeyValuePair<string, string>("contentId", ContentId.Value.ToString()));
+                }
 
                 if (SiteId.HasValue)
+                {
                     list.Add(new KeyValuePair<string, string>("siteId", SiteId.Value.ToString()));
+                }
+
                 return list;
             }
         }

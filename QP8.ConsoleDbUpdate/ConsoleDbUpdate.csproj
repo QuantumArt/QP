@@ -70,7 +70,6 @@
     <Compile Include="Infrastructure\FileSystemReaders\CsvReaderProcessor.cs" />
     <Compile Include="Infrastructure\FileSystemReaders\CsvReaderSettings.cs" />
     <Compile Include="Infrastructure\Helpers\ConsoleHelpers.cs" />
-    <Compile Include="Infrastructure\Extensions\ExceptionExtensions.cs" />
     <Compile Include="Infrastructure\Models\BaseSettingsModel.cs" />
     <Compile Include="EmbeddedAssemblyManager.cs" />
     <Compile Include="Infrastructure\Factories\DataProcessorFactory.cs" />
@@ -90,9 +89,25 @@
     <Compile Include="Infrastructure\FileSystemReaders\XmlReaderSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
+    <EmbeddedResource Include="..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll">
+      <Link>References\Castle.Core.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Moq.4.7.1\lib\net45\Moq.dll">
+      <Link>References\Moq.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\NLog.4.4.4\lib\net45\NLog.dll">
+      <Link>References\NLog.dll</Link>
+    </EmbeddedResource>
+    <Content Include="..\packages\Quantumart.2.0.7\lib\net45\Quantumart.dll">
+      <Link>References\Quantumart.dll</Link>
+    </Content>
+    <Content Include="..\packages\Quantumart.2.0.7\lib\net45\Quantumart.QP8.Assembling.dll">
+      <Link>References\Quantumart.QP8.Assembling.dll</Link>
+    </Content>
+    <Content Include="App.config">
       <SubType>Designer</SubType>
-    </None>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -258,17 +273,8 @@
     <EmbeddedResource Include="..\packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll">
       <Link>References\CsvHelper.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\Moq.4.5.23\lib\net45\Moq.dll">
-      <Link>References\Moq.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\NLog.4.3.10\lib\net45\NLog.dll">
-      <Link>References\NLog.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\siteMvc\bin\Quantumart.QP8.Merger.dll">
       <Link>References\Quantumart.QP8.Merger.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll">
-      <Link>References\Castle.Core.dll</Link>
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll">
       <Link>References\AutoMapper.dll</Link>
@@ -305,6 +311,15 @@
       <Name>WebMvc</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{6E317F05-226C-4C9F-B918-FE71D743C3A3}</Project>
+      <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QP8.Infrastucture\QP8.Infrastucture.csproj">
+      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+      <Name>QP8.Infrastucture</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
@@ -321,6 +336,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>

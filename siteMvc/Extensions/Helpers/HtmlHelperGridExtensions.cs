@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
@@ -34,7 +35,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         private static void ConfigureColumns(GridColumnFactory<DataRow> columnFactory, IEnumerable<Field> displayFields, bool allowMultipleEntitySelection, bool hasTitleLink)
         {
-            var currentTheme = HttpContext.Current.Session["theme"].ToString();
+            var currentTheme = HttpContext.Current.Session[HttpContextSession.CurrentCssTheme].ToString();
             if (allowMultipleEntitySelection)
             {
                 columnFactory

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Web;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Infrastructure.Constants.XmlDbUpdate;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
@@ -19,7 +19,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
         {
             if (context.IsXmlDbUpdateReplayAction())
             {
-                return context.Items.Contains(XmlDbUpdateCommonConstants.BackendUrlContext) ? context.Items[XmlDbUpdateCommonConstants.BackendUrlContext].ToString() : string.Empty;
+                return context.Items.Contains(HttpContextItems.BackendUrlContext) ? context.Items[HttpContextItems.BackendUrlContext].ToString() : string.Empty;
             }
 
             var request = context.Request;

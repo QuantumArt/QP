@@ -9,23 +9,23 @@ namespace Quantumart.QP8.Scheduler.API
         public const string DefaultScheduleName = "NullSchedule";
 
         public static void RegisterProcessor<T>(this IUnityContainer container, string service, string schedule, LifetimeManager lifetimeManager)
-        where T : IProcessor
+            where T : IProcessor
         {
-            var name = typeof(T).Name;
-            container.RegisterType<IProcessor, T>(name, lifetimeManager);
+            var assemblyType = typeof(T);
+            container.RegisterType<IProcessor, T>(assemblyType.Name, lifetimeManager);
 
-            var descriptor = new ProcessorDescriptor(name, service, schedule);
+            var descriptor = new ProcessorDescriptor(assemblyType.Name, service, schedule);
             container.RegisterInstance(descriptor.Processor, descriptor);
         }
 
         public static void RegisterProcessor<T>(this IUnityContainer container, string service, string schedule)
-        where T : IProcessor
+            where T : IProcessor
         {
             container.RegisterProcessor<T>(service, schedule, new TransientLifetimeManager());
         }
 
         public static void RegisterProcessor<T>(this IUnityContainer container, string service, TimeSpan interval, LifetimeManager lifetimeManager)
-        where T : IProcessor
+            where T : IProcessor
         {
             var schedule = Guid.NewGuid().ToString();
             container.RegisterSchedule(schedule, interval);
@@ -33,7 +33,7 @@ namespace Quantumart.QP8.Scheduler.API
         }
 
         public static void RegisterProcessor<T>(this IUnityContainer container, string service, TimeSpan interval)
-        where T : IProcessor
+            where T : IProcessor
         {
             container.RegisterProcessor<T>(service, interval, new TransientLifetimeManager());
         }
@@ -42,7 +42,6 @@ namespace Quantumart.QP8.Scheduler.API
             where TProcessor : IProcessor
             where TSchedule : ISchedule
         {
-
             var schedule = Guid.NewGuid().ToString();
             container.RegisterType<ISchedule, TSchedule>(schedule, new HierarchicalLifetimeManager());
             container.RegisterProcessor<TProcessor>(service, schedule, lifetimeManager);
@@ -56,7 +55,7 @@ namespace Quantumart.QP8.Scheduler.API
         }
 
         public static void RegisterProcessor<T>(this IUnityContainer container, string service)
-        where T : IProcessor
+            where T : IProcessor
         {
             container.RegisterProcessor<T>(service, DefaultScheduleName);
         }
@@ -86,7 +85,7 @@ namespace Quantumart.QP8.Scheduler.API
         public static void RegisterService(this IUnityContainer container, string key, string name, string description)
         {
             var descriptor = new ServiceDescriptor(key, name, description);
-            container.RegisterInstance<ServiceDescriptor>(descriptor.Key, descriptor);
+            container.RegisterInstance(descriptor.Key, descriptor);
             container.RegisterType<TraceSource>(key, new HierarchicalLifetimeManager(), new InjectionFactory(c => new TraceSource(key)));
         }
     }

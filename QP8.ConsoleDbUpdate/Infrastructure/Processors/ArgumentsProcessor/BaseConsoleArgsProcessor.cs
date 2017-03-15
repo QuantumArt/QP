@@ -1,10 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Options;
+using QP8.Infrastructure.Logging;
+using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProcessor
 {
@@ -87,21 +90,11 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         private void ValidateInputData(ICollection<string> noNamedOptions)
         {
-            if (noNamedOptions.Count != 1)
-            {
-                throw new OptionException("Should specify single not named parameter <customer_code>", "customer_code");
-            }
-
-            if (!FilePathes.Any())
-            {
-                throw new OptionException("Should specify at least one xml file or folder path", "path");
-            }
-
+            Ensure.That<OptionException>(noNamedOptions.Count == 1, "Should specify single not named parameter <customer_code>", "customer_code");
+            Ensure.That<OptionException>(FilePathes.Any(), "Should specify at least one xml file or folder path", "path");
             CustomerCode = noNamedOptions.Single();
-            if (string.IsNullOrWhiteSpace(CustomerCode))
-            {
-                throw new OptionException("Should specify <customer_code>", "customer_code");
-            }
+
+            Logger.Log.SetGlobalContext(LoggingData.CustomerCodeCustomVariable, CustomerCode);
         }
 
         private static void ShowCommandLineHelp(OptionSet optionsSet)

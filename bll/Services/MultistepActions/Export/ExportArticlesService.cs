@@ -3,6 +3,7 @@ using System.Web;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
@@ -21,7 +22,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             }
 
             settingsParams.ContentId = content.Id;
-            HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] = settingsParams;
+            HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] = settingsParams;
         }
 
         public override void SetupWithParams(int parentId, int id, IMultistepActionParams settingsParams)
@@ -72,11 +73,11 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
             return new MultistepActionServiceContext { CommandStates = new[] { commandState } };
         }
 
-        protected override string ContextSessionKey { get; } = CsvExport.ExportContextSessionKey;
+        protected override string ContextSessionKey { get; } = HttpContextSession.ExportContextSessionKey;
 
         public override void TearDown()
         {
-            HttpContext.Current.Session.Remove(CsvExport.ExportSettingsSessionKey);
+            HttpContext.Current.Session.Remove(HttpContextSession.ExportSettingsSessionKey);
             base.TearDown();
         }
 
@@ -103,7 +104,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
 
         private static int[] GetArticleIds(int[] ids, int contentId)
         {
-            var settings = HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] as ExportSettings;
+            var settings = HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] as ExportSettings;
             var orderBy = string.IsNullOrEmpty(settings.OrderByField) ? FieldName.ContentItemId : settings.OrderByField;
             return ArticleRepository.SortIdsByFieldName(ids, contentId, orderBy);
         }

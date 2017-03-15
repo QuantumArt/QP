@@ -5,9 +5,6 @@ using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler.Onetime
 {
-    /// <summary>
-    /// Выполняет onetime-задачу
-    /// </summary>
     internal class OnetimeTaskScheduler
     {
         private readonly IArticleOnetimeSchedulerService _bllService;
@@ -29,29 +26,25 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
             _operationsLogWriter = operationsLogWriter;
         }
 
-        /// <summary>
-        /// Выполнить задачу
-        /// </summary>
-        /// <param name="task"></param>
         public void Run(OnetimeTask task)
         {
             var range = Tuple.Create(task.StartDateTime, task.EndDateTime);
             var currentTime = _bllService.GetCurrentDBDateTime();
             var pos = range.Position(currentTime);
+
             Article article;
-            if (pos < 0) // до диапазона задачи
+            if (pos > 0)
             {
-            }
-            else if (pos > 0) // после диапазона задачи
-            {
+                // после диапазона задачи
                 article = _bllService.HideAndCloseSchedule(task.Id);
                 if (article != null && article.Visible)
                 {
                     _operationsLogWriter.HideArticle(article);
                 }
             }
-            else if (pos == 0) // в диапазоне
+            else if (pos == 0)
             {
+                // в диапазоне
                 article = task.EndDateTime.Year == ArticleScheduleConstants.Infinity.Year ? _bllService.ShowAndCloseSchedule(task.Id) : _bllService.ShowArticle(task.ArticleId);
                 if (article != null && !article.Visible)
                 {

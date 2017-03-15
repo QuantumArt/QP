@@ -188,7 +188,7 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     var viewName = $"uq_v_test_{DateTime.Now.Ticks}";
                     var createTestViewSql = $"CREATE VIEW [dbo].{viewName} AS {userQuery}";
-                    using (var connect = new SqlConnection(QPContext.CurrentDbConnectionString))
+                    using (var connect = new SqlConnection(QPContext.CurrentDbConnectionString ?? QPConnectionScope.Current.ConnectionString))
                     {
                         connect.Open();
                         Common.ExecuteSql(connect, createTestViewSql);

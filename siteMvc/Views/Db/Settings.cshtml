@@ -109,6 +109,7 @@
 
 @Html.PrepareInitScript(Model)
 <script>
+  //# sourceURL=dbsettings.js
   var $editingForm = $("#@Model.UniqueId("editingForm")");
   @(Model.ContextObjectName).set_initializedCallback(function() {
     $editingForm.on('click', '.downloadRecords', function() {

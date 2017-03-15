@@ -1,6 +1,6 @@
 using System;
 using System.Web.Mvc;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {

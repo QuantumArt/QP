@@ -1,5 +1,6 @@
-﻿using Quantumart.QP8.Resources;
-using System.Web;
+﻿using System.Web;
+using Quantumart.QP8.Constants.Mvc;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
@@ -11,16 +12,16 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         public string SiteName { get; set; }
 
-		public int Count { get; set; }
+        public int Count { get; set; }
 
         public CopySiteContentLinksCommand(MultistepActionStageCommandState state) : this(state.Id, null, 0) { }
 
-		public CopySiteContentLinksCommand(int siteId, string siteName, int count)
-		{
+        public CopySiteContentLinksCommand(int siteId, string siteName, int count)
+        {
             SiteId = siteId;
             SiteName = siteName;
-			Count = count;
-            var prms = (CopySiteSettings)HttpContext.Current.Session["CopySiteService.Settings"];
+            Count = count;
+            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
             NewSiteId = prms.DestinationSiteId;
         }
 
@@ -28,7 +29,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             var result = new MultistepActionStepResult();
             ContentService.CopyContentLinks(SiteId, NewSiteId.Value);
-			result.ProcessedItemsCount = Count;
+            result.ProcessedItemsCount = Count;
             return result;
         }
 
@@ -38,7 +39,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             {
                 Id = SiteId,
                 ParentId = 0,
-				Type = CopySiteStageCommandTypes.CopySiteContentLinks
+                Type = CopySiteStageCommandTypes.CopySiteContentLinks
             };
         }
 
@@ -47,7 +48,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             return new MultistepStageSettings
             {
                 ItemCount = Count,
-				StepCount = 1,
+                StepCount = 1,
                 Name = string.Format(SiteStrings.CopySiteContentLinks, SiteName ?? string.Empty)
             };
         }

@@ -65,7 +65,8 @@ namespace Quantumart.QP8.BLL
             SetDefaultStatusAndVisibility();
         }
 
-        internal Article(Content content, Dictionary<string, string> predefinedValues) : this(content)
+        internal Article(Content content, Dictionary<string, string> predefinedValues)
+            : this(content)
         {
             PredefinedValues = predefinedValues;
         }
@@ -419,8 +420,8 @@ namespace Quantumart.QP8.BLL
             }
             else
             {
-                var articleByGuid = ArticleRepository.GetByGuid(UniqueId.Value);
-                if (articleByGuid != null && articleByGuid.Id != Id)
+                var idByGuid = new ArticleRepository().GetIdByGuid(UniqueId.Value);
+                if (idByGuid != 0 && idByGuid != Id)
                 {
                     errors.CriticalErrorForModel(ArticleStrings.GuidShouldBeUnique);
                 }

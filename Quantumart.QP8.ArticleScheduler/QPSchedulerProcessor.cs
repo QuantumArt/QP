@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,13 +7,10 @@ using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
-    /// <summary>
-    /// Запускает QPScheduler в отдельном потоке
-    /// </summary>
     public class QpSchedulerProcessor
     {
-        private CancellationTokenSource _cancellationTokenSource;
         private Task _task;
+        private CancellationTokenSource _cancellationTokenSource;
 
         private readonly TimeSpan _recurrentTimeout;
         private readonly IEnumerable<string> _exceptCustomerCodes;
@@ -62,8 +59,6 @@ namespace Quantumart.QP8.ArticleScheduler
             {
                 _cancellationTokenSource.Dispose();
                 _task.Dispose();
-                _cancellationTokenSource = null;
-                _task = null;
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template language="C#" debug="false" #>
 <#@ import namespace="Quantumart.QP8.Logging.Transformers" #>
 <#@ import namespace="Quantumart.QP8.Logging.Templates.Default" #>
 <#@ import namespace="Quantumart.QP8.BLL.Services.MultistepActions.Import" #>
@@ -14,4 +14,5 @@
   ImportAction: <#= (CsvImportMode)Model.ImportAction #>
   Inserted: <#= string.Join(",", Model.InsertedArticleIds) #>
   Updated: <#= string.Join(",", Model.UpdatedArticleIds) #>
+
 <#= TemplateTransformer.Transform<ContextTextTemplate>(Model, Context) #>

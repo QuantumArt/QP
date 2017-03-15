@@ -10,8 +10,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         /// <summary>
         /// Получить время старта до указанной даты иначе null
         /// </summary>
-        /// <param name="dateTime"></param>
-        /// <returns></returns>
         DateTime? GetStart(DateTime dateTime);
     }
 }

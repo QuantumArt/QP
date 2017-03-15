@@ -4,10 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using Ploeh.AutoFixture;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace QP8.WebMvc.Tests.Infrastructure.Helpers
 {

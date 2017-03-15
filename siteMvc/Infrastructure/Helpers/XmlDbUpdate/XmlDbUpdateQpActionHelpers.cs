@@ -31,7 +31,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers.XmlDbUpdate
                 ActionCode.CreateLikeArticle,
                 ActionCode.RemoveArticle,
                 ActionCode.MultipleRemoveArticle,
-                ActionCode.MultipleRemoveArticleFromArchive, // TODO спросить у Паши, почему есть MultipleRemoveArticleFromArchive, но нет RemoveArticleFromArchive
+                ActionCode.MultipleRemoveArticleFromArchive,
                 ActionCode.MoveArticleToArchive,
                 ActionCode.RestoreArticleFromArchive,
                 ActionCode.MultiplePublishArticles,

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
-using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.API;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.Constants;

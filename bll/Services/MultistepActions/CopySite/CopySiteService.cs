@@ -1,25 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Web;
 using Quantumart.QP8.BLL.Repository;
-using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 {
     public class CopySiteService : CopySiteAbstract
     {
-        private CopySiteSettingsCommand copySiteSettingsCommand;
-        private CopySiteContentsCommand copySiteContentsCommand;
-        private CopySiteVirtualContentsCommand copySiteVirtualContentsCommand;
-        private CopySiteContentLinksCommand copySiteContentLinksCommand;
-        private CopySiteArticlesCommand copySiteArticlesCommand;
-        private CopySiteUpdateArticleIdsCommand copySiteUpdateArticleIdsCommand;
-        private CopySiteTemlatesCommand copySiteTemplatesCommand;
-        private CopySiteFilesCommand copySiteFilesCommand;
+        private CopySiteSettingsCommand _copySiteSettingsCommand;
+        private CopySiteContentsCommand _copySiteContentsCommand;
+        private CopySiteVirtualContentsCommand _copySiteVirtualContentsCommand;
+        private CopySiteContentLinksCommand _copySiteContentLinksCommand;
+        private CopySiteArticlesCommand _copySiteArticlesCommand;
+        private CopySiteUpdateArticleIdsCommand _copySiteUpdateArticleIdsCommand;
+        private CopySiteTemlatesCommand _copySiteTemplatesCommand;
+        private CopySiteFilesCommand _copySiteFilesCommand;
 
         public override void SetupWithParams(int parentId, int oldSiteId, IMultistepActionParams settingsParams)
         {
@@ -28,38 +25,37 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
 
         public override MultistepActionSettings Setup(int parentId, int siteId, bool? boundToExternal)
         {
-
-            Site site = SiteRepository.GetById(siteId);
-
+            var site = SiteRepository.GetById(siteId);
             if (site == null)
             {
-                throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, siteId));
+                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, siteId));
             }
 
-            int contentCount = SiteRepository.GetSiteRealContentCount(siteId);
-            int virtualContentCount = SiteRepository.GetSiteVirtualContentCount(siteId);
-            int siteContentLinksCount = SiteRepository.GetSiteContentLinkCount(siteId);
-            int siteArticlesCount = ContentRepository.GetArticlesCountOnSite(siteId);
-            int siteTemplatesElementsCount = ObjectRepository.GetTemplatesElementsCountOnSite(siteId);
+            var contentCount = SiteRepository.GetSiteRealContentCount(siteId);
+            var virtualContentCount = SiteRepository.GetSiteVirtualContentCount(siteId);
+            var siteContentLinksCount = SiteRepository.GetSiteContentLinkCount(siteId);
+            var siteArticlesCount = ContentRepository.GetArticlesCountOnSite(siteId);
+            var siteTemplatesElementsCount = ObjectRepository.GetTemplatesElementsCountOnSite(siteId);
 
-            CopySiteSettings prms = (CopySiteSettings)HttpContext.Current.Session[CopySiteContextSessionKey];
-            if (prms.DoNotCopyArticles != null) {
+            var prms = (CopySiteSettings)HttpContext.Current.Session[CopySiteContextSessionKey];
+            if (prms.DoNotCopyArticles != null)
+            {
                 siteArticlesCount = ContentRepository.GetArticlesCountToCopy(prms.DoNotCopyArticles.Value, site.Id);
             }
 
             if (prms.DoNotCopyTemplates)
+            {
                 siteTemplatesElementsCount = 0;
+            }
 
-            copySiteSettingsCommand = new CopySiteSettingsCommand(siteId, site.Name);
-            copySiteContentsCommand = new CopySiteContentsCommand(siteId, site.Name, contentCount);
-            copySiteVirtualContentsCommand = new CopySiteVirtualContentsCommand(siteId, site.Name, virtualContentCount);
-
-            copySiteContentLinksCommand = new CopySiteContentLinksCommand(siteId, site.Name, siteContentLinksCount);
-
-            copySiteArticlesCommand = new CopySiteArticlesCommand(siteId, site.Name, siteArticlesCount);
-            copySiteUpdateArticleIdsCommand = new CopySiteUpdateArticleIdsCommand(siteId, siteArticlesCount);
-            copySiteTemplatesCommand = new CopySiteTemlatesCommand(siteId, site.Name, siteTemplatesElementsCount);
-            copySiteFilesCommand = new CopySiteFilesCommand(siteId, site.Name, prms.DoNotCopyFiles);
+            _copySiteSettingsCommand = new CopySiteSettingsCommand(siteId, site.Name);
+            _copySiteContentsCommand = new CopySiteContentsCommand(siteId, site.Name, contentCount);
+            _copySiteVirtualContentsCommand = new CopySiteVirtualContentsCommand(siteId, site.Name, virtualContentCount);
+            _copySiteContentLinksCommand = new CopySiteContentLinksCommand(siteId, site.Name, siteContentLinksCount);
+            _copySiteArticlesCommand = new CopySiteArticlesCommand(siteId, site.Name, siteArticlesCount);
+            _copySiteUpdateArticleIdsCommand = new CopySiteUpdateArticleIdsCommand(siteId, siteArticlesCount);
+            _copySiteTemplatesCommand = new CopySiteTemlatesCommand(siteId, site.Name, siteTemplatesElementsCount);
+            _copySiteFilesCommand = new CopySiteFilesCommand(siteId, site.Name, prms.DoNotCopyFiles);
 
             return base.Setup(parentId, siteId, boundToExternal);
         }
@@ -69,60 +65,59 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
         {
             return new MultistepActionSettings
             {
-                Stages = new[] 
-                { 
-                    copySiteSettingsCommand.GetStageSettings(),
-                    copySiteContentsCommand.GetStageSettings(),
-                    copySiteVirtualContentsCommand.GetStageSettings(),
-                    copySiteContentLinksCommand.GetStageSettings(),
-                    copySiteArticlesCommand.GetStageSettings(),
-                    copySiteUpdateArticleIdsCommand.GetStageSettings(),
-                    copySiteTemplatesCommand.GetStageSettings(),
-                    copySiteFilesCommand.GetStageSettings()
+                Stages = new[]
+                {
+                    _copySiteSettingsCommand.GetStageSettings(),
+                    _copySiteContentsCommand.GetStageSettings(),
+                    _copySiteVirtualContentsCommand.GetStageSettings(),
+                    _copySiteContentLinksCommand.GetStageSettings(),
+                    _copySiteArticlesCommand.GetStageSettings(),
+                    _copySiteUpdateArticleIdsCommand.GetStageSettings(),
+                    _copySiteTemplatesCommand.GetStageSettings(),
+                    _copySiteFilesCommand.GetStageSettings()
                 }
             };
         }
 
         protected override MultistepActionServiceContext CreateContext(int parentId, int id, bool? boundToExternal)
         {
-            MultistepActionStageCommandState commandState = copySiteContentsCommand.GetState();
             return new MultistepActionServiceContext
             {
-                CommandStates = new[] 
-                { 
-                    copySiteSettingsCommand.GetState(),
-                    copySiteContentsCommand.GetState(),
-                    copySiteVirtualContentsCommand.GetState(),
-                    copySiteContentLinksCommand.GetState(),
-                    copySiteArticlesCommand.GetState(),
-                    copySiteUpdateArticleIdsCommand.GetState(),
-                    copySiteTemplatesCommand.GetState(),
-                    copySiteFilesCommand.GetState()
+                CommandStates = new[]
+                {
+                    _copySiteSettingsCommand.GetState(),
+                    _copySiteContentsCommand.GetState(),
+                    _copySiteVirtualContentsCommand.GetState(),
+                    _copySiteContentLinksCommand.GetState(),
+                    _copySiteArticlesCommand.GetState(),
+                    _copySiteUpdateArticleIdsCommand.GetState(),
+                    _copySiteTemplatesCommand.GetState(),
+                    _copySiteFilesCommand.GetState()
                 }
             };
         }
 
-        protected string CopySiteContextSessionKey => "CopySiteService.Settings";
+        protected string CopySiteContextSessionKey => HttpContextSession.CopySiteServiceSettings;
 
         public override IMultistepActionSettings MultistepActionSettings(int siteId, int contentId)
         {
-            IMultistepActionSettings prms = new CopySiteParams();
-            return prms;
+            return new CopySiteParams();
         }
+
         public override void TearDown()
         {
             RemoveTempFiles();
             base.TearDown();
         }
-        private void RemoveTempFiles() 
+
+        private void RemoveTempFiles()
         {
-            CopySiteSettings prms = (CopySiteSettings)HttpContext.Current.Session[CopySiteContextSessionKey];
+            var prms = (CopySiteSettings)HttpContext.Current.Session[CopySiteContextSessionKey];
             if (prms != null)
             {
                 File.Delete(prms.PathForFileWithLinks);
                 File.Delete(prms.PathForFileWithFilesToCopy);
             }
-
         }
     }
 }

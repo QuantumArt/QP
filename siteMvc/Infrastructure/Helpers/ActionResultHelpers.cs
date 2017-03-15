@@ -2,7 +2,7 @@
 using System.Web.Mvc;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Factories;
 
@@ -10,7 +10,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {
     internal static class ActionResultHelpers
     {
-        internal static ActionResult GererateJsonError(ExceptionResultMode responseType, Exception ex)
+        internal static ActionResult GererateJsonResultFromException(ExceptionResultMode responseType, Exception ex)
         {
             Ensure.NotNull(ex);
             switch (responseType)
