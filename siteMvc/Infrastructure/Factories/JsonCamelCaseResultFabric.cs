@@ -18,7 +18,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Factories
                 return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Fail, Message = ex.Dump() });
             }
 
-            Logger.Log.Warn("There was an exception: ", ex);
+            Logger.Log.Error("There was an exception: ", ex);
             return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Error, Message = ex.Dump() });
         }
     }
