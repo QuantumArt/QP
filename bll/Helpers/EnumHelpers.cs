@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using QP8.Infrastucture;
 
 namespace Quantumart.QP8.BLL.Helpers
 {

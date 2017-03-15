@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure
+namespace QP8.Infrastucture
 {
     public class Utf8StringWriter : StringWriter
     {

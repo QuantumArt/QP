@@ -299,6 +299,7 @@
     <Compile Include="Infrastructure\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
     <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
+    <Compile Include="Infrastructure\Constants\ConfigConstants.cs" />
     <Compile Include="Infrastructure\Constants\HttpContextFormConstants.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
     <Compile Include="Infrastructure\ActionFilters\DisableBrowserCache.cs" />
@@ -310,8 +311,6 @@
     <Compile Include="Infrastructure\ActionFilters\ResponseHeaderAttribute.cs" />
     <Compile Include="Infrastructure\ActionResults\FileUploadJsonResult.cs" />
     <Compile Include="Infrastructure\ActionResults\JsonpResult.cs" />
-    <Compile Include="Infrastructure\ActionResults\JsonNetResult.cs" />
-    <Compile Include="Infrastructure\ActionResults\JsonCamelCaseResult.cs" />
     <Compile Include="Extensions\Controllers\QPController.cs" />
     <Compile Include="Infrastructure\Extensions\RulesExceptionExtensions.cs" />
     <Compile Include="Extensions\Helpers\AggregationListTemplateField.cs" />
@@ -319,6 +318,7 @@
     <Compile Include="Infrastructure\Extensions\UnityContainerExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XElementExtensions.cs" />
     <Compile Include="Infrastructure\Factories\JsonCamelCaseResultFabric.cs" />
+    <Compile Include="Infrastructure\Helpers\ConfigHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\GuidHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateQpActionHelpers.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateActionCorrecterService.cs" />
@@ -412,7 +412,6 @@
     <Compile Include="Infrastructure\Helpers\HashHelpers.cs" />
     <Compile Include="Infrastructure\Constants\XmlDbUpdateXDocumentConstants.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
-    <Compile Include="Infrastructure\Utf8StringWriter.cs" />
     <Compile Include="Scripts\Quantumart\JsLanguage.ashx.cs">
       <DependentUpon>JsLanguage.ashx</DependentUpon>
     </Compile>

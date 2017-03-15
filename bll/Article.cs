@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
+using QP8.Infrastucture;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;

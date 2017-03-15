@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Mono.Options;
 using QP8.Infrastructure.Logging;
-using Quantumart.QP8.BLL.Helpers;
+using QP8.Infrastucture;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Models;

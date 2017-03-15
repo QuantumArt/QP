@@ -1,10 +1,9 @@
 ﻿using System.Web.Mvc;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Exceptions;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.Abstract;
 
-namespace Quantumart.QP8.WebMvc.ViewModels
+namespace Quantumart.QP8.WebMvc.ViewModels.Library
 {
     public class FileViewModel : EntityViewModel
     {

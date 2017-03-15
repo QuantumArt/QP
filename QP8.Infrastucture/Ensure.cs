@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Quantumart.QP8.BLL.Helpers
+namespace QP8.Infrastucture
 {
     /// <summary>
     /// Helper class that will throw exceptions when conditions are not satisfied.

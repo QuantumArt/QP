@@ -1,7 +1,7 @@
 using System.Web;
 using System.Web.Mvc;
 using QP8.Infrastructure.Logging;
-using Quantumart.QP8.BLL.Helpers;
+using QP8.Infrastucture;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
@@ -47,7 +47,11 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.ActionFilters
 
             filterContext.ExceptionHandled = true;
             filterContext.HttpContext.Response.Clear();
-            filterContext.HttpContext.Response.StatusCode = 500;
+            if (ConfigHelpers.ShouldSet500ForHandledExceptions)
+            {
+                filterContext.HttpContext.Response.StatusCode = 500;
+            }
+
             filterContext.HttpContext.Response.TrySkipIisCustomErrors = true;
         }
 

@@ -5,9 +5,9 @@ using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Security;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
-using Quantumart.QP8.WebMvc.Extensions.Exceptions;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;
 
 namespace Quantumart.QP8.WebMvc.Controllers
