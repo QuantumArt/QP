@@ -157,7 +157,6 @@
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
-    <Compile Include="Helpers\Ensure.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
@@ -744,6 +743,10 @@
     <ProjectReference Include="..\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QP8.Infrastucture\QP8.Infrastucture.csproj">
+      <Project>{27BD20E7-1133-4D13-90C6-6565489DA612}</Project>
+      <Name>QP8.Infrastucture</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

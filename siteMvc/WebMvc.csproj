@@ -311,8 +311,6 @@
     <Compile Include="Infrastructure\ActionFilters\ResponseHeaderAttribute.cs" />
     <Compile Include="Infrastructure\ActionResults\FileUploadJsonResult.cs" />
     <Compile Include="Infrastructure\ActionResults\JsonpResult.cs" />
-    <Compile Include="Infrastructure\ActionResults\JsonNetResult.cs" />
-    <Compile Include="Infrastructure\ActionResults\JsonCamelCaseResult.cs" />
     <Compile Include="Extensions\Controllers\QPController.cs" />
     <Compile Include="Infrastructure\Extensions\RulesExceptionExtensions.cs" />
     <Compile Include="Extensions\Helpers\AggregationListTemplateField.cs" />
@@ -414,7 +412,6 @@
     <Compile Include="Infrastructure\Helpers\HashHelpers.cs" />
     <Compile Include="Infrastructure\Constants\XmlDbUpdateXDocumentConstants.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
-    <Compile Include="Infrastructure\Utf8StringWriter.cs" />
     <Compile Include="Scripts\Quantumart\JsLanguage.ashx.cs">
       <DependentUpon>JsLanguage.ashx</DependentUpon>
     </Compile>
