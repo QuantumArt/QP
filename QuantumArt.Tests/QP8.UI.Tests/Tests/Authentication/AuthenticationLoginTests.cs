@@ -2,9 +2,9 @@
 using AllureCSharpCommons.Attributes;
 using NUnit.Framework;
 using Nunit3AllureAdapter;
-using QP8.Infrastucture.TestTools.Selenium.PageObjects.Pages.Authentication;
-using QP8.Infrastucture.TestTools.Selenium.PageObjects.Pages.Main;
 using QP8.UI.Tests.Configuration;
+using QP8.UI.Tests.PageObjects.Pages.Authentication;
+using QP8.UI.Tests.PageObjects.Pages.Main;
 using QP8.UI.Tests.TestsData.Authentication;
 
 namespace QP8.UI.Tests.Tests.Authentication

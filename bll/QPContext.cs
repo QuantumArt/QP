@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using System.Web;
+using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Facades;

@@ -34,6 +34,16 @@
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\EnvironmentConfig.cs" />
     <Compile Include="Configuration\TestsConfig.cs" />
+    <Compile Include="PageObjects\Components\HeaderComponent.cs" />
+    <Compile Include="PageObjects\Components\TreeComponent.cs" />
+    <Compile Include="PageObjects\Elements\Button.cs" />
+    <Compile Include="PageObjects\Elements\Input.cs" />
+    <Compile Include="PageObjects\Elements\InputBasedElement.cs" />
+    <Compile Include="PageObjects\Elements\Link.cs" />
+    <Compile Include="PageObjects\Elements\Select.cs" />
+    <Compile Include="PageObjects\Pages\Authentication\AuthenticationPage.cs" />
+    <Compile Include="PageObjects\Pages\BasePage.cs" />
+    <Compile Include="PageObjects\Pages\Main\MainPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestsData\Authentication\AuthenticationTestsData.cs" />
     <Compile Include="TestsData\Feature.cs" />
@@ -132,4 +142,3 @@
   </Target>
   -->
 </Project>
-
