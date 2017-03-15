@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using QP8.Infrastucture.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.WebMvc.Infrastructure.ActionResults;
@@ -16,9 +17,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             switch (responseType)
             {
                 case ExceptionResultMode.UiAction:
-                    return new JsonNetResult<object>(new { success = false, message = ex.Message });
+                    return new JsonNetResult<object>(new { success = false, message = ex.Dump() });
                 case ExceptionResultMode.OperationAction:
-                    return new JsonResult { Data = MessageResult.Error(ex.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+                    return new JsonResult { Data = MessageResult.Error(ex.Dump()), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
                 case ExceptionResultMode.JSendResponse:
                     return JsonCamelCaseResultErrorHandlerFabric.Create(ex);
                 default:

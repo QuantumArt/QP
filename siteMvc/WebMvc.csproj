@@ -299,6 +299,7 @@
     <Compile Include="Infrastructure\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
     <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
+    <Compile Include="Infrastructure\Constants\ConfigConstants.cs" />
     <Compile Include="Infrastructure\Constants\HttpContextFormConstants.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
     <Compile Include="Infrastructure\ActionFilters\DisableBrowserCache.cs" />
@@ -319,6 +320,7 @@
     <Compile Include="Infrastructure\Extensions\UnityContainerExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XElementExtensions.cs" />
     <Compile Include="Infrastructure\Factories\JsonCamelCaseResultFabric.cs" />
+    <Compile Include="Infrastructure\Helpers\ConfigHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\GuidHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateQpActionHelpers.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateActionCorrecterService.cs" />
