@@ -27,10 +27,7 @@ namespace QP8.Integration.Tests
         [OneTimeSetUp]
         public static void Init()
         {
-            var settings = typeof(ConfigurationElementCollection)
-                    .GetField("bReadOnly", BindingFlags.Instance | BindingFlags.NonPublic);
-            settings.SetValue(ConfigurationManager.ConnectionStrings, false);
-            ConfigurationManager.ConnectionStrings.Add(new ConnectionStringSettings("qp_database", Global.ConnectionString, "System.Data.SqlClient"));
+            DBConnector.ConnectionString = Global.ConnectionString;
         }
 
         [Test]
