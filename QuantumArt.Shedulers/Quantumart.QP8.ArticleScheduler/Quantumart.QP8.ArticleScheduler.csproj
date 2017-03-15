@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{CC32A8B5-24B7-4EF1-B68E-DE755A136F70}</ProjectGuid>
+    <ProjectGuid>{BD9A445E-8510-489D-8001-409B777C46CD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Quantumart.QP8.Security</RootNamespace>
-    <AssemblyName>Quantumart.QP8.Security</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>Quantumart.QP8.ArticleScheduler</RootNamespace>
+    <AssemblyName>Quantumart.QP8.ArticleScheduler</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -38,15 +38,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\NLog.4.4.4\lib\net45\NLog.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,15 +51,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthenticationModule.cs" />
-    <Compile Include="AuthenticationHelper.cs" />
+    <Compile Include="DateRangeExtensions.cs" />
+    <Compile Include="DbScheduler.cs" />
+    <Compile Include="ExceptionHandler.cs" />
+    <Compile Include="IOperationsLogWriter.cs" />
+    <Compile Include="Onetime\OnetimeTask.cs" />
+    <Compile Include="Onetime\OnetimeTaskScheduler.cs" />
+    <Compile Include="OperationsLogWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QpIdentity.cs" />
-    <Compile Include="QPPrincipal.cs" />
-    <Compile Include="QpRolesManager.cs" />
-    <Compile Include="QPUser.cs" />
+    <Compile Include="Publishing\PublishingTask.cs" />
+    <Compile Include="Publishing\PublishingTaskScheduler.cs" />
+    <Compile Include="QPScheduler.cs" />
+    <Compile Include="QPSchedulerProcessor.cs" />
+    <Compile Include="Recurring\DailyStartCalc.cs" />
+    <Compile Include="Recurring\RecuringStartCalcBase.cs" />
+    <Compile Include="Recurring\RecurringTaskScheduler.cs" />
+    <Compile Include="Recurring\WeeklyStartCalc.cs" />
+    <Compile Include="Recurring\MonthlyStartCalc.cs" />
+    <Compile Include="Recurring\IRecuringStartCalc.cs" />
+    <Compile Include="Recurring\MonthlyRelativeStartCalc.cs" />
+    <Compile Include="Recurring\RecurringTask.cs" />
+    <Compile Include="Recurring\RecurringTaskTypes.cs" />
+    <Compile Include="UnityContainerCustomizer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)bll\BLL.csproj">
+      <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
+      <Name>BLL</Name>
+    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
@@ -71,12 +87,21 @@
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
     </ProjectReference>
+    <ProjectReference Include="$(SolutionDir)Resources\Resources.csproj">
+      <Project>{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}</Project>
+      <Name>Resources</Name>
+    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)utils\Utils.csproj">
       <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
+      <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -88,4 +113,3 @@
   </Target>
   -->
 </Project>
-

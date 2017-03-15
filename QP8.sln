@@ -24,9 +24,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validators", "validators\Va
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ArticleScheduler", "Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj", "{BD9A445E-8510-489D-8001-409B777C46CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ArticleScheduler", "QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj", "{BD9A445E-8510-489D-8001-409B777C46CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ArticleScheduler.WinService", "Quantumart.QP8.ArticleScheduler.WinService\Quantumart.QP8.ArticleScheduler.WinService.csproj", "{F4D41148-04F7-4FAD-A6A5-E8206D9E1C54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ArticleScheduler.WinService", "QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler.WinService\Quantumart.QP8.ArticleScheduler.WinService.csproj", "{F4D41148-04F7-4FAD-A6A5-E8206D9E1C54}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logging", "Logging", "{4ACC2102-63AD-4FEC-B5FB-4A942704BC53}"
 EndProject
@@ -45,15 +45,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merger", "Merger\Merger.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDbUpdate", "QP8.ConsoleDbUpdate\ConsoleDbUpdate.csproj", "{0978B8F2-3561-4E20-8ED3-91917B0600D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Core", "Quantumart.QP8.Scheduler.Core\Quantumart.QP8.Scheduler.Core.csproj", "{4E3C069F-0648-4989-81FB-A026B03562E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Core", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Core\Quantumart.QP8.Scheduler.Core.csproj", "{4E3C069F-0648-4989-81FB-A026B03562E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.API", "Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj", "{B35FEB42-4052-493F-B4EB-328A50453208}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.API", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj", "{B35FEB42-4052-493F-B4EB-328A50453208}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Notification", "Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj", "{4751A066-0F3B-400C-8303-30C1606EC34D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Notification", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj", "{4751A066-0F3B-400C-8303-30C1606EC34D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Service", "Quantumart.QP8.Scheduler.Service\Quantumart.QP8.Scheduler.Service.csproj", "{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Service", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Service\Quantumart.QP8.Scheduler.Service.csproj", "{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Users", "Quantumart.QP8.Scheduler.Users\Quantumart.QP8.Scheduler.Users.csproj", "{BD000ADE-0B97-464D-9376-73BB679A21FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Users", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Users\Quantumart.QP8.Scheduler.Users.csproj", "{BD000ADE-0B97-464D-9376-73BB679A21FC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DA4FC952-0EA9-4C16-A9FD-14662B603709}"
 EndProject
@@ -61,13 +61,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{214AED83-DC72-4279-A9F9-9BBA69CB785C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Integration.Tests", "QP8.Tests\QP8.Integration.Tests\QP8.Integration.Tests.csproj", "{89D19F8D-069F-47CA-9655-5B4D6618F875}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Integration.Tests", "QuantumArt.Tests\QP8.Integration.Tests\QP8.Integration.Tests.csproj", "{89D19F8D-069F-47CA-9655-5B4D6618F875}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.UI.Tests", "QP8.Tests\QP8.UI.Tests\QP8.UI.Tests.csproj", "{3DFA052F-930F-4914-BD6D-66E982CC31A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.UI.Tests", "QuantumArt.Tests\QP8.UI.Tests\QP8.UI.Tests.csproj", "{3DFA052F-930F-4914-BD6D-66E982CC31A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.WebMvc.NUnit.Tests", "QP8.Tests\QP8.WebMvc.NUnit.Tests\QP8.WebMvc.NUnit.Tests.csproj", "{12E512D3-A0D4-4AC6-84FA-D434A6AF063A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.WebMvc.NUnit.Tests", "QuantumArt.Tests\QP8.WebMvc.NUnit.Tests\QP8.WebMvc.NUnit.Tests.csproj", "{12E512D3-A0D4-4AC6-84FA-D434A6AF063A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.WebMvc.Tests", "QP8.Tests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.WebMvc.Tests", "QuantumArt.Tests\QP8.WebMvc.Tests\QP8.WebMvc.Tests.csproj", "{1B992EFD-F6DC-45C2-948C-AF4027D05F65}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{42BD44AF-78C8-4799-9EC5-113923D18639}"
 	ProjectSection(SolutionItems) = preProject
@@ -78,13 +78,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging.Web", "Logging.Web\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{C154FDD0-B9E5-4398-8462-F8243B45B73E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastucture", "QP8.Infrastucture\QP8.Infrastucture.csproj", "{27BD20E7-1133-4D13-90C6-6565489DA612}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastucture", "QuantumArt.Infrastructure\QP8.Infrastucture\QP8.Infrastucture.csproj", "{27BD20E7-1133-4D13-90C6-6565489DA612}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastucture.Web", "QP8.Infrastucture.Web\QP8.Infrastucture.Web.csproj", "{31A1D35E-BACD-4466-B857-6A48F2015569}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastucture.Web", "QuantumArt.Infrastructure\QP8.Infrastucture.Web\QP8.Infrastucture.Web.csproj", "{31A1D35E-BACD-4466-B857-6A48F2015569}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastucture.TestTools", "QP8.Infrastucture.TestTools\QP8.Infrastucture.TestTools.csproj", "{748B27A9-8060-40C3-9309-3A52FA39CA60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastucture.TestTools", "QuantumArt.Infrastructure\QP8.Infrastucture.TestTools\QP8.Infrastucture.TestTools.csproj", "{748B27A9-8060-40C3-9309-3A52FA39CA60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.Logging", "QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj", "{6E317F05-226C-4C9F-B918-FE71D743C3A3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.Logging", "QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj", "{6E317F05-226C-4C9F-B918-FE71D743C3A3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
