@@ -282,6 +282,12 @@
     <EmbeddedResource Include="..\siteMvc\bin\Microsoft.Web.Infrastructure.dll">
       <Link>References\Microsoft.Web.Infrastructure.dll</Link>
     </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Quantumart.2.0.7\lib\net45\Quantumart.dll">
+      <Link>References\Quantumart.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\packages\Quantumart.2.0.7\lib\net45\Quantumart.QP8.Assembling.dll">
+      <Link>References\Quantumart.QP8.Assembling.dll</Link>
+    </EmbeddedResource>
     <Content Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
