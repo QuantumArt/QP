@@ -12,7 +12,9 @@
     <copyright>$copyright$</copyright>
     <tags>QP</tags>
     <dependencies>
-        <dependency id="Quantumart" version="2.0.0" />
+      <dependency id="QP8.Infrastructure" version="1.0.0" />
+      <dependency id="QP8.Infrastructure.Logging" version="1.0.0" />
+      <dependency id="Quantumart" version="2.0.0" />
         <dependency id="QA.Configuration" version="1.0.1" />
         <dependency id="QA.Validation.Xaml" version="1.0.2" />
         <dependency id="QA.Validation.Xaml.Extensions" version="1.0.2" />
