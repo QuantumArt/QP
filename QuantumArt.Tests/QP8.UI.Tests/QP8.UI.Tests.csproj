@@ -55,8 +55,8 @@
     <Compile Include="Tests\Setup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="AllureCSharpCommons, Version=0.1.0.33073, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\AllureCSharpCommons.0.2.4\lib\net45\AllureCSharpCommons.dll</HintPath>
+    <Reference Include="AllureCSharpCommons, Version=0.2.4.37994, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\AllureCSharpCommons.0.2.5\lib\net45\AllureCSharpCommons.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">

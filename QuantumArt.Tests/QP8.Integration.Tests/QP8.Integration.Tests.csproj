@@ -42,8 +42,8 @@
       <HintPath>$(SolutionDir)packages\NUnit.3.6.1\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Quantumart, Version=2.0.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Quantumart.2.0.7\lib\net45\Quantumart.dll</HintPath>
+    <Reference Include="Quantumart, Version=2.0.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Quantumart.2.0.8\lib\net45\Quantumart.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -54,6 +54,7 @@
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Quantumart.2.0.7\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>..\..\packages\Quantumart.2.0.8\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -140,4 +141,3 @@
   </Target>
   -->
 </Project>
-

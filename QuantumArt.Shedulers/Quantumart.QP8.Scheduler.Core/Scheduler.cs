@@ -61,7 +61,7 @@ namespace Quantumart.QP8.Scheduler.Core
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log.Fatal("Sheduller task run error", ex);
+                        Logger.Log.Fatal("Scheduler task run error", ex);
                         interval = _repeatOnErrorInterval;
                     }
 
