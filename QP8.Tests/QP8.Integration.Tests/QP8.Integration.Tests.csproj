@@ -43,11 +43,11 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart, Version=2.0.7.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Quantumart.2.0.7\lib\net45\Quantumart.dll</HintPath>
+      <HintPath>..\..\packages\Quantumart.2.0.7\lib\net45\Quantumart.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Quantumart.2.0.7\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>..\..\packages\Quantumart.2.0.7\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
       <HintPath>..\..\packages\Quantumart.2.0.7\lib\net45\Quantumart.dll</HintPath>
       <Private>True</Private>
     </Reference>
