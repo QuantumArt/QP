@@ -569,14 +569,15 @@ namespace Quantumart.QP8.DAL
             if (ids.Any())
             {
                 var query = string.Format(
-                    "SELECT [item_id], [linked_item_id], link_id, title FROM( SELECT [item_id], [linked_item_id], link_id, CONVERT (NVARCHAR(255), [{3}]) as title, "
+                    "SELECT [item_id], [linked_item_id], link_id, title FROM( SELECT [item_id], [linked_item_id], link_id, CONVERT (NVARCHAR(255), [{2}]) as title, "
                     + " ROW_NUMBER() over (partition by item_id "
-                    + "order by linked_item_id) AS [RowNum] from [item_link_united] as u with(nolock) inner join content_{4}_united as c with(nolock) on u.linked_item_id = c.CONTENT_ITEM_ID"
-                    + " where item_id in ({0}) and link_id = {2}) as subq where subq.RowNum <= {1} ",
-                    string.Join(",", ids), maxNumberOfRecords + 1, linkId, displayFieldName, contentId);
+                    + "order by linked_item_id) AS [RowNum] from [item_link_united] as u with(nolock) inner join content_{3}_united as c with(nolock) on u.linked_item_id = c.CONTENT_ITEM_ID"
+                    + " where item_id in (select id from @ids) and link_id = {1}) as subq where subq.RowNum <= {0} ",
+                    maxNumberOfRecords + 1, linkId, displayFieldName, contentId);
 
                 using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
                 {
+                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
