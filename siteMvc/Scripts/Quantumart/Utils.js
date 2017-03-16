@@ -655,7 +655,7 @@ $q.htmlEncode = function htmlEncode(htmlContent, allowFormatText) {
 $q.cutShort = function cutShort(value, maxLength, endSymbol) {
   var result = $q.toString(value, '').trim();
   if (result.length > maxLength) {
-    result = result.left(maxLength).trim() + endSymbol || '…';
+    result = result.left(maxLength).trim() + (endSymbol || '…');
   }
 
   return result;
