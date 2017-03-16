@@ -31,11 +31,14 @@ namespace Quantumart.QP8.BLL.Factories
                     var linkedFilters = (ArticleRepository.GetLinkSearchParameter(searchQuery) ?? new ArticleLinkSearchParameter[0]).ToList();
                     var hasFtsSearchParams = !string.IsNullOrEmpty(ftsOptions.QueryString) && !(ftsOptions.HasError.HasValue && ftsOptions.HasError.Value);
                     var hasFilterSearchParams = !string.IsNullOrEmpty(sourceQuery) || linkedFilters.Any();
-                    var combinedFilter = string.IsNullOrWhiteSpace(sourceQuery) ? hostFilter : $"({hostFilter} AND {sourceQuery})";
+                    var combinedFilter = string.IsNullOrWhiteSpace(sourceQuery)
+                        ? hostFilter
+                        : string.IsNullOrWhiteSpace(hostFilter) ? sourceQuery : $"({hostFilter} AND {sourceQuery})";
+                    var filterForSmpl = string.IsNullOrWhiteSpace(combinedFilter) ? commonFilter : combinedFilter;
 
                     return hasFtsSearchParams || hasFilterSearchParams
                         ? new ArticleFtsProcessor(contentId, commonFilter, combinedFilter, linkedFilters, contextQuery, filterSqlParams, extensionContentIds, ftsOptions)
-                        : new ArticleSimpleProcessor(contentId, entityId, commonFilter, entityTypeCode, selectItemIDs) as ITreeProcessor;
+                        : new ArticleSimpleProcessor(contentId, entityId, filterForSmpl, entityTypeCode, selectItemIDs) as ITreeProcessor;
                 }
 
                 if (entityTypeCode == EntityTypeCode.SiteFolder || entityTypeCode == EntityTypeCode.ContentFolder)
