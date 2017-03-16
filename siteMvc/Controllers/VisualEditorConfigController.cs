@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Web.Mvc;
-using QP8.Infrastucture.Web.ActionResults;
+using QP8.Infrastructure.Web.ActionResults;
 using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
