@@ -7,7 +7,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.WebPages;
 using QP8.Infrastructure.Logging;
-using QP8.Infrastucture.Web.ActionResults;
+using QP8.Infrastructure.Web.ActionResults;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services.DTO;

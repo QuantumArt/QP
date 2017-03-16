@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 
-namespace QP8.Infrastucture.Web.ActionResults
+namespace QP8.Infrastructure.Web.ActionResults
 {
     public class JsonNetResult<T> : JsonResult
     {

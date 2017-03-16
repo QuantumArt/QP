@@ -1751,9 +1751,6 @@
     </Content>
     <Content Include="Views\VisualEditorConfig\AspellCheck.cshtml">
     </Content>
-    <Content Include="QP8BackendApi.Interaction.nuspec">
-      <SubType>Designer</SubType>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\basic.css" />
@@ -2408,9 +2405,9 @@
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastucture.Web\QP8.Infrastucture.Web.csproj">
-      <Project>{31a1d35e-bacd-4466-b857-6a48f2015569}</Project>
-      <Name>QP8.Infrastucture.Web</Name>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj">
+      <Project>{dbbec146-e74e-45df-a7fe-16701669a0f2}</Project>
+      <Name>QP8.Infrastructure.Web</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastucture\QP8.Infrastucture.csproj">
       <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
@@ -2465,5 +2462,3 @@
   </PropertyGroup>
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-
-
