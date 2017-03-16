@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
+using QP8.Infrastructure.Web.ActionResults;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
 

@@ -2,18 +2,19 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Mvc;
+using QP8.Infrastructure.Web.ActionResults;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Utils;
-using Quantumart.QP8.WebMvc.Extensions.ActionFilters;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
 using Quantumart.QP8.WebMvc.Extensions.Controllers;
 using Quantumart.QP8.WebMvc.Extensions.Helpers;
 using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
+using Quantumart.QP8.WebMvc.Infrastructure.ActionFilters;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -119,10 +120,12 @@ namespace Quantumart.QP8.WebMvc.Controllers
             int id,
             GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
-            string customFilter)
+            string customFilter,
+             bool? onlyIds)
+
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
-            var serviceResult = ArticleService.List(parentId, new[] { id }, command.GetListCommand(), searchQuery, null, customFilter, ftsParser);
+            var serviceResult = ArticleService.List(parentId, new[] { id }, command.GetListCommand(), searchQuery, null, customFilter, ftsParser, onlyIds);
             return View(new GridModel { Data = serviceResult.Data, Total = serviceResult.TotalRecords });
         }
 
@@ -278,7 +281,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonHtml("Properties", model);
         }
 
-        [RequestHeader("X-Requested-With", "XMLHttpRequest")]
+        [RequestHeader(RequestHeaders.XRequestedWith, "XMLHttpRequest")]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.EditArticle)]
         [EntityAuthorize(ActionTypeCode.Read, EntityTypeCode.Article, "id")]

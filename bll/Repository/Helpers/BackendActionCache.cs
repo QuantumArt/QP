@@ -2,15 +2,12 @@
 using System.Linq;
 using System.Web;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
+using Quantumart.QP8.Constants.Mvc;
 
 namespace Quantumart.QP8.BLL.Repository.Helpers
 {
     internal static class BackendActionCache
     {
-        private const string ActionCacheKey = "BackendActionCache.BackendActions";
-        private const string CustomActionCacheKey = "BackendActionCache.CustomBackendActions";
-
         private static IEnumerable<BackendAction> _actions;
         private static IEnumerable<CustomAction> _customActions;
 
@@ -23,12 +20,12 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                     return _actions ?? (_actions = LoadActions());
                 }
 
-                if (HttpContext.Current.Session[ActionCacheKey] == null)
+                if (HttpContext.Current.Session[HttpContextSession.BackendActionCache] == null)
                 {
-                    HttpContext.Current.Session[ActionCacheKey] = LoadActions();
+                    HttpContext.Current.Session[HttpContextSession.BackendActionCache] = LoadActions();
                 }
 
-                return HttpContext.Current.Session[ActionCacheKey] as IEnumerable<BackendAction>;
+                return HttpContext.Current.Session[HttpContextSession.BackendActionCache] as IEnumerable<BackendAction>;
             }
         }
 
@@ -73,12 +70,12 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
                     return _customActions ?? (_customActions = LoadCustomActions());
                 }
 
-                if (HttpContext.Current.Session[CustomActionCacheKey] == null)
+                if (HttpContext.Current.Session[HttpContextSession.BackendCustomActionCache] == null)
                 {
-                    HttpContext.Current.Session[CustomActionCacheKey] = LoadCustomActions();
+                    HttpContext.Current.Session[HttpContextSession.BackendCustomActionCache] = LoadCustomActions();
                 }
 
-                return HttpContext.Current.Session[CustomActionCacheKey] as IEnumerable<CustomAction>;
+                return HttpContext.Current.Session[HttpContextSession.BackendCustomActionCache] as IEnumerable<CustomAction>;
             }
         }
 
@@ -91,8 +88,8 @@ namespace Quantumart.QP8.BLL.Repository.Helpers
             }
             else
             {
-                HttpContext.Current.Session.Remove(ActionCacheKey);
-                HttpContext.Current.Session.Remove(CustomActionCacheKey);
+                HttpContext.Current.Session.Remove(HttpContextSession.BackendActionCache);
+                HttpContext.Current.Session.Remove(HttpContextSession.BackendCustomActionCache);
             }
         }
     }

@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Quantumart.QP8.BLL.Helpers;
+using QP8.Infrastucture;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Models.CsvDbUpdate;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.FileSystemReaders
 {

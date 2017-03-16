@@ -332,7 +332,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void HandleException(Exception ex)
         {
-            EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, "Policy");
+            EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, LoggingData.EnterpiseExceptionPolicyName);
         }
     }
 }

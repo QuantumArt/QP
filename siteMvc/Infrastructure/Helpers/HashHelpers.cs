@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using Quantumart.QP8.BLL.Helpers;
+using QP8.Infrastucture;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
 {

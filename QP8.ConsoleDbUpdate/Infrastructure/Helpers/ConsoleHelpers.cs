@@ -10,7 +10,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
         internal static void PrintHelloMessage()
         {
             WriteLineDebug();
-
             Console.WriteLine("QuantumArt DbUpdate for QP8 version 6.0.");
             Console.WriteLine($"Assembly version {CommonHelpers.GetAssemblyVersion()}.");
         }
@@ -58,24 +57,15 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
             }
         }
 
-        internal static ConsoleKey AskUserToSelectUtilityMode()
-        {
-            Console.WriteLine("Please choose option to process:");
-            Console.WriteLine("1. Continue with XmlImport");
-            Console.WriteLine("2. Continue with CsvImport");
-            Console.WriteLine("3. Quit");
-
-            return Console.ReadKey().Key;
-        }
-
         internal static ConsoleKey GetUtilityMode(string[] args)
         {
             var utilityMode = "ask";
             var options = new OptionSet
             {
-                { "m|mode=", m => { utilityMode = m; } },
-                { "s|silent", "enable silent mode for automatization", s => Program.IsSilentModeEnabled = s != null },
-                { "v|verbose", "increase debug message verbosity. [v|vv|vvv]:[error|warning|info]", v => ++Program.VerboseLevel }
+                {"m|mode=", m => { utilityMode = m; }},
+                {"s|silent", "enable silent mode for automatization", s => Program.IsSilentModeEnabled = s != null},
+                {"v|verbose", "increase debug message verbosity. [v|vv|vvv]:[error|warning|info]", v => ++Program.VerboseLevel},
+                {"h|help", "show this message and exit", h => utilityMode = h != null ? "help" : utilityMode}
             };
 
             options.Parse(args);
@@ -85,11 +75,32 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers
                     return ConsoleKey.NumPad1;
                 case "csv":
                     return ConsoleKey.NumPad2;
+                case "help":
+                    return AskUserToSelectHelpMode();
                 case "ask":
                     return AskUserToSelectUtilityMode();
             }
 
             throw new OptionException("Unexpected utility mode was specified", "m|mode=");
+        }
+
+        internal static ConsoleKey AskUserToSelectHelpMode()
+        {
+            Console.WriteLine("1. Show help for XmlImport");
+            Console.WriteLine("2. Show help for CsvImport");
+            Console.WriteLine("3. Quit");
+
+            return Console.ReadKey().Key;
+        }
+
+        internal static ConsoleKey AskUserToSelectUtilityMode()
+        {
+            Console.WriteLine("Please choose option to process:");
+            Console.WriteLine("1. Continue with XmlImport");
+            Console.WriteLine("2. Continue with CsvImport");
+            Console.WriteLine("3. Quit");
+
+            return Console.ReadKey().Key;
         }
 
         internal static void ExitProgram(ExitCode exitCode)

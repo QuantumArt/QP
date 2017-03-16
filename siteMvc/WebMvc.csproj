@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(SolutionDir)packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props" Condition="Exists('$(SolutionDir)packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" />
-  <Import Project="$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.2.0.1\build\Microsoft.Net.Compilers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -63,20 +63,24 @@
       <HintPath>$(SolutionDir)packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Castle.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Castle.Core.3.3.3\lib\net45\Castle.Core.dll</HintPath>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
+    <Reference Include="Elmah, Version=1.2.14706.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\elmah.corelibrary.1.2.2\lib\Elmah.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.0\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.SignalR.Core.2.2.1\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.1\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+    <Reference Include="Microsoft.AspNet.SignalR.SystemWeb, Version=2.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Microsoft.AspNet.SignalR.SystemWeb.2.2.1\lib\net45\Microsoft.AspNet.SignalR.SystemWeb.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.3\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -136,12 +140,20 @@
       <Private>True</Private>
       <HintPath>$(SolutionDir)packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="Moq, Version=4.5.23.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.5.23\lib\net45\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.7.1.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Moq.4.7.1\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\NLog.4.4.4\lib\net45\NLog.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NLog.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\NLog.Web.4.4.0\lib\net35\NLog.Web.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
@@ -149,7 +161,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="RazorGenerator.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\RazorGenerator.Mvc.2.4.7\lib\net40\RazorGenerator.Mvc.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\RazorGenerator.Mvc.2.4.9\lib\net40\RazorGenerator.Mvc.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -207,7 +219,7 @@
       <HintPath>$(SolutionDir)binaries\Telerik.Web.Mvc.dll</HintPath>
     </Reference>
     <Reference Include="WebActivatorEx, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7b26dc2a43f6a0d4, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\WebActivatorEx.2.1.0\lib\net40\WebActivatorEx.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\WebActivatorEx.2.2.0\lib\net40\WebActivatorEx.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -281,31 +293,32 @@
     <Compile Include="Controllers\ToolbarController.cs" />
     <Compile Include="Controllers\TreeMenuController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Extensions\ActionFilters\ActionAuthorizeAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\BackendActionContextAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\BackendActionLogAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\ConnectionScopeAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\ActionAuthorizeAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\BackendActionContextAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\BackendActionLogAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\ConnectionScopeAttribute.cs" />
     <Compile Include="Extensions\Helpers\RepeatDirection.cs" />
     <Compile Include="Infrastructure\Adapters\ThreadStorageScopeContext.cs" />
+    <Compile Include="Infrastructure\Constants\ConfigConstants.cs" />
+    <Compile Include="Infrastructure\Constants\HttpContextFormConstants.cs" />
     <Compile Include="Infrastructure\Enums\ConnectionScopeMode.cs" />
-    <Compile Include="Extensions\ActionFilters\DisableBrowserCache.cs" />
-    <Compile Include="Extensions\ActionFilters\EntityAuthorizeAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\ExceptionResultAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\NoTransactionConnectionScopeAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\RecordAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\RequestHeaderAttribute.cs" />
-    <Compile Include="Extensions\ActionFilters\ResponseHeaderAttribute.cs" />
-    <Compile Include="Extensions\ActionResults\FileUploadJsonResult.cs" />
-    <Compile Include="Extensions\ActionResults\JsonpResult.cs" />
-    <Compile Include="Extensions\ActionResults\JsonNetResult.cs" />
-    <Compile Include="Extensions\ActionResults\JsonCamelCaseResult.cs" />
+    <Compile Include="Infrastructure\ActionFilters\DisableBrowserCache.cs" />
+    <Compile Include="Infrastructure\ActionFilters\EntityAuthorizeAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\ExceptionResultAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\NoTransactionConnectionScopeAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\RecordAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\RequestHeaderAttribute.cs" />
+    <Compile Include="Infrastructure\ActionFilters\ResponseHeaderAttribute.cs" />
+    <Compile Include="Infrastructure\ActionResults\FileUploadJsonResult.cs" />
+    <Compile Include="Infrastructure\ActionResults\JsonpResult.cs" />
     <Compile Include="Extensions\Controllers\QPController.cs" />
-    <Compile Include="Extensions\Controllers\RulesViolationExceptionExtensions.cs" />
+    <Compile Include="Infrastructure\Extensions\RulesExceptionExtensions.cs" />
     <Compile Include="Extensions\Helpers\AggregationListTemplateField.cs" />
     <Compile Include="Infrastructure\Extensions\HttpContextBaseExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\UnityContainerExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XElementExtensions.cs" />
     <Compile Include="Infrastructure\Factories\JsonCamelCaseResultFabric.cs" />
+    <Compile Include="Infrastructure\Helpers\ConfigHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\GuidHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateQpActionHelpers.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\Interfaces\IXmlDbUpdateActionCorrecterService.cs" />
@@ -314,11 +327,9 @@
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateHttpContextProcessor.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateLogService.cs" />
     <Compile Include="Infrastructure\Services\XmlDbUpdate\XmlDbUpdateNonMvcReplayService.cs" />
-    <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateCommonConstants.cs" />
     <Compile Include="Infrastructure\Enums\ExceptionResultMode.cs" />
     <Compile Include="Infrastructure\Enums\JSendStatus.cs" />
     <Compile Include="Infrastructure\Extensions\ArrayExtensions.cs" />
-    <Compile Include="Infrastructure\Extensions\ObjectExtensions.cs" />
     <Compile Include="Infrastructure\Extensions\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\CommonHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\CultureHelpers.cs" />
@@ -384,11 +395,11 @@
     <Compile Include="Extensions\ModelBinders\VisualEditorPluginViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\VisualEditorStyleViewModelBinder.cs" />
     <Compile Include="Extensions\ModelBinders\WorkflowModelBinder.cs" />
-    <Compile Include="Extensions\SignalRUnityDependencyResolver.cs" />
+    <Compile Include="Infrastructure\UnityExtensions\SignalRUnityDependencyResolver.cs" />
     <Compile Include="App_Start\UnityDependencyResolver.cs" />
     <Compile Include="Extensions\ValidatorProviders\EntLibValidatorProvider.cs" />
     <Compile Include="Extensions\ValidatorProviders\EntLibValidatorWrapper.cs" />
-    <Compile Include="Extensions\ValueProviders\JsonNetValueProviderFactory.cs" />
+    <Compile Include="Infrastructure\ValueProviders\JsonNetValueProviderFactory.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -399,10 +410,8 @@
     <Compile Include="Infrastructure\Exceptions\XmlDbUpdateLoggingException.cs" />
     <Compile Include="Infrastructure\Extensions\XAttributeExtensions.cs" />
     <Compile Include="Infrastructure\Helpers\HashHelpers.cs" />
-    <Compile Include="Infrastructure\Constants\XmlDbUpdate\XmlDbUpdateXDocumentConstants.cs" />
+    <Compile Include="Infrastructure\Constants\XmlDbUpdateXDocumentConstants.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateSerializerHelpers.cs" />
-    <Compile Include="Infrastructure\Utf8StringWriter.cs" />
-    <Compile Include="Infrastructure\Configuration\NLogConfiguration.cs" />
     <Compile Include="Scripts\Quantumart\JsLanguage.ashx.cs">
       <DependentUpon>JsLanguage.ashx</DependentUpon>
     </Compile>
@@ -1372,6 +1381,7 @@
     <None Include="packages.config" />
     <Content Include="Scripts\immutablejs\immutable.js" />
     <Content Include="Scripts\immutablejs\immutable.min.js" />
+    <Content Include="Scripts\jquery\jquery.signalR-2.2.1.js" />
     <Content Include="Scripts\polyfills\console.fns.polyfill.js" />
     <Content Include="Scripts\polyfills\array.includes.polyfill.js" />
     <Content Include="Scripts\polyfills\array.find.polyfill.js" />
@@ -1524,7 +1534,6 @@
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\jquery\jquery.imgareaselect.js" />
     <Content Include="Scripts\jquery\jquery.nouislider.js" />
-    <Content Include="Scripts\jquery\jquery.signalR-2.2.0.js" />
     <Content Include="Scripts\Quantumart\languages\BackendDocumentHost.Lang.ru-ru.js" />
     <Content Include="Scripts\Quantumart\languages\BackendDocumentHost.Lang.js" />
     <Content Include="Scripts\Quantumart\languages\BackendCommunacation.Lang.ru-ru.js" />
@@ -1741,9 +1750,6 @@
     <Content Include="Views\Workflow\MultipleIndex.cshtml">
     </Content>
     <Content Include="Views\VisualEditorConfig\AspellCheck.cshtml">
-    </Content>
-    <Content Include="QP8BackendApi.Interaction.nuspec">
-      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
@@ -2359,22 +2365,6 @@
       <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
       <Name>Constants</Name>
     </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Logging.Loggers\Logging.Loggers.csproj">
-      <Project>{16422a3a-e435-4d6b-b0e0-f47ec0cfc705}</Project>
-      <Name>Logging.Loggers</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Logging.Templates\Logging.Templates.csproj">
-      <Project>{8933767b-4925-469c-92bc-1c6c37ed7ea8}</Project>
-      <Name>Logging.Templates</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Logging.Web\Logging.Web.csproj">
-      <Project>{bca701fb-1883-4831-8e11-ec55e67e3d31}</Project>
-      <Name>Logging.Web</Name>
-    </ProjectReference>
-    <ProjectReference Include="$(SolutionDir)Logging\Logging.csproj">
-      <Project>{2376f4db-61df-4440-bab7-5740e06cd945}</Project>
-      <Name>Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="$(SolutionDir)Merger\Merger.csproj">
       <Project>{cc2a4eab-777f-4b3c-8898-6fa1d00b2f7c}</Project>
       <Name>Merger</Name>
@@ -2394,6 +2384,34 @@
     <ProjectReference Include="$(SolutionDir)validators\Validators.csproj">
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging.Loggers\Logging.Loggers.csproj">
+      <Project>{16422A3A-E435-4D6B-B0E0-F47EC0CFC705}</Project>
+      <Name>Logging.Loggers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging.Templates\Logging.Templates.csproj">
+      <Project>{8933767b-4925-469c-92bc-1c6c37ed7ea8}</Project>
+      <Name>Logging.Templates</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging.Web\Logging.Web.csproj">
+      <Project>{BCA701FB-1883-4831-8E11-EC55E67E3D31}</Project>
+      <Name>Logging.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{2376F4DB-61DF-4440-BAB7-5740E06CD945}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
+      <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj">
+      <Project>{dbbec146-e74e-45df-a7fe-16701669a0f2}</Project>
+      <Name>QP8.Infrastructure.Web</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastucture\QP8.Infrastucture.csproj">
+      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+      <Name>QP8.Infrastucture</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -2442,12 +2460,5 @@
       start /MIN xcopy /s /y /R "$(OutDir)roslyn\*.*" "$(WebProjectOutputDir)\bin\Roslyn"
     </PostBuildEvent>
   </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.3.2\build\Microsoft.Net.Compilers.props'))" />
-    <Error Condition="!Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets'))" />
-  </Target>
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
 </Project>

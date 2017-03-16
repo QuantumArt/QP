@@ -1,4 +1,5 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template language="C#" debug="false" #>
+
 <#@ import namespace="Quantumart.QP8.Logging.Transformers" #>
 <#@ import namespace="Quantumart.QP8.Logging.Templates.Default" #>
 <#@ import namespace="Quantumart.QP8.Resources" #>

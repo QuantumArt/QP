@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template language="C#" debug="false" #>
 <#@ import namespace="Quantumart.QP8.Logging.Transformers" #>
 <#@ import namespace="Quantumart.QP8.Logging.Templates.Default" #>
 <#@ import namespace="Quantumart.QP8.BLL.Services.MultistepActions.Import" #>
@@ -15,4 +15,5 @@
     Step: <#= Model.Step #>
     Inserted: <#= Model.Settings.InsertedArticleIds.Count #>
     Updated: <#= Model.Settings.UpdatedArticleIds.Count #>
+
 <#= TemplateTransformer.Transform<ContextTextTemplate>(Model, Context) #>

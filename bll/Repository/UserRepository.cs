@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.DAL;
 using Quantumart.QP8.DAL.DTO;
@@ -109,8 +108,8 @@ namespace Quantumart.QP8.BLL.Repository
                 .Include("Groups")
                 .Include("LastModifiedByUser")
                 .SingleOrDefault(u => u.Id == id);
-            var user = MapperFacade.UserMapper.GetBizObject(dal);
-            return user;
+
+            return MapperFacade.UserMapper.GetBizObject(dal);
         }
 
         internal static User UpdateProfile(User user)

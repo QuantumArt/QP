@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.BLL</RootNamespace>
     <AssemblyName>Quantumart.QP8.BLL</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -92,8 +92,8 @@
       <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.3.10\lib\net45\NLog.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="QA.Configuration, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -108,12 +108,12 @@
       <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.0.2.0\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Quantumart, Version=2.0.6.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quantumart.2.0.6\lib\net45\Quantumart.dll</HintPath>
+    <Reference Include="Quantumart, Version=2.0.8.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quantumart.2.0.8\lib\net45\Quantumart.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quantumart.2.0.6\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>..\packages\Quantumart.2.0.8\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -138,7 +138,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adapters\Logging\NLogLogger.cs" />
     <Compile Include="Adapters\NonQpEnvironmentContext.cs" />
     <Compile Include="ArticleContextQueryParam.cs" />
     <Compile Include="ArticleContextSearchBlockItem.cs" />
@@ -152,14 +151,12 @@
     <Compile Include="Exceptions\ImportException.cs" />
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
-    <Compile Include="Factories\Logging\NullLogFactory.cs" />
-    <Compile Include="Factories\Logging\NLogFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
-    <Compile Include="Helpers\Ensure.cs" />
     <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
@@ -170,11 +167,6 @@
     <Compile Include="Interfaces\Db\IArticleRepository.cs" />
     <Compile Include="Interfaces\Db\IContentRepository.cs" />
     <Compile Include="Interfaces\Db\IFieldRepository.cs" />
-    <Compile Include="Interfaces\Logging\ILog.cs" />
-    <Compile Include="Interfaces\Logging\ILogFactory.cs" />
-    <Compile Include="Factories\Logging\LogProvider.cs" />
-    <Compile Include="Adapters\Logging\DiagnosticsDebugLogger.cs" />
-    <Compile Include="Factories\Logging\DiagnosticsLogFactory.cs" />
     <Compile Include="ListItems\ArticleListItem.cs" />
     <Compile Include="ArticleScheduleTask.cs" />
     <Compile Include="ArticleSearchQueryParam.cs" />
@@ -469,7 +461,6 @@
     <Compile Include="MultiActionSettingsTemplates.cs" />
     <Compile Include="Services\FormatService.cs" />
     <Compile Include="Interfaces\Services\IArticleService.cs" />
-    <Compile Include="Services\Logger.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesCommand.cs" />
     <Compile Include="Services\MultistepActions\Archive\ArchiveArticlesService.cs" />
     <Compile Include="Services\MultistepActions\Archive\RestoreArticlesCommand.cs" />
@@ -551,7 +542,6 @@
     <Compile Include="Services\API\ArticleScheduler\IArticleVisibleSchedulerService.cs" />
     <Compile Include="Services\Audit\BackendActionLogService.cs" />
     <Compile Include="Services\Audit\ButtonTraceService.cs" />
-    <Compile Include="Services\ContentInitListResult.cs" />
     <Compile Include="Services\CustomActionService.cs" />
     <Compile Include="ListItems\ContentListFilter.cs" />
     <Compile Include="ListItems\CustomActionListItem.cs" />
@@ -674,8 +664,8 @@
     <Compile Include="Services\TreeMenuService.cs" />
     <Compile Include="Services\UserGroupService.cs" />
     <Compile Include="Services\UserService.cs" />
-    <Compile Include="Services\UserSinchronization\IUserSynchronizationService.cs" />
-    <Compile Include="Services\UserSinchronization\UserSynchronizationService.cs" />
+    <Compile Include="Services\UserSynchronization\IUserSynchronizationService.cs" />
+    <Compile Include="Services\UserSynchronization\UserSynchronizationService.cs" />
     <Compile Include="Services\VirtualContentService.cs" />
     <Compile Include="Services\VirtualFieldService.cs" />
     <Compile Include="Services\IVisualEditorService.cs" />
@@ -750,14 +740,26 @@
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
+      <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastucture\QP8.Infrastucture.csproj">
+      <Project>{27BD20E7-1133-4D13-90C6-6565489DA612}</Project>
+      <Name>QP8.Infrastucture</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UnityExtensions\" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="BLL.nuspec">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

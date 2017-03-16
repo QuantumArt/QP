@@ -65,9 +65,9 @@ namespace Quantumart.QP8.Logging.Templates.Import
             
             #line default
             #line hidden
-            this.Write("\r\n");
+            this.Write("\r\n\r\n");
             
-            #line 17 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportEndTemplate.tt"
+            #line 18 "C:\ProxyDocuments\Projects\QP\Logging.Templates\Import\ImportEndTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TemplateTransformer.Transform<ContextTextTemplate>(Model, Context)));
             
             #line default

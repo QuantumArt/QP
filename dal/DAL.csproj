@@ -144,6 +144,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="scripts\ArchiveArticleSearch\1_qp_all_article_search.sql" />
+    <Content Include="scripts\UpdateM2O\1_qp_update_m2o.sql" />
     <Content Include="scripts\data.sql" />
     <Content Include="scripts\EFTablesViews\1_ef_base.sql" />
     <Content Include="scripts\EFTablesViews\2_link_tables.sql" />

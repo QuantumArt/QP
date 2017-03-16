@@ -1,12 +1,12 @@
 using System;
 using Mono.Options;
+using QP8.Infrastucture.Extensions;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
-using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Helpers;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
-using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.Infrastructure.Helpers;
 
 namespace Quantumart.QP8.ConsoleDbUpdate

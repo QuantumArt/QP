@@ -1,8 +1,9 @@
 ﻿using System.Web;
+using QP8.Infrastucture;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
-using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
@@ -53,7 +54,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Export
         public MultistepActionStepResult Step(int step)
         {
             var content = ContentRepository.GetById(ContentId);
-            var settings = HttpContext.Current.Session[CsvExport.ExportSettingsSessionKey] as ExportSettings;
+            var settings = HttpContext.Current.Session[HttpContextSession.ExportSettingsSessionKey] as ExportSettings;
             Ensure.NotNull(content, string.Format(ContentStrings.ContentNotFound, ContentId));
             Ensure.NotNull(settings);
 

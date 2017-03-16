@@ -1,7 +1,7 @@
-﻿using System;
-using Quantumart.QP8.BLL.Services;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
+using System;
+using QP8.Infrastructure.Logging;
+using QP8.Infrastucture.Extensions;
+using QP8.Infrastructure.Web.ActionResults;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Exceptions;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -14,11 +14,12 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Factories
         {
             if (ex is XmlDbUpdateLoggingException || ex is XmlDbUpdateReplayActionException)
             {
-                Logger.Log.Warn("There was an exception in XmlDbUpdateService: ", ex);
-                return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Fail, Message = ex.Message });
+                Logger.Log.Warn("There was an exception at XmlDbUpdateService: ", ex);
+                return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Fail, Message = ex.Dump() });
             }
 
-            return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Error, Message = GlobalStrings._500Error });
+            Logger.Log.Error("There was an exception: ", ex);
+            return new JsonCamelCaseResult<JSendResponse>(new JSendResponse { Status = JSendStatus.Error, Message = ex.Dump() });
         }
     }
 }

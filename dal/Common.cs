@@ -569,14 +569,15 @@ namespace Quantumart.QP8.DAL
             if (ids.Any())
             {
                 var query = string.Format(
-                    "SELECT [item_id], [linked_item_id], link_id, title FROM( SELECT [item_id], [linked_item_id], link_id, CONVERT (NVARCHAR(255), [{3}]) as title, "
+                    "SELECT [item_id], [linked_item_id], link_id, title FROM( SELECT [item_id], [linked_item_id], link_id, CONVERT (NVARCHAR(255), [{2}]) as title, "
                     + " ROW_NUMBER() over (partition by item_id "
-                    + "order by linked_item_id) AS [RowNum] from [item_link_united] as u with(nolock) inner join content_{4}_united as c with(nolock) on u.linked_item_id = c.CONTENT_ITEM_ID"
-                    + " where item_id in ({0}) and link_id = {2}) as subq where subq.RowNum <= {1} ",
-                    string.Join(",", ids), maxNumberOfRecords + 1, linkId, displayFieldName, contentId);
+                    + "order by linked_item_id) AS [RowNum] from [item_link_united] as u with(nolock) inner join content_{3}_united as c with(nolock) on u.linked_item_id = c.CONTENT_ITEM_ID"
+                    + " where item_id in (select id from @ids) and link_id = {1}) as subq where subq.RowNum <= {0} ",
+                    maxNumberOfRecords + 1, linkId, displayFieldName, contentId);
 
                 using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
                 {
+                    cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
                     using (var reader = cmd.ExecuteReader())
                     {
                         while (reader.Read())
@@ -1048,7 +1049,9 @@ namespace Quantumart.QP8.DAL
         public static void M2MtoO2MTranferData(SqlConnection сonnection, int fieldId, int linkId)
         {
             // перенести данные о связях из item_to_item в CONTENT_DATA.
-            using (var cmd = SqlCommandFactory.Create("update CONTENT_DATA SET DATA = LD.linked_item_id from dbo.item_link_united LD where LD.item_id = CONTENT_DATA.CONTENT_ITEM_ID and CONTENT_DATA.ATTRIBUTE_ID = @fid and LD.link_id = @linkid", сonnection))
+            const string cmdText = "update CONTENT_DATA SET DATA = LD.linked_item_id from dbo.item_link_united LD where LD.item_id = CONTENT_DATA.CONTENT_ITEM_ID and CONTENT_DATA.ATTRIBUTE_ID = @fid and LD.link_id = @linkid; " +
+                                   "update CONTENT_DATA SET DATA = NULL where CONTENT_DATA.ATTRIBUTE_ID = @fid and CONTENT_DATA.DATA = @linkid;";
+            using (var cmd = SqlCommandFactory.Create(cmdText, сonnection))
             {
                 cmd.Parameters.AddWithValue("@fid", fieldId);
                 cmd.Parameters.AddWithValue("@linkid", linkId);
@@ -10046,6 +10049,62 @@ namespace Quantumart.QP8.DAL
         private static IList<DataRow> GetDatatableResult(SqlConnection cn, StringBuilder queryBuilder, params SqlParameter[] @params)
         {
             return GetDatatableResult(cn, queryBuilder.ToString(), @params);
+        }
+
+        public static int[] GetArticleIdsByGuids(SqlConnection sqlConnection, Guid[] guids)
+        {
+            if (guids == null)
+            {
+                throw new ArgumentNullException(nameof(guids));
+            }
+
+            var xmlQuery = "SELECT doc.col.value('.[1]', 'nvarchar(max)') UNIQUE_ID FROM @xml.nodes('/guids/guid') doc(col)";
+            var query = $"select isnull(ci.content_item_id, 0), guids.unique_id from ({xmlQuery}) guids left join content_item ci with (nolock) on ci.unique_id = guids.unique_id";
+
+            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+
+                var doc = new XDocument(new XElement("guids"));
+                doc.Root.Add(guids.Select(n => new XElement("guid", n.ToString())));
+                cmd.Parameters.Add(new SqlParameter("@xml", SqlDbType.Xml) { Value = doc.ToString() });
+
+                var result = new Dictionary<Guid,int>();
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        result.Add(new Guid(dr.GetString(1)), (int)dr.GetDecimal(0));
+                    }
+                }
+                return guids.Select(n => result[n]).ToArray();
+            }
+        }
+
+        public static Guid[] GetArticleGuidsByIds(SqlConnection sqlConnection, int[] ids)
+        {
+            if (ids == null)
+            {
+                throw new ArgumentNullException(nameof(ids));
+            }
+
+            var query = @"select ci.unique_id, ids.Id from @ids ids left join content_item ci with (nolock) on ci.content_item_id = ids.Id";
+
+            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.Parameters.Add(GetIdsDatatableParam("@ids", ids));
+
+                var result = new Dictionary<int, Guid>();
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        result.Add((int)dr.GetDecimal(1), dr.IsDBNull(0) ? Guid.Empty : dr.GetGuid(0));
+                    }
+                }
+                return ids.Select(n => result[n]).ToArray();
+            }
         }
     }
 }

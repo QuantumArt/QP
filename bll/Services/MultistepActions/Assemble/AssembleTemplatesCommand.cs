@@ -1,98 +1,92 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
-using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Helpers;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Assemble
 {
-	internal class AssembleTemplatesCommand : IMultistepActionStageCommand
-	{
-		private static readonly int ITEMS_PER_STEP = 1;
-		private static readonly string SESSION_KEY = "AssembleTemplatesCommand.ProcessingContext";
+    internal class AssembleTemplatesCommand : IMultistepActionStageCommand
+    {
+        private const int ItemsPerStep = 1;
 
-		public int SiteId { get; private set; }
-		public string SiteName { get; private set; }
+        public int SiteId { get; }
 
-		private int itemCount = 0;
+        public string SiteName { get; }
 
-		public AssembleTemplatesCommand(MultistepActionStageCommandState state) : this(state.Id, null) { }
+        private int _itemCount;
 
-		public AssembleTemplatesCommand(int siteId, string sitetName)
-		{
-			SiteId = siteId;
-			SiteName = sitetName;
-		}
+        public AssembleTemplatesCommand(MultistepActionStageCommandState state) : this(state.Id, null) { }
 
-		internal void Setup()
-		{
-			IEnumerable<int> templateIds = AssembleRepository.GetSiteTemplatesId(SiteId);
-			itemCount = templateIds.Count();
-			HttpContext.Current.Session[SESSION_KEY] = new AssembleTemplatesCommandContext
-			{
-				TemplateIds = templateIds.ToArray()
-			};
-		}
+        public AssembleTemplatesCommand(int siteId, string sitetName)
+        {
+            SiteId = siteId;
+            SiteName = sitetName;
+        }
 
-		internal static void TearDown()
-		{
-			HttpContext.Current.Session[SESSION_KEY] = null;
-		}
+        internal void Setup()
+        {
+            var templateIds = AssembleRepository.GetSiteTemplatesId(SiteId);
+            _itemCount = templateIds.Count();
 
-		public MultistepActionStageCommandState GetState()
-		{
-			return new MultistepActionStageCommandState
-			{
-				Type = BuildSiteStageCommandTypes.BuildTemplates,
-				ParentId = 0,
-				Id = SiteId
-			};
-		}
+            HttpContext.Current.Session[HttpContextSession.AssembleTemplatesCommandProcessingContext] = new AssembleTemplatesCommandContext
+            {
+                TemplateIds = templateIds.ToArray()
+            };
+        }
 
-		public MultistepStageSettings GetStageSettings()
-		{
-			return new MultistepStageSettings
-			{
-				ItemCount = itemCount,
-				StepCount = MultistepActionHelper.GetStepCount(itemCount, ITEMS_PER_STEP),
-				Name = String.Format(SiteStrings.AssembleTemplatesStageName, (SiteName ?? ""))
-			};
-		}
+        internal static void TearDown()
+        {
+            HttpContext.Current.Session[HttpContextSession.AssembleTemplatesCommandProcessingContext] = null;
+        }
 
-		
+        public MultistepActionStageCommandState GetState()
+        {
+            return new MultistepActionStageCommandState
+            {
+                Type = BuildSiteStageCommandTypes.BuildTemplates,
+                ParentId = 0,
+                Id = SiteId
+            };
+        }
 
-		#region IMultistepActionStageCommand Members
+        public MultistepStageSettings GetStageSettings()
+        {
+            return new MultistepStageSettings
+            {
+                ItemCount = _itemCount,
+                StepCount = MultistepActionHelper.GetStepCount(_itemCount, ItemsPerStep),
+                Name = string.Format(SiteStrings.AssembleTemplatesStageName, SiteName ?? string.Empty)
+            };
+        }
 
-		public MultistepActionStepResult Step(int step)
-		{
-			AssembleTemplatesCommandContext context = HttpContext.Current.Session[SESSION_KEY] as AssembleTemplatesCommandContext;
-			IEnumerable<int> templateIds = context.TemplateIds
-				.Skip(step * ITEMS_PER_STEP)
-				.Take(ITEMS_PER_STEP)
-				.ToArray();
-			if(templateIds.Any())
-			{
-				foreach(int id in templateIds)
-				{
-					new AssembleTemplateObjectsController(id, QPContext.CurrentDbConnectionString).Assemble();
-				}
-			}
-			return new MultistepActionStepResult { ProcessedItemsCount = ITEMS_PER_STEP };
-		}
+        public MultistepActionStepResult Step(int step)
+        {
+            var context = HttpContext.Current.Session[HttpContextSession.AssembleTemplatesCommandProcessingContext] as AssembleTemplatesCommandContext;
+            IEnumerable<int> templateIds = context.TemplateIds
+                .Skip(step * ItemsPerStep)
+                .Take(ItemsPerStep)
+                .ToArray();
 
-		#endregion
+            if (templateIds.Any())
+            {
+                foreach (var id in templateIds)
+                {
+                    new AssembleTemplateObjectsController(id, QPContext.CurrentDbConnectionString).Assemble();
+                }
+            }
 
-		
-	}
+            return new MultistepActionStepResult { ProcessedItemsCount = ItemsPerStep };
+        }
+    }
 
-	[Serializable]
-	public class AssembleTemplatesCommandContext
-	{
-		public int[] TemplateIds { get; set; }
-	}
-
+    [Serializable]
+    public class AssembleTemplatesCommandContext
+    {
+        public int[] TemplateIds { get; set; }
+    }
 }

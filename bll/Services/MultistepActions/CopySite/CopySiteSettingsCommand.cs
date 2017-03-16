@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web;
 using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
@@ -11,28 +9,33 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
     public class CopySiteSettingsCommand : IMultistepActionStageCommand
     {
         public int SiteId { get; set; }
+
         public int? NewSiteId { get; set; }
+
         public string SiteName { get; set; }
 
-        public CopySiteSettingsCommand(MultistepActionStageCommandState state) : this(state.Id, null) { }
+        public CopySiteSettingsCommand(MultistepActionStageCommandState state)
+            : this(state.Id, null) { }
 
         public CopySiteSettingsCommand(int siteId, string siteName)
         {
-            Site site = SiteRepository.GetById(siteId);
+            var site = SiteRepository.GetById(siteId);
 
             if (site == null)
             {
-                throw new ApplicationException(String.Format(SiteStrings.SiteNotFound, siteId));
+                throw new ApplicationException(string.Format(SiteStrings.SiteNotFound, siteId));
             }
 
-            this.SiteId = siteId;
-            this.SiteName = siteName;
-            CopySiteSettings prms = (CopySiteSettings)HttpContext.Current.Session["CopySiteService.Settings"];
-            this.NewSiteId = prms.DestinationSiteId;
+            SiteId = siteId;
+            SiteName = siteName;
+
+            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            NewSiteId = prms.DestinationSiteId;
         }
+
         public MultistepActionStepResult Step(int step)
         {
-            MultistepActionStepResult result = new MultistepActionStepResult();
+            var result = new MultistepActionStepResult();
             SiteService.CopySiteSettings(SiteId, NewSiteId.Value);
             return result;
         }
@@ -53,7 +56,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             {
                 ItemCount = 1,
                 StepCount = 1,
-                Name = String.Format(SiteStrings.CopySiteSettings, (SiteName ?? ""))
+                Name = string.Format(SiteStrings.CopySiteSettings, SiteName ?? string.Empty)
             };
         }
     }

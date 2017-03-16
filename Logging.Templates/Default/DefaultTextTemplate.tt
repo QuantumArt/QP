@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template language="C#" debug="false" #>
 <#@ import namespace="System.Diagnostics" #>
 <#@ parameter name="LogEntry" type="Microsoft.Practices.EnterpriseLibrary.Logging.LogEntry" #>
 <#@ parameter name="TraceOptions" type="System.Diagnostics.TraceOptions" #>

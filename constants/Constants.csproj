@@ -58,12 +58,10 @@
     <Compile Include="ArticleViewType.cs" />
     <Compile Include="ContentSelectMode.cs" />
     <Compile Include="ContextMenuCodes.cs" />
-    <Compile Include="CsvExport.cs" />
     <Compile Include="FieldSelectMode.cs" />
     <Compile Include="CssClasses.cs" />
     <Compile Include="DocumentContextState.cs" />
     <Compile Include="DateTimePickerMode.cs" />
-    <Compile Include="ApplicationConfigurationKeys.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="DayOfWeek.cs" />
     <Compile Include="DaySpecifyingType.cs" />
@@ -77,7 +75,16 @@
     <Compile Include="ActionMessageType.cs" />
     <Compile Include="GroupItemCodes.cs" />
     <Compile Include="ListSelectionMode.cs" />
+    <Compile Include="LoggingData.cs" />
     <Compile Include="MainComponentType.cs" />
+    <Compile Include="Mvc\HttpContextItems.cs" />
+    <Compile Include="Mvc\HttpContextSession.cs" />
+    <Compile Include="Mvc\HttpRouteData.cs" />
+    <Compile Include="Mvc\MimeTypes.cs" />
+    <Compile Include="Mvc\RequestServerVariables.cs" />
+    <Compile Include="Mvc\RequestHeaders.cs" />
+    <Compile Include="Mvc\ResponseHeaders.cs" />
+    <Compile Include="Mvc\WebConfigSections.cs" />
     <Compile Include="NotificationCode.cs" />
     <Compile Include="ObjectSecurityMode.cs" />
     <Compile Include="Plupload.cs" />
@@ -107,6 +114,7 @@
     <Compile Include="VirtualType.cs" />
     <Compile Include="WeekOfMonth.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

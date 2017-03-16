@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
+using QP8.Infrastucture;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -65,7 +66,8 @@ namespace Quantumart.QP8.BLL
             SetDefaultStatusAndVisibility();
         }
 
-        internal Article(Content content, Dictionary<string, string> predefinedValues) : this(content)
+        internal Article(Content content, Dictionary<string, string> predefinedValues)
+            : this(content)
         {
             PredefinedValues = predefinedValues;
         }
@@ -419,8 +421,8 @@ namespace Quantumart.QP8.BLL
             }
             else
             {
-                var articleByGuid = ArticleRepository.GetByGuid(UniqueId.Value);
-                if (articleByGuid != null && articleByGuid.Id != Id)
+                var idByGuid = new ArticleRepository().GetIdByGuid(UniqueId.Value);
+                if (idByGuid != 0 && idByGuid != Id)
                 {
                     errors.CriticalErrorForModel(ArticleStrings.GuidShouldBeUnique);
                 }

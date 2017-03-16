@@ -1,10 +1,11 @@
 using System;
 using System.Transactions;
 using System.Web;
+using QP8.Infrastucture;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
-using Quantumart.QP8.Constants;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Resources;
 
@@ -47,7 +48,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public MultistepActionStepResult Step(int step)
         {
-            var settings = HttpContext.Current.Session[CsvExport.ImportSettingsSessionKey] as ImportSettings;
+            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
             Ensure.NotNull(settings);
 
             var reader = new CsvReader(SiteId, ContentId, settings);

@@ -4,7 +4,7 @@ using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
-using Quantumart.QP8.WebMvc.Extensions.Controllers;
+using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 
 namespace Quantumart.QP8.WebMvc.ViewModels.User
 {
@@ -18,7 +18,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.User
             }
             catch (RulesException ex)
             {
-                ex.CopyTo(modelState, "Data");
+                ex.Extend(modelState, "Data");
                 IsValid = false;
             }
         }

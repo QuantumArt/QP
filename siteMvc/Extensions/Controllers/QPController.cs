@@ -4,12 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Routing;
 using System.Web.WebPages;
+using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Web.ActionResults;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Services;
 using Quantumart.QP8.BLL.Services.DTO;
+using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.WebMvc.Extensions.ActionResults;
+using Quantumart.QP8.Constants.Mvc;
+using Quantumart.QP8.WebMvc.Infrastructure.Constants;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels;
@@ -30,11 +35,17 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             DbArticleService = dbArticleService;
         }
 
+        protected override void Initialize(RequestContext requestContext)
+        {
+            base.Initialize(requestContext);
+            Logger.Log.SetContext(LoggingData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
+        }
+
         public string RenderPartialView(string partialViewName, object model)
         {
             if (string.IsNullOrEmpty(partialViewName))
             {
-                partialViewName = ControllerContext.RouteData.GetRequiredString("action");
+                partialViewName = ControllerContext.RouteData.GetRequiredString(HttpRouteData.Action);
             }
 
             ViewData.Model = model;
@@ -89,8 +100,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         public static bool IsError(HttpContextBase context)
         {
             var form = context.Request.Form;
-            var formResult = form != null && form.AllKeys.Contains("isError") && bool.Parse(form["isError"]);
-            return formResult || context.Items.Contains("IS_ERROR");
+            var formResult = form != null && form.AllKeys.Contains(HttpContextFormConstants.IsError) && bool.Parse(form[HttpContextFormConstants.IsError]);
+            return formResult || context.Items.Contains(HttpContextItems.IsError);
         }
 
         public ActionResult Redirect(string actionName, object routeValues)
@@ -112,7 +123,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
             if (result != null && result.Type == ActionMessageType.Error)
             {
-                ControllerContext.RequestContext.HttpContext.Items.Add("IS_ERROR", true);
+                ControllerContext.RequestContext.HttpContext.Items.Add(HttpContextItems.IsError, true);
             }
 
             return result;
@@ -143,61 +154,61 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
 
         public void PersistFromId(int id)
         {
-            PersistToHttpContext("FROM_ID", id);
+            PersistToHttpContext(HttpContextItems.FromId, id);
         }
 
         public void PersistFromId(int id, Guid guid)
         {
-            PersistToHttpContext("FROM_ID", id);
-            PersistToHttpContext("FROM_GUID", guid.ToString());
+            PersistToHttpContext(HttpContextItems.FromId, id);
+            PersistToHttpContext(HttpContextItems.FromGuid, guid.ToString());
         }
 
         public void PersistFromIds(int[] ids)
         {
-            PersistToHttpContext("FROM_ID", ids);
+            PersistToHttpContext(HttpContextItems.FromId, ids);
         }
 
         public void PersistFromIds(int[] ids, Guid[] guids)
         {
-            PersistToHttpContext("FROM_ID", ids);
-            PersistToHttpContext("FROM_GUID", guids);
+            PersistToHttpContext(HttpContextItems.FromId, ids);
+            PersistToHttpContext(HttpContextItems.FromGuid, guids);
         }
 
         public void PersistResultId(int id)
         {
             BackendActionContext.Current.ResetEntityId(id);
-            PersistToHttpContext("RESULT_ID", id);
+            PersistToHttpContext(HttpContextItems.ResultId, id);
         }
 
         public void PersistResultId(int id, Guid guid)
         {
             PersistResultId(id);
-            PersistToHttpContext("RESULT_GUID", guid.ToString());
+            PersistToHttpContext(HttpContextItems.ResultGuid, guid.ToString());
         }
 
         public void PersistActionCode(string name)
         {
-            PersistToHttpContext("ACTION_CODE", name);
+            PersistToHttpContext(HttpContextItems.ActionCode, name);
         }
 
         public void PersistLinkId(int? oldLinkId, int? newLinkId)
         {
             if (newLinkId.HasValue && newLinkId.Value > 0 && (!oldLinkId.HasValue || oldLinkId.Value != newLinkId.Value))
             {
-                PersistToHttpContext("NEW_LINK_ID", newLinkId.Value);
+                PersistToHttpContext(HttpContextItems.NewLinkId, newLinkId.Value);
             }
         }
 
         public void PersistActionId(int id)
         {
-            PersistToHttpContext("ACTION_ID", id);
+            PersistToHttpContext(HttpContextItems.ActionId, id);
         }
 
         public void PersistDefaultFormatId(int? defaultFormatId)
         {
             if (defaultFormatId.HasValue)
             {
-                PersistToHttpContext("DEFAULT_FORMAT_ID", defaultFormatId.Value);
+                PersistToHttpContext(HttpContextItems.DefaultFormatId, defaultFormatId.Value);
             }
         }
 
@@ -205,50 +216,50 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         {
             if (newBackward != null && newBackward.Id > 0 && (oldBackward == null || oldBackward.Id == 0))
             {
-                PersistToHttpContext("NEW_BACKWARD_ID", newBackward.Id);
+                PersistToHttpContext(HttpContextItems.NewBackwardId, newBackward.Id);
             }
         }
 
         public void PersistFieldIds(int[] ids)
         {
-            PersistToHttpContext("FIELD_IDS", ids);
+            PersistToHttpContext(HttpContextItems.FieldIds, ids);
         }
 
         public void PersistLinkIds(int[] ids)
         {
-            PersistToHttpContext("LINK_IDS", ids);
+            PersistToHttpContext(HttpContextItems.LinkIds, ids);
         }
 
         public void PersistVirtualFieldIds(int[] ids)
         {
-            PersistToHttpContext("NEW_VIRTUAL_FIELD_IDS", ids);
+            PersistToHttpContext(HttpContextItems.NewVirtualFieldIds, ids);
         }
 
         public void PersistChildFieldIds(int[] ids)
         {
-            PersistToHttpContext("NEW_CHILD_FIELD_IDS", ids);
+            PersistToHttpContext(HttpContextItems.NewChildFieldIds, ids);
         }
 
         public void PersistChildLinkIds(int[] ids)
         {
-            PersistToHttpContext("NEW_CHILD_LINK_IDS", ids);
+            PersistToHttpContext(HttpContextItems.NewChildLinkIds, ids);
         }
 
         public void PersistCommandIds(int[] oldIds, int[] ids)
         {
-            PersistToHttpContext("NEW_COMMAND_IDS", (oldIds != null ? ids.Except(oldIds) : ids).ToList());
+            PersistToHttpContext(HttpContextItems.NewCommandIds, (oldIds != null ? ids.Except(oldIds) : ids).ToList());
         }
 
         public void PersistRulesIds(int[] oldIds, int[] ids)
         {
-            PersistToHttpContext("NEW_RULES_IDS", (oldIds != null ? ids.Except(oldIds) : ids).ToList());
+            PersistToHttpContext(HttpContextItems.NewRulesIds, (oldIds != null ? ids.Except(oldIds) : ids).ToList());
         }
 
         public void PersistNotificationFormatId(int? formatId)
         {
             if (formatId.HasValue)
             {
-                PersistToHttpContext("NOTIFICATION_FORMAT_ID", formatId.Value);
+                PersistToHttpContext(HttpContextItems.NotificationFormatId, formatId.Value);
             }
         }
 
@@ -257,14 +268,20 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
             var formIds = HttpContext.Request.Form[formIdsKey]?.Split(',');
             if (formIds != null)
             {
-                var substitutedGuids = formIds
-                    .Where(f => f.IsInt())
-                    .Select(DbArticleService.GetArticleGuidById)
-                    .Where(g => g != Guid.Empty)
-                    .Select(g => g.ToString())
+                var validatedFormIds = formIds
+                    .Where(g => g.IsInt())
+                    .Select(int.Parse)
                     .ToArray();
 
-                HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
+                if (validatedFormIds.Any() && validatedFormIds.Length <= (QPConfiguration.WebConfigSection?.RelationCountLimit ?? Default.RelationCountLimit))
+                {
+                    var substitutedGuids = DbArticleService.GetArticleGuidsByIds(validatedFormIds)
+                       .Where(g => g != Guid.Empty)
+                       .Select(g => g.ToString())
+                       .ToArray();
+
+                    HttpContext.Items.Add(formUniqueIdsKey, substitutedGuids);
+                }
             }
         }
     }

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Web;
-using Quantumart.QP8.BLL.Repository;
+﻿using System.Web;
+using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
@@ -12,25 +7,35 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
     public class CopySiteVirtualContentsCommand : IMultistepActionStageCommand
     {
         public int SiteId { get; set; }
-        public int? NewSiteId { get; set; }
-        public string SiteName { get; set; }
-        public int ContentsCount { get; set; }
-        public CopySiteVirtualContentsCommand(MultistepActionStageCommandState state) : this(state.Id, null, 0) { }
 
-        public CopySiteVirtualContentsCommand(int siteId, string siteName, int contentsCount) {
-            this.SiteId = siteId;
-            this.SiteName = siteName;
-            this.ContentsCount = contentsCount;
-            CopySiteSettings prms = (CopySiteSettings)HttpContext.Current.Session["CopySiteService.Settings"];
-            this.NewSiteId = prms.DestinationSiteId;
+        public int? NewSiteId { get; set; }
+
+        public string SiteName { get; set; }
+
+        public int ContentsCount { get; set; }
+
+        public CopySiteVirtualContentsCommand(MultistepActionStageCommandState state)
+            : this(state.Id, null, 0) { }
+
+        public CopySiteVirtualContentsCommand(int siteId, string siteName, int contentsCount)
+        {
+            SiteId = siteId;
+            SiteName = siteName;
+            ContentsCount = contentsCount;
+            var prms = (CopySiteSettings)HttpContext.Current.Session[HttpContextSession.CopySiteServiceSettings];
+            NewSiteId = prms.DestinationSiteId;
         }
+
         public MultistepActionStepResult Step(int step)
         {
-            MultistepActionStepResult result = new MultistepActionStepResult();
-            IEnumerable<DataRow> contentsToInsert = VirtualContentService.CopyVirtualContents(this.SiteId, this.NewSiteId.Value);
-            string errors = VirtualContentService.UpdateVirtualContents(this.SiteId, this.NewSiteId.Value, contentsToInsert);
-            if(!String.IsNullOrEmpty(errors))
-                result.AdditionalInfo = String.Format("{0}{1}",ContentStrings.ErrorsOnCopyingVirtualContents, errors);
+            var result = new MultistepActionStepResult();
+            var contentsToInsert = VirtualContentService.CopyVirtualContents(SiteId, NewSiteId.Value);
+            var errors = VirtualContentService.UpdateVirtualContents(SiteId, NewSiteId.Value, contentsToInsert);
+            if (!string.IsNullOrEmpty(errors))
+            {
+                result.AdditionalInfo = $"{ContentStrings.ErrorsOnCopyingVirtualContents}{errors}";
+            }
+
             return result;
         }
 
@@ -50,7 +55,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             {
                 ItemCount = ContentsCount,
                 StepCount = 1,
-                Name = String.Format(SiteStrings.CopySiteVirtualContents, (SiteName ?? ""))
+                Name = string.Format(SiteStrings.CopySiteVirtualContents, SiteName ?? string.Empty)
             };
         }
     }

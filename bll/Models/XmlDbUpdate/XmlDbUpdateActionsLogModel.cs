@@ -1,10 +1,10 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.BLL.Models.XmlDbUpdate
 {
     public class XmlDbUpdateActionsLogModel
     {
-        public int Id{ get; set; }
+        public int Id { get; set; }
 
         public int UpdateId { get; set; }
 
