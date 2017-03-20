@@ -191,12 +191,6 @@ a.html:hover
 /*#endregion*/
 
 /*#region Forms*/
-.formLayout input.textbox,
-.formLayout textarea.textbox,
-.formLayout .versionText
-{
-  width: 350px;
-}
 
 .formLayout input.textbox.article,
 .formLayout textarea.textbox.article,
@@ -312,7 +306,6 @@ a.html:hover
   color: black;
 }
 
-.formLayout input.textbox,
 .formLayout textarea.textbox,
 .formLayout select.dropDownList,
 .formLayout select.listBox
