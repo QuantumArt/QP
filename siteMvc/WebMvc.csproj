@@ -1375,6 +1375,7 @@
     <Content Include="Content\codemirror\LICENSE" />
     <Content Include="Content\codemirror\package.json" />
     <Content Include="Content\codemirror\README.md" />
+    <Content Include="Content\custom\main.scss" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
