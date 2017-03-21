@@ -2456,12 +2456,12 @@ namespace Quantumart.QP8.DAL
             {
                 fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_ITEM cil with(nolock) on {0}.CONTENT_ITEM_ID = cil.CONTENT_ITEM_ID AND LOCKED_BY IS NOT NULL", tablePrefix);
                 fromBuilder.AppendFormatLine(" LEFT JOIN CONTENT_{0}_ASYNC ca with(nolock) on {1}.CONTENT_ITEM_ID = ca.CONTENT_ITEM_ID", options.ContentId, tablePrefix);
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[USERS] lu ON cil.LOCKED_BY = lu.USER_ID");
-                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[CONTENT_ITEM_SCHEDULE] sch ON {0}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID", tablePrefix);
+                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[USERS] lu WITH(NOLOCK) ON cil.LOCKED_BY = lu.USER_ID");
+                fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[CONTENT_ITEM_SCHEDULE] sch WITH(NOLOCK) ON {0}.CONTENT_ITEM_ID = sch.CONTENT_ITEM_ID", tablePrefix);
             }
 
-            fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[USERS] mu ON {0}.LAST_MODIFIED_BY = mu.USER_ID", tablePrefix);
-            fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[STATUS_TYPE] st ON {0}.STATUS_TYPE_ID = st.STATUS_TYPE_ID", tablePrefix);
+            fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[USERS] mu WITH(NOLOCK) ON {0}.LAST_MODIFIED_BY = mu.USER_ID", tablePrefix);
+            fromBuilder.AppendFormatLine(" LEFT JOIN dbo.[STATUS_TYPE] st WITH(NOLOCK) ON {0}.STATUS_TYPE_ID = st.STATUS_TYPE_ID", tablePrefix);
 
             if (useSelection)
             {
