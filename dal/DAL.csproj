@@ -145,6 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\ArchiveArticleSearch\1_qp_all_article_search.sql" />
+    <Content Include="scripts\GetPermittedItemsAsQuery\1_qp_GetPermittedItemsAsQuery.sql" />
     <Content Include="scripts\UpdateM2O\1_qp_update_m2o.sql" />
     <Content Include="scripts\data.sql" />
     <Content Include="scripts\EFTablesViews\1_ef_base.sql" />
