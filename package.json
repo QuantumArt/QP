@@ -45,8 +45,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp --gulpfile siteMvc/gulpfile.js",
-    "build-dev": "cross-env NODE_ENV=development gulp --gulpfile siteMvc/gulpfile.js",
+    "build": "cross-env NODE_ENV=production gulp --production --gulpfile siteMvc/gulpfile.js",
+    "build-dev": "gulp --gulpfile siteMvc/gulpfile.js",
     "postrestore": "echo something like npm install shoud here",
     "prepare": "echo something like bower install should be here",
     "predeploy": "echo im about to deploy",

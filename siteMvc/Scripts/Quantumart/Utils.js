@@ -6,10 +6,22 @@
 /* eslint no-alert: 'off' */
 /* eslint no-sync: 'off' */
 
-window.$q = {};
+/* wait4webpack
+var config = require("./config");
+if (config.env === 'development') {
+  $q.isDebug = true;
+}
+
+$q.isDebug = process.env.NODE_ENV === 'development';
+*/
+
+window.$q = {
+  isDebug: window.Sys.Debug.isDebug
+};
+
 $q.trace = function trace() {
   var args, firstArg, otherArgs;
-  if (window.Sys.Debug.isDebug) {
+  if ($q.isDebug || window.Sys.Debug.isDebug) {
     args = [].slice.call(arguments);
     firstArg = args.slice(0, 1)[0];
     otherArgs = args.slice(1);
@@ -29,7 +41,7 @@ $q.trace = function trace() {
 
 $q.alertSuccess = function alertSuccess(msg) {
   window.alert(msg);
-  if (window.Sys.Debug.isDebug) {
+  if ($q.isDebug || window.Sys.Debug.isDebug) {
     window.console.log.apply(window.console, Array.prototype.slice.call(arguments));
   }
 };
@@ -46,7 +58,7 @@ $q.alertError = function alertError(msg) {
 
 $q.alertFail = function alertFail(msg) {
   window.alert(msg);
-  if (window.Sys.Debug.isDebug) {
+  if ($q.isDebug || window.Sys.Debug.isDebug) {
     window.console.warn.apply(window.console, Array.prototype.slice.call(arguments));
   }
 };
@@ -238,15 +250,16 @@ $q._prepareNumber = function prepareNumber(value, forCheck) {
 };
 
 $q.toInt = function toInt(value, defaultValue) {
-  if (value === 'true' || value === 'false') {
-    value = value === 'true' || 0;
+  var result = value;
+  if (result === 'true' || result === 'false') {
+    result = result === 'true' || 0;
   }
 
-  if (value === 0) {
+  if (result === 0) {
     return 0;
   }
 
-  return +value || defaultValue;
+  return +result || defaultValue;
 };
 
 $q.toDate = function toDate(value, defaultValue) {
