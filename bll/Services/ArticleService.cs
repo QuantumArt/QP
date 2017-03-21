@@ -95,7 +95,7 @@ namespace Quantumart.QP8.BLL.Services
             article.DisplayContentId = contentId;
             article.DefineViewType();
 
-            if (withAutoLock && article.ViewType == ArticleViewType.Normal)
+            if (withAutoLock && article.ViewType == ArticleViewType.Normal && !article.IsAggregated)
             {
                 article.AutoLock();
             }
