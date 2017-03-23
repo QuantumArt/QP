@@ -208,9 +208,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         private List<DataRow> GetArticlesForExport(IEnumerable<ExportSettings.FieldSetting> fieldsToExpand)
         {
             var sb = new StringBuilder();
-            foreach (var s in _settings.FieldNames)
+            if (_settings.FieldNames.Any())
             {
-                sb.AppendFormat(", {0}", s);
+                foreach (var s in _settings.FieldNames)
+                {
+                    sb.AppendFormat(", {0}", s);
+                }
             }
 
             foreach (var field in fieldsToExpand)

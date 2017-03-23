@@ -48,7 +48,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        [BackendActionLog]
         public ActionResult Setup(int parentId, int id, bool? boundToExternal)
         {
             return Json(_service.Setup(parentId, id, boundToExternal));
@@ -58,7 +57,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        [BackendActionLog]
         public ActionResult SetupWithParams(int parentId, int id, FormCollection collection)
         {
             var model = new ExportViewModel();
