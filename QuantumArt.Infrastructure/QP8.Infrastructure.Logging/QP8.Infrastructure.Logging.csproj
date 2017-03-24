@@ -75,13 +75,13 @@
     <None Include="QP8.Infrastructure.Logging.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QP8.Infrastucture\QP8.Infrastucture.csproj">
-      <Project>{27BD20E7-1133-4D13-90C6-6565489DA612}</Project>
-      <Name>QP8.Infrastucture</Name>
+    <ProjectReference Include="..\QP8.Infrastructure\QP8.Infrastructure.csproj">
+      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+      <Name>QP8.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
@@ -89,4 +89,3 @@
   </Target>
   -->
 </Project>
-

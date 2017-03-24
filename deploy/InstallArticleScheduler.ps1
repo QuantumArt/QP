@@ -1,5 +1,5 @@
-﻿If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{   
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
     $arguments = "& '" + $myinvocation.mycommand.definition + "'"
     Start-Process powershell -Verb runAs -ArgumentList $arguments
     Break
@@ -10,16 +10,16 @@ $timeout = "00:03:00"
 
 $s = Get-Service $name -ErrorAction SilentlyContinue
 
-if ($s) { 
-    
+if ($s) {
+
 
     if ( $s.Status -eq "Running")
     {
         Write-Host "Stopping service $name..."
         $s.Stop()
-        try { $s.WaitForStatus("Stopped", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been stopped in '$timeout' interval" } 
+        try { $s.WaitForStatus("Stopped", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been stopped in '$timeout' interval" }
         Write-Host "$name Stopped"
-  
+
         Write-Host "Waiting for a while..."
         Start-Sleep -s 3
         Write-Host "Done"
@@ -42,9 +42,11 @@ if (-not(Test-Path $installRoot)) { New-Item $installRoot -ItemType Directory }
 $currentPath = split-path -parent $MyInvocation.MyCommand.Definition
 $projectName = "Quantumart.QP8.ArticleScheduler.WinService"
 
-$schedulerFolder = Join-Path $currentPath "$projectName\bin\Debug"
+$schedulerFolder = Join-Path $currentPath "..\QuantumArt.Shedulers\$projectName\bin\Debug"
 $schedulerPath = Join-Path $schedulerFolder "$projectName.exe"
 $schedulerZipPath = Join-Path $currentPath "ArticleScheduler.zip"
+
+Write-Host $schedulerFolder
 
 if ((Test-Path $schedulerZipPath))
 {
@@ -57,7 +59,7 @@ else
     {
         throw "You should build service $projectName in Debug configuration first";
     }
-    
+
     Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
 }
 
@@ -84,5 +86,5 @@ if ( $s.Status -eq "Stopped")
     $s.Start()
 }
 
-try { $s.WaitForStatus("Running", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been started in '$timeout' interval" } 
+try { $s.WaitForStatus("Running", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been started in '$timeout' interval" }
 Write-Output "$name Running"

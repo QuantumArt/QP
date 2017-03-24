@@ -2,7 +2,6 @@
 {
     public class HttpContextItems
     {
-        public const string LogKey = "LogKey";
         public const string IsError = "IS_ERROR";
         public const string DbContext = "dbContext";
         public const string LogOnUser = "LOGON_USER";

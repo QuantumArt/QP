@@ -690,6 +690,7 @@ namespace Quantumart.QP8.BLL
                 UseDefaultFiltration = true;
                 AdditionalContextClassName = null;
             }
+
             if (CreateDefaultXamlValidation)
             {
                 XamlValidation = GenerateDefaultValidationXaml();
@@ -707,24 +708,24 @@ namespace Quantumart.QP8.BLL
             base.Validate(errors);
 
             ValidateAggregated(errors);
-
             ValidateConditionalRequirements(errors);
 
             if (VirtualType != Constants.VirtualType.None)
             {
                 ValidateVirtualContent(errors);
             }
-            if (VirtualType == Constants.VirtualType.Join)
+
+            switch (VirtualType)
             {
-                ValidateJoinVirtualContent(errors);
-            }
-            else if (VirtualType == Constants.VirtualType.Union)
-            {
-                ValidateUnionVirtualContent(errors);
-            }
-            else if (VirtualType == Constants.VirtualType.UserQuery)
-            {
-                ValidateUserQueryVirtualContent(errors);
+                case Constants.VirtualType.Join:
+                    ValidateJoinVirtualContent(errors);
+                    break;
+                case Constants.VirtualType.Union:
+                    ValidateUnionVirtualContent(errors);
+                    break;
+                case Constants.VirtualType.UserQuery:
+                    ValidateUserQueryVirtualContent(errors);
+                    break;
             }
 
             if (!PageSize.IsInRange(MinPageSize, MaxPageSize))
@@ -746,7 +747,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Проверка XAML
         /// </summary>
-        /// <param name="errors"></param>
         private void ValidateXaml(RulesException<Content> errors)
         {
             if (!DisableXamlValidation && !CreateDefaultXamlValidation && !string.IsNullOrWhiteSpace(XamlValidation))
@@ -769,7 +769,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Валидация контента содержащего агрегированные поля
         /// </summary>
-        /// <param name="errors"></param>
         private void ValidateAggregated(RulesException<Content> errors)
         {
             // изменение некоторых свойств запрещено
@@ -799,7 +798,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Валидация при удалении
         /// </summary>
-        /// <param name="violationMessages"></param>
         public void ValidateForRemove(IList<string> violationMessages)
         {
             // нельзя удалять если контент агрегированный и есть хотя бы одна статья
@@ -1264,7 +1262,6 @@ namespace Quantumart.QP8.BLL
         /// <summary>
         /// Создает XAML для валидации по умолчанию
         /// </summary>
-        /// <returns></returns>
         private string GenerateDefaultValidationXaml()
         {
             var propDefs = new List<PropertyDefinition>

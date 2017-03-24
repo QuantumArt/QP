@@ -1,7 +1,7 @@
 using System.Web;
 using System.Web.Mvc;
+using QP8.Infrastructure;
 using QP8.Infrastructure.Logging;
-using QP8.Infrastucture;
 using Quantumart.QP8.Constants.Mvc;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;

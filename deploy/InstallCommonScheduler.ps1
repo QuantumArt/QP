@@ -1,5 +1,5 @@
-﻿If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{   
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
     $arguments = "& '" + $myinvocation.mycommand.definition + "'"
     Start-Process powershell -Verb runAs -ArgumentList $arguments
     Break
@@ -9,21 +9,21 @@ function Stop-And-Remove-Service([string] $name, [string] $timeout = "00:03:00")
 {
     $s = Get-Service $name -ErrorAction SilentlyContinue
 
-    if ($s) { 
-        
-    
+    if ($s) {
+
+
         if ( $s.Status -eq "Running")
         {
             Write-Host "Stopping service $name..."
             $s.Stop()
-            try { $s.WaitForStatus("Stopped", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been stopped in '$timeout' interval" } 
+            try { $s.WaitForStatus("Stopped", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been stopped in '$timeout' interval" }
             Write-Host "$name Stopped"
-      
+
             Write-Host "Waiting for a while..."
             Start-Sleep -s 3
             Write-Host "Done"
         }
-    
+
         Write-Host "Removing service $name..."
         $serviceToRemove = Get-WmiObject -Class Win32_Service -Filter "name='$name'"
         $serviceToRemove.delete()
@@ -34,14 +34,14 @@ function Stop-And-Remove-Service([string] $name, [string] $timeout = "00:03:00")
 function Start-Service-With-Timeout([string] $name, [string] $timeout = "00:03:00")
 {
     $s = Get-Service $name
-    
+
     if ( $s.Status -eq "Stopped")
     {
         Write-Output "Starting service $name..."
         $s.Start()
     }
-    
-    try { $s.WaitForStatus("Running", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been started in '$timeout' interval" } 
+
+    try { $s.WaitForStatus("Running", $timeout) } catch [System.ServiceProcess.TimeoutException] { throw [System.ApplicationException] "Service '$name' hasn't been started in '$timeout' interval" }
     Write-Output "$name Running"
 
 }
@@ -62,15 +62,8 @@ if ([string]::IsNullOrEmpty($installRoot))
 }
 if (-not(Test-Path $installRoot)) { New-Item $installRoot -ItemType Directory }
 
-$logsRoot = "C:\Logs"
-if (-not(Test-Path $logsRoot)) { New-Item $logsRoot -ItemType Directory }
-$logsDir = Join-Path $logsRoot $projectName
-if (-not(Test-Path $logsDir)) { New-Item $logsDir -ItemType Directory }
-
 $currentPath = split-path -parent $MyInvocation.MyCommand.Definition
-
-
-$schedulerFolder = Join-Path $currentPath "$projectName\bin\Debug"
+$schedulerFolder = Join-Path $currentPath "..\QuantumArt.Shedulers\$projectName\bin\Debug"
 $schedulerPath = Join-Path $schedulerFolder "$projectName.exe"
 $schedulerConfigPath = Join-Path $schedulerFolder "$projectName.exe.config"
 $schedulerZipPath = Join-Path $currentPath "CommonScheduler.zip"

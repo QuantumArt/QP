@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QP8.Infrastucture;
+using QP8.Infrastructure;
 using Quantumart.QP8.DAL.DTO;
 
 namespace Quantumart.QP8.BLL.Repository.Articles

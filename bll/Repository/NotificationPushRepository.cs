@@ -4,8 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.ExceptionHandling;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.BLL.Repository.Articles;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -332,7 +331,7 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static void HandleException(Exception ex)
         {
-            EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>().HandleException(ex, LoggingData.EnterpiseExceptionPolicyName);
+            Logger.Log.Error("Notification service error", ex);
         }
     }
 }

@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Microsoft.Practices.Unity;
+using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.UnityExtensions;
-using QP8.Infrastucture.Helpers;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Interfaces.Db;
 using Quantumart.QP8.BLL.Interfaces.Services;
@@ -23,9 +23,6 @@ using Quantumart.QP8.BLL.Services.MultistepActions.Import;
 using Quantumart.QP8.BLL.Services.MultistepActions.Rebuild;
 using Quantumart.QP8.BLL.Services.MultistepActions.Removing;
 using Quantumart.QP8.BLL.Services.VisualEditor;
-using Quantumart.QP8.Logging.Loggers;
-using Quantumart.QP8.Logging.Services;
-using Quantumart.QP8.Logging.Web;
 using Quantumart.QP8.Utils.FullTextSearch;
 using Quantumart.QP8.WebMvc.Controllers;
 using Quantumart.QP8.WebMvc.Hubs;
@@ -75,9 +72,9 @@ namespace Quantumart.QP8.WebMvc
 
                 .RegisterType<ClearContentController>(new InjectionFactory(c => new ClearContentController(new ClearContentService())))
                 .RegisterType<RemoveContentController>(new InjectionFactory(c => new RemoveContentController(new RemoveContentService())))
+                .RegisterType<ImportArticlesController>(new InjectionFactory(c => new ImportArticlesController(new ImportArticlesService())))
                 .RegisterType<ExportArticlesController>(new InjectionFactory(c => new ExportArticlesController(new ExportArticlesService())))
                 .RegisterType<ExportSelectedArticlesController>(new InjectionFactory(c => new ExportSelectedArticlesController(new ExportArticlesService())))
-                .RegisterType<ImportArticlesController>(new InjectionFactory(c => new ImportArticlesController(new ImportArticlesService(c.Resolve<ILogReader>(), c.Resolve<IImportArticlesLogger>()))))
                 .RegisterType<MultistepController>(new InjectionFactory(c => new MultistepController(c.Resolve<Func<string, IMultistepActionService>>(), c.Resolve<Func<string, string>>())))
                 .RegisterType<CopySiteController>(new InjectionFactory(c => new CopySiteController(new CopySiteService())))
                 .RegisterType<RemoveSiteController>(new InjectionFactory(c => new RemoveSiteController(new RemoveSiteService())))
@@ -113,9 +110,6 @@ namespace Quantumart.QP8.WebMvc
                 .RegisterType<SingleUserModeHub>();
 
             RegisterMultistepActionServices(UnityContainer);
-
-            UnityContainer.AddNewExtension<ImportLogContainerExtension>();
-            UnityContainer.AddNewExtension<LogServicesContainerExtension>();
 
             NLogContainerExtension.LoggerTypeName = AssemblyHelpers.GetAssemblyName();
             UnityContainer.AddNewExtension<NLogContainerExtension>();

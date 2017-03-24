@@ -100,18 +100,6 @@
       <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.ExceptionHandling.Logging.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.Logging.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Logging.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Logging.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Microsoft.Practices.EnterpriseLibrary.Validation, Version=5.0.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Validation.dll</HintPath>
       <Private>True</Private>
@@ -2386,22 +2374,6 @@
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Logging.Loggers\Logging.Loggers.csproj">
-      <Project>{16422A3A-E435-4D6B-B0E0-F47EC0CFC705}</Project>
-      <Name>Logging.Loggers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging.Templates\Logging.Templates.csproj">
-      <Project>{8933767b-4925-469c-92bc-1c6c37ed7ea8}</Project>
-      <Name>Logging.Templates</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging.Web\Logging.Web.csproj">
-      <Project>{BCA701FB-1883-4831-8E11-EC55E67E3D31}</Project>
-      <Name>Logging.Web</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging\Logging.csproj">
-      <Project>{2376F4DB-61DF-4440-BAB7-5740E06CD945}</Project>
-      <Name>Logging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
@@ -2410,9 +2382,9 @@
       <Project>{dbbec146-e74e-45df-a7fe-16701669a0f2}</Project>
       <Name>QP8.Infrastructure.Web</Name>
     </ProjectReference>
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastucture\QP8.Infrastucture.csproj">
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
       <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
-      <Name>QP8.Infrastucture</Name>
+      <Name>QP8.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

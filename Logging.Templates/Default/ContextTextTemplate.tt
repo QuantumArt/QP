@@ -1,5 +1,0 @@
-﻿<#@ template language="C#" debug="false" #>
-<#@ parameter name="Context" type="Quantumart.QP8.Logging.Loggers.LoggerContext" #>
-Context:
-    CustomerCode: <#= Context.CustomerCode #>
-    UserName: <#= Context.UserIdentity.Name #>

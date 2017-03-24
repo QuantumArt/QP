@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QP8.Infrastucture;
+using QP8.Infrastructure;
 using Quantumart.QP8.Utils;
 using Quantumart.QP8.Utils.FullTextSearch;
 

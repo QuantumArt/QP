@@ -205,11 +205,11 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Inserted: {0}.
+        ///   Looks up a localized string similar to Inserted.
         /// </summary>
-        public static string InsertedArticlesCount {
+        public static string InsertedArticles {
             get {
-                return ResourceManager.GetString("InsertedArticlesCount", resourceCulture);
+                return ResourceManager.GetString("InsertedArticles", resourceCulture);
             }
         }
         
@@ -367,11 +367,11 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Updated: {0}.
+        ///   Looks up a localized string similar to Updated.
         /// </summary>
-        public static string UpdatedArticlesCount {
+        public static string UpdatedArticles {
             get {
-                return ResourceManager.GetString("UpdatedArticlesCount", resourceCulture);
+                return ResourceManager.GetString("UpdatedArticles", resourceCulture);
             }
         }
     }

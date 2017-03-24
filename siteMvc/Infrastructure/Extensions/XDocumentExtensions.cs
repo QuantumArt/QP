@@ -2,7 +2,7 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using QP8.Infrastucture;
+using QP8.Infrastructure;
 
 namespace Quantumart.QP8.WebMvc.Infrastructure.Extensions
 {

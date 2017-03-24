@@ -1,11 +1,14 @@
 using System;
 using System.IO;
 using System.Web;
+using QP8.Infrastructure.Logging.Factories;
+using QP8.Infrastructure.Logging.Interfaces;
+using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants.Mvc;
-using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
@@ -13,19 +16,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
     public class ImportArticlesService : MultistepActionServiceAbstract
     {
         private ImportArticlesCommand _command;
-        private readonly ILogReader _logReader;
-        private readonly IImportArticlesLogger _logger;
 
-        public ImportArticlesService(ILogReader logReader, IImportArticlesLogger logger)
+        private readonly ILog _importLogger;
+
+        public ImportArticlesService()
         {
-            _logReader = logReader;
-            _logger = logger;
+            _importLogger = LogProvider.GetLogger();
         }
 
         public override void SetupWithParams(int parentId, int id, IMultistepActionParams settingsParams)
         {
             var importSettings = settingsParams as ImportSettings;
-            _logger.LogStartImport(importSettings);
+            _importLogger.Trace($"Start import articles with settings id: {importSettings.Id}");
 
             var content = ContentRepository.GetById(id);
             if (content == null)
@@ -33,11 +35,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 throw new Exception(string.Format(ContentStrings.ContentNotFound, id));
             }
 
-            if (importSettings != null)
-            {
-                importSettings.IsWorkflowAssigned = content.WorkflowBinding.IsAssigned;
-            }
-
+            importSettings.IsWorkflowAssigned = content.WorkflowBinding.IsAssigned;
             HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] = importSettings;
         }
 
@@ -50,7 +48,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                 fileReader.CopyFileToTempDir();
 
                 var linesTotalCount = fileReader.RowsCount();
-                _command = new ImportArticlesCommand(parentId, id, linesTotalCount, _logReader, _logger);
+                _command = new ImportArticlesCommand(parentId, id, linesTotalCount);
 
                 return base.Setup(parentId, id, boundToExternal);
             }
@@ -79,7 +77,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         protected override IMultistepActionStageCommand CreateCommand(MultistepActionStageCommandState state)
         {
-            return new ImportArticlesCommand(state, _logReader, _logger);
+            return new ImportArticlesCommand(state);
         }
 
         public override IMultistepActionSettings MultistepActionSettings(int siteId, int contentId)
@@ -89,10 +87,18 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public override void TearDown()
         {
-            var settings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
+            var importSettings = HttpContext.Current.Session[HttpContextSession.ImportSettingsSessionKey] as ImportSettings;
             RemoveFileFromTemp();
 
-            _logger.LogEndImport(settings);
+            var logData = new
+            {
+                importSettings.Id,
+                importSettings.InsertedArticleIds,
+                importSettings.UpdatedArticleIds,
+                ImportAction = (CsvImportMode)importSettings.ImportAction
+            };
+
+            _importLogger.Info($"Articles import was finished {logData.ToJsonLog()}");
             HttpContext.Current.Session.Remove(HttpContextSession.ImportSettingsSessionKey);
 
             base.TearDown();

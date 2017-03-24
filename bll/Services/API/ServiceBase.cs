@@ -1,5 +1,5 @@
 using System;
-using QP8.Infrastucture;
+using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
 

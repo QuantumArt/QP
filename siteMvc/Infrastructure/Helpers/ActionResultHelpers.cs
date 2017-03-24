@@ -1,7 +1,7 @@
 using System;
 using System.Web.Mvc;
-using QP8.Infrastucture;
-using QP8.Infrastucture.Extensions;
+using QP8.Infrastructure;
+using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Web.ActionResults;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.WebMvc.Infrastructure.Enums;
