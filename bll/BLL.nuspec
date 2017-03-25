@@ -8,23 +8,20 @@
     <owners>Quantum Art</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>IArticleService interface has been appended</releaseNotes>
+    <releaseNotes>Update QA.Configuration version</releaseNotes>
     <copyright>$copyright$</copyright>
     <tags>QP</tags>
     <dependencies>
       <dependency id="QP8.Infrastructure" version="1.0.0" />
       <dependency id="QP8.Infrastructure.Logging" version="1.0.0" />
       <dependency id="Quantumart" version="2.0.0" />
-        <dependency id="QA.Configuration" version="1.0.1" />
+        <dependency id="QA.Configuration" version="1.0.2" />
         <dependency id="QA.Validation.Xaml" version="1.0.2" />
         <dependency id="QA.Validation.Xaml.Extensions" version="1.0.2" />
         <dependency id="AutoMapper" version="1.1.0" />
         <dependency id="Unity" version="2.1.505" />
         <dependency id="EnterpriseLibrary.Common" version="5.0.505" />
         <dependency id="EnterpriseLibrary.Data" version="5.0.505" />
-        <dependency id="EnterpriseLibrary.ExceptionHandling" version="5.0.505" />
-        <dependency id="EnterpriseLibrary.ExceptionHandling.Logging" version="5.0.505" />
-        <dependency id="EnterpriseLibrary.Logging" version="5.0.505" />
         <dependency id="EnterpriseLibrary.Validation" version="5.0.505" />
     </dependencies>
   </metadata>

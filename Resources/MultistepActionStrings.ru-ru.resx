@@ -162,8 +162,8 @@
   <data name="ImportTab" xml:space="preserve">
     <value>Табуляция (   )</value>
   </data>
-  <data name="InsertedArticlesCount" xml:space="preserve">
-    <value>Добавлено: {0}</value>
+  <data name="InsertedArticles" xml:space="preserve">
+    <value>Добавлено</value>
   </data>
   <data name="LineSeparator" xml:space="preserve">
     <value>Разделитель строк</value>
@@ -213,7 +213,7 @@
   <data name="UniqueFieldToUpdate" xml:space="preserve">
     <value>Выберите поле идентификатора, по которому будет осуществлено сопоставление статей</value>
   </data>
-  <data name="UpdatedArticlesCount" xml:space="preserve">
-    <value>Обновлено: {0}</value>
+  <data name="UpdatedArticles" xml:space="preserve">
+    <value>Обновлено</value>
   </data>
 </root>

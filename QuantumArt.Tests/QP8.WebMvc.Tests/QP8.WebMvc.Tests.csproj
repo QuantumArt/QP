@@ -160,9 +160,9 @@
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastucture.TestTools\QP8.Infrastucture.TestTools.csproj">
-      <Project>{748B27A9-8060-40C3-9309-3A52FA39CA60}</Project>
-      <Name>QP8.Infrastucture.TestTools</Name>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.TestTools\QP8.Infrastructure.TestTools.csproj">
+      <Project>{748b27a9-8060-40c3-9309-3a52fa39ca60}</Project>
+      <Name>QP8.Infrastructure.TestTools</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -183,5 +183,3 @@
   </Target>
   -->
 </Project>
-
-

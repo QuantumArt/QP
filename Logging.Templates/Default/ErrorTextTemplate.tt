@@ -1,3 +1,0 @@
-﻿<#@ template language="C#" debug="false" #>
-<#@ parameter name="LogEntry" type="Microsoft.Practices.EnterpriseLibrary.Logging.LogEntry" #>
-<#= LogEntry.Message #>

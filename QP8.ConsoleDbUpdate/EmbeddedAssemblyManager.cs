@@ -133,16 +133,14 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.System.Web.Mvc.dll", "System.Web.Helpers.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Web.Infrastructure.dll", "Microsoft.Web.Infrastructure.dll");
 
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.dll", "Microsoft.Practices.Unity.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.ServiceLocation.dll", "Microsoft.Practices.ServiceLocation.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.dll", "Microsoft.Practices.Unity.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.Interception.dll", "Microsoft.Practices.Unity.Interception.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.Unity.Configuration.dll", "Microsoft.Practices.Unity.Configuration.dll");
 
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Data.dll", "Microsoft.Practices.EnterpriseLibrary.Data.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Common.dll", "Microsoft.Practices.EnterpriseLibrary.Common.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Logging.dll", "Microsoft.Practices.EnterpriseLibrary.Logging.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.Validation.dll", "Microsoft.Practices.EnterpriseLibrary.Validation.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll", "Microsoft.Practices.EnterpriseLibrary.ExceptionHandling.dll");
 
             Load("Quantumart.QP8.ConsoleDbUpdate.References.AutoMapper.dll", "AutoMapper.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.EFExtensions.dll", "EFExtensions.dll");
@@ -159,13 +157,16 @@ namespace Quantumart.QP8.ConsoleDbUpdate
 
         internal static void LoadQpAssemblies()
         {
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Assembling.dll", "Quantumart.QP8.Assembling.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.dll", "Quantumart.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.QP8.Infrastructure.dll", "QP8.Infrastructure.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.QP8.Infrastructure.Web.dll", "QP8.Infrastructure.Web.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.QP8.Infrastructure.Logging.dll", "QP8.Infrastructure.Logging.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.QA.Configuration.dll", "QA.Configuration.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.QA.Validation.Xaml.dll", "QA.Validation.Xaml.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.QA.Validation.Xaml.Extensions.dll", "QA.Validation.Xaml.Extensions.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.DAL.dll", "Quantumart.QP8.DAL.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.dll", "Quantumart.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Assembling.dll", "Quantumart.QP8.Assembling.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Constants.dll", "Quantumart.QP8.Constants.dll");
+            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.DAL.dll", "Quantumart.QP8.DAL.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Resources.dll", "Quantumart.QP8.Resources.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Utils.dll", "Quantumart.QP8.Utils.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Validators.dll", "Quantumart.QP8.Validators.dll");
@@ -173,9 +174,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.BLL.dll", "Quantumart.QP8.BLL.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Merger.dll", "Quantumart.QP8.Merger.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Configuration.dll", "Quantumart.QP8.Configuration.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Logging.Loggers.dll", "Quantumart.QP8.Logging.Loggers.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Logging.Web.dll", "Quantumart.QP8.Logging.Web.dll");
-            Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.Logging.dll", "Quantumart.QP8.Logging.dll");
             Load("Quantumart.QP8.ConsoleDbUpdate.References.Quantumart.QP8.WebMvc.dll", "Quantumart.QP8.WebMvc.dll");
         }
     }

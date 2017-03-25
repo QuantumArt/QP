@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using QA.Validation.Xaml;
 using QA.Validation.Xaml.Extensions.Rules;
-using QP8.Infrastucture;
+using QP8.Infrastructure;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -791,11 +791,6 @@ namespace Quantumart.QP8.BLL
             }
 
             return VariationArticles.SingleOrDefault(n => n.VariationContext == context) ?? CreateVariationWithFieldValues(GetFieldValuesByContext(context));
-        }
-
-        internal RemoteValidationResult ProceedRemoteValidation()
-        {
-            return new RemoteValidationResult();
         }
 
         private static string ReplaceCommentLink(string comment)

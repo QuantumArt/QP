@@ -1,21 +1,24 @@
 using System;
 using System.Transactions;
 using System.Web;
-using QP8.Infrastucture;
+using QP8.Infrastructure;
+using QP8.Infrastructure.Logging.Factories;
+using QP8.Infrastructure.Logging.Interfaces;
+using Quantumart.QP8.BLL.Enums.Csv;
 using Quantumart.QP8.BLL.Exceptions;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services.MultistepActions.Csv;
 using Quantumart.QP8.Constants.Mvc;
-using Quantumart.QP8.Logging.Services;
 using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 {
     public class ImportArticlesCommand : IMultistepActionStageCommand
     {
+        private readonly ILog _importLogger;
+
         private const int ItemsPerStep = 20;
-        private readonly ILogReader _logReader;
-        private readonly IImportArticlesLogger _logger;
 
         public int SiteId { get; set; }
 
@@ -23,18 +26,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public int ItemCount { get; set; }
 
-        public ImportArticlesCommand(MultistepActionStageCommandState state, ILogReader logReader, IImportArticlesLogger logger)
-            : this(state.ParentId, state.Id, 0, logReader, logger)
+        public ImportArticlesCommand(MultistepActionStageCommandState state)
+            : this(state.ParentId, state.Id, 0)
         {
         }
 
-        public ImportArticlesCommand(int siteId, int contentId, int itemCount, ILogReader logReader, IImportArticlesLogger logger)
+        public ImportArticlesCommand(int siteId, int contentId, int itemCount)
         {
             SiteId = siteId;
             ContentId = contentId;
             ItemCount = itemCount;
-            _logReader = logReader;
-            _logger = logger;
+            _importLogger = LogProvider.GetLogger();
         }
 
         public MultistepActionStageCommandState GetState()
@@ -66,9 +68,17 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
                             reader.PostUpdateM2MRelationAndO2MRelationFields();
                         }
 
-                        _logger.LogStep(step, settings);
+                        var logData = new
+                        {
+                            settings.Id,
+                            ImportAction = (CsvImportMode)settings.ImportAction,
+                            Inserted = settings.InsertedArticleIds.Count,
+                            Updated = settings.UpdatedArticleIds.Count
+                        };
+
+                        _importLogger.Trace($"Import articles step: {step}. Settings: {logData.ToJsonLog()}");
                         result.ProcessedItemsCount = processedItemsCount;
-                        result.AdditionalInfo = _logReader.Read();
+                        result.AdditionalInfo = $"{MultistepActionStrings.InsertedArticles}: {settings.InsertedArticleIds.Count}; {MultistepActionStrings.UpdatedArticles}: {settings.UpdatedArticleIds.Count}.";
                     }
                     catch (Exception ex)
                     {

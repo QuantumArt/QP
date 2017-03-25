@@ -194,18 +194,6 @@
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
-      <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
-      <Name>QP8.Infrastructure.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj">
-      <Project>{dbbec146-e74e-45df-a7fe-16701669a0f2}</Project>
-      <Name>QP8.Infrastructure.Web</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastucture\QP8.Infrastucture.csproj">
-      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
-      <Name>QP8.Infrastucture</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

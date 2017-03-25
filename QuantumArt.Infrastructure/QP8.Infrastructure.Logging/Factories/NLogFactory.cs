@@ -1,7 +1,7 @@
 ﻿using System;
+using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.Adapters;
 using QP8.Infrastructure.Logging.Interfaces;
-using QP8.Infrastucture.Helpers;
 
 namespace QP8.Infrastructure.Logging.Factories
 {
