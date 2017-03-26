@@ -13,3 +13,4 @@ Assembling
 TaHighlight
 ArchiveArticleSearch
 UpdateM2O
+GetPermittedItemsAsQuery

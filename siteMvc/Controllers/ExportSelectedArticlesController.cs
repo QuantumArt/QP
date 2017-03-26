@@ -53,7 +53,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult Setup(int parentId, int[] IDs, bool? boundToExternal)
         {
@@ -64,7 +63,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [ExceptionResult(ExceptionResultMode.OperationAction)]
         [ActionAuthorize(ActionCode.ExportArticles)]
         [BackendActionContext(ActionCode.ExportArticles)]
-        [BackendActionLog]
         [SuppressMessage("ReSharper", "InconsistentNaming")]
         public ActionResult SetupWithParams(int parentId, int[] IDs, FormCollection collection)
         {
