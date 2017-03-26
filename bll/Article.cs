@@ -793,6 +793,14 @@ namespace Quantumart.QP8.BLL
             return VariationArticles.SingleOrDefault(n => n.VariationContext == context) ?? CreateVariationWithFieldValues(GetFieldValuesByContext(context));
         }
 
+        /// <summary>
+        /// Используется для XAML-валидации, не удалять!
+        /// </summary>
+        internal RemoteValidationResult ProceedRemoteValidation()
+        {
+            return new RemoteValidationResult();
+        }
+
         private static string ReplaceCommentLink(string comment)
         {
             return !string.IsNullOrEmpty(comment)
