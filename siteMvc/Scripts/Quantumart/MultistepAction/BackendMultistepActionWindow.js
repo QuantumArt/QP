@@ -1,383 +1,424 @@
-var EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING = "OnMultistepActionWindowCanceling";
-var EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED = "OnMultistepActionWindowCanceled";
-var EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED = "OnMultistepActionWindowClosed";
+window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING = 'OnMultistepActionWindowCanceling';
+window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED = 'OnMultistepActionWindowCanceled';
+window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED = 'OnMultistepActionWindowClosed';
 
-Quantumart.QP8.BackendMultistepActionWindow = function (actionName, shortActionName) {
-	Quantumart.QP8.BackendMultistepActionWindow.initializeBase(this);
+Quantumart.QP8.BackendMultistepActionWindow = function BackendMultistepActionWindow(actionName, shortActionName) {
+  Quantumart.QP8.BackendMultistepActionWindow.initializeBase(this);
 
-	this._actionName = actionName;
-	this._shortActionName = shortActionName;
-
-	this._startStageTime = new Date();
+  this._actionName = actionName;
+  this._shortActionName = shortActionName;
+  this._startStageTime = new Date();
 };
 
 Quantumart.QP8.BackendMultistepActionWindow.prototype = {
-    _actionName: "", //  название действия
-    _shortActionName : "", // краткое название действия
-	_stagesCount: 0, // Всего этапов в действии
-	_stagesRemaining: 0, // осталось этапов
+  //  название действия
+  _actionName: '',
 
-	_stageName: "", // имя текущего этапа
-	_stageStepsCount: 0, // Количество шагов на текущем этапе
-	_stageStepsRemaining: 0, // Осталось шагов на текущем этапе
-	_stageItemsCount: 0, // Всего элементов на текущем этапе
-	_stageItemsRemaining: 0, // Осталось элементов на этапе
+  // краткое название действия
+  _shortActionName: '',
 
-	_startStageTime: null, // используеться для вычисления времени
+  // Всего этапов в действии
+  _stagesCount: 0,
 
-	_popupWindowElement: null, // DOM-элемент, образующий всплывающее окно
-	_popupWindowComponent: null, // компонент "Всплывающее окно"
+  // осталось этапов
+  _stagesRemaining: 0,
 
-	_progressBarComponent: null, // progress bar
-	_progressBarElement: null,
+  // имя текущего этапа
+  _stageName: '',
 
-	_stageNameElement: null,
-	_stageRemainingElement: null,
-	_stageItemsElement: null,
-	_stageElapsedTimeElement: null,
-	_stageTimeRemainingElement: null,
-	_stageAdditionalInfoElement: null,
+  // Количество шагов на текущем этапе
+  _stageStepsCount: 0,
 
-    _additionalInfo: null,
-	_windowTitle: $l.MultistepAction.progressWindowTitle,
-	_windowWidth: 500,
-	_windowHeight: 250,
-	_zIndex: undefined,
-    _parentId: null,
+  // Осталось шагов на текущем этапе
+  _stageStepsRemaining: 0,
 
-	initialize: function () {
-		this._popupWindowComponent = this._createWindow();
-		this._popupWindowElement = this._popupWindowComponent.element;
+  // Всего элементов на текущем этапе
+  _stageItemsCount: 0,
 
-		var $mainContainer = jQuery(".lop-main", this._popupWindowElement);
+  // Осталось элементов на этапе
+  _stageItemsRemaining: 0,
 
-		$mainContainer.find(".lop-action-name").text(this._shortActionName == null ? this._actionName : this._shortActionName);
+  // используеться для вычисления времени
+  _startStageTime: null,
 
-		var $stageNameElement = $mainContainer.find(".lop-stage-name dd");
-		$stageNameElement.text($l.MultistepAction.setupStageName);
-		this._stageNameElement = $stageNameElement.get(0);
+  // DOM-элемент, образующий всплывающее окно
+  _popupWindowElement: null,
 
-		this._stageRemainingElement = $mainContainer.find(".lop-stage-remaining dd").get(0);
-		this._stageItemsElement = $mainContainer.find(".lop-stage-items dd").get(0);
-		this._stageElapsedTimeElement = $mainContainer.find(".lop-elapsed-time dd").get(0);
-		this._stageTimeRemainingElement = $mainContainer.find(".lop-time-remaining dd").get(0);
-		this._stageAdditionalInfoElement = $mainContainer.find(".lop-additional-info dd").get(0);
-		var $progressBarElement = $mainContainer.find(".lop-pbar");
-		this._progressBarElement = $progressBarElement.get(0);
-		$progressBarElement.backendProgressBar();
-		this._progressBarComponent = $progressBarElement.data("backendProgressBar");
+  // компонент "Всплывающее окно"
+  _popupWindowComponent: null,
 
-		this._cancelButtonElement = $mainContainer.find(".lop-cancel-button")
-			.click(jQuery.proxy(this._onCancelClicked, this))
-			.get(0);
+  // progress bar
+  _progressBarComponent: null,
+  _progressBarElement: null,
 
-		$progressBarElement = null;
-		$mainContainer = null;
-	},
+  _stageNameElement: null,
+  _stageRemainingElement: null,
+  _stageItemsElement: null,
+  _stageElapsedTimeElement: null,
+  _stageTimeRemainingElement: null,
+  _stageAdditionalInfoElement: null,
 
-	_refreshView: function () {
-		this._progressBarComponent.total(this._stageItemsCount);
-		this._progressBarComponent.value(this._stageItemsCount - this._stageItemsRemaining);
+  _additionalInfo: null,
+  _windowTitle: $l.MultistepAction.progressWindowTitle,
+  _windowWidth: 500,
+  _windowHeight: 250,
+  _zIndex: undefined,
+  _parentId: null,
 
-		this._progressBarComponent.refresh();
+  initialize: function () {
+    var $mainContainer, $stageNameElement, $progressBarElement;
 
-		jQuery(this._stageNameElement).text(this._stageName);
+    this._popupWindowComponent = this._createWindow();
+    this._popupWindowElement = this._popupWindowComponent.element;
 
-		if (this._additionalInfo != null) {
-		    if (this._additionalInfo.indexOf('.csv') > 0) {
-		        jQuery(this._stageAdditionalInfoElement).html(
-                "<a href='javascript:void(0);'>" + $l.MultistepAction.linkForDownloadFile + "</a>");
-		        $(this._stageAdditionalInfoElement).children('a').on("click", jQuery.proxy(this._createDownloadLink, this));
-		    } else {
-		        jQuery(this._stageAdditionalInfoElement).html(this._additionalInfo);
+    $mainContainer = $('.lop-main', this._popupWindowElement);
+    $mainContainer
+      .find('.lop-action-name')
+      .text(this._shortActionName === null ? this._actionName : this._shortActionName);
 
-		        if (this._stageAdditionalInfoElement.scrollWidth > this._stageAdditionalInfoElement.clientWidth) {
-		            jQuery(this._stageAdditionalInfoElement).append('<div class="tooltip">' + this._additionalInfo + '</div>')
-		        }
-		    }
-		}
+    $stageNameElement = $mainContainer.find('.lop-stage-name dd');
+    $stageNameElement.text($l.MultistepAction.setupStageName);
+
+    this._stageNameElement = $stageNameElement.get(0);
+    this._stageRemainingElement = $mainContainer.find('.lop-stage-remaining dd').get(0);
+    this._stageItemsElement = $mainContainer.find('.lop-stage-items dd').get(0);
+    this._stageElapsedTimeElement = $mainContainer.find('.lop-elapsed-time dd').get(0);
+    this._stageTimeRemainingElement = $mainContainer.find('.lop-time-remaining dd').get(0);
+    this._stageAdditionalInfoElement = $mainContainer.find('.lop-additional-info dd').get(0);
+    $progressBarElement = $mainContainer.find('.lop-pbar');
+
+    this._progressBarElement = $progressBarElement.get(0);
+    $progressBarElement.backendProgressBar();
+
+    this._progressBarComponent = $progressBarElement.data('backendProgressBar');
+    this._cancelButtonElement = $mainContainer
+      .find('.lop-cancel-button')
+      .click($.proxy(this._onCancelClicked, this))
+      .get(0);
+
+    $progressBarElement = null;
+    $mainContainer = null;
+  },
+
+  _refreshView: function () {
+    var elapsedTime, timeRemaining;
+
+    this._progressBarComponent.total(this._stageItemsCount);
+    this._progressBarComponent.value(this._stageItemsCount - this._stageItemsRemaining);
+    this._progressBarComponent.refresh();
+
+    $(this._stageNameElement).text(this._stageName);
+    if (this._additionalInfo !== null) {
+      if (this._additionalInfo.indexOf('.csv') > 0) {
+        $(this._stageAdditionalInfoElement).html(
+          "<a href='javascript:void(0);'>" + $l.MultistepAction.linkForDownloadFile + '</a>');
+        $(this._stageAdditionalInfoElement).children('a').on('click', $.proxy(this._createDownloadLink, this));
+      } else {
+        $(this._stageAdditionalInfoElement).html(this._additionalInfo);
+
+        if (this._stageAdditionalInfoElement.scrollWidth > this._stageAdditionalInfoElement.clientWidth) {
+          $(this._stageAdditionalInfoElement).append('<div class="tooltip">' + this._additionalInfo + '</div>');
+        }
+      }
+    }
 
 
-		jQuery(this._stageRemainingElement).text(String.format(
-			$l.MultistepAction.stageRemainingTemplate,
-			this._stagesRemaining,
-			this._stagesCount
-		));
+    $(this._stageRemainingElement).text(String.format(
+      $l.MultistepAction.stageRemainingTemplate,
+      this._stagesRemaining,
+      this._stagesCount
+    ));
 
-		jQuery(this._stageItemsElement).text(String.format(
-			$l.MultistepAction.stageItemsRemainingTemplate,
-			this._stageItemsRemaining,
-			this._stageItemsCount
-		));
+    $(this._stageItemsElement).text(String.format(
+      $l.MultistepAction.stageItemsRemainingTemplate,
+      this._stageItemsRemaining,
+      this._stageItemsCount
+    ));
 
-		var elapsedTime = new Date().getTime() - this._startStageTime.getTime();
-		jQuery(this._stageElapsedTimeElement).text(this._formatTimeRange(elapsedTime));
+    elapsedTime = new Date().getTime() - this._startStageTime.getTime();
+    $(this._stageElapsedTimeElement).text(this._formatTimeRange(elapsedTime));
 
-		// Вычисление TimeRemaining
-		var timeRemaining = 0;
-		if (this._stageStepsCount == 0) {
-			jQuery(this._stageTimeRemainingElement).text('');
-		}
-		else if (this._stageStepsCount > this._stageStepsRemaining) {
-			timeRemaining = Math.ceil(elapsedTime * this._stageStepsRemaining / (this._stageStepsCount - this._stageStepsRemaining));
-			if (timeRemaining <= 1000) { timeRemaining = 1000; }
-			jQuery(this._stageTimeRemainingElement).text(this._formatTimeRange(timeRemaining));
-		}
-		else {
-			jQuery(this._stageTimeRemainingElement).text(this._formatTimeRange(0));
-		}
+    timeRemaining = 0;
+    if (this._stageStepsCount === 0) {
+      $(this._stageTimeRemainingElement).text('');
+    } else if (this._stageStepsCount > this._stageStepsRemaining) {
+      timeRemaining = Math.ceil(
+        elapsedTime * this._stageStepsRemaining / (this._stageStepsCount - this._stageStepsRemaining)
+      );
 
-	},
+      if (timeRemaining <= 1000) {
+        timeRemaining = 1000;
+      }
 
-	_formatTimeRange: function (milliseconds) {
-		var secontsspan = Math.floor(milliseconds / 1000);
-		var hours = Math.floor(secontsspan / 3600);
-		var minutes = Math.floor((secontsspan - hours * 3600) / 60);
-		var seconds = Math.round(secontsspan - hours * 3600 - minutes * 60);
-		if (minutes < 10) { minutes = "0" + minutes; }
-		if (seconds < 10) { seconds = "0" + seconds; }
-		return hours + ":" + minutes + ":" + seconds;
-	},
+      $(this._stageTimeRemainingElement).text(this._formatTimeRange(timeRemaining));
+    } else {
+      $(this._stageTimeRemainingElement).text(this._formatTimeRange(0));
+    }
+  },
 
-	startAction: function (stageCount) {
-		this._stagesCount = stageCount;
-		this._stagesRemaining = stageCount;
-	},
+  _formatTimeRange: function (milliseconds) {
+    var secondsSpan = Math.floor(milliseconds / 1000);
+    var hours = Math.floor(secondsSpan / 3600);
+    var minutes = Math.floor((secondsSpan - (hours * 3600)) / 60);
+    var seconds = Math.round(secondsSpan - (hours * 3600) - (minutes * 60));
+    if (minutes < 10) {
+      minutes = '0' + minutes;
+    }
 
-	// Начать этап
-	startStage: function (stageName, stepsCount, itemsCount) {
-		this._stageName = stageName;
+    if (seconds < 10) {
+      seconds = '0' + seconds;
+    }
 
-		this._stageStepsCount = stepsCount;
-		this._stageStepsRemaining = stepsCount;
+    return hours + ':' + minutes + ':' + seconds;
+  },
 
-		this._stageItemsCount = itemsCount;
-		this._stageItemsRemaining = itemsCount;
+  startAction: function (stageCount) {
+    this._stagesCount = stageCount;
+    this._stagesRemaining = stageCount;
+  },
 
-		this._startStageTime = new Date();
+  // Начать этап
+  startStage: function (stageName, stepsCount, itemsCount) {
+    this._stageName = stageName;
 
-		this._refreshView();
-	},
+    this._stageStepsCount = stepsCount;
+    this._stageStepsRemaining = stepsCount;
 
-	// Закончить этап
-	completeStage: function () {
-		this._stagesRemaining -= 1;
-		if (this._stagesRemaining < 0) {
-			this._stagesRemaining = 0;
-		}
-		this._stageItemsCount = 0;
-		this._stageItemsRemaining = 0;
+    this._stageItemsCount = itemsCount;
+    this._stageItemsRemaining = itemsCount;
 
-		this._stageStepsCount = 0;
-		this._stageStepsRemaining = 0;
+    this._startStageTime = new Date();
 
-		this._refreshView();
-	},
-	_createDownloadLink: function () {
+    this._refreshView();
+  },
+
+  // Закончить этап
+  completeStage: function () {
+    this._stagesRemaining -= 1;
+    if (this._stagesRemaining < 0) {
+      this._stagesRemaining = 0;
+    }
+    this._stageItemsCount = 0;
+    this._stageItemsRemaining = 0;
+
+    this._stageStepsCount = 0;
+    this._stageStepsRemaining = 0;
+
+    this._refreshView();
+  },
+  _createDownloadLink: function () {
+    var url, urlParams;
     if (!$q.isNullOrWhiteSpace(this._additionalInfo)) {
-      var urlParams = { id: this._parentId, fileName: encodeURIComponent(this._additionalInfo) };
-      var url = Quantumart.QP8.BackendLibrary.generateActionUrl("ExportFileDownload", urlParams);
+      urlParams = { id: this._parentId, fileName: encodeURIComponent(this._additionalInfo) };
+      url = Quantumart.QP8.BackendLibrary.generateActionUrl('ExportFileDownload', urlParams);
       $c.downloadFileWithChecking(url, this._additionalInfo);
     }
 
     return false;
-	},
-	// Закончить шаг этапа
-	completeStep: function (processedItemsCount, additionalInfo, parentId) {
-	    this._stageItemsRemaining -= processedItemsCount;
-	    this._additionalInfo = additionalInfo;
-	    this._parentId = parentId;
-		if (this._stageItemsRemaining < 0) {
-			this._stageItemsRemaining = 0;
-		}
-		this._stageStepsRemaining--;
-		if (this._stageStepsRemaining < 0) {
-			this._stageStepsRemaining = 0;
-		}
+  },
 
-		this._refreshView();
-	},
+  // Закончить шаг этапа
+  completeStep: function (processedItemsCount, additionalInfo, parentId) {
+    this._stageItemsRemaining -= processedItemsCount;
+    this._additionalInfo = additionalInfo;
+    this._parentId = parentId;
+    if (this._stageItemsRemaining < 0) {
+      this._stageItemsRemaining = 0;
+    }
 
-	_isInProcess: true,
+    this._stageStepsRemaining -= 1;
+    if (this._stageStepsRemaining < 0) {
+      this._stageStepsRemaining = 0;
+    }
 
-	_stop: function () {
-		this._isInProcess = false;
+    this._refreshView();
+  },
 
-		jQuery(this._cancelButtonElement).prop(
-		{
-			value: $l.MultistepAction.close,
-			title: $l.MultistepAction.closeTitle
-		});
+  _isInProcess: true,
+  _stop: function () {
+    this._isInProcess = false;
+    $(this._cancelButtonElement).prop({
+      value: $l.MultistepAction.close,
+      title: $l.MultistepAction.closeTitle
+    });
 
-		jQuery([
-			this._stageNameElement,
-			this._stageItemsElement,
-			this._stageTimeRemainingElement,
-			this._stageElapsedTimeElement,
-			this._stageRemainingElement
-		]).text("");
-	},
+    $([
+      this._stageNameElement,
+      this._stageItemsElement,
+      this._stageTimeRemainingElement,
+      this._stageElapsedTimeElement,
+      this._stageRemainingElement
+    ]).text('');
+  },
 
-	setError: function () {
-		this._stop();
-		this._progressBarComponent.setColor('red');
-		this._progressBarComponent.setText($l.MultistepAction.errorStatus);
-	},
+  setError: function () {
+    this._stop();
+    this._progressBarComponent.setColor('red');
+    this._progressBarComponent.setText($l.MultistepAction.errorStatus);
+  },
 
-	setCancel: function () {
-		this._stop();
-		this._progressBarComponent.setColor('#BDBDBD');
-		this._progressBarComponent.setText($l.MultistepAction.canceledStatus);
-	},
+  setCancel: function () {
+    this._stop();
+    this._progressBarComponent.setColor('#BDBDBD');
+    this._progressBarComponent.setText($l.MultistepAction.canceledStatus);
+  },
 
-	setComplete: function () {
-		this._stop();
-		this._progressBarComponent.setColor('green');
-		this._progressBarComponent.setText($l.MultistepAction.completeStatus);
-	},
+  setComplete: function () {
+    this._stop();
+    this._progressBarComponent.setColor('green');
+    this._progressBarComponent.setText($l.MultistepAction.completeStatus);
+  },
 
-	_createWindow: function () {
-		var windowContentHtml = new $.telerik.stringBuilder();
+  _createWindow: function () {
+    var popupWindowComponent, $popupWindow, $content, bottomPaddingFix;
+    var windowContentHtml = new $.telerik.stringBuilder();
 
-	    windowContentHtml
-		.cat('<div class="lop-main">')
+    windowContentHtml
+      .cat('<div class="lop-main">')
+      .cat('<div class="lop-action-name"></div>')
+      .cat('<div class="lop-info">')
 
-			.cat('<div class="lop-action-name"></div>')
+      .cat('<dl class="lop-stage-remaining">')
+      .cat('<dt>' + $l.MultistepAction.stageRemainingLabel + '</dt>')
+      .cat('<dd></dd>')
+      .cat('</dl>')
 
-			.cat('<div class="lop-info">')
+      .cat('<dl class="lop-stage-name">')
+      .cat('<dt>' + $l.MultistepAction.stageNameLabel + '</dt>')
+      .cat('<dd></dd>')
+      .cat('</dl>')
 
-				.cat('<dl class="lop-stage-remaining">')
-					.cat('<dt>' + $l.MultistepAction.stageRemainingLabel + '</dt>')
-					.cat('<dd></dd>')
-				.cat('</dl>')
+      .cat('<dl class="lop-stage-items">')
+      .cat('<dt>' + $l.MultistepAction.stageItemsRemainingLabel + '</dt>')
+      .cat('<dd></dd>')
+      .cat('</dl>')
 
-				.cat('<dl class="lop-stage-name">')
-					.cat('<dt>' + $l.MultistepAction.stageNameLabel + '</dt>')
-					.cat('<dd></dd>')
-				.cat('</dl>')
+      .cat('<dl class="lop-elapsed-time">')
+      .cat('<dt>' + $l.MultistepAction.stageElapsedTimeLabel + '</dt>')
+      .cat('<dd></dd>')
+      .cat('</dl>')
 
-				.cat('<dl class="lop-stage-items">')
-					.cat('<dt>' + $l.MultistepAction.stageItemsRemainingLabel + '</dt>')
-					.cat('<dd></dd>')
-				.cat('</dl>')
+      .cat('<dl class="lop-time-remaining">')
+      .cat('<dt>' + $l.MultistepAction.stageTimeRemaningLabel + '</dt>')
+      .cat('<dd></dd>')
+      .cat('</dl>')
 
-				.cat('<dl class="lop-elapsed-time">')
-					.cat('<dt>' + $l.MultistepAction.stageElapsedTimeLabel + '</dt>')
-					.cat('<dd></dd>')
-				.cat('</dl>')
+      .cat('<dl class="lop-additional-info">')
+      .cat('<dt>' + $l.MultistepAction.additionalInfoLabel + '</dt>')
+      .cat('<dd class="brief"></dd>')
+      .cat('</dl>')
 
-				.cat('<dl class="lop-time-remaining">')
-					.cat('<dt>' + $l.MultistepAction.stageTimeRemaningLabel + '</dt>')
-					.cat('<dd></dd>')
-				.cat('</dl>')
+      .cat('<div class="lop-pbar-container">')
+      .cat('<div class="lop-pbar"></div>')
+      .cat('</div>')
 
-                .cat('<dl class="lop-additional-info">')
-					.cat('<dt>' + $l.MultistepAction.additionalInfoLabel + '</dt>')
-					.cat('<dd class="brief"></dd>')
-				.cat('</dl>')
+      .cat('<div class="lop-cancel-container">')
+      .cat('<input type="button" class="lop-cancel-button" value="')
+      .cat($l.MultistepAction.cancel)
+      .cat('" title="')
+      .cat($l.MultistepAction.cancelTitle)
+      .cat('" />')
+      .cat('</div>')
 
-				.cat('<div class="lop-pbar-container">')
-					.cat('<div class="lop-pbar"></div>')
-				.cat('</div>')
+      .cat('</div>')
+      .cat('</div>');
 
-				.cat('<div class="lop-cancel-container">')
-					.cat('<input type="button" class="lop-cancel-button" value="')
-						.cat($l.MultistepAction.cancel)
-						.cat('" title="').cat($l.MultistepAction.cancelTitle)
-					  .cat('" />')
-				.cat('</div>')
+    popupWindowComponent = $.telerik.window.create({
+      title: this._windowTitle,
+      html: windowContentHtml.string(),
+      width: this._windowWidth,
+      height: this._windowHeight,
+      modal: true,
+      resizable: false,
+      draggable: false,
+      onClose: $.proxy(this._onWindowClose, this)
+    }).data('tWindow').center();
 
-			.cat('</div>')
-		.cat('</div>');
+    $popupWindow = $(popupWindowComponent.element);
+    if (this._zIndex) {
+      $popupWindow.css('z-index', this._windowZIndex);
+    }
 
-		var popupWindowComponent = $.telerik.window.create({
-			title: this._windowTitle,
-			html: windowContentHtml.string(),
-			width: this._windowWidth,
-			height: this._windowHeight,
-			modal: true,
-			resizable: false,
-			draggable: false,
-			onClose: jQuery.proxy(this._onWindowClose, this)
-		}).data("tWindow").center();
+    $content = $popupWindow.find('DIV.t-window-content:first');
+    bottomPaddingFix = 0;
+    if ($.support.borderRadius) {
+      bottomPaddingFix = 15;
+    } else {
+      bottomPaddingFix = 10;
+    }
+    $content.css('padding-bottom', bottomPaddingFix + 'px');
 
-		var $popupWindow = jQuery(popupWindowComponent.element);
-		if (this._zIndex)
-			$popupWindow.css("z-index", this._windowZIndex);
+    return popupWindowComponent;
+  },
 
-		var $content = $popupWindow.find("DIV.t-window-content:first");
-		var bottomPaddingFix = 0;
-		if (jQuery.support.borderRadius) {
-			bottomPaddingFix = 15;
-		}
-		else {
-			bottomPaddingFix = 10;
-		}
-		$content.css("padding-bottom", bottomPaddingFix + "px");
+  _onWindowClose: function onWindowClose() {
+    if (this._isInProcess) {
+      this._cancel();
+      return false;
+    }
 
-		return popupWindowComponent;
-	},
+    this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED, {});
+    return undefined;
+  },
 
-	_onWindowClose: function () {
-		if (this._isInProcess) {
-			this._cancel();
-			return false;
-		}
-		else {
-			this.notify(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CLOSED, {});
-		}
-	},
+  _onCancelClicked: function () {
+    this._popupWindowComponent.close();
+  },
 
-	_onCancelClicked: function () {
-		this._popupWindowComponent.close();
-	},
+  _cancel: function onCancel() {
+    var eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
+    this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
+    if (eventArgs.getCancel() === true) {
+      this.notify(window.EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, eventArgs);
+    } else {
+      return false;
+    }
 
-	_cancel: function () {
-		var eventArgs = new Quantumart.QP8.BackendMultistepActionWindowEventArgs();
-		this.notify(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELING, eventArgs);
-		if (eventArgs.getCancel() === true) {
-			this.notify(EVENT_TYPE_MULTISTEP_ACTION_WINDOW_CANCELED, eventArgs);
-		}
-		else {
-			return false;
-		}
-	},
+    return undefined;
+  },
 
-	dispose: function () {
-		this._progressBarComponent = null;
-		if (this._progressBarElement) {
-			jQuery(this._progressBarElement).backendProgressBar("dispose");
-		}
-		this._progressBarElement = null;
+  dispose: function () {
+    var popupWindowComponent;
+    this._progressBarComponent = null;
+    if (this._progressBarElement) {
+      $(this._progressBarElement).backendProgressBar('dispose');
+    }
 
+    this._progressBarElement = null;
+    if (this._cancelButtonElement) {
+      $(this._cancelButtonElement).off('click');
+    }
 
-		if (this._cancelButtonElement) {
-			jQuery(this._cancelButtonElement).off("click");
-		}
-		this._cancelButtonElement = null;
-
-		if (this._popupWindowComponent) {
-			var popupWindowComponent = this._popupWindowComponent;
-			$c.destroyPopupWindow(popupWindowComponent);
-
-			popupWindowComponent = null;
-			this._popupWindowComponent = null;
-		}
-		this._popupWindowElement = null;
-	}
+    this._cancelButtonElement = null;
+    if (this._popupWindowComponent) {
+      popupWindowComponent = this._popupWindowComponent;
+      $c.destroyPopupWindow(popupWindowComponent);
+    }
+  }
 };
 
-Quantumart.QP8.BackendMultistepActionWindow.registerClass("Quantumart.QP8.BackendMultistepActionWindow", Quantumart.QP8.Observable);
+Quantumart.QP8.BackendMultistepActionWindow.registerClass(
+  'Quantumart.QP8.BackendMultistepActionWindow',
+  Quantumart.QP8.Observable
+);
 
-Quantumart.QP8.BackendMultistepActionWindowEventArgs = function () {
-	Quantumart.QP8.BackendMultistepActionWindowEventArgs.initializeBase(this);
+Quantumart.QP8.BackendMultistepActionWindowEventArgs = function BackendMultistepActionWindowEventArgs() {
+  Quantumart.QP8.BackendMultistepActionWindowEventArgs.initializeBase(this);
 };
 
 Quantumart.QP8.BackendMultistepActionWindowEventArgs.prototype = {
-	_cancel: false,
+  _cancel: false,
 
-	getCancel: function(){return this._cancel;},
-	setCancel: function(val) {this._cancel = val;}
+  getCancel: function () {
+    return this._cancel;
+  },
+
+  setCancel: function (val) {
+    this._cancel = val;
+  }
 };
 
-Quantumart.QP8.BackendMultistepActionWindowEventArgs.registerClass("Quantumart.QP8.BackendMultistepActionWindowEventArgs", Sys.EventArgs);
+Quantumart.QP8.BackendMultistepActionWindowEventArgs.registerClass(
+  'Quantumart.QP8.BackendMultistepActionWindowEventArgs',
+  window.Sys.EventArgs
+);
