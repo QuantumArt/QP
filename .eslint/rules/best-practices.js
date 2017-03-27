@@ -139,7 +139,7 @@ module.exports = {
     // disallow reassignment of function parameters
     'no-param-reassign': ['error', {
       props: true,
-      ignorePropertyModificationsFor: ['bar']
+      ignorePropertyModificationsFor: ['fn']
     }],
 
     // disallow use of __proto__

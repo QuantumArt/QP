@@ -1,5 +1,6 @@
 // based on: http://benogle.com/2009/06/16/simple-css-shiny-progress-bar-technique.html
-(function module() {
+// eslint-disable-next-line no-extra-semi
+; (function module() {
   var methods;
   var BackendProgressBarComponent = function BackendProgressBarComponent($we, options) {
     var $wrapElement = $we;

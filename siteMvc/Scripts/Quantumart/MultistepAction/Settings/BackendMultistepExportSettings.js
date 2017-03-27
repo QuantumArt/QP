@@ -4,7 +4,7 @@ Quantumart.QP8.MultistepActionExportSettings = function MultistepActionExportSet
 
 Quantumart.QP8.MultistepActionExportSettings.prototype = {
   EXPORT_BUTTON: 'Export',
-  AddButtons: function (dataItems) {
+  addButtons: function (dataItems) {
     var exportButton = {
       Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.EXPORT_BUTTON,
@@ -17,7 +17,7 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
     return dataItems.concat(exportButton);
   },
 
-  InitActions: function () {
+  initActions: function () {
     var fieldValues = this.options._popupWindowComponent.loadHostState();
     var id = this.options._popupWindowId;
     var $root = $('#' + id + '_editingForm');
@@ -28,7 +28,7 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
     $c.setAllEntityDataListValues($root, fieldValues);
   },
 
-  Validate: function () {
+  validate: function () {
     var id = this.options._popupWindowId;
     var $root = $('#' + id + '_editingForm');
     var fieldValues = $c.getAllFieldValues($root);

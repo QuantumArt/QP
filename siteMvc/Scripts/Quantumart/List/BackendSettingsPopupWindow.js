@@ -14,8 +14,7 @@ Quantumart.QP8.BackendSettingsPopupWindow = function BackendSettingsPopupWindow(
   this._popupWindowToolbarComponent = this._createToolbar();
   this.openWindow();
 
-  // eslint-disable-next-line new-cap
-  this._settingsWindow.InitActions(this, options);
+  this._settingsWindow.initActions(this, options);
 };
 
 Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
@@ -66,21 +65,17 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   _getToolbarItems: function () {
-    var dataItems = [];
-
-    // eslint-disable-next-line new-cap
-    dataItems = this._settingsWindow.AddButtons(dataItems);
-    return dataItems;
+    return this._settingsWindow.addButtons([]);
   },
 
   _onPopupWindowToolbarButtonClicked: function (eventType, sender) {
     var options, errors, btn, className, prms, that;
     if (this._popupWindowComponent) {
       options = Object.assign(this._eventsArgs, sender);
-
-      // eslint-disable-next-line new-cap
-      errors = this._settingsWindow.Validate();
-      if (!errors.length) {
+      errors = this._settingsWindow.validate();
+      if (errors.length) {
+        $q.alertError(errors);
+      } else {
         btn = $('#' + sender._toolbarElementId + '> ul > li');
         className = 'disabled';
         options.isSettingsSet = true;
@@ -111,8 +106,6 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
             }
           }
         });
-      } else {
-        $q.alertError(errors);
       }
     }
   },

@@ -230,7 +230,7 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     return result;
   },
 
-  AddButtons: function (dataItems) {
+  addButtons: function (dataItems) {
     var importButton = {
       Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.IMPORT_BUTTON,
@@ -243,12 +243,12 @@ Quantumart.QP8.MultistepActionImportSettings.prototype = {
     return dataItems.concat(importButton);
   },
 
-  InitActions: function (object, options) {
+  initActions: function (object, options) {
     this._initFileUploader(object, options.UploadPath);
     this._initValidation();
   },
 
-  Validate: function () {
+  validate: function () {
     var content, $requiredSelects;
     var that = this;
     var errorMessage = '';
