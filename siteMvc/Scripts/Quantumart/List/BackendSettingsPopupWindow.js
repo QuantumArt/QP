@@ -1,4 +1,4 @@
-Quantumart.QP8.BackendSettingsPopupWindow = function (eventArgs, options, callback) {
+Quantumart.QP8.BackendSettingsPopupWindow = function BackendSettingsPopupWindow(eventArgs, options, callback) {
   this._eventsArgs = eventArgs;
   this._actionCode = eventArgs.get_actionCode();
   this._settingsActionUrl = eventArgs.settingsActionUrl;
@@ -13,7 +13,8 @@ Quantumart.QP8.BackendSettingsPopupWindow = function (eventArgs, options, callba
 
   this._popupWindowToolbarComponent = this._createToolbar();
   this.openWindow();
-  this._settingsWindow.InitActions(this, options);
+
+  this._settingsWindow.initActions(this, options);
 };
 
 Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
@@ -45,12 +46,16 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   _createToolbar: function () {
-    var toolbar = new Quantumart.QP8.BackendToolbar();
-    toolbar.set_toolbarElementId('popupWindowToolbar_' + this._popupWindowId);
-    toolbar.initialize();
-    toolbar.attachObserver(EVENT_TYPE_TOOLBAR_BUTTON_CLICKED, jQuery.proxy(this._onPopupWindowToolbarButtonClicked, this));
-    toolbar.addToolbarItemsToToolbar(this._getToolbarItems());
-    return toolbar;
+    var backendToolbar = new Quantumart.QP8.BackendToolbar();
+    backendToolbar.set_toolbarElementId('popupWindowToolbar_' + this._popupWindowId);
+    backendToolbar.initialize();
+    backendToolbar.attachObserver(
+      window.EVENT_TYPE_TOOLBAR_BUTTON_CLICKED,
+      $.proxy(this._onPopupWindowToolbarButtonClicked, this)
+    );
+
+    backendToolbar.addToolbarItemsToToolbar(this._getToolbarItems());
+    return backendToolbar;
   },
 
   openWindow: function () {
@@ -60,21 +65,27 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   },
 
   _getToolbarItems: function () {
-    var dataItems = [];
-    dataItems = this._settingsWindow.AddButtons(dataItems);
-    return dataItems;
+    return this._settingsWindow.addButtons([]);
   },
 
   _onPopupWindowToolbarButtonClicked: function (eventType, sender) {
+    var options, errors, btn, className, prms, that;
     if (this._popupWindowComponent) {
-      var options = jQuery.extend(this._eventsArgs, sender);
-      var errors = this._settingsWindow.Validate();
-      if (errors.length === 0) {
-        var btn = $('#' + sender._toolbarElementId + '> ul > li');
-        var className = 'disabled';
+      options = Object.assign(this._eventsArgs, sender);
+      errors = this._settingsWindow.validate();
+      if (errors.length) {
+        $q.alertError(errors);
+      } else {
+        btn = $('#' + sender._toolbarElementId + '> ul > li');
+        className = 'disabled';
         options.isSettingsSet = true;
-        var prms = $('#' + this._popupWindowComponent._documentWrapperElementId + ' form input, #' + this._popupWindowComponent._documentWrapperElementId + ' form select').serialize();
-        var that = this;
+        prms = $('#'
+          + this._popupWindowComponent._documentWrapperElementId
+          + ' form input, #'
+          + this._popupWindowComponent._documentWrapperElementId
+          + ' form select').serialize();
+
+        that = this;
         $.ajax({
           url: that._settingsActionUrl.replace('Settings', 'SetupWithParams'),
           data: prms,
@@ -86,17 +97,15 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
             btn.removeClass(className);
           },
           success: function (data) {
-            if (data.view == null) {
+            if (data.view) {
+              $('#' + that._popupWindowComponent._documentWrapperElementId).html(data.view);
+            } else {
               that._popupWindowComponent.closeWindow();
               $('.t-overlay').remove();
               that._callback({ isSettingsSet: true });
-            } else {
-              $('#' + that._popupWindowComponent._documentWrapperElementId).html(data.view);
             }
           }
         });
-      } else {
-        alert(errors);
       }
     }
   },
@@ -107,4 +116,7 @@ Quantumart.QP8.BackendSettingsPopupWindow.prototype = {
   }
 };
 
-Quantumart.QP8.BackendSettingsPopupWindow.registerClass('Quantumart.QP8.BackendSettingsPopupWindow', Quantumart.QP8.BackendSelectPopupWindow);
+Quantumart.QP8.BackendSettingsPopupWindow.registerClass(
+  'Quantumart.QP8.BackendSettingsPopupWindow',
+  Quantumart.QP8.BackendSelectPopupWindow
+);

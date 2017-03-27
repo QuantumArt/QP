@@ -1,24 +1,31 @@
-Quantumart.QP8.MultistepActionCopySiteSettings = function () {};
-Quantumart.QP8.MultistepActionCopySiteSettings.prototype = {
-  COPY_BUTTON: "Create like site",
-  AddButtons: function (dataItems) {
-      var exportButton = {
-          Type: TOOLBAR_ITEM_TYPE_BUTTON,
-          Value: this.COPY_BUTTON,
-          Text: $l.MultistepAction.createLikeSite,
-          Tooltip: $l.MultistepAction.createLikeSite,
-          AlwaysEnabled: false,
-          Icon: "action.gif"
-      };
+Quantumart.QP8.MultistepActionCopySiteSettings = function MultistepActionCopySiteSettings() {
+  // ctor
+};
 
-      Array.add(dataItems, exportButton);
-      return dataItems;
+Quantumart.QP8.MultistepActionCopySiteSettings.prototype = {
+  COPY_BUTTON: 'Create like site',
+  addButtons: function (dataItems) {
+    var exportButton = {
+      Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
+      Value: this.COPY_BUTTON,
+      Text: $l.MultistepAction.createLikeSite,
+      Tooltip: $l.MultistepAction.createLikeSite,
+      AlwaysEnabled: false,
+      Icon: 'action.gif'
+    };
+
+    return dataItems.concat(exportButton);
   },
-  InitActions: function (object, options) {
+
+  initActions: function () {
+    // empty fn
   },
-  Validate: function () {
-      return '';
+
+  validate: function () {
+    return '';
   },
+
   dispose: function () {
+    // empty fn
   }
-}
+};

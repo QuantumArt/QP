@@ -137,7 +137,10 @@ module.exports = {
     'no-octal': 'error',
 
     // disallow reassignment of function parameters
-    'no-param-reassign': ['error', { props: true }],
+    'no-param-reassign': ['error', {
+      props: true,
+      ignorePropertyModificationsFor: ['fn']
+    }],
 
     // disallow use of __proto__
     'no-proto': 'error',

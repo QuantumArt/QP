@@ -1,28 +1,26 @@
-Quantumart.QP8.MultistepActionExportSettings = function (options) {
+Quantumart.QP8.MultistepActionExportSettings = function MultistepActionExportSettings(options) {
   this.options = options;
 };
 
 Quantumart.QP8.MultistepActionExportSettings.prototype = {
-  EXPORT_BUTTON: "Export",
-  options: null,
-  AddButtons: function (dataItems) {
+  EXPORT_BUTTON: 'Export',
+  addButtons: function (dataItems) {
     var exportButton = {
-      Type: TOOLBAR_ITEM_TYPE_BUTTON,
+      Type: window.TOOLBAR_ITEM_TYPE_BUTTON,
       Value: this.EXPORT_BUTTON,
       Text: $l.MultistepAction.exportTitle,
       Tooltip: $l.MultistepAction.exportTitle,
       AlwaysEnabled: false,
-      Icon: "action.gif"
+      Icon: 'action.gif'
     };
 
-    Array.add(dataItems, exportButton);
-    return dataItems;
+    return dataItems.concat(exportButton);
   },
 
-  InitActions: function (object, options) {
+  initActions: function () {
     var fieldValues = this.options._popupWindowComponent.loadHostState();
     var id = this.options._popupWindowId;
-    var $root = jQuery("#" + id + "_editingForm");
+    var $root = $('#' + id + '_editingForm');
     $c.setAllBooleanValues($root, fieldValues);
     $c.setAllRadioListValues($root, fieldValues);
     $c.initAllCheckboxToggles($root);
@@ -30,9 +28,9 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
     $c.setAllEntityDataListValues($root, fieldValues);
   },
 
-  Validate: function () {
+  validate: function () {
     var id = this.options._popupWindowId;
-    var $root = jQuery("#" + id + "_editingForm");
+    var $root = $('#' + id + '_editingForm');
     var fieldValues = $c.getAllFieldValues($root);
     this.options._popupWindowComponent.saveHostState(fieldValues);
     return '';
@@ -40,8 +38,8 @@ Quantumart.QP8.MultistepActionExportSettings.prototype = {
 
   dispose: function () {
     var id = this.options._popupWindowId;
-    var $root = jQuery("#" + id + "_editingForm");
+    var $root = $('#' + id + '_editingForm');
     $c.destroyAllEntityDataLists($root);
-    $c.destroyAllCheckboxToggles($root)
+    $c.destroyAllCheckboxToggles($root);
   }
-}
+};
