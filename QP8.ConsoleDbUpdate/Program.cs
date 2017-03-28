@@ -1,6 +1,5 @@
 using System;
 using Mono.Options;
-using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Adapters;
 using Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Enums;
@@ -25,7 +24,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Dump());
+                Console.WriteLine(ex.Message);
                 Environment.Exit(1);
             }
         }
