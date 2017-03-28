@@ -88,7 +88,6 @@ namespace QP8.WebMvc.NUnit.Tests.Quantumart.QP8.ArticleScheduler
             articleOnetimeSchedulerService.Setup(f => f.GetCurrentDBDateTime()).Returns(new DateTime(2011, 1, 5, 12, 15, 17));
 
             var operationsLogWriter = new Mock<IOperationsLogWriter>().Object;
-
             var uc = new UnityContainer()
                 .RegisterInstance(articleSchedulerServiceMock.Object)
                 .RegisterInstance(articleRecurringSchedulerService.Object)
@@ -97,7 +96,7 @@ namespace QP8.WebMvc.NUnit.Tests.Quantumart.QP8.ArticleScheduler
                 .RegisterInstance(operationsLogWriter);
 
             // Вызываем метод
-            new DbScheduler("connection String", uc).ParallelRun();
+            new DbScheduler("connection String", uc).Run();
 
             // Проверяем что все что нужно сделано
             articleRecurringSchedulerService.Verify(f => f.ShowArticle(2), Times.Exactly(2));

@@ -34,9 +34,9 @@ namespace Quantumart.QP8.ArticleScheduler
                     {
                         new QpScheduler(QPConfiguration.GetConnectionStrings(AppName, _exceptCustomerCodes), UnityContainerCustomizer.UnityContainer).ParallelRun();
                     }
-                    catch (Exception exp)
+                    catch (Exception ex)
                     {
-                        UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(exp);
+                        UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(ex);
                     }
                 }
                 while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
@@ -51,9 +51,9 @@ namespace Quantumart.QP8.ArticleScheduler
                 _cancellationTokenSource.Cancel();
                 _task.Wait();
             }
-            catch (Exception exp)
+            catch (Exception ex)
             {
-                UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(exp);
+                UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(ex);
             }
             finally
             {

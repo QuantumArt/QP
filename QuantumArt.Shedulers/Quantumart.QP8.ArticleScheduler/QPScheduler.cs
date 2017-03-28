@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
+using QP8.Infrastructure.Logging.Factories;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
@@ -23,17 +26,32 @@ namespace Quantumart.QP8.ArticleScheduler
 
         public void ParallelRun()
         {
-            _connectionStrings.AsParallel().ForAll(cs =>
+            try
             {
-                try
+                var exceptions = new ConcurrentQueue<Exception>();
+                Parallel.ForEach(_connectionStrings, cs =>
                 {
-                    new DbScheduler(cs, _unityContainer).ParallelRun();
-                }
-                catch (Exception exp)
+                    try
+                    {
+                        new DbScheduler(cs, _unityContainer).Run();
+                    }
+                    catch (Exception ex)
+                    {
+                        exceptions.Enqueue(ex);
+                    }
+                });
+
+                if (exceptions.Any())
                 {
-                    UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(exp);
+                    throw new AggregateException(exceptions);
                 }
-            });
+
+                LogProvider.GetLogger("prtg").Info("PRTG Ok.");
+            }
+            catch (Exception ex)
+            {
+                UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(ex);
+            }
         }
     }
 }

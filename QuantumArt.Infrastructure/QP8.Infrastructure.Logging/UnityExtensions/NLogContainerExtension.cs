@@ -11,7 +11,10 @@ namespace QP8.Infrastructure.Logging.UnityExtensions
         protected override void Initialize()
         {
             Container.RegisterType<ILogFactory, NLogFactory>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ILog>(new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger(LoggerTypeName)));
+            Container.RegisterType<ILog>(string.IsNullOrWhiteSpace(LoggerTypeName)
+                ? new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger())
+                : new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger(LoggerTypeName)));
+
             LogProvider.LogFactory = Container.Resolve<ILogFactory>();
             Logger.Log = Container.Resolve<ILog>();
         }

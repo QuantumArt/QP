@@ -1,6 +1,5 @@
 using System;
 using System.ServiceProcess;
-using Quantumart.QP8.ArticleScheduler.WinService.Properties;
 
 namespace Quantumart.QP8.ArticleScheduler.WinService
 {
@@ -8,21 +7,18 @@ namespace Quantumart.QP8.ArticleScheduler.WinService
     {
         private static void Main()
         {
-            var processor = new QpSchedulerProcessor(Settings.Default.RecurrentTimeout, Settings.SplitExceptCustomerCodes(Settings.Default.ExceptCustomerCodes));
+            var service = new ArticleSchedulerService();
             if (Environment.UserInteractive)
             {
                 Console.WriteLine("Starting...");
-                processor.Run();
+                service.Processor.Run();
 
                 Console.WriteLine("Running...");
                 Console.ReadLine();
             }
             else
             {
-                ServiceBase.Run(new ServiceBase[]
-                {
-                    new ArticleSchedulerService(processor)
-                });
+                ServiceBase.Run(new ServiceBase[] { service });
             }
         }
     }
