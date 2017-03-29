@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
             SiteId = siteId;
             ContentId = contentId;
             ItemCount = itemCount;
-            _importLogger = LogProvider.GetLogger();
+            _importLogger = LogProvider.GetLogger(GetType());
         }
 
         public MultistepActionStageCommandState GetState()
