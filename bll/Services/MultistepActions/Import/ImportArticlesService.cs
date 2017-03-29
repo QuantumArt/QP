@@ -21,7 +21,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Import
 
         public ImportArticlesService()
         {
-            _importLogger = LogProvider.GetLogger();
+            _importLogger = LogProvider.GetLogger(GetType());
         }
 
         public override void SetupWithParams(int parentId, int id, IMultistepActionParams settingsParams)
