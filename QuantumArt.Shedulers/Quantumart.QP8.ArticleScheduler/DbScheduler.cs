@@ -33,37 +33,21 @@ namespace Quantumart.QP8.ArticleScheduler
         }
 
         /// <summary>
-        /// Параллельно обработать задачи (расписания)
-        /// </summary>
-        public void ParallelRun()
-        {
-            GetScheduleTaskActions().AsParallel().ForAll(action => action());
-        }
-
-        /// <summary>
         /// Обработать задачи (расписания)
         /// </summary>
         public void Run()
         {
-            foreach (var action in GetScheduleTaskActions())
-            {
-                action();
-            }
+            GetScheduleTaskActions().ForEach(action => action());
         }
 
         /// <summary>
         /// Получить список action для выполнения всех существующих в БД на текущий момент расписаний
         /// </summary>
-        /// <returns></returns>
-        private IEnumerable<Action> GetScheduleTaskActions()
+        private List<Action> GetScheduleTaskActions()
         {
             var ashBllService = _unityContainer.Resolve<IArticleSchedulerService>(new ParameterOverride("connectionString", _connectionString));
-
-            // Получить список задач из указанной БД
             var scheduleTasks = ashBllService.GetScheduleTaskList();
-
-            // ToArray() обязателен, так как создание результирующей коллекции должно выполняться в одном потоке, при этом обработка результата уже может (и должна) быть обработанна параллельно
-            return scheduleTasks.Select(CreateScheduleTaskAction).ToArray();
+            return scheduleTasks.Select(CreateScheduleTaskAction).ToList();
         }
 
         /// <summary>
