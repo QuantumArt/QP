@@ -7430,7 +7430,21 @@ namespace Quantumart.QP8.DAL
                                           ,rbw.new_workflow_id
                                       from [dbo].[workflow_rules] as wr (nolock)
                                         inner join relations_between_workflows as rbw
-                                            on wr.WORKFLOW_ID = rbw.old_workflow_id";
+                                            on wr.WORKFLOW_ID = rbw.old_workflow_id
+
+	                                update [dbo].[workflow_rules] set SUCCESSOR_STATUS_ID = st.new_status_type
+	                                    from [dbo].[workflow_rules] wr
+	                                        inner join (select st1.STATUS_TYPE_ID as old_status_type,
+                                                               st2.STATUS_TYPE_ID as new_status_type
+                                                            from  [dbo].[STATUS_TYPE] st1
+			                                                    inner join [dbo].[STATUS_TYPE] as st2
+			                                                    on st1.STATUS_TYPE_NAME = st2.STATUS_TYPE_NAME
+                                                                   and st2.SITE_ID = @destinationSiteId
+			                                                where st1.SITE_ID = @sourceSiteId
+			                                            ) as st
+			                                on wr.successor_status_id = st.old_status_type
+	                                        where wr.WORKFLOW_ID in (select WORKFLOW_ID from workflow where site_id = @destinationSiteId)
+										";
 
             using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
             {
@@ -10069,7 +10083,7 @@ namespace Quantumart.QP8.DAL
                 doc.Root.Add(guids.Select(n => new XElement("guid", n.ToString())));
                 cmd.Parameters.Add(new SqlParameter("@xml", SqlDbType.Xml) { Value = doc.ToString() });
 
-                var result = new Dictionary<Guid,int>();
+                var result = new Dictionary<Guid, int>();
                 using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())

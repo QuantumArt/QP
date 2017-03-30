@@ -1485,151 +1485,154 @@ END
 
 GO
 exec qp_drop_existing 'qp_GetPermittedItemsAsQuery', 'IsProcedure'
-go
+਍最漀ഀഀ
 
-CREATE PROCEDURE [dbo].[qp_GetPermittedItemsAsQuery]
-(
-  @user_id numeric(18,0)=0,
-  @group_id numeric(18,0)=0,
-  @start_level int=2,
-  @end_level int=4,
-  @entity_name varchar(100)='content_item',
-  @parent_entity_name varchar(100)='',
-  @parent_entity_id numeric(18,0)=0,
-  @SQLOut varchar(8000) OUTPUT
+਍䌀刀䔀䄀吀䔀 倀刀伀䌀䔀䐀唀刀䔀 嬀搀戀漀崀⸀嬀焀瀀开䜀攀琀倀攀爀洀椀琀琀攀搀䤀琀攀洀猀䄀猀儀甀攀爀礀崀ഀ
+(਍  䀀甀猀攀爀开椀搀 渀甀洀攀爀椀挀⠀㄀㠀Ⰰ　⤀㴀　Ⰰഀ
+  @group_id numeric(18,0)=0,਍  䀀猀琀愀爀琀开氀攀瘀攀氀 椀渀琀㴀㈀Ⰰഀ
+  @end_level int=4,਍  䀀攀渀琀椀琀礀开渀愀洀攀 瘀愀爀挀栀愀爀⠀㄀　　⤀㴀✀挀漀渀琀攀渀琀开椀琀攀洀✀Ⰰഀ
+  @parent_entity_name varchar(100)='',਍  䀀瀀愀爀攀渀琀开攀渀琀椀琀礀开椀搀 渀甀洀攀爀椀挀⠀㄀㠀Ⰰ　⤀㴀　Ⰰഀ
+  @SQLOut varchar(8000) OUTPUT਍⤀ഀ
+AS਍ഀ
+SET NOCOUNT ON਍ഀ
+Declare @sPermissionTable varchar(200)਍䐀攀挀氀愀爀攀 䀀猀䠀椀搀攀 瘀愀爀挀栀愀爀⠀㔀　⤀ഀ
+Declare @NewLine char(2)਍䐀攀挀氀愀爀攀 䀀猀唀渀椀漀渀 瘀愀爀挀栀愀爀⠀㈀　⤀ഀ
+Declare @sSelectUser varchar(200)਍䐀攀挀氀愀爀攀 䀀猀匀攀氀攀挀琀䜀爀漀甀瀀 瘀愀爀挀栀愀爀⠀㠀　　　⤀ഀ
+Declare @sSQL varchar(8000)਍䐀攀挀氀愀爀攀 䀀猀爀䜀爀漀甀瀀䤀渀䰀椀猀琀 瘀愀爀挀栀愀爀 ⠀㌀　⤀ഀ
+Declare @srLevelIncrement varchar (30)਍䐀攀挀氀愀爀攀 䀀猀吀攀洀瀀 瘀愀爀挀栀愀爀⠀㠀　　　⤀ഀ
+Declare @sWhereParentEntity varchar (8000)਍䐀攀挀氀愀爀攀 䀀猀䐀攀昀愀甀氀琀匀儀䰀 瘀愀爀挀栀愀爀 ⠀㠀　　　⤀ഀ
+Declare @sGroupBy varchar (200)਍䐀攀挀氀愀爀攀 䀀椀渀琀䤀渀挀爀攀洀攀渀琀 椀渀琀ഀ
+Declare @CurrentLevelAddition int਍䐀攀挀氀愀爀攀 䀀猀匀儀䰀匀琀愀爀琀 瘀愀爀挀栀愀爀⠀㌀　　⤀ഀ
+Declare @sSQLEnd varchar (600)਍ഀ
+/***********************************/਍⼀⨀⨀⨀⨀ 䐀攀挀氀愀爀攀 吀愀戀氀攀 嘀愀爀椀愀戀氀攀猀   ⨀⨀⨀⨀⼀ഀ
+/***********************************/਍搀攀挀氀愀爀攀 䀀䌀栀椀氀搀䜀爀漀甀瀀猀 琀愀戀氀攀ഀ
+(਍ऀ最爀漀甀瀀开椀搀 渀甀洀攀爀椀挀⠀㄀㠀Ⰰ　⤀ 倀刀䤀䴀䄀刀夀 䬀䔀夀ഀ
+)਍ഀ
+declare @ParentGroups table਍⠀ഀ
+	group_id numeric(18,0) PRIMARY KEY਍⤀ഀ
+਍搀攀挀氀愀爀攀 䀀唀猀攀搀䜀爀漀甀瀀猀 琀愀戀氀攀ഀ
+(਍ऀ最爀漀甀瀀开椀搀 渀甀洀攀爀椀挀⠀㄀㠀Ⰰ　⤀ഀ
+)਍ഀ
+declare @TempParentGroups table਍⠀ഀ
+	group_id numeric(18,0) PRIMARY KEY਍⤀ഀ
+/***********************************/਍ഀ
+select @NewLine = CHAR(13) + CHAR(10)਍匀攀氀攀挀琀 䀀椀渀琀䤀渀挀爀攀洀攀渀琀 㴀 ㄀　ഀ
+Select @CurrentLevelAddition = 0਍匀攀氀攀挀琀 䀀猀匀儀䰀匀琀愀爀琀 㴀 ✀ 猀攀氀攀挀琀 ✀ ⬀ 䀀攀渀琀椀琀礀开渀愀洀攀 ⬀ ✀开椀搀Ⰰ 挀愀猀琀⠀洀椀渀⠀瀀氀⤀ 愀猀 椀渀琀⤀─㄀　 愀猀 瀀攀爀洀椀猀猀椀漀渀开氀攀瘀攀氀Ⰰ 洀愀砀⠀栀椀搀攀⤀ 愀猀 栀椀搀攀 昀爀漀洀 ⠀✀ഀ
+Select @sSQLEnd = ') as qp_zzz group by qp_zzz.' + @entity_name + '_id HAVING cast(min(pl) as int)%10 >= ' + Cast(@start_level AS varchar) + ' AND cast(min(pl) as int)%10 <= ' + Cast(@end_level AS varchar)਍ഀ
+Select @sGroupBy =  ' group by ' + @entity_name + '_id '਍匀攀氀攀挀琀 䀀猀圀栀攀爀攀倀愀爀攀渀琀䔀渀琀椀琀礀 㴀 ✀✀ഀ
+select @sPermissionTable = @entity_name + '_access_PermLevel'਍ഀ
+if @parent_entity_name != '' and @parent_entity_id != 0਍䈀攀最椀渀ഀ
+   Select @sPermissionTable = @sPermissionTable + '_' + @parent_entity_name਍   匀攀氀攀挀琀 䀀猀圀栀攀爀攀倀愀爀攀渀琀䔀渀琀椀琀礀 㴀 ✀ 愀渀搀 ✀ ⬀ 䀀瀀愀爀攀渀琀开攀渀琀椀琀礀开渀愀洀攀⬀ ✀开椀搀㴀✀ ⬀ 䌀愀猀琀⠀䀀瀀愀爀攀渀琀开攀渀琀椀琀礀开椀搀 䄀猀 瘀愀爀挀栀愀爀⤀ ⬀ ✀ ✀ഀ
+End਍ഀ
+if @entity_name = 'content'਍ऀ猀攀琀 䀀猀䠀椀搀攀 㴀 ✀Ⰰ 䴀䄀堀⠀䌀伀一嘀䔀刀吀⠀椀渀琀Ⰰ 栀椀搀攀⤀⤀ 愀猀 栀椀搀攀✀ഀ
+else਍ऀ猀攀琀 䀀猀䠀椀搀攀 㴀 ✀Ⰰ 　 愀猀 栀椀搀攀✀ഀ
+਍猀攀氀攀挀琀 䀀猀匀儀䰀 㴀 ✀✀ഀ
+select @sTemp = null਍匀攀氀攀挀琀 䀀猀爀䜀爀漀甀瀀䤀渀䰀椀猀琀 㴀 ✀㰀䀀开最爀漀甀瀀开椀渀开氀椀猀琀开䀀㸀✀ഀ
+Select @srLevelIncrement = '<@_increment_level_@>'਍猀攀氀攀挀琀 䀀猀唀渀椀漀渀 㴀 䀀一攀眀䰀椀渀攀 ⬀ ✀ 唀渀椀漀渀 䄀氀氀 ✀ ⬀ 䀀一攀眀䰀椀渀攀ഀ
+select @sSelectUser = ' select ' + @entity_name + '_id, max(permission_level) as pl' + @sHide + ' from ' + @sPermissionTable +  ' with(nolock) where user_id=' + Cast(@user_id AS varchar) + @NewLine਍                      ⬀ 䀀猀圀栀攀爀攀倀愀爀攀渀琀䔀渀琀椀琀礀 ⬀ 䀀一攀眀䰀椀渀攀ഀ
+select @sSelectGroup = ' select ' + @entity_name + '_id, max(permission_level) + ' + @srLevelIncrement + ' as pl' + @sHide + ' from ' + @sPermissionTable +  ' with(nolock) where group_id in (' + @srGroupInList + ')' + @NewLine਍                      ⬀ 䀀猀圀栀攀爀攀倀愀爀攀渀琀䔀渀琀椀琀礀 ⬀ 䀀一攀眀䰀椀渀攀ഀ
+select @sDefaultSQL = ' select 0 as ' + @entity_name + '_id, 0 as permission_level' + @sHide + ' from ' + @sPermissionTable਍ഀ
+਍椀昀 䀀甀猀攀爀开椀搀 㸀 　ഀ
+Begin਍   匀攀氀攀挀琀 䀀猀匀儀䰀 㴀 䀀猀匀攀氀攀挀琀唀猀攀爀 ⬀ 䀀猀䜀爀漀甀瀀䈀礀ഀ
+   insert into @ChildGroups (group_id) select distinct group_id from user_group_bind where user_id = @user_id਍   匀攀氀攀挀琀 䀀䌀甀爀爀攀渀琀䰀攀瘀攀氀䄀搀搀椀琀椀漀渀 㴀 䀀䌀甀爀爀攀渀琀䰀攀瘀攀氀䄀搀搀椀琀椀漀渀 ⬀ 䀀椀渀琀䤀渀挀爀攀洀攀渀琀ഀ
+End਍ഀ
+if @group_id > 0 AND @user_id <= 0਍䈀攀最椀渀ഀ
+   insert into @ChildGroups(group_id) values (@group_id)਍䔀渀搀ഀ
+਍椀昀 ⠀猀攀氀攀挀琀 挀漀甀渀琀⠀⨀⤀ 昀爀漀洀 䀀䌀栀椀氀搀䜀爀漀甀瀀猀⤀ 㴀 　ഀ
+Begin਍   椀昀 䀀猀匀儀䰀 ℀㴀 ✀✀ 匀攀氀攀挀琀 䀀匀儀䰀伀甀琀 㴀 䀀猀匀儀䰀ഀ
+   else Select @SQLOut = @sDefaultSQL਍   爀攀琀甀爀渀ഀ
+End਍ഀ
+SELECT @sTemp = COALESCE(@sTemp + ', ', '') + CAST(group_id AS varchar) FROM @ChildGroups਍椀昀 䀀猀匀儀䰀 ℀㴀 ✀✀ 匀攀氀攀挀琀 䀀猀匀儀䰀 㴀 䀀猀匀儀䰀 ⬀ 䀀猀唀渀椀漀渀ഀ
+Select @sSQL = @sSQL + Replace( Replace(@sSelectGroup,@srLevelIncrement,@CurrentLevelAddition), @srGroupInList, @sTemp )਍匀攀氀攀挀琀 䀀猀匀儀䰀 㴀 䀀猀匀儀䰀 ⬀ 䀀猀䜀爀漀甀瀀䈀礀ഀ
+਍椀渀猀攀爀琀 椀渀琀漀 䀀唀猀攀搀䜀爀漀甀瀀猀⠀最爀漀甀瀀开椀搀⤀ 猀攀氀攀挀琀 最爀漀甀瀀开椀搀 昀爀漀洀 䀀䌀栀椀氀搀䜀爀漀甀瀀猀ഀ
+਍圀䠀䤀䰀䔀 ㄀㴀㄀ഀ
+BEGIN਍    匀攀氀攀挀琀 䀀䌀甀爀爀攀渀琀䰀攀瘀攀氀䄀搀搀椀琀椀漀渀 㴀 䀀䌀甀爀爀攀渀琀䰀攀瘀攀氀䄀搀搀椀琀椀漀渀 ⬀ 䀀椀渀琀䤀渀挀爀攀洀攀渀琀ഀ
+    select @sTemp = null਍ऀ椀渀猀攀爀琀 椀渀琀漀 䀀倀愀爀攀渀琀䜀爀漀甀瀀猀 ⠀最爀漀甀瀀开椀搀⤀ 猀攀氀攀挀琀 搀椀猀琀椀渀挀琀 最琀最⸀瀀愀爀攀渀琀开最爀漀甀瀀开椀搀 昀爀漀洀 最爀漀甀瀀开琀漀开最爀漀甀瀀 最琀最 椀渀渀攀爀 樀漀椀渀 䀀䌀栀椀氀搀䜀爀漀甀瀀猀 挀最 漀渀 最琀最⸀挀栀椀氀搀开最爀漀甀瀀开椀搀 㴀 挀最⸀最爀漀甀瀀开椀搀ഀ
+    if (select count(*) from @ParentGroups) = 0 BREAK਍ഀ
+    /* need to check that parent groups are not appearing in child groups */਍    椀渀猀攀爀琀 椀渀琀漀 䀀吀攀洀瀀倀愀爀攀渀琀䜀爀漀甀瀀猀 ⠀最爀漀甀瀀开椀搀⤀ 猀攀氀攀挀琀 瀀最⸀最爀漀甀瀀开椀搀 昀爀漀洀 䀀倀愀爀攀渀琀䜀爀漀甀瀀猀 瀀最 眀栀攀爀攀 瀀最⸀最爀漀甀瀀开椀搀 渀漀琀 椀渀⠀猀攀氀攀挀琀 挀最⸀最爀漀甀瀀开椀搀 昀爀漀洀 䀀䌀栀椀氀搀䜀爀漀甀瀀猀 挀最⤀ 愀渀搀 瀀最⸀最爀漀甀瀀开椀搀 渀漀琀 椀渀 ⠀猀攀氀攀挀琀 最爀漀甀瀀开椀搀 昀爀漀洀 䀀唀猀攀搀䜀爀漀甀瀀猀⤀ഀ
+    if (select count(*) from @TempParentGroups) != 0਍    䈀攀最椀渀ഀ
+		SELECT @sTemp = COALESCE(@sTemp + ', ', '') + CAST(group_id AS varchar) FROM @TempParentGroups਍ऀऀ椀昀 䀀猀匀儀䰀 ℀㴀 ✀✀ 匀攀氀攀挀琀 䀀猀匀儀䰀 㴀 䀀猀匀儀䰀 ⬀ 䀀猀唀渀椀漀渀ഀ
+		Select @sSQL = @sSQL + Replace( Replace(@sSelectGroup,@srLevelIncrement,@CurrentLevelAddition), @srGroupInList, @sTemp )਍ऀऀ匀攀氀攀挀琀 䀀猀匀儀䰀 㴀 䀀猀匀儀䰀 ⬀ 䀀猀䜀爀漀甀瀀䈀礀ഀ
+        insert into @UsedGroups (group_id) select group_id from @TempParentGroups਍    䔀渀搀ഀ
+਍    搀攀氀攀琀攀 䀀䌀栀椀氀搀䜀爀漀甀瀀猀ഀ
+    delete @TempParentGroups਍    椀渀猀攀爀琀 椀渀琀漀 䀀䌀栀椀氀搀䜀爀漀甀瀀猀 ⠀最爀漀甀瀀开椀搀⤀ 猀攀氀攀挀琀 ⠀最爀漀甀瀀开椀搀⤀ 昀爀漀洀 䀀倀愀爀攀渀琀䜀爀漀甀瀀猀ഀ
+    delete @ParentGroups਍    䌀伀一吀䤀一唀䔀ഀ
+END਍ഀ
+Select @SQLOut = @sSQLStart + @sSQL + @sSQLEnd਍爀攀琀甀爀渀ഀ
+
+GO
+DECLARE @articles_with_wrong_statuses TABLE (
+Site_ID int,
+CONTENT_ID int,
+STATUS_TYPE_ID int,
+CONTENT_ITEM_ID int
 )
-AS
 
-SET NOCOUNT ON
-
-Declare @sPermissionTable varchar(200)
-Declare @sHide varchar(50)
-Declare @NewLine char(2)
-Declare @sUnion varchar(20)
-Declare @sSelectUser varchar(200)
-Declare @sSelectGroup varchar(8000)
-Declare @sSQL varchar(8000)
-Declare @srGroupInList varchar (30)
-Declare @srLevelIncrement varchar (30)
-Declare @sTemp varchar(8000)
-Declare @sWhereParentEntity varchar (8000)
-Declare @sDefaultSQL varchar (8000)
-Declare @sGroupBy varchar (200)
-Declare @intIncrement int
-Declare @CurrentLevelAddition int
-Declare @sSQLStart varchar(300)
-Declare @sSQLEnd varchar (600)
-
-/***********************************/
-/**** Declare Table Variables   ****/
-/***********************************/
-declare @ChildGroups table
-(
-	group_id numeric(18,0) PRIMARY KEY
-)
-
-declare @ParentGroups table
-(
-	group_id numeric(18,0) PRIMARY KEY
-)
-
-declare @UsedGroups table
-(
-	group_id numeric(18,0)
-)
-
-declare @TempParentGroups table
-(
-	group_id numeric(18,0) PRIMARY KEY
-)
-/***********************************/
-
-select @NewLine = CHAR(13) + CHAR(10)
-Select @intIncrement = 10
-Select @CurrentLevelAddition = 0
-Select @sSQLStart = ' select ' + @entity_name + '_id, cast(min(pl) as int)%10 as permission_level, max(hide) as hide from ('
-Select @sSQLEnd = ') as qp_zzz group by qp_zzz.' + @entity_name + '_id HAVING cast(min(pl) as int)%10 >= ' + Cast(@start_level AS varchar) + ' AND cast(min(pl) as int)%10 <= ' + Cast(@end_level AS varchar)
-
-Select @sGroupBy =  ' group by ' + @entity_name + '_id '
-Select @sWhereParentEntity = ''
-select @sPermissionTable = @entity_name + '_access_PermLevel'
-
-if @parent_entity_name != '' and @parent_entity_id != 0
-Begin
-   Select @sPermissionTable = @sPermissionTable + '_' + @parent_entity_name
-   Select @sWhereParentEntity = ' and ' + @parent_entity_name+ '_id=' + Cast(@parent_entity_id As varchar) + ' '
-End
-
-if @entity_name = 'content'
-	set @sHide = ', MAX(CONVERT(int, hide)) as hide'
-else
-	set @sHide = ', 0 as hide'
-
-select @sSQL = ''
-select @sTemp = null
-Select @srGroupInList = '<@_group_in_list_@>'
-Select @srLevelIncrement = '<@_increment_level_@>'
-select @sUnion = @NewLine + ' Union All ' + @NewLine
-select @sSelectUser = ' select ' + @entity_name + '_id, max(permission_level) as pl' + @sHide + ' from ' + @sPermissionTable +  ' with(nolock) where user_id=' + Cast(@user_id AS varchar) + @NewLine
-                      + @sWhereParentEntity + @NewLine
-select @sSelectGroup = ' select ' + @entity_name + '_id, max(permission_level) + ' + @srLevelIncrement + ' as pl' + @sHide + ' from ' + @sPermissionTable +  ' with(nolock) where group_id in (' + @srGroupInList + ')' + @NewLine
-                      + @sWhereParentEntity + @NewLine
-select @sDefaultSQL = ' select 0 as ' + @entity_name + '_id, 0 as permission_level' + @sHide + ' from ' + @sPermissionTable
-
-
-if @user_id > 0
-Begin
-   Select @sSQL = @sSelectUser + @sGroupBy
-   insert into @ChildGroups (group_id) select distinct group_id from user_group_bind where user_id = @user_id
-   Select @CurrentLevelAddition = @CurrentLevelAddition + @intIncrement
-End
-
-if @group_id > 0 AND @user_id <= 0
-Begin
-   insert into @ChildGroups(group_id) values (@group_id)
-End
-
-if (select count(*) from @ChildGroups) = 0
-Begin
-   if @sSQL != '' Select @SQLOut = @sSQL
-   else Select @SQLOut = @sDefaultSQL
-   return
-End
-
-SELECT @sTemp = COALESCE(@sTemp + ', ', '') + CAST(group_id AS varchar) FROM @ChildGroups
-if @sSQL != '' Select @sSQL = @sSQL + @sUnion
-Select @sSQL = @sSQL + Replace( Replace(@sSelectGroup,@srLevelIncrement,@CurrentLevelAddition), @srGroupInList, @sTemp )
-Select @sSQL = @sSQL + @sGroupBy
-
-insert into @UsedGroups(group_id) select group_id from @ChildGroups
-
-WHILE 1=1
+INSERT INTO @articles_with_wrong_statuses
+	SELECT c.Site_ID, c.CONTENT_ID, ci.STATUS_TYPE_ID, ci.CONTENT_ITEM_ID FROM [dbo].[CONTENT_ITEM] ci
+	INNER JOIN [dbo].[CONTENT] c ON ci.CONTENT_ID = c.CONTENT_ID
+	WHERE  ci.STATUS_TYPE_ID NOT IN (
+					SELECT STATUS_TYPE_ID
+					FROM [dbo].[STATUS_TYPE] i_st
+					WHERE i_st.SITE_ID = c.SITE_ID
+					)
+IF EXISTS (SELECT * FROM @articles_with_wrong_statuses)
 BEGIN
-    Select @CurrentLevelAddition = @CurrentLevelAddition + @intIncrement
-    select @sTemp = null
-	insert into @ParentGroups (group_id) select distinct gtg.parent_group_id from group_to_group gtg inner join @ChildGroups cg on gtg.child_group_id = cg.group_id
-    if (select count(*) from @ParentGroups) = 0 BREAK
+DECLARE @statuses_names TABLE (
+	STATUS_TYPE_NAME nvarchar(255),
+	STATUS_TYPE_ID int,
+	NEW_SITE int
+)
 
-    /* need to check that parent groups are not appearing in child groups */
-    insert into @TempParentGroups (group_id) select pg.group_id from @ParentGroups pg where pg.group_id not in(select cg.group_id from @ChildGroups cg) and pg.group_id not in (select group_id from @UsedGroups)
-    if (select count(*) from @TempParentGroups) != 0
-    Begin
-		SELECT @sTemp = COALESCE(@sTemp + ', ', '') + CAST(group_id AS varchar) FROM @TempParentGroups
-		if @sSQL != '' Select @sSQL = @sSQL + @sUnion
-		Select @sSQL = @sSQL + Replace( Replace(@sSelectGroup,@srLevelIncrement,@CurrentLevelAddition), @srGroupInList, @sTemp )
-		Select @sSQL = @sSQL + @sGroupBy
-        insert into @UsedGroups (group_id) select group_id from @TempParentGroups
-    End
+INSERT INTO @statuses_names
+	SELECT st1.STATUS_TYPE_NAME, st1.STATUS_TYPE_ID as old_status, st1.SITE_ID as old_site from [dbo].[STATUS_TYPE] st1
+	WHERE st1.STATUS_TYPE_ID IN (SELECT STATUS_TYPE_ID FROM @articles_with_wrong_statuses)
 
-    delete @ChildGroups
-    delete @TempParentGroups
-    insert into @ChildGroups (group_id) select (group_id) from @ParentGroups
-    delete @ParentGroups
-    CONTINUE
+;WITH rel_betw_statuses AS (
+	SELECT new_status_id, new_site_id, old_status_id FROM (
+	SELECT st.SITE_ID AS new_site_id, st.STATUS_TYPE_ID AS new_status_id, stn.STATUS_TYPE_NAME, stn.STATUS_TYPE_ID AS old_status_id
+		FROM [dbo].[STATUS_TYPE] st
+		INNER JOIN @statuses_names stn ON st.STATUS_TYPE_NAME = stn.STATUS_TYPE_NAME
+	) AS nsi
+	WHERE nsi.NEW_SITE_ID IN (SELECT SITE_ID FROM @wrong_statuses)
+)
+
+UPDATE CONTENT_ITEM
+	SET STATUS_TYPE_ID = (
+		SELECT NEW_STATUS_ID FROM CONTENT_ITEM AS ci
+		INNER JOIN @temp AS t ON t.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+		INNER JOIN rel_betw_statuses AS rbs ON t.SITE_ID = rbs.new_site_id AND ci.STATUS_TYPE_ID = rbs.old_status_id
+		WHERE  [dbo].[CONTENT_ITEM].CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+)
+WHERE CONTENT_ITEM_ID IN (SELECT CONTENT_ITEM_ID FROM @temp)
 END
 
-Select @SQLOut = @sSQLStart + @sSQL + @sSQLEnd
-return
+
+
+DECLARE @workflow_rules_ids TABLE (
+WORKFLOW_RULE_ID int
+)
+
+INSERT INTO @workflow_rules_ids
+	SELECT workflow_rule_id FROM [dbo].[workflow_rules] wr
+		WHERE SUCCESSOR_STATUS_ID NOT IN (
+			SELECT STATUS_TYPE_ID FROM [dbo].[STATUS_TYPE] st
+			INNER JOIN [dbo].[workflow] w ON st.SITE_ID = w.SITE_ID
+			WHERE wr.WORKFLOW_ID = w.WORKFLOW_ID
+	)
+
+IF EXISTS (SELECT * FROM @workflow_rules_ids)
+BEGIN
+UPDATE [dbo].[WORKFLOW_RULES]
+SET SUCCESSOR_STATUS_ID = (
+	SELECT st2.STATUS_TYPE_ID
+		FROM [dbo].[STATUS_TYPE] st1
+			INNER JOIN [dbo].[STATUS_TYPE] st2 on st1.STATUS_TYPE_NAME = st2.STATUS_TYPE_NAME
+			INNER JOIN [dbo].[workflow] w on st2.SITE_ID = w.SITE_ID
+		WHERE w.WORKFLOW_ID = [dbo].[workflow_rules].WORKFLOW_ID AND [dbo].[WORKFLOW_RULES].SUCCESSOR_STATUS_ID = st1.STATUS_TYPE_ID
+	)
+WHERE WORKFLOW_RULE_ID IN (SELECT WORKFLOW_RULE_ID FROM @workflow_rules_ids)
+END
 
 GO
 
