@@ -4,54 +4,50 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
+using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Logging.Factories;
+using Quantumart.QP8.Configuration.Models;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
     public class QpScheduler
     {
-        private readonly IEnumerable<string> _connectionStrings;
         private readonly IUnityContainer _unityContainer;
+        private readonly List<QaConfigCustomer> _customers;
 
-        public QpScheduler(IEnumerable<string> connectionStrings, IUnityContainer unityContainer)
+        public QpScheduler(IUnityContainer unityContainer, List<QaConfigCustomer> customers)
         {
             if (unityContainer == null)
             {
                 throw new ArgumentNullException(nameof(unityContainer));
             }
 
-            _connectionStrings = connectionStrings;
             _unityContainer = unityContainer;
+            _customers = customers;
         }
 
         public void ParallelRun()
         {
-            try
+            var exceptions = new ConcurrentQueue<Exception>();
+            Parallel.ForEach(_customers, customer =>
             {
-                var exceptions = new ConcurrentQueue<Exception>();
-                Parallel.ForEach(_connectionStrings, cs =>
+                try
                 {
-                    try
-                    {
-                        new DbScheduler(cs, _unityContainer).Run();
-                    }
-                    catch (Exception ex)
-                    {
-                        exceptions.Enqueue(ex);
-                    }
-                });
-
-                if (exceptions.Any())
-                {
-                    throw new AggregateException(exceptions);
+                    new DbScheduler(customer.ConnectionString, _unityContainer).Run();
                 }
+                catch (Exception ex)
+                {
+                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}");
+                    exceptions.Enqueue(ex);
+                }
+            });
 
-                LogProvider.GetLogger("prtg").Info("All tasks successfully proceed.");
-            }
-            catch (Exception ex)
+            if (exceptions.Any())
             {
-                UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(ex);
+                LogProvider.GetLogger("prtg").Error("There was an error at article sheduler service.");
             }
+
+            LogProvider.GetLogger("prtg").Info("All tasks successfully proceed.");
         }
     }
 }

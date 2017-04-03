@@ -31,14 +31,5 @@ namespace Quantumart.QP8.ArticleScheduler.WinService.Properties {
                 return ((global::System.TimeSpan)(this["RecurrentTimeout"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("publishing_r1")]
-        public string ExceptCustomerCodes {
-            get {
-                return ((string)(this["ExceptCustomerCodes"]));
-            }
-        }
     }
 }

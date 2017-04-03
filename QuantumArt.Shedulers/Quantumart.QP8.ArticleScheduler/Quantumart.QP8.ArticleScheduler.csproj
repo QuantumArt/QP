@@ -53,7 +53,6 @@
   <ItemGroup>
     <Compile Include="DateRangeExtensions.cs" />
     <Compile Include="DbScheduler.cs" />
-    <Compile Include="ExceptionHandler.cs" />
     <Compile Include="IOperationsLogWriter.cs" />
     <Compile Include="Onetime\OnetimeTask.cs" />
     <Compile Include="Onetime\OnetimeTaskScheduler.cs" />

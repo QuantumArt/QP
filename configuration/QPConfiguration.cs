@@ -6,6 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Web.Configuration;
 using System.Xml.Linq;
+using QP8.Infrastructure.Helpers;
+using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.Configuration
@@ -56,22 +58,22 @@ namespace Quantumart.QP8.Configuration
             return null;
         }
 
-        public static IEnumerable<string> GetConnectionStrings(string appName = null, IEnumerable<string> exceptCustomerCodes = null)
+        public static List<QaConfigCustomer> GetCustomers(string appName = null, bool shouldExludeForShedulers = false)
         {
-            exceptCustomerCodes = exceptCustomerCodes ?? new string[0];
-            var result = XmlConfig.Descendants("customer")
-                .Where(n => !exceptCustomerCodes.Contains(n.Attribute("customer_name").Value, StringComparer.InvariantCultureIgnoreCase))
-                .Select(n => TuneConnectionString(n.Element("db").Value, appName));
+            var customers = GetQaConfiguration().Customers.Where(c => !shouldExludeForShedulers || !c.ExcludeFromShedulers).ToList();
+            foreach (var entry in customers)
+            {
+                entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName);
+            }
 
-            return result.ToArray();
+            return customers;
         }
 
-        public static string[] CustomerCodes
+        public static List<string> CustomerCodes
         {
             get
             {
-                var result = XmlConfig.Descendants("customer").Select(n => n.Attribute("customer_name").Value);
-                return result.ToArray();
+                return GetQaConfiguration().Customers.Select(c => c.CustomerName).ToList();
             }
         }
 
@@ -166,6 +168,11 @@ namespace Quantumart.QP8.Configuration
             settings[Config.MailPasswordKey] = ConfigVariable(Config.MailPasswordKey);
             settings[Config.MailAssembleKey] = ConfigVariable(Config.MailAssembleKey) != "no" ? "yes" : string.Empty;
             settings[Config.MailFromNameKey] = ConfigVariable(Config.MailFromNameKey);
+        }
+
+        private static QaConfiguration GetQaConfiguration()
+        {
+            return XmlSerializerHelpers.Deserialize<QaConfiguration>(XmlConfig);
         }
     }
 }

@@ -14,7 +14,6 @@ namespace Quantumart.QP8.ArticleScheduler
             .RegisterType<IArticleOnetimeSchedulerService, ArticleSchedulerService>()
             .RegisterType<IArticlePublishingSchedulerService, ArticleSchedulerService>()
             .RegisterType<IArticleRecurringSchedulerService, ArticleSchedulerService>()
-            .RegisterType<IExceptionHandler, ExceptionHandler>()
             .RegisterType<IOperationsLogWriter, OperationsLogWriter>()
             .AddNewExtension<NLogContainerExtension>();
         }

@@ -1,12 +1,13 @@
 ﻿using System.IO;
 using System.Text;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 
-namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
+namespace QP8.Infrastructure.Helpers
 {
-    internal static class XmlSerializerHelpers
+    public static class XmlSerializerHelpers
     {
-        internal static string Serialize<T>(T item)
+        public static string Serialize<T>(T item)
         {
             var xs = new XmlSerializer(item.GetType());
             using (var sw = new StringWriter())
@@ -16,7 +17,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             }
         }
 
-        internal static string Serialize<T>(T item, string rootName)
+        public static string Serialize<T>(T item, string rootName)
         {
             var xs = new XmlSerializer(item.GetType(), new XmlRootAttribute(rootName));
             using (var sw = new StringWriter())
@@ -26,7 +27,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             }
         }
 
-        internal static T Deserialize<T>(string xmlString)
+        public static T Deserialize<T>(string xmlString)
         {
             if (string.IsNullOrWhiteSpace(xmlString))
             {
@@ -36,6 +37,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Helpers
             using (var ms = new MemoryStream(Encoding.Unicode.GetBytes(xmlString)))
             {
                 return (T)new XmlSerializer(typeof(T)).Deserialize(ms);
+            }
+        }
+
+        public static T Deserialize<T>(XDocument doc)
+        {
+            var xmlSerializer = new XmlSerializer(typeof(T));
+            using (var reader = doc.Root.CreateReader())
+            {
+                return (T)xmlSerializer.Deserialize(reader);
             }
         }
     }

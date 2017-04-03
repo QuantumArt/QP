@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -52,6 +52,11 @@
     <Compile Include="Authentication\AuthenticationElement.cs" />
     <Compile Include="Authentication\WindowsAuthentication\IpRangeElement.cs" />
     <Compile Include="Authentication\WindowsAuthentication\IpRangeCollection.cs" />
+    <Compile Include="Models\QaConfigApplicationVariable.cs" />
+    <Compile Include="Models\QaConfigApplicationVariables.cs" />
+    <Compile Include="Models\QaConfigCustomer.cs" />
+    <Compile Include="Models\QaConfiguration.cs" />
+    <Compile Include="Models\QaConfigurationCustomers.cs" />
     <Compile Include="QPConfiguration.cs" />
     <Compile Include="Globalization\GlobalizationElement.cs" />
     <Compile Include="QPublishingSection.cs" />
@@ -66,6 +71,10 @@
     <ProjectReference Include="$(SolutionDir)utils\Utils.csproj">
       <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
       <Name>Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure\QP8.Infrastructure.csproj">
+      <Project>{27bd20e7-1133-4d13-90c6-6565489da612}</Project>
+      <Name>QP8.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

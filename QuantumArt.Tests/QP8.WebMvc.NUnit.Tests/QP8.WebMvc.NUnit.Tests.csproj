@@ -132,7 +132,6 @@
     <Compile Include="Quantumart.QP8.ArticleScheduler\Recurring\RecuringStartCalcTest.cs" />
     <Compile Include="Quantumart.QP8.ArticleScheduler\Recurring\RecurringTaskSchedulerTest.cs" />
     <Compile Include="ScheduleHelperTest.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\WinService\Properties\SettingsTest.cs" />
     <Compile Include="BLL\Repository\FingerprintRepositoryTest.cs" />
     <Compile Include="Utils\CleanerTest.cs" />
     <Compile Include="Utils\ConverterTest.cs" />
@@ -194,4 +193,3 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
-

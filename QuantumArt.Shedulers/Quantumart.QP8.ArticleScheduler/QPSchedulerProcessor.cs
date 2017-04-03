@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Practices.Unity;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.ArticleScheduler
@@ -13,14 +12,12 @@ namespace Quantumart.QP8.ArticleScheduler
         private CancellationTokenSource _cancellationTokenSource;
 
         private readonly TimeSpan _recurrentTimeout;
-        private readonly IEnumerable<string> _exceptCustomerCodes;
 
         private const string AppName = "QP8ArticleSchedulerService";
 
-        public QpSchedulerProcessor(TimeSpan recurrentTimeout, IEnumerable<string> exceptCustomerCodes)
+        public QpSchedulerProcessor(TimeSpan recurrentTimeout)
         {
             _recurrentTimeout = recurrentTimeout;
-            _exceptCustomerCodes = exceptCustomerCodes ?? new string[0];
         }
 
         public void Run()
@@ -32,11 +29,12 @@ namespace Quantumart.QP8.ArticleScheduler
                 {
                     try
                     {
-                        new QpScheduler(QPConfiguration.GetConnectionStrings(AppName, _exceptCustomerCodes), UnityContainerCustomizer.UnityContainer).ParallelRun();
+                        var customers = QPConfiguration.GetCustomers(AppName, true);
+                        new QpScheduler(UnityContainerCustomizer.UnityContainer, customers).ParallelRun();
                     }
                     catch (Exception ex)
                     {
-                        UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(ex);
+                        Logger.Log.Error($"There was an error while starting the service job, {ex}");
                     }
                 }
                 while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
@@ -53,7 +51,7 @@ namespace Quantumart.QP8.ArticleScheduler
             }
             catch (Exception ex)
             {
-                UnityContainerCustomizer.UnityContainer.Resolve<IExceptionHandler>().HandleException(ex);
+                Logger.Log.Error($"There was an error while stopping the service, {ex}");
             }
             finally
             {

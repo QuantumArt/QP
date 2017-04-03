@@ -1,4 +1,4 @@
-﻿Windows-сервис для публикации статей контентов по расписанию
+Windows-сервис для публикации статей контентов по расписанию
 Service Name: ArticleSchedulerService
 Display Name: QP8 Article Scheduler
 
@@ -24,8 +24,5 @@ Display Name: QP8 Article Scheduler
 		<RecurrentTimeout> – задает периодичность работы сервиса.
 			Формат: hh:mm:ss
 			По умолчанию: 00:00:30
-		<ExceptCustomerCodes> - список исключаемых customer-кодов
-			Формат: [<customer code>;[<customer code>;]]
-			Пример: publishing;publishing_r1;
 
 5.  В случае проблем с сервисом необходимо обратиться по адресу qpdevelopers@quantumart.ru

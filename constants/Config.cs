@@ -17,5 +17,7 @@
         public static readonly string ADsFieldNameKey = "ADsFieldName";
         public static readonly string ADsConnectionUsernameKey = "ADsConnectionUsername";
         public static readonly string ADsConnectionPasswordKey = "ADsConnectionPassword";
+        public static readonly string CustomerName = "customer_name";
+        public static readonly string ExcludeFromShedulers = "exclude_from_shedulers";
     }
 }
