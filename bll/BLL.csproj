@@ -81,27 +81,27 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="QA.Configuration, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QA.Configuration.1.0.2\lib\net40\QA.Configuration.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\QA.Configuration.1.0.2\lib\net40\QA.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="QA.Validation.Xaml, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QA.Validation.Xaml.1.0.2.0\lib\net40\QA.Validation.Xaml.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.1.0.2.0\lib\net40\QA.Validation.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="QA.Validation.Xaml.Extensions, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QA.Validation.Xaml.Extensions.1.0.2.0\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.0.2.0\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart, Version=2.0.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quantumart.2.0.8\lib\net45\Quantumart.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.2.0.8\lib\net45\Quantumart.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Quantumart.2.0.8\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Quantumart.2.0.8\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -751,3 +751,4 @@
   </Target>
   -->
 </Project>
+

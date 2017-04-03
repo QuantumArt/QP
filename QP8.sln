@@ -78,9 +78,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.TestTool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.Web", "QuantumArt.Infrastructure\QP8.Infrastructure.Web\QP8.Infrastructure.Web.csproj", "{DBBEC146-E74E-45DF-A7FE-16701669A0F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.Logging.PrtgMonitoring", "QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj", "{060EB6FE-8C9E-4B81-B17C-D2D3884F0AEC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.Logging.PrtgMonitoring", "QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj", "{060EB6FE-8C9E-4B81-B17C-D2D3884F0AEC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.Tests", "QP8.Infrastructure.Tests\QP8.Infrastructure.Tests.csproj", "{0B42B98E-EC14-4306-9B1D-C0E2205747AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QP8.Infrastructure.Tests", "QuantumArt.Tests\QP8.Infrastructure.Tests\QP8.Infrastructure.Tests.csproj", "{0B42B98E-EC14-4306-9B1D-C0E2205747AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1162,8 +1162,8 @@ Global
 		{0B42B98E-EC14-4306-9B1D-C0E2205747AA} = {4C807A7B-E9D6-4933-9B33-F4706FDFC8E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.Interception.2.1.505.0\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.Interception.2.1.505.0\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = QP8.vsmdi

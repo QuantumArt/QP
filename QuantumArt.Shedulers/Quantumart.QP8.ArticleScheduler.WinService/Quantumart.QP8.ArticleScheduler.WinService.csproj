@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NLog.4.4.5\lib\net45\NLog.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\NLog.4.4.5\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -101,7 +101,7 @@
       <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
       <Name>BLL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
       <Project>{060eb6fe-8c9e-4b81-b17c-d2d3884f0aec}</Project>
       <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
     </ProjectReference>
@@ -126,3 +126,4 @@
   </Target>
   -->
 </Project>
+
