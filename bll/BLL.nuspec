@@ -15,19 +15,19 @@
       <dependency id="QP8.Infrastructure" version="1.0.0" />
       <dependency id="QP8.Infrastructure.Logging" version="1.0.0" />
       <dependency id="Quantumart" version="2.0.0" />
-        <dependency id="QA.Configuration" version="1.0.2" />
-        <dependency id="QA.Validation.Xaml" version="1.0.2" />
-        <dependency id="QA.Validation.Xaml.Extensions" version="1.0.2" />
-        <dependency id="AutoMapper" version="1.1.0" />
-        <dependency id="Unity" version="2.1.505" />
-        <dependency id="EnterpriseLibrary.Common" version="5.0.505" />
-        <dependency id="EnterpriseLibrary.Data" version="5.0.505" />
-        <dependency id="EnterpriseLibrary.Validation" version="5.0.505" />
+      <dependency id="QA.Configuration" version="1.0.2" />
+      <dependency id="QA.Validation.Xaml" version="1.0.2" />
+      <dependency id="QA.Validation.Xaml.Extensions" version="1.0.2" />
+      <dependency id="AutoMapper" version="1.1.0" />
+      <dependency id="Unity" version="2.1.505" />
+      <dependency id="EnterpriseLibrary.Common" version="5.0.505" />
+      <dependency id="EnterpriseLibrary.Data" version="5.0.505" />
+      <dependency id="EnterpriseLibrary.Validation" version="5.0.505" />
     </dependencies>
   </metadata>
   <files>
-      <file src="$OutputPath$Quantumart.QP8.*.dll" target="lib\net45" />
-      <file src="$OutputPath$EFExtensions.dll" target="lib\net45" />
-      <file src="$OutputPath$Irony.dll" target="lib\net45" />
+    <file src="$OutputPath$Quantumart.QP8.*.dll" target="lib\net45" />
+    <file src="$OutputPath$EFExtensions.dll" target="lib\net45" />
+    <file src="$OutputPath$Irony.dll" target="lib\net45" />
   </files>
 </package>

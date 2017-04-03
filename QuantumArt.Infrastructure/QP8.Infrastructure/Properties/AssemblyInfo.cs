@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("QP8.Infrastructure")]
-[assembly: AssemblyDescription("Common QP infrastructure development project")]
+[assembly: AssemblyDescription("QP common infrastructure")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Quantum Art")]
 [assembly: AssemblyProduct("QP8.Framework")]
@@ -12,4 +12,4 @@ using System.Runtime.InteropServices;
 [assembly: Guid("27bd20e7-1133-4d13-90c6-6565489da612")]
 
 [assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyInformationalVersion("1.0.0.0")]
