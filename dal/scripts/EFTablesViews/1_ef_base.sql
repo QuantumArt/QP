@@ -9,123 +9,12 @@ BEGIN
     if object_id('tempdb..#disable_create_new_views') is null
     begin
         declare @ca table (
-<<<<<<< HEAD
-      id numeric identity(1,1) primary key,
-      attribute_id numeric,
-      attribute_name nvarchar(255),
-      attribute_size numeric,
-      attribute_type_id numeric,
-      is_long bit,
-      link_id numeric
-    )
-
-    declare @attribute_id numeric, @attribute_name nvarchar(255), @attribute_size numeric
-    declare @attribute_type_id numeric, @link_id numeric, @is_long bit
-    declare @sql nvarchar(max), @result_sql nvarchar(max), @field_sql nvarchar(max)
-    declare @field_template nvarchar(max), @type_name nvarchar(20), @cast bit
-    declare @i numeric, @count numeric, @preserve_index bit
-
-    set @sql = '
-  isnull(cast([CONTENT_ITEM_ID] as int), 0) as [CONTENT_ITEM_ID]
-  ,isnull(cast([STATUS_TYPE_ID] as int), 0) as [STATUS_TYPE_ID]
-  ,isnull(cast([VISIBLE] as bit), 0) as [VISIBLE]
-  ,isnull(cast([ARCHIVE] as bit), 0) as [ARCHIVE]
-  ,[CREATED]
-  ,[MODIFIED]
-  ,isnull(cast([LAST_MODIFIED_BY] as int), 0) as [LAST_MODIFIED_BY]
-  '
-    insert into @ca (attribute_id, attribute_name, attribute_size, attribute_type_id, link_id, is_long)
-
-    select ca.attribute_id, ca.attribute_name, ca.attribute_size, ca.attribute_type_id, isnull(ca.link_id, 0), ca.IS_LONG
-    from CONTENT_ATTRIBUTE ca
-    where ca.content_id = @content_id
-    order by ATTRIBUTE_ORDER
-
-    set @i = 1
-    select @count = count(id) from @ca
-
-    while @i < @count + 1
-    begin
-
-      select @attribute_id = attribute_id, @attribute_name = '[' + attribute_name + ']', @attribute_size = attribute_size,
-      @attribute_type_id = attribute_type_id, @link_id = link_id, @is_long = is_long
-      from @ca where id = @i
-
-      set @cast = 0
-      set @field_template = 'cast({0} as {1}) as {0}'
-
-      if @attribute_type_id = 2 and @attribute_size = 0 and @is_long = 1
-      begin
-        set @type_name = 'bigint'
-        set @cast = 1
-      end
-
-      else if @attribute_type_id = 11
-      or @attribute_type_id = 13
-      or @attribute_type_id = 2 and @attribute_size = 0 and @is_long = 0
-      begin
-        set @type_name = 'int'
-        set @cast = 1
-      end
-
-      else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 0
-      begin
-        set @type_name = 'float'
-        set @cast = 1
-      end
-
-      else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 1
-      begin
-        set @type_name = 'decimal'
-        set @cast = 1
-      end
-
-      else if @attribute_type_id = 3
-      begin
-        set @type_name = 'bit'
-        set @cast = 1
-        set @field_template = 'cast(isnull({0}, 0) as {1}) as {0}'
-      end
-
-      else if @attribute_type_id = 4
-      begin
-        set @type_name = 'date'
-        set @cast = 1
-      end
-
-      else if @attribute_type_id = 5
-      begin
-        set @type_name = 'time'
-        set @cast = 1
-      end
-
-      else if @attribute_type_id in (9,10)
-      begin
-        set @type_name = 'nvarchar(max)'
-        set @cast = 1
-      end
-
-      if @cast = 1
-      begin
-        set @field_sql = replace(@field_template, '{0}', @attribute_name)
-        set @field_sql = replace(@field_sql, '{1}', @type_name)
-      end
-      else
-      begin
-        set @field_sql = @attribute_name
-      end
-
-      set @sql = @sql + CHAR(13) + CHAR(9) + ',' + @field_sql
-
-      set @i = @i + 1
-    end
-=======
 			id numeric identity(1,1) primary key,
-			attribute_id numeric, 
-			attribute_name nvarchar(255), 
+			attribute_id numeric,
+			attribute_name nvarchar(255),
 			attribute_size numeric,
 			attribute_type_id numeric,
-			is_long bit, 
+			is_long bit,
 			link_id numeric
 		)
 
@@ -147,7 +36,7 @@ BEGIN
 		insert into @ca (attribute_id, attribute_name, attribute_size, attribute_type_id, link_id, is_long)
 
 		select ca.attribute_id, ca.attribute_name, ca.attribute_size, ca.attribute_type_id, isnull(ca.link_id, 0), ca.IS_LONG
-		from CONTENT_ATTRIBUTE ca 
+		from CONTENT_ATTRIBUTE ca
 		where ca.content_id = @content_id
 		order by ATTRIBUTE_ORDER
 
@@ -163,7 +52,7 @@ BEGIN
 
 			set @cast = 0
 			set @field_template = 'cast({0} as {1}) as {0}'
-			 
+
 			if @attribute_type_id = 2 and @attribute_size = 0 and @is_long = 1
 			begin
 				set @type_name = 'bigint'
@@ -177,7 +66,7 @@ BEGIN
 				set @type_name = 'int'
 				set @cast = 1
 			end
-			
+
 			else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 0
 			begin
 				set @type_name = 'float'
@@ -186,30 +75,30 @@ BEGIN
 
 			else if @attribute_type_id = 2 and @attribute_size <> 0 and @is_long = 1
 			begin
-				set @type_name = 'decimal(18,' + cast(@attribute_size as nvarchar) + ')'
+				set @type_name = 'decimal'
 				set @cast = 1
 			end
 
-			else if @attribute_type_id = 3 
+			else if @attribute_type_id = 3
 			begin
 				set @type_name = 'bit'
 				set @cast = 1
 				set @field_template = 'cast(isnull({0}, 0) as {1}) as {0}'
 			end
 
-			else if @attribute_type_id = 4 
+			else if @attribute_type_id = 4
 			begin
 				set @type_name = 'date'
 				set @cast = 1
 			end
 
-			else if @attribute_type_id = 5 
+			else if @attribute_type_id = 5
 			begin
 				set @type_name = 'time'
 				set @cast = 1
 			end
 
-			else if @attribute_type_id in (9,10) 
+			else if @attribute_type_id in (9,10)
 			begin
 				set @type_name = 'nvarchar(max)'
 				set @cast = 1
@@ -229,8 +118,6 @@ BEGIN
 
 			set @i = @i + 1
 		end
->>>>>>> master
-
 
 
         SET @result_sql =  ' create view dbo.content_' + cast(@content_id as varchar(20)) + '_new as (select ' + char(13) + @sql
