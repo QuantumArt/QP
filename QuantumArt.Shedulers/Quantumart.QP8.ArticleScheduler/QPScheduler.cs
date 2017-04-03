@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +46,7 @@ namespace Quantumart.QP8.ArticleScheduler
                     throw new AggregateException(exceptions);
                 }
 
-                LogProvider.GetLogger("prtg").Info("PRTG Ok.");
+                LogProvider.GetLogger("prtg").Info("All tasks successfully proceed.");
             }
             catch (Exception ex)
             {

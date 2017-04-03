@@ -5,7 +5,7 @@ using Microsoft.Data.Extensions;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Kernel;
 
-namespace QP8.WebMvc.Tests.Infrastructure.Specimens
+namespace QP8.Infrastructure.TestTools.AutoFixture.Specimens
 {
     public class NameValueSpecimenBuilder : ISpecimenBuilder
     {

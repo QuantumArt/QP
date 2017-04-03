@@ -92,12 +92,6 @@
     <EmbeddedResource Include="..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll">
       <Link>References\Castle.Core.dll</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\Moq.4.7.1\lib\net45\Moq.dll">
-      <Link>References\Moq.dll</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\packages\NLog.4.4.4\lib\net45\NLog.dll">
-      <Link>References\NLog.dll</Link>
-    </EmbeddedResource>
     <EmbeddedResource Include="..\packages\Quantumart.2.0.8\lib\net45\Quantumart.dll">
       <Link>References\Quantumart.dll</Link>
     </EmbeddedResource>
@@ -127,6 +121,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35\Microsoft.Practices.EnterpriseLibrary.Data.dll">
       <Link>References\Microsoft.Practices.EnterpriseLibrary.Data.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\Moq.dll">
+      <Link>References\Moq.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\siteMvc\bin\NLog.dll">
+      <Link>References\NLog.dll</Link>
     </EmbeddedResource>
     <Content Include="App.config">
       <SubType>Designer</SubType>
@@ -307,9 +307,9 @@
       <HintPath>$(SolutionDir)packages\Mono.Options.4.4.0.0\lib\net4-client\Mono.Options.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Transactions" />

@@ -23,7 +23,7 @@ namespace Quantumart.QP8.ArticleScheduler
                 Logger.Log.Error(ex);
             }
 
-            LogProvider.GetLogger("prtg").Info("PRTG Error.");
+            LogProvider.GetLogger("prtg").Error("There was an error at article sheduler service.");
         }
 
         private static void HandleAggregateException(AggregateException aggregatedException)
