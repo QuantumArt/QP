@@ -2,7 +2,7 @@
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.Kernel;
 
-namespace QP8.Infrastructure.TestTools.xUnit
+namespace QP8.Infrastructure.TestTools.Xunit
 {
     public class GreedyConstructorEngineParts : DefaultEngineParts
     {

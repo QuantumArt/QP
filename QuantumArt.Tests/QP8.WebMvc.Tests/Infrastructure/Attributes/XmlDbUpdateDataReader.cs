@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using QP8.Infrastructure.TestTools.xUnit.Attributes;
+using QP8.Infrastructure.TestTools.Xunit.Attributes;
 
 namespace QP8.WebMvc.Tests.Infrastructure.Attributes
 {

@@ -6,11 +6,11 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F4D41148-04F7-4FAD-A6A5-E8206D9E1C54}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.ArticleScheduler.WinService</RootNamespace>
     <AssemblyName>Quantumart.QP8.ArticleScheduler.WinService</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -29,9 +29,12 @@
     <OutputPath>bin\Release\</OutputPath>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\NLog.4.4.4\lib\net45\NLog.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\NLog.4.4.5\lib\net45\NLog.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -81,6 +84,9 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="NLog.QuantumArt.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>
@@ -91,13 +97,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj">
-      <Project>{BD9A445E-8510-489D-8001-409B777C46CD}</Project>
-      <Name>Quantumart.QP8.ArticleScheduler</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\bll\BLL.csproj">
       <Project>{2FD6E504-0845-4C89-AE58-BDB467D8C487}</Project>
       <Name>BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
+      <Project>{060eb6fe-8c9e-4b81-b17c-d2d3884f0aec}</Project>
+      <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
+      <Project>{6E317F05-226C-4C9F-B918-FE71D743C3A3}</Project>
+      <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj">
+      <Project>{BD9A445E-8510-489D-8001-409B777C46CD}</Project>
+      <Name>Quantumart.QP8.ArticleScheduler</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

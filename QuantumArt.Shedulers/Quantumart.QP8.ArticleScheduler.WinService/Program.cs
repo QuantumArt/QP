@@ -1,5 +1,6 @@
 using System;
 using System.ServiceProcess;
+using QP8.Infrastructure.Logging.Factories;
 
 namespace Quantumart.QP8.ArticleScheduler.WinService
 {
