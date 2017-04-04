@@ -44,7 +44,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
             if (exceptions.Any())
             {
-                LogProvider.GetLogger("prtg").Error("There was an error at article sheduler service.");
+                LogProvider.GetLogger("prtg").Error("There was an error at article scheduler service.");
             }
 
             LogProvider.GetLogger("prtg").Info("All tasks successfully proceed.");

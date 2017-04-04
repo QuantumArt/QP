@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
@@ -11,19 +11,19 @@ namespace Quantumart.QP8.Scheduler.Notification
     public class CleanupProcessor : IProcessor, IDisposable
     {
         private const int DelayDuration = 100;
-        private readonly IShedulerCustomers _shedulerCustomers;
+        private readonly ISchedulerCustomers _schedulerCustomers;
         private readonly IExternalNotificationService _externalNotificationService;
 
-        public CleanupProcessor(IShedulerCustomers shedulerCustomers, IExternalNotificationService externalNotificationService)
+        public CleanupProcessor(ISchedulerCustomers schedulerCustomers, IExternalNotificationService externalNotificationService)
         {
-            _shedulerCustomers = shedulerCustomers;
+            _schedulerCustomers = schedulerCustomers;
             _externalNotificationService = externalNotificationService;
         }
 
         public async Task Run(CancellationToken token)
         {
             Logger.Log.Info("Start cleanup notification queue");
-            foreach (var customer in _shedulerCustomers)
+            foreach (var customer in _schedulerCustomers)
             {
                 using (new QPConnectionScope(customer.ConnectionString))
                 {

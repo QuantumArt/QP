@@ -1,4 +1,4 @@
-﻿namespace Quantumart.QP8.Constants
+namespace Quantumart.QP8.Constants
 {
     public class Config
     {
@@ -18,6 +18,6 @@
         public static readonly string ADsConnectionUsernameKey = "ADsConnectionUsername";
         public static readonly string ADsConnectionPasswordKey = "ADsConnectionPassword";
         public static readonly string CustomerName = "customer_name";
-        public static readonly string ExcludeFromShedulers = "exclude_from_shedulers";
+        public static readonly string ExcludeFromSchedulers = "exclude_from_schedulers";
     }
 }

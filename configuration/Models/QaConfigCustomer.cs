@@ -7,8 +7,8 @@ namespace Quantumart.QP8.Configuration.Models
         [XmlAttribute("customer_name")]
         public string CustomerName { get; set; }
 
-        [XmlAttribute("exclude_from_shedulers")]
-        public bool ExcludeFromShedulers { get; set; }
+        [XmlAttribute("exclude_from_schedulers")]
+        public bool ExcludeFromSchedulers { get; set; }
 
         [XmlElement("db")]
         public string ConnectionString { get; set; }

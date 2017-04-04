@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
@@ -23,7 +23,7 @@ namespace Quantumart.QP8.Scheduler.Users
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new UsersProcessor(
                     LogProvider.LogFactory.GetLogger(assemblyType),
-                    c.Resolve<IShedulerCustomers>(),
+                    c.Resolve<ISchedulerCustomers>(),
                     c.Resolve<Func<IUserSynchronizationService>>()
                )
            ));

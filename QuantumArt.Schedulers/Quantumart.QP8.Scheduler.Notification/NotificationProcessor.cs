@@ -17,18 +17,18 @@ namespace Quantumart.QP8.Scheduler.Notification
     public class NotificationProcessor : IProcessor, IDisposable
     {
         private readonly ILog _logger;
-        private readonly IShedulerCustomers _shedulerCustomers;
+        private readonly ISchedulerCustomers _schedulerCustomers;
         private readonly IExternalNotificationService _externalNotificationService;
         private readonly INotificationProvider _notificationProvider;
 
         public NotificationProcessor(
             ILog logger,
-            IShedulerCustomers shedulerCustomers,
+            ISchedulerCustomers schedulerCustomers,
             IExternalNotificationService externalNotificationService,
             INotificationProvider notificationProvider)
         {
             _logger = logger;
-            _shedulerCustomers = shedulerCustomers;
+            _schedulerCustomers = schedulerCustomers;
             _externalNotificationService = externalNotificationService;
             _notificationProvider = notificationProvider;
         }
@@ -36,7 +36,7 @@ namespace Quantumart.QP8.Scheduler.Notification
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start sending notifications");
-            foreach (var customer in _shedulerCustomers)
+            foreach (var customer in _schedulerCustomers)
             {
                 if (token.IsCancellationRequested)
                 {

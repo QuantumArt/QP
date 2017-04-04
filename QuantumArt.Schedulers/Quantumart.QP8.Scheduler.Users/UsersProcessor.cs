@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
@@ -14,20 +14,20 @@ namespace Quantumart.QP8.Scheduler.Users
         private const int DelayDuration = 100;
 
         private readonly ILog _logger;
-        private readonly IShedulerCustomers _shedulerCustomers;
+        private readonly ISchedulerCustomers _schedulerCustomers;
         private readonly Func<IUserSynchronizationService> _getSynchronizationService;
 
-        public UsersProcessor(ILog logger, IShedulerCustomers shedulerCustomers, Func<IUserSynchronizationService> getSynchronizationService)
+        public UsersProcessor(ILog logger, ISchedulerCustomers schedulerCustomers, Func<IUserSynchronizationService> getSynchronizationService)
         {
             _logger = logger;
-            _shedulerCustomers = shedulerCustomers;
+            _schedulerCustomers = schedulerCustomers;
             _getSynchronizationService = getSynchronizationService;
         }
 
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start users synchronization");
-            foreach (var customer in _shedulerCustomers)
+            foreach (var customer in _schedulerCustomers)
             {
                 using (new QPConnectionScope(customer.ConnectionString))
                 {

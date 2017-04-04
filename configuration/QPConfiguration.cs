@@ -58,9 +58,9 @@ namespace Quantumart.QP8.Configuration
             return null;
         }
 
-        public static List<QaConfigCustomer> GetCustomers(string appName = null, bool shouldExludeForShedulers = false)
+        public static List<QaConfigCustomer> GetCustomers(string appName = null, bool shouldExcludeForSchedulers = false)
         {
-            var customers = GetQaConfiguration().Customers.Where(c => !shouldExludeForShedulers || !c.ExcludeFromShedulers).ToList();
+            var customers = GetQaConfiguration().Customers.Where(c => !shouldExcludeForSchedulers || !c.ExcludeFromSchedulers).ToList();
             foreach (var entry in customers)
             {
                 entry.ConnectionString = TuneConnectionString(entry.ConnectionString, appName);

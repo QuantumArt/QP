@@ -1,15 +1,15 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Configuration.Models;
 
 namespace Quantumart.QP8.Scheduler.API
 {
-    public class ShedulerCustomers : IShedulerCustomers
+    public class SchedulerCustomers : ISchedulerCustomers
     {
         private readonly ServiceDescriptor _descriptor;
 
-        public ShedulerCustomers(ServiceDescriptor descriptor)
+        public SchedulerCustomers(ServiceDescriptor descriptor)
         {
             _descriptor = descriptor;
         }

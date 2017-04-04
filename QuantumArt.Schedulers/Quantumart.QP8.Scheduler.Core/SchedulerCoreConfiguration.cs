@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace Quantumart.QP8.Scheduler.Core
         protected override void Initialize()
         {
             Container.RegisterType<ISchedule, NullSchedule>(ConfigurationExtension.DefaultScheduleName);
-            Container.RegisterType<IShedulerCustomers, ShedulerCustomers>();
+            Container.RegisterType<ISchedulerCustomers, SchedulerCustomers>();
 
             var descriptors = Container.ResolveAll<ProcessorDescriptor>().ToList();
             var services = descriptors.Select(d => d.Service).Distinct().ToList();

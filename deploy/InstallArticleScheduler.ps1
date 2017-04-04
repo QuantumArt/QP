@@ -42,7 +42,7 @@ if (-not(Test-Path $installRoot)) { New-Item $installRoot -ItemType Directory }
 $currentPath = split-path -parent $MyInvocation.MyCommand.Definition
 $projectName = "Quantumart.QP8.ArticleScheduler.WinService"
 
-$schedulerFolder = Join-Path $currentPath "..\QuantumArt.Shedulers\$projectName\bin\Debug"
+$schedulerFolder = Join-Path $currentPath "..\QuantumArt.Schedulers\$projectName\bin\Debug"
 $schedulerPath = Join-Path $schedulerFolder "$projectName.exe"
 $schedulerZipPath = Join-Path $currentPath "ArticleScheduler.zip"
 

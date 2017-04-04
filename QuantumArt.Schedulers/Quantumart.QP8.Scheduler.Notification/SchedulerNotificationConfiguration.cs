@@ -1,4 +1,4 @@
-﻿using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.Scheduler.API;
@@ -22,7 +22,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new NotificationProcessor(
                     LogProvider.LogFactory.GetLogger(assemblyType),
-                    c.Resolve<IShedulerCustomers>(),
+                    c.Resolve<ISchedulerCustomers>(),
                     c.Resolve<IExternalNotificationService>(),
                     c.Resolve<INotificationProvider>()
                )
