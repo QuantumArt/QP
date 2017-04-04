@@ -23,7 +23,7 @@ namespace Quantumart.QP8.Scheduler.Users
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new UsersProcessor(
                     LogProvider.LogFactory.GetLogger(assemblyType),
-                    c.Resolve<IConnectionStrings>(),
+                    c.Resolve<IShedulerCustomers>(),
                     c.Resolve<Func<IUserSynchronizationService>>()
                )
            ));

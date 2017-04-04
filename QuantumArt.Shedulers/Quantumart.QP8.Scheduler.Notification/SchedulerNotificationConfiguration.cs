@@ -22,7 +22,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new NotificationProcessor(
                     LogProvider.LogFactory.GetLogger(assemblyType),
-                    c.Resolve<IConnectionStrings>(),
+                    c.Resolve<IShedulerCustomers>(),
                     c.Resolve<IExternalNotificationService>(),
                     c.Resolve<INotificationProvider>()
                )

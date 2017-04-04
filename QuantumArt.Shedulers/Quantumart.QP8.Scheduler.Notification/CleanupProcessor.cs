@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
@@ -12,26 +11,25 @@ namespace Quantumart.QP8.Scheduler.Notification
     public class CleanupProcessor : IProcessor, IDisposable
     {
         private const int DelayDuration = 100;
-        private readonly IConnectionStrings _connectionStrings;
+        private readonly IShedulerCustomers _shedulerCustomers;
         private readonly IExternalNotificationService _externalNotificationService;
 
-        public CleanupProcessor(IConnectionStrings connectionStrings, IExternalNotificationService externalNotificationService)
+        public CleanupProcessor(IShedulerCustomers shedulerCustomers, IExternalNotificationService externalNotificationService)
         {
-            _connectionStrings = connectionStrings;
+            _shedulerCustomers = shedulerCustomers;
             _externalNotificationService = externalNotificationService;
         }
 
         public async Task Run(CancellationToken token)
         {
             Logger.Log.Info("Start cleanup notification queue");
-            foreach (var connection in _connectionStrings)
+            foreach (var customer in _shedulerCustomers)
             {
-                var builder = new SqlConnectionStringBuilder(connection);
-                using (new QPConnectionScope(connection))
+                using (new QPConnectionScope(customer.ConnectionString))
                 {
                     if (_externalNotificationService.ExistsSentNotifications())
                     {
-                        Logger.Log.Info($"Cleanup notification queue for database {builder.InitialCatalog} on server {builder.DataSource}");
+                        Logger.Log.Info($"Cleanup notification queue for customer code: {customer.CustomerName}");
                         _externalNotificationService.DeleteSentNotifications();
                     }
                 }

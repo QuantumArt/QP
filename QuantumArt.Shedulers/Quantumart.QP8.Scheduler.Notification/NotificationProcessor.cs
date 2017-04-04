@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -18,18 +17,18 @@ namespace Quantumart.QP8.Scheduler.Notification
     public class NotificationProcessor : IProcessor, IDisposable
     {
         private readonly ILog _logger;
-        private readonly IConnectionStrings _connectionStrings;
+        private readonly IShedulerCustomers _shedulerCustomers;
         private readonly IExternalNotificationService _externalNotificationService;
         private readonly INotificationProvider _notificationProvider;
 
         public NotificationProcessor(
             ILog logger,
-            IConnectionStrings connectionStrings,
+            IShedulerCustomers shedulerCustomers,
             IExternalNotificationService externalNotificationService,
             INotificationProvider notificationProvider)
         {
             _logger = logger;
-            _connectionStrings = connectionStrings;
+            _shedulerCustomers = shedulerCustomers;
             _externalNotificationService = externalNotificationService;
             _notificationProvider = notificationProvider;
         }
@@ -37,9 +36,8 @@ namespace Quantumart.QP8.Scheduler.Notification
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start sending notifications");
-            foreach (var connection in _connectionStrings)
+            foreach (var customer in _shedulerCustomers)
             {
-                var builder = new SqlConnectionStringBuilder(connection);
                 if (token.IsCancellationRequested)
                 {
                     break;
@@ -48,7 +46,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 ExternalNotification[] notifications;
                 var sentNotificationIds = new List<int>();
                 var unsentNotificationIds = new List<int>();
-                using (new QPConnectionScope(connection))
+                using (new QPConnectionScope(customer.ConnectionString))
                 {
                     notifications = _externalNotificationService.GetPendingNotifications().ToArray();
                 }
@@ -79,7 +77,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                         }
 
                         var status = await _notificationProvider.Notify(item.NotificationModel);
-                        var message = $"sent event { item.NotificationModel.EventName} to {item.NotificationModel.Url} with status {status} for database {builder.InitialCatalog} on server {builder.DataSource}";
+                        var message = $"Sent event { item.NotificationModel.EventName} to {item.NotificationModel.Url} with status {status} for customer code: {customer.CustomerName}";
                         if (status == HttpStatusCode.OK)
                         {
                             _logger.Info(message);
@@ -99,12 +97,12 @@ namespace Quantumart.QP8.Scheduler.Notification
                     catch (Exception ex)
                     {
                         unsentNotificationIds.AddRange(item.NotificationIds);
-                        var message = $"not sent event {item.NotificationModel.EventName} to {item.NotificationModel.Url} with message {ex.Message} for database {builder.InitialCatalog} on server {builder.DataSource}";
+                        var message = $"Exception while sending event {item.NotificationModel.EventName} to {item.NotificationModel.Url} with message {ex.Message} for customer code: {customer.CustomerName}";
                         _logger.Error(message, ex);
                     }
                 }
 
-                using (new QPConnectionScope(connection))
+                using (new QPConnectionScope(customer.ConnectionString))
                 {
                     if (sentNotificationIds.Any())
                     {

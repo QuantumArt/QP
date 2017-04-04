@@ -50,11 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationExtension.cs" />
-    <Compile Include="ConnectionStrings.cs" />
+    <Compile Include="ShedulerCustomers.cs" />
     <Compile Include="EventIdentificators.cs" />
     <Compile Include="Extensions\Grouping.cs" />
     <Compile Include="Extensions\GroupingExtension.cs" />
-    <Compile Include="IConnectionStrings.cs" />
+    <Compile Include="IShedulerCustomers.cs" />
     <Compile Include="IntervalShedule.cs" />
     <Compile Include="IProcessor.cs" />
     <Compile Include="ISchedule.cs" />
@@ -79,4 +79,3 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
-
