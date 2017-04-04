@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -132,7 +132,6 @@
     <Compile Include="Quantumart.QP8.ArticleScheduler\Recurring\RecuringStartCalcTest.cs" />
     <Compile Include="Quantumart.QP8.ArticleScheduler\Recurring\RecurringTaskSchedulerTest.cs" />
     <Compile Include="ScheduleHelperTest.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\WinService\Properties\SettingsTest.cs" />
     <Compile Include="BLL\Repository\FingerprintRepositoryTest.cs" />
     <Compile Include="Utils\CleanerTest.cs" />
     <Compile Include="Utils\ConverterTest.cs" />
@@ -158,11 +157,11 @@
       <Project>{3FF8834B-FB47-4855-B1E2-3B88C0DB1A94}</Project>
       <Name>DAL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler.WinService\Quantumart.QP8.ArticleScheduler.WinService.csproj">
+    <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler.WinService\Quantumart.QP8.ArticleScheduler.WinService.csproj">
       <Project>{F4D41148-04F7-4FAD-A6A5-E8206D9E1C54}</Project>
       <Name>Quantumart.QP8.ArticleScheduler.WinService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj">
+    <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj">
       <Project>{BD9A445E-8510-489D-8001-409B777C46CD}</Project>
       <Name>Quantumart.QP8.ArticleScheduler</Name>
     </ProjectReference>
@@ -194,4 +193,3 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
-

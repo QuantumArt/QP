@@ -1,4 +1,4 @@
-﻿param(
+param(
   [String] $source = '',
   [String] $config = 'Release'
 )
@@ -8,8 +8,8 @@ if (-not(Test-Path $source)) { throw [System.ArgumentException] "Folder $source 
 
 $backendSource = Join-Path $source "siteMvc"
 $winLogonSource = Join-Path $source "WinLogonMvc"
-$schedulerSource = Join-Path $source "QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler.WinService\bin\$config"
-$commonSchedulerSource = Join-Path $source "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Service\bin\$config"
+$schedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler.WinService\bin\$config"
+$commonSchedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Service\bin\$config"
 $pluginsSource = Join-Path $source "plugins"
 $sitesSource = Join-Path $source "sites"
 $qaSource = Join-Path $source "QA"

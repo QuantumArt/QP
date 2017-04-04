@@ -90,6 +90,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                         ScheduleRepository.Delete(schedule);
                     }
                 }
+
                 transaction.Complete();
             }
 
@@ -111,6 +112,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                         ScheduleRepository.Delete(schedule);
                     }
                 }
+
                 transaction.Complete();
             }
 
@@ -122,7 +124,6 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
             Article article = null;
             using (var transaction = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             {
-
                 using (new QPConnectionScope(_connectionString))
                 {
                     var schedule = ScheduleRepository.GetScheduleById(scheduleId);
@@ -146,8 +147,10 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                         }
                     }
                 }
+
                 transaction.Complete();
             }
+
             return article;
         }
     }

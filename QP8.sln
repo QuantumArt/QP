@@ -24,9 +24,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validators", "validators\Va
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Resources", "Resources\Resources.csproj", "{2A8B24B1-32AA-4A82-AB51-450F18FCBC76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ArticleScheduler", "QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj", "{BD9A445E-8510-489D-8001-409B777C46CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ArticleScheduler", "QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj", "{BD9A445E-8510-489D-8001-409B777C46CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ArticleScheduler.WinService", "QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler.WinService\Quantumart.QP8.ArticleScheduler.WinService.csproj", "{F4D41148-04F7-4FAD-A6A5-E8206D9E1C54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.ArticleScheduler.WinService", "QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler.WinService\Quantumart.QP8.ArticleScheduler.WinService.csproj", "{F4D41148-04F7-4FAD-A6A5-E8206D9E1C54}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{BE7089C7-6A8E-47E4-9D05-2142E4FA0C59}"
 	ProjectSection(SolutionItems) = preProject
@@ -37,15 +37,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Merger", "Merger\Merger.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleDbUpdate", "QP8.ConsoleDbUpdate\ConsoleDbUpdate.csproj", "{0978B8F2-3561-4E20-8ED3-91917B0600D0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Core", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Core\Quantumart.QP8.Scheduler.Core.csproj", "{4E3C069F-0648-4989-81FB-A026B03562E8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Core", "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Core\Quantumart.QP8.Scheduler.Core.csproj", "{4E3C069F-0648-4989-81FB-A026B03562E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.API", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj", "{B35FEB42-4052-493F-B4EB-328A50453208}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.API", "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.API\Quantumart.QP8.Scheduler.API.csproj", "{B35FEB42-4052-493F-B4EB-328A50453208}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Notification", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj", "{4751A066-0F3B-400C-8303-30C1606EC34D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Notification", "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Notification\Quantumart.QP8.Scheduler.Notification.csproj", "{4751A066-0F3B-400C-8303-30C1606EC34D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Service", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Service\Quantumart.QP8.Scheduler.Service.csproj", "{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Service", "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Service\Quantumart.QP8.Scheduler.Service.csproj", "{9D8AEEE9-E49E-4DE4-83A8-7A6F81A47B2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Users", "QuantumArt.Shedulers\Quantumart.QP8.Scheduler.Users\Quantumart.QP8.Scheduler.Users.csproj", "{BD000ADE-0B97-464D-9376-73BB679A21FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quantumart.QP8.Scheduler.Users", "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Users\Quantumart.QP8.Scheduler.Users.csproj", "{BD000ADE-0B97-464D-9376-73BB679A21FC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DA4FC952-0EA9-4C16-A9FD-14662B603709}"
 EndProject
@@ -1163,7 +1163,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		EnterpriseLibraryConfigurationToolBinariesPathV6 = packages\EnterpriseLibrary.Common.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.ExceptionHandling.Logging.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Validation.6.0.1304.0\lib\NET45;packages\EnterpriseLibrary.Data.6.0.1304.0\lib\NET45
-		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.Interception.2.1.505.0\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35
+		EnterpriseLibraryConfigurationToolBinariesPath = packages\Unity.2.1.505.0\lib\NET35;packages\Unity.Interception.2.1.505.0\lib\NET35;packages\EnterpriseLibrary.Common.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Data.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.ExceptionHandling.Logging.5.0.505.0\lib\NET35;packages\EnterpriseLibrary.Validation.5.0.505.0\lib\NET35;packages\Unity.2.1.505.2\lib\NET35
 	EndGlobalSection
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = QP8.vsmdi

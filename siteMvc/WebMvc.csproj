@@ -353,7 +353,6 @@
     <Compile Include="Extensions\Helpers\QPSelectListItem.cs" />
     <Compile Include="Extensions\Helpers\QPTreeCheckedNode.cs" />
     <Compile Include="Infrastructure\Extensions\StringExtensions.cs" />
-    <Compile Include="Infrastructure\Helpers\XmlSerializerHelpers.cs" />
     <Compile Include="Infrastructure\Helpers\XmlDbUpdate\XmlDbUpdateHttpContextHelpers.cs" />
     <Compile Include="Infrastructure\Models\XmlDbUpdateRecordedActionModel.cs" />
     <Compile Include="Extensions\Helpers\SelectOptions.cs" />
@@ -2439,4 +2438,3 @@
   </PropertyGroup>
   <Import Project="..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets" Condition="Exists('..\packages\RazorGenerator.MsBuild.2.4.7\build\RazorGenerator.MsBuild.targets')" />
 </Project>
-
