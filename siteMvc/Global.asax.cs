@@ -180,7 +180,7 @@ namespace Quantumart.QP8.WebMvc
             var exсeption = Server.GetLastError();
             if (exсeption != null)
             {
-                Logger.Log.SetContext(LoggingData.HttpErrorCodeCustomVariable, new HttpException(null, exсeption).GetHttpCode());
+                Logger.Log.SetContext(LoggerData.HttpErrorCodeCustomVariable, new HttpException(null, exсeption).GetHttpCode());
                 Logger.Log.Fatal("Application_Error", exсeption);
             }
         }

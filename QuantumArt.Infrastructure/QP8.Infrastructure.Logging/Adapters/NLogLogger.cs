@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NLog;
 using QP8.Infrastructure.Logging.Interfaces;
 using LogManager = NLog.LogManager;
@@ -60,6 +61,14 @@ namespace QP8.Infrastructure.Logging.Adapters
             }
         }
 
+        public void Trace(object message, IEnumerable<Exception> exceptions)
+        {
+            if (IsTraceEnabled)
+            {
+                Log(LogLevel.Trace, message?.ToString(), new AggregateException(exceptions));
+            }
+        }
+
         public void TraceFormat(string format, params object[] args)
         {
             if (IsTraceEnabled)
@@ -81,6 +90,14 @@ namespace QP8.Infrastructure.Logging.Adapters
             if (IsDebugEnabled)
             {
                 Log(LogLevel.Debug, message?.ToString(), exception);
+            }
+        }
+
+        public void Debug(object message, IEnumerable<Exception> exceptions)
+        {
+            if (IsDebugEnabled)
+            {
+                Log(LogLevel.Debug, message?.ToString(), new AggregateException(exceptions));
             }
         }
 
@@ -108,6 +125,14 @@ namespace QP8.Infrastructure.Logging.Adapters
             }
         }
 
+        public void Info(object message, IEnumerable<Exception> exceptions)
+        {
+            if (IsInfoEnabled)
+            {
+                Log(LogLevel.Info, message?.ToString(), new AggregateException(exceptions));
+            }
+        }
+
         public void InfoFormat(string format, params object[] args)
         {
             if (IsInfoEnabled)
@@ -129,6 +154,14 @@ namespace QP8.Infrastructure.Logging.Adapters
             if (IsWarnEnabled)
             {
                 Log(LogLevel.Warn, message?.ToString(), exception);
+            }
+        }
+
+        public void Warn(object message, IEnumerable<Exception> exceptions)
+        {
+            if (IsWarnEnabled)
+            {
+                Log(LogLevel.Warn, message?.ToString(), new AggregateException(exceptions));
             }
         }
 
@@ -156,6 +189,14 @@ namespace QP8.Infrastructure.Logging.Adapters
             }
         }
 
+        public void Error(object message, IEnumerable<Exception> exceptions)
+        {
+            if (IsErrorEnabled)
+            {
+                Log(LogLevel.Error, message?.ToString(), new AggregateException(exceptions));
+            }
+        }
+
         public void ErrorFormat(string format, params object[] args)
         {
             if (IsErrorEnabled)
@@ -177,6 +218,14 @@ namespace QP8.Infrastructure.Logging.Adapters
             if (IsFatalEnabled)
             {
                 Log(LogLevel.Fatal, message?.ToString(), exception);
+            }
+        }
+
+        public void Fatal(object message, IEnumerable<Exception> exceptions)
+        {
+            if (IsFatalEnabled)
+            {
+                Log(LogLevel.Fatal, message?.ToString(), new AggregateException(exceptions));
             }
         }
 
