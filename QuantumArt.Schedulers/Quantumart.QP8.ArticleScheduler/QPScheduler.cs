@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Logging.Factories;
+using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.Configuration.Models;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
@@ -14,6 +16,7 @@ namespace Quantumart.QP8.ArticleScheduler
     {
         private readonly IUnityContainer _unityContainer;
         private readonly List<QaConfigCustomer> _customers;
+        private readonly ILog _prtgLogger;
 
         public QpScheduler(IUnityContainer unityContainer, List<QaConfigCustomer> customers)
         {
@@ -24,6 +27,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
             _unityContainer = unityContainer;
             _customers = customers;
+            _prtgLogger = LogProvider.GetLogger(LoggerData.DefaultPrtgLoggerName);
         }
 
         public void ParallelRun()
@@ -37,17 +41,17 @@ namespace Quantumart.QP8.ArticleScheduler
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}");
+                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}", ex);
                     exceptions.Enqueue(ex);
                 }
             });
 
             if (exceptions.Any())
             {
-                LogProvider.GetLogger("prtg").Error("There was an error at article scheduler service.");
+                _prtgLogger.Error("There was an error at article scheduler service.", exceptions);
             }
 
-            LogProvider.GetLogger("prtg").Info("All tasks successfully proceed.");
+            _prtgLogger.Info("All tasks successfully proceed.");
         }
     }
 }

@@ -120,7 +120,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 catch (Exception ex)
                 {
                     var throwEx = new XmlDbUpdateReplayActionException("Error while deserializing xml action string.", ex);
-                    throwEx.Data.Add(LoggingData.XmlDbUpdateExceptionXmlActionStringData, xmlActionString.ToJsonLog());
+                    throwEx.Data.Add(LoggerData.XmlDbUpdateExceptionXmlActionStringData, xmlActionString.ToJsonLog());
                     throw throwEx;
                 }
 
@@ -162,7 +162,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
             catch (Exception ex)
             {
                 var throwEx = new XmlDbUpdateReplayActionException("Error while replaying xml action.", ex);
-                throwEx.Data.Add(LoggingData.XmlDbUpdateExceptionActionToReplayData, xmlAction.ToJsonLog());
+                throwEx.Data.Add(LoggerData.XmlDbUpdateExceptionActionToReplayData, xmlAction.ToJsonLog());
                 throw throwEx;
             }
         }

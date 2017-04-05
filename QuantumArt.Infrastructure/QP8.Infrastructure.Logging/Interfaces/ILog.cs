@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace QP8.Infrastructure.Logging.Interfaces
 {
@@ -69,6 +70,13 @@ namespace QP8.Infrastructure.Logging.Interfaces
         void Trace(object message, Exception exception);
 
         /// <summary>
+        /// Logs a Trace message and exception
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="exceptions">Exceptions list</param>
+        void Trace(object message, IEnumerable<Exception> exceptions);
+
+        /// <summary>
         /// Logs a Trace format message.
         /// </summary>
         /// <param name="format">The format</param>
@@ -87,6 +95,13 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// <param name="message">The message</param>
         /// <param name="exception">The exception</param>
         void Debug(object message, Exception exception);
+
+        /// <summary>
+        /// Logs a Debug message and exception
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="exceptions">Exceptions list</param>
+        void Debug(object message, IEnumerable<Exception> exceptions);
 
         /// <summary>
         /// Logs a Debug format message.
@@ -109,6 +124,13 @@ namespace QP8.Infrastructure.Logging.Interfaces
         void Info(object message, Exception exception);
 
         /// <summary>
+        /// Logs an Info message and exception
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="exceptions">Exceptions list</param>
+        void Info(object message, IEnumerable<Exception> exceptions);
+
+        /// <summary>
         /// Logs an Info format message
         /// </summary>
         /// <param name="format">The format</param>
@@ -127,6 +149,13 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// <param name="message">The message</param>
         /// <param name="exception">The exception</param>
         void Warn(object message, Exception exception);
+
+        /// <summary>
+        /// Logs a Warning message and exception
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="exceptions">Exceptions list</param>
+        void Warn(object message, IEnumerable<Exception> exceptions);
 
         /// <summary>
         /// Logs a Warning format message
@@ -149,6 +178,13 @@ namespace QP8.Infrastructure.Logging.Interfaces
         void Error(object message, Exception exception);
 
         /// <summary>
+        /// Logs a Error message and exception
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="exceptions">Exceptions list</param>
+        void Error(object message, IEnumerable<Exception> exceptions);
+
+        /// <summary>
         /// Logs a Error format message
         /// </summary>
         /// <param name="format">The format</param>
@@ -167,6 +203,13 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// <param name="message">The message</param>
         /// <param name="exception">The exception</param>
         void Fatal(object message, Exception exception);
+
+        /// <summary>
+        /// Logs a Fatal message and exception
+        /// </summary>
+        /// <param name="message">The message</param>
+        /// <param name="exceptions">Exceptions list</param>
+        void Fatal(object message, IEnumerable<Exception> exceptions);
 
         /// <summary>
         /// Logs a Error format message

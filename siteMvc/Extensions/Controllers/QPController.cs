@@ -38,7 +38,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Controllers
         protected override void Initialize(RequestContext requestContext)
         {
             base.Initialize(requestContext);
-            Logger.Log.SetContext(LoggingData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
+            Logger.Log.SetContext(LoggerData.CustomerCodeCustomVariable, QPContext.CurrentCustomerCode ?? string.Empty);
         }
 
         public string RenderPartialView(string partialViewName, object model)

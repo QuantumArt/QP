@@ -94,7 +94,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             Ensure.That<OptionException>(FilePathes.Any(), "Should specify at least one xml file or folder path", "path");
             CustomerCode = noNamedOptions.Single();
 
-            Logger.Log.SetGlobalContext(LoggingData.CustomerCodeCustomVariable, CustomerCode);
+            Logger.Log.SetGlobalContext(LoggerData.CustomerCodeCustomVariable, CustomerCode);
         }
 
         private static void ShowCommandLineHelp(OptionSet optionsSet)

@@ -6,7 +6,7 @@
     public class NullLogFactory : DiagnosticsLogFactory
     {
         public NullLogFactory()
-            : base(false, false, false, false)
+            : base(debugEnabled: false, traceEnabled: false, infoEnabled: false, warnEnabled: false, errorEnabled: false, fatalEnabled: false)
         {
         }
     }
