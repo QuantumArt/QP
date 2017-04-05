@@ -1,0 +1,3 @@
+[submodule "QP.Custom"]
+	path = QP.Custom
+	url = http://tfs:8080/tfs/QuantumartCollection/QP/_git/QP.Custom
