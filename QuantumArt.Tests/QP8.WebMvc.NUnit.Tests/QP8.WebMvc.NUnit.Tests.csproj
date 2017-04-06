@@ -88,8 +88,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(SolutionDir)binaries\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll</HintPath>
     </Reference>
-    <Reference Include="Moq, Version=4.7.1.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Moq.4.7.1\lib\net45\Moq.dll</HintPath>
+    <Reference Include="Moq, Version=4.7.8.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>$(SolutionDir)packages\Moq.4.7.8\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -132,7 +132,6 @@
     <Compile Include="Quantumart.QP8.ArticleScheduler\Recurring\RecuringStartCalcTest.cs" />
     <Compile Include="Quantumart.QP8.ArticleScheduler\Recurring\RecurringTaskSchedulerTest.cs" />
     <Compile Include="ScheduleHelperTest.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\WinService\Properties\SettingsTest.cs" />
     <Compile Include="BLL\Repository\FingerprintRepositoryTest.cs" />
     <Compile Include="Utils\CleanerTest.cs" />
     <Compile Include="Utils\ConverterTest.cs" />
@@ -158,11 +157,11 @@
       <Project>{3FF8834B-FB47-4855-B1E2-3B88C0DB1A94}</Project>
       <Name>DAL</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler.WinService\Quantumart.QP8.ArticleScheduler.WinService.csproj">
+    <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler.WinService\Quantumart.QP8.ArticleScheduler.WinService.csproj">
       <Project>{F4D41148-04F7-4FAD-A6A5-E8206D9E1C54}</Project>
       <Name>Quantumart.QP8.ArticleScheduler.WinService</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\QuantumArt.Shedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj">
+    <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj">
       <Project>{BD9A445E-8510-489D-8001-409B777C46CD}</Project>
       <Name>Quantumart.QP8.ArticleScheduler</Name>
     </ProjectReference>

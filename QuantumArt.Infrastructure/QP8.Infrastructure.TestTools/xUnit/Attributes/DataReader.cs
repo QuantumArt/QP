@@ -4,7 +4,7 @@ using System.IO;
 using System.Reflection;
 using Xunit.Sdk;
 
-namespace QP8.Infrastructure.TestTools.xUnit.Attributes
+namespace QP8.Infrastructure.TestTools.Xunit.Attributes
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = false)]
     public class DataReaderAttribute : DataAttribute
