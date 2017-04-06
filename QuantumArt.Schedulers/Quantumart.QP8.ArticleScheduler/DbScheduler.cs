@@ -1,98 +1,62 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Practices.Unity;
-using Quantumart.QP8.ArticleScheduler.Onetime;
-using Quantumart.QP8.ArticleScheduler.Publishing;
-using Quantumart.QP8.ArticleScheduler.Recurring;
+using Microsoft.Practices.ObjectBuilder2;
+using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
-    public class DbScheduler
+    internal class DbScheduler : IScheduler
     {
-        private readonly string _connectionString;
-        private readonly IUnityContainer _unityContainer;
+        private readonly IOnetimeTaskScheduler _onetimeScheduler;
+        private readonly IRecurringTaskScheduler _recurringScheduler;
+        private readonly IPublishingTaskScheduler _publishingScheduler;
+        private readonly IArticleSchedulerService _articleSchedulerService;
 
-        public DbScheduler(string connectionString, IUnityContainer unityContainer)
+        public DbScheduler(
+            IOnetimeTaskScheduler onetimeScheduler,
+            IRecurringTaskScheduler recurringScheduler,
+            IPublishingTaskScheduler publishingScheduler,
+            IArticleSchedulerService articleSchedulerService
+        )
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
-            if (unityContainer == null)
-            {
-                throw new ArgumentNullException(nameof(unityContainer));
-            }
-
-            _connectionString = connectionString;
-            _unityContainer = unityContainer;
+            _onetimeScheduler = onetimeScheduler;
+            _recurringScheduler = recurringScheduler;
+            _publishingScheduler = publishingScheduler;
+            _articleSchedulerService = articleSchedulerService;
         }
 
-        /// <summary>
-        /// Обработать задачи (расписания)
-        /// </summary>
         public void Run()
         {
-            GetScheduleTaskActions().ForEach(action => action());
+            GetDbScheduleTaskActions().ForEach(RunScheduleTaskAction);
         }
 
-        /// <summary>
-        /// Получить список action для выполнения всех существующих в БД на текущий момент расписаний
-        /// </summary>
-        private List<Action> GetScheduleTaskActions()
+        private IEnumerable<ArticleScheduleTask> GetDbScheduleTaskActions()
         {
-            var ashBllService = _unityContainer.Resolve<IArticleSchedulerService>(new ParameterOverride("connectionString", _connectionString));
-            var scheduleTasks = ashBllService.GetScheduleTaskList();
-            return scheduleTasks.Select(CreateScheduleTaskAction).ToList();
+            return _articleSchedulerService.GetScheduleTaskList();
         }
 
-        /// <summary>
-        /// Создать action для обработки задачи
-        /// </summary>
-        private Action CreateScheduleTaskAction(ArticleScheduleTask task)
+        private void RunScheduleTaskAction(ArticleScheduleTask articleTask)
         {
-            switch (task.FreqType)
+            switch (articleTask.FreqType)
             {
                 case ScheduleFreqTypes.OneTime:
-                    return () => RunOnetimeTaskAction(task);
+                    _onetimeScheduler.Run(articleTask);
+                    break;
                 case ScheduleFreqTypes.Publishing:
-                    return () => RunPublishingTaskAction(task);
+                    _publishingScheduler.Run(articleTask);
+                    break;
                 case ScheduleFreqTypes.RecurringDaily:
                 case ScheduleFreqTypes.RecurringWeekly:
                 case ScheduleFreqTypes.RecurringMonthly:
                 case ScheduleFreqTypes.RecurringMonthlyRelative:
-                    return () => RunRecurringTaskAction(task);
+                    _recurringScheduler.Run(articleTask);
+                    break;
                 default:
-                    throw new ArgumentException("Undefined FreqType value: " + task.FreqType);
+                    throw new ArgumentException("Undefined FreqType value: " + articleTask.FreqType);
             }
-        }
-
-        /// <summary>
-        /// Выполнить Recurring задачу
-        /// </summary>
-        private void RunRecurringTaskAction(ArticleScheduleTask task)
-        {
-            _unityContainer.Resolve<RecurringTaskScheduler>(new ParameterOverride("connectionString", _connectionString)).Run(RecurringTask.Create(task));
-        }
-
-        /// <summary>
-        /// Выполнить Publishing задачу
-        /// </summary>
-        private void RunPublishingTaskAction(ArticleScheduleTask task)
-        {
-            _unityContainer.Resolve<PublishingTaskScheduler>(new ParameterOverride("connectionString", _connectionString)).Run(PublishingTask.Create(task));
-        }
-
-        /// <summary>
-        /// Выполнить Onetime задачу
-        /// </summary>
-        private void RunOnetimeTaskAction(ArticleScheduleTask task)
-        {
-            _unityContainer.Resolve<OnetimeTaskScheduler>(new ParameterOverride("connectionString", _connectionString)).Run(OnetimeTask.Create(task));
         }
     }
 }

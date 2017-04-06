@@ -5,9 +5,6 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
 {
     public class OnetimeTask
     {
-        /// <summary>
-        /// Создать PublishingTask из ArticleScheduleTask
-        /// </summary>
         public static OnetimeTask Create(ArticleScheduleTask task)
         {
             if (task == null)
@@ -20,9 +17,7 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
                 throw new ArgumentException("Undefined FreqType value: " + task.FreqType);
             }
 
-            return new OnetimeTask(task.Id, task.ArticleId,
-                task.StartDate + task.StartTime,
-                task.EndDate + task.EndTime);
+            return new OnetimeTask(task.Id, task.ArticleId, task.StartDate + task.StartTime, task.EndDate + task.EndTime);
         }
 
         public OnetimeTask(int id, int articleId, DateTime startDateTime, DateTime endDateTime)

@@ -1,36 +1,30 @@
-﻿using System;
+﻿using QP8.Infrastructure.Logging;
+using Quantumart.QP8.ArticleScheduler.Interfaces;
+using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.Configuration.Models;
 
 namespace Quantumart.QP8.ArticleScheduler.Publishing
 {
-    internal class PublishingTaskScheduler
+    internal class PublishingTaskScheduler : IPublishingTaskScheduler
     {
-        private readonly IArticlePublishingSchedulerService _bllService;
-        private readonly IOperationsLogWriter _operationsLogWriter;
+        private readonly QaConfigCustomer _customer;
+        private readonly IArticlePublishingSchedulerService _publishingService;
 
-        public PublishingTaskScheduler(IArticlePublishingSchedulerService bllService, IOperationsLogWriter operationsLogWriter)
+        public PublishingTaskScheduler(QaConfigCustomer customer, IArticlePublishingSchedulerService publishingService)
         {
-            if (bllService == null)
-            {
-                throw new ArgumentNullException(nameof(bllService));
-            }
-
-            if (operationsLogWriter == null)
-            {
-                throw new ArgumentNullException(nameof(operationsLogWriter));
-            }
-
-            _bllService = bllService;
-            _operationsLogWriter = operationsLogWriter;
+            _customer = customer;
+            _publishingService = publishingService;
         }
 
-        public void Run(PublishingTask task)
+        public void Run(ArticleScheduleTask articleTask)
         {
-            var currentTime = _bllService.GetCurrentDBDateTime();
+            var task = PublishingTask.Create(articleTask);
+            var currentTime = _publishingService.GetCurrentDBDateTime();
             if (currentTime >= task.PublishingDateTime)
             {
-                var article = _bllService.PublishAndCloseSchedule(task.Id);
-                _operationsLogWriter.PublishArticle(article);
+                var article = _publishingService.PublishAndCloseSchedule(task.Id);
+                Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been published on customer code: {_customer.CustomerName}");
             }
         }
     }

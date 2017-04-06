@@ -1,4 +1,5 @@
 ﻿using System;
+using Quantumart.QP8.ArticleScheduler.Interfaces;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
 {

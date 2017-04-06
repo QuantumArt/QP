@@ -15,7 +15,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             {
                 return Optimize(new Tuple<DateTime, DateTime>(startDate.Date, endDate.Date), dateTime.Date)
                     .EveryWeeks(recurrenceFactor) // получаем полные недели, но только те, которые ограничены recurrenceFactor
-                    .Days() // получаем дни
+                    .Days()
                     .Where(d => IntervalPredicate(d, interval))
                     .Where(d => startDate.Date <= d.Date && endDate.Date >= d.Date) // только те даты что в диапазоне
                     .Select(d => d.Add(startTime)) // получаем точное время старта
@@ -23,9 +23,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             };
         }
 
-        /// <summary>
-        /// Возвращает предикат для фильтрации по interval
-        /// </summary>
         private static bool IntervalPredicate(DateTime dateTime, int interval)
         {
             return (interval & 1) == 1 && dateTime.DayOfWeek == DayOfWeek.Sunday ||

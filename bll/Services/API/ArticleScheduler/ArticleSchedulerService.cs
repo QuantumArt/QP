@@ -9,17 +9,16 @@ using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
 {
-    public class ArticleSchedulerService : IArticleSchedulerService, IArticleOnetimeSchedulerService, IArticlePublishingSchedulerService, IArticleRecurringSchedulerService
+    public class ArticleSchedulerService :
+        IArticleSchedulerService,
+        IArticleOnetimeSchedulerService,
+        IArticlePublishingSchedulerService,
+        IArticleRecurringSchedulerService
     {
         private readonly string _connectionString;
 
         public ArticleSchedulerService(string connectionString)
         {
-            if (string.IsNullOrEmpty(connectionString))
-            {
-                throw new ArgumentNullException(nameof(connectionString));
-            }
-
             _connectionString = connectionString;
         }
 
@@ -136,6 +135,7 @@ namespace Quantumart.QP8.BLL.Services.API.ArticleScheduler
                             QPContext.IsLive = true;
                             article.LoadFieldValues();
                             QPContext.IsLive = false;
+
                             var repo = new NotificationPushRepository();
                             repo.PrepareNotifications(article, new[] { NotificationCode.DelayedPublication });
                             QPContext.EFContext.MergeArticle(schedule.ArticleId, article.LastModifiedBy);
