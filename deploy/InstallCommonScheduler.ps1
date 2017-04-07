@@ -70,18 +70,18 @@ $schedulerZipPath = Join-Path $currentPath "CommonScheduler.zip"
 
 if ((Test-Path $schedulerZipPath))
 {
+    $schedulerFolder = $schedulerZipPath.Replace(".zip", "")
     Write-Host "Zip file found. Unpacking..."
-    Invoke-Expression "7za.exe x -r -y -o""$installRoot"" ""$schedulerZipPath"""
+    Invoke-Expression "7za.exe x -r -y -o""$schedulerFolder"" ""$schedulerZipPath"""
+    $schedulerPath = Join-Path $schedulerFolder "bin\Release\$projectName.exe"
 }
-else
-{
-    if (-not(Test-Path $schedulerFolder) -or -not(Test-Path $schedulerPath))
-    {
-        throw "You should build service $projectName in Debug configuration first";
-    }
 
-    Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
+if (-not(Test-Path $schedulerFolder) -or -not(Test-Path $schedulerPath))
+{
+    throw "You should build service $projectName in Debug configuration first";
 }
+
+Copy-Item "$schedulerFolder\*" "$installRoot" -Force -Recurse
 
 Write-Host "Installing service: $name"
 $frameworkDir = $([System.Runtime.InteropServices.RuntimeEnvironment]::GetRuntimeDirectory())
