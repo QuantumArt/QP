@@ -1,41 +1,29 @@
-﻿using System;
+using System;
+using QP8.Infrastructure.Logging;
+using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.Configuration.Models;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
 {
-    internal class RecurringTaskScheduler
+    internal class RecurringTaskScheduler : IRecurringTaskScheduler
     {
-        private readonly IArticleRecurringSchedulerService _bllService;
-        private readonly IOperationsLogWriter _operationsLogWriter;
+        private readonly QaConfigCustomer _customer;
+        private readonly IArticleRecurringSchedulerService _recurringService;
 
-        public RecurringTaskScheduler(IArticleRecurringSchedulerService bllService, IOperationsLogWriter operationsLogWriter)
+        public RecurringTaskScheduler(QaConfigCustomer customer, IArticleRecurringSchedulerService recurringService)
         {
-            if (bllService == null)
-            {
-                throw new ArgumentNullException(nameof(bllService));
-            }
-
-            if (operationsLogWriter == null)
-            {
-                throw new ArgumentNullException(nameof(operationsLogWriter));
-            }
-
-            _bllService = bllService;
-            _operationsLogWriter = operationsLogWriter;
+            _customer = customer;
+            _recurringService = recurringService;
         }
 
-        public void Run(RecurringTask task)
+        public void Run(ArticleScheduleTask articleTask)
         {
-            if (task == null)
-            {
-                return;
-            }
-
-            var currentDateTime = _bllService.GetCurrentDBDateTime();
+            var task = RecurringTask.Create(articleTask);
+            var currentDateTime = _recurringService.GetCurrentDBDateTime();
             var taskRange = Tuple.Create(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
             var taskRangePos = taskRange.Position(currentDateTime);
-
             var calc = CreateRecuringStartCalc(task);
 
             // получить ближайшую дату начала показа статьи
@@ -63,42 +51,34 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             if (showRangePos == 0)
             {
                 // внутри диапазона показа
-                article = _bllService.ShowArticle(task.ArticleId);
+                article = _recurringService.ShowArticle(task.ArticleId);
                 if (article != null && !article.Visible)
                 {
-                    _operationsLogWriter.ShowArticle(article);
+                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been shown on customer code: {_customer.CustomerName}");
                 }
             }
             else if (showRangePos > 0 && taskRangePos == 0)
             {
-                // за диапазоном показа но внутри диапазона задачи
-                article = _bllService.HideArticle(task.ArticleId);
+                // за диапазоном показа, но внутри диапазона задачи
+                article = _recurringService.HideArticle(task.ArticleId);
                 if (article != null && article.Visible)
                 {
-                    _operationsLogWriter.HideArticle(article);
+                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
                 }
             }
             else if (showRangePos > 0 && taskRangePos > 0)
             {
                 // за диапазоном показа и за диапазоном задачи
-                article = _bllService.HideAndCloseSchedule(task.Id);
+                article = _recurringService.HideAndCloseSchedule(task.Id);
                 if (article != null && article.Visible)
                 {
-                    _operationsLogWriter.HideArticle(article);
+                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
                 }
             }
         }
 
-        /// <summary>
-        /// Создать вычислитель даты начала диапазона показа статьи в зависимости от типа задачи
-        /// </summary>
-        private IRecuringStartCalc CreateRecuringStartCalc(RecurringTask task)
+        private static IRecuringStartCalc CreateRecuringStartCalc(RecurringTask task)
         {
-            if (task == null)
-            {
-                throw new ArgumentNullException(nameof(task));
-            }
-
             switch (task.TaskType)
             {
                 case RecurringTaskTypes.Daily:

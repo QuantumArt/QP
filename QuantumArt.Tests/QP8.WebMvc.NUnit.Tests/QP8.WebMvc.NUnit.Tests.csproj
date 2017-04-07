@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -125,12 +125,6 @@
     <Compile Include="BLL\UserQueryColumnTest.cs" />
     <Compile Include="BLL\Helpers\MultistepActionHelperTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\DateRangeExtensionsTest.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\DbSchedulerTest.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\Onetime\OnetimeTaskSchedulerTest.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\Publishing\PublishingTaskSchedulerTest.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\Recurring\RecuringStartCalcTest.cs" />
-    <Compile Include="Quantumart.QP8.ArticleScheduler\Recurring\RecurringTaskSchedulerTest.cs" />
     <Compile Include="ScheduleHelperTest.cs" />
     <Compile Include="BLL\Repository\FingerprintRepositoryTest.cs" />
     <Compile Include="Utils\CleanerTest.cs" />

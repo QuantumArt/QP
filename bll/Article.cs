@@ -59,7 +59,8 @@ namespace Quantumart.QP8.BLL
             UseInVariationUpdate = false;
         }
 
-        internal Article(Content content) : this()
+        internal Article(Content content)
+            : this()
         {
             ContentId = content.Id;
             Content = content;
@@ -1500,8 +1501,7 @@ namespace Quantumart.QP8.BLL
         {
             var fieldIds = VariationContextFieldValues
                 .Select(n => n.Field.Id)
-                .ToArray()
-            ;
+                .ToArray();
 
             foreach (var article in VariationArticles.Concat(Enumerable.Repeat(this, 1)))
             {
