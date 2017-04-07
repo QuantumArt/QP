@@ -8,26 +8,14 @@ namespace Quantumart.QP8.BLL
 {
     public abstract class LockableEntityObject : EntityObject
     {
-        public virtual User LockedByUser
-        {
-            get;
-            set;
-        }
+        public virtual User LockedByUser { get; set; }
 
-        public DateTime Locked
-        {
-            get;
-            set;
-        }
+        public DateTime Locked { get; set; }
 
         [LocalizedDisplayName("Locked", NameResourceType = typeof(GlobalStrings))]
         public string LockedToDisplay => Locked.ValueToDisplay();
 
-        public int LockedBy
-        {
-            get;
-            set;
-        }
+        public int LockedBy { get; set; }
 
         [LocalizedDisplayName("LockedByUser", NameResourceType = typeof(GlobalStrings))]
         public string LockedByDisplayName => LockedByUser != null ? LockedByUser.DisplayName : string.Empty;
@@ -39,13 +27,9 @@ namespace Quantumart.QP8.BLL
         public bool LockedByAnyoneElse => LockedByAnyone && !LockedByYou;
 
         [LocalizedDisplayName("PermanentLock", NameResourceType = typeof(GlobalStrings))]
-        public bool PermanentLock
-        {
-            get;
-            set;
-        }
+        public bool PermanentLock { get; set; }
 
-                public void AutoLock()
+        public void AutoLock()
         {
             if (!LockedByAnyone)
             {
@@ -83,12 +67,7 @@ namespace Quantumart.QP8.BLL
         {
             if (IsLockedByAnyone(lockedBy))
             {
-                if (IsLockedByYou(lockedBy))
-                {
-                    return SiteStrings.Tooltip_LockedByYou;
-                }
-
-                return string.Format(SiteStrings.Tooltip_LockedByUser, displayName);
+                return IsLockedByYou(lockedBy) ? SiteStrings.Tooltip_LockedByYou : string.Format(SiteStrings.Tooltip_LockedByUser, displayName);
             }
 
             return string.Empty;

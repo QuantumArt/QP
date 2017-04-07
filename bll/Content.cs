@@ -274,17 +274,11 @@ namespace Quantumart.QP8.BLL
             });
 
             _unionContentIDs = new InitPropertyValue<IEnumerable<int>>(() => VirtualContentRepository.GetUnionSourceContents(Id));
-
             _virtualSubContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetVirtualSubContents(Id));
-
             _userQueryContentViewSchema = new Lazy<IEnumerable<UserQueryColumn>>(GetUserQueryContentViewSchema);
-
             _aggregatedContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetAggregatedContents(Id));
-
             _parentContent = new InitPropertyValue<Content>(() => ParentContentId.HasValue ? ContentRepository.GetById(ParentContentId.Value) : null);
-
             _childContents = new InitPropertyValue<IEnumerable<Content>>(() => ContentRepository.GetChildList(Id));
-
             _contentGroup = new InitPropertyValue<ContentGroup>(() => ContentRepository.GetGroupById(GroupId));
         }
 

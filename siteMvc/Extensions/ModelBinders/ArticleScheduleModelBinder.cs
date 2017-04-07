@@ -15,8 +15,8 @@ namespace Quantumart.QP8.WebMvc.Extensions.ModelBinders
             // Если это не повторяющееся событие, то удалить все сообщения связанные с item.Recurring
             if (item.ScheduleType != ScheduleTypeEnum.Recurring)
             {
-                var recuringPrefix = GetModelPropertyName(bindingContext, () => item.Recurring);
-                var keys = bindingContext.ModelState.Keys.Where(k => k.StartsWith(recuringPrefix)).ToArray();
+                var recurringPrefix = GetModelPropertyName(bindingContext, () => item.Recurring);
+                var keys = bindingContext.ModelState.Keys.Where(k => k.StartsWith(recurringPrefix)).ToArray();
                 foreach (var key in keys)
                 {
                     bindingContext.ModelState.Remove(key);

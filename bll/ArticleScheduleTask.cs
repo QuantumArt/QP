@@ -4,9 +4,9 @@ namespace Quantumart.QP8.BLL
 {
     public class ArticleScheduleTask
     {
-        public int ArticleId { get; set; }
-
         public int Id { get; set; }
+
+        public int ArticleId { get; set; }
 
         public int FreqType { get; set; }
 
