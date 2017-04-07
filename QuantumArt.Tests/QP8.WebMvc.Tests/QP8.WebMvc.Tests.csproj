@@ -163,6 +163,10 @@
       <Project>{748b27a9-8060-40c3-9309-3a52fa39ca60}</Project>
       <Name>QP8.Infrastructure.TestTools</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj">
+      <Project>{bd9a445e-8510-489d-8001-409b777c46cd}</Project>
+      <Name>Quantumart.QP8.ArticleScheduler</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
@@ -182,4 +186,3 @@
   </Target>
   -->
 </Project>
-

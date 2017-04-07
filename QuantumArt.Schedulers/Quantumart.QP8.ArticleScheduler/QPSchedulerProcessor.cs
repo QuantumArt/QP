@@ -30,7 +30,7 @@ namespace Quantumart.QP8.ArticleScheduler
                     try
                     {
                         var customers = QPConfiguration.GetCustomers(AppName, true);
-                        new QpScheduler(UnityContainerCustomizer.UnityContainer, customers).ParallelRun();
+                        new QpScheduler(UnityContainerCustomizer.UnityContainer, customers).Run();
                     }
                     catch (Exception ex)
                     {

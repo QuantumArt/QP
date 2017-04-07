@@ -3,35 +3,44 @@ using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
 {
-    /// <summary>
-    /// Задача циклического расписания
-    /// </summary>
     public class RecurringTask
     {
-        /// <summary>
-        /// Создать RecurringTask из ArticleScheduleTask
-        /// </summary>
         public static RecurringTask Create(ArticleScheduleTask task)
         {
-            if (task == null)
-            {
-                throw new ArgumentNullException(nameof(task));
-            }
-
-            if (task.FreqType != (int)RecurringTaskTypes.Daily &&
-                task.FreqType != (int)RecurringTaskTypes.Monthly &&
-                task.FreqType != (int)RecurringTaskTypes.MonthlyRelative &&
-                task.FreqType != (int)RecurringTaskTypes.Weekly)
+            if (task.FreqType != (int)RecurringTaskTypes.Daily
+                && task.FreqType != (int)RecurringTaskTypes.Monthly
+                && task.FreqType != (int)RecurringTaskTypes.MonthlyRelative
+                && task.FreqType != (int)RecurringTaskTypes.Weekly)
             {
                 throw new ArgumentException("Undefined FreqType value: " + task.FreqType);
             }
 
-            return new RecurringTask(task.Id, task.ArticleId, (RecurringTaskTypes)task.FreqType,
-                task.FreqInterval, task.FreqRelativeInterval, task.FreqRecurrenceFactor,
-                task.StartDate, task.EndDate, task.StartTime, task.Duration);
+            return new RecurringTask(
+                task.Id,
+                task.ArticleId,
+                (RecurringTaskTypes)task.FreqType,
+                task.FreqInterval,
+                task.FreqRelativeInterval,
+                task.FreqRecurrenceFactor,
+                task.StartDate,
+                task.EndDate,
+                task.StartTime,
+                task.Duration
+            );
         }
 
-        public RecurringTask(int id, int articleId, RecurringTaskTypes taskType, int interval, int relativeInterval, int recurrenceFactor, DateTime startDate, DateTime endDate, TimeSpan startTime, TimeSpan duration)
+        public RecurringTask(
+            int id,
+            int articleId,
+            RecurringTaskTypes taskType,
+            int interval,
+            int relativeInterval,
+            int recurrenceFactor,
+            DateTime startDate,
+            DateTime endDate,
+            TimeSpan startTime,
+            TimeSpan duration
+        )
         {
             Id = id;
             ArticleId = articleId;

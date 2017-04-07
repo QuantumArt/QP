@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Quantumart.QP8.ArticleScheduler.Recurring
+namespace Quantumart.QP8.ArticleScheduler.Interfaces
 {
     /// <summary>
     /// Интерфейс классов определяющих начало периода в Recuring-расписаний

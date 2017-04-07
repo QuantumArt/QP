@@ -1,25 +1,14 @@
 ﻿using System;
+using QP8.Infrastructure;
 using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.ArticleScheduler.Publishing
 {
     public class PublishingTask
     {
-        /// <summary>
-        /// Создать PublishingTask из ArticleScheduleTask
-        /// </summary>
         public static PublishingTask Create(ArticleScheduleTask task)
         {
-            if (task == null)
-            {
-                throw new ArgumentNullException(nameof(task));
-            }
-
-            if (task.FreqType != 2)
-            {
-                throw new ArgumentException("Undefined FreqType value: " + task.FreqType);
-            }
-
+            Ensure.Equal(task.FreqType, 2, $"Undefined FreqType value: {task.FreqType}");
             return new PublishingTask(task.Id, task.ArticleId, task.StartDate + task.StartTime);
         }
 

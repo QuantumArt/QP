@@ -1,54 +1,48 @@
 ﻿using System;
+using QP8.Infrastructure.Logging;
+using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler.Onetime
 {
-    internal class OnetimeTaskScheduler
+    internal class OnetimeTaskScheduler : IOnetimeTaskScheduler
     {
-        private readonly IArticleOnetimeSchedulerService _bllService;
-        private readonly IOperationsLogWriter _operationsLogWriter;
+        private readonly QaConfigCustomer _customer;
+        private readonly IArticleOnetimeSchedulerService _onetimeService;
 
-        public OnetimeTaskScheduler(IArticleOnetimeSchedulerService bllService, IOperationsLogWriter operationsLogWriter)
+        public OnetimeTaskScheduler(QaConfigCustomer customer, IArticleOnetimeSchedulerService onetimeService)
         {
-            if (bllService == null)
-            {
-                throw new ArgumentNullException(nameof(bllService));
-            }
-
-            if (operationsLogWriter == null)
-            {
-                throw new ArgumentNullException(nameof(operationsLogWriter));
-            }
-
-            _bllService = bllService;
-            _operationsLogWriter = operationsLogWriter;
+            _customer = customer;
+            _onetimeService = onetimeService;
         }
 
-        public void Run(OnetimeTask task)
+        public void Run(ArticleScheduleTask articleTask)
         {
+            var task = OnetimeTask.Create(articleTask);
             var range = Tuple.Create(task.StartDateTime, task.EndDateTime);
-            var currentTime = _bllService.GetCurrentDBDateTime();
+            var currentTime = _onetimeService.GetCurrentDBDateTime();
             var pos = range.Position(currentTime);
 
             Article article;
             if (pos > 0)
             {
                 // после диапазона задачи
-                article = _bllService.HideAndCloseSchedule(task.Id);
+                article = _onetimeService.HideAndCloseSchedule(task.Id);
                 if (article != null && article.Visible)
                 {
-                    _operationsLogWriter.HideArticle(article);
+                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
                 }
             }
             else if (pos == 0)
             {
                 // в диапазоне
-                article = task.EndDateTime.Year == ArticleScheduleConstants.Infinity.Year ? _bllService.ShowAndCloseSchedule(task.Id) : _bllService.ShowArticle(task.ArticleId);
+                article = task.EndDateTime.Year == ArticleScheduleConstants.Infinity.Year ? _onetimeService.ShowAndCloseSchedule(task.Id) : _onetimeService.ShowArticle(task.ArticleId);
                 if (article != null && !article.Visible)
                 {
-                    _operationsLogWriter.ShowArticle(article);
+                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been shown on customer code: {_customer.CustomerName}");
                 }
             }
         }

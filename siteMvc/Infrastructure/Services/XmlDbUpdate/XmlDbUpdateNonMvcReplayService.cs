@@ -10,7 +10,8 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
     {
         private readonly bool _isQpInstalled;
 
-        public XmlDbUpdateNonMvcReplayService(string connectionString,
+        public XmlDbUpdateNonMvcReplayService(
+            string connectionString,
             int userId,
             bool useGuidSubstitution,
             IXmlDbUpdateLogService dbLogService,
