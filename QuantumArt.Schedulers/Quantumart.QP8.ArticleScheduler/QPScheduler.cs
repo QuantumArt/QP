@@ -49,8 +49,10 @@ namespace Quantumart.QP8.ArticleScheduler
             {
                 _prtgLogger.Error("There was an error at article scheduler service.", exceptions);
             }
-
-            _prtgLogger.Info("All tasks successfully proceed.");
+            else
+            {
+                _prtgLogger.Info("All tasks successfully proceed.");
+            }
         }
     }
 }
