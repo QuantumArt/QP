@@ -8,8 +8,8 @@ if (-not(Test-Path $source)) { throw [System.ArgumentException] "Folder $source 
 
 $backendSource = Join-Path $source "siteMvc"
 $winLogonSource = Join-Path $source "WinLogonMvc"
-$schedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler.WinService\bin\$config"
-$commonSchedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Service\bin\$config"
+$schedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler.WinService"
+$commonSchedulerSource = Join-Path $source "QuantumArt.Schedulers\Quantumart.QP8.Scheduler.Service"
 $pluginsSource = Join-Path $source "plugins"
 $sitesSource = Join-Path $source "sites"
 $qaSource = Join-Path $source "QA"
@@ -43,13 +43,18 @@ Write-Output "Removing sources for $winLogonSource"
 Invoke-Expression "CleanSource.ps1 -source '$winLogonSource' -removeViews `$true"
 Write-Output "Done"
 
+Write-Output "Removing sources for $schedulerSource"
+Invoke-Expression "CleanSource.ps1 -source '$schedulerSource'"
+Write-Output "Done"
+
+Write-Output "Removing sources for $commonSchedulerSource"
+Invoke-Expression "CleanSource.ps1 -source '$commonSchedulerSource'"
+Write-Output "Done"
+
 Invoke-Expression "7za.exe a -r -y ""$parentSource\Backend.zip"" ""$backendSource\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$parentSource\Winlogon.zip"" ""$winLogonSource\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$parentSource\ArticleScheduler.zip"" ""$schedulerSource\*.*"""
-if (Test-Path $commonSchedulerSource)
-{
-  Invoke-Expression "7za.exe a -r -y ""$parentSource\CommonScheduler.zip"" ""$commonSchedulerSource\*.*"""
-}
+Invoke-Expression "7za.exe a -r -y ""$parentSource\CommonScheduler.zip"" ""$commonSchedulerSource\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$parentSource\plugins.zip"" ""$pluginsSource\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$parentSource\sites.zip"" ""$sitesSource\*.*"""
 Invoke-Expression "7za.exe a -r -y ""$parentSource\qa.zip"" ""$qaSource\*.*"""
@@ -58,7 +63,4 @@ Copy-Item $installQp8Source $parentSource
 Copy-Item $replacelQp8Source $parentSource
 Copy-Item $installSchedulerSource $parentSource
 Copy-Item $currentSqlSource $parentSource
-if (Test-Path $installCommonSchedulerSource)
-{
-  Copy-Item $installCommonSchedulerSource $parentSource
-}
+Copy-Item $installCommonSchedulerSource $parentSource
