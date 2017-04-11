@@ -568,13 +568,13 @@ namespace Quantumart.QP8.BLL
             LockedByUser = null;
             LockedBy = 0;
             SetDefaultStatusAndVisibility();
-            ClearM2OFields();
-            ClearOldIds();
-            ClearFields(clearFieldIds, clearType);
+            ClearM2OArticleFields();
+            ClearOldArticleFields();
+            ClearArticleFields(clearFieldIds, clearType);
 
             if (resolveFieldConflicts)
             {
-                ResolveFieldConflicts();
+                ResolveUniqueFieldConflictsOnCopy();
             }
         }
 
@@ -611,7 +611,7 @@ namespace Quantumart.QP8.BLL
 
             var repo = new NotificationPushRepository();
             repo.PrepareNotifications(articleToPrepare, codes.ToArray(), disableNotifications);
-            result.BackupCurrentFiles();
+            result.BackupFilesFromCurrentVersion();
             result.CreateDynamicImages();
 
             if (IsNew && !IsAggregated && !IsVariation)
@@ -623,7 +623,7 @@ namespace Quantumart.QP8.BLL
             {
                 foreach (var a in AggregatedArticles)
                 {
-                    a.AggregateTo(result);
+                    a.AggregateToRootArticle(result);
                     a.Persist(true);
                 }
 
@@ -894,7 +894,11 @@ namespace Quantumart.QP8.BLL
             StatusTypeId = Status.Id;
         }
 
-        internal void FixNonUsedStatus(bool fixNotAssignedWorkflow)
+        /// <summary>
+        /// Исправляет статус статьи на допустимый (недопустимый статус может появиться в результате изменения Workflow или Binding)
+        /// <param name="fixUnassignedWorkflow">исправлять ли в случае неназначенного Workflow</param>
+        /// </summary>
+        internal void FixNonUsedStatus(bool fixUnassignedWorkflow)
         {
             if (Workflow.IsAssigned)
             {
@@ -904,21 +908,21 @@ namespace Quantumart.QP8.BLL
                     StatusTypeId = Status.Id;
                 }
             }
-            else if (fixNotAssignedWorkflow)
+            else if (fixUnassignedWorkflow)
             {
                 Status = StatusType.GetPublished(Content.SiteId);
                 StatusTypeId = Status.Id;
             }
         }
 
-        internal void ResolveFieldConflicts()
+        internal void ResolveUniqueFieldConflictsOnCopy()
         {
             var constraints = ContentConstraintRepository.GetConstraintsByContentId(ContentId);
             foreach (var constraint in constraints)
             {
+                var step = 0;
                 var fieldValuesToResolve = constraint.Filter(FieldValues);
                 List<FieldValue> currentFieldValues;
-                var step = 0;
 
                 do
                 {
@@ -926,7 +930,6 @@ namespace Quantumart.QP8.BLL
                     currentFieldValues = MutateHelper.MutateFieldValues(fieldValuesToResolve, step);
                 }
                 while (!ArticleRepository.ValidateUnique(currentFieldValues));
-
                 MergeWithFieldValues(currentFieldValues);
             }
         }
@@ -1145,15 +1148,15 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        internal void BackupCurrentFiles()
+        internal void BackupFilesFromCurrentVersion()
         {
             Directory.CreateDirectory(BackupPath);
             CopyArticleFiles(CopyFilesMode.ToBackupFolder, BackupPath);
         }
 
-        internal void RestoreCurrentFiles(int id)
+        internal void RestoreArticleFilesForVersion(int versionId)
         {
-            var versionPath = GetVersionPathInfo(id).Path;
+            var versionPath = GetVersionPathInfo(versionId).Path;
             CopyArticleFiles(CopyFilesMode.FromVersionFolder, BackupPath, versionPath);
             foreach (var a in AggregatedArticles)
             {
@@ -1198,7 +1201,23 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        internal void ClearM2OFields()
+        public void ClearArticleFields(int[] fieldIdsToClear, ArticleClearType clearType)
+        {
+            if (fieldIdsToClear != null && fieldIdsToClear.Length > 0)
+            {
+                ClearArticleFields(fv => fieldIdsToClear.Contains(fv.Field.Id), clearType);
+            }
+        }
+
+        private void ClearArticleFields(Func<FieldValue, bool> fieldsToClearPredicate, ArticleClearType clearType)
+        {
+            foreach (var fieldValue in FieldValues.Where(fieldsToClearPredicate))
+            {
+                fieldValue.Value = clearType == ArticleClearType.DefaultValue ? fieldValue.Field.DefaultValue : string.Empty;
+            }
+        }
+
+        private void ClearM2OArticleFields()
         {
             foreach (var fieldValue in FieldValues.Where(n => n.Field.ExactType == FieldExactTypes.M2ORelation))
             {
@@ -1206,7 +1225,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void ClearOldIds()
+        private void ClearOldArticleFields()
         {
             foreach (var fieldValue in FieldValues.Where(n => n.Field.Name.StartsWith("Old") && n.Field.Name.EndsWith("Id")))
             {
@@ -1214,31 +1233,7 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void ClearFields(Func<FieldValue, bool> fieldValuepredicate, ArticleClearType clearType)
-        {
-            foreach (var fieldValue in FieldValues.Where(fieldValuepredicate))
-            {
-                fieldValue.Value = clearType == ArticleClearType.DefaultValue ? fieldValue.Field.DefaultValue : string.Empty;
-            }
-        }
-
-        public void ClearFields(int[] fieldIds, ArticleClearType clearType)
-        {
-            if (fieldIds != null && fieldIds.Length > 0)
-            {
-                ClearFields(fv => fieldIds.Contains(fv.Field.Id), clearType);
-            }
-        }
-
-        public void ClearFields(string[] fieldNames, ArticleClearType clearType)
-        {
-            if (fieldNames != null && fieldNames.Length > 0)
-            {
-                ClearFields(fv => fieldNames.Contains(fv.Field.Name), clearType);
-            }
-        }
-
-        internal void AggregateTo(Article rootArticle)
+        private void AggregateToRootArticle(Article rootArticle)
         {
             Ensure.Not(rootArticle.IsNew, "Root article has to be saved.");
 
@@ -1250,7 +1245,7 @@ namespace Quantumart.QP8.BLL
             CopyServiceFields(rootArticle);
         }
 
-        internal void VariateTo(Article rootArticle)
+        private void VariateTo(Article rootArticle)
         {
             Ensure.Not(rootArticle.IsNew, "Root article has to be saved.");
 
@@ -1261,7 +1256,7 @@ namespace Quantumart.QP8.BLL
             CopyServiceFields(rootArticle);
         }
 
-        internal void CopyServiceFields(Article fromArticle)
+        private void CopyServiceFields(Article fromArticle)
         {
             Visible = fromArticle.Visible;
             Delayed = fromArticle.Delayed;
@@ -1271,7 +1266,7 @@ namespace Quantumart.QP8.BLL
             LastModifiedBy = fromArticle.LastModifiedBy;
         }
 
-        internal RulesException ValidateUnique(RulesException errors, int exceptFieldId)
+        private RulesException ValidateUnique(RulesException errors, int exceptFieldId)
         {
             foreach (var constraint in Content.Constraints)
             {
@@ -1301,14 +1296,14 @@ namespace Quantumart.QP8.BLL
             var result = new List<Article>();
             foreach (var a in aggregatedArticles)
             {
-                a.AggregateTo(this);
+                a.AggregateToRootArticle(this);
                 result.Add(ArticleRepository.Copy(a));
             }
 
             AggregatedArticles = result;
         }
 
-        internal void CopyParentPermissions()
+        private void CopyParentPermissions()
         {
             var treeField = Content.TreeField;
             if (treeField != null && treeField.CopyPermissionsToChildren)
@@ -1363,7 +1358,6 @@ namespace Quantumart.QP8.BLL
                 {
                     if (item.Field.UseVersionControl && (item.Field.Type.Name == FieldTypeName.Image || item.Field.Type.Name == FieldTypeName.File))
                     {
-
                         if (mode == CopyFilesMode.ToBackupFolder)
                         {
                             // не режем откуда, режем куда

@@ -1,60 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.DAL;
-using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
     internal class ScheduleRepository
     {
-
         internal static ArticleSchedule GetSchedule(Article item)
         {
-            ArticleScheduleDAL dal = GetDalByArticleId(item.Id);
-            if (dal == null)
-				return ArticleSchedule.CreateSchedule(item);
-            else
-            {
-                return MapperFacade.ArticleScheduleMapper.GetBizObject(dal, item);
-            }
+            var dal = GetDalByArticleId(item.Id);
+            return dal == null ? ArticleSchedule.CreateSchedule(item) : MapperFacade.ArticleScheduleMapper.GetBizObject(dal, item);
         }
 
-		internal static ArticleSchedule GetScheduleById(int id)
-		{
-			ArticleScheduleDAL dal = GetDalById(id);
-			if (dal == null)
-				return null;
-			else
-				return MapperFacade.ArticleScheduleMapper.GetBizObject(dal);
-		}
+        internal static ArticleSchedule GetScheduleById(int id)
+        {
+            var dal = GetDalById(id);
+            return dal == null ? null : MapperFacade.ArticleScheduleMapper.GetBizObject(dal);
+        }
 
         internal static void UpdateSchedule(Article article)
         {
-            ArticleSchedule item = article.Schedule;
-
+            var item = article.Schedule;
             if (item != null)
             {
                 item.Article = article;
                 item.ArticleId = article.Id;
 
-                int originalId = item.Id;
+                var originalId = item.Id;
                 item.Id = 0;
-                ArticleScheduleDAL dalItem = MapperFacade.ArticleScheduleMapper.GetDalObject(item);
 
-                bool itemPersisted = (originalId != 0);
-                bool hasChanges = !itemPersisted;
-
+                var dalItem = MapperFacade.ArticleScheduleMapper.GetDalObject(item);
+                var itemPersisted = (originalId != 0);
+                var hasChanges = !itemPersisted;
 
                 if (itemPersisted)
                 {
-                    ArticleScheduleDAL originalItem = GetDalById(originalId);//QPContext.CurrentDBContext.ArticleScheduleSet.SingleOrDefault(s => s.Id == (decimal)originalId);//
+                    var originalItem = GetDalById(originalId);
                     hasChanges = DetectChanges(originalItem, dalItem);
                     if (hasChanges)
                     {
@@ -62,13 +46,13 @@ namespace Quantumart.QP8.BLL.Repository
                     }
                 }
 
-				bool needToPersist = (dalItem.FreqType != ScheduleFreqTypes.None) && hasChanges;
+                var needToPersist = (dalItem.FreqType != ScheduleFreqTypes.None) && hasChanges;
                 if (needToPersist)
                 {
-					dalItem.UseService = QPConfiguration.UseScheduleService;
-					dalItem.Modified = article.Modified;
-					dalItem.LastModifiedBy = article.LastModifiedBy;
-					DefaultRepository.SimpleSave<ArticleScheduleDAL>(dalItem);
+                    dalItem.UseService = QPConfiguration.UseScheduleService;
+                    dalItem.Modified = article.Modified;
+                    dalItem.LastModifiedBy = article.LastModifiedBy;
+                    DefaultRepository.SimpleSave<ArticleScheduleDAL>(dalItem);
                 }
             }
         }
@@ -95,46 +79,31 @@ namespace Quantumart.QP8.BLL.Repository
 
         internal static ArticleScheduleDAL GetDalByArticleId(int id)
         {
-            return QPContext.EFContext.ArticleScheduleSet.SingleOrDefault(n => n.ArticleId == (decimal)id);
+            return QPContext.EFContext.ArticleScheduleSet.SingleOrDefault(n => n.ArticleId == id);
         }
 
         internal static ArticleScheduleDAL GetDalById(int id)
         {
-            return QPContext.EFContext
-				.ArticleScheduleSet
-				.SingleOrDefault(n => n.Id == (decimal)id);
+            return QPContext.EFContext.ArticleScheduleSet.SingleOrDefault(n => n.Id == id);
         }
 
-		/// <summary>
-		/// Удаляет расписание
-		/// </summary>
-		/// <param name="id"></param>
-		internal static void Delete(int id)
-		{
-			DefaultRepository.Delete<ArticleScheduleDAL>(id);
-		}
+        internal static void Delete(int id)
+        {
+            DefaultRepository.Delete<ArticleScheduleDAL>(id);
+        }
 
-		/// <summary>
-		/// Удаляет расписание
-		/// </summary>
-		/// <param name="id"></param>
-		internal static void Delete(ArticleSchedule schedule)
-		{
-			if (schedule != null)
-				Delete(schedule.Id);
-		}
+        internal static void Delete(ArticleSchedule schedule)
+        {
+            if (schedule != null)
+            {
+                Delete(schedule.Id);
+            }
+        }
 
-		/// <summary>
-		/// Получает список раписаний для обработки сервисом расписаний
-		/// </summary>
-		/// <returns></returns>
-		public static IEnumerable<ArticleScheduleTask> GetScheduleTaskList()
-		{
-			// TODO: добавить условие по USE_SERVICE == true
-			return MapperFacade.ArticleScheduleTaskMapper.GetBizList(QPContext.EFContext.ArticleScheduleSet
-				.Where(t => !t.Deactivate && t.UseService)
-				.ToList());
-		}
+        public static IEnumerable<ArticleScheduleTask> GetScheduleTaskList()
+        {
+            return MapperFacade.ArticleScheduleTaskMapper.GetBizList(QPContext.EFContext.ArticleScheduleSet.Where(t => !t.Deactivate && t.UseService).ToList());
+        }
 
         internal static void CopyScheduleToChildDelays(Article item)
         {
@@ -142,9 +111,6 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 Common.UpdateChildDelayedSchedule(scope.DbConnection, item.Id);
             }
-           
-            
-
         }
     }
 }

@@ -187,7 +187,7 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var result = version.Article.Persist(disableNotifications);
-            result.RestoreCurrentFiles(version.Id);
+            result.RestoreArticleFilesForVersion(version.Id);
             return result;
         }
     }
