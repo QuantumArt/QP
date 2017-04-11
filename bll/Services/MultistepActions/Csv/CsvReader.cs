@@ -91,8 +91,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     break;
                 case (int)CsvImportMode.InsertAndUpdate:
                     var existingArticles = UpdateArticles(_articlesListFromCsv);
-                    var notExistingArticles = _articlesListFromCsv.Filter(a => !existingArticles.GetBaseArticleIds().Contains<int>(a.Id));
-                    InsertArticles(notExistingArticles);
+                    var remainingArticles = _articlesListFromCsv.Filter(a => !existingArticles.GetBaseArticleIds().Contains<int>(a.Id));
+                    InsertArticles(remainingArticles);
                     break;
                 case (int)CsvImportMode.Update:
                     UpdateArticles(_articlesListFromCsv);
@@ -102,24 +102,22 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     UpdateArticles(changedArticles);
                     break;
                 case (int)CsvImportMode.InsertNew:
-                    InsertNewArticles();
+                    var nonExistingArticles = GetArticles(_articlesListFromCsv, false);
+                    InsertArticles(nonExistingArticles);
                     break;
                 default:
                     throw new NotImplementedException($"Неизвестный режим импорта: {_importSettings.ImportAction}");
             }
         }
 
-        private ExtendedArticleList InsertArticles(ExtendedArticleList articlesToInsert)
+        private void InsertArticles(ExtendedArticleList articlesToInsert)
         {
             if (articlesToInsert.Any())
             {
                 var insertingArticles = InsertArticlesToDb(articlesToInsert);
                 var insertedArticles = insertingArticles.GetBaseArticleIds();
                 SaveInsertedArticleIdsToSettings(insertedArticles);
-                return insertingArticles;
             }
-
-            return articlesToInsert;
         }
 
         private ExtendedArticleList UpdateArticles(ExtendedArticleList articlesToUpdate)
@@ -133,20 +131,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
 
             return articlesToUpdate;
-        }
-
-        private Tuple<List<int>, List<int>> InsertNewArticles()
-        {
-            var nonExistingArticles = GetArticles(_articlesListFromCsv, false);
-            var insertingArticles = nonExistingArticles;
-            if (nonExistingArticles.Any())
-            {
-                insertingArticles = InsertArticlesToDb(nonExistingArticles);
-            }
-
-            var insertedArticles = insertingArticles.GetBaseArticleIds();
-            var updatedArticles = Enumerable.Empty<int>().ToList();
-            return Tuple.Create(insertedArticles, updatedArticles);
         }
 
         private void ConvertCsvLinesToArticles()
