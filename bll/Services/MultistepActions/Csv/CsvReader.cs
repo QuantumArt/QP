@@ -91,13 +91,8 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                     break;
                 case (int)CsvImportMode.InsertAndUpdate:
                     var existingArticles = UpdateArticles(_articlesListFromCsv);
-                    SaveUpdatedArticleIdsToSettings(existingArticles.GetBaseArticleIds());
-                    var nonExistingArticles = _articlesListFromCsv.Filter(a => !existingArticles.GetBaseArticleIds().Contains<int>(a.Id));
-                    if (nonExistingArticles.Count > 0)
-                    {
-                        InsertArticles(nonExistingArticles);
-                        SaveInsertedArticleIdsToSettings(nonExistingArticles.GetBaseArticleIds());
-                    }
+                    var notExistingArticles = _articlesListFromCsv.Filter(a => !existingArticles.GetBaseArticleIds().Contains<int>(a.Id));
+                    InsertArticles(notExistingArticles);
                     break;
                 case (int)CsvImportMode.Update:
                     UpdateArticles(_articlesListFromCsv);
@@ -105,20 +100,53 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 case (int)CsvImportMode.UpdateIfChanged:
                     var changedArticles = _articlesListFromCsv.Filter(a => a.Created == DateTime.MinValue);
                     UpdateArticles(changedArticles);
-                    SaveUpdatedArticleIdsToSettings(changedArticles.GetBaseArticleIds());
                     break;
                 case (int)CsvImportMode.InsertNew:
-                    var nonExistArticles = GetNonExistingArticles(_articlesListFromCsv);
-                    if (nonExistArticles.Count > 0)
-                    {
-                        InsertArticles(nonExistArticles);
-                        SaveInsertedArticleIdsToSettings(nonExistArticles.GetBaseArticleIds());
-                    }
+                    InsertNewArticles();
                     break;
                 default:
-                    InsertArticles(_articlesListFromCsv);
-                    break;
+                    throw new NotImplementedException($"Неизвестный режим импорта: {_importSettings.ImportAction}");
             }
+        }
+
+        private ExtendedArticleList InsertArticles(ExtendedArticleList articlesToInsert)
+        {
+            if (articlesToInsert.Any())
+            {
+                var insertingArticles = InsertArticlesToDb(articlesToInsert);
+                var insertedArticles = insertingArticles.GetBaseArticleIds();
+                SaveInsertedArticleIdsToSettings(insertedArticles);
+                return insertingArticles;
+            }
+
+            return articlesToInsert;
+        }
+
+        private ExtendedArticleList UpdateArticles(ExtendedArticleList articlesToUpdate)
+        {
+            if (articlesToUpdate.Any())
+            {
+                var updatingArticles = UpdateArticlesToDb(articlesToUpdate);
+                var updatedArticles = updatingArticles.GetBaseArticleIds();
+                SaveUpdatedArticleIdsToSettings(updatedArticles);
+                return updatingArticles;
+            }
+
+            return articlesToUpdate;
+        }
+
+        private Tuple<List<int>, List<int>> InsertNewArticles()
+        {
+            var nonExistingArticles = GetArticles(_articlesListFromCsv, false);
+            var insertingArticles = nonExistingArticles;
+            if (nonExistingArticles.Any())
+            {
+                insertingArticles = InsertArticlesToDb(nonExistingArticles);
+            }
+
+            var insertedArticles = insertingArticles.GetBaseArticleIds();
+            var updatedArticles = Enumerable.Empty<int>().ToList();
+            return Tuple.Create(insertedArticles, updatedArticles);
         }
 
         private void ConvertCsvLinesToArticles()
@@ -204,7 +232,9 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
         {
             return string.IsNullOrWhiteSpace(value)
                    || value == "NULL"
-                   || value.Length >= 2 && value.First() == '"' && value.Last() == '"'
+                   || value.Length >= 2
+                   && value.First() == '"'
+                   && value.Last() == '"'
                    && (value.Length == 2 || string.IsNullOrWhiteSpace(value.Substring(1, value.Length - 2)));
         }
 
@@ -340,16 +370,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
         }
 
-        private ExtendedArticleList GetExistingArticles(ExtendedArticleList articlesList)
-        {
-            return GetArticles(articlesList, true);
-        }
-
-        private ExtendedArticleList GetNonExistingArticles(ExtendedArticleList articlesList)
-        {
-            return GetArticles(articlesList, false);
-        }
-
         private ExtendedArticleList GetArticles(ExtendedArticleList articlesList, bool onlyExisting)
         {
             ExtendedArticleList existingArticles;
@@ -382,7 +402,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             return existingArticles;
         }
 
-        private void InsertArticles(ExtendedArticleList articleList)
+        private ExtendedArticleList InsertArticlesToDb(ExtendedArticleList articleList)
         {
             var baseArticles = articleList.GetBaseArticles();
             var idsList = InsertArticlesIds(baseArticles, baseArticles.All(a => a.UniqueId.HasValue)).ToArray();
@@ -417,11 +437,12 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
             }
 
             _notificationRepository.SendNotifications();
+            return articleList;
         }
 
-        private ExtendedArticleList UpdateArticles(ExtendedArticleList articlesList)
+        private ExtendedArticleList UpdateArticlesToDb(ExtendedArticleList articlesList)
         {
-            var existingArticles = GetExistingArticles(articlesList);
+            var existingArticles = GetArticles(articlesList, true);
             var extensionsMap = ContentRepository.GetAggregatedArticleIdsMap(_contentId, existingArticles.GetBaseArticleIds().ToArray());
             var idsList = existingArticles.GetBaseArticleIds().ToArray();
             _notificationRepository.PrepareNotifications(_contentId, idsList, NotificationCode.Update);
