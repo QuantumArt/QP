@@ -1,5 +1,4 @@
 ﻿using System;
-using QP8.Infrastructure;
 using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.ArticleScheduler.Publishing
@@ -8,7 +7,6 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
     {
         public static PublishingTask Create(ArticleScheduleTask task)
         {
-            Ensure.Equal(task.FreqType, 2, $"Undefined FreqType value: {task.FreqType}");
             return new PublishingTask(task.Id, task.ArticleId, task.StartDate + task.StartTime);
         }
 
@@ -19,10 +17,10 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             PublishingDateTime = publishingDateTime;
         }
 
-        public int Id { get; private set; }
+        public int Id { get; }
 
-        public int ArticleId { get; private set; }
+        public int ArticleId { get; }
 
-        public DateTime PublishingDateTime { get; private set; }
+        public DateTime PublishingDateTime { get; }
     }
 }

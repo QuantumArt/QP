@@ -11,11 +11,12 @@ using Castle.Core.Internal;
 [assembly: AssemblyCopyright("Copyright © 2007-2017 Quantum Art")]
 
 [assembly: ComVisible(false)]
+[assembly: Guid("b6a3bc70-90ec-4193-93e6-5dfafef9c188")]
+
 [assembly: InternalsVisibleTo("QP8.Services.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo("InternalsVisible.DynamicProxyGenAssembly2")]
 [assembly: InternalsVisibleTo(InternalsVisible.ToDynamicProxyGenAssembly2)]
-[assembly: Guid("b6a3bc70-90ec-4193-93e6-5dfafef9c188")]
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyInformationalVersion("1.0.0.0")]

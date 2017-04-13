@@ -23,20 +23,19 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             var task = RecurringTask.Create(articleTask);
             var currentDateTime = _recurringService.GetCurrentDBDateTime();
             var taskRange = Tuple.Create(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
-            var taskRangePos = taskRange.Position(currentDateTime);
-            var calc = CreateRecuringStartCalc(task);
+            var taskRangePos = taskRange.CompareRangeTo(currentDateTime);
+            var calc = CreateRecurringStartCalculator(task);
 
             // получить ближайшую дату начала показа статьи
-            var showRangeStartDt = calc.GetStart(currentDateTime);
+            var showRangeStartDt = calc.GetStartDateBeforeSpecifiedDate(currentDateTime);
             if (!showRangeStartDt.HasValue)
             {
-                // если вычислитель вернул null - значит ничего не делаем
                 return;
             }
 
             // Определяем время окончания показа статьи
             var showRangeEndDt = showRangeStartDt.Value + task.Duration;
-            if (taskRange.Position(showRangeEndDt) > 0)
+            if (taskRange.CompareRangeTo(showRangeEndDt) > 0)
             {
                 // Если необходимо то ограничить время окончания показа статьи правой границей диапазона задачи
                 showRangeEndDt = taskRange.Item2;
@@ -47,7 +46,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             var showRange = Tuple.Create(showRangeStartDt.Value, showRangeEndDt);
 
             // определить положение текущей даты относительно диапазона показа статьи
-            var showRangePos = showRange.Position(currentDateTime);
+            var showRangePos = showRange.CompareRangeTo(currentDateTime);
             if (showRangePos == 0)
             {
                 // внутри диапазона показа
@@ -77,18 +76,18 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        private static IRecuringStartCalc CreateRecuringStartCalc(RecurringTask task)
+        private static IRecurringStartCalculator CreateRecurringStartCalculator(RecurringTask task)
         {
             switch (task.TaskType)
             {
                 case RecurringTaskTypes.Daily:
-                    return new DailyStartCalc(task.Interval, task.StartDate, task.EndDate, task.StartTime);
+                    return new DailyStartCalculator(task.Interval, task.StartDate, task.EndDate, task.StartTime);
                 case RecurringTaskTypes.Weekly:
-                    return new WeeklyStartCalc(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
+                    return new WeeklyStartCalculator(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
                 case RecurringTaskTypes.Monthly:
-                    return new MonthlyStartCalc(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
+                    return new MonthlyStartCalculator(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
                 case RecurringTaskTypes.MonthlyRelative:
-                    return new MonthlyRelativeStartCalc(task.Interval, task.RelativeInterval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
+                    return new MonthlyRelativeStartCalculator(task.Interval, task.RelativeInterval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
                 default:
                     throw new ArgumentException("Неопределенный тип расписания циклической задачи: " + task.TaskType);
             }

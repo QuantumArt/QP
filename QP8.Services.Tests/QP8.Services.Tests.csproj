@@ -63,6 +63,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -87,12 +88,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleSchedulerTests\DateRangeExtensionsTest.cs" />
+    <Compile Include="ArticleSchedulerTests\Recurring\DateRangeExtensionsTests.cs" />
     <Compile Include="ArticleSchedulerTests\DbSchedulerTests.cs" />
-    <Compile Include="ArticleSchedulerTests\Onetime\OnetimeTaskSchedulerTest.cs" />
-    <Compile Include="ArticleSchedulerTests\Publishing\PublishingTaskSchedulerTest.cs" />
-    <Compile Include="ArticleSchedulerTests\Recurring\RecuringStartCalcTest.cs" />
-    <Compile Include="ArticleSchedulerTests\Recurring\RecurringTaskSchedulerTest.cs" />
+    <Compile Include="ArticleSchedulerTests\Onetime\OnetimeTaskSchedulerTests.cs" />
+    <Compile Include="ArticleSchedulerTests\Publishing\PublishingTaskSchedulerTests.cs" />
+    <Compile Include="ArticleSchedulerTests\Recurring\RecurringStartCalculatorTests.cs" />
+    <Compile Include="ArticleSchedulerTests\Recurring\RecurringTaskSchedulerTests.cs" />
+    <Compile Include="Infrastructure\Helpers\DateTimeHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\FixtureArticleHelpers.cs" />
+    <Compile Include="Infrastructure\Helpers\FixtureArticleScheduleTaskHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -104,9 +108,21 @@
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\constants\Constants.csproj">
+      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
+      <Name>Constants</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dal\DAL.csproj">
+      <Project>{3FF8834B-FB47-4855-B1E2-3B88C0DB1A94}</Project>
+      <Name>DAL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6E317F05-226C-4C9F-B918-FE71D743C3A3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.TestTools\QP8.Infrastructure.TestTools.csproj">
+      <Project>{748B27A9-8060-40C3-9309-3A52FA39CA60}</Project>
+      <Name>QP8.Infrastructure.TestTools</Name>
     </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Schedulers\Quantumart.QP8.ArticleScheduler\Quantumart.QP8.ArticleScheduler.csproj">
       <Project>{BD9A445E-8510-489D-8001-409B777C46CD}</Project>

@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DateRangeExtensions.cs" />
+    <Compile Include="Recurring\DateRangeExtensions.cs" />
     <Compile Include="DbScheduler.cs" />
     <Compile Include="Interfaces\IScheduler.cs" />
     <Compile Include="Interfaces\IOnetimeTaskScheduler.cs" />
@@ -67,15 +67,15 @@
     <Compile Include="Publishing\PublishingTaskScheduler.cs" />
     <Compile Include="QpScheduler.cs" />
     <Compile Include="QpSchedulerProcessor.cs" />
-    <Compile Include="Recurring\DailyStartCalc.cs" />
+    <Compile Include="Recurring\DailyStartCalculator.cs" />
     <Compile Include="Interfaces\ITaskScheduler.cs" />
     <Compile Include="Interfaces\IRecurringTaskScheduler.cs" />
-    <Compile Include="Recurring\RecuringStartCalcBase.cs" />
+    <Compile Include="Recurring\RecurringStartCalculatorBase.cs" />
     <Compile Include="Recurring\RecurringTaskScheduler.cs" />
-    <Compile Include="Recurring\WeeklyStartCalc.cs" />
-    <Compile Include="Recurring\MonthlyStartCalc.cs" />
-    <Compile Include="Interfaces\IRecuringStartCalc.cs" />
-    <Compile Include="Recurring\MonthlyRelativeStartCalc.cs" />
+    <Compile Include="Recurring\WeeklyStartCalculator.cs" />
+    <Compile Include="Recurring\MonthlyStartCalculator.cs" />
+    <Compile Include="Interfaces\IRecurringStartCalculator.cs" />
+    <Compile Include="Recurring\MonthlyRelativeStartCalculator.cs" />
     <Compile Include="Recurring\RecurringTask.cs" />
     <Compile Include="Recurring\RecurringTaskTypes.cs" />
     <Compile Include="UnityContainerCustomizer.cs" />

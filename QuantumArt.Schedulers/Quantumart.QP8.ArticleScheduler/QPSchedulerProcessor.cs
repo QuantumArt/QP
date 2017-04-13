@@ -9,10 +9,8 @@ namespace Quantumart.QP8.ArticleScheduler
     public class QpSchedulerProcessor
     {
         private Task _task;
-        private CancellationTokenSource _cancellationTokenSource;
-
         private readonly TimeSpan _recurrentTimeout;
-
+        private CancellationTokenSource _cancellationTokenSource;
         private const string AppName = "QP8ArticleSchedulerService";
 
         public QpSchedulerProcessor(TimeSpan recurrentTimeout)

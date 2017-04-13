@@ -6,20 +6,20 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
     /// <summary>
     /// Вычисляет ближайшее к дате начало диапазона для Weekly расписаний
     /// </summary>
-    public class WeeklyStartCalc : RecuringStartCalcBase
+    public class WeeklyStartCalculator : RecurringStartCalculatorBase
     {
-        public WeeklyStartCalc(int interval, int recurrenceFactor,
+        public WeeklyStartCalculator(int interval, int recurrenceFactor,
             DateTime startDate, DateTime endDate, TimeSpan startTime)
         {
-            Calc = dateTime =>
+            CalculateNearestStartDateFunc = dateTime =>
             {
                 return Optimize(new Tuple<DateTime, DateTime>(startDate.Date, endDate.Date), dateTime.Date)
-                    .EveryWeeks(recurrenceFactor) // получаем полные недели, но только те, которые ограничены recurrenceFactor
-                    .Days()
+                    .GetEveryFullWeekLimitedByFactor(recurrenceFactor) // получаем полные недели, но только те, которые ограничены recurrenceFactor
+                    .GetAllDaysFromRange()
                     .Where(d => IntervalPredicate(d, interval))
                     .Where(d => startDate.Date <= d.Date && endDate.Date >= d.Date) // только те даты что в диапазоне
                     .Select(d => d.Add(startTime)) // получаем точное время старта
-                    .Nearest(dateTime);
+                    .GetNearestPreviousDateFromList(dateTime);
             };
         }
 

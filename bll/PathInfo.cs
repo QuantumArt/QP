@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
-using Quantumart.QP8.Resources;
-using Quantumart.QP8.BLL.Repository;
 using System.Text.RegularExpressions;
+using Quantumart.QP8.BLL.Repository;
+using Quantumart.QP8.Resources;
 
 namespace Quantumart.QP8.BLL
 {
@@ -15,20 +12,27 @@ namespace Quantumart.QP8.BLL
 	public class PathInfo
     {
         public string Path { get; set; }
+
         public string Url { get; set; }
 
         public PathInfo GetSubPathInfo(string folderName)
         {
-			// remove leading and traling slashes if exist
-			if (folderName.IndexOf(@"\") == 0)
-				folderName = folderName.Substring(1);
-			if (!folderName.Equals(String.Empty) && folderName.LastIndexOf(@"\") == folderName.Length - 1)
-				folderName = folderName.Substring(0, folderName.Length - 1);
+            if (folderName.IndexOf(@"\") == 0)
+            {
+                folderName = folderName.Substring(1);
+            }
 
-			if (folderName.Equals(String.Empty))
-				return new PathInfo { Path = Path, Url = Url };
-			else
-				return new PathInfo { Path = String.Format(@"{0}\{1}", Path, folderName), Url = String.Format(@"{0}{1}/", Url, folderName.Replace(@"\", @"/")) };
+            if (!folderName.Equals(string.Empty) && folderName.LastIndexOf(@"\") == folderName.Length - 1)
+            {
+                folderName = folderName.Substring(0, folderName.Length - 1);
+            }
+
+            if (folderName.Equals(string.Empty))
+            {
+                return new PathInfo { Path = Path, Url = Url };
+            }
+
+            return new PathInfo { Path = $@"{Path}\{folderName}", Url = $@"{Url}{folderName.Replace(@"\", @"/")}/"};
         }
 
         public string GetPath(string fileName)
@@ -38,56 +42,60 @@ namespace Quantumart.QP8.BLL
 
         public string GetUrl(string fileName)
         {
-            return String.Format("{0}{1}", Url, ReplaceUp(fileName));
+            return $"{Url}{ReplaceUp(fileName)}";
         }
 
-		private string ReplaceUp(string input)
-		{
-			return input.Replace("..", "");
-		}
+        private static string ReplaceUp(string input)
+        {
+            return input.Replace("..", "");
+        }
 
-		internal FolderFile GetFile(string fileName)
-		{
-			string path = GetPath(fileName);
-			if (!File.Exists(path))
-				throw new Exception(String.Format(LibraryStrings.FileNotExists, path));
-			else
-				return new FolderFile(new FileInfo(path));
-		}
+        internal FolderFile GetFile(string fileName)
+        {
+            var path = GetPath(fileName);
+            if (!File.Exists(path))
+            {
+                throw new Exception(string.Format(LibraryStrings.FileNotExists, path));
+            }
+
+            return new FolderFile(new FileInfo(path));
+        }
 
         public static PathSecurityResult CheckSecurity(string path)
-		{
-			return PathSecurity.Check(path);
-		}
+        {
+            return PathSecurity.Check(path);
+        }
 
-		public static string ConvertToUrl(string path)
-		{
-			string url = String.Empty;
-			foreach (var pathInfo in SiteRepository.GetPathInfoList())
-			{
-				if (path.StartsWith(pathInfo.Path, StringComparison.InvariantCultureIgnoreCase))
-				{
-					url = Regex.Replace(path, Regex.Escape(pathInfo.Path + @"\"), pathInfo.Url);
-					url = url.Replace(@"\", @"/");
-					break;
-				}
- 			}
-			return url;
-		}
+        public static string ConvertToUrl(string path)
+        {
+            var url = string.Empty;
+            foreach (var pathInfo in SiteRepository.GetPathInfoList())
+            {
+                if (path.StartsWith(pathInfo.Path, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    url = Regex.Replace(path, Regex.Escape(pathInfo.Path + @"\"), pathInfo.Url);
+                    url = url.Replace(@"\", @"/");
+                    break;
+                }
+            }
 
-		public static string ConvertToPath(string url)
-		{
-			string path = String.Empty;
-			foreach (var pathInfo in SiteRepository.GetPathInfoList())
-			{
-				if (url.StartsWith(pathInfo.Url, StringComparison.InvariantCultureIgnoreCase))
-				{
-					path = Regex.Replace(url, Regex.Escape(pathInfo.Url), pathInfo.Path + @"\");
-					path = path.Replace(@"/", @"\");
-					break;
-				}
- 			}
-			return path;
-		}
-	}
+            return url;
+        }
+
+        public static string ConvertToPath(string url)
+        {
+            var path = string.Empty;
+            foreach (var pathInfo in SiteRepository.GetPathInfoList())
+            {
+                if (url.StartsWith(pathInfo.Url, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    path = Regex.Replace(url, Regex.Escape(pathInfo.Url), pathInfo.Path + @"\");
+                    path = path.Replace(@"/", @"\");
+                    break;
+                }
+            }
+
+            return path;
+        }
+    }
 }

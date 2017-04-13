@@ -950,7 +950,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
         private Article InitializeArticle(int contentId)
         {
-            var article = new Article
+            return new Article
             {
                 Status = _importSettings.IsWorkflowAssigned ? StatusType.GetNone(_siteId) : StatusType.GetPublished(_siteId),
                 StatusTypeId = _importSettings.IsWorkflowAssigned
@@ -960,8 +960,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 ContentId = contentId,
                 FieldValues = new List<FieldValue>()
             };
-
-            return article;
         }
 
         public static List<string> GetFieldNames(IEnumerable<string> csvLines, char delimiter, bool noHeaders)
