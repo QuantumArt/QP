@@ -20,6 +20,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         public RecurringTaskSchedulerTests()
         {
             _fixture = new Fixture().Customize(new AutoConfiguredMoqCustomization());
+            FixtureArticleHelpers.InjectSimpleArticle(_fixture);
             LogProvider.LogFactory = new NullLogFactory();
         }
 
@@ -47,7 +48,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         }
 
         [Fact, Trait("ArticleScheduler", "RecurringTaskRunner")]
-        public void GivenRecurringTask_WhenDateInRangeButBeforeStartTime_ShouldNotDoAnything()
+        public void GivenRecurringTask_WhenDateWithinRangeButBeforeStartTime_ShouldNotDoAnything()
         {
             // Fixture setup
             var task = _fixture
@@ -78,7 +79,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             // Fixture setup
             var startDate = DateTimeHelpers.ParseDateTime("01/01/2011");
             var endDate = DateTimeHelpers.ParseDateTime("12/31/2011");
-            var startTime = DateTimeHelpers.ParseTimeSpan("12:15:17");
+            var startTime = DateTimeHelpers.ParseTime("12:15:17");
             var task = new ArticleScheduleTask
             {
                 Id = _fixture.Create<int>(),
@@ -115,7 +116,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             // Fixture setup
             var startDate = DateTimeHelpers.ParseDateTime("01/01/2011");
             var endDate = DateTimeHelpers.ParseDateTime("12/31/2011");
-            var startTime = DateTimeHelpers.ParseTimeSpan("12:15:17");
+            var startTime = DateTimeHelpers.ParseTime("12:15:17");
             var task = new ArticleScheduleTask
             {
                 Id = _fixture.Create<int>(),
@@ -152,7 +153,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             // Fixture setup
             var startDate = DateTimeHelpers.ParseDateTime("01/01/2011");
             var endDate = DateTimeHelpers.ParseDateTime("12/31/2011");
-            var startTime = DateTimeHelpers.ParseTimeSpan("12:15:17");
+            var startTime = DateTimeHelpers.ParseTime("12:15:17");
             var task = new ArticleScheduleTask
             {
                 Id = _fixture.Create<int>(),

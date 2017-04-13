@@ -27,7 +27,7 @@ namespace QP8.Infrastructure.Logging.Factories
         }
 
         /// <summary>
-        /// Gets the logger with calling assembly name
+        /// Gets the logger
         /// </summary>
         public static ILog GetLogger()
         {
@@ -37,6 +37,7 @@ namespace QP8.Infrastructure.Logging.Factories
         /// <summary>
         /// Gets the logger
         /// </summary>
+        /// <param name="type">The type on which logger name is based</param>
         public static ILog GetLogger(Type type)
         {
             return LogFactory.GetLogger(type);
@@ -45,9 +46,10 @@ namespace QP8.Infrastructure.Logging.Factories
         /// <summary>
         /// Gets the logger
         /// </summary>
-        public static ILog GetLogger(string typeName)
+        /// <param name="loggerName">The string based logger name</param>
+        public static ILog GetLogger(string loggerName)
         {
-            return LogFactory.GetLogger(typeName);
+            return LogFactory.GetLogger(loggerName);
         }
     }
 }

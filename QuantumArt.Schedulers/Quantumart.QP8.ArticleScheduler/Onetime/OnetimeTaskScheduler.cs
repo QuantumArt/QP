@@ -22,23 +22,39 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
 
         public void Run(ArticleScheduleTask articleTask)
         {
-            var task = OnetimeTask.Create(articleTask);
-            var range = Tuple.Create(task.StartDateTime, task.EndDateTime);
+            var task = OnetimeTask.CreateOnetimeTask(articleTask);
             var currentTime = _onetimeService.GetCurrentDBDateTime();
-            var pos = range.CompareRangeTo(currentTime);
-
-            Article article;
-            if (pos > 0)
+            var comparison = GetTaskRange(task).CompareRangeTo(currentTime);
+            if (ShouldProcessTask(task, currentTime))
             {
-                article = _onetimeService.HideAndCloseSchedule(task.Id);
+                ProcessTask(task, comparison);
+            }
+        }
+
+        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
+        {
+            return GetTaskRange((OnetimeTask)task).CompareRangeTo(dateTimeToCheck) >= 0;
+        }
+
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck)
+        {
+            return ShouldProcessTask(OnetimeTask.CreateOnetimeTask(task), dateTimeToCheck);
+        }
+
+        private void ProcessTask(OnetimeTask task, int comparison)
+        {
+            if (comparison > 0)
+            {
+                var article = _onetimeService.HideAndCloseSchedule(task.Id);
                 if (article != null && article.Visible)
                 {
                     Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
                 }
             }
-            else if (pos == 0)
+
+            if (comparison == 0)
             {
-                article = task.EndDateTime.Year == ArticleScheduleConstants.Infinity.Year
+                var article = task.EndDateTime.Year == ArticleScheduleConstants.Infinity.Year
                     ? _onetimeService.ShowAndCloseSchedule(task.Id)
                     : _onetimeService.ShowArticle(task.ArticleId);
 
@@ -47,6 +63,11 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
                     Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been shown on customer code: {_customer.CustomerName}");
                 }
             }
+        }
+
+        private static Tuple<DateTime, DateTime> GetTaskRange(OnetimeTask task)
+        {
+            return Tuple.Create(task.StartDateTime, task.EndDateTime);
         }
     }
 }

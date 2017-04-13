@@ -1,17 +1,18 @@
 ﻿using Microsoft.Practices.Unity;
-using QP8.Infrastructure.Logging.UnityExtensions;
+using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.UnityExtensions;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Onetime;
 using Quantumart.QP8.ArticleScheduler.Publishing;
 using Quantumart.QP8.ArticleScheduler.Recurring;
 using Quantumart.QP8.BLL.Services.API.ArticleScheduler;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
-    internal static class UnityContainerCustomizer
+    internal class UnityContainerCustomizer
     {
-        static UnityContainerCustomizer()
+        public UnityContainerCustomizer()
         {
             UnityContainer = new UnityContainer()
                 .RegisterType<DbScheduler>()
@@ -22,9 +23,13 @@ namespace Quantumart.QP8.ArticleScheduler
                 .RegisterType<IArticleOnetimeSchedulerService, ArticleSchedulerService>()
                 .RegisterType<IArticlePublishingSchedulerService, ArticleSchedulerService>()
                 .RegisterType<IArticleRecurringSchedulerService, ArticleSchedulerService>()
-                .AddNewExtension<NLogContainerExtension>();
+                .AddExtension(new PrtgNLogContainerExtension(
+                    LoggerData.DefaultPrtgServiceStateVariableName,
+                    LoggerData.DefaultPrtgServiceQueueVariableName,
+                    LoggerData.DefaultPrtgServiceStatusVariableName)
+                );
         }
 
-        public static IUnityContainer UnityContainer { get; }
+        public IUnityContainer UnityContainer { get; }
     }
 }

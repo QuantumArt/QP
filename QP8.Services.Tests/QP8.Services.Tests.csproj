@@ -89,7 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleSchedulerTests\Recurring\DateRangeExtensionsTests.cs" />
-    <Compile Include="ArticleSchedulerTests\DbSchedulerTests.cs" />
+    <Compile Include="ArticleSchedulerTests\ArticleDbSchedulerTests.cs" />
     <Compile Include="ArticleSchedulerTests\Onetime\OnetimeTaskSchedulerTests.cs" />
     <Compile Include="ArticleSchedulerTests\Publishing\PublishingTaskSchedulerTests.cs" />
     <Compile Include="ArticleSchedulerTests\Recurring\RecurringStartCalculatorTests.cs" />

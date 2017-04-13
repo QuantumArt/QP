@@ -10,6 +10,9 @@
         public const string XmlDbUpdateExceptionActionToReplayData = "ActionToReplay";
         public const string XmlDbUpdateExceptionXmlActionStringData = "XmlActionString";
 
-        public const string DefaultPrtgLoggerName = "prtg";
+        public const string DefaultPrtgServiceLoggerName = "prtg";
+        public const string DefaultPrtgServiceStateVariableName = "ServiceState";
+        public const string DefaultPrtgServiceQueueVariableName = "ServiceQueue";
+        public const string DefaultPrtgServiceStatusVariableName = "ServiceStatus";
     }
 }

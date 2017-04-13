@@ -33,7 +33,7 @@ namespace Quantumart.QP8.BLL.Repository
                 item.Id = 0;
 
                 var dalItem = MapperFacade.ArticleScheduleMapper.GetDalObject(item);
-                var itemPersisted = (originalId != 0);
+                var itemPersisted = originalId != 0;
                 var hasChanges = !itemPersisted;
 
                 if (itemPersisted)
@@ -46,13 +46,13 @@ namespace Quantumart.QP8.BLL.Repository
                     }
                 }
 
-                var needToPersist = (dalItem.FreqType != ScheduleFreqTypes.None) && hasChanges;
+                var needToPersist = dalItem.FreqType != ScheduleFreqTypes.None && hasChanges;
                 if (needToPersist)
                 {
                     dalItem.UseService = QPConfiguration.UseScheduleService;
                     dalItem.Modified = article.Modified;
                     dalItem.LastModifiedBy = article.LastModifiedBy;
-                    DefaultRepository.SimpleSave<ArticleScheduleDAL>(dalItem);
+                    DefaultRepository.SimpleSave(dalItem);
                 }
             }
         }

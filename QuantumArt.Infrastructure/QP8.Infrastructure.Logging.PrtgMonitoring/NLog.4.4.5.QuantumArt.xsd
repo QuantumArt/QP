@@ -1336,10 +1336,15 @@
     <xs:complexContent>
       <xs:extension base="Target">
         <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="name" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="host" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="identificationToken" minOccurs="0" maxOccurs="1" type="xs:string" />
           <xs:element name="layout" minOccurs="0" maxOccurs="1" type="Layout" />
         </xs:choice>
+        <xs:attribute name="name" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>Name of the target.</xs:documentation>
+          </xs:annotation>
         <xs:attribute name="host" type="xs:string">
           <xs:annotation>
             <xs:documentation>Monitoring service base url (protocol://host:port/).</xs:documentation>
@@ -1358,6 +1363,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
   <xs:simpleType name="NLog.Targets.ArchiveNumberingMode">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Sequence" />

@@ -11,39 +11,41 @@ namespace QP8.Infrastructure.Logging.Adapters
     /// </summary>
     public class NLogLogger : ILog
     {
-        private readonly NLog.Logger _log;
+        protected readonly NLog.Logger Logger;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NLogLogger"/> class
         /// </summary>
-        /// <param name="typeName">The type name</param>
-        public NLogLogger(string typeName)
+        /// <param name="loggerName">The string based logger name</param>
+        public NLogLogger(string loggerName)
         {
-            _log = LogManager.GetLogger(typeName);
+            Logger = LogManager.GetLogger(loggerName);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NLogLogger"/> class
         /// </summary>
-        /// <param name="type">The type</param>
+        /// <param name="type">The type on which logger name is based</param>
         public NLogLogger(Type type)
         {
-            _log = LogManager.GetLogger(UseFullTypeNames ? type.FullName : type.Name);
+            Logger = LogManager.GetLogger(UseFullTypeNames ? type.FullName : type.Name);
         }
 
         public static bool UseFullTypeNames { get; set; } = true;
 
-        public bool IsTraceEnabled => _log.IsTraceEnabled;
+        public string LoggerName => Logger.Name;
 
-        public bool IsDebugEnabled => _log.IsDebugEnabled;
+        public bool IsTraceEnabled => Logger.IsTraceEnabled;
 
-        public bool IsInfoEnabled => _log.IsInfoEnabled;
+        public bool IsDebugEnabled => Logger.IsDebugEnabled;
 
-        public bool IsWarnEnabled => _log.IsWarnEnabled;
+        public bool IsInfoEnabled => Logger.IsInfoEnabled;
 
-        public bool IsErrorEnabled => _log.IsErrorEnabled;
+        public bool IsWarnEnabled => Logger.IsWarnEnabled;
 
-        public bool IsFatalEnabled => _log.IsFatalEnabled;
+        public bool IsErrorEnabled => Logger.IsErrorEnabled;
+
+        public bool IsFatalEnabled => Logger.IsFatalEnabled;
 
         public void Trace(object message)
         {
@@ -237,19 +239,24 @@ namespace QP8.Infrastructure.Logging.Adapters
             }
         }
 
+        public void Log(LogEventInfo logEventInfo)
+        {
+            Logger.Log(typeof(NLogLogger), logEventInfo);
+        }
+
         public void Log(LogLevel logLevel, string message, Exception ex)
         {
-            _log.Log(typeof(NLogLogger), new LogEventInfo(logLevel, _log.Name, null, message, null, ex));
+            Log(new LogEventInfo(logLevel, Logger.Name, null, message, null, ex));
         }
 
         public void Log(LogLevel logLevel, string format, params object[] args)
         {
-            _log.Log(typeof(NLogLogger), new LogEventInfo(logLevel, _log.Name, null, format, args));
+            Log(new LogEventInfo(logLevel, Logger.Name, null, format, args));
         }
 
         public void Log(LogLevel logLevel, string format, object[] args, Exception ex)
         {
-            _log.Log(typeof(NLogLogger), new LogEventInfo(logLevel, _log.Name, null, format, args, ex));
+            Log(new LogEventInfo(logLevel, Logger.Name, null, format, args, ex));
         }
 
         public void SetContext(string item, string value)

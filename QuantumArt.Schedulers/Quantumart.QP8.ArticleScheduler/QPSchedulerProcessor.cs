@@ -27,8 +27,9 @@ namespace Quantumart.QP8.ArticleScheduler
                 {
                     try
                     {
+                        var unityConfig = new UnityContainerCustomizer();
                         var customers = QPConfiguration.GetCustomers(AppName, true);
-                        new QpScheduler(UnityContainerCustomizer.UnityContainer, customers).Run();
+                        new QpScheduler(unityConfig.UnityContainer, customers).Run();
                     }
                     catch (Exception ex)
                     {

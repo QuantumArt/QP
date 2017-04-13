@@ -1,25 +1,11 @@
 ﻿using System;
+using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring
 {
-    public class RecurringTask
+    internal class RecurringTask : ISchedulerTask
     {
-        public static RecurringTask Create(ArticleScheduleTask task)
-        {
-            return new RecurringTask(
-                task.Id,
-                task.ArticleId,
-                (RecurringTaskTypes)task.FreqType,
-                task.FreqInterval,
-                task.FreqRelativeInterval,
-                task.FreqRecurrenceFactor,
-                task.StartDate,
-                task.EndDate,
-                task.StartTime,
-                task.Duration);
-        }
-
         public RecurringTask(
             int id,
             int articleId,
@@ -63,5 +49,20 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         public TimeSpan StartTime { get; }
 
         public TimeSpan Duration { get; }
+
+        public static RecurringTask Create(ArticleScheduleTask task)
+        {
+            return new RecurringTask(
+                task.Id,
+                task.ArticleId,
+                (RecurringTaskTypes)task.FreqType,
+                task.FreqInterval,
+                task.FreqRelativeInterval,
+                task.FreqRecurrenceFactor,
+                task.StartDate,
+                task.EndDate,
+                task.StartTime,
+                task.Duration);
+        }
     }
 }
