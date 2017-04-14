@@ -1,4 +1,4 @@
-﻿namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions
+﻿namespace QP8.Infrastructure.Logging.PrtgMonitoring.Data
 {
     public class PrtgServiceMonitoringMessage
     {

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using QP8.Infrastructure;
 using QP8.Infrastructure.Logging.Factories;
-using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions;
-using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
-using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
+using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
+using QP8.Infrastructure.Logging.PrtgMonitoring.Interfaces;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 
@@ -13,11 +12,20 @@ namespace Quantumart.QP8.ArticleScheduler
 {
     internal class PrtgErrorsHandler
     {
+        private const string SuccessLogMessage = "All tasks successfully proceeded.";
+        private const string ErrorLogMessage = "Some schedulers were failed to finsih task processing.";
+        private const string CriticalErrorLogMessage = "All schedulers were failed to finish task processing.";
+
         private static readonly IPrtgServiceLogger PrtgLogger;
 
         static PrtgErrorsHandler()
         {
             PrtgLogger = (IPrtgServiceLogger)LogProvider.GetLogger(LoggerData.DefaultPrtgServiceLoggerName);
+        }
+
+        internal static void LogMessage(PrtgServiceMonitoringMessage logMessage)
+        {
+            PrtgLogger.LogMessage(logMessage);
         }
 
         internal static void LogMessage(List<QaConfigCustomer> customers, List<Exception> listOfExceptions, int commonTasksQueueCount = 0)
@@ -28,7 +36,7 @@ namespace Quantumart.QP8.ArticleScheduler
             {
                 PrtgLogger.LogMessage(new PrtgServiceMonitoringMessage
                 {
-                    Message = "All tasks successfully proceeded.",
+                    Message = SuccessLogMessage,
                     Queue = commonTasksQueueCount,
                     State = PrtgServiceMonitoringEnum.Ok
                 });
@@ -37,7 +45,7 @@ namespace Quantumart.QP8.ArticleScheduler
             {
                 PrtgLogger.LogMessage(new PrtgServiceMonitoringMessage
                 {
-                    Message = "Some schedulers were failed to finsih task processing.",
+                    Message = ErrorLogMessage,
                     Queue = commonTasksQueueCount,
                     State = PrtgServiceMonitoringEnum.Error
                 });
@@ -46,7 +54,7 @@ namespace Quantumart.QP8.ArticleScheduler
             {
                 PrtgLogger.LogMessage(new PrtgServiceMonitoringMessage
                 {
-                    Message = "All schedulers were failed to finish task processing.",
+                    Message = CriticalErrorLogMessage,
                     Queue = commonTasksQueueCount,
                     State = PrtgServiceMonitoringEnum.CriticalError
                 });

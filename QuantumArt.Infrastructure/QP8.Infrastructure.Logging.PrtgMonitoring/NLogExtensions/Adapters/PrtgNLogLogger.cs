@@ -1,10 +1,14 @@
 using System;
 using NLog;
 using QP8.Infrastructure.Logging.Adapters;
-using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
+using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
+using QP8.Infrastructure.Logging.PrtgMonitoring.Interfaces;
 
 namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Adapters
 {
+    /// <summary>
+    /// Wrapper over the NLog extended with PrtgNLog monitoring
+    /// </summary>
     public class PrtgNLogLogger : NLogLogger, IPrtgServiceLogger
     {
         private readonly string _prtgServiceStateVariableName;
@@ -12,6 +16,13 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Adapters
         private readonly string _prtgServiceStatusVariableName;
         private readonly LogLevel _defaultLogLevel = LogLevel.Info;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrtgNLogLogger"/> class
+        /// </summary>
+        /// <param name="loggerName">The string based logger name</param>
+        /// <param name="prtgServiceStateVariableName">The name of state parameter to send to prtg monitor</param>
+        /// <param name="prtgServiceQueueVariableName">The name of queue parameter to send to prtg monitor</param>
+        /// <param name="prtgServiceStatusVariableName">The name of status parameter to send to prtg monitor</param>
         public PrtgNLogLogger(string loggerName, string prtgServiceStateVariableName, string prtgServiceQueueVariableName, string prtgServiceStatusVariableName)
             : base(loggerName)
         {
@@ -20,6 +31,13 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Adapters
             _prtgServiceStatusVariableName = prtgServiceStatusVariableName;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PrtgNLogLogger"/> class
+        /// </summary>
+        /// <param name="type">The type on which logger name is based</param>
+        /// <param name="prtgServiceStateVariableName">The name of state parameter to send to prtg monitor</param>
+        /// <param name="prtgServiceQueueVariableName">The name of queue parameter to send to prtg monitor</param>
+        /// <param name="prtgServiceStatusVariableName">The name of status parameter to send to prtg monitor</param>
         public PrtgNLogLogger(Type type, string prtgServiceStateVariableName, string prtgServiceQueueVariableName, string prtgServiceStatusVariableName)
             : base(type)
         {

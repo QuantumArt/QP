@@ -15,11 +15,13 @@ namespace Quantumart.QP8.ArticleScheduler
     {
         private readonly IUnityContainer _unityContainer;
         private readonly List<QaConfigCustomer> _customers;
+        private readonly TimeSpan _tasksQueueCheckShiftTime;
 
-        public QpScheduler(IUnityContainer unityContainer, List<QaConfigCustomer> customers)
+        public QpScheduler(IUnityContainer unityContainer, List<QaConfigCustomer> customers, TimeSpan tasksQueueCheckShiftTime)
         {
             _unityContainer = unityContainer;
             _customers = customers;
+            _tasksQueueCheckShiftTime = tasksQueueCheckShiftTime;
         }
 
         public void Run()
@@ -35,15 +37,14 @@ namespace Quantumart.QP8.ArticleScheduler
                         new ParameterOverride("connectionString", customer.ConnectionString)
                     );
 
-                    var customerTasksQueueCount2 = customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(DateTime.Now);
                     customerDbScheduler.Run();
-                    var customerTasksQueueCount = customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(DateTime.Now.AddHours(3));
+                    var customerTasksQueueCount = customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(DateTime.Now.Add(_tasksQueueCheckShiftTime));
                     Interlocked.Add(ref commonTasksQueueCount, customerTasksQueueCount);
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}", ex);
                     ex.Data.Add("CustomerCode", customer.CustomerName);
+                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}", ex);
                     exceptions.Enqueue(ex);
                 }
             });

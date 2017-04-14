@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 
 namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
@@ -7,7 +7,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
     {
         protected Func<DateTime, DateTime?> CalculateNearestStartDateFunc;
 
-        public virtual DateTime? GetNearesStartDateBeforeSpecifiedDate(DateTime dateTime)
+        public virtual DateTime? GetNearestStartDateBeforeSpecifiedDate(DateTime dateTime)
         {
             return CalculateNearestStartDateFunc(dateTime);
         }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Quantumart.QP8.ArticleScheduler.Interfaces
 {
@@ -11,7 +11,7 @@ namespace Quantumart.QP8.ArticleScheduler.Interfaces
         /// <summary>
         /// Получить ближайшее время старта до указанной даты или null
         /// </summary>
-        DateTime? GetNearesStartDateBeforeSpecifiedDate(DateTime dateTime);
+        DateTime? GetNearestStartDateBeforeSpecifiedDate(DateTime dateTime);
 
         /// <summary>
         /// Оптимизирует размер диапазона, так как нам нужны даты старта только предшествующие указанной дате:

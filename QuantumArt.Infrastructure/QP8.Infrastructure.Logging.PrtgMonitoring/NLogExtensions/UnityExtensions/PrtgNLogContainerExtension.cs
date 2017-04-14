@@ -7,14 +7,21 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.UnityExtensio
 {
     public class PrtgNLogContainerExtension : UnityContainerExtension
     {
-        public static string LoggerTypeName = null;
-
+        private readonly string _loggerName;
         private readonly string _prtgServiceStateVariableName;
         private readonly string _prtgServiceQueueVariableName;
         private readonly string _prtgServiceStatusVariableName;
 
         public PrtgNLogContainerExtension(string prtgServiceStateVariableName, string prtgServiceQueueVariableName, string prtgServiceStatusVariableName)
         {
+            _prtgServiceStateVariableName = prtgServiceStateVariableName;
+            _prtgServiceQueueVariableName = prtgServiceQueueVariableName;
+            _prtgServiceStatusVariableName = prtgServiceStatusVariableName;
+        }
+
+        public PrtgNLogContainerExtension(string loggerName, string prtgServiceStateVariableName, string prtgServiceQueueVariableName, string prtgServiceStatusVariableName)
+        {
+            _loggerName = loggerName;
             _prtgServiceStateVariableName = prtgServiceStateVariableName;
             _prtgServiceQueueVariableName = prtgServiceQueueVariableName;
             _prtgServiceStatusVariableName = prtgServiceStatusVariableName;
@@ -27,9 +34,9 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.UnityExtensio
                 _prtgServiceQueueVariableName,
                 _prtgServiceStatusVariableName));
 
-            Container.RegisterType<ILog>(string.IsNullOrWhiteSpace(LoggerTypeName)
+            Container.RegisterType<ILog>(string.IsNullOrWhiteSpace(_loggerName)
                 ? new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger())
-                : new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger(LoggerTypeName)));
+                : new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger(_loggerName)));
 
             LogProvider.LogFactory = Container.Resolve<ILogFactory>();
             Logger.Log = Container.Resolve<ILog>();

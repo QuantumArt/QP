@@ -34,7 +34,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
         {
             var recurringTask = (RecurringTask)task;
-            var nearestStartDate = RecurringStartCalculatorFactory.Create(recurringTask).GetNearesStartDateBeforeSpecifiedDate(dateTimeToCheck);
+            var nearestStartDate = RecurringStartCalculatorFactory.Create(recurringTask).GetNearestStartDateBeforeSpecifiedDate(dateTimeToCheck);
             if (!nearestStartDate.HasValue)
             {
                 return false;
@@ -55,29 +55,26 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             var nearestComparisonToShowArticle = GetNearestComparison(task, currentTime);
             if (nearestComparisonToShowArticle == 0)
             {
-                // внутри диапазона показа
-                var articleWithinRangeToShow = _recurringService.ShowArticle(task.ArticleId);
-                if (articleWithinRangeToShow != null && !articleWithinRangeToShow.Visible)
+                var articleWithinShowRange = _recurringService.ShowArticle(task.ArticleId);
+                if (articleWithinShowRange != null && !articleWithinShowRange.Visible)
                 {
-                    Logger.Log.Info($"Article [{articleWithinRangeToShow.Id}: {articleWithinRangeToShow.Name}] has been shown on customer code: {_customer.CustomerName}");
+                    Logger.Log.Info($"Article [{articleWithinShowRange.Id}: {articleWithinShowRange.Name}] has been shown on customer code: {_customer.CustomerName}");
                 }
             }
             else if (nearestComparisonToShowArticle > 0 && comparison == 0)
             {
-                // за диапазоном показа, но внутри диапазона задачи
-                var article = _recurringService.HideArticle(task.ArticleId);
-                if (article != null && article.Visible)
+                var articleOutOfShowRange = _recurringService.HideArticle(task.ArticleId);
+                if (articleOutOfShowRange != null && articleOutOfShowRange.Visible)
                 {
-                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Log.Info($"Article [{articleOutOfShowRange.Id}: {articleOutOfShowRange.Name}] has been hidden on customer code: {_customer.CustomerName}");
                 }
             }
             else if (nearestComparisonToShowArticle > 0 && comparison > 0)
             {
-                // за диапазоном показа и за диапазоном задачи
-                var article = _recurringService.HideAndCloseSchedule(task.Id);
-                if (article != null && article.Visible)
+                var articleOutOfShowAndTaskRanges = _recurringService.HideAndCloseSchedule(task.Id);
+                if (articleOutOfShowAndTaskRanges != null && articleOutOfShowAndTaskRanges.Visible)
                 {
-                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Log.Info($"Article [{articleOutOfShowAndTaskRanges.Id}: {articleOutOfShowAndTaskRanges.Name}] has been hidden on customer code: {_customer.CustomerName}");
                 }
             }
         }
@@ -85,7 +82,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         private static int GetNearestComparison(RecurringTask task, DateTime currentTime)
         {
             var recurringCalculator = RecurringStartCalculatorFactory.Create(task);
-            var nearestStartDate = recurringCalculator.GetNearesStartDateBeforeSpecifiedDate(currentTime).Value;
+            var nearestStartDate = recurringCalculator.GetNearestStartDateBeforeSpecifiedDate(currentTime).Value;
             var nearestEndDate = GetNearestEndDate(task, nearestStartDate + task.Duration);
             var nearestTaskRangeToShowArticle = GetTaskRange(nearestStartDate, nearestEndDate);
             return nearestTaskRangeToShowArticle.CompareRangeTo(currentTime);

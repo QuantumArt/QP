@@ -1,10 +1,9 @@
-﻿using Quantumart.QP8.BLL.Mappers;
-using Quantumart.QP8.DAL;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
 using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -29,7 +28,7 @@ namespace Quantumart.QP8.BLL.Repository
             using (new QPConnectionScope())
             {
                 CommonExternalNotifications.UpdateSentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
-            }		
+            }
         }
 
         internal static void UpdateUnsentNotifications(IEnumerable<int> notificationIds)
@@ -37,13 +36,12 @@ namespace Quantumart.QP8.BLL.Repository
             using (new QPConnectionScope())
             {
                 CommonExternalNotifications.UpdateUnsentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
-            }		
+            }
         }
 
         internal static void Update(IEnumerable<ExternalNotification> notifications)
         {
-            QP8Entities entities = QPContext.EFContext;
-
+            var entities = QPContext.EFContext;
             foreach (var notification in notifications)
             {
                 var entity = MapperFacade.ExternalNotificationMapper.GetDalObject(notification);
@@ -65,13 +63,13 @@ namespace Quantumart.QP8.BLL.Repository
 
         private static XDocument GetNotificationsXml(IEnumerable<ExternalNotification> notifications)
         {
-            XDocument doc = new XDocument();
+            var doc = new XDocument();
             var root = new XElement("Notifications");
             doc.Add(root);
 
             foreach (var notification in notifications)
             {
-                XElement elem = new XElement("Notification");
+                var elem = new XElement("Notification");
                 root.Add(elem);
 
                 elem.Add(new XElement("EventName", notification.EventName));

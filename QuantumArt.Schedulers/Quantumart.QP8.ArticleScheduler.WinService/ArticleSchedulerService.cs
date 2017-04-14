@@ -10,7 +10,7 @@ namespace Quantumart.QP8.ArticleScheduler.WinService
         public ArticleSchedulerService()
         {
             InitializeComponent();
-            Processor = new QpSchedulerProcessor(Settings.Default.RecurrentTimeout);
+            Processor = new QpSchedulerProcessor(Settings.Default.RecurrentTimeout, Settings.Default.PrtgLoggerTasksQueueCheckShiftTime);
         }
 
         public ArticleSchedulerService(QpSchedulerProcessor processor)

@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using Castle.Core.Internal;
 
 [assembly: AssemblyTitle("Quantumart.QP8.ArticleScheduler")]
 [assembly: AssemblyDescription("QP common infrastructure")]
@@ -15,8 +14,6 @@ using Castle.Core.Internal;
 
 [assembly: InternalsVisibleTo("QP8.Services.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
-[assembly: InternalsVisibleTo("InternalsVisible.DynamicProxyGenAssembly2")]
-[assembly: InternalsVisibleTo(InternalsVisible.ToDynamicProxyGenAssembly2)]
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyInformationalVersion("1.0.0.0")]

@@ -1,11 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using Quantumart.QP8.Constants;
-using Quantumart.QP8.Utils;
 
 namespace Quantumart.QP8.DAL
 {
@@ -31,8 +26,8 @@ namespace Quantumart.QP8.DAL
 				  col.value('(SiteId)[1]','numeric(18,0)') [SITE_ID],
 				  col.value('(Url)[1]','nvarchar(1024)') [URL],
 				  col.value('(NewXml)[1]','nvarchar(max)') [NEW_XML],
-				  col.value('(OldXml)[1]','nvarchar(max)') [OLD_XML]      
-			FROM 
+				  col.value('(OldXml)[1]','nvarchar(max)') [OLD_XML]
+			FROM
 				@notifications.nodes('/Notifications/Notification') AS tbl(col)";
 
         private const string UpdateSentNotificationsQuery =
@@ -54,7 +49,7 @@ namespace Quantumart.QP8.DAL
 
         private static void ExecuteIdsQuery(SqlConnection connection, string Query, IEnumerable<int> ids)
         {
-            using (SqlCommand cmd = SqlCommandFactory.Create(Query, connection))
+            using (var cmd = SqlCommandFactory.Create(Query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var idsTable = Common.IdsToDataTable(ids);
@@ -67,7 +62,7 @@ namespace Quantumart.QP8.DAL
 
         public static void InsertNotifications(SqlConnection connection, string notificationsXml)
         {
-            using (SqlCommand cmd = SqlCommandFactory.Create(InsertNotificationsQuery, connection))
+            using (var cmd = SqlCommandFactory.Create(InsertNotificationsQuery, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var parameter = cmd.Parameters.AddWithValue("@notifications", notificationsXml);
@@ -88,7 +83,7 @@ namespace Quantumart.QP8.DAL
 
         public static void DeleteSentNotifications(SqlConnection connection)
         {
-            using (SqlCommand cmd = SqlCommandFactory.Create(DeleteSentNotificationsQuery, connection))
+            using (var cmd = SqlCommandFactory.Create(DeleteSentNotificationsQuery, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
@@ -99,11 +94,10 @@ namespace Quantumart.QP8.DAL
 
         public static bool ExistsSentNotifications(SqlConnection connection)
         {
-            using (SqlCommand cmd = SqlCommandFactory.Create(ExistsSentNotificationsQuery, connection))
+            using (var cmd = SqlCommandFactory.Create(ExistsSentNotificationsQuery, connection))
             {
                 cmd.CommandType = CommandType.Text;
-                return (int) cmd.ExecuteScalar() > 0;
-
+                return (int)cmd.ExecuteScalar() > 0;
             }
         }
     }

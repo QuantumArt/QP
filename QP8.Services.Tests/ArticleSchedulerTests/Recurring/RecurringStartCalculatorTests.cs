@@ -1,4 +1,4 @@
-﻿using QP8.Services.Tests.Infrastructure.Helpers;
+using QP8.Services.Tests.Infrastructure.Helpers;
 using Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators;
 using Xunit;
 
@@ -31,7 +31,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetNearesStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Null(actualResult);
@@ -72,7 +72,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var expectedResult = DateTimeHelpers.ParseDateTime(rawExpectedStartDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetNearesStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Equal(expectedResult, actualResult);
@@ -101,7 +101,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetNearesStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Null(actualResult);
@@ -137,7 +137,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var expectedResult = DateTimeHelpers.ParseDateTime(rawExpectedStartDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetNearesStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Equal(expectedResult, actualResult);
@@ -166,7 +166,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetNearesStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Null(actualResult);
@@ -206,7 +206,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var expectedResult = DateTimeHelpers.ParseDateTime(rawExpectedStartDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetNearesStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Equal(expectedResult, actualResult);
@@ -233,7 +233,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetNearesStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Null(actualResult);
@@ -263,7 +263,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
             var expectedResult = DateTimeHelpers.ParseDateTime(rawExpectedStartDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetNearesStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Equal(expectedResult, actualResult);
