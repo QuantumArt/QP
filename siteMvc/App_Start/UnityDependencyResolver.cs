@@ -113,9 +113,7 @@ namespace Quantumart.QP8.WebMvc
 
             RegisterMultistepActionServices(UnityContainer);
             UnityContainer.RegisterType<ExceptionManager>(new InjectionFactory(c => EnterpriseLibraryContainer.Current.GetInstance<ExceptionManager>()));
-
-            NLogContainerExtension.LoggerTypeName = AssemblyHelpers.GetAssemblyName();
-            UnityContainer.AddNewExtension<NLogContainerExtension>();
+            UnityContainer.AddExtension(new NLogContainerExtension(AssemblyHelpers.GetAssemblyName()));
         }
 
         private static void RegisterMultistepActionServices(IUnityContainer container)

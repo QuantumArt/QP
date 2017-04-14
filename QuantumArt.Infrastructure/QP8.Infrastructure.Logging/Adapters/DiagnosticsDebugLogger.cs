@@ -7,6 +7,8 @@ namespace QP8.Infrastructure.Logging.Adapters
 {
     public class DiagnosticsDebugLogger : ILog
     {
+        public string LoggerName { get; set; }
+
         public bool IsTraceEnabled { get; set; }
 
         public bool IsDebugEnabled { get; set; }

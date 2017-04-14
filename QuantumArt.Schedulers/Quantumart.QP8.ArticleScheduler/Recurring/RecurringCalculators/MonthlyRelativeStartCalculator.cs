@@ -2,33 +2,29 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quantumart.QP8.ArticleScheduler.Recurring
+namespace Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators
 {
-    /// <summary>
-    /// Вычисляет ближайшее к дате начало диапазона для Monthly Relative расписаний
-    /// </summary>
     public class MonthlyRelativeStartCalculator : RecurringStartCalculatorBase
     {
+        private readonly int _interval;
+        private readonly int _relativeInterval;
+        private readonly int _recurrenceFactor;
+        private readonly DateTime _startDate;
+        private readonly DateTime _endDate;
+        private readonly TimeSpan _startTime;
+
         public MonthlyRelativeStartCalculator(int interval, int relativeInterval, int recurrenceFactor, DateTime startDate, DateTime endDate, TimeSpan startTime)
         {
-            CalculateNearestStartDateFunc = dateTime =>
-            {
-                var allStarts = Optimize(new Tuple<DateTime, DateTime>(startDate.Date, endDate.Date), dateTime.Date)
-                    .GetEveryFullMonthLimitedByFactor(recurrenceFactor) // получаем полные месяца, но только те, которые ограничены recurrenceFactor
-                    .GetAllDaysFromRange()
-                    .Where(GetIntervalPredicate(interval));
+            _interval = interval;
+            _relativeInterval = relativeInterval;
+            _recurrenceFactor = recurrenceFactor;
+            _startDate = startDate;
+            _endDate = endDate;
+            _startTime = startTime;
 
-                allStarts = ApplyRelativeInternalConditions(allStarts, relativeInterval)
-                    .Where(d => startDate.Date <= d.Date && endDate.Date >= d.Date) // только те даты что в диапазоне
-                    .Select(d => d.Add(startTime)); // получаем точное время старта
-
-                return allStarts.GetNearestPreviousDateFromList(dateTime); // ближайшее время старта до или если нет то null
-            };
+            CalculateNearestStartDateFunc = GetNearestStartDate;
         }
 
-        /// <summary>
-        /// Возвращает предикат для фильтрации по interval
-        /// </summary>
         private static Func<DateTime, bool> GetIntervalPredicate(int interval)
         {
             switch (interval)
@@ -58,9 +54,6 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             }
         }
 
-        /// <summary>
-        /// Фильтрует по условия определяемому relativeInterval
-        /// </summary>
         private static IEnumerable<DateTime> ApplyRelativeInternalConditions(IEnumerable<DateTime> enumerator, int relativeInterval)
         {
             switch (relativeInterval)
@@ -78,6 +71,20 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
                 default:
                     return Enumerable.Empty<DateTime>();
             }
+        }
+
+        private DateTime? GetNearestStartDate(DateTime dateTime)
+        {
+            var allStarts = Optimize(new Tuple<DateTime, DateTime>(_startDate.Date, _endDate.Date), dateTime.Date)
+                    .GetEveryFullMonthLimitedByFactor(_recurrenceFactor) // получаем полные месяца, но только те, которые ограничены recurrenceFactor
+                    .GetAllDaysFromRange()
+                    .Where(GetIntervalPredicate(_interval));
+
+            allStarts = ApplyRelativeInternalConditions(allStarts, _relativeInterval)
+                .Where(d => _startDate.Date <= d.Date && _endDate.Date >= d.Date) // только те даты что в диапазоне
+                .Select(d => d.Add(_startTime)); // получаем точное время старта
+
+            return allStarts.GetNearestPreviousDateFromList(dateTime); // ближайшее время старта до или если нет то null
         }
     }
 }

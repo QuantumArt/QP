@@ -36,6 +36,12 @@ namespace Quantumart.QP8.Scheduler.Notification
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start sending notifications");
+            await ProcessCustomers(token);
+            _logger.Info("End sending notifications");
+        }
+
+        private async Task ProcessCustomers(CancellationToken token)
+        {
             foreach (var customer in _schedulerCustomers)
             {
                 if (token.IsCancellationRequested)
@@ -115,8 +121,6 @@ namespace Quantumart.QP8.Scheduler.Notification
                     }
                 }
             }
-
-            _logger.Info("End sending notifications");
         }
 
         public void Dispose()

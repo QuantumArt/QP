@@ -1,5 +1,5 @@
-﻿using QP8.Services.Tests.Infrastructure.Helpers;
-using Quantumart.QP8.ArticleScheduler.Recurring;
+using QP8.Services.Tests.Infrastructure.Helpers;
+using Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators;
 using Xunit;
 
 namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
@@ -25,13 +25,13 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 recurrenceFactor,
                 DateTimeHelpers.ParseDateTime(rawStartDate),
                 DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTimeSpan(rawStartTime)
+                DateTimeHelpers.ParseTime(rawStartTime)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Null(actualResult);
@@ -49,7 +49,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         [InlineData("12/31/2011 14:15:17", "11/03/2011 12:15:17")]
         [InlineData("03/10/2012", "11/03/2011 12:15:17")]
         [Theory, Trait("RecurringCalculator", "MonthlyRelativeStartCalculator")]
-        public void GivenMonthlyRelativeStartCalculator_WhenDatesInsideScheduleRange_ShouldReturnCorrectDate(string rawCurrentDate, string rawExpectedStartDate)
+        public void GivenMonthlyRelativeStartCalculator_WhenDatesWithinScheduleRange_ShouldReturnCorrectDate(string rawCurrentDate, string rawExpectedStartDate)
         {
             // Fixture setup
             const int interval = 9;
@@ -65,14 +65,14 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 recurrenceFactor,
                 DateTimeHelpers.ParseDateTime(rawStartDate),
                 DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTimeSpan(rawStartTime)
+                DateTimeHelpers.ParseTime(rawStartTime)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
             var expectedResult = DateTimeHelpers.ParseDateTime(rawExpectedStartDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Equal(expectedResult, actualResult);
@@ -95,13 +95,13 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 recurrenceFactor,
                 DateTimeHelpers.ParseDateTime(rawStartDate),
                 DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTimeSpan(rawStartTime)
+                DateTimeHelpers.ParseTime(rawStartTime)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Null(actualResult);
@@ -116,7 +116,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         [InlineData("11/24/2011 12:15:17", "09/15/2011 12:15:17")]
         [InlineData("01/15/2012 12:15:17", "09/15/2011 12:15:17")]
         [Theory, Trait("RecurringCalculator", "MonthlyStartCalculator")]
-        public void GivenMonthlyStartCalculator_WhenDatesInsideScheduleRange_ShouldReturnCorrectDate(string rawCurrentDate, string rawExpectedStartDate)
+        public void GivenMonthlyStartCalculator_WhenDatesWithinScheduleRange_ShouldReturnCorrectDate(string rawCurrentDate, string rawExpectedStartDate)
         {
             // Fixture setup
             const int interval = 15;
@@ -130,14 +130,14 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 recurrenceFactor,
                 DateTimeHelpers.ParseDateTime(rawStartDate),
                 DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTimeSpan(rawStartTime)
+                DateTimeHelpers.ParseTime(rawStartTime)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
             var expectedResult = DateTimeHelpers.ParseDateTime(rawExpectedStartDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Equal(expectedResult, actualResult);
@@ -160,13 +160,13 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 recurrenceFactor,
                 DateTimeHelpers.ParseDateTime(rawStartDate),
                 DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTimeSpan(rawStartTime)
+                DateTimeHelpers.ParseTime(rawStartTime)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Null(actualResult);
@@ -185,7 +185,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         [InlineData("07/11/2011 14:15:17", "07/11/2011 12:15:17")]
         [InlineData("07/20/2011 14:15:17", "07/11/2011 12:15:17")]
         [Theory, Trait("RecurringCalculator", "WeeklyStartCalculator")]
-        public void GivenWeeklyStartCalculator_WhenDatesInsideScheduleRange_ShouldReturnCorrectDate(string rawCurrentDate, string rawExpectedStartDate)
+        public void GivenWeeklyStartCalculator_WhenDatesWithinScheduleRange_ShouldReturnCorrectDate(string rawCurrentDate, string rawExpectedStartDate)
         {
             // Fixture setup
             const int interval = 42;
@@ -199,14 +199,14 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 recurrenceFactor,
                 DateTimeHelpers.ParseDateTime(rawStartDate),
                 DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTimeSpan(rawStartTime)
+                DateTimeHelpers.ParseTime(rawStartTime)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
             var expectedResult = DateTimeHelpers.ParseDateTime(rawExpectedStartDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Equal(expectedResult, actualResult);
@@ -227,13 +227,13 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 interval,
                 DateTimeHelpers.ParseDateTime(rawStartDate),
                 DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTimeSpan(rawStartTime)
+                DateTimeHelpers.ParseTime(rawStartTime)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Null(actualResult);
@@ -244,7 +244,7 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
         [InlineData("06/10/2011 14:15:17", "06/09/2011 12:15:17")]
         [InlineData("06/12/2011 10:15:17", "06/09/2011 12:15:17")]
         [Theory, Trait("RecurringCalculator", "DailyStartCalculator")]
-        public void GivenDailyStartCalculator_WhenDatesInsideScheduleRange_ShouldReturnCorrectDate(string rawCurrentDate, string rawExpectedStartDate)
+        public void GivenDailyStartCalculator_WhenDatesWithinScheduleRange_ShouldReturnCorrectDate(string rawCurrentDate, string rawExpectedStartDate)
         {
             // Fixture setup
             const int interval = 4;
@@ -256,14 +256,14 @@ namespace QP8.Services.Tests.ArticleSchedulerTests.Recurring
                 interval,
                 DateTimeHelpers.ParseDateTime(rawStartDate),
                 DateTimeHelpers.ParseDateTime(rawEndDate),
-                DateTimeHelpers.ParseTimeSpan(rawStartTime)
+                DateTimeHelpers.ParseTime(rawStartTime)
             );
 
             var currentDate = DateTimeHelpers.ParseDateTime(rawCurrentDate);
             var expectedResult = DateTimeHelpers.ParseDateTime(rawExpectedStartDate);
 
             // Exercise system
-            var actualResult = startCalculator.GetStartDateBeforeSpecifiedDate(currentDate);
+            var actualResult = startCalculator.GetNearestStartDateBeforeSpecifiedDate(currentDate);
 
             // Verify outcome
             Assert.Equal(expectedResult, actualResult);

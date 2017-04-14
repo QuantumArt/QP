@@ -1,6 +1,7 @@
 using System;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
+using Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
 using Quantumart.QP8.Configuration.Models;
@@ -21,76 +22,86 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
         public void Run(ArticleScheduleTask articleTask)
         {
             var task = RecurringTask.Create(articleTask);
-            var currentDateTime = _recurringService.GetCurrentDBDateTime();
-            var taskRange = Tuple.Create(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
-            var taskRangePos = taskRange.CompareRangeTo(currentDateTime);
-            var calc = CreateRecurringStartCalculator(task);
-
-            // получить ближайшую дату начала показа статьи
-            var showRangeStartDt = calc.GetStartDateBeforeSpecifiedDate(currentDateTime);
-            if (!showRangeStartDt.HasValue)
+            var currentTime = _recurringService.GetCurrentDBDateTime();
+            var taskRange = GetTaskRange(task);
+            var comparison = taskRange.CompareRangeTo(currentTime);
+            if (ShouldProcessTask(task, currentTime))
             {
-                return;
+                ProcessTask(task, currentTime, comparison);
+            }
+        }
+
+        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
+        {
+            var recurringTask = (RecurringTask)task;
+            var nearestStartDate = RecurringStartCalculatorFactory.Create(recurringTask).GetNearestStartDateBeforeSpecifiedDate(dateTimeToCheck);
+            if (!nearestStartDate.HasValue)
+            {
+                return false;
             }
 
-            // Определяем время окончания показа статьи
-            var showRangeEndDt = showRangeStartDt.Value + task.Duration;
-            if (taskRange.CompareRangeTo(showRangeEndDt) > 0)
-            {
-                // Если необходимо то ограничить время окончания показа статьи правой границей диапазона задачи
-                showRangeEndDt = taskRange.Item2;
-            }
+            var comparison = GetTaskRange(recurringTask).CompareRangeTo(dateTimeToCheck);
+            var nearestComparisonToShowArticle = GetNearestComparison(recurringTask, dateTimeToCheck);
+            return nearestComparisonToShowArticle == 0 || nearestComparisonToShowArticle > 0 && comparison >= 0;
+        }
 
-            // диапазон показа статьи
-            Article article;
-            var showRange = Tuple.Create(showRangeStartDt.Value, showRangeEndDt);
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck)
+        {
+            return ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck);
+        }
 
-            // определить положение текущей даты относительно диапазона показа статьи
-            var showRangePos = showRange.CompareRangeTo(currentDateTime);
-            if (showRangePos == 0)
+        private void ProcessTask(RecurringTask task, DateTime currentTime, int comparison)
+        {
+            var nearestComparisonToShowArticle = GetNearestComparison(task, currentTime);
+            if (nearestComparisonToShowArticle == 0)
             {
-                // внутри диапазона показа
-                article = _recurringService.ShowArticle(task.ArticleId);
-                if (article != null && !article.Visible)
+                var articleWithinShowRange = _recurringService.ShowArticle(task.ArticleId);
+                if (articleWithinShowRange != null && !articleWithinShowRange.Visible)
                 {
-                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been shown on customer code: {_customer.CustomerName}");
+                    Logger.Log.Info($"Article [{articleWithinShowRange.Id}: {articleWithinShowRange.Name}] has been shown on customer code: {_customer.CustomerName}");
                 }
             }
-            else if (showRangePos > 0 && taskRangePos == 0)
+            else if (nearestComparisonToShowArticle > 0 && comparison == 0)
             {
-                // за диапазоном показа, но внутри диапазона задачи
-                article = _recurringService.HideArticle(task.ArticleId);
-                if (article != null && article.Visible)
+                var articleOutOfShowRange = _recurringService.HideArticle(task.ArticleId);
+                if (articleOutOfShowRange != null && articleOutOfShowRange.Visible)
                 {
-                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Log.Info($"Article [{articleOutOfShowRange.Id}: {articleOutOfShowRange.Name}] has been hidden on customer code: {_customer.CustomerName}");
                 }
             }
-            else if (showRangePos > 0 && taskRangePos > 0)
+            else if (nearestComparisonToShowArticle > 0 && comparison > 0)
             {
-                // за диапазоном показа и за диапазоном задачи
-                article = _recurringService.HideAndCloseSchedule(task.Id);
-                if (article != null && article.Visible)
+                var articleOutOfShowAndTaskRanges = _recurringService.HideAndCloseSchedule(task.Id);
+                if (articleOutOfShowAndTaskRanges != null && articleOutOfShowAndTaskRanges.Visible)
                 {
-                    Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been hidden on customer code: {_customer.CustomerName}");
+                    Logger.Log.Info($"Article [{articleOutOfShowAndTaskRanges.Id}: {articleOutOfShowAndTaskRanges.Name}] has been hidden on customer code: {_customer.CustomerName}");
                 }
             }
         }
 
-        private static IRecurringStartCalculator CreateRecurringStartCalculator(RecurringTask task)
+        private static int GetNearestComparison(RecurringTask task, DateTime currentTime)
         {
-            switch (task.TaskType)
-            {
-                case RecurringTaskTypes.Daily:
-                    return new DailyStartCalculator(task.Interval, task.StartDate, task.EndDate, task.StartTime);
-                case RecurringTaskTypes.Weekly:
-                    return new WeeklyStartCalculator(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
-                case RecurringTaskTypes.Monthly:
-                    return new MonthlyStartCalculator(task.Interval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
-                case RecurringTaskTypes.MonthlyRelative:
-                    return new MonthlyRelativeStartCalculator(task.Interval, task.RelativeInterval, task.RecurrenceFactor, task.StartDate, task.EndDate, task.StartTime);
-                default:
-                    throw new ArgumentException("Неопределенный тип расписания циклической задачи: " + task.TaskType);
-            }
+            var recurringCalculator = RecurringStartCalculatorFactory.Create(task);
+            var nearestStartDate = recurringCalculator.GetNearestStartDateBeforeSpecifiedDate(currentTime).Value;
+            var nearestEndDate = GetNearestEndDate(task, nearestStartDate + task.Duration);
+            var nearestTaskRangeToShowArticle = GetTaskRange(nearestStartDate, nearestEndDate);
+            return nearestTaskRangeToShowArticle.CompareRangeTo(currentTime);
+        }
+
+        private static DateTime GetNearestEndDate(RecurringTask task, DateTime nearestEndDate)
+        {
+            var taskRange = GetTaskRange(task);
+            return taskRange.CompareRangeTo(nearestEndDate) > 0 ? taskRange.Item2 : nearestEndDate;
+        }
+
+        private static Tuple<DateTime, DateTime> GetTaskRange(RecurringTask task)
+        {
+            return GetTaskRange(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
+        }
+
+        private static Tuple<DateTime, DateTime> GetTaskRange(DateTime startDateTime, DateTime endDateTime)
+        {
+            return Tuple.Create(startDateTime, endDateTime);
         }
     }
 }

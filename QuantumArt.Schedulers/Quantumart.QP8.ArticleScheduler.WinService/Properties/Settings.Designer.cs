@@ -31,5 +31,14 @@ namespace Quantumart.QP8.ArticleScheduler.WinService.Properties {
                 return ((global::System.TimeSpan)(this["RecurrentTimeout"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("03:00:00")]
+        public global::System.TimeSpan PrtgLoggerTasksQueueCheckShiftTime {
+            get {
+                return ((global::System.TimeSpan)(this["PrtgLoggerTasksQueueCheckShiftTime"]));
+            }
+        }
     }
 }

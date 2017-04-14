@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
+      <HintPath>$(SolutionDir)packages\Castle.Core.4.0.0\lib\net45\Castle.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -55,6 +55,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Interfaces\IDbScheduler.cs" />
+    <Compile Include="Interfaces\ISchedulerTask.cs" />
+    <Compile Include="PrtgErrorsHandler.cs" />
     <Compile Include="Recurring\DateRangeExtensions.cs" />
     <Compile Include="DbScheduler.cs" />
     <Compile Include="Interfaces\IScheduler.cs" />
@@ -67,15 +70,16 @@
     <Compile Include="Publishing\PublishingTaskScheduler.cs" />
     <Compile Include="QpScheduler.cs" />
     <Compile Include="QpSchedulerProcessor.cs" />
-    <Compile Include="Recurring\DailyStartCalculator.cs" />
+    <Compile Include="Recurring\RecurringCalculators\DailyStartCalculator.cs" />
     <Compile Include="Interfaces\ITaskScheduler.cs" />
     <Compile Include="Interfaces\IRecurringTaskScheduler.cs" />
-    <Compile Include="Recurring\RecurringStartCalculatorBase.cs" />
+    <Compile Include="Recurring\RecurringCalculators\RecurringStartCalculatorBase.cs" />
+    <Compile Include="Recurring\RecurringCalculators\RecurringStartCalculatorFactory.cs" />
     <Compile Include="Recurring\RecurringTaskScheduler.cs" />
-    <Compile Include="Recurring\WeeklyStartCalculator.cs" />
-    <Compile Include="Recurring\MonthlyStartCalculator.cs" />
+    <Compile Include="Recurring\RecurringCalculators\WeeklyStartCalculator.cs" />
+    <Compile Include="Recurring\RecurringCalculators\MonthlyStartCalculator.cs" />
     <Compile Include="Interfaces\IRecurringStartCalculator.cs" />
-    <Compile Include="Recurring\MonthlyRelativeStartCalculator.cs" />
+    <Compile Include="Recurring\RecurringCalculators\MonthlyRelativeStartCalculator.cs" />
     <Compile Include="Recurring\RecurringTask.cs" />
     <Compile Include="Recurring\RecurringTaskTypes.cs" />
     <Compile Include="UnityContainerCustomizer.cs" />
@@ -101,6 +105,10 @@
       <Project>{448D5691-BDFC-4314-8036-EA615978273D}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
+      <Project>{060EB6FE-8C9E-4B81-B17C-D2D3884F0AEC}</Project>
+      <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
@@ -123,3 +131,4 @@
   </Target>
   -->
 </Project>
+

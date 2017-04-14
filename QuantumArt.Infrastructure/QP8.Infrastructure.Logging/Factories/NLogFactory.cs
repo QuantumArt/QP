@@ -20,9 +20,9 @@ namespace QP8.Infrastructure.Logging.Factories
             return type == null ? GetLogger() : new NLogLogger(type);
         }
 
-        public ILog GetLogger(string typeName)
+        public ILog GetLogger(string loggerName)
         {
-            return string.IsNullOrWhiteSpace(typeName) ? GetLogger() : new NLogLogger(typeName);
+            return string.IsNullOrWhiteSpace(loggerName) ? GetLogger() : new NLogLogger(loggerName);
         }
     }
 }

@@ -3,7 +3,7 @@ using NLog.Config;
 using NLog.Targets;
 using QP8.Infrastructure.Logging.PrtgMonitoring.Interfaces;
 
-namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions
+namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Targets
 {
     [Target("PrtgMonitoring")]
     public sealed class PrtgMonitoringTarget : TargetWithLayout

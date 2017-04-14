@@ -27,6 +27,12 @@ namespace Quantumart.QP8.Scheduler.Users
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start users synchronization");
+            await ProcessCustomers(token);
+            _logger.Info("End users synchronization");
+        }
+
+        private async Task ProcessCustomers(CancellationToken token)
+        {
             foreach (var customer in _schedulerCustomers)
             {
                 using (new QPConnectionScope(customer.ConnectionString))
@@ -41,8 +47,6 @@ namespace Quantumart.QP8.Scheduler.Users
 
                 await Task.Delay(DelayDuration, token);
             }
-
-            _logger.Info("End users synchronization");
         }
 
         public void Dispose()

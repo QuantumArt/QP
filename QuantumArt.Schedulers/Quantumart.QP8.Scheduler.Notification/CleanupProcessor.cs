@@ -23,6 +23,12 @@ namespace Quantumart.QP8.Scheduler.Notification
         public async Task Run(CancellationToken token)
         {
             Logger.Log.Info("Start cleanup notification queue");
+            await ProcessCustomers(token);
+            Logger.Log.Info("End cleanup notification queue");
+        }
+
+        private async Task ProcessCustomers(CancellationToken token)
+        {
             foreach (var customer in _schedulerCustomers)
             {
                 using (new QPConnectionScope(customer.ConnectionString))
@@ -36,8 +42,6 @@ namespace Quantumart.QP8.Scheduler.Notification
 
                 await Task.Delay(DelayDuration, token);
             }
-
-            Logger.Log.Info("End cleanup notification queue");
         }
 
         public void Dispose()

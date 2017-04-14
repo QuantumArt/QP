@@ -1,4 +1,5 @@
 using System;
+using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.Adapters;
 using QP8.Infrastructure.Logging.Interfaces;
 
@@ -34,8 +35,19 @@ namespace QP8.Infrastructure.Logging.Factories
 
         public ILog GetLogger()
         {
-            return new DiagnosticsDebugLogger
+            return GetLogger(AssemblyHelpers.GetAssemblyName());
+        }
+
+        public ILog GetLogger(Type type)
+        {
+            return type == null ? GetLogger() : GetLogger(type.Name);
+        }
+
+        public ILog GetLogger(string loggerName)
+        {
+            return string.IsNullOrWhiteSpace(loggerName) ? GetLogger() : new DiagnosticsDebugLogger
             {
+                LoggerName = loggerName,
                 IsTraceEnabled = _traceEnabled,
                 IsDebugEnabled = _debugEnabled,
                 IsInfoEnabled = _infoEnabled,
@@ -43,16 +55,6 @@ namespace QP8.Infrastructure.Logging.Factories
                 IsErrorEnabled = _errorEnabled,
                 IsFatalEnabled = _fatalEnabled,
             };
-        }
-
-        public ILog GetLogger(Type type)
-        {
-            return GetLogger();
-        }
-
-        public ILog GetLogger(string typeName)
-        {
-            return GetLogger();
         }
     }
 }

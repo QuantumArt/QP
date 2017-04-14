@@ -2,20 +2,25 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
 using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
     public class QpSchedulerProcessor
     {
-        private Task _task;
-        private readonly TimeSpan _recurrentTimeout;
-        private CancellationTokenSource _cancellationTokenSource;
         private const string AppName = "QP8ArticleSchedulerService";
 
-        public QpSchedulerProcessor(TimeSpan recurrentTimeout)
+        private readonly TimeSpan _recurrentTimeout;
+        private readonly TimeSpan _tasksQueueCheckShiftTime;
+
+        private Task _task;
+        private CancellationTokenSource _cancellationTokenSource;
+
+        public QpSchedulerProcessor(TimeSpan recurrentTimeout, TimeSpan tasksQueueCheckShiftTime)
         {
             _recurrentTimeout = recurrentTimeout;
+            _tasksQueueCheckShiftTime = tasksQueueCheckShiftTime;
         }
 
         public void Run()
@@ -27,12 +32,19 @@ namespace Quantumart.QP8.ArticleScheduler
                 {
                     try
                     {
+                        var unityConfig = new UnityContainerCustomizer();
                         var customers = QPConfiguration.GetCustomers(AppName, true);
-                        new QpScheduler(UnityContainerCustomizer.UnityContainer, customers).Run();
+                        new QpScheduler(unityConfig.UnityContainer, customers, _tasksQueueCheckShiftTime).Run();
                     }
                     catch (Exception ex)
                     {
-                        Logger.Log.Error($"There was an error while starting the service job, {ex}");
+                        const string errorMessage = "There was an error while starting the service job";
+                        Logger.Log.Error(errorMessage, ex);
+                        PrtgErrorsHandler.LogMessage(new PrtgServiceMonitoringMessage
+                        {
+                            Message = errorMessage,
+                            State = PrtgServiceMonitoringEnum.CriticalError
+                        });
                     }
                 }
                 while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
@@ -49,7 +61,13 @@ namespace Quantumart.QP8.ArticleScheduler
             }
             catch (Exception ex)
             {
-                Logger.Log.Error($"There was an error while stopping the service, {ex}");
+                const string errorMessage = "There was an error while stopping the service";
+                Logger.Log.Error(errorMessage, ex);
+                PrtgErrorsHandler.LogMessage(new PrtgServiceMonitoringMessage
+                {
+                    Message = errorMessage,
+                    State = PrtgServiceMonitoringEnum.CriticalError
+                });
             }
             finally
             {
