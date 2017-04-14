@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Include>
-  <UIRef Id="WixUI_FeatureTreeNoLicense"/>
-  <UIRef Id="WixUI_ErrorProgressText" />
-</Include>
