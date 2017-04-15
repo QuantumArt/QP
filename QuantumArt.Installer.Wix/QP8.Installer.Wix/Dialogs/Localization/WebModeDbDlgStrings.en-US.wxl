@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization" Codepage="utf-8">
-  <String Id="WebModeDlgPasswordLabel">Password</String>
-  <String Id="WebModeDlgLoginLabel">Login</String>
-  <String Id="WebModeDlgTitle">Database settings [ProductName] [ProductVersion]</String>
-  <String Id="WebModeDlgServerNameLabel">Server name</String>
-  <String Id="WebModeDlgDbNameLabel">Database name</String>
-  <String Id="WebModeDlgTestConnectButtonText">Test connection</String>
-</WixLocalization>

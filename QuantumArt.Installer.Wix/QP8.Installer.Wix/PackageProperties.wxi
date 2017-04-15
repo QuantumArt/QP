@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Include xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <?define InstallerVersion="200" ?>
-  <?define Compressed="yes" ?>
-  <?define InstallScope="perMachine" ?>
-  <?define CompressionLevel="low" ?>
-  <?define EmbedCab="yes" ?>
-</Include>

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<WixLocalization Culture="ru-RU" xmlns="http://schemas.microsoft.com/wix/2006/localization" Codepage="1251">
-  <String Id="DatabaseModeDlgPasswordLabel">Пароль</String>
-  <String Id="DatabaseModeDlgLoginLabel">Имя пользователя</String>
-  <String Id="DatabaseModeDlgTitle">Настройки БД [ProductName] [ProductVersion]</String>
-  <String Id="DatabaseModeDlgServerNameLabel">Имя сервера</String>
-  <String Id="DatabaseModeDlgDbNameLabel">Имя БД</String>
-  <String Id="DatabaseModeDlgTestConnectButtonText">Проверить подключение</String>
-</WixLocalization>

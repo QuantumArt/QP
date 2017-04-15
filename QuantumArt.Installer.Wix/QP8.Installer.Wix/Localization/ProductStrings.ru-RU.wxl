@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<WixLocalization Culture="ru-RU" xmlns="http://schemas.microsoft.com/wix/2006/localization" Codepage="1251">
-	<String Id="Manufacturer">Quantum Art</String>
-  <String Id="ProductName">QP8</String>
-  <String Id="DowngradeErrorMessage">Установлена более новая версия [ProductName].</String>
-</WixLocalization>
