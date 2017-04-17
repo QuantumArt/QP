@@ -20,7 +20,6 @@ using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
 {
-    // ReSharper disable InconsistentNaming
     public class CustomActionController : QPController
     {
         private readonly ICustomActionService _service;
@@ -50,7 +49,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 return Json(new { Url = result.CustomAction.FullUrl, PreActionUrl = result.CustomAction.PreActionFullUrl });
             }
-            catch (Exception exp)
+            catch (Exception ex)
             {
                 if (result?.CustomAction?.Action == null)
                 {
@@ -59,10 +58,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
                 if (result.CustomAction.Action.IsInterface)
                 {
-                    return new JsonNetResult<object>(new { success = false, message = exp.Message });
+                    return new JsonNetResult<object>(new { success = false, message = ex.Message });
                 }
 
-                return new JsonResult { Data = MessageResult.Error(exp.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
+                return new JsonResult { Data = MessageResult.Error(ex.Message), JsonRequestBehavior = JsonRequestBehavior.AllowGet };
             }
         }
 
@@ -123,7 +122,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
             BackendActionContext.ResetCurrent();
         }
 
-        [HttpGet]
         [ExceptionResult(ExceptionResultMode.UiAction)]
         [ActionAuthorize(ActionCode.CustomActions)]
         [BackendActionContext(ActionCode.CustomActions)]

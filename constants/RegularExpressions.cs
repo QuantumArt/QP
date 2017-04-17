@@ -1,8 +1,5 @@
 ﻿namespace Quantumart.QP8.Constants
 {
-    /// <summary>
-    /// Шаблоны регулярных выражений
-    /// </summary>
     public static class RegularExpressions
     {
         public const string Email = @"^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$";
