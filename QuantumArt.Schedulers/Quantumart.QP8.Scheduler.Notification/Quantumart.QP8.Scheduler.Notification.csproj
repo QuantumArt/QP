@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quantumart.QP8.Scheduler.Notification</RootNamespace>
     <AssemblyName>Quantumart.QP8.Scheduler.Notification</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SccProjectName>SAK</SccProjectName>
     <SccLocalPath>SAK</SccLocalPath>
@@ -54,8 +54,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CleanupProcessor.cs" />
+    <Compile Include="Data\NotificationViewModel.cs" />
     <Compile Include="Providers\INotificationProvider.cs" />
-    <Compile Include="Providers\NotificationModel.cs" />
+    <Compile Include="Data\NotificationModel.cs" />
     <Compile Include="Providers\NotificationProvider.cs" />
     <Compile Include="SchedulerNotificationConfiguration.cs" />
     <Compile Include="NotificationProcessor.cs" />
@@ -74,6 +75,10 @@
       <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
       <Name>Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
+      <Project>{060eb6fe-8c9e-4b81-b17c-d2d3884f0aec}</Project>
+      <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
@@ -83,6 +88,6 @@
       <Name>Quantumart.QP8.Scheduler.API</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
-
