@@ -139,12 +139,6 @@
                 {
                     @Html.TextBoxFieldFor(s => s.Data.LinqPropertyName)
 
-                    using (Html.BeginPanel("IsNumericLong"))
-                    {
-                        @Html.CheckBoxFieldFor(s => s.Data.IsLong)
-                        @Html.CheckBoxFieldFor(s => s.Data.IsDecimal)
-                    }
-
                     if (!Model.Data.IsBackwardFieldExists)
                     {
                         using (Html.BeginPanel("LinqBackProperty"))
@@ -413,6 +407,11 @@
             {
                 @Html.NumericFieldFor(s => s.Data.NumericDefaultValue, null, null, Model.Data.DecimalPlaces == default(int) ? 2 : Model.Data.DecimalPlaces)
                 @Html.CheckBoxFieldFor(s => s.Data.IsInteger, "IsIntegerPanel", true)
+                using (Html.BeginPanel("IsNumericLong"))
+                {
+                    @Html.CheckBoxFieldFor(s => s.Data.IsLong)
+                    @Html.CheckBoxFieldFor(s => s.Data.IsDecimal)
+                }
                 using (Html.BeginPanel("IsIntegerPanel"))
                 {
                     @Html.NumericFieldFor(s => s.Data.DecimalPlaces)
