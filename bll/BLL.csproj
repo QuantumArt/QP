@@ -161,6 +161,8 @@
     <Compile Include="ListItems\BackendActionLogFilter.cs" />
     <Compile Include="ListItems\ObjectFormatVersionListItem.cs" />
     <Compile Include="ListItems\StatusHistoryListItem.cs" />
+    <Compile Include="Logging\PrtgErrorsHandlerViewModel.cs" />
+    <Compile Include="Logging\PrtgErrorsHandler.cs" />
     <Compile Include="Mappers\DataRowMapper.cs" />
     <Compile Include="Mappers\ExternalNotificationMapper.cs" />
     <Compile Include="Mappers\ObjectFormatSearchResultRowMapper.cs" />
@@ -723,6 +725,10 @@
       <Project>{289708F2-2275-4FAD-858F-1499AA467E28}</Project>
       <Name>Validators</Name>
     </ProjectReference>
+    <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
+      <Project>{060eb6fe-8c9e-4b81-b17c-d2d3884f0aec}</Project>
+      <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
+    </ProjectReference>
     <ProjectReference Include="..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
@@ -751,4 +757,3 @@
   </Target>
   -->
 </Project>
-

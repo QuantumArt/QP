@@ -6,8 +6,6 @@ namespace Quantumart.QP8.DAL
 {
     public class CommonExternalNotifications
     {
-        #region External Notification
-
         private const string InsertNotificationsQuery =
             @"INSERT INTO [dbo].[EXTERNAL_NOTIFICATION_QUEUE]
 			(
@@ -43,13 +41,11 @@ namespace Quantumart.QP8.DAL
 			WHERE ID IN (SELECT Id FROM @ids)";
 
         private const string DeleteSentNotificationsQuery = @"DELETE EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
-
         private const string ExistsSentNotificationsQuery = @"SELECT COUNT(ID) FROM EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
 
-
-        private static void ExecuteIdsQuery(SqlConnection connection, string Query, IEnumerable<int> ids)
+        private static void ExecuteIdsQuery(SqlConnection connection, string query, IEnumerable<int> ids)
         {
-            using (var cmd = SqlCommandFactory.Create(Query, connection))
+            using (var cmd = SqlCommandFactory.Create(query, connection))
             {
                 cmd.CommandType = CommandType.Text;
                 var idsTable = Common.IdsToDataTable(ids);
@@ -89,8 +85,6 @@ namespace Quantumart.QP8.DAL
                 cmd.ExecuteNonQuery();
             }
         }
-
-        #endregion
 
         public static bool ExistsSentNotifications(SqlConnection connection)
         {
