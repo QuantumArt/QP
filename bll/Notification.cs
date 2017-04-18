@@ -1,5 +1,5 @@
-﻿using System;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
@@ -146,7 +146,7 @@ namespace Quantumart.QP8.BLL
                 {
                     errors.ErrorFor(n => n.ExternalUrl, NotificationStrings.ExternalUrlNotEntered);
                 }
-                else if (!Regex.IsMatch(ExternalUrl, RegularExpressions.AbsoluteWebFolderUrl))
+                else if (!UrlHelpers.IsAbsoluteWebFolderUrl(ExternalUrl))
                 {
                     errors.ErrorFor(n => n.ExternalUrl, NotificationStrings.ExternalUrlNotValid);
                 }
@@ -165,7 +165,7 @@ namespace Quantumart.QP8.BLL
                 }
                 else if (FromUserName.Length > 255)
                 {
-                    errors.ErrorFor(n => n.FromUserName, String.Format(NotificationStrings.SenderNameMaxLengthExceeded, 255));
+                    errors.ErrorFor(n => n.FromUserName, string.Format(NotificationStrings.SenderNameMaxLengthExceeded, 255));
                 }
             }
 
@@ -177,7 +177,7 @@ namespace Quantumart.QP8.BLL
                 }
                 else if (FromUserEmail.Length > 255)
                 {
-                    errors.ErrorFor(n => n.FromUserEmail, String.Format(NotificationStrings.SenderEmailLengthExceeded, 255));
+                    errors.ErrorFor(n => n.FromUserEmail, string.Format(NotificationStrings.SenderEmailLengthExceeded, 255));
                 }
                 else if (!Regex.IsMatch(FromUserEmail, RegularExpressions.Email))
                 {

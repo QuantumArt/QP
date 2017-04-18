@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using QA.Validation.Xaml;
+using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
@@ -628,7 +628,7 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
-            if (!string.IsNullOrEmpty(ExternalUrl) && !Regex.IsMatch(ExternalUrl, RegularExpressions.AbsoluteWebFolderUrl))
+            if (!string.IsNullOrEmpty(ExternalUrl) && !UrlHelpers.IsAbsoluteWebFolderUrl(ExternalUrl))
             {
                 errors.ErrorFor(s => s.ExternalUrl, SiteStrings.ExternalUrlNotValid);
             }

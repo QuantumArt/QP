@@ -5,8 +5,11 @@ using System.Net;
 using System.Security;
 using System.Text;
 using System.Web.Mvc;
+using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Web.ActionResults;
+using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.DTO;
@@ -32,31 +35,33 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         public ActionResult Execute(string tabId, int parentId, int[] ids, string actionCode)
         {
-            CustomActionPrepareResult result = null;
+            CustomActionPrepareResult customActionToExecute = null;
             try
             {
-                result = _service.PrepareForExecuting(actionCode, tabId, ids, parentId);
-                if (!result.IsActionAccessable)
+                customActionToExecute = _service.PrepareForExecuting(actionCode, tabId, ids, parentId);
+                Logger.Log.Debug($"Executing custom action url: {customActionToExecute.ToJsonLog()}");
+
+                if (!customActionToExecute.IsActionAccessable)
                 {
-                    throw new SecurityException(result.SecurityErrorMesage);
+                    throw new SecurityException(customActionToExecute.SecurityErrorMesage);
                 }
 
-                if (result.CustomAction.Action.IsInterface)
+                if (customActionToExecute.CustomAction.Action.IsInterface)
                 {
-                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, ids, result.CustomAction);
+                    var model = ExecuteCustomActionViewModel.Create(tabId, parentId, ids, customActionToExecute.CustomAction);
                     return JsonHtml("ExecuteAction", model);
                 }
 
-                return Json(new { Url = result.CustomAction.FullUrl, PreActionUrl = result.CustomAction.PreActionFullUrl });
+                return Json(new { Url = customActionToExecute.CustomAction.FullUrl, PreActionUrl = customActionToExecute.CustomAction.PreActionFullUrl });
             }
             catch (Exception ex)
             {
-                if (result?.CustomAction?.Action == null)
+                if (customActionToExecute?.CustomAction?.Action == null)
                 {
                     throw;
                 }
 
-                if (result.CustomAction.Action.IsInterface)
+                if (customActionToExecute.CustomAction.Action.IsInterface)
                 {
                     return new JsonNetResult<object>(new { success = false, message = ex.Message });
                 }
@@ -74,16 +79,18 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [HttpPost]
         public ActionResult Proxy(string url, string actionCode, int level, int[] ids, int? parentEntityId)
         {
-            var parts = url.Split("?".ToCharArray(), 2);
-            var req = WebRequest.Create(parts[0]);
-            req.Method = "POST";
-            req.ContentType = "application/x-www-form-urlencoded";
+            var urlToProcess = UrlHelpers.ConvertToAbsoluteUrl(url);
 
-            var ascii = new ASCIIEncoding();
-            var postBytes = ascii.GetBytes(parts[1]);
-            req.ContentLength = postBytes.Length;
+            Logger.Log.Debug($"Proxy custom action url: {urlToProcess.ToJsonLog()}");
+            var parts = urlToProcess.Split("?".ToCharArray(), 2);
+            var request = WebRequest.Create(parts[0]);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
 
-            using (var postStream = req.GetRequestStream())
+            var postBytes = new ASCIIEncoding().GetBytes(parts[1]);
+            request.ContentLength = postBytes.Length;
+
+            using (var postStream = request.GetRequestStream())
             {
                 postStream.Write(postBytes, 0, postBytes.Length);
                 postStream.Flush();
@@ -93,10 +100,10 @@ namespace Quantumart.QP8.WebMvc.Controllers
             try
             {
                 var result = string.Empty;
-                var resp = req.GetResponse().GetResponseStream();
-                if (resp != null)
+                var response = request.GetResponse().GetResponseStream();
+                if (response != null)
                 {
-                    result = new StreamReader(resp).ReadToEnd();
+                    result = new StreamReader(response).ReadToEnd();
                 }
 
                 if (level >= PermissionLevel.Modify)
@@ -114,11 +121,11 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         private static void CreateLogs(string actionCode, int[] ids, int? parentEntityId)
         {
-            var repo = DependencyResolver.Current.GetService<IBackendActionLogRepository>();
+            var backendLog = DependencyResolver.Current.GetService<IBackendActionLogRepository>();
             BackendActionContext.SetCurrent(actionCode, ids.Select(n => n.ToString()), parentEntityId);
-            var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, repo);
 
-            repo.Save(logs);
+            var logs = BackendActionLog.CreateLogs(BackendActionContext.Current, backendLog);
+            backendLog.Save(logs);
             BackendActionContext.ResetCurrent();
         }
 

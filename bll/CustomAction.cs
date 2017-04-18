@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
@@ -68,6 +69,16 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
+            if (!UrlHelpers.IsValidUrl(Url))
+            {
+                errors.ErrorFor(a => a.Url, string.Format(CustomActionStrings.UrlInvalidFormat));
+            }
+
+            if (!UrlHelpers.IsValidUrl(IconUrl))
+            {
+                errors.ErrorFor(a => a.IconUrl, string.Format(CustomActionStrings.IconUrlInvalidFormat));
+            }
+
             if (!errors.IsEmpty)
             {
                 throw errors;
@@ -104,12 +115,10 @@ namespace Quantumart.QP8.BLL
         [LocalizedDisplayName("Url", NameResourceType = typeof(CustomActionStrings))]
         [MaxLengthValidator(512, MessageTemplateResourceName = "UrlMaxLengthExceeded", MessageTemplateResourceType = typeof(CustomActionStrings))]
         [RequiredValidator(MessageTemplateResourceName = "UrlNotEntered", MessageTemplateResourceType = typeof(CustomActionStrings))]
-        [FormatValidator(RegularExpressions.Url, MessageTemplateResourceName = "UrlInvalidFormat", MessageTemplateResourceType = typeof(CustomActionStrings))]
         public string Url { get; set; }
 
         [LocalizedDisplayName("IconUrl", NameResourceType = typeof(CustomActionStrings))]
         [MaxLengthValidator(512, MessageTemplateResourceName = "IconUrlMaxLengthExceeded", MessageTemplateResourceType = typeof(CustomActionStrings))]
-        [FormatValidator(RegularExpressions.Url, MessageTemplateResourceName = "IconUrlInvalidFormat", MessageTemplateResourceType = typeof(CustomActionStrings))]
         public string IconUrl { get; set; }
 
         public int Order { get; set; }
@@ -136,6 +145,7 @@ namespace Quantumart.QP8.BLL
                 ParentActions = _action.ToolbarButtons?.Select(n => n.ParentActionId).ToArray();
             }
         }
+
         public IEnumerable<Content> Contents { get; set; }
 
         public IEnumerable<Site> Sites { get; set; }

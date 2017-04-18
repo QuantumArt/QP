@@ -23,7 +23,8 @@ namespace Quantumart.QP8.WebMvc.ViewModels.Abstract
             HostUID = Guid.NewGuid().ToString();
         }
 
-        public static T Create<T>(string tabId, int parentId) where T : ViewModel, new()
+        public static T Create<T>(string tabId, int parentId)
+            where T : ViewModel, new()
         {
             var model = new T
             {

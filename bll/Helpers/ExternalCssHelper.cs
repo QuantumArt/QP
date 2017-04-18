@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Quantumart.QP8.Constants;
+using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators.Helpers;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -64,7 +64,7 @@ namespace Quantumart.QP8.BLL.Helpers
                     externalCss.Invalid = true;
                 }
 
-                if (!Regex.IsMatch(externalCss.Url, RegularExpressions.AbsoluteWebFolderUrl) && !Regex.IsMatch(externalCss.Url, RegularExpressions.RelativeWebFolderUrl))
+                if (!UrlHelpers.IsValidWebFolderUrl(externalCss.Url))
                 {
                     errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlNotValid, index));
                     externalCss.Invalid = true;

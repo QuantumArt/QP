@@ -1,184 +1,173 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
-using System.IO;
 
 namespace Quantumart.QP8.Utils
 {
-	public static class PathUtility
-	{
-		private static Regex _lastSlashRegExp = new Regex(@"[\/\\]$");
-		private static Regex _firstSlashRegExp = new Regex(@"^[\/\\]");
+    public static class PathUtility
+    {
+        private static readonly Regex LastSlashRegExp = new Regex(@"[\/\\]$");
+        private static readonly Regex FirstSlashRegExp = new Regex(@"^[\/\\]");
 
-		
+        /// <summary>
+        /// Исправляет слэши
+        /// </summary>
 		public static string CorrectSlashes(string path, CorrectSlashMode mode)
-		{
-			string result = path;
+        {
+            var result = path;
 
-			if (mode.HasFlag(CorrectSlashMode.ReplaceDoubleSlashes))
-				result = ReplaceDoubleSlashes(result);
+            if (mode.HasFlag(CorrectSlashMode.ReplaceDoubleSlashes))
+            {
+                result = ReplaceDoubleSlashes(result);
+            }
 
-			if (mode.HasFlag(CorrectSlashMode.WrapToSlashes))
-				result = WrapToSlashes(result);
+            if (mode.HasFlag(CorrectSlashMode.WrapToSlashes))
+            {
+                result = WrapToSlashes(result);
+            }
 
-			if (mode.HasFlag(CorrectSlashMode.RemoveLastSlash))
-				result = RemoveLastSlash(result);
+            if (mode.HasFlag(CorrectSlashMode.RemoveLastSlash))
+            {
+                result = RemoveLastSlash(result);
+            }
 
-			if (mode.HasFlag(CorrectSlashMode.RemoveFirstSlash))
-				result = RemoveFirstSlash(result);
+            if (mode.HasFlag(CorrectSlashMode.RemoveFirstSlash))
+            {
+                result = RemoveFirstSlash(result);
+            }
 
-			if (mode.HasFlag(CorrectSlashMode.ConvertBackSlashesToSlashes))
-				result = ConvertBackSlashesToSlashes(result);
+            if (mode.HasFlag(CorrectSlashMode.ConvertBackSlashesToSlashes))
+            {
+                result = ConvertBackSlashesToSlashes(result);
+            }
 
-			if (mode.HasFlag(CorrectSlashMode.ConvertSlashesToBackSlashes))
-				result = ConvertSlashesToBackSlashes(result);
+            if (mode.HasFlag(CorrectSlashMode.ConvertSlashesToBackSlashes))
+            {
+                result = ConvertSlashesToBackSlashes(result);
+            }
 
-			return result;
-		}
-		
-		/// <summary>
-		/// Возвращает путь без первого слэша
-		/// </summary>
-		/// <param name="url">путь</param>
-		/// <returns>обработанный путь</returns>
-		public static string RemoveFirstSlash(string path)
-		{
-			string result = path;
-			if (!String.IsNullOrEmpty(result))
-			{
-				result = _firstSlashRegExp.Replace(result, "");
-			}
+            return result;
+        }
 
-			return result;
-		}
+        /// <summary>
+        /// Возвращает путь без первого слэша
+        /// </summary>
+        public static string RemoveFirstSlash(string path)
+        {
+            var result = path;
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = FirstSlashRegExp.Replace(result, string.Empty);
+            }
 
-		/// <summary>
-		/// Возвращает путь без последнего слэша
-		/// </summary>
-		/// <param name="url">путь</param>
-		/// <returns>обработанный путь</returns>
-		public static string RemoveLastSlash(string path)
-		{
-			string result = path;
-			if (!String.IsNullOrEmpty(result))
-			{
-				result = _lastSlashRegExp.Replace(result, "");
-			}
+            return result;
+        }
 
-			return result;
-		}
+        /// <summary>
+        /// Возвращает путь без последнего слэша
+        /// </summary>
+        public static string RemoveLastSlash(string path)
+        {
+            var result = path;
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = LastSlashRegExp.Replace(result, string.Empty);
+            }
 
-		/// <summary>
-		/// Преобразует обычные слэши в обратные
-		/// </summary>
-		/// <param name="path">путь</param>
-		/// <returns>обработанный путь</returns>
-		public static string ConvertSlashesToBackSlashes(string path)
-		{
-			string result = path;
-			if (!String.IsNullOrEmpty(result))
-			{
-				result = result.Replace(@"/", @"\");
-			}
+            return result;
+        }
 
-			return result;
-		}
+        /// <summary>
+        /// Преобразует обычные слэши в обратные
+        /// </summary>
+        public static string ConvertSlashesToBackSlashes(string path)
+        {
+            var result = path;
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = result.Replace(@"/", @"\");
+            }
 
-		/// <summary>
-		/// Обертывает строку в слэши
-		/// </summary>
-		/// <param name="path">путь</param>
-		/// <returns>обработанный путь</returns>
-		public static string WrapToSlashes(string path)
-		{
-			string result = path;
-			if (!String.IsNullOrEmpty(result))
-			{
-				if (!_firstSlashRegExp.IsMatch(result))
-					result = @"/" + result;
-				if (!_lastSlashRegExp.IsMatch(result))
-					result = result + @"/";
-			}
-			return result;
-		}
+            return result;
+        }
 
-		/// <summary>
-		/// Заменяет двойные слэши одинарными
-		/// </summary>
-		/// <param name="path">путь</param>
-		/// <returns>обработанный путь</returns>
-		public static string ReplaceDoubleSlashes(string path)
-		{
-			string result = path;
-			if (!String.IsNullOrEmpty(result))
-			{
-				result = result.Replace(@"\\", @"\");
-				result = result.Replace(@"//", @"/");
-			}
-			return result;
-		}
+        /// <summary>
+        /// Обертывает строку в слэши
+        /// </summary>
+        public static string WrapToSlashes(string path)
+        {
+            var result = path;
+            if (!string.IsNullOrEmpty(result))
+            {
+                if (!FirstSlashRegExp.IsMatch(result))
+                {
+                    result = @"/" + result;
+                }
 
-		/// <summary>
-		/// Преобразует обратные слэши в обычные
-		/// </summary>
-		/// <param name="path">путь</param>
-		/// <returns>обработанный путь</returns>
-		public static string ConvertBackSlashesToSlashes(string path)
-		{
-			string result = path;
-			if (!String.IsNullOrEmpty(result))
-			{
-				result = result.Replace(@"\", @"/");
-			}
+                if (!LastSlashRegExp.IsMatch(result))
+                {
+                    result = result + @"/";
+                }
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		/// <summary>
-		/// Соединяет базовый и относительный путь
-		/// </summary>
-		/// <param name="basePath">базовый путь</param>
-		/// <param name="relativePath">относительный путь</param>
-		/// <returns>путь</returns>
-		public static string Combine(string basePath, string relativePath)
-		{
-			string result = String.Empty;
-			string processedBasePath = Converter.ToString(basePath).Trim();
-			string processedRelativePath = Converter.ToString(relativePath).Trim();
+        /// <summary>
+        /// Заменяет двойные слэши одинарными
+        /// </summary>
+        public static string ReplaceDoubleSlashes(string path)
+        {
+            var result = path;
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = result.Replace(@"\\", @"\");
+                result = result.Replace(@"//", @"/");
+            }
+            return result;
+        }
 
-			if (processedBasePath.Length > 0 && processedRelativePath.Length > 0)
-			{
-				result = RemoveLastSlash(basePath) + @"/" + RemoveFirstSlash(relativePath);
-			}
-			else
-			{
-				if (processedBasePath.Length > 0)
-				{
-					result = processedBasePath;
-				}
-				else
-				{
-					result = processedRelativePath;
-				}
-			}
+        /// <summary>
+        /// Преобразует обратные слэши в обычные
+        /// </summary>
+        public static string ConvertBackSlashesToSlashes(string path)
+        {
+            var result = path;
+            if (!string.IsNullOrEmpty(result))
+            {
+                result = result.Replace(@"\", @"/");
+            }
 
-			return result;
-		}
+            return result;
+        }
 
-		/// <summary>
-		/// Соеденияет пути
-		/// </summary>
-		/// <param name="paths">пути</param>
-		/// <returns>путь</returns>
-		public static string Combine(params string[] paths)
-		{
-			string result = string.Empty;
+        /// <summary>
+        /// Соединяет базовый и относительный путь
+        /// </summary>
+        public static string Combine(string basePath, string relativePath)
+        {
+            string result;
+            var processedBasePath = Converter.ToString(basePath).Trim();
+            var processedRelativePath = Converter.ToString(relativePath).Trim();
 
-			foreach (string path in paths)
-			{
-				result = Combine(result, path);
-			}
+            if (processedBasePath.Length > 0 && processedRelativePath.Length > 0)
+            {
+                result = RemoveLastSlash(basePath) + @"/" + RemoveFirstSlash(relativePath);
+            }
+            else
+            {
+                result = processedBasePath.Length > 0 ? processedBasePath : processedRelativePath;
+            }
 
-			return result;
-		}
-	}
+            return result;
+        }
+
+        /// <summary>
+        /// Соеденияет пути
+        /// </summary>
+        public static string Combine(params string[] paths)
+        {
+            return paths.Aggregate(string.Empty, Combine);
+        }
+    }
 }
