@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Include>
-  <?define Version = "8.1.0.0" ?>
-  <?define Id = "B4938CF5-D93F-466C-8EDD-48B01D039D19" ?>
-  <?define UpgradeCode = "12851B13-74E5-46A8-B19F-1F2F3A8BAD5B" ?>
-</Include>
