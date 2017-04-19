@@ -39,7 +39,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             try
             {
                 customActionToExecute = _service.PrepareForExecuting(actionCode, tabId, ids, parentId);
-                Logger.Log.Debug($"Executing custom action url: {customActionToExecute.ToJsonLog()}");
+                Logger.Log.Debug($"Executing custom action url: {customActionToExecute.CustomAction.FullUrl}");
 
                 if (!customActionToExecute.IsActionAccessable)
                 {
