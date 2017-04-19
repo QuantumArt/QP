@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
 using QA.Validation.Xaml;
+using QP8.Infrastructure.Web.Helpers;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Configuration;
@@ -37,7 +37,7 @@ namespace Quantumart.QP8.BLL
         }
 
         /// <summary>
-        /// название сущности
+        /// Название сущности
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "NameNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "NameMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -46,26 +46,26 @@ namespace Quantumart.QP8.BLL
         public override string Name { get; set; }
 
         /// <summary>
-        /// описание сущности
+        /// Описание сущности
         /// </summary>
         [MaxLengthValidator(512, MessageTemplateResourceName = "DescriptionMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("Description", NameResourceType = typeof(SiteStrings))]
         public override string Description { get; set; }
 
         /// <summary>
-        /// тип сборки
+        /// Тип сборки
         /// </summary>
         [LocalizedDisplayName("AssemblingType", NameResourceType = typeof(SiteStrings))]
         public string AssemblingType { get; set; }
 
         /// <summary>
-        /// признак, разрешающий использование пользовательских сессий
+        /// Признак, разрешающий использование пользовательских сессий
         /// </summary>
         [LocalizedDisplayName("AllowUserSessions", NameResourceType = typeof(SiteStrings))]
         public bool AllowUserSessions { get; set; }
 
         /// <summary>
-        /// признак, разрешающий собирать страницы для предварительного просмотра и уведомлений в Основном режиме
+        /// Признак, разрешающий собирать страницы для предварительного просмотра и уведомлений в Основном режиме
         /// </summary>
         [LocalizedDisplayName("AssemblePreviewAndNotificationsInLiveModeOnly", NameResourceType = typeof(SiteStrings))]
         public bool AssembleFormatsInLive { get; set; }
@@ -87,7 +87,7 @@ namespace Quantumart.QP8.BLL
         public string Dns { get; set; }
 
         /// <summary>
-        /// признак использования отдельного DNS
+        /// Признак использования отдельного DNS
         /// </summary>
         [LocalizedDisplayName("UseSeparateDnsForStageMode", NameResourceType = typeof(SiteStrings))]
         public bool SeparateDns { get; set; }
@@ -111,7 +111,7 @@ namespace Quantumart.QP8.BLL
         public string UploadUrl { get; set; }
 
         /// <summary>
-        /// признак, разрешающий использовать абсолютный URL закачки
+        /// Признак, разрешающий использовать абсолютный URL закачки
         /// </summary>
         [LocalizedDisplayName("UseAbsoluteUploadUrl", NameResourceType = typeof(SiteStrings))]
         public bool UseAbsoluteUploadUrl { get; set; }
@@ -125,7 +125,7 @@ namespace Quantumart.QP8.BLL
         public string UploadUrlPrefix { get; set; }
 
         /// <summary>
-        /// путь загрузки
+        /// Путь загрузки
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "UploadDirNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "UploadDirMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -135,7 +135,7 @@ namespace Quantumart.QP8.BLL
         public string UploadDir { get; set; }
 
         /// <summary>
-        /// виртуальный путь расположения страниц в Основном режиме
+        /// Виртуальный путь расположения страниц в Основном режиме
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "LiveVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "LiveVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -145,7 +145,7 @@ namespace Quantumart.QP8.BLL
         public string LiveVirtualRoot { get; set; }
 
         /// <summary>
-        /// путь расположения страниц в Основном режиме
+        /// Путь расположения страниц в Основном режиме
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "LiveDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "LiveDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -155,13 +155,13 @@ namespace Quantumart.QP8.BLL
         public string LiveDirectory { get; set; }
 
         /// <summary>
-        /// признак, разрешающий использовать тестовую папку
+        /// Признак, разрешающий использовать тестовую папку
         /// </summary>
         [LocalizedDisplayName("ForceTestDirectory", NameResourceType = typeof(SiteStrings))]
         public bool ForceTestDirectory { get; set; }
 
         /// <summary>
-        /// тестовая папка
+        /// Тестовая папка
         /// </summary>
         [MaxLengthValidator(255, MessageTemplateResourceName = "TestDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
         [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "TestDirectoryInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -169,7 +169,7 @@ namespace Quantumart.QP8.BLL
         public string TestDirectory { get; set; }
 
         /// <summary>
-        /// виртуальный путь расположения страниц в Тестовом режиме
+        /// Виртуальный путь расположения страниц в Тестовом режиме
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "StageVirtualRootNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "StageVirtualRootMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -179,7 +179,7 @@ namespace Quantumart.QP8.BLL
         public string StageVirtualRoot { get; set; }
 
         /// <summary>
-        /// путь расположения страниц в Тестовом режиме
+        /// Путь расположения страниц в Тестовом режиме
         /// </summary>
         [RequiredValidator(MessageTemplateResourceName = "StageDirectoryNotEntered", MessageTemplateResourceType = typeof(SiteStrings))]
         [MaxLengthValidator(255, MessageTemplateResourceName = "StageDirectoryMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -189,7 +189,7 @@ namespace Quantumart.QP8.BLL
         public string StageDirectory { get; set; }
 
         /// <summary>
-        /// путь расположения файлов сборок для Основного режима
+        /// Путь расположения файлов сборок для Основного режима
         /// </summary>
         [MaxLengthValidator(255, MessageTemplateResourceName = "AssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
         [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "AssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -198,7 +198,7 @@ namespace Quantumart.QP8.BLL
         public string AssemblyPath { get; set; }
 
         /// <summary>
-        /// путь расположения файлов сборок для Тестового режима
+        /// Путь расположения файлов сборок для Тестового режима
         /// </summary>
         [MaxLengthValidator(255, MessageTemplateResourceName = "StageAssemblyPathMaxLengthExceeded", MessageTemplateResourceType = typeof(SiteStrings))]
         [FormatValidator(RegularExpressions.AbsoluteWindowsFolderPath, MessageTemplateResourceName = "StageAssemblyPathInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
@@ -210,21 +210,20 @@ namespace Quantumart.QP8.BLL
         public bool ForceAssemble { get; set; }
 
         /// <summary>
-        /// отображение рамки объекта в режиме OnScreen
+        /// Отображение рамки объекта в режиме OnScreen
         /// </summary>
         [LocalizedDisplayName("OnScreenObjectBorder", NameResourceType = typeof(SiteStrings))]
         public int OnScreenObjectBorder { get; set; }
 
         /// <summary>
-        /// отображение рамки поля в режиме OnScreen
+        /// Отображение рамки поля в режиме OnScreen
         /// </summary>
         [LocalizedDisplayName("OnScreenFieldBorder", NameResourceType = typeof(SiteStrings))]
         public int OnScreenFieldBorder { get; set; }
 
         /// <summary>
-        /// маска разрешений для объектов в режиме OnScreen
+        /// Маска разрешений для объектов в режиме OnScreen
         /// </summary>
-
         public int OnScreenObjectTypeMask { get; set; }
 
         /// <summary>
@@ -511,12 +510,7 @@ namespace Quantumart.QP8.BLL
 
         public static string GetFullyQualifiedName(string nameSpace, string className)
         {
-            if (string.IsNullOrEmpty(nameSpace))
-            {
-                return className;
-            }
-
-            return $"{nameSpace}.{className}";
+            return string.IsNullOrEmpty(nameSpace) ? className : $"{nameSpace}.{className}";
         }
 
         public void SaveVisualEditorCommands(int[] activeVeCommands)
@@ -634,7 +628,7 @@ namespace Quantumart.QP8.BLL
                 }
             }
 
-            if (!string.IsNullOrEmpty(ExternalUrl) && !Regex.IsMatch(ExternalUrl, RegularExpressions.AbsoluteWebFolderUrl))
+            if (!string.IsNullOrEmpty(ExternalUrl) && !UrlHelpers.IsAbsoluteWebFolderUrl(ExternalUrl))
             {
                 errors.ErrorFor(s => s.ExternalUrl, SiteStrings.ExternalUrlNotValid);
             }

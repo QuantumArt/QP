@@ -10,7 +10,9 @@ namespace Quantumart.QP8.Validators
         private PropertyInfo _nameProperty;
         private Type _resourceType;
 
-        public LocalizedDisplayNameAttribute(string displayNameKey) : base(displayNameKey) { }
+        public LocalizedDisplayNameAttribute(string displayNameKey)
+            : base(displayNameKey)
+        { }
 
         public Type NameResourceType
         {
