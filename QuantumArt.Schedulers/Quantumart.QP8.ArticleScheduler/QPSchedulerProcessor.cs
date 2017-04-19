@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration;
@@ -14,7 +15,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
         private readonly TimeSpan _recurrentTimeout;
         private readonly TimeSpan _tasksQueueCheckShiftTime;
-        private readonly PrtgErrorsHandler _prtgLogger;
+        private PrtgErrorsHandler _prtgLogger;
 
         private Task _task;
         private CancellationTokenSource _cancellationTokenSource;
@@ -23,7 +24,6 @@ namespace Quantumart.QP8.ArticleScheduler
         {
             _recurrentTimeout = recurrentTimeout;
             _tasksQueueCheckShiftTime = tasksQueueCheckShiftTime;
-            _prtgLogger = new PrtgErrorsHandler();
         }
 
         public void Run()
@@ -36,6 +36,8 @@ namespace Quantumart.QP8.ArticleScheduler
                     try
                     {
                         var unityConfig = new UnityContainerCustomizer();
+                        _prtgLogger = _prtgLogger ?? new PrtgErrorsHandler();
+
                         var customers = QPConfiguration.GetCustomers(AppName, true);
                         new QpScheduler(unityConfig.UnityContainer, customers, _tasksQueueCheckShiftTime).Run();
                     }
