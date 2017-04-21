@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Quantumart.QP8.Scheduler.Notification.Providers
+namespace Quantumart.QP8.Scheduler.Notification.Data
 {
     public class NotificationModel
     {

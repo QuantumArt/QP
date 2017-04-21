@@ -21,6 +21,7 @@ namespace Quantumart.QP8.Scheduler.API.Extensions
                     if (!currentKey.Equals(key))
                     {
                         yield return new Grouping<TKey, TElement>(currentKey, foundItems);
+
                         currentKey = key;
                         foundItems = new List<TElement>();
                     }

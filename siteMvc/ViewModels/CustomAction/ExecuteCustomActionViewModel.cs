@@ -6,7 +6,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
 {
     public class ExecuteCustomActionViewModel : ViewModel
     {
-        public static ExecuteCustomActionViewModel Create(string tabId, int parentId, int[] IDs, BLL.CustomAction customAction)
+        public static ExecuteCustomActionViewModel Create(string tabId, int parentId, int[] ids, BLL.CustomAction customAction)
         {
             var model = Create<ExecuteCustomActionViewModel>(tabId, parentId);
             model.CustomAction = customAction;

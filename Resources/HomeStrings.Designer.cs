@@ -79,15 +79,6 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Backend version.
-        /// </summary>
-        public static string BackendVersion {
-            get {
-                return ResourceManager.GetString("BackendVersion", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to DB name.
         /// </summary>
         public static string DBName {
@@ -102,15 +93,6 @@ namespace Quantumart.QP8.Resources {
         public static string DBServerName {
             get {
                 return ResourceManager.GetString("DBServerName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Database version.
-        /// </summary>
-        public static string DBVersion {
-            get {
-                return ResourceManager.GetString("DBVersion", resourceCulture);
             }
         }
         

@@ -2,7 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
+using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.ArticleScheduler
@@ -13,6 +15,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
         private readonly TimeSpan _recurrentTimeout;
         private readonly TimeSpan _tasksQueueCheckShiftTime;
+        private PrtgErrorsHandler _prtgLogger;
 
         private Task _task;
         private CancellationTokenSource _cancellationTokenSource;
@@ -33,6 +36,8 @@ namespace Quantumart.QP8.ArticleScheduler
                     try
                     {
                         var unityConfig = new UnityContainerCustomizer();
+                        _prtgLogger = _prtgLogger ?? new PrtgErrorsHandler();
+
                         var customers = QPConfiguration.GetCustomers(AppName, true);
                         new QpScheduler(unityConfig.UnityContainer, customers, _tasksQueueCheckShiftTime).Run();
                     }
@@ -40,7 +45,7 @@ namespace Quantumart.QP8.ArticleScheduler
                     {
                         const string errorMessage = "There was an error while starting the service job";
                         Logger.Log.Error(errorMessage, ex);
-                        PrtgErrorsHandler.LogMessage(new PrtgServiceMonitoringMessage
+                        _prtgLogger.LogMessage(new PrtgServiceMonitoringMessage
                         {
                             Message = errorMessage,
                             State = PrtgServiceMonitoringEnum.CriticalError
@@ -63,7 +68,7 @@ namespace Quantumart.QP8.ArticleScheduler
             {
                 const string errorMessage = "There was an error while stopping the service";
                 Logger.Log.Error(errorMessage, ex);
-                PrtgErrorsHandler.LogMessage(new PrtgServiceMonitoringMessage
+                _prtgLogger.LogMessage(new PrtgServiceMonitoringMessage
                 {
                     Message = errorMessage,
                     State = PrtgServiceMonitoringEnum.CriticalError

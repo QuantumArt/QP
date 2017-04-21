@@ -1,10 +1,11 @@
-﻿using Quantumart.QP8.BLL.Repository;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using QP8.Infrastructure.Web.Helpers;
+using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
 using Quantumart.QP8.Validators;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Quantumart.QP8.BLL.Services.VisualEditor
 {
@@ -76,7 +77,7 @@ namespace Quantumart.QP8.BLL.Services.VisualEditor
             var errors = new RulesException<VisualEditorPlugin>();
             base.Validate(errors);
 
-            if (!string.IsNullOrEmpty(Url) && !Regex.IsMatch(Url, RegularExpressions.AbsoluteWebFolderUrl) && !Regex.IsMatch(Url, RegularExpressions.RelativeWebFolderUrl))
+            if (!string.IsNullOrEmpty(Url) && !UrlHelpers.IsValidWebFolderUrl(Url))
             {
                 errors.ErrorFor(n => Url, VisualEditorStrings.UrlPrefixInvalidFormat);
             }
