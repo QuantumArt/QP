@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
@@ -8,7 +9,7 @@ using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
-    internal class DbScheduler : IScheduler
+    internal class DbScheduler : IDbScheduler
     {
         private readonly IOnetimeTaskScheduler _onetimeScheduler;
         private readonly IRecurringTaskScheduler _recurringScheduler;
@@ -30,33 +31,47 @@ namespace Quantumart.QP8.ArticleScheduler
 
         public void Run()
         {
-            GetDbScheduleTaskActions().ForEach(RunScheduleTaskAction);
+            var dbTasks = GetDbScheduleTaskActions();
+            dbTasks.Where(FilterOnetimeTasksPredicate).ForEach(_onetimeScheduler.Run);
+            dbTasks.Where(FilterRecurringTasksPredicate).ForEach(_recurringScheduler.Run);
+            dbTasks.Where(FilterPublishingTasksPredicate).ForEach(_publishingScheduler.Run);
         }
 
-        private IEnumerable<ArticleScheduleTask> GetDbScheduleTaskActions()
+        public List<ArticleScheduleTask> GetDbScheduleTaskActions()
         {
-            return _articleSchedulerService.GetScheduleTaskList();
+            return _articleSchedulerService.GetScheduleTaskList().ToList();
         }
 
-        private void RunScheduleTaskAction(ArticleScheduleTask articleTask)
+        public int GetTasksCountToProcessAtSpecificDateTime(DateTime dateTimeToCheck)
         {
-            switch (articleTask.FreqType)
-            {
-                case ScheduleFreqTypes.OneTime:
-                    _onetimeScheduler.Run(articleTask);
-                    break;
-                case ScheduleFreqTypes.Publishing:
-                    _publishingScheduler.Run(articleTask);
-                    break;
-                case ScheduleFreqTypes.RecurringDaily:
-                case ScheduleFreqTypes.RecurringWeekly:
-                case ScheduleFreqTypes.RecurringMonthly:
-                case ScheduleFreqTypes.RecurringMonthlyRelative:
-                    _recurringScheduler.Run(articleTask);
-                    break;
-                default:
-                    throw new ArgumentException("Undefined FreqType value: " + articleTask.FreqType);
-            }
+            var dbTasks = GetDbScheduleTaskActions();
+            var onetimeTasksCount = dbTasks.Where(FilterOnetimeTasksPredicate).Count(FilterTasksToProceedPredicate(_onetimeScheduler, dateTimeToCheck));
+            var recurringTasksCount = dbTasks.Where(FilterRecurringTasksPredicate).Count(FilterTasksToProceedPredicate(_recurringScheduler, dateTimeToCheck));
+            var publishingTasksCount = dbTasks.Where(FilterPublishingTasksPredicate).Count(FilterTasksToProceedPredicate(_publishingScheduler, dateTimeToCheck));
+            return onetimeTasksCount + recurringTasksCount + publishingTasksCount;
+        }
+
+        private static Func<ArticleScheduleTask, bool> FilterTasksToProceedPredicate(ITaskScheduler taskScheduler, DateTime dateTimeToCheck)
+        {
+            return task => taskScheduler.ShouldProcessTask(task, dateTimeToCheck);
+        }
+
+        private static bool FilterOnetimeTasksPredicate(ArticleScheduleTask task)
+        {
+            return task.FreqType == ScheduleFreqTypes.OneTime;
+        }
+
+        private static bool FilterRecurringTasksPredicate(ArticleScheduleTask task)
+        {
+            return task.FreqType == ScheduleFreqTypes.RecurringDaily
+                || task.FreqType == ScheduleFreqTypes.RecurringWeekly
+                || task.FreqType == ScheduleFreqTypes.RecurringMonthly
+                || task.FreqType == ScheduleFreqTypes.RecurringMonthlyRelative;
+        }
+
+        private static bool FilterPublishingTasksPredicate(ArticleScheduleTask task)
+        {
+            return task.FreqType == ScheduleFreqTypes.Publishing;
         }
     }
 }

@@ -32,9 +32,8 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         public void Synchronize()
         {
             // Prepare data
-            var qpGroups = UserGroupRepository.GetNtGroups();
+            var qpGroups = UserGroupRepository.GetNtGroups().ToList();
             var qpGroupNames = qpGroups.Select(g => g.NtGroup).ToArray();
-            var qpUsers = UserRepository.GetNtUsers();
             var adGroups = _activeDirectory.GetGroups(qpGroupNames);
             var adGroupNames = adGroups.Select(g => g.Name).ToArray();
 
@@ -68,6 +67,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             }
 
             // Add users
+            var qpUsers = UserRepository.GetNtUsers();
             var adUsersToBeAdded = adUsers.Where(adu => !adu.IsDisabled && qpUsers.All(qpu => adu.AccountName != qpu.NtLogOn));
             foreach (var adUser in adUsersToBeAdded)
             {
@@ -144,7 +144,7 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
             qpUser.Disabled = adUser.IsDisabled;
         }
 
-        private static void MapGroups(ActiveDirectoryEntityBase adUser, ref User qpUser, IEnumerable<ActiveDirectoryGroup> adGroups, IEnumerable<UserGroup> qpGroups)
+        private static void MapGroups(ActiveDirectoryEntityBase adUser, ref User qpUser, IEnumerable<ActiveDirectoryGroup> adGroups, List<UserGroup> qpGroups)
         {
             var importedGroups = from qpg in qpGroups
                                  join adg in adGroups on qpg.NtGroup equals adg.Name

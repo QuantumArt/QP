@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<WixLocalization Culture="ru-RU" xmlns="http://schemas.microsoft.com/wix/2006/localization" Codepage="1251">
-  <String Id="WrongMVCDlgTitle">Ошибка</String>
-  <String Id="WrongMVCDlgInstallTitle">Ошибка</String>
-  <String Id="WrongMVCDlgErrorMessage">Неверная версия MVC.</String>
-</WixLocalization>

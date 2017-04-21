@@ -1,8 +1,8 @@
-﻿using Quantumart.QP8.Constants;
-using Quantumart.QP8.Resources;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
+using QP8.Infrastructure.Web.Helpers;
+using Quantumart.QP8.Resources;
+using Quantumart.QP8.Validators.Helpers;
 
 namespace Quantumart.QP8.BLL.Helpers
 {
@@ -51,28 +51,30 @@ namespace Quantumart.QP8.BLL.Helpers
 
         internal static void ValidateExternalCss(ExternalCss externalCss, RulesException errors, int index, string[] duplicateUrls)
         {
-            if (!string.IsNullOrWhiteSpace(externalCss.Url) && duplicateUrls.Contains(externalCss.Url))
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlDuplicate, index));
-                externalCss.Invalid = true;
-            }
-
             if (string.IsNullOrWhiteSpace(externalCss.Url))
             {
                 errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlRequired, index));
                 externalCss.Invalid = true;
             }
-
-            if (!string.IsNullOrWhiteSpace(externalCss.Url) && !Regex.IsMatch(externalCss.Url, RegularExpressions.AbsoluteWebFolderUrl) && !Regex.IsMatch(externalCss.Url, RegularExpressions.RelativeWebFolderUrl))
+            else
             {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlNotValid, index));
-                externalCss.Invalid = true;
-            }
+                if (duplicateUrls.Contains(externalCss.Url))
+                {
+                    errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlDuplicate, index));
+                    externalCss.Invalid = true;
+                }
 
-            if (externalCss.Url.Length > 255)
-            {
-                errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlMaxLengthExceeded, index));
-                externalCss.Invalid = true;
+                if (!UrlHelpers.IsValidWebFolderUrl(externalCss.Url))
+                {
+                    errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlNotValid, index));
+                    externalCss.Invalid = true;
+                }
+
+                if (externalCss.Url.Length > 255)
+                {
+                    errors.ErrorForModel(string.Format(VisualEditorStrings.ExternalCssUrlMaxLengthExceeded, index));
+                    externalCss.Invalid = true;
+                }
             }
         }
 

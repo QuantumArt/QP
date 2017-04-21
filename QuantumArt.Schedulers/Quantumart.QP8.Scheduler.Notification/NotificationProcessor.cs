@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Services;
+using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.API.Extensions;
+using Quantumart.QP8.Scheduler.Notification.Data;
 using Quantumart.QP8.Scheduler.Notification.Providers;
 
 namespace Quantumart.QP8.Scheduler.Notification
@@ -20,6 +23,7 @@ namespace Quantumart.QP8.Scheduler.Notification
         private readonly ISchedulerCustomers _schedulerCustomers;
         private readonly IExternalNotificationService _externalNotificationService;
         private readonly INotificationProvider _notificationProvider;
+        private readonly PrtgErrorsHandler _prtgLogger;
 
         public NotificationProcessor(
             ILog logger,
@@ -31,11 +35,14 @@ namespace Quantumart.QP8.Scheduler.Notification
             _schedulerCustomers = schedulerCustomers;
             _externalNotificationService = externalNotificationService;
             _notificationProvider = notificationProvider;
+            _prtgLogger = new PrtgErrorsHandler();
         }
 
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start sending notifications");
+
+            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_schedulerCustomers.ToList());
             foreach (var customer in _schedulerCustomers)
             {
                 if (token.IsCancellationRequested)
@@ -43,80 +50,118 @@ namespace Quantumart.QP8.Scheduler.Notification
                     break;
                 }
 
-                ExternalNotification[] notifications;
-                var sentNotificationIds = new List<int>();
-                var unsentNotificationIds = new List<int>();
-                using (new QPConnectionScope(customer.ConnectionString))
+                try
                 {
-                    notifications = _externalNotificationService.GetPendingNotifications().ToArray();
+                    var notificationIdsStatus = await ProcessCustomer(customer, token);
+                    prtgErrorsHandlerVm.IncrementTasksQueueCount(notificationIdsStatus.Item2.Count);
                 }
-
-                var notificationData = from g in notifications.GroupBySequence(n => new { n.Url, n.EventName, n.SiteId, n.ContentId }, n => n)
-                                       select new
-                                       {
-                                           NotificationModel = new NotificationModel
-                                           {
-                                               Url = g.Key.Url,
-                                               SiteId = g.Key.SiteId,
-                                               ContentId = g.Key.ContentId,
-                                               EventName = g.Key.EventName,
-                                               Ids = g.Select(n => n.ArticleId),
-                                               NewXmlNodes = g.Select(n => n.NewXml),
-                                               OldXmlNodes = g.Select(n => n.OldXml)
-                                           },
-                                           NotificationIds = g.Select(n => n.Id)
-                                       };
-
-                foreach (var item in notificationData)
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        if (token.IsCancellationRequested)
-                        {
-                            break;
-                        }
-
-                        var status = await _notificationProvider.Notify(item.NotificationModel);
-                        var message = $"Sent event { item.NotificationModel.EventName} to {item.NotificationModel.Url} with status {status} for customer code: {customer.CustomerName}";
-                        if (status == HttpStatusCode.OK)
-                        {
-                            _logger.Info(message);
-                            foreach (var param in item.NotificationModel.Parameters)
-                            {
-                                _logger.Info($"{param.Key}: {param.Value}");
-                            }
-
-                            sentNotificationIds.AddRange(item.NotificationIds);
-                        }
-                        else
-                        {
-                            _logger.Info(message);
-                            unsentNotificationIds.AddRange(item.NotificationIds);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        unsentNotificationIds.AddRange(item.NotificationIds);
-                        var message = $"Exception while sending event {item.NotificationModel.EventName} to {item.NotificationModel.Url} with message {ex.Message} for customer code: {customer.CustomerName}";
-                        _logger.Error(message, ex);
-                    }
-                }
-
-                using (new QPConnectionScope(customer.ConnectionString))
-                {
-                    if (sentNotificationIds.Any())
-                    {
-                        _externalNotificationService.UpdateSentNotifications(sentNotificationIds);
-                    }
-
-                    if (unsentNotificationIds.Any())
-                    {
-                        _externalNotificationService.UpdateUnsentNotifications(unsentNotificationIds);
-                    }
+                    ex.Data.Add("CustomerCode", customer.CustomerName);
+                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}", ex);
+                    prtgErrorsHandlerVm.EnqueueNewException(ex);
                 }
             }
 
+            _prtgLogger.LogMessage(prtgErrorsHandlerVm);
             _logger.Info("End sending notifications");
+        }
+
+        private async Task<Tuple<List<int>, List<int>>> ProcessCustomer(QaConfigCustomer customer, CancellationToken token)
+        {
+            var sentNotificationIds = new List<int>();
+            var unsentNotificationIds = new List<int>();
+            var notificationsViewModels = GetPendingNotificationsViewModels(customer);
+            foreach (var notificationVm in notificationsViewModels)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    break;
+                }
+
+                try
+                {
+                    var notificationIdsStatus = await SendNotificationData(notificationVm, customer);
+                    sentNotificationIds.AddRange(notificationIdsStatus.Item1);
+                    unsentNotificationIds.AddRange(notificationIdsStatus.Item2);
+                }
+                catch (Exception ex)
+                {
+                    unsentNotificationIds.AddRange(notificationVm.NotificationsIds);
+                    var message = $"Exception while sending event {notificationVm.NotificationModel.EventName} to {notificationVm.NotificationModel.Url} with message {ex.Message} for customer code: {customer.CustomerName}";
+                    _logger.Error(message, ex);
+                }
+            }
+
+            UpdateDbNotificationsData(customer, sentNotificationIds, unsentNotificationIds);
+            return Tuple.Create(sentNotificationIds, unsentNotificationIds);
+        }
+
+        private IEnumerable<NotificationViewModel> GetPendingNotificationsViewModels(QaConfigCustomer customer)
+        {
+            IEnumerable<ExternalNotification> notifications;
+            using (new QPConnectionScope(customer.ConnectionString))
+            {
+                notifications = _externalNotificationService.GetPendingNotifications();
+            }
+
+            return notifications
+                .GroupBySequence(n => new { n.Url, n.EventName, n.SiteId, n.ContentId }, n => n)
+                .Select(group => new NotificationViewModel
+                {
+                    NotificationModel = new NotificationModel
+                    {
+                        Url = group.Key.Url,
+                        SiteId = group.Key.SiteId,
+                        ContentId = group.Key.ContentId,
+                        EventName = group.Key.EventName,
+                        Ids = group.Select(n => n.ArticleId),
+                        NewXmlNodes = group.Select(n => n.NewXml),
+                        OldXmlNodes = group.Select(n => n.OldXml)
+                    },
+                    NotificationsIds = group.Select(n => n.Id).ToList()
+                });
+        }
+
+        private async Task<Tuple<List<int>, List<int>>> SendNotificationData(NotificationViewModel notificationVm, QaConfigCustomer customer)
+        {
+            var sentNotificationIds = new List<int>();
+            var unsentNotificationIds = new List<int>();
+            var status = await _notificationProvider.Notify(notificationVm.NotificationModel);
+            var message = $"Sent event { notificationVm.NotificationModel.EventName} to {notificationVm.NotificationModel.Url} with status {status} for customer code: {customer.CustomerName}";
+            if (status == HttpStatusCode.OK)
+            {
+                _logger.Info(message);
+                foreach (var param in notificationVm.NotificationModel.Parameters)
+                {
+                    _logger.Info($"{param.Key}: {param.Value}");
+                }
+
+                sentNotificationIds.AddRange(notificationVm.NotificationsIds);
+            }
+            else
+            {
+                _logger.Info(message);
+                unsentNotificationIds.AddRange(notificationVm.NotificationsIds);
+            }
+
+            return Tuple.Create(sentNotificationIds, unsentNotificationIds);
+        }
+
+        private void UpdateDbNotificationsData(QaConfigCustomer customer, IReadOnlyCollection<int> sentNotificationIds, IReadOnlyCollection<int> unsentNotificationIds)
+        {
+            using (new QPConnectionScope(customer.ConnectionString))
+            {
+                if (sentNotificationIds.Any())
+                {
+                    _externalNotificationService.UpdateSentNotifications(sentNotificationIds);
+                }
+
+                if (unsentNotificationIds.Any())
+                {
+                    _externalNotificationService.UpdateUnsentNotifications(unsentNotificationIds);
+                }
+            }
         }
 
         public void Dispose()

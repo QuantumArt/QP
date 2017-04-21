@@ -1,4 +1,5 @@
-﻿using QP8.Infrastructure.Logging;
+﻿using System;
+using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Services.ArticleScheduler;
@@ -21,11 +22,21 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
         {
             var task = PublishingTask.Create(articleTask);
             var currentTime = _publishingService.GetCurrentDBDateTime();
-            if (currentTime >= task.PublishingDateTime)
+            if (ShouldProcessTask(task, currentTime))
             {
                 var article = _publishingService.PublishAndCloseSchedule(task.Id);
                 Logger.Log.Info($"Article [{article.Id}: {article.Name}] has been published on customer code: {_customer.CustomerName}");
             }
+        }
+
+        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
+        {
+            return dateTimeToCheck >= ((PublishingTask)task).PublishingDateTime;
+        }
+
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck)
+        {
+            return ShouldProcessTask(PublishingTask.Create(task), dateTimeToCheck);
         }
     }
 }

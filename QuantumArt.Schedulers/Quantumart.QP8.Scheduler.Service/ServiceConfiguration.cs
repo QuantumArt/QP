@@ -17,7 +17,7 @@ namespace Quantumart.QP8.Scheduler.Service
             Container.AddNewExtension<SchedulerUsersConfiguration>();
             Container.AddNewExtension<SchedulerNotificationConfiguration>();
             Container.AddNewExtension<SchedulerCoreConfiguration>();
-            Container.AddNewExtension<NLogContainerExtension>();
+            Container.AddExtension(new NLogContainerExtension());
 
             var descriptors = Container.ResolveAll<ServiceDescriptor>();
             foreach (var descriptor in descriptors)

@@ -33,9 +33,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
             return model;
         }
 
-        /// <summary>
-        /// Инициализирует View Model
-        /// </summary>
         private void Init()
         {
             if (!IsNew)
@@ -50,9 +47,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
             SelectedActions = Data.ParentActions?.Select(c => new QPCheckedItem { Value = c.ToString() }).ToList() ?? Enumerable.Empty<QPCheckedItem>().ToList();
         }
 
-        /// <summary>
-        /// Устанавливает свойства модели, которые не могут быть установлены автоматически
-        /// </summary>
         internal void DoCustomBinding()
         {
             Data.Action.TypeId = CustomActionTypeId ?? 0;
@@ -61,7 +55,6 @@ namespace Quantumart.QP8.WebMvc.ViewModels.CustomAction
             Data.Sites = _service.GetSites(SelectedSiteIDs);
             Data.Contents = _service.GetContents(SelectedContentIDs);
         }
-
 
         public override void Validate(ModelStateDictionary modelState)
         {

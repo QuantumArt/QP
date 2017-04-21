@@ -1408,7 +1408,7 @@ namespace Quantumart.QP8.BLL.Repository.Articles
         {
             return (from a in articles
                     from f in a.Fields
-                    from linkedItemId in f.ArticleIds ?? new int[0]
+                    from linkedItemId in (f.ArticleIds != null && f.ArticleIds.Any()) ? f.ArticleIds : new int[] { 0 }
                     join r in relations on f.Id equals r.FieldId
                     where r.LinkId.HasValue
                     select new LinkData

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using Newtonsoft.Json;
 using QA.Validation.Xaml;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Interfaces.Db;
@@ -40,13 +41,13 @@ namespace Quantumart.QP8.BLL
                 var result = new List<VirtualFieldNode>();
                 Action<IEnumerable<VirtualFieldNode>> toggle = null;
                 toggle = parentNodes =>
+                {
+                    result.AddRange(parentNodes);
+                    foreach (var childNode in parentNodes)
                     {
-                        result.AddRange(parentNodes);
-                        foreach (var childNode in parentNodes)
-                        {
-                            toggle(childNode.Children);
-                        }
-                    };
+                        toggle(childNode.Children);
+                    }
+                };
 
                 toggle(nodes);
                 return result.ToArray();
@@ -104,12 +105,14 @@ namespace Quantumart.QP8.BLL
                         .Where(f => f.JoinId == parentFieldId)
                         .Select(f => new VirtualFieldNode { Id = f.Id })
                         .ToArray();
+
                     foreach (var childFieldNode in childFieldNodes)
                     {
                         var childTreeId = GetFieldTreeId(childFieldNode.Id, parentFieldTreeId);
                         childFieldNode.TreeId = childTreeId;
                         childFieldNode.Children = addChildFieldNodes(childFieldNode.Id, childTreeId);
                     }
+
                     return childFieldNodes;
                 };
 
@@ -161,12 +164,7 @@ namespace Quantumart.QP8.BLL
             internal static string GetParentFieldTreeId(string fieldTreeId)
             {
                 var lastPointIndex = fieldTreeId.LastIndexOf('.');
-                if (lastPointIndex < 0)
-                {
-                    return null;
-                }
-
-                return string.Concat(fieldTreeId.Substring(0, lastPointIndex), ']');
+                return lastPointIndex < 0 ? null : string.Concat(fieldTreeId.Substring(0, lastPointIndex), ']');
             }
 
             /// <summary>
@@ -274,17 +272,11 @@ namespace Quantumart.QP8.BLL
             });
 
             _unionContentIDs = new InitPropertyValue<IEnumerable<int>>(() => VirtualContentRepository.GetUnionSourceContents(Id));
-
             _virtualSubContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetVirtualSubContents(Id));
-
             _userQueryContentViewSchema = new Lazy<IEnumerable<UserQueryColumn>>(GetUserQueryContentViewSchema);
-
             _aggregatedContents = new Lazy<IEnumerable<Content>>(() => ContentRepository.GetAggregatedContents(Id));
-
             _parentContent = new InitPropertyValue<Content>(() => ParentContentId.HasValue ? ContentRepository.GetById(ParentContentId.Value) : null);
-
             _childContents = new InitPropertyValue<IEnumerable<Content>>(() => ContentRepository.GetChildList(Id));
-
             _contentGroup = new InitPropertyValue<ContentGroup>(() => ContentRepository.GetGroupById(GroupId));
         }
 
@@ -319,101 +311,49 @@ namespace Quantumart.QP8.BLL
         public string FriendlySingularName { get; set; }
 
         [LocalizedDisplayName("EnableArticlesPermissions", NameResourceType = typeof(ContentStrings))]
-        public bool AllowItemsPermission
-        {
-            get;
-            set;
-        }
+        public bool AllowItemsPermission { get; set; }
 
         [LocalizedDisplayName("Group", NameResourceType = typeof(ContentStrings))]
-        public int GroupId
-        {
-            get;
-            set;
-        }
+        public int GroupId { get; set; }
 
         [LocalizedDisplayName("EnableSiteSharing", NameResourceType = typeof(ContentStrings))]
-        public bool IsShared
-        {
-            get;
-            set;
-        }
+        public bool IsShared { get; set; }
 
         [LocalizedDisplayName("ArchiveOnRemoval", NameResourceType = typeof(ContentStrings))]
-        public bool AutoArchive
-        {
-            get;
-            set;
-        }
+        public bool AutoArchive { get; set; }
 
         [LocalizedDisplayName("CreateVersions", NameResourceType = typeof(ContentStrings))]
-        public bool UseVersionControl
-        {
-            get;
-            set;
-        }
+        public bool UseVersionControl { get; set; }
 
         [LocalizedDisplayName("MaximumNumberOfStoredVersions", NameResourceType = typeof(ContentStrings))]
-        public int MaxNumOfStoredVersions
-        {
-            get;
-            set;
-        }
+        public int MaxNumOfStoredVersions { get; set; }
 
         [LocalizedDisplayName("ArticlesNumberPerPage", NameResourceType = typeof(ContentStrings))]
-        public int PageSize
-        {
-            get;
-            set;
-        }
+        public int PageSize { get; set; }
 
         [LocalizedDisplayName("MapAsClass", NameResourceType = typeof(ContentStrings))]
-        public bool MapAsClass
-        {
-            get;
-            set;
-        }
+        public bool MapAsClass { get; set; }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "NameSingularMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NameSingularInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("NameSingular", NameResourceType = typeof(ContentStrings))]
-        public string NetName
-        {
-            get;
-            set;
-        }
+        public string NetName { get; set; }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "NamePluralMaxLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [FormatValidator(RegularExpressions.NetName, MessageTemplateResourceName = "NamePluralInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("NamePlural", NameResourceType = typeof(ContentStrings))]
-        public string NetPluralName
-        {
-            get;
-            set;
-        }
+        public string NetPluralName { get; set; }
 
         [LocalizedDisplayName("UseDefaultFiltration", NameResourceType = typeof(ContentStrings))]
-        public bool UseDefaultFiltration
-        {
-            get;
-            set;
-        }
+        public bool UseDefaultFiltration { get; set; }
 
         [MaxLengthValidator(255, MessageTemplateResourceName = "AddContextClassNameLengthExceeded", MessageTemplateResourceType = typeof(ContentStrings))]
         [FormatValidator(RegularExpressions.FullQualifiedNetName, MessageTemplateResourceName = "AddContextClassNameInvalidFormat", MessageTemplateResourceType = typeof(SiteStrings))]
         [LocalizedDisplayName("AdditionalContextClassName", NameResourceType = typeof(ContentStrings))]
-        public string AdditionalContextClassName
-        {
-            get;
-            set;
-        }
+        public string AdditionalContextClassName { get; set; }
 
         [LocalizedDisplayName("VirtualType", NameResourceType = typeof(ContentStrings))]
-        public int VirtualType
-        {
-            get;
-            set;
-        }
+        public int VirtualType { get; set; }
 
         /// <summary>
         /// Тип виртуального контента в БД
@@ -422,29 +362,13 @@ namespace Quantumart.QP8.BLL
         public int StoredVirtualType { get; set; }
 
         [LocalizedDisplayName("JoinRoot", NameResourceType = typeof(ContentStrings))]
-        public int? JoinRootId
-        {
-            get;
-            set;
-        }
+        public int? JoinRootId { get; set; }
 
-        public string Query
-        {
-            get;
-            set;
-        }
+        public string Query { get; set; }
 
-        public string AltQuery
-        {
-            get;
-            set;
-        }
+        public string AltQuery { get; set; }
 
-        public int SiteId
-        {
-            get;
-            set;
-        }
+        public int SiteId { get; set; }
 
         [LocalizedDisplayName("XamlValidation", NameResourceType = typeof(ContentStrings))]
         public string XamlValidation { get; set; }
@@ -580,14 +504,13 @@ namespace Quantumart.QP8.BLL
         {
             get
             {
-                return Fields
-                    .Where(f => f.IsRelateable)
-                    .Select(f => f);
+                return Fields.Where(f => f.IsRelateable).Select(f => f);
             }
         }
 
         public ContentGroup Group => _contentGroup.Value;
 
+        [JsonIgnore]
         public ContentWorkflowBind WorkflowBinding
         {
             get
@@ -596,6 +519,7 @@ namespace Quantumart.QP8.BLL
                 {
                     LoadWorkflowBinding();
                 }
+
                 return _workflowBinding;
             }
             set
@@ -704,7 +628,6 @@ namespace Quantumart.QP8.BLL
         public override void Validate()
         {
             var errors = new RulesException<Content>();
-
             base.Validate(errors);
 
             ValidateAggregated(errors);
@@ -744,9 +667,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Проверка XAML
-        /// </summary>
         private void ValidateXaml(RulesException<Content> errors)
         {
             if (!DisableXamlValidation && !CreateDefaultXamlValidation && !string.IsNullOrWhiteSpace(XamlValidation))
@@ -766,9 +686,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Валидация контента содержащего агрегированные поля
-        /// </summary>
         private void ValidateAggregated(RulesException<Content> errors)
         {
             // изменение некоторых свойств запрещено
@@ -784,10 +701,12 @@ namespace Quantumart.QP8.BLL
                 {
                     errors.ErrorFor(f => AutoArchive, ContentStrings.CannotChangeAutoArchive);
                 }
+
                 if (WorkflowBinding.WorkflowId != dbContent.WorkflowBinding.WorkflowId) // Тип Workflow
                 {
                     errors.ErrorFor(f => WorkflowBinding.WorkflowId, ContentStrings.CannotChangeWorkflow);
                 }
+
                 if (WorkflowBinding.IsAsync != dbContent.WorkflowBinding.IsAsync) // Расщеплять ли статьи по Workflow
                 {
                     errors.ErrorFor(f => WorkflowBinding.IsAsync, ContentStrings.CannotChangeIsAsync);
@@ -795,9 +714,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        /// <summary>
-        /// Валидация при удалении
-        /// </summary>
         public void ValidateForRemove(IList<string> violationMessages)
         {
             // нельзя удалять если контент агрегированный и есть хотя бы одна статья
@@ -865,13 +781,12 @@ namespace Quantumart.QP8.BLL
                 else
                 {
                     var contentToCopy = ContentRepository.GetById(ParentContentId.Value);
-
                     contentToCopy.Name = Name;
                     contentToCopy.ParentContentId = ParentContentId.Value;
                     contentToCopy.Description = Description;
-
                     result = ContentRepository.Copy(contentToCopy, ForceId, ForceFieldIds, ForceLinkIds, true);
                 }
+
                 result.CreateContentFolders();
             }
             else
@@ -882,6 +797,7 @@ namespace Quantumart.QP8.BLL
                     Folder.ForceDelete(result.RootVersionsLibrary.Path);
                 }
             }
+
             return result;
 
         }
@@ -890,13 +806,13 @@ namespace Quantumart.QP8.BLL
         {
             using (VirtualFieldRepository.LoadVirtualFieldsRelationsToMemory(Id))
             {
-
                 var violationMessages = new List<string>();
                 ValidateForRemove(violationMessages);
                 if (!violationMessages.Any())
                 {
                     DieWithoutValidation();
                 }
+
                 return violationMessages;
             }
         }

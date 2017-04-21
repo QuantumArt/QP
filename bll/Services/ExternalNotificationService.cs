@@ -1,46 +1,46 @@
-﻿using Quantumart.QP8.BLL.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL.Services
 {
-	public interface IExternalNotificationService
-	{
-		IEnumerable<ExternalNotification> GetPendingNotifications();
-		void UpdateSentNotifications(IEnumerable<int> notificationIds);
-		void UpdateUnsentNotifications(IEnumerable<int> notificationIds);
-		void DeleteSentNotifications();
+    public interface IExternalNotificationService
+    {
+        IEnumerable<ExternalNotification> GetPendingNotifications();
 
-	    bool ExistsSentNotifications();
-	}
+        void UpdateSentNotifications(IEnumerable<int> notificationIds);
 
-	public class ExternalNotificationService : IExternalNotificationService
-	{
-		public IEnumerable<ExternalNotification> GetPendingNotifications()
-		{
-			return ExternalNotificationRepository.GetPendingNotifications();
-		}
+        void UpdateUnsentNotifications(IEnumerable<int> notificationIds);
 
-		public void UpdateSentNotifications(IEnumerable<int> notificationIds)
-		{
-			ExternalNotificationRepository.UpdateSentNotifications(notificationIds);
-		}
+        void DeleteSentNotifications();
 
-		public void UpdateUnsentNotifications(IEnumerable<int> notificationIds)
-		{
-			ExternalNotificationRepository.UpdateUnsentNotifications(notificationIds);
-		}
+        bool ExistsSentNotifications();
+    }
 
-		public void DeleteSentNotifications()
-		{
-			ExternalNotificationRepository.DeleteSentNotifications();
-		}
+    public class ExternalNotificationService : IExternalNotificationService
+    {
+        public IEnumerable<ExternalNotification> GetPendingNotifications()
+        {
+            return ExternalNotificationRepository.GetPendingNotifications();
+        }
 
-	    public bool ExistsSentNotifications()
-	    {
+        public void UpdateSentNotifications(IEnumerable<int> notificationIds)
+        {
+            ExternalNotificationRepository.UpdateSentNotifications(notificationIds);
+        }
+
+        public void UpdateUnsentNotifications(IEnumerable<int> notificationIds)
+        {
+            ExternalNotificationRepository.UpdateUnsentNotifications(notificationIds);
+        }
+
+        public void DeleteSentNotifications()
+        {
+            ExternalNotificationRepository.DeleteSentNotifications();
+        }
+
+        public bool ExistsSentNotifications()
+        {
             return ExternalNotificationRepository.ExistsSentNotifications();
         }
-	}
+    }
 }

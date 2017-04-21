@@ -6,14 +6,23 @@ namespace QP8.Infrastructure.Logging.UnityExtensions
 {
     public class NLogContainerExtension : UnityContainerExtension
     {
-        public static string LoggerTypeName = null;
+        private readonly string _loggerName;
+
+        public NLogContainerExtension()
+        {
+        }
+
+        public NLogContainerExtension(string loggerName)
+        {
+            _loggerName = loggerName;
+        }
 
         protected override void Initialize()
         {
             Container.RegisterType<ILogFactory, NLogFactory>(new ContainerControlledLifetimeManager());
-            Container.RegisterType<ILog>(string.IsNullOrWhiteSpace(LoggerTypeName)
+            Container.RegisterType<ILog>(string.IsNullOrWhiteSpace(_loggerName)
                 ? new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger())
-                : new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger(LoggerTypeName)));
+                : new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger(_loggerName)));
 
             LogProvider.LogFactory = Container.Resolve<ILogFactory>();
             Logger.Log = Container.Resolve<ILog>();
