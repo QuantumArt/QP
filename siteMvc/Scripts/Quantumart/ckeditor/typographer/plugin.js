@@ -60,8 +60,8 @@
       }
     }
 
-    fixToMdashFn = function(result, symbol) {
-      var tempResult = result;
+    fixToMdashFn = function (input, symbol) {
+      var tempResult = input;
       tempResult = tempResult.replace(new RegExp(' (' + symbol + '){1,2} ', 'g'), '&nbsp;&mdash; ');
       tempResult = tempResult.replace(new RegExp('([>|\\s])' + symbol + ' ', 'g'), '$1&mdash; ');
       tempResult = tempResult.replace(new RegExp('^' + symbol + ' ', 'g'), '&mdash; ');
@@ -77,7 +77,7 @@
     result = fixToMdashFn(result, '–');
     result = fixToMdashFn(result, '&ndash;');
 
-    result = result.replace(/(\d)-(\d)/g, '$1&ndash;$2');
+    result = result.replace(/\b(\d+)-(\d+)\b/g, '<nobr>$1&ndash;$2</nobr>');
     result = result.replace(/(\S+)-(\S+)/g, function replacer(match, p1, p2) {
       if (p1.length <= 3 || p2.length <= 3) {
         return '<nobr>' + p1 + '-' + p2 + '</nobr>';
