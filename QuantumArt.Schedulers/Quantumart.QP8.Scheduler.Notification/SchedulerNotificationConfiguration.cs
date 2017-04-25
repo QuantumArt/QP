@@ -12,6 +12,8 @@ namespace Quantumart.QP8.Scheduler.Notification
     public class SchedulerNotificationConfiguration : UnityContainerExtension
     {
         public const string ServiceName = "qp8.notification";
+        private const string CleanupNlogPath = "NLog.Notifications.Cleanup.config";
+        private const string NotificationsNlogPath = "NLog.Notifications.config";
 
         protected override void Initialize()
         {
@@ -29,16 +31,14 @@ namespace Quantumart.QP8.Scheduler.Notification
 
         private void RegisterCleanupProcessor()
         {
-            var childContainer = Container.CreateChildContainer();
-            childContainer.RegisterType<IPrtgNLogFactory>(new InjectionFactory(container => GetLoggerFactory("NLog.Notifications.Cleanup.config")));
-
             var assemblyType = typeof(CleanupProcessor);
+            Container.RegisterType<IPrtgNLogFactory>(CleanupNlogPath, new InjectionFactory(container => GetLoggerFactory(CleanupNlogPath)));
             Container.RegisterType<CleanupProcessor>(
                 assemblyType.Name,
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new CleanupProcessor(
-                    childContainer.Resolve<IPrtgNLogFactory>().GetLogger(assemblyType),
-                    new PrtgErrorsHandler(childContainer.Resolve<IPrtgNLogFactory>()),
+                    Container.Resolve<IPrtgNLogFactory>(CleanupNlogPath).GetLogger(assemblyType),
+                    new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(CleanupNlogPath)),
                     c.Resolve<ISchedulerCustomers>(),
                     c.Resolve<IExternalNotificationService>()
                )
@@ -47,16 +47,14 @@ namespace Quantumart.QP8.Scheduler.Notification
 
         private void RegisterNotificationsProcessor()
         {
-            var childContainer = Container.CreateChildContainer();
-            childContainer.RegisterType<IPrtgNLogFactory>(new InjectionFactory(container => GetLoggerFactory("NLog.Notifications.config")));
-
             var assemblyType = typeof(NotificationProcessor);
+            Container.RegisterType<IPrtgNLogFactory>(NotificationsNlogPath, new InjectionFactory(container => GetLoggerFactory(NotificationsNlogPath)));
             Container.RegisterType<NotificationProcessor>(
                 assemblyType.Name,
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new NotificationProcessor(
-                    childContainer.Resolve<IPrtgNLogFactory>().GetLogger(assemblyType),
-                    new PrtgErrorsHandler(childContainer.Resolve<IPrtgNLogFactory>()),
+                    Container.Resolve<IPrtgNLogFactory>(NotificationsNlogPath).GetLogger(assemblyType),
+                    new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(NotificationsNlogPath)),
                     c.Resolve<ISchedulerCustomers>(),
                     c.Resolve<IExternalNotificationService>(),
                     c.Resolve<INotificationProvider>()

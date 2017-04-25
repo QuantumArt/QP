@@ -1,26 +1,18 @@
 ﻿using System;
-using System.Text;
+using System.Globalization;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 using Microsoft.Practices.EnterpriseLibrary.Common;
-using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
 using Microsoft.Practices.EnterpriseLibrary.Validation;
 using Microsoft.Practices.EnterpriseLibrary.Validation.Validators;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Configuration;
-using Microsoft.Practices.EnterpriseLibrary.Validation.Properties;
-using System.Globalization;
 
 namespace Quantumart.QP8.Validators
 {
-	/// <summary>
-	/// Performs validation on strings by matching them to a <see cref="Regex"/> (ignore empty string).
-	/// </summary>
-	public class FormatValidator : ValueValidator<string>
-	{
-        private string pattern;
-        private RegexOptions options;
-        private string patternResourceName;
-        private Type patternResourceType;
+    /// <summary>
+    /// Performs validation on strings by matching them to a <see cref="Regex"/> (ignore empty string).
+    /// </summary>
+    public class FormatValidator : ValueValidator<string>
+    {
+        private readonly RegexOptions _options;
 
         /// <summary>
         /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern.</para>
@@ -59,7 +51,7 @@ namespace Quantumart.QP8.Validators
         { }
 
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern and 
+        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern and
         /// matching options.</para>
         /// </summary>
         /// <param name="pattern">The pattern to match.</param>
@@ -79,7 +71,7 @@ namespace Quantumart.QP8.Validators
         { }
 
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern and 
+        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern and
         /// matching options.</para>
         /// </summary>
         /// <param name="pattern">The pattern to match.</param>
@@ -90,7 +82,7 @@ namespace Quantumart.QP8.Validators
         { }
 
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern and 
+        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern and
         /// matching options.</para>
         /// </summary>
         /// <param name="patternResourceName">The resource name containing the pattern for the regular expression.</param>
@@ -146,7 +138,7 @@ namespace Quantumart.QP8.Validators
         { }
 
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern, 
+        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern,
         /// matching options and a failure message template.</para>
         /// </summary>
         /// <param name="pattern">The pattern to match.</param>
@@ -157,7 +149,7 @@ namespace Quantumart.QP8.Validators
         { }
 
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern, 
+        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern,
         /// matching options and a failure message template.</para>
         /// </summary>
         /// <param name="patternResourceName">The resource name containing the pattern for the regular expression.</param>
@@ -169,7 +161,7 @@ namespace Quantumart.QP8.Validators
         { }
 
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern, 
+        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern,
         /// matching options and a failure message template.</para>
         /// </summary>
         /// <param name="pattern">The pattern to match.</param>
@@ -181,7 +173,7 @@ namespace Quantumart.QP8.Validators
         { }
 
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern, 
+        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern,
         /// matching options and a failure message template.</para>
         /// </summary>
         /// <param name="options">The <see cref="RegexOptions"/> to use when matching.</param>
@@ -194,7 +186,7 @@ namespace Quantumart.QP8.Validators
         { }
 
         /// <summary>
-        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern, 
+        /// <para>Initializes a new instance of the <see cref="FormatValidator"/> class with a regex pattern,
         /// matching options and a failure message template.</para>
         /// </summary>
         /// <param name="pattern">The pattern to match.</param>
@@ -206,12 +198,12 @@ namespace Quantumart.QP8.Validators
         public FormatValidator(string pattern, string patternResourceName, Type patternResourceType, RegexOptions options, string messageTemplate, bool negated)
             : base(messageTemplate, null, negated)
         {
-			ValidatorArgumentsValidatorHelper.ValidateRegexIgnoresEmptyStringValidator(pattern, patternResourceName, patternResourceType);
+            ValidatorArgumentsValidatorHelper.ValidateRegexIgnoresEmptyStringValidator(pattern, patternResourceName, patternResourceType);
 
-            this.pattern = pattern;
-            this.options = options;
-            this.patternResourceName = patternResourceName;
-            this.patternResourceType = patternResourceType;
+            Pattern = pattern;
+            _options = options;
+            PatternResourceName = patternResourceName;
+            PatternResourceType = patternResourceType;
         }
 
         /// <summary>
@@ -226,23 +218,22 @@ namespace Quantumart.QP8.Validators
         /// <see langword="null"/> is considered a failed validation.
         /// </remarks>
 		protected override void DoValidate(string objectToValidate, object currentTarget, string key, ValidationResults validationResults)
-		{
-			bool logError = Negated;
+        {
+            var logError = Negated;
+            if (!string.IsNullOrWhiteSpace(objectToValidate))
+            {
+                var pattern = GetPattern();
+                var regex = new Regex(pattern, (RegexOptions)Options);
+                logError = !regex.IsMatch(objectToValidate);
+            }
 
-			if (!String.IsNullOrWhiteSpace(objectToValidate))
-			{
-				string pattern = GetPattern();
-				Regex regex = new Regex(pattern, (RegexOptions)this.Options);
-				logError = !regex.IsMatch(objectToValidate);
-			}
+            if (logError != Negated)
+            {
+                LogValidationResult(validationResults, GetMessage(objectToValidate, key), currentTarget, key);
+            }
+        }
 
-			if ((logError != Negated))
-			{
-				LogValidationResult(validationResults, GetMessage(objectToValidate, key), currentTarget, key);
-			}
-		}
-
-       /// <summary>
+        /// <summary>
         /// Gets the message representing a failed validation.
         /// </summary>
         /// <param name="objectToValidate">The object for which validation was performed.</param>
@@ -250,14 +241,7 @@ namespace Quantumart.QP8.Validators
         /// <returns>The message representing the validation failure.</returns>
         protected override string GetMessage(object objectToValidate, string key)
         {
-            return string.Format(
-                CultureInfo.CurrentCulture,
-                this.MessageTemplate,
-                objectToValidate,
-                key,
-                this.Tag,
-                this.pattern,
-                this.options);
+            return string.Format(CultureInfo.CurrentCulture, MessageTemplate, objectToValidate, key, Tag, Pattern, _options);
         }
 
         /// <summary>
@@ -266,62 +250,39 @@ namespace Quantumart.QP8.Validators
         /// <returns>The regular expression pattern.</returns>
         public string GetPattern()
         {
-            if (!string.IsNullOrEmpty(pattern))
-            {
-                return pattern;
-            }
-            else
-            {
-                return ResourceStringLoader.LoadString(patternResourceType.FullName, patternResourceName, patternResourceType.Assembly);
-            }
+            return !string.IsNullOrEmpty(Pattern)
+                ? Pattern
+                : ResourceStringLoader.LoadString(PatternResourceType.FullName, PatternResourceName, PatternResourceType.Assembly);
         }
 
         /// <summary>
         /// Gets the Default Message Template when the validator is non negated.
         /// </summary>
-        protected override string DefaultNonNegatedMessageTemplate
-        {
-            get { return Resources.RegexIgnoresEmptyStringValidatorNonNegatedDefaultMessageTemplate; }
-        }
+        protected override string DefaultNonNegatedMessageTemplate => Resources.RegexIgnoresEmptyStringValidatorNonNegatedDefaultMessageTemplate;
 
         /// <summary>
         /// Gets the Default Message Template when the validator is negated.
         /// </summary>
-        protected override string DefaultNegatedMessageTemplate
-        {
-            get { return Resources.RegexIgnoresEmptyStringValidatorNegatedDefaultMessageTemplate; }
-        }
+        protected override string DefaultNegatedMessageTemplate => Resources.RegexIgnoresEmptyStringValidatorNegatedDefaultMessageTemplate;
 
         /// <summary>
         /// Regular expression pattern used.
         /// </summary>
-        public string Pattern
-        {
-            get { return this.pattern; }
-        }
+        public string Pattern { get; }
 
         /// <summary>
         /// Any regex options specified.
         /// </summary>
-        public RegexOptions? Options
-        {
-            get { return this.options; }
-        }
+        public RegexOptions? Options => _options;
 
         /// <summary>
         /// Resource name used to load regex pattern.
         /// </summary>
-        public string PatternResourceName
-        {
-            get { return patternResourceName; }
-        }
+        public string PatternResourceName { get; }
 
         /// <summary>
         /// Resource type used to look up regex pattern.
         /// </summary>
-        public Type PatternResourceType
-        {
-            get { return patternResourceType; }
-        }
-	}
+        public Type PatternResourceType { get; }
+    }
 }

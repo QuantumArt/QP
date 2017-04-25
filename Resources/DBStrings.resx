@@ -171,4 +171,7 @@
   <data name="ReplayRecordsLabel" xml:space="preserve">
     <value>Проигрывание записанных действий</value>
   </data>
+  <data name="UseDPC" xml:space="preserve">
+    <value>Turn on DPC</value>
+  </data>
 </root>

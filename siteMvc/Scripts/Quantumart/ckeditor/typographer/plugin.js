@@ -10,6 +10,7 @@
 
   // eslint-disable-next-line max-statements
   var fixWithRegexps = function fixWithRegexps(str, shouldUseEng) {
+    var fixToMdashFn;
     var result = str;
     var apostropheHtmlCode = '&#146;';
     var numericHtmlCode = '&#8470;';
@@ -39,7 +40,11 @@
 
     // wordfix
     result = result.replace(/…/g, '...');
+
+    // &#8211; &ndash;
     result = result.replace(/–/g, '-');
+
+    // &#8212; &mdash;
     result = result.replace(/—/g, '-');
 
     // advanced quotes
@@ -55,15 +60,24 @@
       }
     }
 
+    fixToMdashFn = function (input, symbol) {
+      var tempResult = input;
+      tempResult = tempResult.replace(new RegExp(' (' + symbol + '){1,2} ', 'g'), '&nbsp;&mdash; ');
+      tempResult = tempResult.replace(new RegExp('([>|\\s])' + symbol + ' ', 'g'), '$1&mdash; ');
+      tempResult = tempResult.replace(new RegExp('^' + symbol + ' ', 'g'), '&mdash; ');
+      return tempResult;
+    };
+
     result = result.replace(/«/g, extLeft);
     result = result.replace(/»/g, extRight);
     result = result.replace(/ +/g, ' ');
-    result = result.replace(/ -{1,2} /g, '&nbsp;&mdash; ');
-    result = result.replace(/ –{1,2} /g, '&nbsp;&mdash; ');
     result = result.replace(/\.{3}/g, '&hellip;');
-    result = result.replace(/([>|\s])- /g, '$1&mdash; ');
-    result = result.replace(/^- /g, '&mdash; ');
-    result = result.replace(/(\d)-(\d)/g, '$1&ndash;$2');
+
+    result = fixToMdashFn(result, '-');
+    result = fixToMdashFn(result, '–');
+    result = fixToMdashFn(result, '&ndash;');
+
+    result = result.replace(/\b(\d+)-(\d+)\b/g, '<nobr>$1&ndash;$2</nobr>');
     result = result.replace(/(\S+)-(\S+)/g, function replacer(match, p1, p2) {
       if (p1.length <= 3 || p2.length <= 3) {
         return '<nobr>' + p1 + '-' + p2 + '</nobr>';

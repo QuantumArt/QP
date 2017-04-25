@@ -196,6 +196,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Turn on DPC.
+        /// </summary>
+        public static string UseDPC {
+            get {
+                return ResourceManager.GetString("UseDPC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Value.
         /// </summary>
         public static string Value {

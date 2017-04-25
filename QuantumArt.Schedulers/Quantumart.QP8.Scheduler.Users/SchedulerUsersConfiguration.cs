@@ -14,6 +14,7 @@ namespace Quantumart.QP8.Scheduler.Users
     public class SchedulerUsersConfiguration : UnityContainerExtension
     {
         public const string ServiceName = "qp8.users";
+        private const string CleanupNlogPath = "NLog.Users.config";
 
         protected override void Initialize()
         {
@@ -30,15 +31,15 @@ namespace Quantumart.QP8.Scheduler.Users
         private void RegisterCleanupProcessor()
         {
             var childContainer = Container.CreateChildContainer();
-            childContainer.RegisterType<IPrtgNLogFactory>(new InjectionFactory(container => GetLoggerFactory("NLog.Users.config")));
+            childContainer.RegisterType<IPrtgNLogFactory>(CleanupNlogPath, new InjectionFactory(container => GetLoggerFactory(CleanupNlogPath)));
 
             var assemblyType = typeof(UsersProcessor);
             Container.RegisterType<IProcessor, UsersProcessor>(
                 assemblyType.Name,
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new UsersProcessor(
-                    childContainer.Resolve<IPrtgNLogFactory>().GetLogger(assemblyType),
-                    new PrtgErrorsHandler(childContainer.Resolve<IPrtgNLogFactory>()),
+                    childContainer.Resolve<IPrtgNLogFactory>(CleanupNlogPath).GetLogger(assemblyType),
+                    new PrtgErrorsHandler(childContainer.Resolve<IPrtgNLogFactory>(CleanupNlogPath)),
                     c.Resolve<ISchedulerCustomers>(),
                     c.Resolve<Func<IUserSynchronizationService>>()
                )

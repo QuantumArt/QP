@@ -82,11 +82,18 @@
   <ItemGroup>
     <Compile Include="ActionResults\JsonCamelCaseResult.cs" />
     <Compile Include="ActionResults\JsonNetResult.cs" />
+    <Compile Include="Helpers\UrlHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="QP8.Infrastructure.Web.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\QP8.Infrastructure\QP8.Infrastructure.csproj">
+      <Project>{27BD20E7-1133-4D13-90C6-6565489DA612}</Project>
+      <Name>QP8.Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -97,4 +104,3 @@
   </Target>
   -->
 </Project>
-

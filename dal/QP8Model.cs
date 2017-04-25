@@ -14637,8 +14637,9 @@ namespace Quantumart.QP8.DAL
         /// <param name="modified">Initial value of the Modified property.</param>
         /// <param name="lastModifiedBy">Initial value of the LastModifiedBy property.</param>
         /// <param name="useADSyncService">Initial value of the UseADSyncService property.</param>
+        /// <param name="useDPC">Initial value of the UseDPC property.</param>
         /// <param name="autoOpenHome">Initial value of the AutoOpenHome property.</param>
-        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean autoOpenHome)
+        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDPC, global::System.Boolean autoOpenHome)
         {
             DbDAL dbDAL = new DbDAL();
             dbDAL.Id = id;
@@ -14647,6 +14648,7 @@ namespace Quantumart.QP8.DAL
             dbDAL.Modified = modified;
             dbDAL.LastModifiedBy = lastModifiedBy;
             dbDAL.UseADSyncService = useADSyncService;
+            dbDAL.UseDPC = useDPC;
             dbDAL.AutoOpenHome = autoOpenHome;
             return dbDAL;
         }
@@ -14825,6 +14827,30 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseADSyncService;
         partial void OnUseADSyncServiceChanging(global::System.Boolean value);
         partial void OnUseADSyncServiceChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean UseDPC
+        {
+            get
+            {
+                return _UseDPC;
+            }
+            set
+            {
+                OnUseDPCChanging(value);
+                ReportPropertyChanging("UseDPC");
+                _UseDPC = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UseDPC");
+                OnUseDPCChanged();
+            }
+        }
+        private global::System.Boolean _UseDPC;
+        partial void OnUseDPCChanging(global::System.Boolean value);
+        partial void OnUseDPCChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
