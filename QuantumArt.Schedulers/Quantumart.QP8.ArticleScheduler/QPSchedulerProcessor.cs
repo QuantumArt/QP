@@ -2,8 +2,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
-using QP8.Infrastructure.Logging.PrtgMonitoring.Data;
-using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration;
 
 namespace Quantumart.QP8.ArticleScheduler
@@ -14,7 +12,6 @@ namespace Quantumart.QP8.ArticleScheduler
 
         private readonly TimeSpan _recurrentTimeout;
         private readonly TimeSpan _tasksQueueCheckShiftTime;
-        private readonly PrtgErrorsHandler _prtgLogger;
 
         private Task _task;
         private CancellationTokenSource _cancellationTokenSource;
@@ -23,7 +20,6 @@ namespace Quantumart.QP8.ArticleScheduler
         {
             _recurrentTimeout = recurrentTimeout;
             _tasksQueueCheckShiftTime = tasksQueueCheckShiftTime;
-            _prtgLogger = new PrtgErrorsHandler();
         }
 
         public void Run()
@@ -41,13 +37,7 @@ namespace Quantumart.QP8.ArticleScheduler
                     }
                     catch (Exception ex)
                     {
-                        const string errorMessage = "There was an error while starting the service job";
-                        Logger.Log.Error(errorMessage, ex);
-                        _prtgLogger.LogMessage(new PrtgServiceMonitoringMessage
-                        {
-                            Message = errorMessage,
-                            State = PrtgServiceMonitoringEnum.CriticalError
-                        });
+                        Logger.Log.Error("There was an error while starting the service job", ex);
                     }
                 }
                 while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
@@ -64,13 +54,7 @@ namespace Quantumart.QP8.ArticleScheduler
             }
             catch (Exception ex)
             {
-                const string errorMessage = "There was an error while stopping the service";
-                Logger.Log.Error(errorMessage, ex);
-                _prtgLogger.LogMessage(new PrtgServiceMonitoringMessage
-                {
-                    Message = errorMessage,
-                    State = PrtgServiceMonitoringEnum.CriticalError
-                });
+                Logger.Log.Error("There was an error while stopping the service", ex);
             }
             finally
             {

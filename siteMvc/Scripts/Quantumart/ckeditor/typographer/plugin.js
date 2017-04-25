@@ -11,37 +11,42 @@
   // eslint-disable-next-line max-statements
   var fixWithRegexps = function fixWithRegexps(str, shouldUseEng) {
     var result = str;
+    var apostropheHtmlCode = '&#146;';
+    var numericHtmlCode = '&#8470;';
     var extLeft = shouldUseEng ? '&ldquo;' : '&laquo;';
     var extRight = shouldUseEng ? '&rdquo;' : '&raquo;';
     var intLeft = shouldUseEng ? '&lsquo;' : '&bdquo;';
     var intRight = shouldUseEng ? '&rsquo;' : '&ldquo;';
 
-    // fix
-    result = result.replace(/&quot;/g, '"');
+    var quotesToReplace = [
+      '&quot;',
+      '&ldquo;',
+      '&rdquo;',
+      '&bdquo;',
+      '&laquo;',
+      '&raquo;',
+      '&lsquo;',
+      '&rsquo;',
+      '«',
+      '»',
+      '“',
+      '”'
+    ];
 
-    // rekavychking
-    result = result.replace(/&ldquo;/g, '"');
-    result = result.replace(/&rdquo;/g, '"');
-    result = result.replace(/&bdquo;/g, '"');
-    result = result.replace(/&laquo;/g, '"');
-    result = result.replace(/&raquo;/g, '"');
-    result = result.replace(/&lsquo;/g, '"');
-    result = result.replace(/&rsquo;/g, '"');
+    quotesToReplace.forEach(function foreach(quote) {
+      result = result.replace(new RegExp(quote, 'g'), '"');
+    });
 
     // wordfix
-    result = result.replace(/«/g, '"');
-    result = result.replace(/»/g, '"');
-    result = result.replace(/“/g, '"');
-    result = result.replace(/”/g, '"');
     result = result.replace(/…/g, '...');
     result = result.replace(/–/g, '-');
     result = result.replace(/—/g, '-');
 
-    // kavychking
+    // advanced quotes
     // eslint-disable-next-line no-control-regex
     result = result.replace(/([\x01-(\s"])(")([^"]{1,})([^\s"(])(")/g, '$1«$3$4»');
 
-    // kavychking in kavychking
+    // quotes in quotes
     if (/"/.test(result)) {
       // eslint-disable-next-line no-control-regex
       result = result.replace(/([\x01(\s"])(")([^"]{1,})([^\s"(])(")/g, '$1«$3$4»');
@@ -53,12 +58,20 @@
     result = result.replace(/«/g, extLeft);
     result = result.replace(/»/g, extRight);
     result = result.replace(/ +/g, ' ');
-    result = result.replace(/ -{1,2} /g, '&nbsp;&#151; ');
+    result = result.replace(/ -{1,2} /g, '&nbsp;&mdash; ');
+    result = result.replace(/ –{1,2} /g, '&nbsp;&mdash; ');
     result = result.replace(/\.{3}/g, '&hellip;');
-    result = result.replace(/([>|\s])- /g, '$1&#151; ');
-    result = result.replace(/^- /g, '&#151; ');
-    result = result.replace(/(\d)-(\d)/g, '$1&#150;$2');
-    result = result.replace(/(\S+)-(\S+)/g, '<nobr>$1-$2</nobr>');
+    result = result.replace(/([>|\s])- /g, '$1&mdash; ');
+    result = result.replace(/^- /g, '&mdash; ');
+    result = result.replace(/(\d)-(\d)/g, '$1&ndash;$2');
+    result = result.replace(/(\S+)-(\S+)/g, function replacer(match, p1, p2) {
+      if (p1.length <= 3 || p2.length <= 3) {
+        return '<nobr>' + p1 + '-' + p2 + '</nobr>';
+      }
+
+      return match;
+    });
+
     result = result.replace(/(\d)\s/g, '$1&nbsp;');
     result = result.replace(/([А-Яа-яA-Za-z]) (ли|ль|же|ж|бы|б|млн|млрд|руб)([^А-Яа-яA-Za-z])/gi, '$1&nbsp;$2$3');
     result = result.replace(/(\s)([А-Яа-я]{1})\s/g, '$1$2&nbsp;');
@@ -84,11 +97,11 @@
     result = result.replace(/(\s[а-я]{1,2})\.\s/g, '$1.&nbsp;');
 
     // trade marks
-    result = result.replace(/'/g, '&#146;');
+    result = result.replace(/'/g, apostropheHtmlCode);
     result = result.replace(/\(c\)/gi, '&copy;');
     result = result.replace(/\(r\)/gi, '&reg;');
     result = result.replace(/\(tm\)/gi, '&trade;');
-    result = result.replace(/№ /gi, '&#8470;&nbsp;');
+    result = result.replace(/№ /gi, numericHtmlCode + '&nbsp;');
 
     return result;
   };

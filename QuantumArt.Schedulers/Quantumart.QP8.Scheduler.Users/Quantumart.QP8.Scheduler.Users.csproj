@@ -63,6 +63,14 @@
       <Project>{eb18df82-a593-40ca-aa31-ef430a9e7f24}</Project>
       <Name>Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\constants\Constants.csproj">
+      <Project>{634F0DA9-9351-40FC-B558-DA8BABC9B2E0}</Project>
+      <Name>Constants</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
+      <Project>{060EB6FE-8C9E-4B81-B17C-D2D3884F0AEC}</Project>
+      <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging\QP8.Infrastructure.Logging.csproj">
       <Project>{6e317f05-226c-4c9f-b918-fe71d743c3a3}</Project>
       <Name>QP8.Infrastructure.Logging</Name>
@@ -74,6 +82,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Content Include="NLog.Users.config">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.QuantumArt.xsd">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

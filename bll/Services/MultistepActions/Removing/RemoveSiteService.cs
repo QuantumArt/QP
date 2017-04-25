@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.Resources;
-using System.Data;
-using Quantumart.QP8.Utils;
-using Quantumart.QP8.BLL.Services.MultistepActions;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Removing
 {

@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using Quantumart.QP8.Constants;
 using Quantumart.QP8.BLL.Services.DTO;
 using Quantumart.QP8.BLL.Repository.EntityPermissions;
 using Quantumart.QP8.BLL.ListItems;

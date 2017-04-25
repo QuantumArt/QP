@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.BLL.Repository;
 
 namespace Quantumart.QP8.BLL.Services.Audit

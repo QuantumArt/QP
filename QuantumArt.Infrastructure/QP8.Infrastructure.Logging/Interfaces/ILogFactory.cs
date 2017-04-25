@@ -19,7 +19,7 @@ namespace QP8.Infrastructure.Logging.Interfaces
         ILog GetLogger(Type type);
 
         /// <summary>
-        /// Gets the logger
+        /// Initializes a new instance of the <see cref="ILog"/> class
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
         ILog GetLogger(string loggerName);

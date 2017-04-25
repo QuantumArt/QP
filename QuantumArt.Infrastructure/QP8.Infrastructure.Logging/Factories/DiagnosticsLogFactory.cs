@@ -56,5 +56,10 @@ namespace QP8.Infrastructure.Logging.Factories
                 IsFatalEnabled = _fatalEnabled,
             };
         }
+
+        public void ReloadConfiguration(string configPath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

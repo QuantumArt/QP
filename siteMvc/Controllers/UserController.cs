@@ -113,7 +113,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionContext(ActionCode.AddNewUser)]
         public ActionResult New(string tabId, int parentId)
         {
-            var user = _service.NewProperties();
+            var user = _service.GetUserToAdd();
             var model = UserViewModel.Create(user, tabId, parentId, _service);
             return JsonHtml("Properties", model);
         }
@@ -126,7 +126,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         [BackendActionLog]
         public ActionResult New(string tabId, int parentId, FormCollection collection)
         {
-            var user = _service.NewProperties();
+            var user = _service.GetUserToAdd();
             var model = UserViewModel.Create(user, tabId, parentId, _service);
 
             TryUpdateModel(model);

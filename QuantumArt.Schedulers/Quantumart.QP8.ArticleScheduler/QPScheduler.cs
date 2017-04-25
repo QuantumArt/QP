@@ -4,9 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
+using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration.Models;
+using Quantumart.QP8.Constants;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
@@ -22,7 +25,13 @@ namespace Quantumart.QP8.ArticleScheduler
             _unityContainer = unityContainer;
             _customers = customers;
             _tasksQueueCheckShiftTime = tasksQueueCheckShiftTime;
-            _prtgLogger = new PrtgErrorsHandler();
+            _prtgLogger = new PrtgErrorsHandler(new PrtgNLogFactory(
+                LoggerData.DefaultPrtgServiceStateVariableName,
+                LoggerData.DefaultPrtgServiceQueueVariableName,
+                LoggerData.DefaultPrtgServiceStatusVariableName
+            ));
+
+            _prtgLogger = new PrtgErrorsHandler(_unityContainer.Resolve<IPrtgNLogFactory>());
         }
 
         public void Run()

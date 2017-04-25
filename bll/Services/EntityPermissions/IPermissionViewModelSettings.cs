@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace Quantumart.QP8.BLL.Services.EntityPermissions
+﻿namespace Quantumart.QP8.BLL.Services.EntityPermissions
 {
 	/// <summary>
 	/// Определяет интерфейс стратегии для настроект ListViewModel списка сущностей

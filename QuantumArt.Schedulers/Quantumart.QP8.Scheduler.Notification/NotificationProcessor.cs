@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
@@ -17,31 +16,31 @@ using Quantumart.QP8.Scheduler.Notification.Providers;
 
 namespace Quantumart.QP8.Scheduler.Notification
 {
-    public class NotificationProcessor : IProcessor, IDisposable
+    public class NotificationProcessor : IProcessor
     {
         private readonly ILog _logger;
+        private readonly PrtgErrorsHandler _prtgLogger;
         private readonly ISchedulerCustomers _schedulerCustomers;
         private readonly IExternalNotificationService _externalNotificationService;
         private readonly INotificationProvider _notificationProvider;
-        private readonly PrtgErrorsHandler _prtgLogger;
 
         public NotificationProcessor(
             ILog logger,
+            PrtgErrorsHandler prtgLogger,
             ISchedulerCustomers schedulerCustomers,
             IExternalNotificationService externalNotificationService,
             INotificationProvider notificationProvider)
         {
             _logger = logger;
+            _prtgLogger = prtgLogger;
             _schedulerCustomers = schedulerCustomers;
             _externalNotificationService = externalNotificationService;
             _notificationProvider = notificationProvider;
-            _prtgLogger = new PrtgErrorsHandler();
         }
 
         public async Task Run(CancellationToken token)
         {
             _logger.Info("Start sending notifications");
-
             var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_schedulerCustomers.ToList());
             foreach (var customer in _schedulerCustomers)
             {
@@ -58,7 +57,7 @@ namespace Quantumart.QP8.Scheduler.Notification
                 catch (Exception ex)
                 {
                     ex.Data.Add("CustomerCode", customer.CustomerName);
-                    Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}", ex);
+                    _logger.Error($"There was an error on customer code: {customer.CustomerName}", ex);
                     prtgErrorsHandlerVm.EnqueueNewException(ex);
                 }
             }
@@ -162,11 +161,6 @@ namespace Quantumart.QP8.Scheduler.Notification
                     _externalNotificationService.UpdateUnsentNotifications(unsentNotificationIds);
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            Logger.Log.Dispose();
         }
     }
 }

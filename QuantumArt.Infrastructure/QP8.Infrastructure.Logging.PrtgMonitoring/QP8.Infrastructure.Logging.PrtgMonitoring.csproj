@@ -122,6 +122,7 @@
     <Compile Include="NLogExtensions\Adapters\PrtgNLogLogger.cs" />
     <Compile Include="NLogExtensions\Factories\PrtgNlogFactory.cs" />
     <Compile Include="Interfaces\IPrtgServiceLogger.cs" />
+    <Compile Include="NLogExtensions\Interfaces\IPrtgNLogFactory.cs" />
     <Compile Include="NLogExtensions\Targets\PrtgMonitoringTarget.cs" />
     <Compile Include="Data\PrtgServiceMonitoringEnum.cs" />
     <Compile Include="Data\PrtgServiceMonitoringMessage.cs" />

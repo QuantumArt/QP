@@ -1,5 +1,4 @@
-﻿using Quantumart.QP8.BLL.Services.DTO;
-using Quantumart.QP8.BLL.Services.MultistepActions.Base;
+﻿using Quantumart.QP8.BLL.Services.MultistepActions.Base;
 
 namespace Quantumart.QP8.BLL.Services.MultistepActions.Archive
 {

@@ -19,27 +19,12 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Adapters
         /// <summary>
         /// Initializes a new instance of the <see cref="PrtgNLogLogger"/> class
         /// </summary>
-        /// <param name="loggerName">The string based logger name</param>
+        /// <param name="logger">NLog logger instanse</param>
         /// <param name="prtgServiceStateVariableName">The name of state parameter to send to prtg monitor</param>
         /// <param name="prtgServiceQueueVariableName">The name of queue parameter to send to prtg monitor</param>
         /// <param name="prtgServiceStatusVariableName">The name of status parameter to send to prtg monitor</param>
-        public PrtgNLogLogger(string loggerName, string prtgServiceStateVariableName, string prtgServiceQueueVariableName, string prtgServiceStatusVariableName)
-            : base(loggerName)
-        {
-            _prtgServiceStateVariableName = prtgServiceStateVariableName;
-            _prtgServiceQueueVariableName = prtgServiceQueueVariableName;
-            _prtgServiceStatusVariableName = prtgServiceStatusVariableName;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PrtgNLogLogger"/> class
-        /// </summary>
-        /// <param name="type">The type on which logger name is based</param>
-        /// <param name="prtgServiceStateVariableName">The name of state parameter to send to prtg monitor</param>
-        /// <param name="prtgServiceQueueVariableName">The name of queue parameter to send to prtg monitor</param>
-        /// <param name="prtgServiceStatusVariableName">The name of status parameter to send to prtg monitor</param>
-        public PrtgNLogLogger(Type type, string prtgServiceStateVariableName, string prtgServiceQueueVariableName, string prtgServiceStatusVariableName)
-            : base(type)
+        public PrtgNLogLogger(ILogger logger, string prtgServiceStateVariableName, string prtgServiceQueueVariableName, string prtgServiceStatusVariableName)
+            : base(logger)
         {
             _prtgServiceStateVariableName = prtgServiceStateVariableName;
             _prtgServiceQueueVariableName = prtgServiceQueueVariableName;

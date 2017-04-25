@@ -1,7 +1,8 @@
 ﻿using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
-using QP8.Infrastructure.Logging.Interfaces;
+using QP8.Infrastructure.Logging.PrtgMonitoring.Interfaces;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
+using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
 
 namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.UnityExtensions
 {
@@ -29,17 +30,17 @@ namespace QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.UnityExtensio
 
         protected override void Initialize()
         {
-            Container.RegisterType<ILogFactory, PrtgNlogFactory>(new ContainerControlledLifetimeManager(), new InjectionConstructor(
+            Container.RegisterType<IPrtgNLogFactory, PrtgNLogFactory>(new ContainerControlledLifetimeManager(), new InjectionConstructor(
                 _prtgServiceStateVariableName,
                 _prtgServiceQueueVariableName,
                 _prtgServiceStatusVariableName));
 
-            Container.RegisterType<ILog>(string.IsNullOrWhiteSpace(_loggerName)
-                ? new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger())
-                : new InjectionFactory(c => c.Resolve<ILogFactory>().GetLogger(_loggerName)));
+            Container.RegisterType<IPrtgServiceLogger>(string.IsNullOrWhiteSpace(_loggerName)
+                ? new InjectionFactory(c => c.Resolve<IPrtgNLogFactory>().GetLogger())
+                : new InjectionFactory(c => c.Resolve<IPrtgNLogFactory>().GetLogger(_loggerName)));
 
-            LogProvider.LogFactory = Container.Resolve<ILogFactory>();
-            Logger.Log = Container.Resolve<ILog>();
+            LogProvider.LogFactory = Container.Resolve<IPrtgNLogFactory>();
+            Logger.Log = Container.Resolve<IPrtgServiceLogger>();
         }
     }
 }
