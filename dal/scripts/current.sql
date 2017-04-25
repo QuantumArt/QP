@@ -1633,11 +1633,12 @@ return
 
 GO
 
+GO
 exec qp_drop_existing 'tbd_delete_content', 'IsTrigger'
 GO
 
 CREATE TRIGGER [dbo].[tbd_delete_content] ON [dbo].[CONTENT] INSTEAD OF DELETE
-AS 
+AS
 BEGIN
 	create table #disable_td_delete_item(id numeric)
 
@@ -1667,10 +1668,10 @@ BEGIN
 	inner join deleted d on d.content_id = cc.r_content_id or d.content_id = cc.l_content_id
 
 	delete container from container c
-	inner join deleted d on d.content_id = c.content_id 
+	inner join deleted d on d.content_id = c.content_id
 
 	delete content_form from content_form cf
-	inner join deleted d on d.content_id = cf.content_id 
+	inner join deleted d on d.content_id = cf.content_id
 
 	delete content_item from content_item ci
 	inner join deleted d on d.content_id = ci.content_id
@@ -1680,7 +1681,7 @@ BEGIN
 
 	delete [ACTION_CONTENT_BIND] from [ACTION_CONTENT_BIND] acb
 	inner join deleted d on d.content_id = acb.content_id
-	
+
 	delete ca from CONTENT_ATTRIBUTE ca
 	inner join CONTENT_ATTRIBUTE cad on ca.BACK_RELATED_ATTRIBUTE_ID = cad.ATTRIBUTE_ID
 	inner join deleted c on cad.CONTENT_ID = c.CONTENT_ID
@@ -1689,6 +1690,12 @@ BEGIN
 
 	drop table #disable_td_delete_item
 END
+
+GO
+
+GO
+IF NOT EXISTS (  SELECT * FROM   sys.columns WHERE  object_id = OBJECT_ID(N'[dbo].[DB]') AND name = 'USE_DPC')
+	ALTER TABLE [dbo].[DB] ADD [USE_DPC] [bit] NOT NULL DEFAULT ((0))
 
 GO
 

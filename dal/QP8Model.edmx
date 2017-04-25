@@ -595,6 +595,7 @@
           <Property Name="LAST_MODIFIED_BY" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="USE_AD_SYNC_SERVICE" Type="bit" Nullable="false" />
           <Property Name="AUTO_OPEN_HOME" Type="bit" Nullable="false" />
+          <Property Name="USE_DPC" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="DEVELOPER">
           <Key>
@@ -10225,6 +10226,7 @@
           <Property Type="Decimal" Name="LastModifiedBy" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="LastModifiedByUser" Relationship="QP8Model.FK_DB_LAST_MODIFIED_BY" FromRole="DB" ToRole="UserDAL" />
           <Property Type="Boolean" Name="UseADSyncService" Nullable="false" />
+          <Property Type="Boolean" Name="UseDPC" Nullable="false" />          
           <Property Type="Boolean" Name="AutoOpenHome" Nullable="false" />
         </EntityType>
         <Association Name="FK_DB_LAST_MODIFIED_BY">
@@ -11877,6 +11879,7 @@
           <EntitySetMapping Name="DbSet">
             <EntityTypeMapping TypeName="QP8Model.DbDAL">
               <MappingFragment StoreEntitySet="DB">
+                <ScalarProperty Name="UseDPC" ColumnName="USE_DPC" />
                 <ScalarProperty Name="AutoOpenHome" ColumnName="AUTO_OPEN_HOME" />
                 <ScalarProperty Name="UseADSyncService" ColumnName="USE_AD_SYNC_SERVICE" />
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
