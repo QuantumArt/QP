@@ -27,8 +27,8 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="$OutputPath$Quantumart.QP8.*.dll" target="lib\net45" />
-    <file src="$OutputPath$EFExtensions.dll" target="lib\net45" />
-    <file src="$OutputPath$Irony.dll" target="lib\net45" />
+    <file src="$OutputPath$Quantumart.QP8.*.dll" target="lib\net452" />
+    <file src="$OutputPath$EFExtensions.dll" target="lib\net452" />
+    <file src="$OutputPath$Irony.dll" target="lib\net452" />
   </files>
 </package>
