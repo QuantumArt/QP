@@ -314,11 +314,6 @@ a.html:hover
   font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-.formLayout textarea.textbox
-{
-  font-size: 1.2em;
-}
-
 .formLayout .originalSize
 {
   width: auto;
