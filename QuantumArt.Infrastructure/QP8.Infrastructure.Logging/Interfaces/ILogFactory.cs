@@ -8,12 +8,12 @@ namespace QP8.Infrastructure.Logging.Interfaces
     public interface ILogFactory
     {
         /// <summary>
-        /// Gets the logger
+        /// Initializes a new instance of the <see cref="ILog"/> class
         /// </summary>
         ILog GetLogger();
 
         /// <summary>
-        /// Gets the logger
+        /// Initializes a new instance of the <see cref="ILog"/> class
         /// </summary>
         /// <param name="type">The type on which logger name is based</param>
         ILog GetLogger(Type type);

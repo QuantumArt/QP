@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
@@ -14,7 +15,7 @@ namespace Quantumart.QP8.Scheduler.Users
     public class SchedulerUsersConfiguration : UnityContainerExtension
     {
         public const string ServiceName = "qp8.users";
-        private const string CleanupNlogPath = "NLog.Users.config";
+        private const string UsersNlogConfigName = "NLog.Users.config";
 
         protected override void Initialize()
         {
@@ -23,23 +24,22 @@ namespace Quantumart.QP8.Scheduler.Users
             Container.RegisterType<IUserService, UserService>();
             Container.RegisterType<IUserSynchronizationService, UserSynchronizationService>(new InjectionFactory(c => UserSynchronizationServiceFactory.GetService(LogProvider.GetLogger())));
 
-            Container.RegisterProcessor<UsersProcessor>(ServiceName, "CleanupNotificationQueueSchedule");
-            RegisterCleanupProcessor();
+            Container.RegisterProcessor<UsersProcessor>(ServiceName, "UsersQueueSchedule");
+            RegisterUsersProcessor();
         }
 
 
-        private void RegisterCleanupProcessor()
+        private void RegisterUsersProcessor()
         {
-            var childContainer = Container.CreateChildContainer();
-            childContainer.RegisterType<IPrtgNLogFactory>(CleanupNlogPath, new InjectionFactory(container => GetLoggerFactory(CleanupNlogPath)));
-
             var assemblyType = typeof(UsersProcessor);
+            var nlogInjectionFactory = new InjectionFactory(container => GetLoggerFactory(GetAbsolutePath(UsersNlogConfigName)));
+            Container.RegisterType<IPrtgNLogFactory>(UsersNlogConfigName, nlogInjectionFactory);
             Container.RegisterType<IProcessor, UsersProcessor>(
                 assemblyType.Name,
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new UsersProcessor(
-                    childContainer.Resolve<IPrtgNLogFactory>(CleanupNlogPath).GetLogger(assemblyType),
-                    new PrtgErrorsHandler(childContainer.Resolve<IPrtgNLogFactory>(CleanupNlogPath)),
+                    Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName).GetLogger(assemblyType),
+                    new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName)),
                     c.Resolve<ISchedulerCustomers>(),
                     c.Resolve<Func<IUserSynchronizationService>>()
                )
@@ -54,6 +54,11 @@ namespace Quantumart.QP8.Scheduler.Users
                 LoggerData.DefaultPrtgServiceQueueVariableName,
                 LoggerData.DefaultPrtgServiceStatusVariableName
             );
+        }
+
+        private static string GetAbsolutePath(string relativePath)
+        {
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
         }
     }
 }

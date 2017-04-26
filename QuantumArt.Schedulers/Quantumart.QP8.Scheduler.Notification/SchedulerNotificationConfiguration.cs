@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
@@ -12,8 +14,8 @@ namespace Quantumart.QP8.Scheduler.Notification
     public class SchedulerNotificationConfiguration : UnityContainerExtension
     {
         public const string ServiceName = "qp8.notification";
-        private const string CleanupNlogPath = "NLog.Notifications.Cleanup.config";
-        private const string NotificationsNlogPath = "NLog.Notifications.config";
+        private const string CleanupNlogConfigName = "NLog.Notifications.Cleanup.config";
+        private const string NotificationsNlogConfigName = "NLog.Notifications.config";
 
         protected override void Initialize()
         {
@@ -32,34 +34,36 @@ namespace Quantumart.QP8.Scheduler.Notification
         private void RegisterCleanupProcessor()
         {
             var assemblyType = typeof(CleanupProcessor);
-            Container.RegisterType<IPrtgNLogFactory>(CleanupNlogPath, new InjectionFactory(container => GetLoggerFactory(CleanupNlogPath)));
+            var nlogInjectionFactory = new InjectionFactory(container => GetLoggerFactory(GetAbsolutePath(CleanupNlogConfigName)));
+            Container.RegisterType<IPrtgNLogFactory>(CleanupNlogConfigName, nlogInjectionFactory);
             Container.RegisterType<CleanupProcessor>(
                 assemblyType.Name,
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new CleanupProcessor(
-                    Container.Resolve<IPrtgNLogFactory>(CleanupNlogPath).GetLogger(assemblyType),
-                    new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(CleanupNlogPath)),
-                    c.Resolve<ISchedulerCustomers>(),
-                    c.Resolve<IExternalNotificationService>()
-               )
-           ));
+                        Container.Resolve<IPrtgNLogFactory>(CleanupNlogConfigName).GetLogger(assemblyType),
+                        new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(CleanupNlogConfigName)),
+                        c.Resolve<ISchedulerCustomers>(),
+                        c.Resolve<IExternalNotificationService>()
+                    )
+                ));
         }
 
         private void RegisterNotificationsProcessor()
         {
             var assemblyType = typeof(NotificationProcessor);
-            Container.RegisterType<IPrtgNLogFactory>(NotificationsNlogPath, new InjectionFactory(container => GetLoggerFactory(NotificationsNlogPath)));
+            var nlogInjectionFactory = new InjectionFactory(container => GetLoggerFactory(GetAbsolutePath(NotificationsNlogConfigName)));
+            Container.RegisterType<IPrtgNLogFactory>(NotificationsNlogConfigName, nlogInjectionFactory);
             Container.RegisterType<NotificationProcessor>(
                 assemblyType.Name,
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new NotificationProcessor(
-                    Container.Resolve<IPrtgNLogFactory>(NotificationsNlogPath).GetLogger(assemblyType),
-                    new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(NotificationsNlogPath)),
-                    c.Resolve<ISchedulerCustomers>(),
-                    c.Resolve<IExternalNotificationService>(),
-                    c.Resolve<INotificationProvider>()
-               )
-           ));
+                        Container.Resolve<IPrtgNLogFactory>(NotificationsNlogConfigName).GetLogger(assemblyType),
+                        new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(NotificationsNlogConfigName)),
+                        c.Resolve<ISchedulerCustomers>(),
+                        c.Resolve<IExternalNotificationService>(),
+                        c.Resolve<INotificationProvider>()
+                    )
+                ));
         }
 
         private static IPrtgNLogFactory GetLoggerFactory(string configPath)
@@ -70,6 +74,11 @@ namespace Quantumart.QP8.Scheduler.Notification
                 LoggerData.DefaultPrtgServiceQueueVariableName,
                 LoggerData.DefaultPrtgServiceStatusVariableName
             );
+        }
+
+        private static string GetAbsolutePath(string relativePath)
+        {
+            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
         }
     }
 }

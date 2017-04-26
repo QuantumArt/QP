@@ -8,7 +8,7 @@ using QP8.Infrastructure.Logging.Interfaces;
 namespace QP8.Infrastructure.Logging.Factories
 {
     /// <summary>
-    /// Creates a NLog logger factory, that return logger instances
+    /// Factory for creating an NLog logger instances
     /// </summary>
     public class NLogFactory : INLogFactory
     {
