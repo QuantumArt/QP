@@ -6,7 +6,7 @@ using QP8.Infrastructure.Logging.Interfaces;
 namespace QP8.Infrastructure.Logging.Factories
 {
     /// <summary>
-    /// Creates a System.Diagnostics logger, that logs all messages to System.Diagnostics.Debug
+    /// Factory for creating a System.Diagnostics logger
     /// </summary>
 	public class DiagnosticsLogFactory : ILogFactory
     {

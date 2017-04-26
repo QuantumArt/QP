@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL.Repository;
 using Quantumart.QP8.BLL.Repository.ActiveDirectory;
 
@@ -12,16 +12,16 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
         private const string DefaultMail = "undefined@domain.com";
         private const string DefaultValue = "undefined";
 
+        private readonly ILog _logger;
         private readonly int _languageId;
-        private readonly TraceSource _logger;
         private readonly ActiveDirectoryRepository _activeDirectory;
 
-        public UserSynchronizationService(int currentUserId, int languageId, TraceSource logger)
+        public UserSynchronizationService(ILog logger, int currentUserId, int languageId)
         {
-            QPContext.CurrentUserId = currentUserId;
-            _languageId = languageId;
             _logger = logger;
+            _languageId = languageId;
             _activeDirectory = new ActiveDirectoryRepository();
+            QPContext.CurrentUserId = currentUserId;
         }
 
         public bool NeedSynchronization()
@@ -31,17 +31,85 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
 
         public void Synchronize()
         {
-            // Prepare data
             var qpGroups = UserGroupRepository.GetNtGroups().ToList();
+            var adGroups = GetAdGroupsToProcess(qpGroups);
+            var adUsers = _activeDirectory.GetUsers(adGroups);
+            var qpUsers = UserRepository.GetNtUsers();
+            AddUsers(adUsers, adGroups, qpUsers, qpGroups);
+            UpdateUsers(qpUsers, adUsers, adGroups, qpGroups);
+            DisableUsers(qpUsers, adUsers);
+        }
+
+        private void AddUsers(IEnumerable<ActiveDirectoryUser> adUsers, ActiveDirectoryGroup[] adGroups, List<User> qpUsers, List<UserGroup> qpGroups)
+        {
+            var adUsersToAdd = adUsers.Where(adu => !adu.IsDisabled && qpUsers.All(qpu => adu.AccountName != qpu.NtLogOn));
+            foreach (var adUser in adUsersToAdd)
+            {
+                try
+                {
+                    var qpUser = CreateUser(adUser);
+                    MapUser(adUser, ref qpUser);
+                    MapGroups(adUser, ref qpUser, adGroups, qpGroups);
+                    UserRepository.SaveProperties(qpUser);
+                    _logger.Info($"User {qpUser.DisplayName} from groups {string.Join(",", GetGroupNames(qpUser))} was added");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("There was an exception while adding user", ex);
+                }
+            }
+        }
+        private void UpdateUsers(IEnumerable<User> qpUsers, IEnumerable<ActiveDirectoryUser> adUsers, ActiveDirectoryGroup[] adGroups, List<UserGroup> qpGroups)
+        {
+            var usersToBeUpdated = from qpu in qpUsers
+                                   join adu in adUsers on qpu.NtLogOn equals adu.AccountName
+                                   select new { QP = qpu, AD = adu };
+
+            foreach (var user in usersToBeUpdated)
+            {
+                try
+                {
+                    var qpUser = user.QP;
+                    MapUser(user.AD, ref qpUser);
+                    MapGroups(user.AD, ref qpUser, adGroups, qpGroups);
+                    UserRepository.UpdateProperties(qpUser);
+                    _logger.Info($"User {qpUser.DisplayName} from groups {string.Join(",", GetGroupNames(qpUser))} was updated");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Error("There was an exception while updating user", ex);
+                }
+            }
+        }
+
+        private void DisableUsers(IEnumerable<User> qpUsers, ActiveDirectoryUser[] adUsers)
+        {
+            var qpUsersToBeDisabled = qpUsers.Where(qpu => adUsers.All(adu => adu.AccountName != qpu.NtLogOn));
+            foreach (var qpUser in qpUsersToBeDisabled)
+            {
+                try
+                {
+                    qpUser.Disabled = true;
+                    UserRepository.UpdateProperties(qpUser);
+                    _logger.Info($"User {qpUser.DisplayName} was disabled");
+                }
+                catch (Exception ex)
+                {
+                    _logger.Warn("There was an exception while disabling user", ex);
+                }
+            }
+        }
+
+        private ActiveDirectoryGroup[] GetAdGroupsToProcess(List<UserGroup> qpGroups)
+        {
             var qpGroupNames = qpGroups.Select(g => g.NtGroup).ToArray();
             var adGroups = _activeDirectory.GetGroups(qpGroupNames);
             var adGroupNames = adGroups.Select(g => g.Name).ToArray();
 
-            // Validate data
             var missedAdGroups = qpGroupNames.Except(adGroupNames).ToArray();
             if (missedAdGroups.Any())
             {
-                _logger.TraceEvent(TraceEventType.Warning, 0, $"Group(s) \"{string.Join(", ", missedAdGroups)}\" is(are) missed in Active Directory");
+                _logger.Warn($"Groups \"{string.Join(", ", missedAdGroups)}\" not exist at active directory");
             }
 
             var adGroupRelations = from adg in adGroups
@@ -53,74 +121,19 @@ namespace Quantumart.QP8.BLL.Services.UserSynchronization
                                                  select g.Name
                                    };
 
-            var adGroupsToBeProcessed = (from adRelation in adGroupRelations
-                                         join qpg in qpGroups on adRelation.Group.Name equals qpg.NtGroup
-                                         where qpg.ParentGroup == null || qpGroups.All(g => g.Id != qpg.ParentGroup.Id) || adRelation.Members.Any(m => qpg.ParentGroup.NtGroup == m)
-                                         select adRelation.Group)
-                                         .ToArray();
+            var adGroupsToProcess = (from adRelation in adGroupRelations
+                                     join qpg in qpGroups on adRelation.Group.Name equals qpg.NtGroup
+                                     where qpg.ParentGroup == null || qpGroups.All(g => g.Id != qpg.ParentGroup.Id) || adRelation.Members.Any(m => qpg.ParentGroup.NtGroup == m)
+                                     select adRelation.Group)
+                                     .ToArray();
 
-            var adUsers = _activeDirectory.GetUsers(adGroupsToBeProcessed);
-            var wrongMembershipAdGroups = adGroupNames.Except(adGroupsToBeProcessed.Select(g => g.Name)).ToArray();
+            var wrongMembershipAdGroups = adGroupNames.Except(adGroupsToProcess.Select(g => g.Name)).ToArray();
             if (wrongMembershipAdGroups.Any())
             {
-                _logger.TraceEvent(TraceEventType.Warning, 0, $"Group(s) \"{string.Join(", ", wrongMembershipAdGroups)}\" have wrong membership");
+                _logger.Warn($"Group(s) \"{string.Join(", ", wrongMembershipAdGroups)}\" have wrong membership");
             }
 
-            // Add users
-            var qpUsers = UserRepository.GetNtUsers();
-            var adUsersToBeAdded = adUsers.Where(adu => !adu.IsDisabled && qpUsers.All(qpu => adu.AccountName != qpu.NtLogOn));
-            foreach (var adUser in adUsersToBeAdded)
-            {
-                try
-                {
-                    var qpUser = CreateUser(adUser);
-                    MapUser(adUser, ref qpUser);
-                    MapGroups(adUser, ref qpUser, adGroupsToBeProcessed, qpGroups);
-                    UserRepository.SaveProperties(qpUser);
-                    _logger.TraceEvent(TraceEventType.Verbose, 0, $"user {qpUser.DisplayName} in groups {string.Join(",", GetGroupNames(qpUser))} is added");
-                }
-                catch (Exception ex)
-                {
-                    _logger.TraceData(TraceEventType.Warning, 0, ex);
-                }
-            }
-
-            // Update users
-            var usersToBeUpdated = from qpu in qpUsers
-                                   join adu in adUsers on qpu.NtLogOn equals adu.AccountName
-                                   select new { QP = qpu, AD = adu };
-
-            foreach (var user in usersToBeUpdated)
-            {
-                try
-                {
-                    var qpUser = user.QP;
-                    MapUser(user.AD, ref qpUser);
-                    MapGroups(user.AD, ref qpUser, adGroupsToBeProcessed, qpGroups);
-                    UserRepository.UpdateProperties(qpUser);
-                    _logger.TraceEvent(TraceEventType.Verbose, 0, $"user {qpUser.DisplayName} in groups {string.Join(",", GetGroupNames(qpUser))} is updated");
-                }
-                catch (Exception ex)
-                {
-                    _logger.TraceData(TraceEventType.Warning, 0, ex);
-                }
-            }
-
-            // Disable users
-            var qpUsersToBeDisabled = qpUsers.Where(qpu => adUsers.All(adu => adu.AccountName != qpu.NtLogOn));
-            foreach (var qpUser in qpUsersToBeDisabled)
-            {
-                try
-                {
-                    qpUser.Disabled = true;
-                    UserRepository.UpdateProperties(qpUser);
-                    _logger.TraceEvent(TraceEventType.Verbose, 0, $"user {qpUser.DisplayName} is disabled");
-                }
-                catch (Exception ex)
-                {
-                    _logger.TraceData(TraceEventType.Warning, 0, ex);
-                }
-            }
+            return adGroupsToProcess;
         }
 
         private User CreateUser(ActiveDirectoryUser user)

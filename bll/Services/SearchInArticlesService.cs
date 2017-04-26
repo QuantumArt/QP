@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Quantumart.QP8.Utils.FullTextSearch;
-using System.Data;
-using AutoMapper;
-using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Repository.Articles;
 
 namespace Quantumart.QP8.BLL.Services

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using AutoMapper;
-using Quantumart.QP8.BLL;
+﻿using AutoMapper;
 
 namespace Quantumart.QP8.BLL.Services.DTO
 {

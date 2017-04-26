@@ -14,10 +14,11 @@ namespace Quantumart.QP8.Scheduler.Service
     {
         protected override void Initialize()
         {
-            Container.AddNewExtension<SchedulerUsersConfiguration>();
-            Container.AddNewExtension<SchedulerNotificationConfiguration>();
-            Container.AddNewExtension<SchedulerCoreConfiguration>();
-            Container.AddExtension(new NLogContainerExtension());
+            Container
+                .AddNewExtension<SchedulerUsersConfiguration>()
+                .AddNewExtension<SchedulerNotificationConfiguration>()
+                .AddNewExtension<SchedulerCoreConfiguration>()
+                .AddExtension(new NLogContainerExtension());
 
             var descriptors = Container.ResolveAll<ServiceDescriptor>();
             foreach (var descriptor in descriptors)

@@ -4,7 +4,6 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Threading.Tasks;
 using Microsoft.Practices.Unity;
-using QP8.Infrastructure.Logging.Factories;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.Core;
 
@@ -14,7 +13,6 @@ namespace Quantumart.QP8.Scheduler.Service
     {
         private static void Main()
         {
-            LogProvider.LogFactory = new NLogFactory();
             if (Environment.UserInteractive)
             {
                 RunConsole();

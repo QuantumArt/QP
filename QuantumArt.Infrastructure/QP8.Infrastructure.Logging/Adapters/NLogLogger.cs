@@ -11,27 +11,16 @@ namespace QP8.Infrastructure.Logging.Adapters
     /// </summary>
     public class NLogLogger : ILog
     {
-        protected readonly NLog.Logger Logger;
+        protected readonly ILogger Logger;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogLogger"/> class
+        /// Initialize new instance of the <see cref="ILog"/> class
         /// </summary>
-        /// <param name="loggerName">The string based logger name</param>
-        public NLogLogger(string loggerName)
+        /// <param name="logger">NLog logger instanse</param>
+        public NLogLogger(ILogger logger)
         {
-            Logger = LogManager.GetLogger(loggerName);
+            Logger = logger;
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="NLogLogger"/> class
-        /// </summary>
-        /// <param name="type">The type on which logger name is based</param>
-        public NLogLogger(Type type)
-        {
-            Logger = LogManager.GetLogger(UseFullTypeNames ? type.FullName : type.Name);
-        }
-
-        public static bool UseFullTypeNames { get; set; } = true;
 
         public string LoggerName => Logger.Name;
 

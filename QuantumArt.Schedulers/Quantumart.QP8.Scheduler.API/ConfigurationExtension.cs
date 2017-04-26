@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+using System;
 using Microsoft.Practices.Unity;
 
 namespace Quantumart.QP8.Scheduler.API
@@ -86,7 +85,6 @@ namespace Quantumart.QP8.Scheduler.API
         {
             var descriptor = new ServiceDescriptor(key, name, description);
             container.RegisterInstance(descriptor.Key, descriptor);
-            container.RegisterType<TraceSource>(key, new HierarchicalLifetimeManager(), new InjectionFactory(c => new TraceSource(key)));
         }
     }
 }
