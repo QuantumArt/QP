@@ -7,7 +7,7 @@
 module.exports = {
   extends: [
     './browser.es5.eslintrc',
-    './es6'
+    './rules/es6'
   ].map(require.resolve),
   parser: 'espree',
   parserOptions: {
