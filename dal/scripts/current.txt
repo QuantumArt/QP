@@ -16,3 +16,5 @@ UpdateM2O
 GetPermittedItemsAsQuery
 DeleteSite
 DBTable
+UpdateWrongWFStatuses
+UpdateItemToItemTrigger

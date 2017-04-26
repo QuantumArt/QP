@@ -171,6 +171,7 @@
     <Content Include="scripts\schema.sql" />
     <Content Include="scripts\TaHighlight\1_adding_column_to_content_attribute.sql" />
     <Content Include="scripts\undo_to_previous.sql" />
+    <Content Include="scripts\UpdateWrongWFStatuses\1_update_wrong_workflow_statuses.sql" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="$(SolutionDir)configuration\Configuration.csproj">

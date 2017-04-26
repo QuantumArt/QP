@@ -44,6 +44,7 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.CopySite
             var siteArticlesCount = xDocument.Elements().Elements().Count();
             if (startFrom >= siteArticlesCount - ItemsPerStep)
             {
+                ContentService.FillLinkTables(SourceSiteId, DestinationSiteId);
                 File.Delete(prms.PathForFileWithLinks);
             }
 
