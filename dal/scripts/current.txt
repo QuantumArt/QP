@@ -17,3 +17,4 @@ GetPermittedItemsAsQuery
 DeleteSite
 DBTable
 UpdateWrongWFStatuses
+UpdateItemToItemTrigger
