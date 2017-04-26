@@ -14,4 +14,6 @@ TaHighlight
 ArchiveArticleSearch
 UpdateM2O
 GetPermittedItemsAsQuery
+DeleteSite
+DBTable
 UpdateWrongWFStatuses

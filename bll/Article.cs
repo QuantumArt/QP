@@ -403,16 +403,18 @@ namespace Quantumart.QP8.BLL
                     currentCount = relationCounters[relationId];
                     currentCount++;
                 }
+
                 relationCounters[relationId] = currentCount;
                 var countSuffix = currentCount == 1 ? "" : "_" + currentCount;
-
                 var result = "rel_field_" + relationId + countSuffix;
                 if (field.Relation.ExactType == FieldExactTypes.O2MRelation)
                 {
                     result += "_r1";
                 }
+
                 return result;
             }
+
             return useFormName ? field.FormName : field.Name;
         }
 
@@ -569,8 +571,8 @@ namespace Quantumart.QP8.BLL
             LockedBy = 0;
             SetDefaultStatusAndVisibility();
             ClearM2OArticleFields();
-            ClearOldArticleFields();
-            ClearArticleFields(clearFieldIds, clearType);
+            ClearOldIds();
+            ClearFields(clearFieldIds, clearType);
 
             if (resolveFieldConflicts)
             {
@@ -1201,15 +1203,21 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        public void ClearArticleFields(int[] fieldIdsToClear, ArticleClearType clearType)
+        /// <summary>
+        /// Service method to clear article fields
+        /// </summary>
+        public void ClearFields(int[] fieldIdsToClear, ArticleClearType clearType)
         {
             if (fieldIdsToClear != null && fieldIdsToClear.Length > 0)
             {
-                ClearArticleFields(fv => fieldIdsToClear.Contains(fv.Field.Id), clearType);
+                ClearFields(fv => fieldIdsToClear.Contains(fv.Field.Id), clearType);
             }
         }
 
-        private void ClearArticleFields(Func<FieldValue, bool> fieldsToClearPredicate, ArticleClearType clearType)
+        /// <summary>
+        /// Service method to clear article fields
+        /// </summary>
+        public void ClearFields(Func<FieldValue, bool> fieldsToClearPredicate, ArticleClearType clearType)
         {
             foreach (var fieldValue in FieldValues.Where(fieldsToClearPredicate))
             {
@@ -1225,7 +1233,10 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        private void ClearOldArticleFields()
+        /// <summary>
+        /// Service method to clear old article fields
+        /// </summary>
+        public void ClearOldIds()
         {
             foreach (var fieldValue in FieldValues.Where(n => n.Field.Name.StartsWith("Old") && n.Field.Name.EndsWith("Id")))
             {
@@ -1236,8 +1247,8 @@ namespace Quantumart.QP8.BLL
         private void AggregateToRootArticle(Article rootArticle)
         {
             Ensure.Not(rootArticle.IsNew, "Root article has to be saved.");
-
             var aggregatorValue = FieldValues.FirstOrDefault(f => f.Field.Aggregated);
+
             Ensure.NotNull(aggregatorValue, "There is no aggregated field in article.");
             aggregatorValue.Value = rootArticle.Id.ToString();
 
@@ -1248,8 +1259,8 @@ namespace Quantumart.QP8.BLL
         private void VariateTo(Article rootArticle)
         {
             Ensure.Not(rootArticle.IsNew, "Root article has to be saved.");
-
             var variationValue = FieldValues.FirstOrDefault(f => f.Field.UseForVariations);
+
             Ensure.NotNull(variationValue, "There is no variation field in article.");
             variationValue.Value = rootArticle.Id.ToString();
 
