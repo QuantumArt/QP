@@ -442,5 +442,11 @@ namespace Quantumart.QP8.BLL.Services
             ContentRepository.UpdateItemToItem(relationsBetweenArticles, relBetweenLinks);
             ContentRepository.UpdateAttributesAfterCopyingArticles(destinationSiteId, relationsBetweenArticles);
         }
+
+        public static void FillLinkTables(int sourceSiteId, int destinationSiteId)
+        {
+            var relBetweenLinks = ContentRepository.GetRelationsBetweenLinks(sourceSiteId, destinationSiteId);
+            ContentRepository.FillLinksTables(relBetweenLinks);
+        }
     }
 }

@@ -1731,17 +1731,17 @@ INSERT INTO @statuses_names
 		FROM [dbo].[STATUS_TYPE] st
 		INNER JOIN @statuses_names stn ON st.STATUS_TYPE_NAME = stn.STATUS_TYPE_NAME
 	) AS nsi
-	WHERE nsi.NEW_SITE_ID IN (SELECT SITE_ID FROM @wrong_statuses)
+	WHERE nsi.NEW_SITE_ID IN (SELECT SITE_ID FROM @articles_with_wrong_statuses)
 )
 
 UPDATE CONTENT_ITEM
 	SET STATUS_TYPE_ID = (
 		SELECT NEW_STATUS_ID FROM CONTENT_ITEM AS ci
-		INNER JOIN @temp AS t ON t.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
+		INNER JOIN @articles_with_wrong_statuses AS t ON t.CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
 		INNER JOIN rel_betw_statuses AS rbs ON t.SITE_ID = rbs.new_site_id AND ci.STATUS_TYPE_ID = rbs.old_status_id
 		WHERE  [dbo].[CONTENT_ITEM].CONTENT_ITEM_ID = ci.CONTENT_ITEM_ID
 )
-WHERE CONTENT_ITEM_ID IN (SELECT CONTENT_ITEM_ID FROM @temp)
+WHERE CONTENT_ITEM_ID IN (SELECT CONTENT_ITEM_ID FROM @articles_with_wrong_statuses)
 END
 
 

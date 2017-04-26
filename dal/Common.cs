@@ -7276,6 +7276,42 @@ namespace Quantumart.QP8.DAL
             }
         }
 
+        public static void FillLinksTables(SqlConnection sqlConnection, string relationsBetweenLinks)
+        {
+            var query = $@"
+                                declare @xmlprmsLinks xml = '{relationsBetweenLinks}'
+
+                                declare @relations_between_links table (
+                                    id numeric identity(1,1) primary key,
+                                    source_link_id int,
+                                    destination_link_id int
+                                )
+                                insert into @relations_between_links
+                                        select doc.col.value('./@sourceId', 'int') source_link_id
+                                         ,doc.col.value('./@destinationId', 'int') destination_link_id
+                                        from @xmlprmsLinks.nodes('/items/item') doc(col)
+
+                                declare @i int, @count int, @link_id numeric
+	
+	                                set @i = 1
+	                                select @count = count(id) from @relations_between_links
+
+	                                while @i < @count + 1
+	                                begin
+		                                select @link_id = destination_link_id from @relations_between_links where id = @i
+		                                exec qp_fill_link_table @link_id
+
+		                                set @i = @i + 1
+	                                end
+                              ";
+
+            using (var cmd = SqlCommandFactory.Create(query, sqlConnection))
+            {
+                cmd.CommandType = CommandType.Text;
+                cmd.ExecuteNonQuery();
+            }
+        }
+
         public static void CopyWorkflow(int sourceSiteId, int destinationSiteId, SqlConnection sqlConnection)
         {
             const string query = @"declare @todaysDate datetime

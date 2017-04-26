@@ -972,6 +972,14 @@ namespace Quantumart.QP8.BLL.Repository
             }
         }
 
+        internal static void FillLinksTables(string relationsBetweenLinks)
+        {
+            using (new QPConnectionScope())
+            {
+                Common.FillLinksTables(QPConnectionScope.Current.DbConnection, relationsBetweenLinks);
+            }
+        }
+
         internal static string GetRelationsBetweenLinks(int sourceSiteId, int destinationSiteId)
         {
             using (new QPConnectionScope())
