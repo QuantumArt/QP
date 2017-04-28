@@ -132,15 +132,9 @@ namespace Quantumart.QP8.BLL.Services
             }
 
             var sqlMetalPath = QPConfiguration.ConfigVariable(Config.SqlMetalKey);
-            if (string.IsNullOrEmpty(sqlMetalPath) && !site.DownloadEfSource)
-            {
-                return MessageResult.Error(string.Format(GlobalStrings.SqlMetalPathEmpty));
-            }
 
             if (site.ExternalDevelopment)
             {
-
-
                 var liveTempDirectory = $@"{site.TempDirectoryForClasses}\live";
                 var stageTempDirectory = $@"{site.TempDirectoryForClasses}\stage";
 
@@ -155,13 +149,6 @@ namespace Quantumart.QP8.BLL.Services
                 if (File.Exists(site.TempArchiveForClasses))
                     File.Delete(site.TempArchiveForClasses);
 
-                site.AssemblyPath = liveTempDirectory;
-                site.StageAssemblyPath = stageTempDirectory;
-                site.IsLive = true;
-                site.CreateLinqDirectories();
-                site.IsLive = false;
-                site.CreateLinqDirectories();
-
 
                 (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = liveTempDirectory, IsLive = true, DisableClassGeneration = site.DownloadEfSource }).Assemble();
                 (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = stageTempDirectory, IsLive = false, DisableClassGeneration = site.DownloadEfSource }).Assemble();
@@ -172,7 +159,6 @@ namespace Quantumart.QP8.BLL.Services
 
             }
 
-            site.CreateLinqDirectories();
             new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString).Assemble();
             return null;
         }
