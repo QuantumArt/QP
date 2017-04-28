@@ -634,18 +634,6 @@ namespace Quantumart.QP8.BLL
             }
         }
 
-        internal void CreateLinqDirectories()
-        {
-            var dataDir = IsLive ? AppDataDirectory : AppDataStageDirectory;
-            var codeDir = IsLive ? AppCodeDirectory : AppCodeStageDirectory;
-            Directory.CreateDirectory(dataDir);
-            SitePathRepository.CopySiteDirectory(dataDir, SitePathRepository.RELATIVE_APP_DATA_PATH);
-            if (!DownloadEfSource)
-            {
-                Directory.CreateDirectory(codeDir);
-            }
-        }
-
         internal void SaveVisualEditorStyles(int[] activeStyleIds)
         {
             var defaultStyles = VisualEditorRepository.GetAllStyles().ToList();
