@@ -36,7 +36,7 @@ namespace Quantumart.QP8.ArticleScheduler
 
         public void Run()
         {
-            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_customers.ToList());
+            var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(_customers);
             Parallel.ForEach(_customers, customer =>
             {
                 try

@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
@@ -65,19 +67,23 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
+      <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
+      <HintPath>..\packages\Unity.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
+      <HintPath>..\packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.Practices.Unity.Interception.Configuration, Version=2.1.505.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\Unity.Interception.2.1.505.0\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+      <HintPath>..\packages\Unity.Interception.2.1.505.2\lib\NET35\Microsoft.Practices.Unity.Interception.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quantumart.2.1.0\lib\net45\Microsoft.VisualStudio.TextTemplating.Interfaces.10.0.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TextTemplating.Interfaces.10.0, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -92,12 +98,12 @@
       <HintPath>$(SolutionDir)packages\QA.Configuration.1.0.2\lib\net40\QA.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="QA.Validation.Xaml, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.1.0.2.0\lib\net40\QA.Validation.Xaml.dll</HintPath>
+    <Reference Include="QA.Validation.Xaml, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QA.Validation.Xaml.1.0.3\lib\net40\QA.Validation.Xaml.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="QA.Validation.Xaml.Extensions, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\QA.Validation.Xaml.Extensions.1.0.2.0\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
+    <Reference Include="QA.Validation.Xaml.Extensions, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QA.Validation.Xaml.Extensions.1.0.3\lib\net40\QA.Validation.Xaml.Extensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Quantumart, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -106,6 +112,11 @@
     </Reference>
     <Reference Include="Quantumart.QP8.Assembling, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>$(SolutionDir)packages\Quantumart.2.1.0\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
+      <HintPath>..\packages\Quantumart.2.1.0\lib\net45\Quantumart.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Quantumart.QP8.Assembling, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Quantumart.2.1.0\lib\net45\Quantumart.QP8.Assembling.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

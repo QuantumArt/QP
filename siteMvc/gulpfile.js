@@ -436,8 +436,6 @@ gulp.task('default', ['clean'], function defaultTask() {
     + '.';
 
   global.console.log(welcomeMsg);
-
-  // TODO: ne pashet
   $.notify({ title: welcomeMsg, message: 'gulp is running' });
   gulp.start('assets:js', 'assets:css', 'assets:img');
 });
