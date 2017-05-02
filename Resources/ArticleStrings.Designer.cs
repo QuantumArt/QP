@@ -1033,6 +1033,15 @@ namespace Quantumart.QP8.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Exact Match.
+        /// </summary>
+        public static string SearchBlock_ExactMatchBoxLabelText {
+            get {
+                return ResourceManager.GetString("SearchBlock_ExactMatchBoxLabelText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filters.
         /// </summary>
         public static string SearchBlock_FieldSearchBlockTitle {
@@ -1110,6 +1119,15 @@ namespace Quantumart.QP8.Resources {
         public static string SearchBlock_SelectFieldToFilter {
             get {
                 return ResourceManager.GetString("SearchBlock_SelectFieldToFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search from beginning.
+        /// </summary>
+        public static string SearchBlock_StartBeginningCheckBoxLabelText {
+            get {
+                return ResourceManager.GetString("SearchBlock_StartBeginningCheckBoxLabelText", resourceCulture);
             }
         }
         
