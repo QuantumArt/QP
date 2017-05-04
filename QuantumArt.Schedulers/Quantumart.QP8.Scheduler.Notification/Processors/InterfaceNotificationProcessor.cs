@@ -1,6 +1,7 @@
 ﻿using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
+using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
@@ -21,14 +22,14 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         private readonly ILog _logger;
         private readonly PrtgErrorsHandler _prtgLogger;
         private readonly ISchedulerCustomers _schedulerCustomers;
-        private readonly IExternalNotificationService _externalNotificationService;
+        private readonly IExternalInterfaceNotificationService _externalNotificationService;
         private readonly INotificationProvider _notificationProvider;
 
         public InterfaceNotificationProcessor(
             ILog logger,
             PrtgErrorsHandler prtgLogger,
             ISchedulerCustomers schedulerCustomers,
-            IExternalNotificationService externalNotificationService,
+            IExternalInterfaceNotificationService externalNotificationService,
             INotificationProvider notificationProvider)
         {
             _logger = logger;

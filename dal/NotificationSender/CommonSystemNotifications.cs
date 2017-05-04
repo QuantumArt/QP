@@ -1,47 +1,45 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace Quantumart.QP8.DAL
+namespace Quantumart.QP8.DAL.NotificationSender
 {
-    public class CommonExternalNotifications
+    public class CommonSystemNotifications
     {
         private const string InsertNotificationsQuery =
-            @"INSERT INTO [dbo].[EXTERNAL_NOTIFICATION_QUEUE]
+            @"INSERT INTO [dbo].[SYSTEM_NOTIFICATION_QUEUE]
 			(
-				[EVENT_NAME],
-				[ARTICLE_ID],
-				[CONTENT_ID],
-				[SITE_ID],
+				[TRANSACTION_DATE],
+				[EVENT],
+				[TYPE],
 				[URL],
-				[NEW_XML],
-				[OLD_XML]
+				[JSON]
 			)
 			SELECT
-				  col.value('(EventName)[1]','nvarchar(50)') [EVENT_NAME],
-				  col.value('(ArticleId)[1]','numeric(18,0)') [ARTICLE_ID],
-				  col.value('(ContentId)[1]','numeric(18,0)') [CONTENT_ID],
-				  col.value('(SiteId)[1]','numeric(18,0)') [SITE_ID],
-				  col.value('(Url)[1]','nvarchar(1024)') [URL],
-				  col.value('(NewXml)[1]','nvarchar(max)') [NEW_XML],
-				  col.value('(OldXml)[1]','nvarchar(max)') [OLD_XML]
+                col.value('(EventName)[1]','nvarchar(50)') [EVENT_NAME],
+                col.value('(ArticleId)[1]','numeric(18,0)') [ARTICLE_ID],
+                col.value('(Url)[1]','nvarchar(1024)') [URL],
+                col.value('(NewXml)[1]','nvarchar(max)') [NEW_XML],
+                col.value('(OldXml)[1]','nvarchar(max)') [OLD_XML],
+                col.value('(ContentId)[1]','numeric(18,0)') [CONTENT_ID],
+                col.value('(SiteId)[1]','numeric(18,0)') [SITE_ID]
 			FROM
-				@notifications.nodes('/Notifications/Notification') AS tbl(col)";
+                @notifications.nodes('/Notifications/Notification') AS tbl(col)";
 
         private const string UpdateSentNotificationsQuery =
-            @"UPDATE EXTERNAL_NOTIFICATION_QUEUE SET
+            @"UPDATE SYSTEM_NOTIFICATION_QUEUE SET
 				SENT = 1,
 				MODIFIED = getdate()
 			WHERE ID IN (SELECT Id FROM @ids)";
 
         private const string UpdateUnsentNotificationsQuery =
-            @"UPDATE EXTERNAL_NOTIFICATION_QUEUE SET
+            @"UPDATE SYSTEM_NOTIFICATION_QUEUE SET
 				TRIES = TRIES + 1,
 				MODIFIED = getdate()
 			WHERE ID IN (SELECT Id FROM @ids)";
 
-        private const string DeleteSentNotificationsQuery = @"DELETE EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
-        private const string ExistsSentNotificationsQuery = @"SELECT COUNT(ID) FROM EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
+        private const string DeleteSentNotificationsQuery = @"DELETE SYSTEM_NOTIFICATION_QUEUE WHERE SENT = 1";
+        private const string ExistsSentNotificationsQuery = @"SELECT COUNT(ID) FROM SYSTEM_NOTIFICATION_QUEUE WHERE SENT = 1";
 
         private static void ExecuteIdsQuery(SqlConnection connection, string query, IEnumerable<int> ids)
         {

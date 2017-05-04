@@ -1,14 +1,16 @@
-﻿using System;
+﻿using QP8.Infrastructure.Logging;
+using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.BLL.Repository.Articles;
+using Quantumart.QP8.BLL.Repository.NotificationSender;
+using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Constants;
+using Quantumart.QPublishing.Database;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using QP8.Infrastructure.Logging;
-using Quantumart.QP8.BLL.Repository.Articles;
-using Quantumart.QP8.Configuration;
-using Quantumart.QP8.Constants;
-using Quantumart.QPublishing.Database;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -172,7 +174,6 @@ namespace Quantumart.QP8.BLL.Repository
                 {
                     var oldArticles = Articles;
                     var newArticles = GetArticles();
-
                     notificationQueue = from notification in ServiceNotifications
                                         from code in Codes
                                         join oldArticle in oldArticles on notification.ContentId equals oldArticle.ContentId

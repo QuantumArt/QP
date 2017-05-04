@@ -18,13 +18,13 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         private readonly ILog _logger;
         private readonly PrtgErrorsHandler _prtgLogger;
         private readonly ISchedulerCustomers _schedulerCustomers;
-        private readonly IExternalNotificationService _externalNotificationService;
+        private readonly IExternalInterfaceNotificationService _externalNotificationService;
 
         public InterfaceCleanupProcessor(
             ILog logger,
             PrtgErrorsHandler prtgLogger,
             ISchedulerCustomers schedulerCustomers,
-            IExternalNotificationService externalNotificationService)
+            IExternalInterfaceNotificationService externalNotificationService)
         {
             _logger = logger;
             _prtgLogger = prtgLogger;

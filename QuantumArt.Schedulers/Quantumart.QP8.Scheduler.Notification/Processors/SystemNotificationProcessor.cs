@@ -1,6 +1,7 @@
 ﻿using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
+using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
@@ -20,14 +21,14 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         private readonly ILog _logger;
         private readonly PrtgErrorsHandler _prtgLogger;
         private readonly ISchedulerCustomers _schedulerCustomers;
-        private readonly IExternalNotificationService _externalNotificationService;
+        private readonly IExternalSystemNotificationService _externalNotificationService;
         private readonly INotificationProvider _notificationProvider;
 
         public SystemNotificationProcessor(
             ILog logger,
             PrtgErrorsHandler prtgLogger,
             ISchedulerCustomers schedulerCustomers,
-            IExternalNotificationService externalNotificationService,
+            IExternalSystemNotificationService externalNotificationService,
             INotificationProvider notificationProvider)
         {
             _logger = logger;
@@ -97,25 +98,25 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
 
         private IEnumerable<NotificationViewModel> GetPendingNotificationsViewModels(QaConfigCustomer customer)
         {
-            IEnumerable<ExternalNotification> notifications;
+            IEnumerable<SystemNotification> notifications;
             using (new QPConnectionScope(customer.ConnectionString))
             {
                 notifications = _externalNotificationService.GetPendingNotifications();
             }
 
             return notifications
-                .GroupBySequence(n => new { n.Url, n.EventName, n.SiteId, n.ContentId }, n => n)
+                .GroupBySequence(n => new { n.Url, n.Event, n.Type }, n => n)
                 .Select(group => new NotificationViewModel
                 {
                     NotificationModel = new NotificationModel
                     {
-                        Url = group.Key.Url,
-                        SiteId = group.Key.SiteId,
-                        ContentId = group.Key.ContentId,
-                        EventName = group.Key.EventName,
-                        Ids = group.Select(n => n.ArticleId),
-                        NewXmlNodes = group.Select(n => n.NewXml),
-                        OldXmlNodes = group.Select(n => n.OldXml)
+                        //Url = group.Key.Url,
+                        //SiteId = group.Key.SiteId,
+                        //ContentId = group.Key.ContentId,
+                        //EventName = group.Key.EventName,
+                        //Ids = group.Select(n => n.ArticleId),
+                        //NewXmlNodes = group.Select(n => n.NewXml),
+                        //OldXmlNodes = group.Select(n => n.OldXml)
                     },
                     NotificationsIds = group.Select(n => n.Id).ToList()
                 });

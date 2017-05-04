@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using Quantumart.QP8.BLL.Facades;
+using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.DAL.NotificationSender;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Xml.Linq;
-using Quantumart.QP8.BLL.Facades;
-using Quantumart.QP8.DAL;
 
-namespace Quantumart.QP8.BLL.Repository
+namespace Quantumart.QP8.BLL.Repository.NotificationSender
 {
     internal class ExternalNotificationRepository
     {
@@ -13,12 +14,6 @@ namespace Quantumart.QP8.BLL.Repository
         {
             var notifications = QPContext.EFContext.ExternalNotificationSet.Where(n => !n.Sent).ToList();
             return MapperFacade.ExternalNotificationMapper.GetBizList(notifications);
-        }
-
-        internal static IEnumerable<SystemNotification> GetSystemPendingNotifications()
-        {
-            var notifications = QPContext.EFContext.SystemNotificationSet.Where(n => !n.Sent).ToList();
-            return MapperFacade.SystemNotificationMapper.GetBizList(notifications);
         }
 
         internal static void DeleteSentNotifications()
@@ -52,19 +47,6 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var entity = MapperFacade.ExternalNotificationMapper.GetDalObject(notification);
                 entities.ExternalNotificationSet.Attach(entity);
-                entities.ObjectStateManager.ChangeObjectState(entity, EntityState.Modified);
-            }
-
-            entities.SaveChanges();
-        }
-
-        internal static void Update(IEnumerable<SystemNotification> notifications)
-        {
-            var entities = QPContext.EFContext;
-            foreach (var notification in notifications)
-            {
-                var entity = MapperFacade.SystemNotificationMapper.GetDalObject(notification);
-                entities.SystemNotificationSet.Attach(entity);
                 entities.ObjectStateManager.ChangeObjectState(entity, EntityState.Modified);
             }
 

@@ -93,7 +93,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArticleDAL.cs" />
-    <Compile Include="CommonExternalNotifications.cs" />
+    <Compile Include="NotificationSender\CommonSystemNotifications.cs" />
+    <Compile Include="NotificationSender\CommonExternalNotifications.cs" />
     <Compile Include="CommonSecurity.cs" />
     <Compile Include="DTO\ArticleFullTextSearchParameter.cs" />
     <Compile Include="Common.cs" />
@@ -202,4 +203,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+</Project>
 </Project>

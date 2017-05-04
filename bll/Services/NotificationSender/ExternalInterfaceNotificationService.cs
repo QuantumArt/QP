@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using Quantumart.QP8.BLL.Repository;
+﻿using Quantumart.QP8.BLL.Models.NotificationSender;
+using Quantumart.QP8.BLL.Repository.NotificationSender;
+using System.Collections.Generic;
 
 namespace Quantumart.QP8.BLL.Services.NotificationSender
 {
-    public class ExternalInterfaceNotificationService : IExternalNotificationService
+    public class ExternalInterfaceNotificationService : IExternalInterfaceNotificationService
     {
         public IEnumerable<ExternalNotification> GetPendingNotifications()
         {

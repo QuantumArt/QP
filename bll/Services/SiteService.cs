@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Quantumart.QP8.Assembling;
+﻿using Quantumart.QP8.Assembling;
 using Quantumart.QP8.BLL.Factories;
 using Quantumart.QP8.BLL.ListItems;
 using Quantumart.QP8.BLL.Repository;
@@ -10,8 +7,11 @@ using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.Resources;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 
 namespace Quantumart.QP8.BLL.Services
 {
@@ -154,7 +154,7 @@ namespace Quantumart.QP8.BLL.Services
                 (new AssembleContentsController(id, sqlMetalPath, QPContext.CurrentDbConnectionString) { SiteRoot = stageTempDirectory, IsLive = false, DisableClassGeneration = site.DownloadEfSource }).Assemble();
 
                 ZipFile.CreateFromDirectory(site.TempDirectoryForClasses, site.TempArchiveForClasses);
-                
+
                 return MessageResult.Download($"/Backend/Site/GetClassesZip/{id}");
 
             }

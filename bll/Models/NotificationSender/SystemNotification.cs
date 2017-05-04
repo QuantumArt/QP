@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Quantumart.QP8.BLL
+namespace Quantumart.QP8.BLL.Models.NotificationSender
 {
     public class SystemNotification
     {

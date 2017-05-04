@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using AutoMapper;
+﻿using AutoMapper;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Mappers.EntityPermissions;
 using Quantumart.QP8.BLL.Mappers.VisualEditor;
@@ -10,6 +8,8 @@ using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Utils;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Quantumart.QP8.BLL.Facades
 {

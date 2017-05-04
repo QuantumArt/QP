@@ -156,8 +156,9 @@
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
     <Compile Include="Mappers\SystemNotificationMapper.cs" />
-    <Compile Include="SystemNotification.cs" />
-    <Compile Include="ExternalNotification.cs" />
+    <Compile Include="Repository\NotificationSender\SystemNotificationRepository.cs" />
+    <Compile Include="Models\NotificationSender\SystemNotification.cs" />
+    <Compile Include="Models\NotificationSender\ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
@@ -223,7 +224,7 @@
     <Compile Include="Repository\ArticleMatching\Models\QueryField.cs" />
     <Compile Include="Repository\ArticleMatching\Models\SchemaInfo.cs" />
     <Compile Include="Repository\DBRepository.cs" />
-    <Compile Include="Repository\ExternalNotificationRepository.cs" />
+    <Compile Include="Repository\NotificationSender\ExternalNotificationRepository.cs" />
     <Compile Include="Repository\FingerprintRepository.cs" />
     <Compile Include="Repository\FormatRepository.cs" />
     <Compile Include="Repository\Helpers\ContentPermissionHelper.cs" />
@@ -518,7 +519,8 @@
     <Compile Include="Services\MultistepActions\Remove\RemoveArticlesFromArchiveService.cs" />
     <Compile Include="Services\MultistepActions\Removing\RemovingServiceAbstract.cs" />
     <Compile Include="Services\NotificationSender\ExternalSystemNotificationService.cs" />
-    <Compile Include="Services\NotificationSender\IExternalNotificationService.cs" />
+    <Compile Include="Services\NotificationSender\IExternalSystemNotificationService.cs" />
+    <Compile Include="Services\NotificationSender\IExternalInterfaceNotificationService.cs" />
     <Compile Include="Services\ObjectService.cs" />
     <Compile Include="Services\PageService.cs" />
     <Compile Include="Services\PageTemplateService.cs" />
