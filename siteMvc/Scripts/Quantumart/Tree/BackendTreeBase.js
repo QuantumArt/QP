@@ -155,13 +155,12 @@ Quantumart.QP8.BackendTreeBase.prototype = {
     if ($q.isObject(node)) {
       return $q.toJQuery(node);
     } else if ($q.isString(node) || $.isNumeric(node)) {
-      $parentNode = $(parentNodeElem);
+      let $parentNode = $(parentNodeElem);
       if ($q.isNullOrEmpty($parentNode)) {
         $parentNode = $('#' + this._treeElementId);
       }
 
       var $node = null;
-
       if (node == this.ROOT_NODE_CODE) {
         $node = $('#' + this._treeElementId);
       } else {
@@ -203,12 +202,11 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
   getParentNode: function(node) {
     var $node = this.getNode(node);
-    var $parentNode = null;
-
+    let $parentNode = null;
     if (!$q.isNullOrEmpty($node)) {
       $parentNode = $node.parent().parent();
       if ($parentNode.length == 0 || !$parentNode.hasClass('t-item')) {
-        $parentNode = null;
+        return null;
       }
     }
 
@@ -288,7 +286,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
   },
 
   _renderChildNodes: function(parentNode, dataItems, isRootNode) {
-    var $parentNode = this.getNode(parentNode);
+    let $parentNode = this.getNode(parentNode);
     var $group = this._getChildNodesContainer($parentNode);
 
     var isGroup = $q.isNullOrEmpty($group);
@@ -414,7 +412,7 @@ Quantumart.QP8.BackendTreeBase.prototype = {
 
     if (!$q.isNullOrEmpty($node)) {
       if (!this.isRootNode($node)) {
-        var $parentNode = $node.parent();
+        let $parentNode = $node.parent();
 
         level = 1;
         while (!$q.isNullOrEmpty($parentNode) && !this.isRootNode($node)) {
@@ -424,12 +422,8 @@ Quantumart.QP8.BackendTreeBase.prototype = {
             level++;
           }
 
-          parentNodeElem = null;
-
           $parentNode = $parentNode.parent();
         }
-
-        $parentNode = null;
       } else {
         level = 0;
       }
@@ -525,7 +519,6 @@ Quantumart.QP8.BackendTreeBase.prototype = {
       }
 
       nodeSelectorFn.call(this, $node);
-      $parentNode = null;
     }
   },
 

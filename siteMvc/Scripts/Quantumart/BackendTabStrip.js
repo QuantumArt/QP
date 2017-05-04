@@ -173,7 +173,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
 
   fixTabStripWidth: function() {
     var $tabStrip = $(this._tabStripElement);
-    var $menuButtonContainer = $(this._tabMenuButtonContainerElement);
+    let $menuButtonContainer = $(this._tabMenuButtonContainerElement);
     var newScrollableWidth = $tabStrip.width() - $menuButtonContainer.width();
     $(this._tabStripScrollableElement).css('width', newScrollableWidth + 'px');
   },
@@ -189,7 +189,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   isTabStripOverflow: function () {
-    var result = false;
+    let result = false;
     var $scrollable = $(this._tabStripScrollableElement);
     var tabStripWidth = $scrollable.width();
     var allTabsWidth = 0;
@@ -452,6 +452,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _getTabEntityTypeCode: function (eventArgs) {
+    let result;
     var actionTypeCode = eventArgs.get_actionTypeCode();
     if (actionTypeCode == ACTION_TYPE_CODE_LIST) {
       result = Quantumart.QP8.BackendEntityType.getParentEntityTypeCodeByCode(eventArgs.get_entityTypeCode());
@@ -463,6 +464,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _getTabEntityId: function (eventArgs) {
+    let result;
     var actionTypeCode = eventArgs.get_actionTypeCode();
     if (actionTypeCode == ACTION_TYPE_CODE_LIST) {
       result = eventArgs.get_parentEntityId();
@@ -477,7 +479,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   getExistingTabId: function (eventArgs) {
-    var result = 0;
+    let result = 0;
     if (eventArgs.get_actionTypeCode() != ACTION_TYPE_CODE_ADD_NEW) {
       var $tab = this.getFirstTabByGroupCode(this.generateTabGroupCode(eventArgs, 0));
       if ($q.isObject($tab)) {
@@ -830,7 +832,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   _addTabMenuToTabStrip: function () {
     var $tabStrip = $(this._tabStripElement);
     if (this._tabMenuButtonContainerElement == null) {
-      $menuButtonContainer = $('<div />', { 'class': 'tabMenuButton' });
+      let $menuButtonContainer = $('<div />', { 'class': 'tabMenuButton' });
       var $menuButton = $('<span />');
       var $menuButtonImage = $('<img />', {
         'src': COMMON_IMAGE_FOLDER_URL_ROOT + '0.gif',
@@ -925,7 +927,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   _changeTabStripOverflowIndicator: function (isOverflow) {
-    var $menuButtonContainer = $(this._tabMenuButtonContainerElement);
+    let $menuButtonContainer = $(this._tabMenuButtonContainerElement);
     if (isOverflow) {
       $menuButtonContainer.removeClass('tabMenuButton').addClass('tabOverflowMenuButton');
     } else {
@@ -1167,7 +1169,7 @@ Quantumart.QP8.BackendTabStrip.prototype = {
   },
 
   tabEntityExists: function ($tab) {
-    var result = true;
+    let result = true;
     var actionTypeCode = $tab.data('action_type_code');
     if (actionTypeCode != ACTION_TYPE_CODE_ADD_NEW && actionTypeCode != ACTION_TYPE_CODE_MULTIPLE_SELECT) {
       var eventArgs = this.getEventArgsFromTab($tab);

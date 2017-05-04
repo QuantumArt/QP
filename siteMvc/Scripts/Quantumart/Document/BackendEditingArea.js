@@ -686,10 +686,10 @@ Quantumart.QP8.BackendEditingAreaEventArgs.prototype = {
   _documentId: null,
   _isSelected: false,
 
-  get_documentId: function () { return _documentId; },
-  set_documentId: function (value) { _documentId = value; },
-  get_isSelected: function () { return _isSelected; },
-  set_isSelected: function (value) { _isSelected = value; }
+  get_documentId: function () { return this._documentId; },
+  set_documentId: function (value) { this._documentId = value; },
+  get_isSelected: function () { return this._isSelected; },
+  set_isSelected: function (value) { this._isSelected = value; }
 };
 
 

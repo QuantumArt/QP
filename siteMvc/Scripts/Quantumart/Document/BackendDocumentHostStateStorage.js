@@ -23,18 +23,16 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
   _keyPrefix: '',
 
   loadHostState: function(hostParams) {
-    var key = this._get_host_key(hostParams);
-
+    let key = this._get_host_key(hostParams);
     if (key) {
       return JSON.parse(localStorage.getItem(key));
     }
   },
 
   saveHostState: function(hostParams, hostState) {
-    var key = this._get_host_key(hostParams);
-
+    let key = this._get_host_key(hostParams);
     if (key) {
-      if (jQuery.isEmptyObject(hostState)) {
+      if ($.isEmptyObject(hostState)) {
         localStorage.removeItem(key);
       } else {
         localStorage.setItem(key, JSON.stringify(hostState));
@@ -42,16 +40,16 @@ Quantumart.QP8.BackendDocumentHostStateStorage.prototype = {
     }
   },
 
-  dispose: function() { },
-
   _get_host_key: function(hostParams) {
-    if (hostParams && !jQuery.isEmptyObject(hostParams)) {
-      var key = new $.telerik.stringBuilder();
+    if (hostParams && !$.isEmptyObject(hostParams)) {
+      let key = new $.telerik.stringBuilder();
+      if (this && this._keyPrefix) {
+        key.cat(this._keyPrefix).cat('.')
+           .cat(hostParams.actionCode).cat('_')
+           .cat(hostParams.entityId).cat('_')
+           .cat(hostParams.parentEntityId);
+      }
 
-      key.cat(this._keyPrefix).cat('.')
-      .cat(hostParams.actionCode).cat('_')
-      .cat(hostParams.entityId).cat('_')
-      .cat(hostParams.parentEntityId);
       return key.string();
     }
   }

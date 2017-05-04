@@ -102,8 +102,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
   _addNodesToParentNode: function(parentNode, maxExpandLevel, getChildNodes, errorHandler) {
     var self = this;
-
-    $parentNode = this.getNode(parentNode);
+    let $parentNode = this.getNode(parentNode);
     var isRootNode = this.isRootNode($parentNode);
     var level = 0;
     var entityTypeCode = null;
@@ -163,7 +162,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
     }
 
     var self = this;
-    var $parentNode = this.getParentNode($node);
+    let $parentNode = this.getParentNode($node);
 
     var entityTypeCode = ($parentNode) ? $parentNode.data('entity_type_code') : null;
     var entityId = ($parentNode) ? $node.data('entity_id') : 0;
@@ -417,7 +416,7 @@ Quantumart.QP8.BackendTreeMenu.prototype = {
 
   _extendNodeElements: function(parentNodeElem, nodes) {
     var self = this;
-    var $parentNode = $q.toJQuery(parentNodeElem);
+    let $parentNode = $q.toJQuery(parentNodeElem);
     $.each(nodes, function(index, node) {
       var $node = self.getNode(node.NodeCode, $parentNode);
       self._extendNodeElement($node, node);

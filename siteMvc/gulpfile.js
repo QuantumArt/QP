@@ -10,6 +10,7 @@ var bs = require('browser-sync');
 var argv = require('yargs').argv;
 var loadPlugins = require('gulp-load-plugins');
 var es6Promise = require('es6-promise');
+var notifier = require('node-notifier')
 
 es6Promise.polyfill();
 $ = loadPlugins();
@@ -58,7 +59,7 @@ custom.destPaths = {
 };
 
 custom.paths = {
-  scripts1: [
+  vendorsjs: [
     'Scripts/es5-shim.js',
     'Scripts/jquery/jquery-1.7.1.js',
     'Scripts/telerik/telerik.common.js',
@@ -104,11 +105,9 @@ custom.paths = {
     'Scripts/telerik/telerik.grid.grouping.js',
     'Scripts/telerik/telerik.grid.editing.js',
     'Scripts/telerik/telerik.upload.js',
-    'Scripts/telerik/telerik.splitter.js'
-  ],
-  scripts2: [
-    'Scripts/Quantumart/Helpers/vanilla.helpers.js',
+    'Scripts/telerik/telerik.splitter.js',
 
+    'Content/ckeditor/ckeditor.js',
     'Content/codemirror/lib/codemirror.js',
     'Content/codemirror/mode/clike/clike.js',
     'Content/codemirror/mode/sql/sql.js',
@@ -121,10 +120,12 @@ custom.paths = {
     'Content/codemirror/addon/mode/multiplex.js',
 
     'Scripts/PlUpload/moxie.js',
-    'Scripts/PlUpload/plupload.dev.js',
+    'Scripts/PlUpload/plupload.dev.js'
+  ],
+  qpjs: [
+    'Scripts/Quantumart/Helpers/vanilla.helpers.js',
     'Scripts/Quantumart/Uploader/plupload/plupload.filters.js',
 
-    'Content/ckeditor/ckeditor.js',
     'Scripts/Quantumart/ckeditor/aspell/plugin.js',
     'Scripts/Quantumart/ckeditor/typographer/plugin.js',
     'Scripts/Quantumart/ckeditor/codemirror/plugin.js',
@@ -352,7 +353,7 @@ gulp.task('assets:js', ['assets:vendorsjs', 'assets:qpjs'], function assetsJsTas
 });
 
 gulp.task('assets:vendorsjs', ['assets:revisions'], function assetsVendorsJsTask() {
-  return gulp.src(custom.paths.scripts1, { base: './' })
+  return gulp.src(custom.paths.vendorsjs, { base: './' })
     .pipe($.plumber({ errorHandler: custom.reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
     .pipe($.rename({ suffix: '.min' }))
@@ -369,9 +370,10 @@ gulp.task('assets:vendorsjs', ['assets:revisions'], function assetsVendorsJsTask
 });
 
 gulp.task('assets:qpjs', ['assets:revisions'], function assetsQpJsTask() {
-  return gulp.src(custom.paths.scripts2, { base: './' })
+  return gulp.src(custom.paths.qpjs, { base: './' })
     .pipe($.plumber({ errorHandler: custom.reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
+    .pipe($.babel())
     .pipe(custom.isProduction() ? $.uglify({
       compress: {
         sequences: false
@@ -436,9 +438,7 @@ gulp.task('default', ['clean'], function defaultTask() {
     + '.';
 
   global.console.log(welcomeMsg);
-
-  // TODO: ne pashet
-  $.notify({ title: welcomeMsg, message: 'gulp is running' });
+  notifier.notify({ title: welcomeMsg, message: 'gulp is running' });
   gulp.start('assets:js', 'assets:css', 'assets:img');
 });
 

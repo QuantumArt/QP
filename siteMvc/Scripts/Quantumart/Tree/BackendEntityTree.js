@@ -248,13 +248,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   },
 
   getParentNode: function(node) {
-    var $parentNode = Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'getParentNode', [node]);
-
+    let $parentNode = Quantumart.QP8.BackendEntityTree.callBaseMethod(this, 'getParentNode', [node]);
     if ($q.isNullOrEmpty($parentNode) && $q.isString(node)) {
       var entityTypeCode = this._entityTypeCode;
       var entityId = this.convertNodeCodeToEntityId(node);
       var parentId = $o.getParentEntityId(entityTypeCode, entityId);
-
       if (parentId) {
         $parentNode = this.getNode(this.convertEntityIdToNodeCode(parentId));
       }
@@ -278,14 +276,11 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       var $node = this.getNodeByEntityId(entityId);
 
       if (!$q.isNullOrEmpty($node)) {
-        var $parentNode = this.getParentNode($node);
-
+        let $parentNode = this.getParentNode($node);
         if (!$q.isNullOrEmpty($parentNode)) {
           var parentNodeCode = this.getNodeValue($parentNode);
           Array.add(parentNodeCodes, parentNodeCode);
         }
-
-        $parentNode = null;
       }
     }
 
@@ -309,11 +304,9 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
     // Формируем список уровней вложенности
     var levels = [];
-
     for (var parentNodeInfoIndex = 0; parentNodeInfoIndex < parentNodeInfos.length; parentNodeInfoIndex++) {
       var parentNodeInfo = parentNodeInfos[parentNodeInfoIndex];
       var level = parentNodeInfo.level;
-
       if (!Array.contains(levels, level)) {
         Array.add(levels, level);
       }
@@ -432,7 +425,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
       this._raiseDataBoundEvent();
 
       if (options.maxExpandLevel !== 0) {
-        $parentNode.find('> UL > LI').each((function(index, $childNode) {
+        options.$parentNode.find('> UL > LI').each((function(index, $childNode) {
           this.addNodesToParentNode($childNode, options.maxExpandLevel);
         }).bind(this));
       }
@@ -452,7 +445,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
   },
 
   addNodesToParentNode: function(parentNode, maxExpandLevel, callback) {
-    var $parentNode = this.getNode(parentNode);
+    let $parentNode = this.getNode(parentNode);
     var isRootNode = this.isRootNode($parentNode);
     var level = 0; // уровень вложенности
     var entityId;
@@ -821,8 +814,7 @@ Quantumart.QP8.BackendEntityTree.prototype = {
 
   _extendNodeElements: function(parentNodeElem, entities) {
     var self = this;
-    var $parentNode = $q.toJQuery(parentNodeElem);
-
+    let $parentNode = $q.toJQuery(parentNodeElem);
     $.each(entities || [],
       function(index, entity) {
         var $node = self.getNode(entity.Id, $parentNode);

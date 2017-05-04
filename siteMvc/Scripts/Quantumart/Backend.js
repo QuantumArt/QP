@@ -202,8 +202,8 @@ Quantumart.QP8.Backend.prototype = {
   },
 
   _initializeSignalrHubs: function() {
-    that = this;
-    $.connection.hub.logging = false;//this._isDebugMode;
+    const that = this;
+    $.connection.hub.logging = false;
     $.connection.communication.client.send = function(key, data) {
       if (key === 'singleusermode') {
         that._updateSingleUserMode(data);
