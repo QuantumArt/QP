@@ -155,6 +155,8 @@
     <Compile Include="Extensions\CollectionExtensions.cs" />
     <Compile Include="Extensions\EnumExtensions.cs" />
     <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="Mappers\SystemNotificationMapper.cs" />
+    <Compile Include="SystemNotification.cs" />
     <Compile Include="ExternalNotification.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
@@ -776,4 +778,3 @@
   </Target>
   -->
 </Project>
-

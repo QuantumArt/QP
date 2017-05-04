@@ -260,6 +260,8 @@ namespace Quantumart.QP8.BLL.Facades
 
         internal static readonly ExternalNotificationMapper ExternalNotificationMapper = Create<ExternalNotificationMapper>();
 
+        internal static readonly SystemNotificationMapper SystemNotificationMapper = Create<SystemNotificationMapper>();
+
         internal static readonly DataRowMapper DataRowMapper = new DataRowMapper();
 
         internal static readonly XmlDbUpdateLogMapper XmlDbUpdateLogMapper = new XmlDbUpdateLogMapper();

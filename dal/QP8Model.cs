@@ -1735,6 +1735,22 @@ namespace Quantumart.QP8.DAL
         }
         private ObjectSet<XmlDbUpdateActionsLogEntity> _XML_DB_UPDATE_ACTIONS;
 
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<SystemNotificationDAL> SystemNotificationSet
+        {
+            get
+            {
+                if ((_SystemNotificationSet == null))
+                {
+                    _SystemNotificationSet = base.CreateObjectSet<SystemNotificationDAL>("SystemNotificationSet");
+                }
+                return _SystemNotificationSet;
+            }
+        }
+        private ObjectSet<SystemNotificationDAL> _SystemNotificationSet;
+
         #endregion
 
         #region AddTo Methods
@@ -2465,6 +2481,14 @@ namespace Quantumart.QP8.DAL
         public void AddToXML_DB_UPDATE_ACTIONS(XmlDbUpdateActionsLogEntity xmlDbUpdateActionsLogEntity)
         {
             base.AddObject("XML_DB_UPDATE_ACTIONS", xmlDbUpdateActionsLogEntity);
+        }
+
+        /// <summary>
+        /// Deprecated Method for adding a new object to the SystemNotificationSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToSystemNotificationSet(SystemNotificationDAL systemNotificationDAL)
+        {
+            base.AddObject("SystemNotificationSet", systemNotificationDAL);
         }
 
         #endregion
@@ -14637,9 +14661,10 @@ namespace Quantumart.QP8.DAL
         /// <param name="modified">Initial value of the Modified property.</param>
         /// <param name="lastModifiedBy">Initial value of the LastModifiedBy property.</param>
         /// <param name="useADSyncService">Initial value of the UseADSyncService property.</param>
-        /// <param name="useDPC">Initial value of the UseDPC property.</param>
+        /// <param name="useDpc">Initial value of the UseDpc property.</param>
+        /// <param name="useCdc">Initial value of the UseCdc property.</param>
         /// <param name="autoOpenHome">Initial value of the AutoOpenHome property.</param>
-        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDPC, global::System.Boolean autoOpenHome)
+        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDpc, global::System.Boolean useCdc, global::System.Boolean autoOpenHome)
         {
             DbDAL dbDAL = new DbDAL();
             dbDAL.Id = id;
@@ -14648,7 +14673,8 @@ namespace Quantumart.QP8.DAL
             dbDAL.Modified = modified;
             dbDAL.LastModifiedBy = lastModifiedBy;
             dbDAL.UseADSyncService = useADSyncService;
-            dbDAL.UseDPC = useDPC;
+            dbDAL.UseDpc = useDpc;
+            dbDAL.UseCdc = useCdc;
             dbDAL.AutoOpenHome = autoOpenHome;
             return dbDAL;
         }
@@ -14833,24 +14859,48 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
-        public global::System.Boolean UseDPC
+        public global::System.Boolean UseDpc
         {
             get
             {
-                return _UseDPC;
+                return _UseDpc;
             }
             set
             {
-                OnUseDPCChanging(value);
-                ReportPropertyChanging("UseDPC");
-                _UseDPC = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("UseDPC");
-                OnUseDPCChanged();
+                OnUseDpcChanging(value);
+                ReportPropertyChanging("UseDpc");
+                _UseDpc = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UseDpc");
+                OnUseDpcChanged();
             }
         }
-        private global::System.Boolean _UseDPC;
-        partial void OnUseDPCChanging(global::System.Boolean value);
-        partial void OnUseDPCChanged();
+        private global::System.Boolean _UseDpc;
+        partial void OnUseDpcChanging(global::System.Boolean value);
+        partial void OnUseDpcChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean UseCdc
+        {
+            get
+            {
+                return _UseCdc;
+            }
+            set
+            {
+                OnUseCdcChanging(value);
+                ReportPropertyChanging("UseCdc");
+                _UseCdc = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("UseCdc");
+                OnUseCdcChanged();
+            }
+        }
+        private global::System.Boolean _UseCdc;
+        partial void OnUseCdcChanging(global::System.Boolean value);
+        partial void OnUseCdcChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -33441,6 +33491,291 @@ namespace Quantumart.QP8.DAL
     
     }
     
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="QP8Model", Name="SystemNotificationDAL")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class SystemNotificationDAL : EntityObject
+    {
+        #region Factory Method
+
+        /// <summary>
+        /// Create a new SystemNotificationDAL object.
+        /// </summary>
+        /// <param name="id">Initial value of the Id property.</param>
+        /// <param name="transactionDate">Initial value of the TransactionDate property.</param>
+        /// <param name="url">Initial value of the Url property.</param>
+        /// <param name="tries">Initial value of the Tries property.</param>
+        /// <param name="sent">Initial value of the Sent property.</param>
+        /// <param name="created">Initial value of the Created property.</param>
+        /// <param name="modified">Initial value of the Modified property.</param>
+        public static SystemNotificationDAL CreateSystemNotificationDAL(global::System.Decimal id, global::System.DateTime transactionDate, global::System.String url, global::System.Decimal tries, global::System.Boolean sent, global::System.DateTime created, global::System.DateTime modified)
+        {
+            SystemNotificationDAL systemNotificationDAL = new SystemNotificationDAL();
+            systemNotificationDAL.Id = id;
+            systemNotificationDAL.TransactionDate = transactionDate;
+            systemNotificationDAL.Url = url;
+            systemNotificationDAL.Tries = tries;
+            systemNotificationDAL.Sent = sent;
+            systemNotificationDAL.Created = created;
+            systemNotificationDAL.Modified = modified;
+            return systemNotificationDAL;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal Id
+        {
+            get
+            {
+                return _Id;
+            }
+            set
+            {
+                if (_Id != value)
+                {
+                    OnIdChanging(value);
+                    ReportPropertyChanging("Id");
+                    _Id = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("Id");
+                    OnIdChanged();
+                }
+            }
+        }
+        private global::System.Decimal _Id;
+        partial void OnIdChanging(global::System.Decimal value);
+        partial void OnIdChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime TransactionDate
+        {
+            get
+            {
+                return _TransactionDate;
+            }
+            set
+            {
+                OnTransactionDateChanging(value);
+                ReportPropertyChanging("TransactionDate");
+                _TransactionDate = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("TransactionDate");
+                OnTransactionDateChanged();
+            }
+        }
+        private global::System.DateTime _TransactionDate;
+        partial void OnTransactionDateChanging(global::System.DateTime value);
+        partial void OnTransactionDateChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Event
+        {
+            get
+            {
+                return _Event;
+            }
+            set
+            {
+                OnEventChanging(value);
+                ReportPropertyChanging("Event");
+                _Event = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Event");
+                OnEventChanged();
+            }
+        }
+        private global::System.String _Event;
+        partial void OnEventChanging(global::System.String value);
+        partial void OnEventChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Type
+        {
+            get
+            {
+                return _Type;
+            }
+            set
+            {
+                OnTypeChanging(value);
+                ReportPropertyChanging("Type");
+                _Type = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Type");
+                OnTypeChanged();
+            }
+        }
+        private global::System.String _Type;
+        partial void OnTypeChanging(global::System.String value);
+        partial void OnTypeChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Url
+        {
+            get
+            {
+                return _Url;
+            }
+            set
+            {
+                OnUrlChanging(value);
+                ReportPropertyChanging("Url");
+                _Url = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Url");
+                OnUrlChanged();
+            }
+        }
+        private global::System.String _Url;
+        partial void OnUrlChanging(global::System.String value);
+        partial void OnUrlChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Decimal Tries
+        {
+            get
+            {
+                return _Tries;
+            }
+            set
+            {
+                OnTriesChanging(value);
+                ReportPropertyChanging("Tries");
+                _Tries = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Tries");
+                OnTriesChanged();
+            }
+        }
+        private global::System.Decimal _Tries;
+        partial void OnTriesChanging(global::System.Decimal value);
+        partial void OnTriesChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Json
+        {
+            get
+            {
+                return _Json;
+            }
+            set
+            {
+                OnJsonChanging(value);
+                ReportPropertyChanging("Json");
+                _Json = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Json");
+                OnJsonChanged();
+            }
+        }
+        private global::System.String _Json;
+        partial void OnJsonChanging(global::System.String value);
+        partial void OnJsonChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Boolean Sent
+        {
+            get
+            {
+                return _Sent;
+            }
+            set
+            {
+                OnSentChanging(value);
+                ReportPropertyChanging("Sent");
+                _Sent = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Sent");
+                OnSentChanged();
+            }
+        }
+        private global::System.Boolean _Sent;
+        partial void OnSentChanging(global::System.Boolean value);
+        partial void OnSentChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Created
+        {
+            get
+            {
+                return _Created;
+            }
+            set
+            {
+                OnCreatedChanging(value);
+                ReportPropertyChanging("Created");
+                _Created = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Created");
+                OnCreatedChanged();
+            }
+        }
+        private global::System.DateTime _Created;
+        partial void OnCreatedChanging(global::System.DateTime value);
+        partial void OnCreatedChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.DateTime Modified
+        {
+            get
+            {
+                return _Modified;
+            }
+            set
+            {
+                OnModifiedChanging(value);
+                ReportPropertyChanging("Modified");
+                _Modified = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("Modified");
+                OnModifiedChanged();
+            }
+        }
+        private global::System.DateTime _Modified;
+        partial void OnModifiedChanging(global::System.DateTime value);
+        partial void OnModifiedChanged();
+
+        #endregion
+
+
+    }
+
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>

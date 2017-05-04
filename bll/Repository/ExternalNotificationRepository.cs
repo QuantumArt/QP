@@ -15,6 +15,12 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.ExternalNotificationMapper.GetBizList(notifications);
         }
 
+        internal static IEnumerable<SystemNotification> GetSystemPendingNotifications()
+        {
+            var notifications = QPContext.EFContext.SystemNotificationSet.Where(n => !n.Sent).ToList();
+            return MapperFacade.SystemNotificationMapper.GetBizList(notifications);
+        }
+
         internal static void DeleteSentNotifications()
         {
             using (new QPConnectionScope())
@@ -46,6 +52,19 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 var entity = MapperFacade.ExternalNotificationMapper.GetDalObject(notification);
                 entities.ExternalNotificationSet.Attach(entity);
+                entities.ObjectStateManager.ChangeObjectState(entity, EntityState.Modified);
+            }
+
+            entities.SaveChanges();
+        }
+
+        internal static void Update(IEnumerable<SystemNotification> notifications)
+        {
+            var entities = QPContext.EFContext;
+            foreach (var notification in notifications)
+            {
+                var entity = MapperFacade.SystemNotificationMapper.GetDalObject(notification);
+                entities.SystemNotificationSet.Attach(entity);
                 entities.ObjectStateManager.ChangeObjectState(entity, EntityState.Modified);
             }
 
