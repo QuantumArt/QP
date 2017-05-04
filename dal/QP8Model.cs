@@ -33608,24 +33608,48 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public global::System.String Type
+        public global::System.String EntityType
         {
             get
             {
-                return _Type;
+                return _EntityType;
             }
             set
             {
-                OnTypeChanging(value);
-                ReportPropertyChanging("Type");
-                _Type = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("Type");
-                OnTypeChanged();
+                OnEntityTypeChanging(value);
+                ReportPropertyChanging("EntityType");
+                _EntityType = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("EntityType");
+                OnEntityTypeChanged();
             }
         }
-        private global::System.String _Type;
-        partial void OnTypeChanging(global::System.String value);
-        partial void OnTypeChanged();
+        private global::System.String _EntityType;
+        partial void OnEntityTypeChanging(global::System.String value);
+        partial void OnEntityTypeChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String Lsn
+        {
+            get
+            {
+                return _Lsn;
+            }
+            set
+            {
+                OnLsnChanging(value);
+                ReportPropertyChanging("Lsn");
+                _Lsn = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("Lsn");
+                OnLsnChanged();
+            }
+        }
+        private global::System.String _Lsn;
+        partial void OnLsnChanging(global::System.String value);
+        partial void OnLsnChanged();
 
         /// <summary>
         /// No Metadata Documentation available.
@@ -33674,6 +33698,54 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Tries;
         partial void OnTriesChanging(global::System.Decimal value);
         partial void OnTriesChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Decimal> EntityId
+        {
+            get
+            {
+                return _EntityId;
+            }
+            set
+            {
+                OnEntityIdChanging(value);
+                ReportPropertyChanging("EntityId");
+                _EntityId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("EntityId");
+                OnEntityIdChanged();
+            }
+        }
+        private Nullable<global::System.Decimal> _EntityId;
+        partial void OnEntityIdChanging(Nullable<global::System.Decimal> value);
+        partial void OnEntityIdChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public Nullable<global::System.Decimal> ParentEntityId
+        {
+            get
+            {
+                return _ParentEntityId;
+            }
+            set
+            {
+                OnParentEntityIdChanging(value);
+                ReportPropertyChanging("ParentEntityId");
+                _ParentEntityId = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("ParentEntityId");
+                OnParentEntityIdChanged();
+            }
+        }
+        private Nullable<global::System.Decimal> _ParentEntityId;
+        partial void OnParentEntityIdChanging(Nullable<global::System.Decimal> value);
+        partial void OnParentEntityIdChanged();
 
         /// <summary>
         /// No Metadata Documentation available.

@@ -8,7 +8,13 @@ namespace Quantumart.QP8.BLL.Models.NotificationSender
 
         public string Event { get; set; }
 
-        public string Type { get; set; }
+        public string Lsn { get; set; }
+
+        public int? ParentEntityId { get; set; }
+
+        public int? EntityId { get; set; }
+
+        public string EventType { get; set; }
 
         public DateTime TransactionDate { get; set; }
 

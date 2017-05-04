@@ -151,7 +151,6 @@
     <Content Include="scripts\DeleteSite\tbd_delete_content.sql" />
     <Content Include="scripts\GetPermittedItemsAsQuery\1_qp_GetPermittedItemsAsQuery.sql" />
     <Content Include="scripts\UpdateM2O\1_qp_update_m2o.sql" />
-    <Content Include="scripts\data.sql" />
     <Content Include="scripts\EFTablesViews\1_ef_base.sql" />
     <Content Include="scripts\EFTablesViews\2_link_tables.sql" />
     <Content Include="scripts\EFTablesViews\3_ti_item_to_item.sql" />
@@ -171,7 +170,6 @@
     <Content Include="scripts\MultipleUpdate\tests\test2.sql" />
     <Content Include="scripts\MultipleUpdate\tests\test3.sql" />
     <Content Include="scripts\MultipleUpdate\tests\test4.sql" />
-    <Content Include="scripts\schema.sql" />
     <Content Include="scripts\TaHighlight\1_adding_column_to_content_attribute.sql" />
     <Content Include="scripts\undo_to_previous.sql" />
     <Content Include="scripts\UpdateWrongWFStatuses\1_update_wrong_workflow_statuses.sql" />
