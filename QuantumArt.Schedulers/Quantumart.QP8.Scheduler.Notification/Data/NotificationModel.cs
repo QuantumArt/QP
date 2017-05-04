@@ -5,17 +5,11 @@ namespace Quantumart.QP8.Scheduler.Notification.Data
 {
     public class NotificationModel
     {
-        private const string XmlTemplate = "<?xml version=\"1.0\" encoding=\"utf-8\"?><articles>{0}</articles>";
-
         public string Url { get; set; }
 
         public IEnumerable<string> OldXmlNodes { get; set; }
 
         public IEnumerable<string> NewXmlNodes { get; set; }
-
-        public string OldXml => GetXml(OldXmlNodes);
-
-        public string NewXml => GetXml(NewXmlNodes);
 
         public List<KeyValuePair<string, string>> Parameters
         {
@@ -24,8 +18,8 @@ namespace Quantumart.QP8.Scheduler.Notification.Data
                 var list = new List<KeyValuePair<string, string>>
                 {
                     new KeyValuePair<string, string>("eventName", EventName),
-                    new KeyValuePair<string, string>("newXml", NewXml),
-                    new KeyValuePair<string, string>("oldXml", OldXml)
+                    new KeyValuePair<string, string>("newXml", CombineNodes(NewXmlNodes, NotificationModelDataType.Articles, NotificationModelFormatType.Xml)),
+                    new KeyValuePair<string, string>("oldXml", CombineNodes(OldXmlNodes, NotificationModelDataType.Articles, NotificationModelFormatType.Xml))
                 };
 
                 list.AddRange(Ids.Select(n => new KeyValuePair<string, string>("id", n.ToString())));
@@ -51,9 +45,9 @@ namespace Quantumart.QP8.Scheduler.Notification.Data
 
         public string EventName { get; set; }
 
-        public static string GetXml(IEnumerable<string> nodes)
+        public static string CombineNodes(IEnumerable<string> nodes, NotificationModelDataType dataType, NotificationModelFormatType formatType)
         {
-            return string.Format(XmlTemplate, string.Join(string.Empty, nodes));
+            return $"<?xml version=\"1.0\" encoding=\"utf-8\"?><articles>{string.Join(string.Empty, nodes)}</articles>";
         }
     }
 }
