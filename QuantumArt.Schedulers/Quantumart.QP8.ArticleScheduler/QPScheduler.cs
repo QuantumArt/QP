@@ -52,6 +52,7 @@ namespace Quantumart.QP8.ArticleScheduler
                 }
                 catch (Exception ex)
                 {
+                    ex.Data.Clear();
                     ex.Data.Add("CustomerCode", customer.CustomerName);
                     Logger.Log.Error($"There was an error on customer code: {customer.CustomerName}", ex);
                     prtgErrorsHandlerVm.EnqueueNewException(ex);
