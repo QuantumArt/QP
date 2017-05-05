@@ -1,7 +1,12 @@
-﻿using System.Web;
+﻿using QP8.Infrastructure.Helpers;
+using QP8.Infrastructure.Logging;
+using QP8.Infrastructure.Logging.Factories;
+using Quantumart.QP8.Constants;
+using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
+using System;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Quantumart.QP8.WebMvc.Extensions.ModelBinders;
 
 namespace Quantumart.QP8.WebMvc.WinLogOn
 {
@@ -19,9 +24,20 @@ namespace Quantumart.QP8.WebMvc.WinLogOn
 
         protected void Application_Start()
         {
+            LogProvider.LogFactory = new NLogFactory();
+            Logger.Log = LogProvider.LogFactory.GetLogger(AssemblyHelpers.GetAssemblyName());
             ModelBinders.Binders.DefaultBinder = new QpModelBinder();
-            AreaRegistration.RegisterAllAreas();
             RegisterRoutes(RouteTable.Routes);
+        }
+
+        protected void Application_Error(object sender, EventArgs e)
+        {
+            var exсeption = Server.GetLastError();
+            if (exсeption != null)
+            {
+                Logger.Log.SetContext(LoggerData.HttpErrorCodeCustomVariable, new HttpException(null, exсeption).GetHttpCode());
+                Logger.Log.Fatal("Application_Error", exсeption);
+            }
         }
     }
 }
