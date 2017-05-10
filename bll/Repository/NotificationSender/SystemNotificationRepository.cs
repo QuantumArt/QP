@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
         {
             using (new QPConnectionScope())
             {
-                CommonSystemNotifications.DeleteSentNotifications(QPConnectionScope.Current.DbConnection);
+                CommonSystemNotificationsDal.DeleteSentNotifications(QPConnectionScope.Current.DbConnection);
             }
         }
 
@@ -28,7 +28,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
         {
             using (new QPConnectionScope())
             {
-                CommonSystemNotifications.UpdateSentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
+                CommonSystemNotificationsDal.UpdateSentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
             }
         }
 
@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
         {
             using (new QPConnectionScope())
             {
-                CommonSystemNotifications.UpdateUnsentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
+                CommonSystemNotificationsDal.UpdateUnsentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
             }
         }
 
@@ -58,7 +58,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
             using (new QPConnectionScope())
             {
                 var xml = GetNotificationsXml(notifications);
-                CommonSystemNotifications.InsertNotifications(QPConnectionScope.Current.DbConnection, xml.ToString(SaveOptions.None));
+                CommonSystemNotificationsDal.InsertNotifications(QPConnectionScope.Current.DbConnection, xml.ToString(SaveOptions.None));
             }
         }
 
@@ -87,7 +87,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
         {
             using (new QPConnectionScope())
             {
-                return CommonSystemNotifications.ExistsSentNotifications(QPConnectionScope.Current.DbConnection);
+                return CommonSystemNotificationsDal.ExistsSentNotifications(QPConnectionScope.Current.DbConnection);
             }
         }
     }

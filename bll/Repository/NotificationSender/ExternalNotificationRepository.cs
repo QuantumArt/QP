@@ -20,7 +20,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
         {
             using (new QPConnectionScope())
             {
-                CommonExternalNotifications.DeleteSentNotifications(QPConnectionScope.Current.DbConnection);
+                CommonExternalNotificationsDal.DeleteSentNotifications(QPConnectionScope.Current.DbConnection);
             }
         }
 
@@ -28,7 +28,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
         {
             using (new QPConnectionScope())
             {
-                CommonExternalNotifications.UpdateSentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
+                CommonExternalNotificationsDal.UpdateSentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
             }
         }
 
@@ -36,7 +36,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
         {
             using (new QPConnectionScope())
             {
-                CommonExternalNotifications.UpdateUnsentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
+                CommonExternalNotificationsDal.UpdateUnsentNotifications(QPConnectionScope.Current.DbConnection, notificationIds);
             }
         }
 
@@ -58,7 +58,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
             using (new QPConnectionScope())
             {
                 var xml = GetNotificationsXml(notifications);
-                CommonExternalNotifications.InsertNotifications(QPConnectionScope.Current.DbConnection, xml.ToString(SaveOptions.None));
+                CommonExternalNotificationsDal.InsertNotifications(QPConnectionScope.Current.DbConnection, xml.ToString(SaveOptions.None));
             }
         }
 
@@ -95,7 +95,7 @@ namespace Quantumart.QP8.BLL.Repository.NotificationSender
         {
             using (new QPConnectionScope())
             {
-                return CommonExternalNotifications.ExistsSentNotifications(QPConnectionScope.Current.DbConnection);
+                return CommonExternalNotificationsDal.ExistsSentNotifications(QPConnectionScope.Current.DbConnection);
             }
         }
     }

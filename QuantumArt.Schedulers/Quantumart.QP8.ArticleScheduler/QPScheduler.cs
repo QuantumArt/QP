@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Practices.Unity;
+﻿using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
@@ -10,6 +6,9 @@ using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Quantumart.QP8.ArticleScheduler
 {
@@ -41,13 +40,7 @@ namespace Quantumart.QP8.ArticleScheduler
             {
                 try
                 {
-                    var customerDbScheduler = _unityContainer.Resolve<DbScheduler>(
-                        new ParameterOverride("customer", customer),
-                        new ParameterOverride("connectionString", customer.ConnectionString)
-                    );
-
-                    customerDbScheduler.Run();
-                    var customerTasksQueueCount = customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(DateTime.Now.Add(_tasksQueueCheckShiftTime));
+                    var customerTasksQueueCount = ProcessCustomer(customer);
                     prtgErrorsHandlerVm.IncrementTasksQueueCount(customerTasksQueueCount);
                 }
                 catch (Exception ex)
@@ -60,6 +53,17 @@ namespace Quantumart.QP8.ArticleScheduler
             });
 
             _prtgLogger.LogMessage(prtgErrorsHandlerVm);
+        }
+
+        private int ProcessCustomer(QaConfigCustomer customer)
+        {
+            var customerDbScheduler = _unityContainer.Resolve<DbScheduler>(
+                new ParameterOverride("customer", customer),
+                new ParameterOverride("connectionString", customer.ConnectionString)
+            );
+
+            customerDbScheduler.Run();
+            return customerDbScheduler.GetTasksCountToProcessAtSpecificDateTime(DateTime.Now.Add(_tasksQueueCheckShiftTime));
         }
     }
 }

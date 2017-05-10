@@ -45,12 +45,6 @@ custom.isProduction = function isProduction() {
   return custom.config.environment === 'production';
 };
 
-custom.AUTOPREFIXER_BROWSERS = [
-  'ie >= 8',
-  '> 3%',
-  'last 3 version'
-];
-
 custom.destPaths = {
   scripts: 'Scripts/build',
   styles: 'Content/build',
@@ -264,7 +258,7 @@ custom.paths = {
     'Content/codemirror/lib/codemirror.css',
     'Content/codemirrorTheme.css',
     'Content/QpCodemirror.css',
-    'Content/custom/**/*.{css,sass,scss}',
+    'Content/custom/**/*.{scss,css}',
     '!Content/build/**/*.css'
   ],
   images: [
@@ -397,9 +391,9 @@ gulp.task('assets:css', ['assets:revisions'], function assetsCssTask() {
   return gulp.src(custom.paths.styles)
     .pipe($.plumber({ errorHandler: custom.reportError }))
     .pipe($.sourcemaps.init({ loadMaps: true, identityMap: true }))
-    .pipe($.sass().on('error', bs.notify))
+    .pipe($.sass({ precision: 10 }).on('error', /*$.sass.logError*/bs.notify))
     .pipe($.replace(/url\('/g, 'url(\'images/'))
-    .pipe($.autoprefixer({ browsers: custom.AUTOPREFIXER_BROWSERS }))
+    .pipe($.autoprefixer())
     .pipe($.cssnano({ zindex: false }))
     .pipe($.concat('app.css'))
     .pipe($.sourcemaps.write('maps'))

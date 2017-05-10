@@ -1,10 +1,15 @@
 ﻿using QP8.Infrastructure.Logging;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
+using Quantumart.QP8.BLL;
+using Quantumart.QP8.BLL.Enums;
 using Quantumart.QP8.BLL.Logging;
+using Quantumart.QP8.BLL.Services.CdcDataImport;
 using Quantumart.QP8.Configuration;
+using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Constants;
 using Quartz;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Quantumart.QP8.CdcDataImport.Tarantool
@@ -13,9 +18,13 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
     {
         private const string AppName = "QP8CdcDataImportService";
         private readonly PrtgErrorsHandler _prtgLogger;
+        private readonly CancellationTokenSource _cts;
+        private readonly CdcImportService cdcImportService;
 
         public DataImportJob()
         {
+            _cts = new CancellationTokenSource();
+            _cdcImportService = new CdcImportService();
             _prtgLogger = new PrtgErrorsHandler(new PrtgNLogFactory(
                 LoggerData.DefaultPrtgServiceStateVariableName,
                 LoggerData.DefaultPrtgServiceQueueVariableName,
@@ -32,13 +41,23 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
 
             var customers = QPConfiguration.GetCustomers(AppName, true);
             var prtgErrorsHandlerVm = new PrtgErrorsHandlerViewModel(customers);
-            Parallel.ForEach(customers, customer =>
+
+            var po = new ParallelOptions()
             {
+                CancellationToken = _cts.Token,
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            };
+
+            Parallel.ForEach(customers, po, (customer, loopState) =>
+            {
+                if (po.CancellationToken.IsCancellationRequested)
+                {
+                    loopState.Stop();
+                }
+
                 try
                 {
-                    // CdcImportService.ImportData(CdcImportType.Tarantool);
-                    // http://stackoverflow.com/questions/19304300/how-do-i-properly-cancel-parallel-foreach
-                    // http://stackoverflow.com/questions/16048260/parallel-foreach-loopstate-stop-versus-cancellation
+                    ProcessCustomer(customer);
                 }
                 catch (Exception ex)
                 {
@@ -49,6 +68,14 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool
             });
 
             _prtgLogger.LogMessage(prtgErrorsHandlerVm);
+        }
+
+        private void ProcessCustomer(QaConfigCustomer customer)
+        {
+            using (new QPConnectionScope(customer.ConnectionString))
+            {
+                _cdcImportService.ImportData(CdcImportType.Tarantool);
+            }
         }
 
         public void Interrupt()
