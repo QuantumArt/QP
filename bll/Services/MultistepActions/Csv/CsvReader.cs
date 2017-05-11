@@ -144,6 +144,13 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
 
                 var fieldValues = SplitToValues(_titleHeaders.Count, line.Value);
                 var baseArticle = InitializeArticle(_contentId);
+
+                int articleId;
+                if (int.TryParse(fieldValues.First(), out articleId))
+                {
+                    baseArticle.Id = articleId;
+                }
+
                 ReadLineFields(baseArticle, fieldValues, _contentId, line.Number);
 
                 var article = new ExtendedArticle(baseArticle);
