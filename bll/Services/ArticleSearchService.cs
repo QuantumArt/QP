@@ -252,34 +252,35 @@ namespace Quantumart.QP8.BLL.Services
         /// <returns></returns>
         private ArticleFieldSearchType GetFieldSearchType(Field field)
         {
-			if (field.ExactType == FieldExactTypes.StringEnum)
-				return ArticleFieldSearchType.StringEnum;
-			else if (field.Type.Name == FieldTypeName.String ||
-				field.Type.Name == FieldTypeName.File ||
-				field.Type.Name == FieldTypeName.Image ||
-				field.Type.Name == FieldTypeName.Textbox ||
-				field.Type.Name == FieldTypeName.VisualEdit ||
-				field.Type.Name == FieldTypeName.DynamicImage)
-				return ArticleFieldSearchType.Text;
-			else if (field.IsClassifier)
-				return ArticleFieldSearchType.Classifier;
-			else if (field.Type.Name == FieldTypeName.Date ||
-					field.Type.Name == FieldTypeName.DateTime)
-				return ArticleFieldSearchType.DateRange;
-			else if (field.Type.Name == FieldTypeName.Time)
-				return ArticleFieldSearchType.TimeRange;
-			else if (field.Type.Name == FieldTypeName.Numeric)
-				return ArticleFieldSearchType.NumericRange;
-			else if (field.Type.Name == FieldTypeName.Boolean)
-				return ArticleFieldSearchType.Boolean;
-			else if (field.RelationType == RelationType.ManyToMany)
-				return ArticleFieldSearchType.M2MRelation;
-			else if (field.RelationType == RelationType.ManyToOne)
-				return ArticleFieldSearchType.M2ORelation;
-			else if (field.RelationType == RelationType.OneToMany)
-				return ArticleFieldSearchType.O2MRelation;
-			else
-				return ArticleFieldSearchType.None;
+            if (field.ExactType == FieldExactTypes.StringEnum)
+                return ArticleFieldSearchType.StringEnum;
+            else if (field.Type.Name == FieldTypeName.String ||
+                field.Type.Name == FieldTypeName.File ||
+                field.Type.Name == FieldTypeName.Image ||
+                field.Type.Name == FieldTypeName.Textbox ||
+                field.Type.Name == FieldTypeName.VisualEdit ||
+                field.Type.Name == FieldTypeName.DynamicImage)
+                return ArticleFieldSearchType.Text;
+            else if (field.IsClassifier)
+                return ArticleFieldSearchType.Classifier;
+            else if (field.Type.Name == FieldTypeName.Date)
+                return ArticleFieldSearchType.DateRange;
+            else if (field.Type.Name == FieldTypeName.DateTime)
+                return ArticleFieldSearchType.DateTimeRange;
+            else if (field.Type.Name == FieldTypeName.Time)
+                return ArticleFieldSearchType.TimeRange;
+            else if (field.Type.Name == FieldTypeName.Numeric)
+                return ArticleFieldSearchType.NumericRange;
+            else if (field.Type.Name == FieldTypeName.Boolean)
+                return ArticleFieldSearchType.Boolean;
+            else if (field.RelationType == RelationType.ManyToMany)
+                return ArticleFieldSearchType.M2MRelation;
+            else if (field.RelationType == RelationType.ManyToOne)
+                return ArticleFieldSearchType.M2ORelation;
+            else if (field.RelationType == RelationType.OneToMany)
+                return ArticleFieldSearchType.O2MRelation;
+            else
+                return ArticleFieldSearchType.None;
         }
 
 

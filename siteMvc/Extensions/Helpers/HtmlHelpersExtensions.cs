@@ -68,6 +68,9 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         public const string DisabledClassName = "disabled";
         public const string SelfClearFloatsClassName = "group";
         public const string DataContentFieldName = "data-content_field_name";
+        public const string DateTextboxClassName = "date";
+        public const string TimeTextboxClassName = "time";
+        public const string DateTimeTextboxClassName = "datetime";
 
         internal static Dictionary<string, object> QpHtmlProperties<TModel, TValue>(this HtmlHelper<TModel> source, Expression<Func<TModel, TValue>> expression, EditorType type, int index = -1)
         {
@@ -321,7 +324,7 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
 
         public static MvcHtmlString NumericTextBox(this HtmlHelper source, string name, object value, Dictionary<string, object> htmlAttributes, int decimalDigits = 0, double? minValue = null, double? maxValue = null)
         {
-            var newHtmlAttributes = new Dictionary<string, object> {{ "id", htmlAttributes["id"] }, { "class", htmlAttributes["class"] }};
+            var newHtmlAttributes = new Dictionary<string, object> { { "id", htmlAttributes["id"] }, { "class", htmlAttributes["class"] } };
             newHtmlAttributes.CopyValueIfExists(htmlAttributes, DataContentFieldName);
 
             return MvcHtmlString.Create(source.Telerik().NumericTextBox()
@@ -863,33 +866,47 @@ namespace Quantumart.QP8.WebMvc.Extensions.Helpers
         {
             var inputId = htmlAttributes["id"].ToString();
             var stringValue = value?.ToString();
-            var newHtmlAttributes = new Dictionary<string, object> {{"id", inputId}};
-            string className;
+            var newHtmlAttributes = new Dictionary<string, object> { { "id", inputId } };
+            string htmlString;
 
-            switch (mode)
-            {
-                case DateTimePickerMode.DateTime:
-                    className = "datetime";
-                    break;
-                case DateTimePickerMode.Date:
-                    className = "date";
-                    break;
-                case DateTimePickerMode.Time:
-                    className = "time";
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
+            var className = (mode == DateTimePickerMode.Date)
+                ? DateTextboxClassName
+                : (mode == DateTimePickerMode.Time)
+                    ? TimeTextboxClassName
+                    : DateTimeTextboxClassName;
 
             newHtmlAttributes.Add("class", className);
             newHtmlAttributes.CopyValueIfExists(htmlAttributes, DataContentFieldName);
 
-            var htmlString = source.Telerik().DateTimePicker()
-                .Name(id)
-                .Value(stringValue)
-                .Enable(!isReadOnly)
-                .InputHtmlAttributes(newHtmlAttributes)
-                .ToHtmlString();
+            switch (mode)
+            {
+                case DateTimePickerMode.DateTime:
+                    htmlString = source.Telerik().DateTimePicker()
+                        .Name(id)
+                        .Value(stringValue)
+                        .Enable(!isReadOnly)
+                        .InputHtmlAttributes(newHtmlAttributes)
+                        .ToHtmlString();
+                    break;
+                case DateTimePickerMode.Date:
+                    htmlString = source.Telerik().DatePicker()
+                      .Name(id)
+                      .Value(stringValue)
+                      .Enable(!isReadOnly)
+                      .InputHtmlAttributes(newHtmlAttributes)
+                      .ToHtmlString();
+                    break;
+                case DateTimePickerMode.Time:
+                    htmlString = source.Telerik().TimePicker()
+                        .Name(id)
+                        .Value(stringValue)
+                        .Enable(!isReadOnly)
+                        .InputHtmlAttributes(newHtmlAttributes)
+                        .ToHtmlString();
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
 
             return MvcHtmlString.Create(htmlString);
         }
