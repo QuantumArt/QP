@@ -13,6 +13,6 @@ Backend.Lang.SearchBlock = {
   falseText: "False",
   notText: "NOT",
   totalText: "Total",
-  etsText: "ets.",
+  etcText: "etc.",
   endText: "Ends:"
 };
