@@ -201,6 +201,7 @@ Quantumart.QP8.BackendArticleSearchBlock.FieldSearchContainer.prototype = {
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Identifier:
         return { w: 365, h: 150 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Text:
+        return { w: 410, h: 150 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.StringEnum:
         return { w: 410, h: 130 };
       case Quantumart.QP8.Enums.ArticleFieldSearchType.Boolean:

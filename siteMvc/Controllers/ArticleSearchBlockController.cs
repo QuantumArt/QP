@@ -130,6 +130,8 @@ namespace Quantumart.QP8.WebMvc.Controllers
             ViewBag.TextBoxElementId = string.Format("{0}_textBox", ViewBag.ElementIdPrefix);
             ViewBag.IsNullCheckBoxElementID = string.Format("{0}_isNullCheckBox", ViewBag.ElementIdPrefix);
             ViewBag.InverseCheckBoxElementID = string.Format("{0}_inverseCheckBox", ViewBag.ElementIdPrefix);
+            ViewBag.ExactMatchCheckBoxElementID = string.Format("{0}_exactCheckBox", ViewBag.ElementIdPrefix);
+            ViewBag.StartBeginningCheckBoxElementID = string.Format("{0}_beginningCheckBox", ViewBag.ElementIdPrefix);
             return JsonHtml("TextSearch", null);
         }
 

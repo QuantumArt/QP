@@ -240,6 +240,9 @@ namespace Quantumart.QP8.BLL.Repository.Articles
             var isNull = (bool)p.QueryParams[0];
             var inverse = p.QueryParams.Length > 2 && p.QueryParams[2] is bool && (bool)p.QueryParams[2];
 
+            var exactMatch = p.QueryParams.Length > 3 && p.QueryParams[3] is bool && (bool)p.QueryParams[3];
+            var startFromBegin = p.QueryParams.Length > 4 && p.QueryParams[4] is bool && (bool)p.QueryParams[4];
+
             // isnull == true
             if (isNull)
             {
@@ -254,6 +257,16 @@ namespace Quantumart.QP8.BLL.Repository.Articles
 
             // Иначе формируем результат
             var value = Cleaner.ToSafeSqlLikeCondition(((string)p.QueryParams[1]).Trim());
+            if (exactMatch)
+            {
+                return string.Format("({2}.[{0}] {3} '{1}')", p.FieldColumn.ToLower(), value, GetTableAlias(p), inverse ? "<> " : "=");
+            }
+
+            if (startFromBegin)
+            {
+                return string.Format("({1}.[{0}] LIKE '{2}')", p.FieldColumn.ToLower(), GetTableAlias(p), inverse ? "%" + value : value + "%" );
+            }
+
             return string.Format("({2}.[{0}] {3}LIKE '%{1}%')", p.FieldColumn.ToLower(), value, GetTableAlias(p), inverse ? "NOT " : "");
         }
 
