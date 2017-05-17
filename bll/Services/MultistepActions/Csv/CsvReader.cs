@@ -675,13 +675,15 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 if (item.NewRelatedItems != null)
                 {
                     var result = GetM2MRelatedArtsWithNewIds(item.NewRelatedItems, m2MValues);
-                    var itemXml = new XElement("item");
-                    itemXml.Add(new XAttribute("id", item.NewId));
-                    itemXml.Add(new XAttribute("linkId", item.FieldId));
-                    itemXml.Add(new XAttribute("value", string.Join(",", result)));
-                    doc.Root?.Add(itemXml);
+                    if (result.Any())
+                    {
+                        var itemXml = new XElement("item");
+                        itemXml.Add(new XAttribute("id", item.NewId));
+                        itemXml.Add(new XAttribute("linkId", item.FieldId));
+                        itemXml.Add(new XAttribute("value", string.Join(",", result)));
+                        doc.Root?.Add(itemXml);
+                    }
                 }
-
             }
 
             ArticleRepository.UpdateM2MValues(doc.ToString(SaveOptions.None));
@@ -698,7 +700,6 @@ namespace Quantumart.QP8.BLL.Services.MultistepActions.Csv
                 {
                     result.Add(value.NewId);
                 }
-
             }
 
             return result;
