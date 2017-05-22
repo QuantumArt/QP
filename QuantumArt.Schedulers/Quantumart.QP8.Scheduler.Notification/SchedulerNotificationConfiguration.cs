@@ -1,4 +1,7 @@
-﻿using Microsoft.Practices.Unity;
+﻿using System;
+using System.IO;
+using AutoMapper;
+using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Factories;
 using QP8.Infrastructure.Logging.PrtgMonitoring.NLogExtensions.Interfaces;
 using Quantumart.QP8.BLL.Logging;
@@ -7,8 +10,6 @@ using Quantumart.QP8.Constants;
 using Quantumart.QP8.Scheduler.API;
 using Quantumart.QP8.Scheduler.Notification.Processors;
 using Quantumart.QP8.Scheduler.Notification.Providers;
-using System;
-using System.IO;
 
 namespace Quantumart.QP8.Scheduler.Notification
 {
@@ -19,18 +20,20 @@ namespace Quantumart.QP8.Scheduler.Notification
         protected override void Initialize()
         {
             Container.RegisterService(ServiceName, "QP8 Notification", "Отправка уведомлений");
-            Container.RegisterType<INotificationProvider, NotificationProvider>();
+            Container.RegisterType<IInterfaceNotificationProvider, InterfaceNotificationProvider>();
 
             RegisterSystemNotificationsProcessor("System.Notifications");
             RegisterInterfaceNotificationsProcessor("Interface.Notifications");
+
+            Mapper.AddProfile<NotificationMapperProfile>();
         }
 
-        private void RegisterSystemNotificationsProcessor(string serviceName)
+        private void RegisterSystemNotificationsProcessor(string serviceConfigName)
         {
-            var nlogConfigName = $"NLog.{serviceName}.config";
-            Container.RegisterProcessor<SystemNotificationProcessor>(ServiceName, serviceName);
+            var nlogConfigName = $"NLog.{serviceConfigName}.config";
+            Container.RegisterProcessor<SystemNotificationProcessor>(ServiceName, serviceConfigName);
             Container.RegisterType<IPrtgNLogFactory>(nlogConfigName, new InjectionFactory(container => GetLoggerFactory(GetAbsolutePath(nlogConfigName))));
-            Container.RegisterType<IExternalSystemNotificationService, ExternalSystemNotificationService>(serviceName);
+            Container.RegisterType<IExternalSystemNotificationService, ExternalSystemNotificationService>(serviceConfigName);
 
             var assemblyType = typeof(SystemNotificationProcessor);
             Container.RegisterType<SystemNotificationProcessor>(
@@ -40,20 +43,19 @@ namespace Quantumart.QP8.Scheduler.Notification
                         Container.Resolve<IPrtgNLogFactory>(nlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(nlogConfigName)),
                         c.Resolve<ISchedulerCustomers>(),
-                        c.Resolve<IExternalSystemNotificationService>(serviceName),
-                        c.Resolve<INotificationProvider>()
+                        c.Resolve<IExternalSystemNotificationService>(serviceConfigName)
                     )
                 ));
 
-            RegisterSystemCleanupProcessor($"{serviceName}.Cleanup");
+            RegisterSystemCleanupProcessor($"{serviceConfigName}.Cleanup");
         }
 
-        private void RegisterSystemCleanupProcessor(string serviceName)
+        private void RegisterSystemCleanupProcessor(string serviceConfigName)
         {
-            var nlogConfigName = $"NLog.{serviceName}.config";
-            Container.RegisterProcessor<SystemCleanupProcessor>(ServiceName, serviceName);
+            var nlogConfigName = $"NLog.{serviceConfigName}.config";
+            Container.RegisterProcessor<SystemCleanupProcessor>(ServiceName, serviceConfigName);
             Container.RegisterType<IPrtgNLogFactory>(nlogConfigName, new InjectionFactory(container => GetLoggerFactory(GetAbsolutePath(nlogConfigName))));
-            Container.RegisterType<IExternalSystemNotificationService, ExternalSystemNotificationService>(serviceName);
+            Container.RegisterType<IExternalSystemNotificationService, ExternalSystemNotificationService>(serviceConfigName);
 
             var assemblyType = typeof(SystemCleanupProcessor);
             Container.RegisterType<SystemCleanupProcessor>(
@@ -63,17 +65,17 @@ namespace Quantumart.QP8.Scheduler.Notification
                         Container.Resolve<IPrtgNLogFactory>(nlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(nlogConfigName)),
                         c.Resolve<ISchedulerCustomers>(),
-                        c.Resolve<IExternalSystemNotificationService>(serviceName)
+                        c.Resolve<IExternalSystemNotificationService>(serviceConfigName)
                     )
                 ));
         }
 
-        private void RegisterInterfaceNotificationsProcessor(string serviceName)
+        private void RegisterInterfaceNotificationsProcessor(string serviceConfigName)
         {
-            var nlogConfigName = $"NLog.{serviceName}.config";
-            Container.RegisterProcessor<InterfaceNotificationProcessor>(ServiceName, serviceName);
+            var nlogConfigName = $"NLog.{serviceConfigName}.config";
+            Container.RegisterProcessor<InterfaceNotificationProcessor>(ServiceName, serviceConfigName);
             Container.RegisterType<IPrtgNLogFactory>(nlogConfigName, new InjectionFactory(container => GetLoggerFactory(GetAbsolutePath(nlogConfigName))));
-            Container.RegisterType<IExternalInterfaceNotificationService, ExternalInterfaceNotificationService>(serviceName);
+            Container.RegisterType<IExternalInterfaceNotificationService, ExternalInterfaceNotificationService>(serviceConfigName);
 
             var assemblyType = typeof(InterfaceNotificationProcessor);
             Container.RegisterType<InterfaceNotificationProcessor>(
@@ -83,20 +85,20 @@ namespace Quantumart.QP8.Scheduler.Notification
                         Container.Resolve<IPrtgNLogFactory>(nlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(nlogConfigName)),
                         c.Resolve<ISchedulerCustomers>(),
-                        c.Resolve<IExternalInterfaceNotificationService>(serviceName),
-                        c.Resolve<INotificationProvider>()
+                        c.Resolve<IExternalInterfaceNotificationService>(serviceConfigName),
+                        c.Resolve<IInterfaceNotificationProvider>()
                     )
                 ));
 
-            RegisterInterfaceCleanupProcessor($"{serviceName}.Cleanup");
+            RegisterInterfaceCleanupProcessor($"{serviceConfigName}.Cleanup");
         }
 
-        private void RegisterInterfaceCleanupProcessor(string serviceName)
+        private void RegisterInterfaceCleanupProcessor(string serviceConfigName)
         {
-            var nlogConfigName = $"NLog.{serviceName}.config";
-            Container.RegisterProcessor<InterfaceCleanupProcessor>(ServiceName, serviceName);
+            var nlogConfigName = $"NLog.{serviceConfigName}.config";
+            Container.RegisterProcessor<InterfaceCleanupProcessor>(ServiceName, serviceConfigName);
             Container.RegisterType<IPrtgNLogFactory>(nlogConfigName, new InjectionFactory(container => GetLoggerFactory(GetAbsolutePath(nlogConfigName))));
-            Container.RegisterType<IExternalInterfaceNotificationService, ExternalInterfaceNotificationService>(serviceName);
+            Container.RegisterType<IExternalInterfaceNotificationService, ExternalInterfaceNotificationService>(serviceConfigName);
 
             var assemblyType = typeof(InterfaceCleanupProcessor);
             Container.RegisterType<InterfaceCleanupProcessor>(
@@ -106,24 +108,18 @@ namespace Quantumart.QP8.Scheduler.Notification
                         Container.Resolve<IPrtgNLogFactory>(nlogConfigName).GetLogger(assemblyType),
                         new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(nlogConfigName)),
                         c.Resolve<ISchedulerCustomers>(),
-                        c.Resolve<IExternalInterfaceNotificationService>(serviceName)
+                        c.Resolve<IExternalInterfaceNotificationService>(serviceConfigName)
                     )
                 ));
         }
 
-        private static IPrtgNLogFactory GetLoggerFactory(string configPath)
-        {
-            return new PrtgNLogFactory(
-                configPath,
-                LoggerData.DefaultPrtgServiceStateVariableName,
-                LoggerData.DefaultPrtgServiceQueueVariableName,
-                LoggerData.DefaultPrtgServiceStatusVariableName
-            );
-        }
+        private static IPrtgNLogFactory GetLoggerFactory(string configPath) => new PrtgNLogFactory(
+            configPath,
+            LoggerData.DefaultPrtgServiceStateVariableName,
+            LoggerData.DefaultPrtgServiceQueueVariableName,
+            LoggerData.DefaultPrtgServiceStatusVariableName
+        );
 
-        private static string GetAbsolutePath(string relativePath)
-        {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
-        }
+        private static string GetAbsolutePath(string relativePath) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
     }
 }

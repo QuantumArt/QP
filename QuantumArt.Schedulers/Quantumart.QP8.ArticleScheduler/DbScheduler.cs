@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.ObjectBuilder2;
@@ -37,10 +37,7 @@ namespace Quantumart.QP8.ArticleScheduler
             dbTasks.Where(FilterPublishingTasksPredicate).ForEach(_publishingScheduler.Run);
         }
 
-        public List<ArticleScheduleTask> GetDbScheduleTaskActions()
-        {
-            return _articleSchedulerService.GetScheduleTaskList().ToList();
-        }
+        public List<ArticleScheduleTask> GetDbScheduleTaskActions() => _articleSchedulerService.GetScheduleTaskList().ToList();
 
         public int GetTasksCountToProcessAtSpecificDateTime(DateTime dateTimeToCheck)
         {
@@ -56,22 +53,13 @@ namespace Quantumart.QP8.ArticleScheduler
             return task => taskScheduler.ShouldProcessTask(task, dateTimeToCheck);
         }
 
-        private static bool FilterOnetimeTasksPredicate(ArticleScheduleTask task)
-        {
-            return task.FreqType == ScheduleFreqTypes.OneTime;
-        }
+        private static bool FilterOnetimeTasksPredicate(ArticleScheduleTask task) => task.FreqType == ScheduleFreqTypes.OneTime;
 
-        private static bool FilterRecurringTasksPredicate(ArticleScheduleTask task)
-        {
-            return task.FreqType == ScheduleFreqTypes.RecurringDaily
-                || task.FreqType == ScheduleFreqTypes.RecurringWeekly
-                || task.FreqType == ScheduleFreqTypes.RecurringMonthly
-                || task.FreqType == ScheduleFreqTypes.RecurringMonthlyRelative;
-        }
+        private static bool FilterRecurringTasksPredicate(ArticleScheduleTask task) => task.FreqType == ScheduleFreqTypes.RecurringDaily
+            || task.FreqType == ScheduleFreqTypes.RecurringWeekly
+            || task.FreqType == ScheduleFreqTypes.RecurringMonthly
+            || task.FreqType == ScheduleFreqTypes.RecurringMonthlyRelative;
 
-        private static bool FilterPublishingTasksPredicate(ArticleScheduleTask task)
-        {
-            return task.FreqType == ScheduleFreqTypes.Publishing;
-        }
+        private static bool FilterPublishingTasksPredicate(ArticleScheduleTask task) => task.FreqType == ScheduleFreqTypes.Publishing;
     }
 }

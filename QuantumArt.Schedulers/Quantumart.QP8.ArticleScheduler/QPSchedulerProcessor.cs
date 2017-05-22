@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using QP8.Infrastructure.Logging;
@@ -32,15 +33,14 @@ namespace Quantumart.QP8.ArticleScheduler
                     try
                     {
                         var unityConfig = new UnityContainerCustomizer();
-                        var customers = QPConfiguration.GetCustomers(AppName, true);
+                        var customers = QPConfiguration.GetCustomers(AppName).Where(c => !c.ExcludeFromSchedulers).ToList();
                         new QpScheduler(unityConfig.UnityContainer, customers, _tasksQueueCheckShiftTime).Run();
                     }
                     catch (Exception ex)
                     {
                         Logger.Log.Error("There was an error while starting the service job", ex);
                     }
-                }
-                while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
+                } while (!_cancellationTokenSource.Token.WaitHandle.WaitOne(_recurrentTimeout));
             }, _cancellationTokenSource.Token, TaskCreationOptions.LongRunning);
             _task.Start();
         }

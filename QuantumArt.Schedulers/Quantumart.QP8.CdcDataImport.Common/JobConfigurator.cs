@@ -1,28 +1,28 @@
-using Quantumart.QP8.CdcDataImport.Common.Listeners;
+﻿using System;
+using Quantumart.QP8.CdcDataImport.Common.Infrastructure.JobListeners;
 using Quartz;
 using Quartz.Impl.Matchers;
-using System;
 using Topshelf.Quartz;
 
-namespace Quantumart.QP8.CdcDataImport.Common.Tarantool.Infrastructure
+namespace Quantumart.QP8.CdcDataImport.Common
 {
     public class JobConfigurator
     {
         public static void GetConfigurationForJob<T>(QuartzConfigurator configurator, TimeSpan recurrentTimeout)
             where T : IJob
         {
-            Func<IJobDetail> jobBuilder = () => JobBuilder.Create<T>().Build();
-            Func<ITrigger> triggerBuilder = () => TriggerBuilder.Create().WithSimpleSchedule(b => b.WithInterval(recurrentTimeout).RepeatForever()).Build();
-            Func<QuartzJobListenerConfig> jobListenerFn = () => new QuartzJobListenerConfig(new JobListener(), KeyMatcher<JobKey>.KeyEquals(new JobKey("job1", "group1")));
-            Func<QuartzTriggerListenerConfig> triggerLoggerFn = () => new QuartzTriggerListenerConfig(new TriggerListener(), KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("job1", "group1")));
-            Func<ISchedulerListener> schedulerLoggerFn = () => new SchedulerListener();
+            IJobDetail JobBuilder() => Quartz.JobBuilder.Create<T>().Build();
+            ITrigger TriggerBuilder() => Quartz.TriggerBuilder.Create().WithSimpleSchedule(b => b.WithInterval(recurrentTimeout).RepeatForever()).Build();
+            QuartzJobListenerConfig JobListenerFn() => new QuartzJobListenerConfig(new JobListener(), KeyMatcher<JobKey>.KeyEquals(new JobKey("cdcJob", "cdcGroup")));
+            QuartzTriggerListenerConfig TriggerLoggerFn() => new QuartzTriggerListenerConfig(new TriggerListener(), KeyMatcher<TriggerKey>.KeyEquals(new TriggerKey("cdcJob", "cdcGroup")));
+            ISchedulerListener SchedulerLoggerFn() => new SchedulerListener();
 
             configurator
-                .WithJob(jobBuilder)
-                .AddTrigger(triggerBuilder)
-                .WithJobListener(jobListenerFn)
-                .WithTriggerListener(triggerLoggerFn)
-                .WithScheduleListener(schedulerLoggerFn);
+                .WithJob(JobBuilder)
+                .AddTrigger(TriggerBuilder)
+                .WithJobListener(JobListenerFn)
+                .WithTriggerListener(TriggerLoggerFn)
+                .WithScheduleListener(SchedulerLoggerFn);
         }
     }
 }

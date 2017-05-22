@@ -18,13 +18,13 @@ namespace Quantumart.QP8.DAL.NotificationSender
 				[SITE_ID],
 			)
 			SELECT
-                col.value('(EventName)[1]','nvarchar(50)') [EVENT_NAME],
-                col.value('(ArticleId)[1]','numeric(18,0)') [ARTICLE_ID],
-                col.value('(Url)[1]','nvarchar(1024)') [URL],
+                col.value('(EventName)[1]','nvarchar(max)') [EVENT_NAME],
+                col.value('(ArticleId)[1]','numeric') [ARTICLE_ID],
+                col.value('(Url)[1]','nvarchar(max)') [URL],
                 col.value('(NewXml)[1]','nvarchar(max)') [NEW_XML],
                 col.value('(OldXml)[1]','nvarchar(max)') [OLD_XML],
-                col.value('(ContentId)[1]','numeric(18,0)') [CONTENT_ID],
-                col.value('(SiteId)[1]','numeric(18,0)') [SITE_ID]
+                col.value('(ContentId)[1]','numeric') [CONTENT_ID],
+                col.value('(SiteId)[1]','numeric') [SITE_ID]
 			FROM
 				@notifications.nodes('/Notifications/Notification') AS tbl(col)";
 
@@ -41,7 +41,6 @@ namespace Quantumart.QP8.DAL.NotificationSender
 			WHERE ID IN (SELECT Id FROM @ids)";
 
         private const string DeleteSentNotificationsQuery = @"DELETE EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
-        private const string ExistsSentNotificationsQuery = @"SELECT COUNT(ID) FROM EXTERNAL_NOTIFICATION_QUEUE WHERE SENT = 1";
 
         private static void ExecuteIdsQuery(SqlConnection connection, string query, IEnumerable<int> ids)
         {
@@ -83,15 +82,6 @@ namespace Quantumart.QP8.DAL.NotificationSender
             {
                 cmd.CommandType = CommandType.Text;
                 cmd.ExecuteNonQuery();
-            }
-        }
-
-        public static bool ExistsSentNotifications(SqlConnection connection)
-        {
-            using (var cmd = SqlCommandFactory.Create(ExistsSentNotificationsQuery, connection))
-            {
-                cmd.CommandType = CommandType.Text;
-                return (int)cmd.ExecuteScalar() > 0;
             }
         }
     }

@@ -42,9 +42,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=1.1.0.188, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>$(SolutionDir)packages\AutoMapper.1.1.0.118\lib\AutoMapper.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="AutoMapper, Version=4.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="EFExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -146,24 +145,39 @@
     <Compile Include="ArticleContextSearchBlockItem.cs" />
     <Compile Include="ArticleFieldSearchType.cs" />
     <Compile Include="Db.cs" />
+    <Compile Include="Enums\CdcImportType.cs" />
     <Compile Include="Enums\Csv\CsvCulture.cs" />
     <Compile Include="Enums\Csv\CsvDelimiter.cs" />
     <Compile Include="Enums\Csv\CsvEncoding.cs" />
     <Compile Include="Enums\Csv\CsvLineSeparator.cs" />
     <Compile Include="Enums\Csv\CsvImportMode.cs" />
     <Compile Include="Exceptions\ImportException.cs" />
-    <Compile Include="Extensions\CollectionExtensions.cs" />
-    <Compile Include="Extensions\EnumExtensions.cs" />
-    <Compile Include="Extensions\ObjectExtensions.cs" />
+    <Compile Include="Factories\CdcCaptureInstanceImportFactory.cs" />
+    <Compile Include="Factories\FolderFactory\ContentFolderFactory.cs" />
+    <Compile Include="Factories\FolderFactory\SiteFolderFactory.cs" />
+    <Compile Include="IContextStorage.cs" />
     <Compile Include="Mappers\SystemNotificationMapper.cs" />
-    <Compile Include="Repository\NotificationSender\SystemNotificationRepository.cs" />
-    <Compile Include="Models\NotificationSender\SystemNotification.cs" />
-    <Compile Include="Models\NotificationSender\ExternalNotification.cs" />
+    <Compile Include="Models\NotificationSender\CdcActionType.cs" />
+    <Compile Include="Models\NotificationSender\SystemNotificationBulkXmlSerilizableModel.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentDataProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentItemProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentToContentProcessorRev.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcItemLinkAsyncProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcItemToItemProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentToContentProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcStatusTypeProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\CdcContentAttributeProcessor.cs" />
+    <Compile Include="Processors\CdcCaptureInstanceImportProcessors\ICdcCaptureInstanceImportProcessor.cs" />
+    <Compile Include="Models\NotificationSender\CdcEntityModel.cs" />
+    <Compile Include="Models\NotificationSender\CdcTableTypeModel.cs" />
+    <Compile Include="Services\NotificationSender\CdcImportService.cs" />
+    <Compile Include="Models\NotificationSender\SystemNotificationModel.cs" />
+    <Compile Include="Models\NotificationSender\ExternalNotificationModel.cs" />
     <Compile Include="Factories\ArticleTreeFactory.cs" />
     <Compile Include="FieldTypeInfo.cs" />
     <Compile Include="Helpers\AppSettingsItem.cs" />
     <Compile Include="Helpers\BackendActionStatusFilters.cs" />
-    <Compile Include="Helpers\EnumHelpers.cs" />
     <Compile Include="Helpers\OptimizeHierarchyHelper.cs" />
     <Compile Include="Helpers\PageCopyHelper.cs" />
     <Compile Include="Helpers\PlaceHolderHelper.cs" />
@@ -224,7 +238,6 @@
     <Compile Include="Repository\ArticleMatching\Models\QueryField.cs" />
     <Compile Include="Repository\ArticleMatching\Models\SchemaInfo.cs" />
     <Compile Include="Repository\DBRepository.cs" />
-    <Compile Include="Repository\NotificationSender\ExternalNotificationRepository.cs" />
     <Compile Include="Repository\FingerprintRepository.cs" />
     <Compile Include="Repository\FormatRepository.cs" />
     <Compile Include="Repository\Helpers\ContentPermissionHelper.cs" />
@@ -559,7 +572,7 @@
     <Compile Include="Helpers\TranslateSortExpressionHelper.cs" />
     <Compile Include="QPConnectionScope.cs" />
     <Compile Include="DynamicImage.cs" />
-    <Compile Include="Factories\FolderFactory.cs" />
+    <Compile Include="Factories\FolderFactory\FolderFactory.cs" />
     <Compile Include="Folder.cs" />
     <Compile Include="ContentFolder.cs" />
     <Compile Include="Repository\Articles\ArticleFilterSearchQueryParser.cs" />

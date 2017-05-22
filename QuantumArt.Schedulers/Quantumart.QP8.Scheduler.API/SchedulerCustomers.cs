@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Configuration.Models;
 
@@ -16,12 +17,9 @@ namespace Quantumart.QP8.Scheduler.API
 
         public IEnumerator<QaConfigCustomer> GetEnumerator()
         {
-            return QPConfiguration.GetCustomers(_descriptor.Name, true).GetEnumerator();
+            return QPConfiguration.GetCustomers(_descriptor.Name).Where(c => !c.ExcludeFromSchedulers).GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

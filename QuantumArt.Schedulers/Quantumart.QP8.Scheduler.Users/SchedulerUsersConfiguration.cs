@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using Microsoft.Practices.Unity;
 using QP8.Infrastructure.Logging.Factories;
@@ -24,10 +24,9 @@ namespace Quantumart.QP8.Scheduler.Users
             Container.RegisterType<IUserService, UserService>();
             Container.RegisterType<IUserSynchronizationService, UserSynchronizationService>(new InjectionFactory(c => UserSynchronizationServiceFactory.GetService(LogProvider.GetLogger())));
 
-            Container.RegisterProcessor<UsersProcessor>(ServiceName, "UsersQueueSchedule");
+            Container.RegisterProcessor<UsersProcessor>(ServiceName, "UserSynchronizationSchedule");
             RegisterUsersProcessor();
         }
-
 
         private void RegisterUsersProcessor()
         {
@@ -38,27 +37,21 @@ namespace Quantumart.QP8.Scheduler.Users
                 assemblyType.Name,
                 new TransientLifetimeManager(),
                 new InjectionFactory(c => new UsersProcessor(
-                    Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName).GetLogger(assemblyType),
-                    new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName)),
-                    c.Resolve<ISchedulerCustomers>(),
-                    c.Resolve<Func<IUserSynchronizationService>>()
-               )
-           ));
+                        Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName).GetLogger(assemblyType),
+                        new PrtgErrorsHandler(Container.Resolve<IPrtgNLogFactory>(UsersNlogConfigName)),
+                        c.Resolve<ISchedulerCustomers>(),
+                        c.Resolve<Func<IUserSynchronizationService>>()
+                    )
+                ));
         }
 
-        private static IPrtgNLogFactory GetLoggerFactory(string configPath)
-        {
-            return new PrtgNLogFactory(
-                configPath,
-                LoggerData.DefaultPrtgServiceStateVariableName,
-                LoggerData.DefaultPrtgServiceQueueVariableName,
-                LoggerData.DefaultPrtgServiceStatusVariableName
-            );
-        }
+        private static IPrtgNLogFactory GetLoggerFactory(string configPath) => new PrtgNLogFactory(
+            configPath,
+            LoggerData.DefaultPrtgServiceStateVariableName,
+            LoggerData.DefaultPrtgServiceQueueVariableName,
+            LoggerData.DefaultPrtgServiceStatusVariableName
+        );
 
-        private static string GetAbsolutePath(string relativePath)
-        {
-            return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
-        }
+        private static string GetAbsolutePath(string relativePath) => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
     }
 }

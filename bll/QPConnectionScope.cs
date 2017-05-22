@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.EntityClient;
 using System.Data.Mapping;
@@ -24,16 +24,16 @@ namespace Quantumart.QP8.BLL
 
         public static QPConnectionScope Current
         {
-            get { return QPContext.CurrentConnectionScope; }
-            private set { QPContext.CurrentConnectionScope = value; }
+            get => QPContext.CurrentConnectionScope;
+            private set => QPContext.CurrentConnectionScope = value;
         }
-
-        public static string SetIsolationLevelCommandText => "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED";
 
         public string ConnectionString { get; }
 
         public QPConnectionScope()
-            : this(QPContext.CurrentDbConnectionString) { }
+            : this(QPContext.CurrentDbConnectionString)
+        {
+        }
 
         public QPConnectionScope(string connectionString)
         {
@@ -86,7 +86,7 @@ namespace Quantumart.QP8.BLL
             Current = null;
         }
 
-        public SqlConnection DbConnection => (SqlConnection)EfConnection.StoreConnection;
+        public SqlConnection DbConnection => (SqlConnection) EfConnection.StoreConnection;
 
         public EntityConnection EfConnection
         {
@@ -112,7 +112,7 @@ namespace Quantumart.QP8.BLL
                 Current._efConnection = efc;
                 if (Transaction.Current == null)
                 {
-                    using (var cmd = SqlCommandFactory.Create(SetIsolationLevelCommandText, sqlConnection))
+                    using (var cmd = SqlCommandFactory.Create("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED", sqlConnection))
                     {
                         cmd.ExecuteNonQuery();
                     }
@@ -125,8 +125,9 @@ namespace Quantumart.QP8.BLL
             "res://*/QP8Model.csdl",
             "res://*/QP8Model.ssdl",
             "res://*/QP8Model.msl"
-        }, new[] { typeof(QP8Entities).Assembly });
+        }, new[] {typeof(QP8Entities).Assembly});
 
+        [SuppressMessage("ReSharper", "AssignNullToNotNullAttribute")]
         private MetadataWorkspace MetadataWorkspace
         {
             get
@@ -141,7 +142,7 @@ namespace Quantumart.QP8.BLL
                 var ssdl = XElement.Load(metaReader);
                 CorrectSsdl(ssdl);
 
-                var rdr = new List<XmlReader> { ssdl.CreateReader() };
+                var rdr = new List<XmlReader> {ssdl.CreateReader()};
                 var sic = new StoreItemCollection(rdr);
                 rdr[0] = XmlReader.Create(edmAssembly.GetManifestResourceStream("QP8Model.csdl"));
 
@@ -178,6 +179,7 @@ namespace Quantumart.QP8.BLL
             CorrectEntityType(ssdl, ns, EntityTypeCode.Notification, "NOTIFICATIONS", "NOTIFICATION_ID");
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         private void CorrectEntityType(XContainer ssdl, XNamespace ns, string entityTypeCode, string tableName, string keyName)
         {
             if (IdentityInsertOptions != null && IdentityInsertOptions.Contains(entityTypeCode))

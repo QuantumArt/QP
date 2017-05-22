@@ -31,7 +31,6 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Factories
                     return Create(ConsoleHelpers.AskUserToSelectUtilityMode());
             }
 
-
             return processor;
         }
     }

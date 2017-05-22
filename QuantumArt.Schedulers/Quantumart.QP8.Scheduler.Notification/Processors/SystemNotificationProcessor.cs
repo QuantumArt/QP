@@ -1,18 +1,20 @@
-﻿using QP8.Infrastructure.Logging.Interfaces;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+using AutoMapper;
+using Flurl.Http;
+using QP8.Infrastructure.Extensions;
+using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
-using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
-using Quantumart.QP8.Scheduler.API.Extensions;
 using Quantumart.QP8.Scheduler.Notification.Data;
-using Quantumart.QP8.Scheduler.Notification.Providers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using Quantumart.QP8.Scheduler.Notification.Properties;
 
 namespace Quantumart.QP8.Scheduler.Notification.Processors
 {
@@ -22,20 +24,17 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         private readonly PrtgErrorsHandler _prtgLogger;
         private readonly ISchedulerCustomers _schedulerCustomers;
         private readonly IExternalSystemNotificationService _externalNotificationService;
-        private readonly INotificationProvider _notificationProvider;
 
         public SystemNotificationProcessor(
             ILog logger,
             PrtgErrorsHandler prtgLogger,
             ISchedulerCustomers schedulerCustomers,
-            IExternalSystemNotificationService externalNotificationService,
-            INotificationProvider notificationProvider)
+            IExternalSystemNotificationService externalNotificationService)
         {
             _logger = logger;
             _prtgLogger = prtgLogger;
             _schedulerCustomers = schedulerCustomers;
             _externalNotificationService = externalNotificationService;
-            _notificationProvider = notificationProvider;
         }
 
         public async Task Run(CancellationToken token)
@@ -70,8 +69,8 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
         {
             var sentNotificationIds = new List<int>();
             var unsentNotificationIds = new List<int>();
-            var notificationsViewModels = GetPendingNotificationsViewModels(customer);
-            foreach (var notificationVm in notificationsViewModels)
+            var notificationDtos = GetPendingNotifications(customer.ConnectionString);
+            foreach (var dto in notificationDtos)
             {
                 if (token.IsCancellationRequested)
                 {
@@ -80,76 +79,43 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
 
                 try
                 {
-                    var notificationIdsStatus = await SendNotificationData(notificationVm, customer);
-                    sentNotificationIds.AddRange(notificationIdsStatus.Item1);
-                    unsentNotificationIds.AddRange(notificationIdsStatus.Item2);
+                    var response = await PushDataToHttpChannel(dto.Url, dto.Json);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        sentNotificationIds.Add(dto.Id);
+                    }
+                    else
+                    {
+                        unsentNotificationIds.Add(dto.Id);
+                        break;
+                    }
+
+                    _logger.Info($"Sended notification for customer code: {customer.CustomerName}, status code: {response.StatusCode}. Notification: {dto.ToJsonLog()}");
                 }
                 catch (Exception ex)
                 {
-                    unsentNotificationIds.AddRange(notificationVm.NotificationsIds);
-                    var message = $"Exception while sending event {notificationVm.NotificationModel.EventName} to {notificationVm.NotificationModel.Url} with message {ex.Message} for customer code: {customer.CustomerName}";
+                    unsentNotificationIds.Add(dto.Id);
+                    var message = $"Exception while sending notification for customer code: {customer.CustomerName}. Notification: {dto.ToJsonLog()}";
                     _logger.Error(message, ex);
                 }
             }
 
-            //UpdateDbNotificationsData(customer, sentNotificationIds, unsentNotificationIds);
+            UpdateDbNotificationsData(customer.ConnectionString, sentNotificationIds, unsentNotificationIds);
             return Tuple.Create(sentNotificationIds, unsentNotificationIds);
         }
 
-        private IEnumerable<NotificationViewModel> GetPendingNotificationsViewModels(QaConfigCustomer customer)
+        private IEnumerable<SystemNotificationDto> GetPendingNotifications(string connection)
         {
-            IEnumerable<SystemNotification> notifications;
-            using (new QPConnectionScope(customer.ConnectionString))
+            using (new QPConnectionScope(connection))
             {
-                notifications = _externalNotificationService.GetPendingNotifications();
+                var notificationModels = _externalNotificationService.GetPendingNotifications();
+                return Mapper.Map<List<SystemNotificationDto>>(notificationModels).OrderBy(n => n.TransactionLsn).ToList();
             }
-
-            return notifications
-                .GroupBySequence(n => new { n.Url, n.Event, n.Type }, n => n)
-                .Select(group => new NotificationViewModel
-                {
-                    NotificationModel = new NotificationModel
-                    {
-                        //Url = group.Key.Url,
-                        //SiteId = group.Key.SiteId,
-                        //ContentId = group.Key.ContentId,
-                        //EventName = group.Key.EventName,
-                        //Ids = group.Select(n => n.ArticleId),
-                        //NewXmlNodes = group.Select(n => n.NewXml),
-                        //OldXmlNodes = group.Select(n => n.OldXml)
-                    },
-                    NotificationsIds = group.Select(n => n.Id).ToList()
-                });
         }
 
-        private async Task<Tuple<List<int>, List<int>>> SendNotificationData(NotificationViewModel notificationVm, QaConfigCustomer customer)
+        private void UpdateDbNotificationsData(string connection, IReadOnlyCollection<int> sentNotificationIds, IReadOnlyCollection<int> unsentNotificationIds)
         {
-            var sentNotificationIds = new List<int>();
-            var unsentNotificationIds = new List<int>();
-            //var status = await _notificationProvider.Notify(notificationVm.NotificationModel);
-            //var message = $"Sent event { notificationVm.NotificationModel.EventName} to {notificationVm.NotificationModel.Url} with status {status} for customer code: {customer.CustomerName}";
-            //if (status == HttpStatusCode.OK)
-            //{
-            //    _logger.Info(message);
-            //    foreach (var param in notificationVm.NotificationModel.Parameters)
-            //    {
-            //        _logger.Info($"{param.Key}: {param.Value}");
-            //    }
-
-            //    sentNotificationIds.AddRange(notificationVm.NotificationsIds);
-            //}
-            //else
-            //{
-            //    _logger.Info(message);
-            //    unsentNotificationIds.AddRange(notificationVm.NotificationsIds);
-            //}
-
-            return Tuple.Create(sentNotificationIds, unsentNotificationIds);
-        }
-
-        private void UpdateDbNotificationsData(QaConfigCustomer customer, IReadOnlyCollection<int> sentNotificationIds, IReadOnlyCollection<int> unsentNotificationIds)
-        {
-            using (new QPConnectionScope(customer.ConnectionString))
+            using (new QPConnectionScope(connection))
             {
                 if (sentNotificationIds.Any())
                 {
@@ -162,5 +128,8 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
                 }
             }
         }
+
+        private static async Task<HttpResponseMessage> PushDataToHttpChannel(string urlEndpoint, string jsonData) =>
+            await urlEndpoint.AllowAnyHttpStatus().WithTimeout(Settings.Default.HttpTimeout).PostStringAsync(jsonData);
     }
 }

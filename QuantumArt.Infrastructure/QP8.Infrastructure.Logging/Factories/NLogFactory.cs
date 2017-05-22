@@ -38,34 +38,25 @@ namespace QP8.Infrastructure.Logging.Factories
         public static bool UseFullTypeNames { get; set; } = true;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogLogger"/> class
+        /// Initializes a new instance of the <see cref="NLogLogger" /> class
         /// </summary>
-        public virtual ILog GetLogger()
-        {
-            return GetLogger(AssemblyHelpers.GetAssemblyName());
-        }
+        public virtual ILog GetLogger() => GetLogger(AssemblyHelpers.GetAssemblyName());
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogLogger"/> class
+        /// Initializes a new instance of the <see cref="NLogLogger" /> class
         /// </summary>
         /// <param name="type">The type on which logger name is based</param>
-        public virtual ILog GetLogger(Type type)
-        {
-            return type == null
-                ? GetLogger()
-                : GetLogger(UseFullTypeNames ? type.FullName : type.Name);
-        }
+        public virtual ILog GetLogger(Type type) => type == null
+            ? GetLogger()
+            : GetLogger(UseFullTypeNames ? type.FullName : type.Name);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NLogLogger"/> class
+        /// Initializes a new instance of the <see cref="NLogLogger" /> class
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
-        public virtual ILog GetLogger(string loggerName)
-        {
-            return string.IsNullOrWhiteSpace(loggerName)
-                ? GetLogger()
-                : CreateLogger(loggerName);
-        }
+        public virtual ILog GetLogger(string loggerName) => string.IsNullOrWhiteSpace(loggerName)
+            ? GetLogger()
+            : CreateLogger(loggerName);
 
         /// <summary>
         /// Flushing all messages and init new configuration config
@@ -79,7 +70,7 @@ namespace QP8.Infrastructure.Logging.Factories
         }
 
         /// <summary>
-        /// Create a new instance of the <see cref="NLog.Logger"/> class
+        /// Create a new instance of the <see cref="NLog.Logger" /> class
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
         public virtual ILogger CreateInnerLogger(string loggerName)
@@ -89,7 +80,7 @@ namespace QP8.Infrastructure.Logging.Factories
         }
 
         /// <summary>
-        /// Create a new instance of the <see cref="NLogLogger"/> class
+        /// Create a new instance of the <see cref="NLogLogger" /> class
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
         protected virtual ILog CreateLogger(string loggerName)

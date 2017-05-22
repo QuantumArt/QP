@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using NLog;
 using QP8.Infrastructure.Logging.Interfaces;
-using LogManager = NLog.LogManager;
 
 namespace QP8.Infrastructure.Logging.Adapters
 {
@@ -14,7 +13,7 @@ namespace QP8.Infrastructure.Logging.Adapters
         protected readonly ILogger Logger;
 
         /// <summary>
-        /// Initialize new instance of the <see cref="ILog"/> class
+        /// Initialize new instance of the <see cref="ILog" /> class
         /// </summary>
         /// <param name="logger">NLog logger instanse</param>
         public NLogLogger(ILogger logger)

@@ -7,7 +7,7 @@ namespace QP8.Infrastructure.TestTools.AutoFixture.Attributes
     public class AutoMoqDataAttribute : AutoDataAttribute
     {
         public AutoMoqDataAttribute()
-           : base(new Fixture().Customize(new AutoMoqCustomization()))
+            : base(new Fixture().Customize(new AutoMoqCustomization()))
         {
         }
     }

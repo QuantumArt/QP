@@ -3,7 +3,7 @@ using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
-    internal class SystemNotificationMapper : GenericMapper<SystemNotification, SystemNotificationDAL>
+    internal class SystemNotificationMapper : GenericMapper<SystemNotificationModel, SystemNotificationDAL>
     {
     }
 }

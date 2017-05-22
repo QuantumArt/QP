@@ -8,6 +8,11 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class DbService
     {
+        public Db GetDbSettings()
+        {
+            return DbRepository.Get();
+        }
+
         public static Db ReadSettings()
         {
             return DbRepository.Get();
@@ -20,8 +25,7 @@ namespace Quantumart.QP8.BLL.Services
 
         public static Db UpdateSettings(Db db)
         {
-            var result = DbRepository.Update(db);
-            return result;
+            return DbRepository.Update(db);
         }
 
         public static string GetDbHash()

@@ -46,7 +46,7 @@ namespace Quantumart.QP8.Scheduler.Service
                     cancelActions.Add(scheduler.Stop);
                 }
 
-                Action stop = () =>
+                void Stop()
                 {
                     lock (locker)
                     {
@@ -57,17 +57,17 @@ namespace Quantumart.QP8.Scheduler.Service
                             isCanceled = true;
                         }
                     }
-                };
+                }
 
                 Console.CancelKeyPress += (s, e) =>
                 {
-                    stop();
+                    Stop();
                     e.Cancel = true;
                 };
 
                 Parallel.Invoke(runActions.ToArray());
                 Console.ReadLine();
-                stop();
+                Stop();
             }
         }
 

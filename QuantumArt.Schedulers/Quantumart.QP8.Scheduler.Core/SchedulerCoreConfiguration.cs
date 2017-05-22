@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.Unity;
@@ -20,23 +20,18 @@ namespace Quantumart.QP8.Scheduler.Core
             {
                 Container.RegisterType<Func<IUnityContainer>>(service, new InjectionFactory(parent =>
                 {
-                    Func<IUnityContainer> factory = () =>
+                    IUnityContainer Factory()
                     {
                         var container = parent.CreateChildContainer();
                         container.LoadConfiguration();
                         container.RegisterType<ServiceDescriptor>(new InjectionFactory(c => c.Resolve<ServiceDescriptor>(service)));
                         container.RegisterType<IScheduler, Scheduler>(new HierarchicalLifetimeManager(), new InjectionFactory(c => new Scheduler(c.Resolve<IEnumerable<IProcessor>>())));
-                        Container.RegisterType<IEnumerable<IProcessor>>(
-                            new InjectionFactory(c => descriptors
-                                .Where(d => d.Service == service)
-                                .Select(d => new ScheduledProcessor(c.Resolve<Func<IProcessor>>(d.Processor), c.Resolve<Func<ISchedule>>(d.Schedule)))
-                            )
-                        );
+                        Container.RegisterType<IEnumerable<IProcessor>>(new InjectionFactory(c => descriptors.Where(d => d.Service == service).Select(d => new ScheduledProcessor(c.Resolve<Func<IProcessor>>(d.Processor), c.Resolve<Func<ISchedule>>(d.Schedule)))));
 
                         return container;
-                    };
+                    }
 
-                    return factory;
+                    return (Func<IUnityContainer>)Factory;
                 }));
             }
         }

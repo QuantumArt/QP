@@ -1197,12 +1197,8 @@
             <PropertyRef Name="ID" />
           </Key>
           <Property Name="ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TRANSACTION_LSN" Type="varchar" MaxLength="22" Nullable="false" />
           <Property Name="TRANSACTION_DATE" Type="datetime" Nullable="false" />
-          <Property Name="EVENT" Type="nvarchar" MaxLength="25" />
-          <Property Name="ENTITY_TYPE" Type="nvarchar" MaxLength="25" />
-          <Property Name="LSN" Type="varchar" MaxLength="20" />
-          <Property Name="ENTITY_ID" Type="numeric" Precision="18" Scale="0" Nullable="true" />
-          <Property Name="PARENT_ENTITY_ID" Type="numeric" Precision="18" Scale="0" Nullable="true" />
           <Property Name="URL" Type="nvarchar" MaxLength="1024" Nullable="false" />
           <Property Name="TRIES" Type="numeric" Precision="18" Scale="0" Nullable="false" />
           <Property Name="JSON" Type="nvarchar(max)" />
@@ -10433,17 +10429,13 @@
           </Key>
           <Property Name="Id" Type="Decimal" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="TransactionDate" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Event" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
-          <Property Name="EntityType" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
-          <Property Name="Lsn" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Url" Type="String" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
           <Property Name="Tries" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <Property Name="EntityId" Type="Decimal" Nullable="true" Precision="18" Scale="0" />
-          <Property Name="ParentEntityId" Type="Decimal" Nullable="true" Precision="18" Scale="0" />
           <Property Name="Json" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="Sent" Type="Boolean" Nullable="false" />
           <Property Name="Created" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Modified" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TransactionLsn" Type="String" Nullable="false" MaxLength="22" FixedLength="false" Unicode="false" />
         </EntityType>
 			</Schema>
     </edmx:ConceptualModels>
@@ -11997,17 +11989,13 @@
           <EntitySetMapping Name="SystemNotificationSet">
             <EntityTypeMapping TypeName="QP8Model.SystemNotificationDAL">
               <MappingFragment StoreEntitySet="SYSTEM_NOTIFICATION_QUEUE">
+                <ScalarProperty Name="TransactionLsn" ColumnName="TRANSACTION_LSN" />
                 <ScalarProperty Name="Modified" ColumnName="MODIFIED" />
                 <ScalarProperty Name="Created" ColumnName="CREATED" />
                 <ScalarProperty Name="Sent" ColumnName="SENT" />
                 <ScalarProperty Name="Json" ColumnName="JSON" />
                 <ScalarProperty Name="Tries" ColumnName="TRIES" />
                 <ScalarProperty Name="Url" ColumnName="URL" />
-                <ScalarProperty Name="EntityType" ColumnName="ENTITY_TYPE" />
-                <ScalarProperty Name="EntityId" ColumnName="ENTITY_ID" />
-                <ScalarProperty Name="ParentEntityId" ColumnName="PARENT_ENTITY_ID" />
-                <ScalarProperty Name="Event" ColumnName="EVENT" />
-                <ScalarProperty Name="Lsn" ColumnName="LSN" />
                 <ScalarProperty Name="TransactionDate" ColumnName="TRANSACTION_DATE" />
                 <ScalarProperty Name="Id" ColumnName="ID" />
               </MappingFragment>
@@ -12035,7 +12023,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="56">
+      <Diagram Name="QP8Model" ZoomLevel="61">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />

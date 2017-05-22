@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using QP8.Infrastructure.Logging;
 using Quantumart.QP8.ArticleScheduler.Interfaces;
 using Quantumart.QP8.ArticleScheduler.Recurring.RecurringCalculators;
@@ -45,10 +45,7 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return nearestComparisonToShowArticle == 0 || nearestComparisonToShowArticle > 0 && comparison >= 0;
         }
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck)
-        {
-            return ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck);
-        }
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(RecurringTask.Create(task), dateTimeToCheck);
 
         private void ProcessTask(RecurringTask task, DateTime currentTime, int comparison)
         {
@@ -94,14 +91,8 @@ namespace Quantumart.QP8.ArticleScheduler.Recurring
             return taskRange.CompareRangeTo(nearestEndDate) > 0 ? taskRange.Item2 : nearestEndDate;
         }
 
-        private static Tuple<DateTime, DateTime> GetTaskRange(RecurringTask task)
-        {
-            return GetTaskRange(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
-        }
+        private static Tuple<DateTime, DateTime> GetTaskRange(RecurringTask task) => GetTaskRange(task.StartDate + task.StartTime, task.EndDate + task.StartTime);
 
-        private static Tuple<DateTime, DateTime> GetTaskRange(DateTime startDateTime, DateTime endDateTime)
-        {
-            return Tuple.Create(startDateTime, endDateTime);
-        }
+        private static Tuple<DateTime, DateTime> GetTaskRange(DateTime startDateTime, DateTime endDateTime) => Tuple.Create(startDateTime, endDateTime);
     }
 }

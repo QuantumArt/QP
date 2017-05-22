@@ -33511,7 +33511,8 @@ namespace Quantumart.QP8.DAL
         /// <param name="sent">Initial value of the Sent property.</param>
         /// <param name="created">Initial value of the Created property.</param>
         /// <param name="modified">Initial value of the Modified property.</param>
-        public static SystemNotificationDAL CreateSystemNotificationDAL(global::System.Decimal id, global::System.DateTime transactionDate, global::System.String url, global::System.Decimal tries, global::System.Boolean sent, global::System.DateTime created, global::System.DateTime modified)
+        /// <param name="transactionLsn">Initial value of the TransactionLsn property.</param>
+        public static SystemNotificationDAL CreateSystemNotificationDAL(global::System.Decimal id, global::System.DateTime transactionDate, global::System.String url, global::System.Decimal tries, global::System.Boolean sent, global::System.DateTime created, global::System.DateTime modified, global::System.String transactionLsn)
         {
             SystemNotificationDAL systemNotificationDAL = new SystemNotificationDAL();
             systemNotificationDAL.Id = id;
@@ -33521,6 +33522,7 @@ namespace Quantumart.QP8.DAL
             systemNotificationDAL.Sent = sent;
             systemNotificationDAL.Created = created;
             systemNotificationDAL.Modified = modified;
+            systemNotificationDAL.TransactionLsn = transactionLsn;
             return systemNotificationDAL;
         }
 
@@ -33582,78 +33584,6 @@ namespace Quantumart.QP8.DAL
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public global::System.String Event
-        {
-            get
-            {
-                return _Event;
-            }
-            set
-            {
-                OnEventChanging(value);
-                ReportPropertyChanging("Event");
-                _Event = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("Event");
-                OnEventChanged();
-            }
-        }
-        private global::System.String _Event;
-        partial void OnEventChanging(global::System.String value);
-        partial void OnEventChanged();
-
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public global::System.String EntityType
-        {
-            get
-            {
-                return _EntityType;
-            }
-            set
-            {
-                OnEntityTypeChanging(value);
-                ReportPropertyChanging("EntityType");
-                _EntityType = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("EntityType");
-                OnEntityTypeChanged();
-            }
-        }
-        private global::System.String _EntityType;
-        partial void OnEntityTypeChanging(global::System.String value);
-        partial void OnEntityTypeChanged();
-
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public global::System.String Lsn
-        {
-            get
-            {
-                return _Lsn;
-            }
-            set
-            {
-                OnLsnChanging(value);
-                ReportPropertyChanging("Lsn");
-                _Lsn = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("Lsn");
-                OnLsnChanged();
-            }
-        }
-        private global::System.String _Lsn;
-        partial void OnLsnChanging(global::System.String value);
-        partial void OnLsnChanged();
-
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
         public global::System.String Url
@@ -33698,54 +33628,6 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Tries;
         partial void OnTriesChanging(global::System.Decimal value);
         partial void OnTriesChanged();
-
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.Decimal> EntityId
-        {
-            get
-            {
-                return _EntityId;
-            }
-            set
-            {
-                OnEntityIdChanging(value);
-                ReportPropertyChanging("EntityId");
-                _EntityId = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("EntityId");
-                OnEntityIdChanged();
-            }
-        }
-        private Nullable<global::System.Decimal> _EntityId;
-        partial void OnEntityIdChanging(Nullable<global::System.Decimal> value);
-        partial void OnEntityIdChanged();
-
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
-        [DataMemberAttribute()]
-        public Nullable<global::System.Decimal> ParentEntityId
-        {
-            get
-            {
-                return _ParentEntityId;
-            }
-            set
-            {
-                OnParentEntityIdChanging(value);
-                ReportPropertyChanging("ParentEntityId");
-                _ParentEntityId = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("ParentEntityId");
-                OnParentEntityIdChanged();
-            }
-        }
-        private Nullable<global::System.Decimal> _ParentEntityId;
-        partial void OnParentEntityIdChanging(Nullable<global::System.Decimal> value);
-        partial void OnParentEntityIdChanged();
 
         /// <summary>
         /// No Metadata Documentation available.
@@ -33842,6 +33724,30 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
+
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String TransactionLsn
+        {
+            get
+            {
+                return _TransactionLsn;
+            }
+            set
+            {
+                OnTransactionLsnChanging(value);
+                ReportPropertyChanging("TransactionLsn");
+                _TransactionLsn = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("TransactionLsn");
+                OnTransactionLsnChanged();
+            }
+        }
+        private global::System.String _TransactionLsn;
+        partial void OnTransactionLsnChanging(global::System.String value);
+        partial void OnTransactionLsnChanged();
 
         #endregion
 

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Quantumart.QP8.BLL.Factories;
+using Quantumart.QP8.BLL.Factories.FolderFactory;
 
 namespace Quantumart.QP8.BLL.Repository
 {
@@ -80,7 +80,6 @@ namespace Quantumart.QP8.BLL.Repository
         /// <param name="name">имя дочерней папки</param>
         /// <returns>папка или null</returns>
         public abstract Folder GetChildByName(int parentId, string name);
-
 
         /// <summary>
         /// Возвращает информацию о корневой папке библиотеки

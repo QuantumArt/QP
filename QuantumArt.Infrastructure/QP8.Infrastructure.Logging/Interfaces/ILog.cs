@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace QP8.Infrastructure.Logging.Interfaces
@@ -18,7 +18,7 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// Gets a value indicating whether this instance is trace enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is trace enabled; otherwise, <c>false</c>
+        /// <c>true</c> if this instance is trace enabled; otherwise, <c>false</c>
         /// </value>
         bool IsTraceEnabled { get; }
 
@@ -26,7 +26,7 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// Gets a value indicating whether this instance is debug enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
+        /// <c>true</c> if this instance is debug enabled; otherwise, <c>false</c>
         /// </value>
         bool IsDebugEnabled { get; }
 
@@ -34,7 +34,7 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// Gets a value indicating whether this instance is info enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is info enabled; otherwise, <c>false</c>
+        /// <c>true</c> if this instance is info enabled; otherwise, <c>false</c>
         /// </value>
         bool IsInfoEnabled { get; }
 
@@ -42,7 +42,7 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// Gets a value indicating whether this instance is warn enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is warn enabled; otherwise, <c>false</c>
+        /// <c>true</c> if this instance is warn enabled; otherwise, <c>false</c>
         /// </value>
         bool IsWarnEnabled { get; }
 
@@ -50,7 +50,7 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// Gets a value indicating whether this instance is error enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is error enabled; otherwise, <c>false</c>
+        /// <c>true</c> if this instance is error enabled; otherwise, <c>false</c>
         /// </value>
         bool IsErrorEnabled { get; }
 
@@ -58,7 +58,7 @@ namespace QP8.Infrastructure.Logging.Interfaces
         /// Gets a value indicating whether this instance is fatal enabled
         /// </summary>
         /// <value>
-        /// 	<c>true</c> if this instance is fatal enabled; otherwise, <c>false</c>
+        /// <c>true</c> if this instance is fatal enabled; otherwise, <c>false</c>
         /// </value>
         bool IsFatalEnabled { get; }
 

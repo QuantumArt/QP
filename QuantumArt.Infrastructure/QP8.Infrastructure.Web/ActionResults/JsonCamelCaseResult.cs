@@ -21,9 +21,6 @@ namespace QP8.Infrastructure.Web.ActionResults
             return base.SerializeToJson(settings);
         }
 
-        public static implicit operator JsonCamelCaseResult<T>(T data)
-        {
-            return new JsonCamelCaseResult<T>(data);
-        }
+        public static implicit operator JsonCamelCaseResult<T>(T data) => new JsonCamelCaseResult<T>(data);
     }
 }

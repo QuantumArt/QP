@@ -11,8 +11,7 @@ namespace QP8.Infrastructure.TestTools.AutoFixture.Specimens
     {
         public object Create(object request, ISpecimenContext context)
         {
-            var propertyInfo = request as PropertyInfo;
-            if (propertyInfo != null && propertyInfo.PropertyType == typeof(NameValueCollection))
+            if (request is PropertyInfo propertyInfo && propertyInfo.PropertyType == typeof(NameValueCollection))
             {
                 var nvc = new NameValueCollection();
                 var dictionary = context.Create<Dictionary<string, string>>();

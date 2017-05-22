@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Mono.Options;
@@ -28,10 +28,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
 
         protected internal abstract BaseSettingsModel CreateSettingsFromArguments();
 
-        protected internal virtual OptionSet BuildOptionSet()
-        {
-            return new OptionSet();
-        }
+        protected internal virtual OptionSet BuildOptionSet() => new OptionSet();
 
         protected internal virtual void PrintEnteredData()
         {
@@ -66,7 +63,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message + Environment.NewLine);
-                Console.WriteLine("Try `qpdbupdate --help' for more information.");
+                Console.WriteLine(@"Try `qpdbupdate --help' for more information.");
                 Console.WriteLine(Environment.NewLine);
                 throw;
             }
@@ -100,7 +97,7 @@ namespace Quantumart.QP8.ConsoleDbUpdate.Infrastructure.Processors.ArgumentsProc
         private static void ShowCommandLineHelp(OptionSet optionsSet)
         {
             Console.WriteLine("USAGE: qpdbupdate [OPTIONS]+ <customer_code>" + Environment.NewLine);
-            Console.WriteLine("OPTIONS:");
+            Console.WriteLine(@"OPTIONS:");
             optionsSet.WriteOptionDescriptions(Console.Out);
             ConsoleHelpers.ExitProgram(ExitCode.Success);
         }

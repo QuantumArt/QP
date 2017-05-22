@@ -1,13 +1,13 @@
-﻿using QP8.Infrastructure.Logging.Interfaces;
+﻿using System;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
-using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Quantumart.QP8.Scheduler.Notification.Processors
 {

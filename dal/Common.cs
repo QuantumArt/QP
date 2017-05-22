@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -639,7 +639,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@field_id", fieldId);
                 cmd.Parameters.AddWithValue("@article_id", articleId);
-                using (IDataReader dr = cmd.ExecuteReader())
+                using (var dr = cmd.ExecuteReader())
                 {
                     if (dr.Read())
                     {
@@ -689,7 +689,7 @@ namespace Quantumart.QP8.DAL
                 cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Parameters.AddWithValue("@entityTypeCode", entityTypeCode);
                 cmd.Parameters.AddWithValue("@entityIds", string.Join(",", ids));
-                using (IDataReader dr = cmd.ExecuteReader())
+                using (var dr = cmd.ExecuteReader())
                 {
                     while (dr.Read())
                     {
@@ -1038,6 +1038,7 @@ namespace Quantumart.QP8.DAL
             // 2. В CONTENT_DATA в качестве значения поля для  всех статей установить LinkId
             const string cmdText = "INSERT INTO [item_to_item] ([link_id],[l_item_id],[r_item_id]) select @linkid as link_id, D.CONTENT_ITEM_ID as l_item_id, D.DATA as r_item_id from CONTENT_DATA D where ATTRIBUTE_ID = @fid and D.DATA is not null; " +
                                    "update CONTENT_DATA set DATA = @linkid where ATTRIBUTE_ID = @fid;";
+
             using (var cmd = SqlCommandFactory.Create(cmdText, сonnection))
             {
                 cmd.Parameters.AddWithValue("@fid", fieldId);
@@ -1051,6 +1052,7 @@ namespace Quantumart.QP8.DAL
             // перенести данные о связях из item_to_item в CONTENT_DATA.
             const string cmdText = "update CONTENT_DATA SET DATA = LD.linked_item_id from dbo.item_link_united LD where LD.item_id = CONTENT_DATA.CONTENT_ITEM_ID and CONTENT_DATA.ATTRIBUTE_ID = @fid and LD.link_id = @linkid; " +
                                    "update CONTENT_DATA SET DATA = NULL where CONTENT_DATA.ATTRIBUTE_ID = @fid and CONTENT_DATA.DATA = @linkid;";
+
             using (var cmd = SqlCommandFactory.Create(cmdText, сonnection))
             {
                 cmd.Parameters.AddWithValue("@fid", fieldId);

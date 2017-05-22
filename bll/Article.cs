@@ -1442,26 +1442,24 @@ namespace Quantumart.QP8.BLL
                 .SelectMany(n => n.AggregatedArticles.Select(m => m.Id))
                 .Union(enumerable.Select(m => m.Id))
                 .ToArray();
+
             ArticleRepository.MultipleDelete(articlesToRemove);
         }
 
         private IEnumerable<ArticleVariationListItem> LoadVariationListForClient()
         {
-            var fieldIds = VariationContextFieldValues
-                .Select(n => n.Field.Id)
-                .ToArray();
-
+            var fieldIds = VariationContextFieldValues.Select(n => n.Field.Id).ToArray();
             foreach (var article in VariationArticles.Concat(Enumerable.Repeat(this, 1)))
             {
                 yield return new ArticleVariationListItem
                 {
+                    Id = article.Id,
+                    FieldValues = article.VariationEditableFieldValues.Union(article.AggregatedArticles.SelectMany(n => n.VariationEditableFieldValues)).ToDictionary(n => n.Field.FormName, n => n.Value),
                     Context = string.Join(",", article.FieldValues
                         .Where(n => fieldIds.Contains(n.Field.Id) && !string.IsNullOrEmpty(n.Value))
                         .OrderBy(n => n.Field.Order)
                         .Select(n => n.Value)
-                    ),
-                    Id = article.Id,
-                    FieldValues = article.VariationEditableFieldValues.Union(article.AggregatedArticles.SelectMany(n => n.VariationEditableFieldValues)).ToDictionary(n => n.Field.FormName, n => n.Value)
+                    )
                 };
             }
         }
@@ -1479,9 +1477,7 @@ namespace Quantumart.QP8.BLL
                 {
                     HasHierarchy = ContentRepository.HasContentTreeField(item.ContentId),
                     FieldId = item.Id,
-                    Ids =
-                        ArticleRepository.GetHierarchy(item.ContentId)
-                            .ToDictionary(k => k.Key.ToString(), k => k.Value.ToString())
+                    Ids = ArticleRepository.GetHierarchy(item.ContentId).ToDictionary(kvp => kvp.Key.ToString(), kvp => kvp.Value.ToString())
                 };
 
                 yield return result;

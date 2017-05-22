@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Web.Mvc;
+using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Web.ActionResults;
-using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.BLL.Helpers;
 using Quantumart.QP8.BLL.Services;
 using Quantumart.QP8.BLL.Services.VisualEditor;
@@ -19,7 +19,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         {
             var result = new JSendResponse { Status = JSendStatus.Success };
 
-            Func<VisualEditorStyle, VisualEditorStyleVm> styleMapFn = entry => new VisualEditorStyleVm
+            VisualEditorStyleVm StyleMapFn(VisualEditorStyle entry) => new VisualEditorStyleVm
             {
                 Name = entry.Name,
                 Element = entry.Tag,
@@ -28,7 +28,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
                 Attributes = entry.AttributeItems.Any() ? entry.AttributeItems.ToDictionary(k => k.Name, v => v.ItemValue) : null
             };
 
-            Func<VisualEditorPlugin, VisualEditorPluginVm> pluginMapFn = entry => new VisualEditorPluginVm
+            VisualEditorPluginVm PluginMapFn(VisualEditorPlugin entry) => new VisualEditorPluginVm
             {
                 Name = entry.Name,
                 Url = entry.Url
@@ -38,9 +38,9 @@ namespace Quantumart.QP8.WebMvc.Controllers
             var includedStyles = FieldService.GetResultStyles(fieldId, siteId).Where(ves => ves.On).OrderBy(ves => ves.Order);
             var model = new VisualEditorConfigVm
             {
-                StylesSet = includedStyles.Where(ves => !ves.IsFormat).Select(styleMapFn),
-                FormatsSet = includedStyles.Where(ves => ves.IsFormat).Select(styleMapFn).EmptyIfNull(),
-                ExtraPlugins = VisualEditorHelpers.GetVisualEditorPlugins(veCommands).Select(pluginMapFn).EmptyIfNull(),
+                StylesSet = includedStyles.Where(ves => !ves.IsFormat).Select(StyleMapFn),
+                FormatsSet = includedStyles.Where(ves => ves.IsFormat).Select(StyleMapFn).EmptyIfNull(),
+                ExtraPlugins = VisualEditorHelpers.GetVisualEditorPlugins(veCommands).Select(PluginMapFn).EmptyIfNull(),
                 Toolbar = VisualEditorHelpers.GenerateToolbar(veCommands)
             };
 
@@ -73,9 +73,6 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [HttpPost]
-        public ActionResult AspellCheck(string text)
-        {
-            return View(new AspellCheckVm(text));
-        }
+        public ActionResult AspellCheck(string text) => View(new AspellCheckVm(text));
     }
 }

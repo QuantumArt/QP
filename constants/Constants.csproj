@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -58,6 +58,7 @@
     <Compile Include="ArticleSelectionMode.cs" />
     <Compile Include="ArticleSelectionIncludeMode.cs" />
     <Compile Include="ArticleViewType.cs" />
+    <Compile Include="CdcCaptureConstants.cs" />
     <Compile Include="ContentSelectMode.cs" />
     <Compile Include="ContextMenuCodes.cs" />
     <Compile Include="FieldSelectMode.cs" />

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -55,11 +55,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Infrastructure\CdcOperationType.cs" />
+    <Compile Include="Infrastructure\CdcSynchronizationContext.cs" />
     <Compile Include="JobConfigurator.cs" />
-    <Compile Include="Listeners\JobListener.cs" />
+    <Compile Include="Infrastructure\JobListeners\JobListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Listeners\SchedulerListener.cs" />
-    <Compile Include="Listeners\TriggerListener.cs" />
+    <Compile Include="Infrastructure\JobListeners\SchedulerListener.cs" />
+    <Compile Include="Infrastructure\JobListeners\TriggerListener.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -69,6 +71,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\configuration\Configuration.csproj">
+      <Project>{EB18DF82-A593-40CA-AA31-EF430A9E7F24}</Project>
+      <Name>Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QuantumArt.Infrastructure\QP8.Infrastructure.Logging.PrtgMonitoring\QP8.Infrastructure.Logging.PrtgMonitoring.csproj">
       <Project>{060eb6fe-8c9e-4b81-b17c-d2d3884f0aec}</Project>
       <Name>QP8.Infrastructure.Logging.PrtgMonitoring</Name>

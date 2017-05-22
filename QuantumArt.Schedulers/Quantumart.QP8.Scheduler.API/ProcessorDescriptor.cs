@@ -2,11 +2,11 @@
 {
     public class ProcessorDescriptor
     {
-        public string Processor { get; private set; }
+        public string Processor { get; }
 
-        public string Service { get; private set; }
+        public string Service { get; }
 
-        public string Schedule { get; private set; }
+        public string Schedule { get; }
 
         public ProcessorDescriptor(string processor, string service, string schedule)
         {

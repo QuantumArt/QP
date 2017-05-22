@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Quantumart.QP8.DAL;
 using Quantumart.QP8.Constants;
-using Quantumart.QP8.BLL.Helpers;
-
+using Quantumart.QP8.DAL;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
@@ -16,29 +14,31 @@ namespace Quantumart.QP8.BLL.Mappers
                 .ForMember(data => data.FromUser, opt => opt.Ignore())
                 .ForMember(data => data.ToUser, opt => opt.Ignore())
                 .ForMember(data => data.ToUserGroup, opt => opt.Ignore())
-				.ForMember(data => data.FromBackenduserId, opt => opt.MapFrom(src => src.FromBackenduser ? src.FromBackenduserId : SpecialIds.AdminUserId))
-				.ForMember(data => data.Content, opt => opt.Ignore())
-				.AfterMap(SetDalProperties)
-				;
+                .ForMember(data => data.FromBackenduserId, opt => opt.MapFrom(src => src.FromBackenduser ? src.FromBackenduserId : SpecialIds.AdminUserId))
+                .ForMember(data => data.Content, opt => opt.Ignore())
+                .AfterMap(SetDalProperties);
         }
 
-		public override void CreateBizMapper()
-		{			
-			Mapper.CreateMap<NotificationsDAL, Notification>()
-				.AfterMap(SetBizProperties);
-		}
+        public override void CreateBizMapper()
+        {
+            Mapper.CreateMap<NotificationsDAL, Notification>().AfterMap(SetBizProperties);
+        }
 
-		private static void SetBizProperties(NotificationsDAL dataObject, Notification bizObject)
-		{
-			bizObject.SelectedReceiverType = bizObject.ComputeReceiverType();
-			if (string.IsNullOrEmpty(bizObject.ExternalUrl))
-				bizObject.ExternalUrl = bizObject.Content.Site.ExternalUrl;
-		}
+        private static void SetBizProperties(NotificationsDAL dataObject, Notification bizObject)
+        {
+            bizObject.SelectedReceiverType = bizObject.ComputeReceiverType();
+            if (string.IsNullOrEmpty(bizObject.ExternalUrl))
+            {
+                bizObject.ExternalUrl = bizObject.Content.Site.ExternalUrl;
+            }
+        }
 
-		private static void SetDalProperties(Notification bizObject, NotificationsDAL dataObject)
-		{
-			if (string.Equals(bizObject.ExternalUrl, bizObject.Content.Site.ExternalUrl) || !bizObject.IsExternal )
-				dataObject.ExternalUrl = null;
-		}
+        private static void SetDalProperties(Notification bizObject, NotificationsDAL dataObject)
+        {
+            if (string.Equals(bizObject.ExternalUrl, bizObject.Content.Site.ExternalUrl) || !bizObject.IsExternal)
+            {
+                dataObject.ExternalUrl = null;
+            }
+        }
     }
 }

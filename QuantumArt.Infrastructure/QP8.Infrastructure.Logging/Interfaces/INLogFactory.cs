@@ -8,7 +8,7 @@ namespace QP8.Infrastructure.Logging.Interfaces
     public interface INLogFactory : ILogFactory
     {
         /// <summary>
-        /// Create a new instance of the inner <see cref="ILogger"/> class
+        /// Create a new instance of the inner <see cref="ILogger" /> class
         /// </summary>
         /// <param name="loggerName">The string based logger name</param>
         ILogger CreateInnerLogger(string loggerName);

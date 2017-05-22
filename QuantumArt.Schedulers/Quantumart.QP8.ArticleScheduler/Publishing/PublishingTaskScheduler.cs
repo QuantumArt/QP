@@ -29,14 +29,8 @@ namespace Quantumart.QP8.ArticleScheduler.Publishing
             }
         }
 
-        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck)
-        {
-            return dateTimeToCheck >= ((PublishingTask)task).PublishingDateTime;
-        }
+        public bool ShouldProcessTask(ISchedulerTask task, DateTime dateTimeToCheck) => dateTimeToCheck >= ((PublishingTask)task).PublishingDateTime;
 
-        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck)
-        {
-            return ShouldProcessTask(PublishingTask.Create(task), dateTimeToCheck);
-        }
+        public bool ShouldProcessTask(ArticleScheduleTask task, DateTime dateTimeToCheck) => ShouldProcessTask(PublishingTask.Create(task), dateTimeToCheck);
     }
 }

@@ -1,7 +1,7 @@
-using System.Dynamic;
+﻿using System.Dynamic;
 using System.Web.Mvc;
+using QP8.Infrastructure.Extensions;
 using Quantumart.QP8.BLL;
-using Quantumart.QP8.BLL.Extensions;
 using Quantumart.QP8.Configuration;
 using Quantumart.QP8.Constants;
 using Quantumart.QP8.WebMvc.ViewModels.DirectLink;

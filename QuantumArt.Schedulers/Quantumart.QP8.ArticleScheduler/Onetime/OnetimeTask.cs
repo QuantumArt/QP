@@ -22,9 +22,6 @@ namespace Quantumart.QP8.ArticleScheduler.Onetime
 
         public DateTime EndDateTime { get; }
 
-        public static OnetimeTask CreateOnetimeTask(ArticleScheduleTask task)
-        {
-            return new OnetimeTask(task.Id, task.ArticleId, task.StartDate + task.StartTime, task.EndDate + task.EndTime);
-        }
+        public static OnetimeTask CreateOnetimeTask(ArticleScheduleTask task) => new OnetimeTask(task.Id, task.ArticleId, task.StartDate + task.StartTime, task.EndDate + task.EndTime);
     }
 }

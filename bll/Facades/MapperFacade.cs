@@ -32,14 +32,15 @@ namespace Quantumart.QP8.BLL.Facades
             return item;
         }
 
+#pragma warning disable CS0618 // Type or member is obsolete
         static MapperFacade()
         {
-            Mapper.CreateMap<decimal, bool>().ConvertUsing(src => Converter.ToBoolean(src));
-            Mapper.CreateMap<decimal?, int?>().ConvertUsing(Converter.ToNullableInt32);
-            Mapper.CreateMap<bool, decimal>().ConvertUsing(src => Converter.ToDecimal(src));
-            Mapper.CreateMap<int, decimal>().ConvertUsing(src => src);
-            Mapper.CreateMap<decimal, int>().ConvertUsing(src => Converter.ToInt32(src));
-            Mapper.CreateMap<int?, decimal?>().ConvertUsing(src => src);
+            Mapper.CreateMap<decimal, bool>().ConvertUsing((decimal src) => Converter.ToBoolean(src));
+            Mapper.CreateMap<decimal?, int?>().ConvertUsing((decimal? src) => Converter.ToNullableInt32(src));
+            Mapper.CreateMap<bool, decimal>().ConvertUsing((bool src) => Converter.ToDecimal(src));
+            Mapper.CreateMap<int, decimal>().ConvertUsing((int src) => src);
+            Mapper.CreateMap<decimal, int>().ConvertUsing((decimal src) => Converter.ToInt32(src));
+            Mapper.CreateMap<int?, decimal?>().ConvertUsing((int? src) => src);
 
             Mapper.CreateMap<IDataReader, IEnumerable<SearchInArticlesResultItem>>();
             Mapper.CreateMap<IDataReader, IEnumerable<VisualEditFieldParams>>();
@@ -51,6 +52,7 @@ namespace Quantumart.QP8.BLL.Facades
             DataRowMapper.CreateMap<ArticleInfo>();
             DataRowMapper.CreateMap<PageInfo>();
         }
+#pragma warning restore CS0618 // Type or member is obsolete
 
         internal static readonly SiteMapper SiteMapper = Create<SiteMapper>(true);
 

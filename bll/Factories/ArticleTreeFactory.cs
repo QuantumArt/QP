@@ -21,10 +21,7 @@ namespace Quantumart.QP8.BLL.Factories
                 if (entityTypeCode == EntityTypeCode.Article || entityTypeCode == EntityTypeCode.VirtualArticle)
                 {
                     var contentId = parentEntityId.GetValueOrDefault();
-                    int[] extensionContentIds;
-                    ContentReference[] contentReferences;
-                    ArticleFullTextSearchParameter ftsOptions;
-                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out ftsOptions, out extensionContentIds, out contentReferences);
+                    commonFilter = ArticleRepository.FillFullTextSearchParams(contentId, commonFilter, searchQuery, ftsParser, out ArticleFullTextSearchParameter ftsOptions, out int[] extensionContentIds, out ContentReference[] contentReferences);
 
                     var filterSqlParams = new List<SqlParameter>();
                     var sourceQuery = new ArticleFilterSearchQueryParser().GetFilter(searchQuery, filterSqlParams);
@@ -34,8 +31,8 @@ namespace Quantumart.QP8.BLL.Factories
                     var combinedFilter = string.IsNullOrWhiteSpace(sourceQuery)
                         ? hostFilter
                         : string.IsNullOrWhiteSpace(hostFilter) ? sourceQuery : $"({hostFilter} AND {sourceQuery})";
-                    var filterForSmpl = string.IsNullOrWhiteSpace(combinedFilter) ? commonFilter : combinedFilter;
 
+                    var filterForSmpl = string.IsNullOrWhiteSpace(combinedFilter) ? commonFilter : combinedFilter;
                     return hasFtsSearchParams || hasFilterSearchParams
                         ? new ArticleFtsProcessor(contentId, commonFilter, combinedFilter, linkedFilters, contextQuery, filterSqlParams, extensionContentIds, ftsOptions)
                         : new ArticleSimpleProcessor(contentId, entityId, filterForSmpl, entityTypeCode, selectItemIDs) as ITreeProcessor;

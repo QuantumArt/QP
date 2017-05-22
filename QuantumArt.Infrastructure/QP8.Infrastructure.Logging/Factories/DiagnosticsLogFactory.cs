@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using QP8.Infrastructure.Helpers;
 using QP8.Infrastructure.Logging.Adapters;
 using QP8.Infrastructure.Logging.Interfaces;
@@ -8,7 +8,7 @@ namespace QP8.Infrastructure.Logging.Factories
     /// <summary>
     /// Factory for creating a System.Diagnostics logger
     /// </summary>
-	public class DiagnosticsLogFactory : ILogFactory
+    public class DiagnosticsLogFactory : ILogFactory
     {
         private readonly bool _traceEnabled;
         private readonly bool _debugEnabled;
@@ -33,19 +33,13 @@ namespace QP8.Infrastructure.Logging.Factories
             _fatalEnabled = fatalEnabled;
         }
 
-        public ILog GetLogger()
-        {
-            return GetLogger(AssemblyHelpers.GetAssemblyName());
-        }
+        public ILog GetLogger() => GetLogger(AssemblyHelpers.GetAssemblyName());
 
-        public ILog GetLogger(Type type)
-        {
-            return type == null ? GetLogger() : GetLogger(type.Name);
-        }
+        public ILog GetLogger(Type type) => type == null ? GetLogger() : GetLogger(type.Name);
 
-        public ILog GetLogger(string loggerName)
-        {
-            return string.IsNullOrWhiteSpace(loggerName) ? GetLogger() : new DiagnosticsDebugLogger
+        public ILog GetLogger(string loggerName) => string.IsNullOrWhiteSpace(loggerName)
+            ? GetLogger()
+            : new DiagnosticsDebugLogger
             {
                 LoggerName = loggerName,
                 IsTraceEnabled = _traceEnabled,
@@ -53,8 +47,7 @@ namespace QP8.Infrastructure.Logging.Factories
                 IsInfoEnabled = _infoEnabled,
                 IsWarnEnabled = _warnEnabled,
                 IsErrorEnabled = _errorEnabled,
-                IsFatalEnabled = _fatalEnabled,
+                IsFatalEnabled = _fatalEnabled
             };
-        }
     }
 }

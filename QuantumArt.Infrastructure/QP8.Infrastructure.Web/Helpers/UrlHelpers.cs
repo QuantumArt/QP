@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -10,11 +10,7 @@ namespace QP8.Infrastructure.Web.Helpers
         public const string RelativeWebFolderUrl = @"^/([a-zA-Z0-9а-яА-Я-_\./]*$)";
         private const string UrlInvalidFormat = "Url has an invalid format";
 
-        public static bool IsValidUrl(string url)
-        {
-            Uri uriResult;
-            return IsValidUrl(url, out uriResult);
-        }
+        public static bool IsValidUrl(string url) => IsValidUrl(url, out Uri _);
 
         public static bool IsValidUrl(string url, out Uri uriResult)
         {
@@ -22,21 +18,11 @@ namespace QP8.Infrastructure.Web.Helpers
             return isUrl && (!uriResult.IsAbsoluteUri || uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
 
-        public static bool IsRelativeUrl(string url)
-        {
-            return !IsAbsoluteUrl(url);
-        }
+        public static bool IsRelativeUrl(string url) => !IsAbsoluteUrl(url);
 
-        public static bool IsRelativeUrl(string url, out Uri uriResult)
-        {
-            return !IsAbsoluteUrl(url, out uriResult);
-        }
+        public static bool IsRelativeUrl(string url, out Uri uriResult) => !IsAbsoluteUrl(url, out uriResult);
 
-        public static bool IsAbsoluteUrl(string url)
-        {
-            Uri uriResult;
-            return IsAbsoluteUrl(url, out uriResult);
-        }
+        public static bool IsAbsoluteUrl(string url) => IsAbsoluteUrl(url, out Uri _);
 
         public static bool IsAbsoluteUrl(string url, out Uri uriResult)
         {
@@ -45,32 +31,15 @@ namespace QP8.Infrastructure.Web.Helpers
             return uriResult.IsAbsoluteUri;
         }
 
-        public static bool IsValidWebFolderUrl(string url)
-        {
-            Uri uriResult;
-            return IsValidWebFolderUrl(url, out uriResult);
-        }
+        public static bool IsValidWebFolderUrl(string url) => IsValidWebFolderUrl(url, out Uri _);
 
-        public static bool IsValidWebFolderUrl(string url, out Uri uriResult)
-        {
-            return IsValidUrl(url, out uriResult) && (Regex.IsMatch(url, AbsoluteWebFolderUrl) || Regex.IsMatch(url, RelativeWebFolderUrl));
-        }
+        public static bool IsValidWebFolderUrl(string url, out Uri uriResult) => IsValidUrl(url, out uriResult) && (Regex.IsMatch(url, AbsoluteWebFolderUrl) || Regex.IsMatch(url, RelativeWebFolderUrl));
 
-        public static bool IsRelativeWebFolderUrl(string url)
-        {
-            return !IsAbsoluteWebFolderUrl(url);
-        }
+        public static bool IsRelativeWebFolderUrl(string url) => !IsAbsoluteWebFolderUrl(url);
 
-        public static bool IsRelativeWebFolderUrl(string url, out Uri uriResult)
-        {
-            return !IsAbsoluteWebFolderUrl(url, out uriResult);
-        }
+        public static bool IsRelativeWebFolderUrl(string url, out Uri uriResult) => !IsAbsoluteWebFolderUrl(url, out uriResult);
 
-        public static bool IsAbsoluteWebFolderUrl(string url)
-        {
-            Uri uriResult;
-            return IsAbsoluteWebFolderUrl(url, out uriResult);
-        }
+        public static bool IsAbsoluteWebFolderUrl(string url) => IsAbsoluteWebFolderUrl(url, out Uri _);
 
         public static bool IsAbsoluteWebFolderUrl(string url, out Uri uriResult)
         {

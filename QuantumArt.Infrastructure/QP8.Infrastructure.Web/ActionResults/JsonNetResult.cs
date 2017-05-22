@@ -35,10 +35,7 @@ namespace QP8.Infrastructure.Web.ActionResults
             response.Write(SerializeToJson(_settings));
         }
 
-        public static implicit operator JsonNetResult<T>(T data)
-        {
-            return new JsonNetResult<T>(data);
-        }
+        public static implicit operator JsonNetResult<T>(T data) => new JsonNetResult<T>(data);
 
         protected virtual string SerializeToJson(JsonSerializerSettings settings)
         {

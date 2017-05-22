@@ -1,4 +1,8 @@
-﻿using QP8.Infrastructure.Web.ActionResults;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Web.Mvc;
+using QP8.Infrastructure.Web.ActionResults;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Exceptions;
 using Quantumart.QP8.BLL.Interfaces.Services;
@@ -15,10 +19,6 @@ using Quantumart.QP8.WebMvc.Infrastructure.Enums;
 using Quantumart.QP8.WebMvc.Infrastructure.Extensions;
 using Quantumart.QP8.WebMvc.ViewModels;
 using Quantumart.QP8.WebMvc.ViewModels.Article;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Web.Mvc;
 using Telerik.Web.Mvc;
 
 namespace Quantumart.QP8.WebMvc.Controllers
@@ -121,7 +121,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             GridCommand command,
             [ModelBinder(typeof(JsonStringModelBinder<ArticleSearchQueryParam[]>))] ArticleSearchQueryParam[] searchQuery,
             string customFilter,
-             bool? onlyIds)
+            bool? onlyIds)
 
         {
             var ftsParser = DependencyResolver.Current.GetService<ArticleFullTextSearchQueryParser>();
@@ -368,10 +368,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(ArticleService.Remove(parentId, articleToRemove, false, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
-        public ActionResult RemovePreAction(int parentId, int id, bool? boundToExternal)
-        {
-            return JsonMessageResult(ArticleService.RemovePreAction(parentId, id));
-        }
+        public ActionResult RemovePreAction(int parentId, int id, bool? boundToExternal) => JsonMessageResult(ArticleService.RemovePreAction(parentId, id));
 
         [HttpPost, Record]
         [ConnectionScope]
@@ -390,10 +387,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleRemovePreAction(int parentId, int[] IDs, bool? boundToExternal)
-        {
-            return JsonMessageResult(ArticleService.MultipleRemovePreAction(parentId, IDs));
-        }
+        public ActionResult MultipleRemovePreAction(int parentId, int[] IDs, bool? boundToExternal) => JsonMessageResult(ArticleService.MultipleRemovePreAction(parentId, IDs));
 
         [HttpPost, Record]
         [ConnectionScope]
@@ -438,10 +432,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
             return JsonMessageResult(ArticleService.MoveToArchive(id, boundToExternal, HttpContext.IsXmlDbUpdateReplayAction()));
         }
 
-        public ActionResult MoveToArchivePreAction(int id, bool? boundToExternal)
-        {
-            return JsonMessageResult(ArticleService.MoveToArchivePreAction(id));
-        }
+        public ActionResult MoveToArchivePreAction(int id, bool? boundToExternal) => JsonMessageResult(ArticleService.MoveToArchivePreAction(id));
 
         [HttpPost, Record]
         [ConnectionScope]
@@ -473,10 +464,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultiplePublishPreAction(int[] IDs, bool? boundToExternal)
-        {
-            return JsonMessageResult(null);
-        }
+        public ActionResult MultiplePublishPreAction(int[] IDs, bool? boundToExternal) => JsonMessageResult(null);
 
         [HttpPost, Record]
         [ConnectionScope]
@@ -495,10 +483,7 @@ namespace Quantumart.QP8.WebMvc.Controllers
         }
 
         [SuppressMessage("ReSharper", "InconsistentNaming")]
-        public ActionResult MultipleMoveToArchivePreAction(int[] IDs, bool? boundToExternal)
-        {
-            return JsonMessageResult(ArticleService.MultipleMoveToArchivePreAction(IDs));
-        }
+        public ActionResult MultipleMoveToArchivePreAction(int[] IDs, bool? boundToExternal) => JsonMessageResult(ArticleService.MultipleMoveToArchivePreAction(IDs));
 
         [HttpPost, Record]
         [ConnectionScope]
@@ -549,34 +534,24 @@ namespace Quantumart.QP8.WebMvc.Controllers
 
         [ConnectionScope]
         [ExceptionResult(ExceptionResultMode.OperationAction)]
-        public ActionResult GetContextQuery(int id, string currentContext)
-        {
-            return Json(ArticleService.GetContextQuery(id, currentContext), JsonRequestBehavior.AllowGet);
-        }
+        public ActionResult GetContextQuery(int id, string currentContext) => Json(ArticleService.GetContextQuery(id, currentContext), JsonRequestBehavior.AllowGet);
 
         [ConnectionScope]
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> GetParentIds(List<int> ids, int fieldId, string filter)
+        public JsonCamelCaseResult<JSendResponse> GetParentIds(List<int> ids, int fieldId, string filter) => new JSendResponse
         {
-            return new JSendResponse
-            {
-                Status = JSendStatus.Success,
-                Data = ArticleService.GetParentIds(ids, fieldId)
-            };
-        }
+            Status = JSendStatus.Success,
+            Data = ArticleService.GetParentIds(ids, fieldId)
+        };
 
         [ConnectionScope]
         [ActionAuthorize(ActionCode.Articles)]
         [ExceptionResult(ExceptionResultMode.JSendResponse)]
-        public JsonCamelCaseResult<JSendResponse> GetChildArticleIds(List<int> ids, int fieldId, string filter)
+        public JsonCamelCaseResult<JSendResponse> GetChildArticleIds(List<int> ids, int fieldId, string filter) => new JSendResponse
         {
-            return new JSendResponse
-            {
-                Status = JSendStatus.Success,
-                Data = ArticleService.GetChildArticles(ids, fieldId, filter)
-            };
-        }
-
+            Status = JSendStatus.Success,
+            Data = ArticleService.GetChildArticles(ids, fieldId, filter)
+        };
     }
 }
