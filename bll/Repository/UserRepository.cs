@@ -63,10 +63,7 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.UserMapper.GetBizList(users);
         }
 
-        internal static bool CheckAuthenticate(string login, string password)
-        {
-            return QPContext.EFContext.Authenticate(login, password, false, false) != null;
-        }
+        internal static bool CheckAuthenticate(string login, string password) => QPContext.EFContext.Authenticate(login, password, false, false) != null;
 
         internal static User GetById(int id, bool stopRecursion = false)
         {
@@ -112,15 +109,9 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.UserMapper.GetBizObject(dal);
         }
 
-        internal static User UpdateProfile(User user)
-        {
-            return UpdateUser(user, true);
-        }
+        internal static User UpdateProfile(User user) => UpdateUser(user, true);
 
-        internal static User UpdateProperties(User user)
-        {
-            return UpdateUser(user);
-        }
+        internal static User UpdateProperties(User user) => UpdateUser(user);
 
         private static User UpdateUser(User user, bool profileOnly = false)
         {
@@ -156,6 +147,7 @@ namespace Quantumart.QP8.BLL.Repository
                         dal.Groups.Add(g);
                     }
                 }
+
                 //-------------------
             }
 
@@ -168,6 +160,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 entities.UserDefaultFilterSet.AddObject(f);
             }
+
             //--------------------------
 
             entities.SaveChanges();
@@ -189,10 +182,7 @@ namespace Quantumart.QP8.BLL.Repository
             return MapperFacade.UserMapper.GetBizList(QPContext.EFContext.UserSet.OrderBy(u => u.LogOn).ToList());
         }
 
-        internal static string GeneratePassword()
-        {
-            return "aA1!" + Guid.NewGuid().ToString("N").Substring(0, 16);
-        }
+        internal static string GeneratePassword() => "aA1!" + Guid.NewGuid().ToString("N").Substring(0, 16);
 
         internal static void UpdatePassword(int userId, string password)
         {
@@ -223,6 +213,7 @@ namespace Quantumart.QP8.BLL.Repository
                 entities.UserGroupSet.Attach(s);
                 dal.Groups.Add(s);
             }
+
             //---------------
 
             // User Default Filters
@@ -230,6 +221,7 @@ namespace Quantumart.QP8.BLL.Repository
             {
                 entities.UserDefaultFilterSet.AddObject(f);
             }
+
             //----------------
 
             entities.SaveChanges();
@@ -295,8 +287,8 @@ namespace Quantumart.QP8.BLL.Repository
                         ContentId = f.ContentId.Value,
                         ArticleId = aid
                     }
-                )
-            );
+                    )
+                );
         }
     }
 }

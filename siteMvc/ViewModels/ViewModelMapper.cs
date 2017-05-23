@@ -10,7 +10,7 @@ namespace Quantumart.QP8.WebMvc.ViewModels
         public static void CreateAllMappings()
         {
             Mapper.CreateMap<DateTime, string>().ConvertUsing(src => src.ValueToDisplay());
-            Mapper.CreateMap<BLL.User, string>().ConvertUsing(src => src == null ? "" : src.LogOn);
+            Mapper.CreateMap<BLL.User, string>().ConvertUsing(src => src == null ? string.Empty : src.LogOn);
             Mapper.CreateMap<BLL.ArticleVersion, ArticleVersionListItem>();
         }
     }

@@ -1734,7 +1734,7 @@ namespace Quantumart.QP8.DAL
             }
         }
         private ObjectSet<XmlDbUpdateActionsLogEntity> _XML_DB_UPDATE_ACTIONS;
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -2482,7 +2482,7 @@ namespace Quantumart.QP8.DAL
         {
             base.AddObject("XML_DB_UPDATE_ACTIONS", xmlDbUpdateActionsLogEntity);
         }
-
+    
         /// <summary>
         /// Deprecated Method for adding a new object to the SystemNotificationSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
         /// </summary>
@@ -14661,10 +14661,10 @@ namespace Quantumart.QP8.DAL
         /// <param name="modified">Initial value of the Modified property.</param>
         /// <param name="lastModifiedBy">Initial value of the LastModifiedBy property.</param>
         /// <param name="useADSyncService">Initial value of the UseADSyncService property.</param>
+        /// <param name="autoOpenHome">Initial value of the AutoOpenHome property.</param>
         /// <param name="useDpc">Initial value of the UseDpc property.</param>
         /// <param name="useCdc">Initial value of the UseCdc property.</param>
-        /// <param name="autoOpenHome">Initial value of the AutoOpenHome property.</param>
-        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean useDpc, global::System.Boolean useCdc, global::System.Boolean autoOpenHome)
+        public static DbDAL CreateDbDAL(global::System.Decimal id, global::System.Boolean recordActions, global::System.DateTime created, global::System.DateTime modified, global::System.Decimal lastModifiedBy, global::System.Boolean useADSyncService, global::System.Boolean autoOpenHome, global::System.Boolean useDpc, global::System.Boolean useCdc)
         {
             DbDAL dbDAL = new DbDAL();
             dbDAL.Id = id;
@@ -14673,9 +14673,9 @@ namespace Quantumart.QP8.DAL
             dbDAL.Modified = modified;
             dbDAL.LastModifiedBy = lastModifiedBy;
             dbDAL.UseADSyncService = useADSyncService;
+            dbDAL.AutoOpenHome = autoOpenHome;
             dbDAL.UseDpc = useDpc;
             dbDAL.UseCdc = useCdc;
-            dbDAL.AutoOpenHome = autoOpenHome;
             return dbDAL;
         }
 
@@ -14859,6 +14859,30 @@ namespace Quantumart.QP8.DAL
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
         [DataMemberAttribute()]
+        public global::System.Boolean AutoOpenHome
+        {
+            get
+            {
+                return _AutoOpenHome;
+            }
+            set
+            {
+                OnAutoOpenHomeChanging(value);
+                ReportPropertyChanging("AutoOpenHome");
+                _AutoOpenHome = StructuralObject.SetValidValue(value);
+                ReportPropertyChanged("AutoOpenHome");
+                OnAutoOpenHomeChanged();
+            }
+        }
+        private global::System.Boolean _AutoOpenHome;
+        partial void OnAutoOpenHomeChanging(global::System.Boolean value);
+        partial void OnAutoOpenHomeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
         public global::System.Boolean UseDpc
         {
             get
@@ -14877,7 +14901,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseDpc;
         partial void OnUseDpcChanging(global::System.Boolean value);
         partial void OnUseDpcChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -14901,30 +14925,6 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _UseCdc;
         partial void OnUseCdcChanging(global::System.Boolean value);
         partial void OnUseCdcChanged();
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
-        [DataMemberAttribute()]
-        public global::System.Boolean AutoOpenHome
-        {
-            get
-            {
-                return _AutoOpenHome;
-            }
-            set
-            {
-                OnAutoOpenHomeChanging(value);
-                ReportPropertyChanging("AutoOpenHome");
-                _AutoOpenHome = StructuralObject.SetValidValue(value);
-                ReportPropertyChanged("AutoOpenHome");
-                OnAutoOpenHomeChanged();
-            }
-        }
-        private global::System.Boolean _AutoOpenHome;
-        partial void OnAutoOpenHomeChanging(global::System.Boolean value);
-        partial void OnAutoOpenHomeChanged();
 
         #endregion
 
@@ -33500,7 +33500,7 @@ namespace Quantumart.QP8.DAL
     public partial class SystemNotificationDAL : EntityObject
     {
         #region Factory Method
-
+    
         /// <summary>
         /// Create a new SystemNotificationDAL object.
         /// </summary>
@@ -33529,7 +33529,7 @@ namespace Quantumart.QP8.DAL
         #endregion
 
         #region Primitive Properties
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33556,7 +33556,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Id;
         partial void OnIdChanging(global::System.Decimal value);
         partial void OnIdChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33580,7 +33580,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _TransactionDate;
         partial void OnTransactionDateChanging(global::System.DateTime value);
         partial void OnTransactionDateChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33604,7 +33604,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Url;
         partial void OnUrlChanging(global::System.String value);
         partial void OnUrlChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33628,7 +33628,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Decimal _Tries;
         partial void OnTriesChanging(global::System.Decimal value);
         partial void OnTriesChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33652,7 +33652,7 @@ namespace Quantumart.QP8.DAL
         private global::System.String _Json;
         partial void OnJsonChanging(global::System.String value);
         partial void OnJsonChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33676,7 +33676,7 @@ namespace Quantumart.QP8.DAL
         private global::System.Boolean _Sent;
         partial void OnSentChanging(global::System.Boolean value);
         partial void OnSentChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33700,7 +33700,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Created;
         partial void OnCreatedChanging(global::System.DateTime value);
         partial void OnCreatedChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33724,7 +33724,7 @@ namespace Quantumart.QP8.DAL
         private global::System.DateTime _Modified;
         partial void OnModifiedChanging(global::System.DateTime value);
         partial void OnModifiedChanged();
-
+    
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
@@ -33751,9 +33751,9 @@ namespace Quantumart.QP8.DAL
 
         #endregion
 
-
+    
     }
-
+    
     /// <summary>
     /// No Metadata Documentation available.
     /// </summary>

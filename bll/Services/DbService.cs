@@ -8,30 +8,15 @@ namespace Quantumart.QP8.BLL.Services
 {
     public class DbService
     {
-        public Db GetDbSettings()
-        {
-            return DbRepository.Get();
-        }
+        public Db GetDbSettings() => DbRepository.Get();
 
-        public static Db ReadSettings()
-        {
-            return DbRepository.Get();
-        }
+        public static Db ReadSettings() => DbRepository.Get();
 
-        public static Db ReadSettingsForUpdate()
-        {
-            return DbRepository.GetForUpdate();
-        }
+        public static Db ReadSettingsForUpdate() => DbRepository.GetForUpdate();
 
-        public static Db UpdateSettings(Db db)
-        {
-            return DbRepository.Update(db);
-        }
+        public static Db UpdateSettings(Db db) => DbRepository.Update(db);
 
-        public static string GetDbHash()
-        {
-            return GehHash(GehHash(DbRepository.GetDbServerName()) + GehHash(DbRepository.GetDbName()));
-        }
+        public static string GetDbHash() => GehHash(GehHash(DbRepository.GetDbServerName()) + GehHash(DbRepository.GetDbName()));
 
         private static string GehHash(string value)
         {
@@ -45,15 +30,12 @@ namespace Quantumart.QP8.BLL.Services
             return sBuilder.ToString();
         }
 
-        public static HomeResult Home()
+        public static HomeResult Home() => new HomeResult
         {
-            return new HomeResult()
-            {
-                Sites = SiteService.GetSites(),
-                CurrentUser = new UserService().ReadProperties(QPContext.CurrentUserId),
-                LockedCount = ArticleRepository.GetLockedCount(),
-                ApprovalCount = ArticleRepository.GetForApprovalCount()
-            };
-        }
+            Sites = SiteService.GetSites(),
+            CurrentUser = new UserService().ReadProperties(QPContext.CurrentUserId),
+            LockedCount = ArticleRepository.GetLockedCount(),
+            ApprovalCount = ArticleRepository.GetForApprovalCount()
+        };
     }
 }

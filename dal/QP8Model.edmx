@@ -10243,9 +10243,9 @@
           <Property Type="Decimal" Name="LastModifiedBy" Nullable="false" Precision="18" Scale="0" />
           <NavigationProperty Name="LastModifiedByUser" Relationship="QP8Model.FK_DB_LAST_MODIFIED_BY" FromRole="DB" ToRole="UserDAL" />
           <Property Type="Boolean" Name="UseADSyncService" Nullable="false" />
-          <Property Type="Boolean" Name="UseDpc" Nullable="false" />
-          <Property Type="Boolean" Name="UseCdc" Nullable="false" />
           <Property Type="Boolean" Name="AutoOpenHome" Nullable="false" />
+          <Property Name="UseDpc" Type="Boolean" Nullable="false" />
+          <Property Name="UseCdc" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_DB_LAST_MODIFIED_BY">
           <End Type="QP8Model.UserDAL" Role="UserDAL" Multiplicity="1" />
@@ -11911,8 +11911,8 @@
           <EntitySetMapping Name="DbSet">
             <EntityTypeMapping TypeName="QP8Model.DbDAL">
               <MappingFragment StoreEntitySet="DB">
-                <ScalarProperty Name="UseDpc" ColumnName="USE_DPC" />
                 <ScalarProperty Name="UseCdc" ColumnName="USE_CDC" />
+                <ScalarProperty Name="UseDpc" ColumnName="USE_DPC" />
                 <ScalarProperty Name="AutoOpenHome" ColumnName="AUTO_OPEN_HOME" />
                 <ScalarProperty Name="UseADSyncService" ColumnName="USE_AD_SYNC_SERVICE" />
                 <ScalarProperty Name="LastModifiedBy" ColumnName="LAST_MODIFIED_BY" />
@@ -12023,7 +12023,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="QP8Model" ZoomLevel="61">
+      <Diagram Name="QP8Model" ZoomLevel="77">
         <EntityTypeShape EntityType="QP8Model.SiteDAL" Width="2.5" PointX="5.375" PointY="0.5" Height="10.441549479166666" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.Group" Width="1.5" PointX="0.5" PointY="0.5" Height="3.5186979166666656" IsExpanded="true" />
         <EntityTypeShape EntityType="QP8Model.UserDAL" Width="1.75" PointX="2.875" PointY="0.5" Height="8.1661995442708335" IsExpanded="true" />

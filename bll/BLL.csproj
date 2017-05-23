@@ -42,8 +42,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=4.2.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.4.2.1\lib\net45\AutoMapper.dll</HintPath>
+    <Reference Include="AutoMapper, Version=1.1.2.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.1.1.2\lib\net35\AutoMapper.dll</HintPath>
     </Reference>
     <Reference Include="EFExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -156,6 +156,7 @@
     <Compile Include="Factories\FolderFactory\ContentFolderFactory.cs" />
     <Compile Include="Factories\FolderFactory\SiteFolderFactory.cs" />
     <Compile Include="IContextStorage.cs" />
+    <Compile Include="Mappers\GenericMapperBase.cs" />
     <Compile Include="Mappers\SystemNotificationMapper.cs" />
     <Compile Include="Models\NotificationSender\CdcActionType.cs" />
     <Compile Include="Models\NotificationSender\SystemNotificationBulkXmlSerilizableModel.cs" />

@@ -22,7 +22,6 @@ namespace Quantumart.QP8.BLL.Repository
                 result = MapperFacade.ContentConstraintMapper.GetBizObject(QPContext.EFContext.ContentConstraintSet.Include("Rules").SingleOrDefault(s => s.Id == constraintId));
             }
             return result;
-
         }
 
         internal static ContentConstraint Save(ContentConstraint constraint)

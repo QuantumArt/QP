@@ -1,4 +1,8 @@
-﻿using AutoMapper;
+﻿#pragma warning disable CS0618 // Type or member is obsolete
+
+using System.Collections.Generic;
+using System.Data;
+using AutoMapper;
 using Quantumart.QP8.BLL.Mappers;
 using Quantumart.QP8.BLL.Mappers.EntityPermissions;
 using Quantumart.QP8.BLL.Mappers.VisualEditor;
@@ -8,19 +12,16 @@ using Quantumart.QP8.BLL.Repository.ArticleMatching.Models;
 using Quantumart.QP8.BLL.Services.API.Models;
 using Quantumart.QP8.BLL.Services.VisualEditor;
 using Quantumart.QP8.Utils;
-using System.Collections.Generic;
-using System.Data;
 
 namespace Quantumart.QP8.BLL.Facades
 {
     public static class MapperFacade
     {
-        internal static T Create<T>() where T : GenericMapper, new()
-        {
-            return Create<T>(false);
-        }
+        internal static T Create<T>()
+            where T : GenericMapper, new() => Create<T>(false);
 
-        internal static T Create<T>(bool withDal) where T : GenericMapper, new()
+        internal static T Create<T>(bool withDal)
+            where T : GenericMapper, new()
         {
             var item = new T();
             item.CreateBizMapper();
@@ -32,15 +33,14 @@ namespace Quantumart.QP8.BLL.Facades
             return item;
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
         static MapperFacade()
         {
-            Mapper.CreateMap<decimal, bool>().ConvertUsing((decimal src) => Converter.ToBoolean(src));
-            Mapper.CreateMap<decimal?, int?>().ConvertUsing((decimal? src) => Converter.ToNullableInt32(src));
-            Mapper.CreateMap<bool, decimal>().ConvertUsing((bool src) => Converter.ToDecimal(src));
-            Mapper.CreateMap<int, decimal>().ConvertUsing((int src) => src);
-            Mapper.CreateMap<decimal, int>().ConvertUsing((decimal src) => Converter.ToInt32(src));
-            Mapper.CreateMap<int?, decimal?>().ConvertUsing((int? src) => src);
+            Mapper.CreateMap<decimal, bool>().ConvertUsing(src => Converter.ToBoolean(src));
+            Mapper.CreateMap<decimal?, int?>().ConvertUsing(Converter.ToNullableInt32);
+            Mapper.CreateMap<bool, decimal>().ConvertUsing(src => Converter.ToDecimal(src));
+            Mapper.CreateMap<int, decimal>().ConvertUsing(src => src);
+            Mapper.CreateMap<decimal, int>().ConvertUsing(src => Converter.ToInt32(src));
+            Mapper.CreateMap<int?, decimal?>().ConvertUsing(src => src);
 
             Mapper.CreateMap<IDataReader, IEnumerable<SearchInArticlesResultItem>>();
             Mapper.CreateMap<IDataReader, IEnumerable<VisualEditFieldParams>>();
@@ -52,7 +52,6 @@ namespace Quantumart.QP8.BLL.Facades
             DataRowMapper.CreateMap<ArticleInfo>();
             DataRowMapper.CreateMap<PageInfo>();
         }
-#pragma warning restore CS0618 // Type or member is obsolete
 
         internal static readonly SiteMapper SiteMapper = Create<SiteMapper>(true);
 
@@ -94,9 +93,9 @@ namespace Quantumart.QP8.BLL.Facades
 
         internal static readonly ContentConstraintMapper ContentConstraintMapper = Create<ContentConstraintMapper>(true);
 
-        internal static readonly NotificationTemplateFormatMapper NotificationTemplateFormatMapper = Create<NotificationTemplateFormatMapper>(true);
-
         internal static readonly ContentConstraintRuleMapper ContentConstraintRuleMapper = Create<ContentConstraintRuleMapper>(true);
+
+        internal static readonly NotificationTemplateFormatMapper NotificationTemplateFormatMapper = Create<NotificationTemplateFormatMapper>(true);
 
         internal static readonly ContentWorkflowBindMapper ContentWorkflowBindMapper = Create<ContentWorkflowBindMapper>(true);
 

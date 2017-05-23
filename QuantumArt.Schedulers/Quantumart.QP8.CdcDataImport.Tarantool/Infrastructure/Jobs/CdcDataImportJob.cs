@@ -128,7 +128,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
                         Action = data.Action,
                         ChangeType = data.ChangeType,
                         OrderNumber = i,
-                        Entity = Mapper.Map<CdcEntityDto>(data.Entity)
+                        Entity = Mapper.Map<CdcEntityModel, CdcEntityDto>(data.Entity)
                     }).ToList()
                 }).ToList();
         }
@@ -145,7 +145,7 @@ namespace Quantumart.QP8.CdcDataImport.Tarantool.Infrastructure.Jobs
             using (var ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions { IsolationLevel = IsolationLevel.ReadCommitted }))
             using (new QPConnectionScope(customer.ConnectionString))
             {
-                var notificationsData = Mapper.Map<List<SystemNotificationModel>>(data);
+                var notificationsData = Mapper.Map<List<CdcDataTableDto>, List<SystemNotificationModel>>(data);
                 _systemNotificationService.InsertNotification(notificationsData);
                 _cdcImportService.PostLastExecutedLsn(Settings.Default.HttpEndpoint, lastPushedLsn, lastExecutedLsn);
                 ts.Complete();

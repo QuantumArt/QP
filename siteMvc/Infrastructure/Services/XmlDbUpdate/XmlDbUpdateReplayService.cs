@@ -40,7 +40,9 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private readonly IXmlDbUpdateHttpContextProcessor _httpContextProcessor;
 
         public XmlDbUpdateReplayService(string connectionString, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
-            : this(connectionString, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor) { }
+            : this(connectionString, null, userId, useGuidSubstitution, dbLogService, appInfoRepository, actionsCorrecterService, httpContextProcessor)
+        {
+        }
 
         public XmlDbUpdateReplayService(string connectionString, HashSet<string> identityInsertOptions, int userId, bool useGuidSubstitution, IXmlDbUpdateLogService dbLogService, IApplicationInfoRepository appInfoRepository, IXmlDbUpdateActionCorrecterService actionsCorrecterService, IXmlDbUpdateHttpContextProcessor httpContextProcessor)
         {
@@ -88,7 +90,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
                 }
 
                 var updateId = _dbLogService.InsertFileLogEntry(dbLogEntry);
-                ReplayActionsFromXml(filteredXmlDocument.Root.Elements(), currentDbVersion, filteredXmlDocument.Root.Attribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute).Value, updateId);
+                ReplayActionsFromXml(filteredXmlDocument.Root?.Elements(), currentDbVersion, filteredXmlDocument.Root?.Attribute(XmlDbUpdateXDocumentConstants.RootBackendUrlAttribute)?.Value, updateId);
                 ts.Complete();
             }
         }
@@ -97,10 +99,15 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         {
             var document = XDocument.Parse(xmlString);
             var comparer = new XNodeEqualityComparer();
-            var distinctElements = document.Root.Elements().Distinct(comparer);
+            var distinctElements = document.Root?.Elements().Distinct(comparer);
+            if (distinctElements == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             foreach (var element in distinctElements)
             {
-                document.Root.Elements().Where(n => comparer.Equals(n, element)).Skip(1).Remove();
+                document.Root?.Elements().Where(n => comparer.Equals(n, element)).Skip(1).Remove();
             }
 
             return document;
@@ -186,7 +193,7 @@ namespace Quantumart.QP8.WebMvc.Infrastructure.Services.XmlDbUpdate
         private static bool ValidateDbVersion(XContainer doc, string currentDbVersion)
         {
             var root = doc.Elements(XmlDbUpdateXDocumentConstants.RootElement).Single();
-            return root.Attribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute) == null || root.Attribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute).Value == currentDbVersion;
+            return root.Attribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute) == null || root.Attribute(XmlDbUpdateXDocumentConstants.RootDbVersionAttribute)?.Value == currentDbVersion;
         }
     }
 }

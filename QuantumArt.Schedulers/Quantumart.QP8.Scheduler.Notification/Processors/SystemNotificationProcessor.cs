@@ -10,6 +10,7 @@ using QP8.Infrastructure.Extensions;
 using QP8.Infrastructure.Logging.Interfaces;
 using Quantumart.QP8.BLL;
 using Quantumart.QP8.BLL.Logging;
+using Quantumart.QP8.BLL.Models.NotificationSender;
 using Quantumart.QP8.BLL.Services.NotificationSender;
 using Quantumart.QP8.Configuration.Models;
 using Quantumart.QP8.Scheduler.API;
@@ -109,7 +110,7 @@ namespace Quantumart.QP8.Scheduler.Notification.Processors
             using (new QPConnectionScope(connection))
             {
                 var notificationModels = _externalNotificationService.GetPendingNotifications();
-                return Mapper.Map<List<SystemNotificationDto>>(notificationModels).OrderBy(n => n.TransactionLsn).ToList();
+                return Mapper.Map<List<SystemNotificationModel>, List<SystemNotificationDto>>(notificationModels).OrderBy(n => n.TransactionLsn).ToList();
             }
         }
 

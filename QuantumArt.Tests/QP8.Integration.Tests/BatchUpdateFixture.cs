@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using Moq;
@@ -436,14 +436,13 @@ namespace QP8.Integration.Tests
                 {
                     ContentId = BaseContentId,
                     Id = articleId,
-                    Fields = new []
+                    Fields = new[]
                     {
                         new FieldData
                         {
                             Id = BaseFieldEx2Id,
                             Value = Ex21ContentId.ToString(),
                             ArticleIds = new[] { -1 }
-
                         }
                     }.ToList()
                 },

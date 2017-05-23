@@ -3,13 +3,6 @@ using AutoMapper;
 
 namespace Quantumart.QP8.BLL.Mappers
 {
-    internal abstract class GenericMapper
-    {
-        public abstract void CreateBizMapper();
-
-        public abstract void CreateDalMapper();
-    }
-
     internal class GenericMapper<TBiz, TDal> : GenericMapper
         where TBiz : class
         where TDal : class
@@ -24,34 +17,16 @@ namespace Quantumart.QP8.BLL.Mappers
             GetDalMapper();
         }
 
-        public IMappingExpression<TDal, TBiz> GetBizMapper()
-        {
-            return Mapper.CreateMap<TDal, TBiz>();
-        }
+        public IMappingExpression<TDal, TBiz> GetBizMapper() => Mapper.CreateMap<TDal, TBiz>();
 
-        public IMappingExpression<TBiz, TDal> GetDalMapper()
-        {
-            return Mapper.CreateMap<TBiz, TDal>();
-        }
+        public IMappingExpression<TBiz, TDal> GetDalMapper() => Mapper.CreateMap<TBiz, TDal>();
 
-        public virtual TBiz GetBizObject(TDal dataObject)
-        {
-            return DefaultMapper.GetBizObject<TBiz, TDal>(dataObject);
-        }
+        public virtual TBiz GetBizObject(TDal dataObject) => DefaultMapper.GetBizObject<TBiz, TDal>(dataObject);
 
-        public virtual List<TBiz> GetBizList(List<TDal> dataList)
-        {
-            return DefaultMapper.GetBizList<TBiz, TDal>(dataList);
-        }
+        public virtual List<TBiz> GetBizList(List<TDal> dataList) => DefaultMapper.GetBizList<TBiz, TDal>(dataList);
 
-        public virtual TDal GetDalObject(TBiz bizObject)
-        {
-            return DefaultMapper.GetDalObject<TDal, TBiz>(bizObject);
-        }
+        public virtual TDal GetDalObject(TBiz bizObject) => DefaultMapper.GetDalObject<TDal, TBiz>(bizObject);
 
-        public virtual List<TDal> GetDalList(List<TBiz> bizList)
-        {
-            return DefaultMapper.GetDalList<TDal, TBiz>(bizList);
-        }
+        public virtual List<TDal> GetDalList(List<TBiz> bizList) => DefaultMapper.GetDalList<TDal, TBiz>(bizList);
     }
 }
